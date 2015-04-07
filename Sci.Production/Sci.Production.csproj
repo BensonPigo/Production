@@ -206,6 +206,12 @@
   <ItemGroup>
     <None Include="Resources\001_jpg.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
+      <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
+      <Name>Sci.Production.Class</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
