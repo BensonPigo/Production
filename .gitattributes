@@ -1,9 +1,5 @@
 * text=auto !eol
 /Production.sln -text
-Sci.Production.Class/Properties/AssemblyInfo.cs -text
-Sci.Production.Class/Sci.Production.Class.csproj -text
-Sci.Production.Class/txtshipmode.Designer.cs -text
-Sci.Production.Class/txtshipmode.cs -text
 Sci.Production/Program.cs -text
 Sci.Production/Properties/AssemblyInfo.cs -text
 Sci.Production/Properties/Resources.Designer.cs -text
