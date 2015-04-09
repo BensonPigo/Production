@@ -30,37 +30,55 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ict">
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="txtbuyer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtbuyer.Designer.cs">
+      <DependentUpon>txtbuyer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtcurrency.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtcurrency.Designer.cs">
+      <DependentUpon>txtcurrency.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtdepartment.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtdepartment.Designer.cs">
+      <DependentUpon>txtdepartment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtshipmode.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtshipmode.Designer.cs">
+      <DependentUpon>txtshipmode.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Ict, Version=1.0.1502.1000, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Ict.dll</HintPath>
     </Reference>
-    <Reference Include="Ict.resources">
-      <HintPath>..\_Dll\en\Ict.resources.dll</HintPath>
-    </Reference>
-    <Reference Include="Ict.Win">
+    <Reference Include="Ict.Win, Version=1.0.1412.3000, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Ict.Win.dll</HintPath>
     </Reference>
-    <Reference Include="Ict.Win.App">
+    <Reference Include="Ict.Win.App, Version=1.0.1503.900, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Ict.Win.App.dll</HintPath>
     </Reference>
-    <Reference Include="Ict.Win.App.resources">
-      <HintPath>..\_Dll\en\Ict.Win.App.resources.dll</HintPath>
-    </Reference>
-    <Reference Include="Ict.Win.Report2010">
+    <Reference Include="Ict.Win.Report2010, Version=1.0.1503.1100, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Ict.Win.Report2010.dll</HintPath>
     </Reference>
-    <Reference Include="Ict.Win.Report2010.resources">
-      <HintPath>..\_Dll\en\Ict.Win.Report2010.resources.dll</HintPath>
-    </Reference>
-    <Reference Include="Ict.Win.resources">
-      <HintPath>..\_Dll\en\Ict.Win.resources.dll</HintPath>
-    </Reference>
-    <Reference Include="Ict.Win.UI">
+    <Reference Include="Ict.Win.UI, Version=1.0.1503.1600, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Ict.Win.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Ict.Win.UI.resources">
-      <HintPath>..\_Dll\en\Ict.Win.UI.resources.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net">
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -75,30 +93,19 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.WinForms.dll</HintPath>
     </Reference>
-    <Reference Include="Sci">
+    <Reference Include="Sci, Version=1.0.1503.2400, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Sci.dll</HintPath>
     </Reference>
-    <Reference Include="Sci.Proj">
+    <Reference Include="Sci.Proj, Version=1.0.1503.1700, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="txtshipmode.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="txtshipmode.Designer.cs">
-      <DependentUpon>txtshipmode.cs</DependentUpon>
-    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
