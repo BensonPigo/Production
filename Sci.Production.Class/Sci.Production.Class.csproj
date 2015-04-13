@@ -55,6 +55,12 @@
     <Compile Include="txtdepartment.Designer.cs">
       <DependentUpon>txtdepartment.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtpaytermar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtpaytermar.Designer.cs">
+      <DependentUpon>txtpaytermar.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtshipmode.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -117,6 +123,9 @@
   <ItemGroup>
     <EmbeddedResource Include="txtcountry.resx">
       <DependentUpon>txtcountry.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtpaytermar.resx">
+      <DependentUpon>txtpaytermar.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -16,6 +16,9 @@ Sci.Production.Class/txtcurrency.Designer.cs -text
 Sci.Production.Class/txtcurrency.cs -text
 Sci.Production.Class/txtdepartment.Designer.cs -text
 Sci.Production.Class/txtdepartment.cs -text
+Sci.Production.Class/txtpaytermar.Designer.cs -text
+Sci.Production.Class/txtpaytermar.cs -text
+Sci.Production.Class/txtpaytermar.resx -text
 Sci.Production.Class/txtshipmode.Designer.cs -text
 Sci.Production.Class/txtshipmode.cs -text
 Sci.Production/Program.cs -text
