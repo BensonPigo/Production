@@ -12,11 +12,18 @@ using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtbuyer : Sci.Win.UI.TextBox
+    public partial class txtcustcd : Sci.Win.UI.TextBox
     {
+        public string Brand { get; set; }
+
+        public txtcustcd()
+        {
+            
+        }
+
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
-            //Sci.Win.UI.TextBox textBox = (Sci.Win.UI.TextBox) s;
+            
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Buyer.id,NameEN", "10,50", this.Text, false, ",");
             // select id, NameEN from buyer where junk = 0
             DialogResult result = item.ShowDialog();
@@ -29,7 +36,7 @@ namespace Sci.Production.Class
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (myUtility.Seek(str, "Buyer", "id") == false)
+                if (myUtility.Seek(str,"Buyer","id") == false)
                 {
                     MessageBox.Show(string.Format("< Buyer : {0} > not found!!!", str));
                     this.Text = "";
@@ -39,25 +46,5 @@ namespace Sci.Production.Class
             }
         }
 
-        public txtbuyer()
-        {
-            //this._Alias = "Buyer";
-            //this._Tag = "ID";
-            //this.HelpColumnWidths = "10,50";
-            //this.HelpRecordSource = "Buyer.id,NameEN";
-            //this.Size = new System.Drawing.Size(100, 22);
-            this.IsSupportSytsemContextMenu = false;
-            
-            //this.PopUp += (s, e) =>
-            //{
-                
-            //};
-
-            //this.Validating += (s, e) =>
-            //{
-               
-            //};
-
-        }
     }
 }
