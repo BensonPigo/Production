@@ -65,6 +65,14 @@ namespace Sci.Production.Class
                 }
             }
 
+        }
+
+        private void textBox1_PopUp(object sender, TextBoxPopUpEventArgs e)
+        {
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Country.Id,Alias", "5,100", this.textBox1.Text);
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            this.textBox1.Text = item.GetSelectedString();
         }     
     }
 }

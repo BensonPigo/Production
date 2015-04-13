@@ -34,14 +34,11 @@
             // 
             // textBox1
             // 
-            this.textBox1._Alias = "Country";
-            this.textBox1._Tag = "Id";
-            this.textBox1.HelpColumnWidths = "5,100";
-            this.textBox1.HelpRecordSource = "Country.Id,Alias";
             this.textBox1.Location = new System.Drawing.Point(0, 0);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(31, 22);
             this.textBox1.TabIndex = 0;
+            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
