@@ -31,7 +31,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="txtartworktype_fty.cs" />
+    <Compile Include="txtartworktype_fty.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="txtartworktype_fty.Designer.cs">
       <DependentUpon>txtartworktype_fty.cs</DependentUpon>
     </Compile>
@@ -53,7 +55,9 @@
     <Compile Include="txtcurrency.Designer.cs">
       <DependentUpon>txtcurrency.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtcustcd.cs" />
+    <Compile Include="txtcustcd.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="txtcustcd.Designer.cs">
       <DependentUpon>txtcustcd.cs</DependentUpon>
     </Compile>
@@ -63,7 +67,9 @@
     <Compile Include="txtdepartment.Designer.cs">
       <DependentUpon>txtdepartment.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtfactory.cs" />
+    <Compile Include="txtfactory.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="txtfactory.Designer.cs">
       <DependentUpon>txtfactory.cs</DependentUpon>
     </Compile>
@@ -85,11 +91,21 @@
     <Compile Include="txtshipmode.Designer.cs">
       <DependentUpon>txtshipmode.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtshipterm.cs" />
+    <Compile Include="txtshipterm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="txtshipterm.Designer.cs">
       <DependentUpon>txtshipterm.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtunit_fty.cs" />
+    <Compile Include="txtsubcon.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtsubcon.Designer.cs">
+      <DependentUpon>txtsubcon.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtunit_fty.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="txtunit_fty.Designer.cs">
       <DependentUpon>txtunit_fty.cs</DependentUpon>
     </Compile>
@@ -155,6 +171,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="txtpayterm_fty.resx">
       <DependentUpon>txtpayterm_fty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtsubcon.resx">
+      <DependentUpon>txtsubcon.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
