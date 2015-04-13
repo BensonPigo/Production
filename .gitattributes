@@ -9,6 +9,9 @@ Sci.Production.Class/Properties/AssemblyInfo.cs -text
 Sci.Production.Class/Sci.Production.Class.csproj -text
 Sci.Production.Class/txtbuyer.Designer.cs -text
 Sci.Production.Class/txtbuyer.cs -text
+Sci.Production.Class/txtcountry.Designer.cs -text
+Sci.Production.Class/txtcountry.cs -text
+Sci.Production.Class/txtcountry.resx -text
 Sci.Production.Class/txtcurrency.Designer.cs -text
 Sci.Production.Class/txtcurrency.cs -text
 Sci.Production.Class/txtdepartment.Designer.cs -text

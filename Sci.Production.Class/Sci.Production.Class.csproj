@@ -37,6 +37,12 @@
     <Compile Include="txtbuyer.Designer.cs">
       <DependentUpon>txtbuyer.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtcountry.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtcountry.Designer.cs">
+      <DependentUpon>txtcountry.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtcurrency.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -106,6 +112,12 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="txtcountry.resx">
+      <DependentUpon>txtcountry.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
