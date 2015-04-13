@@ -17,13 +17,5 @@ namespace Sci.Production.Basic
         {
             InitializeComponent();
         }
-        protected override bool OnGridSetup()
-        {
-            Helper.Controls.Grid.Generator(this.grid)
-                .Text("ID", header: "Code", width: Widths.AnsiChars(10))
-                .Text("Description", header: "Description", width: Widths.AnsiChars(50));
-
-            return true;
-        }
     }
 }

@@ -58,6 +58,10 @@
             this.detailbtm.Location = new System.Drawing.Point(0, 302);
             this.detailbtm.Size = new System.Drawing.Size(683, 38);
             // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(683, 340);
+            // 
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(691, 369);
