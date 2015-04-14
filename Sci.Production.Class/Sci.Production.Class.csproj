@@ -109,6 +109,12 @@
     <Compile Include="txtsupplier.Designer.cs">
       <DependentUpon>txtsupplier.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtunit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtunit.Designer.cs">
+      <DependentUpon>txtunit.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtunit_fty.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -183,6 +189,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="txtsupplier.resx">
       <DependentUpon>txtsupplier.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtunit.resx">
+      <DependentUpon>txtunit.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
