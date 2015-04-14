@@ -1,5 +1,8 @@
 * text=auto !eol
 /Production.sln -text
+Sci.Production.Basic/B09.Designer.cs -text
+Sci.Production.Basic/B09.cs -text
+Sci.Production.Basic/B09.resx -text
 Sci.Production.Basic/B16.Designer.cs -text
 Sci.Production.Basic/B16.cs -text
 Sci.Production.Basic/B16.resx -text
