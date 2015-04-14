@@ -55,9 +55,9 @@
             this.editBox1 = new Sci.Win.UI.EditBox();
             this.editBox2 = new Sci.Win.UI.EditBox();
             this.editBox3 = new Sci.Win.UI.EditBox();
-            this.txtcountry1 = new Sci.Production.Class.txtcountry();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.dateBox2 = new Sci.Win.UI.DateBox();
+            this.txtcountry2 = new Sci.Production.Class.txtcountry();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -71,6 +71,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtcountry2);
             this.detailcont.Controls.Add(this.dateBox2);
             this.detailcont.Controls.Add(this.dateBox1);
             this.detailcont.Controls.Add(this.editBox3);
@@ -88,7 +89,6 @@
             this.detailcont.Controls.Add(this.label11);
             this.detailcont.Controls.Add(this.displayBox6);
             this.detailcont.Controls.Add(this.label10);
-            this.detailcont.Controls.Add(this.txtcountry1);
             this.detailcont.Controls.Add(this.displayBox5);
             this.detailcont.Controls.Add(this.displayBox4);
             this.detailcont.Controls.Add(this.displayBox3);
@@ -383,34 +383,6 @@
             this.editBox3.Size = new System.Drawing.Size(221, 68);
             this.editBox3.TabIndex = 32;
             // 
-            // txtcountry1
-            // 
-            this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
-            // 
-            // 
-            // 
-            this.txtcountry1.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtcountry1.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtcountry1.DisplayBox1.Location = new System.Drawing.Point(140, 0);
-            this.txtcountry1.DisplayBox1.Margin = new System.Windows.Forms.Padding(12, 12, 12, 12);
-            this.txtcountry1.DisplayBox1.Name = "displayBox1";
-            this.txtcountry1.DisplayBox1.Size = new System.Drawing.Size(1044, 23);
-            this.txtcountry1.DisplayBox1.TabIndex = 1;
-            this.txtcountry1.Location = new System.Drawing.Point(152, 79);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(196, 22);
-            this.txtcountry1.TabIndex = 13;
-            // 
-            // 
-            // 
-            this.txtcountry1.TextBox1.BackColor = System.Drawing.Color.White;
-            this.txtcountry1.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcountry1.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtcountry1.TextBox1.Margin = new System.Windows.Forms.Padding(12, 12, 12, 12);
-            this.txtcountry1.TextBox1.Name = "textBox1";
-            this.txtcountry1.TextBox1.Size = new System.Drawing.Size(117, 23);
-            this.txtcountry1.TextBox1.TabIndex = 0;
-            // 
             // dateBox1
             // 
             this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LockDate", true));
@@ -427,11 +399,45 @@
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
             this.dateBox2.TabIndex = 34;
             // 
+            // txtcountry2
+            // 
+            this.txtcountry2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
+            // 
+            // 
+            // 
+            this.txtcountry2.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtcountry2.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtcountry2.DisplayBox1.Location = new System.Drawing.Point(44, 0);
+            this.txtcountry2.DisplayBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtcountry2.DisplayBox1.Name = "displayBox1";
+            this.txtcountry2.DisplayBox1.Size = new System.Drawing.Size(333, 23);
+            this.txtcountry2.DisplayBox1.TabIndex = 1;
+            this.txtcountry2.Location = new System.Drawing.Point(153, 80);
+            this.txtcountry2.Name = "txtcountry2";
+            this.txtcountry2.Size = new System.Drawing.Size(221, 22);
+            this.txtcountry2.TabIndex = 35;
+            // 
+            // 
+            // 
+            this.txtcountry2.TextBox1.BackColor = System.Drawing.Color.White;
+            this.txtcountry2.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcountry2.TextBox1.Location = new System.Drawing.Point(0, 0);
+            this.txtcountry2.TextBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtcountry2.TextBox1.Name = "textBox1";
+            this.txtcountry2.TextBox1.Size = new System.Drawing.Size(40, 23);
+            this.txtcountry2.TextBox1.TabIndex = 0;
+            // 
             // B09
             // 
             this.ClientSize = new System.Drawing.Size(773, 540);
+            this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
+            this.IsSupportPrint = false;
             this.Name = "B09";
             this.Text = "Supplier (Taiwan)";
+            this.UniqueExpress = "ID";
             this.WorkAlias = "Supp";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
@@ -458,7 +464,6 @@
         private Win.UI.Label label11;
         private Win.UI.DisplayBox displayBox6;
         private Win.UI.Label label10;
-        private Class.txtcountry txtcountry1;
         private Win.UI.DisplayBox displayBox5;
         private Win.UI.DisplayBox displayBox4;
         private Win.UI.DisplayBox displayBox3;
@@ -476,5 +481,6 @@
         private Win.UI.EditBox editBox1;
         private Win.UI.DateBox dateBox2;
         private Win.UI.DateBox dateBox1;
+        private Class.txtcountry txtcountry2;
     }
 }
