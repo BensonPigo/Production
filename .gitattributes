@@ -35,6 +35,9 @@ Sci.Production.Class/txtshipterm.cs -text
 Sci.Production.Class/txtsubcon.Designer.cs -text
 Sci.Production.Class/txtsubcon.cs -text
 Sci.Production.Class/txtsubcon.resx -text
+Sci.Production.Class/txtsupplier.Designer.cs -text
+Sci.Production.Class/txtsupplier.cs -text
+Sci.Production.Class/txtsupplier.resx -text
 Sci.Production.Class/txtunit_fty.Designer.cs -text
 Sci.Production.Class/txtunit_fty.cs -text
 Sci.Production/Program.cs -text
