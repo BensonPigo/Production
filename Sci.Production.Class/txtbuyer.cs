@@ -16,7 +16,6 @@ namespace Sci.Production.Class
     {
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
-            //Sci.Win.UI.TextBox textBox = (Sci.Win.UI.TextBox) s;
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Buyer.id,NameEN", "10,50", this.Text, false, ",");
             // select id, NameEN from buyer where junk = 0
             DialogResult result = item.ShowDialog();
@@ -38,7 +37,7 @@ namespace Sci.Production.Class
                 }
             }
         }
-
+        
         public txtbuyer()
         {
             //this._Alias = "Buyer";
@@ -46,17 +45,6 @@ namespace Sci.Production.Class
             //this.HelpColumnWidths = "10,50";
             //this.HelpRecordSource = "Buyer.id,NameEN";
             //this.Size = new System.Drawing.Size(100, 22);
-            this.IsSupportSytsemContextMenu = false;
-            
-            //this.PopUp += (s, e) =>
-            //{
-                
-            //};
-
-            //this.Validating += (s, e) =>
-            //{
-               
-            //};
 
         }
     }

@@ -121,6 +121,12 @@
     <Compile Include="txtunit_fty.Designer.cs">
       <DependentUpon>txtunit_fty.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtbrand.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtbrand.Designer.cs">
+      <DependentUpon>txtbrand.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ict, Version=1.0.1502.1000, Culture=neutral, processorArchitecture=MSIL">

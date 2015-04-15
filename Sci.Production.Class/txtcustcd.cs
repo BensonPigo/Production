@@ -14,7 +14,17 @@ namespace Sci.Production.Class
 {
     public partial class txtcustcd : Sci.Win.UI.TextBox
     {
-        public string Brand { get; set; }
+        //private DataRow aa = new DataRow();
+       // private string brand = string.Empty;
+
+        public DataRow Brand 
+        {  
+            set
+            {
+                
+            }
+        }
+        public string Field {get;set;}
 
         public txtcustcd()
         {
