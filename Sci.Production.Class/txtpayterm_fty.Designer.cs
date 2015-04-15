@@ -51,8 +51,7 @@
             // 
             // txtpayterm_fty
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.Controls.Add(this.displayBox1);
             this.Controls.Add(this.textBox1);
             this.Name = "txtpayterm_fty";
