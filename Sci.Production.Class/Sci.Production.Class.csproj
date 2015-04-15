@@ -103,6 +103,12 @@
     <Compile Include="txtsubcon.Designer.cs">
       <DependentUpon>txtsubcon.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtsubprocess.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtsubprocess.Designer.cs">
+      <DependentUpon>txtsubprocess.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtsupplier.cs">
       <SubType>UserControl</SubType>
     </Compile>
