@@ -127,6 +127,12 @@
     <Compile Include="txtbrand.Designer.cs">
       <DependentUpon>txtbrand.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtuser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtuser.Designer.cs">
+      <DependentUpon>txtuser.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ict, Version=1.0.1502.1000, Culture=neutral, processorArchitecture=MSIL">
@@ -198,6 +204,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="txtunit.resx">
       <DependentUpon>txtunit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtuser.resx">
+      <DependentUpon>txtuser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
