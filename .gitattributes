@@ -12,6 +12,8 @@ Sci.Production.Class/Properties/AssemblyInfo.cs -text
 Sci.Production.Class/Sci.Production.Class.csproj -text
 Sci.Production.Class/txtartworktype_fty.Designer.cs -text
 Sci.Production.Class/txtartworktype_fty.cs -text
+Sci.Production.Class/txtbrand.Designer.cs -text
+Sci.Production.Class/txtbrand.cs -text
 Sci.Production.Class/txtbuyer.Designer.cs -text
 Sci.Production.Class/txtbuyer.cs -text
 Sci.Production.Class/txtcountry.Designer.cs -text
