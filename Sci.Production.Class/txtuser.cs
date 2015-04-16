@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Sci.Data;
+using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
@@ -98,14 +100,8 @@ namespace Sci.Production.Class
         {
             string name = myUtility.Lookup("Name", this.textBox1.Text.ToString(), "Pass1", "ID");
             string extno = myUtility.Lookup("Ext_No", this.textBox1.Text.ToString(), "Pass1", "ID");
-            if (!string.IsNullOrWhiteSpace(extno))
-            {
-                this.displayBox1.Text = name + " #" + extno;
-            }
-            else
-            { 
-                this.displayBox1.Text = name; 
-            }
+            this.displayBox1.Text = name;
+            if (!string.IsNullOrWhiteSpace(extno)) { this.displayBox1.Text = name + " #" + extno; }
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
