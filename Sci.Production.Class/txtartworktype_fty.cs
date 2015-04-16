@@ -18,7 +18,6 @@ namespace Sci.Production.Class
         private string m_subprocess = string.Empty;
 
         [Category("Custom Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public string cClassify
         {
             set { this.m_type = value; }
@@ -26,7 +25,6 @@ namespace Sci.Production.Class
         }
 
        [Category("Custom Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public string cSubprocess
         {
             set { this.m_subprocess = value; }
