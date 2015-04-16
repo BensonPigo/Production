@@ -14,22 +14,23 @@ namespace Sci.Production.Class
 {
     public partial class txtsubcon : UserControl
     {
+
+        private bool _IsIncludeJunk;
+
         public txtsubcon()
         {
             InitializeComponent();
         }
 
-        private bool _IsIncludeJunk;
-
         [Category("Custom Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public bool IsIncludeJunk
         {
             set { this._IsIncludeJunk = value; }
             get { return this._IsIncludeJunk; }
         }
 
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public Sci.Win.UI.TextBox TextBox1
         {
             get { return this.textBox1; }
