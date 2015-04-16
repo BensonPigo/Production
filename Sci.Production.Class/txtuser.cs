@@ -52,25 +52,34 @@ namespace Sci.Production.Class
             {
                 if (!myUtility.Seek(str, "Pass1", "ID"))
                 {
-                    bool IsUserName = myUtility.Seek(str, "Pass1", "Name");
-                    bool IsUserExtNo = myUtility.Seek(str, "Pass1", "Ext_No");
+                    string alltrimdata = str.Trim();
+                    bool IsUserName = myUtility.Seek(alltrimdata, "Pass1", "Name");
+                    bool IsUserExtNo = myUtility.Seek(alltrimdata, "Pass1", "Ext_No");
 
                     if (IsUserName | IsUserExtNo)
                     {
                         if (IsUserName)
                         {
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Pass1.ID,Name,Ext_No,Factory", "15,30,10,150", this.textBox1.Text);
-                            //select ID, Name, Ext_No, Factory from Pass1 where Name = str
+                            //select ID, Name, Ext_No, Factory from Pass1 where Name = alltrimdata
                             DialogResult result = item.ShowDialog();
-                            if (result == DialogResult.Cancel) { return; }
+                            if (result == DialogResult.Cancel) 
+                            {
+                                this.textBox1.Text = "";
+                                return; 
+                            }
                             this.textBox1.Text = item.GetSelectedString();
                         }
                         else
                         {
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Pass1.ID,Name,Ext_No,Factory", "15,30,10,150", this.textBox1.Text);
-                            //select ID, Name, Ext_No, Factory from Pass1 where Ext_No = str
+                            //select ID, Name, Ext_No, Factory from Pass1 where Ext_No = alltrimdata
                             DialogResult result = item.ShowDialog();
-                            if (result == DialogResult.Cancel) { return; }
+                            if (result == DialogResult.Cancel)
+                            {
+                                this.textBox1.Text = "";
+                                return;
+                            }
                             this.textBox1.Text = item.GetSelectedString();
                         }
                     }
@@ -89,7 +98,14 @@ namespace Sci.Production.Class
         {
             string name = myUtility.Lookup("Name", this.textBox1.Text.ToString(), "Pass1", "ID");
             string extno = myUtility.Lookup("Ext_No", this.textBox1.Text.ToString(), "Pass1", "ID");
-            this.displayBox1.Text = name + extno;
+            if (!string.IsNullOrWhiteSpace(extno))
+            {
+                this.displayBox1.Text = name + " #" + extno;
+            }
+            else
+            { 
+                this.displayBox1.Text = name; 
+            }
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
