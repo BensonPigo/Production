@@ -56,6 +56,9 @@ Sci.Production.Class/txtunit_fty.cs -text
 Sci.Production.Class/txtuser.Designer.cs -text
 Sci.Production.Class/txtuser.cs -text
 Sci.Production.Class/txtuser.resx -text
+Sci.Production.Class/txtwhseReason.Designer.cs -text
+Sci.Production.Class/txtwhseReason.cs -text
+Sci.Production.Class/txtwhseReason.resx -text
 Sci.Production/Program.cs -text
 Sci.Production/Properties/AssemblyInfo.cs -text
 Sci.Production/Properties/Resources.Designer.cs -text
