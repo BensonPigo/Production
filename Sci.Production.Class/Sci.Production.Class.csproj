@@ -43,6 +43,12 @@
     <Compile Include="txtbuyer.Designer.cs">
       <DependentUpon>txtbuyer.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtcell.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtcell.Designer.cs">
+      <DependentUpon>txtcell.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtcountry.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -132,12 +138,6 @@
     </Compile>
     <Compile Include="txtunit_fty.Designer.cs">
       <DependentUpon>txtunit_fty.cs</DependentUpon>
-    </Compile>
-    <Compile Include="txtbrand.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="txtbrand.Designer.cs">
-      <DependentUpon>txtbrand.cs</DependentUpon>
     </Compile>
     <Compile Include="txtuser.cs">
       <SubType>UserControl</SubType>
