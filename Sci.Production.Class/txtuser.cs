@@ -49,23 +49,23 @@ namespace Sci.Production.Class
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            string str = this.textBox1.Text;
-            if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
+            string textValue = this.textBox1.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                if (!myUtility.Seek(str, "Pass1", "ID"))
+                if (!myUtility.Seek(textValue, "Pass1", "ID"))
                 {
-                    string alltrimdata = str.Trim();
-                    bool IsUserName = myUtility.Seek(alltrimdata, "Pass1", "Name");
-                    bool IsUserExtNo = myUtility.Seek(alltrimdata, "Pass1", "Ext_No");
+                    string alltrimData = textValue.Trim();
+                    bool isUserName = myUtility.Seek(alltrimData, "Pass1", "Name");
+                    bool isUserExtNo = myUtility.Seek(alltrimData, "Pass1", "Ext_No");
 
-                    if (IsUserName | IsUserExtNo)
+                    if (isUserName | isUserExtNo)
                     {
-                        if (IsUserName)
+                        if (isUserName)
                         {
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Pass1.ID,Name,Ext_No,Factory", "15,30,10,150", this.textBox1.Text);
                             //select ID, Name, Ext_No, Factory from Pass1 where Name = alltrimdata
-                            DialogResult result = item.ShowDialog();
-                            if (result == DialogResult.Cancel) 
+                            DialogResult returnResult = item.ShowDialog();
+                            if (returnResult == DialogResult.Cancel) 
                             {
                                 this.textBox1.Text = "";
                                 return; 
@@ -76,8 +76,8 @@ namespace Sci.Production.Class
                         {
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Pass1.ID,Name,Ext_No,Factory", "15,30,10,150", this.textBox1.Text);
                             //select ID, Name, Ext_No, Factory from Pass1 where Ext_No = alltrimdata
-                            DialogResult result = item.ShowDialog();
-                            if (result == DialogResult.Cancel)
+                            DialogResult returnResult = item.ShowDialog();
+                            if (returnResult == DialogResult.Cancel)
                             {
                                 this.textBox1.Text = "";
                                 return;
@@ -87,7 +87,7 @@ namespace Sci.Production.Class
                     }
                     else
                     {
-                        MessageBox.Show(string.Format("< User Id: {0} > not found!!!", str));
+                        MessageBox.Show(string.Format("< User Id: {0} > not found!!!", textValue));
                         this.textBox1.Text = "";
                         e.Cancel = true;
                         return;
@@ -99,17 +99,17 @@ namespace Sci.Production.Class
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             string name = myUtility.Lookup("Name", this.textBox1.Text.ToString(), "Pass1", "ID");
-            string extno = myUtility.Lookup("Ext_No", this.textBox1.Text.ToString(), "Pass1", "ID");
+            string extNo = myUtility.Lookup("Ext_No", this.textBox1.Text.ToString(), "Pass1", "ID");
             this.displayBox1.Text = name;
-            if (!string.IsNullOrWhiteSpace(extno)) { this.displayBox1.Text = name + " #" + extno; }
+            if (!string.IsNullOrWhiteSpace(extNo)) { this.displayBox1.Text = name + " #" + extNo; }
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Pass1.ID,Name,Ext_No,Factory", "15,30,10,150", this.textBox1.Text);
             //select ID, Name, Ext_No, Factory from Pass1 where Resign is null
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
         }
     }

@@ -36,15 +36,15 @@
             // 
             this.displayBox1.Location = new System.Drawing.Point(0, 0);
             this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(78, 22);
+            this.displayBox1.Size = new System.Drawing.Size(78, 23);
             this.displayBox1.TabIndex = 0;
             this.displayBox1.TextChanged += new System.EventHandler(this.displayBox1_TextChanged);
             // 
             // displayBox2
             // 
-            this.displayBox2.Location = new System.Drawing.Point(80, 0);
+            this.displayBox2.Location = new System.Drawing.Point(79, 0);
             this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(246, 22);
+            this.displayBox2.Size = new System.Drawing.Size(220, 23);
             this.displayBox2.TabIndex = 1;
             // 
             // txttpeuser
@@ -53,7 +53,7 @@
             this.Controls.Add(this.displayBox2);
             this.Controls.Add(this.displayBox1);
             this.Name = "txttpeuser";
-            this.Size = new System.Drawing.Size(327, 22);
+            this.Size = new System.Drawing.Size(300, 23);
             this.ResumeLayout(false);
             this.PerformLayout();
 
