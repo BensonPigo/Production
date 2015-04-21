@@ -103,6 +103,12 @@
     <Compile Include="txtseason.Designer.cs">
       <DependentUpon>txtseason.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtsewingline.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtsewingline.Designer.cs">
+      <DependentUpon>txtsewingline.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtshipmode.cs">
       <SubType>Component</SubType>
     </Compile>
