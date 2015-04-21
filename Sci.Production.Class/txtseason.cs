@@ -19,84 +19,56 @@ namespace Sci.Production.Class
     {
         public txtseason()
         {
-            //this.PopUp += (s, e) =>
-            //{
-            //    Sci.Win.Tools.SelectItem item;
-            //    if (this.BrandObject == null)
-            //    {
-            //        string str = string.Format("select Id from Season where junk = 0 and BrandID = '{0}' ", this.BrandObject.Text);
-            //        item = new Sci.Win.Tools.SelectItem("Season.Id", "20", this.Text, false, ",");
-            //        // select Id from Season where junk = 0 and BrandID = this.BrandObject.Text
-            //    }
-            //    else
-            //    {
-            //        MessageBox.Show(this.BrandObject.Text.ToString());
-            //        string str = string.Format("select Id from Season where junk = 0 and BrandID = '{0}' ", this.BrandObject.Text);
-            //        DataTable dt;
-            //        DualResult Result = DBProxy.Current.Select(null, str, out dt);
-            //        if (dt.Rows.Count == 0)
-            //        {
-            //            MessageBox.Show("Data not found!!!" + str);
-            //            return;
-            //        }
-            //        else
-            //        {
-            //            item = new Sci.Win.Tools.SelectItem(dt, "Id", "20", this.Text, false, ",");
-            //        }
-            //        // select Id from Season where junk = 0
-            //    }
-            //    DialogResult result2 = item.ShowDialog();
-            //    if (result2 == DialogResult.Cancel) { return; }
-            //    this.Text = item.GetSelectedString();
-            //};
+            this.Size = new System.Drawing.Size(78, 23);
         }
 
-        private Control BrandObject;
-        public string strBrandObjectName
+        private Control brandObject;
+        public string BrandObjectName
         {
             set { this.getAllControls(this.FindForm(), value); }
         }
 
         // 取回指定的 Control 並存入 this.BrandObject
-        private void getAllControls(Control container, string SearchName)
+        private void getAllControls(Control container, string searchName)
         {
             foreach (Control c in container.Controls)
             {
-                if (c.Name.ToString() == SearchName)
+                if (c.Name.ToString() == searchName)
                 {
-                    this.BrandObject = c;
+                    this.brandObject = c;
                 }
                 else
                 {
-                    if (c.Controls.Count > 0) this.getAllControls(c, SearchName);
+                    if (c.Controls.Count > 0) this.getAllControls(c, searchName);
                 }
             }
         }
 
         protected override void OnValidating(CancelEventArgs e)
         {
-            string str = this.Text;
-            if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
+            string textValue = this.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.OldValue)
             {
-                if (!myUtility.Seek(str, "Season", "Id"))
+                if (!myUtility.Seek(textValue, "Season", "Id"))
                 {
-                    MessageBox.Show(string.Format("< Season : {0} > not found!!!", str));
+                    MessageBox.Show(string.Format("< Season : {0} > not found!!!", textValue));
                     this.Text = "";
                     e.Cancel = true;
                     return;
                 }
                 else
                 {
-                    if (this.BrandObject != null)
+                    if (this.brandObject != null)
                     {
-                        string lookupResult = myUtility.Lookup("BrandID", this.Text.ToString(), "Season", "ID");
-                        string brandValue = (string)this.BrandObject.Text;
-                        if (lookupResult == brandValue)
+                        if (!string.IsNullOrWhiteSpace((string)this.brandObject.Text))
                         {
-                            MessageBox.Show(string.Format("< Season: {0} > not found!!!", str));
-                            this.Text = "";
-                            e.Cancel = true;
-                            return;
+                            if (!myUtility.Seek((string)this.brandObject.Text + this.Text.ToString(), "Season", "BrandID+ID"))
+                            {
+                                MessageBox.Show(string.Format("< Season: {0} > not found!!!", textValue));
+                                this.Text = "";
+                                e.Cancel = true;
+                                return;
+                            }
                         }
                     }
                 }
@@ -106,34 +78,28 @@ namespace Sci.Production.Class
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item;
-            if (this.BrandObject == null)
+            if (this.brandObject == null)
             {
-                //string str = string.Format("select Id from Season where junk = 0 and BrandID = '{0}' ", this.BrandObject.Text);
                 item = new Sci.Win.Tools.SelectItem("Season.Id", "20", this.Text, false, ",");
-                // select Id from Season where junk = 0 and BrandID = this.BrandObject.Text
             }
             else
             {
-                //MessageBox.Show(this.BrandObject.Text.ToString());
-
-                //string str = string.Format("select Id from Season where junk = 0 and BrandID = '{0}' ", this.BrandObject.Text);
-                //DataTable dt;
-                //DualResult Result = DBProxy.Current.Select(null, str, out dt);
-                //if (dt.Rows.Count == 0)
-                //{
-                //    MessageBox.Show("Data not found!!!" + str);
-                //    return;
-                //}
-                //else
-                //{
-                //    item = new Sci.Win.Tools.SelectItem(dt, "Id", "20", this.Text, false, ",");
-                //}
-                // select Id from Season where junk = 0
-
+                string selectCommand;
+                if (!string.IsNullOrWhiteSpace((string)this.brandObject.Text))
+                {
+                    selectCommand = string.Format("select Id from Season where BrandID = '{0}' ", this.brandObject.Text);
+                }
+                else
+                {
+                    selectCommand = "select Id from Season";
+                }
+                DataTable selectDatatable;
+                DualResult selectResult = DBProxy.Current.Select(null, selectCommand, out selectDatatable);
+                //item = new Sci.Win.Tools.SelectItem(selectDatatable, "Id", "20", this.Text, false, ",");
                 item = new Sci.Win.Tools.SelectItem("Season.Id", "20", this.Text, false, ",");
             }
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
         }
     }

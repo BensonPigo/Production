@@ -18,11 +18,11 @@ namespace Sci.Production.Class
     {
         public txtcdcode() 
         {
-            this.Size = new System.Drawing.Size(60, 23);
+            this.Size = new System.Drawing.Size(54, 23);
         }
 
-        private Control CPUObject;
-        public string strCPUObjectName
+        private Control cpuObject;
+        public string CPUObjectName
         {
             set { this.getAllControls(this.FindForm(), value); }
         }
@@ -34,7 +34,7 @@ namespace Sci.Production.Class
             {
                 if (c.Name.ToString() == SearchName)
                 {
-                    this.CPUObject = c;
+                    this.cpuObject = c;
                 }
                 else
                 {
@@ -45,12 +45,12 @@ namespace Sci.Production.Class
 
         protected override void OnValidating(CancelEventArgs e)
         {
-            string str = this.Text;
-            if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
+            string textValue = this.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.OldValue)
             {
-                if (!myUtility.Seek(str, "CDCode", "Id"))
+                if (!myUtility.Seek(textValue, "CDCode", "Id"))
                 {
-                    MessageBox.Show(string.Format("< CD Code : {0} > not found!!!", str));
+                    MessageBox.Show(string.Format("< CD Code : {0} > not found!!!", textValue));
                     this.Text = "";
                     e.Cancel = true;
                     return;
@@ -60,9 +60,9 @@ namespace Sci.Production.Class
 
         protected override void OnTextChanged(EventArgs e)
         {
-            if (this.CPUObject != null)
+            if (this.cpuObject != null)
             {
-                this.CPUObject.Text = myUtility.Lookup("CPU", this.Text.ToString(), "CDCode", "ID");
+                this.cpuObject.Text = myUtility.Lookup("CPU", this.Text.ToString(), "CDCode", "ID");
             }
         }
 
@@ -70,8 +70,8 @@ namespace Sci.Production.Class
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("CDCode.ID,Cpu,Description", "8,8,100", this.Text);
             // Select ID, Cpu, Description from CDCode where Junk = 0 order by ID
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
         }
     }
