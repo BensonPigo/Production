@@ -49,12 +49,12 @@ namespace Sci.Production.Class
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            string str = this.textBox1.Text;
-            if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
+            string textValue = this.textBox1.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                if (!myUtility.Seek(str, "Supp", "ID"))
+                if (!myUtility.Seek(textValue, "Supp", "ID"))
                 {
-                    MessageBox.Show(string.Format("< Supplier Code: {0} > not found!!!", str));
+                    MessageBox.Show(string.Format("< Supplier Code: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
                     e.Cancel = true;
                     return;
@@ -70,8 +70,8 @@ namespace Sci.Production.Class
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Supp.ID,AbbCH, AbbEN", "8,30,30", this.textBox1.Text);
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
         }
     }
