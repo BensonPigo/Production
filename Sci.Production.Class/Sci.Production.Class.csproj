@@ -91,6 +91,12 @@
     <Compile Include="txtpayterm_fty.Designer.cs">
       <DependentUpon>txtpayterm_fty.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtseason.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtseason.Designer.cs">
+      <DependentUpon>txtseason.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtshipmode.cs">
       <SubType>Component</SubType>
     </Compile>
