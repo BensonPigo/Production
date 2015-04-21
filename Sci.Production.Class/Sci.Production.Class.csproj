@@ -43,6 +43,12 @@
     <Compile Include="txtbuyer.Designer.cs">
       <DependentUpon>txtbuyer.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtcdcode.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtcdcode.Designer.cs">
+      <DependentUpon>txtcdcode.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtcell.cs">
       <SubType>Component</SubType>
     </Compile>
