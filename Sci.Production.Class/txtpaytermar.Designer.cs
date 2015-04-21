@@ -36,7 +36,7 @@
             // 
             this.textBox1.Location = new System.Drawing.Point(0, 0);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(70, 22);
+            this.textBox1.Size = new System.Drawing.Size(48, 23);
             this.textBox1.TabIndex = 0;
             this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
@@ -44,9 +44,9 @@
             // 
             // displayBox1
             // 
-            this.displayBox1.Location = new System.Drawing.Point(72, 0);
+            this.displayBox1.Location = new System.Drawing.Point(49, 0);
             this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(311, 22);
+            this.displayBox1.Size = new System.Drawing.Size(258, 23);
             this.displayBox1.TabIndex = 1;
             // 
             // txtpaytermar
@@ -55,7 +55,7 @@
             this.Controls.Add(this.displayBox1);
             this.Controls.Add(this.textBox1);
             this.Name = "txtpaytermar";
-            this.Size = new System.Drawing.Size(383, 22);
+            this.Size = new System.Drawing.Size(311, 23);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -48,12 +48,12 @@ namespace Sci.Production.Class
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            string str = this.textBox1.Text;
-            if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
+            string textValue = this.textBox1.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                if (!myUtility.Seek(str, "PayTermAR", "ID"))
+                if (!myUtility.Seek(textValue, "PayTermAR", "ID"))
                 {
-                    MessageBox.Show(string.Format("< Pay Term: {0} > not found!!!", str));
+                    MessageBox.Show(string.Format("< Pay Term: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
                     e.Cancel = true;
                     return;
@@ -69,8 +69,8 @@ namespace Sci.Production.Class
         private void textBox1_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("PayTermAR.Id,Description", "10,100", this.textBox1.Text);
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
         }
     }
