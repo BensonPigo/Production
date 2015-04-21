@@ -36,7 +36,7 @@
             // 
             this.textBox1.Location = new System.Drawing.Point(0, 0);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(31, 22);
+            this.textBox1.Size = new System.Drawing.Size(30, 22);
             this.textBox1.TabIndex = 0;
             this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
@@ -44,9 +44,9 @@
             // 
             // displayBox1
             // 
-            this.displayBox1.Location = new System.Drawing.Point(33, 0);
+            this.displayBox1.Location = new System.Drawing.Point(31, 0);
             this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(251, 22);
+            this.displayBox1.Size = new System.Drawing.Size(198, 22);
             this.displayBox1.TabIndex = 1;
             // 
             // txtcountry
@@ -55,7 +55,7 @@
             this.Controls.Add(this.displayBox1);
             this.Controls.Add(this.textBox1);
             this.Name = "txtcountry";
-            this.Size = new System.Drawing.Size(286, 22);
+            this.Size = new System.Drawing.Size(232, 22);
             this.ResumeLayout(false);
             this.PerformLayout();
 
