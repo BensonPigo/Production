@@ -19,19 +19,19 @@ namespace Sci.Production.Class
   
     public partial class txtCell : Sci.Win.UI.TextBox
     {
-        private string cfty = "";
+        private string fty = "";
         
         [Category("Custom Properties")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public string cFactoryid
         {
-            set { cfty = value; }
-            get { return cfty; }
+            set { fty = value; }
+            get { return fty; }
         }
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("CutCell.id", "30", this.Text, false, ",");
-            //select id from CutCell where factoryid = cfty and !junk
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("CutCell.id", "2", this.Text, false, ",");
+            //select id from CutCell where factoryid = fty and !junk
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
@@ -41,7 +41,7 @@ namespace Sci.Production.Class
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                string tmp = myUtility.Lookup("id", cfty + str, "Cutcell", "factoryid+id");
+                string tmp = myUtility.Lookup("id", fty + str, "Cutcell", "factoryid+id");
                 if (string.IsNullOrWhiteSpace(tmp))
                 {
                     MessageBox.Show(string.Format("< Cut Cell> : {0} not found!!!", str));
@@ -51,7 +51,7 @@ namespace Sci.Production.Class
                 }
                 else
                 {
-                    string cJunk = myUtility.Lookup("Junk", cfty + str, "CutCell", "factoryid+id");
+                    string cJunk = myUtility.Lookup("Junk", fty + str, "CutCell", "factoryid+id");
                     if (cJunk == "True")
                     {
                         MessageBox.Show(string.Format("Cut Cell already junk, you can't choose!!"));
@@ -63,7 +63,7 @@ namespace Sci.Production.Class
         }
         public txtCell()
         {
-            this.Width = 50;
+            this.Width = 30;
         }
 
     }
