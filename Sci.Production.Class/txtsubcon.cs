@@ -9,13 +9,15 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Data;
 using Sci.Win.UI;
+using Ict;
+using Sci.Win.Tools;
 
 namespace Sci.Production.Class
 {
     public partial class txtsubcon : UserControl
     {
 
-        private bool _IsIncludeJunk;
+        private bool isIncludeJunk;
 
         public txtsubcon()
         {
@@ -26,8 +28,8 @@ namespace Sci.Production.Class
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public bool IsIncludeJunk
         {
-            set { this._IsIncludeJunk = value; }
-            get { return this._IsIncludeJunk; }
+            set { this.isIncludeJunk = value; }
+            get { return this.isIncludeJunk; }
         }
 
          [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
@@ -60,12 +62,12 @@ namespace Sci.Production.Class
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            string str = this.textBox1.Text;
-            if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
+            string textValue = this.textBox1.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                if (!myUtility.Seek(str, "LocalSupp", "ID"))
+                if (!myUtility.Seek(textValue, "LocalSupp", "ID"))
                 {
-                    MessageBox.Show(string.Format("< Subcon Code: {0} > not found!!!", str));
+                    MessageBox.Show(string.Format("< Subcon Code: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
                     e.Cancel = true;
                     return;
@@ -77,7 +79,7 @@ namespace Sci.Production.Class
                         string lookupresult = myUtility.Lookup("Junk", this.textBox1.Text.ToString(), "LocalSupp", "ID");
                         if (lookupresult == "True")
                         {
-                            MessageBox.Show(string.Format("< Subcon Code: {0} > not found!!!", str));
+                            MessageBox.Show(string.Format("< Subcon Code: {0} > not found!!!", textValue));
                             this.textBox1.Text = "";
                             e.Cancel = true;
                             return;
@@ -94,19 +96,21 @@ namespace Sci.Production.Class
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlwhere = "Where 1=1";
-            string sqlcmd = string.Empty;
-
+            string selectCommand;
             if (!IsIncludeJunk)
             {
-                if (!this.IsIncludeJunk)
-                { sqlwhere = sqlwhere + " And Junk =  0 "; }
-            };
-
-            sqlcmd = "select ID,Abb,Name from LocalSupp " + sqlwhere + " order by ID";
+                selectCommand = "select ID,Abb,Name from LocalSupp where  Junk =  0 order by ID";
+            }
+            else
+            {
+                selectCommand = "select ID,Abb,Name from LocalSupp order by ID";
+            }
+            DataTable selectDatatable;
+            DualResult selectResult = DBProxy.Current.Select(null, selectCommand, out selectDatatable);
+            //Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectDatatable, "Id", "20", this.Text, false, ",");
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("LocalSupp.Id,Abb,Name", "15,30,100", this.textBox1.Text);
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
         }
     }
