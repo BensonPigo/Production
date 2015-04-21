@@ -23,7 +23,7 @@ namespace Sci.Production.Class
         
         [Category("Custom Properties")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public string cFactoryid
+        public string FactoryId
         {
             set { fty = value; }
             get { return fty; }
