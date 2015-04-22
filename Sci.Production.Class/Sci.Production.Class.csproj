@@ -127,6 +127,12 @@
     <Compile Include="txtshipterm.Designer.cs">
       <DependentUpon>txtshipterm.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtstyle.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtstyle.Designer.cs">
+      <DependentUpon>txtstyle.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtsubcon.cs">
       <SubType>UserControl</SubType>
     </Compile>
