@@ -16,6 +16,8 @@ namespace Sci.Production.Class
     {
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
+            base.OnPopUp(e);
+
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("department.id,Name", "10,50", this.Text, false, ",");
             // select  id,Name from department where junk = 0
             DialogResult result = item.ShowDialog();
@@ -25,6 +27,8 @@ namespace Sci.Production.Class
 
         protected override void OnValidating(CancelEventArgs e)
         {
+            base.OnValidating(e);
+
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {

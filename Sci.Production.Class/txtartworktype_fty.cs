@@ -33,6 +33,8 @@ namespace Sci.Production.Class
 
        protected override void OnPopUp(TextBoxPopUpEventArgs e)
        {
+           base.OnPopUp(e);
+
            string sqlwhere = "Where 1=1";
            string sqlcmd = string.Empty;
 
@@ -58,6 +60,8 @@ namespace Sci.Production.Class
 
        protected override void OnValidating(CancelEventArgs e)
        {
+           base.OnValidating(e);
+
            string str = this.Text;
            if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
            {
