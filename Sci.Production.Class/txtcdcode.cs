@@ -21,30 +21,10 @@ namespace Sci.Production.Class
             this.Size = new System.Drawing.Size(54, 23);
         }
 
-        private Control cpuObject;
-        public string CPUObjectName
-        {
-            set { this.getAllControls(this.FindForm(), value); }
-        }
-
-        // 取回指定的 Control 並存入 this.CPUObject
-        private void getAllControls(Control container, string SearchName)
-        {
-            foreach (Control c in container.Controls)
-            {
-                if (c.Name.ToString() == SearchName)
-                {
-                    this.cpuObject = c;
-                }
-                else
-                {
-                    if (c.Controls.Count > 0) this.getAllControls(c, SearchName);
-                }
-            }
-        }
-
         protected override void OnValidating(CancelEventArgs e)
         {
+            base.OnValidating(e);
+
             string textValue = this.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.OldValue)
             {
@@ -58,16 +38,10 @@ namespace Sci.Production.Class
             }
         }
 
-        protected override void OnTextChanged(EventArgs e)
-        {
-            if (this.cpuObject != null)
-            {
-                this.cpuObject.Text = myUtility.Lookup("CPU", this.Text.ToString(), "CDCode", "ID");
-            }
-        }
-
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
+            base.OnPopUp(e);
+
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("CDCode.ID,Cpu,Description", "8,8,100", this.Text);
             // Select ID, Cpu, Description from CDCode where Junk = 0 order by ID
             DialogResult returnResult = item.ShowDialog();
