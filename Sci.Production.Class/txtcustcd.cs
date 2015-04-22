@@ -45,6 +45,8 @@ namespace Sci.Production.Class
 
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
+            base.OnPopUp(e);
+
             Sci.Win.Tools.SelectItem item;
             if (this.brandObject == null)
             {
@@ -74,6 +76,8 @@ namespace Sci.Production.Class
 
         protected override void OnValidating(CancelEventArgs e)
         {
+            base.OnValidating(e);
+
             string textValue = this.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.OldValue)
             {
