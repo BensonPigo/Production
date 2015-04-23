@@ -82,10 +82,10 @@ namespace Sci.Production.Class
 
             Sci.Win.Tools.SelectItem item;
             string selectCommand;
-            selectCommand = "select ID,SeasonID,Description,BrandID from Style where Junk = 0";
+            selectCommand = "select ID,SeasonID,Description,BrandID from Style where Junk = 0 order by ID";
             if (this.brandObject != null && !string.IsNullOrWhiteSpace((string)this.brandObject.Text))
             {
-                selectCommand = string.Format("select ID,SeasonID,Description,BrandID from Style where Junk = 0 and BrandID = '{0}' ", this.brandObject.Text);
+                selectCommand = string.Format("select ID,SeasonID,Description,BrandID from Style where Junk = 0 and BrandID = '{0}' order by ID", this.brandObject.Text);
             }
             item = new Sci.Win.Tools.SelectItem(selectCommand, "16,10,50,8", this.Text);
             DialogResult returnResult = item.ShowDialog();
