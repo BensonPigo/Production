@@ -77,6 +77,7 @@ namespace Sci.Production.Class
 
         public txtartworktype_fty()
         {
+            this.Size = new System.Drawing.Size(140, 23);
         }
     }
 }
