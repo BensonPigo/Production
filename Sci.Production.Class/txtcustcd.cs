@@ -48,27 +48,12 @@ namespace Sci.Production.Class
             base.OnPopUp(e);
 
             Sci.Win.Tools.SelectItem item;
-            if (this.brandObject == null)
+            string selectCommand = "select ID, CountryID, City from CustCD order by ID";
+            if (this.brandObject != null && !string.IsNullOrWhiteSpace((string)this.brandObject.Text))
             {
-                item = new Sci.Win.Tools.SelectItem("CustCD.ID,CountryID, City", "10,5,25", this.Text);
-                // select ID, CountryID, City from CustCD
+                selectCommand = string.Format("select ID, CountryID, City from CustCD where BrandID = '{0}' order by ID", this.brandObject.Text);
             }
-            else
-            {
-                string selectCommand;
-                if (!string.IsNullOrWhiteSpace((string)this.brandObject.Text))
-                {
-                    selectCommand = string.Format("select ID, CountryID, City from CustCD where BrandID = '{0}' ", this.brandObject.Text);
-                }
-                else
-                {
-                    selectCommand = "select ID, CountryID, City from CustCD";
-                }
-                DataTable selectDatatable;
-                DualResult selectResult = DBProxy.Current.Select(null, selectCommand, out selectDatatable);
-                //item = new Sci.Win.Tools.SelectItem(selectDatatable, "Id", "20", this.Text, false, ",");
-                item = new Sci.Win.Tools.SelectItem("CustCD.ID,CountryID, City", "10,5,25", this.Text);
-            }
+            item = new Sci.Win.Tools.SelectItem(selectCommand, "17,3,17", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();

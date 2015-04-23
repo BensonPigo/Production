@@ -16,7 +16,7 @@ namespace Sci.Production.Class
     {
         public txtshipmode()
         {
-            string sqlCMD = "Select ID From ShipMode Order By ID";
+            string sqlCMD = "select ID from ShipMode order by ID";
             Ict.DualResult cbResult;
             DataTable ShipModeTable = new DataTable();
             if (cbResult = DBProxy.Current.Select(null, sqlCMD, out ShipModeTable))

@@ -60,10 +60,11 @@ namespace Sci.Production.Class
 
                     if (isUserName | isUserExtNo)
                     {
+                        string selectCommand;
                         if (isUserName)
                         {
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Pass1.ID,Name,Ext_No,Factory", "15,30,10,150", this.textBox1.Text);
-                            //select ID, Name, Ext_No, Factory from Pass1 where Name = alltrimdata
+                            selectCommand = string.Format("select ID, Name, Ext_No, Factory from Pass1 where Name = '{0}' order by ID", textValue.Trim());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectCommand, "15,30,10,150", this.textBox1.Text);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) 
                             {
@@ -74,8 +75,8 @@ namespace Sci.Production.Class
                         }
                         else
                         {
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Pass1.ID,Name,Ext_No,Factory", "15,30,10,150", this.textBox1.Text);
-                            //select ID, Name, Ext_No, Factory from Pass1 where Ext_No = alltrimdata
+                            selectCommand = string.Format("select ID, Name, Ext_No, Factory from Pass1 where Ext_No = '{0}' order by ID", textValue.Trim());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectCommand, "15,30,10,150", this.textBox1.Text);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -106,8 +107,7 @@ namespace Sci.Production.Class
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Pass1.ID,Name,Ext_No,Factory", "15,30,10,150", this.textBox1.Text);
-            //select ID, Name, Ext_No, Factory from Pass1 where Resign is null
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,Ext_No,Factory from Pass1 where Resign is null order by ID", "15,30,10,150", this.textBox1.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();

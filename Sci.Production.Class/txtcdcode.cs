@@ -42,8 +42,8 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("CDCode.ID,Cpu,Description", "8,8,100", this.Text);
-            // Select ID, Cpu, Description from CDCode where Junk = 0 order by ID
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select ID, Cpu, Description from CDCode where Junk = 0 order by ID", "7,6,45", this.Text);
+
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();

@@ -97,18 +97,12 @@ namespace Sci.Production.Class
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string selectCommand;
+            selectCommand = "select ID,Abb,Name from LocalSupp order by ID";
             if (!IsIncludeJunk)
             {
                 selectCommand = "select ID,Abb,Name from LocalSupp where  Junk =  0 order by ID";
             }
-            else
-            {
-                selectCommand = "select ID,Abb,Name from LocalSupp order by ID";
-            }
-            DataTable selectDatatable;
-            DualResult selectResult = DBProxy.Current.Select(null, selectCommand, out selectDatatable);
-            //Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectDatatable, "Id", "20", this.Text, false, ",");
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("LocalSupp.Id,Abb,Name", "15,30,100", this.textBox1.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectCommand, "9,13,60", this.Text, false, ",");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();

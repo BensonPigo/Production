@@ -16,9 +16,9 @@ namespace Sci.Production.Class
 {
     public partial class txtstyle : Sci.Win.UI.TextBox
     {
-        public txtstyle() 
+        public txtstyle()
         {
-            this.Size = new System.Drawing.Size(115, 23);
+            this.Size = new System.Drawing.Size(130, 23);
         }
 
         private Control brandObject;
@@ -82,30 +82,12 @@ namespace Sci.Production.Class
 
             Sci.Win.Tools.SelectItem item;
             string selectCommand;
-            DataTable selectDatatable;
-            DualResult selectResult;
-
-            if (this.brandObject == null)
+            selectCommand = "select ID,SeasonID,Description,BrandID from Style where Junk = 0";
+            if (this.brandObject != null && !string.IsNullOrWhiteSpace((string)this.brandObject.Text))
             {
-                item = new Sci.Win.Tools.SelectItem("Style.ID,SeasonID,Description,BrandID", "15,10,35,8", this.Text);
-                selectCommand = "select ID,SeasonID,Description,BrandID from Style where Junk = 0";
-                selectResult = DBProxy.Current.Select(null, selectCommand, out selectDatatable);
-                //item = new Sci.Win.Tools.SelectItem(selectDatatable, "Id", "20", this.Text, false, ",");
+                selectCommand = string.Format("select ID,SeasonID,Description,BrandID from Style where Junk = 0 and BrandID = '{0}' ", this.brandObject.Text);
             }
-            else
-            {
-                if (!string.IsNullOrWhiteSpace((string)this.brandObject.Text))
-                {
-                    selectCommand = string.Format("select ID,SeasonID,Description,BrandID from Style where Junk = 0 and BrandID = '{0}' ", this.brandObject.Text);
-                }
-                else
-                {
-                    selectCommand = "select ID,SeasonID,Description,BrandID from Style where Junk = 0";
-                }
-                selectResult = DBProxy.Current.Select(null, selectCommand, out selectDatatable);
-                //item = new Sci.Win.Tools.SelectItem(selectDatatable, "Id", "20", this.Text, false, ",");
-                item = new Sci.Win.Tools.SelectItem("Style.ID,SeasonID,Description,BrandID", "15,10,35,8", this.Text);
-            }
+            item = new Sci.Win.Tools.SelectItem(selectCommand, "16,10,50,8", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();

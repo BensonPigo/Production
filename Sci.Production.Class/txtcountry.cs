@@ -64,12 +64,11 @@ namespace Sci.Production.Class
                     return;
                 }
             }
-
         }
 
         private void textBox1_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Country.Id,Alias", "5,100", this.textBox1.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Alias from Country where Junk = 0 order by ID", "4,30", this.textBox1.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();

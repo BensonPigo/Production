@@ -82,26 +82,12 @@ namespace Sci.Production.Class
             base.OnPopUp(e);
 
             Sci.Win.Tools.SelectItem item;
-            if (this.brandObject == null)
+            string selectCommand = "select distinct ID from Season";
+            if (this.brandObject != null && !string.IsNullOrWhiteSpace((string)this.brandObject.Text))
             {
-                item = new Sci.Win.Tools.SelectItem("Season.Id", "20", this.Text, false, ",");
+                selectCommand = string.Format("select distinct ID from Season where BrandID = '{0}' ", this.brandObject.Text);
             }
-            else
-            {
-                string selectCommand;
-                if (!string.IsNullOrWhiteSpace((string)this.brandObject.Text))
-                {
-                    selectCommand = string.Format("select Id from Season where BrandID = '{0}' ", this.brandObject.Text);
-                }
-                else
-                {
-                    selectCommand = "select Id from Season";
-                }
-                DataTable selectDatatable;
-                DualResult selectResult = DBProxy.Current.Select(null, selectCommand, out selectDatatable);
-                //item = new Sci.Win.Tools.SelectItem(selectDatatable, "Id", "20", this.Text, false, ",");
-                item = new Sci.Win.Tools.SelectItem("Season.Id", "20", this.Text, false, ",");
-            }
+            item = new Sci.Win.Tools.SelectItem(selectCommand, "11", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
