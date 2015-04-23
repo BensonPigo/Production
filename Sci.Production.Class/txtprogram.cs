@@ -33,14 +33,18 @@ namespace Sci.Production.Class
         }
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Program.Id,BrandID", "12,8", this.Text, false, ",");
-            //select id from Program where Brandid = brand
+            base.OnPopUp(e);
+            brand = brandObject.Text;
+            string sql = string.Format("Select id,BrandID from Program where Brandid = '{0}'", brand);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "12,8", this.Text, false, ",");
+            //
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
         }
         protected override void OnValidating(CancelEventArgs e)
         {
+            base.OnValidating(e);
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {

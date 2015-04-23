@@ -22,7 +22,6 @@ namespace Sci.Production.Class
         private string fty = "";
         
         [Category("Custom Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public string FactoryId
         {
             set { fty = value; }
@@ -30,14 +29,18 @@ namespace Sci.Production.Class
         }
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("CutCell.id", "2", this.Text, false, ",");
-            //select id from CutCell where factoryid = fty and !junk
+            base.OnPopUp(e);
+            string sql;
+            sql = string.Format("select id from CutCell where factoryid = '{0}' and junk=0",fty);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2", this.Text, false, ",");
+            
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
         }
         protected override void OnValidating(CancelEventArgs e)
         {
+            base.OnValidating(e);
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {

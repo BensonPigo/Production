@@ -18,30 +18,33 @@ namespace Sci.Production.Class
 {
     public partial class txtsewingline : Sci.Win.UI.TextBox
     {
-        private string cfty = "";
-        private Control cfactoryobject;	//欄位.存入要取值的<控制項>
+        private string fty = "";
+        private Control factoryobject;	//欄位.存入要取值的<控制項>
 
         // 屬性. 利用字串來設定要存取的<控制項>
         [Category("Custom Properties")]
-        public string strFactoryObjectName
+        public string factoryObjectName
         {
             set
             { this.getAllControls(this.FindForm(), value); }
         }
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("SewingLine.id,factoryid", "30,30", this.Text, false, ",");
-            //select id from SewingLine where factoryid = cfty and !junk
+            base.OnPopUp(e);
+            fty = factoryobject.Text;
+            string sql = string.Format("Select id,factoryid From SewingLine Where FactoryId = '{0}'", fty);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "30,30", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
         }
         protected override void OnValidating(CancelEventArgs e)
         {
+            base.OnValidating(e);
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (this.cfactoryobject==null)
+                if (this.factoryobject==null)
                 {
                     string tmp = myUtility.Lookup("id", str, "SewingLine", "id");
                     if (string.IsNullOrWhiteSpace(tmp))
@@ -54,8 +57,8 @@ namespace Sci.Production.Class
                 }
                 else
                 {
-                    cfty = this.cfactoryobject.Text;
-                    string tmp = myUtility.Lookup("id", cfty + str, "SewingLine", "factoryid+id");
+                    fty = this.factoryobject.Text;
+                    string tmp = myUtility.Lookup("id", fty + str, "SewingLine", "factoryid+id");
                     if (string.IsNullOrWhiteSpace(tmp))
                     {
                         MessageBox.Show(string.Format("< Sewing Line> : {0} not found!!!", str));
@@ -73,7 +76,7 @@ namespace Sci.Production.Class
             {
                 if (c.Name.ToString() == SearchName)
                 {
-                    this.cfactoryobject = c;
+                    this.factoryobject = c;
                 }
                 else
                 {
