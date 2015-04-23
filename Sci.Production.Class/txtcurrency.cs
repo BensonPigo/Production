@@ -18,7 +18,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("currency.id,NameCH,NameEN", "10,50,50", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,NameCH,NameEN from Currency where Junk = 0 order by ID", "5,16,60", this.Text);
             // select id, id,NameCH,NameEN from currency where junk = 0
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
@@ -49,7 +49,7 @@ namespace Sci.Production.Class
             //this.HelpColumnWidths = "10,50,50";
             //this.HelpRecordSource = "currency.id,NameCH,NameEN";
             //this.Size = new System.Drawing.Size(100, 22);
-
+            this.Size = new System.Drawing.Size(40, 23);
             this.IsSupportSytsemContextMenu = false;
            
         }
