@@ -42,7 +42,6 @@
             this.label13 = new Sci.Win.UI.Label();
             this.displayBox2 = new Sci.Win.UI.DisplayBox();
             this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.txtcountry1 = new Sci.Production.Class.txtcountry();
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.displayBox5 = new Sci.Win.UI.DisplayBox();
             this.displayBox6 = new Sci.Win.UI.DisplayBox();
@@ -64,6 +63,7 @@
             this.displayBox15 = new Sci.Win.UI.DisplayBox();
             this.displayBox16 = new Sci.Win.UI.DisplayBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.txtcountry1 = new Sci.Production.Class.txtcountry();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -73,7 +73,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(699, 504);
+            this.detail.Size = new System.Drawing.Size(699, 521);
             // 
             // detailcont
             // 
@@ -113,16 +113,16 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(699, 466);
+            this.detailcont.Size = new System.Drawing.Size(699, 483);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 466);
+            this.detailbtm.Location = new System.Drawing.Point(0, 483);
             this.detailbtm.Size = new System.Drawing.Size(699, 38);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(707, 533);
+            this.tabs.Size = new System.Drawing.Size(707, 550);
             // 
             // label3
             // 
@@ -210,7 +210,7 @@
             this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
             this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(124, 14);
+            this.displayBox1.Location = new System.Drawing.Point(127, 14);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(66, 23);
             this.displayBox1.TabIndex = 9;
@@ -238,7 +238,7 @@
             this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyerID", true));
             this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(126, 44);
+            this.displayBox2.Location = new System.Drawing.Point(127, 44);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(66, 23);
             this.displayBox2.TabIndex = 12;
@@ -253,32 +253,6 @@
             this.displayBox3.Size = new System.Drawing.Size(48, 23);
             this.displayBox3.TabIndex = 13;
             // 
-            // txtcountry1
-            // 
-            this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
-            // 
-            // 
-            // 
-            this.txtcountry1.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtcountry1.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtcountry1.DisplayBox1.Location = new System.Drawing.Point(31, 0);
-            this.txtcountry1.DisplayBox1.Name = "displayBox1";
-            this.txtcountry1.DisplayBox1.Size = new System.Drawing.Size(198, 23);
-            this.txtcountry1.DisplayBox1.TabIndex = 1;
-            this.txtcountry1.Location = new System.Drawing.Point(127, 104);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 14;
-            // 
-            // 
-            // 
-            this.txtcountry1.TextBox1.BackColor = System.Drawing.Color.White;
-            this.txtcountry1.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcountry1.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtcountry1.TextBox1.Name = "textBox1";
-            this.txtcountry1.TextBox1.Size = new System.Drawing.Size(30, 23);
-            this.txtcountry1.TextBox1.TabIndex = 0;
-            // 
             // displayBox4
             // 
             this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -286,7 +260,7 @@
             this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox4.Location = new System.Drawing.Point(127, 134);
             this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(200, 23);
+            this.displayBox4.Size = new System.Drawing.Size(232, 23);
             this.displayBox4.TabIndex = 15;
             // 
             // displayBox5
@@ -348,13 +322,13 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.editBox1.Size = new System.Drawing.Size(386, 50);
+            this.editBox1.Size = new System.Drawing.Size(386, 70);
             this.editBox1.TabIndex = 21;
             // 
             // label14
             // 
             this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(24, 373);
+            this.label14.Location = new System.Drawing.Point(24, 389);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(95, 23);
             this.label14.TabIndex = 22;
@@ -363,7 +337,7 @@
             // label15
             // 
             this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(24, 403);
+            this.label15.Location = new System.Drawing.Point(24, 419);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(95, 23);
             this.label15.TabIndex = 23;
@@ -372,7 +346,7 @@
             // label16
             // 
             this.label16.Lines = 0;
-            this.label16.Location = new System.Drawing.Point(24, 433);
+            this.label16.Location = new System.Drawing.Point(24, 449);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(95, 23);
             this.label16.TabIndex = 24;
@@ -383,7 +357,7 @@
             this.displayBox10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox10.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Customize1", true));
             this.displayBox10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox10.Location = new System.Drawing.Point(127, 373);
+            this.displayBox10.Location = new System.Drawing.Point(127, 389);
             this.displayBox10.Name = "displayBox10";
             this.displayBox10.Size = new System.Drawing.Size(90, 23);
             this.displayBox10.TabIndex = 25;
@@ -393,7 +367,7 @@
             this.displayBox11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox11.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Customize2", true));
             this.displayBox11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox11.Location = new System.Drawing.Point(127, 403);
+            this.displayBox11.Location = new System.Drawing.Point(127, 419);
             this.displayBox11.Name = "displayBox11";
             this.displayBox11.Size = new System.Drawing.Size(90, 23);
             this.displayBox11.TabIndex = 26;
@@ -403,7 +377,7 @@
             this.displayBox12.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox12.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Customize3", true));
             this.displayBox12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox12.Location = new System.Drawing.Point(127, 433);
+            this.displayBox12.Location = new System.Drawing.Point(127, 449);
             this.displayBox12.Name = "displayBox12";
             this.displayBox12.Size = new System.Drawing.Size(90, 23);
             this.displayBox12.TabIndex = 27;
@@ -487,9 +461,35 @@
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
+            // txtcountry1
+            // 
+            this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
+            // 
+            // 
+            // 
+            this.txtcountry1.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtcountry1.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtcountry1.DisplayBox1.Location = new System.Drawing.Point(31, 0);
+            this.txtcountry1.DisplayBox1.Name = "displayBox1";
+            this.txtcountry1.DisplayBox1.Size = new System.Drawing.Size(198, 23);
+            this.txtcountry1.DisplayBox1.TabIndex = 1;
+            this.txtcountry1.Location = new System.Drawing.Point(127, 104);
+            this.txtcountry1.Name = "txtcountry1";
+            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
+            this.txtcountry1.TabIndex = 14;
+            // 
+            // 
+            // 
+            this.txtcountry1.TextBox1.BackColor = System.Drawing.Color.White;
+            this.txtcountry1.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcountry1.TextBox1.Location = new System.Drawing.Point(0, 0);
+            this.txtcountry1.TextBox1.Name = "textBox1";
+            this.txtcountry1.TextBox1.Size = new System.Drawing.Size(30, 23);
+            this.txtcountry1.TextBox1.TabIndex = 0;
+            // 
             // B10
             // 
-            this.ClientSize = new System.Drawing.Size(707, 566);
+            this.ClientSize = new System.Drawing.Size(707, 583);
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
