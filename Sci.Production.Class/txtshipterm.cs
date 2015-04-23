@@ -18,7 +18,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Shipterm.id,Description", "10,150", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ShipTerm order by ID", "6,80", this.Text);
             // SELECT Id,Description FROM Shipterm order by id
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
@@ -44,6 +44,7 @@ namespace Sci.Production.Class
 
         public txtshipterm()
         {
+            this.Size = new System.Drawing.Size(50, 23);
         }
 
 
