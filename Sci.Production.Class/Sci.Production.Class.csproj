@@ -85,6 +85,12 @@
     <Compile Include="txtfactory.Designer.cs">
       <DependentUpon>txtfactory.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtlocalitem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtlocalitem.Designer.cs">
+      <DependentUpon>txtlocalitem.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtpaytermar.cs">
       <SubType>UserControl</SubType>
     </Compile>
