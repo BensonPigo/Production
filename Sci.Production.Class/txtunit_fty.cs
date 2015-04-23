@@ -18,7 +18,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Unit.id,Description", "10,150", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from Unit where Junk = 0 order by ID", "10,150", this.Text, false, ",");
             // SELECT Id,Description FROM Unit WHERE junk = 0 order by id
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
@@ -45,7 +45,7 @@ namespace Sci.Production.Class
 
         public txtunit_fty()
         {
-            
+            this.Size = new System.Drawing.Size(66, 23);
         }
     }
 }
