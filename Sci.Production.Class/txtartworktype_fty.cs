@@ -50,8 +50,8 @@ namespace Sci.Production.Class
                else
                { sqlwhere = sqlwhere + " And IsSubprocess =0 "; };
            };
-           sqlcmd = "select id, Abbreviation from artworktype " + sqlwhere + " order by seq";
-           Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("artworktype.id,Abbreviation", "20,10", this.Text, false, ",");
+           sqlcmd = "select ID, Abbreviation from ArtworkType " + sqlwhere + " order by Seq";
+           Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "22,4", this.Text, false, ",");
            // SELECT Id,sid FROM ArtworkType ORDER BY Code WHERE &csWhere INTO CURSOR ART_Class
            DialogResult result = item.ShowDialog();
            if (result == DialogResult.Cancel) { return; }
