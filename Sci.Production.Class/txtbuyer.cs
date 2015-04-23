@@ -18,7 +18,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Buyer.id,NameEN", "10,50", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID, NameEN from Buyer where Junk = 0 order by ID", "10,50", this.Text, false, ",");
             // select id, NameEN from buyer where junk = 0
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
@@ -44,12 +44,7 @@ namespace Sci.Production.Class
         
         public txtbuyer()
         {
-            //this._Alias = "Buyer";
-            //this._Tag = "ID";
-            //this.HelpColumnWidths = "10,50";
-            //this.HelpRecordSource = "Buyer.id,NameEN";
-            //this.Size = new System.Drawing.Size(100, 22);
-
+            this.Size = new System.Drawing.Size(66, 23);
         }
     }
 }
