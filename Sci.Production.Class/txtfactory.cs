@@ -18,7 +18,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Factory.id, NameEN", "10,50", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,NameEN from Factory where Junk = 0 order by ID", "8,40", this.Text, false, ",");
             // SELECT Id, NameEN FROM Factory WHERE Junk = 0
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
@@ -45,6 +45,7 @@ namespace Sci.Production.Class
 
         public txtfactory()
         {
+            this.Size = new System.Drawing.Size(66, 23);
         }
     }
 }
