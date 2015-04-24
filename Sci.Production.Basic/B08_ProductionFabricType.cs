@@ -20,7 +20,7 @@ namespace Sci.Production.Basic
         {
             Sci.Win.UI.TextBox prodText = (Sci.Win.UI.TextBox)sender;
             Sci.Win.Tools.SelectItem item;
-            string selectCommand = "select Name from Reason where Junk = 0 and ReasonTypeID = 'AR' order by ID";
+            string selectCommand = "select Name from Reason where Junk = 0 and ReasonTypeID = 'Style_Apparel_Type' order by ID";
 
             item = new Sci.Win.Tools.SelectItem(selectCommand, "100", prodText.Text);
             DialogResult returnResult = item.ShowDialog();
@@ -32,7 +32,7 @@ namespace Sci.Production.Basic
         {
             Sci.Win.UI.TextBox fabricText = (Sci.Win.UI.TextBox)sender;
             Sci.Win.Tools.SelectItem item;
-            string selectCommand = "select Name from Reason where Junk = 0 and ReasonTypeID = 'FK' order by ID";
+            string selectCommand = "select Name from Reason where Junk = 0 and ReasonTypeID = 'Fabric_Kind' order by ID";
 
             item = new Sci.Win.Tools.SelectItem(selectCommand, "100", fabricText.Text);
             DialogResult returnResult = item.ShowDialog();
@@ -45,7 +45,7 @@ namespace Sci.Production.Basic
             Sci.Win.UI.TextBox prodTextValue = (Sci.Win.UI.TextBox)sender;
             if (!string.IsNullOrWhiteSpace(prodTextValue.Text) && prodTextValue.Text != prodTextValue.OldValue)
             {
-                if (!myUtility.Seek("AR" + prodTextValue.Text, "Reason", "ReasonTypeID+Name"))
+                if (!myUtility.Seek("Style_Apparel_Type                                " + prodTextValue.Text, "Reason", "ReasonTypeID+Name"))
                 {
                     MessageBox.Show(string.Format("< Prod. Type : {0} > not found!!!", prodTextValue.Text));
                     prodTextValue.Text = "";
@@ -60,7 +60,7 @@ namespace Sci.Production.Basic
             Sci.Win.UI.TextBox fabricTextValue = (Sci.Win.UI.TextBox)sender;
             if (!string.IsNullOrWhiteSpace(fabricTextValue.Text) && fabricTextValue.Text != fabricTextValue.OldValue)
             {
-                if (!myUtility.Seek("FK" + fabricTextValue.Text, "Reason", "ReasonTypeID+Name"))
+                if (!myUtility.Seek("Fabric_Kind                                       " + fabricTextValue.Text, "Reason", "ReasonTypeID+Name"))
                 {
                     MessageBox.Show(string.Format("< Prod. Type : {0} > not found!!!", fabricTextValue.Text));
                     fabricTextValue.Text = "";
