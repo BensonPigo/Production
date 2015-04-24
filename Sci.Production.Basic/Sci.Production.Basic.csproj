@@ -94,6 +94,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="B07.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B07.Designer.cs">
+      <DependentUpon>B07.cs</DependentUpon>
+    </Compile>
     <Compile Include="B08.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -168,6 +174,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="B07.resx">
+      <DependentUpon>B07.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B08.resx">
       <DependentUpon>B08.cs</DependentUpon>
     </EmbeddedResource>
