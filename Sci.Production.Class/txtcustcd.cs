@@ -16,31 +16,18 @@ namespace Sci.Production.Class
 {
     public partial class txtcustcd : Sci.Win.UI.TextBox
     {
-        public txtcustcd() 
+        public txtcustcd()
         {
             this.Size = new System.Drawing.Size(115, 23);
         }
 
         private Control brandObject;
-        public string BrandObjectName
+        [Category("Custom Properties")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        public Control BrandObjectName
         {
-            set { this.GetAllControls(this.FindForm(), value); }
-        }
-
-        // 取回指定的 Control 並存入 this.BrandObject
-        private void GetAllControls(Control container, string searchName)
-        {
-            foreach (Control c in container.Controls)
-            {
-                if (c.Name.ToString() == searchName)
-                {
-                    this.brandObject = c;
-                }
-                else
-                {
-                    if (c.Controls.Count > 0) this.GetAllControls(c, searchName);
-                }
-            }
+            set { this.brandObject = value; }
+            get { return this.brandObject; }
         }
 
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
@@ -91,6 +78,5 @@ namespace Sci.Production.Class
                 }
             }
         }
-
     }
 }

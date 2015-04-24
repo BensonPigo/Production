@@ -22,25 +22,12 @@ namespace Sci.Production.Class
         }
 
         private Control brandObject;
-        public string BrandObjectName
+        [Category("Custom Properties")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        public Control BrandObjectName
         {
-            set { this.getAllControls(this.FindForm(), value); }
-        }
-
-        // 取回指定的 Control 並存入 this.BrandObject
-        private void getAllControls(Control container, string searchName)
-        {
-            foreach (Control c in container.Controls)
-            {
-                if (c.Name.ToString() == searchName)
-                {
-                    this.brandObject = c;
-                }
-                else
-                {
-                    if (c.Controls.Count > 0) this.getAllControls(c, searchName);
-                }
-            }
+            set { this.brandObject = value; }
+            get { return this.brandObject; }
         }
 
         protected override void OnValidating(CancelEventArgs e)
