@@ -20,7 +20,7 @@ namespace Sci.Production.Class
     public partial class txtCell : Sci.Win.UI.TextBox
     {
         private string fty = "";
-        
+        private string where = "Where junk = 0";
         [Category("Custom Properties")]
         public string FactoryId
         {
@@ -31,7 +31,11 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
             string sql;
-            sql = string.Format("select id from CutCell where factoryid = '{0}' and junk=0",fty);
+            if (!string.IsNullOrWhiteSpace(fty))
+            {
+                where = where + string.Format("Factoryid = '{0}'", fty);
+            }
+            sql = "select id from CutCell"+where ;
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2", this.Text, false, ",");
             
             DialogResult result = item.ShowDialog();
