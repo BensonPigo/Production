@@ -19,14 +19,20 @@ namespace Sci.Production.Class
     public partial class txtsewingline : Sci.Win.UI.TextBox
     {
         private string fty = "";
-        private Control factoryobject;	//欄位.存入要取值的<控制項>
+        public Control factoryobject;	//欄位.存入要取值的<控制項>
 
-        // 屬性. 利用字串來設定要存取的<控制項>
+        // 屬性. 利用Control來設定要存取的<控制項>
         [Category("Custom Properties")]
-        public string factoryObjectName
+        public Control factoryobjectName
         {
             set
-            { this.getAllControls(this.FindForm(), value); }
+            {
+                factoryobject = value;
+            }
+            get
+            {
+                return factoryobject;
+            }
         }
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
@@ -70,20 +76,20 @@ namespace Sci.Production.Class
             }
         }
         // 取回指定的 Control 並存入 this.BuyerObject
-        private void getAllControls(Control container, string SearchName)
-        {
-            foreach (Control c in container.Controls)
-            {
-                if (c.Name.ToString() == SearchName)
-                {
-                    this.factoryobject = c;
-                }
-                else
-                {
-                    if (c.Controls.Count > 0) this.getAllControls(c, SearchName);
-                }
-            }
-        }
+        //private void getAllControls(Control container, string SearchName)
+        //{
+        //    foreach (Control c in container.Controls)
+        //    {
+        //        if (c.Name.ToString() == SearchName)
+        //        {
+        //            this.factoryobject = c;
+        //        }
+        //        else
+        //        {
+        //            if (c.Controls.Count > 0) this.getAllControls(c, SearchName);
+        //        }
+        //    }
+        //}
         public txtsewingline()
         {
             this.Width = 60;
