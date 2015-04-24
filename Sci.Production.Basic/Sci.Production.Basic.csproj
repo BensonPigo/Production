@@ -130,6 +130,12 @@
     <Compile Include="B11_ShippingMark.Designer.cs">
       <DependentUpon>B11_ShippingMark.cs</DependentUpon>
     </Compile>
+    <Compile Include="B12.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B12.Designer.cs">
+      <DependentUpon>B12.cs</DependentUpon>
+    </Compile>
     <Compile Include="B16.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -167,6 +173,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B11_ShippingMark.resx">
       <DependentUpon>B11_ShippingMark.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B12.resx">
+      <DependentUpon>B12.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B16.resx">
       <DependentUpon>B16.cs</DependentUpon>
