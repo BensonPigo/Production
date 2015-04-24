@@ -118,6 +118,18 @@
     <Compile Include="B10.Designer.cs">
       <DependentUpon>B10.cs</DependentUpon>
     </Compile>
+    <Compile Include="B11.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B11.Designer.cs">
+      <DependentUpon>B11.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B11_ShippingMark.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B11_ShippingMark.Designer.cs">
+      <DependentUpon>B11_ShippingMark.cs</DependentUpon>
+    </Compile>
     <Compile Include="B16.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -125,6 +137,11 @@
       <DependentUpon>B16.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
@@ -145,9 +162,22 @@
     <EmbeddedResource Include="B10.resx">
       <DependentUpon>B10.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B11.resx">
+      <DependentUpon>B11.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B11_ShippingMark.resx">
+      <DependentUpon>B11_ShippingMark.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B16.resx">
       <DependentUpon>B16.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Carton.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
