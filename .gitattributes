@@ -59,6 +59,8 @@ Sci.Production.Class/txtdepartment.Designer.cs -text
 Sci.Production.Class/txtdepartment.cs -text
 Sci.Production.Class/txtfactory.Designer.cs -text
 Sci.Production.Class/txtfactory.cs -text
+Sci.Production.Class/txtlocalitem.Designer.cs -text
+Sci.Production.Class/txtlocalitem.cs -text
 Sci.Production.Class/txtpayterm_fty.Designer.cs -text
 Sci.Production.Class/txtpayterm_fty.cs -text
 Sci.Production.Class/txtpayterm_fty.resx -text
