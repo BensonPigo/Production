@@ -79,6 +79,12 @@
     <Compile Include="txtdepartment.Designer.cs">
       <DependentUpon>txtdepartment.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtdropdownlist.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtdropdownlist.Designer.cs">
+      <DependentUpon>txtdropdownlist.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtfactory.cs">
       <SubType>Component</SubType>
     </Compile>
