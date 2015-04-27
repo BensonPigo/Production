@@ -23,5 +23,19 @@ namespace Sci.Production.Basic
             comboBox1.ValueMember = "Key";
             comboBox1.DisplayMember = "Value";
         }
+
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+            //在編輯模式下，下列這些欄位都不可以被修改
+            if (this.EditMode)
+            {
+                this.comboBox1.ReadOnly = true;
+                this.checkBox1.ReadOnly = true;
+                this.checkBox2.ReadOnly = true;
+                this.checkBox3.ReadOnly = true;
+                this.checkBox4.ReadOnly = true;
+            }
+        }
     }
 }
