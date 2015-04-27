@@ -15,11 +15,12 @@ namespace Sci.Production.Class
 {
     public partial class txtbrand : Sci.Win.UI.TextBox
     {
-
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Brand.id,NameCH,NameEN", "10,50,50", this.Text, false, ",");
-            // SELECT Id,NameCH,NameEN FROM Brand WHERE Junk=0  ORDER BY Id
+            string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WHERE Junk=0  ORDER BY Id";
+            string sqlCmd = string.Empty;
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,50,50", this.Text, false, ",");
+
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
@@ -42,7 +43,7 @@ namespace Sci.Production.Class
 
         public txtbrand()
         {
-
+            this.Size = new System.Drawing.Size(66, 23);
         }
     }
 }

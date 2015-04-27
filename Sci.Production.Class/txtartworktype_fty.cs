@@ -35,24 +35,24 @@ namespace Sci.Production.Class
        {
            base.OnPopUp(e);
 
-           string sqlwhere = "Where 1=1";
-           string sqlcmd = string.Empty;
+           string sqlWhere = "Where 1=1";
+           string sqlCmd = string.Empty;
 
            if (!string.IsNullOrWhiteSpace(cClassify))
            {
-               sqlwhere = sqlwhere + " And Classify in (" + this.cClassify + ")";
+               sqlWhere = sqlWhere + " And Classify in (" + this.cClassify + ")";
            };
 
            if (!string.IsNullOrWhiteSpace(cSubprocess))
            {
                if (this.cSubprocess == "Y")
-               { sqlwhere = sqlwhere + " And IsSubprocess =1 "; }
+               { sqlWhere = sqlWhere + " And IsSubprocess =1 "; }
                else
-               { sqlwhere = sqlwhere + " And IsSubprocess =0 "; };
+               { sqlWhere = sqlWhere + " And IsSubprocess =0 "; };
            };
-           sqlcmd = "select ID, Abbreviation from ArtworkType " + sqlwhere + " order by Seq";
-           Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "22,4", this.Text, false, ",");
-           // SELECT Id,sid FROM ArtworkType ORDER BY Code WHERE &csWhere INTO CURSOR ART_Class
+           sqlCmd = "select ID, Abbreviation from ArtworkType " + sqlWhere + " order by Seq";
+           Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "22,4", this.Text, false, ",");
+
            DialogResult result = item.ShowDialog();
            if (result == DialogResult.Cancel) { return; }
            this.Text = item.GetSelectedString();

@@ -16,10 +16,10 @@ namespace Sci.Production.Class
     {
         public txtsubprocess()
         {
-            string sqlCMD = "Select ID, ArtworkTypeId From Subprocess  where junk !=1 and IsProcess=1 Order By ID";
+            string sqlCmd = "Select ID, ArtworkTypeId From Subprocess  where junk=0 and IsProcess=1 Order By ID";
             Ict.DualResult cbResult;
             DataTable SubprocessTable = new DataTable();
-            if (cbResult = DBProxy.Current.Select(null, sqlCMD, out SubprocessTable))
+            if (cbResult = DBProxy.Current.Select(null, sqlCmd, out SubprocessTable))
             {
                 this.DataSource = SubprocessTable;
                 this.DisplayMember = "ArtworkTypeId";

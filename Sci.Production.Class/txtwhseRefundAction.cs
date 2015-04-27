@@ -10,23 +10,28 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
-    public partial class txtwhseReason : UserControl
+    public partial class txtwhseRefundAction : UserControl
     {
-        public txtwhseReason()
+        public txtwhseRefundAction()
         {
             InitializeComponent();
         }
 
-        [Category("Custom Properties")]
-        public string Type { set; get ; }
+        private txtwhseReason whseReason;
 
+        [Category("Custom Properties")]
+        public txtwhseReason WhseReason
+        {
+            set { whseReason = value; }
+            get { return whseReason; }
+        }
 
         public Sci.Win.UI.TextBox TextBox1
         {
             get { return this.textBox1; }
         }
 
-         public Sci.Win.UI.DisplayBox DisplayBox1
+        public Sci.Win.UI.DisplayBox DisplayBox1
         {
             get { return this.displayBox1; }
         }
@@ -50,9 +55,9 @@ namespace Sci.Production.Class
             string str = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
             {
-                if (!myUtility.Seek("RR"+str, "WhseReason", "type+ID"))
+                if (!myUtility.Seek(str, "WhseReason", "ID"))
                 {
-                    MessageBox.Show(string.Format("< Reason: {0} > not found!!!", str));
+                    MessageBox.Show(string.Format("< Refund Action: {0} > not found!!!", str));
                     this.textBox1.Text = "";
                     e.Cancel = true;
                     return;
@@ -62,16 +67,19 @@ namespace Sci.Production.Class
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            this.displayBox1.Text = myUtility.Lookup("Description", "RR"+this.textBox1.Text.ToString(), "WhseReason", "Type+ID");
+            this.displayBox1.Text = myUtility.Lookup("Description", "RA" + this.textBox1.Text.ToString(), "WhseReason", "Type+ID");
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                ("Select Id, Description from WhseReason where type='RR' order by id", "10,100", this.textBox1.Text);
+            String actionCode = myUtility.Lookup("actioncode", "RR"+whseReason.TextBox1.Text, "WhseReason", "Type+ID");
+            Sci.Win.Tools.SelectItem item = 
+                new Sci.Win.Tools.SelectItem("select Id, Description from WhseReason where type ='RA' "+
+                string.Format(" and id in ({0})", actionCode), "10,100", this.textBox1.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
         }
+
     }
 }

@@ -37,6 +37,12 @@
     <Compile Include="txtartworktype_fty.Designer.cs">
       <DependentUpon>txtartworktype_fty.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtbrand.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtbrand.Designer.cs">
+      <DependentUpon>txtbrand.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtbuyer.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -193,6 +199,12 @@
     <Compile Include="txtwhseReason.Designer.cs">
       <DependentUpon>txtwhseReason.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtwhseRefundAction.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtwhseRefundAction.Designer.cs">
+      <DependentUpon>txtwhseRefundAction.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ict, Version=1.0.1502.1000, Culture=neutral, processorArchitecture=MSIL">
@@ -273,6 +285,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="txtwhseReason.resx">
       <DependentUpon>txtwhseReason.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtwhseRefundAction.resx">
+      <DependentUpon>txtwhseRefundAction.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
