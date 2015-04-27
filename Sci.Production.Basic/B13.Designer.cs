@@ -39,7 +39,7 @@
             this.checkBox3 = new Sci.Win.UI.CheckBox();
             this.checkBox4 = new Sci.Win.UI.CheckBox();
             this.label6 = new Sci.Win.UI.Label();
-            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
+            this.txtdropdownlist2 = new Sci.Production.Class.txtdropdownlist();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -53,7 +53,7 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.txtdropdownlist1);
+            this.detailcont.Controls.Add(this.txtdropdownlist2);
             this.detailcont.Controls.Add(this.label6);
             this.detailcont.Controls.Add(this.checkBox4);
             this.detailcont.Controls.Add(this.checkBox3);
@@ -195,17 +195,18 @@
             this.label6.TabIndex = 11;
             this.label6.Text = "Issue Type";
             // 
-            // txtdropdownlist1
+            // txtdropdownlist2
             // 
-            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlist1.FormattingEnabled = true;
-            this.txtdropdownlist1.IsSupportUnselect = true;
-            this.txtdropdownlist1.Location = new System.Drawing.Point(169, 150);
-            this.txtdropdownlist1.Name = "txtdropdownlist1";
-            this.txtdropdownlist1.Size = new System.Drawing.Size(100, 24);
-            this.txtdropdownlist1.TabIndex = 12;
-            this.txtdropdownlist1.Type = "IssueType";
+            this.txtdropdownlist2.BackColor = System.Drawing.Color.White;
+            this.txtdropdownlist2.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "IssueType", true));
+            this.txtdropdownlist2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdropdownlist2.FormattingEnabled = true;
+            this.txtdropdownlist2.IsSupportUnselect = true;
+            this.txtdropdownlist2.Location = new System.Drawing.Point(169, 150);
+            this.txtdropdownlist2.Name = "txtdropdownlist2";
+            this.txtdropdownlist2.Size = new System.Drawing.Size(121, 24);
+            this.txtdropdownlist2.TabIndex = 13;
+            this.txtdropdownlist2.Type = "IssueType";
             // 
             // B13
             // 
@@ -243,6 +244,6 @@
         private Win.UI.CheckBox checkBox2;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.Label label6;
-        private Class.txtdropdownlist txtdropdownlist1;
+        private Class.txtdropdownlist txtdropdownlist2;
     }
 }
