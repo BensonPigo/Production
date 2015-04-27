@@ -19,7 +19,7 @@ namespace Sci.Production.Class
         public string Type
         {
             set
-            { 
+            {
                 this.type = value;
                 string selectCommand = string.Format("select ID, rtrim(ID)+'- '+rtrim(Name) as IDName from DropDownList where Type = '{0}' order by ID", this.Type);
                 Ict.DualResult returnResult;
@@ -35,8 +35,6 @@ namespace Sci.Production.Class
         }
 
         public txtdropdownlist()
-        {
-            this.Size = new System.Drawing.Size(100, 24);
-        }
+        { }
     }
 }
