@@ -23,10 +23,10 @@ namespace Sci.Production.Class
                 this.type = value;
                 string selectCommand = string.Format("select ID, rtrim(ID)+'- '+rtrim(Name) as IDName from DropDownList where Type = '{0}' order by ID", this.Type);
                 Ict.DualResult returnResult;
-                DataTable DropDownListTable = new DataTable();
-                if (returnResult = DBProxy.Current.Select(null, selectCommand, out DropDownListTable))
+                DataTable dropDownListTable = new DataTable();
+                if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
                 {
-                    this.DataSource = DropDownListTable;
+                    this.DataSource = dropDownListTable;
                     this.DisplayMember = "IDName";
                     this.ValueMember = "ID";
                 }
