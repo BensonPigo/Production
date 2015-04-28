@@ -63,7 +63,7 @@
             this.masterpanel.Controls.Add(this.label5);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Size = new System.Drawing.Size(754, 134);
+            this.masterpanel.Size = new System.Drawing.Size(892, 134);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
@@ -80,31 +80,19 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 134);
-            this.detailpanel.Size = new System.Drawing.Size(754, 215);
+            this.detailpanel.Size = new System.Drawing.Size(892, 215);
             // 
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(653, 95);
             // 
-            // refresh
-            // 
-            this.refresh.Location = new System.Drawing.Point(674, 0);
-            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(754, 215);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 215);
             // 
-            // detail
+            // browse
             // 
-            this.detail.Size = new System.Drawing.Size(754, 387);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(754, 349);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(754, 38);
+            this.browse.Size = new System.Drawing.Size(754, 387);
             // 
             // tabs
             // 
@@ -232,6 +220,7 @@
             this.KeyField1 = "ID";
             this.KeyField2 = "UnitFrom";
             this.Name = "B12";
+            this.Text = "Unit";
             this.UniqueExpress = "ID";
             this.WorkAlias = "Unit";
             this.Controls.SetChildIndex(this.tabs, 0);
