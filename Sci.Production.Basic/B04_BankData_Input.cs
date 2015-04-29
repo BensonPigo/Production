@@ -14,5 +14,38 @@ namespace Sci.Production.Basic
         {
             InitializeComponent();
         }
+
+        protected override bool DoSave()
+        {
+            if (String.IsNullOrWhiteSpace(this.textBox1.Text.ToString()))
+            {
+                MessageBox.Show("< Account No. > can not be empty!");
+                this.textBox1.Focus();
+                return false;
+            }
+
+            if (String.IsNullOrWhiteSpace(this.textBox3.Text.ToString()))
+            {
+                MessageBox.Show("< Account Name > can not be empty!");
+                this.textBox3.Focus();
+                return false;
+            }
+
+            if (String.IsNullOrWhiteSpace(this.textBox4.Text.ToString()))
+            {
+                MessageBox.Show("< Bank Name > can not be empty!");
+                this.textBox4.Focus();
+                return false;
+            }
+
+            if (String.IsNullOrWhiteSpace(this.txtcountry1.TextBox1.Text.ToString()))
+            {
+                MessageBox.Show("< Country > can not be empty!");
+                this.txtcountry1.TextBox1.Focus();
+                return false;
+            }
+
+            return base.DoSave();
+        }
     }
 }
