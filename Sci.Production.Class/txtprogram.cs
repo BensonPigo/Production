@@ -18,17 +18,21 @@ namespace Sci.Production.Class
 {
     public partial class txtprogram : Sci.Win.UI.TextBox
     {
-        private string brand = "";
+        private string brand ;
         private Control brandObject;	//欄位.存入要取值的<控制項>
 
        
         // 屬性. 利用字串來設定要存取的<控制項>
         [Category("Custom Properties")]
-        public string BrandObjectName
+        public Control BrandObjectName
         {
             set
-            { 
-                this.getAllControls(this.FindForm(), value); 
+            {
+                brandObject = value; 
+            }
+            get
+            {
+                return brandObject;
             }
         }
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
@@ -39,7 +43,10 @@ namespace Sci.Production.Class
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "12,8", this.Text, false, ",");
             //
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel) 
+            { 
+                return; 
+            }
             this.Text = item.GetSelectedString();
         }
         protected override void OnValidating(CancelEventArgs e)
@@ -70,21 +77,6 @@ namespace Sci.Production.Class
                         e.Cancel = true;
                         return;
                     }
-                }
-            }
-        }
-        // 取回指定的 Control 並存入 this.BuyerObject
-        private void getAllControls(Control container, string SearchName)
-        {
-            foreach (Control c in container.Controls)
-            {
-                if (c.Name.ToString() == SearchName)
-                {
-                    this.brandObject = c;
-                }
-                else
-                {
-                    if (c.Controls.Count > 0) this.getAllControls(c, SearchName);
                 }
             }
         }
