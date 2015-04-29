@@ -1,0 +1,51 @@
+﻿namespace Sci.Production.Basic
+{
+    partial class B04_BankData
+    {
+        /// <summary>
+        /// 設計工具所需的變數。
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// 清除任何使用中的資源。
+        /// </summary>
+        /// <param name="disposing">如果應該處置 Managed 資源則為 true，否則為 false。</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form 設計工具產生的程式碼
+
+        /// <summary>
+        /// 此為設計工具支援所需的方法 - 請勿使用程式碼編輯器
+        /// 修改這個方法的內容。
+        /// </summary>
+        private void InitializeComponent()
+        {
+            ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // B04_BankData
+            // 
+            this.ClientSize = new System.Drawing.Size(831, 497);
+            this.GridUniqueKey = "ID,AccountNo";
+            this.KeyField1 = "ID";
+            this.Name = "B04_BankData";
+            this.Text = "Bank data";
+            this.WorkAlias = "LocalSupp_Bank";
+            this.Controls.SetChildIndex(this.btmcont, 0);
+            this.Controls.SetChildIndex(this.gridcont, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+    }
+}
