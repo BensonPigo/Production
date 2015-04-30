@@ -18,8 +18,8 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from Unit where Junk = 0 order by ID", "10,150", this.Text, false, ",");
-            // SELECT Id,Description FROM Unit WHERE junk = 0 order by id
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from Unit order by ID", "10,150", this.Text, false, ",");
+
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
