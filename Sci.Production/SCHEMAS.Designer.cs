@@ -311,13 +311,13 @@ namespace Sci.Production {
             
             private global::System.Data.DataColumn columnCODEPAGE;
             
-            private global::System.Data.DataColumn columnADD_NAME;
+            private global::System.Data.DataColumn columnADDNAME;
             
-            private global::System.Data.DataColumn columnADD_DATE;
+            private global::System.Data.DataColumn columnADDDATE;
             
-            private global::System.Data.DataColumn columnEDIT_NAME;
+            private global::System.Data.DataColumn columnEDITNAME;
             
-            private global::System.Data.DataColumn columnEDIT_DATE;
+            private global::System.Data.DataColumn columnEDITDATE;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
@@ -482,33 +482,33 @@ namespace Sci.Production {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn ADD_NAMEColumn {
+            public global::System.Data.DataColumn ADDNAMEColumn {
                 get {
-                    return this.columnADD_NAME;
+                    return this.columnADDNAME;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn ADD_DATEColumn {
+            public global::System.Data.DataColumn ADDDATEColumn {
                 get {
-                    return this.columnADD_DATE;
+                    return this.columnADDDATE;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn EDIT_NAMEColumn {
+            public global::System.Data.DataColumn EDITNAMEColumn {
                 get {
-                    return this.columnEDIT_NAME;
+                    return this.columnEDITNAME;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn EDIT_DATEColumn {
+            public global::System.Data.DataColumn EDITDATEColumn {
                 get {
-                    return this.columnEDIT_DATE;
+                    return this.columnEDITDATE;
                 }
             }
             
@@ -566,10 +566,10 @@ namespace Sci.Production {
                         string DEPUTY, 
                         string FACTORY, 
                         string CODEPAGE, 
-                        string ADD_NAME, 
-                        System.DateTime ADD_DATE, 
-                        string EDIT_NAME, 
-                        System.DateTime EDIT_DATE) {
+                        string ADDNAME, 
+                        System.DateTime ADDDATE, 
+                        string EDITNAME, 
+                        System.DateTime EDITDATE) {
                 PASS1Row rowPASS1Row = ((PASS1Row)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         ID,
@@ -588,10 +588,10 @@ namespace Sci.Production {
                         DEPUTY,
                         FACTORY,
                         CODEPAGE,
-                        ADD_NAME,
-                        ADD_DATE,
-                        EDIT_NAME,
-                        EDIT_DATE};
+                        ADDNAME,
+                        ADDDATE,
+                        EDITNAME,
+                        EDITDATE};
                 rowPASS1Row.ItemArray = columnValuesArray;
                 this.Rows.Add(rowPASS1Row);
                 return rowPASS1Row;
@@ -637,10 +637,10 @@ namespace Sci.Production {
                 this.columnDEPUTY = base.Columns["DEPUTY"];
                 this.columnFACTORY = base.Columns["FACTORY"];
                 this.columnCODEPAGE = base.Columns["CODEPAGE"];
-                this.columnADD_NAME = base.Columns["ADD_NAME"];
-                this.columnADD_DATE = base.Columns["ADD_DATE"];
-                this.columnEDIT_NAME = base.Columns["EDIT_NAME"];
-                this.columnEDIT_DATE = base.Columns["EDIT_DATE"];
+                this.columnADDNAME = base.Columns["ADDNAME"];
+                this.columnADDDATE = base.Columns["ADDDATE"];
+                this.columnEDITNAME = base.Columns["EDITNAME"];
+                this.columnEDITDATE = base.Columns["EDITDATE"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -678,14 +678,14 @@ namespace Sci.Production {
                 base.Columns.Add(this.columnFACTORY);
                 this.columnCODEPAGE = new global::System.Data.DataColumn("CODEPAGE", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnCODEPAGE);
-                this.columnADD_NAME = new global::System.Data.DataColumn("ADD_NAME", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnADD_NAME);
-                this.columnADD_DATE = new global::System.Data.DataColumn("ADD_DATE", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnADD_DATE);
-                this.columnEDIT_NAME = new global::System.Data.DataColumn("EDIT_NAME", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnEDIT_NAME);
-                this.columnEDIT_DATE = new global::System.Data.DataColumn("EDIT_DATE", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnEDIT_DATE);
+                this.columnADDNAME = new global::System.Data.DataColumn("ADDNAME", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnADDNAME);
+                this.columnADDDATE = new global::System.Data.DataColumn("ADDDATE", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnADDDATE);
+                this.columnEDITNAME = new global::System.Data.DataColumn("EDITNAME", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnEDITNAME);
+                this.columnEDITDATE = new global::System.Data.DataColumn("EDITDATE", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnEDITDATE);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnID}, true));
                 this.columnID.AllowDBNull = false;
@@ -703,8 +703,8 @@ namespace Sci.Production {
                 this.columnDEPUTY.MaxLength = 10;
                 this.columnFACTORY.MaxLength = 100;
                 this.columnCODEPAGE.MaxLength = 6;
-                this.columnADD_NAME.MaxLength = 20;
-                this.columnEDIT_NAME.MaxLength = 20;
+                this.columnADDNAME.MaxLength = 20;
+                this.columnEDITNAME.MaxLength = 20;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1098,65 +1098,65 @@ namespace Sci.Production {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string ADD_NAME {
+            public string ADDNAME {
                 get {
                     try {
-                        return ((string)(this[this.tablePASS1.ADD_NAMEColumn]));
+                        return ((string)(this[this.tablePASS1.ADDNAMEColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("資料表 \'PASS1\' 中資料行 \'ADD_NAME\' 的值是 DBNull。", e);
+                        throw new global::System.Data.StrongTypingException("資料表 \'PASS1\' 中資料行 \'ADDNAME\' 的值是 DBNull。", e);
                     }
                 }
                 set {
-                    this[this.tablePASS1.ADD_NAMEColumn] = value;
+                    this[this.tablePASS1.ADDNAMEColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public System.DateTime ADD_DATE {
+            public System.DateTime ADDDATE {
                 get {
                     try {
-                        return ((global::System.DateTime)(this[this.tablePASS1.ADD_DATEColumn]));
+                        return ((global::System.DateTime)(this[this.tablePASS1.ADDDATEColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("資料表 \'PASS1\' 中資料行 \'ADD_DATE\' 的值是 DBNull。", e);
+                        throw new global::System.Data.StrongTypingException("資料表 \'PASS1\' 中資料行 \'ADDDATE\' 的值是 DBNull。", e);
                     }
                 }
                 set {
-                    this[this.tablePASS1.ADD_DATEColumn] = value;
+                    this[this.tablePASS1.ADDDATEColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string EDIT_NAME {
+            public string EDITNAME {
                 get {
                     try {
-                        return ((string)(this[this.tablePASS1.EDIT_NAMEColumn]));
+                        return ((string)(this[this.tablePASS1.EDITNAMEColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("資料表 \'PASS1\' 中資料行 \'EDIT_NAME\' 的值是 DBNull。", e);
+                        throw new global::System.Data.StrongTypingException("資料表 \'PASS1\' 中資料行 \'EDITNAME\' 的值是 DBNull。", e);
                     }
                 }
                 set {
-                    this[this.tablePASS1.EDIT_NAMEColumn] = value;
+                    this[this.tablePASS1.EDITNAMEColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public System.DateTime EDIT_DATE {
+            public System.DateTime EDITDATE {
                 get {
                     try {
-                        return ((global::System.DateTime)(this[this.tablePASS1.EDIT_DATEColumn]));
+                        return ((global::System.DateTime)(this[this.tablePASS1.EDITDATEColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("資料表 \'PASS1\' 中資料行 \'EDIT_DATE\' 的值是 DBNull。", e);
+                        throw new global::System.Data.StrongTypingException("資料表 \'PASS1\' 中資料行 \'EDITDATE\' 的值是 DBNull。", e);
                     }
                 }
                 set {
-                    this[this.tablePASS1.EDIT_DATEColumn] = value;
+                    this[this.tablePASS1.EDITDATEColumn] = value;
                 }
             }
             
@@ -1342,50 +1342,50 @@ namespace Sci.Production {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsADD_NAMENull() {
-                return this.IsNull(this.tablePASS1.ADD_NAMEColumn);
+            public bool IsADDNAMENull() {
+                return this.IsNull(this.tablePASS1.ADDNAMEColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetADD_NAMENull() {
-                this[this.tablePASS1.ADD_NAMEColumn] = global::System.Convert.DBNull;
+            public void SetADDNAMENull() {
+                this[this.tablePASS1.ADDNAMEColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsADD_DATENull() {
-                return this.IsNull(this.tablePASS1.ADD_DATEColumn);
+            public bool IsADDDATENull() {
+                return this.IsNull(this.tablePASS1.ADDDATEColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetADD_DATENull() {
-                this[this.tablePASS1.ADD_DATEColumn] = global::System.Convert.DBNull;
+            public void SetADDDATENull() {
+                this[this.tablePASS1.ADDDATEColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsEDIT_NAMENull() {
-                return this.IsNull(this.tablePASS1.EDIT_NAMEColumn);
+            public bool IsEDITNAMENull() {
+                return this.IsNull(this.tablePASS1.EDITNAMEColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetEDIT_NAMENull() {
-                this[this.tablePASS1.EDIT_NAMEColumn] = global::System.Convert.DBNull;
+            public void SetEDITNAMENull() {
+                this[this.tablePASS1.EDITNAMEColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsEDIT_DATENull() {
-                return this.IsNull(this.tablePASS1.EDIT_DATEColumn);
+            public bool IsEDITDATENull() {
+                return this.IsNull(this.tablePASS1.EDITDATEColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetEDIT_DATENull() {
-                this[this.tablePASS1.EDIT_DATEColumn] = global::System.Convert.DBNull;
+            public void SetEDITDATENull() {
+                this[this.tablePASS1.EDITDATEColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -1564,10 +1564,10 @@ namespace Sci.Production.SCHEMASTableAdapters {
             tableMapping.ColumnMappings.Add("DEPUTY", "DEPUTY");
             tableMapping.ColumnMappings.Add("FACTORY", "FACTORY");
             tableMapping.ColumnMappings.Add("CODEPAGE", "CODEPAGE");
-            tableMapping.ColumnMappings.Add("ADD_NAME", "ADD_NAME");
-            tableMapping.ColumnMappings.Add("ADD_DATE", "ADD_DATE");
-            tableMapping.ColumnMappings.Add("EDIT_NAME", "EDIT_NAME");
-            tableMapping.ColumnMappings.Add("EDIT_DATE", "EDIT_DATE");
+            tableMapping.ColumnMappings.Add("ADDNAME", "ADDNAME");
+            tableMapping.ColumnMappings.Add("ADDDATE", "ADDDATE");
+            tableMapping.ColumnMappings.Add("EDITNAME", "EDITNAME");
+            tableMapping.ColumnMappings.Add("EDITDATE", "EDITDATE");
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
@@ -1576,7 +1576,7 @@ namespace Sci.Production.SCHEMASTableAdapters {
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ID", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ID", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.InsertCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = @"INSERT INTO [dbo].[PASS1] ([ID], [NAME], [PASSWORD], [POSITION], [FK01_PASS0], [ISADMIN], [ORDERGROUP], [EMAIL], [EXT_NO], [ONBOARD], [RESIGN], [SUPERVISOR], [MANAGER], [DEPUTY], [FACTORY], [CODEPAGE], [ADD_NAME], [ADD_DATE], [EDIT_NAME], [EDIT_DATE]) VALUES (@ID, @NAME, @PASSWORD, @POSITION, @FK01_PASS0, @ISADMIN, @ORDERGROUP, @EMAIL, @EXT_NO, @ONBOARD, @RESIGN, @SUPERVISOR, @MANAGER, @DEPUTY, @FACTORY, @CODEPAGE, @ADD_NAME, @ADD_DATE, @EDIT_NAME, @EDIT_DATE)";
+            this._adapter.InsertCommand.CommandText = @"INSERT INTO [dbo].[PASS1] ([ID], [NAME], [PASSWORD], [POSITION], [FK01_PASS0], [ISADMIN], [ORDERGROUP], [EMAIL], [EXT_NO], [ONBOARD], [RESIGN], [SUPERVISOR], [MANAGER], [DEPUTY], [FACTORY], [CODEPAGE], [ADDNAME], [ADDDATE], [EDITNAME], [EDITDATE]) VALUES (@ID, @NAME, @PASSWORD, @POSITION, @FK01_PASS0, @ISADMIN, @ORDERGROUP, @EMAIL, @EXT_NO, @ONBOARD, @RESIGN, @SUPERVISOR, @MANAGER, @DEPUTY, @FACTORY, @CODEPAGE, @ADDNAME, @ADDDATE, @EDITNAME, @EDITDATE)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ID", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ID", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@NAME", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "NAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
@@ -1594,13 +1594,13 @@ namespace Sci.Production.SCHEMASTableAdapters {
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@DEPUTY", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DEPUTY", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FACTORY", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FACTORY", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CODEPAGE", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CODEPAGE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ADD_NAME", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ADD_NAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ADD_DATE", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ADD_DATE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EDIT_NAME", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EDIT_NAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EDIT_DATE", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EDIT_DATE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ADDNAME", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ADDNAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ADDDATE", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ADDDATE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EDITNAME", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EDITNAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EDITDATE", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EDITDATE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = @"UPDATE [dbo].[PASS1] SET [ID] = @ID, [NAME] = @NAME, [PASSWORD] = @PASSWORD, [POSITION] = @POSITION, [FK01_PASS0] = @FK01_PASS0, [ISADMIN] = @ISADMIN, [ORDERGROUP] = @ORDERGROUP, [EMAIL] = @EMAIL, [EXT_NO] = @EXT_NO, [ONBOARD] = @ONBOARD, [RESIGN] = @RESIGN, [SUPERVISOR] = @SUPERVISOR, [MANAGER] = @MANAGER, [DEPUTY] = @DEPUTY, [FACTORY] = @FACTORY, [CODEPAGE] = @CODEPAGE, [ADD_NAME] = @ADD_NAME, [ADD_DATE] = @ADD_DATE, [EDIT_NAME] = @EDIT_NAME, [EDIT_DATE] = @EDIT_DATE WHERE (([ID] = @Original_ID))";
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [dbo].[PASS1] SET [ID] = @ID, [NAME] = @NAME, [PASSWORD] = @PASSWORD, [POSITION] = @POSITION, [FK01_PASS0] = @FK01_PASS0, [ISADMIN] = @ISADMIN, [ORDERGROUP] = @ORDERGROUP, [EMAIL] = @EMAIL, [EXT_NO] = @EXT_NO, [ONBOARD] = @ONBOARD, [RESIGN] = @RESIGN, [SUPERVISOR] = @SUPERVISOR, [MANAGER] = @MANAGER, [DEPUTY] = @DEPUTY, [FACTORY] = @FACTORY, [CODEPAGE] = @CODEPAGE, [ADDNAME] = @ADDNAME, [ADDDATE] = @ADDDATE, [EDITNAME] = @EDITNAME, [EDITDATE] = @EDITDATE WHERE (([ID] = @Original_ID))";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ID", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ID", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@NAME", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "NAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
@@ -1618,10 +1618,10 @@ namespace Sci.Production.SCHEMASTableAdapters {
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@DEPUTY", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DEPUTY", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FACTORY", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FACTORY", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CODEPAGE", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CODEPAGE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ADD_NAME", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ADD_NAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ADD_DATE", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ADD_DATE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EDIT_NAME", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EDIT_NAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EDIT_DATE", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EDIT_DATE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ADDNAME", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ADDNAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ADDDATE", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ADDDATE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EDITNAME", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EDITNAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EDITDATE", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EDITDATE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ID", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ID", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
         }
         
@@ -1640,15 +1640,15 @@ namespace Sci.Production.SCHEMASTableAdapters {
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
             this._commandCollection[0].CommandText = "SELECT ID, NAME, PASSWORD, POSITION, FK01_PASS0, ISADMIN, ORDERGROUP, EMAIL, EXT_" +
-                "NO, ONBOARD, RESIGN, SUPERVISOR, MANAGER, DEPUTY, FACTORY, CODEPAGE, ADD_NAME, A" +
-                "DD_DATE, EDIT_NAME, EDIT_DATE FROM dbo.PASS1";
+                "NO, ONBOARD, RESIGN, SUPERVISOR, MANAGER, DEPUTY, FACTORY, CODEPAGE, ADDNAME, AD" +
+                "DDATE, EDITNAME, EDITDATE FROM dbo.PASS1";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[1] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[1].Connection = this.Connection;
-            this._commandCollection[1].CommandText = @"SELECT          ID, NAME, PASSWORD, POSITION, FK01_PASS0, ISADMIN, ORDERGROUP, EMAIL, EXT_NO, ONBOARD, RESIGN, 
-                            SUPERVISOR, MANAGER, DEPUTY, FACTORY, CODEPAGE, ADD_NAME, ADD_DATE, EDIT_NAME, EDIT_DATE
-FROM              PASS1
-WHERE          (ID = @id) AND (PASSWORD = @password)";
+            this._commandCollection[1].CommandText = "SELECT ADDDATE, ADDNAME, CODEPAGE, DEPUTY, EDITDATE, EDITNAME, EMAIL, EXT_NO, FAC" +
+                "TORY, FK01_PASS0, ID, ISADMIN, MANAGER, NAME, ONBOARD, ORDERGROUP, PASSWORD, POS" +
+                "ITION, RESIGN, SUPERVISOR FROM PASS1 WHERE (ID = @id) AND (PASSWORD = @password)" +
+                "";
             this._commandCollection[1].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.NVarChar, 10, global::System.Data.ParameterDirection.Input, 0, 0, "ID", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@password", global::System.Data.SqlDbType.NVarChar, 10, global::System.Data.ParameterDirection.Input, 0, 0, "PASSWORD", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
@@ -1765,10 +1765,10 @@ WHERE          (ID = @id) AND (PASSWORD = @password)";
                     string DEPUTY, 
                     string FACTORY, 
                     string CODEPAGE, 
-                    string ADD_NAME, 
-                    global::System.Nullable<global::System.DateTime> ADD_DATE, 
-                    string EDIT_NAME, 
-                    global::System.Nullable<global::System.DateTime> EDIT_DATE) {
+                    string ADDNAME, 
+                    global::System.Nullable<global::System.DateTime> ADDDATE, 
+                    string EDITNAME, 
+                    global::System.Nullable<global::System.DateTime> EDITDATE) {
             if ((ID == null)) {
                 throw new global::System.ArgumentNullException("ID");
             }
@@ -1865,26 +1865,26 @@ WHERE          (ID = @id) AND (PASSWORD = @password)";
             else {
                 this.Adapter.InsertCommand.Parameters[15].Value = ((string)(CODEPAGE));
             }
-            if ((ADD_NAME == null)) {
+            if ((ADDNAME == null)) {
                 this.Adapter.InsertCommand.Parameters[16].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.InsertCommand.Parameters[16].Value = ((string)(ADD_NAME));
+                this.Adapter.InsertCommand.Parameters[16].Value = ((string)(ADDNAME));
             }
-            if ((ADD_DATE.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[17].Value = ((System.DateTime)(ADD_DATE.Value));
+            if ((ADDDATE.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[17].Value = ((System.DateTime)(ADDDATE.Value));
             }
             else {
                 this.Adapter.InsertCommand.Parameters[17].Value = global::System.DBNull.Value;
             }
-            if ((EDIT_NAME == null)) {
+            if ((EDITNAME == null)) {
                 this.Adapter.InsertCommand.Parameters[18].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.InsertCommand.Parameters[18].Value = ((string)(EDIT_NAME));
+                this.Adapter.InsertCommand.Parameters[18].Value = ((string)(EDITNAME));
             }
-            if ((EDIT_DATE.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[19].Value = ((System.DateTime)(EDIT_DATE.Value));
+            if ((EDITDATE.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[19].Value = ((System.DateTime)(EDITDATE.Value));
             }
             else {
                 this.Adapter.InsertCommand.Parameters[19].Value = global::System.DBNull.Value;
@@ -1926,10 +1926,10 @@ WHERE          (ID = @id) AND (PASSWORD = @password)";
                     string DEPUTY, 
                     string FACTORY, 
                     string CODEPAGE, 
-                    string ADD_NAME, 
-                    global::System.Nullable<global::System.DateTime> ADD_DATE, 
-                    string EDIT_NAME, 
-                    global::System.Nullable<global::System.DateTime> EDIT_DATE, 
+                    string ADDNAME, 
+                    global::System.Nullable<global::System.DateTime> ADDDATE, 
+                    string EDITNAME, 
+                    global::System.Nullable<global::System.DateTime> EDITDATE, 
                     string Original_ID) {
             if ((ID == null)) {
                 throw new global::System.ArgumentNullException("ID");
@@ -2027,26 +2027,26 @@ WHERE          (ID = @id) AND (PASSWORD = @password)";
             else {
                 this.Adapter.UpdateCommand.Parameters[15].Value = ((string)(CODEPAGE));
             }
-            if ((ADD_NAME == null)) {
+            if ((ADDNAME == null)) {
                 this.Adapter.UpdateCommand.Parameters[16].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[16].Value = ((string)(ADD_NAME));
+                this.Adapter.UpdateCommand.Parameters[16].Value = ((string)(ADDNAME));
             }
-            if ((ADD_DATE.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[17].Value = ((System.DateTime)(ADD_DATE.Value));
+            if ((ADDDATE.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[17].Value = ((System.DateTime)(ADDDATE.Value));
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[17].Value = global::System.DBNull.Value;
             }
-            if ((EDIT_NAME == null)) {
+            if ((EDITNAME == null)) {
                 this.Adapter.UpdateCommand.Parameters[18].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[18].Value = ((string)(EDIT_NAME));
+                this.Adapter.UpdateCommand.Parameters[18].Value = ((string)(EDITNAME));
             }
-            if ((EDIT_DATE.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[19].Value = ((System.DateTime)(EDIT_DATE.Value));
+            if ((EDITDATE.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[19].Value = ((System.DateTime)(EDITDATE.Value));
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[19].Value = global::System.DBNull.Value;
@@ -2093,12 +2093,12 @@ WHERE          (ID = @id) AND (PASSWORD = @password)";
                     string DEPUTY, 
                     string FACTORY, 
                     string CODEPAGE, 
-                    string ADD_NAME, 
-                    global::System.Nullable<global::System.DateTime> ADD_DATE, 
-                    string EDIT_NAME, 
-                    global::System.Nullable<global::System.DateTime> EDIT_DATE, 
+                    string ADDNAME, 
+                    global::System.Nullable<global::System.DateTime> ADDDATE, 
+                    string EDITNAME, 
+                    global::System.Nullable<global::System.DateTime> EDITDATE, 
                     string Original_ID) {
-            return this.Update(Original_ID, NAME, PASSWORD, POSITION, FK01_PASS0, ISADMIN, ORDERGROUP, EMAIL, EXT_NO, ONBOARD, RESIGN, SUPERVISOR, MANAGER, DEPUTY, FACTORY, CODEPAGE, ADD_NAME, ADD_DATE, EDIT_NAME, EDIT_DATE, Original_ID);
+            return this.Update(Original_ID, NAME, PASSWORD, POSITION, FK01_PASS0, ISADMIN, ORDERGROUP, EMAIL, EXT_NO, ONBOARD, RESIGN, SUPERVISOR, MANAGER, DEPUTY, FACTORY, CODEPAGE, ADDNAME, ADDDATE, EDITNAME, EDITDATE, Original_ID);
         }
     }
     
