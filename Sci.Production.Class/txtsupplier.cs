@@ -49,6 +49,7 @@ namespace Sci.Production.Class
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
+            base.OnValidating(e);
             string textValue = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
