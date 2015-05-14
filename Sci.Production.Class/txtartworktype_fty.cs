@@ -18,6 +18,7 @@ namespace Sci.Production.Class
         private string m_subprocess = string.Empty;
 
         [Category("Custom Properties")]
+        [Description("Classify 值需用單引號包起來；逗點分格。例如：'I','A','S'或單一個值'P'")]
         public string cClassify
         {
             set { this.m_type = value; }
@@ -25,6 +26,7 @@ namespace Sci.Production.Class
         }
 
        [Category("Custom Properties")]
+       [Description("IsSubprocess 填Y或不填")]
         public string cSubprocess
         {
             set { this.m_subprocess = value; }

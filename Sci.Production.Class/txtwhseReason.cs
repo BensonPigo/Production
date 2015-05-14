@@ -18,6 +18,7 @@ namespace Sci.Production.Class
         }
 
         [Category("Custom Properties")]
+        [Description("填入Reason Type。例如：RR")]
         public string Type { set; get ; }
 
 

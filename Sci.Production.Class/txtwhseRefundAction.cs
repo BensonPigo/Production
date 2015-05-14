@@ -20,6 +20,7 @@ namespace Sci.Production.Class
         private txtwhseReason whseReason;
 
         [Category("Custom Properties")]
+        [Description("選擇畫面上的txtwhseReason自訂控制項名稱。例如：txtWhseReason1")]
         public txtwhseReason WhseReason
         {
             set { whseReason = value; }
