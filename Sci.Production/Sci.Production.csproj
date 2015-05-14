@@ -210,9 +210,65 @@
     <None Include="Resources\001_jpg.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sci.Production.Basic\Sci.Production.Basic.csproj">
+      <Project>{da40e123-cd22-4656-8b3e-a27953ae7d34}</Project>
+      <Name>Sci.Production.Basic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
       <Name>Sci.Production.Class</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Cutting\Sci.Production.Cutting.csproj">
+      <Project>{df18b09d-15b0-41d9-9350-3d0e20899911}</Project>
+      <Name>Sci.Production.Cutting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.IE\Sci.Production.IE.csproj">
+      <Project>{a650dc92-30e3-4f83-a0ac-eb214d7740f4}</Project>
+      <Name>Sci.Production.IE</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Logistic\Sci.Production.Logistic.csproj">
+      <Project>{105a668a-8233-4d5f-a340-e8e9a743531d}</Project>
+      <Name>Sci.Production.Logistic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Miscellaneous\Sci.Production.Miscellaneous.csproj">
+      <Project>{a61e6d69-1468-4a81-bcbf-c5211c932f9c}</Project>
+      <Name>Sci.Production.Miscellaneous</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Packing\Sci.Production.Packing.csproj">
+      <Project>{0ac9e701-ee86-459b-bdb9-213a79e59017}</Project>
+      <Name>Sci.Production.Packing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Planning\Sci.Production.Planning.csproj">
+      <Project>{0eade09e-b243-4fa9-a351-02828eb3535b}</Project>
+      <Name>Sci.Production.Planning</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.PPIC\Sci.Production.PPIC.csproj">
+      <Project>{b35ffbd5-b004-4929-bf1d-75e2ee403793}</Project>
+      <Name>Sci.Production.PPIC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Quality\Sci.Production.Quality.csproj">
+      <Project>{73c13a2e-00fb-4dc9-ada1-121fba143a99}</Project>
+      <Name>Sci.Production.Quality</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Sewing\Sci.Production.Sewing.csproj">
+      <Project>{ad7856ba-ac68-402c-9de9-e900b8462f8f}</Project>
+      <Name>Sci.Production.Sewing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Shipping\Sci.Production.Shipping.csproj">
+      <Project>{558a6ae9-f802-4d9b-bad4-73fdf0a33326}</Project>
+      <Name>Sci.Production.Shipping</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Subcon\Sci.Production.Subcon.csproj">
+      <Project>{00dd7dbc-5ff6-4b6b-b820-7b2b5edf3116}</Project>
+      <Name>Sci.Production.Subcon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Thread\Sci.Production.Thread.csproj">
+      <Project>{8bd67b5f-49dc-47c7-9330-43af1b161b1b}</Project>
+      <Name>Sci.Production.Thread</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Warehouse\Sci.Production.Warehouse.csproj">
+      <Project>{7fe981ca-bcbd-4ac4-b97b-6b75eda7a73b}</Project>
+      <Name>Sci.Production.Warehouse</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
