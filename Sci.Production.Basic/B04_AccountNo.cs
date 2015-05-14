@@ -47,42 +47,42 @@ namespace Sci.Production.Basic
 
         protected override bool OnSave()
         {
-            ITableSchema ts;
-            DualResult rs = DBProxy.Current.GetTableSchema(null, "LocalSupp_AccountNo", out ts);
-            IList<DataRow> ds = Datas;
-            
-            foreach (DataRow dr in ds)
+            ITableSchema tableSchema;
+            DualResult returnResult = DBProxy.Current.GetTableSchema(null, "LocalSupp_AccountNo", out tableSchema);
+            IList<DataRow> gridData = Datas;
+
+            foreach (DataRow currentRecord in gridData)
             {
-                if (dr.RowState == DataRowState.Modified)
+                if (currentRecord.RowState == DataRowState.Modified)
                 {
-                    if (String.IsNullOrWhiteSpace(dr["AccountNo"].ToString()))
+                    if (String.IsNullOrWhiteSpace(currentRecord["AccountNo"].ToString()))
                     {
-                        rs = DBProxy.Current.Delete(null, ts, dr);
-                        if (rs != Result.True)
+                        returnResult = DBProxy.Current.Delete(null, tableSchema, currentRecord);
+                        if (returnResult != Result.True)
                         {
-                            MessageBox.Show(rs.ToString());
+                            MessageBox.Show(returnResult.ToString());
                             return false;
                         }
                     }
                     else
                     {
-                        string selectCommand = string.Format("select ID from LocalSupp_AccountNo where ID = '{0}' and ArtworkTypeID = '{1}'", dr["ID"].ToString(),dr["ArtworkTypeID"].ToString());
+                        string selectCommand = string.Format("select ID from LocalSupp_AccountNo where ID = '{0}' and ArtworkTypeID = '{1}'", currentRecord["ID"].ToString(), currentRecord["ArtworkTypeID"].ToString());
                         if (!myUtility.Seek(selectCommand, null))
                         {
-                            rs = DBProxy.Current.Insert(null, ts, dr);
-                            if (rs != Result.True)
+                            returnResult = DBProxy.Current.Insert(null, tableSchema, currentRecord);
+                            if (returnResult != Result.True)
                             {
-                                MessageBox.Show(rs.ToString());
+                                MessageBox.Show(returnResult.ToString());
                                 return false;
                             }
                         }
                         else
                         {
                             bool different;
-                            rs = DBProxy.Current.UpdateByChanged(null, ts, dr, out different);
-                            if (rs != Result.True)
+                            returnResult = DBProxy.Current.UpdateByChanged(null, tableSchema, currentRecord, out different);
+                            if (returnResult != Result.True)
                             {
-                                MessageBox.Show(rs.ToString());
+                                MessageBox.Show(returnResult.ToString());
                                 return false;
                             }
                         }

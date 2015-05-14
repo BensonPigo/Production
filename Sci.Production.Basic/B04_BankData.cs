@@ -21,7 +21,6 @@ namespace Sci.Production.Basic
 
         protected override bool OnGridSetup()
         {
-            this.grid.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid)
                 .CheckBox("IsDefault", header: "Default", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("AccountNo", header: "Account No.", width: Widths.AnsiChars(20))
@@ -34,10 +33,10 @@ namespace Sci.Production.Basic
                 .Text("MidBankName", header: "Intermediary Bank", width: Widths.AnsiChars(20))
                 .Text("MidSWIFTCode", header: "Intermediary Bank-SWIFT Code", width: Widths.AnsiChars(11))
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(10))
-                .Text("AddName", header: "Create by", width: Widths.AnsiChars(10), iseditable: false)
-                .DateTime("AddDate", header: "Create at", iseditable: false)
-                .Text("EditName", header: "Edit by", width: Widths.AnsiChars(10), iseditable: false)
-                .DateTime("EditDate", header: "Edit at", iseditable: false);
+                .Text("CreateBy", header: "Create By", width: Widths.AnsiChars(30), iseditable: false)
+                .Text("EditBy", header: "Edit By", width: Widths.AnsiChars(30), iseditable: false)
+                .Text("AddName", header: "Create By", width: Widths.AnsiChars(30), iseditable: false)
+                .DateTime("AddDate", header: "Create date", width: Widths.AnsiChars(30), iseditable: false);
             return true;
         }
 
@@ -45,9 +44,17 @@ namespace Sci.Production.Basic
         {
             base.OnRequeryPost(datas);
             datas.Columns.Add("CountryName");
+            datas.Columns.Add("CreateBy");
+            datas.Columns.Add("EditBy");
             foreach (DataRow gridData in datas.Rows)
             {
                 gridData["CountryName"] = myUtility.Lookup("NameEN", gridData["CountryID"].ToString(), "Country", "ID");
+                gridData["CreateBy"] = gridData["AddName"].ToString() + ((DateTime)gridData["AddDate"]).ToString("yyyy/MM/dd HH:mm:ss");
+                if (gridData["EditDate"] != System.DBNull.Value)
+                {
+                    gridData["EditBy"] = gridData["EditName"].ToString() + ((DateTime)gridData["EditDate"]).ToString("yyyy/MM/dd HH:mm:ss");
+                }
+                gridData.AcceptChanges();
             }
         }
 
