@@ -7,6 +7,8 @@ using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Sci.Data;
+using Sci.Win.Tools;
+using Ict;
 
 namespace Sci.Production.Basic
 {
@@ -20,24 +22,74 @@ namespace Sci.Production.Basic
             this.displayBox2.Text = myUtility.Lookup("Abb", this.KeyValue1, "LocalSupp", "ID");
         }
 
+        protected override DualResult OnRequery()
+        {
+            string selectCommand = string.Format("select '{0}' as ID,a.ID as ArtworkTypeID, a.Seq, b.AccountNo, b.AddName,b.AddDate, b.EditName, b.EditDate from (select ID,Seq from ArtworkType where IsSubprocess = 1 or Classify = 'P' or Seq BETWEEN 'A' and 'Z') a left join (select ArtworkTypeID,AccountNo,AddName,AddDate,EditName,EditDate from LocalSupp_AccountNo where ID = '{0}') b on a.ID = b.ArtworkTypeID order by a.Seq", this.KeyValue1);
+            Ict.DualResult returnResult;
+            DataTable ArtworkTable = new DataTable();
+            returnResult = DBProxy.Current.Select(null, selectCommand, out ArtworkTable);
+            if (!returnResult)
+            {
+                return returnResult;
+            }
+            SetGrid(ArtworkTable);
+            return Result.True;
+        }
+
         protected override bool OnGridSetup()
         {
             Helper.Controls.Grid.Generator(this.grid)
-                .Text("ArtworkType", header: "Type", width: Widths.AnsiChars(10))
+                .Text("ArtworkTypeID", header: "Type", width: Widths.AnsiChars(20),iseditable:false)
                 .Text("AccountNo", header: "Account No", width: Widths.AnsiChars(10));
 
             return true;
         }
 
-        protected override void OnRequeryPost(DataTable datas)
+        protected override bool OnSave()
         {
-            string selectCommand = string.Format("select a.ID as ArtworkType, a.Seq, b.AccountNo from (select ID,Seq from ArtworkType where IsSubprocess = 1 or Classify = 'P' or Seq BETWEEN 'A' and 'Z') a left join (select ArtworkTypeID,AccountNo from LocalSupp_AccountNo where ID = '{0}') b on a.ID = b.ArtworkTypeID order by a.Seq", this.KeyValue1);
-            Ict.DualResult returnResult;
-            DataTable ArtworkTable = new DataTable();
-            if (returnResult = DBProxy.Current.Select(null, selectCommand, out ArtworkTable))
+            ITableSchema ts;
+            DualResult rs = DBProxy.Current.GetTableSchema(null, "LocalSupp_AccountNo", out ts);
+            IList<DataRow> ds = Datas;
+            
+            foreach (DataRow dr in ds)
             {
-                base.OnRequeryPost(ArtworkTable);
+                if (dr.RowState == DataRowState.Modified)
+                {
+                    if (String.IsNullOrWhiteSpace(dr["AccountNo"].ToString()))
+                    {
+                        rs = DBProxy.Current.Delete(null, ts, dr);
+                        if (rs != Result.True)
+                        {
+                            MessageBox.Show(rs.ToString());
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        string selectCommand = string.Format("select ID from LocalSupp_AccountNo where ID = '{0}' and ArtworkTypeID = '{1}'", dr["ID"].ToString(),dr["ArtworkTypeID"].ToString());
+                        if (!myUtility.Seek(selectCommand, null))
+                        {
+                            rs = DBProxy.Current.Insert(null, ts, dr);
+                            if (rs != Result.True)
+                            {
+                                MessageBox.Show(rs.ToString());
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            bool different;
+                            rs = DBProxy.Current.UpdateByChanged(null, ts, dr, out different);
+                            if (rs != Result.True)
+                            {
+                                MessageBox.Show(rs.ToString());
+                                return false;
+                            }
+                        }
+                    }
+                }
             }
+            return true;
         }
     }
 }
