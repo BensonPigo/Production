@@ -223,7 +223,7 @@
             this.textBox3.Location = new System.Drawing.Point(156, 96);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(317, 23);
-            this.textBox3.TabIndex = 12;
+            this.textBox3.TabIndex = 13;
             // 
             // textBox4
             // 
@@ -233,7 +233,7 @@
             this.textBox4.Location = new System.Drawing.Point(156, 123);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(220, 23);
-            this.textBox4.TabIndex = 13;
+            this.textBox4.TabIndex = 14;
             // 
             // textBox5
             // 
@@ -243,7 +243,7 @@
             this.textBox5.Location = new System.Drawing.Point(156, 150);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(220, 23);
-            this.textBox5.TabIndex = 14;
+            this.textBox5.TabIndex = 15;
             // 
             // editBox1
             // 
@@ -255,7 +255,7 @@
             this.editBox1.Name = "editBox1";
             this.editBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox1.Size = new System.Drawing.Size(400, 82);
-            this.editBox1.TabIndex = 15;
+            this.editBox1.TabIndex = 16;
             // 
             // textBox6
             // 
@@ -265,7 +265,7 @@
             this.textBox6.Location = new System.Drawing.Point(156, 317);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(40, 23);
-            this.textBox6.TabIndex = 16;
+            this.textBox6.TabIndex = 19;
             // 
             // checkBox1
             // 
@@ -306,7 +306,7 @@
             // button1
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button1.Location = new System.Drawing.Point(589, 15);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(163, 30);
@@ -318,7 +318,7 @@
             // button2
             // 
             this.button2.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button2.Location = new System.Drawing.Point(589, 52);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(163, 30);
@@ -330,28 +330,12 @@
             // txtpayterm_fty1
             // 
             this.txtpayterm_fty1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermID", true));
-            // 
-            // 
-            // 
-            this.txtpayterm_fty1.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtpayterm_fty1.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtpayterm_fty1.DisplayBox1.Location = new System.Drawing.Point(49, 0);
-            this.txtpayterm_fty1.DisplayBox1.Name = "displayBox1";
-            this.txtpayterm_fty1.DisplayBox1.Size = new System.Drawing.Size(330, 23);
-            this.txtpayterm_fty1.DisplayBox1.TabIndex = 1;
+            this.txtpayterm_fty1.DisplayBox1Binding = "";
             this.txtpayterm_fty1.Location = new System.Drawing.Point(156, 290);
             this.txtpayterm_fty1.Name = "txtpayterm_fty1";
             this.txtpayterm_fty1.Size = new System.Drawing.Size(384, 23);
-            this.txtpayterm_fty1.TabIndex = 19;
-            // 
-            // 
-            // 
-            this.txtpayterm_fty1.TextBox1.BackColor = System.Drawing.Color.White;
-            this.txtpayterm_fty1.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtpayterm_fty1.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtpayterm_fty1.TextBox1.Name = "textBox1";
-            this.txtpayterm_fty1.TextBox1.Size = new System.Drawing.Size(48, 23);
-            this.txtpayterm_fty1.TextBox1.TabIndex = 0;
+            this.txtpayterm_fty1.TabIndex = 18;
+            this.txtpayterm_fty1.TextBox1Binding = "";
             // 
             // txtcurrency1
             // 
@@ -362,33 +346,17 @@
             this.txtcurrency1.Location = new System.Drawing.Point(156, 263);
             this.txtcurrency1.Name = "txtcurrency1";
             this.txtcurrency1.Size = new System.Drawing.Size(40, 23);
-            this.txtcurrency1.TabIndex = 18;
+            this.txtcurrency1.TabIndex = 17;
             // 
             // txtcountry1
             // 
             this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
-            // 
-            // 
-            // 
-            this.txtcountry1.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtcountry1.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtcountry1.DisplayBox1.Location = new System.Drawing.Point(31, 0);
-            this.txtcountry1.DisplayBox1.Name = "displayBox1";
-            this.txtcountry1.DisplayBox1.Size = new System.Drawing.Size(198, 23);
-            this.txtcountry1.DisplayBox1.TabIndex = 1;
+            this.txtcountry1.DisplayBox1Binding = "";
             this.txtcountry1.Location = new System.Drawing.Point(156, 69);
             this.txtcountry1.Name = "txtcountry1";
             this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 17;
-            // 
-            // 
-            // 
-            this.txtcountry1.TextBox1.BackColor = System.Drawing.Color.White;
-            this.txtcountry1.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcountry1.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtcountry1.TextBox1.Name = "textBox1";
-            this.txtcountry1.TextBox1.Size = new System.Drawing.Size(30, 23);
-            this.txtcountry1.TextBox1.TabIndex = 0;
+            this.txtcountry1.TabIndex = 12;
+            this.txtcountry1.TextBox1Binding = "";
             // 
             // B04
             // 
