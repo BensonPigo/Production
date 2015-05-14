@@ -218,6 +218,7 @@
             // textBox3
             // 
             this.textBox3.BackColor = System.Drawing.Color.White;
+            this.textBox3.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Name", true));
             this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox3.Location = new System.Drawing.Point(156, 96);

@@ -230,6 +230,7 @@
             // textBox2
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
+            this.textBox2.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NameEN", true));
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox2.Location = new System.Drawing.Point(124, 41);
@@ -341,7 +342,7 @@
             // button1
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button1.Location = new System.Drawing.Point(500, 14);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(162, 30);
@@ -365,28 +366,12 @@
             // txtuser1
             // 
             this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Manager", true));
-            // 
-            // 
-            // 
-            this.txtuser1.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtuser1.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtuser1.DisplayBox1.Location = new System.Drawing.Point(79, 0);
-            this.txtuser1.DisplayBox1.Name = "displayBox1";
-            this.txtuser1.DisplayBox1.Size = new System.Drawing.Size(220, 23);
-            this.txtuser1.DisplayBox1.TabIndex = 1;
+            this.txtuser1.DisplayBox1Binding = "";
             this.txtuser1.Location = new System.Drawing.Point(124, 196);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(300, 23);
             this.txtuser1.TabIndex = 26;
-            // 
-            // 
-            // 
-            this.txtuser1.TextBox1.BackColor = System.Drawing.Color.White;
-            this.txtuser1.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtuser1.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtuser1.TextBox1.Name = "textBox1";
-            this.txtuser1.TextBox1.Size = new System.Drawing.Size(78, 23);
-            this.txtuser1.TextBox1.TabIndex = 0;
+            this.txtuser1.TextBox1Binding = "";
             // 
             // B01
             // 

@@ -192,6 +192,7 @@
             // textBox3
             // 
             this.textBox3.BackColor = System.Drawing.Color.White;
+            this.textBox3.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountName", true));
             this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox3.Location = new System.Drawing.Point(136, 67);
@@ -202,6 +203,7 @@
             // textBox4
             // 
             this.textBox4.BackColor = System.Drawing.Color.White;
+            this.textBox4.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BankName", true));
             this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox4.Location = new System.Drawing.Point(136, 94);
@@ -212,6 +214,7 @@
             // textBox5
             // 
             this.textBox5.BackColor = System.Drawing.Color.White;
+            this.textBox5.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.textBox5.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "City", true));
             this.textBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox5.Location = new System.Drawing.Point(136, 148);
@@ -260,28 +263,12 @@
             // txtcountry1
             // 
             this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
-            // 
-            // 
-            // 
-            this.txtcountry1.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtcountry1.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtcountry1.DisplayBox1.Location = new System.Drawing.Point(31, 0);
-            this.txtcountry1.DisplayBox1.Name = "displayBox1";
-            this.txtcountry1.DisplayBox1.Size = new System.Drawing.Size(198, 23);
-            this.txtcountry1.DisplayBox1.TabIndex = 1;
+            this.txtcountry1.DisplayBox1Binding = "";
             this.txtcountry1.Location = new System.Drawing.Point(136, 121);
             this.txtcountry1.Name = "txtcountry1";
             this.txtcountry1.Size = new System.Drawing.Size(232, 22);
             this.txtcountry1.TabIndex = 116;
-            // 
-            // 
-            // 
-            this.txtcountry1.TextBox1.BackColor = System.Drawing.Color.White;
-            this.txtcountry1.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcountry1.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtcountry1.TextBox1.Name = "textBox1";
-            this.txtcountry1.TextBox1.Size = new System.Drawing.Size(30, 23);
-            this.txtcountry1.TextBox1.TabIndex = 0;
+            this.txtcountry1.TextBox1Binding = "";
             // 
             // editBox1
             // 

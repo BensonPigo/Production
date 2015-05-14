@@ -319,6 +319,7 @@
             // textBox1
             // 
             this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Dest", true));
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox1.Location = new System.Drawing.Point(147, 390);
@@ -389,7 +390,7 @@
             // button1
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button1.Location = new System.Drawing.Point(550, 15);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(119, 30);
@@ -401,80 +402,32 @@
             // txtpaytermar2
             // 
             this.txtpaytermar2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermARIDSample", true));
-            // 
-            // 
-            // 
-            this.txtpaytermar2.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtpaytermar2.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtpaytermar2.DisplayBox1.Location = new System.Drawing.Point(49, 0);
-            this.txtpaytermar2.DisplayBox1.Name = "displayBox1";
-            this.txtpaytermar2.DisplayBox1.Size = new System.Drawing.Size(258, 23);
-            this.txtpaytermar2.DisplayBox1.TabIndex = 1;
+            this.txtpaytermar2.DisplayBox1Binding = "";
             this.txtpaytermar2.Location = new System.Drawing.Point(147, 330);
             this.txtpaytermar2.Name = "txtpaytermar2";
             this.txtpaytermar2.Size = new System.Drawing.Size(311, 23);
             this.txtpaytermar2.TabIndex = 22;
-            // 
-            // 
-            // 
-            this.txtpaytermar2.TextBox1.BackColor = System.Drawing.Color.White;
-            this.txtpaytermar2.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtpaytermar2.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtpaytermar2.TextBox1.Name = "textBox1";
-            this.txtpaytermar2.TextBox1.Size = new System.Drawing.Size(48, 23);
-            this.txtpaytermar2.TextBox1.TabIndex = 0;
+            this.txtpaytermar2.TextBox1Binding = "";
             // 
             // txtpaytermar1
             // 
             this.txtpaytermar1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermARIDBulk", true));
-            // 
-            // 
-            // 
-            this.txtpaytermar1.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtpaytermar1.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtpaytermar1.DisplayBox1.Location = new System.Drawing.Point(49, 0);
-            this.txtpaytermar1.DisplayBox1.Name = "displayBox1";
-            this.txtpaytermar1.DisplayBox1.Size = new System.Drawing.Size(258, 23);
-            this.txtpaytermar1.DisplayBox1.TabIndex = 1;
+            this.txtpaytermar1.DisplayBox1Binding = "";
             this.txtpaytermar1.Location = new System.Drawing.Point(147, 300);
             this.txtpaytermar1.Name = "txtpaytermar1";
             this.txtpaytermar1.Size = new System.Drawing.Size(311, 23);
             this.txtpaytermar1.TabIndex = 21;
-            // 
-            // 
-            // 
-            this.txtpaytermar1.TextBox1.BackColor = System.Drawing.Color.White;
-            this.txtpaytermar1.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtpaytermar1.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtpaytermar1.TextBox1.Name = "textBox1";
-            this.txtpaytermar1.TextBox1.Size = new System.Drawing.Size(48, 23);
-            this.txtpaytermar1.TextBox1.TabIndex = 0;
+            this.txtpaytermar1.TextBox1Binding = "";
             // 
             // txtcountry1
             // 
             this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
-            // 
-            // 
-            // 
-            this.txtcountry1.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtcountry1.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtcountry1.DisplayBox1.Location = new System.Drawing.Point(31, 0);
-            this.txtcountry1.DisplayBox1.Name = "displayBox1";
-            this.txtcountry1.DisplayBox1.Size = new System.Drawing.Size(198, 23);
-            this.txtcountry1.DisplayBox1.TabIndex = 1;
+            this.txtcountry1.DisplayBox1Binding = "";
             this.txtcountry1.Location = new System.Drawing.Point(147, 75);
             this.txtcountry1.Name = "txtcountry1";
             this.txtcountry1.Size = new System.Drawing.Size(232, 22);
             this.txtcountry1.TabIndex = 15;
-            // 
-            // 
-            // 
-            this.txtcountry1.TextBox1.BackColor = System.Drawing.Color.White;
-            this.txtcountry1.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcountry1.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtcountry1.TextBox1.Name = "textBox1";
-            this.txtcountry1.TextBox1.Size = new System.Drawing.Size(30, 23);
-            this.txtcountry1.TextBox1.TabIndex = 0;
+            this.txtcountry1.TextBox1Binding = "";
             // 
             // B11
             // 
