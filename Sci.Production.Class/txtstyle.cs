@@ -50,7 +50,8 @@ namespace Sci.Production.Class
                     {
                         if (!string.IsNullOrWhiteSpace((string)this.brandObject.Text))
                         {
-                            if (!myUtility.Seek((string)this.brandObject.Text + this.Text.ToString(), "Style", "BrandID+ID"))
+                            string selectCommand = string.Format("select ID from Style where BrandID = '{0}' and ID = '{1}'", (string)this.brandObject.Text, this.Text.ToString());
+                            if (!myUtility.Seek(selectCommand,null))
                             {
                                 MessageBox.Show(string.Format("< Brand + Style: {0} + {1} > not found!!!", (string)this.brandObject.Text, textValue));
                                 this.Text = "";

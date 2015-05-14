@@ -51,7 +51,8 @@ namespace Sci.Production.Class
                     {
                         if (!string.IsNullOrWhiteSpace((string)this.brandObject.Text))
                         {
-                            if (!myUtility.Seek((string)this.brandObject.Text + this.Text.ToString(), "Season", "BrandID+ID"))
+                            string selectCommand = string.Format("select ID from Season where BrandID = '{0}' and ID = '{1}'", (string)this.brandObject.Text, this.Text.ToString());
+                            if (!myUtility.Seek(selectCommand,null))
                             {
                                 MessageBox.Show(string.Format("< Season: {0} > not found!!!", textValue));
                                 this.Text = "";
