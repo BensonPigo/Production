@@ -19,20 +19,17 @@ namespace Sci.Production.Class
             InitializeComponent();
         }
 
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public Sci.Win.UI.DisplayBox DisplayBox1
         {
             get { return this.displayBox2; }
         }
 
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public Sci.Win.UI.DisplayBox DisplayBox2
         {
             get { return this.displayBox2; }
         }
 
         [Bindable(true)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public string DisplayBox1Binding
         {
             set { this.displayBox1.Text = value; }
@@ -40,7 +37,6 @@ namespace Sci.Production.Class
         }
 
         [Bindable(true)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public string DisplayBox2Binding
         {
             set { this.displayBox2.Text = value; }

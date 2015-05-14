@@ -15,7 +15,6 @@ namespace Sci.Production.Class
     {
         private string type;
         [Category("Custom Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public string Type
         {
             set

@@ -25,27 +25,23 @@ namespace Sci.Production.Class
         }
 
         [Category("Custom Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public bool IsIncludeJunk
         {
             set { this.isIncludeJunk = value; }
             get { return this.isIncludeJunk; }
         }
 
-         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public Sci.Win.UI.TextBox TextBox1
         {
             get { return this.textBox1; }
         }
 
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public Sci.Win.UI.DisplayBox DisplayBox1
         {
             get { return this.displayBox1; }
         }
 
         [Bindable(true)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public string TextBox1Binding
         {
             set { this.textBox1.Text = value; }
@@ -53,7 +49,6 @@ namespace Sci.Production.Class
         }
 
         [Bindable(true)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public string DisplayBox1Binding
         {
             set { this.displayBox1.Text = value; }

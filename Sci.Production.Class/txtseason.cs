@@ -24,7 +24,6 @@ namespace Sci.Production.Class
 
         private Control brandObject;
         [Category("Custom Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public Control BrandObjectName
         {
             set { this.brandObject = value; }
