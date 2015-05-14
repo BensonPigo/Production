@@ -40,8 +40,10 @@
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.displayBox5 = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -208,8 +210,8 @@
             // B12
             // 
             this.ClientSize = new System.Drawing.Size(762, 449);
+            this.DefaultDetailOrder = "UnitTo";
             this.DefaultOrder = "ID";
-            this.DefaultOrder2 = "UnitTo";
             this.GridAlias = "Unit_Rate";
             this.IsGridIconVisible = false;
             this.IsSupportCopy = false;
@@ -225,9 +227,11 @@
             this.WorkAlias = "Unit";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
