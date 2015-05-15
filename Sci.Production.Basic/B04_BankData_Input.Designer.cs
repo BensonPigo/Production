@@ -165,7 +165,7 @@
             this.textBox1.Location = new System.Drawing.Point(136, 13);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(198, 23);
-            this.textBox1.TabIndex = 106;
+            this.textBox1.TabIndex = 10;
             // 
             // checkBox1
             // 
@@ -175,7 +175,7 @@
             this.checkBox1.Location = new System.Drawing.Point(377, 12);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(72, 21);
-            this.checkBox1.TabIndex = 107;
+            this.checkBox1.TabIndex = 19;
             this.checkBox1.Text = "Default";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -187,7 +187,7 @@
             this.textBox2.Location = new System.Drawing.Point(136, 40);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(85, 23);
-            this.textBox2.TabIndex = 108;
+            this.textBox2.TabIndex = 11;
             // 
             // textBox3
             // 
@@ -198,7 +198,7 @@
             this.textBox3.Location = new System.Drawing.Point(136, 67);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(378, 23);
-            this.textBox3.TabIndex = 109;
+            this.textBox3.TabIndex = 12;
             // 
             // textBox4
             // 
@@ -209,7 +209,7 @@
             this.textBox4.Location = new System.Drawing.Point(136, 94);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(438, 23);
-            this.textBox4.TabIndex = 110;
+            this.textBox4.TabIndex = 13;
             // 
             // textBox5
             // 
@@ -220,7 +220,7 @@
             this.textBox5.Location = new System.Drawing.Point(136, 148);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(140, 23);
-            this.textBox5.TabIndex = 111;
+            this.textBox5.TabIndex = 15;
             // 
             // textBox6
             // 
@@ -230,7 +230,7 @@
             this.textBox6.Location = new System.Drawing.Point(136, 175);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(438, 23);
-            this.textBox6.TabIndex = 112;
+            this.textBox6.TabIndex = 16;
             // 
             // textBox7
             // 
@@ -240,7 +240,7 @@
             this.textBox7.Location = new System.Drawing.Point(217, 202);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(84, 23);
-            this.textBox7.TabIndex = 113;
+            this.textBox7.TabIndex = 17;
             // 
             // displayBox1
             // 
@@ -248,7 +248,7 @@
             this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox1.Location = new System.Drawing.Point(136, 293);
             this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(200, 23);
+            this.displayBox1.Size = new System.Drawing.Size(232, 23);
             this.displayBox1.TabIndex = 114;
             // 
             // displayBox2
@@ -257,7 +257,7 @@
             this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox2.Location = new System.Drawing.Point(136, 320);
             this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(200, 23);
+            this.displayBox2.Size = new System.Drawing.Size(232, 23);
             this.displayBox2.TabIndex = 115;
             // 
             // txtcountry1
@@ -267,7 +267,7 @@
             this.txtcountry1.Location = new System.Drawing.Point(136, 121);
             this.txtcountry1.Name = "txtcountry1";
             this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 116;
+            this.txtcountry1.TabIndex = 14;
             this.txtcountry1.TextBox1Binding = "";
             // 
             // editBox1
@@ -280,7 +280,7 @@
             this.editBox1.Name = "editBox1";
             this.editBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox1.Size = new System.Drawing.Size(435, 60);
-            this.editBox1.TabIndex = 117;
+            this.editBox1.TabIndex = 18;
             // 
             // B04_BankData_Input
             // 
