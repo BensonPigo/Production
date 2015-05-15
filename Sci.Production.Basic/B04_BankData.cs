@@ -34,9 +34,7 @@ namespace Sci.Production.Basic
                 .Text("MidSWIFTCode", header: "Intermediary Bank-SWIFT Code", width: Widths.AnsiChars(11))
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(10))
                 .Text("CreateBy", header: "Create By", width: Widths.AnsiChars(30), iseditable: false)
-                .Text("EditBy", header: "Edit By", width: Widths.AnsiChars(30), iseditable: false)
-                .Text("AddName", header: "Create By", width: Widths.AnsiChars(30), iseditable: false)
-                .DateTime("AddDate", header: "Create date", width: Widths.AnsiChars(30), iseditable: false);
+                .Text("EditBy", header: "Edit By", width: Widths.AnsiChars(30), iseditable: false);
             return true;
         }
 
