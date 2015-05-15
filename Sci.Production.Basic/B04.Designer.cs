@@ -44,7 +44,6 @@
             this.textBox4 = new Sci.Win.UI.TextBox();
             this.textBox5 = new Sci.Win.UI.TextBox();
             this.editBox1 = new Sci.Win.UI.EditBox();
-            this.textBox6 = new Sci.Win.UI.TextBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.checkBox2 = new Sci.Win.UI.CheckBox();
             this.checkBox3 = new Sci.Win.UI.CheckBox();
@@ -53,6 +52,7 @@
             this.txtpayterm_fty1 = new Sci.Production.Class.txtpayterm_fty();
             this.txtcurrency1 = new Sci.Production.Class.txtcurrency();
             this.txtcountry1 = new Sci.Production.Class.txtcountry();
+            this.numericBox1 = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -66,6 +66,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.numericBox1);
             this.detailcont.Controls.Add(this.button2);
             this.detailcont.Controls.Add(this.button1);
             this.detailcont.Controls.Add(this.checkBox3);
@@ -74,7 +75,6 @@
             this.detailcont.Controls.Add(this.txtpayterm_fty1);
             this.detailcont.Controls.Add(this.txtcurrency1);
             this.detailcont.Controls.Add(this.txtcountry1);
-            this.detailcont.Controls.Add(this.textBox6);
             this.detailcont.Controls.Add(this.editBox1);
             this.detailcont.Controls.Add(this.textBox5);
             this.detailcont.Controls.Add(this.textBox4);
@@ -258,16 +258,6 @@
             this.editBox1.Size = new System.Drawing.Size(400, 82);
             this.editBox1.TabIndex = 16;
             // 
-            // textBox6
-            // 
-            this.textBox6.BackColor = System.Drawing.Color.White;
-            this.textBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "WithHoldingRate", true));
-            this.textBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox6.Location = new System.Drawing.Point(156, 317);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(40, 23);
-            this.textBox6.TabIndex = 19;
-            // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
@@ -359,6 +349,16 @@
             this.txtcountry1.TabIndex = 12;
             this.txtcountry1.TextBox1Binding = "";
             // 
+            // numericBox1
+            // 
+            this.numericBox1.BackColor = System.Drawing.Color.White;
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "WithHoldingRate", true));
+            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox1.Location = new System.Drawing.Point(156, 317);
+            this.numericBox1.Name = "numericBox1";
+            this.numericBox1.Size = new System.Drawing.Size(40, 23);
+            this.numericBox1.TabIndex = 25;
+            // 
             // B04
             // 
             this.ClientSize = new System.Drawing.Size(775, 457);
@@ -387,7 +387,6 @@
         private Class.txtpayterm_fty txtpayterm_fty1;
         private Class.txtcurrency txtcurrency1;
         private Class.txtcountry txtcountry1;
-        private Win.UI.TextBox textBox6;
         private Win.UI.EditBox editBox1;
         private Win.UI.TextBox textBox5;
         private Win.UI.TextBox textBox4;
@@ -408,5 +407,6 @@
         private Win.UI.CheckBox checkBox3;
         private Win.UI.CheckBox checkBox2;
         private Win.UI.CheckBox checkBox1;
+        private Win.UI.NumericBox numericBox1;
     }
 }

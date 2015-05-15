@@ -46,10 +46,10 @@ namespace Sci.Production.Basic
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["ActiveManpower"].ToString()))
+            if ((String.IsNullOrWhiteSpace(CurrentMaintain["ActiveManpower"].ToString())) || (double.Parse(CurrentMaintain["ActiveManpower"].ToString()) == 0))
             {
                 MessageBox.Show("< Active Manpower > can not be empty!");
-                this.textBox5.Focus();
+                this.numericBox3.Focus();
                 return false;
             }
             return base.OnSaveBefore();
@@ -87,47 +87,41 @@ namespace Sci.Production.Basic
             }
         }
 
-        private void textBox4_Validated(object sender, EventArgs e)
+        private void numericBox2_Validated(object sender, EventArgs e)
         {
-            if (this.textBox4.Text != this.textBox4.OldValue || this.textBox5.Text != this.textBox5.OldValue)
+            if ((!string.IsNullOrWhiteSpace(this.numericBox2.Text)) && (!string.IsNullOrWhiteSpace(this.numericBox3.Text)))
             {
-                if ((!string.IsNullOrWhiteSpace(this.textBox4.Text)) && (!string.IsNullOrWhiteSpace(this.textBox5.Text)))
+                if (double.Parse(this.numericBox2.Text) != 0)
                 {
-                    if (int.Parse(this.textBox4.Text) != 0)
-                    {
-                        CurrentMaintain["ManpowerRatio"] = Math.Round((double)(double.Parse(this.textBox5.Text) / double.Parse(this.textBox4.Text)), 2);
-                    }
-                    else
-                    {
-                        CurrentMaintain["ManpowerRatio"] = 0;
-                    }
+                    CurrentMaintain["ManpowerRatio"] = Math.Round(double.Parse(this.numericBox3.Text) / double.Parse(this.numericBox2.Text), 2);
                 }
                 else
                 {
                     CurrentMaintain["ManpowerRatio"] = 0;
                 }
             }
+            else
+            {
+                CurrentMaintain["ManpowerRatio"] = 0;
+            }
         }
 
-        private void textBox9_Validated(object sender, EventArgs e)
+        private void numericBox7_Validated(object sender, EventArgs e)
         {
-            if (this.textBox9.Text != this.textBox9.OldValue || this.textBox10.Text != this.textBox10.OldValue)
+            if ((!string.IsNullOrWhiteSpace(this.numericBox7.Text)) && (!string.IsNullOrWhiteSpace(this.numericBox9.Text)))
             {
-                if ((!string.IsNullOrWhiteSpace(this.textBox9.Text)) && (!string.IsNullOrWhiteSpace(this.textBox10.Text)))
+                if (double.Parse(this.numericBox7.Text) != 0)
                 {
-                    if (double.Parse(this.textBox9.Text) > 0)
-                    {
-                        CurrentMaintain["PPH"] = Math.Round((double)(double.Parse(this.textBox10.Text) / double.Parse(this.textBox9.Text)), 2);
-                    }
-                    else
-                    {
-                        CurrentMaintain["PPH"] = 0;
-                    }
+                    CurrentMaintain["PPH"] = Math.Round(double.Parse(this.numericBox9.Text) / double.Parse(this.numericBox7.Text), 2);
                 }
                 else
                 {
                     CurrentMaintain["PPH"] = 0;
                 }
+            }
+            else
+            {
+                CurrentMaintain["PPH"] = 0;
             }
         }
     }

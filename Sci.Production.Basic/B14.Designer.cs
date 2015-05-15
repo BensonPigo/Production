@@ -45,9 +45,7 @@
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.displayBox6 = new Sci.Win.UI.DisplayBox();
             this.displayBox7 = new Sci.Win.UI.DisplayBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
             this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
-            this.textBox2 = new Sci.Win.UI.TextBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.checkBox2 = new Sci.Win.UI.CheckBox();
@@ -57,6 +55,8 @@
             this.checkBox6 = new Sci.Win.UI.CheckBox();
             this.button1 = new Sci.Win.UI.Button();
             this.editBox1 = new Sci.Win.UI.EditBox();
+            this.numericBox1 = new Sci.Win.UI.NumericBox();
+            this.numericBox2 = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -70,6 +70,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.numericBox2);
+            this.detailcont.Controls.Add(this.numericBox1);
             this.detailcont.Controls.Add(this.editBox1);
             this.detailcont.Controls.Add(this.button1);
             this.detailcont.Controls.Add(this.checkBox6);
@@ -79,8 +81,6 @@
             this.detailcont.Controls.Add(this.checkBox2);
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.comboBox1);
-            this.detailcont.Controls.Add(this.textBox2);
-            this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Controls.Add(this.displayBox7);
             this.detailcont.Controls.Add(this.txtdropdownlist1);
             this.detailcont.Controls.Add(this.displayBox6);
@@ -271,16 +271,6 @@
             this.displayBox7.Size = new System.Drawing.Size(78, 23);
             this.displayBox7.TabIndex = 18;
             // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BcsLt", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(144, 202);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(42, 23);
-            this.textBox1.TabIndex = 19;
-            // 
             // txtdropdownlist1
             // 
             this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
@@ -293,16 +283,6 @@
             this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
             this.txtdropdownlist1.TabIndex = 17;
             this.txtdropdownlist1.Type = "Classify";
-            // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutLt", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(144, 265);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(36, 23);
-            this.textBox2.TabIndex = 20;
             // 
             // comboBox1
             // 
@@ -391,7 +371,7 @@
             // button1
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button1.Location = new System.Drawing.Point(573, 20);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
@@ -410,6 +390,33 @@
             this.editBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox1.Size = new System.Drawing.Size(380, 46);
             this.editBox1.TabIndex = 29;
+            // 
+            // numericBox1
+            // 
+            this.numericBox1.BackColor = System.Drawing.Color.White;
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BcsLt", true));
+            this.numericBox1.DecimalPlaces = 1;
+            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox1.Location = new System.Drawing.Point(144, 202);
+            this.numericBox1.Maximum = new decimal(new int[] {
+            99,
+            0,
+            0,
+            65536});
+            this.numericBox1.MaxLength = 3;
+            this.numericBox1.Name = "numericBox1";
+            this.numericBox1.Size = new System.Drawing.Size(42, 23);
+            this.numericBox1.TabIndex = 30;
+            // 
+            // numericBox2
+            // 
+            this.numericBox2.BackColor = System.Drawing.Color.White;
+            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutLt", true));
+            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox2.Location = new System.Drawing.Point(144, 265);
+            this.numericBox2.Name = "numericBox2";
+            this.numericBox2.Size = new System.Drawing.Size(36, 23);
+            this.numericBox2.TabIndex = 31;
             // 
             // B14
             // 
@@ -447,7 +454,6 @@
         private Win.UI.Label label3;
         private Win.UI.Label label13;
         private Win.UI.Label label12;
-        private Win.UI.TextBox textBox1;
         private Win.UI.DisplayBox displayBox7;
         private Class.txtdropdownlist txtdropdownlist1;
         private Win.UI.DisplayBox displayBox6;
@@ -462,8 +468,9 @@
         private Win.UI.CheckBox checkBox2;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.ComboBox comboBox1;
-        private Win.UI.TextBox textBox2;
         private Win.UI.Button button1;
         private Win.UI.EditBox editBox1;
+        private Win.UI.NumericBox numericBox2;
+        private Win.UI.NumericBox numericBox1;
     }
 }
