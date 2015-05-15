@@ -1,0 +1,134 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Sci.Production.Basic
+{
+    public partial class B06 : Sci.Win.Tems.Input1
+    {
+        public B06(ToolStripMenuItem menuitem)
+            : base(menuitem)
+        {
+            InitializeComponent();
+            this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
+        }
+
+        protected override void OnEditAfter()
+        {
+            base.OnEditAfter();
+            this.textBox1.ReadOnly = true;
+            this.textBox2.ReadOnly = true;
+        }
+
+        protected override void OnNewAfter()
+        {
+            base.OnNewAfter();
+            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+        }
+
+        protected override bool OnSaveBefore()
+        {
+            if (String.IsNullOrWhiteSpace(CurrentMaintain["Year"].ToString()))
+            {
+                MessageBox.Show("< Year > can not be empty!");
+                this.textBox1.Focus();
+                return false;
+            }
+
+            if (String.IsNullOrWhiteSpace(CurrentMaintain["Month"].ToString()))
+            {
+                MessageBox.Show("< Monthly > can not be empty!");
+                this.textBox2.Focus();
+                return false;
+            }
+
+            if (String.IsNullOrWhiteSpace(CurrentMaintain["ActiveManpower"].ToString()))
+            {
+                MessageBox.Show("< Active Manpower > can not be empty!");
+                this.textBox5.Focus();
+                return false;
+            }
+            return base.OnSaveBefore();
+        }
+
+        private void textBox1_Validating(object sender, CancelEventArgs e)
+        {
+            base.OnValidated(e);
+            string textValue = this.textBox1.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
+            {
+                if (!(2015 <= int.Parse(textValue) && int.Parse(textValue) <= 2100))
+                {
+                    MessageBox.Show("< Year > must be between 2015 ~ 2100");
+                    this.textBox1.Text = "";
+                    e.Cancel = true;
+                    return;
+                }
+            }
+        }
+
+        private void textBox2_Validating(object sender, CancelEventArgs e)
+        {
+            base.OnValidated(e);
+            string textValue = this.textBox2.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox2.OldValue)
+            {
+                if (!(1 <= int.Parse(textValue) && int.Parse(textValue) <= 12))
+                {
+                    MessageBox.Show("< Monthly > must be between 1 ~ 12");
+                    this.textBox2.Text = "";
+                    e.Cancel = true;
+                    return;
+                }
+            }
+        }
+
+        private void textBox4_Validated(object sender, EventArgs e)
+        {
+            if (this.textBox4.Text != this.textBox4.OldValue || this.textBox5.Text != this.textBox5.OldValue)
+            {
+                if ((!string.IsNullOrWhiteSpace(this.textBox4.Text)) && (!string.IsNullOrWhiteSpace(this.textBox5.Text)))
+                {
+                    if (int.Parse(this.textBox4.Text) != 0)
+                    {
+                        CurrentMaintain["ManpowerRatio"] = Math.Round((double)(double.Parse(this.textBox5.Text) / double.Parse(this.textBox4.Text)), 2);
+                    }
+                    else
+                    {
+                        CurrentMaintain["ManpowerRatio"] = 0;
+                    }
+                }
+                else
+                {
+                    CurrentMaintain["ManpowerRatio"] = 0;
+                }
+            }
+        }
+
+        private void textBox9_Validated(object sender, EventArgs e)
+        {
+            if (this.textBox9.Text != this.textBox9.OldValue || this.textBox10.Text != this.textBox10.OldValue)
+            {
+                if ((!string.IsNullOrWhiteSpace(this.textBox9.Text)) && (!string.IsNullOrWhiteSpace(this.textBox10.Text)))
+                {
+                    if (double.Parse(this.textBox9.Text) > 0)
+                    {
+                        CurrentMaintain["PPH"] = Math.Round((double)(double.Parse(this.textBox10.Text) / double.Parse(this.textBox9.Text)), 2);
+                    }
+                    else
+                    {
+                        CurrentMaintain["PPH"] = 0;
+                    }
+                }
+                else
+                {
+                    CurrentMaintain["PPH"] = 0;
+                }
+            }
+        }
+    }
+}
