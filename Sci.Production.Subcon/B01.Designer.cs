@@ -55,16 +55,8 @@
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.txtcurrency1 = new Sci.Production.Class.txtcurrency();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
-            this.textBox5 = new Sci.Win.UI.TextBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.textBox6 = new Sci.Win.UI.TextBox();
-            this.textBox7 = new Sci.Win.UI.TextBox();
             this.textBox8 = new Sci.Win.UI.TextBox();
-            this.textBox9 = new Sci.Win.UI.TextBox();
-            this.textBox10 = new Sci.Win.UI.TextBox();
-            this.textBox11 = new Sci.Win.UI.TextBox();
             this.textBox12 = new Sci.Win.UI.TextBox();
             this.label25 = new Sci.Win.UI.Label();
             this.label26 = new Sci.Win.UI.Label();
@@ -75,6 +67,14 @@
             this.button2 = new Sci.Win.UI.Button();
             this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
             this.dateBox1 = new Sci.Win.UI.DateBox();
+            this.numericBox1 = new Sci.Win.UI.NumericBox();
+            this.numericBox2 = new Sci.Win.UI.NumericBox();
+            this.numericBox3 = new Sci.Win.UI.NumericBox();
+            this.numericBox4 = new Sci.Win.UI.NumericBox();
+            this.numericBox5 = new Sci.Win.UI.NumericBox();
+            this.numericBox6 = new Sci.Win.UI.NumericBox();
+            this.numericBox7 = new Sci.Win.UI.NumericBox();
+            this.numericBox8 = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -313,7 +313,7 @@
             // label23
             // 
             this.label23.Lines = 0;
-            this.label23.Location = new System.Drawing.Point(257, 23);
+            this.label23.Location = new System.Drawing.Point(286, 23);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(18, 23);
             this.label23.TabIndex = 22;
@@ -322,7 +322,7 @@
             // label24
             // 
             this.label24.Lines = 0;
-            this.label24.Location = new System.Drawing.Point(357, 23);
+            this.label24.Location = new System.Drawing.Point(417, 23);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(18, 23);
             this.label24.TabIndex = 23;
@@ -383,39 +383,6 @@
             this.displayBox1.Size = new System.Drawing.Size(100, 23);
             this.displayBox1.TabIndex = 7;
             // 
-            // textBox3
-            // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ctnlength", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(176, 23);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(65, 23);
-            this.textBox3.TabIndex = 10;
-            this.textBox3.Validated += new System.EventHandler(this.textBox3_Validated);
-            // 
-            // textBox4
-            // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ctnwidth", true));
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(278, 23);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(65, 23);
-            this.textBox4.TabIndex = 11;
-            this.textBox4.Validated += new System.EventHandler(this.textBox3_Validated);
-            // 
-            // textBox5
-            // 
-            this.textBox5.BackColor = System.Drawing.Color.White;
-            this.textBox5.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ctnheight", true));
-            this.textBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox5.Location = new System.Drawing.Point(379, 23);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(65, 23);
-            this.textBox5.TabIndex = 12;
-            this.textBox5.Validated += new System.EventHandler(this.textBox3_Validated);
-            // 
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.White;
@@ -423,31 +390,11 @@
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(452, 22);
+            this.comboBox1.Location = new System.Drawing.Point(540, 22);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
             this.comboBox1.TabIndex = 13;
             this.comboBox1.Validated += new System.EventHandler(this.textBox3_Validated);
-            // 
-            // textBox6
-            // 
-            this.textBox6.BackColor = System.Drawing.Color.White;
-            this.textBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "cbm", true));
-            this.textBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox6.Location = new System.Drawing.Point(89, 52);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(100, 23);
-            this.textBox6.TabIndex = 14;
-            // 
-            // textBox7
-            // 
-            this.textBox7.BackColor = System.Drawing.Color.White;
-            this.textBox7.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "meterToCone", true));
-            this.textBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox7.Location = new System.Drawing.Point(89, 25);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(100, 23);
-            this.textBox7.TabIndex = 16;
             // 
             // textBox8
             // 
@@ -458,36 +405,6 @@
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(100, 23);
             this.textBox8.TabIndex = 17;
-            // 
-            // textBox9
-            // 
-            this.textBox9.BackColor = System.Drawing.Color.White;
-            this.textBox9.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ThreadTex", true));
-            this.textBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox9.Location = new System.Drawing.Point(664, 25);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(100, 23);
-            this.textBox9.TabIndex = 18;
-            // 
-            // textBox10
-            // 
-            this.textBox10.BackColor = System.Drawing.Color.White;
-            this.textBox10.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Weight", true));
-            this.textBox10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox10.Location = new System.Drawing.Point(125, 55);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(100, 23);
-            this.textBox10.TabIndex = 19;
-            // 
-            // textBox11
-            // 
-            this.textBox11.BackColor = System.Drawing.Color.White;
-            this.textBox11.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AxleWeight", true));
-            this.textBox11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox11.Location = new System.Drawing.Point(125, 86);
-            this.textBox11.Name = "textBox11";
-            this.textBox11.Size = new System.Drawing.Size(100, 23);
-            this.textBox11.TabIndex = 20;
             // 
             // textBox12
             // 
@@ -523,17 +440,17 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.numericBox7);
+            this.groupBox1.Controls.Add(this.numericBox3);
+            this.groupBox1.Controls.Add(this.numericBox2);
+            this.groupBox1.Controls.Add(this.numericBox1);
             this.groupBox1.Controls.Add(this.label13);
             this.groupBox1.Controls.Add(this.label12);
             this.groupBox1.Controls.Add(this.label25);
             this.groupBox1.Controls.Add(this.label17);
             this.groupBox1.Controls.Add(this.label23);
             this.groupBox1.Controls.Add(this.label24);
-            this.groupBox1.Controls.Add(this.textBox3);
-            this.groupBox1.Controls.Add(this.textBox4);
-            this.groupBox1.Controls.Add(this.textBox5);
             this.groupBox1.Controls.Add(this.comboBox1);
-            this.groupBox1.Controls.Add(this.textBox6);
             this.groupBox1.Location = new System.Drawing.Point(15, 159);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(786, 88);
@@ -543,20 +460,20 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.numericBox8);
+            this.groupBox2.Controls.Add(this.numericBox6);
+            this.groupBox2.Controls.Add(this.numericBox5);
+            this.groupBox2.Controls.Add(this.numericBox4);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.label14);
             this.groupBox2.Controls.Add(this.label26);
             this.groupBox2.Controls.Add(this.label15);
             this.groupBox2.Controls.Add(this.label16);
-            this.groupBox2.Controls.Add(this.textBox11);
             this.groupBox2.Controls.Add(this.label18);
-            this.groupBox2.Controls.Add(this.textBox10);
             this.groupBox2.Controls.Add(this.label19);
-            this.groupBox2.Controls.Add(this.textBox9);
             this.groupBox2.Controls.Add(this.label20);
             this.groupBox2.Controls.Add(this.textBox8);
             this.groupBox2.Controls.Add(this.label21);
-            this.groupBox2.Controls.Add(this.textBox7);
             this.groupBox2.Location = new System.Drawing.Point(15, 254);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(786, 124);
@@ -637,6 +554,184 @@
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
             this.dateBox1.TabIndex = 8;
             // 
+            // numericBox1
+            // 
+            this.numericBox1.BackColor = System.Drawing.Color.White;
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ctnlength", true));
+            this.numericBox1.DecimalPlaces = 3;
+            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox1.Location = new System.Drawing.Point(176, 22);
+            this.numericBox1.Maximum = new decimal(new int[] {
+            99999999,
+            0,
+            0,
+            262144});
+            this.numericBox1.MaxLength = 9;
+            this.numericBox1.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.numericBox1.Name = "numericBox1";
+            this.numericBox1.Size = new System.Drawing.Size(95, 23);
+            this.numericBox1.TabIndex = 10;
+            this.numericBox1.Validated += new System.EventHandler(this.textBox3_Validated);
+            // 
+            // numericBox2
+            // 
+            this.numericBox2.BackColor = System.Drawing.Color.White;
+            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ctnwidth", true));
+            this.numericBox2.DecimalPlaces = 3;
+            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox2.Location = new System.Drawing.Point(307, 23);
+            this.numericBox2.Maximum = new decimal(new int[] {
+            99999999,
+            0,
+            0,
+            262144});
+            this.numericBox2.MaxLength = 9;
+            this.numericBox2.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.numericBox2.Name = "numericBox2";
+            this.numericBox2.Size = new System.Drawing.Size(95, 23);
+            this.numericBox2.TabIndex = 11;
+            this.numericBox2.Validated += new System.EventHandler(this.textBox3_Validated);
+            // 
+            // numericBox3
+            // 
+            this.numericBox3.BackColor = System.Drawing.Color.White;
+            this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "cbm", true));
+            this.numericBox3.DecimalPlaces = 4;
+            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox3.Location = new System.Drawing.Point(90, 51);
+            this.numericBox3.Maximum = new decimal(new int[] {
+            1316134911,
+            2328,
+            0,
+            262144});
+            this.numericBox3.MaxLength = 13;
+            this.numericBox3.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            262144});
+            this.numericBox3.Name = "numericBox3";
+            this.numericBox3.Size = new System.Drawing.Size(135, 23);
+            this.numericBox3.TabIndex = 14;
+            // 
+            // numericBox4
+            // 
+            this.numericBox4.BackColor = System.Drawing.Color.White;
+            this.numericBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Weight", true));
+            this.numericBox4.DecimalPlaces = 6;
+            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox4.Location = new System.Drawing.Point(125, 54);
+            this.numericBox4.Maximum = new decimal(new int[] {
+            -727379969,
+            232,
+            0,
+            458752});
+            this.numericBox4.MaxLength = 12;
+            this.numericBox4.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            393216});
+            this.numericBox4.Name = "numericBox4";
+            this.numericBox4.Size = new System.Drawing.Size(100, 23);
+            this.numericBox4.TabIndex = 19;
+            // 
+            // numericBox5
+            // 
+            this.numericBox5.BackColor = System.Drawing.Color.White;
+            this.numericBox5.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ThreadTex", true));
+            this.numericBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox5.Location = new System.Drawing.Point(664, 25);
+            this.numericBox5.Maximum = new decimal(new int[] {
+            999,
+            0,
+            0,
+            0});
+            this.numericBox5.MaxLength = 3;
+            this.numericBox5.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericBox5.Name = "numericBox5";
+            this.numericBox5.Size = new System.Drawing.Size(100, 23);
+            this.numericBox5.TabIndex = 18;
+            // 
+            // numericBox6
+            // 
+            this.numericBox6.BackColor = System.Drawing.Color.White;
+            this.numericBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AxleWeight", true));
+            this.numericBox6.DecimalPlaces = 4;
+            this.numericBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox6.Location = new System.Drawing.Point(125, 86);
+            this.numericBox6.Maximum = new decimal(new int[] {
+            999999999,
+            0,
+            0,
+            262144});
+            this.numericBox6.MaxLength = 10;
+            this.numericBox6.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            262144});
+            this.numericBox6.Name = "numericBox6";
+            this.numericBox6.Size = new System.Drawing.Size(100, 23);
+            this.numericBox6.TabIndex = 20;
+            // 
+            // numericBox7
+            // 
+            this.numericBox7.BackColor = System.Drawing.Color.White;
+            this.numericBox7.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ctnheight", true));
+            this.numericBox7.DecimalPlaces = 3;
+            this.numericBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox7.Location = new System.Drawing.Point(438, 23);
+            this.numericBox7.Maximum = new decimal(new int[] {
+            99999999,
+            0,
+            0,
+            262144});
+            this.numericBox7.MaxLength = 9;
+            this.numericBox7.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.numericBox7.Name = "numericBox7";
+            this.numericBox7.Size = new System.Drawing.Size(95, 23);
+            this.numericBox7.TabIndex = 12;
+            this.numericBox7.Validated += new System.EventHandler(this.textBox3_Validated);
+            // 
+            // numericBox8
+            // 
+            this.numericBox8.BackColor = System.Drawing.Color.White;
+            this.numericBox8.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "meterToCone", true));
+            this.numericBox8.DecimalPlaces = 1;
+            this.numericBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox8.Location = new System.Drawing.Point(90, 25);
+            this.numericBox8.Maximum = new decimal(new int[] {
+            99999999,
+            0,
+            0,
+            65536});
+            this.numericBox8.MaxLength = 8;
+            this.numericBox8.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericBox8.Name = "numericBox8";
+            this.numericBox8.Size = new System.Drawing.Size(100, 23);
+            this.numericBox8.TabIndex = 16;
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(908, 527);
@@ -695,22 +790,22 @@
         private Win.UI.CheckBox checkBox1;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.Label label26;
-        private Win.UI.TextBox textBox11;
-        private Win.UI.TextBox textBox10;
-        private Win.UI.TextBox textBox9;
         private Win.UI.TextBox textBox8;
-        private Win.UI.TextBox textBox7;
         private Win.UI.GroupBox groupBox1;
         private Win.UI.Label label25;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox4;
-        private Win.UI.TextBox textBox5;
         private Win.UI.ComboBox comboBox1;
-        private Win.UI.TextBox textBox6;
         private Win.UI.TextBox textBox12;
         private Win.UI.DisplayBox displayBox1;
         private Class.txtcurrency txtcurrency1;
         private Class.txtsubcon txtsubcon1;
         private Win.UI.DateBox dateBox1;
+        private Win.UI.NumericBox numericBox1;
+        private Win.UI.NumericBox numericBox6;
+        private Win.UI.NumericBox numericBox5;
+        private Win.UI.NumericBox numericBox4;
+        private Win.UI.NumericBox numericBox7;
+        private Win.UI.NumericBox numericBox3;
+        private Win.UI.NumericBox numericBox2;
+        private Win.UI.NumericBox numericBox8;
     }
 }

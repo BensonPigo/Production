@@ -96,22 +96,22 @@ namespace Sci.Production.Subcon
 
             if (CurrentMaintain["Category"].ToString().IndexOf("CARTON")>=0)
             {
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["CtnLength"].ToString()) || CurrentMaintain["CtnLength"].ToString() == "0")
+                if (String.IsNullOrWhiteSpace(CurrentMaintain["CtnLength"].ToString()) || Double.Parse(CurrentMaintain["CtnLength"].ToString()) == 0)
                 {
                     MessageBox.Show("< CtnLength > can not be empty!");
-                    this.textBox3.Focus();
+                    this.numericBox1.Focus();
                     return false;
                 }
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["CtnWidth"].ToString()) || CurrentMaintain["CtnWidth"].ToString() == "0")
+                if (String.IsNullOrWhiteSpace(CurrentMaintain["CtnWidth"].ToString()) || Double.Parse(CurrentMaintain["CtnWidth"].ToString() ) ==0)
                 {
                     MessageBox.Show("< CtnWidth > can not be empty!");
-                    this.textBox4.Focus();
+                    this.numericBox2.Focus();
                     return false;
                 }
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["CtnHeight"].ToString()) || CurrentMaintain["CtnHeight"].ToString() == "0")
+                if (String.IsNullOrWhiteSpace(CurrentMaintain["CtnHeight"].ToString()) || Double.Parse(CurrentMaintain["CtnHeight"].ToString()) ==0)
                 {
                     MessageBox.Show("< CtnHeight > can not be empty!");
-                    this.textBox5.Focus();
+                    this.numericBox7.Focus();
                     return false;
                 }
                 if (String.IsNullOrWhiteSpace(CurrentMaintain["CtnUnit"].ToString()))
@@ -120,20 +120,20 @@ namespace Sci.Production.Subcon
                     this.comboBox1.Focus();
                     return false;
                 }
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["CBM"].ToString()) || CurrentMaintain["CBM"].ToString() == "0")
+                if (String.IsNullOrWhiteSpace(CurrentMaintain["CBM"].ToString()) || Double.Parse(CurrentMaintain["CBM"].ToString()) ==0)
                 {
                     MessageBox.Show("< CBM > can not be empty!");
-                    this.textBox6.Focus();
+                    this.numericBox3.Focus();
                     return false;
                 }
             }
 
             if (CurrentMaintain["Category"].ToString().IndexOf("THREAD") >=0)
             {
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["MeterToCone"].ToString()) || CurrentMaintain["MeterToCone"].ToString() == "0")
+                if (String.IsNullOrWhiteSpace(CurrentMaintain["MeterToCone"].ToString()) || Double.Parse(CurrentMaintain["MeterToCone"].ToString() ) ==0)
                 {
                     MessageBox.Show("< MeterToCone > can not be empty!");
-                    this.textBox7.Focus();
+                    this.numericBox8.Focus();
                     return false;
                 }
                 if (String.IsNullOrWhiteSpace(CurrentMaintain["ThreadTypeID"].ToString()))
@@ -142,22 +142,22 @@ namespace Sci.Production.Subcon
                     this.textBox8.Focus();
                     return false;
                 }
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["ThreadTex"].ToString()) || CurrentMaintain["ThreadTex"].ToString() == "0")
+                if (String.IsNullOrWhiteSpace(CurrentMaintain["ThreadTex"].ToString()) || Double.Parse(CurrentMaintain["ThreadTex"].ToString()) ==0)
                 {
                     MessageBox.Show("< ThreadTex > can not be empty!");
-                    this.textBox9.Focus();
+                    this.numericBox5.Focus();
                     return false;
                 }
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["Weight"].ToString()) || CurrentMaintain["Weight"].ToString() == "0")
+                if (String.IsNullOrWhiteSpace(CurrentMaintain["Weight"].ToString()) || Double.Parse(CurrentMaintain["Weight"].ToString() ) ==0)
                 {
                     MessageBox.Show("< Weight > can not be empty!");
-                    this.textBox10.Focus();
+                    this.numericBox4.Focus();
                     return false;
                 }
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["AxleWeight"].ToString()) || CurrentMaintain["AxleWeight"].ToString() == "0")
+                if (String.IsNullOrWhiteSpace(CurrentMaintain["AxleWeight"].ToString()) || Double.Parse(CurrentMaintain["AxleWeight"].ToString()) == 0)
                 {
                     MessageBox.Show("< AxleWeight > can not be empty!");
-                    this.textBox11.Focus();
+                    this.numericBox6.Focus();
                     return false;
                 }
             }
@@ -181,14 +181,14 @@ namespace Sci.Production.Subcon
                 double i = double.Parse(CurrentMaintain["CtnLength"].ToString()) *
                     double.Parse(CurrentMaintain["CtnWidth"].ToString()) *
                     double.Parse(CurrentMaintain["CtnHeight"].ToString()) /  1728;
-	            this.textBox6.Text = Math.Round(i,4).ToString() ;
+                this.numericBox3.Text = Math.Round(i, 4).ToString();
             }
             else
             {
                 double i = double.Parse(CurrentMaintain["CtnLength"].ToString()) *
                     double.Parse(CurrentMaintain["CtnWidth"].ToString()) *
                     double.Parse(CurrentMaintain["CtnHeight"].ToString()) / 1000000000;
-                this.textBox6.Text = Math.Round(i, 4).ToString();
+                this.numericBox3.Text = Math.Round(i, 4).ToString();
             }
             
         }
@@ -242,9 +242,9 @@ namespace Sci.Production.Subcon
         //計算cbm相關欄位的valid事件
         private void textBox3_Validated(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(textBox3.Text)
-               || string.IsNullOrWhiteSpace(textBox4.Text)
-               || string.IsNullOrWhiteSpace(textBox5.Text))
+            if (string.IsNullOrWhiteSpace(this.numericBox1.Text)
+               || string.IsNullOrWhiteSpace(numericBox2.Text)
+               || string.IsNullOrWhiteSpace(numericBox7.Text))
             {
                 return;
             }
