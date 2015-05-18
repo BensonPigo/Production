@@ -173,6 +173,9 @@ Sci.Production.Shipping/Sci.Production.Shipping.csproj -text
 Sci.Production.Subcon/B01.Designer.cs -text
 Sci.Production.Subcon/B01.cs -text
 Sci.Production.Subcon/B01.resx -text
+Sci.Production.Subcon/B01_History.Designer.cs -text
+Sci.Production.Subcon/B01_History.cs -text
+Sci.Production.Subcon/B01_History.resx -text
 Sci.Production.Subcon/B01_Quotation.Designer.cs -text
 Sci.Production.Subcon/B01_Quotation.cs -text
 Sci.Production.Subcon/B01_Quotation.resx -text
