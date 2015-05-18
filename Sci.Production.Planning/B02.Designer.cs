@@ -1,0 +1,173 @@
+﻿namespace Sci.Production.Planning
+{
+    partial class B02
+    {
+        /// <summary>
+        /// 設計工具所需的變數。
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// 清除任何使用中的資源。
+        /// </summary>
+        /// <param name="disposing">如果應該處置 Managed 資源則為 true，否則為 false。</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form 設計工具產生的程式碼
+
+        /// <summary>
+        /// 此為設計工具支援所需的方法 - 請勿使用程式碼編輯器
+        /// 修改這個方法的內容。
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.label3 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
+            this.numericBox1 = new Sci.Win.UI.NumericBox();
+            this.numericBox2 = new Sci.Win.UI.NumericBox();
+            this.numericBox3 = new Sci.Win.UI.NumericBox();
+            ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
+            this.detail.SuspendLayout();
+            this.detailcont.SuspendLayout();
+            this.tabs.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // detailcont
+            // 
+            this.detailcont.Controls.Add(this.numericBox3);
+            this.detailcont.Controls.Add(this.numericBox2);
+            this.detailcont.Controls.Add(this.numericBox1);
+            this.detailcont.Controls.Add(this.label5);
+            this.detailcont.Controls.Add(this.label4);
+            this.detailcont.Controls.Add(this.label3);
+            // 
+            // label3
+            // 
+            this.label3.Lines = 0;
+            this.label3.Location = new System.Drawing.Point(23, 20);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(105, 23);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Begin Stitch";
+            // 
+            // label4
+            // 
+            this.label4.Lines = 0;
+            this.label4.Location = new System.Drawing.Point(23, 53);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(105, 23);
+            this.label4.TabIndex = 3;
+            this.label4.Text = "End Stitch";
+            // 
+            // label5
+            // 
+            this.label5.Lines = 0;
+            this.label5.Location = new System.Drawing.Point(23, 86);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(105, 23);
+            this.label5.TabIndex = 4;
+            this.label5.Text = "Batch Number";
+            // 
+            // numericBox1
+            // 
+            this.numericBox1.BackColor = System.Drawing.Color.White;
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BeginStitch", true));
+            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox1.Location = new System.Drawing.Point(131, 20);
+            this.numericBox1.Maximum = new decimal(new int[] {
+            9999999,
+            0,
+            0,
+            0});
+            this.numericBox1.MaxLength = 7;
+            this.numericBox1.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox1.Name = "numericBox1";
+            this.numericBox1.Size = new System.Drawing.Size(100, 23);
+            this.numericBox1.TabIndex = 5;
+            // 
+            // numericBox2
+            // 
+            this.numericBox2.BackColor = System.Drawing.Color.White;
+            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "EndStitch", true));
+            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox2.Location = new System.Drawing.Point(131, 53);
+            this.numericBox2.Maximum = new decimal(new int[] {
+            9999999,
+            0,
+            0,
+            0});
+            this.numericBox2.MaxLength = 7;
+            this.numericBox2.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox2.Name = "numericBox2";
+            this.numericBox2.Size = new System.Drawing.Size(100, 23);
+            this.numericBox2.TabIndex = 6;
+            // 
+            // numericBox3
+            // 
+            this.numericBox3.BackColor = System.Drawing.Color.White;
+            this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BatchNo", true));
+            this.numericBox3.DecimalPlaces = 1;
+            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox3.Location = new System.Drawing.Point(131, 86);
+            this.numericBox3.Maximum = new decimal(new int[] {
+            999,
+            0,
+            0,
+            65536});
+            this.numericBox3.MaxLength = 4;
+            this.numericBox3.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            65536});
+            this.numericBox3.Name = "numericBox3";
+            this.numericBox3.Size = new System.Drawing.Size(100, 23);
+            this.numericBox3.TabIndex = 7;
+            // 
+            // B02
+            // 
+            this.ClientSize = new System.Drawing.Size(908, 457);
+            this.IsSupportClip = false;
+            this.IsSupportLocate = false;
+            this.IsSupportPrint = false;
+            this.Name = "B02";
+            this.Text = "B02. Embroidery\'s number of Setting";
+            this.WorkAlias = "EmbBatch";
+            ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
+            this.detail.ResumeLayout(false);
+            this.detailcont.ResumeLayout(false);
+            this.detailcont.PerformLayout();
+            this.tabs.ResumeLayout(false);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private Win.UI.Label label5;
+        private Win.UI.Label label4;
+        private Win.UI.Label label3;
+        private Win.UI.NumericBox numericBox3;
+        private Win.UI.NumericBox numericBox2;
+        private Win.UI.NumericBox numericBox1;
+    }
+}
