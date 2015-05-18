@@ -146,7 +146,7 @@
             this.txtfactory1.Location = new System.Drawing.Point(161, 133);
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 16;
+            this.txtfactory1.TabIndex = 12;
             // 
             // B02
             // 
