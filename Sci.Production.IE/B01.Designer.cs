@@ -37,8 +37,8 @@
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.textBox3 = new Sci.Win.UI.TextBox();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
             this.radioButton2 = new Sci.Win.UI.RadioButton();
+            this.radioButton1 = new Sci.Win.UI.RadioButton();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
@@ -71,6 +71,10 @@
             // detailbtm
             // 
             this.detailbtm.Size = new System.Drawing.Size(682, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(682, 395);
             // 
             // tabs
             // 
@@ -134,6 +138,7 @@
             // textBox2
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
+            this.textBox2.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox2.Location = new System.Drawing.Point(149, 68);
@@ -161,19 +166,6 @@
             this.radioPanel1.Size = new System.Drawing.Size(270, 23);
             this.radioPanel1.TabIndex = 8;
             // 
-            // radioButton1
-            // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(3, 1);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(106, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "ChangeOver";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.Value = "1";
-            // 
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
@@ -186,6 +178,19 @@
             this.radioButton2.Text = "SCI Delivery";
             this.radioButton2.UseVisualStyleBackColor = true;
             this.radioButton2.Value = "2";
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioButton1.Location = new System.Drawing.Point(3, 1);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(106, 21);
+            this.radioButton1.TabIndex = 0;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "ChangeOver";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioButton1.Value = "1";
             // 
             // comboBox1
             // 
