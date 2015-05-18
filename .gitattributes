@@ -171,6 +171,9 @@ Sci.Production.PPIC/Properties/AssemblyInfo.cs -text
 Sci.Production.PPIC/Sci.Production.PPIC.csproj -text
 Sci.Production.Packing/Properties/AssemblyInfo.cs -text
 Sci.Production.Packing/Sci.Production.Packing.csproj -text
+Sci.Production.Planning/B01.Designer.cs -text
+Sci.Production.Planning/B01.cs -text
+Sci.Production.Planning/B01.resx -text
 Sci.Production.Planning/Properties/AssemblyInfo.cs -text
 Sci.Production.Planning/Sci.Production.Planning.csproj -text
 Sci.Production.Quality/Properties/AssemblyInfo.cs -text
