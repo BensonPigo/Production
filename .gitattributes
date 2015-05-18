@@ -143,6 +143,9 @@ Sci.Production.Cutting/Sci.Production.Cutting.csproj -text
 Sci.Production.IE/B01.Designer.cs -text
 Sci.Production.IE/B01.cs -text
 Sci.Production.IE/B01.resx -text
+Sci.Production.IE/B02.Designer.cs -text
+Sci.Production.IE/B02.cs -text
+Sci.Production.IE/B02.resx -text
 Sci.Production.IE/Properties/AssemblyInfo.cs -text
 Sci.Production.IE/Sci.Production.IE.csproj -text
 Sci.Production.Logistic/Properties/AssemblyInfo.cs -text

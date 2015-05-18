@@ -101,12 +101,27 @@
     <Compile Include="B01.Designer.cs">
       <DependentUpon>B01.cs</DependentUpon>
     </Compile>
+    <Compile Include="B02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B02.Designer.cs">
+      <DependentUpon>B02.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
       <DependentUpon>B01.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B02.resx">
+      <DependentUpon>B02.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
+      <Project>{0E35FD31-4A86-4D4E-A393-B6C5E3D7C956}</Project>
+      <Name>Sci.Production.Class</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
