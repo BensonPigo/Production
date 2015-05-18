@@ -86,6 +86,18 @@
     <Compile Include="B01.Designer.cs">
       <DependentUpon>B01.cs</DependentUpon>
     </Compile>
+    <Compile Include="B01_History.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B01_History.Designer.cs">
+      <DependentUpon>B01_History.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B01_Quotation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B01_Quotation.Designer.cs">
+      <DependentUpon>B01_Quotation.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -97,6 +109,12 @@
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
       <DependentUpon>B01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B01_History.resx">
+      <DependentUpon>B01_History.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B01_Quotation.resx">
+      <DependentUpon>B01_Quotation.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

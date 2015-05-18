@@ -60,7 +60,6 @@ namespace Sci.Production.Subcon
         {
             base.OnEditAfter();
             this.textBox1.ReadOnly = true;
-            txtartworktype_fty1.ReadOnly = true;
         }
 
         //存檔前檢查
@@ -249,6 +248,49 @@ namespace Sci.Production.Subcon
                 return;
             }
             getCBM();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var dr = CurrentMaintain; if (null == dr) return;
+            var frm = new Sci.Production.Subcon.B01_Quotation( this.IsSupportEdit, dr);
+            frm.ShowDialog(this);
+            this.RenewData();
+
+        }
+
+        //按鈕變色
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+            
+            string sqlcmd = "select refno from localitem_quot where refno = '" + CurrentMaintain["refno"].ToString() + "';";
+            if (myUtility.Seek(sqlcmd,"Production"  ))
+            {
+                this.button1.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.button1.ForeColor = Color.Black;
+            }
+
+             sqlcmd = "select refno from localap_detail where refno = '" + CurrentMaintain["refno"].ToString() + "';";
+            if (myUtility.Seek(sqlcmd, "Production"))
+            {
+                this.button2.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.button2.ForeColor = Color.Black;
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var dr = CurrentMaintain; if (null == dr) return;
+            var frm = new Sci.Production.Subcon.B01_History(dr);
+            frm.ShowDialog(this);
+            this.RenewData();
         }
     }
 }
