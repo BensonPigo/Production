@@ -33,9 +33,9 @@
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.numericBox1 = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -45,31 +45,31 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(682, 395);
+            this.detail.Size = new System.Drawing.Size(631, 395);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.numericBox1);
             this.detailcont.Controls.Add(this.txtfactory1);
             this.detailcont.Controls.Add(this.comboBox1);
-            this.detailcont.Controls.Add(this.numericBox1);
             this.detailcont.Controls.Add(this.dateBox1);
             this.detailcont.Controls.Add(this.label6);
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(682, 357);
+            this.detailcont.Size = new System.Drawing.Size(631, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(682, 38);
+            this.detailbtm.Size = new System.Drawing.Size(631, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(682, 395);
+            this.browse.Size = new System.Drawing.Size(631, 395);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(690, 424);
+            this.tabs.Size = new System.Drawing.Size(639, 424);
             // 
             // label3
             // 
@@ -113,17 +113,7 @@
             this.dateBox1.Location = new System.Drawing.Point(161, 37);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 10;
-            // 
-            // numericBox1
-            // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Target", true));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(161, 180);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 13;
+            this.dateBox1.TabIndex = 4;
             // 
             // comboBox1
             // 
@@ -135,7 +125,7 @@
             this.comboBox1.Location = new System.Drawing.Point(161, 84);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(188, 24);
-            this.comboBox1.TabIndex = 11;
+            this.comboBox1.TabIndex = 5;
             this.comboBox1.Validated += new System.EventHandler(this.comboBox1_Validated);
             // 
             // txtfactory1
@@ -146,11 +136,28 @@
             this.txtfactory1.Location = new System.Drawing.Point(161, 133);
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 12;
+            this.txtfactory1.TabIndex = 6;
+            // 
+            // numericBox1
+            // 
+            this.numericBox1.BackColor = System.Drawing.Color.White;
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Target", true));
+            this.numericBox1.DecimalPlaces = 2;
+            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox1.Location = new System.Drawing.Point(161, 180);
+            this.numericBox1.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            131072});
+            this.numericBox1.MaxLength = 7;
+            this.numericBox1.Name = "numericBox1";
+            this.numericBox1.Size = new System.Drawing.Size(66, 23);
+            this.numericBox1.TabIndex = 7;
             // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(690, 457);
+            this.ClientSize = new System.Drawing.Size(639, 457);
             this.DefaultOrder = "EffectiveDate";
             this.IsSupportPrint = false;
             this.Name = "B02";
@@ -170,13 +177,13 @@
 
         #endregion
 
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.DateBox dateBox1;
         private Win.UI.Label label6;
         private Win.UI.Label label5;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
-        private Win.UI.ComboBox comboBox1;
+        private Win.UI.DateBox dateBox1;
         private Class.txtfactory txtfactory1;
+        private Win.UI.ComboBox comboBox1;
+        private Win.UI.NumericBox numericBox1;
     }
 }
