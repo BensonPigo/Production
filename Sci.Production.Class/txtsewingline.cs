@@ -19,7 +19,7 @@ namespace Sci.Production.Class
     public partial class txtsewingline : Sci.Win.UI.TextBox
     {
         private string fty = "";
-        public Control factoryobject;	//欄位.存入要取值的<控制項>
+        public Control factoryObject;	//欄位.存入要取值的<控制項>
 
         // 屬性. 利用Control來設定要存取的<控制項>
         [Category("Custom Properties")]
@@ -27,19 +27,19 @@ namespace Sci.Production.Class
         {
             set
             {
-                factoryobject = value;
+                factoryObject = value;
             }
             get
             {
-                return factoryobject;
+                return factoryObject;
             }
         }
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
-            fty = factoryobject.Text;
+            fty = factoryObject.Text;
             string sql = string.Format("Select id,factoryid From SewingLine Where FactoryId = '{0}'", fty);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "30,30", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2,30", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
@@ -50,7 +50,7 @@ namespace Sci.Production.Class
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (this.factoryobject==null)
+                if (this.factoryObject == null)
                 {
                     string tmp = myUtility.Lookup("id", str, "SewingLine", "id");
                     if (string.IsNullOrWhiteSpace(tmp))
@@ -63,33 +63,20 @@ namespace Sci.Production.Class
                 }
                 else
                 {
-                    fty = this.factoryobject.Text;
-                    string tmp = myUtility.Lookup("id", fty + str, "SewingLine", "factoryid+id");
-                    if (string.IsNullOrWhiteSpace(tmp))
+                    if (!string.IsNullOrWhiteSpace((string)this.factoryObject.Text))
                     {
-                        MessageBox.Show(string.Format("< Sewing Line> : {0} not found!!!", str));
-                        this.Text = "";
-                        e.Cancel = true;
-                        return;
+                        string selectCommand = string.Format("select ID from SewingLine where FactoryID = '{0}' and ID = '{1}'", (string)this.factoryObject.Text, this.Text.ToString());
+                        if (!myUtility.Seek(selectCommand, null))
+                        {
+                            MessageBox.Show(string.Format("< Sewing Line: {0} > not found!!!", (string)this.factoryObject.Text));
+                            this.Text = "";
+                            e.Cancel = true;
+                            return;
+                        }
                     }
                 }
             }
         }
-        // 取回指定的 Control 並存入 this.BuyerObject
-        //private void getAllControls(Control container, string SearchName)
-        //{
-        //    foreach (Control c in container.Controls)
-        //    {
-        //        if (c.Name.ToString() == SearchName)
-        //        {
-        //            this.factoryobject = c;
-        //        }
-        //        else
-        //        {
-        //            if (c.Controls.Count > 0) this.getAllControls(c, SearchName);
-        //        }
-        //    }
-        //}
         public txtsewingline()
         {
             this.Width = 60;
