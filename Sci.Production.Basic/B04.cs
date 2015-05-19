@@ -84,12 +84,14 @@ namespace Sci.Production.Basic
         {
             Sci.Production.Basic.B04_AccountNo callNextForm = new Sci.Production.Basic.B04_AccountNo(this.IsSupportEdit,CurrentMaintain["ID"].ToString(),null,null);
             callNextForm.ShowDialog(this);
+            OnDetailEntered();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             Sci.Production.Basic.B04_BankData callNextForm = new Sci.Production.Basic.B04_BankData(this.IsSupportEdit, CurrentMaintain["ID"].ToString(), null, null);
             callNextForm.ShowDialog(this);
+            OnDetailEntered();
         }
     }
 }
