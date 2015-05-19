@@ -59,6 +59,12 @@ namespace Sci.Production.IE
             this.txtfactory1.ReadOnly = true;
         }
 
+        protected override void OnCopyAfter()
+        {
+            base.OnCopyAfter();
+            CurrentMaintain["ID"] = DBNull.Value;
+        }
+
         protected override bool OnSaveBefore()
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["EffectiveDate"].ToString()))
@@ -85,13 +91,16 @@ namespace Sci.Production.IE
                 }
             }
 
-            DateTime effectiveDate = (DateTime)CurrentMaintain["EffectiveDate"];
-            string effectiveDateToString = effectiveDate.ToShortDateString();
-            string selectCommand = string.Format("select ID from ChgOverTarget where EffectiveDate = '{0}' and FactoryID = '{1}' and Type = '{2}'", effectiveDateToString, CurrentMaintain["FactoryID"].ToString(), CurrentMaintain["Type"].ToString());
-            if (myUtility.Seek(selectCommand, null))
+            if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
-                MessageBox.Show(string.Format("Data is Duplicate!!"));
-                return false;
+                DateTime effectiveDate = (DateTime)CurrentMaintain["EffectiveDate"];
+                string effectiveDateToString = effectiveDate.ToShortDateString();
+                string selectCommand = string.Format("select ID from ChgOverTarget where EffectiveDate = '{0}' and FactoryID = '{1}' and Type = '{2}'", effectiveDateToString, CurrentMaintain["FactoryID"].ToString(), CurrentMaintain["Type"].ToString());
+                if (myUtility.Seek(selectCommand, null))
+                {
+                    MessageBox.Show(string.Format("Data is Duplicate!!"));
+                    return false;
+                }
             }
 
             return base.OnSaveBefore();

@@ -45,7 +45,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(631, 395);
+            this.detail.Size = new System.Drawing.Size(681, 395);
             // 
             // detailcont
             // 
@@ -57,19 +57,19 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(631, 357);
+            this.detailcont.Size = new System.Drawing.Size(681, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(631, 38);
+            this.detailbtm.Size = new System.Drawing.Size(681, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(631, 395);
+            this.browse.Size = new System.Drawing.Size(681, 395);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(639, 424);
+            this.tabs.Size = new System.Drawing.Size(689, 424);
             // 
             // label3
             // 
@@ -157,7 +157,7 @@
             // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(639, 457);
+            this.ClientSize = new System.Drawing.Size(689, 457);
             this.DefaultOrder = "EffectiveDate";
             this.IsSupportPrint = false;
             this.Name = "B02";
