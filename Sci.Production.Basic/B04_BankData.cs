@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
+using Ict;
 
 namespace Sci.Production.Basic
 {
@@ -21,14 +22,60 @@ namespace Sci.Production.Basic
 
         protected override bool OnGridSetup()
         {
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            ts.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    {
+                        if (e.RowIndex != -1)
+                        {
+                            DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Alias from Country where Junk = 0 order by ID", "4,30", dr["CountryID"].ToString());
+                            DialogResult returnResult = item.ShowDialog();
+                            if (returnResult == DialogResult.Cancel) { return; }
+                            dr["CountryID"] = item.GetSelectedString();
+                            IList<DataRow> selectedData = item.GetSelecteds();
+                            if (selectedData.Count > 0)
+                            {
+                                dr["CountryName"] = (selectedData[0])["Alias"].ToString();
+                            }
+                        }
+                    }
+                }
+            };
+
+            ts.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()))
+                    {
+                        if (!myUtility.Seek(e.FormattedValue.ToString(),"Country","ID"))
+                        {
+                            MessageBox.Show(string.Format("< Country: {0} > not found!!!", e.FormattedValue.ToString()));
+                            dr["CountryID"] = "";
+                            dr["CountryName"] = "";
+                        }
+                        else
+                        {
+                            dr["CountryID"] = e.FormattedValue.ToString().ToUpper();
+                            dr["CountryName"] = myUtility.Lookup("Alias", dr["CountryID"].ToString(), "Country", "Id");
+                        }
+                    }
+                }
+            };
+
             Helper.Controls.Grid.Generator(this.grid)
                 .CheckBox("IsDefault", header: "Default", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("AccountNo", header: "Account No.", width: Widths.AnsiChars(20))
                 .Text("SWIFTCode", header: "SWIFT", width: Widths.AnsiChars(11))
                 .Text("AccountName", header: "Account Name", width: Widths.AnsiChars(20))
                 .Text("BankName", header: "Bank Name", width: Widths.AnsiChars(20))
-                .Text("CountryID", header: "Country", width: Widths.AnsiChars(2))
-                .Text("CountryName", header: "Country Name", width: Widths.AnsiChars(10),iseditable:false)
+                .Text("CountryID", header: "Country", width: Widths.AnsiChars(2), settings: ts)
+                .Text("CountryName", header: "Country Name", width: Widths.AnsiChars(10), iseditable: false)
                 .Text("City", header: "City", width: Widths.AnsiChars(20))
                 .Text("MidBankName", header: "Intermediary Bank", width: Widths.AnsiChars(20))
                 .Text("MidSWIFTCode", header: "Intermediary Bank-SWIFT Code", width: Widths.AnsiChars(11))
@@ -46,7 +93,7 @@ namespace Sci.Production.Basic
             datas.Columns.Add("EditBy");
             foreach (DataRow gridData in datas.Rows)
             {
-                gridData["CountryName"] = myUtility.Lookup("NameEN", gridData["CountryID"].ToString(), "Country", "ID");
+                gridData["CountryName"] = myUtility.Lookup("Alias", gridData["CountryID"].ToString(), "Country", "ID");
                 gridData["CreateBy"] = gridData["AddName"].ToString() + ((DateTime)gridData["AddDate"]).ToString("yyyy/MM/dd HH:mm:ss");
                 if (gridData["EditDate"] != System.DBNull.Value)
                 {
@@ -87,7 +134,7 @@ namespace Sci.Production.Basic
                 }
 
 
-                if (gridData["IsDefault"].ToString() == "True" )
+                if (gridData["IsDefault"].ToString() == "True")
                 {
                     defaultCount = defaultCount + 1;
                 }
