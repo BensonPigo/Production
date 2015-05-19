@@ -103,7 +103,7 @@ namespace Sci.Production.Basic
             }
         }
 
-        protected override bool DoSave()
+        protected override bool OnSaveBefore()
         {
             int defaultCount = 0;
 
@@ -146,7 +146,7 @@ namespace Sci.Production.Basic
                 return false;
             }
 
-            return base.DoSave();
+            return base.OnSaveBefore();
         }
     }
 }
