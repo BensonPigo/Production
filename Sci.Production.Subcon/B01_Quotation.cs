@@ -36,7 +36,8 @@ namespace Sci.Production.Subcon
         //修改前檢查
         protected override bool OnEditBefore()
         {
-            if(CurrentMaintain["Encode"].ToString() == "True")
+            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if(dr["Encode"].ToString() == "True")
             {
                 MessageBox.Show("Record is encoded, can't modify!");
                 return false;
@@ -47,7 +48,8 @@ namespace Sci.Production.Subcon
         //刪除前檢查
         protected override bool OnDeleteBefore()
         {
-            if (CurrentMaintain["Encode"].ToString() == "True")
+            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if (dr["Encode"].ToString() == "True")
             {
                 MessageBox.Show("Record is encoded, can't delete!");
                 return false;
@@ -102,58 +104,71 @@ namespace Sci.Production.Subcon
                 return;
             }
 
+            DualResult result,result2;
             TransactionScope _transactionscope = new TransactionScope();
-            DualResult result;             
-            try
+            using (_transactionscope)
             {
-                String sqlcmd = "Update localitem_quot set encode = 1 where refno = '" + CurrentMaintain["refno"].ToString() + "'";
-                result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd);
-               
-                string s1 = "Update localitem set localsuppid = @suppid,price = @price,currencyid = @currencyid, quotdate = @quotdate where refno = @refno";
-                
-                #region 準備sql參數資料
-                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                sp1.ParameterName = "@refno";
-                sp1.Value = CurrentMaintain["refno"].ToString();
+                try
+                {
+                    String sqlcmd = "Update localitem_quot set encode = 1 where refno = '" + CurrentMaintain["refno"].ToString() + "'";
+                    result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd);
 
-                System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-                sp2.ParameterName = "@suppid";
-                sp2.Value = suppid;
+                    string s1 = "Update localitem set localsuppid = @suppid,price = @price,currencyid = @currencyid, quotdate = @quotdate where refno = @refno";
 
-                System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-                sp3.ParameterName = "@price";
-                sp3.Value = price;
+                    #region 準備sql參數資料
+                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                    sp1.ParameterName = "@refno";
+                    sp1.Value = CurrentMaintain["refno"].ToString();
 
-                System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
-                sp4.ParameterName = "@currencyid";
-                sp4.Value = currencyid;
+                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+                    sp2.ParameterName = "@suppid";
+                    sp2.Value = suppid;
 
-                System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
-                sp5.ParameterName = "@quotdate";
-                sp5.Value = DateTime.Today;
+                    System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+                    sp3.ParameterName = "@price";
+                    sp3.Value = price;
 
-                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                cmds.Add(sp1);
-                cmds.Add(sp2);
-                cmds.Add(sp3);
-                cmds.Add(sp4);
-                cmds.Add(sp5);
-#endregion
+                    System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+                    sp4.ParameterName = "@currencyid";
+                    sp4.Value = currencyid;
 
-                result = Sci.Data.DBProxy.Current.Execute(null, s1, cmds);
-                _transactionscope.Complete();
-                MessageBox.Show("Encode sucessful");
-                RenewData();
-                OnDetailEntered();
-            }
-            catch (Exception ex)
-            {
-                ShowErr("Commit transaction error.", ex);
-                return;
+                    System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
+                    sp5.ParameterName = "@quotdate";
+                    sp5.Value = DateTime.Today;
+
+                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                    cmds.Add(sp1);
+                    cmds.Add(sp2);
+                    cmds.Add(sp3);
+                    cmds.Add(sp4);
+                    cmds.Add(sp5);
+                    #endregion
+
+                    result2 = Sci.Data.DBProxy.Current.Execute(null, s1, cmds);
+
+                    if (result && result2)
+                    {
+                        _transactionscope.Complete();
+                        MessageBox.Show("Encode sucessful");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Encode failed, Pleaes re-try");
+                    }
+                    
+                }
+                catch (Exception ex)
+                {
+                    ShowErr("Commit transaction error.", ex);
+                    return;
+                }
             }
 
             _transactionscope.Dispose();
             _transactionscope = null;
+
+            result = RenewData();
+            OnDetailEntered();
         }
     }
 }

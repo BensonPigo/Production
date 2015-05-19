@@ -95,31 +95,31 @@ namespace Sci.Production.Subcon
 
             if (CurrentMaintain["Category"].ToString().IndexOf("CARTON")>=0)
             {
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["CtnLength"].ToString()) || Double.Parse(CurrentMaintain["CtnLength"].ToString()) == 0)
+                if (CurrentMaintain["CtnLength"]==DBNull.Value || (decimal)CurrentMaintain["CtnLength"]==0)
                 {
                     MessageBox.Show("< CtnLength > can not be empty!");
                     this.numericBox1.Focus();
                     return false;
                 }
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["CtnWidth"].ToString()) || Double.Parse(CurrentMaintain["CtnWidth"].ToString() ) ==0)
+                if (CurrentMaintain["CtnWidth"]==DBNull.Value || (decimal)CurrentMaintain["CtnWidth"] ==0)
                 {
                     MessageBox.Show("< CtnWidth > can not be empty!");
                     this.numericBox2.Focus();
                     return false;
                 }
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["CtnHeight"].ToString()) || Double.Parse(CurrentMaintain["CtnHeight"].ToString()) ==0)
+                if (CurrentMaintain["CtnHeight"]==DBNull.Value || (decimal)CurrentMaintain["CtnHeight"] ==0)
                 {
                     MessageBox.Show("< CtnHeight > can not be empty!");
                     this.numericBox7.Focus();
                     return false;
                 }
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["CtnUnit"].ToString()))
+                if (string.IsNullOrWhiteSpace(CurrentMaintain["CtnUnit"].ToString()))
                 {
                     MessageBox.Show("< CtnUnit > can not be empty!");
                     this.comboBox1.Focus();
                     return false;
                 }
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["CBM"].ToString()) || Double.Parse(CurrentMaintain["CBM"].ToString()) ==0)
+                if (CurrentMaintain["CBM"]==DBNull.Value || (decimal)CurrentMaintain["CBM"] ==0)
                 {
                     MessageBox.Show("< CBM > can not be empty!");
                     this.numericBox3.Focus();
@@ -129,31 +129,31 @@ namespace Sci.Production.Subcon
 
             if (CurrentMaintain["Category"].ToString().IndexOf("THREAD") >=0)
             {
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["MeterToCone"].ToString()) || Double.Parse(CurrentMaintain["MeterToCone"].ToString() ) ==0)
+                if (CurrentMaintain["MeterToCone"]==DBNull.Value || (decimal)CurrentMaintain["MeterToCone"] ==0)
                 {
                     MessageBox.Show("< MeterToCone > can not be empty!");
                     this.numericBox8.Focus();
                     return false;
                 }
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["ThreadTypeID"].ToString()))
+                if (string.IsNullOrWhiteSpace(CurrentMaintain["ThreadTypeID"].ToString()))
                 {
                     MessageBox.Show("< ThreadTypeID > can not be empty!");
                     this.textBox8.Focus();
                     return false;
                 }
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["ThreadTex"].ToString()) || Double.Parse(CurrentMaintain["ThreadTex"].ToString()) ==0)
+                if (CurrentMaintain["ThreadTex"]==DBNull.Value || (decimal)CurrentMaintain["ThreadTex"] ==0)
                 {
                     MessageBox.Show("< ThreadTex > can not be empty!");
                     this.numericBox5.Focus();
                     return false;
                 }
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["Weight"].ToString()) || Double.Parse(CurrentMaintain["Weight"].ToString() ) ==0)
+                if (CurrentMaintain["Weight"]==DBNull.Value || (decimal)CurrentMaintain["Weight"]  ==0)
                 {
                     MessageBox.Show("< Weight > can not be empty!");
                     this.numericBox4.Focus();
                     return false;
                 }
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["AxleWeight"].ToString()) || Double.Parse(CurrentMaintain["AxleWeight"].ToString()) == 0)
+                if (CurrentMaintain["AxleWeight"]==DBNull.Value || (decimal)CurrentMaintain["AxleWeight"] == 0)
                 {
                     MessageBox.Show("< AxleWeight > can not be empty!");
                     this.numericBox6.Focus();
@@ -180,7 +180,8 @@ namespace Sci.Production.Subcon
                 double i = double.Parse(CurrentMaintain["CtnLength"].ToString()) *
                     double.Parse(CurrentMaintain["CtnWidth"].ToString()) *
                     double.Parse(CurrentMaintain["CtnHeight"].ToString()) /  1728;
-                this.numericBox3.Text = Math.Round(i, 4).ToString();
+                CurrentMaintain["cbm"] = i;
+                //this.numericBox3.Text = Math.Round(i, 4).ToString();
             }
             else
             {

@@ -200,6 +200,9 @@ Sci.Production.Subcon/B01_History.resx -text
 Sci.Production.Subcon/B01_Quotation.Designer.cs -text
 Sci.Production.Subcon/B01_Quotation.cs -text
 Sci.Production.Subcon/B01_Quotation.resx -text
+Sci.Production.Subcon/P01.Designer.cs -text
+Sci.Production.Subcon/P01.cs -text
+Sci.Production.Subcon/P01.resx -text
 Sci.Production.Subcon/Properties/AssemblyInfo.cs -text
 Sci.Production.Subcon/Sci.Production.Subcon.csproj -text
 Sci.Production.Thread/Properties/AssemblyInfo.cs -text
