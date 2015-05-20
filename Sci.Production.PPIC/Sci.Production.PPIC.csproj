@@ -125,6 +125,24 @@
     <Compile Include="B06.Designer.cs">
       <DependentUpon>B06.cs</DependentUpon>
     </Compile>
+    <Compile Include="B07.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B07.Designer.cs">
+      <DependentUpon>B07.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B07_Add.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B07_Add.Designer.cs">
+      <DependentUpon>B07_Add.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B07_BatchAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B07_BatchAdd.Designer.cs">
+      <DependentUpon>B07_BatchAdd.cs</DependentUpon>
+    </Compile>
     <Compile Include="B08.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -148,6 +166,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B06.resx">
       <DependentUpon>B06.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B07.resx">
+      <DependentUpon>B07.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B08.resx">
       <DependentUpon>B08.cs</DependentUpon>
