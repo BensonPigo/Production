@@ -113,6 +113,12 @@
     <Compile Include="B04.Designer.cs">
       <DependentUpon>B04.cs</DependentUpon>
     </Compile>
+    <Compile Include="B05.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B05.Designer.cs">
+      <DependentUpon>B05.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +130,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B04.resx">
       <DependentUpon>B04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B05.resx">
+      <DependentUpon>B05.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
