@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.Production.Shipping", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.Production.Miscellaneous", "Sci.Production.Miscellaneous\Sci.Production.Miscellaneous.csproj", "{A61E6D69-1468-4A81-BCBF-C5211C932F9C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.Production.PublicPrg", "Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj", "{4A2F17B7-EFFE-454C-8F1E-9EEBEF170BC0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -103,6 +105,10 @@ Global
 		{A61E6D69-1468-4A81-BCBF-C5211C932F9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A61E6D69-1468-4A81-BCBF-C5211C932F9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A61E6D69-1468-4A81-BCBF-C5211C932F9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A2F17B7-EFFE-454C-8F1E-9EEBEF170BC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A2F17B7-EFFE-454C-8F1E-9EEBEF170BC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A2F17B7-EFFE-454C-8F1E-9EEBEF170BC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A2F17B7-EFFE-454C-8F1E-9EEBEF170BC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
