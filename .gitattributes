@@ -169,6 +169,9 @@ Sci.Production.IE/B09.cs -text
 Sci.Production.IE/B09.resx -text
 Sci.Production.IE/Properties/AssemblyInfo.cs -text
 Sci.Production.IE/Sci.Production.IE.csproj -text
+Sci.Production.Logistic/B01.Designer.cs -text
+Sci.Production.Logistic/B01.cs -text
+Sci.Production.Logistic/B01.resx -text
 Sci.Production.Logistic/Properties/AssemblyInfo.cs -text
 Sci.Production.Logistic/Sci.Production.Logistic.csproj -text
 Sci.Production.Miscellaneous/Properties/AssemblyInfo.cs -text
