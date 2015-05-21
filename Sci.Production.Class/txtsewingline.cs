@@ -38,8 +38,8 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
             fty = factoryObject.Text;
-            string sql = string.Format("Select id,factoryid From SewingLine Where FactoryId = '{0}'", fty);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2,30", this.Text, false, ",");
+            string sql = string.Format("Select ID,FactoryID,Description From SewingLine Where FactoryId = '{0}'", fty);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2,8,16", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
@@ -52,7 +52,7 @@ namespace Sci.Production.Class
             {
                 if (this.factoryObject == null)
                 {
-                    string tmp = myUtility.Lookup("id", str, "SewingLine", "id");
+                    string tmp = myUtility.Lookup("ID", str, "SewingLine", "id");
                     if (string.IsNullOrWhiteSpace(tmp))
                     {
                         MessageBox.Show(string.Format("< Sewing Line> : {0} not found!!!", str));
@@ -68,7 +68,7 @@ namespace Sci.Production.Class
                         string selectCommand = string.Format("select ID from SewingLine where FactoryID = '{0}' and ID = '{1}'", (string)this.factoryObject.Text, this.Text.ToString());
                         if (!myUtility.Seek(selectCommand, null))
                         {
-                            MessageBox.Show(string.Format("< Sewing Line: {0} > not found!!!", (string)this.factoryObject.Text));
+                            MessageBox.Show(string.Format("< Sewing Line: {0} > not found!!!", this.Text.ToString()));
                             this.Text = "";
                             e.Cancel = true;
                             return;
