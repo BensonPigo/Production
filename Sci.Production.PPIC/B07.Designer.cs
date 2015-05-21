@@ -76,6 +76,10 @@
             // 
             this.detailbtm.Size = new System.Drawing.Size(685, 38);
             // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(685, 395);
+            // 
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(693, 424);
