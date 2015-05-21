@@ -14,7 +14,7 @@ namespace Sci.Production.PublicPrg
         /// GetAuthority()
         /// </summary>
         /// <param name="strLogin"></param>
-        /// <returns>string</returns>
+        /// <returns>bool</returns>
         public static bool GetAuthority(string login)
         {
             return true;

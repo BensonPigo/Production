@@ -216,6 +216,11 @@ Sci.Production.Planning/B02.cs -text
 Sci.Production.Planning/B02.resx -text
 Sci.Production.Planning/Properties/AssemblyInfo.cs -text
 Sci.Production.Planning/Sci.Production.Planning.csproj -text
+Sci.Production.PublicForm/EditRemark.Designer.cs -text
+Sci.Production.PublicForm/EditRemark.cs -text
+Sci.Production.PublicForm/EditRemark.resx -text
+Sci.Production.PublicForm/Properties/AssemblyInfo.cs -text
+Sci.Production.PublicForm/Sci.Production.PublicForm.csproj -text
 Sci.Production.PublicPrg/Properties/AssemblyInfo.cs -text
 Sci.Production.PublicPrg/Sci.Production.PublicPrg.csproj -text
 Sci.Production.PublicPrg/System.cs -text
