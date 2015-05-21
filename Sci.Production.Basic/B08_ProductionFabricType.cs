@@ -45,7 +45,8 @@ namespace Sci.Production.Basic
             Sci.Win.UI.TextBox prodTextValue = (Sci.Win.UI.TextBox)sender;
             if (!string.IsNullOrWhiteSpace(prodTextValue.Text) && prodTextValue.Text != prodTextValue.OldValue)
             {
-                if (!myUtility.Seek("Style_Apparel_Type                                " + prodTextValue.Text, "Reason", "ReasonTypeID+Name"))
+                string selectCommand = string.Format("select ID from Reason where ReasonTypeID = 'Style_Apparel_Type' and Name = '{0}'", prodTextValue.Text);
+                if (!myUtility.Seek(selectCommand,null))
                 {
                     MessageBox.Show(string.Format("< Prod. Type : {0} > not found!!!", prodTextValue.Text));
                     prodTextValue.Text = "";
@@ -60,9 +61,10 @@ namespace Sci.Production.Basic
             Sci.Win.UI.TextBox fabricTextValue = (Sci.Win.UI.TextBox)sender;
             if (!string.IsNullOrWhiteSpace(fabricTextValue.Text) && fabricTextValue.Text != fabricTextValue.OldValue)
             {
-                if (!myUtility.Seek("Fabric_Kind                                       " + fabricTextValue.Text, "Reason", "ReasonTypeID+Name"))
+                string selectCommand = string.Format("select ID from Reason where ReasonTypeID = 'Fabric_Kind' and Name = '{0}'", fabricTextValue.Text);
+                if (!myUtility.Seek(selectCommand,null))
                 {
-                    MessageBox.Show(string.Format("< Prod. Type : {0} > not found!!!", fabricTextValue.Text));
+                    MessageBox.Show(string.Format("< Fabric Type : {0} > not found!!!", fabricTextValue.Text));
                     fabricTextValue.Text = "";
                     e.Cancel = true;
                     return;
