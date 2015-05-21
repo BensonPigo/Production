@@ -27,6 +27,7 @@ namespace Sci.Production.Class
 
         protected override void OnValidating(CancelEventArgs e)
         {
+            base.OnValidating(e);
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
