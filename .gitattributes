@@ -236,6 +236,15 @@ Sci.Production.Shipping/B01.resx -text
 Sci.Production.Shipping/B02.Designer.cs -text
 Sci.Production.Shipping/B02.cs -text
 Sci.Production.Shipping/B02.resx -text
+Sci.Production.Shipping/B03.Designer.cs -text
+Sci.Production.Shipping/B03.cs -text
+Sci.Production.Shipping/B03.resx -text
+Sci.Production.Shipping/B03_CanvassRecord.Designer.cs -text
+Sci.Production.Shipping/B03_CanvassRecord.cs -text
+Sci.Production.Shipping/B03_CanvassRecord.resx -text
+Sci.Production.Shipping/B03_PaymentHistory.Designer.cs -text
+Sci.Production.Shipping/B03_PaymentHistory.cs -text
+Sci.Production.Shipping/B03_PaymentHistory.resx -text
 Sci.Production.Shipping/B04.Designer.cs -text
 Sci.Production.Shipping/B04.cs -text
 Sci.Production.Shipping/B04.resx -text
