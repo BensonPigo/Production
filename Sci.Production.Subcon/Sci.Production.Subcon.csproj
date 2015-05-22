@@ -122,12 +122,28 @@
     <Compile Include="P01_FarmOutList.Designer.cs">
       <DependentUpon>P01_FarmOutList.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_Import.Designer.cs">
+      <DependentUpon>P01_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_SpecialRecord.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_SpecialRecord.Designer.cs">
+      <DependentUpon>P01_SpecialRecord.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
       <Name>Sci.Production.Class</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.PublicForm\Sci.Production.PublicForm.csproj">
+      <Project>{a0afac1d-7488-4271-83f0-9c14baf212fe}</Project>
+      <Name>Sci.Production.PublicForm</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
@@ -155,6 +171,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_FarmOutList.resx">
       <DependentUpon>P01_FarmOutList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_SpecialRecord.resx">
+      <DependentUpon>P01_SpecialRecord.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

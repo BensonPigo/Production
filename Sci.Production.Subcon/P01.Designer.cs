@@ -64,6 +64,8 @@
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
             this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
+            this.label12 = new Sci.Win.UI.Label();
+            this.dateBox2 = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -79,6 +81,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.label12);
             this.masterpanel.Controls.Add(this.numericBox4);
             this.masterpanel.Controls.Add(this.numericBox3);
             this.masterpanel.Controls.Add(this.numericBox2);
@@ -114,10 +117,12 @@
             this.masterpanel.Controls.Add(this.label5);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Size = new System.Drawing.Size(1058, 248);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
@@ -153,6 +158,7 @@
             this.masterpanel.Controls.SetChildIndex(this.numericBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericBox4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
             // 
             // detailpanel
             // 
@@ -163,6 +169,7 @@
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Location = new System.Drawing.Point(928, 210);
+            this.gridicon.TabIndex = 21;
             // 
             // refresh
             // 
@@ -295,7 +302,7 @@
             // label15
             // 
             this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(16, 116);
+            this.label15.Location = new System.Drawing.Point(16, 149);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(75, 23);
             this.label15.TabIndex = 15;
@@ -313,7 +320,7 @@
             // label18
             // 
             this.label18.Lines = 0;
-            this.label18.Location = new System.Drawing.Point(16, 150);
+            this.label18.Location = new System.Drawing.Point(16, 183);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(95, 23);
             this.label18.TabIndex = 18;
@@ -359,7 +366,7 @@
             this.button1.Location = new System.Drawing.Point(928, 42);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(88, 30);
-            this.button1.TabIndex = 45;
+            this.button1.TabIndex = 17;
             this.button1.Text = "Approve";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -371,7 +378,7 @@
             this.button2.Location = new System.Drawing.Point(928, 77);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(88, 30);
-            this.button2.TabIndex = 46;
+            this.button2.TabIndex = 18;
             this.button2.Text = "Close";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -381,10 +388,11 @@
             this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button4.Location = new System.Drawing.Point(928, 112);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(88, 30);
-            this.button4.TabIndex = 48;
+            this.button4.Size = new System.Drawing.Size(115, 30);
+            this.button4.TabIndex = 19;
             this.button4.Text = "Batch Import";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button5
             // 
@@ -392,9 +400,10 @@
             this.button5.Location = new System.Drawing.Point(928, 147);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(115, 30);
-            this.button5.TabIndex = 49;
+            this.button5.TabIndex = 20;
             this.button5.Text = "Special Record";
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // displayBox1
             // 
@@ -403,8 +412,8 @@
             this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox1.Location = new System.Drawing.Point(94, 14);
             this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(100, 23);
-            this.displayBox1.TabIndex = 50;
+            this.displayBox1.Size = new System.Drawing.Size(120, 23);
+            this.displayBox1.TabIndex = 1;
             // 
             // dateBox1
             // 
@@ -412,17 +421,17 @@
             this.dateBox1.Location = new System.Drawing.Point(94, 81);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 52;
+            this.dateBox1.TabIndex = 3;
             // 
             // displayBox2
             // 
             this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CurrencyID", true));
             this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(94, 116);
+            this.displayBox2.Location = new System.Drawing.Point(94, 149);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(100, 23);
-            this.displayBox2.TabIndex = 2;
+            this.displayBox2.TabIndex = 5;
             // 
             // displayBox3
             // 
@@ -432,7 +441,7 @@
             this.displayBox3.Location = new System.Drawing.Point(342, 14);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(100, 23);
-            this.displayBox3.TabIndex = 55;
+            this.displayBox3.TabIndex = 7;
             // 
             // displayBox7
             // 
@@ -442,7 +451,7 @@
             this.displayBox7.Location = new System.Drawing.Point(580, 116);
             this.displayBox7.Name = "displayBox7";
             this.displayBox7.Size = new System.Drawing.Size(182, 23);
-            this.displayBox7.TabIndex = 60;
+            this.displayBox7.TabIndex = 16;
             // 
             // textBox2
             // 
@@ -452,17 +461,17 @@
             this.textBox2.Location = new System.Drawing.Point(580, 14);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(345, 23);
-            this.textBox2.TabIndex = 61;
+            this.textBox2.TabIndex = 13;
             // 
             // numericBox1
             // 
             this.numericBox1.BackColor = System.Drawing.Color.White;
             this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "vatrate", true));
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(114, 149);
+            this.numericBox1.Location = new System.Drawing.Point(114, 182);
             this.numericBox1.Name = "numericBox1";
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 62;
+            this.numericBox1.TabIndex = 6;
             // 
             // textBox1
             // 
@@ -472,7 +481,7 @@
             this.textBox1.Location = new System.Drawing.Point(614, 48);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(308, 23);
-            this.textBox1.TabIndex = 63;
+            this.textBox1.TabIndex = 14;
             // 
             // numericBox2
             // 
@@ -485,7 +494,7 @@
             this.numericBox2.Name = "numericBox2";
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 66;
+            this.numericBox2.TabIndex = 10;
             // 
             // numericBox3
             // 
@@ -498,7 +507,7 @@
             this.numericBox3.Name = "numericBox3";
             this.numericBox3.ReadOnly = true;
             this.numericBox3.Size = new System.Drawing.Size(100, 23);
-            this.numericBox3.TabIndex = 67;
+            this.numericBox3.TabIndex = 9;
             // 
             // numericBox4
             // 
@@ -510,7 +519,7 @@
             this.numericBox4.Name = "numericBox4";
             this.numericBox4.ReadOnly = true;
             this.numericBox4.Size = new System.Drawing.Size(100, 23);
-            this.numericBox4.TabIndex = 68;
+            this.numericBox4.TabIndex = 11;
             // 
             // txtuser2
             // 
@@ -527,7 +536,7 @@
             this.txtuser2.Location = new System.Drawing.Point(580, 82);
             this.txtuser2.Name = "txtuser2";
             this.txtuser2.Size = new System.Drawing.Size(300, 23);
-            this.txtuser2.TabIndex = 65;
+            this.txtuser2.TabIndex = 15;
             // 
             // 
             // 
@@ -555,7 +564,7 @@
             this.txtuser1.Location = new System.Drawing.Point(342, 184);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 64;
+            this.txtuser1.TabIndex = 12;
             // 
             // 
             // 
@@ -570,13 +579,13 @@
             // 
             this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
             this.txtartworktype_fty1.cClassify = "";
-            this.txtartworktype_fty1.cSubprocess = "";
+            this.txtartworktype_fty1.cSubprocess = "Y";
             this.txtartworktype_fty1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
             this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_fty1.Location = new System.Drawing.Point(359, 47);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_fty1.TabIndex = 56;
+            this.txtartworktype_fty1.TabIndex = 8;
             // 
             // txtsubcon1
             // 
@@ -594,7 +603,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(94, 48);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
-            this.txtsubcon1.TabIndex = 51;
+            this.txtsubcon1.TabIndex = 2;
             // 
             // 
             // 
@@ -605,12 +614,29 @@
             this.txtsubcon1.TextBox1.Size = new System.Drawing.Size(66, 23);
             this.txtsubcon1.TextBox1.TabIndex = 0;
             // 
+            // label12
+            // 
+            this.label12.Lines = 0;
+            this.label12.Location = new System.Drawing.Point(16, 116);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(75, 23);
+            this.label12.TabIndex = 69;
+            this.label12.Text = "Delivery";
+            // 
+            // dateBox2
+            // 
+            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "issuedate", true));
+            this.dateBox2.Location = new System.Drawing.Point(94, 115);
+            this.dateBox2.Name = "dateBox2";
+            this.dateBox2.Size = new System.Drawing.Size(130, 23);
+            this.dateBox2.TabIndex = 4;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1066, 577);
             this.DefaultOrder = "issuedate,id";
             this.GridAlias = "ArtworkPO_detail";
-            this.GridPopUp = true;
+            this.GridUniqueKey = "id,artworkid,patterncode";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.KeyField1 = "ID";
@@ -674,5 +700,7 @@
         private Win.UI.NumericBox numericBox4;
         private Win.UI.NumericBox numericBox3;
         private Win.UI.NumericBox numericBox2;
+        private Win.UI.Label label12;
+        private Win.UI.DateBox dateBox2;
     }
 }

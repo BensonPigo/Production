@@ -271,6 +271,11 @@ Sci.Production.Subcon/P01_FarmInList.resx -text
 Sci.Production.Subcon/P01_FarmOutList.Designer.cs -text
 Sci.Production.Subcon/P01_FarmOutList.cs -text
 Sci.Production.Subcon/P01_FarmOutList.resx -text
+Sci.Production.Subcon/P01_Import.Designer.cs -text
+Sci.Production.Subcon/P01_Import.cs -text
+Sci.Production.Subcon/P01_SpecialRecord.Designer.cs -text
+Sci.Production.Subcon/P01_SpecialRecord.cs -text
+Sci.Production.Subcon/P01_SpecialRecord.resx -text
 Sci.Production.Subcon/Properties/AssemblyInfo.cs -text
 Sci.Production.Subcon/Sci.Production.Subcon.csproj -text
 Sci.Production.Thread/Properties/AssemblyInfo.cs -text
