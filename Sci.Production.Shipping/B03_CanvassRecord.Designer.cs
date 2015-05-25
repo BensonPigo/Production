@@ -95,7 +95,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(692, 395);
+            this.browse.Size = new System.Drawing.Size(676, 395);
             // 
             // tabs
             // 
@@ -110,11 +110,12 @@
             this.button1.TabIndex = 43;
             this.button1.Text = "Encode";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // label8
             // 
             this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(332, 133);
+            this.label8.Location = new System.Drawing.Point(332, 137);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(44, 23);
             this.label8.TabIndex = 41;
@@ -126,7 +127,7 @@
             this.numericBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "price4", true));
             this.numericBox4.DecimalPlaces = 4;
             this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox4.Location = new System.Drawing.Point(425, 133);
+            this.numericBox4.Location = new System.Drawing.Point(425, 137);
             this.numericBox4.Maximum = new decimal(new int[] {
             -727379969,
             232,
@@ -148,7 +149,7 @@
             this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "price3", true));
             this.numericBox3.DecimalPlaces = 4;
             this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox3.Location = new System.Drawing.Point(425, 104);
+            this.numericBox3.Location = new System.Drawing.Point(425, 107);
             this.numericBox3.Maximum = new decimal(new int[] {
             -727379969,
             232,
@@ -170,7 +171,7 @@
             this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "price2", true));
             this.numericBox2.DecimalPlaces = 4;
             this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox2.Location = new System.Drawing.Point(425, 75);
+            this.numericBox2.Location = new System.Drawing.Point(425, 78);
             this.numericBox2.Maximum = new decimal(new int[] {
             -727379969,
             232,
@@ -192,7 +193,7 @@
             this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "price1", true));
             this.numericBox1.DecimalPlaces = 4;
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(425, 46);
+            this.numericBox1.Location = new System.Drawing.Point(425, 47);
             this.numericBox1.Maximum = new decimal(new int[] {
             -727379969,
             232,
@@ -211,7 +212,7 @@
             // label7
             // 
             this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(332, 105);
+            this.label7.Location = new System.Drawing.Point(332, 108);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(44, 23);
             this.label7.TabIndex = 36;
@@ -220,7 +221,7 @@
             // label6
             // 
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(332, 76);
+            this.label6.Location = new System.Drawing.Point(332, 79);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(44, 23);
             this.label6.TabIndex = 35;
@@ -229,7 +230,7 @@
             // label5
             // 
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(332, 47);
+            this.label5.Location = new System.Drawing.Point(332, 48);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(44, 23);
             this.label5.TabIndex = 34;
@@ -302,7 +303,7 @@
             // displayBox1
             // 
             this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "refno", true));
+            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
             this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox1.Location = new System.Drawing.Point(78, 18);
             this.displayBox1.Name = "displayBox1";
@@ -324,7 +325,7 @@
             this.txtcurrency4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CurrencyID4", true));
             this.txtcurrency4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtcurrency4.IsSupportSytsemContextMenu = false;
-            this.txtcurrency4.Location = new System.Drawing.Point(379, 133);
+            this.txtcurrency4.Location = new System.Drawing.Point(379, 137);
             this.txtcurrency4.Name = "txtcurrency4";
             this.txtcurrency4.Size = new System.Drawing.Size(40, 23);
             this.txtcurrency4.TabIndex = 29;
@@ -335,7 +336,7 @@
             this.txtcurrency3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CurrencyID3", true));
             this.txtcurrency3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtcurrency3.IsSupportSytsemContextMenu = false;
-            this.txtcurrency3.Location = new System.Drawing.Point(379, 104);
+            this.txtcurrency3.Location = new System.Drawing.Point(379, 107);
             this.txtcurrency3.Name = "txtcurrency3";
             this.txtcurrency3.Size = new System.Drawing.Size(40, 23);
             this.txtcurrency3.TabIndex = 28;
@@ -346,7 +347,7 @@
             this.txtcurrency2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CurrencyID2", true));
             this.txtcurrency2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtcurrency2.IsSupportSytsemContextMenu = false;
-            this.txtcurrency2.Location = new System.Drawing.Point(379, 75);
+            this.txtcurrency2.Location = new System.Drawing.Point(379, 78);
             this.txtcurrency2.Name = "txtcurrency2";
             this.txtcurrency2.Size = new System.Drawing.Size(40, 23);
             this.txtcurrency2.TabIndex = 27;
@@ -357,7 +358,7 @@
             this.txtcurrency1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CurrencyID1", true));
             this.txtcurrency1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtcurrency1.IsSupportSytsemContextMenu = false;
-            this.txtcurrency1.Location = new System.Drawing.Point(379, 46);
+            this.txtcurrency1.Location = new System.Drawing.Point(379, 47);
             this.txtcurrency1.Name = "txtcurrency1";
             this.txtcurrency1.Size = new System.Drawing.Size(40, 23);
             this.txtcurrency1.TabIndex = 26;
@@ -367,7 +368,7 @@
             this.txtsubcon4.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppID4", true));
             this.txtsubcon4.DisplayBox1Binding = "";
             this.txtsubcon4.IsIncludeJunk = false;
-            this.txtsubcon4.Location = new System.Drawing.Point(133, 134);
+            this.txtsubcon4.Location = new System.Drawing.Point(133, 138);
             this.txtsubcon4.Name = "txtsubcon4";
             this.txtsubcon4.Size = new System.Drawing.Size(159, 23);
             this.txtsubcon4.TabIndex = 25;
@@ -378,7 +379,7 @@
             this.txtsubcon3.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppID3", true));
             this.txtsubcon3.DisplayBox1Binding = "";
             this.txtsubcon3.IsIncludeJunk = false;
-            this.txtsubcon3.Location = new System.Drawing.Point(133, 105);
+            this.txtsubcon3.Location = new System.Drawing.Point(133, 108);
             this.txtsubcon3.Name = "txtsubcon3";
             this.txtsubcon3.Size = new System.Drawing.Size(159, 23);
             this.txtsubcon3.TabIndex = 24;
@@ -389,7 +390,7 @@
             this.txtsubcon2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppID2", true));
             this.txtsubcon2.DisplayBox1Binding = "";
             this.txtsubcon2.IsIncludeJunk = false;
-            this.txtsubcon2.Location = new System.Drawing.Point(133, 76);
+            this.txtsubcon2.Location = new System.Drawing.Point(133, 79);
             this.txtsubcon2.Name = "txtsubcon2";
             this.txtsubcon2.Size = new System.Drawing.Size(159, 23);
             this.txtsubcon2.TabIndex = 23;
@@ -400,17 +401,19 @@
             this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppID1", true));
             this.txtsubcon1.DisplayBox1Binding = "";
             this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(133, 47);
+            this.txtsubcon1.Location = new System.Drawing.Point(133, 48);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
             this.txtsubcon1.TabIndex = 22;
             this.txtsubcon1.TextBox1Binding = "";
             // 
-            // B03_CanvassRecord
+            // CanvassRecord
             // 
             this.ClientSize = new System.Drawing.Size(684, 457);
+            this.DefaultOrder = "ID,AddDate";
             this.IsSupportCopy = false;
-            this.Name = "B03_CanvassRecord";
+            this.IsSupportPrint = false;
+            this.Name = "CanvassRecord";
             this.Text = "Canvass record";
             this.WorkAlias = "ShipExpense_CanVass";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
