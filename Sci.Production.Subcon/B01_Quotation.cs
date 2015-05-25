@@ -15,19 +15,70 @@ namespace Sci.Production.Subcon
 {
     public partial class B01_Quotation : Sci.Win.Tems.Input1
     {
-        protected DataRow dr;
+        protected DataRow dr,dr_detail;
         public B01_Quotation(bool canedit, DataRow data )
         {
             InitializeComponent();
             dr = data;
             string b01_refno = data["refno"].ToString();
             this.DefaultFilter = "refno = '"+ b01_refno+"'";
+
+            //選完Supp後要將回寫CurrencyID
+            this.txtsubcon1.TextBox1.Validating += (s, e) =>
+            {
+                if (this.EditMode && this.txtsubcon1.TextBox1.Text != this.txtsubcon1.TextBox1.OldValue)
+                {
+                    CurrentMaintain["CurrencyID1"] = myUtility.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
+                }
+            };
+            this.txtsubcon2.TextBox1.Validating += (s, e) =>
+            {
+                if (this.EditMode && this.txtsubcon2.TextBox1.Text != this.txtsubcon2.TextBox1.OldValue)
+                {
+                    CurrentMaintain["CurrencyID2"] = myUtility.Lookup("CurrencyID", this.txtsubcon2.TextBox1.Text, "LocalSupp", "ID");
+                }
+            };
+            this.txtsubcon3.TextBox1.Validating += (s, e) =>
+            {
+                if (this.EditMode && this.txtsubcon3.TextBox1.Text != this.txtsubcon3.TextBox1.OldValue)
+                {
+                    CurrentMaintain["CurrencyID3"] = myUtility.Lookup("CurrencyID", this.txtsubcon3.TextBox1.Text, "LocalSupp", "ID");
+                }
+            };
+            this.txtsubcon4.TextBox1.Validating += (s, e) =>
+            {
+                if (this.EditMode && this.txtsubcon4.TextBox1.Text != this.txtsubcon4.TextBox1.OldValue)
+                {
+                    CurrentMaintain["CurrencyID4"] = myUtility.Lookup("CurrencyID", this.txtsubcon4.TextBox1.Text, "LocalSupp", "ID");
+                }
+            };
             
+        }
+
+        protected override bool OnNewBefore()
+        {
+            bool flag = false;
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            sp1.ParameterName = "@refno";
+            sp1.Value = dr["refno"].ToString();
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+
+            string sqlcmd = "select refno from localitem_quot where refno = @refno and (encode =0 OR ENCODE IS NULL)";
+            DBProxy.Current.Exists("", sqlcmd, cmds, out flag);
+            if (flag)
+            {
+                MessageBox.Show("Can't add data when data have not been Encoded.", "Warning");
+                return false;
+            }
+            return base.OnNewBefore();
         }
 
         //新增預設值
         protected override void OnNewAfter()
         {
+            
             base.OnNewAfter();
             CurrentMaintain["Refno"] = dr["refno"].ToString();
             CurrentMaintain["issuedate"] = DateTime.Today;
@@ -61,7 +112,7 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.button1.Enabled=CurrentMaintain["Encode"].ToString() == "False";
+            this.button1.Enabled=!(CurrentMaintain["Encode"].ToString().ToUpper() == "TRUE") && !this.EditMode;
         }
 
         //Encode button
@@ -110,10 +161,10 @@ namespace Sci.Production.Subcon
             {
                 try
                 {
-                    String sqlcmd = "Update localitem_quot set encode = 1 where refno = '" + CurrentMaintain["refno"].ToString() + "'";
+                    String sqlcmd = string.Format("Update localitem_quot set encode = 1 ,editname = '{0}', editdate = GETDATE() where ukey = '{1}'",Env.User.UserID.ToString() ,CurrentMaintain["ukey"].ToString());
                     result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd);
 
-                    string s1 = "Update localitem set localsuppid = @suppid,price = @price,currencyid = @currencyid, quotdate = @quotdate where refno = @refno";
+                    string s1 = string.Format("Update localitem set localsuppid = @suppid,price = @price,currencyid = @currencyid, quotdate = @quotdate,editname = '{0}', editdate = GETDATE() where refno = @refno",Env.User.UserID.ToString());
 
                     #region 準備sql參數資料
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -170,5 +221,7 @@ namespace Sci.Production.Subcon
             result = RenewData();
             OnDetailEntered();
         }
+
+        
     }
 }
