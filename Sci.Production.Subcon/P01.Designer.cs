@@ -66,6 +66,7 @@
             this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
             this.label12 = new Sci.Win.UI.Label();
             this.dateBox2 = new Sci.Win.UI.DateBox();
+            this.button3 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -631,9 +632,20 @@
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
             this.dateBox2.TabIndex = 4;
             // 
+            // button3
+            // 
+            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.button3.Location = new System.Drawing.Point(932, 12);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(115, 30);
+            this.button3.TabIndex = 4;
+            this.button3.Text = "Batch Create";
+            this.button3.UseVisualStyleBackColor = true;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1066, 577);
+            this.Controls.Add(this.button3);
             this.DefaultOrder = "issuedate,id";
             this.GridAlias = "ArtworkPO_detail";
             this.GridUniqueKey = "id,artworkid,patterncode";
@@ -644,6 +656,7 @@
             this.Text = "P01. Sub-con Purchase Order";
             this.WorkAlias = "ArtworkPO";
             this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.button3, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -702,5 +715,6 @@
         private Win.UI.NumericBox numericBox2;
         private Win.UI.Label label12;
         private Win.UI.DateBox dateBox2;
+        private Win.UI.Button button3;
     }
 }

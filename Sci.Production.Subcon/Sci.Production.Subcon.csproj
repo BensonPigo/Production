@@ -172,6 +172,9 @@
     <EmbeddedResource Include="P01_FarmOutList.resx">
       <DependentUpon>P01_FarmOutList.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P01_Import.resx">
+      <DependentUpon>P01_Import.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01_SpecialRecord.resx">
       <DependentUpon>P01_SpecialRecord.cs</DependentUpon>
     </EmbeddedResource>

@@ -176,6 +176,9 @@ namespace Sci.Production.Subcon
             button4.Enabled = this.EditMode;
             button5.Enabled = this.EditMode;
             #endregion
+            #region
+            button3.Enabled = !this.EditMode;
+            #endregion
         }
 
         // Detail Grid 設定
@@ -271,7 +274,7 @@ namespace Sci.Production.Subcon
             .Date("sewinline", header: "SewInLine", width: Widths.AnsiChars(10), iseditingreadonly: true)   //3
             .Date("scidelivery", header: "SciDelivery", width: Widths.AnsiChars(10), iseditingreadonly: true)   //4
             .Text("ArtworkId", header: "Artwork", width: Widths.AnsiChars(8), iseditingreadonly: true)    //5
-            .Numeric("custstictch", header: "Cost(PCS/Stitch)", width: Widths.AnsiChars(5), iseditingreadonly: true)//6
+            .Numeric("coststitch", header: "Cost(PCS/Stitch)", width: Widths.AnsiChars(5), iseditingreadonly: true)//6
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(5))    //7
             .Text("patterncode", header: "CutpartID", width: Widths.AnsiChars(10), iseditingreadonly: true) //8
             .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(15))   //9
@@ -351,7 +354,13 @@ namespace Sci.Production.Subcon
         private void button4_Click(object sender, EventArgs e)
         {
             var dr = CurrentMaintain; if (null == dr) return;
-            var frm = new Sci.Production.Subcon.P01_Import(dr);
+            if (dr["artworktypeid"] == DBNull.Value)
+            {
+                MessageBox.Show("Please fill Artworktype first!");
+                txtartworktype_fty1.Focus();
+                return;
+            }
+            var frm = new Sci.Production.Subcon.P01_Import(dr, (DataTable)detailgridbs.DataSource,"P01");
             frm.ShowDialog(this);
             this.RenewData();
         }
