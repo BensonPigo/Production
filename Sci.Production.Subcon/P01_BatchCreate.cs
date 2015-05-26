@@ -5,14 +5,14 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Ict.Win;
 using Sci;
 using Sci.Data;
+using Ict;
+using Ict.Win;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P01_Import : Sci.Win.Subs.Base
+    public partial class P01_BatchCreate : Sci.Win.Subs.Base
     {
         DataRow dr_artworkpo;
         DataTable dt_artworkpoDetail;
@@ -21,19 +21,11 @@ namespace Sci.Production.Subcon
         string poType;
         protected DataTable dtArtwork;
 
-        public P01_Import(DataRow master, DataTable detail, string fuc)
+        public P01_BatchCreate()
         {
             InitializeComponent();
-            dr_artworkpo = master;
-            dt_artworkpoDetail = detail;
-            flag = fuc == "P01";
-            if (flag)
-                poType = "O";
-            else
-                poType = "I";
-
-            this.Text += string.Format(" : {0}", dr_artworkpo["artworktypeid"].ToString());
         }
+
         //Find Now Button
         private void button1_Click(object sender, EventArgs e)
         {
@@ -144,7 +136,7 @@ namespace Sci.Production.Subcon
                 .Numeric("Stitch", header: "Stitch", iseditable: true)    //7
                 .Text("PatternCode", header: "Cutpart Id", iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", iseditingreadonly: true)
-                .Numeric("qtygarment", header: "Qty/GMT", iseditable: true, integer_places: 2,settings:ns2) //10
+                .Numeric("qtygarment", header: "Qty/GMT", iseditable: true, integer_places: 2, settings: ns2) //10
                 .Numeric("Cost", header: "Cost(USD)", settings: ns, iseditingreadonly: true, decimal_places: 4, integer_places: 4)  //11
                 .Numeric("UnitPrice", header: "Unit Price", settings: ns, iseditable: true, decimal_places: 4, integer_places: 4)  //12
                 .Numeric("Price", header: "Price/GMT", iseditingreadonly: true, decimal_places: 4, integer_places: 5)  //13
@@ -193,52 +185,5 @@ namespace Sci.Production.Subcon
             this.Close();
         }
 
-        
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            gridBS1.EndEdit();
-            DataTable dtGridBS1 = (DataTable)gridBS1.DataSource;
-            if (dtGridBS1.Rows.Count == 0) return;
-            DataRow[] dr2 = dtGridBS1.Select("UnitPrice = 0 and Selected = 1");
-
-
-            if (dr2.Length > 0 && flag)
-            {
-                MessageBox.Show("UnitPrice of selected row can't be zero!", "Warning");
-                return;
-            }
-
-            dr2 = dtGridBS1.Select("Selected =  1");
-            if (dr2.Length > 0)
-            {
-                foreach (DataRow tmp in dtGridBS1.Rows)
-                {
-                    DataRow[] findrow = dt_artworkpoDetail.Select(string.Format("orderid = '{0}' and ArtworkId = '{1}' and patterncode = '{2}'", tmp["orderid"].ToString(), tmp["ArtworkId"].ToString(), tmp["patterncode"].ToString()));
-
-                    if (findrow.Length > 0)
-                    {
-                        findrow[0]["unitprice"] = tmp["unitprice"];
-                        findrow[0]["Price"] = tmp["Price"];
-                        findrow[0]["amount"] = tmp["amount"];
-                        findrow[0]["poqty"] = tmp["poqty"];
-                        findrow[0]["qtygarment"] = 1;
-                    }
-                    else
-                    {
-                        tmp["id"] = dr_artworkpo["id"];
-                        tmp.AcceptChanges();
-                        tmp.SetAdded();
-                        dt_artworkpoDetail.ImportRow(tmp);
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("Please select rows first!", "Warnning");
-                return;
-            }
-            this.Close();
-        }
     }
 }

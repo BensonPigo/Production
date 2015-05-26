@@ -78,7 +78,7 @@ namespace Sci.Production.Subcon
         }
 
         // grid 加工填值
-        protected override DualResult OnRenewDataPost(RenewDataPostEventArgs e)
+        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
             {
@@ -101,7 +101,7 @@ namespace Sci.Production.Subcon
                     
                 }
             }
-                return base.OnRenewDataPost(e);
+ 	         return base.OnRenewDataDetailPost(e);
         }
 
         //refresh
@@ -188,9 +188,13 @@ namespace Sci.Production.Subcon
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
             ts4.EditingMouseDown += (s, e) =>
             {
-                if (!this.EditMode && !string.IsNullOrWhiteSpace(CurrentMaintain["ApvName"].ToString()) && CurrentMaintain["closed"].ToString().ToUpper() == "FALSE" && e.Button == MouseButtons.Right)
+                if (!this.EditMode && !string.IsNullOrWhiteSpace(CurrentMaintain["ApvName"].ToString()) 
+                    && CurrentMaintain["closed"].ToString().ToUpper() == "FALSE" && e.Button == MouseButtons.Right)
                 {
-                    
+                    Subcon.P01_ModifyPoQty DoForm = new P01_ModifyPoQty();
+		            DoForm.Set(true, this.DetailDatas, this.CurrentDetailData); 			
+                    DoForm.ShowDialog(this);
+                    DoSave();
                 }
 
             };
@@ -278,15 +282,15 @@ namespace Sci.Production.Subcon
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(5))    //7
             .Text("patterncode", header: "CutpartID", width: Widths.AnsiChars(10), iseditingreadonly: true) //8
             .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(15))   //9
-            .Numeric("unitprice", header: "Unit Price", width: Widths.AnsiChars(5),settings:ns)     //10
-            .Numeric("cost", header: "Cost(USD)", width: Widths.AnsiChars(5), iseditingreadonly: true)  //11
-            .Numeric("qtygarment", header: "Qty/GMT", width: Widths.AnsiChars(5),settings:ns2)  //12
-            .Numeric("Price", header: "Price/GMT", width: Widths.AnsiChars(5), iseditingreadonly: true)   //13
-            .Numeric("amount", header: "Amount", width: Widths.AnsiChars(5), iseditingreadonly: true)   //14
+            .Numeric("unitprice", header: "Unit Price", width: Widths.AnsiChars(5), settings: ns, decimal_places: 4, integer_places: 4)     //10
+            .Numeric("cost", header: "Cost(USD)", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 4, integer_places: 4)  //11
+            .Numeric("qtygarment", header: "Qty/GMT", width: Widths.AnsiChars(5), settings: ns2, integer_places: 2)  //12
+            .Numeric("Price", header: "Price/GMT", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 4, integer_places: 5)   //13
+            .Numeric("amount", header: "Amount", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 4, integer_places: 14)   //14
             .Text("farmout", header: "Farm Out", width: Widths.AnsiChars(5), settings: ts, iseditingreadonly: true) //15
             .Text("farmin", header: "Farm In", width: Widths.AnsiChars(5), settings: ts2, iseditingreadonly: true)  //16
             .Text("apqty", header: "A/P Qty", width: Widths.AnsiChars(5), settings: ts3, iseditingreadonly: true)   //17
-            .Text("exceed", header: "Exceed", width: Widths.AnsiChars(5), iseditingreadonly: true);     //18
+            .Text("exceedqty", header: "Exceed", width: Widths.AnsiChars(5), iseditingreadonly: true);     //18
             #endregion
             #region 可編輯欄位變色
             detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
@@ -380,6 +384,14 @@ namespace Sci.Production.Subcon
             frm.ShowDialog(this);
             this.RenewData();
             detailgridbs.EndEdit();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (this.EditMode) return;
+            var frm = new Sci.Production.Subcon.P01_BatchCreate();
+            frm.ShowDialog(this);
+            ReloadDatas();
         }
 
     }

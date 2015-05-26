@@ -110,6 +110,12 @@
     <Compile Include="P01_Ap.Designer.cs">
       <DependentUpon>P01_Ap.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_BatchCreate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_BatchCreate.Designer.cs">
+      <DependentUpon>P01_BatchCreate.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01_FarmInList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -127,6 +133,12 @@
     </Compile>
     <Compile Include="P01_Import.Designer.cs">
       <DependentUpon>P01_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_ModifyPoQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_ModifyPoQty.Designer.cs">
+      <DependentUpon>P01_ModifyPoQty.cs</DependentUpon>
     </Compile>
     <Compile Include="P01_SpecialRecord.cs">
       <SubType>Form</SubType>
@@ -166,6 +178,9 @@
     <EmbeddedResource Include="P01_Ap.resx">
       <DependentUpon>P01_Ap.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P01_BatchCreate.resx">
+      <DependentUpon>P01_BatchCreate.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01_FarmInList.resx">
       <DependentUpon>P01_FarmInList.cs</DependentUpon>
     </EmbeddedResource>
@@ -174,6 +189,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_Import.resx">
       <DependentUpon>P01_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_ModifyPoQty.resx">
+      <DependentUpon>P01_ModifyPoQty.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01_SpecialRecord.resx">
       <DependentUpon>P01_SpecialRecord.cs</DependentUpon>

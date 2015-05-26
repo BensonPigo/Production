@@ -265,6 +265,9 @@ Sci.Production.Subcon/P01.resx -text
 Sci.Production.Subcon/P01_Ap.Designer.cs -text
 Sci.Production.Subcon/P01_Ap.cs -text
 Sci.Production.Subcon/P01_Ap.resx -text
+Sci.Production.Subcon/P01_BatchCreate.Designer.cs -text
+Sci.Production.Subcon/P01_BatchCreate.cs -text
+Sci.Production.Subcon/P01_BatchCreate.resx -text
 Sci.Production.Subcon/P01_FarmInList.Designer.cs -text
 Sci.Production.Subcon/P01_FarmInList.cs -text
 Sci.Production.Subcon/P01_FarmInList.resx -text
@@ -274,6 +277,9 @@ Sci.Production.Subcon/P01_FarmOutList.resx -text
 Sci.Production.Subcon/P01_Import.Designer.cs -text
 Sci.Production.Subcon/P01_Import.cs -text
 Sci.Production.Subcon/P01_Import.resx -text
+Sci.Production.Subcon/P01_ModifyPoQty.Designer.cs -text
+Sci.Production.Subcon/P01_ModifyPoQty.cs -text
+Sci.Production.Subcon/P01_ModifyPoQty.resx -text
 Sci.Production.Subcon/P01_SpecialRecord.Designer.cs -text
 Sci.Production.Subcon/P01_SpecialRecord.cs -text
 Sci.Production.Subcon/P01_SpecialRecord.resx -text

@@ -125,6 +125,7 @@ namespace Sci.Production.Subcon
 	             "     where a1.id = b1.id "+
 	             "     and a1.POType = '{1}'"+
 	             "     and a1.ArtworkTypeID= '{0}'", dr["artworktypeid"],poType);
+                if (!(string.IsNullOrWhiteSpace(dr["id"].ToString()))) { strSQLCmd += string.Format("  and a1.id !='{0}'", dr["id"]); }
 	             if (!string.IsNullOrWhiteSpace(orderID)) { strSQLCmd += string.Format(" and b1.OrderID = '{0}'", poid); }
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and b1.poid = '{0}'", poid); }
                  strSQLCmd += "     ) as aa" +
@@ -178,6 +179,8 @@ namespace Sci.Production.Subcon
                     {
 
                         tmp["id"] = dr["id"];
+                        tmp.AcceptChanges();
+                        tmp.SetAdded();
                         dt_artworkpo_detail.ImportRow(tmp);
                         
                     }

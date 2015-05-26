@@ -120,7 +120,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(1058, 248);
+            this.masterpanel.Size = new System.Drawing.Size(892, 248);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
@@ -164,7 +164,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 248);
-            this.detailpanel.Size = new System.Drawing.Size(1058, 229);
+            this.detailpanel.Size = new System.Drawing.Size(892, 101);
             // 
             // gridicon
             // 
@@ -172,26 +172,17 @@
             this.gridicon.Location = new System.Drawing.Point(928, 210);
             this.gridicon.TabIndex = 21;
             // 
-            // refresh
-            // 
-            this.refresh.Location = new System.Drawing.Point(978, 0);
-            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1058, 229);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 101);
             // 
-            // detail
+            // detailgridcont2
             // 
-            this.detail.Size = new System.Drawing.Size(1058, 515);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
-            // detailcont
+            // detailpanel2
             // 
-            this.detailcont.Size = new System.Drawing.Size(1058, 477);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // browse
             // 
@@ -525,56 +516,22 @@
             // txtuser2
             // 
             this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "apvname", true));
-            // 
-            // 
-            // 
-            this.txtuser2.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtuser2.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtuser2.DisplayBox1.Location = new System.Drawing.Point(79, 0);
-            this.txtuser2.DisplayBox1.Name = "displayBox1";
-            this.txtuser2.DisplayBox1.Size = new System.Drawing.Size(220, 23);
-            this.txtuser2.DisplayBox1.TabIndex = 1;
+            this.txtuser2.DisplayBox1Binding = "";
             this.txtuser2.Location = new System.Drawing.Point(580, 82);
             this.txtuser2.Name = "txtuser2";
             this.txtuser2.Size = new System.Drawing.Size(300, 23);
             this.txtuser2.TabIndex = 15;
-            // 
-            // 
-            // 
-            this.txtuser2.TextBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtuser2.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtuser2.TextBox1.IsSupportEditMode = false;
-            this.txtuser2.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtuser2.TextBox1.Name = "textBox1";
-            this.txtuser2.TextBox1.ReadOnly = true;
-            this.txtuser2.TextBox1.Size = new System.Drawing.Size(78, 23);
-            this.txtuser2.TextBox1.TabIndex = 0;
+            this.txtuser2.TextBox1Binding = "";
             // 
             // txtuser1
             // 
             this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "handle", true));
-            // 
-            // 
-            // 
-            this.txtuser1.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtuser1.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtuser1.DisplayBox1.Location = new System.Drawing.Point(79, 0);
-            this.txtuser1.DisplayBox1.Name = "displayBox1";
-            this.txtuser1.DisplayBox1.Size = new System.Drawing.Size(220, 23);
-            this.txtuser1.DisplayBox1.TabIndex = 1;
+            this.txtuser1.DisplayBox1Binding = "";
             this.txtuser1.Location = new System.Drawing.Point(342, 184);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(300, 23);
             this.txtuser1.TabIndex = 12;
-            // 
-            // 
-            // 
-            this.txtuser1.TextBox1.BackColor = System.Drawing.Color.White;
-            this.txtuser1.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtuser1.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtuser1.TextBox1.Name = "textBox1";
-            this.txtuser1.TextBox1.Size = new System.Drawing.Size(78, 23);
-            this.txtuser1.TextBox1.TabIndex = 0;
+            this.txtuser1.TextBox1Binding = "";
             // 
             // txtartworktype_fty1
             // 
@@ -591,29 +548,13 @@
             // txtsubcon1
             // 
             this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
-            // 
-            // 
-            // 
-            this.txtsubcon1.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtsubcon1.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtsubcon1.DisplayBox1.Location = new System.Drawing.Point(67, 0);
-            this.txtsubcon1.DisplayBox1.Name = "displayBox1";
-            this.txtsubcon1.DisplayBox1.Size = new System.Drawing.Size(90, 23);
-            this.txtsubcon1.DisplayBox1.TabIndex = 1;
+            this.txtsubcon1.DisplayBox1Binding = "";
             this.txtsubcon1.IsIncludeJunk = false;
             this.txtsubcon1.Location = new System.Drawing.Point(94, 48);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
             this.txtsubcon1.TabIndex = 2;
-            // 
-            // 
-            // 
-            this.txtsubcon1.TextBox1.BackColor = System.Drawing.Color.White;
-            this.txtsubcon1.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtsubcon1.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtsubcon1.TextBox1.Name = "textBox1";
-            this.txtsubcon1.TextBox1.Size = new System.Drawing.Size(66, 23);
-            this.txtsubcon1.TextBox1.TabIndex = 0;
+            this.txtsubcon1.TextBox1Binding = "";
             // 
             // label12
             // 
@@ -641,6 +582,7 @@
             this.button3.TabIndex = 4;
             this.button3.Text = "Batch Create";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // P01
             // 
