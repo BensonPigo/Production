@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace Sci.Production.PPIC
 {
@@ -55,17 +56,29 @@ namespace Sci.Production.PPIC
             //紀錄目前畫面資料，Reload Data後，資料要保留在Reload前的那一筆
             DataRow currentData = CurrentMaintain;
             ReloadDatas();
-            IList<DataRow> list = DataRows;
-            int count = 0;
-            foreach (DataRow dr in list)
+            IList<DataRow> list = DataRows.ToList<DataRow>();
+            DataRow dr = list.First<DataRow>(x => x["FactoryID"].ToString() == currentData["FactoryID"].ToString() && Convert.ToDateTime(x["Date"]).ToString("d") == Convert.ToDateTime(currentData["Date"]).ToString("d") && x["SewingLineID"].ToString() == currentData["SewingLineID"].ToString());
+            if (dr != null)
             {
-                if (dr["FactoryID"].ToString() == currentData["FactoryID"].ToString() && Convert.ToDateTime(dr["Date"]).ToString("d") == Convert.ToDateTime(currentData["Date"]).ToString("d") && dr["SewingLineID"].ToString() == currentData["SewingLineID"].ToString())
+                int pos = list.IndexOf(dr);
+                if (pos != -1)
                 {
-                    break;
+                    this.gridbs.Position = pos;
                 }
-                count++;
             }
-            this.gridbs.Position = count;
+            //DataRow currentData = CurrentMaintain;
+            //ReloadDatas();
+            //IList<DataRow> list = DataRows;
+            //int count = 0;
+            //foreach (DataRow dr in list)
+            //{
+            //    if (dr["FactoryID"].ToString() == currentData["FactoryID"].ToString() && Convert.ToDateTime(dr["Date"]).ToString("d") == Convert.ToDateTime(currentData["Date"]).ToString("d") && dr["SewingLineID"].ToString() == currentData["SewingLineID"].ToString())
+            //    {
+            //        break;
+            //    }
+            //    count++;
+            //}
+            //this.gridbs.Position = count;
         }
     }
 }
