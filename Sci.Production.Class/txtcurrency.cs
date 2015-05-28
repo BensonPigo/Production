@@ -17,8 +17,10 @@ namespace Sci.Production.Class
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
-
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,NameCH,NameEN from Currency where Junk = 0 order by ID", "5,16,60", this.Text);
+            string sql = "select ID,NameCH,NameEN from Currency where Junk = 0 order by ID";
+            DataTable tbCurrency;
+            DBProxy.Current.Select("Production", sql, out tbCurrency);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbCurrency, "ID,NameCH,NameEn", "5,16,60", this.Text, "ID,NameCH,NameEn");
             // select id, id,NameCH,NameEN from currency where junk = 0
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
@@ -44,12 +46,7 @@ namespace Sci.Production.Class
 
         public txtcurrency()
         {
-            //this._Alias = "currency";
-            //this._Tag = "ID";
-            //this.HelpColumnWidths = "10,50,50";
-            //this.HelpRecordSource = "currency.id,NameCH,NameEN";
-            //this.Size = new System.Drawing.Size(100, 22);
-            this.Size = new System.Drawing.Size(40, 23);
+            this.Size = new System.Drawing.Size(48, 23);
             this.IsSupportSytsemContextMenu = false;
            
         }

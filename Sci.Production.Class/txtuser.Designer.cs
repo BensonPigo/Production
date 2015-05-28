@@ -36,7 +36,7 @@
             // 
             this.textBox1.Location = new System.Drawing.Point(0, 0);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(78, 23);
+            this.textBox1.Size = new System.Drawing.Size(78, 22);
             this.textBox1.TabIndex = 0;
             this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
@@ -46,7 +46,7 @@
             // 
             this.displayBox1.Location = new System.Drawing.Point(79, 0);
             this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(220, 23);
+            this.displayBox1.Size = new System.Drawing.Size(220, 22);
             this.displayBox1.TabIndex = 1;
             // 
             // txtuser

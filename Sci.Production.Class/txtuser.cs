@@ -58,10 +58,12 @@ namespace Sci.Production.Class
                     if (isUserName | isUserExtNo)
                     {
                         string selectCommand;
+                        DataTable selectTable;
                         if (isUserName)
                         {
                             selectCommand = string.Format("select ID, Name, Ext_No, Factory from Pass1 where Name = '{0}' order by ID", textValue.Trim());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectCommand, "15,30,10,150", this.textBox1.Text);
+                            DBProxy.Current.Select("Production", selectCommand, out selectTable);
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable,"ID,Name,Ext_No,Factory", "15,30,10,150", this.textBox1.Text);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) 
                             {
@@ -73,7 +75,8 @@ namespace Sci.Production.Class
                         else
                         {
                             selectCommand = string.Format("select ID, Name, Ext_No, Factory from Pass1 where Ext_No = '{0}' order by ID", textValue.Trim());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectCommand, "15,30,10,150", this.textBox1.Text);
+                            DBProxy.Current.Select("Production", selectCommand, out selectTable);
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,Ext_No,Factory", "15,30,10,150", this.textBox1.Text);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -96,8 +99,10 @@ namespace Sci.Production.Class
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            string name = myUtility.Lookup("Name", this.textBox1.Text.ToString(), "Pass1", "ID");
-            string extNo = myUtility.Lookup("Ext_No", this.textBox1.Text.ToString(), "Pass1", "ID");
+            string selectSql = string.Format("Select Name from Pass1 where id = '{0}'",this.textBox1.Text.ToString());
+            string name = myUtility.Lookup(selectSql,"Production");
+            selectSql = string.Format("Select Ext_No from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
+            string extNo = myUtility.Lookup(selectSql, "Production");
             this.displayBox1.Text = name;
             if (!string.IsNullOrWhiteSpace(extNo)) { this.displayBox1.Text = name + " #" + extNo; }
         }

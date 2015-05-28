@@ -61,7 +61,8 @@ namespace Sci.Production.Class
             string textValue = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                if (!myUtility.Seek(textValue, "LocalSupp", "ID"))
+                string Sql = string.Format("Select Junk from LocalSupp where ID = '{0}'", textValue);
+                if (!myUtility.Seek(Sql, "Production"))
                 {
                     MessageBox.Show(string.Format("< Subcon Code: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
@@ -72,7 +73,7 @@ namespace Sci.Production.Class
                 {
                     if (!this.IsIncludeJunk)
                     {
-                        string lookupresult = myUtility.Lookup("Junk", this.textBox1.Text.ToString(), "LocalSupp", "ID");
+                        string lookupresult = myUtility.Lookup(Sql, "Production");
                         if (lookupresult == "True")
                         {
                             MessageBox.Show(string.Format("< Subcon Code: {0} > not found!!!", textValue));
@@ -98,7 +99,9 @@ namespace Sci.Production.Class
             {
                 selectCommand = "select ID,Abb,Name from LocalSupp where  Junk =  0 order by ID";
             }
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectCommand, "9,13,60", this.Text, false, ",");
+            DataTable tbSelect;
+            DBProxy.Current.Select("Production", selectCommand, out tbSelect);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbSelect, "ID,Abb,Name", "9,13,60", this.Text, false, ",", "ID,Abb,Name");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
