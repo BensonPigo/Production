@@ -216,9 +216,11 @@
             this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountNo", true));
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox2.Location = new System.Drawing.Point(120, 260);
+            this.textBox2.Mask = "9999-9999";
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(70, 23);
             this.textBox2.TabIndex = 14;
+            this.textBox2.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             // 
             // checkBox1
             // 
