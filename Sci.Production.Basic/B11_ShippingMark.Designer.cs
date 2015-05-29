@@ -90,7 +90,6 @@
             this.editBox1.Location = new System.Drawing.Point(31, 4);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
-            this.editBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox1.Size = new System.Drawing.Size(285, 172);
             this.editBox1.TabIndex = 98;
             // 
@@ -111,7 +110,6 @@
             this.editBox2.Location = new System.Drawing.Point(575, 4);
             this.editBox2.Multiline = true;
             this.editBox2.Name = "editBox2";
-            this.editBox2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox2.Size = new System.Drawing.Size(285, 172);
             this.editBox2.TabIndex = 100;
             // 
@@ -123,7 +121,6 @@
             this.editBox3.Location = new System.Drawing.Point(31, 182);
             this.editBox3.Multiline = true;
             this.editBox3.Name = "editBox3";
-            this.editBox3.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox3.Size = new System.Drawing.Size(285, 172);
             this.editBox3.TabIndex = 101;
             // 
@@ -135,7 +132,6 @@
             this.editBox4.Location = new System.Drawing.Point(575, 182);
             this.editBox4.Multiline = true;
             this.editBox4.Name = "editBox4";
-            this.editBox4.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox4.Size = new System.Drawing.Size(285, 172);
             this.editBox4.TabIndex = 102;
             // 
