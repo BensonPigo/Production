@@ -101,12 +101,36 @@
     <Compile Include="B01.Designer.cs">
       <DependentUpon>B01.cs</DependentUpon>
     </Compile>
+    <Compile Include="P10.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10.Designer.cs">
+      <DependentUpon>P10.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P10_ImportData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_ImportData.Designer.cs">
+      <DependentUpon>P10_ImportData.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
       <DependentUpon>B01.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P10.resx">
+      <DependentUpon>P10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P10_ImportData.resx">
+      <DependentUpon>P10_ImportData.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
+      <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
+      <Name>Sci.Production.Class</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
