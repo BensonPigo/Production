@@ -280,7 +280,6 @@
             this.editBox1.Location = new System.Drawing.Point(137, 229);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
-            this.editBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox1.Size = new System.Drawing.Size(435, 60);
             this.editBox1.TabIndex = 18;
             // 
