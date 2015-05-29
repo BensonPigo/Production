@@ -82,11 +82,6 @@ namespace Sci.Production.Basic
                  .Numeric("HalfMonth2", header: "2nd half month work day", width: Widths.AnsiChars(3));
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
         private void comboBox1_Validated(object sender, EventArgs e)
         {
             this.SelectGridData();
