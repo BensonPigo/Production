@@ -143,6 +143,7 @@
             // 
             // button2
             // 
+            this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button2.Location = new System.Drawing.Point(283, 164);
             this.button2.Name = "button2";
@@ -150,7 +151,6 @@
             this.button2.TabIndex = 11;
             this.button2.Text = "Cancel";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // label5
             // 
@@ -190,6 +190,8 @@
             // 
             // B07_BatchAdd
             // 
+            this.AcceptButton = this.button1;
+            this.CancelButton = this.button2;
             this.ClientSize = new System.Drawing.Size(377, 204);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);

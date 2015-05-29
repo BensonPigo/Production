@@ -43,42 +43,34 @@ namespace Sci.Production.PPIC
         protected override bool OnNewBefore()
         {
             Sci.Production.PPIC.B07_Add callNextForm = new Sci.Production.PPIC.B07_Add();
-            callNextForm.ShowDialog(this);
-            ReloadDatas();
+            DialogResult result = callNextForm.ShowDialog(this);
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                ReloadDatas();
+            }
             return false;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.B07_BatchAdd callNextForm = new Sci.Production.PPIC.B07_BatchAdd(CurrentMaintain);
-            callNextForm.ShowDialog(this);
-
-            //紀錄目前畫面資料，Reload Data後，資料要保留在Reload前的那一筆
-            DataRow currentData = CurrentMaintain;
-            ReloadDatas();
-            IList<DataRow> list = DataRows.ToList<DataRow>();
-            DataRow dr = list.First<DataRow>(x => x["FactoryID"].ToString() == currentData["FactoryID"].ToString() && Convert.ToDateTime(x["Date"]).ToString("d") == Convert.ToDateTime(currentData["Date"]).ToString("d") && x["SewingLineID"].ToString() == currentData["SewingLineID"].ToString());
-            if (dr != null)
+            DialogResult result = callNextForm.ShowDialog(this);
+            if (result == System.Windows.Forms.DialogResult.OK)
             {
-                int pos = list.IndexOf(dr);
-                if (pos != -1)
+                //紀錄目前畫面資料，Reload Data後，資料要保留在Reload前的那一筆
+                DataRow currentData = CurrentMaintain;
+                ReloadDatas();
+                IList<DataRow> list = DataRows.ToList<DataRow>();
+                DataRow dr = list.First<DataRow>(x => x["FactoryID"].ToString() == currentData["FactoryID"].ToString() && Convert.ToDateTime(x["Date"]).ToString("d") == Convert.ToDateTime(currentData["Date"]).ToString("d") && x["SewingLineID"].ToString() == currentData["SewingLineID"].ToString());
+                if (dr != null)
                 {
-                    this.gridbs.Position = pos;
+                    int pos = list.IndexOf(dr);
+                    if (pos != -1)
+                    {
+                        this.gridbs.Position = pos;
+                    }
                 }
             }
-            //DataRow currentData = CurrentMaintain;
-            //ReloadDatas();
-            //IList<DataRow> list = DataRows;
-            //int count = 0;
-            //foreach (DataRow dr in list)
-            //{
-            //    if (dr["FactoryID"].ToString() == currentData["FactoryID"].ToString() && Convert.ToDateTime(dr["Date"]).ToString("d") == Convert.ToDateTime(currentData["Date"]).ToString("d") && dr["SewingLineID"].ToString() == currentData["SewingLineID"].ToString())
-            //    {
-            //        break;
-            //    }
-            //    count++;
-            //}
-            //this.gridbs.Position = count;
         }
     }
 }
