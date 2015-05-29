@@ -62,17 +62,17 @@
             // 
             // button1
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button1.Location = new System.Drawing.Point(448, 354);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
             this.button1.TabIndex = 1;
             this.button1.Text = "Close";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // B14_Machine
             // 
+            this.CancelButton = this.button1;
             this.ClientSize = new System.Drawing.Size(549, 389);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.grid1);

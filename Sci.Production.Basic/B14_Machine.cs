@@ -36,10 +36,5 @@ namespace Sci.Production.Basic
                  .Text("ID", header: "ID", width: Widths.AnsiChars(10))
                  .Text("Description", header: "Description", width: Widths.AnsiChars(40));
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
     }
 }
