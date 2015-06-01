@@ -51,7 +51,10 @@ namespace Sci.Production.Packing
             e.Details.Columns.Add("ReceiveDate", type: typeof(DateTime));
             foreach (DataRow gridData in e.Details.Rows)
             {
-                string selectCmd = string.Format("select StyleID,SeasonID,BrandID,Customize1,CustPONo,Dest,BuyerDelivery from Orders where ID = '{0}'", gridData["OrderID"].ToString());
+                string selectCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,a.BuyerDelivery 
+                                                                            from Orders a 
+                                                                            left join Country b on b.ID = a.Dest  
+                                                                            where a.ID = '{0}'", gridData["OrderID"].ToString());
                 DataTable orderData, receiveData;
                 DualResult dr;
                 if (dr = DBProxy.Current.Select(null, selectCmd, out orderData))
@@ -63,12 +66,17 @@ namespace Sci.Production.Packing
                         gridData["BrandID"] = orderData.Rows[0]["BrandID"].ToString().Trim();
                         gridData["Customize1"] = orderData.Rows[0]["Customize1"].ToString().Trim();
                         gridData["CustPONo"] = orderData.Rows[0]["CustPONo"].ToString().Trim();
-                        gridData["Alias"] = myUtility.Lookup("Alias", orderData.Rows[0]["Dest"].ToString(), "Country", "ID");
+                        gridData["Alias"] = orderData.Rows[0]["Alias"].ToString().Trim();
                         gridData["BuyerDelivery"] = orderData.Rows[0]["BuyerDelivery"];
                     }
                 }
 
-                selectCmd = string.Format("Select a.ReceiveDate from ClogReceive a, ClogReceive_Detail b where b.TransferToClogId = '{0}' and b.PackingListId = '{1}' and b.OrderId = '{2}' and b.CTNStartNo = '{3}' and a.Id = b.Id and a.Encode = 1", gridData["ID"].ToString(), gridData["PackingListID"].ToString(), gridData["OrderID"].ToString(), gridData["CTNStartNo"].ToString());
+                selectCmd = string.Format(@"Select a.ReceiveDate from ClogReceive a, ClogReceive_Detail b 
+                                                                where b.TransferToClogId = '{0}' 
+                                                                and b.PackingListId = '{1}' 
+                                                                and b.OrderId = '{2}'  
+                                                                and b.CTNStartNo = '{3}' and a.Id = b.Id and a.Encode = 1
+                                                                ", gridData["ID"].ToString(), gridData["PackingListID"].ToString(), gridData["OrderID"].ToString(), gridData["CTNStartNo"].ToString());
                 if (dr = DBProxy.Current.Select(null, selectCmd, out receiveData))
                 {
                     if (receiveData.Rows.Count > 0)
@@ -131,7 +139,9 @@ namespace Sci.Production.Packing
         protected override bool OnDeletePost()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            string sqlUpdatePackingList = string.Format("update PackingList_Detail set TransferToClogID = '', TransferDate = null where TransferToClogID = '{0}';", dr["ID"].ToString());
+            string sqlUpdatePackingList = string.Format(@"update PackingList_Detail 
+                                                                                        set TransferToClogID = '', TransferDate = null 
+                                                                                        where TransferToClogID = '{0}';", dr["ID"].ToString());
             DualResult result;
             if (!(result = DBProxy.Current.Execute(null, sqlUpdatePackingList)))
             {
@@ -151,7 +161,10 @@ namespace Sci.Production.Packing
             {
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    sqlUpdatePackingList = string.Format("update PackingList_Detail set TransferToClogID = '', TransferDate = null where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}';", dr["PackingListID", DataRowVersion.Original].ToString(), dr["OrderID", DataRowVersion.Original].ToString(), dr["CTNStartNo", DataRowVersion.Original].ToString());
+                    sqlUpdatePackingList = string.Format(@"update PackingList_Detail 
+                                                                                       set TransferToClogID = '', TransferDate = null 
+                                                                                       where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}';
+                                                                                        ", dr["PackingListID", DataRowVersion.Original].ToString(), dr["OrderID", DataRowVersion.Original].ToString(), dr["CTNStartNo", DataRowVersion.Original].ToString());
 
                     if (!(result = DBProxy.Current.Execute(null, sqlUpdatePackingList)))
                     {

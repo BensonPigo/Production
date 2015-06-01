@@ -55,7 +55,14 @@ namespace Sci.Production.Packing
                 return;
             }
 
-            string selectCommand = "Select Distinct '' as ID, 0 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery from PackingList a, PackingList_Detail b, Orders c, Country d where a.FactoryID = '" + Sci.Env.User.Factory + "' and (a.Type = 'B' or a.Type = 'L') and c.FTYGroup = '" + Sci.Env.User.Factory + "' and a.OrderId = c.Id and a.Id = b.Id and b.CTNStartNo != '' and ((b.ClogReturnId = '' and TransferToClogId = '') or b.ClogReturnId != '') and c.Dest = d.ID";
+            string selectCommand = @"Select Distinct '' as ID, 0 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery 
+                                                         from PackingList a, PackingList_Detail b, Orders c, Country d 
+                                                         where a.OrderId = c.Id 
+                                                         and a.Id = b.Id 
+                                                         and b.CTNStartNo != '' 
+                                                         and ((b.ClogReturnId = '' and TransferToClogId = '') or b.ClogReturnId != '') 
+                                                         and c.Dest = d.ID 
+                                                         and a.FactoryID = '" + Sci.Env.User.Factory + "' and (a.Type = 'B' or a.Type = 'L') and c.FTYGroup = '" + Sci.Env.User.Factory + "' and ";
             if (!string.IsNullOrWhiteSpace(this.textBox1.Text.ToString()))
             {
                 selectCommand = selectCommand + string.Format(" and a.OrderID = '{0}'", this.textBox1.Text.ToString().Trim());
@@ -156,7 +163,10 @@ namespace Sci.Production.Packing
                      insertData = true;
                      if (!string.IsNullOrWhiteSpace(idValue))
                      {
-                         sqlCommand = string.Format("select ID from TransferToClog_Detail  where ID = '{0}' and PackingListID = '{1}' and CTNStartNo = '{2}'", idValue, currentRecord["PackingListID"].ToString(), currentRecord["CTNStartNo"].ToString());
+                         sqlCommand = string.Format(@"select ID
+                                                                              from TransferToClog_Detail  
+                                                                              where ID = '{0}' and PackingListID = '{1}' and CTNStartNo = '{2}'
+                                                                              ", idValue, currentRecord["PackingListID"].ToString(), currentRecord["CTNStartNo"].ToString());
                          if (myUtility.Seek(sqlCommand, null))
                          {
                              insertData = false;
@@ -168,7 +178,9 @@ namespace Sci.Production.Packing
                          sqlInsert = sqlInsert + "Insert into TransferToClog_Detail (Id,PackingListID,OrderID,CTNStartNo,AddName,AddDate)\r\n ";
                          sqlInsert = sqlInsert + string.Format("Values('{5}','{0}','{1}','{2}','{3}','{4}');\r\n ", currentRecord["PackingListID"].ToString(), currentRecord["OrderID"].ToString(), currentRecord["CTNStartNo"].ToString(), Sci.Env.User.UserID, nowTime.ToString("yyyy/MM/dd HH:mm:ss"), newID);
                          //要順便更新PackingList_Detail
-                         sqlUpdatePackingList = sqlUpdatePackingList + string.Format("update PackingList_Detail set TransferToClogID = '{3}', TransferDate = '{4}', ClogReceiveID = '', ReceiveDate = null, Location = '', ClogReturnID = '', ReturnDate = null where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}';\r\n", currentRecord["PackingListID"].ToString(), currentRecord["OrderID"].ToString(), currentRecord["CTNStartNo"].ToString(), newID, transDate);
+                         sqlUpdatePackingList = sqlUpdatePackingList + string.Format(@"update PackingList_Detail 
+                                                                                                                                  set TransferToClogID = '{3}', TransferDate = '{4}', ClogReceiveID = '', ReceiveDate = null, Location = '', ClogReturnID = '', ReturnDate = null 
+                                                                                                                                  where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}';\r\n", currentRecord["PackingListID"].ToString(), currentRecord["OrderID"].ToString(), currentRecord["CTNStartNo"].ToString(), newID, transDate);
                      }
                  }
              }
@@ -229,7 +241,8 @@ namespace Sci.Production.Packing
             if (openFileDialog1.ShowDialog() == DialogResult.OK) //開窗且有選擇檔案
             {
                 //先將Grid的結構給開出來
-                string selectCommand = "Select distinct '' as ID, 0 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery from PackingList a, PackingList_Detail b, Orders c, Country d where 1=0";
+                string selectCommand = @"Select distinct '' as ID, 0 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery 
+                                                             from PackingList a, PackingList_Detail b, Orders c, Country d where 1=0";
                 DataTable selectDataTable;
                 DualResult selectResult;
                 if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out selectDataTable)))
@@ -261,11 +274,17 @@ namespace Sci.Production.Packing
                             dr["selected"] = 0;
                             dr["PackingListID"] = sl[1].Substring(0,13);
                             dr["CTNStartNo"] = sl[1].Substring(13);
-                            string sqlCmd = string.Format("select OrderID from PackingList_Detail where ID = '{0}' and CTNStartNo = '{1}' and TransferToClogID = ''", dr["PackingListID"].ToString(), dr["CTNStartNo"].ToString());
+                            string sqlCmd = string.Format(@"select OrderID 
+                                                                                  from PackingList_Detail
+                                                                                  where ID = '{0}' and CTNStartNo = '{1}' and TransferToClogID = ''
+                                                                                   ", dr["PackingListID"].ToString(), dr["CTNStartNo"].ToString());
                             if (myUtility.Seek(sqlCmd, out seekData))
                             {
                                 dr["OrderID"] = seekData["OrderID"].ToString().Trim();
-                                sqlCmd = string.Format("select StyleID,SeasonID,BrandID,Customize1,CustPONo,Dest,BuyerDelivery from Orders where ID = '{0}' and FtyGroup = '{1}'", dr["OrderID"].ToString(), Sci.Env.User.Factory);
+                                sqlCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,a.BuyerDelivery 
+                                                                            from Orders a
+                                                                             left join Country b on b.ID = a.Dest
+                                                                            where a.ID = '{0}' and a.FtyGroup = '{1}'", dr["OrderID"].ToString(), Sci.Env.User.Factory);
                                 if (myUtility.Seek(sqlCmd, out seekData))
                                 {
                                     dr["StyleID"] = seekData["StyleID"].ToString().Trim();
@@ -273,7 +292,7 @@ namespace Sci.Production.Packing
                                     dr["BrandID"] = seekData["BrandID"].ToString().Trim();
                                     dr["Customize1"] = seekData["Customize1"].ToString().Trim();
                                     dr["CustPONo"] = seekData["CustPONo"].ToString().Trim();
-                                    dr["Alias"] = myUtility.Lookup("Alias", seekData["Dest"].ToString(), "Country", "ID");
+                                    dr["Alias"] = seekData["Alias"].ToString().Trim();
                                     dr["BuyerDelivery"] = seekData["BuyerDelivery"];
 
                                     selectDataTable.Rows.Add(dr);
