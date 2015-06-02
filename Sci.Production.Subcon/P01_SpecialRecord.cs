@@ -119,15 +119,17 @@ namespace Sci.Production.Subcon
 	             "     where c.id = '{0}'", dr["artworktypeid"]);
 	             if (!string.IsNullOrWhiteSpace(orderID)) { strSQLCmd += string.Format(" and ((a.category='B' and c.isArtwork=0)  or (a.category !='B')) and a.ID = '{0}'", orderID); }
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and a.poid = '{0}'", poid); }
-                strSQLCmd +=string.Format(" EXCEPT"+
+                strSQLCmd +=" EXCEPT"+
 	             "     select b1.orderid,a1.ArtworkTypeID, b1.ArtworkId,b1.PatternCode "+
-	             "     from artworkpo a1,ArtworkPO_Detail b1"+
-	             "     where a1.id = b1.id "+
-	             "     and a1.POType = '{1}'"+
+	             "     from artworkpo a1,ArtworkPO_Detail b1";
+                 if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += " ,orders c1"; }
+                 strSQLCmd += "     where a1.id = b1.id ";
+                 if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += " and b1.orderid=c1.id"; }
+	             strSQLCmd +=string.Format("     and a1.POType = '{1}'"+
 	             "     and a1.ArtworkTypeID= '{0}'", dr["artworktypeid"],poType);
                 if (!(string.IsNullOrWhiteSpace(dr["id"].ToString()))) { strSQLCmd += string.Format("  and a1.id !='{0}'", dr["id"]); }
 	             if (!string.IsNullOrWhiteSpace(orderID)) { strSQLCmd += string.Format(" and b1.OrderID = '{0}'", poid); }
-                 if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and b1.poid = '{0}'", poid); }
+                 if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and c1.poid = '{0}'", poid); }
                  strSQLCmd += "     ) as aa" +
                  " where aaa.id = bbb.id" +
                  " and aaa.ID = aa.orderid" +

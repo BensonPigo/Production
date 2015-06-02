@@ -290,6 +290,9 @@ Sci.Production.Subcon/P01_ModifyPoQty.resx -text
 Sci.Production.Subcon/P01_SpecialRecord.Designer.cs -text
 Sci.Production.Subcon/P01_SpecialRecord.cs -text
 Sci.Production.Subcon/P01_SpecialRecord.resx -text
+Sci.Production.Subcon/P02.Designer.cs -text
+Sci.Production.Subcon/P02.cs -text
+Sci.Production.Subcon/P02.resx -text
 Sci.Production.Subcon/Properties/AssemblyInfo.cs -text
 Sci.Production.Subcon/Sci.Production.Subcon.csproj -text
 Sci.Production.Thread/Properties/AssemblyInfo.cs -text
