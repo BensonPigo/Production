@@ -120,7 +120,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 248);
+            this.masterpanel.Size = new System.Drawing.Size(1058, 248);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
@@ -164,7 +164,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 248);
-            this.detailpanel.Size = new System.Drawing.Size(892, 101);
+            this.detailpanel.Size = new System.Drawing.Size(1058, 229);
             // 
             // gridicon
             // 
@@ -172,9 +172,13 @@
             this.gridicon.Location = new System.Drawing.Point(928, 210);
             this.gridicon.TabIndex = 21;
             // 
+            // refresh
+            // 
+            this.refresh.Location = new System.Drawing.Point(978, 0);
+            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 101);
+            this.detailgridcont.Size = new System.Drawing.Size(1058, 229);
             // 
             // detailgridcont2
             // 
@@ -183,6 +187,19 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1058, 515);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(1058, 477);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 477);
+            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
             // 
             // browse
             // 
@@ -461,6 +478,17 @@
             this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "vatrate", true));
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox1.Location = new System.Drawing.Point(114, 182);
+            this.numericBox1.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numericBox1.MaxLength = 3;
+            this.numericBox1.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Name = "numericBox1";
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
             this.numericBox1.TabIndex = 6;
@@ -517,6 +545,7 @@
             // 
             this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "apvname", true));
             this.txtuser2.DisplayBox1Binding = "";
+            this.txtuser2.Enabled = false;
             this.txtuser2.Location = new System.Drawing.Point(580, 82);
             this.txtuser2.Name = "txtuser2";
             this.txtuser2.Size = new System.Drawing.Size(300, 23);
@@ -544,6 +573,7 @@
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_fty1.TabIndex = 8;
+            this.txtartworktype_fty1.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_fty1_Validating);
             // 
             // txtsubcon1
             // 
@@ -567,7 +597,7 @@
             // 
             // dateBox2
             // 
-            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "issuedate", true));
+            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "delivery", true));
             this.dateBox2.Location = new System.Drawing.Point(94, 115);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
@@ -575,6 +605,7 @@
             // 
             // button3
             // 
+            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button3.Location = new System.Drawing.Point(932, 12);
             this.button3.Name = "button3";
@@ -588,6 +619,7 @@
             // 
             this.ClientSize = new System.Drawing.Size(1066, 577);
             this.Controls.Add(this.button3);
+            this.DefaultFilter = "potype=\'O\'";
             this.DefaultOrder = "issuedate,id";
             this.GridAlias = "ArtworkPO_detail";
             this.GridUniqueKey = "id,artworkid,patterncode";

@@ -13,6 +13,7 @@ using Sci.Data;
 using Sci.Production;
 
 using Sci.Production.PublicPrg;
+using System.Linq;
 
 
 
@@ -31,6 +32,15 @@ namespace Sci.Production.Subcon
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
 
+            this.txtsubcon1.TextBox1.Validated += (s, e) =>
+            {
+                if (this.EditMode && this.txtsubcon1.TextBox1.Text != this.txtsubcon1.TextBox1.OldValue)
+                {
+                    CurrentMaintain["CurrencyID"] = myUtility.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
+                    ((DataTable)detailgridbs.DataSource).Rows.Clear();
+                }
+            };
+
         }
 
         // 新增時預設資料
@@ -41,7 +51,49 @@ namespace Sci.Production.Subcon
             CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
             CurrentMaintain["POType"] = "O";
             CurrentMaintain["HANDLE"] = Sci.Env.User.UserID;
+            CurrentMaintain["VatRate"] = 0;
+            CurrentMaintain["closed"] = 0;
             ((DataTable)(detailgridbs.DataSource)).Rows[0].Delete();
+        }
+
+        // delete前檢查
+
+        protected override bool OnDeleteBefore()
+        {
+            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if (!string.IsNullOrWhiteSpace(dr["apvname"].ToString()) || dr["closed"].ToString().ToUpper() == "TRUE")
+            {
+                MessageBox.Show("Data is approved or closed, can't delete.", "Warning");
+                return false;
+            }
+
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            sp1.ParameterName = "@id";
+            sp1.Value = dr["id"].ToString();
+
+            IList<System.Data.SqlClient.SqlParameter> paras = new List<System.Data.SqlClient.SqlParameter>();
+            paras.Add(sp1);
+
+            string sqlcmd;
+            sqlcmd = "select fd.ID from ArtworkPO_Detail ad, FarmOut_Detail fd where ad.Ukey = fd.ArtworkPo_DetailUkey and ad.id = @id" +
+                     "   union all " +
+                     "   select fo.ID from ArtworkPO_Detail ad, FarmOut_Detail fo where ad.Ukey = fo.ArtworkPo_DetailUkey and ad.id = @id " +
+                     "      union all" +
+                     "   select fi.ID from ArtworkPO_Detail ad, FarmIn_Detail fi where ad.Ukey = fi.ArtworkPo_DetailUkey and ad.id = @id";
+
+            DataTable dt;
+            DBProxy.Current.Select(null, sqlcmd, paras, out dt);
+            if (dt.Rows.Count > 0)
+            {
+                string ids = "";
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    ids += dt.Rows[i][0].ToString() + ";";
+                }
+                MessageBox.Show(string.Format("Below IDs {0} refer to details data, can't delete.", ids), "Warning");
+                return false;
+            }
+            return base.OnDeleteBefore();
         }
 
         // edit前檢查
@@ -63,16 +115,74 @@ namespace Sci.Production.Subcon
         // save前檢查 & 取id
         protected override bool OnSaveBefore()
         {
-            //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
-            if (string.IsNullOrWhiteSpace(CurrentMaintain["id"].ToString()))
-            {
-                //CurrentMaintain["id"] 
+
+            #region 必輸檢查
+            if (CurrentMaintain["LocalSuppID"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["LocalSuppID"].ToString()))
+		    {
+                MessageBox.Show("< Suppiler >  can't be empty!","Warning");
+                txtsubcon1.TextBox1.Focus();
+                return false;
             }
 
-            //nExact: CURRENCY.EXACT
-            //REPLACE POAmount WITH ROUND(明細amount加總, nExact)
-            //REPLACE Vat WITH ROUND(VatRate * POAmount / 100, nExact)
-            //明細Artworktype需填入表頭的artworktype
+            if (CurrentMaintain["issuedate"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
+		    {
+                MessageBox.Show("< Issue Date >  can't be empty!","Warning");
+                dateBox1.Focus();
+                return false;
+            }
+
+            if (CurrentMaintain["Delivery"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["Delivery"].ToString()))
+		    {
+                MessageBox.Show("< Delivery Date >  can't be empty!","Warning");
+                dateBox2.Focus();
+                return false;
+            }
+
+            if (CurrentMaintain["ArtworktypeId"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["ArtworktypeId"].ToString()))
+		    {
+                MessageBox.Show("< Artwork Type >  can't be empty!","Warning");
+                txtartworktype_fty1.Focus();
+                return false;
+            }
+
+            if (CurrentMaintain["CurrencyID"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["CurrencyID"].ToString()))
+		    {
+                MessageBox.Show("< Currency >  can't be empty!","Warning");
+                return false;
+            }
+
+            if (CurrentMaintain["Handle"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["Handle"].ToString()))
+		    {
+                MessageBox.Show("< Handle >  can't be empty!","Warning");
+                txtuser1.TextBox1.Focus();
+                return false;
+            }
+            #endregion
+
+            if (DetailDatas.Count == 0)
+            {
+                MessageBox.Show("Detail can't be empty", "Warning");
+                return false;
+            }
+
+            //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
+            if (this.IsDetailInserting)
+            {
+                CurrentMaintain["id"] = Sci.myUtility.GetID(ProjEnv.Keyword+"OS", "artworkpo", (DateTime)CurrentMaintain["issuedate"]);
+            }
+
+            #region 加總明細金額至表頭
+            string str = myUtility.Lookup(string.Format("Select exact from Currency where id = '{0}'", CurrentMaintain["currencyId"]),null);
+            if (str == null || string.IsNullOrWhiteSpace(str))
+            {
+                MessageBox.Show("Currency is not found in Local Supplier data, can't save!","Warning");
+                return false;
+            }
+            int exact = int.Parse(str);
+            object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(amount)", "");
+            CurrentMaintain["amount"] = Math.Round((decimal)detail_a, exact);
+            CurrentMaintain["vat"] = Math.Round((decimal)detail_a * (decimal)CurrentMaintain["vatrate"]/100, exact);
+            #endregion
             
             return base.OnSaveBefore();
         }
@@ -97,8 +207,6 @@ namespace Sci.Production.Subcon
                     dr["sewinline"] = order_dt.Rows[0]["sewinline"];
                     dr["scidelivery"] = order_dt.Rows[0]["scidelivery"];
                     
-                    
-                    
                 }
             }
  	         return base.OnRenewDataDetailPost(e);
@@ -108,6 +216,10 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            string artworkunit = myUtility.Lookup(string.Format("select artworkunit from artworktype where id='{0}'", CurrentMaintain["artworktypeid"])).ToString().Trim();
+            if (artworkunit == "") artworkunit = "PCS";
+            this.detailgrid.Columns[6].HeaderText = "Cost(" + artworkunit + ")";
+            this.detailgrid.Columns[7].HeaderText = artworkunit;
             if (!(CurrentMaintain==null))
             {
                 if (!(CurrentMaintain["amount"] == DBNull.Value) && !(CurrentMaintain["vat"] == DBNull.Value))
@@ -116,7 +228,8 @@ namespace Sci.Production.Subcon
                     numericBox4.Text = amount.ToString();
                 }
             }
-
+            txtsubcon1.Enabled = !this.EditMode || IsDetailInserting ;
+            txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
             #region Status Label
             if (CurrentMaintain["Closed"].ToString().ToUpper() == "TRUE")
             {
@@ -184,17 +297,24 @@ namespace Sci.Production.Subcon
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
-            #region SP#右鍵開窗
+            #region SP#右鍵開窗- modify poqty
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
             ts4.EditingMouseDown += (s, e) =>
             {
-                if (!this.EditMode && !string.IsNullOrWhiteSpace(CurrentMaintain["ApvName"].ToString()) 
-                    && CurrentMaintain["closed"].ToString().ToUpper() == "FALSE" && e.Button == MouseButtons.Right)
+                if (!this.EditMode && CurrentMaintain["closed"].ToString().ToUpper() == "FALSE" && e.Button == MouseButtons.Right)
                 {
                     Subcon.P01_ModifyPoQty DoForm = new P01_ModifyPoQty();
 		            DoForm.Set(true, this.DetailDatas, this.CurrentDetailData); 			
                     DoForm.ShowDialog(this);
-                    DoSave();
+                    string sqlcmd = "";
+                    //foreach (DataRow tmp in DetailDatas)
+                    //{
+                    //    if (tmp.RowState == DataRowState.Modified)
+                    //    {
+                    //        sqlcmd = 
+                    //    }
+                    //}
+                    
                 }
 
             };
@@ -340,6 +460,8 @@ namespace Sci.Production.Subcon
             }
             else
             {
+                DialogResult dResult = MessageBox.Show("Do you want to recall it?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+                if (dResult.ToString().ToUpper() == "NO") return;
                 sqlcmd = string.Format("update artworkpo set closed=0  , editname = '{0}' , editdate = GETDATE() " +
                                 "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             }
@@ -358,6 +480,12 @@ namespace Sci.Production.Subcon
         private void button4_Click(object sender, EventArgs e)
         {
             var dr = CurrentMaintain; if (null == dr) return;
+            if (dr["localsuppid"] == DBNull.Value)
+            {
+                MessageBox.Show("Please fill Supplier first!");
+                txtsubcon1.TextBox1.Focus();
+                return;
+            }
             if (dr["artworktypeid"] == DBNull.Value)
             {
                 MessageBox.Show("Please fill Artworktype first!");
@@ -389,10 +517,23 @@ namespace Sci.Production.Subcon
         private void button3_Click(object sender, EventArgs e)
         {
             if (this.EditMode) return;
-            var frm = new Sci.Production.Subcon.P01_BatchCreate();
+            var frm = new Sci.Production.Subcon.P01_BatchCreate("P01");
             frm.ShowDialog(this);
             ReloadDatas();
         }
+
+        private void txtartworktype_fty1_Validating(object sender, CancelEventArgs e)
+        {
+            Production.Class.txtartworktype_fty o;
+            o = (Production.Class.txtartworktype_fty)sender;
+
+            if ((o.Text != o.OldValue) && this.EditMode)
+            {
+                ((DataTable)detailgridbs.DataSource).Rows.Clear();
+            }
+        }
+
+        
 
     }
 }
