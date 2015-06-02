@@ -64,6 +64,10 @@
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
     </Reference>
+    <Reference Include="Sci.Proj, Version=1.0.1505.1800, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -152,10 +156,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\PublicClass\Sci.Proj\Sci.Proj.csproj">
-      <Project>{16e935ab-d86f-4f0e-82de-e12c8c74ed3e}</Project>
-      <Name>Sci.Proj</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
       <Name>Sci.Production.Class</Name>

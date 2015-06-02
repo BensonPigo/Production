@@ -301,19 +301,16 @@ namespace Sci.Production.Subcon
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
             ts4.EditingMouseDown += (s, e) =>
             {
-                if (!this.EditMode && CurrentMaintain["closed"].ToString().ToUpper() == "FALSE" && e.Button == MouseButtons.Right)
+                if (!this.EditMode && (myUtility.Empty(CurrentMaintain["closed"]) || CurrentMaintain["closed"].ToString().ToUpper() == "FALSE") && e.Button == MouseButtons.Right)
                 {
-                    Subcon.P01_ModifyPoQty DoForm = new P01_ModifyPoQty();
-		            DoForm.Set(true, this.DetailDatas, this.CurrentDetailData); 			
-                    DoForm.ShowDialog(this);
-                    string sqlcmd = "";
-                    //foreach (DataRow tmp in DetailDatas)
-                    //{
-                    //    if (tmp.RowState == DataRowState.Modified)
-                    //    {
-                    //        sqlcmd = 
-                    //    }
-                    //}
+                    var frm = new Sci.Production.Subcon.P01_ModifyPoQty(CurrentDetailData);
+                    DialogResult result = frm.ShowDialog(this);
+
+                    if (result == DialogResult.OK)
+                    {
+                        this.RenewData();
+                        this.OnDetailEntered();
+                    }
                     
                 }
 
