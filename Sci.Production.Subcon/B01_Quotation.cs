@@ -24,28 +24,28 @@ namespace Sci.Production.Subcon
             this.DefaultFilter = "refno = '"+ b01_refno+"'";
 
             //選完Supp後要將回寫CurrencyID
-            this.txtsubcon1.TextBox1.Validating += (s, e) =>
+            this.txtsubcon1.TextBox1.Validated += (s, e) =>
             {
                 if (this.EditMode && this.txtsubcon1.TextBox1.Text != this.txtsubcon1.TextBox1.OldValue)
                 {
                     CurrentMaintain["CurrencyID1"] = myUtility.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
                 }
             };
-            this.txtsubcon2.TextBox1.Validating += (s, e) =>
+            this.txtsubcon2.TextBox1.Validated += (s, e) =>
             {
                 if (this.EditMode && this.txtsubcon2.TextBox1.Text != this.txtsubcon2.TextBox1.OldValue)
                 {
                     CurrentMaintain["CurrencyID2"] = myUtility.Lookup("CurrencyID", this.txtsubcon2.TextBox1.Text, "LocalSupp", "ID");
                 }
             };
-            this.txtsubcon3.TextBox1.Validating += (s, e) =>
+            this.txtsubcon3.TextBox1.Validated += (s, e) =>
             {
                 if (this.EditMode && this.txtsubcon3.TextBox1.Text != this.txtsubcon3.TextBox1.OldValue)
                 {
                     CurrentMaintain["CurrencyID3"] = myUtility.Lookup("CurrencyID", this.txtsubcon3.TextBox1.Text, "LocalSupp", "ID");
                 }
             };
-            this.txtsubcon4.TextBox1.Validating += (s, e) =>
+            this.txtsubcon4.TextBox1.Validated += (s, e) =>
             {
                 if (this.EditMode && this.txtsubcon4.TextBox1.Text != this.txtsubcon4.TextBox1.OldValue)
                 {

@@ -63,6 +63,10 @@
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(900, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.button1);
@@ -87,6 +91,11 @@
             this.detailcont.Controls.Add(this.txtsubcon3);
             this.detailcont.Controls.Add(this.txtsubcon2);
             this.detailcont.Controls.Add(this.txtsubcon1);
+            this.detailcont.Size = new System.Drawing.Size(900, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(900, 38);
             // 
             // browse
             // 
