@@ -62,7 +62,7 @@ namespace Sci.Production.Packing
                                                          and b.CTNStartNo != '' 
                                                          and ((b.ClogReturnId = '' and TransferToClogId = '') or b.ClogReturnId != '') 
                                                          and c.Dest = d.ID 
-                                                         and a.FactoryID = '" + Sci.Env.User.Factory + "' and (a.Type = 'B' or a.Type = 'L') and c.FTYGroup = '" + Sci.Env.User.Factory + "' and ";
+                                                         and a.FactoryID = '" + Sci.Env.User.Factory + "' and (a.Type = 'B' or a.Type = 'L') and c.FTYGroup = '" + Sci.Env.User.Factory + "'";
             if (!string.IsNullOrWhiteSpace(this.textBox1.Text.ToString()))
             {
                 selectCommand = selectCommand + string.Format(" and a.OrderID = '{0}'", this.textBox1.Text.ToString().Trim());
@@ -122,115 +122,103 @@ namespace Sci.Production.Packing
             string sqlInsertMaster = "";
             string sqlInsert = "";
             string sqlUpdatePackingList = "";
-            int count = 0;
             DateTime nowTime = DateTime.Now;
 
             //檢查是否有勾選資料
-             DataTable dt = (DataTable)bindingSource1.DataSource;
-             foreach (DataRow currentRecord in dt.Rows)
-             {
-                 if ((int)currentRecord["Selected"] == 1)
-                 { 
-                     count = count + 1;
-                     break;
-                 }
-             }
+            DataTable dt = (DataTable)bindingSource1.DataSource;
+            DataRow[] selectedData = dt.Select("Selected = 1");
+            if (selectedData.Length == 0)
+            {
+                MessageBox.Show("No data need to import!");
+                return;
+            }
 
-             if (count == 0)
-             {
-                 MessageBox.Show("No data need to import!");
-                 return;
-             }
+            //設定參數值
+            if (string.IsNullOrWhiteSpace(idValue))
+            {
+                string getID = myUtility.GetID(ProjEnv.Keyword + "CS", "TransferToClog", DateTime.Today, 2, "Id", null);
+                newID = getID;
+                transDate = DateTime.Today.ToString("d");
+            }
+            else
+            {
+                newID = idValue;
+                transDate = Convert.ToDateTime(myUtility.Lookup("TransferDate", newID, "TransferToClog", "ID")).ToString("d");
+            }
 
-             //設定參數值
-             if (string.IsNullOrWhiteSpace(idValue))
-             {
-                 string getID = myUtility.GetID(ProjEnv.Keyword + "CS", "TransferToClog", DateTime.Today, 2, "Id", null);
-                 newID = getID;
-                 transDate = DateTime.Today.ToString("d");
-             }
-             else
-             {
-                 newID = idValue;
-                 transDate = Convert.ToDateTime(myUtility.Lookup("TransferDate", newID, "TransferToClog", "ID")).ToString("d");
-             }
-
-             //組表身資料
-             foreach (DataRow currentRecord in dt.Rows)
-             {
-                 if ((int)currentRecord["Selected"] == 1)
-                 {
-                     insertData = true;
-                     if (!string.IsNullOrWhiteSpace(idValue))
-                     {
-                         sqlCommand = string.Format(@"select ID
+            //組表身資料
+            foreach (DataRow currentRecord in selectedData)
+            {
+                insertData = true;
+                if (!string.IsNullOrWhiteSpace(idValue))
+                {
+                    sqlCommand = string.Format(@"select ID
                                                                               from TransferToClog_Detail  
                                                                               where ID = '{0}' and PackingListID = '{1}' and CTNStartNo = '{2}'
                                                                               ", idValue, currentRecord["PackingListID"].ToString(), currentRecord["CTNStartNo"].ToString());
-                         if (myUtility.Seek(sqlCommand, null))
-                         {
-                             insertData = false;
-                         }
-                     }
+                    if (myUtility.Seek(sqlCommand, null))
+                    {
+                        insertData = false;
+                    }
+                }
 
-                     if (insertData)
-                     {
-                         sqlInsert = sqlInsert + "Insert into TransferToClog_Detail (Id,PackingListID,OrderID,CTNStartNo,AddName,AddDate)\r\n ";
-                         sqlInsert = sqlInsert + string.Format("Values('{5}','{0}','{1}','{2}','{3}','{4}');\r\n ", currentRecord["PackingListID"].ToString(), currentRecord["OrderID"].ToString(), currentRecord["CTNStartNo"].ToString(), Sci.Env.User.UserID, nowTime.ToString("yyyy/MM/dd HH:mm:ss"), newID);
-                         //要順便更新PackingList_Detail
-                         sqlUpdatePackingList = sqlUpdatePackingList + string.Format(@"update PackingList_Detail 
+                if (insertData)
+                {
+                    sqlInsert = sqlInsert + "Insert into TransferToClog_Detail (Id,PackingListID,OrderID,CTNStartNo,AddName,AddDate)\r\n ";
+                    sqlInsert = sqlInsert + string.Format("Values('{5}','{0}','{1}','{2}','{3}','{4}');\r\n ", currentRecord["PackingListID"].ToString(), currentRecord["OrderID"].ToString(), currentRecord["CTNStartNo"].ToString(), Sci.Env.User.UserID, nowTime.ToString("yyyy/MM/dd HH:mm:ss"), newID);
+                    //要順便更新PackingList_Detail
+                    sqlUpdatePackingList = sqlUpdatePackingList + string.Format(@"update PackingList_Detail 
                                                                                                                                   set TransferToClogID = '{3}', TransferDate = '{4}', ClogReceiveID = '', ReceiveDate = null, Location = '', ClogReturnID = '', ReturnDate = null 
-                                                                                                                                  where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}';\r\n", currentRecord["PackingListID"].ToString(), currentRecord["OrderID"].ToString(), currentRecord["CTNStartNo"].ToString(), newID, transDate);
-                     }
-                 }
-             }
+                                                                                                                                  where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}'; ", currentRecord["PackingListID"].ToString(), currentRecord["OrderID"].ToString(), currentRecord["CTNStartNo"].ToString(), newID, transDate);
+                }
+            }
 
-             //組表頭資料
-             if (string.IsNullOrWhiteSpace(idValue))
-             {
-                 sqlInsertMaster = sqlInsertMaster + "Insert into TransferToClog (Id,TransferDate,FactoryID,AddName,AddDate)\r\n ";
-                 sqlInsertMaster = sqlInsertMaster + string.Format("Values('{3}','{4}','{0}','{1}','{2}');\r\n ", Sci.Env.User.Factory, Sci.Env.User.UserID, nowTime.ToString("yyyy/MM/dd HH:mm:ss"), newID, transDate);
-             }
-             else
-             {
-                 sqlInsertMaster = string.Format("update TransferToClog set EditName = '{0}', EditDate = '{1}' where ID = '{2}'", Sci.Env.User.UserID, nowTime.ToString("yyyy/MM/dd HH:mm:ss"), newID);
-             }
+            //組表頭資料
+            if (string.IsNullOrWhiteSpace(idValue))
+            {
+                sqlInsertMaster = sqlInsertMaster + "Insert into TransferToClog (Id,TransferDate,FactoryID,AddName,AddDate)\r\n ";
+                sqlInsertMaster = sqlInsertMaster + string.Format("Values('{3}','{4}','{0}','{1}','{2}');\r\n ", Sci.Env.User.Factory, Sci.Env.User.UserID, nowTime.ToString("yyyy/MM/dd HH:mm:ss"), newID, transDate);
+            }
+            else
+            {
+                sqlInsertMaster = string.Format("update TransferToClog set EditName = '{0}', EditDate = '{1}' where ID = '{2}'", Sci.Env.User.UserID, nowTime.ToString("yyyy/MM/dd HH:mm:ss"), newID);
+            }
 
-             if (!string.IsNullOrWhiteSpace(sqlInsert))
-             {
-                 DualResult result1, result2, result3;
-                 using (TransactionScope transactionScope = new TransactionScope())
-                 {
-                     try
-                     {
-                         result1 = Sci.Data.DBProxy.Current.Execute(null, sqlInsertMaster);
-                         result2 = Sci.Data.DBProxy.Current.Execute(null, sqlInsert);
-                         result3 = Sci.Data.DBProxy.Current.Execute(null, sqlUpdatePackingList);
+            if (!string.IsNullOrWhiteSpace(sqlInsert))
+            {
+                DualResult result1, result2, result3;
+                using (TransactionScope transactionScope = new TransactionScope())
+                {
+                    try
+                    {
+                        result1 = Sci.Data.DBProxy.Current.Execute(null, sqlInsertMaster);
+                        result2 = Sci.Data.DBProxy.Current.Execute(null, sqlInsert);
+                        result3 = Sci.Data.DBProxy.Current.Execute(null, sqlUpdatePackingList);
 
-                         if (result1 && result2 && result3)
-                         {
-                             transactionScope.Complete();
-                         }
-                         else
-                         {
-                             MessageBox.Show("Save failed, Pleaes re-try");
-                             return;
-                         }
-                     }
-                     catch (Exception ex)
-                     {
-                         ShowErr("Commit transaction error.", ex);
-                         return;
-                     }
-                 }
-                 //系統會自動有回傳值
-                 DialogResult = System.Windows.Forms.DialogResult.OK;
-             }
-             else
-             {
-                 MessageBox.Show("No data need to import!");
-                 return;
-             }
+                        if (result1 && result2 && result3)
+                        {
+                            transactionScope.Complete();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Save failed, Pleaes re-try");
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowErr("Commit transaction error.", ex);
+                        return;
+                    }
+                }
+                //系統會自動有回傳值
+                DialogResult = System.Windows.Forms.DialogResult.OK;
+            }
+            else
+            {
+                MessageBox.Show("No data need to import!");
+                return;
+            }
         }
 
         //Import From Barcode
@@ -253,7 +241,7 @@ namespace Sci.Production.Packing
                 bindingSource1.DataSource = selectDataTable;
 
                 //讀檔案
-                using (StreamReader reader = new StreamReader(openFileDialog1.FileName,System.Text.Encoding.UTF8))
+                using (StreamReader reader = new StreamReader(openFileDialog1.FileName, System.Text.Encoding.UTF8))
                 {
                     DataRow seekData;
                     int insertCount = 0;
@@ -272,7 +260,7 @@ namespace Sci.Production.Packing
                             DataRow dr = selectDataTable.NewRow();
                             dr["ID"] = "";
                             dr["selected"] = 0;
-                            dr["PackingListID"] = sl[1].Substring(0,13);
+                            dr["PackingListID"] = sl[1].Substring(0, 13);
                             dr["CTNStartNo"] = sl[1].Substring(13);
                             string sqlCmd = string.Format(@"select OrderID 
                                                                                   from PackingList_Detail
@@ -298,7 +286,7 @@ namespace Sci.Production.Packing
                                     selectDataTable.Rows.Add(dr);
                                     insertCount++;
                                 }
-                            }  
+                            }
                         }
                     }
                     if (insertCount == 0)
