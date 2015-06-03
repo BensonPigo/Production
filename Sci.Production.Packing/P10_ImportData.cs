@@ -137,6 +137,11 @@ namespace Sci.Production.Packing
             if (string.IsNullOrWhiteSpace(idValue))
             {
                 string getID = myUtility.GetID(ProjEnv.Keyword + "CS", "TransferToClog", DateTime.Today, 2, "Id", null);
+                if (myUtility.Empty(getID))
+                {
+                    MessageBox.Show("GetID fail, please try again!");
+                    return;
+                }
                 newID = getID;
                 transDate = DateTime.Today.ToString("d");
             }
