@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sci
+namespace Sci.Production
 {
-    public static class ProjEnv
+    public static class ProductionEnv
     {
         public static string Keyword
         {
