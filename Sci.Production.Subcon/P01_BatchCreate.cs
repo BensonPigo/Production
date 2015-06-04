@@ -272,7 +272,7 @@ namespace Sci.Production.Subcon
                 {
                     if (dtArtwork.Rows.Count == 0)
                     { MessageBox.Show("Data not found!!"); }
-                    gridBS1.DataSource = dtArtwork;
+                    listControlBindingSource1.DataSource = dtArtwork;
                 }
                 else 
                 { 
@@ -294,7 +294,7 @@ namespace Sci.Production.Subcon
             //};
 
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = gridBS1;
+            this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   
                 .Text("Factoryid", header: "Fty", iseditingreadonly: true)
@@ -352,7 +352,7 @@ namespace Sci.Production.Subcon
         // Create
         private void button2_Click(object sender, EventArgs e)
         {
-            gridBS1.EndEdit();
+            listControlBindingSource1.EndEdit();
             string issuedate, delivery;
             issuedate = dateBox1.Text;
             delivery = dateBox2.Text;
@@ -369,8 +369,8 @@ namespace Sci.Production.Subcon
                 dateBox2.Focus();
                 return;
             }
-            
-            DataTable dt = (DataTable)gridBS1.DataSource;
+
+            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             if (dt == null || dt.Rows.Count == 0) return;
 
             DataRow[] find ;
@@ -425,7 +425,7 @@ namespace Sci.Production.Subcon
                             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
                             ITableSchema tableSchema = null;
                             result = DBProxy.Current.GetTableSchema(null, "artworkpo", out tableSchema);
-                            string id = Sci.myUtility.GetID(ProjEnv.Keyword+"OS", "artworkpo",DateTime.Parse(dateBox1.Text));
+                            string id = Sci.myUtility.GetID(ProductionEnv.Keyword+"OS", "artworkpo",DateTime.Parse(dateBox1.Text));
                             decimal ttlamt = 0;
                             string currency = "";
                             string str = "";

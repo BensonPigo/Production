@@ -115,7 +115,7 @@ namespace Sci.Production.Subcon
                 {
                     if (dtArtwork.Rows.Count == 0)
                     { MessageBox.Show("Data not found!!"); }
-                    gridBS1.DataSource = dtArtwork;
+                    listControlBindingSource1.DataSource = dtArtwork;
                 }
                 else { ShowErr(strSQLCmd, result); }
             }
@@ -142,7 +142,7 @@ namespace Sci.Production.Subcon
             };
 
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = gridBS1;
+            this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
@@ -207,8 +207,8 @@ namespace Sci.Production.Subcon
 
         private void button2_Click(object sender, EventArgs e)
         {
-            gridBS1.EndEdit();
-            DataTable dtGridBS1 = (DataTable)gridBS1.DataSource;
+            listControlBindingSource1.EndEdit();
+            DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
             if (dtGridBS1.Rows.Count == 0) return;
             DataRow[] dr2 = dtGridBS1.Select("UnitPrice = 0 and Selected = 1");
 

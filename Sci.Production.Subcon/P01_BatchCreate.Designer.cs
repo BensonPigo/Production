@@ -53,12 +53,12 @@
             this.button2 = new Sci.Win.UI.Button();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.button4 = new Sci.Win.UI.Button();
-            this.gridBS1 = new Sci.Win.UI.BindingSource();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridBS1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // grid1
@@ -350,7 +350,7 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridBS1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -376,12 +376,12 @@
         private Win.UI.Button button2;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.Button button4;
-        private Win.UI.BindingSource gridBS1;
         private Win.UI.Label label7;
         private Win.UI.Label label6;
         private Win.UI.Label label5;
         private Win.UI.DateBox dateBox2;
         private Win.UI.DateBox dateBox1;
         private Class.txtartworktype_fty txtartworktype_fty1;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }

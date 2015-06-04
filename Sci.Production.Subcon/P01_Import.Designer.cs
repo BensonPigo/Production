@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.gridBS1 = new Sci.Win.UI.BindingSource();
             this.button3 = new Sci.Win.UI.Button();
             this.checkBox2 = new Sci.Win.UI.CheckBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
@@ -47,11 +46,12 @@
             this.label2 = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
-            ((System.ComponentModel.ISupportInitialize)(this.gridBS1)).BeginInit();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // button3
@@ -266,20 +266,19 @@
             this.Controls.Add(this.groupBox2);
             this.Name = "P01_Import";
             this.Text = "Batch Import";
-            ((System.ComponentModel.ISupportInitialize)(this.gridBS1)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private Win.UI.BindingSource gridBS1;
         private Win.UI.Button button3;
         private Win.UI.CheckBox checkBox2;
         private Win.UI.CheckBox checkBox1;
@@ -298,5 +297,6 @@
         private Win.UI.DateRange dateRange1;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }

@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.gridBS1 = new Sci.Win.UI.BindingSource();
             this.grid1 = new Sci.Win.UI.Grid();
             this.checkBox2 = new Sci.Win.UI.CheckBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
@@ -41,10 +40,11 @@
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.gridBS1)).BeginInit();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // grid1
@@ -210,19 +210,18 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "P01_SpecialRecord";
             this.Text = "Special Record";
-            ((System.ComponentModel.ISupportInitialize)(this.gridBS1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private Win.UI.BindingSource gridBS1;
         private Win.UI.Grid grid1;
         private Win.UI.CheckBox checkBox2;
         private Win.UI.CheckBox checkBox1;
@@ -235,5 +234,6 @@
         private Win.UI.GroupBox groupBox1;
         private Win.UI.TextBox textBox2;
         private Win.UI.Label label2;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }
