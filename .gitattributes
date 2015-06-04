@@ -69,6 +69,7 @@ Sci.Production.Basic/Properties/Resources.resx -text
 Sci.Production.Basic/Resources/Carton.bmp -text
 Sci.Production.Basic/Sci.Production.Basic.csproj -text
 Sci.Production.Class/ProductionEnv.cs -text
+Sci.Production.Class/ProductionGridExts.cs -text
 Sci.Production.Class/Properties/AssemblyInfo.cs -text
 Sci.Production.Class/Sci.Production.Class.csproj -text
 Sci.Production.Class/txtartworktype_fty.Designer.cs -text
@@ -81,6 +82,8 @@ Sci.Production.Class/txtcdcode.Designer.cs -text
 Sci.Production.Class/txtcdcode.cs -text
 Sci.Production.Class/txtcell.Designer.cs -text
 Sci.Production.Class/txtcell.cs -text
+Sci.Production.Class/txtcloglocation.Designer.cs -text
+Sci.Production.Class/txtcloglocation.cs -text
 Sci.Production.Class/txtcountry.Designer.cs -text
 Sci.Production.Class/txtcountry.cs -text
 Sci.Production.Class/txtcountry.resx -text
