@@ -48,7 +48,7 @@ namespace Sci.Production.Basic
             return base.DoSave();
         }
 
-        protected override void OnAcceptChanging(DataRow data)
+        protected override bool OnAcceptChanging(DataRow data)
         {
             data["CountryName"] = myUtility.Lookup("Alias", data["CountryID"].ToString(), "Country", "ID");
             data["CreateBy"] = data["AddName"].ToString().PadRight(10) + ((DateTime)data["AddDate"]).ToString("yyyy/MM/dd HH:mm:ss");
@@ -56,6 +56,7 @@ namespace Sci.Production.Basic
             {
                 data["EditBy"] = data["EditName"].ToString().PadRight(10) + ((DateTime)data["EditDate"]).ToString("yyyy/MM/dd HH:mm:ss");
             }
+            return base.OnAcceptChanging(data);
         }
     }
 }
