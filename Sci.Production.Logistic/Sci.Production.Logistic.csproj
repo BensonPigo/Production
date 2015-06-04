@@ -114,12 +114,45 @@
     <Compile Include="B01.Designer.cs">
       <DependentUpon>B01.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02.Designer.cs">
+      <DependentUpon>P02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_BatchReceiving.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_BatchReceiving.Designer.cs">
+      <DependentUpon>P02_BatchReceiving.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_InputDate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_InputDate.Designer.cs">
+      <DependentUpon>P02_InputDate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
       <DependentUpon>B01.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P02.resx">
+      <DependentUpon>P02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_BatchReceiving.resx">
+      <DependentUpon>P02_BatchReceiving.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_InputDate.resx">
+      <DependentUpon>P02_InputDate.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
+      <Project>{0E35FD31-4A86-4D4E-A393-B6C5E3D7C956}</Project>
+      <Name>Sci.Production.Class</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
