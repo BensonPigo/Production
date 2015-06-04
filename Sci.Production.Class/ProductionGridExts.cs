@@ -50,8 +50,39 @@ namespace Sci
                         if (myUtility.Seek(e.FormattedValue.ToString(), "ClogLocation", "id") == false)
                         {
                             MessageBox.Show(string.Format("< ClogLocation : {0} > not found!!!", e.FormattedValue.ToString()));
-                            var data = g.GetDataRow(e.RowIndex);
-                            data["ClogLocationId"] = DBNull.Value;
+                            dr["ClogLocationId"] = DBNull.Value;
+                            e.Cancel = true;
+                            return;
+                        }
+                    }
+                }
+            };
+            return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
+        }
+
+        // order id
+        public static IDataGridViewGenerator CellOrderId(this IDataGridViewGenerator gen, string propertyname
+                                                                , string header, IWidth width = null
+                                                                , DataGridViewGeneratorTextColumnSettings settings = null
+                                                                , bool? iseditable = null, bool? iseditingreadonly = null
+                                                                , DataGridViewContentAlignment? alignment = null)
+        {
+            if (settings == null) settings = new DataGridViewGeneratorTextColumnSettings();
+            settings.CharacterCasing = CharacterCasing.Upper;
+            
+            settings.CellValidating += (s, e) =>
+            {
+                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                if (frm.EditMode)
+                {
+                    DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
+                    if (!myUtility.Empty(e.FormattedValue.ToString()))
+                    {
+                        if (myUtility.Seek(e.FormattedValue.ToString(), "Orders", "id") == false)
+                        {
+                            MessageBox.Show(string.Format("< Order Id : {0} > is not found!!!", e.FormattedValue.ToString()));
+                            dr["orderid"] = DBNull.Value;
                             e.Cancel = true;
                             return;
                         }
