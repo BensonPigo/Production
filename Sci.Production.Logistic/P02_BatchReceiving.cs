@@ -28,13 +28,6 @@ namespace Sci.Production.Logistic
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            //this.grid1.CellMouseClick += (s, e) =>
-            //{
-            //    if (e.ColumnIndex == 0)
-            //    {
-            //        this.numericBox4.Value = grid1.GetCheckeds(col_chk).Count;
-            //    }
-            //};
 
             this.grid1.CellValueChanged += (s, e) =>
                 {
@@ -50,15 +43,15 @@ namespace Sci.Production.Logistic
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10))
-                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditable: false)
-                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6), iseditable: false)
-                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditable: false)
-                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditable: false)
-                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditable: false)
-                 .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditable: false)
-                 .Text("CustPONo", header: "P.O.#", width: Widths.AnsiChars(10), iseditable: false)
-                 .Text("Alias", header: "Destination#", width: Widths.AnsiChars(10), iseditable: false)
-                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditable: false);
+                .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditable: false)
+                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6), iseditable: false)
+                .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditable: false)
+                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditable: false)
+                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditable: false)
+                .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditable: false)
+                .Text("CustPONo", header: "P.O.#", width: Widths.AnsiChars(10), iseditable: false)
+                .Text("Alias", header: "Destination#", width: Widths.AnsiChars(10), iseditable: false)
+                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditable: false);
         }
 
         //Find
