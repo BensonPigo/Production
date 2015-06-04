@@ -136,7 +136,7 @@ namespace Sci.Production.Packing
             //設定參數值
             if (string.IsNullOrWhiteSpace(idValue))
             {
-                string getID = myUtility.GetID(ProjEnv.Keyword + "CS", "TransferToClog", DateTime.Today, 2, "Id", null);
+                string getID = myUtility.GetID(ProductionEnv.Keyword + "CS", "TransferToClog", DateTime.Today, 2, "Id", null);
                 if (myUtility.Empty(getID))
                 {
                     MessageBox.Show("GetID fail, please try again!");
