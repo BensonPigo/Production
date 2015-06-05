@@ -53,7 +53,7 @@
             this.masterpanel.Controls.Add(this.displayBox1);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Size = new System.Drawing.Size(779, 102);
+            this.masterpanel.Size = new System.Drawing.Size(892, 102);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
@@ -64,19 +64,15 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 102);
-            this.detailpanel.Size = new System.Drawing.Size(779, 247);
+            this.detailpanel.Size = new System.Drawing.Size(892, 247);
             // 
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(666, 67);
             // 
-            // refresh
-            // 
-            this.refresh.Location = new System.Drawing.Point(699, 0);
-            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(779, 247);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 247);
             // 
             // detailgridcont2
             // 
@@ -85,18 +81,6 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(779, 387);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(779, 349);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(779, 38);
             // 
             // browse
             // 
@@ -162,6 +146,7 @@
             this.DefaultDetailOrder = "PackingListID";
             this.DefaultOrder = "ID";
             this.GridAlias = "TransferToClog_Detail";
+            this.GridEdit = false;
             this.GridUniqueKey = "ID,PackingListID,CTNStartNo";
             this.IsSupportCopy = false;
             this.KeyField1 = "ID";
