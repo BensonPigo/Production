@@ -34,16 +34,16 @@ namespace Sci.Production.Packing
 
             Helper.Controls.Grid.Generator(this.grid1)
                  .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-                 .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(13), iseditable: false)
-                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditable: false)
-                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(4), iseditable: false)
-                 .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditable: false)
-                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditable: false)
-                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditable: false)
-                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditable: false)
-                 .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(10), iseditable: false)
-                 .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditable: false)
-                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditable: false);
+                 .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                 .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true);
         }
 
         //Find
