@@ -173,7 +173,7 @@ namespace Sci.Production.Packing
                     sqlInsert = sqlInsert + string.Format("Values('{5}','{0}','{1}','{2}','{3}','{4}');\r\n ", currentRecord["PackingListID"].ToString(), currentRecord["OrderID"].ToString(), currentRecord["CTNStartNo"].ToString(), Sci.Env.User.UserID, nowTime.ToString("yyyy/MM/dd HH:mm:ss"), newID);
                     //要順便更新PackingList_Detail
                     sqlUpdatePackingList = sqlUpdatePackingList + string.Format(@"update PackingList_Detail 
-                                                                                                                                  set TransferToClogID = '{3}', TransferDate = '{4}', ClogReceiveID = '', ReceiveDate = null, Location = '', ClogReturnID = '', ReturnDate = null 
+                                                                                                                                  set TransferToClogID = '{3}', TransferDate = '{4}', ClogReceiveID = '', ReceiveDate = null, ClogLocationId = '', ClogReturnID = '', ReturnDate = null 
                                                                                                                                   where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}'; ", currentRecord["PackingListID"].ToString(), currentRecord["OrderID"].ToString(), currentRecord["CTNStartNo"].ToString(), newID, transDate);
                 }
             }
