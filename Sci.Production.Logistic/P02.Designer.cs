@@ -53,7 +53,7 @@
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(779, 82);
+            this.masterpanel.Size = new System.Drawing.Size(836, 82);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
@@ -64,7 +64,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 82);
-            this.detailpanel.Size = new System.Drawing.Size(779, 267);
+            this.detailpanel.Size = new System.Drawing.Size(836, 267);
             // 
             // gridicon
             // 
@@ -72,11 +72,11 @@
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(699, 0);
+            this.refresh.Location = new System.Drawing.Point(756, 0);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(779, 267);
+            this.detailgridcont.Size = new System.Drawing.Size(836, 267);
             // 
             // detailgridcont2
             // 
@@ -88,23 +88,23 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(779, 387);
+            this.detail.Size = new System.Drawing.Size(836, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(779, 349);
+            this.detailcont.Size = new System.Drawing.Size(836, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(779, 38);
+            this.detailbtm.Size = new System.Drawing.Size(836, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(779, 387);
+            this.browse.Size = new System.Drawing.Size(836, 387);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(787, 416);
+            this.tabs.Size = new System.Drawing.Size(844, 416);
             // 
             // label4
             // 
@@ -159,7 +159,7 @@
             // P02
             // 
             this.ApvChkValue = "0";
-            this.ClientSize = new System.Drawing.Size(787, 449);
+            this.ClientSize = new System.Drawing.Size(844, 449);
             this.DefaultOrder = "ReceiveDate,ID";
             this.GridAlias = "ClogReceive_Detail";
             this.GridNew = 0;

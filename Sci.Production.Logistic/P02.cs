@@ -24,26 +24,48 @@ namespace Sci.Production.Logistic
             gridicon.Insert.Visible = false;
         }
 
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            //新增Import From Barcode按鈕
+            Sci.Win.UI.Button btn = new Sci.Win.UI.Button();
+            btn.Text = "Import From Barcode";
+            btn.Click += new EventHandler(btn_Click);
+            browsetop.Controls.Add(btn);
+            btn.Size = new Size(165,30);//預設是(80,30)
+        }
+
+        //Import From Barcode按鈕的Click事件
+        private void btn_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Logistic.P02_ImportFromBarCode callNextForm = new Sci.Production.Logistic.P02_ImportFromBarCode();
+            DialogResult result = callNextForm.ShowDialog(this);
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                this.ReloadDatas();
+            }
+        }
+
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            this.detailgrid.ReadOnly = false;
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("TransferToClogId", header: "Trans. Slip#", width: Widths.AnsiChars(13), iseditable: false)
-                .Text("PackingListId", header: "Pack Id", width: Widths.AnsiChars(13), iseditable: false)
-                .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditable: false)
-                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6), iseditable: false)
-                .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditable: false)
-                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditable: false)
-                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditable: false)
-                .Text("CustPONo", header: "P.O.#", width: Widths.AnsiChars(10), iseditable: false)
-                .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditable: false)
-                .Text("Alias", header: "Destination#", width: Widths.AnsiChars(10), iseditable: false)
-                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditable: false)
+                .Text("TransferToClogId", header: "Trans. Slip#", width: Widths.AnsiChars(13),iseditingreadonly : true)
+                .Text("PackingListId", header: "Pack Id", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("CustPONo", header: "P.O.#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Alias", header: "Destination#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10));
         }
 
-        protected override Ict.DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
+        //加工資料
+        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             e.Details.Columns.Add("StyleID");
             e.Details.Columns.Add("SeasonID");
