@@ -11,6 +11,7 @@ using Sci.Data;
 using Sci.Win.UI;
 using Ict;
 using Sci.Win.Tools;
+using Sci.Win;
 
 namespace Sci.Production.Class
 {
@@ -18,12 +19,11 @@ namespace Sci.Production.Class
     {
 
         private bool isIncludeJunk;
-
         public txtsubcon()
         {
             InitializeComponent();
         }
-
+        
         [Category("Custom Properties")]
         public bool IsIncludeJunk
         {
@@ -84,11 +84,14 @@ namespace Sci.Production.Class
                     }
                 }
             }
+            this.ValidateControl();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            this.displayBox1.Text = myUtility.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID");
+           
+            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base) this.FindForm();
+            if (myForm.EditMode == true)this.displayBox1.Text = myUtility.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID","Production");
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
