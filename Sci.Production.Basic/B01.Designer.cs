@@ -59,6 +59,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -256,7 +257,6 @@
             this.editBox1.Location = new System.Drawing.Point(124, 68);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
-            this.editBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox1.Size = new System.Drawing.Size(317, 69);
             this.editBox1.TabIndex = 15;
             // 
@@ -296,9 +296,11 @@
             this.textBox7.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VATAccNo", true));
             this.textBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox7.Location = new System.Drawing.Point(108, 304);
+            this.textBox7.Mask = "9999-9999";
             this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(66, 23);
+            this.textBox7.Size = new System.Drawing.Size(70, 23);
             this.textBox7.TabIndex = 19;
+            this.textBox7.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             // 
             // textBox8
             // 
@@ -306,9 +308,11 @@
             this.textBox8.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "WithholdingRateAccNo", true));
             this.textBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox8.Location = new System.Drawing.Point(296, 304);
+            this.textBox8.Mask = "9999-9999";
             this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(66, 23);
+            this.textBox8.Size = new System.Drawing.Size(70, 23);
             this.textBox8.TabIndex = 20;
+            this.textBox8.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             // 
             // textBox9
             // 
@@ -316,9 +320,11 @@
             this.textBox9.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CreditBankAccNo", true));
             this.textBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox9.Location = new System.Drawing.Point(487, 304);
+            this.textBox9.Mask = "9999-9999";
             this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(66, 23);
+            this.textBox9.Size = new System.Drawing.Size(70, 23);
             this.textBox9.TabIndex = 21;
+            this.textBox9.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             // 
             // label15
             // 
@@ -387,6 +393,8 @@
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
