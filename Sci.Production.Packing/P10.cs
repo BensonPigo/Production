@@ -25,6 +25,8 @@ namespace Sci.Production.Packing
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
+            this.detailgrid.IsEditingReadOnly = true;
+            //this.detailgrid.IsEditable = false;
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13))
                 .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(13))
