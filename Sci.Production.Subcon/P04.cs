@@ -16,9 +16,9 @@ using System.Transactions;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P03 : Sci.Win.Tems.Input6
+    public partial class P04 : Sci.Win.Tems.Input6
     {
-        public P03(ToolStripMenuItem menuitem)
+        public P04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
@@ -136,15 +136,8 @@ namespace Sci.Production.Subcon
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.myUtility.GetID(ProductionEnv.Keyword + "FO", "FarmOut", (DateTime)CurrentMaintain["issuedate"]);
+                CurrentMaintain["id"] = Sci.myUtility.GetID(ProductionEnv.Keyword + "FI", "FarmOut", (DateTime)CurrentMaintain["issuedate"]);
             }
-
-            #region 加總明細Qty至表頭
-            
-            object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(qty)", "");
-            CurrentMaintain["totalqty"] = (decimal)detail_a;
-           
-            #endregion
 
             return base.OnSaveBefore();
         }
@@ -311,7 +304,7 @@ namespace Sci.Production.Subcon
             String sqlcmd, sqlcmd2 = "", sqlcmd3 = "";
             DualResult result,result2;
             DataTable datacheck;
-            sqlcmd = string.Format(@"select a.id from artworkpo a, farmout_detail b 
+            sqlcmd = string.Format(@"select a.id from artworkpo a, farmin_detail b 
                             where a.id = b.artworkpoid and a.closed = 1 and b.id = '{0}'",CurrentMaintain["id"]);
 
 
@@ -327,28 +320,28 @@ namespace Sci.Production.Subcon
                 return;
             }
 
-            sqlcmd = string.Format(@"select b.id,b.bundleno 
-                                    from farmin a,farmin_detail b, farmout_detail c 
-                                    where a.id = b.id 
-                                    and b.bundleno = c.bundleno 
-                                    and c.id = '{0}'
-                                    and a.artworktypeid = '{1}'", CurrentMaintain["id"], CurrentMaintain["artworktypeid"]);
+//            sqlcmd = string.Format(@"select b.id,b.bundleno 
+//                                    from farmin a,farmin_detail b, farmout_detail c 
+//                                    where a.id = b.id 
+//                                    and b.bundleno = c.bundleno 
+//                                    and c.id = '{0}'
+//                                    and a.artworktypeid = '{1}'", CurrentMaintain["id"], CurrentMaintain["artworktypeid"]);
 
 
-            ids = "";
-            if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck))) { ShowErr(sqlcmd, result); }
-            if (datacheck.Rows.Count > 0)
-            {
-                foreach (DataRow dr in datacheck.Rows)
-                {
-                    ids += dr[0].ToString() + ",";
-                    bundlenos += dr[1].ToString() + ",";
-                }
-                MessageBox.Show(String.Format("These Bundle# <{0}> already exist in farm-in data <{1}> , can't encode/amend",bundlenos, ids));
-                return;
-            }
+//            ids = "";
+//            if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck))) { ShowErr(sqlcmd, result); }
+//            if (datacheck.Rows.Count > 0)
+//            {
+//                foreach (DataRow dr in datacheck.Rows)
+//                {
+//                    ids += dr[0].ToString() + ",";
+//                    bundlenos += dr[1].ToString() + ",";
+//                }
+//                MessageBox.Show(String.Format("These Bundle# <{0}> already exist in farm-in data <{1}> , can't encode/amend",bundlenos, ids));
+//                return;
+//            }
 
-            // Encode提示是否超過po qty ， amend
+            // Encode提示是否超過Farm out qty ， amend不低於ap qty
             if (CurrentMaintain["Encode"].ToString().ToUpper() == "FALSE")
             {
                 ids = "";
@@ -362,15 +355,16 @@ namespace Sci.Production.Subcon
                     }
                     if (datacheck.Rows.Count > 0)
                     {
-                        if ((decimal)dr["qty"] + (decimal)datacheck.Rows[0]["farmout"] > (decimal)datacheck.Rows[0]["poqty"])
+                        if ((decimal)dr["qty"] + (decimal)datacheck.Rows[0]["farmin"] > (decimal)datacheck.Rows[0]["farmout"])
                         {
-                            ids += string.Format("{0}-{1}-{2}-{3}-{4} is over PO Qty", datacheck.Rows[0]["id"], datacheck.Rows[0]["orderid"], datacheck.Rows[0]["artworktypeid"], datacheck.Rows[0]["artworkid"], datacheck.Rows[0]["patterncode"]) + Environment.NewLine;
+                            ids += string.Format("{0}-{1}-{2}-{3}-{4} is over Farm out qty", datacheck.Rows[0]["id"], datacheck.Rows[0]["orderid"], datacheck.Rows[0]["artworktypeid"], datacheck.Rows[0]["artworkid"], datacheck.Rows[0]["patterncode"]) + Environment.NewLine;
                         }
                     }
                 }
                 if (!myUtility.Empty(ids))
                 {
                     MessageBox.Show(ids);
+                    return;
                 }
             }
             else
@@ -385,15 +379,16 @@ namespace Sci.Production.Subcon
                     }
                     if (datacheck.Rows.Count > 0)
                     {
-                        if ((decimal)datacheck.Rows[0]["farmout"] - (decimal)dr["qty"] < (decimal)datacheck.Rows[0]["farmin"])
+                        if ((decimal)datacheck.Rows[0]["farmin"] - (decimal)dr["qty"] < (decimal)datacheck.Rows[0]["apqty"])
                         {
-                            ids += string.Format("{0}-{1}-{2}-{3}-{4} can't less farm in qty {5}", datacheck.Rows[0]["id"], datacheck.Rows[0]["orderid"], datacheck.Rows[0]["artworktypeid"], datacheck.Rows[0]["artworkid"], datacheck.Rows[0]["patterncode"], datacheck.Rows[0]["farmin"]) + Environment.NewLine;
+                            ids += string.Format("{0}-{1}-{2}-{3}-{4} can't less AP qty {5}", datacheck.Rows[0]["id"], datacheck.Rows[0]["orderid"], datacheck.Rows[0]["artworktypeid"], datacheck.Rows[0]["artworkid"], datacheck.Rows[0]["patterncode"], datacheck.Rows[0]["apqty"]) + Environment.NewLine;
                         }
                     }
                 }
                 if (!myUtility.Empty(ids))
                 {
                     MessageBox.Show(ids);
+                    return;
                 }
             }
 
@@ -402,21 +397,21 @@ namespace Sci.Production.Subcon
             // update farmout status
             if (CurrentMaintain["Encode"].ToString().ToUpper()=="FALSE")
             {
-                sqlcmd3 = string.Format("update Farmout set encode = 1 , editname = '{0}' , editdate = GETDATE() " +
+                sqlcmd3 = string.Format("update Farmin set encode = 1 , editname = '{0}' , editdate = GETDATE() " +
                                 "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             }
             else
             {
                 DialogResult dResult = MessageBox.Show("Do you want to amend it?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
                 if (dResult.ToString().ToUpper() == "NO") return;
-                sqlcmd3 = string.Format("update Farmout set encode = 0, editname = '{0}' , editdate = GETDATE() " +
+                sqlcmd3 = string.Format("update FarmIn set encode = 0, editname = '{0}' , editdate = GETDATE() " +
                                 "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             }
 
             // update artworkpo_detail farmout
             DataTable detailgroup;
             sqlcmd = string.Format(@"select b.artworkpo_detailukey, sum(b.qty) qty
-                                    from farmout_detail b
+                                    from farmIn_detail b
                                     where b.id ='{0}'
                                     group by b.artworkpo_detailukey ", CurrentMaintain["id"]);
             
@@ -430,9 +425,8 @@ namespace Sci.Production.Subcon
             {
                 foreach (DataRow dr in detailgroup.Rows)
                 {
-
                     sqlcmd = string.Format(@"select b.artworkpo_detailukey, sum(b.qty) qty
-                                    from farmout a, farmout_detail b
+                                    from farmin a, farmIn_detail b
                                     where a.id = b.id  and a.encode =1 and b.artworkpo_detailukey ='{0}'
                                     group by b.artworkpo_detailukey ", dr["artworkpo_detailukey"]);
 
@@ -445,12 +439,12 @@ namespace Sci.Production.Subcon
                     {
                         if (CurrentMaintain["Encode"].ToString().ToUpper() == "FALSE")
                         {
-                            sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
+                            sqlcmd2 += string.Format("update artworkpo_detail set farmIn = {0} where ukey = '{1}';"
                                 + Environment.NewLine, (decimal)datacheck.Rows[0]["qty"] + (decimal)dr["qty"], dr["artworkpo_detailukey"]);
                         }
                         else
                         {
-                            sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
+                            sqlcmd2 += string.Format("update artworkpo_detail set farmIn = {0} where ukey = '{1}';"
                                 + Environment.NewLine, (decimal)datacheck.Rows[0]["qty"] - (decimal)dr["qty"], dr["artworkpo_detailukey"]);
                         }
                     }
@@ -458,12 +452,12 @@ namespace Sci.Production.Subcon
                     {
                         if (CurrentMaintain["Encode"].ToString().ToUpper() == "FALSE")  // encode
                         {
-                            sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
+                            sqlcmd2 += string.Format("update artworkpo_detail set farmIn = {0} where ukey = '{1}';"
                                 + Environment.NewLine, (decimal)dr["qty"], dr["artworkpo_detailukey"]);
                         }
                         else//amend
                         {
-                            sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
+                            sqlcmd2 += string.Format("update artworkpo_detail set farmIn = {0} where ukey = '{1}';"
                                 + Environment.NewLine, 0m, dr["artworkpo_detailukey"]);
                         }
                     }
