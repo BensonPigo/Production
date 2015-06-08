@@ -37,12 +37,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(678, 395);
             // 
             // detailcont
             // 
@@ -51,11 +48,6 @@
             this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(678, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(678, 38);
             // 
             // browse
             // 
@@ -124,7 +116,7 @@
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B07";
-            this.Text = "Payment Term";
+            this.Text = "B07. Payment Term";
             this.UniqueExpress = "ID";
             this.WorkAlias = "PayTerm";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -132,6 +124,8 @@
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

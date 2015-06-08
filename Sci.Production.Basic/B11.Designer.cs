@@ -63,12 +63,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(679, 576);
             // 
             // detailcont
             // 
@@ -103,12 +100,6 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(679, 538);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 538);
-            this.detailbtm.Size = new System.Drawing.Size(679, 38);
             // 
             // browse
             // 
@@ -302,7 +293,6 @@
             this.editBox1.Location = new System.Drawing.Point(147, 195);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
-            this.editBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox1.Size = new System.Drawing.Size(336, 71);
             this.editBox1.TabIndex = 20;
             // 
@@ -335,7 +325,6 @@
             this.editBox2.Location = new System.Drawing.Point(147, 420);
             this.editBox2.Multiline = true;
             this.editBox2.Name = "editBox2";
-            this.editBox2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox2.Size = new System.Drawing.Size(384, 113);
             this.editBox2.TabIndex = 25;
             // 
@@ -438,7 +427,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B11";
-            this.Text = "CustCD";
+            this.Text = "B11. CustCD";
             this.UniqueExpress = "BrandID+ID";
             this.WorkAlias = "CustCD";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -446,6 +435,8 @@
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

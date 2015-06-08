@@ -63,10 +63,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(680, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtuser1);
@@ -96,11 +92,6 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(680, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(680, 38);
             // 
             // browse
             // 
@@ -385,7 +376,7 @@
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B01";
-            this.Text = "Company Profile";
+            this.Text = "B01. Company Profile";
             this.UniqueExpress = "ID";
             this.WorkAlias = "Factory";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();

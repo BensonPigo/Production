@@ -42,12 +42,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(687, 428);
             // 
             // detailcont
             // 
@@ -61,21 +58,14 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(687, 390);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 390);
-            this.detailbtm.Size = new System.Drawing.Size(687, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(687, 428);
+            this.browse.Size = new System.Drawing.Size(687, 395);
             // 
             // tabs
             // 
-            this.tabs.Location = new System.Drawing.Point(0, 0);
-            this.tabs.Size = new System.Drawing.Size(695, 457);
+            this.tabs.Size = new System.Drawing.Size(695, 424);
             // 
             // label3
             // 
@@ -185,7 +175,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B08";
-            this.Text = "CD Code";
+            this.Text = "B08. CD Code";
             this.UniqueExpress = "ID";
             this.WorkAlias = "CDCode";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -193,8 +183,11 @@
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

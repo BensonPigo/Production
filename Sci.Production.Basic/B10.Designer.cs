@@ -68,12 +68,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(699, 521);
             // 
             // detailcont
             // 
@@ -113,12 +110,10 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(699, 483);
             // 
-            // detailbtm
+            // browse
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 483);
-            this.detailbtm.Size = new System.Drawing.Size(699, 38);
+            this.browse.Size = new System.Drawing.Size(699, 521);
             // 
             // tabs
             // 
@@ -321,7 +316,6 @@
             this.editBox1.Location = new System.Drawing.Point(127, 314);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
-            this.editBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox1.Size = new System.Drawing.Size(386, 70);
             this.editBox1.TabIndex = 21;
             // 
@@ -464,28 +458,12 @@
             // txtcountry1
             // 
             this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
-            // 
-            // 
-            // 
-            this.txtcountry1.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtcountry1.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtcountry1.DisplayBox1.Location = new System.Drawing.Point(31, 0);
-            this.txtcountry1.DisplayBox1.Name = "displayBox1";
-            this.txtcountry1.DisplayBox1.Size = new System.Drawing.Size(198, 23);
-            this.txtcountry1.DisplayBox1.TabIndex = 1;
+            this.txtcountry1.DisplayBox1Binding = "";
             this.txtcountry1.Location = new System.Drawing.Point(127, 104);
             this.txtcountry1.Name = "txtcountry1";
             this.txtcountry1.Size = new System.Drawing.Size(232, 22);
             this.txtcountry1.TabIndex = 14;
-            // 
-            // 
-            // 
-            this.txtcountry1.TextBox1.BackColor = System.Drawing.Color.White;
-            this.txtcountry1.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcountry1.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtcountry1.TextBox1.Name = "textBox1";
-            this.txtcountry1.TextBox1.Size = new System.Drawing.Size(30, 23);
-            this.txtcountry1.TextBox1.TabIndex = 0;
+            this.txtcountry1.TextBox1Binding = "";
             // 
             // B10
             // 
@@ -496,7 +474,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B10";
-            this.Text = "Brand";
+            this.Text = "B10. Brand";
             this.UniqueExpress = "ID";
             this.WorkAlias = "Brand";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -504,6 +482,8 @@
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -36,12 +36,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(683, 395);
             // 
             // detailcont
             // 
@@ -49,11 +46,10 @@
             this.detailcont.Controls.Add(this.displayBox1);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(683, 357);
             // 
-            // detailbtm
+            // browse
             // 
-            this.detailbtm.Size = new System.Drawing.Size(683, 38);
+            this.browse.Size = new System.Drawing.Size(683, 395);
             // 
             // tabs
             // 
@@ -107,7 +103,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B15";
-            this.Text = "Shipment Term";
+            this.Text = "B15. Shipment Term";
             this.UniqueExpress = "ID";
             this.WorkAlias = "ShipTerm";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -115,6 +111,8 @@
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -62,12 +62,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(765, 478);
             // 
             // detailcont
             // 
@@ -101,12 +98,6 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(765, 440);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 440);
-            this.detailbtm.Size = new System.Drawing.Size(765, 38);
             // 
             // browse
             // 
@@ -355,7 +346,6 @@
             this.editBox1.Location = new System.Drawing.Point(153, 208);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
-            this.editBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox1.Size = new System.Drawing.Size(369, 52);
             this.editBox1.TabIndex = 30;
             // 
@@ -367,7 +357,6 @@
             this.editBox2.Location = new System.Drawing.Point(153, 366);
             this.editBox2.Multiline = true;
             this.editBox2.Name = "editBox2";
-            this.editBox2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox2.Size = new System.Drawing.Size(221, 68);
             this.editBox2.TabIndex = 31;
             // 
@@ -379,7 +368,6 @@
             this.editBox3.Location = new System.Drawing.Point(471, 366);
             this.editBox3.Multiline = true;
             this.editBox3.Name = "editBox3";
-            this.editBox3.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox3.Size = new System.Drawing.Size(221, 68);
             this.editBox3.TabIndex = 32;
             // 
@@ -402,30 +390,12 @@
             // txtcountry2
             // 
             this.txtcountry2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
-            // 
-            // 
-            // 
-            this.txtcountry2.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtcountry2.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtcountry2.DisplayBox1.Location = new System.Drawing.Point(44, 0);
-            this.txtcountry2.DisplayBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.txtcountry2.DisplayBox1.Name = "displayBox1";
-            this.txtcountry2.DisplayBox1.Size = new System.Drawing.Size(333, 23);
-            this.txtcountry2.DisplayBox1.TabIndex = 1;
+            this.txtcountry2.DisplayBox1Binding = "";
             this.txtcountry2.Location = new System.Drawing.Point(153, 80);
             this.txtcountry2.Name = "txtcountry2";
             this.txtcountry2.Size = new System.Drawing.Size(221, 22);
             this.txtcountry2.TabIndex = 35;
-            // 
-            // 
-            // 
-            this.txtcountry2.TextBox1.BackColor = System.Drawing.Color.White;
-            this.txtcountry2.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcountry2.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtcountry2.TextBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.txtcountry2.TextBox1.Name = "textBox1";
-            this.txtcountry2.TextBox1.Size = new System.Drawing.Size(40, 23);
-            this.txtcountry2.TextBox1.TabIndex = 0;
+            this.txtcountry2.TextBox1Binding = "";
             // 
             // B09
             // 
@@ -436,7 +406,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B09";
-            this.Text = "Supplier (Taiwan)";
+            this.Text = "B09. Supplier (Taiwan)";
             this.UniqueExpress = "ID";
             this.WorkAlias = "Supp";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -444,6 +414,8 @@
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

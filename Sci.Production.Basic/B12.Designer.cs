@@ -92,6 +92,14 @@
             // 
             this.detailgridcont.Size = new System.Drawing.Size(892, 215);
             // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
             // browse
             // 
             this.browse.Size = new System.Drawing.Size(754, 387);
@@ -222,7 +230,7 @@
             this.KeyField1 = "ID";
             this.KeyField2 = "UnitFrom";
             this.Name = "B12";
-            this.Text = "Unit";
+            this.Text = "B12. Unit";
             this.UniqueExpress = "ID";
             this.WorkAlias = "Unit";
             this.Controls.SetChildIndex(this.tabs, 0);

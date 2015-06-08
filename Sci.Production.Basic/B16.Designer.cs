@@ -37,12 +37,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(683, 340);
             // 
             // detailcont
             // 
@@ -51,12 +48,6 @@
             this.detailcont.Controls.Add(this.displayBox1);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(683, 302);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 302);
-            this.detailbtm.Size = new System.Drawing.Size(683, 38);
             // 
             // browse
             // 
@@ -126,7 +117,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B16";
-            this.Text = "Shippng Mode";
+            this.Text = "B16. Shippng Mode";
             this.UniqueExpress = "Id";
             this.WorkAlias = "ShipMode";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -134,6 +125,8 @@
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -61,12 +61,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(694, 455);
             // 
             // detailcont
             // 
@@ -99,12 +96,12 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(694, 403);
+            this.detailcont.Size = new System.Drawing.Size(897, 343);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 403);
-            this.detailbtm.Size = new System.Drawing.Size(694, 52);
+            this.detailbtm.Location = new System.Drawing.Point(0, 343);
+            this.detailbtm.Size = new System.Drawing.Size(897, 52);
             // 
             // browse
             // 
@@ -113,6 +110,22 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(702, 484);
+            // 
+            // createby
+            // 
+            this.createby.Location = new System.Drawing.Point(70, 21);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(400, 21);
+            // 
+            // lblcreateby
+            // 
+            this.lblcreateby.Location = new System.Drawing.Point(5, 27);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(352, 27);
             // 
             // label3
             // 
@@ -387,7 +400,6 @@
             this.editBox1.Location = new System.Drawing.Point(144, 319);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
-            this.editBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox1.Size = new System.Drawing.Size(380, 46);
             this.editBox1.TabIndex = 29;
             // 
@@ -427,7 +439,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B14";
-            this.Text = "TMS & Cost Type";
+            this.Text = "B14. TMS & Cost Type";
             this.UniqueExpress = "ID";
             this.WorkAlias = "ArtworkType";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -435,6 +447,8 @@
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

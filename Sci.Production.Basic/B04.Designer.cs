@@ -57,12 +57,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(767, 395);
             // 
             // detailcont
             // 
@@ -91,11 +88,6 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(767, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(767, 38);
             // 
             // browse
             // 
@@ -254,7 +246,6 @@
             this.editBox1.Location = new System.Drawing.Point(156, 177);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
-            this.editBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox1.Size = new System.Drawing.Size(400, 82);
             this.editBox1.TabIndex = 16;
             // 
@@ -367,7 +358,7 @@
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B04";
-            this.Text = "Supplier/Sub Con (Local)";
+            this.Text = "B04. Supplier/Sub Con (Local)";
             this.UniqueExpress = "ID";
             this.WorkAlias = "LocalSupp";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -375,6 +366,8 @@
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
