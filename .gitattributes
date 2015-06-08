@@ -182,6 +182,10 @@ Sci.Production.Logistic/P02.resx -text
 Sci.Production.Logistic/P02_BatchReceiving.Designer.cs -text
 Sci.Production.Logistic/P02_BatchReceiving.cs -text
 Sci.Production.Logistic/P02_BatchReceiving.resx -text
+Sci.Production.Logistic/P02_FileInfo.cs -text
+Sci.Production.Logistic/P02_ImportFromBarCode.Designer.cs -text
+Sci.Production.Logistic/P02_ImportFromBarCode.cs -text
+Sci.Production.Logistic/P02_ImportFromBarCode.resx -text
 Sci.Production.Logistic/P02_InputDate.Designer.cs -text
 Sci.Production.Logistic/P02_InputDate.cs -text
 Sci.Production.Logistic/P02_InputDate.resx -text

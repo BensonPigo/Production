@@ -126,6 +126,13 @@
     <Compile Include="P02_BatchReceiving.Designer.cs">
       <DependentUpon>P02_BatchReceiving.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_FileInfo.cs" />
+    <Compile Include="P02_ImportFromBarCode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_ImportFromBarCode.Designer.cs">
+      <DependentUpon>P02_ImportFromBarCode.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02_InputDate.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -143,6 +150,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02_BatchReceiving.resx">
       <DependentUpon>P02_BatchReceiving.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_ImportFromBarCode.resx">
+      <DependentUpon>P02_ImportFromBarCode.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_InputDate.resx">
       <DependentUpon>P02_InputDate.cs</DependentUpon>
