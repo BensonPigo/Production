@@ -21,11 +21,11 @@ namespace Sci.Production.IE
             base.OnFormLoaded();
 
             Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("LBR  ", "Line Balancing (%)");
-            comboBox1_RowSource.Add("LLER ", "Lean Line Eff. (%)");
-            comboBox1_RowSource.Add("EFF. ", "Efficiency");
-            comboBox1_RowSource.Add("COPT ", "Changeover Process Time");
-            comboBox1_RowSource.Add("COT  ", "Changeover Time");
+            comboBox1_RowSource.Add("LBR", "Line Balancing (%)");
+            comboBox1_RowSource.Add("LLER", "Lean Line Eff. (%)");
+            comboBox1_RowSource.Add("EFF.", "Efficiency");
+            comboBox1_RowSource.Add("COPT", "Changeover Process Time");
+            comboBox1_RowSource.Add("COT", "Changeover Time");
             comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
             comboBox1.ValueMember = "Key";
             comboBox1.DisplayMember = "Value";
@@ -34,7 +34,7 @@ namespace Sci.Production.IE
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            if ((CurrentMaintain["Type"].ToString() == "COPT " || CurrentMaintain["Type"].ToString() == "COT  "))
+            if ((CurrentMaintain["Type"].ToString().Trim() == "COPT" || CurrentMaintain["Type"].ToString().Trim() == "COT"))
             {
                 this.label6.Text = "Target (min)";
             }
@@ -81,7 +81,7 @@ namespace Sci.Production.IE
                 return false;
             }
 
-            if (CurrentMaintain["Type"].ToString() != "COPT " && CurrentMaintain["Type"].ToString() != "COT  ")
+            if (CurrentMaintain["Type"].ToString().Trim() != "COPT" && CurrentMaintain["Type"].ToString().Trim() != "COT")
             {
                 if (String.IsNullOrWhiteSpace(CurrentMaintain["FactoryID"].ToString()))
                 {
@@ -95,7 +95,7 @@ namespace Sci.Production.IE
             {
                 DateTime effectiveDate = (DateTime)CurrentMaintain["EffectiveDate"];
                 string effectiveDateToString = effectiveDate.ToShortDateString();
-                string selectCommand = string.Format("select ID from ChgOverTarget where EffectiveDate = '{0}' and FactoryID = '{1}' and Type = '{2}'", effectiveDateToString, CurrentMaintain["FactoryID"].ToString(), CurrentMaintain["Type"].ToString());
+                string selectCommand = string.Format("select ID from ChgOverTarget where EffectiveDate = '{0}' and FactoryID = '{1}' and Type = '{2}'", effectiveDateToString, CurrentMaintain["FactoryID"].ToString().Trim(), CurrentMaintain["Type"].ToString().Trim());
                 if (myUtility.Seek(selectCommand, null))
                 {
                     MessageBox.Show(string.Format("Data is Duplicate!!"));
@@ -110,7 +110,7 @@ namespace Sci.Production.IE
         {
             if (this.EditMode)
             {
-                if ((CurrentMaintain["Type"].ToString() == "COPT " || CurrentMaintain["Type"].ToString() == "COT  "))
+                if ((CurrentMaintain["Type"].ToString().Trim() == "COPT" || CurrentMaintain["Type"].ToString().Trim() == "COT"))
                 {
                     this.txtfactory1.ReadOnly = true;
                     CurrentMaintain["FactoryID"] = "";

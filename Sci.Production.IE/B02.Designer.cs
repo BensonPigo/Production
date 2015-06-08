@@ -40,6 +40,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -169,6 +170,8 @@
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
