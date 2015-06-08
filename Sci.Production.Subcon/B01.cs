@@ -188,7 +188,7 @@ namespace Sci.Production.Subcon
                 double i = double.Parse(CurrentMaintain["CtnLength"].ToString()) *
                     double.Parse(CurrentMaintain["CtnWidth"].ToString()) *
                     double.Parse(CurrentMaintain["CtnHeight"].ToString()) / 1000000000;
-                this.numericBox3.Text = Math.Round(i, 4).ToString();
+                this.numericBox3.Text = myUtility.Round(i, 4).ToString();
             }
             
         }

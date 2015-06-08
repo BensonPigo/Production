@@ -200,7 +200,7 @@ namespace Sci.Production.Subcon
                     if (result && result2)
                     {
                         _transactionscope.Complete();
-                        MessageBox.Show("Encode sucessful");
+                        MessageBox.Show("Encode successful");
                     }
                     else
                     {

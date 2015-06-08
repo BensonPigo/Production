@@ -533,7 +533,7 @@ namespace Sci.Production.Subcon
                                                     ,'{11}'
                                                     ,getdate())",
                                         id, Env.User.Factory, q.localsuppid, issuedate, delivery, q.artworktypeid,
-                                        currency,Math.Round(ttlamt, exact),
+                                        currency,myUtility.Round(ttlamt, exact),
                                         "'by batch create!'",Env.User.UserID,poType,Env.User.UserID);
                            
                             #endregion

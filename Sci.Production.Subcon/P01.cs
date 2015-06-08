@@ -168,7 +168,7 @@ namespace Sci.Production.Subcon
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.myUtility.GetID(ProjEnv.Keyword+"OS", "artworkpo", (DateTime)CurrentMaintain["issuedate"]);
+                CurrentMaintain["id"] = Sci.myUtility.GetID(ProductionEnv.Keyword+"OS", "artworkpo", (DateTime)CurrentMaintain["issuedate"]);
             }
 
             #region 加總明細金額至表頭
@@ -180,8 +180,8 @@ namespace Sci.Production.Subcon
             }
             int exact = int.Parse(str);
             object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(amount)", "");
-            CurrentMaintain["amount"] = Math.Round((decimal)detail_a, exact);
-            CurrentMaintain["vat"] = Math.Round((decimal)detail_a * (decimal)CurrentMaintain["vatrate"]/100, exact);
+            CurrentMaintain["amount"] = myUtility.Round((decimal)detail_a, exact);
+            CurrentMaintain["vat"] = myUtility.Round((decimal)detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
             #endregion
             
             return base.OnSaveBefore();
@@ -520,6 +520,11 @@ namespace Sci.Production.Subcon
         }
 
         private void txtartworktype_fty1_Validating(object sender, CancelEventArgs e)
+        {
+            
+        }
+
+        private void txtartworktype_fty1_Validated(object sender, EventArgs e)
         {
             Production.Class.txtartworktype_fty o;
             o = (Production.Class.txtartworktype_fty)sender;
