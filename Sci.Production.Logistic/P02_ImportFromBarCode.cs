@@ -17,7 +17,7 @@ namespace Sci.Production.Logistic
     public partial class P02_ImportFromBarCode : Sci.Win.Subs.Base
     {
         IList<P02_FileInfo> filelists = new List<P02_FileInfo>();
-        IList<DataRow> grid2Data = new List<DataRow>();
+        DataTable grid2Data;
         IList<DataRow> groupData = new List<DataRow>();
         IList<DataRow> TransferIDData = new List<DataRow>();
 
@@ -92,7 +92,10 @@ namespace Sci.Production.Logistic
         private void button3_Click(object sender, EventArgs e)
         {
             //清空Grid資料
-            grid2Data.Clear();
+            if (grid2Data != null)
+            {
+                grid2Data.Clear();
+            }
             groupData.Clear();
 
             #region 檢查所有檔案格式是否正確
@@ -141,9 +144,9 @@ namespace Sci.Production.Logistic
             string selectCommand = @"select a.ClogLocationId,a.OrderID,a.CTNStartNo,b.StyleID,b.SeasonID,b.BrandID,b.Customize1,b.CustPONo,c.Alias,
                                                             b.BuyerDelivery,a.ID as PackingListID,a.TransferToClogId,a.ClogReceiveID,'' as ID,'' as Remark, b.FactoryID, 1 as InsertData 
                                                             from PackingList_Detail a, Orders b, Country c where 1=0";
-            DataTable selectDataTable, groupTable;
+            DataTable groupTable;
             DualResult selectResult;
-            if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out selectDataTable)))
+            if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out grid2Data)))
             {
                 MessageBox.Show("Connection faile!");
                 return;
@@ -156,13 +159,13 @@ namespace Sci.Production.Logistic
                 return;
             }
 
-            listControlBindingSource2.DataSource = grid2Data;
             #endregion
 
             #region 檢查通過後開始讀檔
             DataRow seekPacklistData, seekClogReceiveData, seekOrderdata;
             int insertCount = 0;
             int recordCount;
+            DataRow[] findRow;
             foreach (P02_FileInfo dr in (IList<P02_FileInfo>)listControlBindingSource1.DataSource)
             {
                 if (!myUtility.Empty(dr.Filename))
@@ -175,10 +178,10 @@ namespace Sci.Production.Logistic
                             System.Diagnostics.Debug.WriteLine(line);
                             IList<string> sl = line.Split(" \t\r\n".ToCharArray());
                             //如果有資料重複就不再匯入重複的資料
-                            recordCount = grid2Data.Where(x => x["PackingListID"].ToString().Trim() == sl[2].Substring(0, 13) && x["CTNStartNo"].ToString().Trim() == sl[2].Substring(13).Trim()).Count();
-                            if (recordCount == 0)
+                            findRow = grid2Data.Select(string.Format("PackingListID = '{0}' and CTNStartNo = '{1}'", sl[2].Substring(0, 13), sl[2].Substring(13).Trim()));
+                            if (findRow.Length == 0)
                             {
-                                DataRow dr1 = selectDataTable.NewRow();
+                                DataRow dr1 = grid2Data.NewRow();
                                 dr1["ID"] = "";
                                 dr1["ClogLocationId"] = sl[1];
                                 dr1["PackingListID"] = sl[2].Substring(0, 13);
@@ -237,7 +240,7 @@ namespace Sci.Production.Logistic
                                 {
                                     dr1["Remark"] = "This carton is not in packing list.";
                                 }
-                                grid2Data.Add(dr1);
+                                grid2Data.Rows.Add(dr1);
                                 insertCount++;
 
                                 if (myUtility.Empty(dr1["ClogReceiveID"]) && (int)dr1["InsertData"] == 1)
@@ -257,11 +260,9 @@ namespace Sci.Production.Logistic
                     }
                 }
             }
+
             listControlBindingSource2.DataSource = null;
             listControlBindingSource2.DataSource = grid2Data;
-            listControlBindingSource2.ResetBindings(true);
-             //Rows[1]["OrderID"].ToString();
-            //MessageBox.Show(((IList<DataRow>)listControlBindingSource2.DataSource)[0]["OrderID"].ToString());
             this.numericBox1.Value = insertCount;
             #endregion
         }
@@ -269,7 +270,16 @@ namespace Sci.Production.Logistic
         //To Excel
         private void button4_Click(object sender, EventArgs e)
         {
-
+            SaveFileDialog excelName = new SaveFileDialog();
+            excelName.Filter = "csv files (*.csv)|*.csv";
+            if (excelName.ShowDialog() == DialogResult.OK)
+            {
+                DualResult result = this.grid2.ExportToCsv(excelName.FileName);
+                if (!result)
+                {
+                    ShowErr(result);
+                }
+            }
         }
 
         //Save
@@ -350,64 +360,52 @@ namespace Sci.Production.Logistic
                             #endregion
                             DualResult result1 = Sci.Data.DBProxy.Current.Execute(null, sqlInsertMaster, cmds);
 
-                            foreach (DataRow dr1 in grid2Data)
+                            #region 宣告Detail sql參數
+                            IList<System.Data.SqlClient.SqlParameter> detailcmds = new List<System.Data.SqlClient.SqlParameter>();
+                            System.Data.SqlClient.SqlParameter detail1 = new System.Data.SqlClient.SqlParameter();
+                            System.Data.SqlClient.SqlParameter detail2 = new System.Data.SqlClient.SqlParameter();
+                            System.Data.SqlClient.SqlParameter detail3 = new System.Data.SqlClient.SqlParameter();
+                            System.Data.SqlClient.SqlParameter detail4 = new System.Data.SqlClient.SqlParameter();
+                            System.Data.SqlClient.SqlParameter detail5 = new System.Data.SqlClient.SqlParameter();
+                            System.Data.SqlClient.SqlParameter detail6 = new System.Data.SqlClient.SqlParameter();
+                            System.Data.SqlClient.SqlParameter detail7 = new System.Data.SqlClient.SqlParameter();
+                            System.Data.SqlClient.SqlParameter detail8 = new System.Data.SqlClient.SqlParameter();
+                            detail1.ParameterName = "@id";
+                            detail2.ParameterName = "@transferToClogId";
+                            detail3.ParameterName = "@packingListId";
+                            detail4.ParameterName = "@OrderId";
+                            detail5.ParameterName = "@CTNStartNo";
+                            detail6.ParameterName = "@ClogLocationId";
+                            detail7.ParameterName = "@addName";
+                            detail8.ParameterName = "@addDate";
+                            detailcmds.Add(detail1);
+                            detailcmds.Add(detail2);
+                            detailcmds.Add(detail3);
+                            detailcmds.Add(detail4);
+                            detailcmds.Add(detail5);
+                            detailcmds.Add(detail6);
+                            detailcmds.Add(detail7);
+                            detailcmds.Add(detail8);
+                            #endregion
+                            foreach (DataRow dr1 in grid2Data.Rows)
                             {
                                 if (dr1["FactoryID"].ToString().Trim() == dr["FactoryID"].ToString().Trim())
                                 {
                                     dr1["ID"] = newID; //將ID寫入Grid2的Received ID欄位
-                                    #region remark
-//                                    sqlInsertDetail = @"insert into ClogReceive_Detail (ID, TransferToClogId, PackingListId, OrderId, CTNStartNo, ClogLocationId, AddName, AddDate)
-//                                                                     value (@id,@transferToClogId,@packingListId,@OrderId,@CTNStartNo,@ClogLocationId,@addName,@addDate)";
-//                                    #region 準備Detail sql參數資料
-//                                    System.Data.SqlClient.SqlParameter detail1 = new System.Data.SqlClient.SqlParameter();
-//                                    detail1.ParameterName = "@id";
-//                                    detail1.Value = newID;
-
-//                                    System.Data.SqlClient.SqlParameter detail2 = new System.Data.SqlClient.SqlParameter();
-//                                    detail2.ParameterName = "@transferToClogId";
-//                                    detail2.Value = dr1["TransferToClogId"].ToString().Trim();
-
-//                                    System.Data.SqlClient.SqlParameter detail3 = new System.Data.SqlClient.SqlParameter();
-//                                    detail3.ParameterName = "@packingListId";
-//                                    detail3.Value = dr1["PackingListId"].ToString().Trim();
-
-//                                    System.Data.SqlClient.SqlParameter detail4 = new System.Data.SqlClient.SqlParameter();
-//                                    detail4.ParameterName = "@OrderId";
-//                                    detail4.Value = dr1["OrderId"].ToString().Trim();
-
-//                                    System.Data.SqlClient.SqlParameter detail5 = new System.Data.SqlClient.SqlParameter();
-//                                    detail5.ParameterName = "@CTNStartNo";
-//                                    detail5.Value = dr1["CTNStartNo"].ToString().Trim();
-
-//                                    System.Data.SqlClient.SqlParameter detail6 = new System.Data.SqlClient.SqlParameter();
-//                                    detail4.ParameterName = "@ClogLocationId";
-//                                    detail4.Value = dr1["ClogLocationId"].ToString().Trim();
-
-//                                    System.Data.SqlClient.SqlParameter detail7 = new System.Data.SqlClient.SqlParameter();
-//                                    detail7.ParameterName = "@addName";
-//                                    detail7.Value = Sci.Env.User.UserID;
-
-//                                    System.Data.SqlClient.SqlParameter detail8 = new System.Data.SqlClient.SqlParameter();
-//                                    detail8.ParameterName = "@addDate";
-//                                    detail8.Value = DateTime.Now;
-
-//                                    IList<System.Data.SqlClient.SqlParameter> detailcmds = new List<System.Data.SqlClient.SqlParameter>();
-//                                    detailcmds.Add(detail1);
-//                                    detailcmds.Add(detail2);
-//                                    detailcmds.Add(detail3);
-//                                    detailcmds.Add(detail4);
-//                                    detailcmds.Add(detail5);
-//                                    detailcmds.Add(detail6);
-//                                    detailcmds.Add(detail7);
-//                                    detailcmds.Add(detail8);
-//                                    #endregion
-//                                    DualResult result2 = Sci.Data.DBProxy.Current.Execute(null, sqlInsertDetail, detailcmds);
+                                    sqlInsertDetail = @"insert into ClogReceive_Detail (ID, TransferToClogId, PackingListId, OrderId, CTNStartNo, ClogLocationId, AddName, AddDate)
+                                                                     values (@id,@transferToClogId,@packingListId,@OrderId,@CTNStartNo,@ClogLocationId,@addName,@addDate)";
+                                    #region 準備Detail sql參數資料
+                                    detail1.Value = newID;
+                                    detail2.Value = dr1["TransferToClogId"].ToString().Trim();
+                                    detail3.Value = dr1["PackingListId"].ToString().Trim();
+                                    detail4.Value = dr1["OrderId"].ToString().Trim();
+                                    detail5.Value = dr1["CTNStartNo"].ToString().Trim();
+                                    detail6.Value = dr1["ClogLocationId"].ToString().Trim();
+                                    detail7.Value = Sci.Env.User.UserID;
+                                    detail8.Value = DateTime.Now;
                                     #endregion
+                                    DualResult result2 = Sci.Data.DBProxy.Current.Execute(null, sqlInsertDetail, detailcmds);
 
-                                    sqlInsertDetail = "insert into ClogReceive_Detail (ID, TransferToClogId, PackingListId, OrderId, CTNStartNo, ClogLocationId, AddName, AddDate) \r\n";
-                                    sqlInsertDetail = sqlInsertDetail + string.Format(@"values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')
-                                                                ", newID, dr1["TransferToClogId"].ToString().Trim(), dr1["PackingListId"].ToString().Trim(), dr1["OrderId"].ToString().Trim(), dr1["CTNStartNo"].ToString().Trim(), dr1["ClogLocationId"].ToString().Trim(), Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-                                    DualResult result2 = Sci.Data.DBProxy.Current.Execute(null, sqlInsertDetail);
                                     if (!result2)
                                     {
                                         detailAllSuccess = false;
