@@ -25,20 +25,18 @@ namespace Sci.Production.Packing
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            this.detailgrid.IsEditingReadOnly = true;
-            //this.detailgrid.IsEditable = false;
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13))
-                .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(13))
-                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6))
-                .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10))
-                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(5))
-                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8))
-                .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10))
-                .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(10))
-                .Text("Alias", header: "Destination", width: Widths.AnsiChars(10))
-                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10))
-                .Date("ReceiveDate", header: "Clog CFM", width: Widths.AnsiChars(10));
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly:true)
+                .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Alias", header: "Destination", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("ReceiveDate", header: "Clog CFM", width: Widths.AnsiChars(10), iseditingreadonly: true);
         }
 
         protected override Ict.DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
