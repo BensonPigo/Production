@@ -21,7 +21,6 @@ namespace Sci.Production.Class
             DataTable tbCurrency;
             DBProxy.Current.Select("Production", sql, out tbCurrency);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbCurrency, "ID,NameCH,NameEn", "5,16,60", this.Text, "ID,NameCH,NameEn");
-            // select id, id,NameCH,NameEN from currency where junk = 0
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
@@ -34,7 +33,7 @@ namespace Sci.Production.Class
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (myUtility.Seek(str,"currency","id")==false)
+                if (myUtility.Seek(str,"currency","id","Production")==false)
                 {
                     MessageBox.Show(string.Format("< Currency : {0} > not found!!!", str));
                     this.Text = "";
