@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Sci.Production.Basic;
 
 using Ict;
 using Ict.Win;
@@ -64,9 +65,9 @@ namespace Sci.Production
         }
 
 
-
         ToolStripMenuItem progmenu = null;
         ToolStripMenuItem subMenu = null;
+        ToolStripSeparator separator = null;
 
         Sci.Production.Win.Login login;
 
@@ -81,43 +82,77 @@ namespace Sci.Production
         {
             if (null == user) return Result.F_ArgNull("user");
             if (!OnLogout()) return new DualResult(false, "Cannot logout current user.");
-            DualResult result;
 
+
+            DualResult result = null;
+            DataTable dtDDTable = null;
+            DataTable dtMenu = null;
+            DataRow[] drs = null;
+
+            if (Sci.Env.Cfg.CodePage == 950)
             {
-                //menus.Items.Add(progmenu = new ToolStripMenuItem("固定資產管理"));
-                //progmenu.DropDownItemClicked += progmenu_DropDownItemClicked;
-                //AddTemplate(progmenu, "B01.資產取得代碼", (menuitem) => new Sci.Win.FAB01(menuitem));
-                //AddTemplate(progmenu, "B02.財產目錄設定", (menuitem) => new Sci.Win.FAB02(menuitem));
-                //AddTemplate(progmenu, "B03.資產類別設定", (menuitem) => new Sci.Win.FAB03(menuitem));
-                //AddTemplate(progmenu, "B04.帳務類別設定", (menuitem) => new Sci.FA.FAB04(menuitem));
-                //AddTemplate(progmenu, "P01.固定資產取得作業", (menuitem) => new Sci.Win.FAP01(menuitem));
-                //AddTemplate(progmenu, "P99.固定資產取得作業(Test)", (menuitem) => new Sci.Win.FAP01(menuitem));
-                //AddTemplate(progmenu, "範本6", (menuitem) => new Sci.Win.FORM6(menuitem));
-                //AddTemplate(progmenu, "範本7", (menuitem) => new Sci.Win.FORM7(menuitem));
-                //AddTemplate(progmenu, "範本Q", (menuitem) => new Sci.Win.QUERY(menuitem));
-                //AddTemplate(progmenu, "範本R", (menuitem) => new Sci.Win.REPORT(menuitem));
-
-                ////Parent Menu
-                //menus.Items.Add(progmenu = new ToolStripMenuItem("PMS測試"));
-                //progmenu.DropDownItemClicked += progmenu_DropDownItemClicked;
-                //AddTemplate(progmenu, "SCI元件測試", (menuitem) => new Sci.PMS.Test1(menuitem));
-                //AddTemplate(progmenu, "SCI Test", (menuitem) => new Sci.PMS.PBDB998(menuitem));
-                //AddTemplate(progmenu, "B02.System Parameter", (menuitem) => new Sci.PMS.PBDB020(menuitem));
-                //AddTemplate(progmenu, "B05.Supplier/Sub Con(local)", (menuitem) => new Sci.PMS.PBDB050(menuitem));
-
-                //// Sub Menu
-                //subMenu = AddMenu(progmenu, "SubMenu");
-                //subMenu.DropDownItemClicked += progmenu_DropDownItemClicked;
-                //AddTemplate(subMenu, "SCI元件測試(2)", (menuitem) => new Sci.PMS.Test1(menuitem));
-                //AddTemplate(subMenu, "B02.System Parameter(2)", (menuitem) => new Sci.PMS.PBDB020(menuitem));
-                //AddTemplate(subMenu, "B05.Supplier/Sub Con(Loacl)(2)", (menuitem) => new Sci.PMS.PBDB050(menuitem));
-
-                //AddTemplate(progmenu, "B80.CD Index", (menuitem) => new Sci.PMS.PBDB800(menuitem));
-                //AddTemplate(progmenu, "B83.Cust CD", (menuitem) => new Sci.PMS.PBDB830(menuitem));
-                //AddTemplate(progmenu, "P02.International Express", (menuitem) => new Sci.PMS.PGEP020(menuitem));
-                //AddTemplate(progmenu, "P21.Replacement Report(Fabric)", (menuitem) => new Sci.PMS.PPCP210(menuitem));
-                //AddTemplate(progmenu, "Input2/6", (menuitem) => new Sci.PMS.Test7(menuitem));
+                if (!(result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM DDTable", out dtDDTable)))
+                {
+                    return new DualResult(false, "Can't get DDTable table!");
+                }
             }
+            if (!(result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM Menu ORDER BY MenuNo, BarNo", out dtMenu)))
+            {
+                return new DualResult(false, "Can't get Menu table!");
+            }
+
+            foreach (DataRow dr in dtMenu.Rows)
+            {
+                // For MIS專用頁面, 登入者非MIS則略過產生
+                if (!myUtility.Empty(dr["FORMISONLY"]) && !Sci.Env.User.IsMIS) continue;
+
+                // Menu及Form語言轉換
+                if (Sci.Env.Cfg.CodePage == 950)
+                {
+                    switch (dr["OBJECTCODE"].ToString())
+                    {
+                        case "1":
+                        case "2":
+                            drs = dtDDTable.Select(string.Format("ID = '{0}'", dr["MENUNAME"].ToString().Trim()));
+                            if (drs.Length > 0)
+                            {
+                                dr["MENUNAME"] = drs[0]["NAME950"].ToString();
+                            }
+                            break;
+                        case "4":
+                        case "5":
+                            drs = dtDDTable.Select(string.Format("ID = '{0}'", dr["FORMNAME"].ToString().Trim()));
+                            if (drs.Length > 0)
+                            {
+                                dr["BARPROMPT"] = drs[0]["NAME950"].ToString();
+                            }
+                            break;
+                    }
+                }
+
+                // 產生Menu及Form
+                string dllName = "";
+                switch (dr["OBJECTCODE"].ToString())
+                {
+                    case "1":  // Menu
+                        menus.Items.Add(progmenu = new ToolStripMenuItem(dr["MENUNAME"].ToString()));
+                        progmenu.DropDownItemClicked += progmenu_DropDownItemClicked;
+                        break;
+                    case "2":  // SubMenu
+                        subMenu = AddMenu(progmenu, dr["MENUNAME"].ToString());
+                        subMenu.DropDownItemClicked += progmenu_DropDownItemClicked;
+                        break;
+                    case "3":  // Separtor
+                        progmenu.DropDownItems.Add(separator = new ToolStripSeparator());
+                        break;
+                    case "4":  // Form
+                    case "5":  // SubMenu_Form
+                        dllName = dr["FORMNAME"].ToString().Substring(0, dr["FORMNAME"].ToString().LastIndexOf("."));
+                        AddTemplate((dr["OBJECTCODE"].ToString() == "4" ? progmenu : subMenu), dr["BARPROMPT"].ToString(), (menuitem) => (Sci.Win.Tems.Base)CreateFormObject(menuitem, Type.GetType(dr["FORMNAME"].ToString() + "," + dllName), dr["FORMPARAMETER"].ToString()));
+                        break;
+                }
+            }
+
 
             Env.User = user;
 
@@ -129,6 +164,16 @@ namespace Sci.Production
 
             return Result.True;
         }
+
+        private Object CreateFormObject(ToolStripMenuItem menuItem, Type typeofControl, String strArg)
+        {
+            Object[] arrArg = null;
+            arrArg = string.IsNullOrWhiteSpace(strArg) ? new Object[1] { menuItem } : new Object[2] { menuItem, strArg };
+            Object formClass = Activator.CreateInstance(typeofControl, arrArg);
+            return formClass;
+        }
+
+
         public void DoLogout(bool confirm = true)
         {
             if (confirm)
