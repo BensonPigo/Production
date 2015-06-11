@@ -326,8 +326,8 @@ namespace Sci.Production.Logistic
                         bool detailAllSuccess = true;
                         try
                         {
-                            sqlInsertMaster = @"insert into ClogReceive(ID, ReceiveDate, FactoryID, AddName, AddDate) 
-                                                               values(@id, @receiveDate, @factoryID, @addName, @addDate)";
+                            sqlInsertMaster = @"insert into ClogReceive(ID, ReceiveDate, FactoryID,Status, AddName, AddDate) 
+                                                               values(@id, @receiveDate, @factoryID, @status, @addName, @addDate)";
 
                             #region 準備Master sql參數資料
                             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -337,7 +337,6 @@ namespace Sci.Production.Logistic
                             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
                             sp2.ParameterName = "@receiveDate";
                             sp2.Value = this.dateBox1.Value;
-                            //sp2.Value = Convert.ToDateTime(this.dateBox1.Text.ToString()).ToString("d");
 
                             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
                             sp3.ParameterName = "@factoryID";
@@ -351,12 +350,17 @@ namespace Sci.Production.Logistic
                             sp5.ParameterName = "@addDate";
                             sp5.Value = DateTime.Now;
 
+                            System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
+                            sp4.ParameterName = "@status";
+                            sp4.Value = "New";
+
                             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                             cmds.Add(sp1);
                             cmds.Add(sp2);
                             cmds.Add(sp3);
                             cmds.Add(sp4);
                             cmds.Add(sp5);
+                            cmds.Add(sp6);
                             #endregion
                             DualResult result1 = Sci.Data.DBProxy.Current.Execute(null, sqlInsertMaster, cmds);
 
