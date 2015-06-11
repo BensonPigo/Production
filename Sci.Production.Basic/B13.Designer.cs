@@ -48,6 +48,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(688, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtdropdownlist2);
@@ -62,6 +66,11 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Size = new System.Drawing.Size(688, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(688, 38);
             // 
             // browse
             // 
@@ -133,7 +142,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "Junk", true));
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox1.Location = new System.Drawing.Point(400, 30);
             this.checkBox1.Name = "checkBox1";
@@ -145,7 +154,7 @@
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
-            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsExtensionUnit", true));
+            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsExtensionUnit", true));
             this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox2.Location = new System.Drawing.Point(400, 70);
             this.checkBox2.Name = "checkBox2";
@@ -157,7 +166,7 @@
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
-            this.checkBox3.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "CheckZipper", true));
+            this.checkBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CheckZipper", true));
             this.checkBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox3.Location = new System.Drawing.Point(400, 110);
             this.checkBox3.Name = "checkBox3";
@@ -169,7 +178,7 @@
             // checkBox4
             // 
             this.checkBox4.AutoSize = true;
-            this.checkBox4.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IrregularCost", true));
+            this.checkBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IrregularCost", true));
             this.checkBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox4.Location = new System.Drawing.Point(400, 150);
             this.checkBox4.Name = "checkBox4";
