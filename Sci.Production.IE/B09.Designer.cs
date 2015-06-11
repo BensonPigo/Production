@@ -29,6 +29,14 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.button3 = new Sci.Win.UI.Button();
+            this.button4 = new Sci.Win.UI.Button();
+            this.pictureBox2 = new Sci.Win.UI.PictureBox();
+            this.button2 = new Sci.Win.UI.Button();
+            this.button1 = new Sci.Win.UI.Button();
+            this.pictureBox1 = new Sci.Win.UI.PictureBox();
+            this.label31 = new Sci.Win.UI.Label();
+            this.label30 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
@@ -86,22 +94,15 @@
             this.numericBox12 = new Sci.Win.UI.NumericBox();
             this.label28 = new Sci.Win.UI.Label();
             this.label29 = new Sci.Win.UI.Label();
-            this.label30 = new Sci.Win.UI.Label();
-            this.label31 = new Sci.Win.UI.Label();
-            this.pictureBox1 = new Sci.Win.UI.PictureBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.pictureBox2 = new Sci.Win.UI.PictureBox();
-            this.button3 = new Sci.Win.UI.Button();
-            this.button4 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // detail
@@ -172,6 +173,7 @@
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 448);
+            this.detailbtm.Size = new System.Drawing.Size(900, 38);
             // 
             // browse
             // 
@@ -198,9 +200,87 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(900, 486);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Picture";
+            // 
+            // button3
+            // 
+            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.button3.Location = new System.Drawing.Point(588, 7);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(59, 30);
+            this.button3.TabIndex = 7;
+            this.button3.Text = "Delete";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button4
+            // 
+            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.button4.Location = new System.Drawing.Point(522, 7);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(59, 30);
+            this.button4.TabIndex = 6;
+            this.button4.Text = "Attach";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.Location = new System.Drawing.Point(458, 44);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(430, 434);
+            this.pictureBox2.TabIndex = 5;
+            this.pictureBox2.TabStop = false;
+            // 
+            // button2
+            // 
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.button2.Location = new System.Drawing.Point(139, 7);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(59, 30);
+            this.button2.TabIndex = 4;
+            this.button2.Text = "Delete";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.button1.Location = new System.Drawing.Point(73, 7);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(59, 30);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "Attach";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(9, 44);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(430, 434);
+            this.pictureBox1.TabIndex = 2;
+            this.pictureBox1.TabStop = false;
+            // 
+            // label31
+            // 
+            this.label31.Lines = 0;
+            this.label31.Location = new System.Drawing.Point(458, 7);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(61, 23);
+            this.label31.TabIndex = 1;
+            this.label31.Text = "Picture 2";
+            // 
+            // label30
+            // 
+            this.label30.Lines = 0;
+            this.label30.Location = new System.Drawing.Point(9, 7);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(61, 23);
+            this.label30.TabIndex = 0;
+            this.label30.Text = "Picture 1";
             // 
             // label3
             // 
@@ -323,7 +403,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "FromGSD", true));
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromGSD", true));
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox1.Location = new System.Drawing.Point(313, 14);
             this.checkBox1.Name = "checkBox1";
@@ -340,7 +420,6 @@
             this.editBox1.Location = new System.Drawing.Point(154, 43);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
-            this.editBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox1.Size = new System.Drawing.Size(432, 53);
             this.editBox1.TabIndex = 14;
             // 
@@ -352,7 +431,6 @@
             this.editBox2.Location = new System.Drawing.Point(154, 101);
             this.editBox2.Multiline = true;
             this.editBox2.Name = "editBox2";
-            this.editBox2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.editBox2.Size = new System.Drawing.Size(432, 53);
             this.editBox2.TabIndex = 15;
             // 
@@ -416,7 +494,7 @@
             // numericBox1
             // 
             this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "RPM", true));
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RPM", true));
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox1.Location = new System.Drawing.Point(432, 187);
             this.numericBox1.Name = "numericBox1";
@@ -622,7 +700,7 @@
             // numericBox2
             // 
             this.numericBox2.BackColor = System.Drawing.Color.White;
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MachineTMU", true));
+            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MachineTMU", true));
             this.numericBox2.DecimalPlaces = 2;
             this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox2.Location = new System.Drawing.Point(765, 14);
@@ -633,7 +711,7 @@
             // numericBox3
             // 
             this.numericBox3.BackColor = System.Drawing.Color.White;
-            this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ManualTMU", true));
+            this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ManualTMU", true));
             this.numericBox3.DecimalPlaces = 2;
             this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox3.Location = new System.Drawing.Point(765, 43);
@@ -644,7 +722,7 @@
             // numericBox4
             // 
             this.numericBox4.BackColor = System.Drawing.Color.White;
-            this.numericBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "TotalTMU", true));
+            this.numericBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalTMU", true));
             this.numericBox4.DecimalPlaces = 2;
             this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox4.Location = new System.Drawing.Point(765, 72);
@@ -655,7 +733,7 @@
             // numericBox5
             // 
             this.numericBox5.BackColor = System.Drawing.Color.White;
-            this.numericBox5.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SMV", true));
+            this.numericBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SMV", true));
             this.numericBox5.DecimalPlaces = 4;
             this.numericBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox5.Location = new System.Drawing.Point(765, 101);
@@ -666,7 +744,7 @@
             // numericBox6
             // 
             this.numericBox6.BackColor = System.Drawing.Color.White;
-            this.numericBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "StitchCM", true));
+            this.numericBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StitchCM", true));
             this.numericBox6.DecimalPlaces = 2;
             this.numericBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox6.Location = new System.Drawing.Point(765, 130);
@@ -677,7 +755,7 @@
             // numericBox7
             // 
             this.numericBox7.BackColor = System.Drawing.Color.White;
-            this.numericBox7.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SeamLength", true));
+            this.numericBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SeamLength", true));
             this.numericBox7.DecimalPlaces = 2;
             this.numericBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox7.Location = new System.Drawing.Point(765, 159);
@@ -708,7 +786,7 @@
             // numericBox10
             // 
             this.numericBox10.BackColor = System.Drawing.Color.White;
-            this.numericBox10.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NeedleLength", true));
+            this.numericBox10.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NeedleLength", true));
             this.numericBox10.DecimalPlaces = 2;
             this.numericBox10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox10.Location = new System.Drawing.Point(765, 333);
@@ -719,7 +797,7 @@
             // numericBox11
             // 
             this.numericBox11.BackColor = System.Drawing.Color.White;
-            this.numericBox11.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BottomLength", true));
+            this.numericBox11.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BottomLength", true));
             this.numericBox11.DecimalPlaces = 2;
             this.numericBox11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox11.Location = new System.Drawing.Point(765, 360);
@@ -730,7 +808,7 @@
             // numericBox12
             // 
             this.numericBox12.BackColor = System.Drawing.Color.White;
-            this.numericBox12.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CoverLength", true));
+            this.numericBox12.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CoverLength", true));
             this.numericBox12.DecimalPlaces = 2;
             this.numericBox12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox12.Location = new System.Drawing.Point(765, 387);
@@ -756,84 +834,6 @@
             this.label29.TabIndex = 54;
             this.label29.Text = "%";
             // 
-            // label30
-            // 
-            this.label30.Lines = 0;
-            this.label30.Location = new System.Drawing.Point(9, 7);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(61, 23);
-            this.label30.TabIndex = 0;
-            this.label30.Text = "Picture 1";
-            // 
-            // label31
-            // 
-            this.label31.Lines = 0;
-            this.label31.Location = new System.Drawing.Point(458, 7);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(61, 23);
-            this.label31.TabIndex = 1;
-            this.label31.Text = "Picture 2";
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Location = new System.Drawing.Point(9, 44);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(430, 434);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
-            // 
-            // button1
-            // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(73, 7);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(59, 30);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Attach";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // button2
-            // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(139, 7);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(59, 30);
-            this.button2.TabIndex = 4;
-            this.button2.Text = "Delete";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.Location = new System.Drawing.Point(458, 44);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(430, 434);
-            this.pictureBox2.TabIndex = 5;
-            this.pictureBox2.TabStop = false;
-            // 
-            // button3
-            // 
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button3.Location = new System.Drawing.Point(588, 7);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(59, 30);
-            this.button3.TabIndex = 7;
-            this.button3.Text = "Delete";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // button4
-            // 
-            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button4.Location = new System.Drawing.Point(522, 7);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(59, 30);
-            this.button4.TabIndex = 6;
-            this.button4.Text = "Attach";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
-            // 
             // B09
             // 
             this.ClientSize = new System.Drawing.Size(908, 548);
@@ -852,10 +852,12 @@
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
