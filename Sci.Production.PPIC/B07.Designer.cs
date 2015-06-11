@@ -150,7 +150,7 @@
             // 
             // dateBox1
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Date", true));
+            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Date", true));
             this.dateBox1.Location = new System.Drawing.Point(130, 65);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
@@ -168,7 +168,7 @@
             // numericBox1
             // 
             this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Hours", true));
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Hours", true));
             this.numericBox1.DecimalPlaces = 1;
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox1.Location = new System.Drawing.Point(130, 170);
@@ -195,7 +195,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "Holiday", true));
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Holiday", true));
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox1.Location = new System.Drawing.Point(302, 65);
             this.checkBox1.Name = "checkBox1";
