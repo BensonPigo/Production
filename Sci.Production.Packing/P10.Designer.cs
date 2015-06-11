@@ -136,7 +136,7 @@
             // 
             // dateBox1
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "TransferDate", true));
+            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TransferDate", true));
             this.dateBox1.IsSupportEditMode = false;
             this.dateBox1.Location = new System.Drawing.Point(109, 36);
             this.dateBox1.Name = "dateBox1";
