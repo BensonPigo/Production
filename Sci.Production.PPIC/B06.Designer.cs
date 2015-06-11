@@ -68,6 +68,10 @@
             // 
             this.detailbtm.Size = new System.Drawing.Size(679, 38);
             // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(679, 395);
+            // 
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(687, 424);
@@ -161,7 +165,7 @@
             // numericBox1
             // 
             this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Sewer", true));
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Sewer", true));
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox1.Location = new System.Drawing.Point(112, 175);
             this.numericBox1.Name = "numericBox1";
