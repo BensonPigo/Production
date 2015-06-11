@@ -192,7 +192,7 @@
             // 
             // dateBox1
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OnBoardDate", true));
+            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OnBoardDate", true));
             this.dateBox1.Location = new System.Drawing.Point(479, 32);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
@@ -200,7 +200,7 @@
             // 
             // dateBox2
             // 
-            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ResignationDate", true));
+            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ResignationDate", true));
             this.dateBox2.Location = new System.Drawing.Point(479, 81);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
