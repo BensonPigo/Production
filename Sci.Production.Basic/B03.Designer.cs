@@ -41,10 +41,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(684, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.textBox2);
@@ -52,11 +48,6 @@
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(684, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(684, 38);
             // 
             // browse
             // 
@@ -125,7 +116,7 @@
             this.Name = "B03";
             this.Text = "B03. Department";
             this.UniqueExpress = "ID";
-            this.WorkAlias = "B03. Department";
+            this.WorkAlias = "Department";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
