@@ -64,6 +64,10 @@
             // 
             this.detailbtm.Size = new System.Drawing.Size(682, 38);
             // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(682, 395);
+            // 
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(690, 424);
@@ -127,7 +131,7 @@
             // numericBox1
             // 
             this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CPU", true));
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CPU", true));
             this.numericBox1.DecimalPlaces = 3;
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox1.Location = new System.Drawing.Point(110, 120);
@@ -138,7 +142,7 @@
             // numericBox2
             // 
             this.numericBox2.BackColor = System.Drawing.Color.White;
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SMV", true));
+            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SMV", true));
             this.numericBox2.DecimalPlaces = 4;
             this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox2.Location = new System.Drawing.Point(110, 160);
