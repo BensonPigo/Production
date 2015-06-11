@@ -45,6 +45,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -207,6 +208,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox1.Location = new System.Drawing.Point(309, 30);
             this.checkBox1.Name = "checkBox1";
@@ -231,6 +233,8 @@
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
