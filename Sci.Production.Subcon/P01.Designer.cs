@@ -426,7 +426,7 @@
             // 
             // dateBox1
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "issuedate", true));
+            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "issuedate", true));
             this.dateBox1.Location = new System.Drawing.Point(94, 81);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
@@ -598,7 +598,7 @@
             // 
             // dateBox2
             // 
-            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "delivery", true));
+            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "delivery", true));
             this.dateBox2.Location = new System.Drawing.Point(94, 115);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
