@@ -66,6 +66,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(765, 478);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtcountry2);
@@ -98,6 +102,12 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Size = new System.Drawing.Size(765, 440);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 440);
+            this.detailbtm.Size = new System.Drawing.Size(765, 38);
             // 
             // browse
             // 
@@ -317,7 +327,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "Junk", true));
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox1.Location = new System.Drawing.Point(609, 14);
             this.checkBox1.Name = "checkBox1";
@@ -329,7 +339,7 @@
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
-            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "ThirdCountry", true));
+            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ThirdCountry", true));
             this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox2.Location = new System.Drawing.Point(609, 47);
             this.checkBox2.Name = "checkBox2";
