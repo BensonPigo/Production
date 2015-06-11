@@ -61,6 +61,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(767, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.numericBox1);
@@ -88,6 +92,11 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Size = new System.Drawing.Size(767, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(767, 38);
             // 
             // browse
             // 
@@ -252,7 +261,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "Junk", true));
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox1.Location = new System.Drawing.Point(478, 15);
             this.checkBox1.Name = "checkBox1";
@@ -264,7 +273,7 @@
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
-            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "UseSBTS", true));
+            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "UseSBTS", true));
             this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox2.Location = new System.Drawing.Point(478, 42);
             this.checkBox2.Name = "checkBox2";
@@ -276,7 +285,7 @@
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
-            this.checkBox3.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsFactory", true));
+            this.checkBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsFactory", true));
             this.checkBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox3.Location = new System.Drawing.Point(478, 69);
             this.checkBox3.Name = "checkBox3";
@@ -343,7 +352,7 @@
             // numericBox1
             // 
             this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "WithHoldingRate", true));
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WithHoldingRate", true));
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox1.Location = new System.Drawing.Point(156, 317);
             this.numericBox1.Name = "numericBox1";
