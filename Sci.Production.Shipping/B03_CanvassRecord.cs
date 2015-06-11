@@ -56,14 +56,7 @@ namespace Sci.Production.Shipping
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            if (CurrentMaintain["Status"].ToString() == "New")
-            {
-                this.label1.Text = "New";
-            }
-            else
-            {
-                this.label1.Text = "Confirmed";
-            }
+            this.label1.Text = CurrentMaintain["Status"].ToString();
         }
 
         //檢查是否還有建立的紀錄尚未被confirm，若有則無法新增資料
