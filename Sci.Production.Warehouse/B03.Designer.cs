@@ -41,8 +41,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(900, 395);
             // 
             // detailcont
             // 
@@ -55,10 +60,24 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label5);
+            this.detailcont.Size = new System.Drawing.Size(900, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(900, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(900, 395);
+            // 
+            // tabs
+            // 
+            this.tabs.Size = new System.Drawing.Size(908, 424);
             // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "junk", true));
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox1.Location = new System.Drawing.Point(655, 17);
             this.checkBox1.Name = "checkBox1";
@@ -160,6 +179,8 @@
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
