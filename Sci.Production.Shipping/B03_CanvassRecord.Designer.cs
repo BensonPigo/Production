@@ -124,7 +124,7 @@
             // numericBox4
             // 
             this.numericBox4.BackColor = System.Drawing.Color.White;
-            this.numericBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "price4", true));
+            this.numericBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "price4", true));
             this.numericBox4.DecimalPlaces = 4;
             this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox4.Location = new System.Drawing.Point(425, 137);
@@ -146,7 +146,7 @@
             // numericBox3
             // 
             this.numericBox3.BackColor = System.Drawing.Color.White;
-            this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "price3", true));
+            this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "price3", true));
             this.numericBox3.DecimalPlaces = 4;
             this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox3.Location = new System.Drawing.Point(425, 107);
@@ -168,7 +168,7 @@
             // numericBox2
             // 
             this.numericBox2.BackColor = System.Drawing.Color.White;
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "price2", true));
+            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "price2", true));
             this.numericBox2.DecimalPlaces = 4;
             this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox2.Location = new System.Drawing.Point(425, 78);
@@ -190,7 +190,7 @@
             // numericBox1
             // 
             this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "price1", true));
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "price1", true));
             this.numericBox1.DecimalPlaces = 4;
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox1.Location = new System.Drawing.Point(425, 47);
@@ -407,13 +407,13 @@
             this.txtsubcon1.TabIndex = 22;
             this.txtsubcon1.TextBox1Binding = "";
             // 
-            // CanvassRecord
+            // B03_CanvassRecord
             // 
             this.ClientSize = new System.Drawing.Size(684, 457);
             this.DefaultOrder = "ID,AddDate";
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
-            this.Name = "CanvassRecord";
+            this.Name = "B03_CanvassRecord";
             this.Text = "Canvass record";
             this.WorkAlias = "ShipExpense_CanVass";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
