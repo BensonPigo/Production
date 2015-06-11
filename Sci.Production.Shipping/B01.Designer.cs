@@ -83,6 +83,10 @@
             this.detailbtm.Location = new System.Drawing.Point(0, 333);
             this.detailbtm.Size = new System.Drawing.Size(680, 38);
             // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(680, 371);
+            // 
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(688, 400);
@@ -217,7 +221,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "Junk", true));
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox1.Location = new System.Drawing.Point(400, 15);
             this.checkBox1.Name = "checkBox1";
