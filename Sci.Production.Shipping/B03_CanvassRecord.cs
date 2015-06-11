@@ -56,16 +56,23 @@ namespace Sci.Production.Shipping
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.button1.Enabled = CurrentMaintain["Encode"].ToString() == "False";
+            if (CurrentMaintain["Status"].ToString() == "New")
+            {
+                this.label1.Text = "New";
+            }
+            else
+            {
+                this.label1.Text = "Confirmed";
+            }
         }
 
-        //檢查是否還有建立的紀錄尚未被encode，若有則無法新增資料
+        //檢查是否還有建立的紀錄尚未被confirm，若有則無法新增資料
         protected override bool OnNewBefore()
         {
-            string sqlCmd = string.Format("select ID from ShipExpense_CanVass where ID = '{0}' and Encode = 0", this.motherData["ID"].ToString());
+            string sqlCmd = string.Format("select ID from ShipExpense_CanVass where ID = '{0}' and Status = 'New'", this.motherData["ID"].ToString());
             if (myUtility.Seek(sqlCmd, null))
             {
-                MessageBox.Show("Still have data not yet encode, so can't create new record!");
+                MessageBox.Show("Still have data not yet confirm, so can't create new record!");
                 return false;
             }
             return base.OnNewBefore();
@@ -77,43 +84,45 @@ namespace Sci.Production.Shipping
             base.OnNewAfter();
             CurrentMaintain["ID"] = motherData["ID"].ToString().Trim();
             CurrentMaintain["ChooseSupp"] = 1;
-            this.button1.Enabled = false;
+            CurrentMaintain["Status"] = "New";
+            this.label1.Text = "New";
         }
 
         //修改前檢查
         protected override bool OnEditBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["Encode"].ToString() == "True")
+            if (dr["Status"].ToString() == "Confirmed")
             {
-                MessageBox.Show("Record is encoded, can't modify!");
+                MessageBox.Show("Record is confirmed, can't modify!");
                 return false;
             }
             return base.OnEditBefore();
-        }
-
-        //編輯狀態下按鈕不可以使用
-        protected override void OnEditAfter()
-        {
-            base.OnEditAfter();
-            this.button1.Enabled = false;
         }
 
         //刪除前檢查
         protected override bool OnDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["Encode"].ToString() == "True")
+            if (dr["Status"].ToString() == "Confirmed")
             {
-                MessageBox.Show("Record is encoded, can't delete!");
+                MessageBox.Show("Record is confirmed, can't delete!");
                 return false;
             }
             return base.OnDeleteBefore();
         }
 
-        //Encode button
-        private void button1_Click(object sender, EventArgs e)
+        //Confirm
+        protected override void OnConfirm()
         {
+            base.OnConfirm();
+
+            var currentMaintain = this.CurrentMaintain;
+            if (currentMaintain == null)
+            {
+                return;
+            }
+
             var suppId = "";
             var price = 0.0;
             var currencyId = "";
@@ -155,7 +164,7 @@ namespace Sci.Production.Shipping
             {
                 try
                 {
-                    string updateCommand = string.Format("Update ShipExpense_CanVass set encode = 1, EditName ='{0}', EditDate = '{1}' where UKey = '{2}'", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["UKey"].ToString());
+                    string updateCommand = string.Format("Update ShipExpense_CanVass set Status = 'Confirmed', EditName ='{0}', EditDate = '{1}' where UKey = '{2}'", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["UKey"].ToString());
                     result = Sci.Data.DBProxy.Current.Execute(null, updateCommand);
 
                     string s1 = "Update ShipExpense set LocalSuppID = @suppId, Price = @price, CurrencyID = @currencyId, CanvassDate = @canvassDate, EditName = @editName, EditDate = @editDate where ID = @id";
@@ -204,11 +213,10 @@ namespace Sci.Production.Shipping
                     if (result && result2)
                     {
                         transactionScope.Complete();
-                        MessageBox.Show("Encode sucessful");
                     }
                     else
                     {
-                        MessageBox.Show("Encode failed, Pleaes re-try");
+                        MessageBox.Show("Confirm failed, Pleaes re-try");
                     }
 
                 }
@@ -221,8 +229,7 @@ namespace Sci.Production.Shipping
 
             result = RenewData();
             OnDetailEntered();
+            EnsureToolbarCUSR();
         }
-
-       
     }
 }

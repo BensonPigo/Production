@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new Sci.Win.UI.Button();
             this.label8 = new Sci.Win.UI.Label();
             this.numericBox4 = new Sci.Win.UI.NumericBox();
             this.numericBox3 = new Sci.Win.UI.NumericBox();
@@ -44,6 +43,7 @@
             this.radioButton1 = new Sci.Win.UI.RadioButton();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.label3 = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
             this.txtcurrency4 = new Sci.Production.Class.txtcurrency();
             this.txtcurrency3 = new Sci.Production.Class.txtcurrency();
             this.txtcurrency2 = new Sci.Production.Class.txtcurrency();
@@ -67,7 +67,7 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.button1);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.label8);
             this.detailcont.Controls.Add(this.numericBox4);
             this.detailcont.Controls.Add(this.numericBox3);
@@ -100,17 +100,6 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(684, 424);
-            // 
-            // button1
-            // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(548, 11);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 43;
-            this.button1.Text = "Encode";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // label8
             // 
@@ -319,6 +308,19 @@
             this.label3.TabIndex = 30;
             this.label3.Text = "Code";
             // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(557, 18);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(112, 23);
+            this.label1.TabIndex = 42;
+            this.label1.Text = "label1";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.label1.TextStyle.Color = System.Drawing.Color.Red;
+            // 
             // txtcurrency4
             // 
             this.txtcurrency4.BackColor = System.Drawing.Color.White;
@@ -409,8 +411,10 @@
             // 
             // B03_CanvassRecord
             // 
+            this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(684, 457);
             this.DefaultOrder = "ID,AddDate";
+            this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
             this.Name = "B03_CanvassRecord";
@@ -433,7 +437,6 @@
 
         #endregion
 
-        private Win.UI.Button button1;
         private Win.UI.Label label8;
         private Win.UI.NumericBox numericBox4;
         private Win.UI.NumericBox numericBox3;
@@ -457,5 +460,6 @@
         private Class.txtsubcon txtsubcon3;
         private Class.txtsubcon txtsubcon2;
         private Class.txtsubcon txtsubcon1;
+        private Win.UI.Label label1;
     }
 }
