@@ -69,7 +69,7 @@ namespace Sci.Production.Subcon
             DBProxy.Current.Exists("", sqlcmd, cmds, out flag);
             if (flag)
             {
-                MessageBox.Show("Can't add data when data have not been Encoded.", "Warning");
+                myUtility.WarningBox("Can't add data when data have not been Encoded.", "Warning");
                 return false;
             }
             return base.OnNewBefore();
@@ -90,7 +90,7 @@ namespace Sci.Production.Subcon
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if(dr["Encode"].ToString() == "True")
             {
-                MessageBox.Show("Record is encoded, can't modify!");
+                myUtility.WarningBox("Record is encoded, can't modify!");
                 return false;
             }
             return base.OnEditBefore();
@@ -102,7 +102,7 @@ namespace Sci.Production.Subcon
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["Encode"].ToString() == "True")
             {
-                MessageBox.Show("Record is encoded, can't delete!");
+                myUtility.WarningBox("Record is encoded, can't delete!");
                 return false;
             }
             return base.OnDeleteBefore();
@@ -151,7 +151,7 @@ namespace Sci.Production.Subcon
 
             if (string.IsNullOrWhiteSpace(suppid) || string.IsNullOrWhiteSpace(currencyid) || price == 0.0)
             {
-                MessageBox.Show("Choosed Set of data can't be empty!!");
+                myUtility.WarningBox("Choosed Set of data can't be empty!!");
                 return;
             }
 
@@ -200,11 +200,11 @@ namespace Sci.Production.Subcon
                     if (result && result2)
                     {
                         _transactionscope.Complete();
-                        MessageBox.Show("Encode successful");
+                        myUtility.WarningBox("Encode successful");
                     }
                     else
                     {
-                        MessageBox.Show("Encode failed, Pleaes re-try");
+                        myUtility.WarningBox("Encode failed, Pleaes re-try");
                     }
                     
                 }

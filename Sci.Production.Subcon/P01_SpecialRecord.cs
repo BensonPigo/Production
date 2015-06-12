@@ -101,7 +101,7 @@ namespace Sci.Production.Subcon
 
             if (string.IsNullOrWhiteSpace(orderID) && string.IsNullOrWhiteSpace(poid))
             {
-                MessageBox.Show("< SP# > or < Mother SP# > can't be empty!!");
+                myUtility.WarningBox("< SP# > or < Mother SP# > can't be empty!!");
                 textBox1.Focus();
                 return;
             }
@@ -141,7 +141,7 @@ namespace Sci.Production.Subcon
                 if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
                 {
                     if (dtArtwork.Rows.Count == 0)
-                    { MessageBox.Show("Data not found!!"); }
+                    { myUtility.WarningBox("Data not found!!"); }
                     listControlBindingSource1.DataSource = dtArtwork;
                 }
                 else { ShowErr(strSQLCmd,result); }
@@ -158,7 +158,7 @@ namespace Sci.Production.Subcon
 
             if (dr2.Length > 0 && flag)
             {
-                MessageBox.Show("UnitPrice of selected row can't be zero!", "Warning");
+                myUtility.WarningBox("UnitPrice of selected row can't be zero!", "Warning");
                 return;
             }
 
@@ -190,7 +190,7 @@ namespace Sci.Production.Subcon
             }
             else
             {
-                MessageBox.Show("Please select rows first!", "Warnning");
+                myUtility.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
             this.Close();
@@ -207,7 +207,7 @@ namespace Sci.Production.Subcon
 
             if (!myUtility.Seek(string.Format("select id from orders where id='{0}'", ((Sci.Win.UI.TextBox)sender).Text), null))
             {
-                MessageBox.Show(string.Format("SP# ({0}) is not found!",((Sci.Win.UI.TextBox)sender).Text));
+                myUtility.WarningBox(string.Format("SP# ({0}) is not found!",((Sci.Win.UI.TextBox)sender).Text));
                 return;
             }
 
@@ -216,7 +216,7 @@ namespace Sci.Production.Subcon
 
             if (cat=="B" && isArtwork.ToUpper()=="TRUE")
             {
-                MessageBox.Show("Bulk orders only allow Artwork is like Bonding,GMT Wash, ....!!", "Warning");
+                myUtility.WarningBox("Bulk orders only allow Artwork is like Bonding,GMT Wash, ....!!", "Warning");
                 ((Sci.Win.UI.TextBox)sender).Text="";
                 e.Cancel = true;
                 return;

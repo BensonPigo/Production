@@ -62,7 +62,7 @@ namespace Sci.Production.Subcon
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (!myUtility.Empty(dr["encode"].ToString()) || dr["encode"].ToString().ToUpper() == "TRUE")
             {
-                MessageBox.Show("Data is encoded, can't be deleted.", "Warning");
+                myUtility.WarningBox("Data is encoded, can't be deleted.", "Warning");
                 return false;
             }
 
@@ -93,21 +93,21 @@ namespace Sci.Production.Subcon
             #region 必輸檢查
             if (CurrentMaintain["issuedate"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
             {
-                MessageBox.Show("< Issue Date >  can't be empty!", "Warning");
+                myUtility.WarningBox("< Issue Date >  can't be empty!", "Warning");
                 dateBox1.Focus();
                 return false;
             }
 
             if (CurrentMaintain["ArtworktypeId"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["ArtworktypeId"].ToString()))
             {
-                MessageBox.Show("< Artwork Type >  can't be empty!", "Warning");
+                myUtility.WarningBox("< Artwork Type >  can't be empty!", "Warning");
                 txtartworktype_fty1.Focus();
                 return false;
             }
 
             if (CurrentMaintain["Handle"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["Handle"].ToString()))
             {
-                MessageBox.Show("< Handle >  can't be empty!", "Warning");
+                myUtility.WarningBox("< Handle >  can't be empty!", "Warning");
                 txtuser1.TextBox1.Focus();
                 return false;
             }
@@ -121,14 +121,14 @@ namespace Sci.Production.Subcon
 
             if (((DataTable)detailgridbs.DataSource).Rows.Count == 0)
             {
-                MessageBox.Show("Detail can't be empty", "Warning");
+                myUtility.WarningBox("Detail can't be empty", "Warning");
                 return false;
             }
 
             DataRow[] drchk = ((DataTable)detailgridbs.DataSource).Select("[orderid] ='' or [artworkpoid] ='' or [orderid] is null or [artworkpoid] is null ");
             if (drchk.Length > 0)
             {
-                MessageBox.Show("Detail of SP# & POID can't be empty", "Warning");
+                myUtility.WarningBox("Detail of SP# & POID can't be empty", "Warning");
                 return false;
             }
 
@@ -224,14 +224,14 @@ namespace Sci.Production.Subcon
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (myUtility.Empty(CurrentMaintain["artworktypeid"]))
                     {
-                        MessageBox.Show("Please fill Artwork Type first");
+                        myUtility.WarningBox("Please fill Artwork Type first");
                         this.txtartworktype_fty1.Focus();
                         return;
                     }
                     
                     if (myUtility.Empty(dr["OrderID"]))
                     {
-                        MessageBox.Show("Please fill SP# first");
+                        myUtility.WarningBox("Please fill SP# first");
                         return;
                     }
                     if (e.Button == System.Windows.Forms.MouseButtons.Right && e.RowIndex != -1 )
@@ -316,7 +316,7 @@ namespace Sci.Production.Subcon
                 {
                     ids += dr[0].ToString() + ",";
                 }
-                MessageBox.Show(String.Format("These POID <{0}> already closed, can't encode/amend", ids));
+                myUtility.WarningBox(String.Format("These POID <{0}> already closed, can't encode/amend", ids));
                 return;
             }
 
@@ -337,7 +337,7 @@ namespace Sci.Production.Subcon
 //                    ids += dr[0].ToString() + ",";
 //                    bundlenos += dr[1].ToString() + ",";
 //                }
-//                MessageBox.Show(String.Format("These Bundle# <{0}> already exist in farm-in data <{1}> , can't encode/amend",bundlenos, ids));
+//                myUtility.WarningBox(String.Format("These Bundle# <{0}> already exist in farm-in data <{1}> , can't encode/amend",bundlenos, ids));
 //                return;
 //            }
 
@@ -363,7 +363,7 @@ namespace Sci.Production.Subcon
                 }
                 if (!myUtility.Empty(ids))
                 {
-                    MessageBox.Show(ids);
+                    myUtility.WarningBox(ids);
                     return;
                 }
             }
@@ -387,7 +387,7 @@ namespace Sci.Production.Subcon
                 }
                 if (!myUtility.Empty(ids))
                 {
-                    MessageBox.Show(ids);
+                    myUtility.WarningBox(ids);
                     return;
                 }
             }
@@ -402,13 +402,13 @@ namespace Sci.Production.Subcon
             }
             else
             {
-                DialogResult dResult = MessageBox.Show("Do you want to amend it?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+                DialogResult dResult = myUtility.QuestionBox("Do you want to amend it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
                 if (dResult.ToString().ToUpper() == "NO") return;
                 sqlcmd3 = string.Format("update FarmIn set encode = 0, editname = '{0}' , editdate = GETDATE() " +
                                 "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             }
 
-            // update artworkpo_detail farmout
+            // update artworkpo_detail farmin
             DataTable detailgroup;
             sqlcmd = string.Format(@"select b.artworkpo_detailukey, sum(b.qty) qty
                                     from farmIn_detail b
@@ -482,7 +482,7 @@ namespace Sci.Production.Subcon
                     }
 
                     _transactionscope.Complete();
-                    MessageBox.Show("Encode successful");
+                    myUtility.WarningBox("Encode successful");
                 }
                 catch (Exception ex)
                 {

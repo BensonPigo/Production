@@ -74,7 +74,7 @@ namespace Sci.Production.Subcon
                 (Inline_b == null && Inline_e == null) &&
                 string.IsNullOrWhiteSpace(sp_b) && string.IsNullOrWhiteSpace(sp_e))
             {
-                MessageBox.Show("< Approve Date > or < SCI Delivery > or < Inline Date > or < SP# > can't be empty!!");
+                myUtility.WarningBox("< Approve Date > or < SCI Delivery > or < Inline Date > or < SP# > can't be empty!!");
                 dateRange1.Focus1();
                 return;
             }
@@ -83,7 +83,7 @@ namespace Sci.Production.Subcon
             #region 組query sqlcmd
             if (string.IsNullOrWhiteSpace(artworktype))
             {
-                MessageBox.Show("< Artwork Type > can't be empty!!");
+                myUtility.WarningBox("< Artwork Type > can't be empty!!");
                 txtartworktype_fty1.Focus();
                 return;
             }
@@ -271,7 +271,7 @@ namespace Sci.Production.Subcon
                 if (result = DBProxy.Current.Select(null, SqlCmd, out dtArtwork))
                 {
                     if (dtArtwork.Rows.Count == 0)
-                    { MessageBox.Show("Data not found!!"); }
+                    { myUtility.WarningBox("Data not found!!"); }
                     listControlBindingSource1.DataSource = dtArtwork;
                 }
                 else 
@@ -359,13 +359,13 @@ namespace Sci.Production.Subcon
 
             if (dateBox1.Value ==null)
             {
-                MessageBox.Show("< Issue Date > can't be empty!!");
+                myUtility.WarningBox("< Issue Date > can't be empty!!");
                 dateBox1.Focus();
                 return;
             }
             if (dateBox2.Value == null)
             {
-                MessageBox.Show("< Delivery > can't be empty!!");
+                myUtility.WarningBox("< Delivery > can't be empty!!");
                 dateBox2.Focus();
                 return;
             }
@@ -378,7 +378,7 @@ namespace Sci.Production.Subcon
             find = dt.Select("Selected = 1");
             if (find.Length == 0)
             {
-                MessageBox.Show("Please select rows first!", "Warnning");
+                myUtility.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
 
@@ -389,7 +389,7 @@ namespace Sci.Production.Subcon
             //    {
             //        dr["message"] = "Unit price = 0 or Approve Date is null";
             //    }
-            //    MessageBox.Show("Unit Price or Approve Date can't be zero or empty", "Warning");
+            //    myUtility.WarningBox("Unit Price or Approve Date can't be zero or empty", "Warning");
             //    grid1.Sort(grid1.Columns[17], ListSortDirection.Descending);
             //    return;
             //}
@@ -540,7 +540,7 @@ namespace Sci.Production.Subcon
 
                             if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd)))
                             {
-                                MessageBox.Show("Create failed, Pleaes re-try");
+                                myUtility.WarningBox("Create failed, Pleaes re-try");
                                 break;
                             }
 
@@ -590,13 +590,13 @@ namespace Sci.Production.Subcon
 
                                 if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd)))
                                 {
-                                    MessageBox.Show("Create failed, Pleaes re-try");
+                                    myUtility.WarningBox("Create failed, Pleaes re-try");
                                     break;
                                 }
                             }
                             #endregion
                             _transactionscope.Complete();
-                            MessageBox.Show("Complete!");
+                            myUtility.WarningBox("Complete!");
                         }
 
                         catch (Exception ex)

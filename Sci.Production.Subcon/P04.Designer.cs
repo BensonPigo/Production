@@ -96,7 +96,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(892, 104);
+            this.gridicon.Location = new System.Drawing.Point(1000, 104);
             this.gridicon.TabIndex = 6;
             // 
             // refresh
@@ -279,15 +279,19 @@
             // 
             // P04
             // 
+            this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1008, 729);
             this.DefaultControl = "datebox1";
             this.DefaultOrder = "IssueDate,ID";
             this.GridAlias = "FarmIn_detail";
+            this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
+            this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
             this.Name = "P04";
             this.Text = "P04. Bundles Farm In";
+            this.UnApvChkValue = "Confirmed";
             this.WorkAlias = "FarmIn";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();

@@ -12,7 +12,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class P01_Import : Sci.Win.Subs.Base
+    public partial class P10_ImportFromPO : Sci.Win.Subs.Base
     {
         DataRow dr_artworkpo;
         DataTable dt_artworkpoDetail;
@@ -21,23 +21,11 @@ namespace Sci.Production.Subcon
         string poType;
         protected DataTable dtArtwork;
 
-        public P01_Import(DataRow master, DataTable detail, string fuc)
+        public P10_ImportFromPO(DataRow master, DataTable detail)
         {
             InitializeComponent();
             dr_artworkpo = master;
             dt_artworkpoDetail = detail;
-            flag = fuc == "P01";
-            if (flag)
-            {
-                poType = "O";
-                this.Text += " (Sub-con Purchase Order)";
-            }
-            else
-            {
-                poType = "I";
-                this.Text += " (In-House Requisition)";
-            }
-
             this.Text += string.Format(" : {0}", dr_artworkpo["artworktypeid"].ToString());
         }
 

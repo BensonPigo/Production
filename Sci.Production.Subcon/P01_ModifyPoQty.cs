@@ -60,7 +60,7 @@ namespace Sci.Production.Subcon
         {
             if (!(dr["apqty"] == DBNull.Value) && ((Sci.Win.UI.NumericBox)sender).Value < int.Parse(dr["apqty"].ToString()))
             {
-                MessageBox.Show("PO Qty can't less than AP Qty", "Wanring");
+                myUtility.WarningBox("PO Qty can't less than AP Qty", "Wanring");
                 e.Cancel = true;
                 return;
             }
@@ -118,11 +118,11 @@ namespace Sci.Production.Subcon
                     if (result && result2)
                     {
                         _transactionscope.Complete();
-                        MessageBox.Show("Save sucessful");
+                        myUtility.WarningBox("Save sucessful");
                     }
                     else
                     {
-                        MessageBox.Show("Save failed, Pleaes re-try");
+                        myUtility.WarningBox("Save failed, Pleaes re-try");
                         return;
                     }
                 }

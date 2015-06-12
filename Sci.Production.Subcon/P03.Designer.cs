@@ -102,7 +102,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(892, 100);
+            this.gridicon.Location = new System.Drawing.Point(1000, 100);
             this.gridicon.TabIndex = 6;
             // 
             // refresh
@@ -116,11 +116,11 @@
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(994, 621);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(994, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -311,8 +311,10 @@
             this.DefaultControl = "datebox1";
             this.DefaultOrder = "IssueDate,ID";
             this.GridAlias = "FarmOut_detail";
+            this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
+            this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
             this.Name = "P03";
             this.Text = "P03. Bundles Farm Out";

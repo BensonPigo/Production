@@ -67,28 +67,28 @@ namespace Sci.Production.Subcon
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["refno"].ToString()))
             {
-                MessageBox.Show("< Refno > can not be empty!");
+                myUtility.WarningBox("< Refno > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Category"].ToString()))
             {
-                MessageBox.Show("< Category > can not be empty!");
+                myUtility.WarningBox("< Category > can not be empty!");
                 this.txtartworktype_fty1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Unitid"].ToString()))
             {
-                MessageBox.Show("< Unit > can not be empty!");
+                myUtility.WarningBox("< Unit > can not be empty!");
                 this.txtunit_fty1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["description"].ToString()))
             {
-                MessageBox.Show("< Description > can not be empty!");
+                myUtility.WarningBox("< Description > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }
@@ -97,31 +97,31 @@ namespace Sci.Production.Subcon
             {
                 if (CurrentMaintain["CtnLength"]==DBNull.Value || (decimal)CurrentMaintain["CtnLength"]==0)
                 {
-                    MessageBox.Show("< CtnLength > can not be empty!");
+                    myUtility.WarningBox("< CtnLength > can not be empty!");
                     this.numericBox1.Focus();
                     return false;
                 }
                 if (CurrentMaintain["CtnWidth"]==DBNull.Value || (decimal)CurrentMaintain["CtnWidth"] ==0)
                 {
-                    MessageBox.Show("< CtnWidth > can not be empty!");
+                    myUtility.WarningBox("< CtnWidth > can not be empty!");
                     this.numericBox2.Focus();
                     return false;
                 }
                 if (CurrentMaintain["CtnHeight"]==DBNull.Value || (decimal)CurrentMaintain["CtnHeight"] ==0)
                 {
-                    MessageBox.Show("< CtnHeight > can not be empty!");
+                    myUtility.WarningBox("< CtnHeight > can not be empty!");
                     this.numericBox7.Focus();
                     return false;
                 }
                 if (string.IsNullOrWhiteSpace(CurrentMaintain["CtnUnit"].ToString()))
                 {
-                    MessageBox.Show("< CtnUnit > can not be empty!");
+                    myUtility.WarningBox("< CtnUnit > can not be empty!");
                     this.comboBox1.Focus();
                     return false;
                 }
                 if (CurrentMaintain["CBM"]==DBNull.Value || (decimal)CurrentMaintain["CBM"] ==0)
                 {
-                    MessageBox.Show("< CBM > can not be empty!");
+                    myUtility.WarningBox("< CBM > can not be empty!");
                     this.numericBox3.Focus();
                     return false;
                 }
@@ -131,31 +131,31 @@ namespace Sci.Production.Subcon
             {
                 if (CurrentMaintain["MeterToCone"]==DBNull.Value || (decimal)CurrentMaintain["MeterToCone"] ==0)
                 {
-                    MessageBox.Show("< MeterToCone > can not be empty!");
+                    myUtility.WarningBox("< MeterToCone > can not be empty!");
                     this.numericBox8.Focus();
                     return false;
                 }
                 if (string.IsNullOrWhiteSpace(CurrentMaintain["ThreadTypeID"].ToString()))
                 {
-                    MessageBox.Show("< ThreadTypeID > can not be empty!");
+                    myUtility.WarningBox("< ThreadTypeID > can not be empty!");
                     this.textBox8.Focus();
                     return false;
                 }
                 if (CurrentMaintain["ThreadTex"]==DBNull.Value || (decimal)CurrentMaintain["ThreadTex"] ==0)
                 {
-                    MessageBox.Show("< ThreadTex > can not be empty!");
+                    myUtility.WarningBox("< ThreadTex > can not be empty!");
                     this.numericBox5.Focus();
                     return false;
                 }
                 if (CurrentMaintain["Weight"]==DBNull.Value || (decimal)CurrentMaintain["Weight"]  ==0)
                 {
-                    MessageBox.Show("< Weight > can not be empty!");
+                    myUtility.WarningBox("< Weight > can not be empty!");
                     this.numericBox4.Focus();
                     return false;
                 }
                 if (CurrentMaintain["AxleWeight"]==DBNull.Value || (decimal)CurrentMaintain["AxleWeight"] == 0)
                 {
-                    MessageBox.Show("< AxleWeight > can not be empty!");
+                    myUtility.WarningBox("< AxleWeight > can not be empty!");
                     this.numericBox6.Focus();
                     return false;
                 }
