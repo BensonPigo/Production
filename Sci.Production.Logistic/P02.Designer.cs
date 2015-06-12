@@ -33,6 +33,7 @@
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.button2 = new Sci.Win.UI.Button();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -49,6 +50,7 @@
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.button2);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.displayBox1);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
@@ -58,17 +60,18 @@
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 82);
-            this.detailpanel.Size = new System.Drawing.Size(836, 267);
+            this.detailpanel.Size = new System.Drawing.Size(836, 316);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(666, 47);
+            this.gridicon.Location = new System.Drawing.Point(724, 47);
             // 
             // refresh
             // 
@@ -76,26 +79,27 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(836, 267);
+            this.detailgridcont.Size = new System.Drawing.Size(836, 316);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(830, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(830, 40);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(836, 387);
+            this.detail.Size = new System.Drawing.Size(836, 436);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(836, 349);
+            this.detailcont.Size = new System.Drawing.Size(836, 398);
             // 
             // detailbtm
             // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 398);
             this.detailbtm.Size = new System.Drawing.Size(836, 38);
             // 
             // browse
@@ -104,7 +108,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(844, 416);
+            this.tabs.Size = new System.Drawing.Size(844, 465);
             // 
             // label4
             // 
@@ -148,18 +152,31 @@
             // 
             this.button2.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(653, 9);
+            this.button2.Location = new System.Drawing.Point(658, 47);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(113, 30);
+            this.button2.Size = new System.Drawing.Size(125, 30);
             this.button2.TabIndex = 8;
             this.button2.Text = "Batch Receive";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(714, 11);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(110, 23);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "label1";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.label1.TextStyle.Color = System.Drawing.Color.Red;
+            // 
             // P02
             // 
-            this.ApvChkValue = "0";
-            this.ClientSize = new System.Drawing.Size(844, 449);
+            this.ApvChkValue = "New";
+            this.ClientSize = new System.Drawing.Size(844, 498);
             this.DefaultOrder = "ReceiveDate,ID";
             this.GridAlias = "ClogReceive_Detail";
             this.GridNew = 0;
@@ -170,7 +187,7 @@
             this.KeyField1 = "ID";
             this.Name = "P02";
             this.Text = "P02. Carton Receiving";
-            this.UnApvChkValue = "1";
+            this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
             this.WorkAlias = "ClogReceive";
             this.Controls.SetChildIndex(this.tabs, 0);
@@ -199,5 +216,6 @@
         private Win.UI.Button button2;
         private Win.UI.DateBox dateBox1;
         private Win.UI.DisplayBox displayBox1;
+        private Win.UI.Label label1;
     }
 }

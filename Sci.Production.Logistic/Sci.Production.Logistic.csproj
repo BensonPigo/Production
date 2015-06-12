@@ -163,6 +163,10 @@
       <Project>{0E35FD31-4A86-4D4E-A393-B6C5E3D7C956}</Project>
       <Name>Sci.Production.Class</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
+      <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
+      <Name>Sci.Production.PublicPrg</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
