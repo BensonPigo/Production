@@ -27,7 +27,8 @@ namespace Sci.Production.Class
             base.OnPopUp(e);
             if (e.IsHandled) return;
 
-            if (this.ReadOnly == false)
+            Sci.Win.Tems.Base myform = (Sci.Win.Tems.Base)this.FindForm();
+            if (myform.EditMode)
             {
                 string sql = "select ID,Description from ClogLocation order by ID";
                 DataTable tbClogLocation;

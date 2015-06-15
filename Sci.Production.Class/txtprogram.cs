@@ -82,7 +82,7 @@ namespace Sci.Production.Class
         }
         public txtprogram()
         {
-            this.Width =90;
+            this.Width =95;
         }
 
     }

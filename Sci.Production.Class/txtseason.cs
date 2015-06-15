@@ -19,7 +19,7 @@ namespace Sci.Production.Class
     {
         public txtseason()
         {
-            this.Size = new System.Drawing.Size(78, 23);
+            this.Size = new System.Drawing.Size(80, 23);
         }
 
         private Control brandObject;

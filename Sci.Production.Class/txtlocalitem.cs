@@ -147,7 +147,7 @@ namespace Sci.Production.Class
         }
         public txtlocalitem()
         {
-            this.Width = 108;
+            this.Width = 150;
         }
 
     }

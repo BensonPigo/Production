@@ -44,7 +44,7 @@ namespace Sci.Production.Class
 
         public txtdepartment()
         {
-            this.Size = new System.Drawing.Size(70, 23);
+            this.Size = new System.Drawing.Size(80, 23);
             //this._Alias = "department";
             //this._Tag = "ID";
             //this.HelpColumnWidths = "10,50";

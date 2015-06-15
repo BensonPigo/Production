@@ -18,7 +18,7 @@ namespace Sci.Production.Class
     {
         public txtcustcd()
         {
-            this.Size = new System.Drawing.Size(115, 23);
+            this.Size = new System.Drawing.Size(125, 23);
         }
 
         private Control brandObject;
