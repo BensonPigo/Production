@@ -223,7 +223,8 @@ namespace Sci.Production.Logistic
                                                                 and a.PackingListId = b.PackingListId 
                                                                 and a.OrderId = b.OrderId  
                                                                 and a.CTNStartNo = b.CTNStartNo
-                                                            where a.Id in (select distinct TransferToClogId  from ClogReceive_Detail where id = '{0}')) c where c.ReceiveID is null", CurrentMaintain["ID"].ToString());
+                                                            where a.Id in (select distinct TransferToClogId  from ClogReceive_Detail where id = '{0}')) c 
+                                                        where c.ReceiveID is null or c.ReceiveID != '{0}'", CurrentMaintain["ID"].ToString());
             result = DBProxy.Current.Select(null, sqlCmd, out selectDate);
             if (!result)
             {
@@ -288,9 +289,9 @@ namespace Sci.Production.Logistic
                     #endregion
                     foreach (DataRow eachRow in selectDate.Rows)
                     {
-                        pckinglistcmds = @"update PackingList_Detail 
-                                         set ClogReceiveId = @clogReceiveId, ReceiveDate = @receiveDate, ClogLocationId = @clogLocationId 
-                                         where ID = @packingListID and OrderID = @orderID and CTNStartNo = @CTNStartNo";
+                        sqlCmd = @"update PackingList_Detail 
+                                             set ClogReceiveId = @clogReceiveId, ReceiveDate = @receiveDate, ClogLocationId = @clogLocationId 
+                                             where ID = @packingListID and OrderID = @orderID and CTNStartNo = @CTNStartNo";
                         #region Update PackingList_Detail sql參數資料
                         detail1.Value = CurrentMaintain["ID"].ToString();
                         detail2.Value = Convert.ToDateTime(CurrentMaintain["ReceiveDate"].ToString()).ToString("d");
