@@ -288,7 +288,7 @@ namespace Sci.Production.Logistic
                     #endregion
                     foreach (DataRow eachRow in selectDate.Rows)
                     {
-                        sqlCmd = @"update PackingList_Detail 
+                        pckinglistcmds = @"update PackingList_Detail 
                                          set ClogReceiveId = @clogReceiveId, ReceiveDate = @receiveDate, ClogLocationId = @clogLocationId 
                                          where ID = @packingListID and OrderID = @orderID and CTNStartNo = @CTNStartNo";
                         #region Update PackingList_Detail sql參數資料
