@@ -189,6 +189,15 @@ Sci.Production.Logistic/P02_ImportFromBarCode.resx -text
 Sci.Production.Logistic/P02_InputDate.Designer.cs -text
 Sci.Production.Logistic/P02_InputDate.cs -text
 Sci.Production.Logistic/P02_InputDate.resx -text
+Sci.Production.Logistic/P03.Designer.cs -text
+Sci.Production.Logistic/P03.cs -text
+Sci.Production.Logistic/P03.resx -text
+Sci.Production.Logistic/P03_BatchReturn.Designer.cs -text
+Sci.Production.Logistic/P03_BatchReturn.cs -text
+Sci.Production.Logistic/P03_BatchReturn.resx -text
+Sci.Production.Logistic/P03_ImportFromBarCode.Designer.cs -text
+Sci.Production.Logistic/P03_ImportFromBarCode.cs -text
+Sci.Production.Logistic/P03_ImportFromBarCode.resx -text
 Sci.Production.Logistic/Properties/AssemblyInfo.cs -text
 Sci.Production.Logistic/Sci.Production.Logistic.csproj -text
 Sci.Production.Miscellaneous/Properties/AssemblyInfo.cs -text

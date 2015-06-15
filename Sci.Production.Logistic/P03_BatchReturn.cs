@@ -1,0 +1,128 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Ict;
+using Ict.Win;
+using Sci.Data;
+using System.Transactions;
+using Sci;
+
+namespace Sci.Production.Logistic
+{
+    public partial class P03_BatchReturn : Sci.Win.Subs.Base
+    {
+        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        protected int allRecord = 0;
+        DataTable returnDetailData;
+
+        public P03_BatchReturn(DateTime receiveDate, DataTable detailData)
+        {
+            InitializeComponent();
+            this.Text = "Carton Return - Batch Return (Return Date - " + receiveDate.ToString("d") + ")";
+            returnDetailData = detailData;
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.grid1.DataSource = listControlBindingSource1;
+            this.grid1.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(this.grid1)
+                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3),iseditable:true, trueValue: 1, falseValue: 0).Get(out col_chk)
+                .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("PackingListId", header: "Pack ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Date("ReceiveDate", header: "Receive Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("CustPONo", header: "P.O.#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Alias", header: "Destination#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true);
+        }
+
+        //Find
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (myUtility.Empty(this.textBox1.Text) && myUtility.Empty(this.textBox2.Text) && myUtility.Empty(this.textBox3.Text) && myUtility.Empty(this.dateBox1.Value))
+            {
+                MessageBox.Show("< SP# > or < Pack ID > or < Receive Date > or < P.O. No. > can not be empty!");
+                this.textBox1.Focus();
+                return;
+            }
+
+
+            string sqlCmd = @"select '' as ID, 0 as selected, b.TransferToClogId, b.ClogLocationId,b.ReceiveDate, b.ID as PackingListId, b.OrderId,b.CTNStartNo,a.StyleID,a.SeasonID, a.BrandID, a.CustPONo, a.Customize1, a.BuyerDelivery, c.Alias
+                                           from Orders a, PackingList_Detail b, Country c
+                                           where a.ID = b.OrderID
+                                           and b.CTNQty = 1
+                                           and b.ReceiveDate is not null
+                                           and a.Dest = c.ID";
+            if (!myUtility.Empty(this.textBox1.Text))
+            {
+                sqlCmd = sqlCmd + string.Format(" and a.ID = '{0}'",this.textBox1.Text.Trim());
+            }
+
+            if (!myUtility.Empty(this.textBox2.Text))
+            {
+                sqlCmd = sqlCmd + string.Format(" and b.ID = '{0}'",this.textBox2.Text.Trim());
+            }
+
+            if (!myUtility.Empty(this.dateBox1.Value))
+            {
+                sqlCmd = sqlCmd + string.Format(" and b.ReceiveDate = '{0}'",Convert.ToDateTime(this.dateBox1.Text).ToString("d"));
+            }
+
+            if (!myUtility.Empty(this.textBox3.Text))
+            {
+                sqlCmd = sqlCmd + string.Format(" and a.CustPONo = '{0}'",this.textBox3.Text.Trim());
+            }
+
+            DataTable selectDataTable1;
+            DualResult selectResult;
+            if (selectResult = DBProxy.Current.Select(null, sqlCmd, out selectDataTable1))
+            {
+                if (selectDataTable1.Rows.Count == 0)
+                {
+                    MessageBox.Show("Data not found!");
+                }
+            }
+            listControlBindingSource1.DataSource = selectDataTable1;
+        }
+
+        //Save，將有勾選的資料回寫回上一層的Detail
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.grid1.ValidateControl();
+            DataTable gridData = (DataTable)listControlBindingSource1.DataSource;
+            if (gridData.Rows.Count == 0)
+            {
+                MessageBox.Show("No data!");
+                return;
+            }
+
+            DataRow[] dr = gridData.Select("Selected = 1");
+            if (dr.Length > 0)
+            {
+                foreach (DataRow currentRow in dr)
+                {
+                    DataRow[] findrow = returnDetailData.Select(string.Format("TransferToClogId = '{0}' and PackingListId = '{1}' and OrderId = '{2}' and CTNStartNo = '{3}'", currentRow["TransferToClogId"].ToString(), currentRow["PackingListId"].ToString(), currentRow["OrderId"].ToString(), currentRow["CTNStartNo"].ToString()));
+                    if (findrow.Length == 0)
+                    {
+                        currentRow.AcceptChanges();
+                        currentRow.SetAdded();
+                        returnDetailData.ImportRow(currentRow);
+                    }
+                }
+            }
+            //系統會自動有回傳值
+            DialogResult = System.Windows.Forms.DialogResult.OK;
+        }
+    }
+}
