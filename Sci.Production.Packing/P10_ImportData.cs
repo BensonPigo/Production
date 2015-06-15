@@ -30,7 +30,7 @@ namespace Sci.Production.Packing
         protected override void OnFormLoaded()
         {
             this.grid1.IsEditingReadOnly = false;
-            this.grid1.DataSource = bindingSource1;
+            this.grid1.DataSource = listControlBindingSource1;
 
             Helper.Controls.Grid.Generator(this.grid1)
                  .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
@@ -85,7 +85,7 @@ namespace Sci.Production.Packing
                     MessageBox.Show("Data not found!");
                 }
             }
-            bindingSource1.DataSource = selectDataTable;
+            listControlBindingSource1.DataSource = selectDataTable;
         }
 
         //全選的CheckBox
@@ -125,7 +125,7 @@ namespace Sci.Production.Packing
             DateTime nowTime = DateTime.Now;
 
             //檢查是否有勾選資料
-            DataTable dt = (DataTable)bindingSource1.DataSource;
+            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             DataRow[] selectedData = dt.Select("Selected = 1");
             if (selectedData.Length == 0)
             {
@@ -243,7 +243,7 @@ namespace Sci.Production.Packing
                     MessageBox.Show("Connection faile.!");
                     return;
                 }
-                bindingSource1.DataSource = selectDataTable;
+                listControlBindingSource1.DataSource = selectDataTable;
 
                 //讀檔案
                 using (StreamReader reader = new StreamReader(openFileDialog1.FileName, System.Text.Encoding.UTF8))

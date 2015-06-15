@@ -38,7 +38,6 @@
             this.button2 = new Sci.Win.UI.Button();
             this.button3 = new Sci.Win.UI.Button();
             this.button4 = new Sci.Win.UI.Button();
-            this.bindingSource1 = new Sci.Win.UI.BindingSource();
             this.grid1 = new Sci.Win.UI.Grid();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape5 = new Microsoft.VisualBasic.PowerPacks.LineShape();
@@ -49,8 +48,9 @@
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.checkBox2 = new Sci.Win.UI.CheckBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -156,11 +156,9 @@
             this.grid1.AllowUserToAddRows = false;
             this.grid1.AllowUserToDeleteRows = false;
             this.grid1.AllowUserToResizeRows = false;
-            this.grid1.AutoGenerateColumns = false;
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.bindingSource1;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
@@ -282,8 +280,8 @@
             this.Controls.Add(this.shapeContainer1);
             this.Name = "P10_ImportData";
             this.Text = "Carton Transfer to Clog (Select Transfer PO -- )";
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -301,7 +299,6 @@
         private Win.UI.Button button2;
         private Win.UI.Button button3;
         private Win.UI.Button button4;
-        private Win.UI.BindingSource bindingSource1;
         private Win.UI.Grid grid1;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape5;
@@ -312,5 +309,6 @@
         private Win.UI.CheckBox checkBox1;
         private Win.UI.CheckBox checkBox2;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }
