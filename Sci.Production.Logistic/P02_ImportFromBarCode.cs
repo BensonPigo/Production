@@ -206,7 +206,7 @@ namespace Sci.Production.Logistic
                                         {
                                             sqlCmd = string.Format(@"select a.ID 
                                                                                     from ClogReceive a, ClogReceive_Detail b 
-                                                                                    where a.ID = b.ID and b.PackingListID = '{0}' and b.CTNStartNo = '{1}'  and a.Encode = 0
+                                                                                    where a.ID = b.ID and b.PackingListID = '{0}' and b.CTNStartNo = '{1}'  and a.Status = 'New'
                                                                                     ", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
                                             if (myUtility.Seek(sqlCmd, out seekClogReceiveData))
                                             {
@@ -224,7 +224,7 @@ namespace Sci.Production.Logistic
                                     sqlCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,a.BuyerDelivery 
                                                                             from Orders a
                                                                              left join Country b on b.ID = a.Dest
-                                                                            where a.ID = '{0}' and a.FtyGroup = '{1}'", dr1["OrderID"].ToString(), Sci.Env.User.Factory);
+                                                                            where a.ID = '{0}'", dr1["OrderID"].ToString());
                                     if (myUtility.Seek(sqlCmd, out seekOrderdata))
                                     {
                                         dr1["StyleID"] = seekOrderdata["StyleID"].ToString().Trim();
@@ -351,8 +351,8 @@ namespace Sci.Production.Logistic
                             sp5.Value = DateTime.Now;
 
                             System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
-                            sp4.ParameterName = "@status";
-                            sp4.Value = "New";
+                            sp6.ParameterName = "@status";
+                            sp6.Value = "New";
 
                             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                             cmds.Add(sp1);
@@ -377,9 +377,9 @@ namespace Sci.Production.Logistic
                             detail1.ParameterName = "@id";
                             detail2.ParameterName = "@transferToClogId";
                             detail3.ParameterName = "@packingListId";
-                            detail4.ParameterName = "@OrderId";
-                            detail5.ParameterName = "@CTNStartNo";
-                            detail6.ParameterName = "@ClogLocationId";
+                            detail4.ParameterName = "@orderId";
+                            detail5.ParameterName = "@ctnStartNo";
+                            detail6.ParameterName = "@clogLocationId";
                             detail7.ParameterName = "@addName";
                             detail8.ParameterName = "@addDate";
                             detailcmds.Add(detail1);
@@ -396,8 +396,9 @@ namespace Sci.Production.Logistic
                                 if (dr1["FactoryID"].ToString().Trim() == dr["FactoryID"].ToString().Trim())
                                 {
                                     dr1["ID"] = newID; //將ID寫入Grid2的Received ID欄位
+                                    dr1["ClogReceiveID"] = newID;
                                     sqlInsertDetail = @"insert into ClogReceive_Detail (ID, TransferToClogId, PackingListId, OrderId, CTNStartNo, ClogLocationId, AddName, AddDate)
-                                                                     values (@id,@transferToClogId,@packingListId,@OrderId,@CTNStartNo,@ClogLocationId,@addName,@addDate)";
+                                                                     values (@id,@transferToClogId,@packingListId,@orderId,@ctnStartNo,@clogLocationId,@addName,@addDate)";
                                     #region 準備Detail sql參數資料
                                     detail1.Value = newID;
                                     detail2.Value = dr1["TransferToClogId"].ToString().Trim();
@@ -472,8 +473,13 @@ namespace Sci.Production.Logistic
             {
                 sqlCmd = string.Format(@"select a.PackingListID, a.OrderID, a.CTNStartNo, isnull(b.Id,'') as ReceiveID 
                                                             from TransferToClog_Detail a 
-                                                            left Join ClogReceive_Detail b on b.TransferToClogId = a.ID and b.PackingListId = a.PackingListId and b.OrderId = a.OrderId and b.CTNStartNo = a.CTNStartNo 
+                                                            left Join ClogReceive_Detail b 
+                                                                on b.TransferToClogId = a.ID 
+                                                                and b.PackingListId = a.PackingListId 
+                                                                and b.OrderId = a.OrderId 
+                                                                and b.CTNStartNo = a.CTNStartNo 
                                                             where a.ID = '{0}'", findDataRow["TransferToClogId"].ToString().Trim());
+
                 if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out transferToClogData)))
                 {
                     MessageBox.Show("Connection faile!");
