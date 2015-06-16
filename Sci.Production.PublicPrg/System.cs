@@ -37,11 +37,11 @@ namespace Sci.Production.PublicPrg
             string sqlCmd;
 
             sqlCmd =string.Format(@"update Orders 
-                                                       set TotalCTN = (select count(b.ID) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}'), 
-                                                             FtyCTN = (select count(b.ID) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and TransferToClogID != ''), 
-                                                             ClogCTN = (select count(b.ID) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and ClogReceiveID != ''), 
+                                                       set TotalCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}'), 
+                                                             FtyCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and TransferToClogID != ''), 
+                                                             ClogCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and ClogReceiveID != ''), 
                                                             ClogLastReceiveDate = (select max(ReceiveDate) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}') 
-                                                       where ID = '{0}'",orderID);
+                                                       where ID = '{0}'", orderID);
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
