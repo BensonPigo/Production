@@ -8,11 +8,13 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Packing
 {
     public partial class P10 : Sci.Win.Tems.Input6
     {
+        DataTable detailOrderID;
         public P10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -75,7 +77,7 @@ namespace Sci.Production.Packing
                                                                 where b.TransferToClogId = '{0}' 
                                                                 and b.PackingListId = '{1}' 
                                                                 and b.OrderId = '{2}'  
-                                                                and b.CTNStartNo = '{3}' and a.Id = b.Id and a.Encode = 1
+                                                                and b.CTNStartNo = '{3}' and a.Id = b.Id and a.Status = 'Confirmed'
                                                                 ", gridData["ID"].ToString(), gridData["PackingListID"].ToString(), gridData["OrderID"].ToString(), gridData["CTNStartNo"].ToString());
                 if (dr = DBProxy.Current.Select(null, selectCmd, out receiveData))
                 {
@@ -86,6 +88,29 @@ namespace Sci.Production.Packing
                 }
             }
             return base.OnRenewDataDetailPost(e);
+        }
+
+        //表身Grid的Delete
+        protected override void OnDetailGridRemoveClick()
+        {
+            //檢查此筆記錄是否已被Clog Receive，若是則出訊息告知且無法刪除
+            string sqlCmd = string.Format(@"select a.Status 
+                                                                  from ClogReceive a, ClogReceive_Detail b
+                                                                  where a.ID = b.ID
+                                                                  and b.TransferToClogId = '{0}'
+                                                                  and b.PackingListId = '{1}'
+                                                                  and b.OrderId = '{2}'
+                                                                  and b.CTNStartNo = '{3}'", CurrentDetailData["ID"].ToString(), CurrentDetailData["PackingListId"].ToString(), CurrentDetailData["OrderId"].ToString(), CurrentDetailData["CTNStartNo"].ToString());
+            DataRow receivdData;
+            if (myUtility.Seek(sqlCmd, out receivdData))
+            {
+                if (receivdData["Status"].ToString() == "Confirmed")
+                {
+                    MessageBox.Show("This carton has receive record, can't delete!");
+                    return;
+                }
+            }
+            base.OnDetailGridRemoveClick();
         }
 
         //新增資料時直接呼叫Form:P10_ImportData，P10_ImportData會將資料直接存進實體Table，回到Form:P10時再將剛新增的那筆資料寫入Browse的Cursor中
@@ -132,6 +157,15 @@ namespace Sci.Production.Packing
                 MessageBox.Show("Check transaction error.");
                 return false;
             }
+
+            //先記錄要被Delete的表身資料OrderID
+            sqlCmd = string.Format("select OrderID from TransferToClog_Detail where ID = '{0}' group by OrderID", dr["ID"].ToString());
+            result = DBProxy.Current.Select(null, sqlCmd, out detailOrderID);
+            if (!result)
+            {
+                MessageBox.Show("Query detail data fail!");
+            }
+
             return base.OnDeleteBefore();
         }
 
@@ -140,7 +174,22 @@ namespace Sci.Production.Packing
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             string sqlUpdatePackingList = string.Format(@"update PackingList_Detail 
-                                                                                        set TransferToClogID = '', TransferDate = null 
+                                                                                        set TransferToClogID = '', 
+                                                                                              TransferDate = null, 
+                                                                                              ClogReturnID = (select max(a.ID)
+                                                                                                                         from ClogReturn a, ClogReturn_Detail b 
+					                                                                                                     where a.id = b.id 
+					                                                                                                     and b.PackingListId = PackingList_Detail.ID
+					                                                                                                     and b.OrderId = PackingList_Detail.OrderID
+					                                                                                                     and b.CTNStartNo = PackingList_Detail.CTNStartNo), 
+                                                                                              ReturnDate = (select ReturnDate
+                                                                                                                      from ClogReturn 
+                                                                                                                      where ID = (select max(a.ID) 
+                                                                                                                                          from ClogReturn a, ClogReturn_Detail b 
+                                                                                                                                          where a.id = b.id 
+                                                                                                                                          and b.PackingListId = PackingList_Detail.ID
+                                                                                                                                          and b.OrderId = PackingList_Detail.OrderID
+                                                                                                                                          and b.CTNStartNo = PackingList_Detail.CTNStartNo))
                                                                                         where TransferToClogID = '{0}';", dr["ID"].ToString());
             DualResult result;
             if (!(result = DBProxy.Current.Execute(null, sqlUpdatePackingList)))
@@ -148,6 +197,29 @@ namespace Sci.Production.Packing
                 return false;
             }
             return base.OnDeletePost();
+        }
+
+        //刪除後要Update Orders的資料
+        protected override void OnDeleteAfter()
+        {
+            if (detailOrderID.Rows.Count > 0)
+            {
+                bool prgResult, lastResult = false;
+                foreach (DataRow currentRow in detailOrderID.Rows)
+                {
+                    prgResult = Prgs.GetCartonList(currentRow["OrderID"].ToString());
+                    if (!prgResult)
+                    {
+                        lastResult = true;
+                    }
+
+                }
+                if (lastResult)
+                {
+                    MessageBox.Show("Update orders data fail!");
+                }
+            }
+            base.OnDeleteAfter();
         }
 
         //存檔後要更新PalcingList_Detail資料，表身資料刪除後也要更新PackingList_Detail的值
@@ -162,7 +234,22 @@ namespace Sci.Production.Packing
                 if (dr.RowState == DataRowState.Deleted)
                 {
                     sqlUpdatePackingList = string.Format(@"update PackingList_Detail 
-                                                                                       set TransferToClogID = '', TransferDate = null 
+                                                                                       set TransferToClogID = '', 
+                                                                                             TransferDate = null,
+                                                                                             ClogReturnID = (select max(a.ID)
+                                                                                                                        from ClogReturn a, ClogReturn_Detail b 
+					                                                                                                    where a.id = b.id 
+					                                                                                                    and b.PackingListId = PackingList_Detail.ID
+					                                                                                                    and b.OrderId = PackingList_Detail.OrderID
+					                                                                                                    and b.CTNStartNo = PackingList_Detail.CTNStartNo), 
+                                                                                             ReturnDate = (select ReturnDate
+                                                                                                                     from ClogReturn 
+                                                                                                                     where ID = (select max(a.ID) 
+                                                                                                                                         from ClogReturn a, ClogReturn_Detail b 
+                                                                                                                                         where a.id = b.id 
+                                                                                                                                         and b.PackingListId = PackingList_Detail.ID
+                                                                                                                                         and b.OrderId = PackingList_Detail.OrderID
+                                                                                                                                         and b.CTNStartNo = PackingList_Detail.CTNStartNo))
                                                                                        where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}';
                                                                                         ", dr["PackingListID", DataRowVersion.Original].ToString(), dr["OrderID", DataRowVersion.Original].ToString(), dr["CTNStartNo", DataRowVersion.Original].ToString());
 
@@ -173,6 +260,35 @@ namespace Sci.Production.Packing
                 }
             }
             return base.OnSavePre();
+        }
+
+        //存檔後要Update Orders的資料
+        protected override void OnSaveAfter()
+        {
+            //Update Orders的資料
+            DataTable selectData;
+            string sqlCmd = string.Format("select OrderID from TransferToClog_Detail where ID = '{0}' group by OrderID", CurrentMaintain["ID"].ToString());
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
+            if (!result)
+            {
+                MessageBox.Show("Update orders data fail!");
+            }
+
+            bool prgResult, lastResult = false;
+            foreach (DataRow currentRow in selectData.Rows)
+            {
+                prgResult = Prgs.GetCartonList(currentRow["OrderID"].ToString());
+                if (!prgResult)
+                {
+                    lastResult = true;
+                }
+
+            }
+            if (lastResult)
+            {
+                MessageBox.Show("Update orders data fail!");
+            }
+            base.OnSaveAfter();
         }
 
         //Select Trans PO or Import From Barcode

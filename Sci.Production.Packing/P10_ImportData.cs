@@ -11,6 +11,7 @@ using Ict.Win;
 using Sci.Data;
 using System.Transactions;
 using Sci;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Packing
 {
@@ -125,6 +126,8 @@ namespace Sci.Production.Packing
             DateTime nowTime = DateTime.Now;
 
             //檢查是否有勾選資料
+            this.grid1.ValidateControl();
+            listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             DataRow[] selectedData = dt.Select("Selected = 1");
             if (selectedData.Length == 0)
@@ -216,6 +219,31 @@ namespace Sci.Production.Packing
                         return;
                     }
                 }
+
+                //Update Orders的資料
+                DataTable selectData;
+                string sqlCmd = string.Format("select OrderID from TransferToClog_Detail where ID = '{0}' group by OrderID", newID);
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
+                if (!result)
+                {
+                    MessageBox.Show("Update orders data fail!");
+                }
+
+                bool prgResult, lastResult = false;
+                foreach (DataRow currentRow in selectData.Rows)
+                {
+                    prgResult = Prgs.GetCartonList(currentRow["OrderID"].ToString());
+                    if (!prgResult)
+                    {
+                        lastResult = true;
+                    }
+
+                }
+                if (lastResult)
+                {
+                    MessageBox.Show("Update orders data fail!");
+                }
+
                 //系統會自動有回傳值
                 DialogResult = System.Windows.Forms.DialogResult.OK;
             }
