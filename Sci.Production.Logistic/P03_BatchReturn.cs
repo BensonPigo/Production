@@ -100,6 +100,7 @@ namespace Sci.Production.Logistic
         private void button2_Click(object sender, EventArgs e)
         {
             this.grid1.ValidateControl();
+            listControlBindingSource1.EndEdit();
             DataTable gridData = (DataTable)listControlBindingSource1.DataSource;
             if (gridData.Rows.Count == 0)
             {

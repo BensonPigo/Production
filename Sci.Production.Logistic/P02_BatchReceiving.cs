@@ -249,7 +249,9 @@ namespace Sci.Production.Logistic
         private void button3_Click(object sender, EventArgs e)
         {
             this.grid1.ValidateControl();
+            bindingSource1.EndEdit();
             DataTable gridData = (DataTable)bindingSource1.DataSource;
+
             if (gridData.Rows.Count == 0)
             {
                 MessageBox.Show("No data!");
