@@ -58,6 +58,7 @@ namespace Sci.Production.Class
            DialogResult result = item.ShowDialog();
            if (result == DialogResult.Cancel) { return; }
            this.Text = item.GetSelectedString();
+           this.OnValidated(e);
        }
 
        protected override void OnValidating(CancelEventArgs e)
@@ -75,6 +76,7 @@ namespace Sci.Production.Class
                    return;
                }
            }
+           
        }
 
         public txtartworktype_fty()
