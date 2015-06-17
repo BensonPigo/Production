@@ -37,13 +37,10 @@
             this.label1 = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.dateRange3 = new Sci.Win.UI.DateRange();
-            this.dateRange2 = new Sci.Win.UI.DateRange();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
+            this.textBox3 = new Sci.Win.UI.TextBox();
+            this.textBox4 = new Sci.Win.UI.TextBox();
             this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
             this.textBox2 = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
@@ -113,7 +110,7 @@
             this.button1.Location = new System.Drawing.Point(1205, 15);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(101, 30);
-            this.button1.TabIndex = 5;
+            this.button1.TabIndex = 4;
             this.button1.Text = "Find Now";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -122,15 +119,15 @@
             // 
             this.textBox1.BackColor = System.Drawing.Color.White;
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(517, 51);
+            this.textBox1.Location = new System.Drawing.Point(107, 15);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(122, 23);
-            this.textBox1.TabIndex = 3;
+            this.textBox1.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(419, 51);
+            this.label1.Location = new System.Drawing.Point(9, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(95, 23);
             this.label1.TabIndex = 0;
@@ -151,87 +148,63 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.dateRange3);
-            this.groupBox1.Controls.Add(this.dateRange2);
-            this.groupBox1.Controls.Add(this.dateRange1);
+            this.groupBox1.Controls.Add(this.textBox3);
+            this.groupBox1.Controls.Add(this.textBox4);
             this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.textBox2);
-            this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.textBox1);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1312, 93);
-            this.groupBox1.TabIndex = 17;
+            this.groupBox1.Size = new System.Drawing.Size(1312, 52);
+            this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             // 
-            // dateRange3
+            // textBox3
             // 
-            this.dateRange3.Location = new System.Drawing.Point(517, 15);
-            this.dateRange3.Name = "dateRange3";
-            this.dateRange3.Size = new System.Drawing.Size(280, 23);
-            this.dateRange3.TabIndex = 1;
+            this.textBox3.BackColor = System.Drawing.Color.White;
+            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox3.Location = new System.Drawing.Point(632, 15);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(122, 23);
+            this.textBox3.TabIndex = 3;
             // 
-            // dateRange2
+            // textBox4
             // 
-            this.dateRange2.Location = new System.Drawing.Point(107, 51);
-            this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 2;
-            // 
-            // dateRange1
-            // 
-            this.dateRange1.Location = new System.Drawing.Point(107, 15);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 0;
+            this.textBox4.BackColor = System.Drawing.Color.White;
+            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox4.Location = new System.Drawing.Point(504, 15);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(122, 23);
+            this.textBox4.TabIndex = 2;
             // 
             // label4
             // 
             this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(419, 15);
+            this.label4.Location = new System.Drawing.Point(406, 15);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(95, 23);
             this.label4.TabIndex = 8;
-            this.label4.Text = "Inline Date";
-            // 
-            // label3
-            // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(9, 51);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(95, 23);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "SCI  Delivery";
+            this.label4.Text = "Artwork POID";
             // 
             // textBox2
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(645, 51);
+            this.textBox2.Location = new System.Drawing.Point(235, 15);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(122, 23);
-            this.textBox2.TabIndex = 4;
-            // 
-            // label2
-            // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(9, 15);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(95, 23);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Approve Date";
+            this.textBox2.TabIndex = 1;
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.grid1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 93);
+            this.panel1.Location = new System.Drawing.Point(0, 52);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1312, 384);
+            this.panel1.Size = new System.Drawing.Size(1312, 425);
             this.panel1.TabIndex = 20;
             // 
             // grid1
@@ -254,18 +227,18 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1312, 384);
+            this.grid1.Size = new System.Drawing.Size(1312, 425);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
-            // P01_Import
+            // P10_ImportFromPO
             // 
             this.ClientSize = new System.Drawing.Size(1312, 530);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
-            this.Name = "P01_Import";
-            this.Text = "Batch Import";
+            this.Name = "P10_ImportFromPO";
+            this.Text = "Import From P/O#";
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -289,14 +262,11 @@
         private Win.UI.GroupBox groupBox2;
         private Win.UI.GroupBox groupBox1;
         private Win.UI.TextBox textBox2;
-        private Win.UI.Label label2;
         private Win.UI.Panel panel1;
         private Win.UI.Grid grid1;
-        private Win.UI.DateRange dateRange3;
-        private Win.UI.DateRange dateRange2;
-        private Win.UI.DateRange dateRange1;
         private Win.UI.Label label4;
-        private Win.UI.Label label3;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.TextBox textBox3;
+        private Win.UI.TextBox textBox4;
     }
 }

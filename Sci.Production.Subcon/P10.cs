@@ -502,13 +502,13 @@ namespace Sci.Production.Subcon
         private void button4_Click(object sender, EventArgs e)
         {
             var dr = CurrentMaintain; if (null == dr) return;
-            if (dr["localsuppid"] == DBNull.Value)
+            if (myUtility.Empty(dr["localsuppid"]))
             {
                 myUtility.WarningBox("Please fill Supplier first!");
                 txtsubcon1.TextBox1.Focus();
                 return;
             }
-            if (dr["artworktypeid"] == DBNull.Value)
+            if (myUtility.Empty(dr["artworktypeid"]))
             {
                 myUtility.WarningBox("Please fill Artworktype first!");
                 txtartworktype_fty1.Focus();
