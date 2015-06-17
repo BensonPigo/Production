@@ -68,6 +68,11 @@ namespace Sci.Production
         ToolStripMenuItem progmenu = null;
         ToolStripMenuItem subMenu = null;
         ToolStripSeparator separator = null;
+        DualResult result = null;
+        DataTable dtDDTable = null;
+        DataTable dtMenu = null;
+        DataTable dtMenuDetail = null;
+        DataRow[] drs = null;
 
         Sci.Production.Win.Login login;
 
@@ -83,74 +88,36 @@ namespace Sci.Production
             if (null == user) return Result.F_ArgNull("user");
             if (!OnLogout()) return new DualResult(false, "Cannot logout current user.");
 
-
-            DualResult result = null;
-            DataTable dtDDTable = null;
-            DataTable dtMenu = null;
-            DataRow[] drs = null;
-
-            if (Sci.Env.Cfg.CodePage == 950)
+            if (!(result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM Menu ORDER BY MenuNo, IsSubMenu", out dtMenu)))
             {
-                if (!(result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM DDTable", out dtDDTable)))
-                {
-                    return new DualResult(false, "Can't get DDTable table!");
-                }
+                return new DualResult(false, "Can't get Menu table!");
             }
-            if (!(result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM Menu ORDER BY MenuNo, BarNo", out dtMenu)))
+            if (!(result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM MenuDetail ORDER BY Ukey, BarNo", out dtMenuDetail)))
             {
                 return new DualResult(false, "Can't get Menu table!");
             }
 
+            // 中英文轉換
+            if (Sci.Env.Cfg.CodePage == 950)
+            {
+                if (!(result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM DDTable", out dtDDTable)))
+                {
+                    return new DualResult(false, "Can't get DDTable table!"); ;
+                }
+                DDConvert();
+            }
+
+            // 產生Menu
             foreach (DataRow dr in dtMenu.Rows)
             {
-                // For MIS專用頁面, 登入者非MIS則略過產生
-                if (!myUtility.Empty(dr["FORMISONLY"]) && !Sci.Env.User.IsMIS) continue;
+                //if (!myUtility.Empty(dr["ForMISOnly"]) && !Sci.Env.User.IsMIS) continue;
+                if (!myUtility.Empty(dr["IsSubMenu"])) continue;
 
-                // Menu及Form語言轉換
-                if (Sci.Env.Cfg.CodePage == 950)
-                {
-                    switch (dr["OBJECTCODE"].ToString())
-                    {
-                        case "1":
-                        case "2":
-                            drs = dtDDTable.Select(string.Format("ID = '{0}'", dr["MENUNAME"].ToString().Trim()));
-                            if (drs.Length > 0)
-                            {
-                                dr["MENUNAME"] = drs[0]["NAME950"].ToString();
-                            }
-                            break;
-                        case "4":
-                        case "5":
-                            drs = dtDDTable.Select(string.Format("ID = '{0}'", dr["FORMNAME"].ToString().Trim()));
-                            if (drs.Length > 0)
-                            {
-                                dr["BARPROMPT"] = drs[0]["NAME950"].ToString();
-                            }
-                            break;
-                    }
-                }
+                menus.Items.Add(progmenu = new ToolStripMenuItem(dr["MenuName"].ToString()));
+                progmenu.DropDownItemClicked += progmenu_DropDownItemClicked;
 
-                // 產生Menu及Form
-                string dllName = "";
-                switch (dr["OBJECTCODE"].ToString())
-                {
-                    case "1":  // Menu
-                        menus.Items.Add(progmenu = new ToolStripMenuItem(dr["MENUNAME"].ToString()));
-                        progmenu.DropDownItemClicked += progmenu_DropDownItemClicked;
-                        break;
-                    case "2":  // SubMenu
-                        subMenu = AddMenu(progmenu, dr["MENUNAME"].ToString());
-                        subMenu.DropDownItemClicked += progmenu_DropDownItemClicked;
-                        break;
-                    case "3":  // Separtor
-                        progmenu.DropDownItems.Add(separator = new ToolStripSeparator());
-                        break;
-                    case "4":  // Form
-                    case "5":  // SubMenu_Form
-                        dllName = dr["FORMNAME"].ToString().Substring(0, dr["FORMNAME"].ToString().LastIndexOf("."));
-                        AddTemplate((dr["OBJECTCODE"].ToString() == "4" ? progmenu : subMenu), dr["BARPROMPT"].ToString(), (menuitem) => (Sci.Win.Tems.Base)CreateFormObject(menuitem, Type.GetType(dr["FORMNAME"].ToString() + "," + dllName), dr["FORMPARAMETER"].ToString()));
-                        break;
-                }
+                drs = dtMenuDetail.Select(string.Format("UKey = '{0}'", dr["PKey"].ToString().Trim()));
+                GenerateMenu(progmenu, drs);
             }
 
 
@@ -163,6 +130,77 @@ namespace Sci.Production
             }
 
             return Result.True;
+        }
+
+        private void DDConvert()
+        {
+            foreach (DataRow dr in dtMenu.Rows)
+            {
+                drs = dtDDTable.Select(string.Format("ID = '{0}'", dr["MenuName"].ToString().Trim()));
+                if (drs.Length > 0)
+                {
+                    dr["MenuName"] = drs[0]["Name950"].ToString();
+                }
+            }
+
+            foreach (DataRow dr in dtMenuDetail.Rows)
+            {
+                switch (dr["ObjectCode"].ToString())
+                {
+                    case "0": // Form
+                        drs = dtDDTable.Select(string.Format("ID = '{0}'", dr["FormName"].ToString().Trim()));
+                        if (drs.Length > 0)
+                        {
+                            dr["BarPrompt"] = drs[0]["Name950"].ToString();
+                        }
+                        break;
+                    case "1": // SubMenu
+                        drs = dtDDTable.Select(string.Format("ID = '{0}'", dr["BarPrompt"].ToString().Trim()));
+                        if (drs.Length > 0)
+                        {
+                            dr["BarPrompt"] = drs[0]["Name950"].ToString();
+                        }
+                        break;
+                }
+            }
+        }
+
+        private void GenerateMenu(ToolStripMenuItem menu, DataRow[] details)
+        {
+            DataRow[] arrayDrs = null;
+            string pKey = "";
+            string dllName = "";
+
+            foreach (DataRow dr in details)
+            {
+                switch (dr["ObjectCode"].ToString())
+                {
+                    case "0": // Form
+                        if (myUtility.Empty(dr["BarPrompt"]) || myUtility.Empty(dr["FormName"])) break;
+                        dllName = dr["FormName"].ToString().Substring(0, dr["FormName"].ToString().LastIndexOf("."));
+                        // PublicClass的Dll Name為Sci.Proj
+                        if (dllName == "Sci.Win.UI") dllName = "Sci.Proj";
+
+                        AddTemplate(menu, dr["BarPrompt"].ToString(), (menuitem) => (Sci.Win.Tems.Base)CreateFormObject(menuitem, Type.GetType(dr["FormName"].ToString() + "," + dllName), dr["FormParameter"].ToString()));
+                        break;
+
+                    case "1": //SubMenu
+                        subMenu = AddMenu(menu, dr["BarPrompt"].ToString());
+                        subMenu.DropDownItemClicked += progmenu_DropDownItemClicked;
+                        arrayDrs = dtMenu.Select(string.Format("MenuName = '{0}'", dr["BarPrompt"].ToString().Trim()));
+                        if (arrayDrs.Length > 0)
+                        {
+                            pKey = arrayDrs[0]["PKey"].ToString();
+                            arrayDrs = dtMenuDetail.Select(string.Format("UKey = {0}", pKey));
+                            GenerateMenu(subMenu, arrayDrs);
+                        }
+                        break;
+
+                    case "2":  //Seperator
+                        menu.DropDownItems.Add(separator = new ToolStripSeparator());
+                        break;
+                }
+            }
         }
 
         private Object CreateFormObject(ToolStripMenuItem menuItem, Type typeofControl, String strArg)
