@@ -1,0 +1,246 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Ict;
+using Ict.Win;
+using Sci;
+using Sci.Data;
+
+namespace Sci.Production.Subcon
+{
+    public partial class P35_Import : Sci.Win.Subs.Base
+    {
+        DataRow dr_localAp;
+        DataTable dt_localApDetail;
+        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        bool flag;
+        string poType;
+        protected DataTable dtlocal;
+
+        public P35_Import(DataRow master, DataTable detail)
+        {
+            InitializeComponent();
+            dr_localAp = master;
+            dt_localApDetail = detail;
+            this.Text += string.Format(" ( Categgory:{0} - Supplier:{1} )", dr_localAp["category"].ToString(), dr_localAp["localsuppid"].ToString());
+        }
+
+        //Find Now Button
+        private void button1_Click(object sender, EventArgs e)
+        {
+            String sp_b = this.textBox1.Text;
+            String sp_e = this.textBox2.Text;
+            String poid_b = this.textBox4.Text;
+            String poid_e = this.textBox3.Text;
+            string issuedate_b, issuedate_e, delivery_b, delivery_e;
+            issuedate_b = null;
+            issuedate_e = null;
+            delivery_b = null;
+            delivery_e = null;
+            
+
+            if (dateRange1.Value1 != null) issuedate_b = this.dateRange1.Text1;
+            if (dateRange1.Value2 != null) { issuedate_e = this.dateRange1.Text2; }
+            if (dateRange2.Value1 != null) delivery_b = this.dateRange2.Text1;
+            if (dateRange2.Value2 != null) { delivery_e = this.dateRange2.Text2; }
+
+            if ((myUtility.Empty(issuedate_b) && myUtility.Empty(issuedate_e)) &&
+                (myUtility.Empty(delivery_b) && myUtility.Empty(delivery_e ))  &&
+                myUtility.Empty(sp_b) && myUtility.Empty(sp_e) && myUtility.Empty(poid_b) && myUtility.Empty(poid_e))
+            {
+                myUtility.WarningBox("< PO Issue Date > or < Delivery > or < PO ID > or < SP# > can't be empty!!");
+                textBox1.Focus();
+                return;
+            }
+            
+            else
+            {
+                // 建立可以符合回傳的Cursor
+
+                string strSQLCmd = string.Format(@"Select 1 as Selected
+                                                                                ,b.id as localpoid
+                                                                                , b.orderid
+                                                                                ,b.refno
+                                                                                ,b.threadcolorid
+                                                                                ,'' description
+                                                                                ,b.qty as poqty
+                                                                                ,b.unitid
+                                                                                ,b.price
+                                                                                ,b.inqty - apqty unpaid
+                                                                                ,0 as qty
+                                                                                ,b.ukey localpo_detailukey
+                                                                                ,'' id
+                                                                                
+                                                                                ,0.0 amount
+                                                                        from localpo a, localpo_detail b 
+                                                                        where a.id = b.id and a.status='Approved' and b.apqty < inqty
+                                                                        and a.category = '{0}' 
+                                                                        and a.localsuppid = '{1}'", dr_localAp["category"].ToString(),
+                                                                                                            dr_localAp["localsuppid"].ToString());
+                if(!myUtility.Empty(sp_b)){strSQLCmd+= " and b.orderid between @sp1 and @sp2";}
+                if (!myUtility.Empty(poid_b)) { strSQLCmd += " and b.id between @localpoid1 and  @localpoid2"; }
+                if (!myUtility.Empty(delivery_b)) { strSQLCmd += string.Format(" and b.Delivery between '{0}' and '{1}'", delivery_b, delivery_e); }
+                if (!myUtility.Empty(issuedate_b)) { strSQLCmd += string.Format(" and a.issuedate between '{0}' and '{1}'", issuedate_b, issuedate_e); }
+                strSQLCmd += " order by b.id,b.orderid,b.refno,b.threadcolorid";
+
+                #region 準備sql參數資料
+                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                sp1.ParameterName = "@sp1";
+                sp1.Value = sp_b;
+
+                System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+                sp2.ParameterName = "@sp2";
+                sp2.Value = sp_e;
+
+                System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+                sp3.ParameterName = "@localpoid1";
+                sp3.Value = poid_b;
+
+                System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+                sp4.ParameterName = "@localpoid2";
+                sp4.Value = poid_e;
+                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                cmds.Add(sp1);
+                cmds.Add(sp2);
+                cmds.Add(sp3);
+                cmds.Add(sp4);
+                #endregion
+
+                Ict.DualResult result;
+                if (result = DBProxy.Current.Select(null, strSQLCmd,cmds, out dtlocal))
+                {
+                    if (dtlocal.Rows.Count == 0)
+                    { myUtility.WarningBox("Data not found!!"); }
+                    listControlBindingSource1.DataSource = dtlocal;
+                }
+                else { ShowErr(strSQLCmd, result); }
+            }
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            ns.CellValidating += (s, e) =>
+            {
+                if (null == e.FormattedValue) return;
+                DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                if ((decimal)e.FormattedValue > (decimal)ddr["unpaid"])
+                {
+                    e.Cancel = true;
+                    myUtility.WarningBox("Qty can't be more than unpaid");
+                    return;
+                }
+
+                ddr["qty"] = e.FormattedValue;
+
+            };
+
+
+            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.grid1.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.grid1)
+                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
+                .Text("localpoid", header: "local PO", iseditingreadonly: true) //1
+                .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))//2
+                 .Text("refno", header: "Refno", iseditingreadonly: true)      //3
+
+                 .Text("threadcolorid", header: "Color Shade", iseditingreadonly: true)//4
+                .Text("description", header: "Description", iseditingreadonly: true)//5
+                .Numeric("poqty", header: "PO Qty", iseditingreadonly: true)//6
+                .Text("Unitid", header: "Unit", iseditingreadonly: true)//7
+                .Numeric("Price", header: "PO Price", iseditable: true, decimal_places: 4, integer_places: 4)  //8
+
+                .Numeric("unpaid", header: "UnPaid", iseditingreadonly: true)//9
+                .Numeric("qty", header: "Qty", settings: ns);//10
+                
+
+            this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;  //Qty
+
+            // 全選
+            checkBox1.Click += (s, e) =>
+            {
+                if (null != col_chk)
+                {
+                    this.grid1.SetCheckeds(col_chk);
+                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
+                    {
+                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
+                    }
+                }
+            };
+
+            // 全不選
+            checkBox2.Click += (s, e) =>
+            {
+                if (null != col_chk)
+                {
+                    this.grid1.SetUncheckeds(col_chk);
+                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
+                    {
+                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
+                    }
+                }
+            };
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            listControlBindingSource1.EndEdit();
+            grid1.ValidateControl();
+            
+            DataTable dtImport = (DataTable)listControlBindingSource1.DataSource;
+            
+            if (dtImport.Rows.Count == 0) return;
+            
+            DataRow[] dr2 = dtImport.Select("qty = 0 and Selected = 1");
+            if (dr2.Length > 0)
+            {
+                myUtility.WarningBox("Qty of selected row can't be zero!", "Warning");
+                return;
+            }
+
+            dr2 = dtImport.Select("Selected = 1");
+            if (dr2.Length > 0)
+            {
+                foreach (DataRow tmp in dr2)
+                {
+                    DataRow[] findrow = dt_localApDetail.Select(string.Format("localpo_detailukey = '{0}' ", tmp["localpo_detailukey"].ToString()));
+
+                    if (findrow.Length > 0)
+                    {
+                       
+                        findrow[0]["Price"] = tmp["Price"];
+                        findrow[0]["qty"] = tmp["qty"];
+
+                    }
+                    else
+                    {
+                        tmp["id"] = dr_localAp["id"];
+                        tmp.AcceptChanges();
+                        tmp.SetAdded();
+                        dt_localApDetail.ImportRow(tmp);
+                    }
+                }
+            }
+            else
+            {
+                myUtility.WarningBox("Please select rows first!", "Warnning");
+                return;
+            }
+            this.Close();
+        }
+    }
+}
