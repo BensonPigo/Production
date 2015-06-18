@@ -78,7 +78,7 @@ namespace Sci.Production.Class
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
-            this.OnValidated(e);
+            this.Validate();
         }
     }
 }

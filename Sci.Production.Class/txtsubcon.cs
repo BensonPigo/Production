@@ -112,7 +112,6 @@ namespace Sci.Production.Class
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
             this.textBox1.ValidateControl();
-            this.OnValidated(e);
         }
     }
 }
