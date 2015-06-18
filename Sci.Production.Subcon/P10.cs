@@ -73,36 +73,9 @@ namespace Sci.Production.Subcon
         protected override bool OnDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if ( dr["Status"].ToString().ToUpper() == "APPROVED")
+            if (dr["Status"].ToString().ToUpper() == "APPROVED")
             {
                 myUtility.WarningBox("Data is approved, can't delete.", "Warning");
-                return false;
-            }
-
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            sp1.ParameterName = "@id";
-            sp1.Value = dr["id"].ToString();
-
-            IList<System.Data.SqlClient.SqlParameter> paras = new List<System.Data.SqlClient.SqlParameter>();
-            paras.Add(sp1);
-
-            string sqlcmd;
-            sqlcmd = "select fd.ID from ArtworkPO_Detail ad, FarmOut_Detail fd where ad.Ukey = fd.ArtworkPo_DetailUkey and ad.id = @id" +
-                     "   union all " +
-                     "   select fo.ID from ArtworkPO_Detail ad, FarmOut_Detail fo where ad.Ukey = fo.ArtworkPo_DetailUkey and ad.id = @id " +
-                     "      union all" +
-                     "   select fi.ID from ArtworkPO_Detail ad, FarmIn_Detail fi where ad.Ukey = fi.ArtworkPo_DetailUkey and ad.id = @id";
-
-            DataTable dt;
-            DBProxy.Current.Select(null, sqlcmd, paras, out dt);
-            if (dt.Rows.Count > 0)
-            {
-                string ids = "";
-                for (int i = 0; i < dt.Rows.Count; i++)
-                {
-                    ids += dt.Rows[i][0].ToString() + ";";
-                }
-                myUtility.WarningBox(string.Format("Below IDs {0} refer to details data, can't delete.", ids), "Warning");
                 return false;
             }
             return base.OnDeleteBefore();
@@ -187,6 +160,11 @@ namespace Sci.Production.Subcon
             if (this.IsDetailInserting)
             {
                 CurrentMaintain["id"] = Sci.myUtility.GetID(ProductionEnv.Keyword+"FA", "artworkAP", (DateTime)CurrentMaintain["issuedate"]);
+                if (myUtility.Empty(CurrentMaintain["id"]))
+                {
+                    myUtility.WarningBox("Server is busy, Please re-try it again", "GetID() Failed");
+                    return false;
+                }
             }
 
             #region 加總明細金額至表頭
