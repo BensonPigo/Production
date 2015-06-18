@@ -270,7 +270,7 @@ namespace Sci.Production.Logistic
             bool prgResult, lastResult = false;
             foreach (DataRow currentRow in selectData.Rows)
             {
-                prgResult = Prgs.GetCartonList(currentRow["OrderID"].ToString());
+                prgResult = Prgs.UpdateOrdersCTN(currentRow["OrderID"].ToString());
                 if (!prgResult)
                 {
                     lastResult = true;
