@@ -90,6 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logistic.cs" />
     <Compile Include="System.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Subcon.cs" />
