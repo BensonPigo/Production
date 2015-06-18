@@ -9,7 +9,6 @@ using System.Transactions;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using System.Transactions;
 using Sci;
 
 namespace Sci.Production.Logistic
@@ -18,6 +17,13 @@ namespace Sci.Production.Logistic
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         DataTable gridData;
+        IList<string> comboBox2_RowSource1 = new List<string>();
+        IList<string> comboBox2_RowSource2 = new List<string>();
+        IList<string> comboBox2_RowSource3 = new List<string>();
+        IList<string> comboBox2_RowSource4 = new List<string>();
+        IList<string> comboBox2_RowSource5 = new List<string>();
+        IList<string> comboBox3_RowSource = new List<string>();
+        BindingSource comboxbs1, comboxbs2, comboxbs3;
 
         public P04(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -34,22 +40,59 @@ namespace Sci.Production.Logistic
             comboBox1_RowSource.Add("3", "Colorway");
             comboBox1_RowSource.Add("4", "Color");
             comboBox1_RowSource.Add("5", "Size");
-            comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
+            comboxbs1 = new BindingSource(comboBox1_RowSource, null);
+            comboBox1.DataSource = comboxbs1;
             comboBox1.ValueMember = "Key";
             comboBox1.DisplayMember = "Value";
 
-            Dictionary<String, String> comboBox3_RowSource = new Dictionary<string, string>();
-            comboBox3_RowSource.Add("CFA", "CFA");
-            comboBox3_RowSource.Add("INSPECTOR", "INSPECTOR");
-            comboBox3.DataSource = new BindingSource(comboBox3_RowSource, null);
-            comboBox3.ValueMember = "Key";
-            comboBox3.DisplayMember = "Value";
+            //comboBox2_RowSource1.Add("");
+            comboxbs2 = new BindingSource(comboBox2_RowSource1, null);
+            comboBox2.DataSource = comboxbs2;
+
+            comboBox3_RowSource.Add("CFA");
+            comboBox3_RowSource.Add("INSPECTOR");
+            comboxbs3 = new BindingSource(comboBox3_RowSource, null);
+            comboBox3.DataSource = comboxbs3;
 
 
             //Grid設定
             this.grid1.IsEditingReadOnly = false;
             this.grid1.DataSource = listControlBindingSource1;
+
+            this.grid1.CellValueChanged += (s, e) =>
+            {
+                if (grid1.CurrentCellAddress.X == 11)
+                {
+                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    dr["Selected"] = 1;
+                }
+            };
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            //ts.CellValidating += (s, e) =>
+            //    {
+            //        if (this.EditMode)
+            //        {
+            //            DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+            //            if (e.FormattedValue.ToString() != dr["ClogLocationId"].ToString())
+            //            {
+            //                dr["ClogLocationId"] = e.FormattedValue.ToString();
+            //                dr["Selected"] = 1;
+            //            }
+            //        }
+            //    };
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            ts1.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    if (e.FormattedValue.ToString() != dr["Remark"].ToString())
+                    {
+                        dr["Remark"] = e.FormattedValue.ToString();
+                        dr["Selected"] = 1;
+                    }
+                }
+            };
 
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
@@ -63,8 +106,8 @@ namespace Sci.Production.Logistic
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("QtyPerCTN", header: "PC/Ctn", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10))
-                .Text("Remark", header: "Reamrks", width: Widths.AnsiChars(10), settings: ts);
+                .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10), settings: ts)
+                .Text("Remark", header: "Reamrks", width: Widths.AnsiChars(10), settings: ts1);
         }
 
         //Query
@@ -137,8 +180,39 @@ namespace Sci.Production.Logistic
                     MessageBox.Show("Data not found!");
                 }
             }
-
             listControlBindingSource1.DataSource = gridData;
+
+            //組Filter內容
+            foreach (DataRow dr in gridData.Rows)
+            {
+                //Ctn#
+                if (comboBox2_RowSource2.Contains(dr["CTNStartNo"].ToString()) == false)
+                {
+                    comboBox2_RowSource2.Add(dr["CTNStartNo"].ToString());
+                }
+
+                //Color Way
+                if (comboBox2_RowSource3.Contains(dr["Article"].ToString()) == false)
+                {
+                    comboBox2_RowSource3.Add(dr["Article"].ToString());
+                }
+
+                //Color
+                if (comboBox2_RowSource4.Contains(dr["Color"].ToString()) == false)
+                {
+                    comboBox2_RowSource4.Add(dr["Color"].ToString());
+                }
+
+                //Size
+                if (comboBox2_RowSource5.Contains(dr["SizeCode"].ToString()) == false)
+                {
+                    comboBox2_RowSource5.Add(dr["SizeCode"].ToString());
+                }
+            }
+            ((List<string>)comboBox2_RowSource2).Sort();
+            ((List<string>)comboBox2_RowSource3).Sort();
+            ((List<string>)comboBox2_RowSource4).Sort();
+            ((List<string>)comboBox2_RowSource5).Sort();
         }
 
         //Update All Location
@@ -166,6 +240,7 @@ namespace Sci.Production.Logistic
         private void button4_Click(object sender, EventArgs e)
         {
             this.grid1.ValidateControl();
+            this.grid1.EndEdit();
             listControlBindingSource1.EndEdit();
             DataTable detailData = (DataTable)listControlBindingSource1.DataSource;
             DataRow[] dr = detailData.Select("Selected = 1");
@@ -181,51 +256,56 @@ namespace Sci.Production.Logistic
                 try
                 {
                     bool lastResult = true;
-                    foreach (DataRow currentRow in dr)
+                    //只存畫面上看到的那幾筆資料
+                    foreach (DataRowView currentRowView in gridData.DefaultView)
                     {
-                        string updateCmd = @"update ClogReceive_Detail 
+                        DataRow currentRow = currentRowView.Row;
+                        if (currentRow["Selected"].ToString() == "1")
+                        {
+                            string updateCmd = @"update ClogReceive_Detail 
                                                                 set ClogLocationId = @clogLocationId 
                                                                 where ID = @clogReceiveID and PackingListId = @id and OrderId = @orderId and CTNStartNo = @ctnStartNo;
                                                           update PackingList_Detail 
                                                                 set ClogLocationId = @clogLocationId, Remark = @remark 
                                                                 where id = @id and CTNStartNo = @ctnStartNo;";
-                        #region 準備sql參數資料
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                        sp1.ParameterName = "@clogLocationId";
-                        sp1.Value = currentRow["ClogLocationId"].ToString();
+                            #region 準備sql參數資料
+                            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                            sp1.ParameterName = "@clogLocationId";
+                            sp1.Value = currentRow["ClogLocationId"].ToString();
 
-                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-                        sp2.ParameterName = "@clogReceiveID";
-                        sp2.Value = currentRow["ClogReceiveID"].ToString();
+                            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+                            sp2.ParameterName = "@clogReceiveID";
+                            sp2.Value = currentRow["ClogReceiveID"].ToString();
 
-                        System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-                        sp3.ParameterName = "@id";
-                        sp3.Value = currentRow["ID"].ToString();
+                            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+                            sp3.ParameterName = "@id";
+                            sp3.Value = currentRow["ID"].ToString();
 
-                        System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
-                        sp4.ParameterName = "@orderId";
-                        sp4.Value = currentRow["OrderId"].ToString();
+                            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+                            sp4.ParameterName = "@orderId";
+                            sp4.Value = currentRow["OrderId"].ToString();
 
-                        System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
-                        sp5.ParameterName = "@ctnStartNo";
-                        sp5.Value = currentRow["CTNStartNo"].ToString();
+                            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
+                            sp5.ParameterName = "@ctnStartNo";
+                            sp5.Value = currentRow["CTNStartNo"].ToString();
 
-                        System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
-                        sp6.ParameterName = "@remark";
-                        sp6.Value = currentRow["Remark"].ToString();
+                            System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
+                            sp6.ParameterName = "@remark";
+                            sp6.Value = currentRow["Remark"].ToString();
 
-                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                        cmds.Add(sp1);
-                        cmds.Add(sp2);
-                        cmds.Add(sp3);
-                        cmds.Add(sp4);
-                        cmds.Add(sp5);
-                        cmds.Add(sp6);
-                        #endregion
-                        DualResult result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds);
-                        if (!result)
-                        {
-                            lastResult = false;
+                            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                            cmds.Add(sp1);
+                            cmds.Add(sp2);
+                            cmds.Add(sp3);
+                            cmds.Add(sp4);
+                            cmds.Add(sp5);
+                            cmds.Add(sp6);
+                            #endregion
+                            DualResult result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds);
+                            if (!result)
+                            {
+                                lastResult = false;
+                            }
                         }
                     }
 
@@ -256,6 +336,9 @@ namespace Sci.Production.Logistic
             this.textBox6.Text = "";
             this.textBox7.Text = "";
             this.textBox8.Text = "";
+            this.comboBox1.SelectedValue = "1";
+            this.comboBox2.SelectedIndex = -1;
+
             string sqlCmd = @"select 0 as selected, b.TransferToClogID, b.ID, b.OrderID, c.CustPONo, b.CTNStartNo, b.Article, b.Color, b.SizeCode, b.QtyPerCTN, b.ShipQty, b.ClogLocationId, b.Remark, b.ClogReceiveID
                                            from PackingList a, PackingList_Detail b, Orders c where 1=0";
             DualResult result1 = DBProxy.Current.Select(null, sqlCmd, out gridData);
@@ -269,15 +352,79 @@ namespace Sci.Production.Logistic
             this.Close();
         }
 
-        private void comboBox1_SelectedValueChanged(object sender, EventArgs e)
+        //Filter
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox1.SelectedValue.ToString() == "1")
-            {
-                this.comboBox2.Enabled = false;
-            }
-            else
+            if (comboBox1.SelectedIndex != -1)
             {
                 this.comboBox2.Enabled = true;
+                switch (comboBox1.SelectedValue.ToString())
+                {
+                    case "1":
+                        this.comboBox2.Enabled = false;
+                        comboBox2.DataSource = comboBox2_RowSource1;
+                        if (gridData != null)
+                        {
+                            gridData.DefaultView.RowFilter = "";
+                        }
+                        break;
+                    case "2":
+                        comboBox2.DataSource = comboBox2_RowSource2;
+                        comboBox2.SelectedIndex = -1;
+                        gridData.DefaultView.RowFilter = "";
+                        break;
+                    case "3":
+                        comboBox2.DataSource = comboBox2_RowSource3;
+                        comboBox2.SelectedIndex = -1;
+                        gridData.DefaultView.RowFilter = "";
+                        break;
+                    case "4":
+                        comboBox2.DataSource = comboBox2_RowSource4;
+                        comboBox2.SelectedIndex = -1;
+                        gridData.DefaultView.RowFilter = "";
+                        break;
+                    case "5":
+                        comboBox2.DataSource = comboBox2_RowSource5;
+                        comboBox2.SelectedIndex = -1;
+                        gridData.DefaultView.RowFilter = "";
+                        break;
+                    default:
+                        this.comboBox2.Enabled = false;
+                        comboBox2.DataSource = comboBox2_RowSource1;
+                        break;
+                }
+            }
+        }
+
+        //第二個Filter
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox2.SelectedIndex != -1)
+            {
+                switch (comboBox1.SelectedValue.ToString())
+                {
+                    case "1":
+                        break;
+                    case "2":
+                        gridData.DefaultView.RowFilter = "CTNStartNo = '"+comboBox2.SelectedValue.ToString() +"'";
+                        break;
+                    case "3":
+                        comboBox2.DataSource = comboBox2_RowSource3;
+                        gridData.DefaultView.RowFilter = "Article  = '" + comboBox2.SelectedValue.ToString() + "'";
+                        break;
+                    case "4":
+                        comboBox2.DataSource = comboBox2_RowSource4;
+                        gridData.DefaultView.RowFilter = "Color = '" + comboBox2.SelectedValue.ToString() + "'";
+                        break;
+                    case "5":
+                        comboBox2.DataSource = comboBox2_RowSource5;
+                        gridData.DefaultView.RowFilter = "SizeCode = '" + comboBox2.SelectedValue.ToString() + "'";
+                        break;
+                    default:
+                        comboBox2.DataSource = comboBox2_RowSource1;
+                        gridData.DefaultView.RowFilter = "'";
+                        break;
+                }
             }
         }
 

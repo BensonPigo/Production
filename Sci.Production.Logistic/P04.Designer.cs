@@ -31,45 +31,45 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.panel4 = new Sci.Win.UI.Panel();
-            this.panel5 = new Sci.Win.UI.Panel();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
+            this.comboBox2 = new Sci.Win.UI.ComboBox();
+            this.comboBox1 = new Sci.Win.UI.ComboBox();
+            this.label10 = new Sci.Win.UI.Label();
+            this.button2 = new Sci.Win.UI.Button();
+            this.txtcloglocation1 = new Sci.Production.Class.txtcloglocation();
+            this.label9 = new Sci.Win.UI.Label();
+            this.button1 = new Sci.Win.UI.Button();
             this.label7 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
             this.textBox5 = new Sci.Win.UI.TextBox();
             this.textBox6 = new Sci.Win.UI.TextBox();
             this.textBox7 = new Sci.Win.UI.TextBox();
             this.textBox8 = new Sci.Win.UI.TextBox();
-            this.button1 = new Sci.Win.UI.Button();
+            this.label6 = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
+            this.textBox4 = new Sci.Win.UI.TextBox();
+            this.textBox3 = new Sci.Win.UI.TextBox();
+            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.label4 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.label9 = new Sci.Win.UI.Label();
-            this.button2 = new Sci.Win.UI.Button();
-            this.label10 = new Sci.Win.UI.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.comboBox2 = new Sci.Win.UI.ComboBox();
-            this.label11 = new Sci.Win.UI.Label();
-            this.comboBox3 = new Sci.Win.UI.ComboBox();
-            this.button3 = new Sci.Win.UI.Button();
-            this.button4 = new Sci.Win.UI.Button();
+            this.panel4 = new Sci.Win.UI.Panel();
             this.button5 = new Sci.Win.UI.Button();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.button4 = new Sci.Win.UI.Button();
+            this.button3 = new Sci.Win.UI.Button();
+            this.comboBox3 = new Sci.Win.UI.ComboBox();
+            this.label11 = new Sci.Win.UI.Label();
+            this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.txtcloglocation1 = new Sci.Production.Class.txtcloglocation();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -120,123 +120,77 @@
             this.panel3.Size = new System.Drawing.Size(849, 106);
             this.panel3.TabIndex = 3;
             // 
-            // panel4
+            // comboBox2
             // 
-            this.panel4.Controls.Add(this.button5);
-            this.panel4.Controls.Add(this.button4);
-            this.panel4.Controls.Add(this.button3);
-            this.panel4.Controls.Add(this.comboBox3);
-            this.panel4.Controls.Add(this.label11);
-            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(5, 459);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(849, 49);
-            this.panel4.TabIndex = 4;
+            this.comboBox2.BackColor = System.Drawing.Color.White;
+            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.IsSupportUnselect = true;
+            this.comboBox2.Location = new System.Drawing.Point(543, 73);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(166, 24);
+            this.comboBox2.TabIndex = 23;
+            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
-            // panel5
+            // comboBox1
             // 
-            this.panel5.Controls.Add(this.grid1);
-            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(5, 106);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(849, 353);
-            this.panel5.TabIndex = 5;
+            this.comboBox1.BackColor = System.Drawing.Color.White;
+            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.IsSupportUnselect = true;
+            this.comboBox1.Location = new System.Drawing.Point(453, 73);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(85, 24);
+            this.comboBox1.TabIndex = 22;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
-            // label1
+            // label10
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(4, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(112, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "SP#";
+            this.label10.Lines = 0;
+            this.label10.Location = new System.Drawing.Point(409, 74);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(41, 23);
+            this.label10.TabIndex = 21;
+            this.label10.Text = "Filter";
             // 
-            // label2
+            // button2
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(4, 36);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(112, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Transfer Clog No.";
+            this.button2.Location = new System.Drawing.Point(179, 70);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(159, 30);
+            this.button2.TabIndex = 20;
+            this.button2.Text = "Update All Location";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // label3
+            // txtcloglocation1
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(420, 9);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(55, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Pack ID";
+            this.txtcloglocation1.BackColor = System.Drawing.Color.White;
+            this.txtcloglocation1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcloglocation1.IsSupportSytsemContextMenu = false;
+            this.txtcloglocation1.Location = new System.Drawing.Point(92, 74);
+            this.txtcloglocation1.Name = "txtcloglocation1";
+            this.txtcloglocation1.Size = new System.Drawing.Size(80, 23);
+            this.txtcloglocation1.TabIndex = 19;
             // 
-            // label4
+            // label9
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(420, 36);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(55, 23);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "PO#";
+            this.label9.Lines = 0;
+            this.label9.Location = new System.Drawing.Point(4, 74);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(84, 23);
+            this.label9.TabIndex = 18;
+            this.label9.Text = "Location No.";
             // 
-            // textBox1
+            // button1
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(119, 9);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(120, 23);
-            this.textBox1.TabIndex = 4;
-            // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(262, 9);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(120, 23);
-            this.textBox2.TabIndex = 5;
-            // 
-            // textBox3
-            // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(478, 9);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(120, 23);
-            this.textBox3.TabIndex = 6;
-            // 
-            // textBox4
-            // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(621, 9);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(120, 23);
-            this.textBox4.TabIndex = 7;
-            // 
-            // label5
-            // 
-            this.label5.BackColor = System.Drawing.Color.Transparent;
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(242, 9);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(17, 23);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "~";
-            this.label5.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label5.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // label6
-            // 
-            this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(242, 36);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(17, 23);
-            this.label6.TabIndex = 9;
-            this.label6.Text = "~";
-            this.label6.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label6.TextStyle.Color = System.Drawing.Color.Black;
+            this.button1.Location = new System.Drawing.Point(761, 9);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(80, 30);
+            this.button1.TabIndex = 16;
+            this.button1.Text = "Query";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // label7
             // 
@@ -298,15 +252,101 @@
             this.textBox8.Size = new System.Drawing.Size(120, 23);
             this.textBox8.TabIndex = 10;
             // 
-            // button1
+            // label6
             // 
-            this.button1.Location = new System.Drawing.Point(761, 9);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 16;
-            this.button1.Text = "Query";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.label6.BackColor = System.Drawing.Color.Transparent;
+            this.label6.Lines = 0;
+            this.label6.Location = new System.Drawing.Point(242, 36);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(17, 23);
+            this.label6.TabIndex = 9;
+            this.label6.Text = "~";
+            this.label6.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label6.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label5
+            // 
+            this.label5.BackColor = System.Drawing.Color.Transparent;
+            this.label5.Lines = 0;
+            this.label5.Location = new System.Drawing.Point(242, 9);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(17, 23);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "~";
+            this.label5.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label5.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // textBox4
+            // 
+            this.textBox4.BackColor = System.Drawing.Color.White;
+            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox4.Location = new System.Drawing.Point(621, 9);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(120, 23);
+            this.textBox4.TabIndex = 7;
+            // 
+            // textBox3
+            // 
+            this.textBox3.BackColor = System.Drawing.Color.White;
+            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox3.Location = new System.Drawing.Point(478, 9);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(120, 23);
+            this.textBox3.TabIndex = 6;
+            // 
+            // textBox2
+            // 
+            this.textBox2.BackColor = System.Drawing.Color.White;
+            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox2.Location = new System.Drawing.Point(262, 9);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(120, 23);
+            this.textBox2.TabIndex = 5;
+            // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.Location = new System.Drawing.Point(119, 9);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(120, 23);
+            this.textBox1.TabIndex = 4;
+            // 
+            // label4
+            // 
+            this.label4.Lines = 0;
+            this.label4.Location = new System.Drawing.Point(420, 36);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(55, 23);
+            this.label4.TabIndex = 3;
+            this.label4.Text = "PO#";
+            // 
+            // label3
+            // 
+            this.label3.Lines = 0;
+            this.label3.Location = new System.Drawing.Point(420, 9);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(55, 23);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Pack ID";
+            // 
+            // label2
+            // 
+            this.label2.Lines = 0;
+            this.label2.Location = new System.Drawing.Point(4, 36);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(112, 23);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Transfer Clog No.";
+            // 
+            // label1
+            // 
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(4, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(112, 23);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "SP#";
             // 
             // shapeContainer1
             // 
@@ -327,65 +367,47 @@
             this.lineShape1.Y1 = 64;
             this.lineShape1.Y2 = 64;
             // 
-            // label9
+            // panel4
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(4, 74);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(84, 23);
-            this.label9.TabIndex = 18;
-            this.label9.Text = "Location No.";
+            this.panel4.Controls.Add(this.button5);
+            this.panel4.Controls.Add(this.button4);
+            this.panel4.Controls.Add(this.button3);
+            this.panel4.Controls.Add(this.comboBox3);
+            this.panel4.Controls.Add(this.label11);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel4.Location = new System.Drawing.Point(5, 459);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(849, 49);
+            this.panel4.TabIndex = 4;
             // 
-            // button2
+            // button5
             // 
-            this.button2.Location = new System.Drawing.Point(179, 70);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(159, 30);
-            this.button2.TabIndex = 20;
-            this.button2.Text = "Update All Location";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button5.Location = new System.Drawing.Point(752, 8);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(80, 30);
+            this.button5.TabIndex = 4;
+            this.button5.Text = "Cancel";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
-            // label10
+            // button4
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(409, 74);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(41, 23);
-            this.label10.TabIndex = 21;
-            this.label10.Text = "Filter";
+            this.button4.Location = new System.Drawing.Point(666, 8);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(80, 30);
+            this.button4.TabIndex = 3;
+            this.button4.Text = "Save";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
-            // comboBox1
+            // button3
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(453, 73);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(85, 24);
-            this.comboBox1.TabIndex = 22;
-            this.comboBox1.SelectedValueChanged += new System.EventHandler(this.comboBox1_SelectedValueChanged);
-            // 
-            // comboBox2
-            // 
-            this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Location = new System.Drawing.Point(543, 73);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(166, 24);
-            this.comboBox2.TabIndex = 23;
-            // 
-            // label11
-            // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(224, 13);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(75, 23);
-            this.label11.TabIndex = 0;
-            this.label11.Text = "Request by";
+            this.button3.Location = new System.Drawing.Point(412, 8);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(135, 30);
+            this.button3.TabIndex = 2;
+            this.button3.Text = "Print Move Ticket";
+            this.button3.UseVisualStyleBackColor = true;
             // 
             // comboBox3
             // 
@@ -398,34 +420,23 @@
             this.comboBox3.Size = new System.Drawing.Size(104, 24);
             this.comboBox3.TabIndex = 1;
             // 
-            // button3
+            // label11
             // 
-            this.button3.Location = new System.Drawing.Point(412, 8);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(135, 30);
-            this.button3.TabIndex = 2;
-            this.button3.Text = "Print Move Ticket";
-            this.button3.UseVisualStyleBackColor = true;
+            this.label11.Lines = 0;
+            this.label11.Location = new System.Drawing.Point(224, 13);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(75, 23);
+            this.label11.TabIndex = 0;
+            this.label11.Text = "Request by";
             // 
-            // button4
+            // panel5
             // 
-            this.button4.Location = new System.Drawing.Point(666, 8);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(80, 30);
-            this.button4.TabIndex = 3;
-            this.button4.Text = "Save";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
-            // 
-            // button5
-            // 
-            this.button5.Location = new System.Drawing.Point(752, 8);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(80, 30);
-            this.button5.TabIndex = 4;
-            this.button5.Text = "Cancel";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel5.Location = new System.Drawing.Point(5, 106);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(849, 353);
+            this.panel5.TabIndex = 5;
             // 
             // grid1
             // 
@@ -453,16 +464,6 @@
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
-            // txtcloglocation1
-            // 
-            this.txtcloglocation1.BackColor = System.Drawing.Color.White;
-            this.txtcloglocation1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcloglocation1.IsSupportSytsemContextMenu = false;
-            this.txtcloglocation1.Location = new System.Drawing.Point(92, 74);
-            this.txtcloglocation1.Name = "txtcloglocation1";
-            this.txtcloglocation1.Size = new System.Drawing.Size(80, 23);
-            this.txtcloglocation1.TabIndex = 19;
-            // 
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(859, 508);
@@ -483,8 +484,8 @@
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
