@@ -49,11 +49,11 @@ namespace Sci.Production.Class
             string textValue = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                if (!myUtility.Seek(textValue, "Pass1", "ID","Production"))
+                if (!myUtility.Seek(textValue, "Pass1", "ID"))
                 {
                     string alltrimData = textValue.Trim();
-                    bool isUserName = myUtility.Seek(alltrimData, "Pass1", "Name", "Production");
-                    bool isUserExtNo = myUtility.Seek(alltrimData, "Pass1", "ExtNo", "Production");
+                    bool isUserName = myUtility.Seek(alltrimData, "Pass1", "Name" );
+                    bool isUserExtNo = myUtility.Seek(alltrimData, "Pass1", "ExtNo");
 
                     if (isUserName | isUserExtNo)
                     {
@@ -62,7 +62,7 @@ namespace Sci.Production.Class
                         if (isUserName)
                         {
                             selectCommand = string.Format("select ID, Name, ExtNo, Factory from Pass1 where Name = '{0}' order by ID", textValue.Trim());
-                            DBProxy.Current.Select("Production", selectCommand, out selectTable);
+                            DBProxy.Current.Select(null, selectCommand, out selectTable);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable,"ID,Name,ExtNo,Factory", "15,30,10,150", this.textBox1.Text);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) 
@@ -75,7 +75,7 @@ namespace Sci.Production.Class
                         else
                         {
                             selectCommand = string.Format("select ID, Name, ExtNo, Factory from Pass1 where Ext_No = '{0}' order by ID", textValue.Trim());
-                            DBProxy.Current.Select("Production", selectCommand, out selectTable);
+                            DBProxy.Current.Select(null, selectCommand, out selectTable);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "15,30,10,150", this.textBox1.Text);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
@@ -100,12 +100,12 @@ namespace Sci.Production.Class
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-            if (myForm.EditMode == true)
+            if (myForm.EditMode == false)
             {
                 string selectSql = string.Format("Select Name from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
-                string name = myUtility.Lookup(selectSql, "Production");
+                string name = myUtility.Lookup(selectSql);
                 selectSql = string.Format("Select ExtNo from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
-                string extNo = myUtility.Lookup(selectSql, "Production");
+                string extNo = myUtility.Lookup(selectSql);
                 if (!string.IsNullOrWhiteSpace(name)) { this.displayBox1.Text = name; }
                 if (!string.IsNullOrWhiteSpace(extNo)) { this.displayBox1.Text = name + " #" + extNo; }
             }

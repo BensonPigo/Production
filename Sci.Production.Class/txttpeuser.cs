@@ -47,7 +47,7 @@ namespace Sci.Production.Class
 
         private void displayBox1_TextChanged(object sender, EventArgs e)
         {
-            if (myForm.EditMode == true)
+            if (myForm.EditMode == false)
             {
                 string selectSql = string.Format("Select Name from TPEPass1 Where id='{0}'", this.displayBox1.Text.ToString());
                 string name = myUtility.Lookup(selectSql, "Production");
