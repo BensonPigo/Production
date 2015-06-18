@@ -260,6 +260,7 @@ Sci.Production.PublicForm/Properties/AssemblyInfo.cs -text
 Sci.Production.PublicForm/Sci.Production.PublicForm.csproj -text
 Sci.Production.PublicPrg/Properties/AssemblyInfo.cs -text
 Sci.Production.PublicPrg/Sci.Production.PublicPrg.csproj -text
+Sci.Production.PublicPrg/Subcon.cs -text
 Sci.Production.PublicPrg/System.cs -text
 Sci.Production.Quality/Properties/AssemblyInfo.cs -text
 Sci.Production.Quality/Sci.Production.Quality.csproj -text
