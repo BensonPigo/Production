@@ -46,7 +46,7 @@
             // 
             this.displayBox1.Location = new System.Drawing.Point(67, 0);
             this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(90, 22);
+            this.displayBox1.Size = new System.Drawing.Size(100, 22);
             this.displayBox1.TabIndex = 1;
             // 
             // txtsubcon
@@ -55,7 +55,7 @@
             this.Controls.Add(this.displayBox1);
             this.Controls.Add(this.textBox1);
             this.Name = "txtsubcon";
-            this.Size = new System.Drawing.Size(159, 23);
+            this.Size = new System.Drawing.Size(170, 23);
             this.ResumeLayout(false);
             this.PerformLayout();
 

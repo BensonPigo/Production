@@ -69,7 +69,11 @@ namespace Sci.Production.Class
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            this.displayBox1.Text = myUtility.Lookup("Description", "RA" + this.textBox1.Text.ToString(), "WhseReason", "Type+ID");
+            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            if (myForm.EditMode == false)
+            {
+                this.displayBox1.Text = myUtility.Lookup("Description", "RA" + this.textBox1.Text.ToString(), "WhseReason", "Type+ID");
+            }
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -81,6 +85,7 @@ namespace Sci.Production.Class
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
+            this.OnValidated(e);
         }
 
     }

@@ -24,6 +24,7 @@ namespace Sci.Production.Class
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
+            this.OnValidated(e);
         }
 
         protected override void OnValidating(CancelEventArgs e)
@@ -46,7 +47,7 @@ namespace Sci.Production.Class
         public txtcurrency()
         {
             this.Size = new System.Drawing.Size(48, 23);
-            this.IsSupportSytsemContextMenu = false;
+            //this.IsSupportSytsemContextMenu = false;
            
         }
     }

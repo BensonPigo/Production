@@ -91,7 +91,10 @@ namespace Sci.Production.Class
         {
            
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base) this.FindForm();
-            if (myForm.EditMode == true)this.displayBox1.Text = myUtility.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID","Production");
+            if (myForm.EditMode == false)
+            {
+                this.displayBox1.Text = myUtility.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
+            }
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -109,6 +112,7 @@ namespace Sci.Production.Class
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
             this.textBox1.ValidateControl();
+            this.OnValidated(e);
         }
     }
 }
