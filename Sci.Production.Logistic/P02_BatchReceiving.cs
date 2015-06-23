@@ -31,7 +31,7 @@ namespace Sci.Production.Logistic
 
             this.grid1.CellValueChanged += (s, e) =>
                 {
-                    if (grid1.CurrentCellAddress.X == 0)
+                    if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
                     {
                         this.numericBox4.Value = grid1.GetCheckeds(col_chk).Count;
                     }
