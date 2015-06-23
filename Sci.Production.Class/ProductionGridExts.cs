@@ -34,7 +34,7 @@ namespace Sci
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ClogLocation order by ID", "10,40", dr["ClogLocationId"].ToString().Trim());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
-                            dr["ClogLocationId"] = item.GetSelectedString();
+                            e.EditingControl.Text = item.GetSelectedString();
                         }
                     }
                 }
@@ -112,7 +112,7 @@ namespace Sci
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo", "10,25,25", dr["RefNo"].ToString().Trim());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
-                            dr["RefNo"] = item.GetSelectedString();
+                            e.EditingControl.Text = item.GetSelectedString();
                         }
                     }
                 }
