@@ -16,6 +16,7 @@ namespace Sci.Production.Logistic
     public partial class P04 : Sci.Win.Tems.QueryForm
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        Ict.Win.UI.DataGridViewTextBoxColumn col_location;
         DataTable gridData;
         IList<string> comboBox2_RowSource1 = new List<string>();
         IList<string> comboBox2_RowSource2 = new List<string>();
@@ -61,27 +62,15 @@ namespace Sci.Production.Logistic
 
             this.grid1.CellValueChanged += (s, e) =>
             {
-                if (grid1.CurrentCellAddress.X == 11)
+                if (grid1.Columns[e.ColumnIndex].Name == col_location.Name)
                 {
                     DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                     dr["Selected"] = 1;
                 }
             };
+
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            //ts.CellValidating += (s, e) =>
-            //    {
-            //        if (this.EditMode)
-            //        {
-            //            DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-            //            if (e.FormattedValue.ToString() != dr["ClogLocationId"].ToString())
-            //            {
-            //                dr["ClogLocationId"] = e.FormattedValue.ToString();
-            //                dr["Selected"] = 1;
-            //            }
-            //        }
-            //    };
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            ts1.CellValidating += (s, e) =>
+            ts.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
                 {
@@ -106,8 +95,8 @@ namespace Sci.Production.Logistic
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("QtyPerCTN", header: "PC/Ctn", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10), settings: ts)
-                .Text("Remark", header: "Reamrks", width: Widths.AnsiChars(10), settings: ts1);
+                .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10)).Get(out col_location)
+                .Text("Remark", header: "Reamrks", width: Widths.AnsiChars(10), settings: ts);
         }
 
         //Query
