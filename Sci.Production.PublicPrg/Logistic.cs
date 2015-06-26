@@ -14,11 +14,11 @@ namespace Sci.Production.PublicPrg
 
     public static partial class Prgs
     {
-        #region GetCartonList
+        #region UpdateOrdersCTN
         /// <summary>
-        /// GetCartonList(string)
+        /// UpdateOrdersCTN(string)
         /// </summary>
-        /// <param name="strLogin"></param>
+        /// <param name="orderID"></param>
         /// <returns>bool</returns>
         public static bool UpdateOrdersCTN(string orderID)
         {
