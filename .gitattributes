@@ -237,6 +237,9 @@ Sci.Production.PPIC/Sci.Production.PPIC.csproj -text
 Sci.Production.Packing/B01.Designer.cs -text
 Sci.Production.Packing/B01.cs -text
 Sci.Production.Packing/B01.resx -text
+Sci.Production.Packing/P02.Designer.cs -text
+Sci.Production.Packing/P02.cs -text
+Sci.Production.Packing/P02.resx -text
 Sci.Production.Packing/P10.Designer.cs -text
 Sci.Production.Packing/P10.cs -text
 Sci.Production.Packing/P10.resx -text
