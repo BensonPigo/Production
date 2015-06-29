@@ -658,6 +658,13 @@ namespace Sci.Production.Packing
             callNextForm.ShowDialog(this);
         }
 
+        //Carton Dimension
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Packing.P02_CartonSummary callNextForm = new Sci.Production.Packing.P02_CartonSummary(CurrentMaintain["OrderID"].ToString());
+            callNextForm.ShowDialog(this);
+        }
+
         //Switch to Packing list
         private void button3_Click(object sender, EventArgs e)
         {

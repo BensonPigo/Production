@@ -107,6 +107,12 @@
     <Compile Include="P02.Designer.cs">
       <DependentUpon>P02.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_CartonSummary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_CartonSummary.Designer.cs">
+      <DependentUpon>P02_CartonSummary.cs</DependentUpon>
+    </Compile>
     <Compile Include="P10.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -127,6 +133,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02.resx">
       <DependentUpon>P02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_CartonSummary.resx">
+      <DependentUpon>P02_CartonSummary.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P10.resx">
       <DependentUpon>P10.cs</DependentUpon>
