@@ -257,6 +257,12 @@ Sci.Production.Planning/B01.resx -text
 Sci.Production.Planning/B02.Designer.cs -text
 Sci.Production.Planning/B02.cs -text
 Sci.Production.Planning/B02.resx -text
+Sci.Production.Planning/P01.Designer.cs -text
+Sci.Production.Planning/P01.cs -text
+Sci.Production.Planning/P01.resx -text
+Sci.Production.Planning/P01_BatchApprove.Designer.cs -text
+Sci.Production.Planning/P01_BatchApprove.cs -text
+Sci.Production.Planning/P01_BatchApprove.resx -text
 Sci.Production.Planning/Properties/AssemblyInfo.cs -text
 Sci.Production.Planning/Sci.Production.Planning.csproj -text
 Sci.Production.PublicForm/EditRemark.Designer.cs -text
