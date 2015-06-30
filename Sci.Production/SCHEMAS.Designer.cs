@@ -287,15 +287,11 @@ namespace Sci.Production {
             
             private global::System.Data.DataColumn columnPOSITION;
             
-            private global::System.Data.DataColumn columnFK01_PASS0;
-            
             private global::System.Data.DataColumn columnISADMIN;
             
             private global::System.Data.DataColumn columnORDERGROUP;
             
             private global::System.Data.DataColumn columnEMAIL;
-            
-            private global::System.Data.DataColumn columnEXT_NO;
             
             private global::System.Data.DataColumn columnONBOARD;
             
@@ -318,6 +314,12 @@ namespace Sci.Production {
             private global::System.Data.DataColumn columnEDITNAME;
             
             private global::System.Data.DataColumn columnEDITDATE;
+            
+            private global::System.Data.DataColumn columnFKPASS0;
+            
+            private global::System.Data.DataColumn columnISMIS;
+            
+            private global::System.Data.DataColumn columnEXTNO;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
@@ -386,14 +388,6 @@ namespace Sci.Production {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn FK01_PASS0Column {
-                get {
-                    return this.columnFK01_PASS0;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public global::System.Data.DataColumn ISADMINColumn {
                 get {
                     return this.columnISADMIN;
@@ -413,14 +407,6 @@ namespace Sci.Production {
             public global::System.Data.DataColumn EMAILColumn {
                 get {
                     return this.columnEMAIL;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn EXT_NOColumn {
-                get {
-                    return this.columnEXT_NO;
                 }
             }
             
@@ -514,6 +500,30 @@ namespace Sci.Production {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn FKPASS0Column {
+                get {
+                    return this.columnFKPASS0;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn ISMISColumn {
+                get {
+                    return this.columnISMIS;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn EXTNOColumn {
+                get {
+                    return this.columnEXTNO;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -554,11 +564,9 @@ namespace Sci.Production {
                         string NAME, 
                         string PASSWORD, 
                         string POSITION, 
-                        string FK01_PASS0, 
                         bool ISADMIN, 
                         string ORDERGROUP, 
                         string EMAIL, 
-                        string EXT_NO, 
                         System.DateTime ONBOARD, 
                         System.DateTime RESIGN, 
                         string SUPERVISOR, 
@@ -569,18 +577,19 @@ namespace Sci.Production {
                         string ADDNAME, 
                         System.DateTime ADDDATE, 
                         string EDITNAME, 
-                        System.DateTime EDITDATE) {
+                        System.DateTime EDITDATE, 
+                        long FKPASS0, 
+                        bool ISMIS, 
+                        string EXTNO) {
                 PASS1Row rowPASS1Row = ((PASS1Row)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         ID,
                         NAME,
                         PASSWORD,
                         POSITION,
-                        FK01_PASS0,
                         ISADMIN,
                         ORDERGROUP,
                         EMAIL,
-                        EXT_NO,
                         ONBOARD,
                         RESIGN,
                         SUPERVISOR,
@@ -591,7 +600,10 @@ namespace Sci.Production {
                         ADDNAME,
                         ADDDATE,
                         EDITNAME,
-                        EDITDATE};
+                        EDITDATE,
+                        FKPASS0,
+                        ISMIS,
+                        EXTNO};
                 rowPASS1Row.ItemArray = columnValuesArray;
                 this.Rows.Add(rowPASS1Row);
                 return rowPASS1Row;
@@ -625,11 +637,9 @@ namespace Sci.Production {
                 this.columnNAME = base.Columns["NAME"];
                 this.columnPASSWORD = base.Columns["PASSWORD"];
                 this.columnPOSITION = base.Columns["POSITION"];
-                this.columnFK01_PASS0 = base.Columns["FK01_PASS0"];
                 this.columnISADMIN = base.Columns["ISADMIN"];
                 this.columnORDERGROUP = base.Columns["ORDERGROUP"];
                 this.columnEMAIL = base.Columns["EMAIL"];
-                this.columnEXT_NO = base.Columns["EXT_NO"];
                 this.columnONBOARD = base.Columns["ONBOARD"];
                 this.columnRESIGN = base.Columns["RESIGN"];
                 this.columnSUPERVISOR = base.Columns["SUPERVISOR"];
@@ -641,6 +651,9 @@ namespace Sci.Production {
                 this.columnADDDATE = base.Columns["ADDDATE"];
                 this.columnEDITNAME = base.Columns["EDITNAME"];
                 this.columnEDITDATE = base.Columns["EDITDATE"];
+                this.columnFKPASS0 = base.Columns["FKPASS0"];
+                this.columnISMIS = base.Columns["ISMIS"];
+                this.columnEXTNO = base.Columns["EXTNO"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -654,16 +667,12 @@ namespace Sci.Production {
                 base.Columns.Add(this.columnPASSWORD);
                 this.columnPOSITION = new global::System.Data.DataColumn("POSITION", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnPOSITION);
-                this.columnFK01_PASS0 = new global::System.Data.DataColumn("FK01_PASS0", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnFK01_PASS0);
                 this.columnISADMIN = new global::System.Data.DataColumn("ISADMIN", typeof(bool), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnISADMIN);
                 this.columnORDERGROUP = new global::System.Data.DataColumn("ORDERGROUP", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnORDERGROUP);
                 this.columnEMAIL = new global::System.Data.DataColumn("EMAIL", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnEMAIL);
-                this.columnEXT_NO = new global::System.Data.DataColumn("EXT_NO", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnEXT_NO);
                 this.columnONBOARD = new global::System.Data.DataColumn("ONBOARD", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnONBOARD);
                 this.columnRESIGN = new global::System.Data.DataColumn("RESIGN", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
@@ -686,6 +695,12 @@ namespace Sci.Production {
                 base.Columns.Add(this.columnEDITNAME);
                 this.columnEDITDATE = new global::System.Data.DataColumn("EDITDATE", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnEDITDATE);
+                this.columnFKPASS0 = new global::System.Data.DataColumn("FKPASS0", typeof(long), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnFKPASS0);
+                this.columnISMIS = new global::System.Data.DataColumn("ISMIS", typeof(bool), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnISMIS);
+                this.columnEXTNO = new global::System.Data.DataColumn("EXTNO", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnEXTNO);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnID}, true));
                 this.columnID.AllowDBNull = false;
@@ -694,10 +709,8 @@ namespace Sci.Production {
                 this.columnNAME.MaxLength = 20;
                 this.columnPASSWORD.MaxLength = 10;
                 this.columnPOSITION.MaxLength = 12;
-                this.columnFK01_PASS0.MaxLength = 10;
                 this.columnORDERGROUP.MaxLength = 2;
                 this.columnEMAIL.MaxLength = 50;
-                this.columnEXT_NO.MaxLength = 6;
                 this.columnSUPERVISOR.MaxLength = 10;
                 this.columnMANAGER.MaxLength = 10;
                 this.columnDEPUTY.MaxLength = 10;
@@ -705,6 +718,7 @@ namespace Sci.Production {
                 this.columnCODEPAGE.MaxLength = 6;
                 this.columnADDNAME.MaxLength = 20;
                 this.columnEDITNAME.MaxLength = 20;
+                this.columnEXTNO.MaxLength = 6;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -906,22 +920,6 @@ namespace Sci.Production {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string FK01_PASS0 {
-                get {
-                    try {
-                        return ((string)(this[this.tablePASS1.FK01_PASS0Column]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("資料表 \'PASS1\' 中資料行 \'FK01_PASS0\' 的值是 DBNull。", e);
-                    }
-                }
-                set {
-                    this[this.tablePASS1.FK01_PASS0Column] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool ISADMIN {
                 get {
                     try {
@@ -965,22 +963,6 @@ namespace Sci.Production {
                 }
                 set {
                     this[this.tablePASS1.EMAILColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string EXT_NO {
-                get {
-                    try {
-                        return ((string)(this[this.tablePASS1.EXT_NOColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("資料表 \'PASS1\' 中資料行 \'EXT_NO\' 的值是 DBNull。", e);
-                    }
-                }
-                set {
-                    this[this.tablePASS1.EXT_NOColumn] = value;
                 }
             }
             
@@ -1162,6 +1144,54 @@ namespace Sci.Production {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public long FKPASS0 {
+                get {
+                    try {
+                        return ((long)(this[this.tablePASS1.FKPASS0Column]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("資料表 \'PASS1\' 中資料行 \'FKPASS0\' 的值是 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tablePASS1.FKPASS0Column] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool ISMIS {
+                get {
+                    try {
+                        return ((bool)(this[this.tablePASS1.ISMISColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("資料表 \'PASS1\' 中資料行 \'ISMIS\' 的值是 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tablePASS1.ISMISColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string EXTNO {
+                get {
+                    try {
+                        return ((string)(this[this.tablePASS1.EXTNOColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("資料表 \'PASS1\' 中資料行 \'EXTNO\' 的值是 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tablePASS1.EXTNOColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsNAMENull() {
                 return this.IsNull(this.tablePASS1.NAMEColumn);
             }
@@ -1198,18 +1228,6 @@ namespace Sci.Production {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsFK01_PASS0Null() {
-                return this.IsNull(this.tablePASS1.FK01_PASS0Column);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetFK01_PASS0Null() {
-                this[this.tablePASS1.FK01_PASS0Column] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsISADMINNull() {
                 return this.IsNull(this.tablePASS1.ISADMINColumn);
             }
@@ -1242,18 +1260,6 @@ namespace Sci.Production {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetEMAILNull() {
                 this[this.tablePASS1.EMAILColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsEXT_NONull() {
-                return this.IsNull(this.tablePASS1.EXT_NOColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetEXT_NONull() {
-                this[this.tablePASS1.EXT_NOColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1386,6 +1392,42 @@ namespace Sci.Production {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetEDITDATENull() {
                 this[this.tablePASS1.EDITDATEColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsFKPASS0Null() {
+                return this.IsNull(this.tablePASS1.FKPASS0Column);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetFKPASS0Null() {
+                this[this.tablePASS1.FKPASS0Column] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsISMISNull() {
+                return this.IsNull(this.tablePASS1.ISMISColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetISMISNull() {
+                this[this.tablePASS1.ISMISColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsEXTNONull() {
+                return this.IsNull(this.tablePASS1.EXTNOColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetEXTNONull() {
+                this[this.tablePASS1.EXTNOColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -1552,11 +1594,9 @@ namespace Sci.Production.SCHEMASTableAdapters {
             tableMapping.ColumnMappings.Add("NAME", "NAME");
             tableMapping.ColumnMappings.Add("PASSWORD", "PASSWORD");
             tableMapping.ColumnMappings.Add("POSITION", "POSITION");
-            tableMapping.ColumnMappings.Add("FK01_PASS0", "FK01_PASS0");
             tableMapping.ColumnMappings.Add("ISADMIN", "ISADMIN");
             tableMapping.ColumnMappings.Add("ORDERGROUP", "ORDERGROUP");
             tableMapping.ColumnMappings.Add("EMAIL", "EMAIL");
-            tableMapping.ColumnMappings.Add("EXT_NO", "EXT_NO");
             tableMapping.ColumnMappings.Add("ONBOARD", "ONBOARD");
             tableMapping.ColumnMappings.Add("RESIGN", "RESIGN");
             tableMapping.ColumnMappings.Add("SUPERVISOR", "SUPERVISOR");
@@ -1568,69 +1608,74 @@ namespace Sci.Production.SCHEMASTableAdapters {
             tableMapping.ColumnMappings.Add("ADDDATE", "ADDDATE");
             tableMapping.ColumnMappings.Add("EDITNAME", "EDITNAME");
             tableMapping.ColumnMappings.Add("EDITDATE", "EDITDATE");
+            tableMapping.ColumnMappings.Add("FKPASS0", "FKPASS0");
+            tableMapping.ColumnMappings.Add("ISMIS", "ISMIS");
+            tableMapping.ColumnMappings.Add("EXTNO", "EXTNO");
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
-            this._adapter.DeleteCommand.CommandText = "DELETE FROM [dbo].[PASS1] WHERE (([ID] = @Original_ID))";
+            this._adapter.DeleteCommand.CommandText = "DELETE FROM [PASS1] WHERE (([ID] = @Original_ID))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ID", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ID", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ID", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ID", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.InsertCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = @"INSERT INTO [dbo].[PASS1] ([ID], [NAME], [PASSWORD], [POSITION], [FK01_PASS0], [ISADMIN], [ORDERGROUP], [EMAIL], [EXT_NO], [ONBOARD], [RESIGN], [SUPERVISOR], [MANAGER], [DEPUTY], [FACTORY], [CODEPAGE], [ADDNAME], [ADDDATE], [EDITNAME], [EDITDATE]) VALUES (@ID, @NAME, @PASSWORD, @POSITION, @FK01_PASS0, @ISADMIN, @ORDERGROUP, @EMAIL, @EXT_NO, @ONBOARD, @RESIGN, @SUPERVISOR, @MANAGER, @DEPUTY, @FACTORY, @CODEPAGE, @ADDNAME, @ADDDATE, @EDITNAME, @EDITDATE)";
+            this._adapter.InsertCommand.CommandText = @"INSERT INTO [PASS1] ([ID], [NAME], [PASSWORD], [POSITION], [FKPASS0], [ISADMIN], [ISMIS], [ORDERGROUP], [EMAIL], [EXTNO], [ONBOARD], [RESIGN], [SUPERVISOR], [MANAGER], [DEPUTY], [FACTORY], [CODEPAGE], [ADDNAME], [ADDDATE], [EDITNAME], [EDITDATE]) VALUES (@ID, @NAME, @PASSWORD, @POSITION, @FKPASS0, @ISADMIN, @ISMIS, @ORDERGROUP, @EMAIL, @EXTNO, @ONBOARD, @RESIGN, @SUPERVISOR, @MANAGER, @DEPUTY, @FACTORY, @CODEPAGE, @ADDNAME, @ADDDATE, @EDITNAME, @EDITDATE)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ID", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ID", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ID", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ID", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@NAME", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "NAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@PASSWORD", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "PASSWORD", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@POSITION", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "POSITION", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FK01_PASS0", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FK01_PASS0", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@PASSWORD", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "PASSWORD", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@POSITION", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "POSITION", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FKPASS0", global::System.Data.SqlDbType.BigInt, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FKPASS0", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ISADMIN", global::System.Data.SqlDbType.Bit, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ISADMIN", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ORDERGROUP", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ORDERGROUP", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EMAIL", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EMAIL", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EXT_NO", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EXT_NO", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ISMIS", global::System.Data.SqlDbType.Bit, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ISMIS", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ORDERGROUP", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ORDERGROUP", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EMAIL", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EMAIL", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EXTNO", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EXTNO", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ONBOARD", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ONBOARD", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@RESIGN", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "RESIGN", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@SUPERVISOR", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "SUPERVISOR", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@MANAGER", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "MANAGER", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@DEPUTY", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DEPUTY", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FACTORY", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FACTORY", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CODEPAGE", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CODEPAGE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ADDNAME", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ADDNAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@SUPERVISOR", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "SUPERVISOR", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@MANAGER", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "MANAGER", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@DEPUTY", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DEPUTY", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FACTORY", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FACTORY", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CODEPAGE", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CODEPAGE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ADDNAME", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ADDNAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ADDDATE", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ADDDATE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EDITNAME", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EDITNAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EDITNAME", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EDITNAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EDITDATE", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EDITDATE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = @"UPDATE [dbo].[PASS1] SET [ID] = @ID, [NAME] = @NAME, [PASSWORD] = @PASSWORD, [POSITION] = @POSITION, [FK01_PASS0] = @FK01_PASS0, [ISADMIN] = @ISADMIN, [ORDERGROUP] = @ORDERGROUP, [EMAIL] = @EMAIL, [EXT_NO] = @EXT_NO, [ONBOARD] = @ONBOARD, [RESIGN] = @RESIGN, [SUPERVISOR] = @SUPERVISOR, [MANAGER] = @MANAGER, [DEPUTY] = @DEPUTY, [FACTORY] = @FACTORY, [CODEPAGE] = @CODEPAGE, [ADDNAME] = @ADDNAME, [ADDDATE] = @ADDDATE, [EDITNAME] = @EDITNAME, [EDITDATE] = @EDITDATE WHERE (([ID] = @Original_ID))";
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [PASS1] SET [ID] = @ID, [NAME] = @NAME, [PASSWORD] = @PASSWORD, [POSITION] = @POSITION, [FKPASS0] = @FKPASS0, [ISADMIN] = @ISADMIN, [ISMIS] = @ISMIS, [ORDERGROUP] = @ORDERGROUP, [EMAIL] = @EMAIL, [EXTNO] = @EXTNO, [ONBOARD] = @ONBOARD, [RESIGN] = @RESIGN, [SUPERVISOR] = @SUPERVISOR, [MANAGER] = @MANAGER, [DEPUTY] = @DEPUTY, [FACTORY] = @FACTORY, [CODEPAGE] = @CODEPAGE, [ADDNAME] = @ADDNAME, [ADDDATE] = @ADDDATE, [EDITNAME] = @EDITNAME, [EDITDATE] = @EDITDATE WHERE (([ID] = @Original_ID))";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ID", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ID", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ID", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ID", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@NAME", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "NAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@PASSWORD", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "PASSWORD", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@POSITION", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "POSITION", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FK01_PASS0", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FK01_PASS0", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@PASSWORD", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "PASSWORD", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@POSITION", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "POSITION", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FKPASS0", global::System.Data.SqlDbType.BigInt, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FKPASS0", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ISADMIN", global::System.Data.SqlDbType.Bit, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ISADMIN", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ORDERGROUP", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ORDERGROUP", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EMAIL", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EMAIL", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EXT_NO", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EXT_NO", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ISMIS", global::System.Data.SqlDbType.Bit, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ISMIS", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ORDERGROUP", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ORDERGROUP", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EMAIL", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EMAIL", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EXTNO", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EXTNO", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ONBOARD", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ONBOARD", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@RESIGN", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "RESIGN", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@SUPERVISOR", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "SUPERVISOR", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@MANAGER", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "MANAGER", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@DEPUTY", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DEPUTY", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FACTORY", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FACTORY", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CODEPAGE", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CODEPAGE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ADDNAME", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ADDNAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@SUPERVISOR", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "SUPERVISOR", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@MANAGER", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "MANAGER", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@DEPUTY", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DEPUTY", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FACTORY", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FACTORY", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CODEPAGE", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CODEPAGE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ADDNAME", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ADDNAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ADDDATE", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ADDDATE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EDITNAME", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EDITNAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EDITNAME", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EDITNAME", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@EDITDATE", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "EDITDATE", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ID", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ID", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ID", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ID", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SqlClient.SqlConnection();
-            this._connection.ConnectionString = "Data Source=localhost\\SQL2012EXP;Initial Catalog=SCI;Persist Security Info=True;U" +
-                "ser ID=sa;Password=123456";
+            this._connection.ConnectionString = "Data Source=localhost\\SQL2012EXP;Initial Catalog=SCITEST;Persist Security Info=Tr" +
+                "ue;User ID=sa;Password=123456";
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1639,19 +1684,20 @@ namespace Sci.Production.SCHEMASTableAdapters {
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[2];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "SELECT ID, NAME, PASSWORD, POSITION, FK01_PASS0, ISADMIN, ORDERGROUP, EMAIL, EXT_" +
-                "NO, ONBOARD, RESIGN, SUPERVISOR, MANAGER, DEPUTY, FACTORY, CODEPAGE, ADDNAME, AD" +
-                "DDATE, EDITNAME, EDITDATE FROM dbo.PASS1";
+            this._commandCollection[0].CommandText = "SELECT          ID, NAME, PASSWORD, POSITION, FKPASS0, ISADMIN, ISMIS, ORDERGROUP" +
+                ", EMAIL, EXTNO, ONBOARD, RESIGN, \r\n                            SUPERVISOR, MANAG" +
+                "ER, DEPUTY, FACTORY, CODEPAGE, ADDNAME, ADDDATE, EDITNAME, EDITDATE\r\nFROM       " +
+                "       PASS1";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[1] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[1].Connection = this.Connection;
-            this._commandCollection[1].CommandText = "SELECT ADDDATE, ADDNAME, CODEPAGE, DEPUTY, EDITDATE, EDITNAME, EMAIL, EXT_NO, FAC" +
-                "TORY, FK01_PASS0, ID, ISADMIN, MANAGER, NAME, ONBOARD, ORDERGROUP, PASSWORD, POS" +
-                "ITION, RESIGN, SUPERVISOR FROM PASS1 WHERE (ID = @id) AND (PASSWORD = @password)" +
-                "";
+            this._commandCollection[1].CommandText = @"SELECT          ID, NAME, PASSWORD, POSITION, FKPASS0, ISADMIN, ISMIS, ORDERGROUP, EMAIL, EXTNO, ONBOARD, RESIGN, 
+                            SUPERVISOR, MANAGER, DEPUTY, FACTORY, CODEPAGE, ADDNAME, ADDDATE, EDITNAME, EDITDATE
+FROM              PASS1
+WHERE          (ID = @id) AND (PASSWORD = @password)";
             this._commandCollection[1].CommandType = global::System.Data.CommandType.Text;
-            this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.NVarChar, 10, global::System.Data.ParameterDirection.Input, 0, 0, "ID", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@password", global::System.Data.SqlDbType.NVarChar, 10, global::System.Data.ParameterDirection.Input, 0, 0, "PASSWORD", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.VarChar, 10, global::System.Data.ParameterDirection.Input, 0, 0, "ID", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@password", global::System.Data.SqlDbType.VarChar, 10, global::System.Data.ParameterDirection.Input, 0, 0, "PASSWORD", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1753,11 +1799,12 @@ namespace Sci.Production.SCHEMASTableAdapters {
                     string NAME, 
                     string PASSWORD, 
                     string POSITION, 
-                    string FK01_PASS0, 
+                    global::System.Nullable<long> FKPASS0, 
                     global::System.Nullable<bool> ISADMIN, 
+                    global::System.Nullable<bool> ISMIS, 
                     string ORDERGROUP, 
                     string EMAIL, 
-                    string EXT_NO, 
+                    string EXTNO, 
                     global::System.Nullable<global::System.DateTime> ONBOARD, 
                     global::System.Nullable<global::System.DateTime> RESIGN, 
                     string SUPERVISOR, 
@@ -1793,11 +1840,11 @@ namespace Sci.Production.SCHEMASTableAdapters {
             else {
                 this.Adapter.InsertCommand.Parameters[3].Value = ((string)(POSITION));
             }
-            if ((FK01_PASS0 == null)) {
-                this.Adapter.InsertCommand.Parameters[4].Value = global::System.DBNull.Value;
+            if ((FKPASS0.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[4].Value = ((long)(FKPASS0.Value));
             }
             else {
-                this.Adapter.InsertCommand.Parameters[4].Value = ((string)(FK01_PASS0));
+                this.Adapter.InsertCommand.Parameters[4].Value = global::System.DBNull.Value;
             }
             if ((ISADMIN.HasValue == true)) {
                 this.Adapter.InsertCommand.Parameters[5].Value = ((bool)(ISADMIN.Value));
@@ -1805,89 +1852,95 @@ namespace Sci.Production.SCHEMASTableAdapters {
             else {
                 this.Adapter.InsertCommand.Parameters[5].Value = global::System.DBNull.Value;
             }
-            if ((ORDERGROUP == null)) {
-                this.Adapter.InsertCommand.Parameters[6].Value = global::System.DBNull.Value;
+            if ((ISMIS.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[6].Value = ((bool)(ISMIS.Value));
             }
             else {
-                this.Adapter.InsertCommand.Parameters[6].Value = ((string)(ORDERGROUP));
+                this.Adapter.InsertCommand.Parameters[6].Value = global::System.DBNull.Value;
             }
-            if ((EMAIL == null)) {
+            if ((ORDERGROUP == null)) {
                 this.Adapter.InsertCommand.Parameters[7].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.InsertCommand.Parameters[7].Value = ((string)(EMAIL));
+                this.Adapter.InsertCommand.Parameters[7].Value = ((string)(ORDERGROUP));
             }
-            if ((EXT_NO == null)) {
+            if ((EMAIL == null)) {
                 this.Adapter.InsertCommand.Parameters[8].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.InsertCommand.Parameters[8].Value = ((string)(EXT_NO));
+                this.Adapter.InsertCommand.Parameters[8].Value = ((string)(EMAIL));
             }
-            if ((ONBOARD.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[9].Value = ((System.DateTime)(ONBOARD.Value));
-            }
-            else {
+            if ((EXTNO == null)) {
                 this.Adapter.InsertCommand.Parameters[9].Value = global::System.DBNull.Value;
             }
-            if ((RESIGN.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[10].Value = ((System.DateTime)(RESIGN.Value));
+            else {
+                this.Adapter.InsertCommand.Parameters[9].Value = ((string)(EXTNO));
+            }
+            if ((ONBOARD.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[10].Value = ((System.DateTime)(ONBOARD.Value));
             }
             else {
                 this.Adapter.InsertCommand.Parameters[10].Value = global::System.DBNull.Value;
             }
-            if ((SUPERVISOR == null)) {
-                this.Adapter.InsertCommand.Parameters[11].Value = global::System.DBNull.Value;
+            if ((RESIGN.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[11].Value = ((System.DateTime)(RESIGN.Value));
             }
             else {
-                this.Adapter.InsertCommand.Parameters[11].Value = ((string)(SUPERVISOR));
+                this.Adapter.InsertCommand.Parameters[11].Value = global::System.DBNull.Value;
             }
-            if ((MANAGER == null)) {
+            if ((SUPERVISOR == null)) {
                 this.Adapter.InsertCommand.Parameters[12].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.InsertCommand.Parameters[12].Value = ((string)(MANAGER));
+                this.Adapter.InsertCommand.Parameters[12].Value = ((string)(SUPERVISOR));
             }
-            if ((DEPUTY == null)) {
+            if ((MANAGER == null)) {
                 this.Adapter.InsertCommand.Parameters[13].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.InsertCommand.Parameters[13].Value = ((string)(DEPUTY));
+                this.Adapter.InsertCommand.Parameters[13].Value = ((string)(MANAGER));
             }
-            if ((FACTORY == null)) {
+            if ((DEPUTY == null)) {
                 this.Adapter.InsertCommand.Parameters[14].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.InsertCommand.Parameters[14].Value = ((string)(FACTORY));
+                this.Adapter.InsertCommand.Parameters[14].Value = ((string)(DEPUTY));
             }
-            if ((CODEPAGE == null)) {
+            if ((FACTORY == null)) {
                 this.Adapter.InsertCommand.Parameters[15].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.InsertCommand.Parameters[15].Value = ((string)(CODEPAGE));
+                this.Adapter.InsertCommand.Parameters[15].Value = ((string)(FACTORY));
             }
-            if ((ADDNAME == null)) {
+            if ((CODEPAGE == null)) {
                 this.Adapter.InsertCommand.Parameters[16].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.InsertCommand.Parameters[16].Value = ((string)(ADDNAME));
+                this.Adapter.InsertCommand.Parameters[16].Value = ((string)(CODEPAGE));
             }
-            if ((ADDDATE.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[17].Value = ((System.DateTime)(ADDDATE.Value));
-            }
-            else {
+            if ((ADDNAME == null)) {
                 this.Adapter.InsertCommand.Parameters[17].Value = global::System.DBNull.Value;
             }
-            if ((EDITNAME == null)) {
+            else {
+                this.Adapter.InsertCommand.Parameters[17].Value = ((string)(ADDNAME));
+            }
+            if ((ADDDATE.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[18].Value = ((System.DateTime)(ADDDATE.Value));
+            }
+            else {
                 this.Adapter.InsertCommand.Parameters[18].Value = global::System.DBNull.Value;
             }
+            if ((EDITNAME == null)) {
+                this.Adapter.InsertCommand.Parameters[19].Value = global::System.DBNull.Value;
+            }
             else {
-                this.Adapter.InsertCommand.Parameters[18].Value = ((string)(EDITNAME));
+                this.Adapter.InsertCommand.Parameters[19].Value = ((string)(EDITNAME));
             }
             if ((EDITDATE.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[19].Value = ((System.DateTime)(EDITDATE.Value));
+                this.Adapter.InsertCommand.Parameters[20].Value = ((System.DateTime)(EDITDATE.Value));
             }
             else {
-                this.Adapter.InsertCommand.Parameters[19].Value = global::System.DBNull.Value;
+                this.Adapter.InsertCommand.Parameters[20].Value = global::System.DBNull.Value;
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -1914,11 +1967,12 @@ namespace Sci.Production.SCHEMASTableAdapters {
                     string NAME, 
                     string PASSWORD, 
                     string POSITION, 
-                    string FK01_PASS0, 
+                    global::System.Nullable<long> FKPASS0, 
                     global::System.Nullable<bool> ISADMIN, 
+                    global::System.Nullable<bool> ISMIS, 
                     string ORDERGROUP, 
                     string EMAIL, 
-                    string EXT_NO, 
+                    string EXTNO, 
                     global::System.Nullable<global::System.DateTime> ONBOARD, 
                     global::System.Nullable<global::System.DateTime> RESIGN, 
                     string SUPERVISOR, 
@@ -1955,11 +2009,11 @@ namespace Sci.Production.SCHEMASTableAdapters {
             else {
                 this.Adapter.UpdateCommand.Parameters[3].Value = ((string)(POSITION));
             }
-            if ((FK01_PASS0 == null)) {
-                this.Adapter.UpdateCommand.Parameters[4].Value = global::System.DBNull.Value;
+            if ((FKPASS0.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[4].Value = ((long)(FKPASS0.Value));
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[4].Value = ((string)(FK01_PASS0));
+                this.Adapter.UpdateCommand.Parameters[4].Value = global::System.DBNull.Value;
             }
             if ((ISADMIN.HasValue == true)) {
                 this.Adapter.UpdateCommand.Parameters[5].Value = ((bool)(ISADMIN.Value));
@@ -1967,95 +2021,101 @@ namespace Sci.Production.SCHEMASTableAdapters {
             else {
                 this.Adapter.UpdateCommand.Parameters[5].Value = global::System.DBNull.Value;
             }
-            if ((ORDERGROUP == null)) {
-                this.Adapter.UpdateCommand.Parameters[6].Value = global::System.DBNull.Value;
+            if ((ISMIS.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[6].Value = ((bool)(ISMIS.Value));
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[6].Value = ((string)(ORDERGROUP));
+                this.Adapter.UpdateCommand.Parameters[6].Value = global::System.DBNull.Value;
             }
-            if ((EMAIL == null)) {
+            if ((ORDERGROUP == null)) {
                 this.Adapter.UpdateCommand.Parameters[7].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[7].Value = ((string)(EMAIL));
+                this.Adapter.UpdateCommand.Parameters[7].Value = ((string)(ORDERGROUP));
             }
-            if ((EXT_NO == null)) {
+            if ((EMAIL == null)) {
                 this.Adapter.UpdateCommand.Parameters[8].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[8].Value = ((string)(EXT_NO));
+                this.Adapter.UpdateCommand.Parameters[8].Value = ((string)(EMAIL));
             }
-            if ((ONBOARD.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[9].Value = ((System.DateTime)(ONBOARD.Value));
-            }
-            else {
+            if ((EXTNO == null)) {
                 this.Adapter.UpdateCommand.Parameters[9].Value = global::System.DBNull.Value;
             }
-            if ((RESIGN.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[10].Value = ((System.DateTime)(RESIGN.Value));
+            else {
+                this.Adapter.UpdateCommand.Parameters[9].Value = ((string)(EXTNO));
+            }
+            if ((ONBOARD.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[10].Value = ((System.DateTime)(ONBOARD.Value));
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[10].Value = global::System.DBNull.Value;
             }
-            if ((SUPERVISOR == null)) {
-                this.Adapter.UpdateCommand.Parameters[11].Value = global::System.DBNull.Value;
+            if ((RESIGN.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[11].Value = ((System.DateTime)(RESIGN.Value));
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[11].Value = ((string)(SUPERVISOR));
+                this.Adapter.UpdateCommand.Parameters[11].Value = global::System.DBNull.Value;
             }
-            if ((MANAGER == null)) {
+            if ((SUPERVISOR == null)) {
                 this.Adapter.UpdateCommand.Parameters[12].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[12].Value = ((string)(MANAGER));
+                this.Adapter.UpdateCommand.Parameters[12].Value = ((string)(SUPERVISOR));
             }
-            if ((DEPUTY == null)) {
+            if ((MANAGER == null)) {
                 this.Adapter.UpdateCommand.Parameters[13].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[13].Value = ((string)(DEPUTY));
+                this.Adapter.UpdateCommand.Parameters[13].Value = ((string)(MANAGER));
             }
-            if ((FACTORY == null)) {
+            if ((DEPUTY == null)) {
                 this.Adapter.UpdateCommand.Parameters[14].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[14].Value = ((string)(FACTORY));
+                this.Adapter.UpdateCommand.Parameters[14].Value = ((string)(DEPUTY));
             }
-            if ((CODEPAGE == null)) {
+            if ((FACTORY == null)) {
                 this.Adapter.UpdateCommand.Parameters[15].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[15].Value = ((string)(CODEPAGE));
+                this.Adapter.UpdateCommand.Parameters[15].Value = ((string)(FACTORY));
             }
-            if ((ADDNAME == null)) {
+            if ((CODEPAGE == null)) {
                 this.Adapter.UpdateCommand.Parameters[16].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[16].Value = ((string)(ADDNAME));
+                this.Adapter.UpdateCommand.Parameters[16].Value = ((string)(CODEPAGE));
             }
-            if ((ADDDATE.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[17].Value = ((System.DateTime)(ADDDATE.Value));
-            }
-            else {
+            if ((ADDNAME == null)) {
                 this.Adapter.UpdateCommand.Parameters[17].Value = global::System.DBNull.Value;
             }
-            if ((EDITNAME == null)) {
+            else {
+                this.Adapter.UpdateCommand.Parameters[17].Value = ((string)(ADDNAME));
+            }
+            if ((ADDDATE.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[18].Value = ((System.DateTime)(ADDDATE.Value));
+            }
+            else {
                 this.Adapter.UpdateCommand.Parameters[18].Value = global::System.DBNull.Value;
             }
+            if ((EDITNAME == null)) {
+                this.Adapter.UpdateCommand.Parameters[19].Value = global::System.DBNull.Value;
+            }
             else {
-                this.Adapter.UpdateCommand.Parameters[18].Value = ((string)(EDITNAME));
+                this.Adapter.UpdateCommand.Parameters[19].Value = ((string)(EDITNAME));
             }
             if ((EDITDATE.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[19].Value = ((System.DateTime)(EDITDATE.Value));
+                this.Adapter.UpdateCommand.Parameters[20].Value = ((System.DateTime)(EDITDATE.Value));
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[19].Value = global::System.DBNull.Value;
+                this.Adapter.UpdateCommand.Parameters[20].Value = global::System.DBNull.Value;
             }
             if ((Original_ID == null)) {
                 throw new global::System.ArgumentNullException("Original_ID");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[20].Value = ((string)(Original_ID));
+                this.Adapter.UpdateCommand.Parameters[21].Value = ((string)(Original_ID));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -2081,11 +2141,12 @@ namespace Sci.Production.SCHEMASTableAdapters {
                     string NAME, 
                     string PASSWORD, 
                     string POSITION, 
-                    string FK01_PASS0, 
+                    global::System.Nullable<long> FKPASS0, 
                     global::System.Nullable<bool> ISADMIN, 
+                    global::System.Nullable<bool> ISMIS, 
                     string ORDERGROUP, 
                     string EMAIL, 
-                    string EXT_NO, 
+                    string EXTNO, 
                     global::System.Nullable<global::System.DateTime> ONBOARD, 
                     global::System.Nullable<global::System.DateTime> RESIGN, 
                     string SUPERVISOR, 
@@ -2098,7 +2159,7 @@ namespace Sci.Production.SCHEMASTableAdapters {
                     string EDITNAME, 
                     global::System.Nullable<global::System.DateTime> EDITDATE, 
                     string Original_ID) {
-            return this.Update(Original_ID, NAME, PASSWORD, POSITION, FK01_PASS0, ISADMIN, ORDERGROUP, EMAIL, EXT_NO, ONBOARD, RESIGN, SUPERVISOR, MANAGER, DEPUTY, FACTORY, CODEPAGE, ADDNAME, ADDDATE, EDITNAME, EDITDATE, Original_ID);
+            return this.Update(Original_ID, NAME, PASSWORD, POSITION, FKPASS0, ISADMIN, ISMIS, ORDERGROUP, EMAIL, EXTNO, ONBOARD, RESIGN, SUPERVISOR, MANAGER, DEPUTY, FACTORY, CODEPAGE, ADDNAME, ADDDATE, EDITNAME, EDITDATE, Original_ID);
         }
     }
     
