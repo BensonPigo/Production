@@ -112,7 +112,7 @@ namespace Sci.Production
             foreach (DataRow dr in dtMenu.Rows)
             {
                 //if (!myUtility.Empty(dr["ForMISOnly"]) && !Sci.Env.User.IsMIS) continue;
-                if (!myUtility.Empty(dr["IsSubMenu"])) continue;
+                if (!MyUtility.Check.Empty(dr["IsSubMenu"])) continue;
 
                 menus.Items.Add(progmenu = new ToolStripMenuItem(dr["MenuName"].ToString()));
                 progmenu.DropDownItemClicked += progmenu_DropDownItemClicked;
@@ -177,7 +177,7 @@ namespace Sci.Production
                 switch (dr["ObjectCode"].ToString())
                 {
                     case "0": // Form
-                        if (myUtility.Empty(dr["BarPrompt"]) || myUtility.Empty(dr["FormName"])) break;
+                        if (MyUtility.Check.Empty(dr["BarPrompt"]) || MyUtility.Check.Empty(dr["FormName"])) break;
                         dllName = dr["FormName"].ToString().Substring(0, dr["FormName"].ToString().LastIndexOf("."));
                         // PublicClass的Dll Name為Sci.Proj
                         if (dllName == "Sci.Win.UI") dllName = "Sci.Proj";
