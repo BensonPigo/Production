@@ -108,10 +108,13 @@ namespace Sci.Production
                 DDConvert();
             }
 
+            Env.User = user;
+
             // 產生Menu
             foreach (DataRow dr in dtMenu.Rows)
             {
                 if (!MyUtility.Check.Empty(dr["ForMISOnly"]) && !Sci.Env.User.IsMIS) continue;
+                if (!MyUtility.Check.Empty(dr["IsSubMenu"])) continue;
 
                 menus.Items.Add(progmenu = new ToolStripMenuItem(dr["MenuName"].ToString()));
                 progmenu.DropDownItemClicked += progmenu_DropDownItemClicked;
@@ -119,9 +122,6 @@ namespace Sci.Production
                 drs = dtMenuDetail.Select(string.Format("UKey = '{0}'", dr["PKey"].ToString().Trim()));
                 GenerateMenu(progmenu, drs);
             }
-
-
-            Env.User = user;
 
             if (!(result = SetTemplatePerm()))
             {
