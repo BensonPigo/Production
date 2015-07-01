@@ -48,11 +48,11 @@ namespace Sci.Production.Subcon
             if (dateRange2.Value1 != null) delivery_b = this.dateRange2.Text1;
             if (dateRange2.Value2 != null) { delivery_e = this.dateRange2.Text2; }
 
-            if ((myUtility.Empty(issuedate_b) && myUtility.Empty(issuedate_e)) &&
-                (myUtility.Empty(delivery_b) && myUtility.Empty(delivery_e ))  &&
-                myUtility.Empty(sp_b) && myUtility.Empty(sp_e) && myUtility.Empty(poid_b) && myUtility.Empty(poid_e))
+            if ((MyUtility.Check.Empty(issuedate_b) && MyUtility.Check.Empty(issuedate_e)) &&
+                (MyUtility.Check.Empty(delivery_b) && MyUtility.Check.Empty(delivery_e ))  &&
+                MyUtility.Check.Empty(sp_b) && MyUtility.Check.Empty(sp_e) && MyUtility.Check.Empty(poid_b) && MyUtility.Check.Empty(poid_e))
             {
-                myUtility.WarningBox("< PO Issue Date > or < Delivery > or < PO ID > or < SP# > can't be empty!!");
+                MyUtility.Msg.WarningBox("< PO Issue Date > or < Delivery > or < PO ID > or < SP# > can't be empty!!");
                 textBox1.Focus();
                 return;
             }
@@ -81,10 +81,10 @@ namespace Sci.Production.Subcon
                                                                         and a.category = '{0}' 
                                                                         and a.localsuppid = '{1}'", dr_localAp["category"].ToString(),
                                                                                                             dr_localAp["localsuppid"].ToString());
-                if(!myUtility.Empty(sp_b)){strSQLCmd+= " and b.orderid between @sp1 and @sp2";}
-                if (!myUtility.Empty(poid_b)) { strSQLCmd += " and b.id between @localpoid1 and  @localpoid2"; }
-                if (!myUtility.Empty(delivery_b)) { strSQLCmd += string.Format(" and b.Delivery between '{0}' and '{1}'", delivery_b, delivery_e); }
-                if (!myUtility.Empty(issuedate_b)) { strSQLCmd += string.Format(" and a.issuedate between '{0}' and '{1}'", issuedate_b, issuedate_e); }
+                if(!MyUtility.Check.Empty(sp_b)){strSQLCmd+= " and b.orderid between @sp1 and @sp2";}
+                if (!MyUtility.Check.Empty(poid_b)) { strSQLCmd += " and b.id between @localpoid1 and  @localpoid2"; }
+                if (!MyUtility.Check.Empty(delivery_b)) { strSQLCmd += string.Format(" and b.Delivery between '{0}' and '{1}'", delivery_b, delivery_e); }
+                if (!MyUtility.Check.Empty(issuedate_b)) { strSQLCmd += string.Format(" and a.issuedate between '{0}' and '{1}'", issuedate_b, issuedate_e); }
                 strSQLCmd += " order by b.id,b.orderid,b.refno,b.threadcolorid";
 
                 #region 準備sql參數資料
@@ -114,7 +114,7 @@ namespace Sci.Production.Subcon
                 if (result = DBProxy.Current.Select(null, strSQLCmd,cmds, out dtlocal))
                 {
                     if (dtlocal.Rows.Count == 0)
-                    { myUtility.WarningBox("Data not found!!"); }
+                    { MyUtility.Msg.WarningBox("Data not found!!"); }
                     listControlBindingSource1.DataSource = dtlocal;
                 }
                 else { ShowErr(strSQLCmd, result); }
@@ -133,7 +133,7 @@ namespace Sci.Production.Subcon
                 if ((decimal)e.FormattedValue > (decimal)ddr["unpaid"])
                 {
                     e.Cancel = true;
-                    myUtility.WarningBox("Qty can't be more than unpaid");
+                    MyUtility.Msg.WarningBox("Qty can't be more than unpaid");
                     return;
                 }
 
@@ -208,7 +208,7 @@ namespace Sci.Production.Subcon
             DataRow[] dr2 = dtImport.Select("qty = 0 and Selected = 1");
             if (dr2.Length > 0)
             {
-                myUtility.WarningBox("Qty of selected row can't be zero!", "Warning");
+                MyUtility.Msg.WarningBox("Qty of selected row can't be zero!", "Warning");
                 return;
             }
 
@@ -237,7 +237,7 @@ namespace Sci.Production.Subcon
             }
             else
             {
-                myUtility.WarningBox("Please select rows first!", "Warnning");
+                MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
             this.Close();

@@ -28,34 +28,34 @@ namespace Sci.Production.Subcon
             {
                 if (this.EditMode && this.txtsubcon1.TextBox1.Text != this.txtsubcon1.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID1"] = myUtility.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID1"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
                 }
             };
             this.txtsubcon2.TextBox1.Validated += (s, e) =>
             {
                 if (this.EditMode && this.txtsubcon2.TextBox1.Text != this.txtsubcon2.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID2"] = myUtility.Lookup("CurrencyID", this.txtsubcon2.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID2"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon2.TextBox1.Text, "LocalSupp", "ID");
                 }
             };
             this.txtsubcon3.TextBox1.Validated += (s, e) =>
             {
                 if (this.EditMode && this.txtsubcon3.TextBox1.Text != this.txtsubcon3.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID3"] = myUtility.Lookup("CurrencyID", this.txtsubcon3.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID3"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon3.TextBox1.Text, "LocalSupp", "ID");
                 }
             };
             this.txtsubcon4.TextBox1.Validated += (s, e) =>
             {
                 if (this.EditMode && this.txtsubcon4.TextBox1.Text != this.txtsubcon4.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID4"] = myUtility.Lookup("CurrencyID", this.txtsubcon4.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID4"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon4.TextBox1.Text, "LocalSupp", "ID");
                 }
             };
             
         }
 
-        protected override bool OnNewBefore()
+        protected override bool ClickNewBefore()
         {
             bool flag = false;
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -69,43 +69,43 @@ namespace Sci.Production.Subcon
             DBProxy.Current.Exists("", sqlcmd, cmds, out flag);
             if (flag)
             {
-                myUtility.WarningBox("Can't add data when data have not been Encoded.", "Warning");
+                MyUtility.Msg.WarningBox("Can't add data when data have not been Encoded.", "Warning");
                 return false;
             }
-            return base.OnNewBefore();
+            return base.ClickNewBefore();
         }
 
         //新增預設值
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
             
-            base.OnNewAfter();
+            base.ClickNewAfter();
             CurrentMaintain["Refno"] = dr["refno"].ToString();
             CurrentMaintain["issuedate"] = DateTime.Today;
         }
 
         //修改前檢查
-        protected override bool OnEditBefore()
+        protected override bool ClickEditBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if(dr["Encode"].ToString() == "True")
             {
-                myUtility.WarningBox("Record is encoded, can't modify!");
+                MyUtility.Msg.WarningBox("Record is encoded, can't modify!");
                 return false;
             }
-            return base.OnEditBefore();
+            return base.ClickEditBefore();
         }
 
         //刪除前檢查
-        protected override bool OnDeleteBefore()
+        protected override bool ClickDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["Encode"].ToString() == "True")
             {
-                myUtility.WarningBox("Record is encoded, can't delete!");
+                MyUtility.Msg.WarningBox("Record is encoded, can't delete!");
                 return false;
             }
-            return base.OnDeleteBefore();
+            return base.ClickDeleteBefore();
         }
 
         //refresh
@@ -151,7 +151,7 @@ namespace Sci.Production.Subcon
 
             if (string.IsNullOrWhiteSpace(suppid) || string.IsNullOrWhiteSpace(currencyid) || price == 0.0)
             {
-                myUtility.WarningBox("Choosed Set of data can't be empty!!");
+                MyUtility.Msg.WarningBox("Choosed Set of data can't be empty!!");
                 return;
             }
 
@@ -200,11 +200,11 @@ namespace Sci.Production.Subcon
                     if (result && result2)
                     {
                         _transactionscope.Complete();
-                        myUtility.WarningBox("Encode successful");
+                        MyUtility.Msg.WarningBox("Encode successful");
                     }
                     else
                     {
-                        myUtility.WarningBox("Encode failed, Pleaes re-try");
+                        MyUtility.Msg.WarningBox("Encode failed, Pleaes re-try");
                     }
                     
                 }

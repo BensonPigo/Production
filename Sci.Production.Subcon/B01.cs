@@ -37,14 +37,14 @@ namespace Sci.Production.Subcon
         }
 
         //
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
             
-            base.OnNewAfter();
+            base.ClickNewAfter();
         }
         
         //copy前清空id
-        protected override void OnCopyAfter()
+        protected override void ClickCopyAfter()
         {
             CurrentMaintain["Refno"] = DBNull.Value;
             CurrentMaintain["localsuppid"] = DBNull.Value;
@@ -56,39 +56,39 @@ namespace Sci.Production.Subcon
         }
 
         //編輯狀態限制
-        protected override void OnEditAfter()
+        protected override void ClickEditAfter()
         {
-            base.OnEditAfter();
+            base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
         }
 
         //存檔前檢查
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["refno"].ToString()))
             {
-                myUtility.WarningBox("< Refno > can not be empty!");
+                MyUtility.Msg.WarningBox("< Refno > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Category"].ToString()))
             {
-                myUtility.WarningBox("< Category > can not be empty!");
+                MyUtility.Msg.WarningBox("< Category > can not be empty!");
                 this.txtartworktype_fty1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Unitid"].ToString()))
             {
-                myUtility.WarningBox("< Unit > can not be empty!");
+                MyUtility.Msg.WarningBox("< Unit > can not be empty!");
                 this.txtunit_fty1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["description"].ToString()))
             {
-                myUtility.WarningBox("< Description > can not be empty!");
+                MyUtility.Msg.WarningBox("< Description > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }
@@ -97,31 +97,31 @@ namespace Sci.Production.Subcon
             {
                 if (CurrentMaintain["CtnLength"]==DBNull.Value || (decimal)CurrentMaintain["CtnLength"]==0)
                 {
-                    myUtility.WarningBox("< CtnLength > can not be empty!");
+                    MyUtility.Msg.WarningBox("< CtnLength > can not be empty!");
                     this.numericBox1.Focus();
                     return false;
                 }
                 if (CurrentMaintain["CtnWidth"]==DBNull.Value || (decimal)CurrentMaintain["CtnWidth"] ==0)
                 {
-                    myUtility.WarningBox("< CtnWidth > can not be empty!");
+                    MyUtility.Msg.WarningBox("< CtnWidth > can not be empty!");
                     this.numericBox2.Focus();
                     return false;
                 }
                 if (CurrentMaintain["CtnHeight"]==DBNull.Value || (decimal)CurrentMaintain["CtnHeight"] ==0)
                 {
-                    myUtility.WarningBox("< CtnHeight > can not be empty!");
+                    MyUtility.Msg.WarningBox("< CtnHeight > can not be empty!");
                     this.numericBox7.Focus();
                     return false;
                 }
                 if (string.IsNullOrWhiteSpace(CurrentMaintain["CtnUnit"].ToString()))
                 {
-                    myUtility.WarningBox("< CtnUnit > can not be empty!");
+                    MyUtility.Msg.WarningBox("< CtnUnit > can not be empty!");
                     this.comboBox1.Focus();
                     return false;
                 }
                 if (CurrentMaintain["CBM"]==DBNull.Value || (decimal)CurrentMaintain["CBM"] ==0)
                 {
-                    myUtility.WarningBox("< CBM > can not be empty!");
+                    MyUtility.Msg.WarningBox("< CBM > can not be empty!");
                     this.numericBox3.Focus();
                     return false;
                 }
@@ -131,37 +131,37 @@ namespace Sci.Production.Subcon
             {
                 if (CurrentMaintain["MeterToCone"]==DBNull.Value || (decimal)CurrentMaintain["MeterToCone"] ==0)
                 {
-                    myUtility.WarningBox("< MeterToCone > can not be empty!");
+                    MyUtility.Msg.WarningBox("< MeterToCone > can not be empty!");
                     this.numericBox8.Focus();
                     return false;
                 }
                 if (string.IsNullOrWhiteSpace(CurrentMaintain["ThreadTypeID"].ToString()))
                 {
-                    myUtility.WarningBox("< ThreadTypeID > can not be empty!");
+                    MyUtility.Msg.WarningBox("< ThreadTypeID > can not be empty!");
                     this.textBox8.Focus();
                     return false;
                 }
                 if (CurrentMaintain["ThreadTex"]==DBNull.Value || (decimal)CurrentMaintain["ThreadTex"] ==0)
                 {
-                    myUtility.WarningBox("< ThreadTex > can not be empty!");
+                    MyUtility.Msg.WarningBox("< ThreadTex > can not be empty!");
                     this.numericBox5.Focus();
                     return false;
                 }
                 if (CurrentMaintain["Weight"]==DBNull.Value || (decimal)CurrentMaintain["Weight"]  ==0)
                 {
-                    myUtility.WarningBox("< Weight > can not be empty!");
+                    MyUtility.Msg.WarningBox("< Weight > can not be empty!");
                     this.numericBox4.Focus();
                     return false;
                 }
                 if (CurrentMaintain["AxleWeight"]==DBNull.Value || (decimal)CurrentMaintain["AxleWeight"] == 0)
                 {
-                    myUtility.WarningBox("< AxleWeight > can not be empty!");
+                    MyUtility.Msg.WarningBox("< AxleWeight > can not be empty!");
                     this.numericBox6.Focus();
                     return false;
                 }
             }
 
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         //算CBM
@@ -188,7 +188,7 @@ namespace Sci.Production.Subcon
                 double i = double.Parse(CurrentMaintain["CtnLength"].ToString()) *
                     double.Parse(CurrentMaintain["CtnWidth"].ToString()) *
                     double.Parse(CurrentMaintain["CtnHeight"].ToString()) / 1000000000;
-                this.numericBox3.Text = myUtility.Round(i, 4).ToString();
+                this.numericBox3.Text = MyUtility.Math.Round(i, 4).ToString();
             }
             
         }
@@ -266,7 +266,7 @@ namespace Sci.Production.Subcon
             base.OnDetailEntered();
             
             string sqlcmd = "select refno from localitem_quot where refno = '" + CurrentMaintain["refno"].ToString() + "';";
-            if (myUtility.Seek(sqlcmd,"Production"  ))
+            if (MyUtility.Check.Seek(sqlcmd, "Production"))
             {
                 this.button1.ForeColor = Color.Blue;
             }
@@ -276,7 +276,7 @@ namespace Sci.Production.Subcon
             }
 
              sqlcmd = "select refno from localap_detail where refno = '" + CurrentMaintain["refno"].ToString() + "';";
-            if (myUtility.Seek(sqlcmd, "Production"))
+             if (MyUtility.Check.Seek(sqlcmd, "Production"))
             {
                 this.button2.ForeColor = Color.Blue;
             }

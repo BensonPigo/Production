@@ -101,7 +101,7 @@ namespace Sci.Production.Subcon
 
             if (string.IsNullOrWhiteSpace(orderID) && string.IsNullOrWhiteSpace(poid))
             {
-                myUtility.WarningBox("< SP# > or < Mother SP# > can't be empty!!");
+                MyUtility.Msg.WarningBox("< SP# > or < Mother SP# > can't be empty!!");
                 textBox1.Focus();
                 return;
             }
@@ -141,7 +141,7 @@ namespace Sci.Production.Subcon
                 if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
                 {
                     if (dtArtwork.Rows.Count == 0)
-                    { myUtility.WarningBox("Data not found!!"); }
+                    { MyUtility.Msg.WarningBox("Data not found!!"); }
                     listControlBindingSource1.DataSource = dtArtwork;
                 }
                 else { ShowErr(strSQLCmd,result); }
@@ -158,7 +158,7 @@ namespace Sci.Production.Subcon
 
             if (dr2.Length > 0 && flag)
             {
-                myUtility.WarningBox("UnitPrice of selected row can't be zero!", "Warning");
+                MyUtility.Msg.WarningBox("UnitPrice of selected row can't be zero!", "Warning");
                 return;
             }
 
@@ -190,7 +190,7 @@ namespace Sci.Production.Subcon
             }
             else
             {
-                myUtility.WarningBox("Please select rows first!", "Warnning");
+                MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
             this.Close();
@@ -205,18 +205,18 @@ namespace Sci.Production.Subcon
         {
             if (string.IsNullOrWhiteSpace(((Sci.Win.UI.TextBox)sender).Text)) return;
 
-            if (!myUtility.Seek(string.Format("select id from orders where id='{0}'", ((Sci.Win.UI.TextBox)sender).Text), null))
+            if (!MyUtility.Check.Seek(string.Format("select id from orders where id='{0}'", ((Sci.Win.UI.TextBox)sender).Text), null))
             {
-                myUtility.WarningBox(string.Format("SP# ({0}) is not found!",((Sci.Win.UI.TextBox)sender).Text));
+                MyUtility.Msg.WarningBox(string.Format("SP# ({0}) is not found!",((Sci.Win.UI.TextBox)sender).Text));
                 return;
             }
 
-            string cat = myUtility.Lookup(string.Format("select category from orders where  id= '{0}'", ((Sci.Win.UI.TextBox)sender).Text), null);
-            string isArtwork = myUtility.Lookup(string.Format("select isArtwork from artworktype where id='{0}'", dr["artworktypeid"]), null);
+            string cat = MyUtility.GetValue.Lookup(string.Format("select category from orders where  id= '{0}'", ((Sci.Win.UI.TextBox)sender).Text), null);
+            string isArtwork = MyUtility.GetValue.Lookup(string.Format("select isArtwork from artworktype where id='{0}'", dr["artworktypeid"]), null);
 
             if (cat=="B" && isArtwork.ToUpper()=="TRUE")
             {
-                myUtility.WarningBox("Bulk orders only allow Artwork is like Bonding,GMT Wash, ....!!", "Warning");
+                MyUtility.Msg.WarningBox("Bulk orders only allow Artwork is like Bonding,GMT Wash, ....!!", "Warning");
                 ((Sci.Win.UI.TextBox)sender).Text="";
                 e.Cancel = true;
                 return;

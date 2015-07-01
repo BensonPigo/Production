@@ -79,6 +79,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -117,6 +118,7 @@
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 427);
+            this.detailbtm.Size = new System.Drawing.Size(900, 38);
             // 
             // browse
             // 
@@ -698,31 +700,13 @@
             // txtsubcon1
             // 
             this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
-            // 
-            // 
-            // 
-            this.txtsubcon1.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtsubcon1.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtsubcon1.DisplayBox1.Location = new System.Drawing.Point(67, 0);
-            this.txtsubcon1.DisplayBox1.Name = "displayBox1";
-            this.txtsubcon1.DisplayBox1.Size = new System.Drawing.Size(90, 23);
-            this.txtsubcon1.DisplayBox1.TabIndex = 1;
+            this.txtsubcon1.DisplayBox1Binding = "";
             this.txtsubcon1.IsIncludeJunk = false;
             this.txtsubcon1.Location = new System.Drawing.Point(93, 130);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
             this.txtsubcon1.TabIndex = 5;
-            // 
-            // 
-            // 
-            this.txtsubcon1.TextBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtsubcon1.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtsubcon1.TextBox1.IsSupportEditMode = false;
-            this.txtsubcon1.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtsubcon1.TextBox1.Name = "textBox1";
-            this.txtsubcon1.TextBox1.ReadOnly = true;
-            this.txtsubcon1.TextBox1.Size = new System.Drawing.Size(66, 23);
-            this.txtsubcon1.TextBox1.TabIndex = 0;
+            this.txtsubcon1.TextBox1Binding = "";
             // 
             // dateBox1
             // 
@@ -750,6 +734,8 @@
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

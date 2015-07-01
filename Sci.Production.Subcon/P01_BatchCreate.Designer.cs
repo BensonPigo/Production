@@ -52,6 +52,7 @@
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.button2 = new Sci.Win.UI.Button();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.button5 = new Sci.Win.UI.Button();
             this.button4 = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
@@ -309,6 +310,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.button5);
             this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.button4);
             this.groupBox2.Controls.Add(this.label6);
@@ -325,6 +327,16 @@
             this.groupBox2.TabIndex = 22;
             this.groupBox2.TabStop = false;
             // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(148, 15);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(80, 30);
+            this.button5.TabIndex = 16;
+            this.button5.Text = "csv + xlt";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click_1);
+            // 
             // button4
             // 
             this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -335,6 +347,7 @@
             this.button4.TabIndex = 2;
             this.button4.Text = "To Excel";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // P01_BatchCreate
             // 
@@ -383,5 +396,6 @@
         private Win.UI.DateBox dateBox1;
         private Class.txtartworktype_fty txtartworktype_fty1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.Button button5;
     }
 }

@@ -34,7 +34,7 @@ namespace Sci.Production.Subcon
 
             DataTable tmpdt;
             Sci.Data.DBProxy.Current.Select(null, string.Format("select sum(qty) from order_qty where id = '{0}'", data["orderid"]), out tmpdt);
-            if (myUtility.Empty(tmpdt.Rows[0][0]))
+            if (MyUtility.Check.Empty(tmpdt.Rows[0][0]))
             { this.displayBox8.Text = ""; }
             else
             { sum_order_qty = int.Parse(tmpdt.Rows[0][0].ToString()); this.displayBox8.Text = tmpdt.Rows[0][0].ToString(); }
@@ -60,7 +60,7 @@ namespace Sci.Production.Subcon
         {
             if (!(dr["apqty"] == DBNull.Value) && ((Sci.Win.UI.NumericBox)sender).Value < int.Parse(dr["apqty"].ToString()))
             {
-                myUtility.WarningBox("PO Qty can't less than AP Qty", "Wanring");
+                MyUtility.Msg.WarningBox("PO Qty can't less than AP Qty", "Wanring");
                 e.Cancel = true;
                 return;
             }
@@ -118,11 +118,11 @@ namespace Sci.Production.Subcon
                     if (result && result2)
                     {
                         _transactionscope.Complete();
-                        myUtility.WarningBox("Save sucessful");
+                        MyUtility.Msg.WarningBox("Save sucessful");
                     }
                     else
                     {
-                        myUtility.WarningBox("Save failed, Pleaes re-try");
+                        MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
                         return;
                     }
                 }

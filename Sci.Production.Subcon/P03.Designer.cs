@@ -101,8 +101,8 @@
             // 
             // gridicon
             // 
-            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(1000, 100);
+            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
+            this.gridicon.Location = new System.Drawing.Point(892, 100);
             this.gridicon.TabIndex = 6;
             // 
             // refresh
@@ -113,14 +113,6 @@
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(1000, 490);
-            // 
-            // detailgridcont2
-            // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
-            // 
-            // detailpanel2
-            // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 

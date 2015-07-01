@@ -26,6 +26,13 @@ namespace Sci.Production.Subcon
             : base(menuitem)
         {
             InitializeComponent();
+            
+            //(e.Details).Columns.Add("amount", typeof(decimal));
+            //(e.Details).Columns["amount"].Expression = "price * qty";
+            //(e.Details).Columns.Add("balance", typeof(decimal));
+            //(e.Details).Columns.Add("inqty", typeof(decimal));
+            //(e.Details).Columns.Add("apqty", typeof(decimal));
+            //(e.Details).Columns.Add("description", typeof(string));
             this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
             gridicon.Append.Enabled = false;
             gridicon.Append.Visible = false;
@@ -36,8 +43,8 @@ namespace Sci.Production.Subcon
             {
                 if (this.EditMode && this.txtsubcon1.TextBox1.Text != this.txtsubcon1.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID"] = myUtility.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
-                    CurrentMaintain["Paytermid"] = myUtility.Lookup("paytermid", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["Paytermid"] = MyUtility.GetValue.Lookup("paytermid", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
                     ((DataTable)detailgridbs.DataSource).Rows.Clear();
                 }
             };
@@ -56,9 +63,9 @@ namespace Sci.Production.Subcon
         }
 
         // 新增時預設資料
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
-            base.OnNewAfter();
+            base.ClickNewAfter();
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
             CurrentMaintain["HANDLE"] = Sci.Env.User.UserID;
@@ -68,19 +75,19 @@ namespace Sci.Production.Subcon
         }
 
         // delete前檢查
-        protected override bool OnDeleteBefore()
+        protected override bool ClickDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["Status"].ToString().ToUpper() == "APPROVED")
             {
-                myUtility.WarningBox("Data is approved, can't delete.", "Warning");
+                MyUtility.Msg.WarningBox("Data is approved, can't delete.", "Warning");
                 return false;
             }
-            return base.OnDeleteBefore();
+            return base.ClickDeleteBefore();
         }
 
         // edit前檢查
-        protected override bool OnEditBefore()
+        protected override bool ClickEditBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["status"].ToString() == "Approved")
@@ -91,23 +98,23 @@ namespace Sci.Production.Subcon
                 return false;
             }
 
-            return base.OnEditBefore();
+            return base.ClickEditBefore();
         }
 
         // save前檢查 & 取id
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             #region 必輸檢查
             if (CurrentMaintain["LocalSuppID"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["LocalSuppID"].ToString()))
             {
-                myUtility.WarningBox("< Suppiler >  can't be empty!", "Warning");
+                MyUtility.Msg.WarningBox("< Suppiler >  can't be empty!", "Warning");
                 txtsubcon1.TextBox1.Focus();
                 return false;
             }
 
             if (CurrentMaintain["issuedate"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
             {
-                myUtility.WarningBox("< Issue Date >  can't be empty!", "Warning");
+                MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
                 dateBox1.Focus();
                 return false;
             }
@@ -116,56 +123,61 @@ namespace Sci.Production.Subcon
 
             if (CurrentMaintain["Category"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["Category"].ToString()))
             {
-                myUtility.WarningBox("< Category >  can't be empty!", "Warning");
+                MyUtility.Msg.WarningBox("< Category >  can't be empty!", "Warning");
                 txtartworktype_fty1.Focus();
                 return false;
             }
 
             if (CurrentMaintain["CurrencyID"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["CurrencyID"].ToString()))
             {
-                myUtility.WarningBox("< Currency >  can't be empty!", "Warning");
+                MyUtility.Msg.WarningBox("< Currency >  can't be empty!", "Warning");
                 return false;
             }
 
             if (CurrentMaintain["Handle"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["Handle"].ToString()))
             {
-                myUtility.WarningBox("< Handle >  can't be empty!", "Warning");
+                MyUtility.Msg.WarningBox("< Handle >  can't be empty!", "Warning");
                 txtuser1.TextBox1.Focus();
                 return false;
             }
             #endregion
 
+            foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty = 0"))
+            {
+                ((DataTable)detailgridbs.DataSource).Rows.Remove(row);
+            }
+
             if (DetailDatas.Count == 0)
             {
-                myUtility.WarningBox("Detail can't be empty", "Warning");
+                MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
                 return false;
             }
 
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'LocalPO1'), 'LocalPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.myUtility.GetID(ProductionEnv.Keyword + "LA", "LocalAP", (DateTime)CurrentMaintain["issuedate"]);
-                if (myUtility.Empty(CurrentMaintain["id"]))
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(ProductionEnv.Keyword + "LA", "LocalAP", (DateTime)CurrentMaintain["issuedate"]);
+                if (MyUtility.Check.Empty(CurrentMaintain["id"]))
                 {
-                    myUtility.WarningBox("Server is busy, Please re-try it again", "GetID() Failed");
+                    MyUtility.Msg.WarningBox("Server is busy, Please re-try it again", "GetID() Failed");
                     return false;
                 }
             }
 
             #region 加總明細金額至表頭
-            string str = myUtility.Lookup(string.Format("Select exact from Currency where id = '{0}'", CurrentMaintain["currencyId"]), null);
+            string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency where id = '{0}'", CurrentMaintain["currencyId"]), null);
             if (str == null || string.IsNullOrWhiteSpace(str))
             {
-                myUtility.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't save!", CurrentMaintain["currencyID"]), "Warning");
+                MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't save!", CurrentMaintain["currencyID"]), "Warning");
                 return false;
             }
             int exact = int.Parse(str);
             object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(amount)", "");
-            CurrentMaintain["amount"] = myUtility.Round((decimal)detail_a, exact);
-            CurrentMaintain["vat"] = myUtility.Round((decimal)detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
+            CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_a, exact);
+            CurrentMaintain["vat"] = MyUtility.Math.Round((decimal)detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
             #endregion
 
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         // grid 加工填值
@@ -173,21 +185,21 @@ namespace Sci.Production.Subcon
         {
             if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
             {
-                (e.Details).Columns.Add("amount", typeof(decimal));
+                //(e.Details).Columns.Add("amount", typeof(decimal));
                 (e.Details).Columns["amount"].Expression = "price * qty";
-                (e.Details).Columns.Add("balance", typeof(decimal));
-                (e.Details).Columns.Add("inqty", typeof(decimal));
-                (e.Details).Columns.Add("apqty", typeof(decimal));
-                (e.Details).Columns.Add("description", typeof(string));
+                //(e.Details).Columns.Add("balance", typeof(decimal));
+                //(e.Details).Columns.Add("inqty", typeof(decimal));
+                //(e.Details).Columns.Add("apqty", typeof(decimal));
+                //(e.Details).Columns.Add("description", typeof(string));
 
                 foreach (DataRow dr in e.Details.Rows)
                 {
                     DataRow tmp;
-                    if (myUtility.Seek(string.Format("select inqty,apqty from localpo_detail where ukey = '{0}'", dr["localpo_detailukey"]), out tmp))
+                    if (MyUtility.Check.Seek(string.Format("select inqty,apqty from localpo_detail where ukey = '{0}'", dr["localpo_detailukey"]), out tmp))
                     {
                         dr["inqty"] = tmp["inqty"];
                         dr["apqty"] = tmp["apqty"];
-                        dr["balance"] = (decimal)dr["inqty"] - (decimal)dr["apqty"];
+                        dr["balance"] = (int)dr["inqty"] - (int)dr["apqty"];
                     }
                     
                     dr["description"] = Prgs.GetItemDesc(e.Master["category"].ToString(), dr["refno"].ToString());
@@ -224,6 +236,13 @@ namespace Sci.Production.Subcon
             #endregion
 
         }
+        // detail 新增時設定預設值
+        protected override void OnDetailGridInsert(int index = -1)
+        {
+            base.OnDetailGridInsert(index);
+            CurrentDetailData["bundleno"] = "";
+            CurrentDetailData["qty"] = 0;
+        }
 
         // Detail Grid 設定 & Detail Vaild
         protected override void OnDetailGridSetup()
@@ -236,7 +255,7 @@ namespace Sci.Production.Subcon
                 {
                     if ((decimal)e.FormattedValue > (decimal)CurrentDetailData["balance"] )
                     {
-                        myUtility.WarningBox("can't over balance qty", "Warning");
+                        MyUtility.Msg.WarningBox("can't over balance qty", "Warning");
                         e.Cancel = true;
                         return;
                     }
@@ -266,9 +285,9 @@ namespace Sci.Production.Subcon
         }
 
         //Approve
-        protected override void OnConfirm()
+        protected override void ClickConfirm()
         {
-            base.OnConfirm();
+            base.ClickConfirm();
             var dr = this.CurrentMaintain; if (null == dr) return;
             String sqlcmd, sqlupd2 = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
@@ -283,7 +302,7 @@ namespace Sci.Production.Subcon
                 {
                     ids += drchk[0].ToString() + ",";
                 }
-                myUtility.WarningBox(String.Format("These POID <{0}> already closed, can't Approve it", ids));
+                MyUtility.Msg.WarningBox(String.Format("These POID <{0}> already closed, can't Approve it", ids));
                 return;
             }
             #endregion
@@ -311,9 +330,9 @@ namespace Sci.Production.Subcon
                     }
                 }
             }
-            if (!myUtility.Empty(ids))
+            if (!MyUtility.Check.Empty(ids))
             {
-                myUtility.WarningBox(ids);
+                MyUtility.Msg.WarningBox(ids);
                 return;
             }
             #endregion
@@ -365,7 +384,7 @@ namespace Sci.Production.Subcon
                     }
 
                     _transactionscope.Complete();
-                    myUtility.InfoBox("Approve successful");
+                    MyUtility.Msg.InfoBox("Approve successful");
                 }
                 catch (Exception ex)
                 {
@@ -377,15 +396,15 @@ namespace Sci.Production.Subcon
             _transactionscope = null;
             this.RenewData();
             this.OnDetailEntered();
-            this.EnsureToolbarCUSR();
+            this.EnsureToolbarExt();
             #endregion
         }
 
         //unApprove
-        protected override void OnUnconfirm()
+        protected override void ClickUnconfirm()
         {
-            base.OnUnconfirm();
-            DialogResult dResult = myUtility.QuestionBox("Do you want to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+            base.ClickUnconfirm();
+            DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO") return;
             var dr = this.CurrentMaintain; if (null == dr) return;
             String sqlcmd, sqlupd2 = "", sqlupd3 = "", ids = "";
@@ -401,17 +420,14 @@ namespace Sci.Production.Subcon
                 {
                     ids += drchk[0].ToString() + ",";
                 }
-                myUtility.WarningBox(String.Format("These POID <{0}> already closed, can't UnApprove it", ids));
+                MyUtility.Msg.WarningBox(String.Format("These POID <{0}> already closed, can't UnApprove it", ids));
                 return;
             }
             #endregion
 
-
             #region 開始更新相關table資料
-
-            sqlupd3 = string.Format("update Localap set status='New',apvname='', apvdate = null , editname = '{0}' , editdate = GETDATE() " +
-                               "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-
+            sqlupd3 = string.Format(@"update Localap set status='New',apvname='', apvdate = null , editname = '{0}' 
+                                                , editdate = GETDATE() where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
             foreach (DataRow drchk in DetailDatas)
             {
@@ -455,7 +471,7 @@ namespace Sci.Production.Subcon
                     }
 
                     _transactionscope.Complete();
-                    myUtility.InfoBox("UnApprove successful");
+                    MyUtility.Msg.InfoBox("UnApprove successful");
                 }
                 catch (Exception ex)
                 {
@@ -467,7 +483,7 @@ namespace Sci.Production.Subcon
             _transactionscope = null;
             this.RenewData();
             this.OnDetailEntered();
-            this.EnsureToolbarCUSR();
+            this.EnsureToolbarExt();
 
             #endregion
         }
@@ -477,16 +493,16 @@ namespace Sci.Production.Subcon
         {
             var dr = CurrentMaintain; if (null == dr) return;
             
-            if (myUtility.Empty(dr["Category"]))
+            if (MyUtility.Check.Empty(dr["Category"]))
             {
-                myUtility.WarningBox("Please fill Category first!");
+                MyUtility.Msg.WarningBox("Please fill Category first!");
                 txtartworktype_fty1.Focus();
                 return;
             }
 
-            if (myUtility.Empty(dr["localsuppid"]))
+            if (MyUtility.Check.Empty(dr["localsuppid"]))
             {
-                myUtility.WarningBox("Please fill Supplier first!");
+                MyUtility.Msg.WarningBox("Please fill Supplier first!");
                 txtsubcon1.TextBox1.Focus();
                 return;
             }
@@ -511,8 +527,19 @@ namespace Sci.Production.Subcon
 
         }
 
+        protected override DualResult OnRenewDataPost(Win.Tems.Input1.RenewDataPostEventArgs e)
+        {
+            this.DetailSelectCommand = string.Format(@"select *,0.0 as amount,0.0 as balance,0 as inqty,0 as apqty,'' as description 
+                                                                            from localap_detail where localap_detail.id = '{0}'", e.Data["id"].ToString());
+            return base.OnRenewDataPost(e);
+        }
 
-
+        protected override bool ClickNewBefore()
+        {
+            this.DetailSelectCommand = string.Format(@"select *,0.0 as amount,0.0 as balance,0 as inqty,0 as apqty,'' as description 
+                                                                            from localap_detail where 1=2");
+            return base.ClickNewBefore();
+        }
 
     }
 }

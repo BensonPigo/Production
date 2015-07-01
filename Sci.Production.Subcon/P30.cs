@@ -27,11 +27,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
-            this.DetailSelectCommand = @"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
-                                                        from localpo_detail 
-                                                            inner join orders on localpo_detail.orderid = orders.id
-                                                            inner join localitem on localitem.refno = localpo_detail.refno 
-                                                        Where localpo_detail.id = @ID order by orderid,localpo_detail.refno,threadcolorid ;--";
+            
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
 
@@ -39,17 +35,17 @@ namespace Sci.Production.Subcon
             {
                 if (this.EditMode && this.txtsubcon1.TextBox1.Text != this.txtsubcon1.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID"] = myUtility.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
                     ((DataTable)detailgridbs.DataSource).Rows.Clear();
                 }
             };
 
         }
 
-        protected override void EnsureToolbarCUSR()
+        protected override void EnsureToolbarExt()
         {
-            base.EnsureToolbarCUSR();
-            if (!tabs.TabPages[0].Equals(tabs.SelectedTab) && !myUtility.Empty(CurrentMaintain))
+            base.EnsureToolbarExt();
+            if (!tabs.TabPages[0].Equals(tabs.SelectedTab) && !MyUtility.Check.Empty(CurrentMaintain))
             {
                 this.toolbar.cmdConfirm.Enabled = !this.EditMode && Sci.Production.PublicPrg.Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["status"].ToString() == "New";
                 this.toolbar.cmdUnconfirm.Enabled = !this.EditMode && Sci.Production.PublicPrg.Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["status"].ToString() == "Approved";
@@ -57,9 +53,9 @@ namespace Sci.Production.Subcon
         }
 
         // 新增時預設資料
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
-            base.OnNewAfter();
+            base.ClickNewAfter();
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
             CurrentMaintain["VatRate"] = 0;
@@ -68,12 +64,12 @@ namespace Sci.Production.Subcon
         }
 
         // delete前檢查
-        protected override bool OnDeleteBefore()
+        protected override bool ClickDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["status"].ToString().ToUpper() == "APPROVED")
             {
-                myUtility.WarningBox("Data is approved, can't delete.", "Warning");
+                MyUtility.Msg.WarningBox("Data is approved, can't delete.", "Warning");
                 return false;
             }
 
@@ -96,14 +92,14 @@ namespace Sci.Production.Subcon
                 {
                     ids += dt.Rows[i][0].ToString() + ";";
                 }
-                myUtility.WarningBox(string.Format("Below AP {0} refer to details data, can't delete.", ids), "Warning");
+                MyUtility.Msg.WarningBox(string.Format("Below AP {0} refer to details data, can't delete.", ids), "Warning");
                 return false;
             }
-            return base.OnDeleteBefore();
+            return base.ClickDeleteBefore();
         }
 
         // edit前檢查
-        protected override bool OnEditBefore()
+        protected override bool ClickEditBefore()
         {
             //!EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
@@ -115,70 +111,76 @@ namespace Sci.Production.Subcon
                 return false;
             }
 
-            return base.OnEditBefore();
+            return base.ClickEditBefore();
         }
 
         // save前檢查 & 取id
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
 
             #region 必輸檢查
             if (CurrentMaintain["LocalSuppID"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["LocalSuppID"].ToString()))
             {
-                myUtility.WarningBox("< Suppiler >  can't be empty!", "Warning");
+                MyUtility.Msg.WarningBox("< Suppiler >  can't be empty!", "Warning");
                 txtsubcon1.TextBox1.Focus();
                 return false;
             }
 
             if (CurrentMaintain["issuedate"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
             {
-                myUtility.WarningBox("< Issue Date >  can't be empty!", "Warning");
+                MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
                 dateBox1.Focus();
                 return false;
             }
 
             if (CurrentMaintain["Category"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["Category"].ToString()))
             {
-                myUtility.WarningBox("< Category >  can't be empty!", "Warning");
+                MyUtility.Msg.WarningBox("< Category >  can't be empty!", "Warning");
                 txtartworktype_fty1.Focus();
                 return false;
             }
 
             if (CurrentMaintain["CurrencyID"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["CurrencyID"].ToString()))
             {
-                myUtility.WarningBox("< Currency >  can't be empty!", "Warning");
+                MyUtility.Msg.WarningBox("< Currency >  can't be empty!", "Warning");
                 return false;
             }
 
 
             #endregion
 
+            foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty = 0 or qty = null"))
+            {
+                ((DataTable)detailgridbs.DataSource).Rows.Remove(row);
+            }
+            
+
             if (DetailDatas.Count == 0)
             {
-                myUtility.WarningBox("Detail can't be empty", "Warning");
+                MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
                 return false;
             }
 
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'LocalPO1'), 'LocalPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.myUtility.GetID(ProductionEnv.Keyword + "LP", "Localpo", (DateTime)CurrentMaintain["issuedate"]);
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(ProductionEnv.Keyword + "LP", "Localpo", (DateTime)CurrentMaintain["issuedate"]);
             }
 
             #region 加總明細金額至表頭
-            string str = myUtility.Lookup(string.Format("Select exact from Currency where id = '{0}'", CurrentMaintain["currencyId"]), null);
+            string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency where id = '{0}'", CurrentMaintain["currencyId"]), null);
             if (str == null || string.IsNullOrWhiteSpace(str))
             {
-                myUtility.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't save!", CurrentMaintain["currencyID"]), "Warning");
+                MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't save!", CurrentMaintain["currencyID"]), "Warning");
                 return false;
             }
             int exact = int.Parse(str);
-            //object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(amount)", "");
-            //CurrentMaintain["amount"] = myUtility.Round((decimal)detail_a, exact);
-            //CurrentMaintain["vat"] = myUtility.Round((decimal)detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
+            object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(amount)", "");
+            CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_a, exact);
+            CurrentMaintain["vat"] = MyUtility.Math.Round((decimal)detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
             #endregion
 
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         // grid 加工填值
@@ -233,6 +235,13 @@ namespace Sci.Production.Subcon
 
         }
 
+        // detail 新增時設定預設值
+        protected override void OnDetailGridInsert(int index = -1)
+        {
+            base.OnDetailGridInsert(index);
+            CurrentDetailData["qty"] = 0;
+        }
+
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
@@ -243,23 +252,23 @@ namespace Sci.Production.Subcon
             {
                 if (!this.EditMode && (CurrentMaintain["status"].ToString().ToUpper() == "Approved"))
                 {
-                    if (myUtility.Seek(string.Format("select price from order_tmscost where id = '{0}' and artworktypeid = '{1}'",e.FormattedValue,CurrentMaintain["categor"]),out dr,null))
+                    if (MyUtility.Check.Seek(string.Format("select price from order_tmscost where id = '{0}' and artworktypeid = '{1}'", e.FormattedValue, CurrentMaintain["categor"]), out dr, null))
                     {
                         if ((decimal)dr["price"] == 0m)
                         {
-                            myUtility.WarningBox("TmsCost price is Zero","Warning");
+                            MyUtility.Msg.WarningBox("TmsCost price is Zero","Warning");
                             e.Cancel=true;
                             return;
                         }
                     }
                     else
                     {
-                        myUtility.WarningBox("SP# is not in Order_TmsCost","Data not found");
+                        MyUtility.Msg.WarningBox("SP# is not in Order_TmsCost","Data not found");
                         e.Cancel = true;
                         return;
                     }
                 }
-                if (myUtility.Seek(string.Format("select factoryid, sewinline from orders where id = '{0}'", e.FormattedValue), out dr, null))
+                if (MyUtility.Check.Seek(string.Format("select factoryid, sewinline from orders where id = '{0}'", e.FormattedValue), out dr, null))
                 {
                     //CurrentDetailData["factoryid"] = dr["factoryid"];
                     //CurrentDetailData["sewinline"] = dr["sewinline"];
@@ -288,13 +297,13 @@ namespace Sci.Production.Subcon
             };
             ts.CellValidating += (s, e) =>
                 {
-                    if (myUtility.Empty(e.FormattedValue)) return;
-                    if (!myUtility.Seek(string.Format(@"select refno,unitid,price from localitem 
+                    if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                    if (!MyUtility.Check.Seek(string.Format(@"select refno,unitid,price from localitem 
                                                                       where refno = '{0}' and category ='{1}'and localsuppid = '{2}'"
                                                                     ,e.FormattedValue.ToString(),CurrentMaintain["category"],CurrentMaintain["localsuppid"])
                                                                     ,out dr,null))
                     {
-                        myUtility.WarningBox("Data not found!","Ref#");
+                        MyUtility.Msg.WarningBox("Data not found!","Ref#");
                         e.Cancel = true;
                         return;
                     }
@@ -326,17 +335,17 @@ namespace Sci.Production.Subcon
             };
             ts2.CellValidating += (s, e) =>
             {
-                if (myUtility.Empty(e.FormattedValue) || !(CurrentMaintain["category"].ToString().ToUpper() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper() == "EMB_THREAD"))
+                if (MyUtility.Check.Empty(e.FormattedValue) || !(CurrentMaintain["category"].ToString().ToUpper() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper() == "EMB_THREAD"))
                 {
                     //e.Cancel = true;
                     return;
                 }
-                if (!myUtility.Seek(string.Format(@"select junk from threadcolor 
+                if (!MyUtility.Check.Seek(string.Format(@"select junk from threadcolor 
                                                                       where id = '{0}' and junk=0 "
                                                                 , e.FormattedValue.ToString())
                                                                 , out dr, null))
                 {
-                    myUtility.WarningBox("Data not found!","Color Shade");
+                    MyUtility.Msg.WarningBox("Data not found!","Color Shade");
                     e.Cancel = true;
                     return;
                 }
@@ -350,7 +359,7 @@ namespace Sci.Production.Subcon
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    CurrentDetailData["amount"] = (decimal)CurrentDetailData["price"] * (decimal)e.FormattedValue;
+                    //CurrentDetailData["amount"] = (decimal)CurrentDetailData["price"] * (decimal)e.FormattedValue;
                     CurrentDetailData["qty"] = e.FormattedValue;
                 }
             };
@@ -387,15 +396,15 @@ namespace Sci.Production.Subcon
         private void button4_Click(object sender, EventArgs e)
         {
             var dr = CurrentMaintain; if (null == dr) return;
-            if (myUtility.Empty(dr["localsuppid"]))
+            if (MyUtility.Check.Empty(dr["localsuppid"]))
             {
-                myUtility.WarningBox("Please fill Supplier first!");
+                MyUtility.Msg.WarningBox("Please fill Supplier first!");
                 txtsubcon1.TextBox1.Focus();
                 return;
             }
-            if (myUtility.Empty(dr["category"]))
+            if (MyUtility.Check.Empty(dr["category"]))
             {
-                myUtility.WarningBox("Please fill Localtype first!");
+                MyUtility.Msg.WarningBox("Please fill Localtype first!");
                 txtartworktype_fty1.Focus();
                 return;
             }
@@ -416,9 +425,9 @@ namespace Sci.Production.Subcon
         }
 
         //Approve
-        protected override void OnConfirm()
+        protected override void ClickConfirm()
         {
-            base.OnConfirm();
+            base.ClickConfirm();
             var dr = this.CurrentMaintain; 
             if (null == dr) return;
 
@@ -436,13 +445,13 @@ namespace Sci.Production.Subcon
                 ShowErr(sqlcmd,result2);
                 return;
             }
-            if (myUtility.Empty(datacheck) && datacheck.Rows.Count > 0)
+            if (MyUtility.Check.Empty(datacheck) && datacheck.Rows.Count > 0)
             {
                 foreach (DataRow tmp in datacheck.Rows)
                 {
                     ids += string.Format("Request ID: {0} is already in LocalPO : {1}" + Environment.NewLine, tmp[0], tmp[1]);
                 }
-                myUtility.WarningBox("Below request id already be created in Local PO, can't approve it!!" + Environment.NewLine + ids, "Warning");
+                MyUtility.Msg.WarningBox("Below request id already be created in Local PO, can't approve it!!" + Environment.NewLine + ids, "Warning");
                 return;
             }
             #endregion
@@ -479,7 +488,7 @@ namespace Sci.Production.Subcon
                     }
 
                     _transactionscope.Complete();
-                    myUtility.InfoBox("Approve successful");
+                    MyUtility.Msg.InfoBox("Approve successful");
                 }
                 catch (Exception ex)
                 {
@@ -491,23 +500,23 @@ namespace Sci.Production.Subcon
             _transactionscope = null;
             this.RenewData();
             this.OnDetailEntered();
-            this.EnsureToolbarCUSR();
+            this.EnsureToolbarExt();
             #endregion
         }
 
         //unApprove
-        protected override void OnUnconfirm()
+        protected override void ClickUnconfirm()
         {
-            base.OnUnconfirm();
+            base.ClickUnconfirm();
             DataTable dt = (DataTable)detailgridbs.DataSource;
             DataRow[] drs = dt.Select("apqty > 0");
             if (drs.Length != 0)
             {
-                myUtility.WarningBox("Detail data has AP Qty, can't unApprove!", "Warning");
+                MyUtility.Msg.WarningBox("Detail data has AP Qty, can't unApprove!", "Warning");
                 return;
             }
             
-            DialogResult dResult = myUtility.QuestionBox("Do you want to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+            DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO") return;
             var dr = this.CurrentMaintain; if (null == dr) return;
             String sqlcmd, sqlupd2 = "", sqlupd3 = "", ids = "";
@@ -550,7 +559,7 @@ namespace Sci.Production.Subcon
                     }
 
                     _transactionscope.Complete();
-                    myUtility.InfoBox("UnApprove successful");
+                    MyUtility.Msg.InfoBox("UnApprove successful");
                 }
                 catch (Exception ex)
                 {
@@ -562,12 +571,29 @@ namespace Sci.Production.Subcon
             _transactionscope = null;
             this.RenewData();
             this.OnDetailEntered();
-            this.EnsureToolbarCUSR();
+            this.EnsureToolbarExt();
 
             #endregion
         }
 
+        protected override DualResult OnRenewDataPost(Win.Tems.Input1.RenewDataPostEventArgs e)
+        {
+            this.DetailSelectCommand = string.Format(@"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
+                                                        from localpo_detail 
+                                                            inner join orders on localpo_detail.orderid = orders.id
+                                                            inner join localitem on localitem.refno = localpo_detail.refno 
+                                                        Where localpo_detail.id = '{0}' order by orderid,localpo_detail.refno,threadcolorid ", e.Data["id"].ToString());//
+            return base.OnRenewDataPost(e);
+        }
 
-
+        protected override bool ClickNewBefore()
+        {
+            this.DetailSelectCommand = string.Format(@"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
+                                                        from localpo_detail 
+                                                            inner join orders on localpo_detail.orderid = orders.id
+                                                            inner join localitem on localitem.refno = localpo_detail.refno 
+                                                        where 1=2 order by orderid,localpo_detail.refno,threadcolorid ");
+            return base.ClickNewBefore();
+        }
     }
 }

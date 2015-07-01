@@ -37,9 +37,9 @@ namespace Sci.Production.Subcon
             String poid_b = this.textBox4.Text;
             String poid_e = this.textBox3.Text;
 
-            if (myUtility.Empty(sp_b) && myUtility.Empty(sp_e) && myUtility.Empty(poid_b) && myUtility.Empty(poid_e))
+            if (MyUtility.Check.Empty(sp_b) && MyUtility.Check.Empty(sp_e) && MyUtility.Check.Empty(poid_b) && MyUtility.Check.Empty(poid_e))
             {
-                myUtility.WarningBox("SP# and Artwork POID can't be emtpqy");
+                MyUtility.Msg.WarningBox("SP# and Artwork POID can't be emtpqy");
                 textBox1.Focus();
                 return;
             }
@@ -70,8 +70,8 @@ namespace Sci.Production.Subcon
                                                                         and a.artworktypeid = '{0}' 
                                                                         and a.localsuppid = '{1}'", dr_artworkAp["artworktypeid"].ToString(),
                                                                                                             dr_artworkAp["localsuppid"].ToString());
-                if(!myUtility.Empty(sp_b)){strSQLCmd+= " and b.orderid between @sp1 and @sp2";}
-                if (!myUtility.Empty(poid_b)) { strSQLCmd += " and b.id between @artworkpoid1 and  @artworkpoid2"; }
+                if(!MyUtility.Check.Empty(sp_b)){strSQLCmd+= " and b.orderid between @sp1 and @sp2";}
+                if (!MyUtility.Check.Empty(poid_b)) { strSQLCmd += " and b.id between @artworkpoid1 and  @artworkpoid2"; }
                 strSQLCmd += " order by b.id,b.ukey";
 
                 #region 準備sql參數資料
@@ -101,7 +101,7 @@ namespace Sci.Production.Subcon
                 if (result = DBProxy.Current.Select(null, strSQLCmd,cmds, out dtArtwork))
                 {
                     if (dtArtwork.Rows.Count == 0)
-                    { myUtility.WarningBox("Data not found!!"); }
+                    { MyUtility.Msg.WarningBox("Data not found!!"); }
                     listControlBindingSource1.DataSource = dtArtwork;
                 }
                 else { ShowErr(strSQLCmd, result); }
@@ -119,14 +119,14 @@ namespace Sci.Production.Subcon
                 if ((decimal)e.FormattedValue > (decimal)ddr["balance"])
                 {
                     e.Cancel = true;
-                    myUtility.WarningBox("Qty can't be more than balance");
+                    MyUtility.Msg.WarningBox("Qty can't be more than balance");
                     return;
                 }
 
                 if ((decimal)e.FormattedValue > ((decimal)ddr["poqty"] - (decimal)ddr["accumulatedqty"]))
                 {
                     e.Cancel = true;
-                    myUtility.WarningBox("Total Qty can't be more than PO Qty");
+                    MyUtility.Msg.WarningBox("Total Qty can't be more than PO Qty");
                     return;
                 }
                 ddr["amount"] = (decimal)e.FormattedValue * (decimal)ddr["price"];
@@ -203,7 +203,7 @@ namespace Sci.Production.Subcon
             DataRow[] dr2 = dtImport.Select("apqty = 0 and Selected = 1");
             if (dr2.Length > 0)
             {
-                myUtility.WarningBox("Qty of selected row can't be zero!", "Warning");
+                MyUtility.Msg.WarningBox("Qty of selected row can't be zero!", "Warning");
                 return;
             }
 
@@ -236,7 +236,7 @@ namespace Sci.Production.Subcon
             }
             else
             {
-                myUtility.WarningBox("Please select rows first!", "Warnning");
+                MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
             this.Close();

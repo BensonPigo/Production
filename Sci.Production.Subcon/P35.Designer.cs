@@ -173,14 +173,6 @@
             // 
             this.detailgridcont.Size = new System.Drawing.Size(1058, 219);
             // 
-            // detailgridcont2
-            // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
-            // 
-            // detailpanel2
-            // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
             // detail
             // 
             this.detail.Size = new System.Drawing.Size(1058, 515);

@@ -12,6 +12,8 @@ using Ict.Win;
 using System.Linq;
 using System.Transactions;
 
+
+
 namespace Sci.Production.Subcon
 {
     public partial class P01_BatchCreate : Sci.Win.Subs.Base
@@ -19,8 +21,8 @@ namespace Sci.Production.Subcon
         DataRow dr_artworkpo;
         DataTable dt_artworkpoDetail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        bool flag ;
-        string poType ,isArtwork;
+        bool flag;
+        string poType, isArtwork;
         protected DataTable dtArtwork;
 
         public P01_BatchCreate()
@@ -74,7 +76,7 @@ namespace Sci.Production.Subcon
                 (Inline_b == null && Inline_e == null) &&
                 string.IsNullOrWhiteSpace(sp_b) && string.IsNullOrWhiteSpace(sp_e))
             {
-                myUtility.WarningBox("< Approve Date > or < SCI Delivery > or < Inline Date > or < SP# > can't be empty!!");
+                MyUtility.Msg.WarningBox("< Approve Date > or < SCI Delivery > or < Inline Date > or < SP# > can't be empty!!");
                 dateRange1.Focus1();
                 return;
             }
@@ -83,7 +85,7 @@ namespace Sci.Production.Subcon
             #region 組query sqlcmd
             if (string.IsNullOrWhiteSpace(artworktype))
             {
-                myUtility.WarningBox("< Artwork Type > can't be empty!!");
+                MyUtility.Msg.WarningBox("< Artwork Type > can't be empty!!");
                 txtartworktype_fty1.Focus();
                 return;
             }
@@ -262,23 +264,23 @@ namespace Sci.Production.Subcon
                                 ,orders.StyleUkey,orders.factoryid";
                 }
             }
-        
+
 
 
             #endregion
 
-                Ict.DualResult result;
-                if (result = DBProxy.Current.Select(null, SqlCmd, out dtArtwork))
-                {
-                    if (dtArtwork.Rows.Count == 0)
-                    { myUtility.WarningBox("Data not found!!"); }
-                    listControlBindingSource1.DataSource = dtArtwork;
-                }
-                else 
-                { 
-                    ShowErr(SqlCmd, result); 
-                }
-                
+            Ict.DualResult result;
+            if (result = DBProxy.Current.Select(null, SqlCmd, out dtArtwork))
+            {
+                if (dtArtwork.Rows.Count == 0)
+                { MyUtility.Msg.WarningBox("Data not found!!"); }
+                listControlBindingSource1.DataSource = dtArtwork;
+            }
+            else
+            {
+                ShowErr(SqlCmd, result);
+            }
+
         }
 
         protected override void OnFormLoaded()
@@ -296,7 +298,7 @@ namespace Sci.Production.Subcon
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   
+                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("Factoryid", header: "Fty", iseditingreadonly: true)
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("Styleid", header: "Style", iseditingreadonly: true)
@@ -304,17 +306,17 @@ namespace Sci.Production.Subcon
                 .Date("SciDelivery", header: "Sci Delivery", iseditingreadonly: true)
                 .Text("Article", header: "Article", iseditingreadonly: true)
                 .Text("ArtworkTypeID", header: "Artwork Type", iseditingreadonly: true)
-                .Text("artworkid", header: "Artwork", iseditingreadonly: true)      
+                .Text("artworkid", header: "Artwork", iseditingreadonly: true)
                 .Text("PatternCode", header: "Cutpart Id", iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", iseditingreadonly: true)
                 .Text("LocalSuppID", header: "Supplier", iseditingreadonly: true)
-                .Numeric("Cost", header: "Cost(USD)", iseditingreadonly: true, decimal_places: 4, integer_places: 4)  
-                .Numeric("UnitPrice", header: "Unit Price", iseditable: true, decimal_places: 4, integer_places: 4)  
+                .Numeric("Cost", header: "Cost(USD)", iseditingreadonly: true, decimal_places: 4, integer_places: 4)
+                .Numeric("UnitPrice", header: "Unit Price", iseditable: true, decimal_places: 4, integer_places: 4)
                 .Numeric("poqty", header: "Po QTY", iseditingreadonly: true)
                 .Date("artworkinline", header: "inline", iseditingreadonly: true)
                 .Date("artworkoffline", header: "offline", iseditingreadonly: true)
                 .Text("message", header: "Message", iseditingreadonly: true, width: Widths.AnsiChars(30))
-                ;  
+                ;
 
             // 全選
             checkBox1.Click += (s, e) =>
@@ -357,15 +359,15 @@ namespace Sci.Production.Subcon
             issuedate = dateBox1.Text;
             delivery = dateBox2.Text;
 
-            if (dateBox1.Value ==null)
+            if (dateBox1.Value == null)
             {
-                myUtility.WarningBox("< Issue Date > can't be empty!!");
+                MyUtility.Msg.WarningBox("< Issue Date > can't be empty!!");
                 dateBox1.Focus();
                 return;
             }
             if (dateBox2.Value == null)
             {
-                myUtility.WarningBox("< Delivery > can't be empty!!");
+                MyUtility.Msg.WarningBox("< Delivery > can't be empty!!");
                 dateBox2.Focus();
                 return;
             }
@@ -373,12 +375,12 @@ namespace Sci.Production.Subcon
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             if (dt == null || dt.Rows.Count == 0) return;
 
-            DataRow[] find ;
+            DataRow[] find;
 
             find = dt.Select("Selected = 1");
             if (find.Length == 0)
             {
-                myUtility.WarningBox("Please select rows first!", "Warnning");
+                MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
 
@@ -389,24 +391,26 @@ namespace Sci.Production.Subcon
             //    {
             //        dr["message"] = "Unit price = 0 or Approve Date is null";
             //    }
-            //    myUtility.WarningBox("Unit Price or Approve Date can't be zero or empty", "Warning");
+            //    MyUtility.Msg.WarningBox("Unit Price or Approve Date can't be zero or empty", "Warning");
             //    grid1.Sort(grid1.Columns[17], ListSortDirection.Descending);
             //    return;
             //}
 
             #region 表頭資料group by --- LINQ
             var query = (from row in dt.AsEnumerable()
-                        where row.Field<int>("Selected").ToString()=="1"
-                        group row by new { t1 = row.Field<string>("ftygroup"), 
-                                           t2 = row.Field<string>("localsuppid") ,
-                                           t3 = row.Field<string>("artworktypeid") 
-                        } into m
-                        select new
-                        {
-                            ftygroup = m.Key.t1,
-                            localsuppid = m.Key.t2,
-                            artworktypeid = m.Key.t3
-                        });
+                         where row.Field<int>("Selected").ToString() == "1"
+                         group row by new
+                         {
+                             t1 = row.Field<string>("ftygroup"),
+                             t2 = row.Field<string>("localsuppid"),
+                             t3 = row.Field<string>("artworktypeid")
+                         } into m
+                         select new
+                         {
+                             ftygroup = m.Key.t1,
+                             localsuppid = m.Key.t2,
+                             artworktypeid = m.Key.t3
+                         });
             #endregion
 
 
@@ -416,7 +420,7 @@ namespace Sci.Production.Subcon
                 DualResult result;
                 string sqlcmd;
 
-                foreach (var q  in  query.ToList())
+                foreach (var q in query.ToList())
                 {
                     using (_transactionscope)
                     {
@@ -425,7 +429,7 @@ namespace Sci.Production.Subcon
                             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
                             ITableSchema tableSchema = null;
                             result = DBProxy.Current.GetTableSchema(null, "artworkpo", out tableSchema);
-                            string id = Sci.myUtility.GetID(ProductionEnv.Keyword+"OS", "artworkpo",DateTime.Parse(dateBox1.Text));
+                            string id = Sci.MyUtility.GetValue.GetID(ProductionEnv.Keyword + "OS", "artworkpo", DateTime.Parse(dateBox1.Text));
                             decimal ttlamt = 0;
                             string currency = "";
                             string str = "";
@@ -434,14 +438,14 @@ namespace Sci.Production.Subcon
                             #region 加總明細金額至表頭
                             if (poType == "O")
                             {
-                                currency = myUtility.Lookup("CurrencyID", q.localsuppid, "LocalSupp", "ID");
-                                str = myUtility.Lookup(string.Format("Select exact from Currency where id = '{0}'", currency), null);
+                                currency = MyUtility.GetValue.Lookup("CurrencyID", q.localsuppid, "LocalSupp", "ID");
+                                str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency where id = '{0}'", currency), null);
                                 if (str == null || string.IsNullOrWhiteSpace(str))
                                 {
                                     continue;
                                 }
                                 exact = int.Parse(str);
-                                
+
                                 var query3 = (from row in dt.AsEnumerable()
                                               where row.Field<int>("Selected").ToString() == "1"
                                                      && row.Field<string>("ftygroup").ToString() == q.ftygroup
@@ -461,7 +465,7 @@ namespace Sci.Production.Subcon
                                     ttlamt = (decimal)q3.amount;
                                 }
                             }
-                            
+
                             #endregion
 
                             #region 表身資料 group by -- LINQ
@@ -489,16 +493,16 @@ namespace Sci.Production.Subcon
                                              ArtworkTypeID = m.Key.t2,
                                              artworkid = m.Key.t3,
                                              PatternCode = m.Key.t4,
-                                              PatternDesc = m.Key.t5,
+                                             PatternDesc = m.Key.t5,
                                              coststitch = m.Key.t6,
                                              stitch = m.Key.t7,
                                              cost = m.Key.t8,
                                              unitprice = m.Key.t9,
                                              QtyGarment = m.Key.t10,
-                                             poqty = m.Sum(n => n.Field<int>("poqty")) 
-                                             
+                                             poqty = m.Sum(n => n.Field<int>("poqty"))
+
                                          };
-                                                       
+
                             #endregion
 
                             #region 表頭sql
@@ -533,14 +537,14 @@ namespace Sci.Production.Subcon
                                                     ,'{11}'
                                                     ,getdate())",
                                         id, Env.User.Factory, q.localsuppid, issuedate, delivery, q.artworktypeid,
-                                        currency,myUtility.Round(ttlamt, exact),
-                                        "'by batch create!'",Env.User.UserID,poType,Env.User.UserID);
-                           
+                                        currency, MyUtility.Math.Round(ttlamt, exact),
+                                        "'by batch create!'", Env.User.UserID, poType, Env.User.UserID);
+
                             #endregion
 
                             if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd)))
                             {
-                                myUtility.WarningBox("Create failed, Pleaes re-try");
+                                MyUtility.Msg.WarningBox("Create failed, Pleaes re-try");
                                 break;
                             }
 
@@ -590,13 +594,13 @@ namespace Sci.Production.Subcon
 
                                 if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd)))
                                 {
-                                    myUtility.WarningBox("Create failed, Pleaes re-try");
+                                    MyUtility.Msg.WarningBox("Create failed, Pleaes re-try");
                                     break;
                                 }
                             }
                             #endregion
                             _transactionscope.Complete();
-                            myUtility.WarningBox("Complete!");
+                            MyUtility.Msg.WarningBox("Complete!");
                         }
 
                         catch (Exception ex)
@@ -608,18 +612,117 @@ namespace Sci.Production.Subcon
                     _transactionscope.Dispose();
                     _transactionscope = null;
                 }
-            } 
+            }
 
-            
+
         }
 
         private void txtartworktype_fty1_Validated(object sender, EventArgs e)
         {
-            isArtwork = myUtility.Lookup(string.Format("select isartwork from artworktype where id = '{0}'", ((Sci.Production.Class.txtartworktype_fty)sender).Text), null);
+            isArtwork = MyUtility.GetValue.Lookup(string.Format("select isartwork from artworktype where id = '{0}'", ((Sci.Production.Class.txtartworktype_fty)sender).Text), null);
             this.dateRange1.Enabled = (isArtwork.ToUpper() == "TRUE");
             this.dateRange3.Enabled = (isArtwork.ToUpper() == "TRUE");
         }
 
+        //excel
+        private void button4_Click(object sender, EventArgs e)
+        {
+            string strFilePath;
+            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+
+            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
+            SaveFileDialog dlg = new SaveFileDialog();
+
+            //移動上層在指定下層路徑
+            dlg.RestoreDirectory = true;
+            dlg.InitialDirectory = dir.FullName + @"\tmp";
+            dlg.Title = "Save as Excel File";
+
+            // Set filter for file extension and default file extension
+            dlg.Filter = "Excel Files (*.xls)|*.xls";
+
+            // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
+            // Get the selected file name and display in a TextBox
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
+            {
+                // Open document
+                strFilePath = dlg.FileName;
+            }
+            else
+            {
+                return;
+            }
+
+            //ClipBoardToExcel(dt, strFilePath, "P01_BatchCreate", "MMDR030.xlt", 12);
+            //ClipBoardToExcel(dt, strFilePath);
+
+        }
+
+
+
+        private void button5_Click_1(object sender, EventArgs e)
+        {
+            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.RestoreDirectory = true;
+            dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
+            dlg.Title = "Save as Excel File";
+            dlg.FileName = "P01_BatchCreate_ToExcel_" + DateTime.Now.ToString("yyyyMMdd")+@".xls";
+
+            dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
+
+            // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
+            // Get the selected file name and CopyToXls
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
+            {
+                // Open document
+                DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+                DualResult result = MyUtility.Excel.CopyToXls(dt, dlg.FileName);
+                if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName); }   //XlsAutoFit(dlg.FileName, "MMDR030.xlt", 12);
+                else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(),"Warning"); }
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        
+
+        
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            string strFilePath;
+            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
+            SaveFileDialog dlg = new SaveFileDialog();
+
+            //移動上層在指定下層路徑
+            dlg.RestoreDirectory = true;
+            dlg.InitialDirectory = MyDocumentsPath;// dir.FullName + @"\tmp";
+            dlg.Title = "Save as Excel File";
+
+            // Set filter for file extension and default file extension
+            dlg.Filter = "Excel Files (*.xls)|*.xls";
+
+            // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
+            // Get the selected file name and display in a TextBox
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
+            {
+                // Open document
+                strFilePath = dlg.FileName;
+            }
+            else
+            {
+                return;
+            }
+            grid1.ExportToCsv(strFilePath);
+            MyUtility.Excel.XlsAutoFit(strFilePath, "MMDR030.xlt", 12);
+        }
+
+        
 
     }
 }

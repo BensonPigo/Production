@@ -15,8 +15,6 @@ using Sci.Production;
 using Sci.Production.PublicPrg;
 using System.Linq;
 
-
-
 namespace Sci.Production.Subcon
 {
     public partial class P01 : Sci.Win.Tems.Input6
@@ -36,7 +34,7 @@ namespace Sci.Production.Subcon
             {
                 if (this.EditMode && this.txtsubcon1.TextBox1.Text != this.txtsubcon1.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID"] = myUtility.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
                     ((DataTable)detailgridbs.DataSource).Rows.Clear();
                 }
             };
@@ -44,9 +42,9 @@ namespace Sci.Production.Subcon
         }
 
         // 新增時預設資料
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
-            base.OnNewAfter();
+            base.ClickNewAfter();
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
             CurrentMaintain["POType"] = "O";
@@ -58,12 +56,12 @@ namespace Sci.Production.Subcon
 
         // delete前檢查
 
-        protected override bool OnDeleteBefore()
+        protected override bool ClickDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (!string.IsNullOrWhiteSpace(dr["apvname"].ToString()) || dr["closed"].ToString().ToUpper() == "TRUE")
             {
-                myUtility.WarningBox("Data is approved or closed, can't delete.", "Warning");
+                MyUtility.Msg.WarningBox("Data is approved or closed, can't delete.", "Warning");
                 return false;
             }
 
@@ -90,14 +88,14 @@ namespace Sci.Production.Subcon
                 {
                     ids += dt.Rows[i][0].ToString() + ";";
                 }
-                myUtility.WarningBox(string.Format("Below IDs {0} refer to details data, can't delete.", ids), "Warning");
+                MyUtility.Msg.WarningBox(string.Format("Below IDs {0} refer to details data, can't delete.", ids), "Warning");
                 return false;
             }
-            return base.OnDeleteBefore();
+            return base.ClickDeleteBefore();
         }
 
         // edit前檢查
-        protected override bool OnEditBefore()
+        protected override bool ClickEditBefore()
         {
             //!EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
@@ -109,82 +107,87 @@ namespace Sci.Production.Subcon
                 return false;
             }
 
-            return base.OnEditBefore();
+            return base.ClickEditBefore();
         }
 
         // save前檢查 & 取id
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
 
             #region 必輸檢查
             if (CurrentMaintain["LocalSuppID"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["LocalSuppID"].ToString()))
 		    {
-                myUtility.WarningBox("< Suppiler >  can't be empty!","Warning");
+                MyUtility.Msg.WarningBox("< Suppiler >  can't be empty!","Warning");
                 txtsubcon1.TextBox1.Focus();
                 return false;
             }
 
             if (CurrentMaintain["issuedate"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
 		    {
-                myUtility.WarningBox("< Issue Date >  can't be empty!","Warning");
+                MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!","Warning");
                 dateBox1.Focus();
                 return false;
             }
 
             if (CurrentMaintain["Delivery"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["Delivery"].ToString()))
 		    {
-                myUtility.WarningBox("< Delivery Date >  can't be empty!","Warning");
+                MyUtility.Msg.WarningBox("< Delivery Date >  can't be empty!","Warning");
                 dateBox2.Focus();
                 return false;
             }
 
             if (CurrentMaintain["ArtworktypeId"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["ArtworktypeId"].ToString()))
 		    {
-                myUtility.WarningBox("< Artwork Type >  can't be empty!","Warning");
+                MyUtility.Msg.WarningBox("< Artwork Type >  can't be empty!","Warning");
                 txtartworktype_fty1.Focus();
                 return false;
             }
 
             if (CurrentMaintain["CurrencyID"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["CurrencyID"].ToString()))
 		    {
-                myUtility.WarningBox("< Currency >  can't be empty!","Warning");
+                MyUtility.Msg.WarningBox("< Currency >  can't be empty!","Warning");
                 return false;
             }
 
             if (CurrentMaintain["Handle"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["Handle"].ToString()))
 		    {
-                myUtility.WarningBox("< Handle >  can't be empty!","Warning");
+                MyUtility.Msg.WarningBox("< Handle >  can't be empty!","Warning");
                 txtuser1.TextBox1.Focus();
                 return false;
             }
             #endregion
 
+            foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("poqty = 0"))
+            {
+                ((DataTable)detailgridbs.DataSource).Rows.Remove(row);
+            }
+
             if (DetailDatas.Count == 0)
             {
-                myUtility.WarningBox("Detail can't be empty", "Warning");
+                MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
                 return false;
             }
 
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.myUtility.GetID(ProductionEnv.Keyword+"OS", "artworkpo", (DateTime)CurrentMaintain["issuedate"]);
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(ProductionEnv.Keyword+"OS", "artworkpo", (DateTime)CurrentMaintain["issuedate"]);
             }
 
             #region 加總明細金額至表頭
-            string str = myUtility.Lookup(string.Format("Select exact from Currency where id = '{0}'", CurrentMaintain["currencyId"]),null);
+            string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency where id = '{0}'", CurrentMaintain["currencyId"]),null);
             if (str == null || string.IsNullOrWhiteSpace(str))
             {
-                myUtility.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't save!", CurrentMaintain["currencyID"]), "Warning");
+                MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't save!", CurrentMaintain["currencyID"]), "Warning");
                 return false;
             }
             int exact = int.Parse(str);
             object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(amount)", "");
-            CurrentMaintain["amount"] = myUtility.Round((decimal)detail_a, exact);
-            CurrentMaintain["vat"] = myUtility.Round((decimal)detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
+            CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_a, exact);
+            CurrentMaintain["vat"] = MyUtility.Math.Round((decimal)detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
             #endregion
             
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         // grid 加工填值
@@ -216,7 +219,7 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            string artworkunit = myUtility.Lookup(string.Format("select artworkunit from artworktype where id='{0}'", CurrentMaintain["artworktypeid"])).ToString().Trim();
+            string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype where id='{0}'", CurrentMaintain["artworktypeid"])).ToString().Trim();
             if (artworkunit == "") artworkunit = "PCS";
             this.detailgrid.Columns[6].HeaderText = "Cost(" + artworkunit + ")";
             this.detailgrid.Columns[7].HeaderText = artworkunit;
@@ -271,6 +274,7 @@ namespace Sci.Production.Subcon
                 button1.ForeColor = Color.Blue;
             }
             #endregion
+
             #region Close button
             //ApvName = MyApp.cLogin OR getauthority(MyApp.cLogin)) AND !Thisform.LEditmode
             button2.Enabled = !this.EditMode && 
@@ -301,7 +305,7 @@ namespace Sci.Production.Subcon
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
             ts4.EditingMouseDown += (s, e) =>
             {
-                if (!this.EditMode && (myUtility.Empty(CurrentMaintain["closed"]) || CurrentMaintain["closed"].ToString().ToUpper() == "FALSE") && e.Button == MouseButtons.Right)
+                if (!this.EditMode && (MyUtility.Check.Empty(CurrentMaintain["closed"]) || CurrentMaintain["closed"].ToString().ToUpper() == "FALSE") && e.Button == MouseButtons.Right)
                 {
                     var frm = new Sci.Production.Subcon.P01_ModifyPoQty(CurrentDetailData);
                     DialogResult result = frm.ShowDialog(this);
@@ -428,7 +432,7 @@ namespace Sci.Production.Subcon
             }
             else
             {
-                DialogResult dResult = myUtility.QuestionBox("Do you want to unapprove it?", "Question", MessageBoxButtons.YesNo,MessageBoxDefaultButton.Button2);
+                DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unapprove it?", "Question", MessageBoxButtons.YesNo,MessageBoxDefaultButton.Button2);
                 if (dResult.ToString().ToUpper() == "NO") return;
                 sqlcmd = string.Format("update artworkpo set apvname='', apvdate = null , editname = '{0}' , editdate = GETDATE() " +
                                 "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
@@ -457,7 +461,7 @@ namespace Sci.Production.Subcon
             }
             else
             {
-                DialogResult dResult = myUtility.QuestionBox("Do you want to recall it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+                DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to recall it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
                 if (dResult.ToString().ToUpper() == "NO") return;
                 sqlcmd = string.Format("update artworkpo set closed=0  , editname = '{0}' , editdate = GETDATE() " +
                                 "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
@@ -479,13 +483,13 @@ namespace Sci.Production.Subcon
             var dr = CurrentMaintain; if (null == dr) return;
             if (dr["localsuppid"] == DBNull.Value)
             {
-                myUtility.WarningBox("Please fill Supplier first!");
+                MyUtility.Msg.WarningBox("Please fill Supplier first!");
                 txtsubcon1.TextBox1.Focus();
                 return;
             }
             if (dr["artworktypeid"] == DBNull.Value)
             {
-                myUtility.WarningBox("Please fill Artworktype first!");
+                MyUtility.Msg.WarningBox("Please fill Artworktype first!");
                 txtartworktype_fty1.Focus();
                 return;
             }
@@ -500,7 +504,7 @@ namespace Sci.Production.Subcon
             var dr = CurrentMaintain; if (null == dr) return;
             if (dr["artworktypeid"] == DBNull.Value)
             {
-                myUtility.WarningBox("Please fill Artworktype first!");
+                MyUtility.Msg.WarningBox("Please fill Artworktype first!");
                 txtartworktype_fty1.Focus();
                 return;
             }

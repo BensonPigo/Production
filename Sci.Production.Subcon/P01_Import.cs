@@ -68,7 +68,7 @@ namespace Sci.Production.Subcon
                 (Inline_b == null && Inline_e == null) &&
                 string.IsNullOrWhiteSpace(sp_b) && string.IsNullOrWhiteSpace(sp_e))
             {
-                myUtility.WarningBox("< Approve Date > or < SCI Delivery > or < Inline Date > or < SP# > can't be empty!!");
+                MyUtility.Msg.WarningBox("< Approve Date > or < SCI Delivery > or < Inline Date > or < SP# > can't be empty!!");
                 dateRange1.Focus1();
                 return;
             }
@@ -114,7 +114,7 @@ namespace Sci.Production.Subcon
                 if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
                 {
                     if (dtArtwork.Rows.Count == 0)
-                    { myUtility.WarningBox("Data not found!!"); }
+                    { MyUtility.Msg.WarningBox("Data not found!!"); }
                     listControlBindingSource1.DataSource = dtArtwork;
                 }
                 else { ShowErr(strSQLCmd, result); }
@@ -215,7 +215,7 @@ namespace Sci.Production.Subcon
 
             if (dr2.Length > 0 && flag)
             {
-                myUtility.WarningBox("UnitPrice of selected row can't be zero!", "Warning");
+                MyUtility.Msg.WarningBox("UnitPrice of selected row can't be zero!", "Warning");
                 return;
             }
 
@@ -245,7 +245,7 @@ namespace Sci.Production.Subcon
             }
             else
             {
-                myUtility.WarningBox("Please select rows first!", "Warnning");
+                MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
             this.Close();

@@ -63,14 +63,14 @@ namespace Sci.Production.Subcon
 
             
 
-            if ((myUtility.Empty(booking_b) && myUtility.Empty(booking_e)) &&
-                (myUtility.Empty(sewinline_b) && myUtility.Empty(sewinline_e ))  &&
-                (myUtility.Empty(arrived_b) && myUtility.Empty(arrived_e)) &&
-                (myUtility.Empty(approved_b) && myUtility.Empty(approved_e)) &&
-                (myUtility.Empty(scidelivery_b) && myUtility.Empty(scidelivery_e)) &&
-                myUtility.Empty(sp_b) && myUtility.Empty(sp_e) && myUtility.Empty(brandid))
+            if ((MyUtility.Check.Empty(booking_b) && MyUtility.Check.Empty(booking_e)) &&
+                (MyUtility.Check.Empty(sewinline_b) && MyUtility.Check.Empty(sewinline_e ))  &&
+                (MyUtility.Check.Empty(arrived_b) && MyUtility.Check.Empty(arrived_e)) &&
+                (MyUtility.Check.Empty(approved_b) && MyUtility.Check.Empty(approved_e)) &&
+                (MyUtility.Check.Empty(scidelivery_b) && MyUtility.Check.Empty(scidelivery_e)) &&
+                MyUtility.Check.Empty(sp_b) && MyUtility.Check.Empty(sp_e) && MyUtility.Check.Empty(brandid))
             {
-                myUtility.WarningBox(@"< Booking Date > or < Sci Delivery > or < Arrived Date > or < Sewing Inline >  
+                MyUtility.Msg.WarningBox(@"< Booking Date > or < Sci Delivery > or < Arrived Date > or < Sewing Inline >  
                                                 or < Approve Date > or  < SP# > or  < Brand > can't be empty!!");
                 textBox1.Focus();
                 return;
@@ -97,17 +97,16 @@ namespace Sci.Production.Subcon
                                                                     and b.RefNo = d.RefNo
                                                                     and a.ApvToPurchase = 1 
                                                                     and a.LocalPOID =''
-                                                                    and a.factoryid = '{0}'
-                                                                "
+                                                                    and a.factoryid = '{0}'"
                                                                 ,Env.User.Factory);
 
-                    if (!myUtility.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
-                    if (!myUtility.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
-                    if (!myUtility.Empty(sewinline_b)) { strSQLCmd += string.Format(" and c.sewinline between '{0}' and '{1}'", sewinline_b, sewinline_e); }
-                    if (!myUtility.Empty(scidelivery_b)) { strSQLCmd += string.Format(" and c.scidelivery between '{0}' and '{1}'", scidelivery_b, scidelivery_e); }
-                    if (!myUtility.Empty(booking_b)) { strSQLCmd += string.Format(" and a.EstCTNBooking between '{0}' and '{1}'", booking_b, booking_e); }
-                    if (!myUtility.Empty(arrived_b)) { strSQLCmd += string.Format(" and a.EstCTNArrive between '{0}' and '{1}'", arrived_b, arrived_e); }
-                    if (!myUtility.Empty(approved_b)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate between '{0}' and '{1}'", approved_b, approved_e); }
+                    if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
+                    if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
+                    if (!MyUtility.Check.Empty(sewinline_b)) { strSQLCmd += string.Format(" and c.sewinline between '{0}' and '{1}'", sewinline_b, sewinline_e); }
+                    if (!MyUtility.Check.Empty(scidelivery_b)) { strSQLCmd += string.Format(" and c.scidelivery between '{0}' and '{1}'", scidelivery_b, scidelivery_e); }
+                    if (!MyUtility.Check.Empty(booking_b)) { strSQLCmd += string.Format(" and a.EstCTNBooking between '{0}' and '{1}'", booking_b, booking_e); }
+                    if (!MyUtility.Check.Empty(arrived_b)) { strSQLCmd += string.Format(" and a.EstCTNArrive between '{0}' and '{1}'", arrived_b, arrived_e); }
+                    if (!MyUtility.Check.Empty(approved_b)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate between '{0}' and '{1}'", approved_b, approved_e); }
                     strSQLCmd += " group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID ";
 
                     #region 準備sql參數資料
@@ -153,12 +152,12 @@ namespace Sci.Production.Subcon
                                                                 "
                         , Env.User.Factory);
 
-                    if (!myUtility.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
-                    if (!myUtility.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
-                    if (!myUtility.Empty(sewinline_b)) { strSQLCmd += string.Format(" and c.sewinline between '{0}' and '{1}'", sewinline_b, sewinline_e); }
-                    if (!myUtility.Empty(scidelivery_b)) { strSQLCmd += string.Format(" and c.scidelivery between '{0}' and '{1}'", scidelivery_b, scidelivery_e); }
-                    if (!myUtility.Empty(booking_b)) { strSQLCmd += string.Format(" and a.EstBookDate between '{0}' and '{1}'", booking_b, booking_e); }
-                    if (!myUtility.Empty(arrived_b)) { strSQLCmd += string.Format(" and a.EstArriveDate between '{0}' and '{1}'", arrived_b, arrived_e); }
+                    if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
+                    if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
+                    if (!MyUtility.Check.Empty(sewinline_b)) { strSQLCmd += string.Format(" and c.sewinline between '{0}' and '{1}'", sewinline_b, sewinline_e); }
+                    if (!MyUtility.Check.Empty(scidelivery_b)) { strSQLCmd += string.Format(" and c.scidelivery between '{0}' and '{1}'", scidelivery_b, scidelivery_e); }
+                    if (!MyUtility.Check.Empty(booking_b)) { strSQLCmd += string.Format(" and a.EstBookDate between '{0}' and '{1}'", booking_b, booking_e); }
+                    if (!MyUtility.Check.Empty(arrived_b)) { strSQLCmd += string.Format(" and a.EstArriveDate between '{0}' and '{1}'", arrived_b, arrived_e); }
                     
                     //strSQLCmd += " group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstArriveDate,a.ID ";
 
@@ -187,7 +186,7 @@ namespace Sci.Production.Subcon
                 if (result = DBProxy.Current.Select(null, strSQLCmd,cmds, out dtlocal))
                 {
                     if (dtlocal.Rows.Count == 0)
-                    { myUtility.WarningBox("Data not found!!"); }
+                    { MyUtility.Msg.WarningBox("Data not found!!"); }
                     listControlBindingSource1.DataSource = dtlocal;
                 }
                 else 
@@ -198,12 +197,12 @@ namespace Sci.Production.Subcon
                 decimal price;
                 foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
                 {
-                    category = myUtility.Lookup(string.Format(@"select category from orders where id = '{0}'", dr["orderid"]), null);
+                    category = MyUtility.GetValue.Lookup(string.Format(@"select category from orders where id = '{0}'", dr["orderid"]), null);
                     if (category == "B")
                     {
-                        price = decimal.Parse(myUtility.Lookup(string.Format(@"select price from order_tmscost where id='{0}' and artworktypeid='{1}'"                            
+                        price = decimal.Parse(MyUtility.GetValue.Lookup(string.Format(@"select price from order_tmscost where id='{0}' and artworktypeid='{1}'"                            
                                                                                             , dr["orderid"], dr_localPO["category"].ToString().TrimEnd().ToUpper()), null));
-                        if (myUtility.Empty(price) || price == 0)
+                        if (MyUtility.Check.Empty(price) || price == 0)
                         {
                             dr["remark"] = "Price is 0, can not be transfered to local purchase!!";
                             dr["selected"] = 0;
@@ -226,7 +225,7 @@ namespace Sci.Production.Subcon
                 if ((decimal)e.FormattedValue > (decimal)ddr["unpaid"])
                 {
                     e.Cancel = true;
-                    myUtility.WarningBox("Qty can't be more than unpaid");
+                    MyUtility.Msg.WarningBox("Qty can't be more than unpaid");
                     return;
                 }
 
@@ -297,7 +296,7 @@ namespace Sci.Production.Subcon
             
             DataTable dtImport = (DataTable)listControlBindingSource1.DataSource;
             
-            if (myUtility.Empty(dtImport) || dtImport.Rows.Count == 0) return;
+            if (MyUtility.Check.Empty(dtImport) || dtImport.Rows.Count == 0) return;
             
             DataRow[] dr2 = dtImport.Select("Selected = 1 and remark=''");
             if (dr2.Length > 0)
@@ -328,7 +327,7 @@ namespace Sci.Production.Subcon
             }
             else
             {
-                myUtility.WarningBox("Please select rows with empty remark first!", "Warnning");
+                MyUtility.Msg.WarningBox("Please select rows with empty remark first!", "Warnning");
                 return;
             }
             this.Close();
@@ -353,9 +352,9 @@ namespace Sci.Production.Subcon
             {
                 // Open document
                 DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-                DualResult result = myUtility.CopyToXls(dt, dlg.FileName);
-                if (result) { myUtility.XlsAutoFit(dlg.FileName); }   //XlsAutoFit(dlg.FileName, "MMDR030.xlt", 12);
-                else { myUtility.WarningBox(result.ToMessages().ToString(), "Warning"); }
+                DualResult result = MyUtility.Excel.CopyToXls(dt, dlg.FileName);
+                if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName); }   //XlsAutoFit(dlg.FileName, "MMDR030.xlt", 12);
+                else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(), "Warning"); }
             }
             else
             {

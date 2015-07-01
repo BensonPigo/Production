@@ -45,36 +45,36 @@ namespace Sci.Production.Subcon
         }
 
         // 新增時預設資料
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
-            base.OnNewAfter();
+            base.ClickNewAfter();
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
             CurrentMaintain["HANDLE"] = Sci.Env.User.UserID;
-            CurrentMaintain["Encode"] = 0;
+            CurrentMaintain["Status"] = "New";
             
         }
 
         // delete前檢查
 
-        protected override bool OnDeleteBefore()
+        protected override bool ClickDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (!myUtility.Empty(dr["encode"].ToString()) || dr["encode"].ToString().ToUpper() == "TRUE")
+            if (dr["Status"].ToString() == "Confirmed")
             {
-                myUtility.WarningBox("Data is encoded, can't be deleted.", "Warning");
+                MyUtility.Msg.WarningBox("Data is encoded, can't be deleted.", "Warning");
                 return false;
             }
 
-            return base.OnDeleteBefore();
+            return base.ClickDeleteBefore();
         }
 
         // edit前檢查
-        protected override bool OnEditBefore()
+        protected override bool ClickEditBefore()
         {
             //!EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["encode"].ToString().ToUpper() == "TRUE")
+            if (dr["status"].ToString() == "Confirmed")
             {
                 var frm = new Sci.Production.PublicForm.EditRemark("farmout", "remark", dr);
                 frm.ShowDialog(this);
@@ -82,32 +82,32 @@ namespace Sci.Production.Subcon
                 return false;
             }
 
-            return base.OnEditBefore();
+            return base.ClickEditBefore();
         }
 
         // save前檢查 & 取id
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             detailgridbs.EndEdit();
 
             #region 必輸檢查
             if (CurrentMaintain["issuedate"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
             {
-                myUtility.WarningBox("< Issue Date >  can't be empty!", "Warning");
+                MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
                 dateBox1.Focus();
                 return false;
             }
 
             if (CurrentMaintain["ArtworktypeId"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["ArtworktypeId"].ToString()))
             {
-                myUtility.WarningBox("< Artwork Type >  can't be empty!", "Warning");
+                MyUtility.Msg.WarningBox("< Artwork Type >  can't be empty!", "Warning");
                 txtartworktype_fty1.Focus();
                 return false;
             }
 
             if (CurrentMaintain["Handle"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["Handle"].ToString()))
             {
-                myUtility.WarningBox("< Handle >  can't be empty!", "Warning");
+                MyUtility.Msg.WarningBox("< Handle >  can't be empty!", "Warning");
                 txtuser1.TextBox1.Focus();
                 return false;
             }
@@ -121,14 +121,14 @@ namespace Sci.Production.Subcon
 
             if (((DataTable)detailgridbs.DataSource).Rows.Count == 0)
             {
-                myUtility.WarningBox("Detail can't be empty", "Warning");
+                MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
                 return false;
             }
 
             DataRow[] drchk = ((DataTable)detailgridbs.DataSource).Select("[orderid] ='' or [artworkpoid] ='' or [orderid] is null or [artworkpoid] is null ");
             if (drchk.Length > 0)
             {
-                myUtility.WarningBox("Detail of SP# & POID can't be empty", "Warning");
+                MyUtility.Msg.WarningBox("Detail of SP# & POID can't be empty", "Warning");
                 return false;
             }
 
@@ -136,10 +136,10 @@ namespace Sci.Production.Subcon
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.myUtility.GetID(ProductionEnv.Keyword + "FI", "FarmOut", (DateTime)CurrentMaintain["issuedate"]);
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(ProductionEnv.Keyword + "FI", "FarmOut", (DateTime)CurrentMaintain["issuedate"]);
             }
 
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         // grid 加工填值
@@ -174,7 +174,7 @@ namespace Sci.Production.Subcon
                                 (Prgs.GetAuthority(Env.User.UserID) ||
                                 CurrentMaintain["handle"].ToString() == Env.User.UserID);
 
-            if (myUtility.Empty(CurrentMaintain["encode"]) || CurrentMaintain["encode"].ToString().ToUpper() == "False")
+            if (CurrentMaintain["status"].ToString() == "New")
             {
                 button1.Text = "Encode";
                 button1.ForeColor = Color.Black;
@@ -202,9 +202,9 @@ namespace Sci.Production.Subcon
             {
 
                 if (!(this.EditMode) || this.IsDetailInserting) return;
-                if (!(myUtility.Empty(e.FormattedValue)) && e.FormattedValue.ToString().TrimEnd() != ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex)["orderid"].ToString().TrimEnd())
+                if (!(MyUtility.Check.Empty(e.FormattedValue)) && e.FormattedValue.ToString().TrimEnd() != ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex)["orderid"].ToString().TrimEnd())
                 {
-                    CurrentDetailData["styleid"] = myUtility.Seek(string.Format("select styleid from orders where id ='{0}'", e.FormattedValue));
+                    CurrentDetailData["styleid"] = MyUtility.Check.Empty(string.Format("select styleid from orders where id ='{0}'", e.FormattedValue));
                     CurrentDetailData["artworkid"] = "";
                     CurrentDetailData["patterndesc"] = "";
                     CurrentDetailData["artworkpoqty"] = 0;
@@ -222,16 +222,16 @@ namespace Sci.Production.Subcon
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (myUtility.Empty(CurrentMaintain["artworktypeid"]))
+                    if (MyUtility.Check.Empty(CurrentMaintain["artworktypeid"]))
                     {
-                        myUtility.WarningBox("Please fill Artwork Type first");
+                        MyUtility.Msg.WarningBox("Please fill Artwork Type first");
                         this.txtartworktype_fty1.Focus();
                         return;
                     }
                     
-                    if (myUtility.Empty(dr["OrderID"]))
+                    if (MyUtility.Check.Empty(dr["OrderID"]))
                     {
-                        myUtility.WarningBox("Please fill SP# first");
+                        MyUtility.Msg.WarningBox("Please fill SP# first");
                         return;
                     }
                     if (e.Button == System.Windows.Forms.MouseButtons.Right && e.RowIndex != -1 )
@@ -316,7 +316,7 @@ namespace Sci.Production.Subcon
                 {
                     ids += dr[0].ToString() + ",";
                 }
-                myUtility.WarningBox(String.Format("These POID <{0}> already closed, can't encode/amend", ids));
+                MyUtility.Msg.WarningBox(String.Format("These POID <{0}> already closed, can't encode/amend", ids));
                 return;
             }
 
@@ -337,12 +337,12 @@ namespace Sci.Production.Subcon
 //                    ids += dr[0].ToString() + ",";
 //                    bundlenos += dr[1].ToString() + ",";
 //                }
-//                myUtility.WarningBox(String.Format("These Bundle# <{0}> already exist in farm-in data <{1}> , can't encode/amend",bundlenos, ids));
+//                MyUtility.Msg.WarningBox(String.Format("These Bundle# <{0}> already exist in farm-in data <{1}> , can't encode/amend",bundlenos, ids));
 //                return;
 //            }
 
             // Encode提示是否超過Farm out qty ， amend不低於ap qty
-            if (CurrentMaintain["Encode"].ToString().ToUpper() == "FALSE")
+            if (CurrentMaintain["status"].ToString().ToUpper() == "NEW")
             {
                 ids = "";
                 foreach (var dr in DetailDatas)
@@ -361,9 +361,9 @@ namespace Sci.Production.Subcon
                         }
                     }
                 }
-                if (!myUtility.Empty(ids))
+                if (!MyUtility.Check.Empty(ids))
                 {
-                    myUtility.WarningBox(ids);
+                    MyUtility.Msg.WarningBox(ids);
                     return;
                 }
             }
@@ -385,9 +385,9 @@ namespace Sci.Production.Subcon
                         }
                     }
                 }
-                if (!myUtility.Empty(ids))
+                if (!MyUtility.Check.Empty(ids))
                 {
-                    myUtility.WarningBox(ids);
+                    MyUtility.Msg.WarningBox(ids);
                     return;
                 }
             }
@@ -395,14 +395,14 @@ namespace Sci.Production.Subcon
             
 
             // update farmout status
-            if (CurrentMaintain["Encode"].ToString().ToUpper()=="FALSE")
+            if (CurrentMaintain["Status"].ToString().ToUpper()=="NEW")
             {
                 sqlcmd3 = string.Format("update Farmin set encode = 1 , editname = '{0}' , editdate = GETDATE() " +
                                 "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             }
             else
             {
-                DialogResult dResult = myUtility.QuestionBox("Do you want to amend it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+                DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to amend it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
                 if (dResult.ToString().ToUpper() == "NO") return;
                 sqlcmd3 = string.Format("update FarmIn set encode = 0, editname = '{0}' , editdate = GETDATE() " +
                                 "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
@@ -437,7 +437,7 @@ namespace Sci.Production.Subcon
                     }
                     if (datacheck.Rows.Count > 0)
                     {
-                        if (CurrentMaintain["Encode"].ToString().ToUpper() == "FALSE")
+                        if (CurrentMaintain["Status"].ToString().ToUpper() == "NEW")
                         {
                             sqlcmd2 += string.Format("update artworkpo_detail set farmIn = {0} where ukey = '{1}';"
                                 + Environment.NewLine, (decimal)datacheck.Rows[0]["qty"] + (decimal)dr["qty"], dr["artworkpo_detailukey"]);
@@ -450,7 +450,7 @@ namespace Sci.Production.Subcon
                     }
                     else
                     {
-                        if (CurrentMaintain["Encode"].ToString().ToUpper() == "FALSE")  // encode
+                        if (CurrentMaintain["Status"].ToString().ToUpper() == "NEW")  // encode
                         {
                             sqlcmd2 += string.Format("update artworkpo_detail set farmIn = {0} where ukey = '{1}';"
                                 + Environment.NewLine, (decimal)dr["qty"], dr["artworkpo_detailukey"]);
@@ -477,12 +477,12 @@ namespace Sci.Production.Subcon
 
                     if (!(result2 = DBProxy.Current.Execute(null, sqlcmd2)))
                     {
-                        ShowErr(sqlcmd2, result);
+                        ShowErr(sqlcmd2, result2);
                         return;
                     }
 
                     _transactionscope.Complete();
-                    myUtility.WarningBox("Encode successful");
+                    MyUtility.Msg.WarningBox("Encode successful");
                 }
                 catch (Exception ex)
                 {
