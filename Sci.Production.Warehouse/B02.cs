@@ -29,14 +29,14 @@ namespace Sci.Production.Warehouse
         }
 
         //編輯狀態限制
-        protected override void OnEditAfter()
+        protected override void ClickEditAfter()
         {
-            base.OnEditAfter();
+            base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
         }
 
         //存檔前檢查
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
@@ -59,7 +59,7 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
     }
 }

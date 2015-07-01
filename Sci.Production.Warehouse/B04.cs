@@ -19,9 +19,9 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
         }
-
+        
         //存檔前檢查
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             DataTable whseReasonDt;
             Ict.DualResult cbResult;
@@ -50,11 +50,11 @@ namespace Sci.Production.Warehouse
                 
             }
 
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         //copy前清空id
-        protected override void OnCopyAfter()
+        protected override void ClickCopyAfter()
         {
             CurrentMaintain["id"] = string.Empty;
         }
