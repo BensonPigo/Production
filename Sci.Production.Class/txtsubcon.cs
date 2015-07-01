@@ -62,7 +62,7 @@ namespace Sci.Production.Class
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
                 string Sql = string.Format("Select Junk from LocalSupp where ID = '{0}'", textValue);
-                if (!myUtility.Seek(Sql, "Production"))
+                if (!MyUtility.Check.Seek(Sql, "Production"))
                 {
                     MessageBox.Show(string.Format("< Subcon Code: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
@@ -73,7 +73,7 @@ namespace Sci.Production.Class
                 {
                     if (!this.IsIncludeJunk)
                     {
-                        string lookupresult = myUtility.Lookup(Sql, "Production");
+                        string lookupresult = MyUtility.GetValue.Lookup(Sql, "Production");
                         if (lookupresult == "True")
                         {
                             MessageBox.Show(string.Format("< Subcon Code: {0} > not found!!!", textValue));
@@ -93,7 +93,7 @@ namespace Sci.Production.Class
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base) this.FindForm();
             if (myForm.EditMode == false)
             {
-                this.displayBox1.Text = myUtility.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
+                this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
             }
         }
 

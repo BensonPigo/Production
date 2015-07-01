@@ -49,7 +49,7 @@ namespace Sci.Production.Class
             string textValue = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                if (!myUtility.Seek(textValue, "Unit", "ID"))
+                if (!MyUtility.Check.Seek(textValue, "Unit", "ID"))
                 {
                     MessageBox.Show(string.Format("< Unit Code: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
@@ -61,7 +61,7 @@ namespace Sci.Production.Class
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            this.displayBox1.Text = myUtility.Lookup("Description", this.textBox1.Text.ToString(), "Unit", "ID");
+            this.displayBox1.Text = MyUtility.GetValue.Lookup("Description", this.textBox1.Text.ToString(), "Unit", "ID");
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)

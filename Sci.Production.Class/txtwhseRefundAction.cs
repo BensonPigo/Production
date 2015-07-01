@@ -57,7 +57,7 @@ namespace Sci.Production.Class
             string str = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
             {
-                if (!myUtility.Seek(str, "WhseReason", "ID"))
+                if (!MyUtility.Check.Seek(str, "WhseReason", "ID"))
                 {
                     MessageBox.Show(string.Format("< Refund Action: {0} > not found!!!", str));
                     this.textBox1.Text = "";
@@ -72,13 +72,13 @@ namespace Sci.Production.Class
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false)
             {
-                this.displayBox1.Text = myUtility.Lookup("Description", "RA" + this.textBox1.Text.ToString(), "WhseReason", "Type+ID");
+                this.displayBox1.Text = MyUtility.GetValue.Lookup("Description", "RA" + this.textBox1.Text.ToString(), "WhseReason", "Type+ID");
             }
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            String actionCode = myUtility.Lookup("actioncode", "RR"+whseReason.TextBox1.Text, "WhseReason", "Type+ID");
+            String actionCode = MyUtility.GetValue.Lookup("actioncode", "RR"+whseReason.TextBox1.Text, "WhseReason", "Type+ID");
             Sci.Win.Tools.SelectItem item = 
                 new Sci.Win.Tools.SelectItem("select Id, Description from WhseReason where type ='RA' "+
                 string.Format(" and id in ({0})", actionCode), "10,100", this.textBox1.Text);

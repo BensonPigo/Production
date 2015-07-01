@@ -47,9 +47,9 @@ namespace Sci.Production.Class
             base.OnValidating(e);
 
             string str = this.Text;
-            if (!myUtility.Empty(str) && str != this.OldValue)
+            if (!MyUtility.Check.Empty(str) && str != this.OldValue)
             {
-                if (myUtility.Seek(str, "ClogLocation", "id") == false)
+                if (MyUtility.Check.Seek(str, "ClogLocation", "id") == false)
                 {
                     MessageBox.Show(string.Format("< ClogLocation : {0} > not found!!!", str));
                     this.Text = "";

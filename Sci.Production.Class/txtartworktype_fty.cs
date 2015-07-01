@@ -68,7 +68,7 @@ namespace Sci.Production.Class
            string str = this.Text;
            if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
            {
-               if (myUtility.Seek(str,"artworktype","id")==false)
+               if (MyUtility.Check.Seek(str, "artworktype", "id") == false)
                {
                    MessageBox.Show(string.Format("< Artworktype : {0} > not found!!!", str));
                    this.Text = "";

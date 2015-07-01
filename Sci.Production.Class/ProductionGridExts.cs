@@ -46,9 +46,9 @@ namespace Sci
                 if (frm.EditMode)
                 {
                     DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
-                    if (!myUtility.Empty(e.FormattedValue.ToString()))
+                    if (!MyUtility.Check.Empty(e.FormattedValue.ToString()))
                     {
-                        if (myUtility.Seek(e.FormattedValue.ToString(), "ClogLocation", "id") == false)
+                        if (MyUtility.Check.Seek(e.FormattedValue.ToString(), "ClogLocation", "id") == false)
                         {
                             MessageBox.Show(string.Format("< ClogLocation : {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["ClogLocationId"] = DBNull.Value;
@@ -78,9 +78,9 @@ namespace Sci
                 if (frm.EditMode)
                 {
                     DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
-                    if (!myUtility.Empty(e.FormattedValue.ToString()))
+                    if (!MyUtility.Check.Empty(e.FormattedValue.ToString()))
                     {
-                        if (myUtility.Seek(e.FormattedValue.ToString(), "Orders", "id") == false)
+                        if (MyUtility.Check.Seek(e.FormattedValue.ToString(), "Orders", "id") == false)
                         {
                             MessageBox.Show(string.Format("< Order Id : {0} > is not found!!!", e.FormattedValue.ToString()));
                             dr["orderid"] = DBNull.Value;
@@ -124,10 +124,10 @@ namespace Sci
                 if (frm.EditMode)
                 {
                     DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
-                    if (!myUtility.Empty(e.FormattedValue.ToString()))
+                    if (!MyUtility.Check.Empty(e.FormattedValue.ToString()))
                     {
                         string seekSql = string.Format("select RefNo from LocalItem where Category = 'CARTON' and Junk = 0 and RefNo = '{0}'", e.FormattedValue.ToString());
-                        if (myUtility.Seek(seekSql) == false)
+                        if (MyUtility.Check.Empty(seekSql) == false)
                         {
                             MessageBox.Show(string.Format("< Ref No. : {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["RefNo"] = DBNull.Value;

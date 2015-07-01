@@ -28,7 +28,7 @@ namespace Sci.Production.Class
             string textValue = this.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.OldValue)
             {
-                if (!myUtility.Seek(textValue, "CDCode", "Id"))
+                if (!MyUtility.Check.Seek(textValue, "CDCode", "Id"))
                 {
                     MessageBox.Show(string.Format("< CD Code : {0} > not found!!!", textValue));
                     this.Text = "";

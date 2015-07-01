@@ -34,7 +34,7 @@ namespace Sci.Production.Class
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (myUtility.Seek(str,"currency","id","Production")==false)
+                if (MyUtility.Check.Seek(str,"currency","id","Production")==false)
                 {
                     MessageBox.Show(string.Format("< Currency : {0} > not found!!!", str));
                     this.Text = "";

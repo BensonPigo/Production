@@ -49,11 +49,11 @@ namespace Sci.Production.Class
             string textValue = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                if (!myUtility.Seek(textValue, "Pass1", "ID"))
+                if (!MyUtility.Check.Seek(textValue, "Pass1", "ID"))
                 {
                     string alltrimData = textValue.Trim();
-                    bool isUserName = myUtility.Seek(alltrimData, "Pass1", "Name" );
-                    bool isUserExtNo = myUtility.Seek(alltrimData, "Pass1", "ExtNo");
+                    bool isUserName = MyUtility.Check.Seek(alltrimData, "Pass1", "Name" );
+                    bool isUserExtNo = MyUtility.Check.Seek(alltrimData, "Pass1", "ExtNo");
 
                     if (isUserName | isUserExtNo)
                     {
@@ -103,9 +103,9 @@ namespace Sci.Production.Class
             if (myForm.EditMode == false)
             {
                 string selectSql = string.Format("Select Name from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
-                string name = myUtility.Lookup(selectSql);
+                string name = MyUtility.GetValue.Lookup(selectSql);
                 selectSql = string.Format("Select ExtNo from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
-                string extNo = myUtility.Lookup(selectSql);
+                string extNo = MyUtility.GetValue.Lookup(selectSql);
                 if (!string.IsNullOrWhiteSpace(name)) { this.displayBox1.Text = name; }
                 if (!string.IsNullOrWhiteSpace(extNo)) { this.displayBox1.Text = name + " #" + extNo; }
             }

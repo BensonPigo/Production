@@ -52,7 +52,7 @@ namespace Sci.Production.Class
             string str = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
             {
-                if (!myUtility.Seek("RR"+str, "WhseReason", "type+ID"))
+                if (!MyUtility.Check.Seek("RR" + str, "WhseReason", "type+ID"))
                 {
                     MessageBox.Show(string.Format("< Reason: {0} > not found!!!", str));
                     this.textBox1.Text = "";
@@ -67,7 +67,7 @@ namespace Sci.Production.Class
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false)
             {
-                this.displayBox1.Text = myUtility.Lookup("Description", "RR" + this.textBox1.Text.ToString(), "WhseReason", "Type+ID");
+                this.displayBox1.Text = MyUtility.GetValue.Lookup("Description", "RR" + this.textBox1.Text.ToString(), "WhseReason", "Type+ID");
             }
         }
 

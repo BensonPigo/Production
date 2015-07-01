@@ -33,7 +33,7 @@ namespace Sci.Production.Class
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (myUtility.Seek(str,"department","id")==false)
+                if (MyUtility.Check.Seek(str, "department", "id") == false)
                 {
                     MessageBox.Show(string.Format("< Department : {0} > not found!!!", str));
                     this.Text = "";

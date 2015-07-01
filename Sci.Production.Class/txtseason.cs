@@ -37,7 +37,7 @@ namespace Sci.Production.Class
             string textValue = this.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.OldValue)
             {
-                if (!myUtility.Seek(textValue, "Season", "Id"))
+                if (!MyUtility.Check.Seek(textValue, "Season", "Id"))
                 {
                     MessageBox.Show(string.Format("< Season : {0} > not found!!!", textValue));
                     this.Text = "";
@@ -51,7 +51,7 @@ namespace Sci.Production.Class
                         if (!string.IsNullOrWhiteSpace((string)this.brandObject.Text))
                         {
                             string selectCommand = string.Format("select ID from Season where BrandID = '{0}' and ID = '{1}'", (string)this.brandObject.Text, this.Text.ToString());
-                            if (!myUtility.Seek(selectCommand,null))
+                            if (!MyUtility.Check.Seek(selectCommand, null))
                             {
                                 MessageBox.Show(string.Format("< Season: {0} > not found!!!", textValue));
                                 this.Text = "";

@@ -49,7 +49,7 @@ namespace Sci.Production.Class
             string textValue = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                if (!myUtility.Seek(textValue, "Supp", "ID"))
+                if (!MyUtility.Check.Seek(textValue, "Supp", "ID"))
                 {
                     MessageBox.Show(string.Format("< Supplier Code: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
@@ -61,7 +61,7 @@ namespace Sci.Production.Class
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            this.displayBox1.Text = myUtility.Lookup("AbbEN", this.textBox1.Text.ToString(), "Supp", "ID");
+            this.displayBox1.Text = MyUtility.GetValue.Lookup("AbbEN", this.textBox1.Text.ToString(), "Supp", "ID");
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)

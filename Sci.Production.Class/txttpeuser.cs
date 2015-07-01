@@ -50,9 +50,9 @@ namespace Sci.Production.Class
             if (myForm.EditMode == false)
             {
                 string selectSql = string.Format("Select Name from TPEPass1 Where id='{0}'", this.displayBox1.Text.ToString());
-                string name = myUtility.Lookup(selectSql, "Production");
+                string name = MyUtility.GetValue.Lookup(selectSql, "Production");
                 selectSql = string.Format("Select Ext_No from TPEPass1 Where id='{0}'", this.displayBox1.Text.ToString());
-                string extNo = myUtility.Lookup(selectSql, "Production");
+                string extNo = MyUtility.GetValue.Lookup(selectSql, "Production");
                 this.displayBox2.Text = name;
                 if (!string.IsNullOrWhiteSpace(extNo)) { this.displayBox2.Text = name + " #" + extNo; }
             }        

@@ -44,7 +44,7 @@ namespace Sci.Production.Class
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            this.displayBox1.Text = myUtility.Lookup("Alias", this.textBox1.Text.ToString(), "Country", "Id");
+            this.displayBox1.Text = MyUtility.GetValue.Lookup("Alias", this.textBox1.Text.ToString(), "Country", "Id");
         }
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
@@ -53,7 +53,7 @@ namespace Sci.Production.Class
             string textValue = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                if (!myUtility.Seek(textValue, "Country", "ID"))
+                if (!MyUtility.Check.Seek(textValue, "Country", "ID"))
                 {
                     MessageBox.Show(string.Format("< Country: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";

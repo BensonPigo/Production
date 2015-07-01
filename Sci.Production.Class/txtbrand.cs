@@ -32,7 +32,7 @@ namespace Sci.Production.Class
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (myUtility.Seek(str, "Brand", "id") == false)
+                if (MyUtility.Check.Seek(str, "Brand", "id") == false)
                 {
                     MessageBox.Show(string.Format("< Brand : {0} > not found!!!", str));
                     this.Text = "";

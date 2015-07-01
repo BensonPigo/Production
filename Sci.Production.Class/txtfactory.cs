@@ -33,7 +33,7 @@ namespace Sci.Production.Class
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (myUtility.Seek(str,"factory","id")==false)
+                if (MyUtility.Check.Seek(str, "factory", "id") == false)
                 {
                     MessageBox.Show(string.Format("< Factory : {0} > not found!!!", str));
                     this.Text = "";

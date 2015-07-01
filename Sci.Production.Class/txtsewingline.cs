@@ -52,7 +52,7 @@ namespace Sci.Production.Class
             {
                 if (this.factoryObject == null)
                 {
-                    string tmp = myUtility.Lookup("ID", str, "SewingLine", "id");
+                    string tmp = MyUtility.GetValue.Lookup("ID", str, "SewingLine", "id");
                     if (string.IsNullOrWhiteSpace(tmp))
                     {
                         MessageBox.Show(string.Format("< Sewing Line> : {0} not found!!!", str));
@@ -66,7 +66,7 @@ namespace Sci.Production.Class
                     if (!string.IsNullOrWhiteSpace((string)this.factoryObject.Text))
                     {
                         string selectCommand = string.Format("select ID from SewingLine where FactoryID = '{0}' and ID = '{1}'", (string)this.factoryObject.Text, this.Text.ToString());
-                        if (!myUtility.Seek(selectCommand, null))
+                        if (!MyUtility.Check.Seek(selectCommand, null))
                         {
                             MessageBox.Show(string.Format("< Sewing Line: {0} > not found!!!", this.Text.ToString()));
                             this.Text = "";
