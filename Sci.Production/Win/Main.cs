@@ -24,6 +24,7 @@ namespace Sci.Production
         }
         public Main()
         {
+            Sci.Env.App = this;
             InitializeComponent();
 
             {
