@@ -38,13 +38,13 @@ namespace Sci.Production.Planning
             this.comboBox1.ValueMember = "Value";
         }
         //新增資料預設
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
-            base.OnNewAfter();
+            base.ClickNewAfter();
             this.CurrentMaintain["unit"] = 1;
         }
         //存檔前檢查
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
             {
@@ -74,7 +74,7 @@ namespace Sci.Production.Planning
                 return false;
             }
 
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         //combo下拉控制其它物件

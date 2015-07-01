@@ -21,7 +21,7 @@ namespace Sci.Production.Planning
             InitializeComponent();
         }
 
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["BeginStitch"].ToString()))
             {
@@ -67,7 +67,7 @@ namespace Sci.Production.Planning
                 MessageBox.Show("This Data ranage already cover existed data");
                 return false;
             }
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
     }
 }

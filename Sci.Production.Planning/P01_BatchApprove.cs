@@ -100,19 +100,19 @@ namespace Sci.Production.Planning
             if (dateRangeApvDate.Value1 != null) { approve_b = this.dateRangeApvDate.Text1; }
             if (dateRangeApvDate.Value2 != null) { approve_e = this.dateRangeApvDate.Text2; }
 
-            if (chkApprove && (myUtility.Empty(approve_b) || myUtility.Empty(approve_e)))
+            if (chkApprove && (MyUtility.Check.Empty(approve_b) || MyUtility.Check.Empty(approve_e)))
             {
-                myUtility.WarningBox("Approve date can't be empty", "Warning");
+                MyUtility.Msg.WarningBox("Approve date can't be empty", "Warning");
                 return;
             }
 
-            if ((myUtility.Empty(inline_b) && myUtility.Empty(inline_e)) &&
-                (myUtility.Empty(sewinline_b) && myUtility.Empty(sewinline_e)) &&
-                (myUtility.Empty(delivery_b) && myUtility.Empty(delivery_e)) &&
-                myUtility.Empty(sp_b) && myUtility.Empty(sp_e) && 
-                myUtility.Empty(artworktype) )
+            if ((MyUtility.Check.Empty(inline_b) && MyUtility.Check.Empty(inline_e)) &&
+                (MyUtility.Check.Empty(sewinline_b) && MyUtility.Check.Empty(sewinline_e)) &&
+                (MyUtility.Check.Empty(delivery_b) && MyUtility.Check.Empty(delivery_e)) &&
+                MyUtility.Check.Empty(sp_b) && MyUtility.Check.Empty(sp_e) && 
+                MyUtility.Check.Empty(artworktype) )
             {
-                myUtility.WarningBox("< Inline Date > or < SewInline Date > or < SCI Delivery > or < SP# > or < Artwork Type > can't be empty!!");
+                MyUtility.Msg.WarningBox("< Inline Date > or < SewInline Date > or < SCI Delivery > or < SP# > or < Artwork Type > can't be empty!!");
                 textBoxSp1.Focus();
                 return;
             }
@@ -136,13 +136,13 @@ namespace Sci.Production.Planning
                                                     and (ods.category = 'B' or ods.category = 'S')
                                                     and ods.qty > 0 and (ot.qty > 0 or ot.tms > 0)";
                 if (!chkApprove) { strSQLCmd += " and  ot.apvdate is null"; }
-                if (!myUtility.Empty(sp_b)) { strSQLCmd += " and  ot.id  between @sp1 and  @sp2"; }
-                if (!myUtility.Empty(inline_b)) { strSQLCmd += string.Format(" and not(ot.artworkinline > '{1}' or ot.artworkoffline < '{0}')", inline_b, inline_e); }
-                if (!myUtility.Empty(sewinline_b)) { strSQLCmd += string.Format(" and not(ods.sewinline > '{1}' or ods.sewoffline < '{0}')", sewinline_b, sewinline_e); }
-                if (!myUtility.Empty(artworktype)) { strSQLCmd += " and ot.artworktypeid = @artworktypeid"; }
-                if (!myUtility.Empty(delivery_b)) { strSQLCmd += string.Format(" and ods.sciDelivery between '{0}' and '{1}'", delivery_b, delivery_e); }
-                if (!myUtility.Empty(approve_b)) { strSQLCmd += string.Format(" and ot.apvdate between '{0}' and '{1}'", approve_b, approve_e); }
-                if (!myUtility.Empty(factory)) { strSQLCmd += " and ods.factoryid = @factoryid"; }
+                if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and  ot.id  between @sp1 and  @sp2"; }
+                if (!MyUtility.Check.Empty(inline_b)) { strSQLCmd += string.Format(" and not(ot.artworkinline > '{1}' or ot.artworkoffline < '{0}')", inline_b, inline_e); }
+                if (!MyUtility.Check.Empty(sewinline_b)) { strSQLCmd += string.Format(" and not(ods.sewinline > '{1}' or ods.sewoffline < '{0}')", sewinline_b, sewinline_e); }
+                if (!MyUtility.Check.Empty(artworktype)) { strSQLCmd += " and ot.artworktypeid = @artworktypeid"; }
+                if (!MyUtility.Check.Empty(delivery_b)) { strSQLCmd += string.Format(" and ods.sciDelivery between '{0}' and '{1}'", delivery_b, delivery_e); }
+                if (!MyUtility.Check.Empty(approve_b)) { strSQLCmd += string.Format(" and ot.apvdate between '{0}' and '{1}'", approve_b, approve_e); }
+                if (!MyUtility.Check.Empty(factory)) { strSQLCmd += " and ods.factoryid = @factoryid"; }
                 
                 strSQLCmd += @" order by ods.FactoryID
                                                 ,ot.ID
@@ -179,7 +179,7 @@ namespace Sci.Production.Planning
                 if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out dtOT))
                 {
                     if (dtOT.Rows.Count == 0)
-                    { myUtility.WarningBox("Data not found!!"); }
+                    { MyUtility.Msg.WarningBox("Data not found!!"); }
                     listControlBindingSource1.DataSource = dtOT;
                 }
                 else { ShowErr(strSQLCmd, result); }
@@ -220,16 +220,16 @@ namespace Sci.Production.Planning
 
             DataTable dtImport = (DataTable)listControlBindingSource1.DataSource;
 
-            if (myUtility.Empty(dtImport) || dtImport.Rows.Count == 0) return;
+            if (MyUtility.Check.Empty(dtImport) || dtImport.Rows.Count == 0) return;
 
             DataRow[] dr2 = dtImport.Select("Selected = 1 ");
             if (dr2.Length == 0)
             {
-                myUtility.WarningBox("Please select rows first!", "Warnning");
+                MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
 
-            DialogResult dResult = myUtility.QuestionBox("Do you want to Approve data?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+            DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to Approve data?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO") return;
 
             IList<SqlCommandText> updateCmds = new List<SqlCommandText>();
@@ -248,7 +248,7 @@ namespace Sci.Production.Planning
                 return;
             }
 
-            myUtility.InfoBox("Approve data successful.");
+            MyUtility.Msg.InfoBox("Approve data successful.");
 
 
         }
@@ -272,9 +272,9 @@ namespace Sci.Production.Planning
             {
                 // Open document
                 DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-                DualResult result = myUtility.CopyToXls(dt, dlg.FileName);
-                if (result) { myUtility.XlsAutoFit(dlg.FileName); }   //XlsAutoFit(dlg.FileName, "MMDR030.xlt", 12);
-                else { myUtility.WarningBox(result.ToMessages().ToString(), "Warning"); }
+                DualResult result = MyUtility.Excel.CopyToXls(dt, dlg.FileName);
+                if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName); }   //XlsAutoFit(dlg.FileName, "MMDR030.xlt", 12);
+                else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(), "Warning"); }
             }
             else
             {
@@ -290,16 +290,16 @@ namespace Sci.Production.Planning
 
             DataTable dtImport = (DataTable)listControlBindingSource1.DataSource;
 
-            if (myUtility.Empty(dtImport) || dtImport.Rows.Count == 0) return;
+            if (MyUtility.Check.Empty(dtImport) || dtImport.Rows.Count == 0) return;
 
             DataRow[] dr2 = dtImport.Select("Selected = 1 ");
             if (dr2.Length == 0)
             {
-                myUtility.WarningBox("Please select rows first!", "Warnning");
+                MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
 
-            DialogResult dResult = myUtility.QuestionBox("Do you want to UnApprove data?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+            DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to UnApprove data?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO") return;
 
             IList<SqlCommandText> updateCmds = new List<SqlCommandText>();
@@ -318,7 +318,7 @@ namespace Sci.Production.Planning
                 return;
             }
 
-            myUtility.InfoBox("UnApprove data successful.");
+            MyUtility.Msg.InfoBox("UnApprove data successful.");
         }
     }
 

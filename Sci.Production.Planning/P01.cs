@@ -24,24 +24,7 @@ namespace Sci.Production.Planning
         {
             InitializeComponent();
             //this.DefaultFilter = "Finished = 0 and IsForecast = 0";
-            this.DetailSelectCommand = @"select convert(date,null) as mockupdate,order_tmscost.*
-                                                                    ,osp.poqty osp_qty,osp.farmout as osp_farmout,osp.farmin as osp_farmin
-                                                                    ,osp.poqty inhouse_qty,osp.farmout as inhouse_farmout,osp.farmin as inhouse_farmin
-                                                                    ,(select localsupp.abb from localsupp where id = order_tmscost.localsuppid) as localsuppname
-                                                            from order_tmscost 
-                                                            inner join artworktype on order_tmscost.artworktypeid = artworktype.id 
-                                                          left join (select artworkpo.artworktypeid,orderid,poqty,Farmout,farmin 
-                                                                         from artworkpo,artworkpo_detail 
-                                                                        where artworkpo.potype = 'O' and artworkpo.id = artworkpo_detail.id 
-                                                                            and artworkpo_detail.orderid = @id and artworkpo.status = 'Approved'  group by artworkpo.artworktypeid,orderid,poqty,Farmout,farmin) osp
-                                                                on Order_TmsCost.id = osp.orderid and osp.artworktypeid = Order_TmsCost.ArtworkTypeID
-                                                            left join (select artworkpo.artworktypeid,orderid,poqty,Farmout,farmin 
-                                                                         from artworkpo,artworkpo_detail 
-                                                                        where artworkpo.potype = 'I' and artworkpo.id = artworkpo_detail.id 
-                                                                            and artworkpo_detail.orderid = @id and artworkpo.status = 'Approved'  group by artworkpo.artworktypeid,orderid,poqty,Farmout,farmin) inhouse
-                                                                on Order_TmsCost.id = inhouse.orderid and inhouse.artworktypeid = Order_TmsCost.ArtworkTypeID
-                                                         where order_tmscost.id = @id and (order_tmscost.qty > 0 or order_tmscost.tms >0 )
-                                                            and artworktype.isSubprocess = 1;--";
+            
         }
         public P01(ToolStripMenuItem menuitem ,bool history): base(menuitem)
         {
@@ -55,24 +38,24 @@ namespace Sci.Production.Planning
                 this.DefaultFilter = "Finished = 0 and IsForecast = 0";
             }
 
-            this.DetailSelectCommand = @"select order_tmscost.*
-                                                                    ,osp.poqty osp_qty,osp.farmout as osp_farmout,osp.farmin as osp_farmin
-                                                                    ,osp.poqty inhouse_qty,osp.farmout as inhouse_farmout,osp.farmin as inhouse_farmin
-                                                                    ,(select localsupp.abb from localsupp where id = order_tmscost.localsuppid) as localsuppname
-                                                            from order_tmscost 
-                                                            inner join artworktype on order_tmscost.artworktypeid = artworktype.id 
-                                                          left join (select artworkpo.artworktypeid,orderid,poqty,Farmout,farmin 
-                                                                         from artworkpo,artworkpo_detail 
-                                                                        where artworkpo.potype = 'O' and artworkpo.id = artworkpo_detail.id 
-                                                                            and artworkpo_detail.orderid = @id and artworkpo.status = 'Approved'  group by artworkpo.artworktypeid,orderid,poqty,Farmout,farmin) osp
-                                                                on Order_TmsCost.id = osp.orderid and osp.artworktypeid = Order_TmsCost.ArtworkTypeID
-                                                            left join (select artworkpo.artworktypeid,orderid,poqty,Farmout,farmin 
-                                                                         from artworkpo,artworkpo_detail 
-                                                                        where artworkpo.potype = 'I' and artworkpo.id = artworkpo_detail.id 
-                                                                            and artworkpo_detail.orderid = @id and artworkpo.status = 'Approved'  group by artworkpo.artworktypeid,orderid,poqty,Farmout,farmin) inhouse
-                                                                on Order_TmsCost.id = inhouse.orderid and inhouse.artworktypeid = Order_TmsCost.ArtworkTypeID
-                                                         where order_tmscost.id = @id and (order_tmscost.qty > 0 or order_tmscost.tms >0 )
-                                                            and artworktype.isSubprocess = 1;--";
+//            this.DetailSelectCommand = @"select order_tmscost.*
+//                                                                    ,osp.poqty osp_qty,osp.farmout as osp_farmout,osp.farmin as osp_farmin
+//                                                                    ,osp.poqty inhouse_qty,osp.farmout as inhouse_farmout,osp.farmin as inhouse_farmin
+//                                                                    ,(select localsupp.abb from localsupp where id = order_tmscost.localsuppid) as localsuppname
+//                                                            from order_tmscost 
+//                                                            inner join artworktype on order_tmscost.artworktypeid = artworktype.id 
+//                                                          left join (select artworkpo.artworktypeid,orderid,poqty,Farmout,farmin 
+//                                                                         from artworkpo,artworkpo_detail 
+//                                                                        where artworkpo.potype = 'O' and artworkpo.id = artworkpo_detail.id 
+//                                                                            and artworkpo_detail.orderid = @id and artworkpo.status = 'Approved'  group by artworkpo.artworktypeid,orderid,poqty,Farmout,farmin) osp
+//                                                                on Order_TmsCost.id = osp.orderid and osp.artworktypeid = Order_TmsCost.ArtworkTypeID
+//                                                            left join (select artworkpo.artworktypeid,orderid,poqty,Farmout,farmin 
+//                                                                         from artworkpo,artworkpo_detail 
+//                                                                        where artworkpo.potype = 'I' and artworkpo.id = artworkpo_detail.id 
+//                                                                            and artworkpo_detail.orderid = @id and artworkpo.status = 'Approved'  group by artworkpo.artworktypeid,orderid,poqty,Farmout,farmin) inhouse
+//                                                                on Order_TmsCost.id = inhouse.orderid and inhouse.artworktypeid = Order_TmsCost.ArtworkTypeID
+//                                                         where order_tmscost.id = @id and (order_tmscost.qty > 0 or order_tmscost.tms >0 )
+//                                                            and artworktype.isSubprocess = 1;--";
         }
 
         //refresh
@@ -85,10 +68,10 @@ namespace Sci.Production.Planning
             
             if (!(CurrentMaintain==null))
             {
-                result = myUtility.Seek(string.Format(@"select isnull(sum(qty),0) as cutqty from cuttingOutput_detail_detail where CuttingID='{0}'", CurrentMaintain["id"]), out dr, null);
+                result = MyUtility.Check.Seek(string.Format(@"select isnull(sum(qty),0) as cutqty from cuttingOutput_detail_detail where CuttingID='{0}'", CurrentMaintain["id"]), out dr, null);
                 if (result) numericBox_cutqty.Value = (decimal)dr[0];
                 dr = null;
-                result = myUtility.Seek(string.Format(@"select isnull(sum(workday),0) as workday from sewingschedule where orderid ='{0}'", CurrentMaintain["id"]), out dr, null);
+                result = MyUtility.Check.Seek(string.Format(@"select isnull(sum(workday),0) as workday from sewingschedule where orderid ='{0}'", CurrentMaintain["id"]), out dr, null);
                 if (result) numericBox_NeedPerDay.Value = decimal.Parse(dr[0].ToString());
             }
             button_batchApprove.Enabled = !this.EditMode;
@@ -113,7 +96,7 @@ namespace Sci.Production.Planning
                                                                                         , dr["ID"]
                                                                                         , dr["Artworktypeid"]
                                                                                         , dr["localsuppid"]), out order_dt);
-                    if (order_dt.Rows.Count > 0 && !myUtility.Empty(order_dt.Rows[0]["mockup"]))
+                    if (order_dt.Rows.Count > 0 && !MyUtility.Check.Empty(order_dt.Rows[0]["mockup"]))
                     {
                         dr["mockupdate"] = order_dt.Rows[0]["mockup"];
                     } 
@@ -151,7 +134,7 @@ namespace Sci.Production.Planning
 
             ts4.CellValidating+=(s,e)=>
             {
-                if (this.EditMode && !myUtility.Empty(e.FormattedValue))
+                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
                     if (CurrentDetailData["InhouseOSP"].ToString() == "O")
                     {
@@ -169,7 +152,7 @@ namespace Sci.Production.Planning
                         if (!exist)
                         {
                             e.Cancel = true;
-                            myUtility.WarningBox("Supplier not in Style Quotation or not Mock approved or not Price approved!!", "Warning");
+                            MyUtility.Msg.WarningBox("Supplier not in Style Quotation or not Mock approved or not Price approved!!", "Warning");
                             return;
                         }
                     }
@@ -184,11 +167,11 @@ namespace Sci.Production.Planning
             Ict.Win.DataGridViewGeneratorComboBoxColumnSettings cs = new DataGridViewGeneratorComboBoxColumnSettings();
             cs.CellValidating += (s, e) =>
             {
-                if (this.EditMode && !myUtility.Empty(e.FormattedValue) && myUtility.Empty(CurrentDetailData["localsuppid"]))
+                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Check.Empty(CurrentDetailData["localsuppid"]))
                 {
                     if (e.FormattedValue.ToString() == "O")
                     {
-                        CurrentDetailData["localsuppid"] = myUtility.Lookup(string.Format(@"SELECT top 1 QU.LocalSuppId
+                        CurrentDetailData["localsuppid"] = MyUtility.GetValue.Lookup(string.Format(@"SELECT top 1 QU.LocalSuppId
                                                     FROM Order_TmsCost OT
                                                     INNER JOIN ORDERS ON OT.ID = ORDERS.ID
                                                     INNER JOIN Style_Artwork SA ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
@@ -249,6 +232,29 @@ namespace Sci.Production.Planning
             var frm = new Sci.Production.Planning.P01_BatchApprove(dr["ID"].ToString());
             frm.ShowDialog(this);
             this.RenewData();
+        }
+
+        protected override DualResult OnRenewDataPost(Win.Tems.Input1.RenewDataPostEventArgs e)
+        {
+            this.DetailSelectCommand = string.Format(@"select convert(date,null) as mockupdate,order_tmscost.*
+                                                                    ,osp.poqty osp_qty,osp.farmout as osp_farmout,osp.farmin as osp_farmin
+                                                                    ,osp.poqty inhouse_qty,osp.farmout as inhouse_farmout,osp.farmin as inhouse_farmin
+                                                                    ,(select localsupp.abb from localsupp where id = order_tmscost.localsuppid) as localsuppname
+                                                            from order_tmscost 
+                                                            inner join artworktype on order_tmscost.artworktypeid = artworktype.id 
+                                                          left join (select artworkpo.artworktypeid,orderid,poqty,Farmout,farmin 
+                                                                         from artworkpo,artworkpo_detail 
+                                                                        where artworkpo.potype = 'O' and artworkpo.id = artworkpo_detail.id 
+                                                                            and artworkpo_detail.orderid = '{0}' and artworkpo.status = 'Approved'  group by artworkpo.artworktypeid,orderid,poqty,Farmout,farmin) osp
+                                                                on Order_TmsCost.id = osp.orderid and osp.artworktypeid = Order_TmsCost.ArtworkTypeID
+                                                            left join (select artworkpo.artworktypeid,orderid,poqty,Farmout,farmin 
+                                                                         from artworkpo,artworkpo_detail 
+                                                                        where artworkpo.potype = 'I' and artworkpo.id = artworkpo_detail.id 
+                                                                            and artworkpo_detail.orderid = '{0}' and artworkpo.status = 'Approved'  group by artworkpo.artworktypeid,orderid,poqty,Farmout,farmin) inhouse
+                                                                on Order_TmsCost.id = inhouse.orderid and inhouse.artworktypeid = Order_TmsCost.ArtworkTypeID
+                                                         where order_tmscost.id = '{0}' and (order_tmscost.qty > 0 or order_tmscost.tms >0 )
+                                                            and artworktype.isSubprocess = 1;--", e.Data["id"].ToString());
+            return base.OnRenewDataPost(e);
         }
     }
 }
