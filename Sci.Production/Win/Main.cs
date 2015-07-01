@@ -111,8 +111,7 @@ namespace Sci.Production
             // 產生Menu
             foreach (DataRow dr in dtMenu.Rows)
             {
-                //if (!myUtility.Empty(dr["ForMISOnly"]) && !Sci.Env.User.IsMIS) continue;
-                if (!MyUtility.Check.Empty(dr["IsSubMenu"])) continue;
+                if (!MyUtility.Check.Empty(dr["ForMISOnly"]) && !Sci.Env.User.IsMIS) continue;
 
                 menus.Items.Add(progmenu = new ToolStripMenuItem(dr["MenuName"].ToString()));
                 progmenu.DropDownItemClicked += progmenu_DropDownItemClicked;
