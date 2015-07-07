@@ -35,6 +35,8 @@ namespace Sci.Production.Win
             this.pwd = new Sci.Win.UI.TextBox();
             this.ok = new Sci.Win.UI.Button();
             this.exit = new Sci.Win.UI.Button();
+            this.label3 = new Sci.Win.UI.Label();
+            this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
             // act
@@ -46,6 +48,7 @@ namespace Sci.Production.Win
             this.act.ShortcutsEnabled = false;
             this.act.Size = new System.Drawing.Size(131, 23);
             this.act.TabIndex = 0;
+            this.act.Validating += new System.ComponentModel.CancelEventHandler(this.act_Validated);
             // 
             // label1
             // 
@@ -54,7 +57,7 @@ namespace Sci.Production.Win
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(109, 23);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Account:";
+            this.label1.Text = "Account";
             this.label1.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label2
@@ -80,27 +83,50 @@ namespace Sci.Production.Win
             // 
             // ok
             // 
-            this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.ok.Location = new System.Drawing.Point(172, 95);
+            this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.ok.Location = new System.Drawing.Point(172, 128);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(80, 30);
-            this.ok.TabIndex = 90;
+            this.ok.TabIndex = 3;
             this.ok.Text = "Login";
             this.ok.UseVisualStyleBackColor = true;
             // 
             // exit
             // 
-            this.exit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.exit.Location = new System.Drawing.Point(258, 95);
+            this.exit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.exit.Location = new System.Drawing.Point(258, 128);
             this.exit.Name = "exit";
             this.exit.Size = new System.Drawing.Size(80, 30);
-            this.exit.TabIndex = 91;
+            this.exit.TabIndex = 4;
             this.exit.Text = "Exit";
             this.exit.UseVisualStyleBackColor = true;
             // 
+            // label3
+            // 
+            this.label3.Lines = 0;
+            this.label3.Location = new System.Drawing.Point(9, 89);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(109, 23);
+            this.label3.TabIndex = 92;
+            this.label3.Text = "Factory";
+            this.label3.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.BackColor = System.Drawing.Color.White;
+            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.IsSupportUnselect = true;
+            this.comboBox1.Location = new System.Drawing.Point(121, 88);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(131, 24);
+            this.comboBox1.TabIndex = 2;
+            // 
             // Login
             // 
-            this.ClientSize = new System.Drawing.Size(352, 133);
+            this.ClientSize = new System.Drawing.Size(352, 168);
+            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.exit);
             this.Controls.Add(this.ok);
             this.Controls.Add(this.pwd);
@@ -123,6 +149,8 @@ namespace Sci.Production.Win
         private Sci.Win.UI.TextBox pwd;
         private Sci.Win.UI.Button ok;
         private Sci.Win.UI.Button exit;
+        private Sci.Win.UI.Label label3;
+        private Sci.Win.UI.ComboBox comboBox1;
 
     }
 }
