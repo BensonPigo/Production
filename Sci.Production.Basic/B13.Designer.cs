@@ -129,13 +129,14 @@
             // 
             // comboBox1
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
+            this.comboBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Type", true));
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
             this.comboBox1.Location = new System.Drawing.Point(169, 30);
             this.comboBox1.Name = "comboBox1";
+            this.comboBox1.ReadOnly = true;
             this.comboBox1.Size = new System.Drawing.Size(100, 24);
             this.comboBox1.TabIndex = 6;
             // 
@@ -200,6 +201,7 @@
             // 
             this.txtdropdownlist2.BackColor = System.Drawing.Color.White;
             this.txtdropdownlist2.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "IssueType", true));
+            this.txtdropdownlist2.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.txtdropdownlist2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtdropdownlist2.FormattingEnabled = true;
             this.txtdropdownlist2.IsSupportUnselect = true;
