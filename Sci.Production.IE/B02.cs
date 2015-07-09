@@ -44,28 +44,28 @@ namespace Sci.Production.IE
             }
         }
 
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
-            base.OnNewAfter();
+            base.ClickNewAfter();
             CurrentMaintain["EffectiveDate"] = DateTime.Today;
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
         }
 
-        protected override void OnEditAfter()
+        protected override void ClickEditAfter()
         {
-            base.OnEditAfter();
+            base.ClickEditAfter();
             this.dateBox1.ReadOnly = true;
             this.comboBox1.ReadOnly = true;
             this.txtfactory1.ReadOnly = true;
         }
 
-        protected override void OnCopyAfter()
+        protected override void ClickCopyAfter()
         {
-            base.OnCopyAfter();
+            base.ClickCopyAfter();
             CurrentMaintain["ID"] = DBNull.Value;
         }
 
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["EffectiveDate"].ToString()))
             {
@@ -96,14 +96,14 @@ namespace Sci.Production.IE
                 DateTime effectiveDate = (DateTime)CurrentMaintain["EffectiveDate"];
                 string effectiveDateToString = effectiveDate.ToShortDateString();
                 string selectCommand = string.Format("select ID from ChgOverTarget where EffectiveDate = '{0}' and FactoryID = '{1}' and Type = '{2}'", effectiveDateToString, CurrentMaintain["FactoryID"].ToString().Trim(), CurrentMaintain["Type"].ToString().Trim());
-                if (myUtility.Seek(selectCommand, null))
+                if (MyUtility.Check.Seek(selectCommand, null))
                 {
                     MessageBox.Show(string.Format("Data is Duplicate!!"));
                     return false;
                 }
             }
 
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         private void comboBox1_Validated(object sender, EventArgs e)

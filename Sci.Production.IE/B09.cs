@@ -27,15 +27,15 @@ namespace Sci.Production.IE
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.displayBox3.Text = myUtility.Lookup("Description", this.displayBox2.Text.ToString(), "MachineType","ID");
+            this.displayBox3.Text = MyUtility.GetValue.Lookup("Description", this.displayBox2.Text.ToString(), "MachineType","ID");
             string selectCommand = string.Format("select Name from Reason where ReasonTypeID = 'OperationType' and ID = '{0}'", this.displayBox7.Text.ToString());
-            this.displayBox8.Text = myUtility.Lookup(selectCommand,null);
+            this.displayBox8.Text = MyUtility.GetValue.Lookup(selectCommand,null);
             selectCommand = string.Format("select Name from Reason where ReasonTypeID = 'CostCenter' and ID = '{0}'", this.displayBox10.Text.ToString());
-            this.displayBox9.Text = myUtility.Lookup(selectCommand, null);
+            this.displayBox9.Text = MyUtility.GetValue.Lookup(selectCommand, null);
             selectCommand = string.Format("select Name from Reason where ReasonTypeID = 'Section' and ID = '{0}'", this.displayBox12.Text.ToString());
-            this.displayBox11.Text = myUtility.Lookup(selectCommand, null);
-            this.numericBox8.Text = myUtility.Lookup("MachineAllow", this.displayBox2.Text.ToString(), "MachineType", "ID");
-            this.numericBox9.Text = myUtility.Lookup("ManAllow", this.displayBox2.Text.ToString(), "MachineType", "ID");
+            this.displayBox11.Text = MyUtility.GetValue.Lookup(selectCommand, null);
+            this.numericBox8.Text = MyUtility.GetValue.Lookup("MachineAllow", this.displayBox2.Text.ToString(), "MachineType", "ID");
+            this.numericBox9.Text = MyUtility.GetValue.Lookup("ManAllow", this.displayBox2.Text.ToString(), "MachineType", "ID");
             this.pictureBox1.ImageLocation = this.CurrentMaintain["Picture1"].ToString();
             this.pictureBox2.ImageLocation = this.CurrentMaintain["Picture2"].ToString();
         }
@@ -58,7 +58,7 @@ namespace Sci.Production.IE
                         {
                             string local_path_file = file.FileName;
                             string local_file_type = Path.GetExtension(local_path_file);
-                            string destination_path = myUtility.Lookup("select PicPath from System", null);
+                            string destination_path = MyUtility.GetValue.Lookup("select PicPath from System", null);
                             string destination_fileName = (this.CurrentMaintain["UKey"].ToString()).Trim() + "-1" + local_file_type;
 
                             System.IO.File.Copy(local_path_file, destination_path + destination_fileName, true);
@@ -123,7 +123,7 @@ namespace Sci.Production.IE
                         {
                             string local_path_file = file.FileName;
                             string local_file_type = Path.GetExtension(local_path_file);
-                            string destination_path = myUtility.Lookup("select PicPath from System", null);
+                            string destination_path = MyUtility.GetValue.Lookup("select PicPath from System", null);
                             string destination_fileName = this.CurrentMaintain["UKey"] + "-2" + local_file_type;
 
                             System.IO.File.Copy(local_path_file, destination_path + destination_fileName, true);

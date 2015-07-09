@@ -18,19 +18,19 @@ namespace Sci.Production.IE
             this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
         }
 
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
-            base.OnNewAfter();
+            base.ClickNewAfter();
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
         }
 
-        protected override void OnEditAfter()
+        protected override void ClickEditAfter()
         {
-            base.OnEditAfter();
+            base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
         }
 
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
@@ -60,7 +60,7 @@ namespace Sci.Production.IE
                 return false;
             }
 
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
