@@ -361,7 +361,6 @@
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
@@ -451,6 +450,7 @@
             // 
             this.txtshipmode1.BackColor = System.Drawing.Color.White;
             this.txtshipmode1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
+            this.txtshipmode1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.txtshipmode1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtshipmode1.FormattingEnabled = true;
             this.txtshipmode1.IsSupportUnselect = true;
