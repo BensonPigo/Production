@@ -22,19 +22,19 @@ namespace Sci.Production.PPIC
             comboBox1.DisplayMember = "Value";
         }
 
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
-            base.OnNewAfter();
+            base.ClickNewAfter();
             CurrentMaintain["Type"] = "FL";
         }
 
-        protected override void OnEditAfter()
+        protected override void ClickEditAfter()
         {
-            base.OnEditAfter();
+            base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
         }
 
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             if (string.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
@@ -56,7 +56,7 @@ namespace Sci.Production.PPIC
                 this.comboBox1.Focus();
                 return false;
             }
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
     }
 }

@@ -60,7 +60,7 @@ namespace Sci.Production.PPIC
             if (!string.IsNullOrWhiteSpace(sewingLineText.Text) && sewingLineText.Text != sewingLineText.OldValue)
             {
                 string selectCommand = string.Format("select ID from SewingLine where FactoryID = '{0}' and ID = '{1}'", Sci.Env.User.Factory, sewingLineText.Text.ToString());
-                if (!myUtility.Seek(selectCommand, null))
+                if (!MyUtility.Check.Seek(selectCommand, null))
                 {
                     MessageBox.Show(string.Format("< Sewing Line: {0} > not found!!!", sewingLineText.Text.ToString()));
                     sewingLineText.Text = "";
@@ -164,7 +164,7 @@ namespace Sci.Production.PPIC
                         foreach (DataRow currentRecord in sewingLine.Rows)
                         {
                             sqlCommand = string.Format("select Date from WorkHour where SewingLineID = '{0}' and FactoryID = '{1}' and Date = '{2}'", currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d"));
-                            if (!myUtility.Seek(sqlCommand, null))
+                            if (!MyUtility.Check.Seek(sqlCommand, null))
                             {
                                 sqlInsert = sqlInsert + "Insert into WorkHour (SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)\r\n ";
                                 sqlInsert = sqlInsert + string.Format("Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}');\r\n", currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d"), this.numericBox1.Text.ToString(), this.checkBox1.Checked, Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));

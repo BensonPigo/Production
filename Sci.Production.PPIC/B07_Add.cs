@@ -78,7 +78,7 @@ namespace Sci.Production.PPIC
                             foreach (DataRow currentRecord in sewingLine.Rows)
                             {
                               sqlCommand = string.Format("select Date from WorkHour where SewingLineID = '{0}' and FactoryID = '{1}' and Date = '{2}'", currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d"));
-                              if (!myUtility.Seek(sqlCommand, null))
+                              if (!MyUtility.Check.Seek(sqlCommand, null))
                                {
                                     sqlInsert = sqlInsert + "Insert into WorkHour (SewingLineID,FactoryID,Date,Hours,AddName,AddDate)\r\n ";
                                     sqlInsert = sqlInsert + string.Format("Values('{0}','{1}','{2}','{3}','{4}','{5}');\r\n", currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d"),this.numericBox1.Text.ToString(),Sci.Env.User.UserID,DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));

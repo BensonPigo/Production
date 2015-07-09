@@ -15,7 +15,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             string sqlCommand = "select UseAPS from factory where ID = '" + Sci.Env.User.Factory + "'";
-            string useAPS = myUtility.Lookup(sqlCommand, null);
+            string useAPS = MyUtility.GetValue.Lookup(sqlCommand, null);
             if (useAPS.ToUpper() == "TRUE")
             {
                 IsSupportDelete = false;
@@ -33,14 +33,14 @@ namespace Sci.Production.PPIC
             this.button1.ForeColor = Color.Blue;
         }
 
-        protected override void OnEditAfter()
+        protected override void ClickEditAfter()
         {
-            base.OnEditAfter();
+            base.ClickEditAfter();
             this.dateBox1.ReadOnly = true;
             this.txtsewingline1.ReadOnly = true;
         }
 
-        protected override bool OnNewBefore()
+        protected override bool ClickNewBefore()
         {
             Sci.Production.PPIC.B07_Add callNextForm = new Sci.Production.PPIC.B07_Add();
             DialogResult result = callNextForm.ShowDialog(this);

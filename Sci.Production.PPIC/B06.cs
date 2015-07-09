@@ -14,7 +14,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             string sqlCommand = "select UseAPS from factory where ID = '"+Sci.Env.User.Factory+"'";
-            string useAPS = myUtility.Lookup(sqlCommand, null);
+            string useAPS = MyUtility.GetValue.Lookup(sqlCommand, null);
             if (useAPS.ToUpper() == "TRUE")
             {
                 IsSupportCopy = false;
@@ -26,19 +26,19 @@ namespace Sci.Production.PPIC
             this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
         }
 
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
-            base.OnNewAfter();
+            base.ClickNewAfter();
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
         }
 
-        protected override void OnEditAfter()
+        protected override void ClickEditAfter()
         {
-            base.OnEditAfter();
+            base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
         }
 
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
@@ -54,7 +54,7 @@ namespace Sci.Production.PPIC
                 return false;
             }
    
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
