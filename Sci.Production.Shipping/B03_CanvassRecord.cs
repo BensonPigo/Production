@@ -27,28 +27,28 @@ namespace Sci.Production.Shipping
                 {
                     if (this.EditMode && this.txtsubcon1.TextBox1.Text != this.txtsubcon1.TextBox1.OldValue)
                     {
-                        CurrentMaintain["CurrencyID1"] = myUtility.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
+                        CurrentMaintain["CurrencyID1"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
                     }
                 };
             this.txtsubcon2.TextBox1.Validating += (s, e) =>
             {
                 if (this.EditMode && this.txtsubcon2.TextBox1.Text != this.txtsubcon2.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID2"] = myUtility.Lookup("CurrencyID", this.txtsubcon2.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID2"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon2.TextBox1.Text, "LocalSupp", "ID");
                 }
             };
             this.txtsubcon3.TextBox1.Validating += (s, e) =>
             {
                 if (this.EditMode && this.txtsubcon3.TextBox1.Text != this.txtsubcon3.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID3"] = myUtility.Lookup("CurrencyID", this.txtsubcon3.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID3"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon3.TextBox1.Text, "LocalSupp", "ID");
                 }
             };
             this.txtsubcon4.TextBox1.Validating += (s, e) =>
             {
                 if (this.EditMode && this.txtsubcon4.TextBox1.Text != this.txtsubcon4.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID4"] = myUtility.Lookup("CurrencyID", this.txtsubcon4.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID4"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon4.TextBox1.Text, "LocalSupp", "ID");
                 }
             };
         }
@@ -60,21 +60,21 @@ namespace Sci.Production.Shipping
         }
 
         //檢查是否還有建立的紀錄尚未被confirm，若有則無法新增資料
-        protected override bool OnNewBefore()
+        protected override bool ClickNewBefore()
         {
             string sqlCmd = string.Format("select ID from ShipExpense_CanVass where ID = '{0}' and Status = 'New'", this.motherData["ID"].ToString());
-            if (myUtility.Seek(sqlCmd, null))
+            if (MyUtility.Check.Seek(sqlCmd, null))
             {
                 MessageBox.Show("Still have data not yet confirm, so can't create new record!");
                 return false;
             }
-            return base.OnNewBefore();
+            return base.ClickNewBefore();
         }
 
         //新增預設值
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
-            base.OnNewAfter();
+            base.ClickNewAfter();
             CurrentMaintain["ID"] = motherData["ID"].ToString().Trim();
             CurrentMaintain["ChooseSupp"] = 1;
             CurrentMaintain["Status"] = "New";
@@ -82,7 +82,7 @@ namespace Sci.Production.Shipping
         }
 
         //修改前檢查
-        protected override bool OnEditBefore()
+        protected override bool ClickEditBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["Status"].ToString() == "Confirmed")
@@ -90,11 +90,11 @@ namespace Sci.Production.Shipping
                 MessageBox.Show("Record is confirmed, can't modify!");
                 return false;
             }
-            return base.OnEditBefore();
+            return base.ClickEditBefore();
         }
 
         //刪除前檢查
-        protected override bool OnDeleteBefore()
+        protected override bool ClickDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["Status"].ToString() == "Confirmed")
@@ -102,13 +102,13 @@ namespace Sci.Production.Shipping
                 MessageBox.Show("Record is confirmed, can't delete!");
                 return false;
             }
-            return base.OnDeleteBefore();
+            return base.ClickDeleteBefore();
         }
 
         //Confirm
-        protected override void OnConfirm()
+        protected override void ClickConfirm()
         {
-            base.OnConfirm();
+            base.ClickConfirm();
 
             var currentMaintain = this.CurrentMaintain;
             if (currentMaintain == null)
@@ -222,7 +222,7 @@ namespace Sci.Production.Shipping
 
             result = RenewData();
             OnDetailEntered();
-            EnsureToolbarCUSR();
+            EnsureToolbarExt();
         }
     }
 }

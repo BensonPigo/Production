@@ -16,13 +16,13 @@ namespace Sci.Production.Shipping
             InitializeComponent();
         }
 
-        protected override void OnCopyAfter()
+        protected override void ClickCopyAfter()
         {
-            base.OnCopyAfter();
+            base.ClickCopyAfter();
             CurrentMaintain["ID"] = DBNull.Value;
         }
 
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Forwarder"].ToString()))
             {
@@ -38,7 +38,7 @@ namespace Sci.Production.Shipping
                 return false;
             }
 
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Sci.Production.Shipping
         {
             base.OnDetailEntered();
             //按鈕Canvass Record變色
-            if (myUtility.Seek(CurrentMaintain["ID"].ToString(), "ShipExpense_CanVass", "ID"))
+            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "ShipExpense_CanVass", "ID"))
             {
                 this.button1.ForeColor = Color.Blue;
             }
@@ -30,7 +30,7 @@ namespace Sci.Production.Shipping
             }
 
             //按鈕Payment History變色
-            if (myUtility.Seek(CurrentMaintain["ID"].ToString(), "ShippingAP_Detail", "ShipExpenseID"))
+            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "ShippingAP_Detail", "ShipExpenseID"))
             {
                 this.button2.ForeColor = Color.Blue;
             }
@@ -40,22 +40,22 @@ namespace Sci.Production.Shipping
             }
         }
 
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
-            base.OnNewAfter();
+            base.ClickNewAfter();
             this.txtsubcon1.TextBox1.ReadOnly = true;
         }
 
-        protected override void OnEditAfter()
+        protected override void ClickEditAfter()
         {
-            base.OnEditAfter();
+            base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
             this.txtsubcon1.TextBox1.ReadOnly = true;
         }
 
-        protected override void OnCopyAfter()
+        protected override void ClickCopyAfter()
         {
-            base.OnCopyAfter();
+            base.ClickCopyAfter();
             CurrentMaintain["ID"] = DBNull.Value;
             CurrentMaintain["LocalSuppID"] = DBNull.Value;
             CurrentMaintain["CurrencyID"] = DBNull.Value;
@@ -64,7 +64,7 @@ namespace Sci.Production.Shipping
             this.txtsubcon1.TextBox1.ReadOnly = true;
         }
 
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             if (string.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
@@ -87,7 +87,7 @@ namespace Sci.Production.Shipping
                 return false;
             }
 
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
@@ -95,7 +95,7 @@ namespace Sci.Production.Shipping
             if (!string.IsNullOrWhiteSpace(this.textBox1.Text) && this.textBox1.Text != this.textBox1.OldValue)
             {
                 string selectCommand = string.Format("select ID from ShipExpense where ID = '{0}'", this.textBox1.Text.ToString());
-                if (myUtility.Seek(selectCommand, null))
+                if (MyUtility.Check.Seek(selectCommand, null))
                 {
                     MessageBox.Show(string.Format("Code: '{0}' is duplicate!", this.textBox1.Text.ToString().Trim()));
                     this.textBox1.Text = "";
