@@ -207,7 +207,15 @@ namespace Sci.Production
         {
             Object[] arrArg = null;
             arrArg = string.IsNullOrWhiteSpace(strArg) ? new Object[1] { menuItem } : new Object[2] { menuItem, strArg };
-            Object formClass = Activator.CreateInstance(typeofControl, arrArg);
+            Object formClass = null;
+            try
+            {
+                formClass = Activator.CreateInstance(typeofControl, arrArg);
+            }
+            catch (Exception e)
+            {
+                MyUtility.Msg.ErrorBox(e.ToString());
+            }
             return formClass;
         }
 
