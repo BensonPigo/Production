@@ -361,9 +361,9 @@
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportEditMode = false;
             this.comboBox1.IsSupportUnselect = true;
             this.comboBox1.Location = new System.Drawing.Point(477, 64);
             this.comboBox1.Name = "comboBox1";

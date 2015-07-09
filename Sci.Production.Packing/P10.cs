@@ -102,7 +102,7 @@ namespace Sci.Production.Packing
                                                                   and b.OrderId = '{2}'
                                                                   and b.CTNStartNo = '{3}'", CurrentDetailData["ID"].ToString(), CurrentDetailData["PackingListId"].ToString(), CurrentDetailData["OrderId"].ToString(), CurrentDetailData["CTNStartNo"].ToString());
             DataRow receivdData;
-            if (myUtility.Seek(sqlCmd, out receivdData))
+            if (MyUtility.Check.Seek(sqlCmd, out receivdData))
             {
                 if (receivdData["Status"].ToString() == "Confirmed")
                 {
@@ -114,7 +114,7 @@ namespace Sci.Production.Packing
         }
 
         //新增資料時直接呼叫Form:P10_ImportData，P10_ImportData會將資料直接存進實體Table，回到Form:P10時再將剛新增的那筆資料寫入Browse的Cursor中
-        protected override bool OnNewBefore()
+        protected override bool ClickNewBefore()
         {
             Sci.Production.Packing.P10_ImportData callNextForm = new Sci.Production.Packing.P10_ImportData("");
             DialogResult dr = callNextForm.ShowDialog(this);
@@ -138,7 +138,7 @@ namespace Sci.Production.Packing
         }
 
         //刪除前檢查，如果表身有任一筆資料已被Clog Receive的話，就不可以被刪除
-        protected override bool OnDeleteBefore()
+        protected override bool ClickDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             DataTable selectData;
@@ -166,11 +166,11 @@ namespace Sci.Production.Packing
                 MessageBox.Show("Query detail data fail!");
             }
 
-            return base.OnDeleteBefore();
+            return base.ClickDeleteBefore();
         }
 
         //刪除更新PalcingList_Detail資料，資料刪除後也要更新PackingList_Detail的值
-        protected override bool OnDeletePost()
+        protected override bool ClickDeletePost()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             string sqlUpdatePackingList = string.Format(@"update PackingList_Detail 
@@ -196,11 +196,11 @@ namespace Sci.Production.Packing
             {
                 return false;
             }
-            return base.OnDeletePost();
+            return base.ClickDeletePost();
         }
 
         //刪除後要Update Orders的資料
-        protected override void OnDeleteAfter()
+        protected override void ClickDeleteAfter()
         {
             if (detailOrderID.Rows.Count > 0)
             {
@@ -219,11 +219,11 @@ namespace Sci.Production.Packing
                     MessageBox.Show("Update orders data fail!");
                 }
             }
-            base.OnDeleteAfter();
+            base.ClickDeleteAfter();
         }
 
         //存檔後要更新PalcingList_Detail資料，表身資料刪除後也要更新PackingList_Detail的值
-        protected override bool OnSavePre()
+        protected override bool ClickSavePre()
         {
             DataTable t = (DataTable) detailgridbs.DataSource;
 
@@ -259,11 +259,11 @@ namespace Sci.Production.Packing
                     }
                 }
             }
-            return base.OnSavePre();
+            return base.ClickSavePre();
         }
 
         //存檔後要Update Orders的資料
-        protected override void OnSaveAfter()
+        protected override void ClickSaveAfter()
         {
             //Update Orders的資料
             DataTable selectData;
@@ -288,7 +288,7 @@ namespace Sci.Production.Packing
             {
                 MessageBox.Show("Update orders data fail!");
             }
-            base.OnSaveAfter();
+            base.ClickSaveAfter();
         }
 
         //Select Trans PO or Import From Barcode

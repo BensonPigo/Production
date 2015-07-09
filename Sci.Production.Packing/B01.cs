@@ -16,19 +16,19 @@ namespace Sci.Production.Packing
             InitializeComponent();
         }
 
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
-            base.OnNewAfter();
+            base.ClickNewAfter();
             CurrentMaintain["Type"] = "OG";
         }
 
-        protected override void OnEditAfter()
+        protected override void ClickEditAfter()
         {
-            base.OnEditAfter();
+            base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
         }
 
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             if (string.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
@@ -43,7 +43,7 @@ namespace Sci.Production.Packing
                 this.textBox2.Focus();
                 return false;
             }
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
     }
 }

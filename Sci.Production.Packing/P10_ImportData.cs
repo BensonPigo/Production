@@ -139,8 +139,8 @@ namespace Sci.Production.Packing
             //設定參數值
             if (string.IsNullOrWhiteSpace(idValue))
             {
-                string getID = myUtility.GetID(ProductionEnv.Keyword + "CS", "TransferToClog", DateTime.Today, 2, "Id", null);
-                if (myUtility.Empty(getID))
+                string getID = MyUtility.GetValue.GetID(ProductionEnv.Keyword + "CS", "TransferToClog", DateTime.Today, 2, "Id", null);
+                if (MyUtility.Check.Empty(getID))
                 {
                     MessageBox.Show("GetID fail, please try again!");
                     return;
@@ -151,7 +151,7 @@ namespace Sci.Production.Packing
             else
             {
                 newID = idValue;
-                transDate = Convert.ToDateTime(myUtility.Lookup("TransferDate", newID, "TransferToClog", "ID")).ToString("d");
+                transDate = Convert.ToDateTime(MyUtility.GetValue.Lookup("TransferDate", newID, "TransferToClog", "ID")).ToString("d");
             }
 
             //組表身資料
@@ -164,7 +164,7 @@ namespace Sci.Production.Packing
                                                                               from TransferToClog_Detail  
                                                                               where ID = '{0}' and PackingListID = '{1}' and CTNStartNo = '{2}'
                                                                               ", idValue, currentRecord["PackingListID"].ToString(), currentRecord["CTNStartNo"].ToString());
-                    if (myUtility.Seek(sqlCommand, null))
+                    if (MyUtility.Check.Seek(sqlCommand, null))
                     {
                         insertData = false;
                     }
@@ -299,14 +299,14 @@ namespace Sci.Production.Packing
                                                                                   from PackingList_Detail
                                                                                   where ID = '{0}' and CTNStartNo = '{1}' and TransferToClogID = ''
                                                                                    ", dr["PackingListID"].ToString(), dr["CTNStartNo"].ToString());
-                            if (myUtility.Seek(sqlCmd, out seekData))
+                            if (MyUtility.Check.Seek(sqlCmd, out seekData))
                             {
                                 dr["OrderID"] = seekData["OrderID"].ToString().Trim();
                                 sqlCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,a.BuyerDelivery 
                                                                             from Orders a
                                                                              left join Country b on b.ID = a.Dest
                                                                             where a.ID = '{0}' and a.FtyGroup = '{1}'", dr["OrderID"].ToString(), Sci.Env.User.Factory);
-                                if (myUtility.Seek(sqlCmd, out seekData))
+                                if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
                                     dr["StyleID"] = seekData["StyleID"].ToString().Trim();
                                     dr["SeasonID"] = seekData["SeasonID"].ToString().Trim();

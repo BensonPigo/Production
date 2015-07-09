@@ -53,7 +53,7 @@ namespace Sci.Production.Packing
             DataRow orderData;
             string sqlCmd;
             sqlCmd = string.Format("select StyleID,SeasonID,CustPONo,Qty,CtnType from Orders where ID = '{0}'", CurrentMaintain["OrderID"].ToString());
-            if (myUtility.Seek(sqlCmd, out orderData))
+            if (MyUtility.Check.Seek(sqlCmd, out orderData))
             {
                 displayBox2.Value = orderData["StyleID"].ToString();
                 displayBox3.Value = orderData["SeasonID"].ToString();
@@ -61,14 +61,14 @@ namespace Sci.Production.Packing
                 numericBox1.Value = Convert.ToInt32(orderData["Qty"].ToString());
                 comboBox1.SelectedValue = orderData["CtnType"].ToString();
                 sqlCmd = string.Format("select Qty from Order_QtyShip where ID = '{0}' and Seq = '{1}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
-                if (myUtility.Seek(sqlCmd, out orderData))
+                if (MyUtility.Check.Seek(sqlCmd, out orderData))
                 {
                     numericBox4.Value = Convert.ToInt32(orderData["Qty"].ToString());
                 }
             }
 
             //Special Instruction按鈕變色
-            if (myUtility.Empty(CurrentMaintain["SpecialInstruction"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["SpecialInstruction"].ToString()))
             {
                 this.button1.ForeColor = Color.Black;
             }
@@ -78,7 +78,7 @@ namespace Sci.Production.Packing
             }
 
             //Carton Dimension按鈕變色
-            if (myUtility.Seek(CurrentMaintain["OrderID"].ToString(), "Order_CTNData", "ID"))
+            if (MyUtility.Check.Seek(CurrentMaintain["OrderID"].ToString(), "Order_CTNData", "ID"))
             {
                 this.button2.ForeColor = Color.Blue;
             }
@@ -102,18 +102,18 @@ namespace Sci.Production.Packing
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("QtyPerCTN", header: "Qty/Ctn").Get(out col_qtyperctn)
                 .Numeric("ShipQty", header: "ShipQty", iseditingreadonly: true)
-                .Numeric("NW", header: "N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999, minimum: 0)
-                .Numeric("GW", header: "G.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999, minimum: 0)
-                .Numeric("NNW", header: "N.N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999, minimum: 0);
+                .Numeric("NW", header: "N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
+                .Numeric("GW", header: "G.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
+                .Numeric("NNW", header: "N.N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0);
 
             this.detailgrid.CellValueChanged += (s, e) =>
             {
                 #region 選完RefNo後，要自動帶出Description與G.W
-                if (detailgrid.Columns[e.ColumnIndex].Name == col_refno.Name)
+                if (detailgrid.Columns[e.ColumnIndex].DataPropertyName == col_refno.DataPropertyName)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    if (myUtility.Empty(dr["RefNo"]))
+                    if (MyUtility.Check.Empty(dr["RefNo"]))
                     {
                         dr["Description"] = "";
                         dr["GW"] = dr["NW"].ToString();
@@ -122,7 +122,7 @@ namespace Sci.Production.Packing
                     {
                         string seekSql = string.Format("select Description,Weight from LocalItem where RefNo = '{0}'", dr["RefNo"].ToString());
                         DataRow localItem;
-                        if (myUtility.Seek(seekSql, out localItem))
+                        if (MyUtility.Check.Seek(seekSql, out localItem))
                         {
                             dr["Description"] = localItem["Description"].ToString();
                             dr["GW"] = Convert.ToDouble(dr["NW"].ToString()) + Convert.ToDouble(localItem["Weight"].ToString());
@@ -138,7 +138,7 @@ namespace Sci.Production.Packing
                 #endregion
 
                 #region 輸入Qty/Ctn後要重算N.W.,G.W.,N.N.W.
-                if (detailgrid.Columns[e.ColumnIndex].Name == col_qtyperctn.Name)
+                if (detailgrid.Columns[e.ColumnIndex].DataPropertyName == col_qtyperctn.DataPropertyName)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
@@ -164,9 +164,9 @@ namespace Sci.Production.Packing
             };
         }
 
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
-            base.OnNewAfter();
+            base.ClickNewAfter();
 
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["CTNStartNo"] = 1;
@@ -178,29 +178,29 @@ namespace Sci.Production.Packing
             comboBox1.SelectedValue = "";
         }
 
-        protected override void OnEditAfter()
+        protected override void ClickEditAfter()
         {
-            base.OnEditAfter();
+            base.ClickEditAfter();
             ControlGridColumn();
         }
 
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
-            if (myUtility.Empty(CurrentMaintain["OrderID"]))
+            if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
             {
                 MessageBox.Show("< SP No. > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
-            if (myUtility.Empty(CurrentMaintain["OrderShipmodeSeq"]))
+            if (MyUtility.Check.Empty(CurrentMaintain["OrderShipmodeSeq"]))
             {
                 MessageBox.Show("< Seq > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }
 
-            if (myUtility.Empty(CurrentMaintain["ShipModeID"]))
+            if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
             {
                 MessageBox.Show("< Shipping Mode > can not be empty!");
                 this.txtshipmode1.Focus();
@@ -218,9 +218,9 @@ namespace Sci.Production.Packing
             //表身的Ref No.與Qty/CTN不可以為空值
             foreach (DataRow dr in detailData)
             {
-                bool isEmptyRefNo = myUtility.Empty(dr["RefNo"]);
-                bool isEmptyQtyPerCTN = myUtility.Empty(dr["QtyPerCTN"]);
-                bool isEmptyShipQty = myUtility.Empty(dr["ShipQty"]);
+                bool isEmptyRefNo = MyUtility.Check.Empty(dr["RefNo"]);
+                bool isEmptyQtyPerCTN = MyUtility.Check.Empty(dr["QtyPerCTN"]);
+                bool isEmptyShipQty = MyUtility.Check.Empty(dr["ShipQty"]);
                 if (isEmptyQtyPerCTN && !isEmptyShipQty)
                 {
                     MessageBox.Show("< Color Way > " + dr["Article"].ToString().Trim() + " < Qty/Ctn > can't empty!");
@@ -253,14 +253,14 @@ namespace Sci.Production.Packing
                         if (article != dr["Article"].ToString())
                         {
                             article = dr["Article"].ToString();
-                            cbm = myUtility.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo");
+                            cbm = MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo");
                             DataRow dr1 = groupData.NewRow();
                             dr1["Article"] = article;
                             dr1["CBM"] = Convert.ToDouble(cbm);
                             groupData.Rows.Add(dr1);
                             recordNo += 1;
                         }
-                        if (myUtility.Empty(Convert.ToDouble(dr["QtyPerCTN"])))
+                        if (MyUtility.Check.Empty(Convert.ToDouble(dr["QtyPerCTN"])))
                         {
                             ctn = 0;
                         }
@@ -296,7 +296,7 @@ namespace Sci.Production.Packing
                 //Total Cartons: 表身每一列資料的訂單件數/每箱件數無條件進位後加總
                 foreach (DataRow dr in detailData)
                 {
-                    if (myUtility.Empty(Convert.ToDouble(dr["QtyPerCTN"])))
+                    if (MyUtility.Check.Empty(Convert.ToDouble(dr["QtyPerCTN"])))
                     {
                         ctn = 0;
                     }
@@ -306,7 +306,7 @@ namespace Sci.Production.Packing
                     }
                     ctns = (int)Math.Ceiling(ctn);
                     ttlCTN = ttlCTN + ctns;
-                    cbm = myUtility.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo");
+                    cbm = MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo");
                     ttlCBM = ttlCBM + Convert.ToDouble(cbm) * ctns;
                 }
             }
@@ -317,15 +317,15 @@ namespace Sci.Production.Packing
             //GetID
             if (IsDetailInserting)
             {
-                string id = myUtility.GetID(ProductionEnv.Keyword + "PG", "PackingGuide", DateTime.Today, 2, "Id", null);
-                if (myUtility.Empty(id))
+                string id = MyUtility.GetValue.GetID(ProductionEnv.Keyword + "PG", "PackingGuide", DateTime.Today, 2, "Id", null);
+                if (MyUtility.Check.Empty(id))
                 {
                     MessageBox.Show("GetID fail, please try again!");
                     return false;
                 }
                 CurrentMaintain["ID"] = id;
             }
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         //控制Grid欄位的可修改性
@@ -351,11 +351,11 @@ namespace Sci.Production.Packing
                 {
                     bool returnData = false;
                     #region 檢查輸入的值是否符合條件
-                    if (!myUtility.Empty(textBox1.Text))
+                    if (!MyUtility.Check.Empty(textBox1.Text))
                     {
                         DataRow orderData;
                         string sqlCmd = string.Format("select Category, LocalOrder, IsForecast from Orders where ID = '{0}' and FtyGroup = '{1}'", textBox1.Text, Sci.Env.User.Factory);
-                        if (myUtility.Seek(sqlCmd, out orderData))
+                        if (MyUtility.Check.Seek(sqlCmd, out orderData))
                         {
                             string msg = "";
                             //只能建立大貨單的資料
@@ -438,7 +438,7 @@ namespace Sci.Production.Packing
 
             CurrentMaintain["CTNQty"] = 0;
 
-            if (myUtility.Empty(orderID))
+            if (MyUtility.Check.Empty(orderID))
             {
                 //OrderID為空值時，要把其他相關欄位值清空
                 CurrentMaintain["OrderShipmodeSeq"] = "";
@@ -455,7 +455,7 @@ namespace Sci.Production.Packing
                 DataRow orderData;
                 string sqlCmd;
                 sqlCmd = string.Format("select StyleID,SeasonID,CustPONo,Qty,CtnType,Packing from Orders where ID = '{0}'", orderID);
-                if (myUtility.Seek(sqlCmd, out orderData))
+                if (MyUtility.Check.Seek(sqlCmd, out orderData))
                 {
                     //帶出相關欄位的資料
                     displayBox2.Value = orderData["StyleID"].ToString();
@@ -468,19 +468,22 @@ namespace Sci.Production.Packing
                     #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
                     int orderQty = Convert.ToInt32(orderData["Qty"].ToString());
                     sqlCmd = string.Format("select count(ID) as CountID from Order_QtyShip where ID = '{0}'", orderID);
-                    if (myUtility.Seek(sqlCmd, out orderData))
+                    if (MyUtility.Check.Seek(sqlCmd, out orderData))
                     {
                         if (orderData["CountID"].ToString() == "1")
                         {
-                            CurrentMaintain["OrderShipmodeSeq"] = "01";
-                            string lookCmd = string.Format("select ShipModeID from Order_QtyShip where ID = '{0}' and Seq = '01'", orderID);
-                            CurrentMaintain["ShipModeID"] = myUtility.Lookup(lookCmd);
-                            numericBox4.Value = orderQty;
+                            sqlCmd = string.Format("select ShipModeID,Seq from Order_QtyShip where ID = '{0}'", orderID);
+                            if (MyUtility.Check.Seek(sqlCmd, out orderData))
+                            {
+                                CurrentMaintain["OrderShipmodeSeq"] = orderData["Seq"].ToString();
+                                CurrentMaintain["ShipModeID"] = orderData["ShipModeID"].ToString();
+                                numericBox4.Value = orderQty;
+                            }
                         }
                         else
                         {
                             IList<DataRow> orderQtyShipData;
-                            sqlCmd = string.Format("select Seq, BuyerDelivery,ShipmodeID,Qty from Order_QtyShip where ID = '{0}'", orderID);
+                            sqlCmd = string.Format("select Seq,BuyerDelivery,ShipmodeID,Qty from Order_QtyShip where ID = '{0}'", orderID);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", "", "Seq,Buyer Delivery,ShipMode,Qty");
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
@@ -509,13 +512,13 @@ namespace Sci.Production.Packing
         //產生表身Grid的資料
         private void GenDetailData(string orderID, string seq)
         {
-            if (!myUtility.Empty(orderID) && !myUtility.Empty(orderID))
+            if (!MyUtility.Check.Empty(orderID) && !MyUtility.Check.Empty(orderID))
             {
                 string sqlCmd;
                 if (comboBox1.SelectedValue.ToString() == "2")
                 {
                     sqlCmd = string.Format("select * from Order_QtyCTN where Id = '{0}'", orderID);
-                    if (!myUtility.Seek(sqlCmd))
+                    if (!MyUtility.Check.Seek(sqlCmd))
                     {
                         MessageBox.Show("No packing data, can't create!!");
                         return;
@@ -535,7 +538,7 @@ namespace Sci.Production.Packing
                                                                                                                                                                                    where id = a.id and  Article = a.Article and PatternPanel = 'FA') 
                                                                                                                                                                                    and id = a.id and  Article = a.Article and PatternPanel = 'FA') as Color 
                                                                                from Order_ColorCombo a
-                                                                               where PatternPanel = 'FA') oc on oc.id = oqd.Id and oc.Article = oqd.Article and oc.PatternPanel = 'FA'
+                                                                               where a.PatternPanel = 'FA') oc on oc.id = o.POID and oc.Article = oqd.Article and oc.PatternPanel = 'FA'
                                                                 left join Style_WeightData sw on sw.StyleUkey = o.StyleUkey and sw.Article = oqd.Article and sw.SizeCode = oqd.SizeCode
                                                                 left join Style_WeightData sw2 on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = oqd.SizeCode
                                                                 left join Order_SizeCode os on os.id = o.POID and os.SizeCode = oqd.SizeCode
@@ -559,7 +562,7 @@ namespace Sci.Production.Packing
                                                                                                                                                                                    where id = a.id and  Article = a.Article and PatternPanel = 'FA') 
                                                                                                                                                 and id = a.id and  Article = a.Article and PatternPanel = 'FA') as Color 
                                                                                from Order_ColorCombo a
-                                                                               where PatternPanel = 'FA') oc on oc.id = oqd.Id and oc.Article = oqd.Article and oc.PatternPanel = 'FA'
+                                                                               where a.PatternPanel = 'FA') oc on oc.id = oqd.Id and oc.Article = oqd.Article and oc.PatternPanel = 'FA'
                                                                 left join Style_WeightData sw on sw.StyleUkey = o.StyleUkey and sw.Article = oqd.Article and sw.SizeCode = oqd.SizeCode
                                                                 left join Style_WeightData sw2 on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = oqd.SizeCode
                                                                 left join Order_SizeCode os on os.id = o.POID and os.SizeCode = oqd.SizeCode
@@ -613,9 +616,9 @@ namespace Sci.Production.Packing
         {
             if (this.EditMode)
             {
-                if (!myUtility.Empty(txtshipmode1.SelectedValue))
+                if (!MyUtility.Check.Empty(txtshipmode1.SelectedValue))
                 {
-                    if (myUtility.Empty(CurrentMaintain["OrderShipmodeSeq"]))
+                    if (MyUtility.Check.Empty(CurrentMaintain["OrderShipmodeSeq"]))
                     {
                         MessageBox.Show("ShipMode is incorrect!");
                         txtshipmode1.SelectedValue = "";
@@ -624,7 +627,7 @@ namespace Sci.Production.Packing
                     {
                         string sqlCmd = string.Format("select ShipModeID from Order_QtyShip where ID = '{0}' and Seq = '{1}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
                         DataRow qtyShipData;
-                        if (myUtility.Seek(sqlCmd, out qtyShipData))
+                        if (MyUtility.Check.Seek(sqlCmd, out qtyShipData))
                         {
                             if (qtyShipData["ShipModeID"].ToString() != txtshipmode1.SelectedValue.ToString())
                             {
@@ -669,7 +672,7 @@ namespace Sci.Production.Packing
         private void button3_Click(object sender, EventArgs e)
         {
             ////檢查訂單狀態：如果已經Pullout Complete出訊息告知使用者且不做任何事
-            string lookupReturn = myUtility.Lookup("select PulloutComplete from Orders where ID = '" + CurrentMaintain["OrderID"].ToString() + "'");
+            string lookupReturn = MyUtility.GetValue.Lookup("select PulloutComplete from Orders where ID = '" + CurrentMaintain["OrderID"].ToString() + "'");
             if (lookupReturn == "True")
             {
                 MessageBox.Show("SP# was ship complete!! You can't switch to packing list.");
@@ -679,7 +682,7 @@ namespace Sci.Production.Packing
             //檢查PackingList狀態：(1)PackingList如果已經Confirm就出訊息告知使用者且不做任事 (2)如果已經有Invoice No就出訊息告知使用者且不做任事
             DataRow seekData;
             string seekCmd = "select Status, INVNo from PackingList where ID = '" + CurrentMaintain["ID"].ToString() + "'";
-            if (myUtility.Seek(seekCmd, out seekData))
+            if (MyUtility.Check.Seek(seekCmd, out seekData))
             {
                 if (seekData["Status"].ToString() == "Confirmed")
                 {
@@ -687,7 +690,7 @@ namespace Sci.Production.Packing
                     return;
                 }
 
-                if (!myUtility.Empty(seekData["INVNo"]))
+                if (!MyUtility.Check.Empty(seekData["INVNo"]))
                 {
                     MessageBox.Show("SP# was booking!! You can't switch to packing list.");
                     return;
@@ -696,7 +699,7 @@ namespace Sci.Production.Packing
 
             //檢查PackingList是否已經有箱子送到Clog，若有，就出訊息告知使用者且不做任事
             seekCmd = "select ID from PackingList_Detail where ID = '" + CurrentMaintain["ID"].ToString() + "' and TransferToClogID != ''";
-            if (myUtility.Seek(seekCmd))
+            if (MyUtility.Check.Seek(seekCmd))
             {
                 MessageBox.Show("SP# has been transfer!! You can't switch to packing list.");
                 return;
@@ -944,7 +947,7 @@ CLOSE cursor_@temppacklistgroup
 DEALLOCATE cursor_@temppacklistgroup
 
 --全部總重量
-SELECT @ttlnw = SUM(NW), @ttlgw = SUM(GW), @ttlnnw = SUM(NNW), @ttlshipqty = SUM(ShipQty) FROM @tempPackingList
+SELECT @ttlnw = SUM(NW), @ttlgw = SUM(GW), @ttlnnw = SUM(NNW), @ttlshipqty = SUM(ShipQty), @seqcount = MAX(CtnNo) FROM @tempPackingList
 
 --刪除PackingList_Detail資料
 DELETE PackingList_Detail WHERE ID = @id
