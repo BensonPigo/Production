@@ -127,7 +127,7 @@ namespace Sci
                     if (!MyUtility.Check.Empty(e.FormattedValue.ToString()))
                     {
                         string seekSql = string.Format("select RefNo from LocalItem where Category = 'CARTON' and Junk = 0 and RefNo = '{0}'", e.FormattedValue.ToString());
-                        if (MyUtility.Check.Empty(seekSql) == false)
+                        if (MyUtility.Check.Seek(seekSql) == false)
                         {
                             MessageBox.Show(string.Format("< Ref No. : {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["RefNo"] = DBNull.Value;
