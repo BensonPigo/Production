@@ -86,6 +86,7 @@
             // 
             this.comboBox1.BackColor = System.Drawing.Color.White;
             this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "TypeForUse", true));
+            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
