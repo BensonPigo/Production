@@ -22,15 +22,22 @@ namespace Sci.Production.Packing
         {
             InitializeComponent();
             this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
-            this.DetailSelectCommand = @"select a.Refno,a.Article,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW,c.Description
-                                                                from PackingGuide_Detail a
-                                                                left join PackingGuide b on a.Id = b.Id
-                                                                left join LocalItem c on a.RefNo = c.RefNo
-                                                                left join Orders d on b.OrderID = d.ID
-                                                                left join Order_Article e on b.OrderID = e.Id and a.Article = e.Article
-                                                                left join Order_SizeCode f on d.POID = f.Id and a.SizeCode = f.SizeCode
-                                                                where a.Id =@id
-                                                                order by e.Seq,f.Seq;--";
+            
+        }
+
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        {
+            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            this.DetailSelectCommand = string.Format(@"select a.Refno,a.Article,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW,c.Description
+                                                                                       from PackingGuide_Detail a
+                                                                                       left join PackingGuide b on a.Id = b.Id
+                                                                                       left join LocalItem c on a.RefNo = c.RefNo
+                                                                                       left join Orders d on b.OrderID = d.ID
+                                                                                       left join Order_Article e on b.OrderID = e.Id and a.Article = e.Article
+                                                                                       left join Order_SizeCode f on d.POID = f.Id and a.SizeCode = f.SizeCode
+                                                                                       where a.Id ='{0}'
+                                                                                       order by e.Seq,f.Seq",masterID);
+            return base.OnDetailSelectCommandPrepare(e);
         }
 
         protected override void OnFormLoaded()
