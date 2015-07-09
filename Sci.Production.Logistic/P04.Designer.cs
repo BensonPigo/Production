@@ -442,7 +442,6 @@
             // 
             this.grid1.AllowUserToAddRows = false;
             this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToOrderColumns = true;
             this.grid1.AllowUserToResizeRows = false;
             this.grid1.AutoGenerateColumns = false;
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;

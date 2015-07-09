@@ -360,22 +360,31 @@ namespace Sci.Production.Logistic
                     case "2":
                         comboBox2.DataSource = comboBox2_RowSource2;
                         comboBox2.SelectedIndex = -1;
-                        gridData.DefaultView.RowFilter = "";
+                        if (gridData != null)
+                        {
+                            gridData.DefaultView.RowFilter = "";
+                        }
                         break;
                     case "3":
                         comboBox2.DataSource = comboBox2_RowSource3;
                         comboBox2.SelectedIndex = -1;
-                        gridData.DefaultView.RowFilter = "";
+                        {
+                            gridData.DefaultView.RowFilter = "";
+                        }
                         break;
                     case "4":
                         comboBox2.DataSource = comboBox2_RowSource4;
                         comboBox2.SelectedIndex = -1;
-                        gridData.DefaultView.RowFilter = "";
+                        {
+                            gridData.DefaultView.RowFilter = "";
+                        }
                         break;
                     case "5":
                         comboBox2.DataSource = comboBox2_RowSource5;
                         comboBox2.SelectedIndex = -1;
-                        gridData.DefaultView.RowFilter = "";
+                        {
+                            gridData.DefaultView.RowFilter = "";
+                        }
                         break;
                     default:
                         this.comboBox2.Enabled = false;
