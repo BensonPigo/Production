@@ -103,7 +103,7 @@ namespace Sci.Production.Logistic
             int count = 0;
             foreach (P02_FileInfo dr in (IList<P02_FileInfo>)listControlBindingSource1.DataSource)
             {
-                if (!myUtility.Empty(dr.Filename))
+                if (!MyUtility.Check.Empty(dr.Filename))
                 {
                     using (StreamReader reader = new StreamReader(dr.Fullfilename, System.Text.Encoding.UTF8))
                     {
@@ -133,7 +133,7 @@ namespace Sci.Production.Logistic
             #endregion
 
             #region 若有格式不正確的就出訊息告之使用者哪些檔案格式錯誤且不做任何動作
-            if (!myUtility.Empty(errorMsg))
+            if (!MyUtility.Check.Empty(errorMsg))
             {
                 MessageBox.Show("File Name: \r\n" + errorMsg + "Format is not correct!");
                 return;
@@ -168,7 +168,7 @@ namespace Sci.Production.Logistic
             DataRow[] findRow;
             foreach (P02_FileInfo dr in (IList<P02_FileInfo>)listControlBindingSource1.DataSource)
             {
-                if (!myUtility.Empty(dr.Filename))
+                if (!MyUtility.Check.Empty(dr.Filename))
                 {
                     using (StreamReader reader = new StreamReader(dr.Fullfilename, System.Text.Encoding.UTF8))
                     {
@@ -191,14 +191,14 @@ namespace Sci.Production.Logistic
                                 string sqlCmd = string.Format(@"select OrderID, TransferToClogID, ClogReceiveID 
                                                                                   from PackingList_Detail
                                                                                   where ID = '{0}' and CTNStartNo = '{1}'", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
-                                if (myUtility.Seek(sqlCmd, out seekPacklistData))
+                                if (MyUtility.Check.Seek(sqlCmd, out seekPacklistData))
                                 {
                                     dr1["OrderID"] = seekPacklistData["OrderID"].ToString().Trim();
                                     dr1["ClogReceiveID"] = seekPacklistData["ClogReceiveID"].ToString().Trim();
                                     dr1["TransferToClogId"] = seekPacklistData["TransferToClogID"].ToString().Trim();
-                                    if (myUtility.Empty(dr1["ClogReceiveID"]))
+                                    if (MyUtility.Check.Empty(dr1["ClogReceiveID"]))
                                     {
-                                        if (myUtility.Empty(seekPacklistData["TransferToClogID"]))
+                                        if (MyUtility.Check.Empty(seekPacklistData["TransferToClogID"]))
                                         {
                                             dr1["Remark"] = "This carton not yet transfer to clog.";
                                         }
@@ -208,7 +208,7 @@ namespace Sci.Production.Logistic
                                                                                     from ClogReceive a, ClogReceive_Detail b 
                                                                                     where a.ID = b.ID and b.PackingListID = '{0}' and b.CTNStartNo = '{1}'  and a.Status = 'New'
                                                                                     ", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
-                                            if (myUtility.Seek(sqlCmd, out seekClogReceiveData))
+                                            if (MyUtility.Check.Seek(sqlCmd, out seekClogReceiveData))
                                             {
                                                 dr1["ClogReceiveID"] = seekClogReceiveData["ID"].ToString().Trim();
                                                 dr1["Remark"] = "This carton already in clog, but not yet encode.";
@@ -225,7 +225,7 @@ namespace Sci.Production.Logistic
                                                                             from Orders a
                                                                              left join Country b on b.ID = a.Dest
                                                                             where a.ID = '{0}'", dr1["OrderID"].ToString());
-                                    if (myUtility.Seek(sqlCmd, out seekOrderdata))
+                                    if (MyUtility.Check.Seek(sqlCmd, out seekOrderdata))
                                     {
                                         dr1["StyleID"] = seekOrderdata["StyleID"].ToString().Trim();
                                         dr1["SeasonID"] = seekOrderdata["SeasonID"].ToString().Trim();
@@ -243,7 +243,7 @@ namespace Sci.Production.Logistic
                                 grid2Data.Rows.Add(dr1);
                                 insertCount++;
 
-                                if (myUtility.Empty(dr1["ClogReceiveID"]) && (int)dr1["InsertData"] == 1)
+                                if (MyUtility.Check.Empty(dr1["ClogReceiveID"]) && (int)dr1["InsertData"] == 1)
                                 {
                                     recordCount = groupData.Where(x => x["FactoryID"].ToString() == dr1["FactoryID"].ToString()).Count();
                                     if (recordCount == 0)
@@ -286,7 +286,7 @@ namespace Sci.Production.Logistic
         private void button5_Click(object sender, EventArgs e)
         {
             //檢查Receive Date不可為空值，若為空值則出訊息告知且不做任何動作
-            if (myUtility.Empty(this.dateBox1.Value))
+            if (MyUtility.Check.Empty(this.dateBox1.Value))
             {
                 MessageBox.Show("Receive date can't empty!");
                 return;
@@ -312,10 +312,10 @@ namespace Sci.Production.Logistic
 
             foreach (DataRow dr in groupData)
             {
-                if (myUtility.Empty(dr["ID"]))
+                if (MyUtility.Check.Empty(dr["ID"]))
                 {
-                    newID = myUtility.GetID(dr["FactoryID"].ToString().Trim() + "CR", "ClogReceive", Convert.ToDateTime(this.dateBox1.Value), 2, "Id", null);
-                    if (myUtility.Empty(newID))
+                    newID = MyUtility.GetValue.GetID(dr["FactoryID"].ToString().Trim() + "CR", "ClogReceive", Convert.ToDateTime(this.dateBox1.Value), 2, "Id", null);
+                    if (MyUtility.Check.Empty(newID))
                     {
                         MessageBox.Show("GetID fail, please try again!");
                         return;
@@ -416,13 +416,13 @@ namespace Sci.Production.Logistic
                                         detailAllSuccess = false;
                                         break;
                                     }
-                                    if (!myUtility.Empty(dr1["Remark"].ToString()))
+                                    if (!MyUtility.Check.Empty(dr1["Remark"].ToString()))
                                     {
                                         lostCTN = lostCTN + string.Format("PACK ID: '{0}'  SP#:'{1}'  CTN#:'{2}' \r\n", dr1["PackingListId"].ToString(), dr1["OrderId"].ToString(), dr1["CTNStartNo"].ToString().Trim());
                                     }
 
                                     //記錄此次Import的所有TransferToClogID
-                                    if (!myUtility.Empty(dr1["TransferToClogId"].ToString()))
+                                    if (!MyUtility.Check.Empty(dr1["TransferToClogId"].ToString()))
                                     {
                                         int recordCount = TransferIDData.Where(x => x["TransferToClogId"].ToString() == dr1["TransferToClogId"].ToString()).Count();
                                         if (recordCount == 0)
@@ -458,7 +458,7 @@ namespace Sci.Production.Logistic
 
             #region 存檔完成後要出訊息告知使用者匯入的資料中整份的TransferToClogId還缺少哪箱子沒有送達Clog或者多送哪些箱子到Clog(即在TransferToClog中找不到的)
             bool lackMsg = false;
-            if (!myUtility.Empty(lostCTN))
+            if (!MyUtility.Check.Empty(lostCTN))
             {
                 lostCTN = "Wrong Rev# \r\n" + lostCTN + "\r\nLacking Rev# \r\n";
                 lackMsg = true;

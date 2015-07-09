@@ -102,7 +102,7 @@ namespace Sci.Production.Logistic
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            if (myUtility.Empty(this.textBox1.Text) && myUtility.Empty(this.textBox2.Text) && myUtility.Empty(this.textBox3.Text) && myUtility.Empty(this.textBox4.Text) && myUtility.Empty(this.textBox5.Text) && myUtility.Empty(this.textBox6.Text) && myUtility.Empty(this.textBox7.Text) && myUtility.Empty(this.textBox8.Text))
+            if (MyUtility.Check.Empty(this.textBox1.Text) && MyUtility.Check.Empty(this.textBox2.Text) && MyUtility.Check.Empty(this.textBox3.Text) && MyUtility.Check.Empty(this.textBox4.Text) && MyUtility.Check.Empty(this.textBox5.Text) && MyUtility.Check.Empty(this.textBox6.Text) && MyUtility.Check.Empty(this.textBox7.Text) && MyUtility.Check.Empty(this.textBox8.Text))
             {
                 MessageBox.Show("< SP# > or < Pack ID > or < Transfer Clog No. > or < PO# > can not empty!");
                 this.textBox1.Focus();
@@ -124,38 +124,38 @@ namespace Sci.Production.Logistic
                                                         and b.CTNQty = 1
                                                         and b.OrderID = c.ID";
             #region 組條件
-            if (!myUtility.Empty(this.textBox1.Text))
+            if (!MyUtility.Check.Empty(this.textBox1.Text))
             {
                 sqlCmd = sqlCmd + string.Format(" and c.ID >= '{0}'", this.textBox1.Text);
             }
-            if (!myUtility.Empty(this.textBox2.Text))
+            if (!MyUtility.Check.Empty(this.textBox2.Text))
             {
                 sqlCmd = sqlCmd + string.Format(" and c.ID <= '{0}'", this.textBox2.Text);
             }
 
-            if (!myUtility.Empty(this.textBox3.Text))
+            if (!MyUtility.Check.Empty(this.textBox3.Text))
             {
                 sqlCmd = sqlCmd + string.Format(" and a.ID >= '{0}'", this.textBox3.Text);
             }
-            if (!myUtility.Empty(this.textBox4.Text))
+            if (!MyUtility.Check.Empty(this.textBox4.Text))
             {
                 sqlCmd = sqlCmd + string.Format(" and a.ID <= '{0}'", this.textBox4.Text);
             }
 
-            if (!myUtility.Empty(this.textBox5.Text))
+            if (!MyUtility.Check.Empty(this.textBox5.Text))
             {
                 sqlCmd = sqlCmd + string.Format(" and b.TransferToClogID >= '{0}'", this.textBox5.Text);
             }
-            if (!myUtility.Empty(this.textBox6.Text))
+            if (!MyUtility.Check.Empty(this.textBox6.Text))
             {
                 sqlCmd = sqlCmd + string.Format(" and b.TransferToClogID <= '{0}'", this.textBox6.Text);
             }
 
-            if (!myUtility.Empty(this.textBox7.Text))
+            if (!MyUtility.Check.Empty(this.textBox7.Text))
             {
                 sqlCmd = sqlCmd + string.Format(" and c.CustPONo >= '{0}'", this.textBox7.Text);
             }
-            if (!myUtility.Empty(this.textBox8.Text))
+            if (!MyUtility.Check.Empty(this.textBox8.Text))
             {
                 sqlCmd = sqlCmd + string.Format(" and c.CustPONo <= '{0}'", this.textBox8.Text);
             }

@@ -108,7 +108,7 @@ namespace Sci.Production.Logistic
         }
 
         //修改前檢查，如果已經Confirm了，就不可以被修改
-        protected override bool OnEditBefore()
+        protected override bool ClickEditBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["Status"].ToString() == "Confirmed")
@@ -116,11 +116,11 @@ namespace Sci.Production.Logistic
                 MessageBox.Show("Record is confirmed, can't modify!");
                 return false;
             }
-            return base.OnEditBefore();
+            return base.ClickEditBefore();
         }
 
         //刪除前檢查，如果已經Confirm了，就不可以被刪除
-        protected override bool OnDeleteBefore()
+        protected override bool ClickDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["Status"].ToString() == "Confirmed")
@@ -128,26 +128,26 @@ namespace Sci.Production.Logistic
                 MessageBox.Show("Record is confirmed, can't delete!");
                 return false;
             }
-            return base.OnDeleteBefore();
+            return base.ClickDeleteBefore();
         }
 
         //新增時執行LOGISTIC->P02_InputDate
-        protected override bool OnNewBefore()
+        protected override bool ClickNewBefore()
         {
             Sci.Production.Logistic.P02_InputDate callNextForm = new Sci.Production.Logistic.P02_InputDate("Input Receive Date", "Receive Date");
             DialogResult dr = callNextForm.ShowDialog(this);
             if (dr == System.Windows.Forms.DialogResult.OK)
             {
                 receiveDate = callNextForm.returnDate;
-                return base.OnNewBefore();
+                return base.ClickNewBefore();
             }
             return false;
         }
 
         //新增帶入預設值後再執行LOGISTIC->P02_BatchReceiving
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
-            base.OnNewAfter();
+            base.ClickNewAfter();
             CurrentMaintain["ReceiveDate"] = receiveDate;
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["Status"] = "New";
@@ -157,7 +157,7 @@ namespace Sci.Production.Logistic
         }
 
         //檢查表身不可以沒有資料
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             DataRow[] detailData = ((DataTable)detailgridbs.DataSource).Select();
             if (detailData.Length == 0)
@@ -167,21 +167,21 @@ namespace Sci.Production.Logistic
             }
             if (IsDetailInserting)
             {
-                string id = myUtility.GetID(ProductionEnv.Keyword + "CR", "ClogReceive", Convert.ToDateTime(CurrentMaintain["ReceiveDate"].ToString()), 2, "Id", null);
-                if (myUtility.Empty(id))
+                string id = MyUtility.GetValue.GetID(ProductionEnv.Keyword + "CR", "ClogReceive", Convert.ToDateTime(CurrentMaintain["ReceiveDate"].ToString()), 2, "Id", null);
+                if (MyUtility.Check.Empty(id))
                 {
                     MessageBox.Show("GetID fail, please try again!");
                     return false;
                 }
                 CurrentMaintain["ID"] = id;
             }
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         //Confirm
-        protected override void OnConfirm()
+        protected override void ClickConfirm()
         {
-            base.OnConfirm();
+            base.ClickConfirm();
             string sqlCmd, wrongCtn = "", lostCtn = "";
             DualResult result, result1;
             DataTable selectDate;
@@ -209,7 +209,7 @@ namespace Sci.Production.Logistic
                     wrongCtn = wrongCtn + string.Format("Pack ID:{0}  SP#:{1}   CTN#:{2}\r\n", eachRow["PackingListId"].ToString(), eachRow["OrderId"].ToString(), eachRow["CTNStartNo"].ToString());
                 }
             }
-            if (!myUtility.Empty(wrongCtn))
+            if (!MyUtility.Check.Empty(wrongCtn))
             {
                 wrongCtn = "Wrong Rev#\r\n" + wrongCtn;
             }
@@ -238,12 +238,12 @@ namespace Sci.Production.Logistic
                     lostCtn = lostCtn + string.Format("Trans. Slip#:{0}   Pack ID:{1}  SP#:{2}   CTN#:{3}\r\n", eachRow["ID"].ToString(), eachRow["PackingListId"].ToString(), eachRow["OrderId"].ToString(), eachRow["CTNStartNo"].ToString());
                 }
             }
-            if (!myUtility.Empty(lostCtn))
+            if (!MyUtility.Check.Empty(lostCtn))
             {
                 lostCtn = "Lacking Rev#\r\n" + lostCtn;
             }
             #endregion
-            if (!myUtility.Empty(wrongCtn) || !myUtility.Empty(lostCtn))
+            if (!MyUtility.Check.Empty(wrongCtn) || !MyUtility.Check.Empty(lostCtn))
             {
                 MessageBox.Show(wrongCtn + lostCtn);
                 return;
@@ -330,18 +330,18 @@ namespace Sci.Production.Logistic
 
             RenewData();
             OnDetailEntered();
-            EnsureToolbarCUSR();
+            EnsureToolbarExt();
         }
 
         //UnConfirm
-        protected override void OnUnconfirm()
+        protected override void ClickUnconfirm()
         {
-            base.OnUnconfirm();
+            base.ClickUnconfirm();
             //檢查是否有箱子已被Clog Return，若有則出訊息告知且不做任何事
             DataTable selectData;
             string sqlCmd = string.Format("select count(b.id) as returnCTN from ClogReceive_Detail a, ClogReturn_Detail b where a.TransferToClogId = b.TransferToClogId and a.PackingListId = b.PackingListId and a.OrderId = b.OrderId and a.CTNStartNo = b.CTNStartNo and a.ID = '{0}'", CurrentMaintain["ID"].ToString());
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
-            if (!myUtility.Empty(selectData.Rows[0]["returnCTN"]))
+            if (!MyUtility.Check.Empty(selectData.Rows[0]["returnCTN"]))
             {
                 MessageBox.Show("This recode has return record, con not unconfirm!");
                 return;
@@ -386,7 +386,7 @@ namespace Sci.Production.Logistic
 
                 RenewData();
                 OnDetailEntered();
-                EnsureToolbarCUSR();
+                EnsureToolbarExt();
             }
         }
 

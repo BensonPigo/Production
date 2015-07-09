@@ -57,7 +57,7 @@ namespace Sci.Production.Logistic
         //Find
         private void button1_Click(object sender, EventArgs e)
         {
-            if (myUtility.Empty(this.textBox1) && myUtility.Empty(this.textBox2))
+            if (MyUtility.Check.Empty(this.textBox1) && MyUtility.Check.Empty(this.textBox2))
             {
                 MessageBox.Show("< Transfer Clog No > can not be empty!");
                 this.textBox1.Focus();
@@ -65,7 +65,7 @@ namespace Sci.Production.Logistic
             }
 
             string selectCommand1, selectCommand2, selectCommand3;
-            if (!myUtility.Empty(this.textBox1.Text) && !myUtility.Empty(this.textBox2.Text))
+            if (!MyUtility.Check.Empty(this.textBox1.Text) && !MyUtility.Check.Empty(this.textBox2.Text))
             {
                 selectCommand1 = string.Format(@"Select '' as ID, 0 as selected,'' as ClogLocationId,a.*,b.StyleID,b.SeasonID,b.BrandID,b.Customize1,b.CustPONo,b.BuyerDelivery,c.Alias from 
                                                                             ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo 
@@ -98,7 +98,7 @@ namespace Sci.Production.Logistic
             }
             else
             {
-                if (!myUtility.Empty(this.textBox1.Text))
+                if (!MyUtility.Check.Empty(this.textBox1.Text))
                 {
                     selectCommand1 = string.Format(@"Select '' as ID, 0 as selected,'' as ClogLocationId,a.*,b.StyleID,b.SeasonID,b.BrandID,b.Customize1,b.CustPONo,b.BuyerDelivery,c.Alias 
                                                                                 from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo 

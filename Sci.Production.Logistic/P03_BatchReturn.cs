@@ -50,7 +50,7 @@ namespace Sci.Production.Logistic
         //Find
         private void button1_Click(object sender, EventArgs e)
         {
-            if (myUtility.Empty(this.textBox1.Text) && myUtility.Empty(this.textBox2.Text) && myUtility.Empty(this.textBox3.Text) && myUtility.Empty(this.dateBox1.Value))
+            if (MyUtility.Check.Empty(this.textBox1.Text) && MyUtility.Check.Empty(this.textBox2.Text) && MyUtility.Check.Empty(this.textBox3.Text) && MyUtility.Check.Empty(this.dateBox1.Value))
             {
                 MessageBox.Show("< SP# > or < Pack ID > or < Receive Date > or < P.O. No. > can not be empty!");
                 this.textBox1.Focus();
@@ -64,22 +64,22 @@ namespace Sci.Production.Logistic
                                            and b.CTNQty = 1
                                            and b.ReceiveDate is not null
                                            and a.Dest = c.ID";
-            if (!myUtility.Empty(this.textBox1.Text))
+            if (!MyUtility.Check.Empty(this.textBox1.Text))
             {
                 sqlCmd = sqlCmd + string.Format(" and a.ID = '{0}'",this.textBox1.Text.Trim());
             }
 
-            if (!myUtility.Empty(this.textBox2.Text))
+            if (!MyUtility.Check.Empty(this.textBox2.Text))
             {
                 sqlCmd = sqlCmd + string.Format(" and b.ID = '{0}'",this.textBox2.Text.Trim());
             }
 
-            if (!myUtility.Empty(this.dateBox1.Value))
+            if (!MyUtility.Check.Empty(this.dateBox1.Value))
             {
                 sqlCmd = sqlCmd + string.Format(" and b.ReceiveDate = '{0}'",Convert.ToDateTime(this.dateBox1.Text).ToString("d"));
             }
 
-            if (!myUtility.Empty(this.textBox3.Text))
+            if (!MyUtility.Check.Empty(this.textBox3.Text))
             {
                 sqlCmd = sqlCmd + string.Format(" and a.CustPONo = '{0}'",this.textBox3.Text.Trim());
             }

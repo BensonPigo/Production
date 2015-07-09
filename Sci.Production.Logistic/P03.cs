@@ -107,7 +107,7 @@ namespace Sci.Production.Logistic
         }
 
         //修改前檢查，如果已經Confirm了，就不可以被修改
-        protected override bool OnEditBefore()
+        protected override bool ClickEditBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["Status"].ToString() == "Confirmed")
@@ -115,11 +115,11 @@ namespace Sci.Production.Logistic
                 MessageBox.Show("Record is confirmed, can't modify!");
                 return false;
             }
-            return base.OnEditBefore();
+            return base.ClickEditBefore();
         }
 
         //刪除前檢查，如果已經Confirm了，就不可以被刪除
-        protected override bool OnDeleteBefore()
+        protected override bool ClickDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["Status"].ToString() == "Confirmed")
@@ -127,26 +127,26 @@ namespace Sci.Production.Logistic
                 MessageBox.Show("Record is confirmed, can't delete!");
                 return false;
             }
-            return base.OnDeleteBefore();
+            return base.ClickDeleteBefore();
         }
 
         //新增時執行LOGISTIC->P02_InputDate
-        protected override bool OnNewBefore()
+        protected override bool ClickNewBefore()
         {
             Sci.Production.Logistic.P02_InputDate callNextForm = new Sci.Production.Logistic.P02_InputDate("Input Return Date", "Return Date");
             DialogResult dr = callNextForm.ShowDialog(this);
             if (dr == System.Windows.Forms.DialogResult.OK)
             {
                 returnDate = callNextForm.returnDate;
-                return base.OnNewBefore();
+                return base.ClickNewBefore();
             }
             return false;
         }
 
         //新增帶入預設值後再執行LOGISTIC->P03_BatchReturn
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
-            base.OnNewAfter();
+            base.ClickNewAfter();
             CurrentMaintain["ReturnDate"] = returnDate;
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["Status"] = "New";
@@ -156,7 +156,7 @@ namespace Sci.Production.Logistic
         }
 
         //檢查表身不可以沒有資料
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             DataRow[] detailData = ((DataTable)detailgridbs.DataSource).Select();
             if (detailData.Length == 0)
@@ -166,21 +166,21 @@ namespace Sci.Production.Logistic
             }
             if (IsDetailInserting)
             {
-                string id = myUtility.GetID(ProductionEnv.Keyword + "CN", "ClogReturn", Convert.ToDateTime(CurrentMaintain["ReturnDate"].ToString()), 2, "Id", null);
-                if (myUtility.Empty(id))
+                string id = MyUtility.GetValue.GetID(ProductionEnv.Keyword + "CN", "ClogReturn", Convert.ToDateTime(CurrentMaintain["ReturnDate"].ToString()), 2, "Id", null);
+                if (MyUtility.Check.Empty(id))
                 {
                     MessageBox.Show("GetID fail, please try again!");
                     return false;
                 }
                 CurrentMaintain["ID"] = id;
             }
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         //Confirm
-        protected override void OnConfirm()
+        protected override void ClickConfirm()
         {
-            base.OnConfirm();
+            base.ClickConfirm();
             string sqlCmd;
             DualResult result, result1;
             DataTable selectDate;
@@ -285,7 +285,7 @@ namespace Sci.Production.Logistic
 
             RenewData();
             OnDetailEntered();
-            EnsureToolbarCUSR();
+            EnsureToolbarExt();
         }
 
         //Batch Return，執行LOGISTIC->P03_BatchReturn

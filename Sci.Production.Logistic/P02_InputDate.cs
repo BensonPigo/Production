@@ -20,7 +20,7 @@ namespace Sci.Production.Logistic
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (myUtility.Empty(this.dateBox1.Text))
+            if (MyUtility.Check.Empty(this.dateBox1.Text))
             {
                 MessageBox.Show("Date can't be empty!");
                 this.dateBox1.Focus();

@@ -81,14 +81,6 @@
             // 
             this.detailgridcont.Size = new System.Drawing.Size(836, 316);
             // 
-            // detailgridcont2
-            // 
-            this.detailgridcont2.Size = new System.Drawing.Size(830, 341);
-            // 
-            // detailpanel2
-            // 
-            this.detailpanel2.Size = new System.Drawing.Size(830, 40);
-            // 
             // detail
             // 
             this.detail.Size = new System.Drawing.Size(836, 436);
@@ -104,7 +96,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(836, 387);
+            this.browse.Size = new System.Drawing.Size(836, 436);
             // 
             // tabs
             // 

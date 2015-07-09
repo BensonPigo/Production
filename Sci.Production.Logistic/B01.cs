@@ -16,13 +16,13 @@ namespace Sci.Production.Logistic
             InitializeComponent();
         }
 
-        protected override void OnEditAfter()
+        protected override void ClickEditAfter()
         {
-            base.OnEditAfter();
+            base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
         }
 
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             if (string.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
@@ -37,7 +37,7 @@ namespace Sci.Production.Logistic
                 this.textBox2.Focus();
                 return false;
             }
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
     }
 }

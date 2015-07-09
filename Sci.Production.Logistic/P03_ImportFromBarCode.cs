@@ -102,7 +102,7 @@ namespace Sci.Production.Logistic
             int count = 0;
             foreach (P02_FileInfo dr in (IList<P02_FileInfo>)listControlBindingSource1.DataSource)
             {
-                if (!myUtility.Empty(dr.Filename))
+                if (!MyUtility.Check.Empty(dr.Filename))
                 {
                     using (StreamReader reader = new StreamReader(dr.Fullfilename, System.Text.Encoding.UTF8))
                     {
@@ -132,7 +132,7 @@ namespace Sci.Production.Logistic
             #endregion
 
             #region 若有格式不正確的就出訊息告之使用者哪些檔案格式錯誤且不做任何動作
-            if (!myUtility.Empty(errorMsg))
+            if (!MyUtility.Check.Empty(errorMsg))
             {
                 MessageBox.Show("File Name: \r\n" + errorMsg + "Format is not correct!");
                 return;
@@ -168,7 +168,7 @@ namespace Sci.Production.Logistic
             DataRow[] findRow;
             foreach (P02_FileInfo dr in (IList<P02_FileInfo>)listControlBindingSource1.DataSource)
             {
-                if (!myUtility.Empty(dr.Filename))
+                if (!MyUtility.Check.Empty(dr.Filename))
                 {
                     using (StreamReader reader = new StreamReader(dr.Fullfilename, System.Text.Encoding.UTF8))
                     {
@@ -190,19 +190,19 @@ namespace Sci.Production.Logistic
                                 string sqlCmd = string.Format(@"select OrderID, TransferToClogID, ClogReceiveID, ClogLocationId, ReceiveDate,ClogReturnID 
                                                                                       from PackingList_Detail
                                                                                       where ID = '{0}' and CTNStartNo = '{1}'", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
-                                if (myUtility.Seek(sqlCmd, out seekPacklistData))
+                                if (MyUtility.Check.Seek(sqlCmd, out seekPacklistData))
                                 {
                                     dr1["OrderID"] = seekPacklistData["OrderID"].ToString().Trim();
                                     dr1["ClogReceiveID"] = seekPacklistData["ClogReceiveID"].ToString().Trim();
                                     dr1["TransferToClogId"] = seekPacklistData["TransferToClogID"].ToString().Trim();
                                     dr1["ClogLocationId"] = seekPacklistData["ClogLocationId"].ToString().Trim();
-                                    if (!myUtility.Empty(seekPacklistData["ReceiveDate"]))
+                                    if (!MyUtility.Check.Empty(seekPacklistData["ReceiveDate"]))
                                     {
                                         dr1["ReceiveDate"] = Convert.ToDateTime(seekPacklistData["ReceiveDate"].ToString()).ToString("d");
                                     }
-                                    if (myUtility.Empty(dr1["ClogReturnID"]))
+                                    if (MyUtility.Check.Empty(dr1["ClogReturnID"]))
                                     {
-                                        if (myUtility.Empty(seekPacklistData["ClogReceiveID"]))
+                                        if (MyUtility.Check.Empty(seekPacklistData["ClogReceiveID"]))
                                         {
                                             dr1["Remark"] = "This carton not yet send to Clog.";
                                         }
@@ -212,7 +212,7 @@ namespace Sci.Production.Logistic
                                                                                     from ClogReturn a, ClogReturn_Detail b 
                                                                                     where a.ID = b.ID and b.PackingListID = '{0}' and b.CTNStartNo = '{1}'  and a.Status = 'New'
                                                                                     ", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
-                                            if (myUtility.Seek(sqlCmd, out seekClogReturnData))
+                                            if (MyUtility.Check.Seek(sqlCmd, out seekClogReturnData))
                                             {
                                                 dr1["ClogReturnID"] = seekClogReturnData["ID"].ToString().Trim();
                                                 dr1["Remark"] = "This carton has been return, but not yet confirm.";
@@ -229,7 +229,7 @@ namespace Sci.Production.Logistic
                                                                             from Orders a
                                                                              left join Country b on b.ID = a.Dest
                                                                             where a.ID = '{0}'", dr1["OrderID"].ToString());
-                                    if (myUtility.Seek(sqlCmd, out seekOrderdata))
+                                    if (MyUtility.Check.Seek(sqlCmd, out seekOrderdata))
                                     {
                                         dr1["StyleID"] = seekOrderdata["StyleID"].ToString().Trim();
                                         dr1["SeasonID"] = seekOrderdata["SeasonID"].ToString().Trim();
@@ -248,7 +248,7 @@ namespace Sci.Production.Logistic
                                 grid2Data.Rows.Add(dr1);
                                 insertCount++;
 
-                                if (myUtility.Empty(dr1["ClogReturnID"]) && (int)dr1["InsertData"] == 1)
+                                if (MyUtility.Check.Empty(dr1["ClogReturnID"]) && (int)dr1["InsertData"] == 1)
                                 {
                                     recordCount = groupData.Where(x => x["FactoryID"].ToString() == dr1["FactoryID"].ToString()).Count();
                                     if (recordCount == 0)
@@ -290,7 +290,7 @@ namespace Sci.Production.Logistic
         private void button5_Click(object sender, EventArgs e)
         {
             //檢查Return Date不可為空值，若為空值則出訊息告知且不做任何動作
-            if (myUtility.Empty(this.dateBox1.Value))
+            if (MyUtility.Check.Empty(this.dateBox1.Value))
             {
                 MessageBox.Show("Return date can't empty!");
                 return;
@@ -307,10 +307,10 @@ namespace Sci.Production.Logistic
 
             foreach (DataRow dr in groupData)
             {
-                if (myUtility.Empty(dr["ID"]))
+                if (MyUtility.Check.Empty(dr["ID"]))
                 {
-                    newID = myUtility.GetID(dr["FactoryID"].ToString().Trim() + "CN", "ClogReturn", Convert.ToDateTime(this.dateBox1.Value), 2, "Id", null);
-                    if (myUtility.Empty(newID))
+                    newID = MyUtility.GetValue.GetID(dr["FactoryID"].ToString().Trim() + "CN", "ClogReturn", Convert.ToDateTime(this.dateBox1.Value), 2, "Id", null);
+                    if (MyUtility.Check.Empty(newID))
                     {
                         MessageBox.Show("GetID fail, please try again!");
                         return;
@@ -385,7 +385,7 @@ namespace Sci.Production.Logistic
                             #endregion
                             foreach (DataRow dr1 in grid2Data.Rows)
                             {
-                                if (dr1["FactoryID"].ToString().Trim() == dr["FactoryID"].ToString().Trim() && myUtility.Empty(dr1["Remark"]))
+                                if (dr1["FactoryID"].ToString().Trim() == dr["FactoryID"].ToString().Trim() && MyUtility.Check.Empty(dr1["Remark"]))
                                 {
                                     dr1["ID"] = newID; //將ID寫入Grid2的Received ID欄位
                                     dr1["ClogReturnID"] = newID;
