@@ -68,6 +68,10 @@
             // 
             this.detailbtm.Size = new System.Drawing.Size(680, 38);
             // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(680, 395);
+            // 
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(688, 424);
@@ -150,6 +154,7 @@
             // 
             this.comboBox1.BackColor = System.Drawing.Color.White;
             this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShareBase", true));
+            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
@@ -172,6 +177,11 @@
             // B04
             // 
             this.ClientSize = new System.Drawing.Size(688, 457);
+            this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
+            this.IsSupportPrint = false;
             this.Name = "B04";
             this.Text = "B04. Share base of Share Expense";
             this.WorkAlias = "ShareRule";
