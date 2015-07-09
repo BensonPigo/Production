@@ -50,7 +50,7 @@ namespace Sci.Production.Basic
 
         protected override bool OnAcceptChanging(DataRow data)
         {
-            data["CountryName"] = myUtility.Lookup("Alias", data["CountryID"].ToString(), "Country", "ID");
+            data["CountryName"] = MyUtility.GetValue.Lookup("Alias", data["CountryID"].ToString(), "Country", "ID");
             data["CreateBy"] = data["AddName"].ToString().PadRight(10) + ((DateTime)data["AddDate"]).ToString("yyyy/MM/dd HH:mm:ss");
             if (data["EditDate"] != System.DBNull.Value)
             {

@@ -46,7 +46,7 @@ namespace Sci.Production.Basic
             if (!string.IsNullOrWhiteSpace(prodTextValue.Text) && prodTextValue.Text != prodTextValue.OldValue)
             {
                 string selectCommand = string.Format("select ID from Reason where ReasonTypeID = 'Style_Apparel_Type' and Name = '{0}'", prodTextValue.Text);
-                if (!myUtility.Seek(selectCommand,null))
+                if (!MyUtility.Check.Seek(selectCommand,null))
                 {
                     MessageBox.Show(string.Format("< Prod. Type : {0} > not found!!!", prodTextValue.Text));
                     prodTextValue.Text = "";
@@ -62,7 +62,7 @@ namespace Sci.Production.Basic
             if (!string.IsNullOrWhiteSpace(fabricTextValue.Text) && fabricTextValue.Text != fabricTextValue.OldValue)
             {
                 string selectCommand = string.Format("select ID from Reason where ReasonTypeID = 'Fabric_Kind' and Name = '{0}'", fabricTextValue.Text);
-                if (!myUtility.Seek(selectCommand,null))
+                if (!MyUtility.Check.Seek(selectCommand,null))
                 {
                     MessageBox.Show(string.Format("< Fabric Type : {0} > not found!!!", fabricTextValue.Text));
                     fabricTextValue.Text = "";

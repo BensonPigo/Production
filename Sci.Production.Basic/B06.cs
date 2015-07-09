@@ -17,20 +17,20 @@ namespace Sci.Production.Basic
             this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
         }
 
-        protected override void OnEditAfter()
+        protected override void ClickEditAfter()
         {
-            base.OnEditAfter();
+            base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
             this.textBox2.ReadOnly = true;
         }
 
-        protected override void OnNewAfter()
+        protected override void ClickNewAfter()
         {
-            base.OnNewAfter();
+            base.ClickNewAfter();
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
         }
 
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Year"].ToString()))
             {
@@ -52,7 +52,7 @@ namespace Sci.Production.Basic
                 this.numericBox3.Focus();
                 return false;
             }
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         private void textBox1_Validating(object sender, CancelEventArgs e)

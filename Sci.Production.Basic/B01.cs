@@ -20,8 +20,8 @@ namespace Sci.Production.Basic
         {
             base.OnDetailEntered();
             //按鈕Shipping Mark變色
-            if (myUtility.Seek(CurrentMaintain["ID"].ToString(), "Factory_TMS", "ID") ||
-                myUtility.Seek(CurrentMaintain["ID"].ToString(), "Factory_WorkHour", "ID"))
+            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Factory_TMS", "ID") ||
+                MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Factory_WorkHour", "ID"))
             {
                 this.button1.ForeColor = Color.Blue;
             }
@@ -31,13 +31,13 @@ namespace Sci.Production.Basic
             }
         }
 
-        protected override void OnEditAfter()
+        protected override void ClickEditAfter()
         {
-            base.OnEditAfter();
+            base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
         }
 
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
@@ -53,7 +53,7 @@ namespace Sci.Production.Basic
                 return false;
             }
 
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         private void button1_Click(object sender, EventArgs e)

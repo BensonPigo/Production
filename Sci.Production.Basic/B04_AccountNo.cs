@@ -19,7 +19,7 @@ namespace Sci.Production.Basic
         {
             InitializeComponent();
             this.displayBox1.Text = this.KeyValue1;
-            this.displayBox2.Text = myUtility.Lookup("Abb", this.KeyValue1, "LocalSupp", "ID");
+            this.displayBox2.Text = MyUtility.GetValue.Lookup("Abb", this.KeyValue1, "LocalSupp", "ID");
         }
 
         protected override DualResult OnRequery()
@@ -67,7 +67,7 @@ namespace Sci.Production.Basic
                     else
                     {
                         string selectCommand = string.Format("select ID from LocalSupp_AccountNo where ID = '{0}' and ArtworkTypeID = '{1}'", currentRecord["ID"].ToString(), currentRecord["ArtworkTypeID"].ToString());
-                        if (!myUtility.Seek(selectCommand, null))
+                        if (!MyUtility.Check.Seek(selectCommand, null))
                         {
                             returnResult = DBProxy.Current.Insert(null, tableSchema, currentRecord);
                             if (returnResult != Result.True)

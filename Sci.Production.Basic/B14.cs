@@ -39,9 +39,9 @@ namespace Sci.Production.Basic
             }
         }
 
-        protected override void OnEditAfter()
+        protected override void ClickEditAfter()
         {
-            base.OnEditAfter();
+            base.ClickEditAfter();
             this.txtdropdownlist1.ReadOnly = true;
             this.editBox1.ReadOnly = true;
             this.checkBox1.ReadOnly = true;
@@ -51,7 +51,7 @@ namespace Sci.Production.Basic
             this.checkBox5.ReadOnly = true;
         }
 
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["InhouseOSP"].ToString()))
@@ -60,7 +60,7 @@ namespace Sci.Production.Basic
                 this.comboBox1.Focus();
                 return false;
             }
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
 
         private void button1_Click(object sender, EventArgs e)

@@ -53,7 +53,7 @@ namespace Sci.Production.Basic
                     DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
                     if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()))
                     {
-                        if (!myUtility.Seek(e.FormattedValue.ToString(),"Country","ID"))
+                        if (!MyUtility.Check.Seek(e.FormattedValue.ToString(),"Country","ID"))
                         {
                             MessageBox.Show(string.Format("< Country: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["CountryID"] = "";
@@ -62,7 +62,7 @@ namespace Sci.Production.Basic
                         else
                         {
                             dr["CountryID"] = e.FormattedValue.ToString().ToUpper();
-                            dr["CountryName"] = myUtility.Lookup("Alias", dr["CountryID"].ToString(), "Country", "Id");
+                            dr["CountryName"] = MyUtility.GetValue.Lookup("Alias", dr["CountryID"].ToString(), "Country", "Id");
                         }
                     }
                 }
@@ -93,7 +93,7 @@ namespace Sci.Production.Basic
             datas.Columns.Add("EditBy");
             foreach (DataRow gridData in datas.Rows)
             {
-                gridData["CountryName"] = myUtility.Lookup("Alias", gridData["CountryID"].ToString(), "Country", "ID");
+                gridData["CountryName"] = MyUtility.GetValue.Lookup("Alias", gridData["CountryID"].ToString(), "Country", "ID");
                 gridData["CreateBy"] = gridData["AddName"].ToString() + ((DateTime)gridData["AddDate"]).ToString("yyyy/MM/dd HH:mm:ss");
                 if (gridData["EditDate"] != System.DBNull.Value)
                 {

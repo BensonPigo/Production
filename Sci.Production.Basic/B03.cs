@@ -16,13 +16,13 @@ namespace Sci.Production.Basic
             InitializeComponent();
         }
 
-        protected override void OnEditAfter()
+        protected override void ClickEditAfter()
         {
-            base.OnEditAfter();
+            base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
         }
 
-        protected override bool OnSaveBefore()
+        protected override bool ClickSaveBefore()
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
@@ -38,7 +38,7 @@ namespace Sci.Production.Basic
                 return false;
             }
 
-            return base.OnSaveBefore();
+            return base.ClickSaveBefore();
         }
     }
 }
