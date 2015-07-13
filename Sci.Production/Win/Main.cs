@@ -180,8 +180,9 @@ namespace Sci.Production
                         dllName = dr["FormName"].ToString().Substring(0, dr["FormName"].ToString().LastIndexOf("."));
                         // PublicClass的Dll Name為Sci.Proj
                         if (dllName == "Sci.Win.UI") dllName = "Sci.Proj";
-
-                        AddTemplate(menu, dr["BarPrompt"].ToString(), (menuitem) => (Sci.Win.Tems.Base)CreateFormObject(menuitem, Type.GetType(dr["FormName"].ToString() + "," + dllName), dr["FormParameter"].ToString()));
+                        
+                        Type typeofControl = Type.GetType(dr["FormName"].ToString() + "," + dllName);
+                        AddTemplate(menu, dr["BarPrompt"].ToString(), (menuitem) => (Sci.Win.Tems.Base)CreateFormObject(menuitem, typeofControl, dr["FormParameter"].ToString()));
                         break;
 
                     case "1": //SubMenu
