@@ -82,6 +82,7 @@ namespace Sci.Production.Class
                             return;
                         }
                     }
+                    this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
                 }
             }
             this.ValidateControl();
