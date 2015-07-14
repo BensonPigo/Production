@@ -30,6 +30,7 @@ namespace Sci.Production.Win
         void ok_Click(object sender, EventArgs e)
         {
             DualResult result;
+            DataTable dtFactory;
 
             string act = this.act.Text;
             string loginFactory = (string)this.comboBox1.SelectedValue;
@@ -50,6 +51,21 @@ namespace Sci.Production.Win
             {
                 ShowErr("Please select factory.");
                 this.comboBox1.Focus();
+                return;
+            }
+
+            if (!(result = DBProxy.Current.Select(null, string.Format("SELECT KeyWord FROM Factory WHERE ID = '{0}'", loginFactory), out dtFactory)))
+            {
+                ShowErr(result.ToString());
+                return;
+            }
+            if (dtFactory.Rows.Count > 0 && !MyUtility.Check.Empty(dtFactory.Rows[0]["Keyword"].ToString()))
+            {
+                Sci.Production.ProductionEnv.Keyword = dtFactory.Rows[0]["Keyword"].ToString();
+            }
+            else
+            {
+                ShowErr("Keyword is not exist!");
                 return;
             }
 
