@@ -27,10 +27,12 @@ namespace Sci.Production.Packing
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select td.*, o.StyleID,o.SeasonID,o.BrandID,o.Customize1,o.CustPONo,c.Alias,o.BuyerDelivery,cr.ReceiveDate
+            this.DetailSelectCommand = string.Format(@"select td.*, o.StyleID,o.SeasonID,o.BrandID,o.Customize1,o.CustPONo,c.Alias,oqs.BuyerDelivery,cr.ReceiveDate
 from TransferToClog_Detail td
 left join Orders o on o.ID = td.OrderID
 left join Country c on c.ID = o.Dest
+left join PackingList pl on pl.ID = td.PackingListId
+left join Order_QtyShip oqs on oqs.Id = pl.OrderId and oqs.Seq = pl.OrderShipmodeSeq
 left join ClogReceive_Detail crd on crd.TransferToClogId = td.Id and crd.PackingListId = td.PackingListID and crd.OrderId = td.OrderID and crd.CTNStartNo = td.CTNStartNo
 left join ClogReceive cr on cr.Status = 'Confirmed' and cr.ID = crd.ID
 where td.Id = '{0}'", masterID);
