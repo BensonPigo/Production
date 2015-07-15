@@ -1126,43 +1126,43 @@ where ID = @INVNo";
                     label24.Text = "Locate for Transfer Clog:";
                     label24.Width = 156;
                     dateBox6.Visible = true;
-                    dateBox6.Location = new System.Drawing.Point(452, 222);
-                    button4.Location = new System.Drawing.Point(595, 217);
+                    dateBox6.Location = new System.Drawing.Point(448, 222);
+                    button4.Location = new System.Drawing.Point(591, 217);
                     break;
                 case "Clog Cfm":
                     label24.Text = "Locate for Clog Cfm:";
                     label24.Width = 129;
                     dateBox6.Visible = true;
-                    dateBox6.Location = new System.Drawing.Point(424, 222);
-                    button4.Location = new System.Drawing.Point(567, 217);
+                    dateBox6.Location = new System.Drawing.Point(420, 222);
+                    button4.Location = new System.Drawing.Point(563, 217);
                     break;
                 case "Location No":
                     label24.Text = "Locate for Location No:";
                     label24.Width = 147;
                     textBox3.Visible = true;
-                    textBox3.Location = new System.Drawing.Point(442, 222);
-                    button4.Location = new System.Drawing.Point(541, 217);
+                    textBox3.Location = new System.Drawing.Point(438, 222);
+                    button4.Location = new System.Drawing.Point(537, 217);
                     break;
                 case "ColorWay":
                     label24.Text = "Locate for ColorWay:";
                     label24.Width = 135;
                     textBox3.Visible = true;
-                    textBox3.Location = new System.Drawing.Point(430, 222);
-                    button4.Location = new System.Drawing.Point(529, 217);
+                    textBox3.Location = new System.Drawing.Point(426, 222);
+                    button4.Location = new System.Drawing.Point(525, 217);
                     break;
                 case "Color":
                     label24.Text = "Locate for Color:";
                     label24.Width = 106;
                     textBox3.Visible = true;
-                    textBox3.Location = new System.Drawing.Point(401, 222);
-                    button4.Location = new System.Drawing.Point(500, 217);
+                    textBox3.Location = new System.Drawing.Point(397, 222);
+                    button4.Location = new System.Drawing.Point(496, 217);
                     break;
                 case "Size":
                     label24.Text = "Locate for Size:";
                     label24.Width = 100;
                     textBox3.Visible = true;
-                    textBox3.Location = new System.Drawing.Point(395, 222);
-                    button4.Location = new System.Drawing.Point(494, 217);
+                    textBox3.Location = new System.Drawing.Point(391, 222);
+                    button4.Location = new System.Drawing.Point(490, 217);
                     break;
                 default:
                     label24.Visible = false;
