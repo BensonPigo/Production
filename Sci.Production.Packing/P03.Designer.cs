@@ -680,30 +680,36 @@
             // 
             // button1
             // 
+            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button1.Location = new System.Drawing.Point(845, 46);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(150, 30);
             this.button1.TabIndex = 48;
             this.button1.Text = "Carton Summary";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
+            this.button2.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.button2.Location = new System.Drawing.Point(845, 83);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(150, 30);
             this.button2.TabIndex = 49;
             this.button2.Text = "Recalculate Weight";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button3
             // 
+            this.button3.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button3.Location = new System.Drawing.Point(845, 119);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(150, 30);
             this.button3.TabIndex = 50;
-            this.button3.Text = "Confirm History";
+            this.button3.Text = "UnConfirm History";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // label24
             // 
@@ -740,6 +746,7 @@
             this.button4.TabIndex = 54;
             this.button4.Text = "Find Now";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // txtshipmode1
             // 
@@ -757,18 +764,20 @@
             // 
             // P03
             // 
+            this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1008, 668);
             this.DefaultDetailOrder = "Seq";
             this.DefaultOrder = "OrderID,OrderShipmodeSeq";
             this.GridAlias = "PackingList_Detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "ID, CTNStartNo, Article, SizeCode";
+            this.GridUniqueKey = "ID,CTNStartNo,Article,SizeCode";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P03";
             this.Text = "P03. Packing List Weight & Summary(Bulk)";
+            this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
             this.WorkAlias = "PackingList";
             this.Controls.SetChildIndex(this.tabs, 0);
