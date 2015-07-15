@@ -1182,8 +1182,8 @@ where ID = @INVNo";
         //UnConfirm History
         private void button3_Click(object sender, EventArgs e)
         {
-            //Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("PackingList_History", CurrentMaintain["ID"].ToString(), "Status", caption: "UnConfirm History", haveRemark: true, customerGridFormat: true, moduleName: "PackingList");
-            //callNextForm.ShowDialog(this);
+            Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("PackingList_History", CurrentMaintain["ID"].ToString(), "Status", caption: "UnConfirm History", haveRemark: true, customerGridFormatTable: "HisType", moduleName: "PackingList");
+            callNextForm.ShowDialog(this);
         }
 
         //Recalculate Weight
