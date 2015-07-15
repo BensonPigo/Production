@@ -24,7 +24,12 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             this.DefaultFilter = "id = poid and IsForecast = 0 and WhseClose is null";
+            ChangeDetailColor();
+            MyUtility.Tool.SetGridFrozen(this.detailgrid);
+        }
 
+        private void ChangeDetailColor()
+        {
             detailgrid.RowsAdded += (s, e) =>
             {
                 DataTable dt = (DataTable)detailgridbs.DataSource;
@@ -48,22 +53,23 @@ namespace Sci.Production.Warehouse
                     }
                 }
             };
-
-
         }
-        public P03(ToolStripMenuItem menuitem, bool history)
+
+        public P03(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
         {
             InitializeComponent();
-            if (history)
+            if (history.ToUpper() != "Y")
             {
                 this.DefaultFilter = "id = poid and IsForecast = 0 and WhseClose is null";
             }
             else
             {
-                this.DefaultFilter = "Finished = 0 and IsForecast and WhseClose is not null";
+                this.DefaultFilter = "id = poid and IsForecast = 0 and WhseClose is not null";
+                this.Text += " (History)";
             }
-
+            ChangeDetailColor();
+            MyUtility.Tool.SetGridFrozen(this.detailgrid);
         }
 
         //refresh
@@ -80,7 +86,7 @@ namespace Sci.Production.Warehouse
                 if (result) numericBox_cutqty.Value = (decimal)dr[0];
                 dr = null;
                 result = MyUtility.Check.Seek(string.Format(@"select isnull(sum(workday),0) as workday from sewingschedule where orderid ='{0}'", CurrentMaintain["id"]), out dr, null);
-                if (result) numericBox_NeedPerDay.Value = decimal.Parse(dr[0].ToString());
+                //if (result) numericBox_NeedPerDay.Value = decimal.Parse(dr[0].ToString());
             }
             
         }
@@ -114,7 +120,6 @@ namespace Sci.Production.Warehouse
                     if (null == dr) return;
                     var frm = new Sci.Production.Warehouse.P03_Supplier(dr);
                     frm.ShowDialog(this);
-                    this.RenewData();
                 }
 
             };
@@ -130,7 +135,6 @@ namespace Sci.Production.Warehouse
                     if (null == dr) return;
                     var frm = new Sci.Production.Warehouse.P03_Refno(dr);
                     frm.ShowDialog(this);
-                    this.RenewData();
                 }
 
             };
@@ -146,7 +150,6 @@ namespace Sci.Production.Warehouse
                     if (null == dr) return;
                     var frm = new Sci.Production.Warehouse.P03_Wkno(dr);
                     frm.ShowDialog(this);
-                    this.RenewData();
                 }
 
             };
@@ -159,9 +162,8 @@ namespace Sci.Production.Warehouse
                 {
                     var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (null == dr) return;
-                    var frm = new Sci.Production.Warehouse.P03_Wkno(dr);
+                    var frm = new Sci.Production.Warehouse.P03_TaipeiInventory(dr);
                     frm.ShowDialog(this);
-                    this.RenewData();
                 }
 
             };
@@ -174,14 +176,13 @@ namespace Sci.Production.Warehouse
                 {
                     var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (null == dr) return;
-                    var frm = new Sci.Production.Warehouse.P03_Wkno(dr);
+                    var frm = new Sci.Production.Warehouse.P03_RollTransaction(dr);
                     frm.ShowDialog(this);
-                    this.RenewData();
                 }
 
             };
             #endregion
-            #region Released Qty 開窗
+            #region Balance Qty 開窗
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts6 = new DataGridViewGeneratorTextColumnSettings();
             ts6.CellMouseDoubleClick += (s, e) =>
             {
@@ -189,14 +190,14 @@ namespace Sci.Production.Warehouse
                 {
                     var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (null == dr) return;
-                    var frm = new Sci.Production.Warehouse.P03_Wkno(dr);
+                    var frm = new Sci.Production.Warehouse.P03_Transaction(dr);
                     frm.ShowDialog(this);
                     this.RenewData();
                 }
 
             };
             #endregion
-            #region Released Qty 開窗
+            #region Inventory Qty 開窗
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts7 = new DataGridViewGeneratorTextColumnSettings();
             ts7.CellMouseDoubleClick += (s, e) =>
             {
@@ -204,14 +205,13 @@ namespace Sci.Production.Warehouse
                 {
                     var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (null == dr) return;
-                    var frm = new Sci.Production.Warehouse.P03_Wkno(dr);
+                    var frm = new Sci.Production.Warehouse.P03_InventoryStatus(dr);
                     frm.ShowDialog(this);
-                    this.RenewData();
                 }
 
             };
             #endregion
-            #region Released Qty 開窗
+            #region Scrap Qty 開窗
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts8 = new DataGridViewGeneratorTextColumnSettings();
             ts8.CellMouseDoubleClick += (s, e) =>
             {
@@ -219,9 +219,8 @@ namespace Sci.Production.Warehouse
                 {
                     var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (null == dr) return;
-                    var frm = new Sci.Production.Warehouse.P03_Wkno(dr);
+                    var frm = new Sci.Production.Warehouse.P03_Scrap(dr);
                     frm.ShowDialog(this);
-                    this.RenewData();
                 }
 
             };
@@ -236,12 +235,11 @@ namespace Sci.Production.Warehouse
                     if (null == dr) return;
                     var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr);
                     frm.ShowDialog(this);
-                    this.RenewData();
                 }
 
             };
             #endregion
-            #region Released Qty 開窗
+            #region FIR 開窗
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts10 = new DataGridViewGeneratorTextColumnSettings();
             ts10.CellMouseDoubleClick += (s, e) =>
             {
@@ -249,9 +247,8 @@ namespace Sci.Production.Warehouse
                 {
                     var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (null == dr) return;
-                    var frm = new Sci.Production.Warehouse.P03_Wkno(dr);
+                    var frm = new Sci.Production.Warehouse.P03_InspectionList(dr);
                     frm.ShowDialog(this);
-                    this.RenewData();
                 }
 
             };
@@ -370,7 +367,7 @@ namespace Sci.Production.Warehouse
             .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //3
             .Text("balanceqty", header: "Balance", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts6)    //3
             .Text("LInvQty", header: "Stock Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts7)    //3
-            .Text("LObQty", header: "Arrived Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts8)    //3
+            .Text("LObQty", header: "Scrap Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts8)    //3
             .Text("ALocation", header: "Bulk Location", iseditingreadonly: true,settings:ts9)  //2
             .Text("BLocation", header: "Stock Location", iseditingreadonly: true)  //2
             .Text("Remark", header: "Remark", iseditingreadonly: true)  //2
@@ -412,6 +409,22 @@ namespace Sci.Production.Warehouse
                 left join supp s on s.id = b.suppid
             where a.id='{0}' order by a.refno,a.colorid", masterID);
             return base.OnDetailSelectCommandPrepare(e);
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (comboBox1.SelectedIndex)
+            {
+                case 0:
+                    if (MyUtility.Check.Empty(detailgridbs)) break;
+                    ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "refno , colorid";
+                    break;
+                case 1:
+                    if (MyUtility.Check.Empty(detailgridbs)) break;
+                    ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "seq1 , seq2";
+                    break;
+                
+            }
         }
     }
 }

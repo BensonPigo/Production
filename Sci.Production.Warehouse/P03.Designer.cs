@@ -39,7 +39,6 @@
             this.label9 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
             this.label13 = new Sci.Win.UI.Label();
             this.label14 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
@@ -56,8 +55,9 @@
             this.dateBox7 = new Sci.Win.UI.DateBox();
             this.numericBox_cutqty = new Sci.Win.UI.NumericBox();
             this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.numericBox_NeedPerDay = new Sci.Win.UI.NumericBox();
             this.displayBox5 = new Sci.Win.UI.DisplayBox();
+            this.comboBox1 = new Sci.Win.UI.ComboBox();
+            this.label12 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -73,8 +73,9 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.label12);
+            this.masterpanel.Controls.Add(this.comboBox1);
             this.masterpanel.Controls.Add(this.displayBox5);
-            this.masterpanel.Controls.Add(this.numericBox_NeedPerDay);
             this.masterpanel.Controls.Add(this.numericBox2);
             this.masterpanel.Controls.Add(this.numericBox_cutqty);
             this.masterpanel.Controls.Add(this.txtuser1);
@@ -86,7 +87,6 @@
             this.masterpanel.Controls.Add(this.label15);
             this.masterpanel.Controls.Add(this.label14);
             this.masterpanel.Controls.Add(this.label13);
-            this.masterpanel.Controls.Add(this.label12);
             this.masterpanel.Controls.Add(this.label11);
             this.masterpanel.Controls.Add(this.label10);
             this.masterpanel.Controls.Add(this.label9);
@@ -121,7 +121,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label9, 0);
             this.masterpanel.Controls.SetChildIndex(this.label10, 0);
             this.masterpanel.Controls.SetChildIndex(this.label11, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
             this.masterpanel.Controls.SetChildIndex(this.label13, 0);
             this.masterpanel.Controls.SetChildIndex(this.label14, 0);
             this.masterpanel.Controls.SetChildIndex(this.label15, 0);
@@ -133,8 +132,9 @@
             this.masterpanel.Controls.SetChildIndex(this.txtuser1, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericBox_cutqty, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox_NeedPerDay, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox5, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
             // 
             // detailpanel
             // 
@@ -268,25 +268,16 @@
             // label11
             // 
             this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(640, 12);
+            this.label11.Location = new System.Drawing.Point(654, 12);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(130, 23);
             this.label11.TabIndex = 11;
             this.label11.Text = "Sewing Line#";
             // 
-            // label12
-            // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(640, 44);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(130, 23);
-            this.label12.TabIndex = 12;
-            this.label12.Text = "Needed Per Day";
-            // 
             // label13
             // 
             this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(640, 76);
+            this.label13.Location = new System.Drawing.Point(654, 44);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(130, 23);
             this.label13.TabIndex = 13;
@@ -295,7 +286,7 @@
             // label14
             // 
             this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(640, 110);
+            this.label14.Location = new System.Drawing.Point(654, 78);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(130, 23);
             this.label14.TabIndex = 14;
@@ -304,7 +295,7 @@
             // label15
             // 
             this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(640, 144);
+            this.label15.Location = new System.Drawing.Point(654, 112);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(130, 23);
             this.label15.TabIndex = 15;
@@ -416,7 +407,7 @@
             // 
             this.dateBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cutinline", true));
             this.dateBox7.IsSupportEditMode = false;
-            this.dateBox7.Location = new System.Drawing.Point(773, 76);
+            this.dateBox7.Location = new System.Drawing.Point(787, 44);
             this.dateBox7.Name = "dateBox7";
             this.dateBox7.ReadOnly = true;
             this.dateBox7.Size = new System.Drawing.Size(130, 23);
@@ -427,7 +418,7 @@
             this.numericBox_cutqty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericBox_cutqty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox_cutqty.IsSupportEditMode = false;
-            this.numericBox_cutqty.Location = new System.Drawing.Point(773, 110);
+            this.numericBox_cutqty.Location = new System.Drawing.Point(787, 78);
             this.numericBox_cutqty.Name = "numericBox_cutqty";
             this.numericBox_cutqty.ReadOnly = true;
             this.numericBox_cutqty.Size = new System.Drawing.Size(100, 23);
@@ -439,32 +430,45 @@
             this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "qty", true));
             this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(773, 143);
+            this.numericBox2.Location = new System.Drawing.Point(787, 111);
             this.numericBox2.Name = "numericBox2";
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
             this.numericBox2.TabIndex = 28;
-            // 
-            // numericBox_NeedPerDay
-            // 
-            this.numericBox_NeedPerDay.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox_NeedPerDay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox_NeedPerDay.IsSupportEditMode = false;
-            this.numericBox_NeedPerDay.Location = new System.Drawing.Point(773, 44);
-            this.numericBox_NeedPerDay.Name = "numericBox_NeedPerDay";
-            this.numericBox_NeedPerDay.ReadOnly = true;
-            this.numericBox_NeedPerDay.Size = new System.Drawing.Size(100, 23);
-            this.numericBox_NeedPerDay.TabIndex = 29;
             // 
             // displayBox5
             // 
             this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "sewline", true));
             this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(773, 12);
+            this.displayBox5.Location = new System.Drawing.Point(787, 12);
             this.displayBox5.Name = "displayBox5";
             this.displayBox5.Size = new System.Drawing.Size(137, 23);
             this.displayBox5.TabIndex = 30;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.BackColor = System.Drawing.Color.White;
+            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "Refno",
+            "Seq"});
+            this.comboBox1.Location = new System.Drawing.Point(766, 144);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 24);
+            this.comboBox1.TabIndex = 31;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // label12
+            // 
+            this.label12.Lines = 0;
+            this.label12.Location = new System.Drawing.Point(654, 144);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(109, 23);
+            this.label12.TabIndex = 32;
+            this.label12.Text = "Sort By";
             // 
             // P03
             // 
@@ -506,7 +510,6 @@
 
         #endregion
 
-        private Win.UI.NumericBox numericBox_NeedPerDay;
         private Win.UI.NumericBox numericBox2;
         private Win.UI.NumericBox numericBox_cutqty;
         private Win.UI.DateBox dateBox7;
@@ -523,7 +526,6 @@
         private Win.UI.Label label15;
         private Win.UI.Label label14;
         private Win.UI.Label label13;
-        private Win.UI.Label label12;
         private Win.UI.Label label11;
         private Win.UI.Label label10;
         private Win.UI.Label label9;
@@ -536,5 +538,7 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.DisplayBox displayBox5;
+        private Win.UI.Label label12;
+        private Win.UI.ComboBox comboBox1;
     }
 }

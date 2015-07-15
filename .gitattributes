@@ -386,6 +386,12 @@ Sci.Production.Warehouse/P03.resx -text
 Sci.Production.Warehouse/P03_Supplier.Designer.cs -text
 Sci.Production.Warehouse/P03_Supplier.cs -text
 Sci.Production.Warehouse/P03_Supplier.resx -text
+Sci.Production.Warehouse/P03_TaipeiInventory.Designer.cs -text
+Sci.Production.Warehouse/P03_TaipeiInventory.cs -text
+Sci.Production.Warehouse/P03_TaipeiInventory.resx -text
+Sci.Production.Warehouse/P03_Transaction.Designer.cs -text
+Sci.Production.Warehouse/P03_Transaction.cs -text
+Sci.Production.Warehouse/P03_Transaction.resx -text
 Sci.Production.Warehouse/P03_Wkno.Designer.cs -text
 Sci.Production.Warehouse/P03_Wkno.cs -text
 Sci.Production.Warehouse/P03_Wkno.resx -text
