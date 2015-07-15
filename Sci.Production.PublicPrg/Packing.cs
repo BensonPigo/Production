@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
+using System.Windows.Forms;
 using Sci.Data;
 using Sci;
 using Ict;
@@ -111,6 +112,60 @@ ELSE
             }
 
             return true;
+        }
+        #endregion
+
+        #region CheckPulloutComplete
+        /// <summary>
+        /// CheckPulloutComplete(string,string,string,int)
+        /// </summary>
+        /// <param name="packingListID"></param>
+        /// <returns>bool</returns>
+        public static bool CheckPulloutComplete(string orderID, string orderShipmodeSeq, string article, string sizeCode, int packingQty)
+        {
+            DataTable qty;
+            DualResult result;
+            string sqlCmd = string.Format(@"with PulloutQty
+as
+(select iif(sum(pdd.ShipQty) is null,0,sum(pdd.ShipQty)) as ShipQty
+ from Pullout p, Pullout_Detail pd, Pullout_Detail_Detail pdd
+ where p.Status != 'New'
+ and p.id = pd.ID
+ and pd.OrderID = '{0}'
+ and pd.OrderShipmodeSeq = '{1}'
+ and p.ID = pdd.ID
+ and pd.UKey = pdd.UKey
+ and pdd.Article = '{2}'
+ and pdd.SizeCode = '{3}'
+),
+InvadjQty
+as
+(select iif(sum(iaq.DiffQty) is null,0,sum(iaq.DiffQty)) as DiffQty
+ from InvAdjust ia, InvAdjust_Qty iaq
+ where ia.OrderID = '{0}'
+ and ia.OrderShipmodeSeq = '{1}'
+ and ia.ID = iaq.ID
+ and iaq.Article = '{2}'
+ and iaq.SizeCode = '{3}'
+)
+
+select iif(oqd.Qty is null,0, oqd.Qty) as OrderQty,(select ShipQty from PulloutQty)+(select DiffQty from InvadjQty) as ShipQty
+from Order_QtyShip_Detail oqd
+where oqd.Id = '{0}'
+and oqd.Seq = '{1}'
+and oqd.Article = '{2}'
+and oqd.SizeCode = '{3}'", orderID, orderShipmodeSeq, article, sizeCode);
+
+            result = DBProxy.Current.Select(null, sqlCmd, out qty);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Query ship qty fail!");
+                return false;
+            }
+            else
+            {
+                return (Convert.ToInt32(qty.Rows[0]["OrderQty"].ToString()) >= Convert.ToInt32(qty.Rows[0]["ShipQty"].ToString()) + packingQty);
+            }
         }
         #endregion
     }
