@@ -24,6 +24,19 @@ namespace Sci.Production.Packing
             gridicon.Insert.Visible = false;
         }
 
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        {
+            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            this.DetailSelectCommand = string.Format(@"select td.*, o.StyleID,o.SeasonID,o.BrandID,o.Customize1,o.CustPONo,c.Alias,o.BuyerDelivery,cr.ReceiveDate
+from TransferToClog_Detail td
+left join Orders o on o.ID = td.OrderID
+left join Country c on c.ID = o.Dest
+left join ClogReceive_Detail crd on crd.TransferToClogId = td.Id and crd.PackingListId = td.PackingListID and crd.OrderId = td.OrderID and crd.CTNStartNo = td.CTNStartNo
+left join ClogReceive cr on cr.Status = 'Confirmed' and cr.ID = crd.ID
+where td.Id = '{0}'", masterID);
+            return base.OnDetailSelectCommandPrepare(e);
+        }
+
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -39,55 +52,6 @@ namespace Sci.Production.Packing
                 .Text("Alias", header: "Destination", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("ReceiveDate", header: "Clog CFM", width: Widths.AnsiChars(10), iseditingreadonly: true);
-        }
-
-        protected override Ict.DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
-        {
-            e.Details.Columns.Add("StyleID");
-            e.Details.Columns.Add("SeasonID");
-            e.Details.Columns.Add("BrandID");
-            e.Details.Columns.Add("Customize1");
-            e.Details.Columns.Add("CustPONo");
-            e.Details.Columns.Add("Alias");
-            e.Details.Columns.Add("BuyerDelivery", type: typeof(DateTime));
-            e.Details.Columns.Add("ReceiveDate", type: typeof(DateTime));
-            foreach (DataRow gridData in e.Details.Rows)
-            {
-                string selectCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,a.BuyerDelivery 
-                                                                            from Orders a 
-                                                                            left join Country b on b.ID = a.Dest  
-                                                                            where a.ID = '{0}'", gridData["OrderID"].ToString());
-                DataTable orderData, receiveData;
-                DualResult dr;
-                if (dr = DBProxy.Current.Select(null, selectCmd, out orderData))
-                {
-                    if (orderData.Rows.Count > 0)
-                    {
-                        gridData["StyleID"] = orderData.Rows[0]["StyleID"].ToString().Trim();
-                        gridData["SeasonID"] = orderData.Rows[0]["SeasonID"].ToString().Trim();
-                        gridData["BrandID"] = orderData.Rows[0]["BrandID"].ToString().Trim();
-                        gridData["Customize1"] = orderData.Rows[0]["Customize1"].ToString().Trim();
-                        gridData["CustPONo"] = orderData.Rows[0]["CustPONo"].ToString().Trim();
-                        gridData["Alias"] = orderData.Rows[0]["Alias"].ToString().Trim();
-                        gridData["BuyerDelivery"] = orderData.Rows[0]["BuyerDelivery"];
-                    }
-                }
-
-                selectCmd = string.Format(@"Select a.ReceiveDate from ClogReceive a, ClogReceive_Detail b 
-                                                                where b.TransferToClogId = '{0}' 
-                                                                and b.PackingListId = '{1}' 
-                                                                and b.OrderId = '{2}'  
-                                                                and b.CTNStartNo = '{3}' and a.Id = b.Id and a.Status = 'Confirmed'
-                                                                ", gridData["ID"].ToString(), gridData["PackingListID"].ToString(), gridData["OrderID"].ToString(), gridData["CTNStartNo"].ToString());
-                if (dr = DBProxy.Current.Select(null, selectCmd, out receiveData))
-                {
-                    if (receiveData.Rows.Count > 0)
-                    {
-                        gridData["ReceiveDate"] = receiveData.Rows[0]["ReceiveDate"];
-                    }
-                }
-            }
-            return base.OnRenewDataDetailPost(e);
         }
 
         //表身Grid的Delete
