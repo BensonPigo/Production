@@ -26,6 +26,19 @@ namespace Sci.Production.Logistic
             gridicon.Insert.Visible = false;
         }
 
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        {
+            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            this.DetailSelectCommand = string.Format(@"select crd.*, o.StyleID,o.SeasonID,o.BrandID,o.Customize1,o.CustPONo,c.Alias,oqs.BuyerDelivery
+from ClogReceive_Detail crd
+left join Orders o on o.ID = crd.OrderID
+left join Country c on c.ID = o.Dest
+left join PackingList pl on pl.ID = crd.PackingListId
+left join Order_QtyShip oqs on oqs.Id = pl.OrderId and oqs.Seq = pl.OrderShipmodeSeq
+where crd.ID = '{0}'", masterID);
+            return base.OnDetailSelectCommandPrepare(e);
+        }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -70,41 +83,6 @@ namespace Sci.Production.Logistic
                 .Text("Alias", header: "Destination#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10));
-        }
-
-        //加工資料
-        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
-        {
-            e.Details.Columns.Add("StyleID");
-            e.Details.Columns.Add("SeasonID");
-            e.Details.Columns.Add("BrandID");
-            e.Details.Columns.Add("Customize1");
-            e.Details.Columns.Add("CustPONo");
-            e.Details.Columns.Add("Alias");
-            e.Details.Columns.Add("BuyerDelivery", type: typeof(DateTime));
-            foreach (DataRow gridData in e.Details.Rows)
-            {
-                string selectCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,a.BuyerDelivery 
-                                                                           from Orders a 
-                                                                           left join Country b on b.ID = a.Dest 
-                                                                           where a.ID = '{0}'", gridData["OrderID"].ToString());
-                DataTable orderData;
-                DualResult dr;
-                if (dr = DBProxy.Current.Select(null, selectCmd, out orderData))
-                {
-                    if (orderData.Rows.Count > 0)
-                    {
-                        gridData["StyleID"] = orderData.Rows[0]["StyleID"].ToString().Trim();
-                        gridData["SeasonID"] = orderData.Rows[0]["SeasonID"].ToString().Trim();
-                        gridData["BrandID"] = orderData.Rows[0]["BrandID"].ToString().Trim();
-                        gridData["Customize1"] = orderData.Rows[0]["Customize1"].ToString().Trim();
-                        gridData["CustPONo"] = orderData.Rows[0]["CustPONo"].ToString().Trim();
-                        gridData["Alias"] = orderData.Rows[0]["Alias"].ToString().Trim();
-                        gridData["BuyerDelivery"] = orderData.Rows[0]["BuyerDelivery"];
-                    }
-                }
-            }
-            return base.OnRenewDataDetailPost(e);
         }
 
         //修改前檢查，如果已經Confirm了，就不可以被修改
