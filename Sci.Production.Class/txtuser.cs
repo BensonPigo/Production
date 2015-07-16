@@ -107,6 +107,7 @@ namespace Sci.Production.Class
                 selectSql = string.Format("Select ExtNo from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
                 string extNo = MyUtility.GetValue.Lookup(selectSql);
                 if (!string.IsNullOrWhiteSpace(name)) { this.displayBox1.Text = name; }
+                else this.displayBox1.Text = "";
                 if (!string.IsNullOrWhiteSpace(extNo)) { this.displayBox1.Text = name + " #" + extNo; }
             }
         }
