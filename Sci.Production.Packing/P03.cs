@@ -55,6 +55,7 @@ as
  from PackingList_Detail
  where ID != '{0}'
  and OrderID = '{1}'
+and OrderShipmodeSeq = '{2}'
  group by Article, SizeCode
 ),
 PulloutAdjQty
@@ -73,7 +74,7 @@ as
  where ID = '{0}'
  group by Article, SizeCode
 )
-select a.CTNStartNo,a.CTNQty, a.RefNo, a.Article, a.Color, a.SizeCode, a.QtyPerCTN, a.ShipQty, a.NW, a.GW, a.NNW, a.NWPerPcs, a.ScanQty,a.TransferToClogID, a.TransferDate, a.ReceiveDate, a.ClogLocationId, a.ReturnDate, b.Description, oqd.Qty-iif(pd.TtlShipQty is null,0,pd.TtlShipQty)+iif(paq.TtlDiffQty is null,0,paq.TtlDiffQty)-pk.ShipQty as BalanceQty, a.Seq
+select a.CTNStartNo,a.CTNQty, a.RefNo, a.Article, a.Color, a.SizeCode, a.QtyPerCTN, a.ShipQty, a.NW, a.GW, a.NNW, a.NWPerPcs, a.ScanQty,a.TransferToClogID, a.TransferDate, a.ReceiveDate, a.ClogLocationId, a.ReturnDate, b.Description, oqd.Qty-isnull(pd.TtlShipQty,0)+isnull(paq.TtlDiffQty,0)-pk.ShipQty as BalanceQty, a.Seq
 from PackingList_Detail a
 left join LocalItem b on b.RefNo = a.RefNo
 left join AccuPKQty pd on pd.Article = a.Article and pd.SizeCode = a.SizeCode
@@ -192,7 +193,7 @@ order by a.Seq", masterID, OrderID, OrderSeqID);
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = string.Format("Select Distinct Article from Order_QtyShip_Detail where ID = '{0}' and Seq = '{1}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
+                            string sqlCmd = string.Format("Select Distinct Article from Order_QtyShip_Detail where ID = '{0}' and Seq = '{1}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", dr["Article"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
@@ -220,7 +221,7 @@ order by a.Seq", masterID, OrderID, OrderSeqID);
 
                     if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()) && e.FormattedValue.ToString() != dr["Article"].ToString())
                     {
-                        if (!MyUtility.Check.Seek(string.Format("Select Article from Order_QtyShip_Detail where ID = '{0}' and Seq = '{1}' and Article = '{2}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), e.FormattedValue.ToString())))
+                        if (!MyUtility.Check.Seek(string.Format("Select Article from Order_QtyShip_Detail where ID = '{0}' and Seq = '{1}' and Article = '{2}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), e.FormattedValue.ToString())))
                         {
                             MessageBox.Show(string.Format("< Article: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["Article"] = "";
@@ -235,7 +236,7 @@ order by a.Seq", masterID, OrderID, OrderSeqID);
                                                                                   where occ.LectraCode = (select min(LectraCode) 
 					                                                                                                       from Order_ColorCombo 
 					                                                                                                       where id = occ.Id and  Article = '{1}' and PatternPanel = 'FA') 
-                                                                                  and o.id = '{0}' and  occ.Id = o.POID and  occ.Article = '{1}' and occ.PatternPanel = 'FA'", dr["OrderID"].ToString(), dr["Article"]);
+                                                                                  and o.id = '{0}' and  occ.Id = o.POID and  occ.Article = '{1}' and occ.PatternPanel = 'FA'", CurrentMaintain["OrderID"].ToString(), dr["Article"].ToString());
                             DataTable colorData;
                             if (result = DBProxy.Current.Select(null, sqlCmd, out colorData))
                             {
@@ -256,7 +257,12 @@ order by a.Seq", masterID, OrderID, OrderSeqID);
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = string.Format("Select Distinct SizeCode from Order_QtyShip_Detail where ID = '{0}' and Seq = '{1}' and Article = '{2}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString());
+                            string sqlCmd = string.Format(@"Select oqd.SizeCode 
+from Order_QtyShip_Detail oqd
+left join Orders o on o.ID = oqd.Id
+left join Order_SizeCode os on os.ID = o.POID and os.SizeCode = oqd.SizeCode
+where oqd.ID = '{0}' and oqd.Seq = '{1}' and oqd.Article = '{2}' 
+order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), dr["Article"].ToString());
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", dr["SizeCode"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
@@ -283,7 +289,7 @@ order by a.Seq", masterID, OrderID, OrderSeqID);
                     }
                     if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()) && e.FormattedValue.ToString() != dr["SizeCode"].ToString())
                     {
-                        if (!MyUtility.Check.Seek(string.Format("Select SizeCode from Order_QtyShip_Detail where ID = '{0}' and Seq = '{1}' and Article = '{2}' and SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), e.FormattedValue.ToString())))
+                        if (!MyUtility.Check.Seek(string.Format("Select SizeCode from Order_QtyShip_Detail where ID = '{0}' and Seq = '{1}' and Article = '{2}' and SizeCode = '{3}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), e.FormattedValue.ToString())))
                         {
                             MessageBox.Show(string.Format("< SizeCode: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["SizeCode"] = "";
@@ -325,39 +331,48 @@ order by a.Seq", masterID, OrderID, OrderSeqID);
                     #region 檢查箱子如果有送到Clog則不可以被修改
                     if (detailgrid.Columns[e.ColumnIndex].DataPropertyName == col_ctnno.DataPropertyName)
                     {
-                        if (e.FormattedValue.ToString() != dr["CTNStartNo"].ToString())
+                        if (!string.IsNullOrWhiteSpace(dr["CTNStartNo"].ToString()))
                         {
-                            if (!CheckCanCahngeCol(dr["TransferToClogID"].ToString()))
+                            if (e.FormattedValue.ToString() != dr["CTNStartNo"].ToString())
                             {
-                                dr["CTNStartNo"] = dr["CTNStartNo"].ToString();
-                                e.Cancel = true;
-                                return;
+                                if (!CheckCanCahngeCol(dr["TransferToClogID"].ToString()))
+                                {
+                                    dr["CTNStartNo"] = dr["CTNStartNo"].ToString();
+                                    e.Cancel = true;
+                                    return;
+                                }
                             }
                         }
                     }
 
                     if (detailgrid.Columns[e.ColumnIndex].DataPropertyName == col_qtyperctn.DataPropertyName)
                     {
-                        if (e.FormattedValue.ToString() != dr["QtyPerCTN"].ToString())
+                        if (!string.IsNullOrWhiteSpace(dr["QtyPerCTN"].ToString()))
                         {
-                            if (!CheckCanCahngeCol(dr["TransferToClogID"].ToString()))
+                            if (e.FormattedValue.ToString() != dr["QtyPerCTN"].ToString())
                             {
-                                dr["QtyPerCTN"] = dr["QtyPerCTN"].ToString();
-                                e.Cancel = true;
-                                return;
+                                if (!CheckCanCahngeCol(dr["TransferToClogID"].ToString()))
+                                {
+                                    dr["QtyPerCTN"] = dr["QtyPerCTN"].ToString();
+                                    e.Cancel = true;
+                                    return;
+                                }
                             }
                         }
                     }
 
                     if (detailgrid.Columns[e.ColumnIndex].DataPropertyName == col_shipqty.DataPropertyName)
                     {
-                        if (e.FormattedValue.ToString() != dr["ShipQty"].ToString())
+                        if (!string.IsNullOrWhiteSpace(dr["ShipQty"].ToString()))
                         {
-                            if (!CheckCanCahngeCol(dr["TransferToClogID"].ToString()))
+                            if (e.FormattedValue.ToString() != dr["ShipQty"].ToString())
                             {
-                                dr["ShipQty"] = dr["ShipQty"].ToString();
-                                e.Cancel = true;
-                                return;
+                                if (!CheckCanCahngeCol(dr["TransferToClogID"].ToString()))
+                                {
+                                    dr["ShipQty"] = dr["ShipQty"].ToString();
+                                    e.Cancel = true;
+                                    return;
+                                }
                             }
                         }
                     }
@@ -365,14 +380,17 @@ order by a.Seq", masterID, OrderID, OrderSeqID);
 
                     if (detailgrid.Columns[e.ColumnIndex].DataPropertyName == col_ctnqty.DataPropertyName)
                     {
-                        if (e.FormattedValue.ToString() != dr["CTNQty"].ToString())
+                        if (!string.IsNullOrWhiteSpace(dr["CTNQty"].ToString()))
                         {
-                            if (e.FormattedValue.ToString() != "0" && e.FormattedValue.ToString() != "1")
+                            if (e.FormattedValue.ToString() != dr["CTNQty"].ToString())
                             {
-                                MessageBox.Show("# of CTN only keyin 1 or 0");
-                                dr["CTNQty"] = 0;
-                                e.Cancel = true;
-                                return;
+                                if (e.FormattedValue.ToString() != "0" && e.FormattedValue.ToString() != "1")
+                                {
+                                    MessageBox.Show("# of CTN only keyin 1 or 0");
+                                    dr["CTNQty"] = 0;
+                                    e.Cancel = true;
+                                    return;
+                                }
                             }
                         }
                     }
@@ -499,7 +517,7 @@ order by a.Seq", masterID, OrderID, OrderSeqID);
             DualResult selectResult;
             DataRow[] detailData;
             #region 先將此Packinglist的各Article & SizeCode尚未裝箱件數撈出來
-            sqlCmd = string.Format(@"select pd.Article,pd.SizeCode,(oqd.Qty-iif(sum(pd.ShipQty) is null, 0, sum(pd.ShipQty)) - iif(sum(iaq.DiffQty) is null, 0, sum(iaq.DiffQty))) as Qty
+            sqlCmd = string.Format(@"select pd.Article,pd.SizeCode,(oqd.Qty-isnull(sum(pd.ShipQty), 0) - isnull(sum(iaq.DiffQty), 0)) as Qty
 from PackingList_Detail pd
 left join Order_QtyShip_Detail oqd on oqd.Id = pd.OrderID and oqd.Seq = pd.OrderShipmodeSeq and oqd.Article = pd.Article and oqd.SizeCode = pd.SizeCode
 left join InvAdjust ia on ia.OrderID = pd.OrderID and ia.OrderShipmodeSeq = pd.OrderShipmodeSeq
@@ -623,7 +641,7 @@ group by pd.Article,pd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), Cur
         {
             if (!MyUtility.Check.Empty(CurrentMaintain["INVNo"]))
             {
-                string sqlCmd = string.Format(@"select iif(sum(ShipQty) is null,0,sum(ShipQty)) as ShipQty,iif(sum(CTNQty) is null,0,sum(CTNQty)) as CTNQty,iif(sum(NW) is null,0,sum(NW)) as NW,iif(sum(GW) is null,0,sum(GW)) as GW,iif(sum(NNW) is null,0,sum(NNW)) as NNW,iif(sum(CBM) is null,0,sum(CBM)) as CBM
+                string sqlCmd = string.Format(@"select isnull(sum(ShipQty),0) as ShipQty,isnull(sum(CTNQty),0) as CTNQty,isnull(sum(NW),0) as NW,isnull(sum(GW),0) as GW,isnull(sum(NNW),0) as NNW,isnull(sum(CBM),0) as CBM
 from PackingList
 where INVNo = '{0}'
 and ID != '{1}'", CurrentMaintain["INVNo"].ToString(), CurrentMaintain["ID"].ToString());
@@ -737,10 +755,13 @@ where ID = @INVNo";
         protected override void OnDetailGridDelete()
         {
             //檢查此筆記錄是否已Transfer to Clog，若是則出訊息告知且無法刪除
-            if (!MyUtility.Check.Empty(CurrentDetailData["TransferToClogID"].ToString()))
+            if (this.DetailDatas.Count > 0)
             {
-                MessageBox.Show("This record had been send to CLOG, can't delete!!");
-                return;
+                if (!MyUtility.Check.Empty(CurrentDetailData["TransferToClogID"]))
+                {
+                    MessageBox.Show("This record had been send to CLOG, can't delete!!");
+                    return;
+                }
             }
 
             base.OnDetailGridDelete();
@@ -1401,7 +1422,7 @@ as
 SewingData
 as
 (select a.Article,a.SizeCode,MIN(a.QAQty) as QAQty
- from (select oq.Article,oq.SizeCode, sl.Location, iif(sum(sodd.QAQty)is null,0,sum(sodd.QAQty)) as QAQty
+ from (select oq.Article,oq.SizeCode, sl.Location, isnull(sum(sodd.QAQty),0) as QAQty
 	   from Orders o
 	   left join Order_Qty oq on oq.ID = o.ID
 	   left join Style_Location sl on sl.StyleUkey = o.StyleUkey
@@ -1410,7 +1431,7 @@ as
 	   group by oq.Article,oq.SizeCode, sl.Location) a
  group by a.Article,a.SizeCode
 )
-select oq.Article,oq.SizeCode, oq.Qty, iif(pedd.PackedShipQty is null,0,pedd.PackedShipQty)+iif(pingd.ShipQty is null,0,pingd.ShipQty) as PackQty,iif(iq.DiffQty is null,0,iq.DiffQty) as DiffQty, iif(sd.QAQty is null,0,sd.QAQty) as QAQty
+select oq.Article,oq.SizeCode, oq.Qty, isnull(pedd.PackedShipQty,0)+isnull(pingd.ShipQty,0) as PackQty,isnull(iq.DiffQty,0) as DiffQty, isnull(sd.QAQty,0) as QAQty
 from Order_Qty oq
 left join PackedDate pedd on pedd.Article = oq.Article and pedd.SizeCode = oq.SizeCode
 left join PackingData pingd on pingd.Article = oq.Article and pingd.SizeCode = oq.SizeCode
