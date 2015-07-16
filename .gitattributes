@@ -383,6 +383,9 @@ Sci.Production.Warehouse/B04.resx -text
 Sci.Production.Warehouse/P03.Designer.cs -text
 Sci.Production.Warehouse/P03.cs -text
 Sci.Production.Warehouse/P03.resx -text
+Sci.Production.Warehouse/P03_RollTransaction.Designer.cs -text
+Sci.Production.Warehouse/P03_RollTransaction.cs -text
+Sci.Production.Warehouse/P03_RollTransaction.resx -text
 Sci.Production.Warehouse/P03_Supplier.Designer.cs -text
 Sci.Production.Warehouse/P03_Supplier.cs -text
 Sci.Production.Warehouse/P03_Supplier.resx -text
