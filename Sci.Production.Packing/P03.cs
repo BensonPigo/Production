@@ -232,15 +232,19 @@ order by a.Seq", masterID, OrderID, OrderSeqID);
                         {
                             dr["Article"] = e.FormattedValue.ToString().ToUpper();
                             string sqlCmd = string.Format(@"select ColorID 
-                                                                                  from Order_ColorCombo occ, Orders o 
-                                                                                  where occ.LectraCode = (select min(LectraCode) 
-					                                                                                                       from Order_ColorCombo 
-					                                                                                                       where id = occ.Id and  Article = '{1}' and PatternPanel = 'FA') 
-                                                                                  and o.id = '{0}' and  occ.Id = o.POID and  occ.Article = '{1}' and occ.PatternPanel = 'FA'", CurrentMaintain["OrderID"].ToString(), dr["Article"].ToString());
-                            DataTable colorData;
-                            if (result = DBProxy.Current.Select(null, sqlCmd, out colorData))
+                                                                                      from Order_ColorCombo occ, Orders o 
+                                                                                      where occ.LectraCode = (select min(LectraCode) 
+					                                                                                                           from Order_ColorCombo 
+					                                                                                                           where id = occ.Id and  Article = '{1}' and PatternPanel = 'FA') 
+                                                                                      and o.id = '{0}' and  occ.Id = o.POID and  occ.Article = '{1}' and occ.PatternPanel = 'FA'", CurrentMaintain["OrderID"].ToString(), dr["Article"]);
+                            DataRow colorData;
+                            if (MyUtility.Check.Seek(sqlCmd, out colorData))
                             {
-                                dr["Color"] = colorData.Rows[0]["ColorID"].ToString();
+                                dr["Color"] = colorData["ColorID"].ToString();
+                            }
+                            else
+                            {
+                                dr["Color"] = "";
                             }
                         }
                         dr.EndEdit();
