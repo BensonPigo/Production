@@ -127,7 +127,7 @@ ELSE
             DualResult result;
             string sqlCmd = string.Format(@"with PulloutQty
 as
-(select iif(sum(pdd.ShipQty) is null,0,sum(pdd.ShipQty)) as ShipQty
+(select isnull(sum(pdd.ShipQty),0) as ShipQty
  from Pullout p, Pullout_Detail pd, Pullout_Detail_Detail pdd
  where p.Status != 'New'
  and p.id = pd.ID
@@ -140,7 +140,7 @@ as
 ),
 InvadjQty
 as
-(select iif(sum(iaq.DiffQty) is null,0,sum(iaq.DiffQty)) as DiffQty
+(select isnull(sum(iaq.DiffQty),0) as DiffQty
  from InvAdjust ia, InvAdjust_Qty iaq
  where ia.OrderID = '{0}'
  and ia.OrderShipmodeSeq = '{1}'
@@ -149,7 +149,7 @@ as
  and iaq.SizeCode = '{3}'
 )
 
-select iif(oqd.Qty is null,0, oqd.Qty) as OrderQty,(select ShipQty from PulloutQty)+(select DiffQty from InvadjQty) as ShipQty
+select isnull(oqd.Qty,0) as OrderQty,(select ShipQty from PulloutQty)+(select DiffQty from InvadjQty) as ShipQty
 from Order_QtyShip_Detail oqd
 where oqd.Id = '{0}'
 and oqd.Seq = '{1}'
