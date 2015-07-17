@@ -22,7 +22,7 @@ namespace Sci.Production.PublicPrg
 
         static Prgs()
         {
-            DBProxy.Current.Select(null, "SELECT * FROM Pass1", out dtPass1);
+            DBProxy.Current.Select(null, "SELECT ID, Name, ExtNo FROM Pass1", out dtPass1);
             if (dtPass1 != null) { dtPass1.PrimaryKey = new DataColumn[] { dtPass1.Columns["ID"] }; }
         }
 
