@@ -31,24 +31,26 @@ namespace Sci.Production.PublicPrg
             MyUtility.Check.Seek(string.Format(@"select StockPOID,scirefno,SuppColor,colorid,ColorDetail,sizespec
                                             ,special,SizeUnit,remark from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'"
                                             , Poid, seq1, seq2), out dr);
+            if (seq1.Substring(0, 1) == "7")
+            {
+                rtn = "**PLS USE STOCK FROM SP#:"
+                    + dr["StockPOID"].ToString()
+                    + "**" + Environment.NewLine;
+            }
+
             switch (ReturnFormat)
             {
                 case 1:
                     break;
-                case 2:
+                case 2: //Fabric.DescDetail 全部顯示
+                    rtn = rtn + MyUtility.GetValue.Lookup(string.Format(@"
+                                        select DescDetail from fabric where SCIRefno = '{0}'", dr["scirefno"].ToString().Replace("'", "''")));
                     break;
-                case 3:
-                    if (seq1.Substring(0,1) ==  "7")
-                    {
-                        rtn = "**PLS USE STOCK FROM SP#:" 
-                            + dr["StockPOID"].ToString()
-                            + "**" + Environment.NewLine;
-                    }
-
+                case 3: // 只顯示Fabric.DescDetail的第一列
                     if (!Repeat && !MyUtility.Check.Empty(dr["scirefno"]))
                     {
                         string DescDetail = MyUtility.GetValue.Lookup(string.Format(@"
-                                        select DescDetail from fabric where SCIRefno = '{0}'", dr["scirefno"]));
+                                        select DescDetail from fabric where SCIRefno = '{0}'", dr["scirefno"].ToString().Replace("'","''")));
 
                         string[] descs = DescDetail.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
