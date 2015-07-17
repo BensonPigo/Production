@@ -39,12 +39,12 @@ namespace Sci.Production.PublicPrg
         #endregion
 
         /// <summary>
-        /// GetPass1String()
+        /// GetAddOrEditBy()
         /// </summary>
         /// <param name="string id"></param>
         /// <param name="[Object datetime = null]"></param>
         /// <param name="[int format = 1]"></param>
-        /// <returns>bool</returns>
+        /// <returns>string</returns>
         public static string GetAddOrEditBy(Object id, Object dateColumn = null, int format = 1)
         {
             if (dtPass1 == null) { return id.ToString().Trim(); }
