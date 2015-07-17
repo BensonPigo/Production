@@ -149,9 +149,9 @@ namespace Sci.Production.Packing
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    string sqlCmd = string.Format(@"select IIF(li.Weight is null, 0, li.Weight) as CTNWeight,
-                                                                                     IIF(sw.NW is null, IIF(sw2.NW is null, 0, sw2.NW), sw.NW) as NW,
-                                                                                     IIF(sw.NNW is null, IIF(sw2.NNW is null, 0, sw2.NNW), sw.NNW) as NNW
+                    string sqlCmd = string.Format(@"select isnull(li.Weight, 0) as CTNWeight,
+                                                                                     isnull(sw.NW, isnull(sw2.NW, 0)) as NW,
+                                                                                     isnull(sw.NNW, isnull(sw2.NNW, 0)) as NNW
                                                                           from Orders o
                                                                           left join Style_WeightData sw on sw.StyleUkey = o.StyleUkey and sw.Article = '{0}' and sw.SizeCode = '{1}'
                                                                           left join Style_WeightData sw2 on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = '{1}'
@@ -532,9 +532,9 @@ namespace Sci.Production.Packing
                     }
                     sqlCmd = string.Format(@"select '' as ID, '' as RefNo, '' as Description, oqd.Article, oc.Color, oqd.SizeCode, oqd.Qty as ShipQty, oqc.Qty as QtyPerCTN, os.Seq,
                                                                            sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
-                                                                           IIF(sw.NW is null, IIF(sw2.NW is null, 0, sw2.NW), sw.NW)*oqc.Qty as NW,
-                                                                           IIF(sw.NW is null, IIF(sw2.NW is null, 0, sw2.NW), sw.NW)*oqc.Qty as GW,
-                                                                           IIF(sw.NNW is null, IIF(sw2.NNW is null, 0, sw2.NNW), sw.NNW)*oqc.Qty as NNW 
+                                                                           isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as NW,
+                                                                           isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as GW,
+                                                                           isnull(sw.NNW, isnull(sw2.NNW, 0))*oqc.Qty as NNW 
                                                                 from Order_QtyShip_Detail oqd
                                                                 left Join Orders o on o.ID = oqd.Id
                                                                 left Join Order_QtyCTN oqc on oqc.id = oqd.Id and oqc.Article = oqd.Article and oqc.SizeCode = oqd.SizeCode
@@ -557,9 +557,9 @@ namespace Sci.Production.Packing
                 {
                     sqlCmd = string.Format(@"select '' as ID, '' as RefNo, '' as Description, oqd.Article, oc.Color, oqd.SizeCode, oqd.Qty as ShipQty, o.CTNQty as QtyPerCTN, os.Seq,
                                                                            sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
-                                                                           IIF(sw.NW is null, IIF(sw2.NW is null, 0, sw2.NW), sw.NW)*o.CTNQty as NW,
-                                                                           IIF(sw.NW is null, IIF(sw2.NW is null, 0, sw2.NW), sw.NW)*o.CTNQty as GW,
-                                                                           IIF(sw.NNW is null, IIF(sw2.NNW is null, 0, sw2.NNW), sw.NNW)*o.CTNQty as NNW 
+                                                                           isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW,
+                                                                           isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW,
+                                                                           isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW 
                                                                 from Order_QtyShip_Detail oqd
                                                                 left Join Orders o on o.ID = oqd.Id
                                                                 left join (select distinct id, Article, PatternPanel, (select ColorID 
