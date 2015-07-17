@@ -452,6 +452,7 @@
             this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.IsSupportUnselect = true;
             this.comboBox1.Items.AddRange(new object[] {
             "Refno",
             "Seq"});
@@ -475,8 +476,10 @@
             this.ClientSize = new System.Drawing.Size(1008, 729);
             this.DefaultDetailOrder = "refno,colorid,seq1,seq2";
             this.DefaultOrder = "scidelivery,id";
+            this.Grid2New = 0;
             this.GridAlias = "Po_supp_detail";
             this.GridEdit = false;
+            this.GridNew = 0;
             this.GridUniqueKey = "ID,SEQ1,SEQ2";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

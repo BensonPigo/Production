@@ -76,7 +76,7 @@ from ReturnReceipt a, ReturnReceipt_Detail b
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id group by a.id, poid, seq1,Seq2, remark,a.IssueDate                                                                               
 union all
 	select issuedate, a.id
-	,case a.type when 'A' then 'P23. Transfer Inventory to Bulk' when 'B' then 'P24. Transfer Inventory to Scrap' end as name
+	,case a.type when 'A' then 'P25. Transfer Bulk to Scrap' when 'B' then 'P24. Transfer Inventory to Scrap' end as name
 	,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
 from Scrap a, Scrap_Detail b 
 where Status='Confirmed' and Poid ='{0}' and Seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id group by a.id, Poid, Seq1,Seq2, remark,a.IssueDate,a.Type
@@ -179,7 +179,6 @@ order by IssueDate,name,id
                             break;
                         case "II":
                             //	P13
-                            break;
                             break;
                         case "RR":
                             //	P17

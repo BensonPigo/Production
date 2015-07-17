@@ -75,15 +75,18 @@ SELECT invtrans.ID, Type,case Type
 
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
             if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);
-            string remark = "";
-            foreach (DataRow dr2 in selectDataTable1.Rows)
+            else
             {
-                if (!MyUtility.Check.Empty(dr2["remark"].ToString()))
+                string remark = "";
+                foreach (DataRow dr2 in selectDataTable1.Rows)
                 {
-                    remark += dr2["remark"].ToString().TrimEnd() + Environment.NewLine;
+                    if (!MyUtility.Check.Empty(dr2["remark"].ToString()))
+                    {
+                        remark += dr2["remark"].ToString().TrimEnd() + Environment.NewLine;
+                    }
                 }
+                this.editBox1.Text = remark;
             }
-            this.editBox1.Text = remark;
             bindingSource1.DataSource = selectDataTable1;
             MyUtility.Tool.SetGridFrozen(grid1);
             //設定Grid1的顯示欄位

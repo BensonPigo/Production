@@ -30,24 +30,26 @@ namespace Sci.Production.Warehouse
 
         private void ChangeDetailColor()
         {
-            detailgrid.RowsAdded += (s, e) =>
+            detailgrid.RowPostPaint += (s, e) =>
             {
-                DataTable dt = (DataTable)detailgridbs.DataSource;
-                for (int i = 0; i < detailgrid.Rows.Count; i++)
+                //DataGridViewRow dvr = detailgrid.Rows[e.RowIndex];
+                //DataRow dr = ((DataRowView)dvr.DataBoundItem).Row;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (detailgrid.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
+                
+                int i = e.RowIndex;
+                if (dr["junk"].ToString()=="True")
                 {
-
-                    if (dt.Rows[i]["junk"].ToString() == "True")
-                    {
-                        detailgrid.Rows[i].DefaultCellStyle.BackColor = Color.Gray;
-                        continue;
-                    }
-
-                    if (dt.Rows[i]["ThirdCountry"].ToString() == "True")
+                    detailgrid.Rows[i].DefaultCellStyle.BackColor = Color.Gray;
+                }
+                else
+                {
+                    if (dr["ThirdCountry"].ToString() == "True")
                     {
                         detailgrid.Rows[i].Cells[2].Style.BackColor = Color.DeepPink;
                     }
 
-                    if (dt.Rows[i]["BomTypeCalculate"].ToString() == "True")
+                    if (dr["BomTypeCalculate"].ToString() == "True")
                     {
                         detailgrid.Rows[i].Cells[6].Style.BackColor = Color.Orange;
                     }
@@ -70,6 +72,7 @@ namespace Sci.Production.Warehouse
             }
             ChangeDetailColor();
             MyUtility.Tool.SetGridFrozen(this.detailgrid);
+            
         }
 
         //refresh
@@ -192,7 +195,6 @@ namespace Sci.Production.Warehouse
                     if (null == dr) return;
                     var frm = new Sci.Production.Warehouse.P03_Transaction(dr);
                     frm.ShowDialog(this);
-                    this.RenewData();
                 }
 
             };
@@ -339,41 +341,42 @@ namespace Sci.Production.Warehouse
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(4))  //0
-            .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(4))  //0
-            .Text("Suppid", header: "Supp", iseditingreadonly: true, width: Widths.AnsiChars(4),settings:ts1)  //0
-            .Text("eta", header: "Sup. 1st Cfm ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //1
-            .Text("RevisedETD", header: "Sup. Del. Rvsd ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //1
-            .Text("refno", header: "Ref#", iseditingreadonly: true,settings:ts2)  //2
-            .Text("description", header: "Description", iseditingreadonly: true)  //2
-            .Text("fabrictype2", header: "Fabric Type", iseditingreadonly: true)  //2
-            .Text("ColorID", header: "Color", iseditingreadonly: true)  //2
-            .Text("SizeSpec", header: "Size", iseditingreadonly: true)  //2
-            .Text("CurrencyID", header: "Currency", iseditingreadonly: true)  //2
-            .Numeric("unitqty", header: "@Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //3
-            .Numeric("Qty", header: "Order Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //3
-            .Numeric("NETQty", header: "Net Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //3
-            .Numeric("useqty", header: "Use Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //3
-            .Text("ShipQty", header: "Ship Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings:ts3)    //3
-            .Numeric("ShipFOC", header: "F.O.C", width: Widths.AnsiChars(6), iseditingreadonly: true)    //3
-            .Numeric("ApQty", header: "AP Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //3
-            .Text("InputQty", header: "Taipei Stock Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)    //3
-            .Text("POUnit", header: "PO Unit", iseditingreadonly: true)  //2
-            .Text("Complete", header: "Cmplt", iseditingreadonly: true)  //2
-            .Date("ATA", header: "Act. ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //1
-            .Text("OrderIdList", header: "Order List", iseditingreadonly: true)  //2
-            .Numeric("InQty", header: "Arrived Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //3
-            .Text("StockUnit", header: "Stock Unit", iseditingreadonly: true)  //2
-            .Text("OutQty", header: "Released Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts5)    //3
-            .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //3
-            .Text("balanceqty", header: "Balance", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts6)    //3
-            .Text("LInvQty", header: "Stock Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts7)    //3
-            .Text("LObQty", header: "Scrap Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts8)    //3
-            .Text("ALocation", header: "Bulk Location", iseditingreadonly: true,settings:ts9)  //2
-            .Text("BLocation", header: "Stock Location", iseditingreadonly: true)  //2
-            .Text("Remark", header: "Remark", iseditingreadonly: true)  //2
-            ;     //18
+            .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(4))  //1
+            .Text("Suppid", header: "Supp", iseditingreadonly: true, width: Widths.AnsiChars(4),settings:ts1)  //2
+            .Text("eta", header: "Sup. 1st "+Environment.NewLine+"Cfm ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //3
+            .Text("RevisedETD", header: "Sup. Delivery"+Environment.NewLine+"Rvsd ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //4
+            .Text("refno", header: "Ref#", iseditingreadonly: true,settings:ts2)  //5
+            .Text("description", header: "Description", iseditingreadonly: true)  //6
+            .Text("fabrictype2", header: "Fabric Type", iseditingreadonly: true)  //7
+            .Text("ColorID", header: "Color", iseditingreadonly: true)  //8
+            .Text("SizeSpec", header: "Size", iseditingreadonly: true)  //9
+            .Text("CurrencyID", header: "Currency", iseditingreadonly: true)  //10
+            .Numeric("unitqty", header: "@Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //11
+            .Numeric("Qty", header: "Order Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //12
+            .Numeric("NETQty", header: "Net Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //13
+            .Numeric("useqty", header: "Use Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //14
+            .Text("ShipQty", header: "Ship Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings:ts3)    //15
+            .Numeric("ShipFOC", header: "F.O.C", width: Widths.AnsiChars(6), iseditingreadonly: true)    //16
+            .Numeric("ApQty", header: "AP Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //17
+            .Text("InputQty", header: "Taipei Stock Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)    //18
+            .Text("POUnit", header: "PO Unit", iseditingreadonly: true)  //19
+            .Text("Complete", header: "Cmplt", iseditingreadonly: true)  //20
+            .Date("ATA", header: "Act. ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //21
+            .Text("OrderIdList", header: "Order List", iseditingreadonly: true)  //23
+            .Numeric("InQty", header: "Arrived Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //23
+            .Text("StockUnit", header: "Stock Unit", iseditingreadonly: true)  //24
+            .Text("OutQty", header: "Released Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts5)    //25
+            .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //26
+            .Text("balanceqty", header: "Balance", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts6)    //27
+            .Text("LInvQty", header: "Stock Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts7)    //28
+            .Text("LObQty", header: "Scrap Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts8)    //29
+            .Text("ALocation", header: "Bulk Location", iseditingreadonly: true,settings:ts9)  //30
+            .Text("BLocation", header: "Stock Location", iseditingreadonly: true)  //31
+            .Text("Remark", header: "Remark", iseditingreadonly: true)  //32
+            ;     
             #endregion
 
+            detailgrid.Columns[7].Frozen = true;  //Fabric Type
 
             //#region 可編輯欄位變色
             //detailgrid.Columns[4].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
@@ -418,6 +421,8 @@ namespace Sci.Production.Warehouse
                 case 0:
                     if (MyUtility.Check.Empty(detailgridbs)) break;
                     ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "refno , colorid";
+                    //detailgridbs.Sort(new IComparable[] { "refno", "colorid" });
+                    //detailgridbs.Sort = "refno , colorid";
                     break;
                 case 1:
                     if (MyUtility.Check.Empty(detailgridbs)) break;
