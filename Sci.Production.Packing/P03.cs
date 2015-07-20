@@ -439,6 +439,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
             txtshipmode1.ReadOnly = false;
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["Type"] = "B";
+            CurrentMaintain["Status"] = "New";
         }
 
         protected override bool ClickEditBefore()
@@ -1270,7 +1271,7 @@ where ID = @INVNo";
 
             if (!MyUtility.Check.Empty(message))
             {
-                buttonResult = MessageBox.Show("Size: " + message + " not in Stylebasic data, are you sure you want to  recalculate weight?", "Warning", buttons);
+                buttonResult = MessageBox.Show("Size: " + message + " not in Style basic data, are you sure you want to  recalculate weight?", "Warning", buttons);
                 if (buttonResult == System.Windows.Forms.DialogResult.No)
                 {
                     return;
@@ -1512,7 +1513,7 @@ order by oq.Article,oq.SizeCode", CurrentMaintain["OrderID"].ToString(), Current
             {
                 return;
             }
-            //Sci.Win.UI.ChangeMemo callChangeMemo = new Sci.Win.UI.ChangeMemo();
+
             Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason();
             DialogResult dResult = callReason.ShowDialog(this);
             if (dResult == System.Windows.Forms.DialogResult.OK)
@@ -1581,7 +1582,7 @@ order by oq.Article,oq.SizeCode", CurrentMaintain["OrderID"].ToString(), Current
                             }
                             else
                             {
-                                MessageBox.Show("Confirm failed, Pleaes re-try");
+                                MessageBox.Show("UnConfirm failed, Pleaes re-try");
                             }
                         }
                         catch (Exception ex)
