@@ -214,6 +214,13 @@ namespace Sci.Production.Packing
                 return false;
             }
 
+            //檢查OrderID+Seq不可以重複建立
+            if (MyUtility.Check.Seek(string.Format("select ID from PackingGuide where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), IsDetailInserting ? "" : CurrentMaintain["ID"].ToString())))
+            {
+                MessageBox.Show("SP No:" + CurrentMaintain["OrderID"].ToString() + ", Seq:" + CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing guide, can't be create again!");
+                return false;
+            }
+
             //檢查表身不可以沒有資料
             DataRow[] detailData = ((DataTable)detailgridbs.DataSource).Select();
             if (detailData.Length == 0)
@@ -678,7 +685,14 @@ namespace Sci.Production.Packing
         //Switch to Packing list
         private void button3_Click(object sender, EventArgs e)
         {
-            ////檢查訂單狀態：如果已經Pullout Complete出訊息告知使用者且不做任何事
+            //檢查OrderID+Seq不可以重複建立
+            if (MyUtility.Check.Seek(string.Format("select ID from PackingList where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), CurrentMaintain["ID"].ToString())))
+            {
+                MessageBox.Show("SP No:" + CurrentMaintain["OrderID"].ToString() + ", Seq:" + CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing list, can't be create again!");
+                return;
+            }
+
+            //檢查訂單狀態：如果已經Pullout Complete出訊息告知使用者且不做任何事
             string lookupReturn = MyUtility.GetValue.Lookup("select PulloutComplete from Orders where ID = '" + CurrentMaintain["OrderID"].ToString() + "'");
             if (lookupReturn == "True")
             {
