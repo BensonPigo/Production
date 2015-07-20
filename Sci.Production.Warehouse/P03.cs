@@ -235,7 +235,21 @@ namespace Sci.Production.Warehouse
                 {
                     var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (null == dr) return;
-                    var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr);
+                    var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr,"B");
+                    frm.ShowDialog(this);
+                }
+
+            };
+            #endregion
+            #region Bulk Location 開窗
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts11 = new DataGridViewGeneratorTextColumnSettings();
+            ts11.CellMouseDoubleClick += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (null == dr) return;
+                    var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "I");
                     frm.ShowDialog(this);
                 }
 
@@ -371,7 +385,7 @@ namespace Sci.Production.Warehouse
             .Text("LInvQty", header: "Stock Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts7)    //28
             .Text("LObQty", header: "Scrap Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts8)    //29
             .Text("ALocation", header: "Bulk Location", iseditingreadonly: true,settings:ts9)  //30
-            .Text("BLocation", header: "Stock Location", iseditingreadonly: true)  //31
+            .Text("BLocation", header: "Stock Location", iseditingreadonly: true,settings:ts11)  //31
             .Text("Remark", header: "Remark", iseditingreadonly: true)  //32
             ;     
             #endregion
