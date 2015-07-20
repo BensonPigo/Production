@@ -500,17 +500,28 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
 
         protected override bool ClickSaveBefore()
         {
+            //檢查欄位值不可為空
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
             {
                 MessageBox.Show("SP# can't empty!!");
+                textBox1.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
             {
                 MessageBox.Show("Ship Mode can't empty!!");
+                txtshipmode1.Focus();
                 return false;
             }
+
+            //檢查OrderID+Seq不可以重複建立
+            if (MyUtility.Check.Seek(string.Format("select ID from PackingList where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), IsDetailInserting ? "" : CurrentMaintain["ID"].ToString())))
+            {
+                MessageBox.Show("SP No:" + CurrentMaintain["OrderID"].ToString() + ", Seq:" + CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing list, can't be create again!");
+                return false;
+            }
+
 
             //表身的CTN#, Ref No., Color Way與Size不可以為空值，順便填入OrderID, OrderShipmodeSeq與Seq欄位值，計算CTNQty, ShipQty, NW, GW, NNW, CBM，重算表身Grid的Bal. Qty
             int i = 0, ctnQty = 0, shipQty = 0, ttlShipQty = 0, needPackQty = 0, count = 0;
