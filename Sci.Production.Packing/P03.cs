@@ -74,7 +74,7 @@ as
  where ID = '{0}'
  group by Article, SizeCode
 )
-select a.CTNStartNo,a.CTNQty, a.RefNo, a.Article, a.Color, a.SizeCode, a.QtyPerCTN, a.ShipQty, a.NW, a.GW, a.NNW, a.NWPerPcs, a.ScanQty,a.TransferToClogID, a.TransferDate, a.ReceiveDate, a.ClogLocationId, a.ReturnDate, b.Description, oqd.Qty-isnull(pd.TtlShipQty,0)+isnull(paq.TtlDiffQty,0)-pk.ShipQty as BalanceQty, a.Seq
+select a.ID,a.CTNStartNo,a.CTNQty, a.RefNo, a.Article, a.Color, a.SizeCode, a.QtyPerCTN, a.ShipQty, a.NW, a.GW, a.NNW, a.NWPerPcs, a.ScanQty,a.TransferToClogID, a.TransferDate, a.ReceiveDate, a.ClogLocationId, a.ReturnDate, b.Description, oqd.Qty-isnull(pd.TtlShipQty,0)+isnull(paq.TtlDiffQty,0)-pk.ShipQty as BalanceQty, a.Seq
 from PackingList_Detail a
 left join LocalItem b on b.RefNo = a.RefNo
 left join AccuPKQty pd on pd.Article = a.Article and pd.SizeCode = a.SizeCode

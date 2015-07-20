@@ -28,7 +28,7 @@ namespace Sci.Production.Packing
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.Refno,a.Article,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW,c.Description
+            this.DetailSelectCommand = string.Format(@"select a.ID,a.Refno,a.Article,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW,c.Description
                                                                                        from PackingGuide_Detail a
                                                                                        left join PackingGuide b on a.Id = b.Id
                                                                                        left join LocalItem c on a.RefNo = c.RefNo
