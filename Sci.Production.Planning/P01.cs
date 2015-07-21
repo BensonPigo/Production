@@ -26,9 +26,10 @@ namespace Sci.Production.Planning
             //this.DefaultFilter = "Finished = 0 and IsForecast = 0";
             
         }
-        public P01(ToolStripMenuItem menuitem ,bool history): base(menuitem)
+        public P01(ToolStripMenuItem menuitem ,bool history=false): base(menuitem)
         {
             InitializeComponent();
+            this.detailgrid.CellValueChanged += new DataGridViewCellEventHandler(ComboxChange);
             if (history)
             {
                 this.DefaultFilter = "Finished = 1 and IsForecast = 0";
@@ -37,7 +38,7 @@ namespace Sci.Production.Planning
             {
                 this.DefaultFilter = "Finished = 0 and IsForecast = 0";
             }
-
+            
 //            this.DetailSelectCommand = @"select order_tmscost.*
 //                                                                    ,osp.poqty osp_qty,osp.farmout as osp_farmout,osp.farmin as osp_farmin
 //                                                                    ,osp.poqty inhouse_qty,osp.farmout as inhouse_farmout,osp.farmin as inhouse_farmin
@@ -57,7 +58,33 @@ namespace Sci.Production.Planning
 //                                                         where order_tmscost.id = @id and (order_tmscost.qty > 0 or order_tmscost.tms >0 )
 //                                                            and artworktype.isSubprocess = 1;--";
         }
-
+        
+        private void ComboxChange(object o,  DataGridViewCellEventArgs e)
+        {
+            
+            if (this.EditMode && e.ColumnIndex == 4)
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["inhouseosp"].ToString() == "O")
+                {
+                    dr["localsuppid"] = MyUtility.GetValue.Lookup(string.Format(@"SELECT top 1 QU.LocalSuppId
+                                                    FROM Order_TmsCost OT
+                                                    INNER JOIN ORDERS ON OT.ID = ORDERS.ID
+                                                    INNER JOIN Style_Artwork SA ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
+                                                    LEFT JOIN Style_Artwork_Quot QU ON QU.Ukey = SA.Ukey
+                                                    INNER JOIN LocalSupp ON LocalSupp.ID = QU.LocalSuppId
+                                                    WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' 
+                                                        AND OT.ARTWORKTYPEID = '{1}' 
+                                                    GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup"
+                                                , CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"]), null);
+                    
+                }
+                if (dr["inhouseosp"].ToString() == "I")
+                {
+                    dr["localsuppid"] = Env.User.Factory;
+                }
+            }
+        }
         //refresh
         protected override void OnDetailEntered()
         {

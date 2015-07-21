@@ -48,28 +48,28 @@ namespace Sci.Production.Planning
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
             {
-                MessageBox.Show("< Date > can not be empty!");
+                MyUtility.Msg.WarningBox("< Date > can not be empty!");
                 this.dateBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["artworktypeid"].ToString()))
             {
-                MessageBox.Show("< Artwork Type > can not be empty!");
+                MyUtility.Msg.WarningBox("< Artwork Type > can not be empty!");
                 this.comboBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ftysupp"].ToString()))
             {
-                MessageBox.Show("< Fty / Supp > can not be empty!");
+                MyUtility.Msg.WarningBox("< Fty / Supp > can not be empty!");
                 this.txtsubcon1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["headsno"].ToString()) && CurrentMaintain["artworktypeid"].ToString().TrimEnd()=="Embroidery")
             {
-                MessageBox.Show("< # of Heads > can not be empty!");
+                MyUtility.Msg.WarningBox("< # of Heads > can not be empty!");
                 this.numericBox2.Focus();
                 return false;
             }

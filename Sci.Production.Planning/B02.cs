@@ -25,21 +25,21 @@ namespace Sci.Production.Planning
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["BeginStitch"].ToString()))
             {
-                MessageBox.Show("< Begin Stitch > can not be empty!");
+                MyUtility.Msg.WarningBox("< Begin Stitch > can not be empty!");
                 this.numericBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["EndStitch"].ToString()))
             {
-                MessageBox.Show("< End Stitch > can not be empty!");
+                MyUtility.Msg.WarningBox("< End Stitch > can not be empty!");
                 this.numericBox2.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Batchno"].ToString()))
             {
-                MessageBox.Show("< Batch Number > can not be empty!");
+                MyUtility.Msg.WarningBox("< Batch Number > can not be empty!");
                 this.numericBox3.Focus();
                 return false;
             }
@@ -64,7 +64,7 @@ namespace Sci.Production.Planning
             Sci.Data.DBProxy.Current.Exists(null, s1, cmds,out flag);
             if (flag)
             {
-                MessageBox.Show("This Data ranage already cover existed data");
+                MyUtility.Msg.WarningBox("This Data ranage already cover existed data");
                 return false;
             }
             return base.ClickSaveBefore();
