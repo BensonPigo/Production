@@ -65,7 +65,7 @@ namespace Sci.Production.Shipping
             string sqlCmd = string.Format("select ID from ShipExpense_CanVass where ID = '{0}' and Status = 'New'", this.motherData["ID"].ToString());
             if (MyUtility.Check.Seek(sqlCmd, null))
             {
-                MessageBox.Show("Still have data not yet confirm, so can't create new record!");
+                MyUtility.Msg.WarningBox("Still have data not yet confirm, so can't create new record!");
                 return false;
             }
             return base.ClickNewBefore();
@@ -87,7 +87,7 @@ namespace Sci.Production.Shipping
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["Status"].ToString() == "Confirmed")
             {
-                MessageBox.Show("Record is confirmed, can't modify!");
+                MyUtility.Msg.WarningBox("Record is confirmed, can't modify!");
                 return false;
             }
             return base.ClickEditBefore();
@@ -99,7 +99,7 @@ namespace Sci.Production.Shipping
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["Status"].ToString() == "Confirmed")
             {
-                MessageBox.Show("Record is confirmed, can't delete!");
+                MyUtility.Msg.WarningBox("Record is confirmed, can't delete!");
                 return false;
             }
             return base.ClickDeleteBefore();
@@ -148,7 +148,7 @@ namespace Sci.Production.Shipping
 
             if (string.IsNullOrWhiteSpace(suppId) || string.IsNullOrWhiteSpace(currencyId) || price == 0.0)
             {
-                MessageBox.Show("Choosed Set of data can't be empty!!");
+                MyUtility.Msg.WarningBox("Choosed Set of data can't be empty!!");
                 return;
             }
 
@@ -209,7 +209,7 @@ namespace Sci.Production.Shipping
                     }
                     else
                     {
-                        MessageBox.Show("Confirm failed, Pleaes re-try");
+                        MyUtility.Msg.WarningBox("Confirm failed, Pleaes re-try");
                     }
 
                 }

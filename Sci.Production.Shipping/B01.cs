@@ -26,14 +26,14 @@ namespace Sci.Production.Shipping
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Forwarder"].ToString()))
             {
-                MessageBox.Show("< Forwarder > can not be empty!");
+                MyUtility.Msg.WarningBox("< Forwarder > can not be empty!");
                 this.txtsubcon1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["WhseNo"].ToString()))
             {
-                MessageBox.Show("< Warehouse# > can not be empty!");
+                MyUtility.Msg.WarningBox("< Warehouse# > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }

@@ -68,21 +68,21 @@ namespace Sci.Production.Shipping
         {
             if (string.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
-                MessageBox.Show("< Code > can not be empty!");
+                MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
             {
-                MessageBox.Show("< Description > can not be empty!");
+                MyUtility.Msg.WarningBox("< Description > can not be empty!");
                 this.editBox1.Focus();
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(CurrentMaintain["AccountNo"].ToString()))
             {
-                MessageBox.Show("< Account No > can not be empty!");
+                MyUtility.Msg.WarningBox("< Account No > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }
@@ -97,7 +97,7 @@ namespace Sci.Production.Shipping
                 string selectCommand = string.Format("select ID from ShipExpense where ID = '{0}'", this.textBox1.Text.ToString());
                 if (MyUtility.Check.Seek(selectCommand, null))
                 {
-                    MessageBox.Show(string.Format("Code: '{0}' is duplicate!", this.textBox1.Text.ToString().Trim()));
+                    MyUtility.Msg.WarningBox(string.Format("Code: '{0}' is duplicate!", this.textBox1.Text.ToString().Trim()));
                     this.textBox1.Text = "";
                     e.Cancel = true;
                     return;
