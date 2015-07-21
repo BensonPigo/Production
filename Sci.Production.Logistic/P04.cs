@@ -104,7 +104,7 @@ namespace Sci.Production.Logistic
         {
             if (MyUtility.Check.Empty(this.textBox1.Text) && MyUtility.Check.Empty(this.textBox2.Text) && MyUtility.Check.Empty(this.textBox3.Text) && MyUtility.Check.Empty(this.textBox4.Text) && MyUtility.Check.Empty(this.textBox5.Text) && MyUtility.Check.Empty(this.textBox6.Text) && MyUtility.Check.Empty(this.textBox7.Text) && MyUtility.Check.Empty(this.textBox8.Text))
             {
-                MessageBox.Show("< SP# > or < Pack ID > or < Transfer Clog No. > or < PO# > can not empty!");
+                MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < Transfer Clog No. > or < PO# > can not empty!");
                 this.textBox1.Focus();
                 return;
             }
@@ -166,7 +166,7 @@ namespace Sci.Production.Logistic
             {
                 if (gridData.Rows.Count == 0)
                 {
-                    MessageBox.Show("Data not found!");
+                    MyUtility.Msg.WarningBox("Data not found!");
                 }
             }
             listControlBindingSource1.DataSource = gridData;
@@ -235,7 +235,7 @@ namespace Sci.Production.Logistic
             DataRow[] dr = detailData.Select("Selected = 1");
             if (dr.Length <= 0)
             {
-                MessageBox.Show("Please select at least one data!");
+                MyUtility.Msg.WarningBox("Please select at least one data!");
                 return;
             }
 
@@ -304,7 +304,7 @@ namespace Sci.Production.Logistic
                     }
                     else
                     {
-                        MessageBox.Show("Save failed, Pleaes re-try");
+                        MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
                         return;
                     }
                 }

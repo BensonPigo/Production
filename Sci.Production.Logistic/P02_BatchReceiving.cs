@@ -59,7 +59,7 @@ namespace Sci.Production.Logistic
         {
             if (MyUtility.Check.Empty(this.textBox1) && MyUtility.Check.Empty(this.textBox2))
             {
-                MessageBox.Show("< Transfer Clog No > can not be empty!");
+                MyUtility.Msg.WarningBox("< Transfer Clog No > can not be empty!");
                 this.textBox1.Focus();
                 return;
             }
@@ -168,7 +168,7 @@ namespace Sci.Production.Logistic
             {
                 if (selectDataTable1.Rows.Count == 0)
                 {
-                    MessageBox.Show("Data not found!");
+                    MyUtility.Msg.WarningBox("Data not found!");
                 }
             }
 
@@ -254,7 +254,7 @@ namespace Sci.Production.Logistic
 
             if (gridData.Rows.Count == 0)
             {
-                MessageBox.Show("No data!");
+                MyUtility.Msg.WarningBox("No data!");
                 return;
             }
 

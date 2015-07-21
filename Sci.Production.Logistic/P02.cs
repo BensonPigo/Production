@@ -91,7 +91,7 @@ where crd.ID = '{0}'", masterID);
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["Status"].ToString() == "Confirmed")
             {
-                MessageBox.Show("Record is confirmed, can't modify!");
+                MyUtility.Msg.WarningBox("Record is confirmed, can't modify!");
                 return false;
             }
             return base.ClickEditBefore();
@@ -103,7 +103,7 @@ where crd.ID = '{0}'", masterID);
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["Status"].ToString() == "Confirmed")
             {
-                MessageBox.Show("Record is confirmed, can't delete!");
+                MyUtility.Msg.WarningBox("Record is confirmed, can't delete!");
                 return false;
             }
             return base.ClickDeleteBefore();
@@ -140,7 +140,7 @@ where crd.ID = '{0}'", masterID);
             DataRow[] detailData = ((DataTable)detailgridbs.DataSource).Select();
             if (detailData.Length == 0)
             {
-                MessageBox.Show("Detail can't empty!");
+                MyUtility.Msg.WarningBox("Detail can't empty!");
                 return false;
             }
             if (IsDetailInserting)
@@ -148,7 +148,7 @@ where crd.ID = '{0}'", masterID);
                 string id = MyUtility.GetValue.GetID(ProductionEnv.Keyword + "CR", "ClogReceive", Convert.ToDateTime(CurrentMaintain["ReceiveDate"].ToString()), 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
-                    MessageBox.Show("GetID fail, please try again!");
+                    MyUtility.Msg.WarningBox("GetID fail, please try again!");
                     return false;
                 }
                 CurrentMaintain["ID"] = id;
@@ -177,7 +177,7 @@ where crd.ID = '{0}'", masterID);
             result = DBProxy.Current.Select(null, sqlCmd, out selectDate);
             if (!result)
             {
-                MessageBox.Show("Connection fail!");
+                MyUtility.Msg.WarningBox("Connection fail!");
                 return;
             }
             if (selectDate.Rows.Count > 0)
@@ -206,7 +206,7 @@ where crd.ID = '{0}'", masterID);
             result = DBProxy.Current.Select(null, sqlCmd, out selectDate);
             if (!result)
             {
-                MessageBox.Show("Connection fail!");
+                MyUtility.Msg.WarningBox("Connection fail!");
                 return;
             }
             if (selectDate.Rows.Count > 0)
@@ -223,7 +223,7 @@ where crd.ID = '{0}'", masterID);
             #endregion
             if (!MyUtility.Check.Empty(wrongCtn) || !MyUtility.Check.Empty(lostCtn))
             {
-                MessageBox.Show(wrongCtn + lostCtn);
+                MyUtility.Msg.WarningBox(wrongCtn + lostCtn);
                 return;
             }
 
@@ -234,7 +234,7 @@ where crd.ID = '{0}'", masterID);
             result = DBProxy.Current.Select(null, sqlCmd, out selectDate);
             if (!result)
             {
-                MessageBox.Show("Connection fail!");
+                MyUtility.Msg.WarningBox("Connection fail!");
                 return;
             }
 
@@ -281,7 +281,7 @@ where crd.ID = '{0}'", masterID);
                         result1 = Sci.Data.DBProxy.Current.Execute(null, sqlCmd, pckinglistcmds);
                         if (!result1)
                         {
-                            MessageBox.Show("Confirm failed, Pleaes re-try\r\n" + result1.ToString());
+                            MyUtility.Msg.WarningBox("Confirm failed, Pleaes re-try\r\n" + result1.ToString());
                             break;
                         }
                     }
@@ -292,7 +292,7 @@ where crd.ID = '{0}'", masterID);
                     }
                     else
                     {
-                        MessageBox.Show("Confirm fail !\r\n" + result.ToString());
+                        MyUtility.Msg.WarningBox("Confirm failed !\r\n" + result.ToString());
                         return;
                     }
                 }
@@ -321,14 +321,13 @@ where crd.ID = '{0}'", masterID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
             if (!MyUtility.Check.Empty(selectData.Rows[0]["returnCTN"]))
             {
-                MessageBox.Show("This recode has return record, con not unconfirm!");
+                MyUtility.Msg.WarningBox("This recode has return record, con not unconfirm!");
                 return;
             }
 
             //先問使用者是否確定要Unconfirm，若是才做更新
             DialogResult unconfirmResult;
-            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-            unconfirmResult = MessageBox.Show("Are you sure unconfirm this data?", "Warning", buttons);
+            unconfirmResult = MyUtility.Msg.WarningBox("Are you sure unconfirm this data?", buttons: MessageBoxButtons.YesNo);
             if (unconfirmResult == System.Windows.Forms.DialogResult.Yes)
             {
                  using (TransactionScope transactionScope = new TransactionScope())
@@ -354,7 +353,7 @@ where crd.ID = '{0}'", masterID);
                                 failMsg = failMsg + result2.ToString();
                             }
 
-                            MessageBox.Show("Unconfirm fail !\r\n" + failMsg);
+                            MyUtility.Msg.WarningBox("Unconfirm fail !\r\n" + failMsg);
                             return;
                         }
                  }
@@ -376,7 +375,7 @@ where crd.ID = '{0}'", masterID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
             if (!result)
             {
-                MessageBox.Show("Update orders data fail!");
+                MyUtility.Msg.WarningBox("Update orders data fail!");
             }
 
             bool prgResult, lastResult = false;
@@ -391,7 +390,7 @@ where crd.ID = '{0}'", masterID);
             }
             if (lastResult)
             {
-                MessageBox.Show("Update orders data fail!");
+                MyUtility.Msg.WarningBox("Update orders data fail!");
             }
         }
 

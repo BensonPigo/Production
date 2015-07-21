@@ -22,7 +22,7 @@ namespace Sci.Production.Logistic
         {
             if (MyUtility.Check.Empty(this.dateBox1.Text))
             {
-                MessageBox.Show("Date can't be empty!");
+                MyUtility.Msg.WarningBox("Date can't be empty!");
                 this.dateBox1.Focus();
                 return;
             }

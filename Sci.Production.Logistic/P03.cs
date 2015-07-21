@@ -90,7 +90,7 @@ where crd.ID = '{0}'", masterID);
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["Status"].ToString() == "Confirmed")
             {
-                MessageBox.Show("Record is confirmed, can't modify!");
+                MyUtility.Msg.WarningBox("Record is confirmed, can't modify!");
                 return false;
             }
             return base.ClickEditBefore();
@@ -102,7 +102,7 @@ where crd.ID = '{0}'", masterID);
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["Status"].ToString() == "Confirmed")
             {
-                MessageBox.Show("Record is confirmed, can't delete!");
+                MyUtility.Msg.WarningBox("Record is confirmed, can't delete!");
                 return false;
             }
             return base.ClickDeleteBefore();
@@ -139,7 +139,7 @@ where crd.ID = '{0}'", masterID);
             DataRow[] detailData = ((DataTable)detailgridbs.DataSource).Select();
             if (detailData.Length == 0)
             {
-                MessageBox.Show("Detail can't empty!");
+                MyUtility.Msg.WarningBox("Detail can't empty!");
                 return false;
             }
             if (IsDetailInserting)
@@ -147,7 +147,7 @@ where crd.ID = '{0}'", masterID);
                 string id = MyUtility.GetValue.GetID(ProductionEnv.Keyword + "CN", "ClogReturn", Convert.ToDateTime(CurrentMaintain["ReturnDate"].ToString()), 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
-                    MessageBox.Show("GetID fail, please try again!");
+                    MyUtility.Msg.WarningBox("GetID fail, please try again!");
                     return false;
                 }
                 CurrentMaintain["ID"] = id;
@@ -170,7 +170,7 @@ where crd.ID = '{0}'", masterID);
             result = DBProxy.Current.Select(null, sqlCmd, out selectDate);
             if (!result)
             {
-                MessageBox.Show("Connection fail!");
+                MyUtility.Msg.WarningBox("Connection fail!");
                 return;
             }
 
@@ -213,7 +213,7 @@ where crd.ID = '{0}'", masterID);
                         result1 = Sci.Data.DBProxy.Current.Execute(null, sqlCmd, pckinglistcmds);
                         if (!result1)
                         {
-                            MessageBox.Show("Confirm failed, Pleaes re-try\r\n" + result1.ToString());
+                            MyUtility.Msg.WarningBox("Confirm failed, Pleaes re-try\r\n" + result1.ToString());
                             break;
                         }
                     }
@@ -224,7 +224,7 @@ where crd.ID = '{0}'", masterID);
                     }
                     else
                     {
-                        MessageBox.Show("Confirm fail !\r\n" + result.ToString());
+                        MyUtility.Msg.WarningBox("Confirm failed !\r\n" + result.ToString());
                         return;
                     }
                 }
@@ -242,7 +242,7 @@ where crd.ID = '{0}'", masterID);
             result = DBProxy.Current.Select(null, sqlCmd, out selectData);
             if (!result)
             {
-                MessageBox.Show("Update orders data fail!");
+                MyUtility.Msg.WarningBox("Update orders data fail!");
             }
 
             bool prgResult, lastResult = false;
@@ -257,7 +257,7 @@ where crd.ID = '{0}'", masterID);
             }
             if (lastResult)
             {
-                MessageBox.Show("Update orders data fail!");
+                MyUtility.Msg.WarningBox("Update orders data fail!");
             }
             #endregion
 

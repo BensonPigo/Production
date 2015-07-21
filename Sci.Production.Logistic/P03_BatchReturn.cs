@@ -52,7 +52,7 @@ namespace Sci.Production.Logistic
         {
             if (MyUtility.Check.Empty(this.textBox1.Text) && MyUtility.Check.Empty(this.textBox2.Text) && MyUtility.Check.Empty(this.textBox3.Text) && MyUtility.Check.Empty(this.dateBox1.Value))
             {
-                MessageBox.Show("< SP# > or < Pack ID > or < Receive Date > or < P.O. No. > can not be empty!");
+                MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < Receive Date > or < P.O. No. > can not be empty!");
                 this.textBox1.Focus();
                 return;
             }
@@ -90,7 +90,7 @@ namespace Sci.Production.Logistic
             {
                 if (selectDataTable1.Rows.Count == 0)
                 {
-                    MessageBox.Show("Data not found!");
+                    MyUtility.Msg.WarningBox("Data not found!");
                 }
             }
             listControlBindingSource1.DataSource = selectDataTable1;
@@ -104,7 +104,7 @@ namespace Sci.Production.Logistic
             DataTable gridData = (DataTable)listControlBindingSource1.DataSource;
             if (gridData.Rows.Count == 0)
             {
-                MessageBox.Show("No data!");
+                MyUtility.Msg.WarningBox("No data!");
                 return;
             }
 

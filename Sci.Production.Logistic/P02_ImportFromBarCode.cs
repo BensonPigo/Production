@@ -127,7 +127,7 @@ namespace Sci.Production.Logistic
             #region 如果都沒有資料的話出訊息告知且不做任何動作
             if (count == 0)
             {
-                MessageBox.Show("File list is empty!");
+                MyUtility.Msg.WarningBox("File list is empty!");
                 return;
             }
             #endregion
@@ -135,7 +135,7 @@ namespace Sci.Production.Logistic
             #region 若有格式不正確的就出訊息告之使用者哪些檔案格式錯誤且不做任何動作
             if (!MyUtility.Check.Empty(errorMsg))
             {
-                MessageBox.Show("File Name: \r\n" + errorMsg + "Format is not correct!");
+                MyUtility.Msg.WarningBox("File Name: \r\n" + errorMsg + "Format is not correct!");
                 return;
             }
             #endregion
@@ -148,14 +148,14 @@ namespace Sci.Production.Logistic
             DualResult selectResult;
             if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out grid2Data)))
             {
-                MessageBox.Show("Connection faile!");
+                MyUtility.Msg.WarningBox("Connection faile!");
                 return;
             }
 
             selectCommand = "Select ID, ReceiveDate, FactoryID from ClogReceive where 1 = 0";
             if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out groupTable)))
             {
-                MessageBox.Show("Connection faile!");
+                MyUtility.Msg.WarningBox("Connection faile!");
                 return;
             }
 
@@ -288,7 +288,7 @@ namespace Sci.Production.Logistic
             //檢查Receive Date不可為空值，若為空值則出訊息告知且不做任何動作
             if (MyUtility.Check.Empty(this.dateBox1.Value))
             {
-                MessageBox.Show("Receive date can't empty!");
+                MyUtility.Msg.WarningBox("Receive date can't empty!");
                 return;
             }
             
@@ -306,7 +306,7 @@ namespace Sci.Production.Logistic
             string sqlCmd = "select TransferToClogId from ClogReceive_Detail where 1 = 0";
             if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out selectDataTable)))
             {
-                MessageBox.Show("Connection faile!");
+                MyUtility.Msg.WarningBox("Connection faile!");
                 return;
             }
 
@@ -317,7 +317,7 @@ namespace Sci.Production.Logistic
                     newID = MyUtility.GetValue.GetID(dr["FactoryID"].ToString().Trim() + "CR", "ClogReceive", Convert.ToDateTime(this.dateBox1.Value), 2, "Id", null);
                     if (MyUtility.Check.Empty(newID))
                     {
-                        MessageBox.Show("GetID fail, please try again!");
+                        MyUtility.Msg.WarningBox("GetID fail, please try again!");
                         return;
                     }
 
@@ -443,7 +443,7 @@ namespace Sci.Production.Logistic
                             }
                             else
                             {
-                                MessageBox.Show("Save failed, Pleaes re-try");
+                                MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
                                 return;
                             }
                         }
@@ -482,7 +482,7 @@ namespace Sci.Production.Logistic
 
                 if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out transferToClogData)))
                 {
-                    MessageBox.Show("Connection faile!");
+                    MyUtility.Msg.WarningBox("Connection faile!");
                     return;
                 }
                 foreach (DataRow transferRow in transferToClogData.Rows)
@@ -497,11 +497,11 @@ namespace Sci.Production.Logistic
 
             if (lackMsg)
             {
-                MessageBox.Show(lostCTN);
+                MyUtility.Msg.WarningBox(lostCTN);
             }
             else
             {
-                MessageBox.Show("Import complete!");
+                MyUtility.Msg.InfoBox("Import complete!");
             }
             #endregion
         }
