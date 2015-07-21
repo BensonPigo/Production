@@ -62,7 +62,7 @@ namespace Sci.Production.PPIC
                 string selectCommand = string.Format("select ID from SewingLine where FactoryID = '{0}' and ID = '{1}'", Sci.Env.User.Factory, sewingLineText.Text.ToString());
                 if (!MyUtility.Check.Seek(selectCommand, null))
                 {
-                    MessageBox.Show(string.Format("< Sewing Line: {0} > not found!!!", sewingLineText.Text.ToString()));
+                    MyUtility.Msg.WarningBox(string.Format("< Sewing Line: {0} > not found!!!", sewingLineText.Text.ToString()));
                     sewingLineText.Text = "";
                     e.Cancel = true;
                     return;
@@ -75,13 +75,13 @@ namespace Sci.Production.PPIC
             //檢查Date不可為空值
             if (string.IsNullOrWhiteSpace(this.dateRange1.Text1))
             {
-                MessageBox.Show("< Date > can not be empty!");
+                MyUtility.Msg.WarningBox("< Date > can not be empty!");
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(this.dateRange1.Text2))
             {
-                MessageBox.Show("< Date > can not be empty!");
+                MyUtility.Msg.WarningBox("< Date > can not be empty!");
                 return;
             }
             
@@ -91,7 +91,7 @@ namespace Sci.Production.PPIC
             DualResult returnResult = DBProxy.Current.Select(null, sqlCommand, out sewingLine);
             if (!returnResult)
             {
-                MessageBox.Show("Connection fail!\r\nPlease try again.");
+                MyUtility.Msg.WarningBox("Connection fail!\r\nPlease try again.");
                 return;
             }
 
@@ -194,7 +194,7 @@ namespace Sci.Production.PPIC
                         }
                         else
                         {
-                            MessageBox.Show("Create failed, Pleaes re-try");
+                            MyUtility.Msg.WarningBox("Create failed, Pleaes re-try");
                         }
                     }
                     catch (Exception ex)

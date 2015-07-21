@@ -42,14 +42,14 @@ namespace Sci.Production.PPIC
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
-                MessageBox.Show("< Line# > can not be empty!");
+                MyUtility.Msg.WarningBox("< Line# > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
             {
-                MessageBox.Show("< Description > can not be empty!");
+                MyUtility.Msg.WarningBox("< Description > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }

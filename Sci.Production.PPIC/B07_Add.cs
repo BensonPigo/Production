@@ -23,26 +23,26 @@ namespace Sci.Production.PPIC
             //檢查Date, Hours不可為空值
             if (string.IsNullOrWhiteSpace(this.dateRange1.Text1))
             {
-                MessageBox.Show("< Date > can not be empty!");
+                MyUtility.Msg.WarningBox("< Date > can not be empty!");
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(this.dateRange1.Text2))
             {
-                MessageBox.Show("< Date > can not be empty!");
+                MyUtility.Msg.WarningBox("< Date > can not be empty!");
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(this.numericBox1.Text))
             {
-                MessageBox.Show("< Hours > can not be empty!");
+                MyUtility.Msg.WarningBox("< Hours > can not be empty!");
                 return;
             }
             else
             {
                 if (this.numericBox1.Text == "0")
                 {
-                    MessageBox.Show("< Hours > can not be empty!");
+                    MyUtility.Msg.WarningBox("< Hours > can not be empty!");
                     return;
                 }
             }
@@ -53,7 +53,7 @@ namespace Sci.Production.PPIC
             DualResult returnResult = DBProxy.Current.Select(null, sqlCommand, out sewingLine);
             if (!returnResult)
             {
-                MessageBox.Show("Connection fail!\r\nPlease try again.");
+                MyUtility.Msg.WarningBox("Connection fail!\r\nPlease try again.");
                 return;
             }
 
@@ -105,7 +105,7 @@ namespace Sci.Production.PPIC
                         }
                         else
                         {
-                            MessageBox.Show("Create failed, Pleaes re-try");
+                            MyUtility.Msg.WarningBox("Create failed, Pleaes re-try");
                         }
                     }
                     catch (Exception ex)
