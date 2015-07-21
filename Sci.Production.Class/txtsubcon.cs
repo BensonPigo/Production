@@ -17,7 +17,6 @@ namespace Sci.Production.Class
 {
     public partial class txtsubcon : UserControl
     {
-
         private bool isIncludeJunk;
         public txtsubcon()
         {
@@ -64,7 +63,7 @@ namespace Sci.Production.Class
                 string Sql = string.Format("Select Junk from LocalSupp where ID = '{0}'", textValue);
                 if (!MyUtility.Check.Seek(Sql, "Production"))
                 {
-                    MessageBox.Show(string.Format("< Subcon Code: {0} > not found!!!", textValue));
+                    MyUtility.Msg.WarningBox(string.Format("< Subcon Code: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
                     e.Cancel = true;
                     return;
@@ -76,7 +75,7 @@ namespace Sci.Production.Class
                         string lookupresult = MyUtility.GetValue.Lookup(Sql, "Production");
                         if (lookupresult == "True")
                         {
-                            MessageBox.Show(string.Format("< Subcon Code: {0} > not found!!!", textValue));
+                            MyUtility.Msg.WarningBox(string.Format("< Subcon Code: {0} > not found!!!", textValue));
                             this.textBox1.Text = "";
                             e.Cancel = true;
                             return;

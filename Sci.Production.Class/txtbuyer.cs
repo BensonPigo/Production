@@ -35,7 +35,7 @@ namespace Sci.Production.Class
             {
                 if (MyUtility.Check.Seek(str, "Buyer", "id") == false)
                 {
-                    MessageBox.Show(string.Format("< Buyer : {0} > not found!!!", str));
+                    MyUtility.Msg.WarningBox(string.Format("< Buyer : {0} > not found!!!", str));
                     this.Text = "";
                     e.Cancel = true;
                     return;

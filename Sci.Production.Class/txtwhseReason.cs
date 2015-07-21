@@ -54,7 +54,7 @@ namespace Sci.Production.Class
             {
                 if (!MyUtility.Check.Seek("RR" + str, "WhseReason", "type+ID"))
                 {
-                    MessageBox.Show(string.Format("< Reason: {0} > not found!!!", str));
+                    MyUtility.Msg.WarningBox(string.Format("< Reason: {0} > not found!!!", str));
                     this.textBox1.Text = "";
                     e.Cancel = true;
                     return;

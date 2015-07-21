@@ -19,7 +19,6 @@ namespace Sci.Production.Class
             base.OnPopUp(e);
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from Unit order by ID", "10,150", this.Text, false, ",");
-
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
@@ -35,12 +34,11 @@ namespace Sci.Production.Class
             {
                 if (MyUtility.Check.Seek(str,"unit","id")==false)
                 {
-                    MessageBox.Show(string.Format("< Unit : {0} > not found!!!", str));
+                    MyUtility.Msg.WarningBox(string.Format("< Unit : {0} > not found!!!", str));
                     this.Text = "";
                     e.Cancel = true;
                     return;
                 }
-
             }
         }
 

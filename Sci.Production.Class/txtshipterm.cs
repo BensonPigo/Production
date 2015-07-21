@@ -19,7 +19,6 @@ namespace Sci.Production.Class
             base.OnPopUp(e);
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ShipTerm order by ID", "6,80", this.Text);
-            // SELECT Id,Description FROM Shipterm order by id
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
@@ -35,7 +34,7 @@ namespace Sci.Production.Class
             {
                 if (MyUtility.Check.Seek(str,"shipterm","id")==false)
                 {
-                    MessageBox.Show(string.Format("< Ship Term : {0} > not found!!!", str));
+                    MyUtility.Msg.WarningBox(string.Format("< Ship Term : {0} > not found!!!", str));
                     this.Text = "";
                     e.Cancel = true;
                     return;
@@ -47,7 +46,5 @@ namespace Sci.Production.Class
         {
             this.Size = new System.Drawing.Size(50, 23);
         }
-
-
     }
 }

@@ -59,7 +59,7 @@ namespace Sci.Production.Class
             {
                 if (!MyUtility.Check.Seek(str, "WhseReason", "ID"))
                 {
-                    MessageBox.Show(string.Format("< Refund Action: {0} > not found!!!", str));
+                    MyUtility.Msg.WarningBox(string.Format("< Refund Action: {0} > not found!!!", str));
                     this.textBox1.Text = "";
                     e.Cancel = true;
                     return;
@@ -87,6 +87,5 @@ namespace Sci.Production.Class
             this.textBox1.Text = item.GetSelectedString();
             this.Validate();
         }
-
     }
 }

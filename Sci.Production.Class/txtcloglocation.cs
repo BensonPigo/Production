@@ -19,7 +19,6 @@ namespace Sci.Production.Class
         {
             this.Size = new System.Drawing.Size(80, 23);
             this.IsSupportSytsemContextMenu = false;
-            
         }
 
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
@@ -51,7 +50,7 @@ namespace Sci.Production.Class
             {
                 if (MyUtility.Check.Seek(str, "ClogLocation", "id") == false)
                 {
-                    MessageBox.Show(string.Format("< ClogLocation : {0} > not found!!!", str));
+                    MyUtility.Msg.WarningBox(string.Format("< ClogLocation : {0} > not found!!!", str));
                     this.Text = "";
                     e.Cancel = true;
                     return;

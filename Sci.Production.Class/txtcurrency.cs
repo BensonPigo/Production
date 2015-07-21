@@ -36,7 +36,7 @@ namespace Sci.Production.Class
             {
                 if (MyUtility.Check.Seek(str,"currency","id","Production")==false)
                 {
-                    MessageBox.Show(string.Format("< Currency : {0} > not found!!!", str));
+                    MyUtility.Msg.WarningBox(string.Format("< Currency : {0} > not found!!!", str));
                     this.Text = "";
                     e.Cancel = true;
                     return;
@@ -47,8 +47,6 @@ namespace Sci.Production.Class
         public txtcurrency()
         {
             this.Size = new System.Drawing.Size(48, 23);
-            //this.IsSupportSytsemContextMenu = false;
-           
         }
     }
 }

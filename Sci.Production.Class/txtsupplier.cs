@@ -51,7 +51,7 @@ namespace Sci.Production.Class
             {
                 if (!MyUtility.Check.Seek(textValue, "Supp", "ID"))
                 {
-                    MessageBox.Show(string.Format("< Supplier Code: {0} > not found!!!", textValue));
+                    MyUtility.Msg.WarningBox(string.Format("< Supplier Code: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
                     e.Cancel = true;
                     return;

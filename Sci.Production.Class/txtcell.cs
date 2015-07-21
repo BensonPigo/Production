@@ -51,7 +51,7 @@ namespace Sci.Production.Class
                 string tmp = MyUtility.GetValue.Lookup("id", fty + str, "Cutcell", "factoryid+id");
                 if (string.IsNullOrWhiteSpace(tmp))
                 {
-                    MessageBox.Show(string.Format("< Cut Cell> : {0} not found!!!", str));
+                    MyUtility.Msg.WarningBox(string.Format("< Cut Cell> : {0} not found!!!", str));
                     this.Text = "";
                     e.Cancel = true;
                     return;
@@ -61,7 +61,7 @@ namespace Sci.Production.Class
                     string cJunk = MyUtility.GetValue.Lookup("Junk", fty + str, "CutCell", "factoryid+id");
                     if (cJunk == "True")
                     {
-                        MessageBox.Show(string.Format("Cut Cell already junk, you can't choose!!"));
+                        MyUtility.Msg.WarningBox(string.Format("Cut Cell already junk, you can't choose!!"));
                         this.Text = "";
                     }
 

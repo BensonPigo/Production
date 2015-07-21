@@ -20,7 +20,6 @@ namespace Sci.Production.Class
     {
         private string brand ;
         private Control brandObject;	//欄位.存入要取值的<控制項>
-
        
         // 屬性. 利用字串來設定要存取的<控制項>
         [Category("Custom Properties")]
@@ -41,7 +40,6 @@ namespace Sci.Production.Class
             brand = brandObject.Text;
             string sql = string.Format("Select id,BrandID from Program where Brandid = '{0}'", brand);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "12,8", this.Text, false, ",");
-            //
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) 
             { 
@@ -49,6 +47,7 @@ namespace Sci.Production.Class
             }
             this.Text = item.GetSelectedString();
         }
+
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
@@ -60,7 +59,7 @@ namespace Sci.Production.Class
                     string tmp = MyUtility.GetValue.Lookup("Id", str, "Program", "Id");
                     if (string.IsNullOrWhiteSpace(tmp))
                     {
-                        MessageBox.Show(string.Format("< Program> : {0} not found!!!", str));
+                        MyUtility.Msg.WarningBox(string.Format("< Program> : {0} not found!!!", str));
                         this.Text = "";
                         e.Cancel = true;
                         return;
@@ -72,7 +71,7 @@ namespace Sci.Production.Class
                     string tmp = MyUtility.GetValue.Lookup("id", str+brand, "Program", "Id+Brandid");
                     if (string.IsNullOrWhiteSpace(tmp))
                     {
-                        MessageBox.Show(string.Format("< Program> : {0} not found!!!", str));
+                        MyUtility.Msg.WarningBox(string.Format("< Program> : {0} not found!!!", str));
                         this.Text = "";
                         e.Cancel = true;
                         return;
@@ -80,10 +79,10 @@ namespace Sci.Production.Class
                 }
             }
         }
+
         public txtprogram()
         {
             this.Width =95;
         }
-
     }
 }

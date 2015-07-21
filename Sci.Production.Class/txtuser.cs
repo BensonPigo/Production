@@ -88,7 +88,7 @@ namespace Sci.Production.Class
                     }
                     else
                     {
-                        MessageBox.Show(string.Format("< User Id: {0} > not found!!!", textValue));
+                        MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textValue));
                         this.textBox1.Text = "";
                         e.Cancel = true;
                         return;

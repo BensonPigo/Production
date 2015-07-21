@@ -51,7 +51,7 @@ namespace Sci.Production.Class
             {
                 if (!MyUtility.Check.Seek(textValue, "Unit", "ID"))
                 {
-                    MessageBox.Show(string.Format("< Unit Code: {0} > not found!!!", textValue));
+                    MyUtility.Msg.WarningBox(string.Format("< Unit Code: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
                     e.Cancel = true;
                     return;

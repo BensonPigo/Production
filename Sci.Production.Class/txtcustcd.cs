@@ -54,7 +54,7 @@ namespace Sci.Production.Class
             {
                 if (!MyUtility.Check.Seek(textValue, "CustCD", "ID"))
                 {
-                    MessageBox.Show(string.Format("< CustCD : {0} > not found!!!", textValue));
+                    MyUtility.Msg.WarningBox(string.Format("< CustCD : {0} > not found!!!", textValue));
                     this.Text = "";
                     e.Cancel = true;
                     return;
@@ -68,7 +68,7 @@ namespace Sci.Production.Class
                             string selectCommand = string.Format("select ID from CustCD where BrandID = '{0}' and ID = '{1}'", (string)this.brandObject.Text,this.Text.ToString());
                             if (!MyUtility.Check.Seek(selectCommand, null))
                             {
-                                MessageBox.Show(string.Format("< CustCD: {0} > not found!!!", textValue));
+                                MyUtility.Msg.WarningBox(string.Format("< CustCD: {0} > not found!!!", textValue));
                                 this.Text = "";
                                 e.Cancel = true;
                                 return;

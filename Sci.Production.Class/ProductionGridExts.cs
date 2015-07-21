@@ -50,7 +50,7 @@ namespace Sci
                     {
                         if (MyUtility.Check.Seek(e.FormattedValue.ToString(), "ClogLocation", "id") == false)
                         {
-                            MessageBox.Show(string.Format("< ClogLocation : {0} > not found!!!", e.FormattedValue.ToString()));
+                            MyUtility.Msg.WarningBox(string.Format("< ClogLocation : {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["ClogLocationId"] = DBNull.Value;
                             e.Cancel = true;
                             return;
@@ -82,7 +82,7 @@ namespace Sci
                     {
                         if (MyUtility.Check.Seek(e.FormattedValue.ToString(), "Orders", "id") == false)
                         {
-                            MessageBox.Show(string.Format("< Order Id : {0} > is not found!!!", e.FormattedValue.ToString()));
+                            MyUtility.Msg.WarningBox(string.Format("< Order Id : {0} > is not found!!!", e.FormattedValue.ToString()));
                             dr["orderid"] = DBNull.Value;
                             e.Cancel = true;
                             return;
@@ -129,7 +129,7 @@ namespace Sci
                         string seekSql = string.Format("select RefNo from LocalItem where Category = 'CARTON' and Junk = 0 and RefNo = '{0}'", e.FormattedValue.ToString());
                         if (MyUtility.Check.Seek(seekSql) == false)
                         {
-                            MessageBox.Show(string.Format("< Ref No. : {0} > not found!!!", e.FormattedValue.ToString()));
+                            MyUtility.Msg.WarningBox(string.Format("< Ref No. : {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["RefNo"] = DBNull.Value;
                             e.Cancel = true;
                             return;

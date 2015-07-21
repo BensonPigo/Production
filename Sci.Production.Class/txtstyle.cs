@@ -38,7 +38,7 @@ namespace Sci.Production.Class
             {
                 if (!MyUtility.Check.Seek(textValue, "Style", "ID"))
                 {
-                    MessageBox.Show(string.Format("< Style : {0} > not found!!!", textValue));
+                    MyUtility.Msg.WarningBox(string.Format("< Style : {0} > not found!!!", textValue));
                     this.Text = "";
                     e.Cancel = true;
                     return;
@@ -52,7 +52,7 @@ namespace Sci.Production.Class
                             string selectCommand = string.Format("select ID from Style where BrandID = '{0}' and ID = '{1}'", (string)this.brandObject.Text, this.Text.ToString());
                             if (!MyUtility.Check.Seek(selectCommand, null))
                             {
-                                MessageBox.Show(string.Format("< Brand + Style: {0} + {1} > not found!!!", (string)this.brandObject.Text, textValue));
+                                MyUtility.Msg.WarningBox(string.Format("< Brand + Style: {0} + {1} > not found!!!", (string)this.brandObject.Text, textValue));
                                 this.Text = "";
                                 e.Cancel = true;
                                 return;

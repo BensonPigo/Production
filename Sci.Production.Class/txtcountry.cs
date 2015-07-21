@@ -55,7 +55,7 @@ namespace Sci.Production.Class
             {
                 if (!MyUtility.Check.Seek(textValue, "Country", "ID"))
                 {
-                    MessageBox.Show(string.Format("< Country: {0} > not found!!!", textValue));
+                    MyUtility.Msg.WarningBox(string.Format("< Country: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
                     e.Cancel = true;
                     return;

@@ -125,7 +125,7 @@ namespace Sci.Production.Class
                         aa = (sqlTable.Rows[0])["Junk"].ToString();
                         if (aa == "True")
                         {
-                            MessageBox.Show(string.Format("< Local item> : {0} is Junk!!!", str));
+                            MyUtility.Msg.WarningBox(string.Format("< Local item> : {0} is Junk!!!", str));
                             this.Text = "";
                             e.Cancel = true;
                             return;
@@ -133,7 +133,7 @@ namespace Sci.Production.Class
                     }
                     else
                     {
-                        MessageBox.Show(string.Format("< Local item> : {0} not found!!!", str));
+                        MyUtility.Msg.WarningBox(string.Format("< Local item> : {0} not found!!!", str));
                         this.Text = "";
                         e.Cancel = true;
                         return;
@@ -149,6 +149,5 @@ namespace Sci.Production.Class
         {
             this.Width = 150;
         }
-
     }
 }
