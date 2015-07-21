@@ -98,25 +98,8 @@ namespace Sci
         {
             if (settings == null) settings = new DataGridViewGeneratorTextColumnSettings();
             settings.CharacterCasing = CharacterCasing.Upper;
-            settings.EditingMouseDown += (s, e) =>
-            {
-                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
-                if (frm.EditMode)
-                {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                    {
-                        if (e.RowIndex != -1)
-                        {
-                            DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo", "10,25,25", dr["RefNo"].ToString().Trim());
-                            DialogResult returnResult = item.ShowDialog();
-                            if (returnResult == DialogResult.Cancel) { return; }
-                            e.EditingControl.Text = item.GetSelectedString();
-                        }
-                    }
-                }
-            };
+            settings.EditingMouseDown = new EventHandler<Ict.Win.UI.DataGridViewEditingControlMouseEventArgs>(CartonRefnoCommon.EditingMouseDown);
+            
             settings.CellValidating += (s, e) =>
             {
                 Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
@@ -138,6 +121,29 @@ namespace Sci
                 }
             };
             return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
+        }
+    }
+
+    public class CartonRefnoCommon
+    {
+        public static void EditingMouseDown(object sender, Ict.Win.UI.DataGridViewEditingControlMouseEventArgs e)
+        {
+            Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)sender).DataGridView;
+            Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+            if (frm.EditMode)
+            {
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    if (e.RowIndex != -1)
+                    {
+                        DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
+                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo", "10,25,25", dr["RefNo"].ToString().Trim());
+                        DialogResult returnResult = item.ShowDialog();
+                        if (returnResult == DialogResult.Cancel) { return; }
+                        e.EditingControl.Text = item.GetSelectedString();
+                    }
+                }
+            }
         }
     }
 }
