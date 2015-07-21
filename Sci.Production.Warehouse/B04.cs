@@ -28,7 +28,7 @@ namespace Sci.Production.Warehouse
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
             {
-                MessageBox.Show("< Desc > can not be empty!");
+                MyUtility.Msg.WarningBox("< Desc > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }

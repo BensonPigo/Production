@@ -28,14 +28,14 @@ namespace Sci.Production.Warehouse
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
             {
-                MessageBox.Show("< Desc > can not be empty!");
+                MyUtility.Msg.WarningBox("< Desc > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["No"].ToString()))
             {
-                MessageBox.Show("< No > can not be empty!");
+                MyUtility.Msg.WarningBox("< No > can not be empty!");
                 this.textBox4.Focus();
                 return false;
             }

@@ -40,21 +40,21 @@ namespace Sci.Production.Warehouse
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
-                MessageBox.Show("< Code > can not be empty!");
+                MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Stocktype"].ToString()))
             {
-                MessageBox.Show("< Stock Type > can not be empty!");
+                MyUtility.Msg.WarningBox("< Stock Type > can not be empty!");
                 this.comboBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
             {
-                MessageBox.Show("< Description > can not be empty!");
+                MyUtility.Msg.WarningBox("< Description > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }

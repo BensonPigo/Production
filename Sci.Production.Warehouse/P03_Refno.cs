@@ -25,10 +25,6 @@ namespace Sci.Production.Warehouse
             
         }
 
-        protected void DoMyCMS()
-        {
-            MessageBox.Show("test");
-        }
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
