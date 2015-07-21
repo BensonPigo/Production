@@ -32,14 +32,14 @@ namespace Sci.Production.IE
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
-                MessageBox.Show("< ID > can not be empty!");
+                MyUtility.Msg.WarningBox("< ID > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
             {
-                MessageBox.Show("< Problem > can not be empty!");
+                MyUtility.Msg.WarningBox("< Problem > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }

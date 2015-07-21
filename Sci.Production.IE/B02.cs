@@ -69,14 +69,14 @@ namespace Sci.Production.IE
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["EffectiveDate"].ToString()))
             {
-                MessageBox.Show("< Date > can not be empty!");
+                MyUtility.Msg.WarningBox("< Date > can not be empty!");
                 this.dateBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Type"].ToString()))
             {
-                MessageBox.Show("< Type > can not be empty!");
+                MyUtility.Msg.WarningBox("< Type > can not be empty!");
                 this.comboBox1.Focus();
                 return false;
             }
@@ -85,7 +85,7 @@ namespace Sci.Production.IE
             {
                 if (String.IsNullOrWhiteSpace(CurrentMaintain["FactoryID"].ToString()))
                 {
-                    MessageBox.Show("< Factory > can not be empty!");
+                    MyUtility.Msg.WarningBox("< Factory > can not be empty!");
                     this.txtfactory1.Focus();
                     return false;
                 }
@@ -98,7 +98,7 @@ namespace Sci.Production.IE
                 string selectCommand = string.Format("select ID from ChgOverTarget where EffectiveDate = '{0}' and FactoryID = '{1}' and Type = '{2}'", effectiveDateToString, CurrentMaintain["FactoryID"].ToString().Trim(), CurrentMaintain["Type"].ToString().Trim());
                 if (MyUtility.Check.Seek(selectCommand, null))
                 {
-                    MessageBox.Show(string.Format("Data is Duplicate!!"));
+                    MyUtility.Msg.WarningBox(string.Format("Data is Duplicate!!"));
                     return false;
                 }
             }

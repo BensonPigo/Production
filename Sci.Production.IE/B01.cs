@@ -46,21 +46,21 @@ namespace Sci.Production.IE
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
-                MessageBox.Show("< Code > can not be empty!");
+                MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
             {
-                MessageBox.Show("< Activities > can not be empty!");
+                MyUtility.Msg.WarningBox("< Activities > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["UseFor"].ToString()))
             {
-                MessageBox.Show("< New/Repeat > can not be empty!");
+                MyUtility.Msg.WarningBox("< New/Repeat > can not be empty!");
                 this.comboBox1.Focus();
                 return false;
             }

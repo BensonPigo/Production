@@ -34,28 +34,28 @@ namespace Sci.Production.IE
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
-                MessageBox.Show("< Employee# > can not be empty!");
+                MyUtility.Msg.WarningBox("< Employee# > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Name"].ToString()))
             {
-                MessageBox.Show("< Nick Name > can not be empty!");
+                MyUtility.Msg.WarningBox("< Nick Name > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["OnBoardDate"].ToString()))
             {
-                MessageBox.Show("< Hired on > can not be empty!");
+                MyUtility.Msg.WarningBox("< Hired on > can not be empty!");
                 this.dateBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["SewingLineID"].ToString()))
             {
-                MessageBox.Show("< Line > can not be empty!");
+                MyUtility.Msg.WarningBox("< Line > can not be empty!");
                 this.txtsewingline1.Focus();
                 return false;
             }

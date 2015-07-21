@@ -16,7 +16,6 @@ namespace Sci.Production.IE
     {
         private Stream fileOpened = null;
         private DialogResult deleteResult1;
-        private MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
         public B09(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -72,14 +71,14 @@ namespace Sci.Production.IE
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                    MyUtility.Msg.ErrorBox("Error: Could not read file from disk. Original error: " + ex.Message);
                 }
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            deleteResult1 = MessageBox.Show("Are you sure delete the < Picture1 >?", "Warning", buttons);
+            deleteResult1 = MyUtility.Msg.WarningBox("Are you sure delete the < Picture1 >?",buttons: MessageBoxButtons.YesNo);
             if (deleteResult1 == System.Windows.Forms.DialogResult.Yes)
             {
                 if (System.IO.File.Exists(CurrentMaintain["Picture1"].ToString()))
@@ -93,7 +92,7 @@ namespace Sci.Production.IE
                     }
                     catch (System.IO.IOException exception)
                     {
-                        MessageBox.Show("Error: Delete file fail. Original error: " + exception.Message);
+                        MyUtility.Msg.ErrorBox("Error: Delete file fail. Original error: " + exception.Message);
                     }
                 }
                 else
@@ -137,14 +136,14 @@ namespace Sci.Production.IE
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                    MyUtility.Msg.ErrorBox("Error: Could not read file from disk. Original error: " + ex.Message);
                 }
             }
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            deleteResult1 = MessageBox.Show("Are you sure delete the < Picture2 >?", "Warning", buttons);
+            deleteResult1 = MyUtility.Msg.WarningBox("Are you sure delete the < Picture2 >?", buttons: MessageBoxButtons.YesNo);
             if (deleteResult1 == System.Windows.Forms.DialogResult.Yes)
             {
                 if (System.IO.File.Exists(CurrentMaintain["Picture2"].ToString()))
@@ -158,7 +157,7 @@ namespace Sci.Production.IE
                     }
                     catch (System.IO.IOException exception)
                     {
-                        MessageBox.Show("Error: Delete file fail. Original error: " + exception.Message);
+                        MyUtility.Msg.ErrorBox("Error: Delete file fail. Original error: " + exception.Message);
                     }
                 }
                 else
