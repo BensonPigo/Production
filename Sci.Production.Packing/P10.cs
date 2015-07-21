@@ -72,7 +72,7 @@ where td.Id = '{0}'", masterID);
             {
                 if (receivdData["Status"].ToString() == "Confirmed")
                 {
-                    MessageBox.Show("This carton has receive record, can't delete!");
+                    MyUtility.Msg.WarningBox("This carton has receive record, can't delete!");
                     return;
                 }
             }
@@ -114,13 +114,13 @@ where td.Id = '{0}'", masterID);
             {
                 if (selectData.Rows.Count > 0)
                 {
-                    MessageBox.Show("This record has received, can not be delete!");
+                    MyUtility.Msg.WarningBox("This record has received, can not be delete!");
                     return false;
                 }
             }
             else
             {
-                MessageBox.Show("Check transaction error.");
+                MyUtility.Msg.WarningBox("Check transaction error.");
                 return false;
             }
 
@@ -129,7 +129,7 @@ where td.Id = '{0}'", masterID);
             result = DBProxy.Current.Select(null, sqlCmd, out detailOrderID);
             if (!result)
             {
-                MessageBox.Show("Query detail data fail!");
+                MyUtility.Msg.WarningBox("Query detail data fail!");
             }
 
             return base.ClickDeleteBefore();
@@ -182,7 +182,7 @@ where td.Id = '{0}'", masterID);
                 }
                 if (lastResult)
                 {
-                    MessageBox.Show("Update orders data fail!");
+                    MyUtility.Msg.WarningBox("Update orders data fail!");
                 }
             }
             base.ClickDeleteAfter();
@@ -237,7 +237,7 @@ where td.Id = '{0}'", masterID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
             if (!result)
             {
-                MessageBox.Show("Update orders data fail!");
+                MyUtility.Msg.WarningBox("Update orders data fail!");
             }
 
             bool prgResult, lastResult = false;
@@ -252,7 +252,7 @@ where td.Id = '{0}'", masterID);
             }
             if (lastResult)
             {
-                MessageBox.Show("Update orders data fail!");
+                MyUtility.Msg.WarningBox("Update orders data fail!");
             }
             base.ClickSaveAfter();
         }
@@ -265,7 +265,7 @@ where td.Id = '{0}'", masterID);
             {
                 if (dr["ReceiveDate"] != DBNull.Value)
                 {
-                    MessageBox.Show("This CTN has received, can not be import data!");
+                    MyUtility.Msg.WarningBox("This CTN has received, can not be import data!");
                     return;
                 }
             }

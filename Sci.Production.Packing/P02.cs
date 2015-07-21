@@ -195,21 +195,21 @@ namespace Sci.Production.Packing
         {
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
             {
-                MessageBox.Show("< SP No. > can not be empty!");
+                MyUtility.Msg.WarningBox("< SP No. > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["OrderShipmodeSeq"]))
             {
-                MessageBox.Show("< Seq > can not be empty!");
+                MyUtility.Msg.WarningBox("< Seq > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
             {
-                MessageBox.Show("< Shipping Mode > can not be empty!");
+                MyUtility.Msg.WarningBox("< Shipping Mode > can not be empty!");
                 this.txtshipmode1.Focus();
                 return false;
             }
@@ -217,7 +217,7 @@ namespace Sci.Production.Packing
             //檢查OrderID+Seq不可以重複建立
             if (MyUtility.Check.Seek(string.Format("select ID from PackingGuide where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), IsDetailInserting ? "" : CurrentMaintain["ID"].ToString())))
             {
-                MessageBox.Show("SP No:" + CurrentMaintain["OrderID"].ToString() + ", Seq:" + CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing guide, can't be create again!");
+                MyUtility.Msg.WarningBox("SP No:" + CurrentMaintain["OrderID"].ToString() + ", Seq:" + CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing guide, can't be create again!");
                 return false;
             }
 
@@ -225,7 +225,7 @@ namespace Sci.Production.Packing
             DataRow[] detailData = ((DataTable)detailgridbs.DataSource).Select();
             if (detailData.Length == 0)
             {
-                MessageBox.Show("Detail can't empty!");
+                MyUtility.Msg.WarningBox("Detail can't empty!");
                 return false;
             }
 
@@ -237,13 +237,13 @@ namespace Sci.Production.Packing
                 bool isEmptyShipQty = MyUtility.Check.Empty(dr["ShipQty"]);
                 if (isEmptyQtyPerCTN && !isEmptyShipQty)
                 {
-                    MessageBox.Show("< Color Way > " + dr["Article"].ToString().Trim() + " < Qty/Ctn > can't empty!");
+                    MyUtility.Msg.WarningBox("< Color Way > " + dr["Article"].ToString().Trim() + " < Qty/Ctn > can't empty!");
                     return false;
                 }
 
                 if (isEmptyRefNo && !isEmptyShipQty)
                 {
-                    MessageBox.Show("< Color Way > " + dr["Article"].ToString().Trim() + " < Ref No. > can't empty!");
+                    MyUtility.Msg.WarningBox("< Color Way > " + dr["Article"].ToString().Trim() + " < Ref No. > can't empty!");
                     return false;
                 }
             }
@@ -334,7 +334,7 @@ namespace Sci.Production.Packing
                 string id = MyUtility.GetValue.GetID(ProductionEnv.Keyword + "PG", "PackingGuide", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
-                    MessageBox.Show("GetID fail, please try again!");
+                    MyUtility.Msg.WarningBox("GetID fail, please try again!");
                     return false;
                 }
                 CurrentMaintain["ID"] = id;
@@ -404,7 +404,7 @@ namespace Sci.Production.Packing
                             }
                             if (returnData)
                             {
-                                MessageBox.Show("SP#:" + textBox1.Text + msg);
+                                MyUtility.Msg.WarningBox("SP#:" + textBox1.Text + msg);
                                 //OrderID異動，其他相關欄位要跟著異動
                                 ChangeOtherData("");
                                 textBox1.Text = "";
@@ -413,7 +413,7 @@ namespace Sci.Production.Packing
                         else
                         {
                             returnData = true;
-                            MessageBox.Show("< SP# > does not exist!");
+                            MyUtility.Msg.WarningBox("< SP# > does not exist!");
                             //OrderID異動，其他相關欄位要跟著異動
                             ChangeOtherData("");
                             textBox1.Text = "";
@@ -534,7 +534,7 @@ namespace Sci.Production.Packing
                     sqlCmd = string.Format("select * from Order_QtyCTN where Id = '{0}'", orderID);
                     if (!MyUtility.Check.Seek(sqlCmd))
                     {
-                        MessageBox.Show("No packing data, can't create!!");
+                        MyUtility.Msg.WarningBox("No packing data, can't create!!");
                         return;
                     }
                     sqlCmd = string.Format(@"select '' as ID, '' as RefNo, '' as Description, oqd.Article, oc.Color, oqd.SizeCode, oqd.Qty as ShipQty, oqc.Qty as QtyPerCTN, os.Seq,
@@ -634,7 +634,7 @@ namespace Sci.Production.Packing
                 {
                     if (MyUtility.Check.Empty(CurrentMaintain["OrderShipmodeSeq"]))
                     {
-                        MessageBox.Show("ShipMode is incorrect!");
+                        MyUtility.Msg.WarningBox("ShipMode is incorrect!");
                         txtshipmode1.SelectedValue = "";
                     }
                     else
@@ -645,13 +645,13 @@ namespace Sci.Production.Packing
                         {
                             if (qtyShipData["ShipModeID"].ToString() != txtshipmode1.SelectedValue.ToString())
                             {
-                                MessageBox.Show("ShipMode is incorrect!");
+                                MyUtility.Msg.WarningBox("ShipMode is incorrect!");
                                 txtshipmode1.SelectedValue = "";
                             }
                         }
                         else
                         {
-                            MessageBox.Show("ShipMode is incorrect!");
+                            MyUtility.Msg.WarningBox("ShipMode is incorrect!");
                             txtshipmode1.SelectedValue = "";
                         }
                     }
@@ -688,7 +688,7 @@ namespace Sci.Production.Packing
             //檢查OrderID+Seq不可以重複建立
             if (MyUtility.Check.Seek(string.Format("select ID from PackingList where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), CurrentMaintain["ID"].ToString())))
             {
-                MessageBox.Show("SP No:" + CurrentMaintain["OrderID"].ToString() + ", Seq:" + CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing list, can't be create again!");
+                MyUtility.Msg.WarningBox("SP No:" + CurrentMaintain["OrderID"].ToString() + ", Seq:" + CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing list, can't be create again!");
                 return;
             }
 
@@ -696,7 +696,7 @@ namespace Sci.Production.Packing
             string lookupReturn = MyUtility.GetValue.Lookup("select PulloutComplete from Orders where ID = '" + CurrentMaintain["OrderID"].ToString() + "'");
             if (lookupReturn == "True")
             {
-                MessageBox.Show("SP# was ship complete!! You can't switch to packing list.");
+                MyUtility.Msg.WarningBox("SP# was ship complete!! You can't switch to packing list.");
                 return;
             }
 
@@ -707,13 +707,13 @@ namespace Sci.Production.Packing
             {
                 if (seekData["Status"].ToString() == "Confirmed")
                 {
-                    MessageBox.Show("SP# has been confirmed!! You can't switch to packing list.");
+                    MyUtility.Msg.WarningBox("SP# has been confirmed!! You can't switch to packing list.");
                     return;
                 }
 
                 if (!MyUtility.Check.Empty(seekData["INVNo"]))
                 {
-                    MessageBox.Show("SP# was booking!! You can't switch to packing list.");
+                    MyUtility.Msg.WarningBox("SP# was booking!! You can't switch to packing list.");
                     return;
                 }
             }
@@ -722,7 +722,7 @@ namespace Sci.Production.Packing
             seekCmd = "select ID from PackingList_Detail where ID = '" + CurrentMaintain["ID"].ToString() + "' and TransferToClogID != ''";
             if (MyUtility.Check.Seek(seekCmd))
             {
-                MessageBox.Show("SP# has been transfer!! You can't switch to packing list.");
+                MyUtility.Msg.WarningBox("SP# has been transfer!! You can't switch to packing list.");
                 return;
             }
 
@@ -1288,11 +1288,11 @@ ELSE
                 bool prgResult = Prgs.UpdateOrdersCTN(CurrentMaintain["OrderID"].ToString());
                 prgResult = Prgs.CreateOrderCTNData(CurrentMaintain["ID"].ToString());
 
-                MessageBox.Show("Switch completed!");
+                MyUtility.Msg.InfoBox("Switch completed!");
             }
             else
             {
-                MessageBox.Show("Switch fail!");
+                MyUtility.Msg.WarningBox("Switch fail!");
             }
         }
     }

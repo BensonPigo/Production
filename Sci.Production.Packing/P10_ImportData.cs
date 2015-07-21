@@ -52,7 +52,7 @@ namespace Sci.Production.Packing
         {
             if (string.IsNullOrWhiteSpace(this.textBox1.Text.ToString()) && string.IsNullOrWhiteSpace(this.textBox2.Text.ToString()) && string.IsNullOrWhiteSpace(this.textBox3.Text.ToString()))
             {
-                MessageBox.Show("< SP# > or < Order# > or < PackID > can not be empty!");
+                MyUtility.Msg.WarningBox("< SP# > or < Order# > or < PackID > can not be empty!");
                 return;
             }
 
@@ -83,7 +83,7 @@ namespace Sci.Production.Packing
             {
                 if (selectDataTable.Rows.Count == 0)
                 {
-                    MessageBox.Show("Data not found!");
+                    MyUtility.Msg.WarningBox("Data not found!");
                 }
             }
             listControlBindingSource1.DataSource = selectDataTable;
@@ -132,7 +132,7 @@ namespace Sci.Production.Packing
             DataRow[] selectedData = dt.Select("Selected = 1");
             if (selectedData.Length == 0)
             {
-                MessageBox.Show("No data need to import!");
+                MyUtility.Msg.WarningBox("No data need to import!");
                 return;
             }
 
@@ -142,7 +142,7 @@ namespace Sci.Production.Packing
                 string getID = MyUtility.GetValue.GetID(ProductionEnv.Keyword + "CS", "TransferToClog", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(getID))
                 {
-                    MessageBox.Show("GetID fail, please try again!");
+                    MyUtility.Msg.WarningBox("GetID fail, please try again!");
                     return;
                 }
                 newID = getID;
@@ -209,7 +209,7 @@ namespace Sci.Production.Packing
                         }
                         else
                         {
-                            MessageBox.Show("Save failed, Pleaes re-try");
+                            MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
                             return;
                         }
                     }
@@ -226,7 +226,7 @@ namespace Sci.Production.Packing
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
                 if (!result)
                 {
-                    MessageBox.Show("Update orders data fail!");
+                    MyUtility.Msg.WarningBox("Update orders data fail!");
                 }
 
                 bool prgResult, lastResult = false;
@@ -241,7 +241,7 @@ namespace Sci.Production.Packing
                 }
                 if (lastResult)
                 {
-                    MessageBox.Show("Update orders data fail!");
+                    MyUtility.Msg.WarningBox("Update orders data fail!");
                 }
 
                 //系統會自動有回傳值
@@ -249,7 +249,7 @@ namespace Sci.Production.Packing
             }
             else
             {
-                MessageBox.Show("No data need to import!");
+                MyUtility.Msg.WarningBox("No data need to import!");
                 return;
             }
         }
@@ -268,7 +268,7 @@ namespace Sci.Production.Packing
                 DualResult selectResult;
                 if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out selectDataTable)))
                 {
-                    MessageBox.Show("Connection faile.!");
+                    MyUtility.Msg.WarningBox("Connection faile.!");
                     return;
                 }
                 listControlBindingSource1.DataSource = selectDataTable;
@@ -285,7 +285,7 @@ namespace Sci.Production.Packing
                         IList<string> sl = line.Split(" \t\r\n".ToCharArray());
                         if (sl[0] != "1")
                         {
-                            MessageBox.Show("Format is not correct!");
+                            MyUtility.Msg.WarningBox("Format is not correct!");
                             return;
                         }
                         else
@@ -324,7 +324,7 @@ namespace Sci.Production.Packing
                     }
                     if (insertCount == 0)
                     {
-                        MessageBox.Show("This data were all be transferred or order factory is not equal to login factory.");
+                        MyUtility.Msg.WarningBox("This data were all be transferred or order factory is not equal to login factory.");
                         return;
                     }
                 }

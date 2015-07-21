@@ -223,7 +223,7 @@ order by a.Seq", masterID, OrderID, OrderSeqID);
                     {
                         if (!MyUtility.Check.Seek(string.Format("Select Article from Order_QtyShip_Detail where ID = '{0}' and Seq = '{1}' and Article = '{2}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), e.FormattedValue.ToString())))
                         {
-                            MessageBox.Show(string.Format("< Article: {0} > not found!!!", e.FormattedValue.ToString()));
+                            MyUtility.Msg.WarningBox(string.Format("< Article: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["Article"] = "";
                             dr["Color"] = "";
                             dr["SizeCode"] = "";
@@ -295,7 +295,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
                     {
                         if (!MyUtility.Check.Seek(string.Format("Select SizeCode from Order_QtyShip_Detail where ID = '{0}' and Seq = '{1}' and Article = '{2}' and SizeCode = '{3}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), e.FormattedValue.ToString())))
                         {
-                            MessageBox.Show(string.Format("< SizeCode: {0} > not found!!!", e.FormattedValue.ToString()));
+                            MyUtility.Msg.WarningBox(string.Format("< SizeCode: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["SizeCode"] = "";
                             e.Cancel = true;
                             return;
@@ -390,7 +390,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
                             {
                                 if (e.FormattedValue.ToString() != "0" && e.FormattedValue.ToString() != "1")
                                 {
-                                    MessageBox.Show("# of CTN only keyin 1 or 0");
+                                    MyUtility.Msg.WarningBox("# of CTN only keyin 1 or 0");
                                     dr["CTNQty"] = 0;
                                     e.Cancel = true;
                                     return;
@@ -446,13 +446,13 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
         {
             if (CurrentMaintain["Status"].ToString() == "Confirmed")
             {
-                MessageBox.Show("This record is < Confirmed >, can't be modified!");
+                MyUtility.Msg.WarningBox("This record is < Confirmed >, can't be modified!");
                 return false;
             }
 
             if (MyUtility.GetValue.Lookup("FtyGroup", CurrentMaintain["OrderID"].ToString(), "Orders", "ID") != Sci.Env.User.Factory)
             {
-                MessageBox.Show("Factory of this SP# is not equal to login factory, can't be modified!");
+                MyUtility.Msg.WarningBox("Factory of this SP# is not equal to login factory, can't be modified!");
                 return false;
             }
             return base.ClickEditBefore();
@@ -504,14 +504,14 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
             //檢查欄位值不可為空
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
             {
-                MessageBox.Show("SP# can't empty!!");
+                MyUtility.Msg.WarningBox("SP# can't empty!!");
                 textBox1.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
             {
-                MessageBox.Show("Ship Mode can't empty!!");
+                MyUtility.Msg.WarningBox("Ship Mode can't empty!!");
                 txtshipmode1.Focus();
                 return false;
             }
@@ -519,7 +519,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
             //檢查OrderID+Seq不可以重複建立
             if (MyUtility.Check.Seek(string.Format("select ID from PackingList where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), IsDetailInserting ? "" : CurrentMaintain["ID"].ToString())))
             {
-                MessageBox.Show("SP No:" + CurrentMaintain["OrderID"].ToString() + ", Seq:" + CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing list, can't be create again!");
+                MyUtility.Msg.WarningBox("SP No:" + CurrentMaintain["OrderID"].ToString() + ", Seq:" + CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing list, can't be create again!");
                 return false;
             }
 
@@ -543,7 +543,7 @@ and pd.OrderID = '{1}'
 group by pd.Article,pd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), CurrentMaintain["OrderID"].ToString());
             if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out needPackData)))
             {
-                MessageBox.Show("Query pack qty fail!");
+                MyUtility.Msg.WarningBox("Query pack qty fail!");
                 return false;
             }
             #endregion
@@ -553,25 +553,25 @@ group by pd.Article,pd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), Cur
                 #region 表身的CTN#, Ref No., Color Way與Size不可以為空值
                 if (MyUtility.Check.Empty(dr["CTNStartNo"]))
                 {
-                    MessageBox.Show("< CTN# >  can't empty!");
+                    MyUtility.Msg.WarningBox("< CTN# >  can't empty!");
                     return false;
                 }
 
                 if (MyUtility.Check.Empty(dr["RefNo"]))
                 {
-                    MessageBox.Show("< Ref No. >  can't empty!");
+                    MyUtility.Msg.WarningBox("< Ref No. >  can't empty!");
                     return false;
                 }
 
                 if (MyUtility.Check.Empty(dr["Article"]))
                 {
-                    MessageBox.Show("< ColorWay >  can't empty!");
+                    MyUtility.Msg.WarningBox("< ColorWay >  can't empty!");
                     return false;
                 }
 
                 if (MyUtility.Check.Empty(dr["SizeCode"]))
                 {
-                    MessageBox.Show("< Size >  can't empty!");
+                    MyUtility.Msg.WarningBox("< Size >  can't empty!");
                     return false;
                 }
                 #endregion
@@ -635,7 +635,7 @@ group by pd.Article,pd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), Cur
 
             if (isNegativeBalQty)
             {
-                MessageBox.Show("Quantity entered is greater than order quantity!!");
+                MyUtility.Msg.WarningBox("Quantity entered is greater than order quantity!!");
                 return false;
             }
 
@@ -645,7 +645,7 @@ group by pd.Article,pd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), Cur
                 string id = MyUtility.GetValue.GetID(ProductionEnv.Keyword + "PL", "PackingList", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
-                    MessageBox.Show("GetID fail, please try again!");
+                    MyUtility.Msg.WarningBox("GetID fail, please try again!");
                     return false;
                 }
                 CurrentMaintain["ID"] = id;
@@ -712,7 +712,7 @@ where ID = @INVNo";
                 }
                 else
                 {
-                    MessageBox.Show("Update Garment Booking fail!");
+                    MyUtility.Msg.WarningBox("Update Garment Booking fail!");
                     return false;
                 }
             }
@@ -738,13 +738,13 @@ where ID = @INVNo";
         {
             if (CurrentMaintain["Status"].ToString() == "Confirmed")
             {
-                MessageBox.Show("This record is < Confirmed >, can't be deleted!");
+                MyUtility.Msg.WarningBox("This record is < Confirmed >, can't be deleted!");
                 return false;
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["INVNo"]))
             {
-                MessageBox.Show("This record had booking no. Can't be deleted!");
+                MyUtility.Msg.WarningBox("This record had booking no. Can't be deleted!");
                 return false;
             }
 
@@ -753,7 +753,7 @@ where ID = @INVNo";
             {
                 if (!MyUtility.Check.Empty(dr["TransferDate"]))
                 {
-                    MessageBox.Show(dr["CTNStartNo"].ToString() + " had been send to Clog, can't be deleted!");
+                    MyUtility.Msg.WarningBox(dr["CTNStartNo"].ToString() + " had been send to Clog, can't be deleted!");
                     return false;
                 }
             }
@@ -775,7 +775,7 @@ where ID = @INVNo";
             {
                 if (!MyUtility.Check.Empty(CurrentDetailData["TransferToClogID"]))
                 {
-                    MessageBox.Show("This record had been send to CLOG, can't delete!!");
+                    MyUtility.Msg.WarningBox("This record had been send to CLOG, can't delete!!");
                     return;
                 }
             }
@@ -876,7 +876,7 @@ where ID = @INVNo";
                             }
                             if (returnData)
                             {
-                                MessageBox.Show("SP#:" + textBox1.Text + msg);
+                                MyUtility.Msg.WarningBox("SP#:" + textBox1.Text + msg);
                                 //OrderID異動，其他相關欄位要跟著異動
                                 ChangeOtherData("");
                                 textBox1.Text = "";
@@ -885,7 +885,7 @@ where ID = @INVNo";
                         else
                         {
                             returnData = true;
-                            MessageBox.Show("< SP# > does not exist!");
+                            MyUtility.Msg.WarningBox("< SP# > does not exist!");
                             //OrderID異動，其他相關欄位要跟著異動
                             ChangeOtherData("");
                             textBox1.Text = "";
@@ -1018,7 +1018,7 @@ where ID = @INVNo";
                     sqlCmd = string.Format("select * from Order_QtyCTN where Id = '{0}'", orderID);
                     if (!MyUtility.Check.Seek(sqlCmd))
                     {
-                        MessageBox.Show("No packing data, can't create!!");
+                        MyUtility.Msg.WarningBox("No packing data, can't create!!");
                         return;
                     }
                     sqlCmd = string.Format(@"select o.ID as OrderID, oqd.Seq as OrderShipmodeSeq, oqd.Article, oc.Color, oqd.SizeCode, oqd.Qty as ShipQty, oqc.Qty as QtyPerCTN
@@ -1108,7 +1108,7 @@ where ID = @INVNo";
                 {
                     if (MyUtility.Check.Empty(CurrentMaintain["OrderShipmodeSeq"]))
                     {
-                        MessageBox.Show("ShipMode is incorrect!");
+                        MyUtility.Msg.WarningBox("ShipMode is incorrect!");
                         txtshipmode1.SelectedValue = "";
                         return;
                     }
@@ -1120,14 +1120,14 @@ where ID = @INVNo";
                         {
                             if (qtyShipData["ShipModeID"].ToString() != txtshipmode1.SelectedValue.ToString())
                             {
-                                MessageBox.Show("ShipMode is incorrect!");
+                                MyUtility.Msg.WarningBox("ShipMode is incorrect!");
                                 txtshipmode1.SelectedValue = "";
                                 return;
                             }
                         }
                         else
                         {
-                            MessageBox.Show("ShipMode is incorrect!");
+                            MyUtility.Msg.WarningBox("ShipMode is incorrect!");
                             txtshipmode1.SelectedValue = "";
                             return;
                         }
@@ -1145,7 +1145,7 @@ where ID = @INVNo";
             }
             else
             {
-                MessageBox.Show("This record had been send to CLOG, can't modified!!");
+                MyUtility.Msg.WarningBox("This record had been send to CLOG, can't modified!!");
                 return false;
             }
         }
@@ -1229,7 +1229,7 @@ where ID = @INVNo";
             //如果已經Shipping Lock的話就不可以再重算重量
             if (!MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]))
             {
-                MessageBox.Show("This record already shipping lock, can't recalculate weight!");
+                MyUtility.Msg.WarningBox("This record already shipping lock, can't recalculate weight!");
                 return;
             }
 
@@ -1244,7 +1244,7 @@ where ID = @INVNo";
             sqlCmd = string.Format("select Article,SizeCode,NW,NNW from Style_WeightData where StyleUkey = '{0}'", styleUKey);
             if (!(result = DBProxy.Current.Select(null, sqlCmd, out weightData)))
             {
-                MessageBox.Show("Query weight data fail!");
+                MyUtility.Msg.WarningBox("Query weight data fail!");
                 return;
             }
 
@@ -1271,7 +1271,7 @@ where ID = @INVNo";
 
             if (!MyUtility.Check.Empty(message))
             {
-                buttonResult = MessageBox.Show("Size: " + message + " not in Style basic data, are you sure you want to  recalculate weight?", "Warning", buttons);
+                buttonResult = MyUtility.Msg.WarningBox("Size: " + message + " not in Style basic data, are you sure you want to  recalculate weight?", "Warning", buttons);
                 if (buttonResult == System.Windows.Forms.DialogResult.No)
                 {
                     return;
@@ -1367,14 +1367,14 @@ where ID = @INVNo";
             //訂單工廠別與登入系統工廠別不一致時，不可以Confirm
             if (MyUtility.GetValue.Lookup("FtyGroup", CurrentMaintain["OrderID"].ToString(), "Orders", "ID") != Sci.Env.User.Factory)
             {
-                MessageBox.Show("This SP's factory not equal to login system factory so can't confirm!");
+                MyUtility.Msg.WarningBox("This SP's factory not equal to login system factory so can't confirm!");
                 return;
             }
 
             //還沒有Invoice No就不可以做Confirm
             if (MyUtility.Check.Empty(MyUtility.GetValue.Lookup("INVNo", CurrentMaintain["ID"].ToString(), "PackingList", "ID")))
             {
-                MessageBox.Show("Shipping is not yet booking so can't confirm!");
+                MyUtility.Msg.WarningBox("Shipping is not yet booking so can't confirm!");
                 return;
             }
 
@@ -1399,13 +1399,13 @@ group by Article,SizeCode", CurrentMaintain["ID"].ToString());
                 }
                 if (!MyUtility.Check.Empty(errMesg))
                 {
-                    MessageBox.Show("Pullout qty is more than order qty!\n\r" + errMesg);
+                    MyUtility.Msg.WarningBox("Pullout qty is more than order qty!\n\r" + errMesg);
                     return;
                 }
             }
             else
             {
-                MessageBox.Show("Query packinglist fail!");
+                MyUtility.Msg.WarningBox("Query packinglist fail!");
                 return;
             }
 
@@ -1471,13 +1471,13 @@ order by oq.Article,oq.SizeCode", CurrentMaintain["OrderID"].ToString(), Current
                 }
                 if (!MyUtility.Check.Empty(errMesg))
                 {
-                    MessageBox.Show(errMesg);
+                    MyUtility.Msg.WarningBox(errMesg);
                     return;
                 }
             }
             else
             {
-                MessageBox.Show("Query sewing fail!");
+                MyUtility.Msg.WarningBox("Query sewing fail!");
                 return;
             }
 
@@ -1485,7 +1485,7 @@ order by oq.Article,oq.SizeCode", CurrentMaintain["OrderID"].ToString(), Current
             result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
-                MessageBox.Show("Confirm fail !\r\n" + result.ToString());
+                MyUtility.Msg.WarningBox("Confirm fail !\r\n" + result.ToString());
                 return;
             }
 
@@ -1502,13 +1502,13 @@ order by oq.Article,oq.SizeCode", CurrentMaintain["OrderID"].ToString(), Current
             {
                 if (MyUtility.GetValue.Lookup("Status", CurrentMaintain["INVNo"].ToString(), "GMTBooking", "ID") == "Confirmed")
                 {
-                    MessageBox.Show("Garment booking already confirmed, can't unconfirm! ");
+                    MyUtility.Msg.WarningBox("Garment booking already confirmed, can't unconfirm! ");
                     return;
                 }
             }
 
             //問是否要做Unconfirm，確定才繼續往下做
-            buttonResult = MessageBox.Show("Are you sure you want to < Unconfirm > this data?", "Warning", buttons);
+            buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unconfirm > this data?", "Warning", buttons);
             if (buttonResult == System.Windows.Forms.DialogResult.No)
             {
                 return;
@@ -1582,7 +1582,7 @@ order by oq.Article,oq.SizeCode", CurrentMaintain["OrderID"].ToString(), Current
                             }
                             else
                             {
-                                MessageBox.Show("UnConfirm failed, Pleaes re-try");
+                                MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
                             }
                         }
                         catch (Exception ex)
@@ -1643,7 +1643,7 @@ order by oq.Article,oq.SizeCode", CurrentMaintain["OrderID"].ToString(), Current
             }
             else
             {
-                MessageBox.Show("Data is not found!");
+                MyUtility.Msg.WarningBox("Data is not found!");
             }
         }
     }
