@@ -63,12 +63,12 @@ namespace Sci.Production.Subcon
         protected override bool ClickDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (!string.IsNullOrWhiteSpace(dr["apvname"].ToString()) || dr["closed"].ToString().ToUpper() == "TRUE")
+            if (dr["Status"].ToString() != "New")
             {
                 MyUtility.Msg.WarningBox("Data is approved or closed, can't delete.", "Warning");
                 return false;
             }
-            
+
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
             sp1.ParameterName = "@id";
             sp1.Value = dr["id"].ToString();
@@ -103,9 +103,9 @@ namespace Sci.Production.Subcon
         {
             //!EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (!string.IsNullOrWhiteSpace(dr["apvname"].ToString()) || dr["closed"].ToString().ToUpper() == "TRUE")
+            if (dr["Status"].ToString() != "New")
             {
-                var frm = new Sci.Production.PublicForm.EditRemark("artworkpo","remark",dr);
+                var frm = new Sci.Production.PublicForm.EditRemark("artworkpo", "remark", dr);
                 frm.ShowDialog(this);
                 this.RenewData();
                 return false;
@@ -119,37 +119,37 @@ namespace Sci.Production.Subcon
         {
 
             #region 必輸檢查
-            if (CurrentMaintain["LocalSuppID"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["LocalSuppID"].ToString()))
-		    {
-                MyUtility.Msg.WarningBox("< Suppiler >  can't be empty!","Warning");
+            if (CurrentMaintain["LocalSuppID"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["LocalSuppID"].ToString()))
+            {
+                MyUtility.Msg.WarningBox("< Suppiler >  can't be empty!", "Warning");
                 txtsubcon1.TextBox1.Focus();
                 return false;
             }
 
-            if (CurrentMaintain["issuedate"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
-		    {
-                MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!","Warning");
+            if (CurrentMaintain["issuedate"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
+            {
+                MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
                 dateBox1.Focus();
                 return false;
             }
 
-            if (CurrentMaintain["Delivery"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["Delivery"].ToString()))
-		    {
-                MyUtility.Msg.WarningBox("< Delivery Date >  can't be empty!","Warning");
+            if (CurrentMaintain["Delivery"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["Delivery"].ToString()))
+            {
+                MyUtility.Msg.WarningBox("< Delivery Date >  can't be empty!", "Warning");
                 dateBox2.Focus();
                 return false;
             }
 
-            if (CurrentMaintain["ArtworktypeId"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["ArtworktypeId"].ToString()))
-		    {
-                MyUtility.Msg.WarningBox("< Artwork Type >  can't be empty!","Warning");
+            if (CurrentMaintain["ArtworktypeId"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["ArtworktypeId"].ToString()))
+            {
+                MyUtility.Msg.WarningBox("< Artwork Type >  can't be empty!", "Warning");
                 txtartworktype_fty1.Focus();
                 return false;
             }
 
-            if (CurrentMaintain["Handle"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["Handle"].ToString()))
-		    {
-                MyUtility.Msg.WarningBox("< Handle >  can't be empty!","Warning");
+            if (CurrentMaintain["Handle"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["Handle"].ToString()))
+            {
+                MyUtility.Msg.WarningBox("< Handle >  can't be empty!", "Warning");
                 txtuser1.TextBox1.Focus();
                 return false;
             }
@@ -164,7 +164,7 @@ namespace Sci.Production.Subcon
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(ProductionEnv.Keyword+"OS", "artworkpo", (DateTime)CurrentMaintain["issuedate"]);
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(ProductionEnv.Keyword + "OS", "artworkpo", (DateTime)CurrentMaintain["issuedate"]);
             }
 
             return base.ClickSaveBefore();
@@ -178,20 +178,20 @@ namespace Sci.Production.Subcon
                 (e.Details).Columns.Add("Style", typeof(String));
                 (e.Details).Columns.Add("sewinline", typeof(DateTime));
                 (e.Details).Columns.Add("scidelivery", typeof(DateTime));
-                
+
                 foreach (DataRow dr in e.Details.Rows)
                 {
                     DataTable order_dt;
                     DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders where id='{0}'", dr["orderid"].ToString()), out order_dt);
-                    if (order_dt.Rows.Count == 0) 
+                    if (order_dt.Rows.Count == 0)
                         break;
                     dr["style"] = order_dt.Rows[0]["styleid"].ToString();
                     dr["sewinline"] = order_dt.Rows[0]["sewinline"];
                     dr["scidelivery"] = order_dt.Rows[0]["scidelivery"];
-                       
+
                 }
             }
- 	         return base.OnRenewDataDetailPost(e);
+            return base.OnRenewDataDetailPost(e);
         }
 
         //refresh
@@ -200,64 +200,15 @@ namespace Sci.Production.Subcon
             base.OnDetailEntered();
             string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype where id='{0}'", CurrentMaintain["artworktypeid"])).ToString().Trim();
             if (artworkunit == "") artworkunit = "PCS";
-            this.detailgrid.Columns[6].HeaderText = "Cost(" + artworkunit+ ")";
+            this.detailgrid.Columns[6].HeaderText = "Cost(" + artworkunit + ")";
             this.detailgrid.Columns[7].HeaderText = artworkunit;
             txtsubcon1.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
             #region Status Label
-            if (CurrentMaintain["Closed"].ToString().ToUpper() == "TRUE")
-            {
-                label25.Text = "Closed";
-            }
-            else
-            {
-                if (!string.IsNullOrWhiteSpace(CurrentMaintain["apvname"].ToString()))
-                {
-                    label25.Text = "Approved";
-                }
-                else
-                {
-                    label25.Text = "Not Approve";
-                }
-            }
+            label25.Text = CurrentMaintain["Status"].ToString();
             #endregion
             #region exceed status
             label17.Visible = CurrentMaintain["Exceed"].ToString().ToUpper() == "TRUE";
-            #endregion
-            #region Approve Button
-            DataTable dt = (DataTable)detailgridbs.DataSource;
-            DataRow[] dr = dt.Select("apqty > 0");
-
-            
-            button1.Enabled = !this.EditMode &&
-                            !(CurrentMaintain["closed"].ToString().ToUpper() == "TRUE") &&
-                            this.IsSupportConfirm &&
-                            dr.Length == 0;
-
-            if (string.IsNullOrWhiteSpace(CurrentMaintain["apvname"].ToString()))
-            {
-                button1.Text = "Approve";
-                button1.ForeColor = Color.Black;
-            }
-            else
-            {
-                button1.Text = "Unapprove";
-                button1.ForeColor = Color.Blue;
-            }
-            #endregion
-            #region Close button
-            //ApvName = MyApp.cLogin OR getauthority(MyApp.cLogin)) AND !Thisform.LEditmode
-            button2.Enabled = !this.EditMode && 
-                                (Prgs.GetAuthority(Env.User.UserID) || 
-                                CurrentMaintain["apvname"].ToString() == Env.User.UserID);
-            if (CurrentMaintain["closed"].ToString().ToUpper()=="TRUE")
-            {
-                button2.Text = "Recall";
-            }
-            else
-            {
-                button2.Text = "Close";
-            }
             #endregion
             #region Batch Import, Special record button
             button4.Enabled = this.EditMode;
@@ -295,7 +246,7 @@ namespace Sci.Production.Subcon
             {
                 if (!this.EditMode)
                 {
-                    var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex); 
+                    var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (null == dr) return;
                     var frm = new Sci.Production.Subcon.P01_FarmOutList(dr);
                     frm.ShowDialog(this);
@@ -334,10 +285,10 @@ namespace Sci.Production.Subcon
 
             };
             #endregion
-
+            MyUtility.Tool.SetGridFrozen(this.detailgrid);
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("orderid", header: "SP#", width: Widths.AnsiChars(13),iseditingreadonly:true, settings: ts4)  //0
+            .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: ts4)  //0
             .Text("Style", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)   //1
             .Numeric("PoQty", header: "PO Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //2
             .Date("sewinline", header: "SewInLine", width: Widths.AnsiChars(10), iseditingreadonly: true)   //3
@@ -347,9 +298,9 @@ namespace Sci.Production.Subcon
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(5))    //7
             .Text("patterncode", header: "CutpartID", width: Widths.AnsiChars(10), iseditingreadonly: true) //8
             .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(15))   //9
-            
-            .Numeric("qtygarment", header: "Qty/GMT", width: Widths.AnsiChars(5),  integer_places: 2)  //10
-            
+
+            .Numeric("qtygarment", header: "Qty/GMT", width: Widths.AnsiChars(5), integer_places: 2)  //10
+
             .Text("farmout", header: "Farm Out", width: Widths.AnsiChars(5), settings: ts, iseditingreadonly: true) //11
             .Text("farmin", header: "Farm In", width: Widths.AnsiChars(5), settings: ts2, iseditingreadonly: true)  //12
             .Text("apqty", header: "A/P Qty", width: Widths.AnsiChars(5), settings: ts3, iseditingreadonly: true)   //13
@@ -362,51 +313,13 @@ namespace Sci.Production.Subcon
             #endregion
         }
 
-        //Approve
-        private void button1_Click(object sender, EventArgs e)
+        protected override void ClickConfirm()
         {
+            base.ClickConfirm();
             String sqlcmd;
-            if (string.IsNullOrWhiteSpace(CurrentMaintain["apvname"].ToString()))
-            {
-                sqlcmd = string.Format("update artworkpo set apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
-                                "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-            }
-            else
-            {
-                DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unapprove it?", "Question", MessageBoxButtons.YesNo,MessageBoxDefaultButton.Button2);
-                if (dResult.ToString().ToUpper() == "NO") return;
-                sqlcmd = string.Format("update artworkpo set apvname='', apvdate = null , editname = '{0}' , editdate = GETDATE() " +
-                                "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-            }
 
-            DualResult result;
-            if(!(result = DBProxy.Current.Execute(null,sqlcmd)))
-            {
-                ShowErr(sqlcmd,result);
-                return;
-            }
-            RenewData();
-            OnDetailEntered();
-            
-        }
-
-        
-        //Cloee
-        private void button2_Click(object sender, EventArgs e)
-        {
-            String sqlcmd;
-            if (CurrentMaintain["closed"].ToString().ToUpper()=="FALSE")
-            {
-                sqlcmd = string.Format("update artworkpo set closed=1 , editname = '{0}' , editdate = GETDATE() " +
-                                "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-            }
-            else
-            {
-                DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to close it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
-                if (dResult.ToString().ToUpper() == "NO") return;
-                sqlcmd = string.Format("update artworkpo set closed=0  , editname = '{0}' , editdate = GETDATE() " +
-                                "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-            }
+            sqlcmd = string.Format("update artworkpo set Status = 'Approved', apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
+                            "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
             DualResult result;
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
@@ -416,6 +329,78 @@ namespace Sci.Production.Subcon
             }
             RenewData();
             OnDetailEntered();
+            this.EnsureToolbarExt();
+        }
+
+        protected override void ClickUnconfirm()
+        {
+            base.ClickUnconfirm();
+            String sqlcmd;
+
+            DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+            if (dResult.ToString().ToUpper() == "NO") return;
+            sqlcmd = string.Format("update artworkpo set status = 'New', apvname='', apvdate = null , editname = '{0}' , editdate = GETDATE() " +
+                            "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+
+
+            DualResult result;
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+            {
+                ShowErr(sqlcmd, result);
+                return;
+            }
+            RenewData();
+            OnDetailEntered();
+            this.EnsureToolbarExt();
+        }
+
+        protected override void ClickClose()
+        {
+            base.ClickClose();
+            if (!Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["apvname"].ToString() != Env.User.UserID)
+            {
+                MyUtility.Msg.InfoBox("Only Apporver & leader can close!");
+                return;
+            }
+            String sqlcmd;
+            sqlcmd = string.Format("update artworkpo set status = 'Closed', closed=1 , editname = '{0}' , editdate = GETDATE() " +
+                            "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+
+            DualResult result;
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+            {
+                ShowErr(sqlcmd, result);
+                return;
+            }
+            RenewData();
+            OnDetailEntered();
+            this.EnsureToolbarExt();
+        }
+
+        protected override void ClickUnclose()
+        {
+            base.ClickUnclose();
+            if (!(Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["apvname"].ToString() != Env.User.UserID))
+            {
+                MyUtility.Msg.InfoBox("Only Apporver & leader can unclose!");
+                return;
+            }
+
+            String sqlcmd;
+            DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to unclose it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+            if (dResult.ToString().ToUpper() == "NO") return;
+            sqlcmd = string.Format("update artworkpo set status = 'Approved', closed=0  , editname = '{0}' , editdate = GETDATE() " +
+                            "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+
+            DualResult result;
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+            {
+                ShowErr(sqlcmd, result);
+                return;
+            }
+            RenewData();
+            OnDetailEntered();
+            this.EnsureToolbarExt();
         }
 
         //batch import
@@ -435,7 +420,7 @@ namespace Sci.Production.Subcon
                 txtartworktype_fty1.Focus();
                 return;
             }
-            var frm = new Sci.Production.Subcon.P01_Import(dr, (DataTable)detailgridbs.DataSource,"P02");
+            var frm = new Sci.Production.Subcon.P01_Import(dr, (DataTable)detailgridbs.DataSource, "P02");
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -450,8 +435,8 @@ namespace Sci.Production.Subcon
                 txtartworktype_fty1.Focus();
                 return;
             }
-           
-            var frm = new Sci.Production.Subcon.P01_SpecialRecord(dr,(DataTable)detailgridbs.DataSource,"P02");
+
+            var frm = new Sci.Production.Subcon.P01_SpecialRecord(dr, (DataTable)detailgridbs.DataSource, "P02");
             frm.ShowDialog(this);
             this.RenewData();
             detailgridbs.EndEdit();
@@ -475,8 +460,6 @@ namespace Sci.Production.Subcon
                 ((DataTable)detailgridbs.DataSource).Rows.Clear();
             }
         }
-
-        
 
     }
 }

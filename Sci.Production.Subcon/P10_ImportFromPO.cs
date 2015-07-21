@@ -17,8 +17,7 @@ namespace Sci.Production.Subcon
         DataRow dr_artworkAp;
         DataTable dt_artworkApDetail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        bool flag;
-        string poType;
+
         protected DataTable dtArtwork;
 
         public P10_ImportFromPO(DataRow master, DataTable detail)
@@ -115,22 +114,25 @@ namespace Sci.Production.Subcon
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
-                DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
-                if ((decimal)e.FormattedValue > (decimal)ddr["balance"])
+                if (this.EditMode && e.FormattedValue != null)
                 {
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox("Qty can't be more than balance");
-                    return;
-                }
+                    DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                    if ((decimal)e.FormattedValue > (decimal)ddr["balance"])
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Qty can't be more than balance");
+                        return;
+                    }
 
-                if ((decimal)e.FormattedValue > ((decimal)ddr["poqty"] - (decimal)ddr["accumulatedqty"]))
-                {
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox("Total Qty can't be more than PO Qty");
-                    return;
+                    if ((decimal)e.FormattedValue > ((decimal)ddr["poqty"] - (decimal)ddr["accumulatedqty"]))
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Total Qty can't be more than PO Qty");
+                        return;
+                    }
+                    ddr["amount"] = (decimal)e.FormattedValue * (decimal)ddr["price"];
+                    ddr["apqty"] = e.FormattedValue;
                 }
-                ddr["amount"] = (decimal)e.FormattedValue * (decimal)ddr["price"];
-                ddr["apqty"] = e.FormattedValue;
 
             };
 

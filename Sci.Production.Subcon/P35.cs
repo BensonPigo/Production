@@ -71,7 +71,7 @@ namespace Sci.Production.Subcon
             CurrentMaintain["HANDLE"] = Sci.Env.User.UserID;
             CurrentMaintain["VatRate"] = 0;
             CurrentMaintain["Status"] = "New";
-            ((DataTable)(detailgridbs.DataSource)).Rows[0].Delete();
+            //((DataTable)(detailgridbs.DataSource)).Rows[0].Delete();
         }
 
         // delete前檢查

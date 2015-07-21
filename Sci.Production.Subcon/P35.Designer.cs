@@ -115,7 +115,7 @@
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(1058, 258);
+            this.masterpanel.Size = new System.Drawing.Size(892, 258);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -157,7 +157,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 258);
-            this.detailpanel.Size = new System.Drawing.Size(1058, 219);
+            this.detailpanel.Size = new System.Drawing.Size(892, 91);
             // 
             // gridicon
             // 
@@ -165,26 +165,9 @@
             this.gridicon.Location = new System.Drawing.Point(928, 210);
             this.gridicon.TabIndex = 21;
             // 
-            // refresh
-            // 
-            this.refresh.Location = new System.Drawing.Point(978, 0);
-            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1058, 219);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1058, 515);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1058, 477);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 91);
             // 
             // browse
             // 
@@ -571,7 +554,9 @@
             this.DefaultControlForEdit = "txtpayterm_fty1";
             this.DefaultDetailOrder = "Localpoid+orderid+refno+threadcolorid";
             this.DefaultOrder = "issuedate,id";
+            this.Grid2New = 0;
             this.GridAlias = "LocalAP_detail";
+            this.GridNew = 0;
             this.GridUniqueKey = "localpo_detailukey";
             this.IsSupportConfirm = true;
             this.IsSupportUnconfirm = true;

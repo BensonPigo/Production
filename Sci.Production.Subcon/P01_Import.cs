@@ -79,7 +79,7 @@ namespace Sci.Production.Subcon
 
                 string strSQLCmd = @"select 0 as Selected, '' as id, q.id as orderid ,sum(q.qty) poqty
                                             , artwk.ArtworkTypeID,artwk.ArtworkID,artwk.PatternCode,o.SewInLIne,o.SciDelivery
-                                             ,oa.Stitch as coststitch,oa.Stitch,oa.PatternDesc,1 as qtygarment,oa.Cost
+                                             ,oa.qty as coststitch,oa.qty Stitch,oa.PatternDesc,1 as qtygarment,oa.Cost
                                             , oa.Cost unitprice, oa.Cost as  price, sum(q.qty)*cost as amount
                                     from orders o,order_qty q, order_artwork oa,
                                             (select c.ID,c.ArtworkTypeID,d.ArtworkID,d.PatternCode
@@ -108,7 +108,7 @@ namespace Sci.Production.Subcon
                 if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("  and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
                 if (!(dateRange2.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
 
-                strSQLCmd += " group by q.id,artwk.ArtworkTypeID,artwk.ArtworkID,artwk.PatternCode,o.SewInLIne,o.SciDelivery,oa.Stitch,oa.Cost,oa.PatternDesc";
+                strSQLCmd += " group by q.id,artwk.ArtworkTypeID,artwk.ArtworkID,artwk.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.Cost,oa.PatternDesc";
 
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))

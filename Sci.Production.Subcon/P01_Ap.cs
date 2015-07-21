@@ -24,8 +24,10 @@ namespace Sci.Production.Subcon
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            string selectCommand1 = string.Format("SELECT B.ID,A.issuedate,B.ApQty,B.PRICE,A.Handle,A.apvdate FROM ArtworkAP A, ArtworkAP_Detail B " +
-	                                "WHERE A.ID = B.ID  AND B.artworkPOID = '{0}' and b.artworkpo_detailukey = {1}", dr["id"].ToString(), dr["ukey"].ToString());
+            string selectCommand1 = string.Format(@"SELECT B.ID,A.issuedate,B.ApQty,B.PRICE,A.Handle,A.apvdate 
+                                                    FROM ArtworkAP A, ArtworkAP_Detail B 
+	                                                WHERE A.ID = B.ID  AND B.artworkPOID = '{0}' and b.artworkpo_detailukey = {1}"
+                                                , dr["id"].ToString(), dr["ukey"].ToString());
             DataTable selectDataTable1;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
             if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);

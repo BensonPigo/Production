@@ -60,7 +60,7 @@ namespace Sci.Production.Subcon
             CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
             CurrentMaintain["VatRate"] = 0;
             CurrentMaintain["Status"] = "New";
-            ((DataTable)(detailgridbs.DataSource)).Rows[0].Delete();
+            //((DataTable)(detailgridbs.DataSource)).Rows[0].Delete();
         }
 
         // delete前檢查
@@ -519,9 +519,9 @@ namespace Sci.Production.Subcon
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO") return;
             var dr = this.CurrentMaintain; if (null == dr) return;
-            String sqlcmd, sqlupd2 = "", sqlupd3 = "", ids = "";
+            String sqlupd2 = "", sqlupd3 = "";
             DualResult result, result2;
-            DataTable datacheck;
+            
 
             #region 開始更新相關table資料
             sqlupd2 = string.Format(@"with MyCTE 

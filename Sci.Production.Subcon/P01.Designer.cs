@@ -45,8 +45,6 @@
             this.label19 = new Sci.Win.UI.Label();
             this.label25 = new Sci.Win.UI.Label();
             this.label17 = new Sci.Win.UI.Label();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
             this.button4 = new Sci.Win.UI.Button();
             this.button5 = new Sci.Win.UI.Button();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
@@ -99,8 +97,6 @@
             this.masterpanel.Controls.Add(this.displayBox1);
             this.masterpanel.Controls.Add(this.button5);
             this.masterpanel.Controls.Add(this.button4);
-            this.masterpanel.Controls.Add(this.button2);
-            this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.label17);
             this.masterpanel.Controls.Add(this.label25);
             this.masterpanel.Controls.Add(this.label19);
@@ -141,8 +137,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label19, 0);
             this.masterpanel.Controls.SetChildIndex(this.label25, 0);
             this.masterpanel.Controls.SetChildIndex(this.label17, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
             this.masterpanel.Controls.SetChildIndex(this.button4, 0);
             this.masterpanel.Controls.SetChildIndex(this.button5, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
@@ -179,14 +173,6 @@
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(1058, 229);
-            // 
-            // detailgridcont2
-            // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
-            // 
-            // detailpanel2
-            // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -361,41 +347,17 @@
             this.label17.BackColor = System.Drawing.Color.Transparent;
             this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.label17.Lines = 0;
-            this.label17.Location = new System.Drawing.Point(928, 182);
+            this.label17.Location = new System.Drawing.Point(928, 116);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(108, 23);
             this.label17.TabIndex = 44;
             this.label17.Text = "Exceed Qty";
             this.label17.TextStyle.Color = System.Drawing.Color.Red;
             // 
-            // button1
-            // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(928, 42);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(88, 30);
-            this.button1.TabIndex = 17;
-            this.button1.Text = "Approve";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // button2
-            // 
-            this.button2.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(928, 77);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(88, 30);
-            this.button2.TabIndex = 18;
-            this.button2.Text = "Close";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // button4
             // 
             this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button4.Location = new System.Drawing.Point(928, 112);
+            this.button4.Location = new System.Drawing.Point(928, 44);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(115, 30);
             this.button4.TabIndex = 19;
@@ -406,7 +368,7 @@
             // button5
             // 
             this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button5.Location = new System.Drawing.Point(928, 147);
+            this.button5.Location = new System.Drawing.Point(928, 79);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(115, 30);
             this.button5.TabIndex = 20;
@@ -618,17 +580,24 @@
             // 
             // P01
             // 
+            this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
+            this.CloseChkValue = "Approved";
             this.Controls.Add(this.button3);
             this.DefaultFilter = "potype=\'O\'";
             this.DefaultOrder = "issuedate,id";
             this.GridAlias = "ArtworkPO_detail";
             this.GridUniqueKey = "id,artworkid,patterncode";
+            this.IsSupportClose = true;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportUnclose = true;
+            this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P01";
             this.Text = "P01. Sub-con Purchase Order";
+            this.UnApvChkValue = "Approved";
+            this.UncloseChkValue = "Closed";
             this.WorkAlias = "ArtworkPO";
             this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.button3, 0);
@@ -679,8 +648,6 @@
         private Win.UI.DisplayBox displayBox1;
         private Win.UI.Button button5;
         private Win.UI.Button button4;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
         private Win.UI.Label label17;
         private Win.UI.Label label25;
         private Class.txtuser txtuser2;

@@ -17,8 +17,7 @@ namespace Sci.Production.Subcon
         DataRow dr_localAp;
         DataTable dt_localApDetail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        bool flag;
-        string poType;
+
         protected DataTable dtlocal;
 
         public P35_Import(DataRow master, DataTable detail)
@@ -128,17 +127,18 @@ namespace Sci.Production.Subcon
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
-                if (null == e.FormattedValue) return;
-                DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
-                if ((decimal)e.FormattedValue > (decimal)ddr["unpaid"])
+                if (this.EditMode && e.FormattedValue != null)
                 {
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox("Qty can't be more than unpaid");
-                    return;
+                    DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                    if ((decimal)e.FormattedValue > (decimal)ddr["unpaid"])
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Qty can't be more than unpaid");
+                        return;
+                    }
+
+                    ddr["qty"] = e.FormattedValue;
                 }
-
-                ddr["qty"] = e.FormattedValue;
-
             };
 
 

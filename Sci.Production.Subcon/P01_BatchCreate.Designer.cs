@@ -52,7 +52,6 @@
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.button2 = new Sci.Win.UI.Button();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.button5 = new Sci.Win.UI.Button();
             this.button4 = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
@@ -69,6 +68,7 @@
             this.grid1.AllowUserToResizeRows = false;
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
@@ -310,7 +310,6 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.button5);
             this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.button4);
             this.groupBox2.Controls.Add(this.label6);
@@ -326,16 +325,6 @@
             this.groupBox2.Size = new System.Drawing.Size(1181, 53);
             this.groupBox2.TabIndex = 22;
             this.groupBox2.TabStop = false;
-            // 
-            // button5
-            // 
-            this.button5.Location = new System.Drawing.Point(148, 15);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(80, 30);
-            this.button5.TabIndex = 16;
-            this.button5.Text = "csv + xlt";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click_1);
             // 
             // button4
             // 
@@ -396,6 +385,5 @@
         private Win.UI.DateBox dateBox1;
         private Class.txtartworktype_fty txtartworktype_fty1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Button button5;
     }
 }

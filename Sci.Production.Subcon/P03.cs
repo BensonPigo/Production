@@ -22,7 +22,7 @@ namespace Sci.Production.Subcon
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = string.Format("FactoryID = '{0}'" , Sci.Env.User.Factory);
+            this.DefaultFilter = string.Format("FactoryID = '{0}'", Sci.Env.User.Factory);
         }
 
         // detail 新增時設定預設值
@@ -30,7 +30,7 @@ namespace Sci.Production.Subcon
         {
             base.OnDetailGridInsert(index);
             CurrentDetailData["bundleno"] = "";
-            CurrentDetailData["qty"] =0;
+            CurrentDetailData["qty"] = 0;
         }
 
         private void txtartworktype_fty1_Validated(object sender, EventArgs e)
@@ -52,7 +52,7 @@ namespace Sci.Production.Subcon
             CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
             CurrentMaintain["HANDLE"] = Sci.Env.User.UserID;
             CurrentMaintain["Status"] = "New";
-            
+
         }
 
         // delete前檢查
@@ -60,9 +60,9 @@ namespace Sci.Production.Subcon
         protected override bool ClickDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["Status"].ToString().ToUpper() == "Confirmed")
+            if (dr["Status"].ToString().ToUpper() != "NEW")
             {
-                MyUtility.Msg.WarningBox("Data is encoded, can't be deleted.", "Warning");
+                MyUtility.Msg.WarningBox("Data is Confirmed, can't be deleted.", "Warning");
                 return false;
             }
 
@@ -74,7 +74,7 @@ namespace Sci.Production.Subcon
         {
             //!EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["Status"].ToString().ToUpper() == "Confirmed")
+            if (dr["Status"].ToString() != "New")
             {
                 var frm = new Sci.Production.PublicForm.EditRemark("farmout", "remark", dr);
                 frm.ShowDialog(this);
@@ -113,7 +113,7 @@ namespace Sci.Production.Subcon
             }
             #endregion
 
-            foreach( DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty = 0" ))
+            foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty = 0"))
             {
                 ((DataTable)detailgridbs.DataSource).Rows.Remove(row);
             }
@@ -140,10 +140,10 @@ namespace Sci.Production.Subcon
             }
 
             #region 加總明細Qty至表頭
-            
+
             object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(qty)", "");
             CurrentMaintain["totalqty"] = (decimal)detail_a;
-           
+
             #endregion
 
             return base.ClickSaveBefore();
@@ -157,7 +157,7 @@ namespace Sci.Production.Subcon
                 (e.Details).Columns.Add("StyleId", typeof(String));
                 (e.Details).Columns.Add("Variance", typeof(decimal));
                 (e.Details).Columns.Add("BalQty", typeof(decimal));
-                
+
                 foreach (DataRow dr in e.Details.Rows)
                 {
                     dr["Variance"] = (decimal)dr["artworkpoqty"] - (decimal)dr["onhand"];
@@ -167,7 +167,7 @@ namespace Sci.Production.Subcon
                     if (order_dt.Rows.Count == 0)
                         continue;
                     dr["StyleId"] = order_dt.Rows[0]["styleid"].ToString();
-                    
+
                 }
             }
             return base.OnRenewDataDetailPost(e);
@@ -177,29 +177,17 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            button1.Enabled = !this.EditMode &&
-                                (Prgs.GetAuthority(Env.User.UserID) ||
-                                CurrentMaintain["handle"].ToString() == Env.User.UserID);
-
-            if (CurrentMaintain["status"].ToString().ToUpper() == "NEW")
-            {
-                button1.Text = "Encode";
-                button1.ForeColor = Color.Black;
-            }
-            else
-            {
-                button1.Text = "Amend";
-                button1.ForeColor = Color.Blue;
-            }
-                              
+            
             txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
-
+            #region Status Label
+            label25.Text = CurrentMaintain["Status"].ToString();
+            #endregion
             #region Batch Import
             button2.Enabled = this.EditMode;
             #endregion
-            
+
         }
-       
+
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
@@ -235,15 +223,15 @@ namespace Sci.Production.Subcon
                         this.txtartworktype_fty1.Focus();
                         return;
                     }
-                    
+
                     if (MyUtility.Check.Empty(dr["OrderID"]))
                     {
                         MyUtility.Msg.WarningBox("Please fill SP# first");
                         return;
                     }
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right && e.RowIndex != -1 )
+                    if (e.Button == System.Windows.Forms.MouseButtons.Right && e.RowIndex != -1)
                     {
-                        
+
                         string sqlcmd = string.Format(@"SELECT B.id
                                                         ,b.artworktypeid
                                                         ,b.artworkid
@@ -257,7 +245,7 @@ namespace Sci.Production.Subcon
                                                         AND A.ApvName IS NOT NULL
                                                         AND A.Closed = 0
                                                         AND B.OrderID ='{0}'
-                                                        AND B.ArtworkTypeID = '{1}' order by B.ID",dr["OrderID"].ToString(), CurrentMaintain["artworktypeid"].ToString());
+                                                        AND B.ArtworkTypeID = '{1}' order by B.ID", dr["OrderID"].ToString(), CurrentMaintain["artworktypeid"].ToString());
                         Sci.Win.Tools.SelectItem item
                             = new Sci.Win.Tools.SelectItem(sqlcmd, "13,13,13,13,15,5,5,0", dr["artworkpoID"].ToString(), "POID,Artwork Type,Artwork,Cutpart,Cutpart Name,PoQty,FarmOut,Ukey");
                         item.Width = 1024;
@@ -281,11 +269,11 @@ namespace Sci.Production.Subcon
                 }
             };
             #endregion
-            
+            MyUtility.Tool.SetGridFrozen(this.detailgrid);
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("BundleNo", header: "Bundle No", width: Widths.AnsiChars(10), iseditingreadonly: true)  //0
-            .CellOrderId("OrderID", header: "SP#", width: Widths.AnsiChars(13),settings:ts)
+            .CellOrderId("OrderID", header: "SP#", width: Widths.AnsiChars(13), settings: ts)
             .Text("StyleID", header: "Style", width: Widths.AnsiChars(6), iseditingreadonly: false)    //2
             .Text("ArtworkPoID", header: "POID", settings: ts4, iseditingreadonly: true, width: Widths.AnsiChars(13))   //3
             .Text("ArtworkId", header: "Artwork", iseditingreadonly: false)   //4
@@ -294,28 +282,33 @@ namespace Sci.Production.Subcon
             .Numeric("ArtworkPoQty", header: "P/O Qty", width: Widths.AnsiChars(5), iseditingreadonly: false)    //7
             .Numeric("OnHand", header: "Accum. Qty", width: Widths.AnsiChars(5), iseditingreadonly: false) //8
             .Numeric("Variance", header: "Variance", width: Widths.AnsiChars(5), iseditingreadonly: false)   //9
-            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5) )     //10
+            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5))     //10
             .Numeric("BalQty", header: "Bal. Qty", width: Widths.AnsiChars(5), iseditingreadonly: true);  //11
-            
+
             #endregion
             #region 可編輯欄位變色
-            detailgrid.Columns[1].DefaultCellStyle.BackColor = Color.Pink; 
-            detailgrid.Columns[3].DefaultCellStyle.BackColor = Color.Pink;  
-            detailgrid.Columns[10].DefaultCellStyle.BackColor = Color.Pink; 
+            detailgrid.Columns[1].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns[3].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
         }
 
-        // Encode
-        private void button1_Click(object sender, EventArgs e)
+        protected override void ClickConfirm()
         {
+            base.ClickConfirm();
+            if (!(Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["handle"].ToString() != Env.User.UserID))
+            {
+                MyUtility.Msg.WarningBox("Only Handle or Leader have authority to Confirm!");
+                return;
+            }
             String sqlcmd, sqlcmd2 = "", sqlcmd3 = "";
-            DualResult result,result2;
+            DualResult result, result2;
             DataTable datacheck;
             sqlcmd = string.Format(@"select a.id from artworkpo a, farmout_detail b 
-                            where a.id = b.artworkpoid and a.closed = 1 and b.id = '{0}'",CurrentMaintain["id"]);
+                            where a.id = b.artworkpoid and a.Status = 'Closed' and b.id = '{0}'", CurrentMaintain["id"]);
 
 
-            string ids = "", bundlenos="";
+            string ids = "", bundlenos = "";
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck))) { ShowErr(sqlcmd, result); }
             if (datacheck.Rows.Count > 0)
             {
@@ -323,7 +316,7 @@ namespace Sci.Production.Subcon
                 {
                     ids += dr[0].ToString() + ",";
                 }
-                MyUtility.Msg.WarningBox(String.Format("These POID <{0}> already closed, can't encode/amend", ids));
+                MyUtility.Msg.WarningBox(String.Format("These POID <{0}> already closed, can't Confirmed", ids));
                 return;
             }
 
@@ -344,18 +337,18 @@ namespace Sci.Production.Subcon
                     ids += dr[0].ToString() + ",";
                     bundlenos += dr[1].ToString() + ",";
                 }
-                MyUtility.Msg.WarningBox(String.Format("These Bundle# <{0}> already exist in farm-in data <{1}> , can't encode/amend",bundlenos, ids));
+                MyUtility.Msg.WarningBox(String.Format("These Bundle# <{0}> already exist in farm-in data <{1}> , can't Confirmed", bundlenos, ids));
                 return;
             }
 
-            // Encode提示是否超過po qty ， amend
+            // Confirmed 提示是否超過po qty
             if (CurrentMaintain["status"].ToString().ToUpper() == "NEW")
             {
                 ids = "";
                 foreach (var dr in DetailDatas)
                 {
                     sqlcmd = string.Format("select * from artworkpo_detail where ukey = '{0}'", dr["artworkpo_detailukey"]);
-                    if (!(result = DBProxy.Current.Select(null, sqlcmd,out datacheck)))
+                    if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
                     {
                         ShowErr(sqlcmd, result);
                         return;
@@ -373,45 +366,17 @@ namespace Sci.Production.Subcon
                     MyUtility.Msg.WarningBox(ids);
                 }
             }
-            else
-            {
-                ids = "";
-                foreach (var dr in DetailDatas)
-                {
-                    if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
-                    {
-                        ShowErr(sqlcmd, result);
-                        return;
-                    }
-                    if (datacheck.Rows.Count > 0)
-                    {
-                        if ((decimal)datacheck.Rows[0]["farmout"] - (decimal)dr["qty"] < (decimal)datacheck.Rows[0]["farmin"])
-                        {
-                            ids += string.Format("{0}-{1}-{2}-{3}-{4} can't less farm in qty {5}", datacheck.Rows[0]["id"], datacheck.Rows[0]["orderid"], datacheck.Rows[0]["artworktypeid"], datacheck.Rows[0]["artworkid"], datacheck.Rows[0]["patterncode"], datacheck.Rows[0]["farmin"]) + Environment.NewLine;
-                        }
-                    }
-                }
-                if (!MyUtility.Check.Empty(ids))
-                {
-                    MyUtility.Msg.WarningBox(ids);
-                }
-            }
 
-            
+
+
 
             // update farmout status
-            if (CurrentMaintain["Status"].ToString().ToUpper()=="NEW")
+            if (CurrentMaintain["Status"].ToString().ToUpper() == "NEW")
             {
-                sqlcmd3 = string.Format("update Farmout set encode = 1 , editname = '{0}' , editdate = GETDATE() " +
+                sqlcmd3 = string.Format("update Farmout set Status = 'Confirmed' , editname = '{0}' , editdate = GETDATE() " +
                                 "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             }
-            else
-            {
-                DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to amend it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
-                if (dResult.ToString().ToUpper() == "NO") return;
-                sqlcmd3 = string.Format("update Farmout set encode = 0, editname = '{0}' , editdate = GETDATE() " +
-                                "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-            }
+
 
             // update artworkpo_detail farmout
             DataTable detailgroup;
@@ -419,7 +384,7 @@ namespace Sci.Production.Subcon
                                     from farmout_detail b
                                     where b.id ='{0}'
                                     group by b.artworkpo_detailukey ", CurrentMaintain["id"]);
-            
+
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out detailgroup)))
             {
                 ShowErr(sqlcmd, result);
@@ -433,7 +398,7 @@ namespace Sci.Production.Subcon
 
                     sqlcmd = string.Format(@"select b.artworkpo_detailukey, sum(b.qty) qty
                                     from farmout a, farmout_detail b
-                                    where a.id = b.id  and a.encode =1 and b.artworkpo_detailukey ='{0}'
+                                    where a.id = b.id  and a.Status ='Confirmed' and b.artworkpo_detailukey ='{0}'
                                     group by b.artworkpo_detailukey ", dr["artworkpo_detailukey"]);
 
                     if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -443,29 +408,15 @@ namespace Sci.Production.Subcon
                     }
                     if (datacheck.Rows.Count > 0)
                     {
-                        if (CurrentMaintain["Encode"].ToString().ToUpper() == "FALSE")
-                        {
-                            sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
+                         sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
                                 + Environment.NewLine, (decimal)datacheck.Rows[0]["qty"] + (decimal)dr["qty"], dr["artworkpo_detailukey"]);
-                        }
-                        else
-                        {
-                            sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
-                                + Environment.NewLine, (decimal)datacheck.Rows[0]["qty"] - (decimal)dr["qty"], dr["artworkpo_detailukey"]);
-                        }
+                        
                     }
                     else
                     {
-                        if (CurrentMaintain["Status"].ToString().ToUpper() == "NEW")  // encode
-                        {
-                            sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
+                         sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
                                 + Environment.NewLine, (decimal)dr["qty"], dr["artworkpo_detailukey"]);
-                        }
-                        else//amend
-                        {
-                            sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
-                                + Environment.NewLine, 0m, dr["artworkpo_detailukey"]);
-                        }
+                        
                     }
                 }
             }
@@ -488,7 +439,7 @@ namespace Sci.Production.Subcon
                     }
 
                     _transactionscope.Complete();
-                    MyUtility.Msg.WarningBox("Encode successful");
+                    MyUtility.Msg.InfoBox("Confirm successful");
                 }
                 catch (Exception ex)
                 {
@@ -500,6 +451,167 @@ namespace Sci.Production.Subcon
             _transactionscope = null;
             RenewData();
             OnDetailEntered();
+            this.EnsureToolbarExt();
         }
+
+        protected override void ClickUnconfirm()
+        {
+            base.ClickUnconfirm();
+            if (!(Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["handle"].ToString() != Env.User.UserID))
+            {
+                MyUtility.Msg.WarningBox("Only Handle & Leader have authority to UnConfirm!");
+                return;
+            }
+
+            String sqlcmd, sqlcmd2 = "", sqlcmd3 = "";
+            DualResult result, result2;
+            DataTable datacheck;
+            sqlcmd = string.Format(@"select a.id from artworkpo a, farmout_detail b 
+                            where a.id = b.artworkpoid and a.Status = 'Closed' and b.id = '{0}'", CurrentMaintain["id"]);
+
+            string ids = "", bundlenos = "";
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck))) { ShowErr(sqlcmd, result); }
+            if (datacheck.Rows.Count > 0)
+            {
+                foreach (DataRow dr in datacheck.Rows)
+                {
+                    ids += dr[0].ToString() + ",";
+                }
+                MyUtility.Msg.WarningBox(String.Format("These POID <{0}> already closed, can't UnConfirmed", ids));
+                return;
+            }
+
+            sqlcmd = string.Format(@"select b.id,b.bundleno 
+                                    from farmin a,farmin_detail b, farmout_detail c 
+                                    where a.id = b.id 
+                                    and b.bundleno = c.bundleno 
+                                    and c.id = '{0}'
+                                    and a.artworktypeid = '{1}'", CurrentMaintain["id"], CurrentMaintain["artworktypeid"]);
+
+
+            ids = "";
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck))) { ShowErr(sqlcmd, result); }
+            if (datacheck.Rows.Count > 0)
+            {
+                foreach (DataRow dr in datacheck.Rows)
+                {
+                    ids += dr[0].ToString() + ",";
+                    bundlenos += dr[1].ToString() + ",";
+                }
+                MyUtility.Msg.WarningBox(String.Format("These Bundle# <{0}> already exist in farm-in data <{1}> , can't UnConfirmed", bundlenos, ids));
+                return;
+            }
+
+
+            ids = "";
+            foreach (var dr in DetailDatas)
+            {
+                if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+                {
+                    ShowErr(sqlcmd, result);
+                    return;
+                }
+                if (datacheck.Rows.Count > 0)
+                {
+                    if ((decimal)datacheck.Rows[0]["farmout"] - (decimal)dr["qty"] < (decimal)datacheck.Rows[0]["farmin"])
+                    {
+                        ids += string.Format("{0}-{1}-{2}-{3}-{4} can't less farm in qty {5}", datacheck.Rows[0]["id"], datacheck.Rows[0]["orderid"], datacheck.Rows[0]["artworktypeid"], datacheck.Rows[0]["artworkid"], datacheck.Rows[0]["patterncode"], datacheck.Rows[0]["farmin"]) + Environment.NewLine;
+                    }
+                }
+            }
+            if (!MyUtility.Check.Empty(ids))
+            {
+                MyUtility.Msg.WarningBox(ids);
+            }
+
+            // update farmout status
+            DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to unconfirm it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+            if (dResult.ToString().ToUpper() == "NO") return;
+            sqlcmd3 = string.Format("update Farmout set Status = 'New', editname = '{0}' , editdate = GETDATE() " +
+                            "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+
+            // update artworkpo_detail farmout
+            DataTable detailgroup;
+            sqlcmd = string.Format(@"select b.artworkpo_detailukey, sum(b.qty) qty
+                                    from farmout_detail b
+                                    where b.id ='{0}'
+                                    group by b.artworkpo_detailukey ", CurrentMaintain["id"]);
+
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out detailgroup)))
+            {
+                ShowErr(sqlcmd, result);
+                return;
+            }
+
+            if (detailgroup.Rows.Count > 0)
+            {
+                foreach (DataRow dr in detailgroup.Rows)
+                {
+
+                    sqlcmd = string.Format(@"select b.artworkpo_detailukey, sum(b.qty) qty
+                                    from farmout a, farmout_detail b
+                                    where a.id = b.id  and a.Status ='Confirmed' and b.artworkpo_detailukey ='{0}'
+                                    group by b.artworkpo_detailukey ", dr["artworkpo_detailukey"]);
+
+                    if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+                    {
+                        ShowErr(sqlcmd, result);
+                        return;
+                    }
+                    if (datacheck.Rows.Count > 0)
+                    {
+
+                        sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
+                            + Environment.NewLine, (decimal)datacheck.Rows[0]["qty"] - (decimal)dr["qty"], dr["artworkpo_detailukey"]);
+
+                    }
+                    else
+                    {
+
+                        sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
+                            + Environment.NewLine, 0m, dr["artworkpo_detailukey"]);
+
+                    }
+                }
+            }
+
+            TransactionScope _transactionscope = new TransactionScope();
+            using (_transactionscope)
+            {
+                try
+                {
+                    if (!(result = DBProxy.Current.Execute(null, sqlcmd3)))
+                    {
+                        ShowErr(sqlcmd3, result);
+                        return;
+                    }
+
+                    if (!(result2 = DBProxy.Current.Execute(null, sqlcmd2)))
+                    {
+                        ShowErr(sqlcmd2, result2);
+                        return;
+                    }
+
+                    _transactionscope.Complete();
+                    MyUtility.Msg.InfoBox("UnConfirm successful");
+                }
+                catch (Exception ex)
+                {
+                    ShowErr("Commit transaction error.", ex);
+                    return;
+                }
+            }
+            _transactionscope.Dispose();
+            _transactionscope = null;
+            RenewData();
+            OnDetailEntered();
+            this.EnsureToolbarExt();
+        }
+
+        private void label25_Click(object sender, EventArgs e)
+        {
+
+        }
+
     }
 }

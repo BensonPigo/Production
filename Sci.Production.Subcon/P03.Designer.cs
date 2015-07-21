@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new Sci.Win.UI.Button();
             this.button2 = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
@@ -44,6 +43,7 @@
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.numericBox3 = new Sci.Win.UI.NumericBox();
+            this.label25 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -59,6 +59,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.label25);
             this.masterpanel.Controls.Add(this.numericBox3);
             this.masterpanel.Controls.Add(this.textBox2);
             this.masterpanel.Controls.Add(this.txtuser1);
@@ -73,12 +74,10 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.button2);
-            this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Size = new System.Drawing.Size(1000, 139);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
             this.masterpanel.Controls.SetChildIndex(this.button2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -93,6 +92,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtuser1, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericBox3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label25, 0);
             // 
             // detailpanel
             // 
@@ -134,18 +134,6 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(1008, 696);
-            // 
-            // button1
-            // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(892, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(100, 30);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Encode";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
@@ -297,8 +285,22 @@
             this.numericBox3.Size = new System.Drawing.Size(100, 23);
             this.numericBox3.TabIndex = 10;
             // 
+            // label25
+            // 
+            this.label25.BackColor = System.Drawing.Color.Transparent;
+            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
+            this.label25.Lines = 0;
+            this.label25.Location = new System.Drawing.Point(892, 14);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(103, 23);
+            this.label25.TabIndex = 44;
+            this.label25.Text = "Confirmed";
+            this.label25.TextStyle.Color = System.Drawing.Color.Red;
+            this.label25.Click += new System.EventHandler(this.label25_Click);
+            // 
             // P03
             // 
+            this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1008, 729);
             this.DefaultControl = "datebox1";
             this.DefaultOrder = "IssueDate,ID";
@@ -310,6 +312,7 @@
             this.KeyField1 = "id";
             this.Name = "P03";
             this.Text = "P03. Bundles Farm Out";
+            this.UnApvChkValue = "Confirmed";
             this.WorkAlias = "FarmOut";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
@@ -334,7 +337,6 @@
 
         private Win.UI.Label label1;
         private Win.UI.Button button2;
-        private Win.UI.Button button1;
         private Win.UI.TextBox textBox2;
         private Class.txtuser txtuser1;
         private Win.UI.DisplayBox displayBox1;
@@ -348,5 +350,6 @@
         private Win.UI.Label label2;
         private Win.UI.DateBox dateBox1;
         private Win.UI.NumericBox numericBox3;
+        private Win.UI.Label label25;
     }
 }

@@ -18,10 +18,9 @@ namespace Sci.Production.Subcon
 {
     public partial class P01_BatchCreate : Sci.Win.Subs.Base
     {
-        DataRow dr_artworkpo;
-        DataTable dt_artworkpoDetail;
+
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        bool flag;
+
         string poType, isArtwork;
         protected DataTable dtArtwork;
 
@@ -109,8 +108,8 @@ namespace Sci.Production.Subcon
                                 v.PatternDesc,                                
                                 rtrim(order_tmscost.LocalSuppID) LocalSuppID, 
                                 v.Cost,                                       
-                                v.stitch costStitch,                          
-                                v.stitch,                                     
+                                v.qty costStitch,                          
+                                v.qty,                                     
                                 isnull((select b.Price from                   
 	                                style_artwork a,Style_Artwork_Quot b        
 	                                where a.StyleUkey = orders.StyleUkey        
@@ -188,7 +187,7 @@ namespace Sci.Production.Subcon
                                 ,V.PatternCode              
                                 ,V.PatternDesc              
                                 ,V.Cost                     
-                                ,V.ArtworkTypeID,orders.factoryid,v.stitch";
+                                ,V.ArtworkTypeID,orders.factoryid,v.qty";
                 }
                 else
                 {
@@ -627,48 +626,13 @@ namespace Sci.Production.Subcon
         //excel
         private void button4_Click(object sender, EventArgs e)
         {
-            string strFilePath;
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
-            SaveFileDialog dlg = new SaveFileDialog();
-
-            //移動上層在指定下層路徑
-            dlg.RestoreDirectory = true;
-            dlg.InitialDirectory = dir.FullName + @"\tmp";
-            dlg.Title = "Save as Excel File";
-
-            // Set filter for file extension and default file extension
-            dlg.Filter = "Excel Files (*.xls)|*.xls";
-
-            // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
-            // Get the selected file name and display in a TextBox
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
-            {
-                // Open document
-                strFilePath = dlg.FileName;
-            }
-            else
-            {
-                return;
-            }
-
-            //ClipBoardToExcel(dt, strFilePath, "P01_BatchCreate", "MMDR030.xlt", 12);
-            //ClipBoardToExcel(dt, strFilePath);
-
-        }
-
-
-
-        private void button5_Click_1(object sender, EventArgs e)
-        {
             string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
             SaveFileDialog dlg = new SaveFileDialog();
             dlg.RestoreDirectory = true;
             dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
             dlg.Title = "Save as Excel File";
-            dlg.FileName = "P01_BatchCreate_ToExcel_" + DateTime.Now.ToString("yyyyMMdd")+@".xls";
+            dlg.FileName = "P01_BatchCreate_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
 
             dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
 
@@ -680,49 +644,13 @@ namespace Sci.Production.Subcon
                 DataTable dt = (DataTable)listControlBindingSource1.DataSource;
                 DualResult result = MyUtility.Excel.CopyToXls(dt, dlg.FileName);
                 if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName); }   //XlsAutoFit(dlg.FileName, "MMDR030.xlt", 12);
-                else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(),"Warning"); }
+                else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(), "Warning"); }
             }
             else
             {
                 return;
             }
+
         }
-
-        
-
-        
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-            string strFilePath;
-            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
-            SaveFileDialog dlg = new SaveFileDialog();
-
-            //移動上層在指定下層路徑
-            dlg.RestoreDirectory = true;
-            dlg.InitialDirectory = MyDocumentsPath;// dir.FullName + @"\tmp";
-            dlg.Title = "Save as Excel File";
-
-            // Set filter for file extension and default file extension
-            dlg.Filter = "Excel Files (*.xls)|*.xls";
-
-            // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
-            // Get the selected file name and display in a TextBox
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
-            {
-                // Open document
-                strFilePath = dlg.FileName;
-            }
-            else
-            {
-                return;
-            }
-            grid1.ExportToCsv(strFilePath);
-            MyUtility.Excel.XlsAutoFit(strFilePath, "MMDR030.xlt", 12);
-        }
-
-        
-
     }
 }

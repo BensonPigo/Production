@@ -103,7 +103,7 @@
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(1058, 215);
+            this.masterpanel.Size = new System.Drawing.Size(892, 215);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -139,7 +139,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 215);
-            this.detailpanel.Size = new System.Drawing.Size(1058, 262);
+            this.detailpanel.Size = new System.Drawing.Size(892, 134);
             // 
             // gridicon
             // 
@@ -147,26 +147,9 @@
             this.gridicon.Location = new System.Drawing.Point(928, 170);
             this.gridicon.TabIndex = 21;
             // 
-            // refresh
-            // 
-            this.refresh.Location = new System.Drawing.Point(978, 0);
-            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1058, 262);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1058, 515);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1058, 477);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 134);
             // 
             // browse
             // 
@@ -497,7 +480,9 @@
             this.DefaultControlForEdit = "txtsubcon1";
             this.DefaultDetailOrder = "orderid,refno,threadcolorid";
             this.DefaultOrder = "issuedate,id";
+            this.Grid2New = 0;
             this.GridAlias = "localPO_detail";
+            this.GridNew = 0;
             this.GridUniqueKey = "orderid,refno,threadcolorid";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
