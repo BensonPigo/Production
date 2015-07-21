@@ -60,7 +60,7 @@ namespace Sci.Production.Basic
                         returnResult = DBProxy.Current.Delete(null, tableSchema, currentRecord);
                         if (returnResult != Result.True)
                         {
-                            MessageBox.Show(returnResult.ToString());
+                            MyUtility.Msg.WarningBox(returnResult.ToString());
                             return false;
                         }
                     }
@@ -72,7 +72,7 @@ namespace Sci.Production.Basic
                             returnResult = DBProxy.Current.Insert(null, tableSchema, currentRecord);
                             if (returnResult != Result.True)
                             {
-                                MessageBox.Show(returnResult.ToString());
+                                MyUtility.Msg.WarningBox(returnResult.ToString());
                                 return false;
                             }
                         }
@@ -82,7 +82,7 @@ namespace Sci.Production.Basic
                             returnResult = DBProxy.Current.UpdateByChanged(null, tableSchema, currentRecord, out different);
                             if (returnResult != Result.True)
                             {
-                                MessageBox.Show(returnResult.ToString());
+                                MyUtility.Msg.WarningBox(returnResult.ToString());
                                 return false;
                             }
                         }

@@ -34,21 +34,21 @@ namespace Sci.Production.Basic
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Year"].ToString()))
             {
-                MessageBox.Show("< Year > can not be empty!");
+                MyUtility.Msg.WarningBox("< Year > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Month"].ToString()))
             {
-                MessageBox.Show("< Monthly > can not be empty!");
+                MyUtility.Msg.WarningBox("< Monthly > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }
 
             if ((String.IsNullOrWhiteSpace(CurrentMaintain["ActiveManpower"].ToString())) || (double.Parse(CurrentMaintain["ActiveManpower"].ToString()) == 0))
             {
-                MessageBox.Show("< Active Manpower > can not be empty!");
+                MyUtility.Msg.WarningBox("< Active Manpower > can not be empty!");
                 this.numericBox3.Focus();
                 return false;
             }
@@ -63,7 +63,7 @@ namespace Sci.Production.Basic
             {
                 if (!(2015 <= int.Parse(textValue) && int.Parse(textValue) <= 2100))
                 {
-                    MessageBox.Show("< Year > must be between 2015 ~ 2100");
+                    MyUtility.Msg.WarningBox("< Year > must be between 2015 ~ 2100");
                     this.textBox1.Text = "";
                     e.Cancel = true;
                     return;
@@ -79,7 +79,7 @@ namespace Sci.Production.Basic
             {
                 if (!(1 <= int.Parse(textValue) && int.Parse(textValue) <= 12))
                 {
-                    MessageBox.Show("< Monthly > must be between 1 ~ 12");
+                    MyUtility.Msg.WarningBox("< Monthly > must be between 1 ~ 12");
                     this.textBox2.Text = "";
                     e.Cancel = true;
                     return;

@@ -26,14 +26,14 @@ namespace Sci.Production.Basic
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
-                MessageBox.Show("< Code > can not be empty!");
+                MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Name"].ToString()))
             {
-                MessageBox.Show("< Name > can not be empty!");
+                MyUtility.Msg.WarningBox("< Name > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }

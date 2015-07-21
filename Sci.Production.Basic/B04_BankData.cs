@@ -55,7 +55,7 @@ namespace Sci.Production.Basic
                     {
                         if (!MyUtility.Check.Seek(e.FormattedValue.ToString(),"Country","ID"))
                         {
-                            MessageBox.Show(string.Format("< Country: {0} > not found!!!", e.FormattedValue.ToString()));
+                            MyUtility.Msg.WarningBox(string.Format("< Country: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["CountryID"] = "";
                             dr["CountryName"] = "";
                         }
@@ -111,25 +111,25 @@ namespace Sci.Production.Basic
             {
                 if (string.IsNullOrWhiteSpace(gridData["AccountNo"].ToString()))
                 {
-                    MessageBox.Show("The field < Account No. > can not be empty!");
+                    MyUtility.Msg.WarningBox("The field < Account No. > can not be empty!");
                     return false;
                 }
 
                 if (string.IsNullOrWhiteSpace(gridData["AccountName"].ToString()))
                 {
-                    MessageBox.Show("The field < Account Name > can not be empty!");
+                    MyUtility.Msg.WarningBox("The field < Account Name > can not be empty!");
                     return false;
                 }
 
                 if (string.IsNullOrWhiteSpace(gridData["BankName"].ToString()))
                 {
-                    MessageBox.Show("The field < Bank Name > can not be empty!");
+                    MyUtility.Msg.WarningBox("The field < Bank Name > can not be empty!");
                     return false;
                 }
 
                 if (string.IsNullOrWhiteSpace(gridData["CountryID"].ToString()))
                 {
-                    MessageBox.Show("The field < Country > can not be empty!");
+                    MyUtility.Msg.WarningBox("The field < Country > can not be empty!");
                     return false;
                 }
 
@@ -142,7 +142,7 @@ namespace Sci.Production.Basic
 
             if (defaultCount != 1)
             {
-                MessageBox.Show("The field < Default > can only collude and select one!");
+                MyUtility.Msg.WarningBox("The field < Default > can only collude and select one!");
                 return false;
             }
 

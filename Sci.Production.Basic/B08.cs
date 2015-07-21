@@ -35,7 +35,7 @@ namespace Sci.Production.Basic
                 }
                 else
                 {
-                    MessageBox.Show("Insert data fail!! Please click button again. \n" + result.ToString());
+                    MyUtility.Msg.WarningBox("Insert data fail!! Please click button again. \n" + result.ToString());
                     return;
                 }
             }

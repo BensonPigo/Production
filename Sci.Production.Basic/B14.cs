@@ -24,7 +24,6 @@ namespace Sci.Production.Basic
             comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
             comboBox1.ValueMember = "Key";
             comboBox1.DisplayMember = "Value";
-
         }
 
         protected override void OnDetailEntered()
@@ -56,7 +55,7 @@ namespace Sci.Production.Basic
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["InhouseOSP"].ToString()))
             {
-                MessageBox.Show("< InHouse/OSP > can not be empty!");
+                MyUtility.Msg.WarningBox("< InHouse/OSP > can not be empty!");
                 this.comboBox1.Focus();
                 return false;
             }

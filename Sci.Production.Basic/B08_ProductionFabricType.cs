@@ -48,7 +48,7 @@ namespace Sci.Production.Basic
                 string selectCommand = string.Format("select ID from Reason where ReasonTypeID = 'Style_Apparel_Type' and Name = '{0}'", prodTextValue.Text);
                 if (!MyUtility.Check.Seek(selectCommand,null))
                 {
-                    MessageBox.Show(string.Format("< Prod. Type : {0} > not found!!!", prodTextValue.Text));
+                    MyUtility.Msg.WarningBox(string.Format("< Prod. Type : {0} > not found!!!", prodTextValue.Text));
                     prodTextValue.Text = "";
                     e.Cancel = true;
                     return;
@@ -64,7 +64,7 @@ namespace Sci.Production.Basic
                 string selectCommand = string.Format("select ID from Reason where ReasonTypeID = 'Fabric_Kind' and Name = '{0}'", fabricTextValue.Text);
                 if (!MyUtility.Check.Seek(selectCommand,null))
                 {
-                    MessageBox.Show(string.Format("< Fabric Type : {0} > not found!!!", fabricTextValue.Text));
+                    MyUtility.Msg.WarningBox(string.Format("< Fabric Type : {0} > not found!!!", fabricTextValue.Text));
                     fabricTextValue.Text = "";
                     e.Cancel = true;
                     return;

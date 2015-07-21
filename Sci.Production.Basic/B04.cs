@@ -52,28 +52,28 @@ namespace Sci.Production.Basic
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
-                MessageBox.Show("< Code > can not be empty!");
+                MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Abb"].ToString()))
             {
-                MessageBox.Show("< Abbreviation > can not be empty!");
+                MyUtility.Msg.WarningBox("< Abbreviation > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["CountryID"].ToString()))
             {
-                MessageBox.Show("< Nationality > can not be empty!");
+                MyUtility.Msg.WarningBox("< Nationality > can not be empty!");
                 this.txtcountry1.TextBox1.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Name"].ToString()))
             {
-                MessageBox.Show("< Company > can not be empty!");
+                MyUtility.Msg.WarningBox("< Company > can not be empty!");
                 this.textBox3.Focus();
                 return false;
             }
