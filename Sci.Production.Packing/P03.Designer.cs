@@ -304,7 +304,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(65, 23);
             this.label7.TabIndex = 7;
-            this.label7.Text = "Remarks";
+            this.label7.Text = "Remark";
             // 
             // label8
             // 
