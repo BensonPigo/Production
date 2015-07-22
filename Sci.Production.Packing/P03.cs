@@ -530,14 +530,13 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
             DualResult selectResult;
             DataRow[] detailData;
             #region 先將此Packinglist的各Article & SizeCode尚未裝箱件數撈出來
-            sqlCmd = string.Format(@"select pd.Article,pd.SizeCode,(oqd.Qty-isnull(sum(pd.ShipQty), 0) - isnull(sum(iaq.DiffQty), 0)) as Qty
-from PackingList_Detail pd
-left join Order_QtyShip_Detail oqd on oqd.Id = pd.OrderID and oqd.Seq = pd.OrderShipmodeSeq and oqd.Article = pd.Article and oqd.SizeCode = pd.SizeCode
+            sqlCmd = string.Format(@"select oqd.Article,oqd.SizeCode,(oqd.Qty-isnull(sum(pd.ShipQty), 0) - isnull(sum(iaq.DiffQty), 0)) as Qty
+from Order_QtyShip_Detail oqd
+left join PackingList_Detail pd on pd.ID != '{0}' and oqd.Id = pd.OrderID and oqd.Seq = pd.OrderShipmodeSeq and oqd.Article = pd.Article and oqd.SizeCode = pd.SizeCode
 left join InvAdjust ia on ia.OrderID = pd.OrderID and ia.OrderShipmodeSeq = pd.OrderShipmodeSeq
 left join InvAdjust_Qty iaq on iaq.ID = ia.ID and iaq.Article = pd.Article and iaq.SizeCode = pd.SizeCode
-where pd.ID != '{0}'
-and pd.OrderID = '{1}'
-group by pd.Article,pd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), CurrentMaintain["OrderID"].ToString());
+where oqd.ID = '{1}'
+group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), CurrentMaintain["OrderID"].ToString());
             if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out needPackData)))
             {
                 MyUtility.Msg.WarningBox("Query pack qty fail!");
