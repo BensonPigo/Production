@@ -255,6 +255,12 @@ Sci.Production.Packing/P04_BatchImport.resx -text
 Sci.Production.Packing/P04_CartonSummary.Designer.cs -text
 Sci.Production.Packing/P04_CartonSummary.cs -text
 Sci.Production.Packing/P04_CartonSummary.resx -text
+Sci.Production.Packing/P05.Designer.cs -text
+Sci.Production.Packing/P05.cs -text
+Sci.Production.Packing/P05.resx -text
+Sci.Production.Packing/P05_BatchImport.Designer.cs -text
+Sci.Production.Packing/P05_BatchImport.cs -text
+Sci.Production.Packing/P05_BatchImport.resx -text
 Sci.Production.Packing/P10.Designer.cs -text
 Sci.Production.Packing/P10.cs -text
 Sci.Production.Packing/P10.resx -text
