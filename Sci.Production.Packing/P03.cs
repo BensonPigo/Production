@@ -232,11 +232,8 @@ order by a.Seq", masterID, OrderID, OrderSeqID);
                         {
                             dr["Article"] = e.FormattedValue.ToString().ToUpper();
                             string sqlCmd = string.Format(@"select ColorID 
-                                                                                      from Order_ColorCombo occ, Orders o 
-                                                                                      where occ.LectraCode = (select min(LectraCode) 
-					                                                                                                           from Order_ColorCombo 
-					                                                                                                           where id = occ.Id and  Article = '{1}' and PatternPanel = 'FA') 
-                                                                                      and o.id = '{0}' and  occ.Id = o.POID and  occ.Article = '{1}' and occ.PatternPanel = 'FA'", CurrentMaintain["OrderID"].ToString(), dr["Article"]);
+                                                                                  from V_OrderFAColor 
+                                                                                  where ID = '{0}' and Article = '{1}'", CurrentMaintain["OrderID"].ToString(), dr["Article"]);
                             DataRow colorData;
                             if (MyUtility.Check.Seek(sqlCmd, out colorData))
                             {
@@ -805,6 +802,10 @@ where ID = @INVNo";
                         detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Red;
                     }
                 }
+
+                //先-再+預防重複出現多次視窗
+                col_refno.EditingMouseDown -= new EventHandler<Ict.Win.UI.DataGridViewEditingControlMouseEventArgs>(CartonRefnoCommon.EditingMouseDown);
+                col_refno.EditingMouseDown += new EventHandler<Ict.Win.UI.DataGridViewEditingControlMouseEventArgs>(CartonRefnoCommon.EditingMouseDown);
             }
             else
             {
@@ -825,6 +826,7 @@ where ID = @INVNo";
                         detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Black;
                     }
                 }
+                col_refno.EditingMouseDown -= new EventHandler<Ict.Win.UI.DataGridViewEditingControlMouseEventArgs>(CartonRefnoCommon.EditingMouseDown);
             }
         }
 
@@ -1021,18 +1023,11 @@ where ID = @INVNo";
                         MyUtility.Msg.WarningBox("No packing data, can't create!!");
                         return;
                     }
-                    sqlCmd = string.Format(@"select o.ID as OrderID, oqd.Seq as OrderShipmodeSeq, oqd.Article, oc.Color, oqd.SizeCode, oqd.Qty as ShipQty, oqc.Qty as QtyPerCTN
+                    sqlCmd = string.Format(@"select o.ID as OrderID, oqd.Seq as OrderShipmodeSeq, oqd.Article, voc.ColorID as Color, oqd.SizeCode, oqd.Qty as ShipQty, oqc.Qty as QtyPerCTN
                                                                 from Order_QtyShip_Detail oqd
                                                                 left Join Orders o on o.ID = oqd.Id
                                                                 left Join Order_QtyCTN oqc on oqc.id = oqd.Id and oqc.Article = oqd.Article and oqc.SizeCode = oqd.SizeCode
-                                                                left join (select distinct id, Article, PatternPanel, (select ColorID 
-                                                                                                                       from Order_ColorCombo 
-                                                                                                                       where LectraCode = (select min(LectraCode) 
-                                                                                                                                           from Order_ColorCombo 
-                                                                                                                                           where id = a.id and  Article = a.Article and PatternPanel = 'FA') 
-                                                                                                                                           and id = a.id and  Article = a.Article and PatternPanel = 'FA') as Color 
-                                                                               from Order_ColorCombo a
-                                                                               where a.PatternPanel = 'FA') oc on oc.id = oqd.Id and oc.Article = oqd.Article and oc.PatternPanel = 'FA'
+                                                                left join V_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
                                                                 left join Order_SizeCode os on os.id = o.POID and os.SizeCode = oqd.SizeCode
                                                                 left join Order_Article oa on oa.id = oqd.Id and oa.Article = oqd.Article
                                                                 where oqd.ID = '{0}' and oqd.Seq = '{1}'
@@ -1040,17 +1035,10 @@ where ID = @INVNo";
                 }
                 else
                 {
-                    sqlCmd = string.Format(@"select o.ID as OrderID, oqd.Seq as OrderShipmodeSeq, oqd.Article, oc.Color, oqd.SizeCode, oqd.Qty as ShipQty, o.CTNQty as QtyPerCTN
+                    sqlCmd = string.Format(@"select o.ID as OrderID, oqd.Seq as OrderShipmodeSeq, oqd.Article, voc.ColorID as Color, oqd.SizeCode, oqd.Qty as ShipQty, o.CTNQty as QtyPerCTN
                                                                 from Order_QtyShip_Detail oqd
                                                                 left Join Orders o on o.ID = oqd.Id
-                                                                left join (select distinct id, Article, PatternPanel, (select ColorID 
-                                                                                                                       from Order_ColorCombo 
-                                                                                                                       where LectraCode = (select min(LectraCode) 
-                                                                                                                       from Order_ColorCombo 
-                                                                                                                       where id = a.id and  Article = a.Article and PatternPanel = 'FA') 
-                                                                                                                       and id = a.id and  Article = a.Article and PatternPanel = 'FA') as Color 
-                                                                           from Order_ColorCombo a
-                                                                           where a.PatternPanel = 'FA') oc on oc.id = oqd.Id and oc.Article = oqd.Article and oc.PatternPanel = 'FA'
+                                                                left join V_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
                                                                 left join Order_SizeCode os on os.id = o.POID and os.SizeCode = oqd.SizeCode
                                                                 left join Order_Article oa on oa.id = oqd.Id and oa.Article = oqd.Article
                                                                 where oqd.ID = '{0}' and oqd.Seq = '{1}'
