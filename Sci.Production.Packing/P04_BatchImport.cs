@@ -65,27 +65,27 @@ as
  and BrandID = @brand";
             if (!MyUtility.Check.Empty(txtcustcd1.Text))
             {
-                sqlCmd = sqlCmd + "\r\nand CustCDID = @custcd";
+                sqlCmd = sqlCmd + "\r\n and CustCDID = @custcd";
             }
             if (!MyUtility.Check.Empty(textBox1.Text))
             {
-                sqlCmd = sqlCmd + "\r\nand OrderTypeID = @orderType";
+                sqlCmd = sqlCmd + "\r\n and OrderTypeID = @orderType";
             }
             if (!MyUtility.Check.Empty(txtseason1.Text))
             {
-                sqlCmd = sqlCmd + "\r\nand SeasonID = @season";
+                sqlCmd = sqlCmd + "\r\n and SeasonID = @season";
             }
             if (!MyUtility.Check.Empty(txtdropdownlist1.SelectedValue))
             {
-                sqlCmd = sqlCmd + "\r\nand BuyMonth = @buyMonth";
+                sqlCmd = sqlCmd + "\r\n and BuyMonth = @buyMonth";
             }
             if (!MyUtility.Check.Empty(dateRange1.Value1))
             {
-                sqlCmd = sqlCmd + "\r\nand BuyerDelivery >= @buyerDelivery1";
+                sqlCmd = sqlCmd + "\r\n and BuyerDelivery >= @buyerDelivery1";
             }
             if (!MyUtility.Check.Empty(dateRange1.Value2))
             {
-                sqlCmd = sqlCmd + "\r\nand BuyerDelivery <= @buyerDelivery2";
+                sqlCmd = sqlCmd + "\r\n and BuyerDelivery <= @buyerDelivery2";
             }
             sqlCmd = sqlCmd + @"),
 OrderQty
@@ -97,11 +97,11 @@ and oqs.Id = oqsd.Id
 and oqs.Seq = oqsd.Seq";
             if (!MyUtility.Check.Empty(dateRange1.Value1))
             {
-                sqlCmd = sqlCmd + "\r\nand oqs.BuyerDelivery >= @buyerDelivery1";
+                sqlCmd = sqlCmd + "\r\n and oqs.BuyerDelivery >= @buyerDelivery1";
             }
             if (!MyUtility.Check.Empty(dateRange1.Value2))
             {
-                sqlCmd = sqlCmd + "\r\nand oqs.BuyerDelivery <= @buyerDelivery2";
+                sqlCmd = sqlCmd + "\r\n and oqs.BuyerDelivery <= @buyerDelivery2";
             }
             sqlCmd = sqlCmd + @"),
 PackData
@@ -119,19 +119,10 @@ as
 				  group by oq1.OrderID,oq1.OrderShipmodeSeq,pdd.Article,pdd.SizeCode) a on a.OrderID = oq.OrderID and a.OrderShipmodeSeq = oq.OrderShipmodeSeq and a.Article = oq.Article and a.SizeCode = oq.SizeCode
 		) b
  where b.ShipQty > 0
-),
-ColorData
-as
-(select pd.OrderID,pd.Article,ColorID as Color
- from Order_ColorCombo occ, PackData pd
- where occ.LectraCode = (select min(LectraCode) 
-                         from Order_ColorCombo 
-                         where id = occ.Id and  Article = pd.Article and PatternPanel = 'FA') 
- and occ.Id = pd.POID and occ.Article = pd.Article and occ.PatternPanel = 'FA'
 )
-select 0 as Selected,pd.OrderID,pd.StyleID,pd.SeasonID,pd.CustCDID,pd.SeasonID,pd.OrderTypeID,pd.CustPONo,pd.POID,pd.OrderShipmodeSeq,pd.ShipmodeID,pd.Article,pd.SizeCode,pd.ShipQty, isnull(cd.Color,'') as Color
+select 0 as Selected,pd.OrderID,pd.StyleID,pd.SeasonID,pd.CustCDID,pd.SeasonID,pd.OrderTypeID,pd.CustPONo,pd.POID,pd.OrderShipmodeSeq,pd.ShipmodeID,pd.Article,pd.SizeCode,pd.ShipQty, isnull(voc.ColorID,'') as Color
 from PackData pd
-left join ColorData cd on cd.OrderID = pd.OrderID and cd.Article = pd.Article";
+left join V_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Article";
             #region 準備sql參數資料
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
             sp1.ParameterName = "@brand";
@@ -175,8 +166,13 @@ left join ColorData cd on cd.OrderID = pd.OrderID and cd.Article = pd.Article";
             {
                 if (selectDataTable.Rows.Count == 0)
                 {
-                    MessageBox.Show("Data not found!");
+                    MyUtility.Msg.WarningBox("Data not found!");
                 }
+            }
+            else
+            {
+                MyUtility.Msg.ErrorBox(selectResult.ToString());
+                return;
             }
 
             listControlBindingSource1.DataSource = selectDataTable;
@@ -207,7 +203,7 @@ left join ColorData cd on cd.OrderID = pd.OrderID and cd.Article = pd.Article";
             }
             else
             {
-                MessageBox.Show("Data is not found!");
+                MyUtility.Msg.WarningBox("Data is not found!");
             }
         }
 
@@ -220,7 +216,7 @@ left join ColorData cd on cd.OrderID = pd.OrderID and cd.Article = pd.Article";
 
             if (gridData.Rows.Count == 0)
             {
-                MessageBox.Show("No data!");
+                MyUtility.Msg.WarningBox("No data!");
                 return;
             }
 
