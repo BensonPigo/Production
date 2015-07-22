@@ -57,7 +57,7 @@ where a.id = '{0}'", masterID);
                 if (this.EditMode)
                 {
                     dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()) && e.FormattedValue.ToString() != dr["OrderID"].ToString())
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["OrderID"].ToString())
                     {
                         DataRow orderData;
                         if (!MyUtility.Check.Seek(string.Format("Select ID,StyleID,CustPONo from Orders where ID = '{0}' and FtyGroup = '{1}'  and BrandID = '{2}' and IsForecast = 0 and LocalOrder = 0 and Junk = 0", e.FormattedValue.ToString(), Sci.Env.User.Factory, CurrentMaintain["BrandID"].ToString()), out orderData))
@@ -174,7 +174,7 @@ where a.Price = 0", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString())
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()) && e.FormattedValue.ToString() != dr["Article"].ToString())
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["Article"].ToString())
                     {
                         sqlCmd = string.Format(@"select a.Article
 from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
@@ -253,7 +253,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()) && e.FormattedValue.ToString() != dr["SizeCode"].ToString())
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["SizeCode"].ToString())
                     {
                         sqlCmd = string.Format(@"select a.SizeCode
 from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
@@ -584,7 +584,7 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
             return base.ClickDeleteBefore();
         }
 
-        //Pull-out Date Validate()
+        //Pull-out Date Validating()
         private void dateBox1_Validating(object sender, CancelEventArgs e)
         {
             if (!MyUtility.Check.Empty(dateBox1.Value) && dateBox1.Value != dateBox1.OldValue)
