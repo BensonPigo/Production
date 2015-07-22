@@ -537,7 +537,7 @@ namespace Sci.Production.Packing
                         MyUtility.Msg.WarningBox("No packing data, can't create!!");
                         return;
                     }
-                    sqlCmd = string.Format(@"select '' as ID, '' as RefNo, '' as Description, oqd.Article, oc.Color, oqd.SizeCode, oqd.Qty as ShipQty, oqc.Qty as QtyPerCTN, os.Seq,
+                    sqlCmd = string.Format(@"select '' as ID, '' as RefNo, '' as Description, oqd.Article, voc.ColorID as Color, oqd.SizeCode, oqd.Qty as ShipQty, oqc.Qty as QtyPerCTN, os.Seq,
                                                                            sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
                                                                            isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as NW,
                                                                            isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as GW,
@@ -545,14 +545,7 @@ namespace Sci.Production.Packing
                                                                 from Order_QtyShip_Detail oqd
                                                                 left Join Orders o on o.ID = oqd.Id
                                                                 left Join Order_QtyCTN oqc on oqc.id = oqd.Id and oqc.Article = oqd.Article and oqc.SizeCode = oqd.SizeCode
-                                                                left join (select distinct id, Article, PatternPanel, (select ColorID 
-                                                                                                                                                from Order_ColorCombo 
-                                                                                                                                                where LectraCode = (select min(LectraCode) 
-                                                                                                                                                                                   from Order_ColorCombo 
-                                                                                                                                                                                   where id = a.id and  Article = a.Article and PatternPanel = 'FA') 
-                                                                                                                                                                                   and id = a.id and  Article = a.Article and PatternPanel = 'FA') as Color 
-                                                                               from Order_ColorCombo a
-                                                                               where a.PatternPanel = 'FA') oc on oc.id = o.POID and oc.Article = oqd.Article and oc.PatternPanel = 'FA'
+                                                                left join V_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
                                                                 left join Style_WeightData sw on sw.StyleUkey = o.StyleUkey and sw.Article = oqd.Article and sw.SizeCode = oqd.SizeCode
                                                                 left join Style_WeightData sw2 on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = oqd.SizeCode
                                                                 left join Order_SizeCode os on os.id = o.POID and os.SizeCode = oqd.SizeCode
@@ -562,21 +555,14 @@ namespace Sci.Production.Packing
                 }
                 else
                 {
-                    sqlCmd = string.Format(@"select '' as ID, '' as RefNo, '' as Description, oqd.Article, oc.Color, oqd.SizeCode, oqd.Qty as ShipQty, o.CTNQty as QtyPerCTN, os.Seq,
+                    sqlCmd = string.Format(@"select '' as ID, '' as RefNo, '' as Description, oqd.Article, voc.ColorID as Color, oqd.SizeCode, oqd.Qty as ShipQty, o.CTNQty as QtyPerCTN, os.Seq,
                                                                            sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
                                                                            isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW,
                                                                            isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW,
                                                                            isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW 
                                                                 from Order_QtyShip_Detail oqd
                                                                 left Join Orders o on o.ID = oqd.Id
-                                                                left join (select distinct id, Article, PatternPanel, (select ColorID 
-                                                                                                                                                from Order_ColorCombo 
-                                                                                                                                                where LectraCode = (select min(LectraCode) 
-                                                                                                                                                                                   from Order_ColorCombo 
-                                                                                                                                                                                   where id = a.id and  Article = a.Article and PatternPanel = 'FA') 
-                                                                                                                                                and id = a.id and  Article = a.Article and PatternPanel = 'FA') as Color 
-                                                                               from Order_ColorCombo a
-                                                                               where a.PatternPanel = 'FA') oc on oc.id = oqd.Id and oc.Article = oqd.Article and oc.PatternPanel = 'FA'
+                                                                left join V_OrderFAColor voc on voc.id = oqd.Id and oc.Article = oqd.Article
                                                                 left join Style_WeightData sw on sw.StyleUkey = o.StyleUkey and sw.Article = oqd.Article and sw.SizeCode = oqd.SizeCode
                                                                 left join Style_WeightData sw2 on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = oqd.SizeCode
                                                                 left join Order_SizeCode os on os.id = o.POID and os.SizeCode = oqd.SizeCode
