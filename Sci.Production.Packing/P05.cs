@@ -584,6 +584,24 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
             return base.ClickDeleteBefore();
         }
 
+        //Pull-out Date Validate()
+        private void dateBox1_Validating(object sender, CancelEventArgs e)
+        {
+            if (!MyUtility.Check.Empty(dateBox1.Value) && dateBox1.Value != dateBox1.OldValue)
+            {
+                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout where PulloutDate = '{0}' and FactoryID = '{1}'", Convert.ToDateTime(dateBox1.Value.ToString()).ToString("d"), Sci.Env.User.Factory), out dr))
+                {
+                    if (dr["Status"].ToString() == "Confirmed")
+                    {
+                        MyUtility.Msg.WarningBox("Pullout date already exist pullout report and have been confirmed!");
+                        dateBox1.Value = null;
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+            }
+        }
+
         //Batch Import
         private void button1_Click(object sender, EventArgs e)
         {
