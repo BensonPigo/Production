@@ -26,7 +26,6 @@ namespace Sci.Production.Win
 
         Sci.Production.Main app;
 
-
         void ok_Click(object sender, EventArgs e)
         {
             DualResult result;
@@ -84,8 +83,9 @@ namespace Sci.Production.Win
                 //if (!data.IsFACTORYNull()) Sci.Production.ProductionEnv.UserFactories = data.FACTORY;
                 u.Factory = loginFactory;
                 u.IsMIS = data.ISMIS;
-               
-                
+                u.FactoryList = data.FACTORY;
+                u.MailAddress = data.EMAIL;
+
                 // 載入登入人員相關資訊
                 //u.AuthorityList = "";
                 //u.IsTS = false;
@@ -98,7 +98,6 @@ namespace Sci.Production.Win
                 //u.BrandList = "";
                 //u.MailAddress = "";
                
-
                 // 載入根據登入資訊而異系統參數, 
                 //Sci.Env.Cfg.ReportTitle = "XXX"
 
@@ -151,7 +150,7 @@ namespace Sci.Production.Win
             }
             if (dtPass1.Rows.Count == 0)
             {
-                MyUtility.Msg.ErrorBox("Account is not exist!");
+                MyUtility.Msg.WarningBox("Account is not exist!");
                 e.Cancel = true;
                 return;
             }
