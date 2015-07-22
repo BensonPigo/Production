@@ -50,7 +50,7 @@ namespace Sci.Production.Packing
         //Find
         private void button1_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(this.textBox1.Text.ToString()) && string.IsNullOrWhiteSpace(this.textBox2.Text.ToString()) && string.IsNullOrWhiteSpace(this.textBox3.Text.ToString()))
+            if (MyUtility.Check.Empty(this.textBox1.Text) && MyUtility.Check.Empty(this.textBox2.Text) && MyUtility.Check.Empty(this.textBox3.Text))
             {
                 MyUtility.Msg.WarningBox("< SP# > or < Order# > or < PackID > can not be empty!");
                 return;
@@ -64,15 +64,15 @@ namespace Sci.Production.Packing
                                                          and ((b.ClogReturnId = '' and TransferToClogId = '') or b.ClogReturnId != '') 
                                                          and c.Dest = d.ID 
                                                          and a.FactoryID = '" + Sci.Env.User.Factory + "' and (a.Type = 'B' or a.Type = 'L') and c.FTYGroup = '" + Sci.Env.User.Factory + "'";
-            if (!string.IsNullOrWhiteSpace(this.textBox1.Text.ToString()))
+            if (!MyUtility.Check.Empty(this.textBox1.Text))
             {
                 selectCommand = selectCommand + string.Format(" and a.OrderID = '{0}'", this.textBox1.Text.ToString().Trim());
             }
-            if (!string.IsNullOrWhiteSpace(this.textBox2.Text.ToString()))
+            if (!MyUtility.Check.Empty(this.textBox2.Text))
             {
                 selectCommand = selectCommand + string.Format(" and c.CustPONo = '{0}'", this.textBox2.Text.ToString().Trim());
             }
-            if (!string.IsNullOrWhiteSpace(this.textBox3.Text.ToString()))
+            if (!MyUtility.Check.Empty(this.textBox3.Text))
             {
                 selectCommand = selectCommand + string.Format(" and a.ID = '{0}'", this.textBox3.Text.ToString().Trim());
             }
@@ -137,7 +137,8 @@ namespace Sci.Production.Packing
             }
 
             //設定參數值
-            if (string.IsNullOrWhiteSpace(idValue))
+
+            if (MyUtility.Check.Empty(idValue))
             {
                 string getID = MyUtility.GetValue.GetID(ProductionEnv.Keyword + "CS", "TransferToClog", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(getID))
@@ -158,7 +159,7 @@ namespace Sci.Production.Packing
             foreach (DataRow currentRecord in selectedData)
             {
                 insertData = true;
-                if (!string.IsNullOrWhiteSpace(idValue))
+                if (!MyUtility.Check.Empty(idValue))
                 {
                     sqlCommand = string.Format(@"select ID
                                                                               from TransferToClog_Detail  
@@ -182,7 +183,7 @@ namespace Sci.Production.Packing
             }
 
             //組表頭資料
-            if (string.IsNullOrWhiteSpace(idValue))
+            if (MyUtility.Check.Empty(idValue))
             {
                 sqlInsertMaster = sqlInsertMaster + "Insert into TransferToClog (Id,TransferDate,FactoryID,AddName,AddDate)\r\n ";
                 sqlInsertMaster = sqlInsertMaster + string.Format("Values('{3}','{4}','{0}','{1}','{2}');\r\n ", Sci.Env.User.Factory, Sci.Env.User.UserID, nowTime.ToString("yyyy/MM/dd HH:mm:ss"), newID, transDate);
@@ -192,7 +193,7 @@ namespace Sci.Production.Packing
                 sqlInsertMaster = string.Format("update TransferToClog set EditName = '{0}', EditDate = '{1}' where ID = '{2}'", Sci.Env.User.UserID, nowTime.ToString("yyyy/MM/dd HH:mm:ss"), newID);
             }
 
-            if (!string.IsNullOrWhiteSpace(sqlInsert))
+            if (!MyUtility.Check.Empty(sqlInsert))
             {
                 DualResult result1, result2, result3;
                 using (TransactionScope transactionScope = new TransactionScope())
