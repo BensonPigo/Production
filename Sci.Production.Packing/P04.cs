@@ -84,7 +84,8 @@ order by a.Seq", masterID);
                 if (this.EditMode)
                 {
                     dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()) && e.FormattedValue.ToString() != dr["OrderID"].ToString())
+                    
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["OrderID"].ToString())
                     {
                         DataRow orderData;
                         if (!MyUtility.Check.Seek(string.Format("Select ID,StyleID,CustPONo from Orders where ID = '{0}' and Category = 'S' and BrandID = '{1}'", e.FormattedValue.ToString(), CurrentMaintain["BrandID"].ToString()), out orderData))
@@ -194,7 +195,7 @@ order by a.Seq", masterID);
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()) && e.FormattedValue.ToString() != dr["Article"].ToString())
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["Article"].ToString())
                     {
                         if (!MyUtility.Check.Seek(string.Format("Select Article from Order_QtyShip_Detail where ID = '{0}' and Seq = '{1}' and Article = '{2}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), e.FormattedValue.ToString())))
                         {
@@ -254,7 +255,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()) && e.FormattedValue.ToString() != dr["SizeCode"].ToString())
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["SizeCode"].ToString())
                     {
                         if (!MyUtility.Check.Seek(string.Format("Select SizeCode from Order_QtyShip_Detail where ID = '{0}' and Seq = '{1}' and Article = '{2}' and SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), e.FormattedValue.ToString())))
                         {
@@ -491,12 +492,12 @@ left join InvAdjData iad on iad.OrderID = oq.OrderID and iad.OrderShipmodeSeq = 
                 #endregion
 
                 #region 計算CTNQty, ShipQty, NW, GW, NNW, CBM
-                drCtnQty = (String.IsNullOrWhiteSpace(dr["CTNQty"].ToString()) ? 0 : Convert.ToInt32(dr["CTNQty"].ToString()));
+                drCtnQty = (MyUtility.Check.Empty(dr["CTNQty"]) ? 0 : Convert.ToInt32(dr["CTNQty"].ToString()));
                 ctnQty = ctnQty + drCtnQty;
                 shipQty = shipQty + Convert.ToInt32(dr["ShipQty"].ToString());
-                nw = MyUtility.Math.Round(nw + (String.IsNullOrWhiteSpace(dr["NW"].ToString()) ? 0 : Convert.ToDouble(dr["NW"].ToString())), 3);
-                gw = MyUtility.Math.Round(gw + (String.IsNullOrWhiteSpace(dr["GW"].ToString()) ? 0 : Convert.ToDouble(dr["GW"].ToString())), 3);
-                nnw = MyUtility.Math.Round(nnw + (String.IsNullOrWhiteSpace(dr["NNW"].ToString()) ? 0 : Convert.ToDouble(dr["NNW"].ToString())), 3);
+                nw = MyUtility.Math.Round(nw + (MyUtility.Check.Empty(dr["NW"]) ? 0 : Convert.ToDouble(dr["NW"].ToString())), 3);
+                gw = MyUtility.Math.Round(gw + (MyUtility.Check.Empty(dr["GW"]) ? 0 : Convert.ToDouble(dr["GW"].ToString())), 3);
+                nnw = MyUtility.Math.Round(nnw + (MyUtility.Check.Empty(dr["NNW"]) ? 0 : Convert.ToDouble(dr["NNW"].ToString())), 3);
                 if (drCtnQty > 0)
                 {
                     ctnCBM = MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo");
