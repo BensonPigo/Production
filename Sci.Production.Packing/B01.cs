@@ -30,14 +30,14 @@ namespace Sci.Production.Packing
 
         protected override bool ClickSaveBefore()
         {
-            if (string.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("< ID > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["Description"]))
             {
                 MyUtility.Msg.WarningBox("< Description > can not be empty!");
                 this.textBox2.Focus();
