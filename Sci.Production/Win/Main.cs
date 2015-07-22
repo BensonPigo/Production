@@ -177,10 +177,12 @@ namespace Sci.Production
                 {
                     case "0": // Form
                         if (MyUtility.Check.Empty(dr["BarPrompt"]) || MyUtility.Check.Empty(dr["FormName"])) break;
+                        if (!MyUtility.Check.Empty(dr["ForMISOnly"]) && !Sci.Env.User.IsMIS) break;
+
                         dllName = dr["FormName"].ToString().Substring(0, dr["FormName"].ToString().LastIndexOf("."));
                         // PublicClass的Dll Name為Sci.Proj
                         if (dllName == "Sci.Win.UI") dllName = "Sci.Proj";
-                        
+
                         Type typeofControl = Type.GetType(dr["FormName"].ToString() + "," + dllName);
                         AddTemplate(menu, dr["BarPrompt"].ToString(), (menuitem) => (Sci.Win.Tems.Base)CreateFormObject(menuitem, typeofControl, dr["FormParameter"].ToString()));
                         break;
