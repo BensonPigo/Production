@@ -287,7 +287,7 @@ namespace Sci.Production.Packing
                             }
                         }
                         ctns = (int)Math.Floor(ctn);
-                        if (string.IsNullOrWhiteSpace(groupData.Rows[recordNo]["ctn"].ToString()) || (Convert.ToInt32(groupData.Rows[recordNo]["ctn"].ToString()) > ctns))
+                        if (MyUtility.Check.Empty(groupData.Rows[recordNo]["ctn"]) || (Convert.ToInt32(groupData.Rows[recordNo]["ctn"].ToString()) > ctns))
                         {
                             groupData.Rows[recordNo]["ctn"] = ctns;
                         }
