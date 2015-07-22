@@ -74,7 +74,7 @@ as
  where ID = '{0}'
  group by Article, SizeCode
 )
-select a.ID,a.CTNStartNo,a.CTNQty, a.RefNo, a.Article, a.Color, a.SizeCode, a.QtyPerCTN, a.ShipQty, a.NW, a.GW, a.NNW, a.NWPerPcs, a.ScanQty,a.TransferToClogID, a.TransferDate, a.ReceiveDate, a.ClogLocationId, a.ReturnDate, b.Description, oqd.Qty-isnull(pd.TtlShipQty,0)+isnull(paq.TtlDiffQty,0)-pk.ShipQty as BalanceQty, a.Seq
+select a.ID,a.OrderID,a.OrderShipmodeSeq,a.CTNStartNo,a.CTNQty, a.RefNo, a.Article, a.Color, a.SizeCode, a.QtyPerCTN, a.ShipQty, a.NW, a.GW, a.NNW, a.NWPerPcs, a.ScanQty,a.TransferToClogID, a.TransferDate, a.ReceiveDate, a.ClogLocationId, a.ReturnDate, b.Description, oqd.Qty-isnull(pd.TtlShipQty,0)+isnull(paq.TtlDiffQty,0)-pk.ShipQty as BalanceQty, a.Seq
 from PackingList_Detail a
 left join LocalItem b on b.RefNo = a.RefNo
 left join AccuPKQty pd on pd.Article = a.Article and pd.SizeCode = a.SizeCode
@@ -219,7 +219,7 @@ order by a.Seq", masterID, OrderID, OrderSeqID);
                         }
                     }
 
-                    if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()) && e.FormattedValue.ToString() != dr["Article"].ToString())
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["Article"].ToString())
                     {
                         if (!MyUtility.Check.Seek(string.Format("Select Article from Order_QtyShip_Detail where ID = '{0}' and Seq = '{1}' and Article = '{2}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), e.FormattedValue.ToString())))
                         {
@@ -288,7 +288,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
                             return;
                         }
                     }
-                    if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()) && e.FormattedValue.ToString() != dr["SizeCode"].ToString())
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["SizeCode"].ToString())
                     {
                         if (!MyUtility.Check.Seek(string.Format("Select SizeCode from Order_QtyShip_Detail where ID = '{0}' and Seq = '{1}' and Article = '{2}' and SizeCode = '{3}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), e.FormattedValue.ToString())))
                         {
@@ -332,7 +332,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
                     #region 檢查箱子如果有送到Clog則不可以被修改
                     if (detailgrid.Columns[e.ColumnIndex].DataPropertyName == col_ctnno.DataPropertyName)
                     {
-                        if (!string.IsNullOrWhiteSpace(dr["CTNStartNo"].ToString()))
+                        if (!MyUtility.Check.Empty(e.FormattedValue))
                         {
                             if (e.FormattedValue.ToString() != dr["CTNStartNo"].ToString())
                             {
@@ -348,7 +348,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
 
                     if (detailgrid.Columns[e.ColumnIndex].DataPropertyName == col_qtyperctn.DataPropertyName)
                     {
-                        if (!string.IsNullOrWhiteSpace(dr["QtyPerCTN"].ToString()))
+                        if (!MyUtility.Check.Empty(e.FormattedValue))
                         {
                             if (e.FormattedValue.ToString() != dr["QtyPerCTN"].ToString())
                             {
@@ -364,7 +364,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
 
                     if (detailgrid.Columns[e.ColumnIndex].DataPropertyName == col_shipqty.DataPropertyName)
                     {
-                        if (!string.IsNullOrWhiteSpace(dr["ShipQty"].ToString()))
+                        if (!MyUtility.Check.Empty(e.FormattedValue))
                         {
                             if (e.FormattedValue.ToString() != dr["ShipQty"].ToString())
                             {
@@ -381,7 +381,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
 
                     if (detailgrid.Columns[e.ColumnIndex].DataPropertyName == col_ctnqty.DataPropertyName)
                     {
-                        if (!string.IsNullOrWhiteSpace(dr["CTNQty"].ToString()))
+                        if (!MyUtility.Check.Empty(e.FormattedValue))
                         {
                             if (e.FormattedValue.ToString() != dr["CTNQty"].ToString())
                             {
