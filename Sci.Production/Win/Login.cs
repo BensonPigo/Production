@@ -33,13 +33,15 @@ namespace Sci.Production.Win
 
             string act = this.act.Text;
             string loginFactory = (string)this.comboBox1.SelectedValue;
+            string pwd = this.pwd.Text;
+            string keyword = "";
+
             if (0 == act.Length)
             {
                 ShowErr("Please enter account.");
                 this.act.Focus();
                 return;
             }
-            string pwd = this.pwd.Text;
             if (0 == pwd.Length)
             {
                 ShowErr("Please enter password.");
@@ -60,7 +62,7 @@ namespace Sci.Production.Win
             }
             if (dtFactory.Rows.Count > 0 && !MyUtility.Check.Empty(dtFactory.Rows[0]["Keyword"].ToString()))
             {
-                Sci.Production.ProductionEnv.Keyword = dtFactory.Rows[0]["Keyword"].ToString();
+                keyword = dtFactory.Rows[0]["Keyword"].ToString();
             }
             else
             {
@@ -85,6 +87,8 @@ namespace Sci.Production.Win
                 u.IsMIS = data.ISMIS;
                 u.FactoryList = data.FACTORY;
                 u.MailAddress = data.EMAIL;
+                u.Keyword = keyword;
+
 
                 // 載入登入人員相關資訊
                 //u.AuthorityList = "";

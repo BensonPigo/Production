@@ -15,15 +15,8 @@ namespace Sci.Production.Tools
     {
         public SwitchFactory(ToolStripMenuItem menuitem) : base(menuitem)
         {
-            //int openFormCount = Application.OpenForms.Cast<Form>().Count(openForm => openForm.IsMdiChild);
-            //if (openFormCount > 0)
-            //{
-            //    MyUtility.Msg.WarningBox("Please close all processing forms first!");
-            //    return;
-            //}
-
             InitializeComponent();
-            
+  
             EditMode = true;
             act.Text = Sci.Env.User.UserID;
             act.Enabled = false;

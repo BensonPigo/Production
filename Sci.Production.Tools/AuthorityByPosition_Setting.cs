@@ -39,7 +39,6 @@ namespace Sci.Production.Tools
                                                 WHERE Menu.PKey = MenuDetail.UKey AND MenuDetail.PKey = {0}", (Int64)_refDr["FKMenu"]);
             if (result = DBProxy.Current.Select(null, sqlCmd, out dtMenuDetail))
             {
-                //dtMenuDetail.PrimaryKey = new DataColumn[] { dtMenuDetail.Columns["PKey"] };
                 this.checkBox1.Enabled = (bool) dtMenuDetail.Rows[0]["CanNew"];
                 this.checkBox2.Enabled = (bool) dtMenuDetail.Rows[0]["CanEdit"];
                 this.checkBox3.Enabled = (bool) dtMenuDetail.Rows[0]["CanDelete"];
@@ -146,8 +145,6 @@ namespace Sci.Production.Tools
                     }
                     else
                     {
-                        //seekedData = dtMenuDetail.Rows.Find((Int64)_refDr["FKMenu"]);
-
                         DataRow newRow = dtPass2.NewRow();
                         newRow["FKPass0"] = (Int64)dr["PKey"];
                         newRow["FKMenu"] = (Int64)_refDr["FKMenu"];

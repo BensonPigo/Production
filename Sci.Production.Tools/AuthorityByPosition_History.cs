@@ -23,13 +23,6 @@ namespace Sci.Production.Tools
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             InitializeComponent();
-
-            //if (!(result = DBProxy.Current.Select(null, "SELECT * FROM Pass1", out dtPass1)))
-            //{
-            //    MyUtility.Msg.ErrorBox(result.ToString());
-            //    this.Close();
-            //}
-            //dtPass1.PrimaryKey = new DataColumn[] { dtPass1.Columns["ID"] };
         }
 
         protected override bool OnGridSetup()
@@ -55,20 +48,8 @@ namespace Sci.Production.Tools
                 dr["Modifier"] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(dr["AddName"], format: (int)
 Sci.Production.PublicPrg.Prgs.Pass1Format.NameExt);
 
-               // DateTime dd = (DateTime)dr["EditDate"];
-
                 dr["Editby"] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(dr["EditName"], dateColumn: dr["EditDate"], format: (int)
 Sci.Production.PublicPrg.Prgs.Pass1Format.IDNameExtDateTime);
-
-                //findedData = dtPass1.Rows.Find(dr["AddName"].ToString());
-                //dr["Modifier"] = (findedData != null) ? 
-                //                     (findedData["Name"].ToString() + "   Ext. " + findedData["ExtNo"].ToString()) :
-                //                     dr["AddName"].ToString();
-
-                //findedData = dtPass1.Rows.Find(dr["EditName"].ToString());
-                //dr["Editby"] = (findedData != null) ? 
-                //                   (dr["EditName"].ToString() + " - " + findedData["Name"].ToString() + "  Ext." + findedData["ExtNo"].ToString() + "  " + ((DateTime)dr["EditDate"]).ToAppDateTimeFormatString()) :
-                //                   dr["EditName"].ToString();
             }
         }
 

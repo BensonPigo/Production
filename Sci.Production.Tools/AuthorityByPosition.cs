@@ -124,21 +124,6 @@ namespace Sci.Production.Tools
                     }
                 };
 
-            //tsPosition.EditingMouseDoubleClick += (s, e) =>
-            //    {
-            //        if (!this.EditMode)
-            //        {
-            //            var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-            //            if (null == dr) return;
-            //            Sci.Production.Tools.AllPositionAuthoritySetting frm = new Sci.Production.Tools.AllPositionAuthoritySetting((Int64)CurrentMaintain["PKey"], (Int64)dr["FKMenu"]);
-            //            frm.ShowDialog(this);
-            //            if (frm.DialogResult == DialogResult.OK)
-            //            {
-            //                RenewData();
-            //            }
-            //        }
-            //    };
-
             Ict.Win.DataGridViewGeneratorTextColumnSettings tsUsed = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
             tsUsed.CellMouseClick += (s, e) =>
             {
@@ -147,11 +132,6 @@ namespace Sci.Production.Tools
                     CurrentDetailData["Used"] = CurrentDetailData["Used"].ToString().ToUpper() == "Y" ? "" : "Y";
                 }
             };
-
-            //tsUsed.EditingMouseDoubleClick += (s, e) =>
-            //    {
-            //        CurrentDetailData["Used"] = CurrentDetailData["Used"].ToString().ToUpper() == "Y" ? "" : "Y";
-            //    };
 
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("MenuName", header: "Menu", width: Widths.AnsiChars(10), settings: tsPosition, iseditingreadonly: true)
@@ -172,11 +152,6 @@ namespace Sci.Production.Tools
                 .CheckBox("CanReceive", header: "Receive", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0).Get(out ckReceive)
                 .CheckBox("CanReturn", header: "Return", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0).Get(out ckReturn)
                 .CheckBox("CanJunk", header: "Junk", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0).Get(out ckJunk);
-
-            //this.detailgrid.RowsAdded += (s, e) =>
-            //{
-            //    this.LockCheckBox(e.RowIndex);
-            //};
         }
 
         protected override void ClickNewAfter()
@@ -516,34 +491,6 @@ namespace Sci.Production.Tools
             }
         }
         
-        //protected void LockCheckBox(DataTable refTable, int index)
-        //{
-        //    dtDetail = (DataTable)this.detailgridbs.DataSource;
-        //    if (dtDetail.Rows.Count == 0) return;
-
-        //    DataRow[] drs = null;
-        //    GetMenuData();
-        //    drs = dtDetailMenu.Select(string.Format("PKey = {0}", (Int64) dtDetail.Rows[index]["FKMenu"]));
-        //    if (drs.Length > 0)
-        //    {
-        //        detailgrid.Rows[index].Cells[ckNew.Index].ReadOnly = !((bool)drs[0]["CanNew"]);
-        //        detailgrid.Rows[index].Cells[ckEdit.Index].ReadOnly = !((bool)drs[0]["CanEdit"]);
-        //        detailgrid.Rows[index].Cells[ckDelete.Index].ReadOnly = !((bool)drs[0]["CanDelete"]);
-        //        detailgrid.Rows[index].Cells[ckPrint.Index].ReadOnly = !((bool)drs[0]["CanPrint"]);
-        //        detailgrid.Rows[index].Cells[ckConfirm.Index].ReadOnly = !((bool)drs[0]["CanConfirm"]);
-        //        detailgrid.Rows[index].Cells[ckUnConfirm.Index].ReadOnly = !((bool)drs[0]["CanUnConfirm"]);
-        //        detailgrid.Rows[index].Cells[ckSend.Index].ReadOnly = !((bool)drs[0]["CanSend"]);
-        //        detailgrid.Rows[index].Cells[ckRecall.Index].ReadOnly = !((bool)drs[0]["CanRecall"]);
-        //        detailgrid.Rows[index].Cells[ckCheck.Index].ReadOnly = !((bool)drs[0]["CanCheck"]);
-        //        detailgrid.Rows[index].Cells[ckUnCheck.Index].ReadOnly = !((bool)drs[0]["CanUnCheck"]);
-        //        detailgrid.Rows[index].Cells[ckClose.Index].ReadOnly = !((bool)drs[0]["CanClose"]);
-        //        detailgrid.Rows[index].Cells[ckUnClose.Index].ReadOnly = !((bool)drs[0]["CanUnClose"]);
-        //        detailgrid.Rows[index].Cells[ckReceive.Index].ReadOnly = !((bool)drs[0]["CanReceive"]);
-        //        detailgrid.Rows[index].Cells[ckReturn.Index].ReadOnly = !((bool)drs[0]["CanReturn"]);
-        //        detailgrid.Rows[index].Cells[ckJunk.Index].ReadOnly = !((bool)drs[0]["CanJunk"]);
-        //    }
-        //}
-
         private void GetMenuData()
         {
             sqlCmd = @"SELECT Menu.MenuName, Menu.MenuNo, MenuDetail.*
