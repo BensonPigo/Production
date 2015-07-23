@@ -589,7 +589,7 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
             //GetID
             if (IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(ProductionEnv.Keyword + "PS", "PackingList", DateTime.Today, 2, "Id", null);
+                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PS", "PackingList", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");

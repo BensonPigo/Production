@@ -140,7 +140,7 @@ namespace Sci.Production.Packing
 
             if (MyUtility.Check.Empty(idValue))
             {
-                string getID = MyUtility.GetValue.GetID(ProductionEnv.Keyword + "CS", "TransferToClog", DateTime.Today, 2, "Id", null);
+                string getID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "CS", "TransferToClog", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(getID))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");

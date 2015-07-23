@@ -331,7 +331,7 @@ namespace Sci.Production.Packing
             //GetID
             if (IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(ProductionEnv.Keyword + "PG", "PackingGuide", DateTime.Today, 2, "Id", null);
+                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PG", "PackingGuide", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
