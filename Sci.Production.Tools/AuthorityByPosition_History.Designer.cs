@@ -40,25 +40,8 @@
             // 
             this.gridcont.Size = new System.Drawing.Size(807, 329);
             // 
-            // append
-            // 
-            this.append.EditMode = Sci.Win.UI.AdvEditModes.None;
-            // 
-            // revise
-            // 
-            this.revise.EditMode = Sci.Win.UI.AdvEditModes.None;
-            // 
-            // delete
-            // 
-            this.delete.EditMode = Sci.Win.UI.AdvEditModes.None;
-            // 
-            // undo
-            // 
-            this.undo.EditMode = Sci.Win.UI.AdvEditModes.None;
-            // 
             // save
             // 
-            this.save.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.save.Click += new System.EventHandler(this.save_Click);
             // 
             // AuthorityByPosition_History

@@ -17,10 +17,8 @@ namespace Sci.Production.Tools
     {
         private DataTable dtPass1 = null;
         private DualResult result = null;
-        private DataRow findedData = null;
 
-        public AuthorityByPosition_History(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
-            : base(canedit, keyvalue1, keyvalue2, keyvalue3)
+        public AuthorityByPosition_History(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3) : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             InitializeComponent();
         }
@@ -29,7 +27,7 @@ namespace Sci.Production.Tools
         {
             Helper.Controls.Grid.Generator(this.grid)
                .Text("Modifier", header: "Modifier", width: Widths.AnsiChars(20), iseditingreadonly: true)
-               .DateTime("AddDate", header: "Modify Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format:DataGridViewDateTimeFormat.yyyyMMddHHmmss)
+               .DateTime("AddDate", header: "Modify Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format:DataGridViewDateTimeFormat.MMddyyyyHHmmss)
                .EditText("Remark", header: "Remark", width: Widths.AnsiChars(30), iseditingreadonly: false)
                .Text("Editby", header: "Edit by", width: Widths.AnsiChars(40), iseditingreadonly: true);
 
@@ -38,7 +36,6 @@ namespace Sci.Production.Tools
 
         protected override void OnRequeryPost(DataTable datas)
         {
-
             base.OnRequeryPost(datas);
 
             datas.Columns.Add("Modifier");
@@ -47,7 +44,6 @@ namespace Sci.Production.Tools
             {
                 dr["Modifier"] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(dr["AddName"], format: (int)
 Sci.Production.PublicPrg.Prgs.Pass1Format.NameExt);
-
                 dr["Editby"] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(dr["EditName"], dateColumn: dr["EditDate"], format: (int)
 Sci.Production.PublicPrg.Prgs.Pass1Format.IDNameExtDateTime);
             }
