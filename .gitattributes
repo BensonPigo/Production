@@ -273,6 +273,9 @@ Sci.Production.Packing/P10.resx -text
 Sci.Production.Packing/P10_ImportData.Designer.cs -text
 Sci.Production.Packing/P10_ImportData.cs -text
 Sci.Production.Packing/P10_ImportData.resx -text
+Sci.Production.Packing/P11.Designer.cs -text
+Sci.Production.Packing/P11.cs -text
+Sci.Production.Packing/P11.resx -text
 Sci.Production.Packing/Properties/AssemblyInfo.cs -text
 Sci.Production.Packing/Sci.Production.Packing.csproj -text
 Sci.Production.Planning/B01.Designer.cs -text
