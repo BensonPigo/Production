@@ -1,0 +1,10 @@
+Sci.Production.Tools/*.aps
+Sci.Production.Tools/*.eto
+Sci.Production.Tools/*.user
+Sci.Production.Tools/ClientBin
+Sci.Production.Tools/GeneratedArtifacts
+Sci.Production.Tools/[Bb]in
+Sci.Production.Tools/[Dd]ebug
+Sci.Production.Tools/[Rr]elease
+Sci.Production.Tools/_Pvt_Extensions
+Sci.Production.Tools/obj

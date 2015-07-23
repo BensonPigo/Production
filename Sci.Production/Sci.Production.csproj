@@ -246,6 +246,14 @@
       <Project>{b35ffbd5-b004-4929-bf1d-75e2ee403793}</Project>
       <Name>Sci.Production.PPIC</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.PublicForm\Sci.Production.PublicForm.csproj">
+      <Project>{a0afac1d-7488-4271-83f0-9c14baf212fe}</Project>
+      <Name>Sci.Production.PublicForm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
+      <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
+      <Name>Sci.Production.PublicPrg</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Quality\Sci.Production.Quality.csproj">
       <Project>{73c13a2e-00fb-4dc9-ada1-121fba143a99}</Project>
       <Name>Sci.Production.Quality</Name>
@@ -265,6 +273,10 @@
     <ProjectReference Include="..\Sci.Production.Thread\Sci.Production.Thread.csproj">
       <Project>{8bd67b5f-49dc-47c7-9330-43af1b161b1b}</Project>
       <Name>Sci.Production.Thread</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Tools\Sci.Production.Tools.csproj">
+      <Project>{f1a7f278-efa9-4dda-b68a-202093b2444c}</Project>
+      <Name>Sci.Production.Tools</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Warehouse\Sci.Production.Warehouse.csproj">
       <Project>{7fe981ca-bcbd-4ac4-b97b-6b75eda7a73b}</Project>
