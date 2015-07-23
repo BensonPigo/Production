@@ -45,7 +45,9 @@ namespace Sci.Production.Packing
                 .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("PulloutQty", header: "Accu. Ship Qty", iseditingreadonly: true)
-                .Numeric("ShipQty", header: "Qty", iseditingreadonly: true);
+                .Numeric("ShipQty", header: "Qty");
+
+            this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Query
