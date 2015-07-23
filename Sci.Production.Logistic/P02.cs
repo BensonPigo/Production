@@ -145,7 +145,7 @@ where crd.ID = '{0}'", masterID);
             }
             if (IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(ProductionEnv.Keyword + "CR", "ClogReceive", Convert.ToDateTime(CurrentMaintain["ReceiveDate"].ToString()), 2, "Id", null);
+                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "CR", "ClogReceive", Convert.ToDateTime(CurrentMaintain["ReceiveDate"].ToString()), 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
