@@ -491,7 +491,7 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), C
                 {
                     if (!MyUtility.Check.Empty(textBox1.Text))
                     {
-                        string sqlCmd = string.Format("select ID, StyleID, SeasonID, CustPONo, LocalOrder from Orders where ID = '{0}' and FtyGroup = '{1}' and LocalOrder = 1", textBox1.Text, Sci.Env.User.Factory);
+                        string sqlCmd = string.Format("select ID, StyleID, SeasonID, CustPONo, LocalOrder from Orders where ID = '{0}' and FtyGroup = '{1}'", textBox1.Text, Sci.Env.User.Factory);
                         if (MyUtility.Check.Seek(sqlCmd, out dr))
                         {
                             if (dr["LocalOrder"].ToString() == "False")
@@ -500,6 +500,8 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), C
                                 //OrderID異動，其他相關欄位要跟著異動
                                 ChangeOtherData("");
                                 textBox1.Text = "";
+                                e.Cancel = true;
+                                return;
                             }
                         }
                         else
@@ -508,6 +510,8 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), C
                             //OrderID異動，其他相關欄位要跟著異動
                             ChangeOtherData("");
                             textBox1.Text = "";
+                            e.Cancel = true;
+                            return;
                         }
                     }
                 }
