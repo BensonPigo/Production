@@ -13,6 +13,9 @@ namespace Sci.Production.Win
 {
     public partial class Login : Sci.Win.Tools.Base
     {
+        Sci.Production.Main app;
+        DualResult result;
+
         public Login(Sci.Production.Main app)
         {
             this.app = app;
@@ -24,13 +27,10 @@ namespace Sci.Production.Win
             Sci.Production.SCHEMAS.PASS1Row data;
         }
 
-        Sci.Production.Main app;
 
         void ok_Click(object sender, EventArgs e)
         {
-            DualResult result;
             DataTable dtFactory;
-
             string act = this.act.Text;
             string loginFactory = (string)this.comboBox1.SelectedValue;
             string pwd = this.pwd.Text;
@@ -83,10 +83,10 @@ namespace Sci.Production.Win
                 if (!data.IsNAMENull()) u.UserName = data.NAME;
                 if (!data.IsISADMINNull()) u.IsAdmin = data.ISADMIN;
                 //if (!data.IsFACTORYNull()) Sci.Production.ProductionEnv.UserFactories = data.FACTORY;
+                if (!data.IsFACTORYNull()) u.FactoryList = data.FACTORY;
+                if (!data.IsISMISNull()) u.IsMIS = data.ISMIS;
+                if (!data.IsEMAILNull()) u.MailAddress = data.EMAIL;
                 u.Factory = loginFactory;
-                u.IsMIS = data.ISMIS;
-                u.FactoryList = data.FACTORY;
-                u.MailAddress = data.EMAIL;
                 u.Keyword = keyword;
 
 
@@ -137,7 +137,6 @@ namespace Sci.Production.Win
                 return;
             }
 
-            DualResult result;
             DataTable dtPass1;
             string SQLCmd = "SELECT ID, Factory FROM Pass1 WHERE ID = @ID";
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
