@@ -179,6 +179,12 @@
     <Compile Include="P11.Designer.cs">
       <DependentUpon>P11.cs</DependentUpon>
     </Compile>
+    <Compile Include="P12.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P12.Designer.cs">
+      <DependentUpon>P12.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +229,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P11.resx">
       <DependentUpon>P11.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P12.resx">
+      <DependentUpon>P12.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
