@@ -33,6 +33,7 @@
             this.panel2 = new Sci.Win.UI.Panel();
             this.button1 = new Sci.Win.UI.Button();
             this.bindingSource1 = new Sci.Win.UI.BindingSource();
+            this.label1 = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.panel2.SuspendLayout();
@@ -76,6 +77,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.label1);
             this.panel2.Controls.Add(this.button1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 444);
@@ -94,6 +96,16 @@
             this.button1.Text = "Close";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // label1
+            // 
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(9, 11);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(567, 23);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Tip: A means warehouse Bulk, B means warehouse Inventory, C means warehouse Scrap" +
+    ".";
             // 
             // P03_InventoryStatus
             // 
@@ -117,5 +129,6 @@
         private Win.UI.Panel panel2;
         private Win.UI.Button button1;
         private Win.UI.BindingSource bindingSource1;
+        private Win.UI.Label label1;
     }
 }
