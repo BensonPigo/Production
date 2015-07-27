@@ -457,7 +457,15 @@ Sci.Production.Warehouse/P03_Transaction.resx -text
 Sci.Production.Warehouse/P03_Wkno.Designer.cs -text
 Sci.Production.Warehouse/P03_Wkno.cs -text
 Sci.Production.Warehouse/P03_Wkno.resx -text
+Sci.Production.Warehouse/P41.Designer.cs -text
+Sci.Production.Warehouse/P41.cs -text
+Sci.Production.Warehouse/P41.resx -text
+Sci.Production.Warehouse/P42.Designer.cs -text
+Sci.Production.Warehouse/P42.cs -text
+Sci.Production.Warehouse/P42.resx -text
 Sci.Production.Warehouse/Properties/AssemblyInfo.cs -text
+Sci.Production.Warehouse/Properties/Resources.Designer.cs -text
+Sci.Production.Warehouse/Properties/Resources.resx -text
 Sci.Production.Warehouse/Sci.Production.Warehouse.csproj -text
 Sci.Production/Program.cs -text
 Sci.Production/Properties/AssemblyInfo.cs -text
