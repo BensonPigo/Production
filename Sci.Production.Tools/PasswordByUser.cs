@@ -160,7 +160,7 @@ namespace Sci.Production.Tools
             this.textBox2.ReadOnly = !(this.EditMode && (Sci.Env.User.IsAdmin || this.textBox8.Text == Sci.Env.User.UserID));
             this.textBox2.UseSystemPasswordChar = !this.EditMode;
             this.textBox3.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
-            this.editBox1.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
+            this.editBox1.ReadOnly = true;  // !(this.EditMode && Sci.Env.User.IsAdmin);
 
             this.txtuser1.TextBox1.Enabled = (this.EditMode && Sci.Env.User.IsAdmin);
             this.txtuser2.TextBox1.Enabled = (this.EditMode && Sci.Env.User.IsAdmin);
