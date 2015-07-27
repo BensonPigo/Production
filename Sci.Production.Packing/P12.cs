@@ -18,6 +18,7 @@ namespace Sci.Production.Packing
         private string sqlCmd;
         DualResult result;
         DataTable gridData,dateData;
+        DataGridViewGeneratorNumericColumnSettings clogctn = new DataGridViewGeneratorNumericColumnSettings();
         public P12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -42,6 +43,9 @@ namespace Sci.Production.Packing
             //Grid設定
             this.grid1.IsEditingReadOnly = true;
             this.grid1.DataSource = listControlBindingSource1;
+
+            //當欄位值為0時，顯示空白
+            clogctn.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
 
             Helper.Controls.Grid.Generator(this.grid1)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -73,7 +77,7 @@ namespace Sci.Production.Packing
                 .Text("ProdRemark", header: "Production Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("ShipRemark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("MtlFormA", header: "Mtl. FormA", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Numeric("InClogCTN", header: "% in CLOG", iseditingreadonly: true)
+                .Numeric("InClogCTN", header: "% in CLOG", iseditingreadonly: true, settings: clogctn)
                 .Numeric("CBM", header: "Ttl CBM",decimal_places:3, iseditingreadonly: true)
                 .Text("ClogLocationId", header: "Bin Location", width: Widths.AnsiChars(20), iseditingreadonly: true);
         }

@@ -147,6 +147,7 @@
             // 
             // button3
             // 
+            this.button3.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.button3.Location = new System.Drawing.Point(756, 8);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(80, 30);
@@ -248,6 +249,7 @@
             // 
             // P12
             // 
+            this.CancelButton = this.button3;
             this.ClientSize = new System.Drawing.Size(856, 483);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
