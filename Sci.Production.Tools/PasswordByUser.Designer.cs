@@ -291,7 +291,7 @@
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(81, 23);
             this.label14.TabIndex = 12;
-            this.label14.Text = "Region";
+            this.label14.Text = "Resign";
             // 
             // label13
             // 
