@@ -20,9 +20,9 @@ namespace Sci.Production.Class
         {
             set 
             {
+                this.useFunction = value;
                 if (!Env.DesignTime)
                 {
-                    this.useFunction = value;
                     string sqlCMD;
                     if (MyUtility.Check.Empty(this.useFunction))
                     {
@@ -39,7 +39,6 @@ namespace Sci.Production.Class
                         this.DataSource = ShipModeTable;
                         this.DisplayMember = "ID";
                         this.ValueMember = "ID";
-                        this.Size = new System.Drawing.Size(80, 24);
                     }
                 }
             }
@@ -48,6 +47,7 @@ namespace Sci.Production.Class
 
         public txtshipmode()
         {
+            this.Size = new System.Drawing.Size(80, 24);
         }
     }
 }
