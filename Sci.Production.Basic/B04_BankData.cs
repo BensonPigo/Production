@@ -94,10 +94,10 @@ namespace Sci.Production.Basic
             foreach (DataRow gridData in datas.Rows)
             {
                 gridData["CountryName"] = MyUtility.GetValue.Lookup("Alias", gridData["CountryID"].ToString(), "Country", "ID");
-                gridData["CreateBy"] = gridData["AddName"].ToString() + ((DateTime)gridData["AddDate"]).ToString("yyyy/MM/dd HH:mm:ss");
+                gridData["CreateBy"] = gridData["AddName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", gridData["AddName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
                 if (gridData["EditDate"] != System.DBNull.Value)
                 {
-                    gridData["EditBy"] = gridData["EditName"].ToString() + ((DateTime)gridData["EditDate"]).ToString("yyyy/MM/dd HH:mm:ss");
+                    gridData["EditBy"] = gridData["EditName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", gridData["EditName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
                 }
                 gridData.AcceptChanges();
             }
