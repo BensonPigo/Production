@@ -20,14 +20,17 @@ namespace Sci.Production.Class
             set
             {
                 this.type = value;
-                string selectCommand = string.Format("select ID, rtrim(ID)+'- '+rtrim(Name) as IDName from DropDownList where Type = '{0}' order by ID", this.Type);
-                Ict.DualResult returnResult;
-                DataTable dropDownListTable = new DataTable();
-                if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
+                if (!Env.DesignTime)
                 {
-                    this.DataSource = dropDownListTable;
-                    this.DisplayMember = "IDName";
-                    this.ValueMember = "ID";
+                    string selectCommand = string.Format("select ID, rtrim(ID)+'- '+rtrim(Name) as IDName from DropDownList where Type = '{0}' order by Seq", this.Type);
+                    Ict.DualResult returnResult;
+                    DataTable dropDownListTable = new DataTable();
+                    if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
+                    {
+                        this.DataSource = dropDownListTable;
+                        this.DisplayMember = "IDName";
+                        this.ValueMember = "ID";
+                    }
                 }
             }
             get { return this.type; }
