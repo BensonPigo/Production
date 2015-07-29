@@ -30,7 +30,7 @@ namespace Sci.Production.Class
                     }
                     else
                     {
-                        sqlCMD = string.Format("select ID from ShipMode where PATINDEX('%{0}%',UseFunction) <> 0", useFunction.Trim());
+                        sqlCMD = string.Format("select ID from ShipMode where UseFunction like '%{0}%' <> 0", useFunction.Trim());
                     }
                     Ict.DualResult cbResult;
                     DataTable ShipModeTable = new DataTable();
