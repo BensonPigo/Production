@@ -24,6 +24,7 @@ namespace Sci.Production.Logistic
             this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
             gridicon.Append.Visible = false;
             gridicon.Insert.Visible = false;
+            InsertDetailGridOnDoubleClick = false;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
