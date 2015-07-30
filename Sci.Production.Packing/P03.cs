@@ -582,10 +582,10 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), C
                 #region 計算CTNQty, ShipQty, NW, GW, NNW, CBM
                 ctnQty = ctnQty + Convert.ToInt32(dr["CTNQty"].ToString());
                 shipQty = shipQty + Convert.ToInt32(dr["ShipQty"].ToString());
-                nw = MyUtility.Math.Round(nw + Convert.ToDouble(dr["NW"].ToString()), 3);
-                gw = MyUtility.Math.Round(gw + Convert.ToDouble(dr["GW"].ToString()), 3);
-                nnw = MyUtility.Math.Round(nnw + Convert.ToDouble(dr["NNW"].ToString()), 3);
-                if (Convert.ToInt32(dr["CTNQty"].ToString()) > 0)
+                nw = MyUtility.Math.Round(nw +(MyUtility.Check.Empty(dr["NW"]) ? 0 : Convert.ToDouble(dr["NW"].ToString())), 3);
+                gw = MyUtility.Math.Round(gw + (MyUtility.Check.Empty(dr["GW"]) ? 0 : Convert.ToDouble(dr["GW"].ToString())), 3);
+                nnw = MyUtility.Math.Round(nnw + (MyUtility.Check.Empty(dr["NNW"]) ? 0 : Convert.ToDouble(dr["NNW"].ToString())), 3);
+                if (MyUtility.Check.Empty(dr["CTNQty"]) || Convert.ToInt32(dr["CTNQty"].ToString()) > 0)
                 {
                     cbm = MyUtility.Math.Round(cbm + (MyUtility.Math.Round(Convert.ToDouble(MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo")), 3) * Convert.ToInt32(dr["CTNQty"].ToString())), 4);
                 }

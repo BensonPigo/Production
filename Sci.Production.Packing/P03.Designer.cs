@@ -760,6 +760,7 @@
             this.txtshipmode1.ReadOnly = true;
             this.txtshipmode1.Size = new System.Drawing.Size(121, 24);
             this.txtshipmode1.TabIndex = 25;
+            this.txtshipmode1.UseFunction = null;
             this.txtshipmode1.SelectedIndexChanged += new System.EventHandler(this.txtshipmode1_SelectedIndexChanged);
             // 
             // P03
