@@ -42,6 +42,7 @@ namespace Sci.Production.Packing
             InitializeComponent();
             this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "' AND Type = 'B'";
             detailgrid.AllowUserToOrderColumns = true;
+            InsertDetailGridOnDoubleClick = false;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
