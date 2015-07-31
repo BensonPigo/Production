@@ -13,11 +13,11 @@ using System.Linq;
 
 namespace Sci.Production.Planning
 {
-    public partial class P02 : Sci.Win.Tems.QueryForm
+    public partial class P05 : Sci.Win.Tems.QueryForm
     {
         Dictionary<string, string> di_inhouseOsp2 = new Dictionary<string, string>();
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        public P02(ToolStripMenuItem menuitem)
+        public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
@@ -31,7 +31,6 @@ namespace Sci.Production.Planning
             base.OnFormLoaded();
             grid2.AutoGenerateColumns = true;
 
-            this.checkBox1.Checked = true;
             dateRange2.Value1 = DateTime.Now.AddMonths(1);
             dateRange2.Value2 = DateTime.Now.AddMonths(2).AddDays(-1);
 
@@ -40,19 +39,18 @@ namespace Sci.Production.Planning
             di_inhouseOsp.Add("O", "OSP");
             di_inhouseOsp.Add("I", "InHouse");
 
+            comboBox1.DataSource = new BindingSource(di_inhouseOsp, null);
+            comboBox1.ValueMember = "Key";
+            comboBox1.DisplayMember = "Value";
+            comboBox1.SelectedIndex = 2;  //inhouse
 
             di_inhouseOsp2.Add("O", "OSP");
             di_inhouseOsp2.Add("I", "InHouse");
 
-            comboBox1.DataSource = new BindingSource(di_inhouseOsp, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
-            comboBox1.SelectedIndex = 1;  //OSP
-
             comboBox3.DataSource = new BindingSource(di_inhouseOsp2, null);
             comboBox3.ValueMember = "Key";
             comboBox3.DisplayMember = "Value";
-            comboBox3.SelectedIndex = 0;  //OSP
+            comboBox3.SelectedIndex = 1;  //inhouse
 
             string[] items = Sci.Env.User.FactoryList.Split(',');
             comboBox2.Items.AddRange(items);
@@ -150,20 +148,25 @@ namespace Sci.Production.Planning
                 .Text("POID", header: "Mother SP", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
                 .Text("id", header: "SP#", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
                 .Text("article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Numeric("totalqty", header: "Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
+                .Numeric("totalqty", header: "M Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
                 .ComboBox("inhouseosp", header: "OSP/Inhouse").Get(out col_inhouseosp)
                 .Text("localSuppid", header: "Supp Id", width: Widths.AnsiChars(6))
-                .Text("suppnm", header: "Supplierd", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("suppnm", header: "Supplier", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("cutinline", header: "Cut Inline", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
                  .Text("cutoffline", header: "Cut Offline", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
                  .Text("Sewinline", header: "Sew Inline" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
                  .Text("sewoffline", header: "Sew Offline" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
-                 .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
                  .Text("ArtworkInLine", header: "Inline", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
                  .Text("ArtworkOffLine", header: "Offline", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
                  .Numeric("Stdq", header: "Std. Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
-                 .Numeric("qaqty", header: "Output Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
-                 .Numeric("qty", header: "Panels", width: Widths.AnsiChars(3), integer_places: 8, iseditingreadonly: true)
+                 .Numeric("batchno", header: "Bat.", width: Widths.AnsiChars(3), integer_places: 3,decimal_places:1, iseditingreadonly: true)
+                 .Numeric("qty", header: "Stitches", width: Widths.AnsiChars(3), integer_places: 8, iseditingreadonly: true)
+                 .Numeric("alloqty", header: "AlloQty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
+                 .Numeric("ttlqty", header: "TTL. Stitches", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
+                 .Numeric("target", header: "Target Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
+                 .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
+                 
+                 
                  .Text("msg", header: "Error Message", width: Widths.AnsiChars(20), settings: ts1, iseditingreadonly: true)
                   ;
             col_inhouseosp.DataSource = new BindingSource(di_inhouseOsp2, null);
@@ -175,24 +178,28 @@ namespace Sci.Production.Planning
         private void button1_Click(object sender, EventArgs e)
         {
             DataTable dtData;
-            string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, styleid, seasonid, localsuppid, inhouseosp, factoryid;
+            string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, styleid, seasonid, localsuppid, inhouseosp, factoryid,inline_b,inline_e;
             sewinline_b = null;
             sewinline_e = null;
             sciDelivery_b = null;
             sciDelivery_e = null;
-            bool chkprice;
-            chkprice = checkBox1.Checked;
+            inline_b = null;
+            inline_e = null;
+            
             styleid = txtstyle1.Text;
             seasonid = txtseason1.Text;
             localsuppid = txtsubcon1.TextBox1.Text;
             factoryid = comboBox2.Text;
             inhouseosp = comboBox1.SelectedValue.ToString();
 
-            if (dateRange1.Value1 != null) sewinline_b = this.dateRange1.Text1;
+            if (dateRange1.Value1 != null) {sewinline_b = this.dateRange1.Text1;}
             if (dateRange1.Value2 != null) { sewinline_e = this.dateRange1.Text2; }
 
-            if (dateRange2.Value1 != null) sciDelivery_b = this.dateRange2.Text1;
+            if (dateRange2.Value1 != null) {sciDelivery_b = this.dateRange2.Text1;}
             if (dateRange2.Value2 != null) { sciDelivery_e = this.dateRange2.Text2; }
+
+            if (dateRange3.Value1 != null) { inline_b = this.dateRange3.Text1; }
+            if (dateRange3.Value2 != null) { inline_e = this.dateRange3.Text2; }
 
             if ((sewinline_b == null && sewinline_e == null) &&
                 (sciDelivery_b == null && sciDelivery_e == null))
@@ -210,8 +217,8 @@ namespace Sci.Production.Planning
 ,(select Abb from LocalSupp where id = b.LocalSuppID) suppnm
 ,b.ArtworkInLine
 ,b.ArtworkOffLine
-,a.SewInLine
-,a.SewOffLine
+,convert(date,c.Inline) as sewinline
+,convert(date,c.offline) as SewOffLine
 ,a.StyleUkey
 ,isnull((select sum(tmp3.qaqty)  
     from 
@@ -229,8 +236,11 @@ namespace Sci.Production.Planning
 , 0 as stdq
 , 0 as err
 ,'' as msg
- FROM (Orders a inner join  Order_tmscost b on a.ID = b.ID)
- where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'PRINTING'";
+,C.alloqty
+,(select batchno from embbatch where b.qty >= BeginStitch AND b.qty <=EndStitch) batchno
+ FROM (Orders a inner join  Order_tmscost b on a.ID = b.ID) 
+inner join SewingSchedule c on a.id = c.OrderID
+ where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'EMBROIDERY'";
 
             if (!(MyUtility.Check.Empty(styleid)))
             { sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid); }
@@ -242,13 +252,13 @@ namespace Sci.Production.Planning
             { sqlcmd += string.Format(@" and b.InhouseOSP = '{0}'", inhouseosp); }
             if (!(MyUtility.Check.Empty(factoryid)))
             { sqlcmd += string.Format(@" and a.FactoryID =''", factoryid); }
-            if (chkprice)
-            { sqlcmd += @" and b.Price > 0"; }
 
             if (!(MyUtility.Check.Empty(sciDelivery_b)))
             { sqlcmd += string.Format(@" and a.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
             if (!(string.IsNullOrWhiteSpace(sewinline_b)))
-            { sqlcmd += string.Format(@" and not (a.SewInLine > '{1}' or a.SewOffLine < '{0}')", sewinline_b, sewinline_e); }
+            { sqlcmd += string.Format(@" and not (c.InLine > '{1}' or c.OffLine < '{0}')", sewinline_b, sewinline_e); }
+            if (!(string.IsNullOrWhiteSpace(inline_b)))
+            { sqlcmd += string.Format(@" and not (b.artworkInLine > '{1}' or b.artworkOffLine < '{0}')", inline_b, inline_e); }
 
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
@@ -256,8 +266,8 @@ namespace Sci.Production.Planning
                 if (dtData.Rows.Count == 0)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
                 listControlBindingSource1.DataSource = dtData;
-                dtData.Columns.Add("totalqty", typeof(decimal));
-                dtData.Columns["totalqty"].Expression = "(orderqty - qaqty) * qty";
+                dtData.Columns.Add("ttlqty", typeof(decimal));
+                dtData.Columns["ttlqty"].Expression = "alloqty * qty";
                 grid2_generate();
             }
             else
@@ -504,6 +514,52 @@ namespace Sci.Production.Planning
                 }
             }
             dt.DefaultView.Sort = "err desc";
+        }
+
+        private void pictureBox3_Click(object sender, EventArgs e)
+        {
+            listControlBindingSource1.EndEdit();
+            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            if (dt == null || dt.Rows.Count == 0) return;
+            DataRow[] drfound = dt.Select("selected = 1");
+
+            foreach (var item in drfound)
+            {
+                if (null != dateBox1.Value)
+                {
+                    item["artworkinline"] = dateBox1.Value;
+                }
+                else
+                    item["artworkinline"] = DBNull.Value;
+            }
+        }
+
+        private void pictureBox4_Click(object sender, EventArgs e)
+        {
+            listControlBindingSource1.EndEdit();
+            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            if (dt == null || dt.Rows.Count == 0) return;
+            DataRow[] drfound = dt.Select("selected = 1");
+            foreach (var item in drfound)
+            {
+                if (null != dateBox2.Value)
+                {
+                    item["artworkoffline"] = dateBox2.Value;
+                }
+                else
+                    item["artworkoffline"] = DBNull.Value;
+            }
+        }
+
+        //find Style#
+        private void button6_Click_1(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
+            int index = listControlBindingSource1.Find("Styleid", textBox2.Text.TrimEnd());
+            if (index == -1)
+            { MyUtility.Msg.WarningBox("Data was not found!!"); }
+            else
+            { listControlBindingSource1.Position = index; }
         }
     }
 }
