@@ -269,21 +269,27 @@
   <ItemGroup>
     <EmbeddedResource Include="txtcountry.resx">
       <DependentUpon>txtcountry.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="txtpaytermar.resx">
       <DependentUpon>txtpaytermar.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="txtpayterm_fty.resx">
       <DependentUpon>txtpayterm_fty.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="txtsubcon.resx">
       <DependentUpon>txtsubcon.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="txtsupplier.resx">
       <DependentUpon>txtsupplier.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="txttpeuser.resx">
       <DependentUpon>txttpeuser.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="txtunit.resx">
       <DependentUpon>txtunit.cs</DependentUpon>

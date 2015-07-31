@@ -114,6 +114,7 @@ namespace Sci.Production.Class
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
             this.textBox1.ValidateControl();
+            this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
         }
     }
 }
