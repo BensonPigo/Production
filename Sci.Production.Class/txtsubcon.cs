@@ -99,6 +99,8 @@ namespace Sci.Production.Class
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
+            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base) this.FindForm();
+            if (myForm.EditMode == false || textBox1.ReadOnly==true) return;
             string selectCommand;
             selectCommand = "select ID,Abb,Name from LocalSupp order by ID";
             if (!IsIncludeJunk)

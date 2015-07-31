@@ -48,7 +48,7 @@ namespace Sci.Production.Class
             string textValue = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                if (!MyUtility.Check.Seek(textValue, "PayTerm", "ID"))
+                if (!MyUtility.Check.Seek(textValue, "PayTerm", "ID","Production"))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Pay Term: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
@@ -60,12 +60,16 @@ namespace Sci.Production.Class
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            this.displayBox1.Text = MyUtility.GetValue.Lookup("Name", this.textBox1.Text.ToString(), "PayTerm", "ID");
+
+            this.displayBox1.Text = MyUtility.GetValue.Lookup("Name", this.textBox1.Text.ToString(), "PayTerm", "ID", "Production");
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from PayTerm where Junk = 0 order by ID", "6,60", this.textBox1.Text);
+            string selItem = "select ID,Name from PayTerm where Junk = 0 order by ID";
+            DataTable itemDt;
+            DBProxy.Current.Select("Production", selItem, out itemDt);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(itemDt, "ID,Name", "6,60", this.textBox1.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
