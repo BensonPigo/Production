@@ -131,6 +131,42 @@
     <Compile Include="B04.Designer.cs">
       <DependentUpon>B04.cs</DependentUpon>
     </Compile>
+    <Compile Include="P05.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05.Designer.cs">
+      <DependentUpon>P05.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_AirPrePaidList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_AirPrePaidList.Designer.cs">
+      <DependentUpon>P05_AirPrePaidList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_ContainerTruck.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_ContainerTruck.Designer.cs">
+      <DependentUpon>P05_ContainerTruck.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_ExpenseData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_ExpenseData.Designer.cs">
+      <DependentUpon>P05_ExpenseData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_ImportFromPackingList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_ImportFromPackingList.Designer.cs">
+      <DependentUpon>P05_ImportFromPackingList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_QtyBreakDown.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_QtyBreakDown.Designer.cs">
+      <DependentUpon>P05_QtyBreakDown.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +187,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B04.resx">
       <DependentUpon>B04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05.resx">
+      <DependentUpon>P05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_AirPrePaidList.resx">
+      <DependentUpon>P05_AirPrePaidList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_ContainerTruck.resx">
+      <DependentUpon>P05_ContainerTruck.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_ExpenseData.resx">
+      <DependentUpon>P05_ExpenseData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_ImportFromPackingList.resx">
+      <DependentUpon>P05_ImportFromPackingList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_QtyBreakDown.resx">
+      <DependentUpon>P05_QtyBreakDown.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
