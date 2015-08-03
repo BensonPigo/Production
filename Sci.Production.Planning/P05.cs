@@ -29,10 +29,10 @@ namespace Sci.Production.Planning
         {
 
             base.OnFormLoaded();
-            grid2.AutoGenerateColumns = true;
+            //grid2.AutoGenerateColumns = true;
 
-            dateRange2.Value1 = DateTime.Now.AddMonths(1);
-            dateRange2.Value2 = DateTime.Now.AddMonths(2).AddDays(-1);
+            dateRange1.Value1 = DateTime.Now.AddMonths(1);
+            dateRange1.Value2 = DateTime.Now.AddMonths(2).AddDays(-1);
 
             Dictionary<string, string> di_inhouseOsp = new Dictionary<string, string>();
             di_inhouseOsp.Add("", "All");
@@ -135,7 +135,6 @@ namespace Sci.Production.Planning
             };
 
             Ict.Win.UI.DataGridViewComboBoxColumn col_inhouseosp;
-                    
 
             //設定Grid1的顯示欄位
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
@@ -148,7 +147,7 @@ namespace Sci.Production.Planning
                 .Text("POID", header: "Mother SP", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
                 .Text("id", header: "SP#", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
                 .Text("article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Numeric("totalqty", header: "M Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
+                .Numeric("totalqty", header: "M Qty", width: Widths.AnsiChars(8), integer_places: 8,decimal_places:3, iseditingreadonly: true)
                 .ComboBox("inhouseosp", header: "OSP/Inhouse").Get(out col_inhouseosp)
                 .Text("localSuppid", header: "Supp Id", width: Widths.AnsiChars(6))
                 .Text("suppnm", header: "Supplier", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -162,8 +161,8 @@ namespace Sci.Production.Planning
                  .Numeric("batchno", header: "Bat.", width: Widths.AnsiChars(3), integer_places: 3,decimal_places:1, iseditingreadonly: true)
                  .Numeric("qty", header: "Stitches", width: Widths.AnsiChars(3), integer_places: 8, iseditingreadonly: true)
                  .Numeric("alloqty", header: "AlloQty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
-                 .Numeric("ttlqty", header: "TTL. Stitches", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
-                 .Numeric("target", header: "Target Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
+                 .Numeric("ttlStitch", header: "TTL. Stitches", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
+                 .Numeric("target", header: "Target Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 1, iseditingreadonly: true)
                  .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
                  
                  
@@ -172,11 +171,17 @@ namespace Sci.Production.Planning
             col_inhouseosp.DataSource = new BindingSource(di_inhouseOsp2, null);
             col_inhouseosp.ValueMember = "Key";
             col_inhouseosp.DisplayMember = "Value";
+
+            Helper.Controls.Grid.Generator(this.grid2)
+                .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(6))
+                .Numeric("totalqty", header: "M Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 3, iseditingreadonly: true)
+                .Numeric("TotalStitch", header: "Total Stitch", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true);
         }
 
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
+            numericBox4.Value = 0;
             DataTable dtData;
             string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, styleid, seasonid, localsuppid, inhouseosp, factoryid,inline_b,inline_e;
             sewinline_b = null;
@@ -185,7 +190,7 @@ namespace Sci.Production.Planning
             sciDelivery_e = null;
             inline_b = null;
             inline_e = null;
-            
+
             styleid = txtstyle1.Text;
             seasonid = txtseason1.Text;
             localsuppid = txtsubcon1.TextBox1.Text;
@@ -209,8 +214,29 @@ namespace Sci.Production.Planning
                 return;
             }
 
+            if (MyUtility.Check.Empty(numericBox2.Text))
+            {
+                MyUtility.Msg.WarningBox("Efficiency can't be empty!!");
+                numericBox2.Focus();
+                return;
+            }
+
+            if (MyUtility.Check.Empty(numericBox1.Text))
+            {
+                MyUtility.Msg.WarningBox("Heads# can't be empty!!");
+                numericBox1.Focus();
+                return;
+            }
+
+            if (MyUtility.Check.Empty(numericBox3.Text))
+            {
+                MyUtility.Msg.WarningBox("Work hours can't be empty!!");
+                numericBox3.Focus();
+                return;
+            }
+
             string sqlcmd
-                = @"SELECT 0 as selected,a.id, a.SciDelivery, a.CutInline, a.CutOffline, a.FactoryID
+                = string.Format(@"SELECT 0 as selected,a.id, a.SciDelivery, a.CutInline, a.CutOffline, a.FactoryID
 , a.StyleID, a.SeasonID, a.Qty AS OrderQty, a.isforecast,a.poid
 , (select cast(t.article as varchar)+',' from (select article from order_qty where id = a.ID group by article )t for xml path('')) as article
 ,b.qty,b.InhouseOSP,b.LocalSuppID
@@ -238,9 +264,10 @@ namespace Sci.Production.Planning
 ,'' as msg
 ,C.alloqty
 ,(select batchno from embbatch where b.qty >= BeginStitch AND b.qty <=EndStitch) batchno
+,round(alloqty/({0}*{1}*(select batchno from embbatch where b.qty >= BeginStitch AND b.qty <=EndStitch))*100/{2},3) as totalqty
  FROM (Orders a inner join  Order_tmscost b on a.ID = b.ID) 
 inner join SewingSchedule c on a.id = c.OrderID
- where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'EMBROIDERY'";
+ where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'EMBROIDERY'", numericBox1.Text,numericBox3.Text,numericBox2.Text);
 
             if (!(MyUtility.Check.Empty(styleid)))
             { sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid); }
@@ -266,8 +293,11 @@ inner join SewingSchedule c on a.id = c.OrderID
                 if (dtData.Rows.Count == 0)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
                 listControlBindingSource1.DataSource = dtData;
-                dtData.Columns.Add("ttlqty", typeof(decimal));
-                dtData.Columns["ttlqty"].Expression = "alloqty * qty";
+                dtData.Columns.Add("ttlStitch", typeof(decimal));
+                dtData.Columns["ttlStitch"].Expression = "alloqty * qty";
+                dtData.Columns.Add("target", typeof(decimal));
+                dtData.Columns["target"].Expression = this.numericBox1.Text + " * " + this.numericBox3.Text + " * batchno";
+                //dtData.Columns["totalqty"].Expression = "round(alloqty / (heads * workhours * batchno) * 100 / eff,3)";
                 grid2_generate();
             }
             else
@@ -367,7 +397,10 @@ inner join SewingSchedule c on a.id = c.OrderID
             listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             Object localPrice = dt.Compute("Sum(totalqty)", "selected = 1");
-            this.displayBox1.Value = localPrice.ToString();
+            if (MyUtility.Check.Empty(localPrice.ToString()))
+                this.numericBox4.Value = 0;
+            else
+                this.numericBox4.Value = decimal.Parse(localPrice.ToString());
         }
 
         //Filter empty Supp ID , In Line
@@ -391,7 +424,8 @@ inner join SewingSchedule c on a.id = c.OrderID
                        select new
                        {
                            Supplier = grouprows.Key.localsuppid + "-" + grouprows.Key.suppnm,
-                           TotalQty = grouprows.Sum(r => r.Field<int>("OrderQty") - r.Field<int>("qaqty") * r.Field<decimal>("qty"))
+                           TotalQty = grouprows.Sum(r => r.Field<decimal>("totalqty")),
+                           TotalStitch = grouprows.Sum(r => r.Field<decimal>("ttlstitch"))
                        }).ToList();
 
             var bs2 = (from rows in ((DataTable)listControlBindingSource1.DataSource).AsEnumerable()
@@ -399,11 +433,13 @@ inner join SewingSchedule c on a.id = c.OrderID
                        select new
                        {
                            Supplier = grouprows.Key.localsuppid,
-                           TotalQty = grouprows.Sum(r => r.Field<int>("OrderQty") - r.Field<int>("qaqty") * r.Field<decimal>("qty"))
+                           TotalQty = grouprows.Sum(r =>  r.Field<decimal>("totalqty")),
+                           TotalStitch = grouprows.Sum(r => r.Field<decimal>("ttlstitch"))
                        }).ToList();
             bs1.AddRange(bs2);
             grid2.DataSource = bs1;
-            grid2.AutoResizeColumns();
+            //grid2.AutoResizeColumns();
+            
         }
 
         //set default supplier from style
