@@ -164,7 +164,7 @@ namespace Sci.Production.Subcon
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(ProductionEnv.Keyword + "OS", "artworkpo", (DateTime)CurrentMaintain["issuedate"]);
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "OS", "artworkpo", (DateTime)CurrentMaintain["issuedate"]);
             }
 
             return base.ClickSaveBefore();

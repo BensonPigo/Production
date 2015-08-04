@@ -136,7 +136,7 @@ namespace Sci.Production.Subcon
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(ProductionEnv.Keyword + "FO", "FarmOut", (DateTime)CurrentMaintain["issuedate"]);
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "FO", "FarmOut", (DateTime)CurrentMaintain["issuedate"]);
             }
 
             #region 加總明細Qty至表頭

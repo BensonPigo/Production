@@ -164,7 +164,7 @@ namespace Sci.Production.Subcon
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'LocalPO1'), 'LocalPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(ProductionEnv.Keyword + "LP", "Localpo", (DateTime)CurrentMaintain["issuedate"]);
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LP", "Localpo", (DateTime)CurrentMaintain["issuedate"]);
             }
 
             #region 加總明細金額至表頭

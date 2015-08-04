@@ -383,17 +383,17 @@ namespace Sci.Production.Subcon
                 return;
             }
 
-            //find = dt.Select("(unitprice = 0 or apvdate is null) and Selected = 1");
-            //if (find.Length > 0)
-            //{
-            //    foreach (DataRow dr in find)
-            //    {
-            //        dr["message"] = "Unit price = 0 or Approve Date is null";
-            //    }
-            //    MyUtility.Msg.WarningBox("Unit Price or Approve Date can't be zero or empty", "Warning");
-            //    grid1.Sort(grid1.Columns[17], ListSortDirection.Descending);
-            //    return;
-            //}
+            find = dt.Select("(unitprice = 0 or apvdate is null) and Selected = 1");
+            if (find.Length > 0)
+            {
+                foreach (DataRow dr in find)
+                {
+                    dr["message"] = "Unit price = 0 or Approve Date is null";
+                }
+                MyUtility.Msg.WarningBox("Unit Price or Approve Date can't be zero or empty", "Warning");
+                grid1.Sort(grid1.Columns[17], ListSortDirection.Descending);
+                return;
+            }
 
             #region 表頭資料group by --- LINQ
             var query = (from row in dt.AsEnumerable()
@@ -428,7 +428,7 @@ namespace Sci.Production.Subcon
                             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
                             ITableSchema tableSchema = null;
                             result = DBProxy.Current.GetTableSchema(null, "artworkpo", out tableSchema);
-                            string id = Sci.MyUtility.GetValue.GetID(ProductionEnv.Keyword + "OS", "artworkpo", DateTime.Parse(dateBox1.Text));
+                            string id = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "OS", "artworkpo", DateTime.Parse(dateBox1.Text));
                             decimal ttlamt = 0;
                             string currency = "";
                             string str = "";

@@ -156,7 +156,7 @@ namespace Sci.Production.Subcon
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'LocalPO1'), 'LocalPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(ProductionEnv.Keyword + "LA", "LocalAP", (DateTime)CurrentMaintain["issuedate"]);
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LA", "LocalAP", (DateTime)CurrentMaintain["issuedate"]);
                 if (MyUtility.Check.Empty(CurrentMaintain["id"]))
                 {
                     MyUtility.Msg.WarningBox("Server is busy, Please re-try it again", "GetID() Failed");
