@@ -108,22 +108,22 @@ namespace Sci.Production.Warehouse
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("FactoryID", header: "Fac", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true)
-                .Text("POID", header: "SP#", width: Widths.AnsiChars(13), settings: ts1)
-                 .Text("EachConsApv", header: "Each Cons.", width: Widths.AnsiChars(10), settings: ts1)
-                 .Text("ETA", header: "Mtl. ETA", width: Widths.AnsiChars(10), settings: ts1)
-                 .Text("fstSewinline", header: "1st. Sewing" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), settings: ts1)
-                 .Text("cutType", header: "Type of Cutting", width: Widths.AnsiChars(13), settings: ts1)
-                 .Text("cutwidth", header: "Cut Width", width: Widths.AnsiChars(10), settings: ts1)
-                 .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                  .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(8))
+                .Text("POID", header: "SP#", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
+                 .Text("EachConsApv", header: "Each Cons.", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
+                 .Text("ETA", header: "Mtl. ETA", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
+                 .Text("fstSewinline", header: "1st. Sewing" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
+                 .Text("cutType", header: "Type of Cutting", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
+                 .Text("cutwidth", header: "Cut Width", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
+                 .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                  .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .Date("TapeInline", header: "Inline", width: Widths.AnsiChars(10),settings:ts2)
                   .Date("TapeOffline", header: "Offline", width: Widths.AnsiChars(10), settings: ts3)
-                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3))
-                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(2))
-                  .Date("fstSCIdlv", header: "SCI Dlv.", width: Widths.AnsiChars(10))
-                  .Date("fstBuyerDlv", header: "Buyer Dlv.", width: Widths.AnsiChars(10))
-                  .Text("Refno", header: "Ref#", width: Widths.AnsiChars(20))
-                  .Text("color", header: "Color Desc", width: Widths.AnsiChars(13))
+                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                  .Date("fstSCIdlv", header: "SCI Dlv.", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                  .Date("fstBuyerDlv", header: "Buyer Dlv.", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                  .Text("Refno", header: "Ref#", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                  .Text("color", header: "Color Desc", width: Widths.AnsiChars(13), iseditingreadonly: true)
                   ;
         }
 
@@ -314,18 +314,12 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)";
 
         private void button2_Click(object sender, EventArgs e)
         {
-            IList<DataRow> list = ((DataTable)listControlBindingSource1.DataSource).ToList<DataRow>();  // 將 DataTable 轉成 IList<DataRow>
-            if (MyUtility.Check.Empty(list) || list.Count == 0) return;
-            DataRow dr1 = list.First<DataRow>(x => x["poid"].ToString() == textBox1.Text.TrimEnd()); // 使用取出符合條件的 DataRow
-            if (dr1 != null)
-            {
-                int pos = list.IndexOf(dr1); // 取回物件在串列中的位置.
-                if (pos != -1)
-                {
-                    this.listControlBindingSource1.Position = pos;       // 指定 bindibgsource 到要的位置.
-                }
-
-            }
+            if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
+            int index = listControlBindingSource1.Find("poid", textBox1.Text.TrimEnd());
+            if (index == -1)
+            { MyUtility.Msg.WarningBox("Data was not found!!"); }
+            else
+            { listControlBindingSource1.Position = index; }
         }
 
         private void sum_checkedqty()

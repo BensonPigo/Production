@@ -174,18 +174,12 @@ AND B.Special LIKE ('%EMB APPLIQUE%')";
 
         private void button2_Click(object sender, EventArgs e)
         {
-            IList<DataRow> list = ((DataTable)listControlBindingSource1.DataSource).ToList<DataRow>();  // 將 DataTable 轉成 IList<DataRow>
-            if (MyUtility.Check.Empty(list) || list.Count == 0) return;
-            DataRow dr1 = list.First<DataRow>(x => x["poid"].ToString() == textBox1.Text.TrimEnd()); // 使用取出符合條件的 DataRow
-            if (dr1 != null)
-            {
-                int pos = list.IndexOf(dr1); // 取回物件在串列中的位置.
-                if (pos != -1)
-                {
-                    this.listControlBindingSource1.Position = pos;       // 指定 bindibgsource 到要的位置.
-                }
-
-            }
+            if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
+            int index = listControlBindingSource1.Find("poid", textBox1.Text.TrimEnd());
+            if (index == -1)
+            { MyUtility.Msg.WarningBox("Data was not found!!"); }
+            else
+            { listControlBindingSource1.Position = index; }
         }
 
         private void button3_Click(object sender, EventArgs e)
