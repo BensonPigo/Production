@@ -109,7 +109,7 @@ namespace Sci.Production.Subcon
                                 rtrim(order_tmscost.LocalSuppID) LocalSuppID, 
                                 v.Cost,                                       
                                 v.qty costStitch,                          
-                                v.qty,                                     
+                                v.qty stitch,                                     
                                 isnull((select b.Price from                   
 	                                style_artwork a,Style_Artwork_Quot b        
 	                                where a.StyleUkey = orders.StyleUkey        
@@ -204,8 +204,8 @@ namespace Sci.Production.Subcon
                                     Order_TmsCost.ArtworkTypeID PatternDesc,     
                                     rtrim(order_tmscost.LocalSuppID) LocalSuppID,
                                     0.0 Cost,                                    
-                                    1.0 costStitch,                              
-                                    1.0 stitch,                                  
+                                    1 costStitch,                              
+                                    1 stitch,                                  
                                 isnull((select b.Price 
                                         from style_artwork a,Style_Artwork_Quot b         
                                         where a.StyleUkey = orders.StyleUkey         
@@ -480,8 +480,8 @@ namespace Sci.Production.Subcon
                                              t3 = row.Field<string>("artworkid"),
                                              t4 = row.Field<string>("PatternCode"),
                                              t5 = row.Field<string>("PatternDesc"),
-                                             t6 = row.Field<decimal>("coststitch"),
-                                             t7 = row.Field<decimal>("stitch"),
+                                             t6 = row.Field<int>("coststitch"),
+                                             t7 = row.Field<int>("stitch"),
                                              t8 = row.Field<decimal>("cost"),
                                              t9 = row.Field<decimal>("unitprice"),
                                              t10 = row.Field<decimal>("QtyGarment"),
