@@ -13,11 +13,11 @@ using System.Linq;
 
 namespace Sci.Production.Planning
 {
-    public partial class P04 : Sci.Win.Tems.QueryForm
+    public partial class P03 : Sci.Win.Tems.QueryForm
     {
         Dictionary<string, string> di_inhouseOsp2 = new Dictionary<string, string>();
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        public P04(ToolStripMenuItem menuitem)
+        public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
@@ -54,11 +54,6 @@ namespace Sci.Production.Planning
 
             string[] items = Sci.Env.User.FactoryList.Split(',');
             comboBox2.Items.AddRange(items);
-
-            string artworktype = "BONDING (MACHINE),BONDING (HAND)";
-            string[] items2 = artworktype.Split(',');
-            comboBox4.Items.AddRange(items2);
-            comboBox4.SelectedIndex = 0;
 
             MyUtility.Tool.SetGridFrozen(this.grid1);
             grid1.RowPostPaint += (s, e) =>
@@ -219,7 +214,6 @@ namespace Sci.Production.Planning
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            
             numericBox4.Value = 0;
             DataTable dtData;
             string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, styleid, seasonid, localsuppid, inhouseosp, factoryid,inline_b,inline_e,artworktypeid;
@@ -235,7 +229,6 @@ namespace Sci.Production.Planning
             localsuppid = txtsubcon1.TextBox1.Text;
             factoryid = comboBox2.Text;
             inhouseosp = comboBox1.SelectedValue.ToString();
-            artworktypeid = comboBox4.Text;
 
             if (dateRange1.Value1 != null) {sewinline_b = this.dateRange1.Text1;}
             if (dateRange1.Value2 != null) { sewinline_e = this.dateRange1.Text2; }
@@ -322,7 +315,7 @@ namespace Sci.Production.Planning
 ,b.artworktypeid
  FROM (Orders a inner join  Order_tmscost b on a.ID = b.ID) 
 inner join SewingSchedule c on a.id = c.OrderID
- where a.Finished = 0 AND a.Category !='M' 
+ where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'LASER'
 and b.tms > 0", numericBox3.Text,numericBox2.Text);
 
             if (!(MyUtility.Check.Empty(styleid)))
@@ -335,8 +328,6 @@ and b.tms > 0", numericBox3.Text,numericBox2.Text);
             { sqlcmd += string.Format(@" and b.InhouseOSP = '{0}'", inhouseosp); }
             if (!(MyUtility.Check.Empty(factoryid)))
             { sqlcmd += string.Format(@" and a.FactoryID =''", factoryid); }
-            if (!(MyUtility.Check.Empty(artworktypeid)))
-            { sqlcmd += string.Format(@" and b.artworktypeid = '{0}'", artworktypeid); }
 
             if (!(MyUtility.Check.Empty(sciDelivery_b)))
             { sqlcmd += string.Format(@" and a.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
@@ -344,7 +335,8 @@ and b.tms > 0", numericBox3.Text,numericBox2.Text);
             { sqlcmd += string.Format(@" and not (c.InLine > '{1}' or c.OffLine < '{0}')", sewinline_b, sewinline_e); }
             if (!(string.IsNullOrWhiteSpace(inline_b)))
             { sqlcmd += string.Format(@" and not (b.artworkInLine > '{1}' or b.artworkOffLine < '{0}')", inline_b, inline_e); }
-            MyUtility.Msg.WaitWindows("Querying.... Please wait....");
+
+            MyUtility.Msg.WaitWindows("Querying....Please wait....");
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
             {
@@ -548,7 +540,8 @@ and b.tms > 0", numericBox3.Text,numericBox2.Text);
                 MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
-            MyUtility.Msg.WaitWindows("Updating Inline Date.... Please wait....");
+
+            MyUtility.Msg.WaitWindows("Updating Inline Date...Please wait....");
             foreach (DataRow item in find)
             {
                 

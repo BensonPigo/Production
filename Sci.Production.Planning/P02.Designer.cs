@@ -39,6 +39,7 @@
             this.dateRange2 = new Sci.Win.UI.DateRange();
             this.label3 = new Sci.Win.UI.Label();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.button7 = new Sci.Win.UI.Button();
             this.comboBox3 = new Sci.Win.UI.ComboBox();
             this.txtsubcon2 = new Sci.Production.Class.txtsubcon();
             this.button4 = new Sci.Win.UI.Button();
@@ -68,7 +69,6 @@
             this.txtseason1 = new Sci.Production.Class.txtseason();
             this.button6 = new Sci.Win.UI.Button();
             this.label8 = new Sci.Win.UI.Label();
-            this.button7 = new Sci.Win.UI.Button();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -180,6 +180,17 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1234, 45);
             this.panel3.TabIndex = 0;
+            // 
+            // button7
+            // 
+            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button7.Location = new System.Drawing.Point(959, 8);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(96, 30);
+            this.button7.TabIndex = 30;
+            this.button7.Text = "Check Data";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // comboBox3
             // 
@@ -528,17 +539,6 @@
             this.label8.Size = new System.Drawing.Size(75, 23);
             this.label8.TabIndex = 22;
             this.label8.Text = "Style";
-            // 
-            // button7
-            // 
-            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button7.Location = new System.Drawing.Point(959, 8);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(96, 30);
-            this.button7.TabIndex = 30;
-            this.button7.Text = "Check Data";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // P02
             // 

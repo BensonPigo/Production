@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Planning
 {
-    partial class P04
+    partial class P03
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(P04));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(P03));
             this.button2 = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
             this.textBox1 = new Sci.Win.UI.TextBox();
@@ -54,8 +54,6 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.label13 = new Sci.Win.UI.Label();
-            this.comboBox4 = new Sci.Win.UI.ComboBox();
             this.label16 = new Sci.Win.UI.Label();
             this.numericBox3 = new Sci.Win.UI.NumericBox();
             this.numericBox2 = new Sci.Win.UI.NumericBox();
@@ -350,8 +348,6 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.label13);
-            this.groupBox2.Controls.Add(this.comboBox4);
             this.groupBox2.Controls.Add(this.label16);
             this.groupBox2.Controls.Add(this.numericBox3);
             this.groupBox2.Controls.Add(this.numericBox2);
@@ -379,26 +375,6 @@
             this.groupBox2.Size = new System.Drawing.Size(941, 159);
             this.groupBox2.TabIndex = 33;
             this.groupBox2.TabStop = false;
-            // 
-            // label13
-            // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(246, 72);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(109, 23);
-            this.label13.TabIndex = 43;
-            this.label13.Text = "Artwork Type";
-            // 
-            // comboBox4
-            // 
-            this.comboBox4.BackColor = System.Drawing.Color.White;
-            this.comboBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox4.FormattingEnabled = true;
-            this.comboBox4.IsSupportUnselect = true;
-            this.comboBox4.Location = new System.Drawing.Point(358, 71);
-            this.comboBox4.Name = "comboBox4";
-            this.comboBox4.Size = new System.Drawing.Size(159, 24);
-            this.comboBox4.TabIndex = 42;
             // 
             // label16
             // 
@@ -733,13 +709,13 @@
             this.grid1.TabIndex = 34;
             this.grid1.TabStop = false;
             // 
-            // P04
+            // P03
             // 
             this.ClientSize = new System.Drawing.Size(1232, 661);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel3);
-            this.Name = "P04";
-            this.Text = "P04. Bonding Quick Adjust";
+            this.Name = "P03";
+            this.Text = "P03. Laser Quick Adjust";
             this.Controls.SetChildIndex(this.panel3, 0);
             this.Controls.SetChildIndex(this.splitContainer1, 0);
             this.panel3.ResumeLayout(false);
@@ -817,7 +793,5 @@
         private Win.UI.PictureBox pictureBox4;
         private Win.UI.Label label16;
         private Win.UI.NumericBox numericBox4;
-        private Win.UI.Label label13;
-        private Win.UI.ComboBox comboBox4;
     }
 }

@@ -134,6 +134,36 @@ namespace Sci.Production.Planning
                 }
             };
 
+            #region local supplier 右鍵開窗
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            ts.EditingMouseDown += (s, e) =>
+            {
+
+                if (e.RowIndex < 0) return;
+                DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+                string sqlcmd = "";
+                if (MyUtility.Check.Empty(ddr["inhouseosp"]))
+                {
+                    MyUtility.Msg.WarningBox("Please select inhouse or osp first");
+                    return;
+                }
+                if (ddr["inhouseosp"].ToString() == "O")
+                    sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 0 order by ID";
+                if (ddr["inhouseosp"].ToString() == "I")
+                    sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 1 order by ID";
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30", null);
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    IList<DataRow> x = item.GetSelecteds();
+                    ddr["localsuppid"] = x[0][0];
+                    ddr["suppnm"] = x[0][1];
+                }
+            };
+            #endregion
+
             Ict.Win.UI.DataGridViewComboBoxColumn col_inhouseosp;
 
             //設定Grid1的顯示欄位
@@ -149,14 +179,14 @@ namespace Sci.Production.Planning
                 .Text("article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("totalqty", header: "M Qty", width: Widths.AnsiChars(8), integer_places: 8,decimal_places:3, iseditingreadonly: true)
                 .ComboBox("inhouseosp", header: "OSP/Inhouse").Get(out col_inhouseosp)
-                .Text("localSuppid", header: "Supp Id", width: Widths.AnsiChars(6))
+                .Text("localSuppid", header: "Supp Id", width: Widths.AnsiChars(6),settings:ts)
                 .Text("suppnm", header: "Supplier", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Text("cutinline", header: "Cut Inline", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
-                 .Text("cutoffline", header: "Cut Offline", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
-                 .Text("Sewinline", header: "Sew Inline" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
-                 .Text("sewoffline", header: "Sew Offline" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
-                 .Text("ArtworkInLine", header: "Inline", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
-                 .Text("ArtworkOffLine", header: "Offline", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
+                 .Date("cutinline", header: "Cut Inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Date("cutoffline", header: "Cut Offline", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Date("Sewinline", header: "Sew Inline" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Date("sewoffline", header: "Sew Offline" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Date("ArtworkInLine", header: "Inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Date("ArtworkOffLine", header: "Offline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Numeric("Stdq", header: "Std. Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
                  .Numeric("batchno", header: "Bat.", width: Widths.AnsiChars(3), integer_places: 3,decimal_places:1, iseditingreadonly: true)
                  .Numeric("qty", header: "Stitches", width: Widths.AnsiChars(3), integer_places: 8, iseditingreadonly: true)
@@ -265,6 +295,7 @@ namespace Sci.Production.Planning
 ,C.alloqty
 ,(select batchno from embbatch where b.qty >= BeginStitch AND b.qty <=EndStitch) batchno
 ,round(alloqty/({0}*{1}*(select batchno from embbatch where b.qty >= BeginStitch AND b.qty <=EndStitch))*100/{2},3) as totalqty
+,b.artworktypeid
  FROM (Orders a inner join  Order_tmscost b on a.ID = b.ID) 
 inner join SewingSchedule c on a.id = c.OrderID
  where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'EMBROIDERY'", numericBox1.Text,numericBox3.Text,numericBox2.Text);
@@ -287,6 +318,7 @@ inner join SewingSchedule c on a.id = c.OrderID
             if (!(string.IsNullOrWhiteSpace(inline_b)))
             { sqlcmd += string.Format(@" and not (b.artworkInLine > '{1}' or b.artworkOffLine < '{0}')", inline_b, inline_e); }
 
+            MyUtility.Msg.WaitWindows("Querying....Please wait....");
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
             {
@@ -304,6 +336,7 @@ inner join SewingSchedule c on a.id = c.OrderID
             {
                 ShowErr(sqlcmd, result);
             }
+            MyUtility.Msg.WaitClear();
         }
 
         //close
@@ -344,8 +377,8 @@ inner join SewingSchedule c on a.id = c.OrderID
                 else
                 { sqlcmd += string.Format(@",artworkOffline = '{0}'", ((DateTime)item["artworkOffline"]).ToShortDateString()); }
                 sqlcmd += string.Format(@",inhouseosp = '{0}',localsuppid='{1}'", item["inhouseosp"].ToString(),item["localsuppid"].ToString()); 
-                sqlcmd += string.Format(@" where id ='{0}' and artworktypeid = 'PRINTING';"
-                                                        , item["ID"]);
+                sqlcmd += string.Format(@" where id ='{0}' and artworktypeid = '{1}';"
+                                                        , item["ID"],item["artworktypeid"]);
 
             }
             if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd)))
@@ -378,6 +411,7 @@ inner join SewingSchedule c on a.id = c.OrderID
             foreach (var item in drfound)
             {
                 item["localsuppid"] = txtsubcon2.TextBox1.Text;
+                item["suppnm"] = txtsubcon2.DisplayBox1.Text;
             }
         }
 
@@ -491,7 +525,8 @@ inner join SewingSchedule c on a.id = c.OrderID
                 MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
-            
+
+            MyUtility.Msg.WaitWindows("Updating Inline Date.... Please wait....");
             foreach (DataRow item in find)
             {
                 
@@ -508,6 +543,7 @@ inner join SewingSchedule c on a.id = c.OrderID
                     }
                 }
             }
+            MyUtility.Msg.WaitClear();
         }
 
         //Check data

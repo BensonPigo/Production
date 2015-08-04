@@ -38,6 +38,7 @@
             this.dateRange2 = new Sci.Win.UI.DateRange();
             this.label3 = new Sci.Win.UI.Label();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.numericBox4 = new Sci.Win.UI.NumericBox();
             this.pictureBox4 = new Sci.Win.UI.PictureBox();
             this.pictureBox3 = new Sci.Win.UI.PictureBox();
             this.dateBox2 = new Sci.Win.UI.DateBox();
@@ -82,7 +83,6 @@
             this.checkBox3 = new Sci.Win.UI.CheckBox();
             this.button5 = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.numericBox4 = new Sci.Win.UI.NumericBox();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -189,6 +189,18 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1232, 45);
             this.panel3.TabIndex = 0;
+            // 
+            // numericBox4
+            // 
+            this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBox4.DecimalPlaces = 3;
+            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBox4.IsSupportEditMode = false;
+            this.numericBox4.Location = new System.Drawing.Point(116, 12);
+            this.numericBox4.Name = "numericBox4";
+            this.numericBox4.ReadOnly = true;
+            this.numericBox4.Size = new System.Drawing.Size(100, 23);
+            this.numericBox4.TabIndex = 36;
             // 
             // pictureBox4
             // 
@@ -714,18 +726,6 @@
             this.grid1.Size = new System.Drawing.Size(1226, 368);
             this.grid1.TabIndex = 34;
             this.grid1.TabStop = false;
-            // 
-            // numericBox4
-            // 
-            this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox4.DecimalPlaces = 3;
-            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox4.IsSupportEditMode = false;
-            this.numericBox4.Location = new System.Drawing.Point(116, 12);
-            this.numericBox4.Name = "numericBox4";
-            this.numericBox4.ReadOnly = true;
-            this.numericBox4.Size = new System.Drawing.Size(100, 23);
-            this.numericBox4.TabIndex = 36;
             // 
             // P05
             // 

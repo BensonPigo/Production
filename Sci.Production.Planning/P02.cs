@@ -136,8 +136,38 @@ namespace Sci.Production.Planning
                 }
             };
 
+            #region local supplier 右鍵開窗
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            ts.EditingMouseDown += (s, e) =>
+            {
+
+                if (e.RowIndex < 0) return;
+                DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+                string sqlcmd = "";
+                if (MyUtility.Check.Empty(ddr["inhouseosp"]))
+                {
+                    MyUtility.Msg.WarningBox("Please select inhouse or osp first");
+                    return;
+                }
+                if (ddr["inhouseosp"].ToString() == "O")
+                    sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 0 order by ID";
+                if (ddr["inhouseosp"].ToString() == "I")
+                    sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 1 order by ID";
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30", null);
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    IList<DataRow> x = item.GetSelecteds();
+                    ddr["localsuppid"] = x[0][0];
+                    ddr["suppnm"] = x[0][1];
+                }
+            };
+            #endregion
+
             Ict.Win.UI.DataGridViewComboBoxColumn col_inhouseosp;
-                    
+            
 
             //設定Grid1的顯示欄位
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
@@ -152,15 +182,15 @@ namespace Sci.Production.Planning
                 .Text("article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("totalqty", header: "Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
                 .ComboBox("inhouseosp", header: "OSP/Inhouse").Get(out col_inhouseosp)
-                .Text("localSuppid", header: "Supp Id", width: Widths.AnsiChars(6))
+                .Text("localSuppid", header: "Supp Id", width: Widths.AnsiChars(6),settings:ts)
                 .Text("suppnm", header: "Supplierd", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Text("cutinline", header: "Cut Inline", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
-                 .Text("cutoffline", header: "Cut Offline", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
-                 .Text("Sewinline", header: "Sew Inline" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
-                 .Text("sewoffline", header: "Sew Offline" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
+                 .Date("cutinline", header: "Cut Inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Date("cutoffline", header: "Cut Offline", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Date("Sewinline", header: "Sew Inline" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Date("sewoffline", header: "Sew Offline" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
-                 .Text("ArtworkInLine", header: "Inline", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
-                 .Text("ArtworkOffLine", header: "Offline", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
+                 .Date("ArtworkInLine", header: "Inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Date("ArtworkOffLine", header: "Offline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Numeric("Stdq", header: "Std. Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
                  .Numeric("qaqty", header: "Output Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
                  .Numeric("qty", header: "Panels", width: Widths.AnsiChars(3), integer_places: 8, iseditingreadonly: true)
@@ -250,6 +280,7 @@ namespace Sci.Production.Planning
             if (!(string.IsNullOrWhiteSpace(sewinline_b)))
             { sqlcmd += string.Format(@" and not (a.SewInLine > '{1}' or a.SewOffLine < '{0}')", sewinline_b, sewinline_e); }
 
+            MyUtility.Msg.WaitWindows("Querying....Please wait....");
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
             {
@@ -264,6 +295,7 @@ namespace Sci.Production.Planning
             {
                 ShowErr(sqlcmd, result);
             }
+            MyUtility.Msg.WaitClear();
         }
 
         //close
@@ -338,6 +370,7 @@ namespace Sci.Production.Planning
             foreach (var item in drfound)
             {
                 item["localsuppid"] = txtsubcon2.TextBox1.Text;
+                item["suppnm"] = txtsubcon2.DisplayBox1.Text;
             }
         }
 
@@ -445,7 +478,8 @@ namespace Sci.Production.Planning
                 MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
-            
+
+            MyUtility.Msg.WaitWindows("Updating Inline Date... Please wait....");
             foreach (DataRow item in find)
             {
                 
@@ -462,6 +496,7 @@ namespace Sci.Production.Planning
                     }
                 }
             }
+            MyUtility.Msg.WaitClear();
         }
 
         //Check data
