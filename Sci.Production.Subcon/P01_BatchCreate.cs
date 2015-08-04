@@ -316,6 +316,10 @@ namespace Sci.Production.Subcon
                 .Date("artworkoffline", header: "offline", iseditingreadonly: true)
                 .Text("message", header: "Message", iseditingreadonly: true, width: Widths.AnsiChars(30))
                 ;
+            
+            this.grid1.Columns[12].Visible = poType=="O";
+            this.grid1.Columns[13].Visible = poType == "O";
+            
 
             // 全選
             checkBox1.Click += (s, e) =>
@@ -383,16 +387,19 @@ namespace Sci.Production.Subcon
                 return;
             }
 
-            find = dt.Select("(unitprice = 0 or apvdate is null) and Selected = 1");
-            if (find.Length > 0)
+            if (poType == "O")
             {
-                foreach (DataRow dr in find)
+                find = dt.Select("(unitprice = 0 or apvdate is null) and Selected = 1");
+                if (find.Length > 0)
                 {
-                    dr["message"] = "Unit price = 0 or Approve Date is null";
+                    foreach (DataRow dr in find)
+                    {
+                        dr["message"] = "Unit price = 0 or Approve Date is null";
+                    }
+                    MyUtility.Msg.WarningBox("Unit Price or Approve Date can't be zero or empty", "Warning");
+                    grid1.Sort(grid1.Columns[17], ListSortDirection.Descending);
+                    return;
                 }
-                MyUtility.Msg.WarningBox("Unit Price or Approve Date can't be zero or empty", "Warning");
-                grid1.Sort(grid1.Columns[17], ListSortDirection.Descending);
-                return;
             }
 
             #region 表頭資料group by --- LINQ
@@ -520,7 +527,7 @@ namespace Sci.Production.Subcon
                                                     ,[Handle]         
                                                     ,[POType]         
                                                     ,[AddName]        
-                                                    ,[AddDate])       
+                                                    ,[AddDate],[Status])       
                                                     VALUES            
                                                     ('{0}'    
                                                     ,'{1}'   
@@ -534,7 +541,7 @@ namespace Sci.Production.Subcon
                                                     ,'{9}'
                                                     ,'{10}'  
                                                     ,'{11}'
-                                                    ,getdate())",
+                                                    ,getdate(),'New')",
                                         id, Env.User.Factory, q.localsuppid, issuedate, delivery, q.artworktypeid,
                                         currency, MyUtility.Math.Round(ttlamt, exact),
                                         "'by batch create!'", Env.User.UserID, poType, Env.User.UserID);
