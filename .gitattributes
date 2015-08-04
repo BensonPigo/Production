@@ -463,6 +463,9 @@ Sci.Production.Warehouse/P03.resx -text
 Sci.Production.Warehouse/P03_BulkLocation.Designer.cs -text
 Sci.Production.Warehouse/P03_BulkLocation.cs -text
 Sci.Production.Warehouse/P03_BulkLocation.resx -text
+Sci.Production.Warehouse/P03_InspectionList.Designer.cs -text
+Sci.Production.Warehouse/P03_InspectionList.cs -text
+Sci.Production.Warehouse/P03_InspectionList.resx -text
 Sci.Production.Warehouse/P03_InventoryStatus.Designer.cs -text
 Sci.Production.Warehouse/P03_InventoryStatus.cs -text
 Sci.Production.Warehouse/P03_InventoryStatus.resx -text
