@@ -12,6 +12,7 @@ using Sci.Win.UI;
 using Ict;
 using Sci.Win.Tools;
 using Sci.Win;
+using Ict.Win;
 
 namespace Sci.Production.Class
 {
@@ -116,5 +117,62 @@ namespace Sci.Production.Class
             this.textBox1.ValidateControl();
             this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
         }
+    }
+    public class cellsbucon : DataGridViewGeneratorTextColumnSettings
+    {
+        public static DataGridViewGeneratorTextColumnSettings GetGridCell(string suppid)
+        {
+            cellsbucon ts = new cellsbucon();
+            // 右鍵彈出功能
+
+            ts.EditingMouseDown += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                    // Parent form 若是非編輯狀態就 return 
+                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+                    DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                    DataTable subTb;
+                    string sql = "select ID,Abb,Name from LocalSupp where  Junk =  0 order by ID";
+                    DualResult duR =  DBProxy.Current.Select("Production", sql, out subTb);
+                    if (duR)
+                    {
+                        SelectItem sele = new SelectItem(subTb, "ID,Abb,Name", "10,20,30", row[suppid].ToString());
+                        DialogResult result = sele.ShowDialog();
+                        if (result == DialogResult.Cancel) { return; }
+                        e.EditingControl.Text = sele.GetSelectedString();
+                    }
+
+                }
+
+
+            };
+            // 正確性檢查
+            ts.CellValidating += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                // Parent form 若是非編輯狀態就 return 
+                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+                DataRow row = grid.GetDataRow<DataRow>(e.RowIndex), sqlRow;
+                String oldValue = row[suppid].ToString();
+                String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
+                string sql = string.Format("select ID,Abb,Name from LocalSupp where  Junk =  0 and ID = '{0}'", newValue);
+                if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
+                {
+                    if (!MyUtility.Check.Seek(sql, out sqlRow,"Production"))
+                    {
+                        MyUtility.Msg.WarningBox(string.Format("< Local Supplier > : {0} not found!!!", newValue));
+                        row[suppid] = "";
+                        row.EndEdit();
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+
+            };
+            return ts;
+        }
+
     }
 }
