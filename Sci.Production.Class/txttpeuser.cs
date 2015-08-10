@@ -14,11 +14,9 @@ namespace Sci.Production.Class
 {
     public partial class txttpeuser : UserControl
     {
-        private Sci.Win.Forms.Base myForm;
         public txttpeuser()
         {
             InitializeComponent();
-            myForm = (Sci.Win.Forms.Base)this.FindForm();
         }
 
         public Sci.Win.UI.DisplayBox DisplayBox1
@@ -47,15 +45,20 @@ namespace Sci.Production.Class
 
         private void displayBox1_TextChanged(object sender, EventArgs e)
         {
-            if (myForm.EditMode == false)
+            string selectSql = string.Format("Select Name,Ext_No from TPEPass1 Where id='{0}'", this.displayBox1.Text.ToString());
+            DataRow dr;
+            if (MyUtility.Check.Seek(selectSql, out dr))
             {
-                string selectSql = string.Format("Select Name from TPEPass1 Where id='{0}'", this.displayBox1.Text.ToString());
-                string name = MyUtility.GetValue.Lookup(selectSql, "Production");
-                selectSql = string.Format("Select Ext_No from TPEPass1 Where id='{0}'", this.displayBox1.Text.ToString());
-                string extNo = MyUtility.GetValue.Lookup(selectSql, "Production");
-                this.displayBox2.Text = name;
-                if (!string.IsNullOrWhiteSpace(extNo)) { this.displayBox2.Text = name + " #" + extNo; }
-            }        
+                this.displayBox2.Text = MyUtility.Check.Empty(dr["extNo"]) ? "" : dr["Name"].ToString();
+                if (!MyUtility.Check.Empty(dr["extNo"]))
+                {
+                    this.displayBox2.Text = this.displayBox2.Text + " #" + dr["extNo"].ToString();
+                }
+            }
+            else
+            {
+                this.displayBox2.Text = "";
+            }
         }
     }
 }
