@@ -130,7 +130,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(990, 176);
+            this.masterpanel.Size = new System.Drawing.Size(892, 176);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -177,32 +177,15 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 176);
-            this.detailpanel.Size = new System.Drawing.Size(990, 280);
+            this.detailpanel.Size = new System.Drawing.Size(892, 173);
             // 
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(887, 140);
             // 
-            // refresh
-            // 
-            this.refresh.Location = new System.Drawing.Point(910, 0);
-            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(990, 280);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(990, 494);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(990, 456);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 456);
-            this.detailbtm.Size = new System.Drawing.Size(990, 38);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 173);
             // 
             // browse
             // 
@@ -715,7 +698,7 @@
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.Name = "P04";
-            this.Text = "mtbs - Type";
+            this.Text = "P04. Raw Material Shipment Data Maintain";
             this.UniqueExpress = "ID";
             this.WorkAlias = "FtyExport";
             this.Controls.SetChildIndex(this.tabs, 0);
