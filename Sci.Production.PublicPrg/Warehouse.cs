@@ -99,7 +99,324 @@ namespace Sci.Production.PublicPrg
         }
         #endregion
 
-        
+        #region UpdatePO_Supp_Detail
+        /// <summary>
+        /// UpdatePO_Supp_Detail()
+        /// *	更新 Po3 的庫存
+        /// *-----------------------------------------------------
+        /// * Type	: 
+        /// *	2.	更新InQty
+        /// *	4.	更新OutQty
+        /// *	8.	更新LInvQty
+        /// *	16.	更新LObQty
+        /// *	32.	更新AdQty
+        /// </summary>
+        /// <param name="Int Type"></param>
+        /// <param name="String Poid"></param>
+        /// <param name="String Seq1"></param>
+        /// <param name="String Seq2"></param>
+        /// <param name="decimal qty"</param>
+        /// <param name="bool encoded"></param>
+        /// <param name="char stocktype"></param>
+        /// <returns>String Sqlcmd</returns>
+        public static string UpdatePO_Supp_Detail(int type, string Poid, string seq1, string seq2,decimal qty,bool encoded, string stocktype)
+        {
+            string sqlcmd=null;
+            switch (type)
+            {
+                case 2:
+                    if (encoded)
+                    {
+                        sqlcmd = string.Format(@"update po_supp_detail set  inqty = inqty+{3} 
+where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
+                            ,Poid,seq1,seq2,qty);
+                    }
+                    else
+                    {
+                        sqlcmd = string.Format(@"update po_supp_detail set  inqty = inqty-{3} 
+where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
+                            , Poid, seq1, seq2,qty);
+                    }
+                    break;
+                case 4:
+                    if (encoded)
+                    {
+                        sqlcmd = string.Format(@"update po_supp_detail set  OutQty = OutQty+{3} 
+where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
+                            , Poid, seq1, seq2, qty);
+                    }
+                    else
+                    {
+                        sqlcmd = string.Format(@"update po_supp_detail set  OutQty = OutQty-{3} 
+where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
+                            , Poid, seq1, seq2, qty);
+                    }
+                    break;
+                case 8:
+                    if (encoded)
+                    {
+                        sqlcmd = string.Format(@"update po_supp_detail set  LInvQty = LInvQty+{3} 
+where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
+                            , Poid, seq1, seq2, qty);
+                    }
+                    else
+                    {
+                        sqlcmd = string.Format(@"update po_supp_detail set  LInvQty = LInvQty-{3} 
+where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
+                            , Poid, seq1, seq2, qty);
+                    }
+                    break;
+                case 16:
+                    if (encoded)
+                    {
+                        sqlcmd = string.Format(@"update po_supp_detail set  LObQty = LObQty+{3} 
+where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
+                            , Poid, seq1, seq2, qty);
+                    }
+                    else
+                    {
+                        sqlcmd = string.Format(@"update po_supp_detail set  LObQty = LObQty-{3} 
+where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
+                            , Poid, seq1, seq2, qty);
+                    }
+                    break;
+                case 32:
+                    if (encoded)
+                    {
+                        sqlcmd = string.Format(@"update po_supp_detail set  AdjustQty = AdjustQty+{3} 
+where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
+                            , Poid, seq1, seq2, qty);
+                    }
+                    else
+                    {
+                        sqlcmd = string.Format(@"update po_supp_detail set AdjustQty = AdjustQty - {3} 
+where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
+                            , Poid, seq1, seq2, qty);
+                    }
+                    break;
+            }
+            if (encoded && (type==2 || type==16) && !MyUtility.Check.Empty(stocktype))
+            {
+                switch (stocktype)
+                {
+                    case "B":
+                        sqlcmd += string.Format(@"update po_supp_detail set ALocation 
+= (Select cast(tmp.MtlLocationID as nvarchar)+',' 
+from (select d.mtllocationid from ftyinventory_detail d inner join ftyinventory f
+on d.ukey = f.ukey
+where f.poid = '{0}' and f.seq1 ='{1}' and f.seq2 ='{2}' and stocktype = 'B' 
+group by d.MtlLocationID) tmp 
+for XML PATH(''))
+where id = '{0}' and seq1 = '{1}' and seq2='{2}' ;", Poid, seq1, seq2);
+                        break;
+                    case "I":
+                        sqlcmd += string.Format(@"update po_supp_detail set BLocation 
+= (Select cast(tmp.MtlLocationID as nvarchar)+',' 
+from (select d.mtllocationid from ftyinventory_detail d inner join ftyinventory f
+on d.ukey = f.ukey
+where f.poid = '{0}' and f.seq1 ='{1}' and f.seq2 ='{2}' and stocktype = 'I' 
+group by d.MtlLocationID) tmp 
+for XML PATH(''))
+where id = '{0}' and seq1 = '{1}' and seq2='{2}' ;", Poid, seq1, seq2);
+                        break;
+                    default:
+                        break;
+                }
+                
+            }
+            return sqlcmd;
+        }
+        #endregion
+
+        #region UpdateFtyInventory
+        /// <summary>
+        /// UpdateFtyInventory()
+        /// *	更新 FtyInventory 的庫存
+        /// *-----------------------------------------------------
+        /// * Type	: 
+        /// *	2.	更新InQty
+        /// *	4.	更新OutQty
+        /// *	6.	更新OutQty with Location
+        /// *	8.	更新AdjustQty
+        /// </summary>
+        /// <param name="Int Type"></param>
+        /// <param name="String Poid"></param>
+        /// <param name="String Seq1"></param>
+        /// <param name="String Seq2"></param>
+        /// <param name="decimal qty"</param>
+        ///<param name="roll"></param>
+        ///<param name="dyelot"></param>
+        /// <param name="char stocktype"></param>
+        /// <param name="bool encoded"></param>
+        /// <param name="location"></param>
+        /// <returns>String Sqlcmd</returns>
+        public static string UpdateFtyInventory(int type, string Poid, string seq1, string seq2
+            , decimal qty, string roll, string dyelot, char stocktype, bool encoded, string location = null)
+        {
+            string sqlcmd=null;
+            switch (type)
+            {
+                case 2:
+                    if (encoded)
+                    {
+                        sqlcmd = string.Format(@"merge dbo.FtyInventory as target
+using (values ({3}))
+    as source (field1)
+    on target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
+when matched then
+    update
+    set inqty = inqty + source.field1
+when not matched then
+    insert ( [Category],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
+    values ((select category from orders where id = '{0}')
+	,'{0}','{1}','{2}','{4}','{5}','{6}',{3});	", Poid, seq1, seq2, qty, roll, dyelot, stocktype);
+                        if (location != null)
+                        {
+                             string[] str_array = location.Split(',');
+                            for (int i = 0; i < str_array.Length; i++)
+                            {
+                                if(MyUtility.Check.Empty(str_array[i])) continue ;
+                                sqlcmd += string.Format(@" insert into #tmp (ukey,locationid) 
+values ((select ukey from dbo.ftyinventory where poid='{1}' and seq1='{2}' and seq2 ='{3}' and roll='{4}' and stocktype='{5}'),'{0}');"
+                                    , str_array[i], Poid, seq1, seq2, roll, stocktype)+Environment.NewLine;
+                            }
+                            sqlcmd += string.Format(@"merge dbo.ftyinventory_detail as t
+using (select * from #tmp where ukey = (select ukey from dbo.ftyinventory 
+where poid='{0}' and seq1='{1}' and seq2 ='{2}' and roll='{3}' and stocktype='{4}')) as s on t.ukey = s.ukey and t.mtllocationid = s.locationid
+when not matched then
+insert ([ukey],[mtllocationid]) values ((select ukey from dbo.ftyinventory where poid='{0}' and seq1='{1}' and seq2 ='{2}' and roll='{3}' and stocktype='{4}'),s.locationid)
+WHEN NOT MATCHED BY SOURCE and t.ukey = (select ukey from dbo.ftyinventory where poid='{0}' and seq1='{1}' and seq2 ='{2}' and roll='{3}' and stocktype='{4}')
+THEN delete;", Poid, seq1, seq2, roll, stocktype);
+                        }
+                    }
+                    else
+                    {
+                        sqlcmd = string.Format(@"merge dbo.FtyInventory as target
+using (values ({3}))
+    as source (field1)
+    on target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
+when matched then
+    update
+    set inqty = inqty - source.field1
+when not matched then
+    insert ( [Category],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
+    values ((select category from orders where id = '{0}')
+	,'{0}','{1}','{2}','{4}','{5}','{6}',{3});	", Poid, seq1, seq2, qty, roll, dyelot, stocktype);
+                    }
+                    break;
+
+                case 4:
+                    if (encoded)
+                    {
+                        sqlcmd = string.Format(@"merge dbo.FtyInventory as target
+using (values ({3}))
+    as source (field1)
+    on target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
+when matched then
+    update
+    set outqty = outqty + source.field1
+when not matched then
+    insert ( [Category],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
+    values ((select category from orders where id = '{0}')
+	,'{0}','{1}','{2}','{4}','{5}','{6}',{3});	", Poid, seq1, seq2, qty, roll, dyelot, stocktype);
+                    }
+                    else
+                    {
+                        sqlcmd = string.Format(@"merge dbo.FtyInventory as target
+using (values ({3}))
+    as source (field1)
+    on target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
+when matched then
+    update
+    set outqty = outqty - source.field1
+when not matched then
+    insert ( [Category],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
+    values ((select category from orders where id = '{0}')
+	,'{0}','{1}','{2}','{4}','{5}','{6}',{3});	", Poid, seq1, seq2, qty, roll, dyelot, stocktype);
+                    }
+                    break;
+                case 6:
+                    if (encoded)
+                    {
+                        sqlcmd = string.Format(@"merge dbo.FtyInventory as target
+using (values ({3}))
+    as source (field1)
+    on target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
+when matched then
+    update
+    set outqty = outqty + source.field1
+when not matched then
+    insert ( [Category],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
+    values ((select category from orders where id = '{0}')
+	,'{0}','{1}','{2}','{4}','{5}','{6}',{3});	", Poid, seq1, seq2, qty, roll, dyelot, stocktype);
+                        if (location != null)
+                        {
+                            string[] str_array = location.Split(',');
+                            for (int i = 0; i < str_array.Length; i++)
+                            {
+                                if (MyUtility.Check.Empty(str_array[i])) continue;
+                                sqlcmd += string.Format(@" insert into #tmp (ukey,locationid) 
+values ((select ukey from dbo.ftyinventory where poid='{1}' and seq1='{2}' and seq2 ='{3}' and roll='{4}' and stocktype='{5}'),'{0}');"
+                                    , str_array[i], Poid, seq1, seq2, roll, stocktype) + Environment.NewLine;
+                            }
+                            sqlcmd += string.Format(@"merge dbo.ftyinventory_detail as t
+using (select * from #tmp where ukey = (select ukey from dbo.ftyinventory 
+where poid='{0}' and seq1='{1}' and seq2 ='{2}' and roll='{3}' and stocktype='{4}')) as s on t.ukey = s.ukey and t.mtllocationid = s.locationid
+when not matched then
+insert ([ukey],[mtllocationid]) values ((select ukey from dbo.ftyinventory where poid='{0}' and seq1='{1}' and seq2 ='{2}' and roll='{3}' and stocktype='{4}'),s.locationid)
+WHEN NOT MATCHED BY SOURCE and t.ukey = (select ukey from dbo.ftyinventory where poid='{0}' and seq1='{1}' and seq2 ='{2}' and roll='{3}' and stocktype='{4}')
+THEN delete;", Poid, seq1, seq2, roll, stocktype);
+                        }
+                    }
+                    else
+                    {
+                        sqlcmd = string.Format(@"merge dbo.FtyInventory as target
+using (values ({3}))
+    as source (field1)
+    on target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
+when matched then
+    update
+    set outqty = outqty - source.field1
+when not matched then
+    insert ( [Category],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
+    values ((select category from orders where id = '{0}')
+	,'{0}','{1}','{2}','{4}','{5}','{6}',{3});	", Poid, seq1, seq2, qty, roll, dyelot, stocktype);
+                    }
+                    break;
+                case 8:
+                    if (encoded)
+                    {
+                        sqlcmd = string.Format(@"merge dbo.FtyInventory as target
+using (values ({3}))
+    as source (field1)
+    on target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
+when matched then
+    update
+    set adjustqty = adjustqty + source.field1
+when not matched then
+    insert ( [Category],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[adjustqty])
+    values ((select category from orders where id = '{0}')
+	,'{0}','{1}','{2}','{4}','{5}','{6}',{3});	", Poid, seq1, seq2, qty, roll, dyelot, stocktype);
+                    }
+                    else
+                    {
+                        sqlcmd = string.Format(@"merge dbo.FtyInventory as target
+using (values ({3}))
+    as source (field1)
+    on target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
+when matched then
+    update
+    set outqty = outqty - source.field1
+when not matched then
+    insert ( [Category],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
+    values ((select category from orders where id = '{0}')
+	,'{0}','{1}','{2}','{4}','{5}','{6}',{3});", Poid, seq1, seq2, qty, roll, dyelot, stocktype);
+                    }
+                    break;
+            }
+            return sqlcmd;
+        }
+        #endregion
     }
     
 }
