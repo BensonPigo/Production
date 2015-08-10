@@ -26,11 +26,11 @@ namespace Sci.Production.Class
                     string sqlCMD;
                     if (MyUtility.Check.Empty(this.useFunction))
                     {
-                        sqlCMD = "select ID from ShipMode order by ID";
+                        sqlCMD = "select ID,UseFunction from ShipMode order by ID";
                     }
                     else
                     {
-                        sqlCMD = string.Format("select ID from ShipMode where UseFunction like '%{0}%'", useFunction.Trim());
+                        sqlCMD = string.Format("select ID,UseFunction from ShipMode where UseFunction like '%{0}%'", useFunction.Trim());
                     }
                     Ict.DualResult cbResult;
                     DataTable ShipModeTable = new DataTable();
