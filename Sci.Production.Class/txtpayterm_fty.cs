@@ -66,6 +66,8 @@ namespace Sci.Production.Class
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
+            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
             string selItem = "select ID,Name from PayTerm where Junk = 0 order by ID";
             DataTable itemDt;
             DBProxy.Current.Select("Production", selItem, out itemDt);
