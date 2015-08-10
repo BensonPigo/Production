@@ -517,7 +517,7 @@ namespace Sci.Production.Packing
                     }
                     #endregion
 
-                    //ControlGridColumn();
+                    //產生表身Grid的資料
                     GenDetailData(orderID, CurrentMaintain["OrderShipmodeSeq"].ToString());
                 }
             }
@@ -526,6 +526,11 @@ namespace Sci.Production.Packing
         //產生表身Grid的資料
         private void GenDetailData(string orderID, string seq)
         {
+            // 清空表身Grid資料
+            foreach (DataRow dr in DetailDatas)
+            {
+                dr.Delete();
+            }
             if (!MyUtility.Check.Empty(orderID) && !MyUtility.Check.Empty(orderID))
             {
                 string sqlCmd;
@@ -606,8 +611,7 @@ namespace Sci.Production.Packing
                 CurrentMaintain["ShipModeID"] = orderQtyShipData[0]["ShipmodeID"].ToString();
                 numericBox4.Value = Convert.ToInt32(orderQtyShipData[0]["Qty"].ToString());
             }
-            // 清空表身Grid資料
-            ((DataTable)detailgridbs.DataSource).Clear();
+            //產生表身Grid的資料
             GenDetailData(CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
         }
 

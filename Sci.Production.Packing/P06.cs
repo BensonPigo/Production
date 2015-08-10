@@ -599,7 +599,7 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), C
                     }
                     #endregion
 
-                    //ControlGridColumn();
+                    //產生表身Grid的資料
                     GenDetailData(orderID, CurrentMaintain["OrderShipmodeSeq"].ToString());
                 }
             }
@@ -626,8 +626,7 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), C
                     CurrentMaintain["OrderShipmodeSeq"] = item.GetSelectedString();
                     CurrentMaintain["ShipModeID"] = orderQtyShipData[0]["ShipmodeID"].ToString();
                 }
-                // 清空表身Grid資料
-                ((DataTable)detailgridbs.DataSource).Clear();
+                //產生表身Grid的資料
                 GenDetailData(CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
             }
         }
@@ -649,6 +648,11 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), C
         //產生表身Grid的資料
         private void GenDetailData(string orderID, string seq)
         {
+            // 清空表身Grid資料
+            foreach (DataRow dr in DetailDatas)
+            {
+                dr.Delete();
+            }
             if (!MyUtility.Check.Empty(orderID) && !MyUtility.Check.Empty(orderID))
             {
                 sqlCmd = string.Format(@"select '' as ID,o.ID as OrderID, oqd.Seq as OrderShipmodeSeq, oqd.Article, oqd.SizeCode, oqd.Qty as ShipQty, o.CTNQty as QtyPerCTN

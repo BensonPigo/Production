@@ -977,7 +977,6 @@ where ID = @INVNo";
                                 CurrentMaintain["ShipModeID"] = orderData["ShipModeID"].ToString();
                                 dateBox1.Value = Convert.ToDateTime(orderData["BuyerDelivery"].ToString());
                             }
-
                         }
                         else
                         {
@@ -1002,7 +1001,7 @@ where ID = @INVNo";
                     }
                     #endregion
 
-                    //ControlGridColumn();
+                    //產生表身Grid的資料
                     GenDetailData(orderID, CurrentMaintain["OrderShipmodeSeq"].ToString());
                 }
             }
@@ -1011,6 +1010,11 @@ where ID = @INVNo";
         //產生表身Grid的資料
         private void GenDetailData(string orderID, string seq)
         {
+            // 清空表身Grid資料
+            foreach (DataRow dr in DetailDatas)
+            {
+                dr.Delete();
+            }
             if (!MyUtility.Check.Empty(orderID) && !MyUtility.Check.Empty(orderID))
             {
                 string sqlCmd;
@@ -1081,8 +1085,7 @@ where ID = @INVNo";
                     CurrentMaintain["ShipModeID"] = orderQtyShipData[0]["ShipmodeID"].ToString();
                     dateBox1.Value = Convert.ToDateTime(orderQtyShipData[0]["BuyerDelivery"].ToString());
                 }
-                // 清空表身Grid資料
-                ((DataTable)detailgridbs.DataSource).Clear();
+                //產生表身Grid的資料
                 GenDetailData(CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
             }
         }
