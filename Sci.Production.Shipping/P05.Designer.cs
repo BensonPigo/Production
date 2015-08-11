@@ -71,7 +71,6 @@
             this.label29 = new Sci.Win.UI.Label();
             this.label30 = new Sci.Win.UI.Label();
             this.textBox3 = new Sci.Win.UI.TextBox();
-            this.dateBox3 = new Sci.Win.UI.DateBox();
             this.dateBox4 = new Sci.Win.UI.DateBox();
             this.textBox5 = new Sci.Win.UI.TextBox();
             this.dateBox5 = new Sci.Win.UI.DateBox();
@@ -88,6 +87,7 @@
             this.displayBox3 = new Sci.Win.UI.DisplayBox();
             this.textBox4 = new Sci.Win.UI.TextBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
+            this.textBox6 = new Sci.Win.UI.TextBox();
             this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.txtshipterm1 = new Sci.Production.Class.txtshipterm();
@@ -111,6 +111,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.textBox6);
             this.masterpanel.Controls.Add(this.comboBox1);
             this.masterpanel.Controls.Add(this.textBox4);
             this.masterpanel.Controls.Add(this.displayBox3);
@@ -156,7 +157,6 @@
             this.masterpanel.Controls.Add(this.textBox2);
             this.masterpanel.Controls.Add(this.displayBox2);
             this.masterpanel.Controls.Add(this.dateBox6);
-            this.masterpanel.Controls.Add(this.dateBox3);
             this.masterpanel.Controls.Add(this.dateBox4);
             this.masterpanel.Controls.Add(this.dateBox5);
             this.masterpanel.Controls.Add(this.dateBox7);
@@ -180,6 +180,7 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Size = new System.Drawing.Size(990, 311);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -199,11 +200,9 @@
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtcountry1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtpaytermar1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox7, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox5, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox6, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
@@ -249,6 +248,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox4, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox6, 0);
             // 
             // detailpanel
             // 
@@ -445,7 +445,7 @@
             this.displayBox2.Location = new System.Drawing.Point(73, 247);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(331, 23);
-            this.displayBox2.TabIndex = 21;
+            this.displayBox2.TabIndex = 7;
             // 
             // textBox2
             // 
@@ -455,7 +455,7 @@
             this.textBox2.Location = new System.Drawing.Point(73, 274);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(469, 23);
-            this.textBox2.TabIndex = 19;
+            this.textBox2.TabIndex = 8;
             // 
             // label12
             // 
@@ -731,16 +731,7 @@
             this.textBox3.Location = new System.Drawing.Point(657, 85);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(140, 23);
-            this.textBox3.TabIndex = 13;
-            // 
-            // dateBox3
-            // 
-            this.dateBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CutOffDate", true));
-            this.dateBox3.Location = new System.Drawing.Point(657, 139);
-            this.dateBox3.Name = "dateBox3";
-            this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 15;
-            this.dateBox3.Validating += new System.ComponentModel.CancelEventHandler(this.dateBox3_Validating);
+            this.textBox3.TabIndex = 14;
             // 
             // dateBox4
             // 
@@ -760,7 +751,7 @@
             this.textBox5.Location = new System.Drawing.Point(657, 193);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(188, 23);
-            this.textBox5.TabIndex = 16;
+            this.textBox5.TabIndex = 17;
             // 
             // dateBox5
             // 
@@ -768,7 +759,7 @@
             this.dateBox5.Location = new System.Drawing.Point(636, 247);
             this.dateBox5.Name = "dateBox5";
             this.dateBox5.Size = new System.Drawing.Size(130, 23);
-            this.dateBox5.TabIndex = 17;
+            this.dateBox5.TabIndex = 18;
             this.dateBox5.Validating += new System.ComponentModel.CancelEventHandler(this.dateBox5_Validating);
             // 
             // dateBox6
@@ -777,7 +768,7 @@
             this.dateBox6.Location = new System.Drawing.Point(784, 247);
             this.dateBox6.Name = "dateBox6";
             this.dateBox6.Size = new System.Drawing.Size(130, 23);
-            this.dateBox6.TabIndex = 18;
+            this.dateBox6.TabIndex = 19;
             this.dateBox6.Validating += new System.ComponentModel.CancelEventHandler(this.dateBox6_Validating);
             // 
             // dateBox7
@@ -798,7 +789,7 @@
             this.numericBox7.Location = new System.Drawing.Point(657, 112);
             this.numericBox7.Name = "numericBox7";
             this.numericBox7.Size = new System.Drawing.Size(60, 23);
-            this.numericBox7.TabIndex = 14;
+            this.numericBox7.TabIndex = 15;
             // 
             // label31
             // 
@@ -806,7 +797,7 @@
             this.label31.Location = new System.Drawing.Point(770, 247);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(10, 23);
-            this.label31.TabIndex = 63;
+            this.label31.TabIndex = 19;
             this.label31.Text = "/";
             // 
             // button1
@@ -873,7 +864,7 @@
             this.button6.Location = new System.Drawing.Point(784, 274);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(165, 30);
-            this.button6.TabIndex = 69;
+            this.button6.TabIndex = 20;
             this.button6.Text = "Import from packing list";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
@@ -910,7 +901,18 @@
             this.comboBox1.Location = new System.Drawing.Point(658, 57);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 12;
+            this.comboBox1.TabIndex = 13;
+            // 
+            // textBox6
+            // 
+            this.textBox6.BackColor = System.Drawing.Color.White;
+            this.textBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox6.Location = new System.Drawing.Point(657, 139);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(154, 23);
+            this.textBox6.TabIndex = 16;
+            this.textBox6.ValidatingType = typeof(System.DateTime);
+            this.textBox6.Validating += new System.ComponentModel.CancelEventHandler(this.textBox6_Validating);
             // 
             // txtsubcon1
             // 
@@ -920,7 +922,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(657, 31);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 11;
+            this.txtsubcon1.TabIndex = 12;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // txtuser1
@@ -930,7 +932,7 @@
             this.txtuser1.Location = new System.Drawing.Point(657, 4);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(302, 23);
-            this.txtuser1.TabIndex = 10;
+            this.txtuser1.TabIndex = 11;
             this.txtuser1.TextBox1Binding = "";
             // 
             // txtshipterm1
@@ -941,7 +943,7 @@
             this.txtshipterm1.Location = new System.Drawing.Point(420, 31);
             this.txtshipterm1.Name = "txtshipterm1";
             this.txtshipterm1.Size = new System.Drawing.Size(50, 23);
-            this.txtshipterm1.TabIndex = 9;
+            this.txtshipterm1.TabIndex = 10;
             // 
             // txtshipmode1
             // 
@@ -953,7 +955,7 @@
             this.txtshipmode1.Location = new System.Drawing.Point(420, 4);
             this.txtshipmode1.Name = "txtshipmode1";
             this.txtshipmode1.Size = new System.Drawing.Size(121, 24);
-            this.txtshipmode1.TabIndex = 8;
+            this.txtshipmode1.TabIndex = 9;
             this.txtshipmode1.UseFunction = "ORDER";
             // 
             // txtpaytermar1
@@ -1100,8 +1102,8 @@
         private Win.UI.DateBox dateBox5;
         private Win.UI.TextBox textBox5;
         private Win.UI.DateBox dateBox4;
-        private Win.UI.DateBox dateBox3;
         private Win.UI.TextBox textBox3;
         private Win.UI.ComboBox comboBox1;
+        private Win.UI.TextBox textBox6;
     }
 }

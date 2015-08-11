@@ -21,6 +21,7 @@ namespace Sci.Production.Shipping
         private DualResult result, result2;
         private DataTable selectData;
         private DataRow dr;
+        string dateTimeMask = "", emptyDTMask = "",empmask,dtmask;
 
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -30,11 +31,22 @@ namespace Sci.Production.Shipping
             gridicon.Insert.Visible = false;
             detailgrid.AllowUserToOrderColumns = true;
             InsertDetailGridOnDoubleClick = false;
+            //組Cut off date的mask
+            for (int i = 0; i < Sci.Env.Cfg.DateTimeStringFormat.Length;i++)
+            {
+                dtmask = Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == " " ? " " : "0";
+                empmask = Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "s" ? "":" ";
+                dateTimeMask = dateTimeMask + dtmask;
+                emptyDTMask = emptyDTMask + empmask;
+            }
+
+            this.textBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutOffDate", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
+            this.textBox6.Mask = dateTimeMask;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            masterID = (e.Master == null) ? "1=0" : string.Format("p.INVNo = '{0}'",e.Master["ID"].ToString());
             this.DetailSelectCommand = string.Format(@"select p.GMTBookingLock,p.FactoryID,p.ID,
 iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd where pd.ID = p.id) a for xml path('')),p.OrderID) as OrderID,
 p.CargoReadyDate,iif(p.type = 'B',(select BuyerDelivery from Order_QtyShip where ID = p.OrderID and Seq = p.OrderShipmodeSeq),(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq)) as BuyerDelivery,
@@ -44,7 +56,7 @@ iif(p.type = 'B',(select CustCDID from Orders where ID = p.OrderID),(select o.Cu
 iif(p.type = 'B',(select Dest from Orders where ID = p.OrderID),(select o.Dest from Orders o, (select top 1 OrderID from PackingList_Detail pd where pd.ID = p.ID) a where o.ID = a.OrderID)) as Dest,
 p.NW,p.NNW,p.Status,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ClogReceiveID != '') as ClogCTNQty,p.InspDate,p.ShipModeID
 from PackingList p
-where p.INVNo = '{0}'", masterID);
+where {0}", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -251,7 +263,7 @@ and p.Status = 'Confirmed'", dr["ID"].ToString());
                 comboBox1.ReadOnly = true;
                 textBox3.ReadOnly = true;
                 numericBox7.ReadOnly = true;
-                dateBox3.ReadOnly = true;
+                textBox6.ReadOnly = true;
                 col_lock.IsEditingReadOnly = true;
                 col_crd.IsEditingReadOnly = true;
                 detailgrid.Columns[0].DefaultCellStyle.ForeColor = Color.Black;
@@ -690,14 +702,15 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         }
 
         //檢查輸入的Cut-off Date是否正確
-        private void dateBox3_Validating(object sender, CancelEventArgs e)
+        private void textBox6_Validating(object sender, CancelEventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(dateBox3.Value))
+            if (this.EditMode && textBox6.Text != emptyDTMask)
             {
-                if (dateBox3.Value > DateTime.Today.AddMonths(12) || dateBox3.Value < DateTime.Today.AddMonths(-12))
+                string cutOffDate = textBox6.Text.Substring(0, 10).Replace(" ","1");
+                if (Convert.ToDateTime(cutOffDate) > DateTime.Today.AddMonths(12) || Convert.ToDateTime(cutOffDate) < DateTime.Today.AddMonths(-12))
                 {
                     MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
-                    dateBox3.Value = null;
+                    textBox6.Text = null;
                     e.Cancel = true;
                     return;
                 }
@@ -1009,6 +1022,6 @@ left join AirPP a on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipm
             RenewData();
             OnDetailEntered();
             EnsureToolbarExt();
-        }
+        }        
     }
 }
