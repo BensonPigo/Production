@@ -30,11 +30,80 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// GetAuthority()
         /// </summary>
-        /// <param name="strLogin"></param>
+        /// <param name="checkid"></param>
         /// <returns>bool</returns>
-        public static bool GetAuthority(string login)
+        public static bool GetAuthority(string checkid)
         {
-            return true;
+            if (Sci.Env.User.IsAdmin)
+            {
+                return true;
+            }
+            else
+            {
+                string sqlCmd = string.Format(@"with handlepass1
+as
+(select ID,Supervisor,Deputy from Pass1 where ID = '{0}'),
+superpass1
+as
+(select Pass1.ID,Pass1.Supervisor,Pass1.Deputy from Pass1,handlepass1 where Pass1.ID = handlepass1.Supervisor),
+allpass1
+as
+(select * from handlepass1
+ union
+ select * from superpass1
+)
+select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'", checkid, Sci.Env.User.UserID);
+
+                return MyUtility.Check.Seek(sqlCmd) ? true : false;
+            }
+        }
+
+        /// <summary>
+        /// GetAuthority()
+        /// </summary>
+        /// <param name="checkid"></param>
+        /// <param name="formcaption"></param>
+        /// <param name="pass2colname"></param>
+        /// <returns>bool</returns>
+        public static bool GetAuthority(string checkid, string formcaption, string pass2colname)
+        {
+            if (Sci.Env.User.IsAdmin)
+            {
+                return true;
+            }
+            else
+            {
+                //Sci.Env.User.PositionID
+                string PositionID = "1";
+                DataTable dt;
+                DualResult result = DBProxy.Current.Select(null, string.Format("select {0} as Result from Pass2 where FKPass0 = {1} and UPPER(BarPrompt) = N'{2}'", pass2colname, PositionID, formcaption.ToUpper()), out dt);
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox(result.ToString());
+                    return false;
+                }
+
+                if (dt.Rows[0]["Result"].ToString().ToUpper() != "TRUE")
+                {
+                    return false;
+                }
+
+                string sqlCmd = string.Format(@"with handlepass1
+as
+(select ID,Supervisor,Deputy from Pass1 where ID = '{0}'),
+superpass1
+as
+(select Pass1.ID,Pass1.Supervisor,Pass1.Deputy from Pass1,handlepass1 where Pass1.ID = handlepass1.Supervisor),
+allpass1
+as
+(select * from handlepass1
+ union
+ select * from superpass1
+)
+select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'", checkid, Sci.Env.User.UserID);
+
+                return MyUtility.Check.Seek(sqlCmd) ? true : false;
+            }
         }
         #endregion
 
