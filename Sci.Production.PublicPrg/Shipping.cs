@@ -172,7 +172,7 @@ BEGIN
 	ELSE
 		BEGIN
 			UPDATE ShareExpense 
-			SET CurrencyID = @currency, Amount = @inputamount, ShareBase = @1stsharebase, EditName = @login, EditDate = @adddate 
+			SET CurrencyID = @currency, Amount = @inputamount, ShareBase = @1stsharebase, AccountName = @accname, EditName = @login, EditDate = @adddate 
 			where ShippingAPID = @id and WKNo = @wkno and BLNo = @blno and InvNo = @invno and AccountNo = @accno
 		END
 
