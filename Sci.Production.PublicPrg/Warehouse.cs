@@ -24,27 +24,43 @@ namespace Sci.Production.PublicPrg
         /// <param name="Int ReturnFormat"></param>
         /// <param name="Bool Repeat"></param>
         /// <returns>String Desc</returns>
-        public static string GetMtlDesc(string Poid, string seq1, string seq2, int ReturnFormat, bool Repeat = false)
+        public static string GetMtlDesc(string Poid, string seq1, string seq2, int ReturnFormat, bool Repeat = false, System.Data.SqlClient.SqlConnection conn=null)
         {
             string rtn="";
             DataRow dr;
-            MyUtility.Check.Seek(string.Format(@"select StockPOID,scirefno,SuppColor,colorid,ColorDetail,sizespec
-                                            ,special,SizeUnit,remark from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'"
-                                            , Poid, seq1, seq2), out dr);
-            if (seq1.Substring(0, 1) == "7")
+            DataTable dt;
+            if (null == conn)
             {
-                rtn = "**PLS USE STOCK FROM SP#:"
-                    + dr["StockPOID"].ToString()
-                    + "**" + Environment.NewLine;
+                MyUtility.Check.Seek(string.Format(@"select StockPOID,scirefno,SuppColor,colorid,ColorDetail,sizespec
+                                            ,special,SizeUnit,remark from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'"
+                                                , Poid, seq1, seq2), out dr);
             }
+            else
+            {
+                DBProxy.Current.SelectByConn(conn, string.Format(@"select StockPOID,scirefno,SuppColor,colorid,ColorDetail,sizespec
+                                            ,special,SizeUnit,remark 
+from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'"
+                                                , Poid, seq1, seq2), out dt);
+                if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return "";
+                dr = dt.Rows[0];
+            }
+            //if (seq1.Substring(0, 1) == "7")
+            //{
+            //    rtn = "**PLS USE STOCK FROM SP#:"
+            //        + dr["StockPOID"].ToString()
+            //        + "**" + Environment.NewLine;
+            //}
 
             switch (ReturnFormat)
             {
                 case 1:
                     break;
                 case 2: //Fabric.DescDetail 全部顯示
-                    rtn = rtn + MyUtility.GetValue.Lookup(string.Format(@"
-                                        select DescDetail from fabric where SCIRefno = '{0}'", dr["scirefno"].ToString().Replace("'", "''")));
+//                    rtn = rtn + MyUtility.GetValue.Lookup(string.Format(@"
+//                                        select DescDetail from fabric where SCIRefno = '{0}'", dr["scirefno"].ToString().Replace("'", "''")));
+                    DBProxy.Current.SelectByConn(conn, string.Format(@"
+                                        select DescDetail from fabric where SCIRefno = '{0}'", dr["scirefno"].ToString().Replace("'", "''")), out dt);
+                    rtn += dt.Rows[0][0].ToString();
                     break;
                 case 3: // 只顯示Fabric.DescDetail的第一列
                     if (!Repeat && !MyUtility.Check.Empty(dr["scirefno"]))
@@ -65,7 +81,7 @@ namespace Sci.Production.PublicPrg
                     break;
             }
 
-            if (Repeat || ReturnFormat == 2 || ReturnFormat==4)
+            if (Repeat || ReturnFormat == 1 || ReturnFormat==4)
             {
                 rtn += dr["SuppColor"].ToString().TrimEnd();
                 string colorid = dr["colorid"].ToString();
@@ -74,10 +90,16 @@ namespace Sci.Production.PublicPrg
                 {
                     for (int i = 0; i < colors.Length; i++)
                     {
-                        rtn = rtn + colors[i] + "-" + MyUtility.GetValue.Lookup(string.Format(@"select name from color,orders 
+//                        rtn = rtn + colors[i] + "-" + MyUtility.GetValue.Lookup(string.Format(@"select name from color,orders 
+//                                                                                                    where color.brandid = orders.brandid 
+//                                                                                                            and orders.brandid= '{0}' 
+//                                                                                                            and color.id = '{1}'", Poid, colors[i].ToString()));
+                        DBProxy.Current.SelectByConn(conn, string.Format(@"select name from color,orders 
                                                                                                     where color.brandid = orders.brandid 
                                                                                                             and orders.brandid= '{0}' 
-                                                                                                            and color.id = '{1}'", Poid, colors[i].ToString()));
+                                                                                                            and color.id = '{1}'", Poid, colors[i].ToString()), out dt);
+                        if (dt.Rows.Count == 0) continue;
+                        rtn += colors[i] + "-" + dt.Rows[0][0].ToString();
                     }
                 }
                 if (!MyUtility.Check.Empty(dr["ColorDetail"].ToString())) { rtn += dr["ColorDetail"].ToString() + Environment.NewLine; }
@@ -251,7 +273,7 @@ where id = '{0}' and seq1 = '{1}' and seq2='{2}' ;", Poid, seq1, seq2);
         /// <param name="location"></param>
         /// <returns>String Sqlcmd</returns>
         public static string UpdateFtyInventory(int type, string Poid, string seq1, string seq2
-            , decimal qty, string roll, string dyelot, char stocktype, bool encoded, string location = null)
+            , decimal qty, string roll, string dyelot, string stocktype, bool encoded, string location = null)
         {
             string sqlcmd=null;
             switch (type)
@@ -417,6 +439,62 @@ when not matched then
             return sqlcmd;
         }
         #endregion
+
+        #region SelePoItem
+        /// <summary>
+        /// 右鍵開窗選取採購項
+        /// </summary>
+        /// <param name="poid"></param>
+        /// <param name="defaultseq"></param>
+        /// <param name="filters"></param>
+        /// <returns>Sci.Win.Tools.SelectItem</returns>
+        public static Sci.Win.Tools.SelectItem SelePoItem(string poid, string defaultseq, string filters = null)
+        {
+            DataTable dt;
+            string sqlcmd = string.Format(@"select p.id poid,p.seq1+p.seq2 as seq, p.Refno, '' as Description 
+,p.ColorID,p.ata,p.InQty,p.pounit,p.StockUnit,p.OutQty,p.AdjustQty
+,p.inqty - p.OutQty + p.AdjustQty as balance
+,p.LInvQty
+,p.fabrictype
+,p.seq1
+,p.seq2
+from dbo.PO_Supp_Detail p
+where id ='{0}' and {1}", poid, filters);
+
+            DBProxy.Current.Select(null, sqlcmd, out dt);
+            string tmpdesc = "";
+            foreach (DataRow dr in dt.ToList())
+            {
+                tmpdesc = PublicPrg.Prgs.GetMtlDesc(dr["poid"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString(), 3, false);
+                if (!MyUtility.Check.Empty(tmpdesc)) dr["Description"] = tmpdesc;
+            }
+            Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt
+                            , "Seq,refno,description,colorid,eta,inqty,stockunit,outqty,adjustqty,balanceqty,linvqty"
+                            , "6,8,8,8,10,6,6,6,6,6,6", defaultseq, "Seq,Ref#,Description,Color,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty");
+            selepoitem.Width = 1024;
+
+            return selepoitem;
+        }
+        #endregion 
+
+        #region SelectLocation
+        /// <summary>
+        /// 右鍵開窗選取物料儲位
+        /// </summary>
+        /// <param name="stocktype"></param>
+        /// <param name="defaultseq"></param>
+        /// <returns>Sci.Win.Tools.SelectItem2</returns>
+        public static Sci.Win.Tools.SelectItem2 SelectLocation(string stocktype, string defaultseq = "")
+        {
+            string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}'", stocktype);
+           
+            Sci.Win.Tools.SelectItem2 selectlocation= new Win.Tools.SelectItem2(sqlcmd,
+                            "Location ID,Description,Stock Type", "13,60,10", defaultseq);
+            selectlocation.Width = 1024;
+
+            return selectlocation;
+        }
+        #endregion 
     }
     
 }
