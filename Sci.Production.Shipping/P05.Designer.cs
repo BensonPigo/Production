@@ -156,16 +156,10 @@
             this.masterpanel.Controls.Add(this.label12);
             this.masterpanel.Controls.Add(this.textBox2);
             this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.dateBox6);
-            this.masterpanel.Controls.Add(this.dateBox4);
-            this.masterpanel.Controls.Add(this.dateBox5);
-            this.masterpanel.Controls.Add(this.dateBox7);
             this.masterpanel.Controls.Add(this.txtpaytermar1);
             this.masterpanel.Controls.Add(this.txtcountry1);
-            this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.txtbrand1);
             this.masterpanel.Controls.Add(this.txtfactory1);
-            this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Controls.Add(this.textBox1);
             this.masterpanel.Controls.Add(this.displayBox1);
             this.masterpanel.Controls.Add(this.label11);
@@ -179,8 +173,20 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.dateBox6);
+            this.masterpanel.Controls.Add(this.dateBox4);
+            this.masterpanel.Controls.Add(this.dateBox5);
+            this.masterpanel.Controls.Add(this.dateBox7);
+            this.masterpanel.Controls.Add(this.dateBox2);
+            this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Size = new System.Drawing.Size(990, 311);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox7, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox5, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox6, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -194,16 +200,10 @@
             this.masterpanel.Controls.SetChildIndex(this.label11, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtfactory1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtbrand1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtcountry1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtpaytermar1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox6, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label12, 0);
@@ -450,6 +450,7 @@
             // textBox2
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
+            this.textBox2.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox2.Location = new System.Drawing.Point(73, 274);
