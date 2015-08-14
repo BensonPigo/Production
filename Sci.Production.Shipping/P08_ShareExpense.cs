@@ -187,35 +187,38 @@ namespace Sci.Production.Shipping
 
                 foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).ToList<DataRow>())
                 {
-                    if (MyUtility.Check.Empty(dr["BLNo"]) && MyUtility.Check.Empty(dr["WKNo"]) && MyUtility.Check.Empty(dr["InvNo"]))
+                    if (dr.RowState != DataRowState.Deleted)
                     {
-                        dr.Delete();
-                        continue;
-                    }
-
-                    //檢查重複值
-                    DataRow[] findrow = duplicData.Select(string.Format("BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", dr["BLNo"].ToString(),dr["WKNo"].ToString(),dr["InvNo"].ToString()));
-                    if (findrow.Length == 0)
-                    {
-                        duplicData.ImportRow(dr);
-                    }
-                    else
-                    {
-                        if (apData["Type"].ToString() == "IMPORT")
+                        if (MyUtility.Check.Empty(dr["BLNo"]) && MyUtility.Check.Empty(dr["WKNo"]) && MyUtility.Check.Empty(dr["InvNo"]))
                         {
-                            msg.Append(string.Format("{0}\r\n",dr["WKno"].ToString()));
+                            dr.Delete();
+                            continue;
+                        }
+
+                        //檢查重複值
+                        DataRow[] findrow = duplicData.Select(string.Format("BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", dr["BLNo"].ToString(), dr["WKNo"].ToString(), dr["InvNo"].ToString()));
+                        if (findrow.Length == 0)
+                        {
+                            duplicData.ImportRow(dr);
                         }
                         else
                         {
-                            msg.Append(string.Format("{0}\r\n", dr["InvNo"].ToString()));
+                            if (apData["Type"].ToString() == "IMPORT")
+                            {
+                                msg.Append(string.Format("{0}\r\n", dr["WKno"].ToString()));
+                            }
+                            else
+                            {
+                                msg.Append(string.Format("{0}\r\n", dr["InvNo"].ToString()));
+                            }
                         }
-                    }
 
-                    //當有Forwarder費用且SubType不是Material時，要檢查如果有一筆Ship Mode為SEA時，全部的Ship Mode就都要為SEA
-                    if (forwarderFee && (apData["Type"].ToString() == "EXPORT" || apData["SubType"].ToString() == "SISTER FACTORY TRANSFER"))
-                    {
-                        haveSea = haveSea || dr["ShipModeID"].ToString() == "SEA";
-                        noExistNotSea = noExistNotSea && dr["ShipModeID"].ToString() == "SEA";
+                        //當有Forwarder費用且SubType不是Material時，要檢查如果有一筆Ship Mode為SEA時，全部的Ship Mode就都要為SEA
+                        if (forwarderFee && (apData["Type"].ToString() == "EXPORT" || apData["SubType"].ToString() == "SISTER FACTORY TRANSFER"))
+                        {
+                            haveSea = haveSea || dr["ShipModeID"].ToString() == "SEA";
+                            noExistNotSea = noExistNotSea && dr["ShipModeID"].ToString() == "SEA";
+                        }
                     }
                 }
 
@@ -241,7 +244,8 @@ namespace Sci.Production.Shipping
                 {
                     if (dr.RowState == DataRowState.Deleted)
                     {
-                        deleteCmds.Add(string.Format("delete ShareExpense where ShippingAPID = '{0}' and BLNo = '{1}' and WKNo = '{2}' and InvNo = '{3}';",apData["ID"].ToString(),dr["BLNo"].ToString(),dr["WKNo"].ToString(),dr["InvNo"].ToString()));
+                        deleteCmds.Add(string.Format("delete ShareExpense where ShippingAPID = '{0}' and BLNo = '{1}' and WKNo = '{2}' and InvNo = '{3}';",apData["ID"].ToString(),dr["BLNo", DataRowVersion.Original].ToString().Trim(),dr["WKNo", DataRowVersion.Original].ToString().Trim(),dr["InvNo", DataRowVersion.Original].ToString().Trim()));
+                        
                     }
                 }
                 //新增實體資料
@@ -253,6 +257,11 @@ namespace Sci.Production.Shipping
  values ('{0}','{1}','{2}','{3}','{4}',{5},{6},'{7}','{8}',{9},'{10}');", apData["ID"].ToString(), dr["BLNo"].ToString(), dr["WKNo"].ToString(), dr["InvNo"].ToString(),
                                                                  apData["SubType"].ToString(), dr["GW"].ToString(), dr["CBM"].ToString(), apData["CurrencyID"].ToString(), dr["ShipModeID"].ToString(),
                                                                  dr["FtyWK"].ToString() == "True"?"1":"0", accNo));
+                    }
+                    if (dr.RowState == DataRowState.Modified)
+                    {
+                        addCmds.Add(string.Format(@"update ShareExpense set ShipModeID = '{0}', GW = {1}, CBM = {2} where ShippingAPID = '{3}' and BLNo = '{4}' and WKNo = '{5}' and InvNo = '{6}';",
+                                                                 dr["ShipModeID"].ToString(),dr["GW"].ToString(),dr["CBM"].ToString(),apData["ID"].ToString(), dr["BLNo"].ToString(), dr["WKNo"].ToString(), dr["InvNo"].ToString()));
                     }
                 }
                 if (deleteCmds.Count != 0 || addCmds.Count != 0)
