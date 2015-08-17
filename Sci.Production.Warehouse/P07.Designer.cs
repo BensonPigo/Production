@@ -63,7 +63,6 @@
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.button9 = new Sci.Win.UI.Button();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.button4 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -79,7 +78,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.button4);
             this.masterpanel.Controls.Add(this.checkBox1);
             this.masterpanel.Controls.Add(this.button9);
             this.masterpanel.Controls.Add(this.label8);
@@ -150,7 +148,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
             this.masterpanel.Controls.SetChildIndex(this.button9, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button4, 0);
             // 
             // detailpanel
             // 
@@ -382,9 +379,11 @@
             this.button1.TabIndex = 10;
             this.button1.Text = "Modify Roll & Dyelot";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
+            this.button2.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button2.Location = new System.Drawing.Point(882, 125);
             this.button2.Name = "button2";
@@ -395,6 +394,7 @@
             // 
             // button3
             // 
+            this.button3.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button3.Location = new System.Drawing.Point(882, 76);
             this.button3.Name = "button3";
@@ -413,6 +413,7 @@
             this.button5.TabIndex = 9;
             this.button5.Text = "Accumulated Qty";
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // button6
             // 
@@ -427,12 +428,14 @@
             // 
             // button7
             // 
+            this.button7.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button7.Location = new System.Drawing.Point(755, 125);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(121, 30);
             this.button7.TabIndex = 12;
             this.button7.Text = "Update Act. (kg)";
             this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // shapeContainer1
             // 
@@ -467,6 +470,7 @@
             // 
             // button8
             // 
+            this.button8.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button8.Location = new System.Drawing.Point(279, 175);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(98, 30);
@@ -505,18 +509,18 @@
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
             this.comboBox1.Items.AddRange(new object[] {
             "ALL",
-            "Bulk",
-            "Inventory"});
+            "Fabric",
+            "Accessory"});
             this.comboBox1.Location = new System.Drawing.Point(468, 178);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(100, 24);
             this.comboBox1.TabIndex = 6;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // button9
             // 
@@ -543,21 +547,12 @@
             this.checkBox1.Text = "3rd Country";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(768, 40);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(80, 30);
-            this.button4.TabIndex = 8;
-            this.button4.Text = "button4";
-            this.button4.UseVisualStyleBackColor = true;
-            // 
             // P07
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
-            this.DefaultControl = "textbox3";
-            this.DefaultControlForEdit = "textbox3";
+            this.DefaultControl = "textBox3";
+            this.DefaultControlForEdit = "textBox3";
             this.DefaultOrder = "ID";
             this.Grid2New = 0;
             this.GridAlias = "Receiving_detail";
@@ -628,6 +623,5 @@
         private Win.UI.Button button9;
         private Win.UI.Label label8;
         private Win.UI.ComboBox comboBox1;
-        private Win.UI.Button button4;
     }
 }
