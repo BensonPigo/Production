@@ -1,0 +1,461 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Ict.Win;
+using Ict;
+using Sci.Data;
+using System.Transactions;
+
+namespace Sci.Production.Sewing
+{
+    public partial class P02 : Sci.Win.Tems.Input6
+    {
+        Ict.Win.DataGridViewGeneratorTextColumnSettings orderID = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        Ict.Win.DataGridViewGeneratorNumericColumnSettings qaqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        Ict.Win.DataGridViewGeneratorNumericColumnSettings inlineqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+
+        private DateTime systemLockDate;
+        private decimal systemTMS = 0;
+
+        public P02(ToolStripMenuItem menuitem)
+            : base(menuitem)
+        {
+            InitializeComponent();
+            this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "' and Category = 'M'";
+
+            DataRow sysData;
+            if (MyUtility.Check.Seek("select SewLock,StdTMS from System", out sysData))
+            {
+                systemLockDate = Convert.ToDateTime(sysData["SewLock"]);
+                systemTMS = Convert.ToDecimal(sysData["StdTMS"]);
+            }
+            else
+            {
+                MyUtility.Msg.ErrorBox("Query System fail, pls contact Taipei MIS!!");
+            }
+        }
+
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        {
+            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            this.DetailSelectCommand = string.Format(@"select sd.*,mo.MockupID,mo.Qty,(select isnull(sum(QAQty),0) from SewingOutput_Detail where OrderId = sd.OrderId and ID != sd.ID) as AccuQty,
+mo.Qty-(select isnull(sum(QAQty),0) from SewingOutput_Detail where OrderId = sd.OrderId and ID != sd.ID) as VarQty,
+mo.Qty-(select isnull(sum(QAQty),0) from SewingOutput_Detail where OrderId = sd.OrderId and ID != sd.ID)-sd.QAQty as BalQty,
+round(iif(sd.InlineQty = 0,0,sd.QAQty/sd.InlineQty),2)*100 as RFT
+from SewingOutput_Detail sd
+left join MockupOrder mo on mo.ID = sd.OrderId
+where sd.ID = '{0}'", masterID);
+            return base.OnDetailSelectCommandPrepare(e);
+        }
+
+        protected override void OnDetailGridSetup()
+        {
+            base.OnDetailGridSetup();
+            #region Reght click & Validating
+            orderID.EditingMouseDown += (s, e) =>
+            {
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    if (this.EditMode)
+                    {
+                        if (e.RowIndex != -1)
+                        {
+                            DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                            string sqlCmd = string.Format("select ID,MockupID,StyleID,SeasonID,BrandID from MockupOrder where Junk = 0 and FTYGroup = '{0}'", Sci.Env.User.Factory);
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "13,15,15,10,8", dr["OrderID"].ToString());
+                            DialogResult returnResult = item.ShowDialog();
+                            if (returnResult == DialogResult.Cancel) { return; }
+                            e.EditingControl.Text = item.GetSelectedString();
+                        }
+                    }
+                }
+            };
+
+            orderID.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["OrderID"].ToString())
+                    {
+                        DataRow moData;
+                        if (!MyUtility.Check.Seek(string.Format("select * from MockupOrder where Junk = 0 and FTYGroup = '{0}' and ID = '{1}'", Sci.Env.User.Factory, e.FormattedValue.ToString()), out moData))
+                        {
+                            MyUtility.Msg.WarningBox(string.Format("Data not found!!!"));
+                            dr["OrderID"] = "";
+                            dr["TMS"] = 0;
+                            dr["MockupID"] = "";
+                            dr["Qty"] = 0;
+                            dr["AccuQty"] = 0;
+                            dr["VarQty"] = 0;
+                            dr["QAQty"] = 0;
+                            dr["BalQty"] = Convert.ToInt32(dr["Qty"]) - Convert.ToInt32(dr["AccuQty"]) - Convert.ToInt32(dr["QAQty"]);
+                            dr["InlineQty"] = 0;
+                            dr["DefectQty"] = 0;
+                            dr["WorkHour"] = 0;
+                            dr["RFT"] = 0;
+                            e.Cancel = true;
+                            return;
+                        }
+                        else
+                        {
+                            dr["OrderID"] = e.FormattedValue.ToString();
+                            //自動算出TMS值，等Trade將Prg: GetSOCpu()完成再補
+                            dr["TMS"] = MyUtility.Math.Round(Convert.ToDecimal(moData["CPU"]) * 1 * systemTMS);
+                            dr["MockupID"] = moData["MockupID"].ToString();
+                            dr["Qty"] = Convert.ToInt32(moData["Qty"]);
+                            dr["AccuQty"] = Convert.ToInt32(MyUtility.GetValue.Lookup(string.Format("select isnull(sum(QAQty),0) from SewingOutput_Detail where OrderId = '{0}'", dr["OrderID"].ToString())));
+                            dr["VarQty"] = Convert.ToInt32(dr["Qty"]) - Convert.ToInt32(dr["AccuQty"]);
+                            dr["QAQty"] = 0;
+                            dr["BalQty"] = Convert.ToInt32(dr["Qty"]) - Convert.ToInt32(dr["AccuQty"]) - Convert.ToInt32(dr["QAQty"]);
+                            dr["InlineQty"] = 0;
+                            dr["DefectQty"] = 0;
+                            dr["WorkHour"] = 0;
+                            dr["RFT"] = 0;
+                        }
+                    }
+                }
+            };
+
+            qaqty.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["QAQty"].ToString())
+                    {
+                        if (Convert.ToInt32(e.FormattedValue) > Convert.ToInt32(dr["VarQty"]))
+                        {
+                            MyUtility.Msg.WarningBox("Output Qty can't exceed Variance!");
+                            dr["QAQty"] = dr["QAQty"].ToString();
+                            return;
+                        }
+                        else
+                        {
+                            dr["QAQty"] = e.FormattedValue.ToString();
+                            dr["BalQty"] = Convert.ToInt32(dr["Qty"]) - Convert.ToInt32(dr["AccuQty"]) - Convert.ToInt32(dr["QAQty"]);
+                            ReCalculateDefectAndRFT(dr);
+                        }
+                    }
+                }
+            };
+
+            inlineqty.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["InlineQty"].ToString())
+                    {
+                        dr["InlineQty"] = e.FormattedValue.ToString();
+                        ReCalculateDefectAndRFT(dr);
+                    }
+                }
+            };
+
+            #endregion
+
+            Helper.Controls.Grid.Generator(this.detailgrid)
+                .Text("OrderID", header: "Mockup order#", width: Widths.AnsiChars(13), settings: orderID)
+                .Text("MockupID", header: "Mockup type", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Numeric("TMS", header: "TMS", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("Qty", header: "Order Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("AccuQty", header: "Accu. Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("VarQty", header: "Variance", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("QAQty", header: "QA Output", width: Widths.AnsiChars(5), settings: qaqty)
+                .Numeric("BalQty", header: "Bal. Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("InlineQty", header: "Prod. Output", width: Widths.AnsiChars(5), settings: inlineqty)
+                .Numeric("DefectQty", header: "Defect Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("WorkHour", header: "W'Hours", decimal_places: 3, width: Widths.AnsiChars(5))
+                .Numeric("RFT", header: "RFT(%)", width: Widths.AnsiChars(5), iseditingreadonly: true);
+        }
+
+        protected override void ClickNewAfter()
+        {
+            base.ClickNewAfter();
+            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["Category"] = "M";
+            CurrentMaintain["OutputDate"] = DateTime.Today.AddDays(-1).ToString("d");
+            CurrentMaintain["Shift"] = "D";
+            CurrentMaintain["Team"] = "A";
+            CurrentMaintain["WorkHour"] = 0;
+            CurrentMaintain["Status"] = "New";
+        }
+
+        protected override bool ClickEditBefore()
+        {
+            if (CurrentMaintain["Status"].ToString() == "Locked")
+            {
+                MyUtility.Msg.WarningBox("This resord is < Locked >, can't modify!!");
+                return false;
+            }
+            return base.ClickEditBefore();
+        }
+
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+
+            dateBox1.ReadOnly = true;
+
+            if (Convert.ToDateTime(CurrentMaintain["OutputDate"]) <= systemLockDate)
+            {
+                txtsewingline1.ReadOnly = true;
+                numericBox1.ReadOnly = true;
+                numericBox2.ReadOnly = true;
+            }
+        }
+
+        protected override bool ClickSaveBefore()
+        {
+            //檢查欄位值不可為空
+            if (MyUtility.Check.Empty(CurrentMaintain["OutputDate"]))
+            {
+                MyUtility.Msg.WarningBox("Date can't empty!!");
+                dateBox1.Focus();
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(CurrentMaintain["SewingLineID"]))
+            {
+                MyUtility.Msg.WarningBox("Line can't empty!!");
+                txtsewingline1.Focus();
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(CurrentMaintain["Manpower"]))
+            {
+                MyUtility.Msg.WarningBox("Manpower can't empty!!");
+                numericBox1.Focus();
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(CurrentMaintain["WorkHour"]))
+            {
+                MyUtility.Msg.WarningBox("W/Hours(Day) can't empty!!");
+                numericBox2.Focus();
+                return false;
+            }
+
+            DataTable SumQty;
+            int recCnt = 0, gridQaQty, gridInlineQty , gridDefectQty;
+            decimal gridWHours, gridTms = 0;
+            try
+            {
+                MyUtility.Tool.ProcessWithDatatable(((DataTable)detailgridbs.DataSource), "WorkHour,QAQty,InlineQty,DefectQty,OrderID", "select isnull(sum(WorkHour),0) as sumWorkHour,isnull(sum(QAQty),0) as sumQaqty,isnull(sum(InlineQty),0) as sumInlineQty,isnull(sum(DefectQty),0) as sumDefectQty from #tmp where (OrderID <> '' or OrderID is not null)", out SumQty, "#tmp");
+            }
+            catch (Exception ex)
+            {
+                ShowErr("Calculate error.", ex);
+                return false;
+            }
+
+            if (SumQty == null)
+            {
+                gridQaQty = 0;
+                gridInlineQty = 0;
+                gridDefectQty = 0;
+                gridWHours = 0;
+            }
+            else
+            {
+                gridQaQty = Convert.ToInt32(SumQty.Rows[0]["sumQAQty"]);
+                gridInlineQty = Convert.ToInt32(SumQty.Rows[0]["sumInlineQty"]);
+                gridDefectQty = Convert.ToInt32(SumQty.Rows[0]["sumDefectQty"]);
+                gridWHours = Convert.ToDecimal(SumQty.Rows[0]["sumWorkHour"]);
+            }
+
+
+            foreach (DataRow dr in DetailDatas)
+            {
+                if (MyUtility.Check.Empty(dr["OrderID"]))
+                {
+                    dr.Delete();
+                    continue;
+                }
+                gridTms = gridTms + gridQaQty == 0 ? 0 : (Convert.ToDecimal(dr["TMS"]) * Convert.ToDecimal(dr["QAQty"]) / Convert.ToDecimal(gridQaQty));
+                recCnt += 1;
+            }
+
+            if (recCnt == 0)
+            {
+                MyUtility.Msg.WarningBox("< Detail > can't be empty!");
+                detailgrid.Focus();
+                return false;
+            }
+
+            if (gridWHours != Convert.ToDecimal(CurrentMaintain["WorkHour"]))
+            {
+                MyUtility.Msg.WarningBox("The working hours summary is not equal to working hours/day, please correct, or else can't be saved.");
+                return false;
+            }
+
+            //GetID
+            if (IsDetailInserting)
+            {
+                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "MM", "SewingOutput", DateTime.Today, 3, "Id", null);
+                if (MyUtility.Check.Empty(id))
+                {
+                    MyUtility.Msg.WarningBox("GetID fail, please try again!");
+                    return false;
+                }
+                CurrentMaintain["ID"] = id;
+            }
+
+            CurrentMaintain["QAQty"] = gridQaQty;
+            CurrentMaintain["InlineQty"] = gridInlineQty;
+            CurrentMaintain["DefectQty"] = gridDefectQty;
+            CurrentMaintain["TMS"] = MyUtility.Math.Round(gridTms, 0);
+            CurrentMaintain["Efficiency"] = Convert.ToDecimal(gridQaQty) / (3600 / Convert.ToDecimal(CurrentMaintain["TMS"]) * Convert.ToDecimal(CurrentMaintain["ManHour"])) * 100;
+            return base.ClickSaveBefore();
+        }
+
+        protected override bool ClickDeleteBefore()
+        {
+            if (CurrentMaintain["Status"].ToString() == "Locked")
+            {
+                MyUtility.Msg.WarningBox("This resord is < Locked >, can't delete!!");
+                return false;
+            }
+
+            if (Convert.ToDateTime(CurrentMaintain["OutputDate"]) <= systemLockDate)
+            {
+                MyUtility.Msg.WarningBox("The date less then System.sewLock date, can't deleted.");
+                return false;
+            }
+
+            return base.ClickDeleteBefore();
+        }
+
+        //Date
+        private void dateBox1_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.EditMode && !MyUtility.Check.Empty(dateBox1.Value))
+            {
+                if (dateBox1.Value > DateTime.Today)
+                {
+                    MyUtility.Msg.WarningBox("< Date > is greater than today, please pay attention!!");
+                    dateBox1.Value = null;
+                    e.Cancel = true;
+                    return;
+                }
+                if (dateBox1.Value < systemLockDate)
+                {
+                    MyUtility.Msg.WarningBox("< Date > can't early than System Lock Date:" + systemLockDate.ToString("d"));
+                    dateBox1.Value = null;
+                    e.Cancel = true;
+                    return;
+                }
+            }
+        }
+
+        private void CalculateManHour()
+        {
+            decimal manpower = MyUtility.Check.Empty(CurrentMaintain["Manpower"]) ? 0 : Convert.ToDecimal(CurrentMaintain["Manpower"]);
+            decimal workHour = MyUtility.Check.Empty(CurrentMaintain["WorkHour"]) ? 0 : Convert.ToDecimal(CurrentMaintain["WorkHour"]);
+            CurrentMaintain["ManHour"] = Convert.ToString(manpower * workHour);
+        }
+
+        //Manpower
+        private void numericBox1_Validated(object sender, EventArgs e)
+        {
+            CalculateManHour();
+        }
+
+        //W/Hours(Day)
+        private void numericBox2_Validated(object sender, EventArgs e)
+        {
+            CalculateManHour();
+        }
+
+        private void ReCalculateDefectAndRFT(DataRow dr)
+        {
+            dr["DefectQty"] = (MyUtility.Check.Empty(dr["InlineQty"]) ? 0 : Convert.ToInt32(dr["InlineQty"])) - (MyUtility.Check.Empty(dr["QAQty"]) ? 0 : Convert.ToInt32(dr["QAQty"]));
+            dr["RFT"] = MyUtility.Check.Empty(dr["InlineQty"]) ? 0 : MyUtility.Math.Round(((MyUtility.Check.Empty(dr["QAQty"]) ? 0 : Convert.ToInt32(dr["QAQty"])) / Convert.ToDecimal(dr["InlineQty"])), 2) * 100;
+        }
+
+        //Share < working hours > to SP#
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DataTable SumQaQty;
+            try
+            {
+                MyUtility.Tool.ProcessWithDatatable(((DataTable)detailgridbs.DataSource), "QAQty,TMS,OrderID", "select isnull(sum(QAQty*TMS),0) as sumQaqty,isnull(count(QAQty),0) as RecCnt from #tmp", out SumQaQty, "#tmp");
+            }
+            catch (Exception ex)
+            {
+                ShowErr("Calculate error.", ex);
+                return;
+            }
+
+            if (SumQaQty == null)
+            {
+                return;
+            }
+            
+            int recCnt = Convert.ToInt32(SumQaQty.Rows[0]["RecCnt"]);
+            decimal ttlQaqty = Convert.ToDecimal(SumQaQty.Rows[0]["sumQaqty"]);
+            
+            decimal subSum = 0;
+            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
+            {
+                recCnt = recCnt - 1;
+
+                if (recCnt == 0)
+                {
+                    dr["WorkHour"] = Convert.ToDecimal(CurrentMaintain["WorkHour"]) - subSum;
+                }
+                else
+                {
+                    dr["WorkHour"] = ttlQaqty == 0 ? 0 : MyUtility.Math.Round(Convert.ToDecimal(dr["QAQty"]) * Convert.ToDecimal(dr["TMS"]) / ttlQaqty * Convert.ToDecimal(CurrentMaintain["WorkHour"]), 3);
+                }
+                subSum = subSum + Convert.ToDecimal(dr["WorkHour"]);
+            }
+        }
+
+        //UnConfirm
+        protected override void ClickUnconfirm()
+        {
+            base.ClickUnconfirm();
+            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("Sewing_RVS", true);
+            DialogResult dResult = callReason.ShowDialog(this);
+            if (dResult == System.Windows.Forms.DialogResult.OK)
+            {
+                string insertCmd = string.Format(@"insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
+values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')", CurrentMaintain["ID"].ToString(), "Status", "Locked", "New", callReason.ReturnReason, callReason.ReturnRemark, Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+                string updateCmd = string.Format(@"update SewingOutput set LockDate = null, Status = 'New' where ID = '{0}'", CurrentMaintain["ID"].ToString());
+
+                using (TransactionScope transactionScope = new TransactionScope())
+                {
+                    try
+                    {
+                        DualResult result = DBProxy.Current.Execute(null, insertCmd);
+                        DualResult result2 = DBProxy.Current.Execute(null, updateCmd);
+
+                        if (result && result2)
+                        {
+                            transactionScope.Complete();
+                        }
+                        else
+                        {
+                            MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowErr("Commit transaction error.", ex);
+                        return;
+                    }
+                }
+            }
+
+            RenewData();
+            OnDetailEntered();
+            EnsureToolbarExt();
+        }        
+    }
+}
