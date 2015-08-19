@@ -40,10 +40,11 @@ namespace Sci.Production.Warehouse
                 //this.numericBox3.Value = !MyUtility.Check.Empty(adjust) ? decimal.Parse(adjust.ToString()) : 0m;
             }
         }
-        public P07_UpdateActualWeight(object data)
+        public P07_UpdateActualWeight(object data,string data2)
         {
             InitializeComponent();
             selectDataTable1 = (DataTable)data;
+            this.Text+= " - " + data2;
             this.EditMode = true;
         }
 

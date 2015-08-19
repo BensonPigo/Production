@@ -28,42 +28,111 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.panel1 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
             this.panel2 = new Sci.Win.UI.Panel();
-            this.button2 = new Sci.Win.UI.Button();
+            this.button3 = new Sci.Win.UI.Button();
+            this.label1 = new Sci.Win.UI.Label();
             this.button1 = new Sci.Win.UI.Button();
             this.bindingSource1 = new Sci.Win.UI.BindingSource();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.numericBox3 = new Sci.Win.UI.NumericBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.button3 = new Sci.Win.UI.Button();
-            this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.grid1 = new Sci.Win.UI.Grid();
+            this.grid2 = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.displayBox2 = new Sci.Win.UI.DisplayBox();
+            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.label4 = new Sci.Win.UI.Label();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
-            // panel1
+            // panel2
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.Controls.Add(this.grid1);
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 507);
-            this.panel1.TabIndex = 0;
+            this.panel2.Controls.Add(this.textBox2);
+            this.panel2.Controls.Add(this.label4);
+            this.panel2.Controls.Add(this.textBox1);
+            this.panel2.Controls.Add(this.label3);
+            this.panel2.Controls.Add(this.displayBox2);
+            this.panel2.Controls.Add(this.label2);
+            this.panel2.Controls.Add(this.displayBox1);
+            this.panel2.Controls.Add(this.button3);
+            this.panel2.Controls.Add(this.label1);
+            this.panel2.Controls.Add(this.button1);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(0, 663);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(1008, 48);
+            this.panel2.TabIndex = 0;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(834, 9);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(80, 30);
+            this.button3.TabIndex = 1;
+            this.button3.Text = "Commit";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // label1
+            // 
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(438, 13);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Roll#";
+            // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.button1.Location = new System.Drawing.Point(916, 9);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(80, 30);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "Close";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.grid1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.grid2);
+            this.splitContainer1.Size = new System.Drawing.Size(1008, 663);
+            this.splitContainer1.SplitterDistance = 433;
+            this.splitContainer1.TabIndex = 1;
             // 
             // grid1
             // 
             this.grid1.AllowUserToAddRows = false;
             this.grid1.AllowUserToDeleteRows = false;
             this.grid1.AllowUserToResizeRows = false;
+            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
@@ -75,125 +144,138 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1008, 507);
+            this.grid1.Size = new System.Drawing.Size(1008, 430);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
+            this.grid1.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid1_RowEnter);
             // 
-            // panel2
+            // grid2
             // 
-            this.panel2.Controls.Add(this.button3);
-            this.panel2.Controls.Add(this.label1);
-            this.panel2.Controls.Add(this.numericBox3);
-            this.panel2.Controls.Add(this.numericBox2);
-            this.panel2.Controls.Add(this.numericBox1);
-            this.panel2.Controls.Add(this.button2);
-            this.panel2.Controls.Add(this.button1);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 513);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1008, 48);
-            this.panel2.TabIndex = 0;
+            this.grid2.AllowUserToAddRows = false;
+            this.grid2.AllowUserToDeleteRows = false;
+            this.grid2.AllowUserToResizeRows = false;
+            this.grid2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.grid2.Location = new System.Drawing.Point(3, 3);
+            this.grid2.Name = "grid2";
+            this.grid2.RowHeadersVisible = false;
+            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.grid2.RowTemplate.Height = 24;
+            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid2.Size = new System.Drawing.Size(1002, 217);
+            this.grid2.TabIndex = 0;
+            this.grid2.TabStop = false;
             // 
-            // button2
+            // displayBox1
             // 
-            this.button2.Location = new System.Drawing.Point(12, 11);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(113, 30);
-            this.button2.TabIndex = 0;
-            this.button2.Text = "Re-Calculate";
-            this.button2.UseVisualStyleBackColor = true;
+            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(92, 13);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(140, 23);
+            this.displayBox1.TabIndex = 5;
             // 
-            // button1
+            // label2
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(916, 11);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.label2.Lines = 0;
+            this.label2.Location = new System.Drawing.Point(14, 13);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(75, 23);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "SP#";
             // 
-            // numericBox1
+            // label3
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(390, 15);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 1;
+            this.label3.Lines = 0;
+            this.label3.Location = new System.Drawing.Point(244, 13);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(75, 23);
+            this.label3.TabIndex = 8;
+            this.label3.Text = "Seq#";
             // 
-            // numericBox2
+            // displayBox2
             // 
-            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(496, 15);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.ReadOnly = true;
-            this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 2;
+            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox2.Location = new System.Drawing.Point(322, 13);
+            this.displayBox2.Name = "displayBox2";
+            this.displayBox2.Size = new System.Drawing.Size(100, 23);
+            this.displayBox2.TabIndex = 7;
             // 
-            // numericBox3
+            // textBox1
             // 
-            this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox3.IsSupportEditMode = false;
-            this.numericBox3.Location = new System.Drawing.Point(602, 15);
-            this.numericBox3.Name = "numericBox3";
-            this.numericBox3.ReadOnly = true;
-            this.numericBox3.Size = new System.Drawing.Size(100, 23);
-            this.numericBox3.TabIndex = 3;
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.Location = new System.Drawing.Point(516, 13);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 23);
+            this.textBox1.TabIndex = 9;
             // 
-            // label1
+            // textBox2
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(312, 15);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Total";
+            this.textBox2.BackColor = System.Drawing.Color.White;
+            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox2.Location = new System.Drawing.Point(697, 13);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(68, 23);
+            this.textBox2.TabIndex = 11;
             // 
-            // button3
+            // label4
             // 
-            this.button3.Location = new System.Drawing.Point(834, 11);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 1;
-            this.button3.Text = "Print";
-            this.button3.UseVisualStyleBackColor = true;
+            this.label4.Lines = 0;
+            this.label4.Location = new System.Drawing.Point(619, 13);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(75, 23);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "Dyelot#";
             // 
-            // P03_Transaction
+            // P07_ModifyRollDyelot
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 561);
+            this.ClientSize = new System.Drawing.Size(1008, 711);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel1);
-            this.Name = "P03_Transaction";
-            this.Text = "Transaction Detail";
-            this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            this.Name = "P07_ModifyRollDyelot";
+            this.Text = "P07. Modify Roll & Dyelot";
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private Win.UI.Panel panel1;
-        private Win.UI.Grid grid1;
         private Win.UI.Panel panel2;
         private Win.UI.Button button1;
         private Win.UI.BindingSource bindingSource1;
-        private Win.UI.Button button2;
         private Win.UI.Label label1;
-        private Win.UI.NumericBox numericBox3;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.NumericBox numericBox1;
         private Win.UI.Button button3;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private Win.UI.Grid grid1;
+        private Win.UI.Grid grid2;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.TextBox textBox2;
+        private Win.UI.Label label4;
+        private Win.UI.TextBox textBox1;
+        private Win.UI.Label label3;
+        private Win.UI.DisplayBox displayBox2;
+        private Win.UI.Label label2;
+        private Win.UI.DisplayBox displayBox1;
     }
 }

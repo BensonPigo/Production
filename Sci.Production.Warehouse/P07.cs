@@ -897,8 +897,9 @@ where a.id='{0}'", CurrentMaintain["exportid"]), out dt);
                 MyUtility.Msg.InfoBox("Please modify data directly!!");
                 return;
             }
-            var frm = new Sci.Production.Warehouse.P07_ModifyRollDyelot(CurrentMaintain);
+            var frm = new Sci.Production.Warehouse.P07_ModifyRollDyelot(detailgridbs.DataSource,CurrentMaintain["id"].ToString());
             frm.ShowDialog(this);
+            this.RenewData();
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -908,7 +909,7 @@ where a.id='{0}'", CurrentMaintain["exportid"]), out dt);
                 MyUtility.Msg.InfoBox("Please modify data directly!!");
                 return;
             }
-            var frm = new Sci.Production.Warehouse.P07_UpdateActualWeight(detailgridbs.DataSource);
+            var frm = new Sci.Production.Warehouse.P07_UpdateActualWeight(detailgridbs.DataSource, CurrentMaintain["id"].ToString());
             frm.ShowDialog(this);
             this.RenewData();
         }
