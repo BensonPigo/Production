@@ -559,6 +559,12 @@ Sci.Production.Warehouse/P07_ModifyRollDyelot.resx -text
 Sci.Production.Warehouse/P07_UpdateActualWeight.Designer.cs -text
 Sci.Production.Warehouse/P07_UpdateActualWeight.cs -text
 Sci.Production.Warehouse/P07_UpdateActualWeight.resx -text
+Sci.Production.Warehouse/P08.Designer.cs -text
+Sci.Production.Warehouse/P08.cs -text
+Sci.Production.Warehouse/P08.resx -text
+Sci.Production.Warehouse/P08_AccumulatedQty.Designer.cs -text
+Sci.Production.Warehouse/P08_AccumulatedQty.cs -text
+Sci.Production.Warehouse/P08_AccumulatedQty.resx -text
 Sci.Production.Warehouse/P41.Designer.cs -text
 Sci.Production.Warehouse/P41.cs -text
 Sci.Production.Warehouse/P41.resx -text

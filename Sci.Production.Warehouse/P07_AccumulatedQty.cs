@@ -51,7 +51,7 @@ group by poid,seq1,seq2,description", dr["id"].ToString()));
             {
                 selectCommand1.Append(string.Format(@"select a.PoID,a.Seq1,a.seq2,(a.Qty+a.Foc) as shipqty,0 as accu_rcv,0 as rcv
 ,'' as description
-from dbo.Export_Detail a where id='WK20150400605') tmp
+from dbo.Export_Detail a where id='{0}') tmp
 group by poid,seq1,seq2,description"
                                 , dr["exportid"].ToString()));
             }
