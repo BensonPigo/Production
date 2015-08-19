@@ -30,16 +30,16 @@ namespace Sci.Production.Warehouse
             di_stocktype.Add("B", "Bulk");
             di_stocktype.Add("I", "Inventory");
             //
-            //detailgrid.EditingControlShowing += (s, e) =>
-            //{
-            //    if (this.EditMode)
-            //    {
-            //        //if (detailgrid.Columns[detailgrid.CurrentCell.ColumnIndex].HeaderText == "Remark")
-            //        //{
-            //            e.Control.KeyDown += new KeyEventHandler(dataGridViewTextBox_KeyDown);
-            //        //}
-            //    }
-            //};
+            detailgrid.StatusNotification += (s, e) =>
+            {
+                if (this.EditMode&&e.Notification == Ict.Win.UI.DataGridViewStatusNotification.NoMoreRowOnEnterPress)
+                {
+                    DataRow tmp = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
+                    this.OnDetailGridInsert();
+                    DataRow newrow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
+                    newrow.ItemArray = tmp.ItemArray;
+                }
+            };
         }
 
         public P07(ToolStripMenuItem menuitem, string transID)
@@ -67,7 +67,6 @@ namespace Sci.Production.Warehouse
             CurrentMaintain["Third"] = 1;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Type"] = "A";
-            //((DataTable)(detailgridbs.DataSource)).Rows[0].Delete();
         }
 
         private void ChangeDetailColor()
@@ -137,8 +136,41 @@ namespace Sci.Production.Warehouse
             #endregion 必輸檢查
 
             // 到倉日不可早於到港日，如果有到港日的話。
-            // 到倉日如果早於ETA 3天，則提示窗請USER再確認是否存檔。
-            // 到倉日如果晚於ETA 15天，則提示窗請USER再確認是否存檔。
+            DateTime t1 = new DateTime();
+            DateTime t2 = new DateTime();
+            
+            if (!MyUtility.Check.Empty(dateBox2.Value)&&!MyUtility.Check.Empty(dateBox4.Value))
+            {
+                t1 = DateTime.Parse(dateBox2.Text);//port
+                t2 = DateTime.Parse(dateBox3.Text);//warehouse
+
+                if (DateTime.Compare(t1, t2) > 0)
+                {
+                    MyUtility.Msg.WarningBox("Arrive Warehouse date can't be early than arrive port date");
+                    dateBox3.Focus();
+                    return false;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(dateBox4.Value))
+            {
+                // 到倉日如果早於ETA 3天，則提示窗請USER再確認是否存檔。
+                t1 = DateTime.Parse(dateBox1.Text);//eta
+                t2 = DateTime.Parse(dateBox3.Text).AddDays(-3);//warehouse
+                if (DateTime.Compare(t1, t2) > 0)
+                {
+                    DialogResult dResult = MyUtility.Msg.QuestionBox("Arrive Warehouse date is early than ETA 3 days, do you save it?");
+                    if (dResult.ToString().ToUpper() == "NO") return false;
+                }
+                    // 到倉日如果晚於ETA 15天，則提示窗請USER再確認是否存檔。
+                t1 = DateTime.Parse(dateBox1.Text).AddDays(15);//eta
+                t2 = DateTime.Parse(dateBox3.Text);//warehouse
+                if (DateTime.Compare(t1, t2) < 0)
+                {
+                    DialogResult dResult = MyUtility.Msg.QuestionBox("Arrive Warehouse date is late than ETA 15 days, do you save it?");
+                    if (dResult.ToString().ToUpper() == "NO") return false;
+                }
+            }
 
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).ToList())
             {
@@ -488,10 +520,24 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
             if (null == dr) return;
 
             StringBuilder sqlupd2 = new StringBuilder();
-            String sqlcmd = "", sqlupd3 = "", ids = "";
-            DualResult result, result2;
+            String sqlcmd = "", sqlupd3 = "", ids = "",sqlcmd4 ="";
+            DualResult result, result2, result3;
             DataTable datacheck;
 
+            #region 檢查必輸欄位
+            if (MyUtility.Check.Empty(CurrentMaintain["PackingReceive"]))
+            {
+                MyUtility.Msg.WarningBox("<Packing Receive Date>  can't be empty!", "Warning");
+                dateBox4.Focus();
+                return;
+            }
+            if (MyUtility.Check.Empty(CurrentMaintain["whseArrival"]))
+            {
+                MyUtility.Msg.WarningBox("< Arrive W/H Date >  can't be empty!", "Warning");
+                dateBox3.Focus();
+                return;
+            }
+            #endregion
             #region 檢查負數庫存
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.StockQty
@@ -565,6 +611,12 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
 
             #endregion 更新庫存數量 po_supp_detail & ftyinventory
 
+            #region 收wkno時回寫export
+            sqlcmd4 = string.Format(@"update dbo.export set whsearrival =(select WhseArrival from dbo.receiving where id='{2}')
+,packingarrival = (select PackingReceive from dbo.receiving where id='{2}'), editname = '{0}' , editdate = GETDATE()
+                                where id = '{1}'", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain["id"]);
+            #endregion
+
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
@@ -579,6 +631,15 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
                     {
                         ShowErr(sqlupd3, result);
                         return;
+                    }
+
+                    if (!MyUtility.Check.Empty(CurrentMaintain["exportid"]))
+                    {
+                        if (!(result3 = DBProxy.Current.Execute(null, sqlcmd4)))
+                        {
+                            ShowErr(sqlcmd4, result);
+                            return;
+                        }
                     }
 
                     _transactionscope.Complete();
@@ -604,12 +665,12 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
             DataTable datacheck;
             DataTable dt = (DataTable)detailgridbs.DataSource;
 
-            DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unconfirme it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+            DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unconfirme it?");
             if (dResult.ToString().ToUpper() == "NO") return;
             var dr = this.CurrentMaintain; if (null == dr) return;
             StringBuilder sqlupd2 = new StringBuilder();
-            string sqlcmd = "", sqlupd3 = "", ids = "";
-            DualResult result, result2;
+            string sqlcmd = "", sqlupd3 = "", ids = "", sqlcmd4="";
+            DualResult result, result2, result3;
 
             #region 檢查負數庫存
 
@@ -684,6 +745,9 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
 
             #endregion 更新庫存數量 po_supp_detail & ftyinventory
 
+            sqlcmd4 = string.Format(@"update dbo.export set whsearrival =null,packingarrival =null, editname = '{0}' , editdate = GETDATE()
+                                where id = '{1}'", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain["id"]);
+
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
@@ -699,6 +763,15 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
                     {
                         ShowErr(sqlupd3, result);
                         return;
+                    }
+
+                    if (!MyUtility.Check.Empty(CurrentMaintain["exportid"]))
+                    {
+                        if (!(result3 = DBProxy.Current.Execute(null, sqlcmd4)))
+                        {
+                            ShowErr(sqlcmd4, result);
+                            return;
+                        }
                     }
 
                     _transactionscope.Complete();
@@ -840,15 +913,5 @@ where a.id='{0}'", CurrentMaintain["exportid"]), out dt);
             this.RenewData();
         }
 
-        //private void dataGridViewTextBox_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (detailgrid.Columns[detailgrid.CurrentCell.ColumnIndex].HeaderText == "Remark")
-        //    {
-        //        if (e.KeyCode == Keys.Enter)
-        //        {
-        //            MessageBox.Show("Y");
-        //        }
-        //    }
-        //}
     }
 }
