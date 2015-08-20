@@ -483,7 +483,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
             .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(13), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //10
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //11
             .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)   //12
-            .Text("Location", header: "Location", settings: ts2)    //13
+            .Text("Location", header: "Location", settings: ts2, iseditingreadonly: true)    //13
             .Text("remark", header: "Remark")    //14
             ;     //
 
@@ -793,7 +793,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
         //寫明細撈出的sql command
         protected override DualResult OnRenewDataPost(Win.Tems.Input1.RenewDataPostEventArgs e)
         {
-            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,a.Seq1+a.Seq2 as seq
+            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
 ,(select p1.FabricType from PO_Supp_Detail p1 where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
 ,a.shipqty
 ,a.Weight
