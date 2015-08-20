@@ -290,6 +290,7 @@
             this.GridUniqueKey = "poid,seq1,seq2,roll,Dyelot";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P08";
