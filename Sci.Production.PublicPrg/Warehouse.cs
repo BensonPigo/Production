@@ -141,9 +141,10 @@ from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'"
         /// <param name="String Seq2"></param>
         /// <param name="decimal qty"</param>
         /// <param name="bool encoded"></param>
-        /// <param name="char stocktype"></param>
+        /// <param name="string stocktype"></param>
+        /// <param name="string tablename"></param>
         /// <returns>String Sqlcmd</returns>
-        public static string UpdatePO_Supp_Detail(int type, string Poid, string seq1, string seq2,decimal qty,bool encoded, string stocktype)
+        public static string UpdatePO_Supp_Detail(int type, string Poid, string seq1, string seq2,decimal qty,bool encoded, string stocktype,string tablename="Po_supp_detail")
         {
             string sqlcmd=null;
             switch (type)
@@ -151,71 +152,71 @@ from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'"
                 case 2:
                     if (encoded)
                     {
-                        sqlcmd = string.Format(@"update po_supp_detail set  inqty = inqty+{3} 
+                        sqlcmd = string.Format(@"update {4} set  inqty = isnull(inqty,0.00) + {3} 
 where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
-                            ,Poid,seq1,seq2,qty);
+                            ,Poid,seq1,seq2,qty,tablename);
                     }
                     else
                     {
-                        sqlcmd = string.Format(@"update po_supp_detail set  inqty = inqty-{3} 
+                        sqlcmd = string.Format(@"update {4} set  inqty = isnull(inqty,0.00) - {3} 
 where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
-                            , Poid, seq1, seq2,qty);
+                            , Poid, seq1, seq2, qty, tablename);
                     }
                     break;
                 case 4:
                     if (encoded)
                     {
-                        sqlcmd = string.Format(@"update po_supp_detail set  OutQty = OutQty+{3} 
+                        sqlcmd = string.Format(@"update {4} set  OutQty = isnull(OutQty,0.00) + {3} 
 where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
-                            , Poid, seq1, seq2, qty);
+                            , Poid, seq1, seq2, qty, tablename);
                     }
                     else
                     {
-                        sqlcmd = string.Format(@"update po_supp_detail set  OutQty = OutQty-{3} 
+                        sqlcmd = string.Format(@"update {4} set  OutQty = isnull(OutQty,0.00) - {3} 
 where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
-                            , Poid, seq1, seq2, qty);
+                            , Poid, seq1, seq2, qty, tablename);
                     }
                     break;
                 case 8:
                     if (encoded)
                     {
-                        sqlcmd = string.Format(@"update po_supp_detail set  LInvQty = LInvQty+{3} 
+                        sqlcmd = string.Format(@"update {4} set  LInvQty = isnull(LInvQty,0.00) + {3} 
 where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
-                            , Poid, seq1, seq2, qty);
+                            , Poid, seq1, seq2, qty, tablename);
                     }
                     else
                     {
-                        sqlcmd = string.Format(@"update po_supp_detail set  LInvQty = LInvQty-{3} 
+                        sqlcmd = string.Format(@"update {4} set  LInvQty = isnull(LInvQty,0.00) - {3} 
 where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
-                            , Poid, seq1, seq2, qty);
+                            , Poid, seq1, seq2, qty, tablename);
                     }
                     break;
                 case 16:
                     if (encoded)
                     {
-                        sqlcmd = string.Format(@"update po_supp_detail set  LObQty = LObQty+{3} 
+                        sqlcmd = string.Format(@"update {4} set  LObQty = isnull(LObQty,0.00) + {3} 
 where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
-                            , Poid, seq1, seq2, qty);
+                            , Poid, seq1, seq2, qty, tablename);
                     }
                     else
                     {
-                        sqlcmd = string.Format(@"update po_supp_detail set  LObQty = LObQty-{3} 
+                        sqlcmd = string.Format(@"update {4} set  LObQty = isnull(LObQty,0.00) - {3} 
 where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
-                            , Poid, seq1, seq2, qty);
+                            , Poid, seq1, seq2, qty, tablename);
                     }
                     break;
                 case 32:
                     if (encoded)
                     {
-                        sqlcmd = string.Format(@"update po_supp_detail set  AdjustQty = AdjustQty+{3} 
+                        sqlcmd = string.Format(@"update {4} set  AdjustQty = isnull(AdjustQty,0.00) + {3} 
 where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
-                            , Poid, seq1, seq2, qty);
+                            , Poid, seq1, seq2, qty, tablename);
                     }
                     else
                     {
-                        sqlcmd = string.Format(@"update po_supp_detail set AdjustQty = AdjustQty - {3} 
+                        sqlcmd = string.Format(@"update {4} set AdjustQty = isnull(AdjustQty,0.00) - {3} 
 where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
-                            , Poid, seq1, seq2, qty);
+                            , Poid, seq1, seq2, qty, tablename);
                     }
                     break;
             }
@@ -224,24 +225,24 @@ where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
                 switch (stocktype)
                 {
                     case "B":
-                        sqlcmd += string.Format(@"update po_supp_detail set ALocation 
+                        sqlcmd += string.Format(@"update {3} set ALocation 
 = (Select cast(tmp.MtlLocationID as nvarchar)+',' 
 from (select d.mtllocationid from ftyinventory_detail d inner join ftyinventory f
 on d.ukey = f.ukey
 where f.poid = '{0}' and f.seq1 ='{1}' and f.seq2 ='{2}' and stocktype = 'B' 
 group by d.MtlLocationID) tmp 
 for XML PATH(''))
-where id = '{0}' and seq1 = '{1}' and seq2='{2}' ;", Poid, seq1, seq2);
+where id = '{0}' and seq1 = '{1}' and seq2='{2}' ;", Poid, seq1, seq2, tablename);
                         break;
                     case "I":
-                        sqlcmd += string.Format(@"update po_supp_detail set BLocation 
+                        sqlcmd += string.Format(@"update {3} set BLocation 
 = (Select cast(tmp.MtlLocationID as nvarchar)+',' 
 from (select d.mtllocationid from ftyinventory_detail d inner join ftyinventory f
 on d.ukey = f.ukey
 where f.poid = '{0}' and f.seq1 ='{1}' and f.seq2 ='{2}' and stocktype = 'I' 
 group by d.MtlLocationID) tmp 
 for XML PATH(''))
-where id = '{0}' and seq1 = '{1}' and seq2='{2}' ;", Poid, seq1, seq2);
+where id = '{0}' and seq1 = '{1}' and seq2='{2}' ;", Poid, seq1, seq2, tablename);
                         break;
                     default:
                         break;
@@ -289,7 +290,7 @@ using (values ({3}))
     on target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
 when matched then
     update
-    set inqty = inqty + source.field1
+    set inqty = isnull(inqty,0.00) + source.field1
 when not matched then
     insert ( [Category],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
     values ((select category from orders where id = '{0}')
@@ -321,7 +322,7 @@ using (values ({3}))
     on target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
 when matched then
     update
-    set inqty = inqty - source.field1
+    set inqty = isnull(inqty,0.00) - source.field1
 when not matched then
     insert ( [Category],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
     values ((select category from orders where id = '{0}')
@@ -338,7 +339,7 @@ using (values ({3}))
     on target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
 when matched then
     update
-    set outqty = outqty + source.field1
+    set outqty = isnull(outqty,0.00) + source.field1
 when not matched then
     insert ( [Category],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
     values ((select category from orders where id = '{0}')
@@ -352,7 +353,7 @@ using (values ({3}))
     on target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
 when matched then
     update
-    set outqty = outqty - source.field1
+    set outqty = isnull(outqty,0.00) - source.field1
 when not matched then
     insert ( [Category],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
     values ((select category from orders where id = '{0}')
@@ -368,7 +369,7 @@ using (values ({3}))
     on target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
 when matched then
     update
-    set outqty = outqty + source.field1
+    set outqty = isnull(outqty,0.00) + source.field1
 when not matched then
     insert ( [Category],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
     values ((select category from orders where id = '{0}')
@@ -400,7 +401,7 @@ using (values ({3}))
     on target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
 when matched then
     update
-    set outqty = outqty - source.field1
+    set outqty = isnull(outqty,0.00) - source.field1
 when not matched then
     insert ( [Category],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
     values ((select category from orders where id = '{0}')
@@ -416,7 +417,7 @@ using (values ({3}))
     on target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
 when matched then
     update
-    set adjustqty = adjustqty + source.field1
+    set adjustqty = isnull(adjustqty,0.00) + source.field1
 when not matched then
     insert ( [Category],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[adjustqty])
     values ((select category from orders where id = '{0}')
@@ -430,7 +431,7 @@ using (values ({3}))
     on target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
 when matched then
     update
-    set outqty = outqty - source.field1
+    set outqty = isnull(outqty,0.00) - source.field1
 when not matched then
     insert ( [Category],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
     values ((select category from orders where id = '{0}')
