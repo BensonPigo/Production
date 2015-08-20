@@ -591,8 +591,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
                        group b by new
                        {
                            poid = b.Field<string>("poid"),
-                           seq1 = b.Field<string>("poid"),
-                           seq2 = b.Field<string>("poid"),
+                           seq1 = b.Field<string>("seq1"),
+                           seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
                        } into m
                        select new
@@ -607,6 +607,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
             foreach (var item in bs1)
             {
                 sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(2, item.poid, item.seq1, item.seq2, item.stockqty, true, item.stocktype));
+                if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(8, item.poid, item.seq1, item.seq2, item.stockqty, true, item.stocktype));
             }
 
             #endregion 更新庫存數量 po_supp_detail & ftyinventory
@@ -725,8 +726,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
                        group b by new
                        {
                            poid = b.Field<string>("poid"),
-                           seq1 = b.Field<string>("poid"),
-                           seq2 = b.Field<string>("poid"),
+                           seq1 = b.Field<string>("seq1"),
+                           seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
                        } into m
                        select new
@@ -741,6 +742,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
             foreach (var item in bs1)
             {
                 sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(2, item.poid, item.seq1, item.seq2, item.stockqty, false, item.stocktype));
+                if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(8, item.poid, item.seq1, item.seq2, item.stockqty, false, item.stocktype));
             }
 
             #endregion 更新庫存數量 po_supp_detail & ftyinventory

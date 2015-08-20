@@ -116,7 +116,6 @@ namespace Sci.Production.Warehouse
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
         {
-            DataTable result = null;
             StringBuilder warningmsg = new StringBuilder();
 
             #region 必輸檢查
@@ -336,31 +335,13 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts)  //1
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9))    //2
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5))    //3
-            .Text("Description", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true) //4
+            .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //5
             .Numeric("useqty", header: "Use Qty", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
             .Numeric("stockqty", header: "Receiving Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //7
-            .Text("Bulk Location", header: "Location", settings: ts2)    //8
-
+            .Text("Location", header: "Bulk Location", settings: ts2, iseditingreadonly: true)    //8
             ;     //
-
             #endregion 欄位設定
-
-
-            #region 可編輯欄位變色
-
-            //detailgrid.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
-            //detailgrid.Columns[1].DefaultCellStyle.BackColor = Color.Pink;
-            //detailgrid.Columns[3].DefaultCellStyle.BackColor = Color.Pink;
-            //detailgrid.Columns[4].DefaultCellStyle.BackColor = Color.Pink;
-            //detailgrid.Columns[5].DefaultCellStyle.BackColor = Color.Pink;
-            //detailgrid.Columns[6].DefaultCellStyle.BackColor = Color.Pink;
-            //detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
-            //detailgrid.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
-            //detailgrid.Columns[13].DefaultCellStyle.BackColor = Color.Pink;
-            //detailgrid.Columns[14].DefaultCellStyle.BackColor = Color.Pink;
-
-            #endregion 可編輯欄位變色
         }
 
         //Confirm
@@ -423,7 +404,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
 
             #endregion 更新表頭狀態資料
 
-            #region 更新庫存數量 po_supp_detail & ftyinventory
+            #region 更新庫存數量 Po_artwork & ftyinventory
 
             sqlupd2.Append("declare @iden as bigint;");
             sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
@@ -437,8 +418,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
                        group b by new
                        {
                            poid = b.Field<string>("poid"),
-                           seq1 = b.Field<string>("poid"),
-                           seq2 = b.Field<string>("poid"),
+                           seq1 = b.Field<string>("seq1"),
+                           seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
                        } into m
                        select new
@@ -452,10 +433,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
 
             foreach (var item in bs1)
             {
-                sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(2, item.poid, item.seq1, item.seq2, item.stockqty, true, item.stocktype));
+                sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(2, item.poid, item.seq1, item.seq2, item.stockqty, true, item.stocktype,"Po_artwork"));
             }
 
-            #endregion 更新庫存數量 po_supp_detail & ftyinventory
+            #endregion 更新庫存數量 Po_artwork & ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
@@ -542,7 +523,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
 
             #endregion 更新表頭狀態資料
 
-            #region 更新庫存數量 po_supp_detail & ftyinventory
+            #region 更新庫存數量 Po_artwork & ftyinventory
 
             sqlupd2.Append("declare @iden as bigint;");
             sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
@@ -556,8 +537,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
                        group b by new
                        {
                            poid = b.Field<string>("poid"),
-                           seq1 = b.Field<string>("poid"),
-                           seq2 = b.Field<string>("poid"),
+                           seq1 = b.Field<string>("seq1"),
+                           seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
                        } into m
                        select new
@@ -571,10 +552,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
 
             foreach (var item in bs1)
             {
-                sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(2, item.poid, item.seq1, item.seq2, item.stockqty, false, item.stocktype));
+                sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(2, item.poid, item.seq1, item.seq2, item.stockqty, false, item.stocktype,"Po_artwork"));
             }
 
-            #endregion 更新庫存數量 po_supp_detail & ftyinventory
+            #endregion 更新庫存數量 Po_artwork & ftyinventory
 
             sqlcmd4 = string.Format(@"update dbo.export set whsearrival =null,packingarrival =null, editname = '{0}' , editdate = GETDATE()
                                 where id = '{1}'", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain["id"]);
@@ -624,7 +605,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
         //寫明細撈出的sql command
         protected override DualResult OnRenewDataPost(Win.Tems.Input1.RenewDataPostEventArgs e)
         {
-            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,a.Seq1+a.Seq2 as seq
+            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
 ,(select p1.FabricType from PO_Supp_Detail p1 where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
 ,'' Description
 ,a.Roll
