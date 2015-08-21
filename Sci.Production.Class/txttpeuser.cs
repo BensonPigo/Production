@@ -45,7 +45,7 @@ namespace Sci.Production.Class
 
         private void displayBox1_TextChanged(object sender, EventArgs e)
         {
-            string selectSql = string.Format("Select Name,Ext_No from TPEPass1 Where id='{0}'", this.displayBox1.Text.ToString());
+            string selectSql = string.Format("Select Name,ExtNo from TPEPass1 Where id='{0}'", this.displayBox1.Text.ToString());
             DataRow dr;
             if (MyUtility.Check.Seek(selectSql, out dr))
             {
