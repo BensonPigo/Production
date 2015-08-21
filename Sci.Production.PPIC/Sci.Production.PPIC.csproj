@@ -149,6 +149,12 @@
     <Compile Include="B08.Designer.cs">
       <DependentUpon>B08.cs</DependentUpon>
     </Compile>
+    <Compile Include="P12.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P12.Designer.cs">
+      <DependentUpon>P12.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +184,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B08.resx">
       <DependentUpon>B08.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P12.resx">
+      <DependentUpon>P12.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
