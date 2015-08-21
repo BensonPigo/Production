@@ -576,14 +576,18 @@ namespace Sci.Production.Subcon
             #endregion
         }
 
-        protected override DualResult OnRenewDataPost(Win.Tems.Input1.RenewDataPostEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
+            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+
             this.DetailSelectCommand = string.Format(@"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
                                                         from localpo_detail 
                                                             inner join orders on localpo_detail.orderid = orders.id
                                                             inner join localitem on localitem.refno = localpo_detail.refno 
-                                                        Where localpo_detail.id = '{0}' order by orderid,localpo_detail.refno,threadcolorid ", e.Data["id"].ToString());//
-            return base.OnRenewDataPost(e);
+                                                        Where localpo_detail.id = '{0}' order by orderid,localpo_detail.refno,threadcolorid ", masterID);
+
+            return base.OnDetailSelectCommandPrepare(e);
+
         }
 
         protected override bool ClickNewBefore()

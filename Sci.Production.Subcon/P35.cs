@@ -527,11 +527,15 @@ namespace Sci.Production.Subcon
 
         }
 
-        protected override DualResult OnRenewDataPost(Win.Tems.Input1.RenewDataPostEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
+            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+
             this.DetailSelectCommand = string.Format(@"select *,0.0 as amount,0.0 as balance,0 as inqty,0 as apqty,'' as description 
-                                                                            from localap_detail where localap_detail.id = '{0}'", e.Data["id"].ToString());
-            return base.OnRenewDataPost(e);
+                                                                            from localap_detail where localap_detail.id = '{0}'", masterID);
+
+            return base.OnDetailSelectCommandPrepare(e);
+
         }
 
         protected override bool ClickNewBefore()
