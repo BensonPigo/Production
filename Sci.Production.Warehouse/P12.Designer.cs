@@ -177,13 +177,13 @@
             // 
             // button5
             // 
-            this.button5.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.button5.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button5.Location = new System.Drawing.Point(893, 39);
+            this.button5.Location = new System.Drawing.Point(939, 43);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(145, 31);
+            this.button5.Size = new System.Drawing.Size(89, 31);
             this.button5.TabIndex = 9;
-            this.button5.Text = "Accumulated Qty";
+            this.button5.Text = "Import";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
@@ -240,9 +240,9 @@
             this.button9.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.button9.Location = new System.Drawing.Point(355, 115);
             this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(80, 30);
+            this.button9.Size = new System.Drawing.Size(148, 30);
             this.button9.TabIndex = 7;
-            this.button9.Text = "Delete all";
+            this.button9.Text = "Clear Qty is empty";
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
@@ -273,7 +273,7 @@
             this.DefaultControlForEdit = "textBox3";
             this.DefaultOrder = "ID";
             this.Grid2New = 0;
-            this.GridAlias = "Issue_detail";
+            this.GridAlias = "issue_detail";
             this.GridNew = 0;
             this.GridUniqueKey = "poid,seq1,seq2,roll,Dyelot";
             this.IsSupportConfirm = true;

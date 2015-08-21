@@ -394,22 +394,37 @@ where e.PoID ='{0}' and e.id = '{1}'", CurrentDetailData["poid"], CurrentMaintai
             };
             ts.CellValidating += (s, e) =>
                 {
-                    if (!this.EditMode || MyUtility.Check.Empty(e.FormattedValue)) return;
-                    if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype from po_supp_detail
+                    if (!this.EditMode) return;
+                    if (String.Compare(e.FormattedValue.ToString(), CurrentDataRow["seq"].ToString()) != 0)
+                    {
+                        if (MyUtility.Check.Empty(e.FormattedValue))
+                        {
+                            CurrentDetailData["seq"] = "";
+                            CurrentDetailData["seq1"] = "";
+                            CurrentDetailData["seq2"] = "";
+                            CurrentDetailData["pounit"] ="";
+                            CurrentDetailData["stockunit"] = "";
+                            CurrentDetailData["fabrictype"] = "";
+                        }
+                        else
+                        {
+                            if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype from po_supp_detail
 where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3), e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr, null))
-                    {
-                        MyUtility.Msg.WarningBox("Data not found!", "Seq");
-                        e.Cancel = true;
-                        return;
-                    }
-                    else
-                    {
-                        CurrentDetailData["seq"] = e.FormattedValue;
-                        CurrentDetailData["seq1"] = e.FormattedValue.ToString().Substring(0, 3);
-                        CurrentDetailData["seq2"] = e.FormattedValue.ToString().Substring(3, 2);
-                        CurrentDetailData["pounit"] = dr["pounit"];
-                        CurrentDetailData["stockunit"] = dr["stockunit"];
-                        CurrentDetailData["fabrictype"] = dr["fabrictype"];
+                            {
+                                MyUtility.Msg.WarningBox("Data not found!", "Seq");
+                                e.Cancel = true;
+                                return;
+                            }
+                            else
+                            {
+                                CurrentDetailData["seq"] = e.FormattedValue;
+                                CurrentDetailData["seq1"] = e.FormattedValue.ToString().Substring(0, 3);
+                                CurrentDetailData["seq2"] = e.FormattedValue.ToString().Substring(3, 2);
+                                CurrentDetailData["pounit"] = dr["pounit"];
+                                CurrentDetailData["stockunit"] = dr["stockunit"];
+                                CurrentDetailData["fabrictype"] = dr["fabrictype"];
+                            }
+                        }
                     }
                 };
 
@@ -793,8 +808,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
         }
 
         //寫明細撈出的sql command
-        protected override DualResult OnRenewDataPost(Win.Tems.Input1.RenewDataPostEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
+            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+
             this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
 ,(select p1.FabricType from PO_Supp_Detail p1 where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
 ,a.shipqty
@@ -810,8 +827,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
 ,a.Location
 ,a.remark
 from dbo.Receiving_Detail a
-Where a.id = '{0}' ", e.Data["id"].ToString());
-            return base.OnRenewDataPost(e);
+Where a.id = '{0}' ", masterID);
+
+            return base.OnDetailSelectCommandPrepare(e);
+
         }
 
         // invoice# valid
