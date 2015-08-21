@@ -32,7 +32,10 @@ namespace Sci.Production.PublicPrg
             if (null == conn)
             {
                 MyUtility.Check.Seek(string.Format(@"select StockPOID,scirefno,SuppColor,colorid,ColorDetail,sizespec
-                                            ,special,SizeUnit,remark from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'"
+                                            ,special,SizeUnit,remark from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'
+union all
+select '',scirefno,'',colorid,'',sizespec
+                                            ,special,'',remark from po_artwork where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'"
                                                 , Poid, seq1, seq2), out dr);
                 if (MyUtility.Check.Empty(dr)) return "";
             }
@@ -40,7 +43,11 @@ namespace Sci.Production.PublicPrg
             {
                 DBProxy.Current.SelectByConn(conn, string.Format(@"select StockPOID,scirefno,SuppColor,colorid,ColorDetail,sizespec
                                             ,special,SizeUnit,remark 
-from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'"
+from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'
+union all
+select '',scirefno,'',colorid,'',sizespec
+                                            ,special,'',remark 
+from PO_Artwork where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'"
                                                 , Poid, seq1, seq2), out dt);
                 if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return "";
                 dr = dt.Rows[0];
@@ -253,7 +260,6 @@ where id = '{0}' and seq1 = '{1}' and seq2='{2}' ;", Poid, seq1, seq2, tablename
         }
         #endregion
 
-        #region UpdateFtyInventory
         /// <summary>
         /// UpdateFtyInventory()
         /// *	更新 FtyInventory 的庫存
@@ -275,6 +281,7 @@ where id = '{0}' and seq1 = '{1}' and seq2='{2}' ;", Poid, seq1, seq2, tablename
         /// <param name="bool encoded"></param>
         /// <param name="location"></param>
         /// <returns>String Sqlcmd</returns>
+        #region UpdateFtyInventory
         public static string UpdateFtyInventory(int type, string Poid, string seq1, string seq2
             , decimal qty, string roll, string dyelot, string stocktype, bool encoded, string location = null)
         {
@@ -461,6 +468,7 @@ when not matched then
 ,p.fabrictype
 ,p.seq1
 ,p.seq2
+,p.scirefno
 from dbo.PO_Supp_Detail p
 where id ='{0}'", poid);
 
@@ -542,6 +550,31 @@ where id ='{0}'", poid);
             return selectlocation;
         }
         #endregion 
+
+        #region GetLocation
+        public static string GetLocation(int ukey, System.Data.SqlClient.SqlConnection conn = null)
+        {
+            string rtn = "";
+            DataRow dr;
+            DataTable dt;
+            if (null == conn)
+            {
+                MyUtility.Check.Seek(string.Format(@"select cast(tmp.MtlLocationID as nvarchar) +','
+from (select f.MtlLocationID from dbo.FtyInventory_Detail f where f.Ukey = {0}) tmp
+for xml path('') ", ukey), out dr);
+                if (MyUtility.Check.Empty(dr)) return "";
+            }
+            else
+            {
+                DBProxy.Current.SelectByConn(conn, string.Format(@"select cast(tmp.MtlLocationID as nvarchar) +','
+from (select f.MtlLocationID from dbo.FtyInventory_Detail f where f.Ukey = {0}) tmp
+for xml path('') ", ukey), out dt);
+                if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return "";
+                dr = dt.Rows[0];
+            }
+            return dr[0].ToString();
+        }
+        #endregion
     }
     
 }
