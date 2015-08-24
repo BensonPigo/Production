@@ -586,6 +586,15 @@ Sci.Production.Warehouse/P12.resx -text
 Sci.Production.Warehouse/P12_Import.Designer.cs -text
 Sci.Production.Warehouse/P12_Import.cs -text
 Sci.Production.Warehouse/P12_Import.resx -text
+Sci.Production.Warehouse/P13.Designer.cs -text
+Sci.Production.Warehouse/P13.cs -text
+Sci.Production.Warehouse/P13.resx -text
+Sci.Production.Warehouse/P13_AccumulatedQty.Designer.cs -text
+Sci.Production.Warehouse/P13_AccumulatedQty.cs -text
+Sci.Production.Warehouse/P13_AccumulatedQty.resx -text
+Sci.Production.Warehouse/P13_Import.Designer.cs -text
+Sci.Production.Warehouse/P13_Import.cs -text
+Sci.Production.Warehouse/P13_Import.resx -text
 Sci.Production.Warehouse/P41.Designer.cs -text
 Sci.Production.Warehouse/P41.cs -text
 Sci.Production.Warehouse/P41.resx -text
