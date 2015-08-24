@@ -93,6 +93,56 @@ namespace Sci
             return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
         }
 
+        // POID with seq , roll ,dyelot
+        public static IDataGridViewGenerator CellPOIDWithSeqRollDyelot(this IDataGridViewGenerator gen, string propertyname
+                                                                , string header, IWidth width = null
+                                                                , DataGridViewGeneratorTextColumnSettings settings = null
+                                                                , bool? iseditable = null, bool? iseditingreadonly = null
+                                                                , DataGridViewContentAlignment? alignment = null)
+        {
+            if (settings == null) settings = new DataGridViewGeneratorTextColumnSettings();
+            settings.CharacterCasing = CharacterCasing.Upper;
+
+            settings.CellValidating += (s, e) =>
+            {
+                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
+                if (frm.EditMode && String.Compare(dr["poid"].ToString(),e.FormattedValue.ToString())!=0)
+                {
+                    if (!MyUtility.Check.Empty(e.FormattedValue.ToString()))
+                    {
+                        if (MyUtility.Check.Seek(e.FormattedValue.ToString(), "Orders", "id") == false)
+                        {
+                            MyUtility.Msg.WarningBox(string.Format("< Order Id : {0} > is not found!!!", e.FormattedValue.ToString()));
+                            dr["poid"] = "";
+                            e.Cancel = true;
+                            return;
+                        }
+                        else
+                        {
+                            dr["poid"] = e.FormattedValue;
+                            dr["seq"] = "";
+                            dr["seq1"] = "";
+                            dr["seq2"] = "";
+                            dr["roll"] = "";
+                            dr["dyelot"] = "";
+                        }
+                    }
+                    else
+                    {
+                        dr["poid"] = "";
+                        dr["seq"] = "";
+                        dr["seq1"] = "";
+                        dr["seq2"] = "";
+                        dr["roll"] = "";
+                        dr["dyelot"] = "";
+                    }
+                }
+            };
+            return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
+        }
+
         //LocalItem: Carton
         public static IDataGridViewGenerator CellCartonItem(this IDataGridViewGenerator gen, string propertyname, string header, IWidth width = null, DataGridViewGeneratorTextColumnSettings settings = null, bool? iseditable = null, bool? iseditingreadonly = null, DataGridViewContentAlignment? alignment = null)
         {
