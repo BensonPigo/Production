@@ -66,8 +66,16 @@ from PO_Artwork where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'"
                 case 2: //Fabric.DescDetail 全部顯示
 //                    rtn = rtn + MyUtility.GetValue.Lookup(string.Format(@"
 //                                        select DescDetail from fabric where SCIRefno = '{0}'", dr["scirefno"].ToString().Replace("'", "''")));
-                    DBProxy.Current.SelectByConn(conn, string.Format(@"
+                    if (null == conn)
+                    {
+                        DBProxy.Current.Select(null, string.Format(@"
                                         select DescDetail from fabric where SCIRefno = '{0}'", dr["scirefno"].ToString().Replace("'", "''")), out dt);
+                    }
+                    else
+                    {
+                        DBProxy.Current.SelectByConn(conn, string.Format(@"
+                                        select DescDetail from fabric where SCIRefno = '{0}'", dr["scirefno"].ToString().Replace("'", "''")), out dt);
+                    }
                     if (!MyUtility.Check.Empty(dt) && dt.Rows.Count > 0)
                     { rtn += dt.Rows[0][0].ToString(); }
                     break;
