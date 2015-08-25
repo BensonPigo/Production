@@ -65,11 +65,11 @@ namespace Sci.Production.Subcon
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
 
-            string sqlcmd = "select refno from localitem_quot where refno = @refno and (encode =0 OR ENCODE IS NULL)";
+            string sqlcmd = "select refno from localitem_quot where refno = @refno and (Status ='New')";
             DBProxy.Current.Exists("", sqlcmd, cmds, out flag);
             if (flag)
             {
-                MyUtility.Msg.WarningBox("Can't add data when data have not been Encoded.", "Warning");
+                MyUtility.Msg.WarningBox("Can't add data when data have not been approved.", "Warning");
                 return false;
             }
             return base.ClickNewBefore();
@@ -82,15 +82,16 @@ namespace Sci.Production.Subcon
             base.ClickNewAfter();
             CurrentMaintain["Refno"] = dr["refno"].ToString();
             CurrentMaintain["issuedate"] = DateTime.Today;
+            CurrentMaintain["Status"] = "New";
         }
 
         //修改前檢查
         protected override bool ClickEditBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if(dr["Encode"].ToString() == "True")
+            if (dr["Status"].ToString() == "Approved")
             {
-                MyUtility.Msg.WarningBox("Record is encoded, can't modify!");
+                MyUtility.Msg.WarningBox("Record is Approved, can't modify!");
                 return false;
             }
             return base.ClickEditBefore();
@@ -100,9 +101,9 @@ namespace Sci.Production.Subcon
         protected override bool ClickDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["Encode"].ToString() == "True")
+            if (dr["Status"].ToString() == "Approved")
             {
-                MyUtility.Msg.WarningBox("Record is encoded, can't delete!");
+                MyUtility.Msg.WarningBox("Record is Approved, can't delete!");
                 return false;
             }
             return base.ClickDeleteBefore();
@@ -112,7 +113,7 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.button1.Enabled=!(CurrentMaintain["Encode"].ToString().ToUpper() == "TRUE") && !this.EditMode;
+            this.button1.Enabled = (CurrentMaintain["Status"].ToString().ToUpper() == "NEW") && this.EditMode;
         }
 
         //Encode button
@@ -161,7 +162,7 @@ namespace Sci.Production.Subcon
             {
                 try
                 {
-                    String sqlcmd = string.Format("Update localitem_quot set encode = 1 ,editname = '{0}', editdate = GETDATE() where ukey = '{1}'",Env.User.UserID.ToString() ,CurrentMaintain["ukey"].ToString());
+                    String sqlcmd = string.Format("Update localitem_quot set Status = 'Approved' ,editname = '{0}', editdate = GETDATE() where ukey = '{1}'", Env.User.UserID.ToString(), CurrentMaintain["ukey"].ToString());
                     result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd);
 
                     string s1 = string.Format("Update localitem set localsuppid = @suppid,price = @price,currencyid = @currencyid, quotdate = @quotdate,editname = '{0}', editdate = GETDATE() where refno = @refno",Env.User.UserID.ToString());
@@ -200,11 +201,11 @@ namespace Sci.Production.Subcon
                     if (result && result2)
                     {
                         _transactionscope.Complete();
-                        MyUtility.Msg.WarningBox("Encode successful");
+                        MyUtility.Msg.WarningBox("Approved successful");
                     }
                     else
                     {
-                        MyUtility.Msg.WarningBox("Encode failed, Pleaes re-try");
+                        MyUtility.Msg.WarningBox("Approved failed, Pleaes re-try");
                     }
                     
                 }
