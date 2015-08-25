@@ -132,7 +132,7 @@ where o.Id = '{0}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["Ord
             ControlBuyerRatio(true);
 
         }
-
+        
         protected override bool ClickEditBefore()
         {
             if (CurrentMaintain["Status"].ToString() == "New")
@@ -158,7 +158,7 @@ where o.Id = '{0}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["Ord
             }
             return base.ClickEditBefore();
         }
-
+        
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -351,9 +351,13 @@ values ('{0}','Status','','New','{1}',GETDATE())", CurrentMaintain["ID"].ToStrin
         {
             if (this.EditMode)
             {
-                //CurrentMaintain["ResponsibleFty"] = Convert.ToBoolean(checkBox1.Value);
-                //ControlRatio("ResponsibleFty");
-                //ControlFactoryRatio(!Convert.ToBoolean(checkBox1.Value));
+                ControlFactoryRatio(!checkBox1.Checked);
+                CurrentMaintain["ResponsibleFty"] = checkBox1.Checked;
+                if (!checkBox1.Checked)
+                {
+                    CurrentMaintain["RatioFty"] = 0;
+                    CurrentMaintain["ResponsibleFtyNo"] = "";
+                }
             }
         }
 
@@ -362,9 +366,14 @@ values ('{0}','Status','','New','{1}',GETDATE())", CurrentMaintain["ID"].ToStrin
         {
             if (this.EditMode)
             {
-                //CurrentMaintain["ResponsibleSubcon"] = Convert.ToBoolean(checkBox2.Value);
-                //ControlRatio("ResponsibleSubcon");
-                //ControlSubconRatio(!Convert.ToBoolean(checkBox2.Value));
+                ControlSubconRatio(!checkBox2.Checked);
+                CurrentMaintain["ResponsibleSubcon"] = checkBox2.Checked;
+                if (!checkBox2.Checked)
+                {
+                    CurrentMaintain["RatioSubcon"] = 0;
+                    CurrentMaintain["SubconDBCNo"] = "";
+                    CurrentMaintain["SubConName"] = "";
+                }
             }
         }
 
@@ -373,9 +382,12 @@ values ('{0}','Status','','New','{1}',GETDATE())", CurrentMaintain["ID"].ToStrin
         {
             if (this.EditMode)
             {
-                //CurrentMaintain["ResponsibleSCI"] = Convert.ToBoolean(checkBox3.Value);
-                //ControlRatio("ResponsibleSCI");
-                //ControlSCIRatio(!Convert.ToBoolean(checkBox3.Value));
+                ControlSCIRatio(!checkBox3.Checked);
+                CurrentMaintain["ResponsibleSCI"] = checkBox3.Checked;
+                if (!checkBox3.Checked)
+                {
+                    CurrentMaintain["RatioSCI"] = 0;
+                }
             }
         }
 
@@ -384,9 +396,12 @@ values ('{0}','Status','','New','{1}',GETDATE())", CurrentMaintain["ID"].ToStrin
         {
             if (this.EditMode)
             {
-                //CurrentMaintain["ResponsibleSupp"] = Convert.ToBoolean(checkBox4.Value);
-                //ControlRatio("ResponsibleSupp");
-                //ControlSupplierRatio(!Convert.ToBoolean(checkBox4.Value));
+                ControlSupplierRatio(!checkBox4.Checked);
+                CurrentMaintain["ResponsibleSupp"] = checkBox4.Checked;
+                if (!checkBox4.Checked)
+                {
+                    CurrentMaintain["RatioSupp"] = 0;
+                }
             }
         }
 
@@ -395,121 +410,35 @@ values ('{0}','Status','','New','{1}',GETDATE())", CurrentMaintain["ID"].ToStrin
         {
             if (this.EditMode)
             {
-                //CurrentMaintain["ResponsibleBuyer"] = Convert.ToBoolean(checkBox5.Value);
-                //ControlRatio("ResponsibleBuyer");
-                //ControlBuyerRatio(!Convert.ToBoolean(checkBox5.Value));
-            }
-        }
-
-        private void ControlRatio(string type)
-        {
-            #region Factory
-            if (type == "All" || type == "ResponsibleFty")
-            {
-                if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleFty"]) && CurrentMaintain["ResponsibleFty"].ToString() == "True")
+                ControlBuyerRatio(!checkBox5.Checked);
+                CurrentMaintain["ResponsibleBuyer"] = checkBox5.Checked;
+                if (!checkBox5.Checked)
                 {
-                    numericBox11.ReadOnly = false;
-                    txtfactory1.ReadOnly = false;
-                }
-                else
-                {
-                    numericBox11.Value = 0;
-                    txtfactory1.Text = "";
-                    numericBox11.ReadOnly = true;
-                    txtfactory1.ReadOnly = true;
+                    CurrentMaintain["RatioBuyer"] = 0;
+                    CurrentMaintain["BuyerRemark"] = "";
                 }
             }
-            #endregion
-
-            #region Subcon
-            if (type == "All" || type == "ResponsibleSubcon")
-            {
-                if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleSubcon"]) && CurrentMaintain["ResponsibleSubcon"].ToString() == "True")
-                {
-                    numericBox12.ReadOnly = false;
-                    textBox5.ReadOnly = false;
-                    textBox6.ReadOnly = false;
-                }
-                else
-                {
-                    numericBox12.Value = 0;
-                    textBox5.Text = "";
-                    textBox6.Text = "";
-                    numericBox12.ReadOnly = true;
-                    textBox5.ReadOnly = true;
-                    textBox6.ReadOnly = true;
-                }
-            }
-            #endregion
-
-            #region SCI
-            if (type == "All" || type == "ResponsibleSCI")
-            {
-                if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleSCI"]) && CurrentMaintain["ResponsibleSCI"].ToString() == "True")
-                {
-                    numericBox13.ReadOnly = false;
-                }
-                else
-                {
-                    numericBox13.Value = 0;
-                    numericBox13.ReadOnly = true;
-                }
-            }
-            #endregion
-
-            #region Supplier
-            if (type == "All" || type == "ResponsibleSupp")
-            {
-                if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleSupp"]) && CurrentMaintain["ResponsibleSupp"].ToString() == "True")
-                {
-                    numericBox14.ReadOnly = false;
-                }
-                else
-                {
-                    numericBox14.Value = 0;
-                    numericBox14.ReadOnly = true;
-                }
-            }
-            #endregion
-
-            #region Buyer
-            if (type == "All" || type == "ResponsibleBuyer")
-            {
-                if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleBuyer"]) && CurrentMaintain["ResponsibleBuyer"].ToString() == "True")
-                {
-                    numericBox15.ReadOnly = false;
-                    textBox7.ReadOnly = false;
-                }
-                else
-                {
-                    numericBox15.Value = 0;
-                    textBox7.Text = "";
-                    numericBox15.ReadOnly = true;
-                    textBox7.ReadOnly = true;
-                }
-            }
-            #endregion
         }
 
         private void ControlFactoryRatio(bool ReadOnly)
         {
-            if (ReadOnly)
-            {
-                CurrentMaintain["RatioFty"] = 0;
-                CurrentMaintain["ResponsibleFtyNo"] = "";
-            }
+            //if (ReadOnly)
+            //{
+            //    numericBox11.Value = 0;
+            //    txtfactory1.Text = "";
+            //}
             numericBox11.ReadOnly = ReadOnly;
             txtfactory1.ReadOnly = ReadOnly;
         }
 
         private void ControlSubconRatio(bool ReadOnly)
         {
-            if (ReadOnly)
-            {
-                CurrentMaintain["RatioSubcon"] = 0;
-                CurrentMaintain["SubconDBCNo"] = "";
-                CurrentMaintain["SubConName"] = "";
-            }
+            //if (ReadOnly)
+            //{
+            //    numericBox12.Value = 0;
+            //    textBox5.Text = "";
+            //    textBox6.Text = "";
+            //}
             numericBox12.ReadOnly = ReadOnly;
             textBox5.ReadOnly = ReadOnly;
             textBox6.ReadOnly = ReadOnly;
@@ -517,76 +446,31 @@ values ('{0}','Status','','New','{1}',GETDATE())", CurrentMaintain["ID"].ToStrin
 
         private void ControlSCIRatio(bool ReadOnly)
         {
-            if (ReadOnly)
-            {
-                CurrentMaintain["RatioSCI"] = 0;
-            }
+            //if (ReadOnly)
+            //{
+            //    numericBox13.Value = 0;
+            //}
             numericBox13.ReadOnly = ReadOnly;
         }
 
         private void ControlSupplierRatio(bool ReadOnly)
         {
-            if (ReadOnly)
-            {
-                CurrentMaintain["RatioSupp"] = 0;
-            }
+            //if (ReadOnly)
+            //{
+            //    numericBox14.Value = 0;
+            //}
             numericBox14.ReadOnly = ReadOnly;
         }
 
         private void ControlBuyerRatio(bool ReadOnly)
         {
-            if (ReadOnly)
-            {
-                CurrentMaintain["RatioBuyer"] = 0;
-                CurrentMaintain["BuyerRemark"] = "";
-            }
+            //if (ReadOnly)
+            //{
+            //    numericBox15.Value = 0;
+            //    textBox7.Text = "";
+            //}
             numericBox15.ReadOnly = ReadOnly;
             textBox7.ReadOnly = ReadOnly;
-        }
-
-        //Factory
-        private void checkBox1_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (this.EditMode)
-            {
-                ControlFactoryRatio(!Convert.ToBoolean(checkBox1.Value));
-            }
-        }
-
-        //Subcon
-        private void checkBox2_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (this.EditMode)
-            {
-                ControlSubconRatio(!Convert.ToBoolean(checkBox2.Value));
-            }
-        }
-
-        //SCI
-        private void checkBox3_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (this.EditMode)
-            {
-                ControlSCIRatio(!Convert.ToBoolean(checkBox3.Value));
-            }
-        }
-
-        //Supplier
-        private void checkBox4_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (this.EditMode)
-            {
-                ControlSupplierRatio(!Convert.ToBoolean(checkBox4.Value));
-            }
-        }
-
-        //Buyer
-        private void checkBox5_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (this.EditMode)
-            {
-                ControlBuyerRatio(!Convert.ToBoolean(checkBox5.Value));
-            }
         }
 
         //檢查輸入的SP#是否正確

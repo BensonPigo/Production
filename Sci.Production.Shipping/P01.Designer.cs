@@ -1136,7 +1136,7 @@
             this.checkBox1.TabIndex = 16;
             this.checkBox1.Text = "Factory";
             this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.checkBox1_MouseClick);
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // checkBox2
             // 
@@ -1149,7 +1149,7 @@
             this.checkBox2.TabIndex = 19;
             this.checkBox2.Text = "Subcon";
             this.checkBox2.UseVisualStyleBackColor = true;
-            this.checkBox2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.checkBox2_MouseClick);
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
             // checkBox3
             // 
@@ -1162,7 +1162,7 @@
             this.checkBox3.TabIndex = 23;
             this.checkBox3.Text = "SCI";
             this.checkBox3.UseVisualStyleBackColor = true;
-            this.checkBox3.MouseClick += new System.Windows.Forms.MouseEventHandler(this.checkBox3_MouseClick);
+            this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
             // 
             // checkBox4
             // 
@@ -1175,7 +1175,7 @@
             this.checkBox4.TabIndex = 25;
             this.checkBox4.Text = "Supplier";
             this.checkBox4.UseVisualStyleBackColor = true;
-            this.checkBox4.MouseClick += new System.Windows.Forms.MouseEventHandler(this.checkBox4_MouseClick);
+            this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
             // 
             // checkBox5
             // 
@@ -1188,7 +1188,7 @@
             this.checkBox5.TabIndex = 27;
             this.checkBox5.Text = "Buyer";
             this.checkBox5.UseVisualStyleBackColor = true;
-            this.checkBox5.MouseClick += new System.Windows.Forms.MouseEventHandler(this.checkBox5_MouseClick);
+            this.checkBox5.CheckedChanged += new System.EventHandler(this.checkBox5_CheckedChanged);
             // 
             // label36
             // 
