@@ -161,6 +161,12 @@
     <Compile Include="P03_Detail.Designer.cs">
       <DependentUpon>P03_Detail.cs</DependentUpon>
     </Compile>
+    <Compile Include="P05.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05.Designer.cs">
+      <DependentUpon>P05.cs</DependentUpon>
+    </Compile>
     <Compile Include="P12.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -203,6 +209,9 @@
     <EmbeddedResource Include="P03_Detail.resx">
       <DependentUpon>P03_Detail.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P05.resx">
+      <DependentUpon>P05.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P12.resx">
       <DependentUpon>P12.cs</DependentUpon>
     </EmbeddedResource>
@@ -211,6 +220,10 @@
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0E35FD31-4A86-4D4E-A393-B6C5E3D7C956}</Project>
       <Name>Sci.Production.Class</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
+      <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
+      <Name>Sci.Production.PublicPrg</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
