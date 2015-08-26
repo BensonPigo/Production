@@ -144,7 +144,7 @@ namespace Sci.Production.Warehouse
             #endregion
 
             #region Ship qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ts3 = new DataGridViewGeneratorNumericColumnSettings();
             ts3.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode)
@@ -158,7 +158,7 @@ namespace Sci.Production.Warehouse
             };
             #endregion
             #region Taipei Stock Qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ts4 = new DataGridViewGeneratorNumericColumnSettings();
             ts4.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode)
@@ -172,7 +172,7 @@ namespace Sci.Production.Warehouse
             };
             #endregion
             #region Released Qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts5 = new DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ts5 = new DataGridViewGeneratorNumericColumnSettings();
             ts5.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode)
@@ -186,7 +186,7 @@ namespace Sci.Production.Warehouse
             };
             #endregion
             #region Balance Qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts6 = new DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ts6 = new DataGridViewGeneratorNumericColumnSettings();
             ts6.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode)
@@ -200,7 +200,7 @@ namespace Sci.Production.Warehouse
             };
             #endregion
             #region Inventory Qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts7 = new DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ts7 = new DataGridViewGeneratorNumericColumnSettings();
             ts7.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode)
@@ -214,7 +214,7 @@ namespace Sci.Production.Warehouse
             };
             #endregion
             #region Scrap Qty 開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts8 = new DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ts8 = new DataGridViewGeneratorNumericColumnSettings();
             ts8.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode)
@@ -241,7 +241,7 @@ namespace Sci.Production.Warehouse
 
             };
             #endregion
-            #region Bulk Location 開窗
+            #region Stock Location 開窗
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts11 = new DataGridViewGeneratorTextColumnSettings();
             ts11.CellMouseDoubleClick += (s, e) =>
             {
@@ -269,88 +269,6 @@ namespace Sci.Production.Warehouse
 
             };
             #endregion
-            
-//            Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
-//            #region Supplier 右鍵開窗
-//            ts4.EditingMouseDown += (s, e) =>
-//            {
-//                if (this.EditMode && e.Button == MouseButtons.Right && CurrentDetailData["InhouseOSP"].ToString() == "O")
-//                {
-//                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-//                        (string.Format(@"SELECT QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup
-//                                                    FROM Order_TmsCost OT
-//                                                    INNER JOIN ORDERS ON OT.ID = ORDERS.ID
-//                                                    INNER JOIN Style_Artwork SA ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
-//                                                    LEFT JOIN Style_Artwork_Quot QU ON QU.Ukey = SA.Ukey
-//                                                    INNER JOIN LocalSupp ON LocalSupp.ID = QU.LocalSuppId
-//                                                    WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' AND OT.ARTWORKTYPEID='{1}'
-//                                                    GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup", CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"])
-//                                                                                                                                                                                     , "10,15,12", null, null);
-//                    DialogResult result = item.ShowDialog();
-//                    if (result == DialogResult.Cancel) { return; }
-//                    CurrentDetailData["localsuppid"] = item.GetSelectedString();
-//                }
-//            };
-//            #endregion
-
-//            ts4.CellValidating += (s, e) =>
-//            {
-//                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
-//                {
-//                    if (CurrentDetailData["InhouseOSP"].ToString() == "O")
-//                    {
-//                        bool exist = false;
-//                        DualResult result = DBProxy.Current.Exists(null, string.Format(@"SELECT QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup
-//                                                    FROM Order_TmsCost OT
-//                                                    INNER JOIN ORDERS ON OT.ID = ORDERS.ID
-//                                                    INNER JOIN Style_Artwork SA ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
-//                                                    LEFT JOIN Style_Artwork_Quot QU ON QU.Ukey = SA.Ukey
-//                                                    INNER JOIN LocalSupp ON LocalSupp.ID = QU.LocalSuppId
-//                                                    WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' 
-//                                                        AND OT.ARTWORKTYPEID = '{1}' AND qu.Localsuppid = '{2}'
-//                                                    GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup"
-//                                                    , CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"], e.FormattedValue), null, out exist);
-//                        if (!exist)
-//                        {
-//                            e.Cancel = true;
-//                            MyUtility.Msg.WarningBox("Supplier not in Style Quotation or not Mock approved or not Price approved!!", "Warning");
-//                            return;
-//                        }
-//                    }
-//                }
-//            };
-
-            
-            //Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
-            //comboBox1_RowSource.Add("O", "OSP");
-            //comboBox1_RowSource.Add("I", "InHouse");
-
-//            Ict.Win.DataGridViewGeneratorComboBoxColumnSettings cs = new DataGridViewGeneratorComboBoxColumnSettings();
-//            cs.CellValidating += (s, e) =>
-//            {
-//                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Check.Empty(CurrentDetailData["localsuppid"]))
-//                {
-//                    if (e.FormattedValue.ToString() == "O")
-//                    {
-//                        CurrentDetailData["localsuppid"] = MyUtility.GetValue.Lookup(string.Format(@"SELECT top 1 QU.LocalSuppId
-//                                                    FROM Order_TmsCost OT
-//                                                    INNER JOIN ORDERS ON OT.ID = ORDERS.ID
-//                                                    INNER JOIN Style_Artwork SA ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
-//                                                    LEFT JOIN Style_Artwork_Quot QU ON QU.Ukey = SA.Ukey
-//                                                    INNER JOIN LocalSupp ON LocalSupp.ID = QU.LocalSuppId
-//                                                    WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' 
-//                                                        AND OT.ARTWORKTYPEID = '{1}' 
-//                                                    GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup"
-//                                                    , CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"]), null);
-//                        CurrentDetailData["inhouseOSP"] = e.FormattedValue;
-//                    }
-//                    if (e.FormattedValue.ToString() == "I")
-//                    {
-//                        CurrentDetailData["localsuppid"] = Env.User.Factory;
-//                        CurrentDetailData["inhouseOSP"] = e.FormattedValue;
-//                    }
-//                }
-//            };
 
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
@@ -369,21 +287,21 @@ namespace Sci.Production.Warehouse
             .Numeric("Qty", header: "Order Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //12
             .Numeric("NETQty", header: "Net Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //13
             .Numeric("useqty", header: "Use Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //14
-            .Text("ShipQty", header: "Ship Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings:ts3)    //15
+            .Numeric("ShipQty", header: "Ship Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts3)    //15
             .Numeric("ShipFOC", header: "F.O.C", width: Widths.AnsiChars(6), iseditingreadonly: true)    //16
             .Numeric("ApQty", header: "AP Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //17
-            .Text("InputQty", header: "Taipei Stock Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)    //18
+            .Numeric("InputQty", header: "Taipei Stock Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)    //18
             .Text("POUnit", header: "PO Unit", iseditingreadonly: true)  //19
             .Text("Complete", header: "Cmplt", iseditingreadonly: true)  //20
             .Date("ATA", header: "Act. ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //21
             .Text("OrderIdList", header: "Order List", iseditingreadonly: true)  //23
             .Numeric("InQty", header: "Arrived Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //23
             .Text("StockUnit", header: "Stock Unit", iseditingreadonly: true)  //24
-            .Text("OutQty", header: "Released Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts5)    //25
+            .Numeric("OutQty", header: "Released Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts5)    //25
             .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //26
-            .Text("balanceqty", header: "Balance", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts6)    //27
-            .Text("LInvQty", header: "Stock Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts7)    //28
-            .Text("LObQty", header: "Scrap Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts8)    //29
+            .Numeric("balanceqty", header: "Balance", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts6)    //27
+            .Numeric("LInvQty", header: "Stock Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts7)    //28
+            .Numeric("LObQty", header: "Scrap Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts8)    //29
             .Text("ALocation", header: "Bulk Location", iseditingreadonly: true,settings:ts9)  //30
             .Text("BLocation", header: "Stock Location", iseditingreadonly: true,settings:ts11)  //31
             .Text("Remark", header: "Remark", iseditingreadonly: true)  //32

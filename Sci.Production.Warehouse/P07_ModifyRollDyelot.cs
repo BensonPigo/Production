@@ -148,7 +148,7 @@ group by a.Id, poid, seq1,Seq2, remark,a.IssueDate
             union all
             select a.eta, a.id
             ,'P07. Material Receiving' as name
-            , sum(b.ActualQty) arrived,0 as ouqty,0 as adjust,'' remark ,'' location
+            , sum(b.StockQty) arrived,0 as ouqty,0 as adjust,'' remark ,'' location
             from Receiving a, Receiving_Detail b 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and type='A' and a.id!='{5}'
 and roll='{3}' and dyelot='{4}'
@@ -156,7 +156,7 @@ group by a.Id, poid, seq1,Seq2,a.eta,a.Type
             union all
             select a.WhseArrival, a.id
                     ,'P08. Warehouse Shopfloor Receiving' as name
-            	    , sum(b.ActualQty) arrived,0 as ouqty,0 as adjust,'' remark ,'' location
+            	    , sum(b.StockQty) arrived,0 as ouqty,0 as adjust,'' remark ,'' location
             from Receiving a, Receiving_Detail b 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and type='B'
 and roll='{3}' and dyelot='{4}'

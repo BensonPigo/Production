@@ -34,7 +34,8 @@ sum(TMP.inqty - TMP.outqty+tmp.adjust) over ( order by tmp.IssueDate,tmp.iD,sum(
 ,Case type when 'A' then 'P35. Adjust Bulk Qty' when 'B' then 'P34. Adjust Stock Qty' end as name
 ,0 as inqty,0 as outqty, sum(QtyAfter - QtyBefore) adjust, remark ,'' location
 from Adjust a, Adjust_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id group by a.id, poid, seq1,Seq2, remark,a.IssueDate,type
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+group by a.id, poid, seq1,Seq2, remark,a.IssueDate,type
 union all
 	select a.IssueDate, a.id
 ,'P31. Material Borrow' name
@@ -46,40 +47,56 @@ union all
 	select issuedate, a.id
 ,'BorrowBack' name, sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location
 from BorrowBack a, BorrowBack_Detail b 
-where Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate
+where Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id 
+group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate
 union all
 	select issuedate, a.id
-	,case type when 'A' then 'P10. Issue Fabric to Cutting Section' when 'B' then 'P11. Issue Sewing Material by Transfer Guide' when 'C' then 'P12. Issue Packing Material by Transfer Guide' when 'D' then 'P13. Issue Material by Item' end name
+	,case type when 'A' then 'P10. Issue Fabric to Cutting Section' 
+when 'B' then 'P11. Issue Sewing Material by Transfer Guide' 
+when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
+when 'D' then 'P13. Issue Material by Item' end name
 	,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
 from Issue a, Issue_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type                                                                          
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type                                                                          
 union all
 	select issuedate, a.id
-	,case FabricType when 'A' then 'P15. Issue Accessory Lacking & Replacement' when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
+	,case FabricType when 'A' then 'P15. Issue Accessory Lacking & Replacement' 
+when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
 	, 0 as inqty,sum(b.Qty) outqty ,0 as adjust, remark ,'' location
 from IssueLack a, IssueLack_Detail b 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
 group by a.id, poid, seq1,Seq2, remark  ,a.IssueDate,a.FabricType                                                               
 union all
-	select issuedate, a.id,'P17. R/Mtl Return' name, 0 as inqty, sum(b.Qty) released,0 as adjust, remark,'' location
+	select issuedate, a.id
+,'P17. R/Mtl Return' name
+, 0 as inqty, sum(b.Qty) released,0 as adjust, remark,'' location
 from IssueReturn a, IssueReturn_Detail b 
-where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id group by a.Id, poid, seq1,Seq2, remark,a.IssueDate                                                                                 
+where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+group by a.Id, poid, seq1,Seq2, remark,a.IssueDate                                                                                 
 union all
-	select a.WhseArrival, a.id
-	,case type when 'A' then 'P07. Material Receiving' when 'B' then 'P08. Warehouse Shopfloor Receiving' end name
-	, sum(b.ActualQty) arrived,0 as ouqty,0 as adjust,'' remark ,'' location
+	select case type when 'A' then a.eta else a.WhseArrival end as issuedate, a.id
+	,case type when 'A' then 'P07. Material Receiving' 
+                    when 'B' then 'P08. Warehouse Shopfloor Receiving' end name
+	, sum(b.StockQty) arrived,0 as ouqty,0 as adjust,'' remark ,'' location
 from Receiving a, Receiving_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type                                                                              
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,a.eta
 union all
-	select issuedate,'P37. Return Receiving Material' name, a.id, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
+	select issuedate
+    ,'P37. Return Receiving Material' name
+    , a.id, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
 from ReturnReceipt a, ReturnReceipt_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id group by a.id, poid, seq1,Seq2, remark,a.IssueDate                                                                               
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+group by a.id, poid, seq1,Seq2, remark,a.IssueDate                                                                               
 union all
 	select issuedate, a.id
-	,case a.type when 'A' then 'P25. Transfer Bulk to Scrap' when 'B' then 'P24. Transfer Inventory to Scrap' end as name
+	,case a.type when 'A' then 'P25. Transfer Bulk to Scrap' 
+                    when 'B' then 'P24. Transfer Inventory to Scrap' end as name
 	,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
 from Scrap a, Scrap_Detail b 
-where Status='Confirmed' and Poid ='{0}' and Seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id group by a.id, Poid, Seq1,Seq2, remark,a.IssueDate,a.Type
+where Status='Confirmed' and Poid ='{0}' and Seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+group by a.id, Poid, Seq1,Seq2, remark,a.IssueDate,a.Type
 union all
 	select issuedate, a.id
 	,'P23. Transfer Inventory to Bulk' as name
@@ -88,7 +105,9 @@ from SubTransfer a, SubTransfer_Detail b
 where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id and type = 'B' 
 group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type                                                                               
 union all
-	select issuedate, a.id,'SubTransfer' name, sum(Qty) arrived,0 as ouqty,0 as adjust, remark
+	select issuedate, a.id
+,'P23. Transfer Inventory to Bulk' name
+, sum(Qty) arrived,0 as ouqty,0 as adjust, remark
 	,(Select cast(tmp.ToLocation as nvarchar)+',' 
                         from (select b1.ToLocation 
                                     from SubTransfer a1 
@@ -102,7 +121,9 @@ from SubTransfer a, SubTransfer_Detail b
 where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id and type = 'B' 
 group by a.id, ToPoid, ToSeq1,ToSeq2, remark ,a.IssueDate     
 union all
-	select issuedate, a.id,'TransferIn' name, sum(Qty) arrived,0 as ouqty,0 as adjust, remark
+	select issuedate, a.id
+,'P18. TransferIn' name
+, sum(Qty) arrived,0 as ouqty,0 as adjust, remark
 	,(Select cast(tmp.Location as nvarchar)+',' 
                         from (select b1.Location 
                                     from TransferIn a1 
@@ -115,7 +136,8 @@ union all
 from TransferIn a, TransferIn_Detail b 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id group by a.id, poid, seq1,Seq2, remark,a.IssueDate                                                                                 
 union all
-	select issuedate, a.id,'TransferOut' name, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
+	select issuedate, a.id
+,'P19. TransferOut' name, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
 from TransferOut a, TransferOut_Detail b 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id group by a.id, poid, Seq1,Seq2, remark,a.IssueDate) tmp
 group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name

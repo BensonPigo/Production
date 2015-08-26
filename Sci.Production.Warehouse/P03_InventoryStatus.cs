@@ -58,6 +58,7 @@ where a.Status = 'Confirmed'
 and b.PoId ='{0}'
 and b.Seq1 = '{1}'
 and b.Seq2 = '{2}'
+and b.Stocktype ='I'
 group by b.Roll,b.Dyelot
 union all
 select B.ToRoll,B.ToDyelot,0,0,0,0,SUM(B.QTY) backin,0,0,0,0,0,0
@@ -94,7 +95,7 @@ group by b.Roll,b.Dyelot
 union all
 select b.Roll,b.Dyelot,0,0,0,0,0,0,0,0,sum(b.Qty) as transout,0,0
 from TransferOut a inner join TransferOut_Detail b on a.Id=b.id
-where a.Status = 'Confirmed' 
+where a.Status = 'Confirmed' and stocktype='I'
 and b.PoId ='{0}'
 and b.Seq1 = '{1}'
 and b.Seq2 = '{2}'
