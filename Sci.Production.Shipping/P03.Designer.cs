@@ -99,10 +99,6 @@
             this.masterpanel.Controls.Add(this.button2);
             this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.label21);
-            this.masterpanel.Controls.Add(this.dateBox5);
-            this.masterpanel.Controls.Add(this.dateBox4);
-            this.masterpanel.Controls.Add(this.dateBox3);
-            this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.txttpeuser1);
             this.masterpanel.Controls.Add(this.label20);
             this.masterpanel.Controls.Add(this.label19);
@@ -129,7 +125,6 @@
             this.masterpanel.Controls.Add(this.numericBox1);
             this.masterpanel.Controls.Add(this.displayBox3);
             this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Controls.Add(this.displayBox1);
             this.masterpanel.Controls.Add(this.label8);
             this.masterpanel.Controls.Add(this.label7);
@@ -139,8 +134,18 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.dateBox5);
+            this.masterpanel.Controls.Add(this.dateBox4);
+            this.masterpanel.Controls.Add(this.dateBox3);
+            this.masterpanel.Controls.Add(this.dateBox2);
+            this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Size = new System.Drawing.Size(990, 285);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox5, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -150,7 +155,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
@@ -177,10 +181,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label19, 0);
             this.masterpanel.Controls.SetChildIndex(this.label20, 0);
             this.masterpanel.Controls.SetChildIndex(this.txttpeuser1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox5, 0);
             this.masterpanel.Controls.SetChildIndex(this.label21, 0);
             this.masterpanel.Controls.SetChildIndex(this.button1, 0);
             this.masterpanel.Controls.SetChildIndex(this.button2, 0);
@@ -219,6 +219,10 @@
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 562);
             this.detailbtm.Size = new System.Drawing.Size(990, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(990, 600);
             // 
             // tabs
             // 

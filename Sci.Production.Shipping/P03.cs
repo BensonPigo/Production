@@ -34,7 +34,7 @@ iif(o.PFOrder = 1,dateadd(day,-10,o.SciDelivery),iif((select CountryID from Fact
 iif(ed.Description = '',isnull(f.DescDetail,''),ed.Description) as Description,
 (case when ed.FabricType = 'M' then 'Machine' when ed.FabricType = 'P' then 'Part' when ed.FabricType = 'O' then 'Miscellaneous' else '' end) as FabricType,
 ed.UnitId,isnull(psd.ColorID,'') as ColorID,isnull(psd.SizeSpec,'') as SizeSpec,ed.Qty,ed.Foc,ed.BalanceQty,
-ed.NetKg,ed.WeightKg,iif(ed.IsFormA = 1,'Y','') as IsFormA,ed.FormXType,ed.FormXReceived,ed.FormXDraftCFM,ed.FormXINV,ed.ID,ed.Seq1,ed.Seq2,ed.Ukey
+ed.NetKg,ed.WeightKg,iif(ed.IsFormA = 1,'Y','') as IsFormA,ed.FormXType,ed.FormXReceived,ed.FormXDraftCFM,ed.FormXINV,ed.ID,ed.Seq1,ed.Seq2,ed.Ukey,rtrim(ed.PoID)+(SUBSTRING(ed.Seq1,1,3)+'-'+ed.Seq2) as FindColumn
 from Export_Detail ed
 left join Orders o on o.ID = ed.PoID
 left join Supp s on s.id = ed.SuppID 
@@ -133,23 +133,14 @@ where ed.ID = '{0}'", masterID);
         //Find
         private void button3_Click(object sender, EventArgs e)
         {
-            string poID, seq;
-            poID = textBox1.Text.Trim();
-            seq = textBox2.Text.Trim();
-            
-            DataRow dr = (((DataTable)detailgridbs.DataSource).ToList<DataRow>()).FirstOrDefault<DataRow>(x => x["POID"].ToString().Trim()== poID && x["Seq"].ToString() == seq);
-            if (dr != null)
-            {
-                int pos = (((DataTable)detailgridbs.DataSource).ToList<DataRow>()).IndexOf(dr);
-                if (pos != -1)
-                {
-                    detailgridbs.Position = pos;
-                }
-            }
+            string poID = textBox1.Text + textBox2.Text;
+
+            if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
+            int index = detailgridbs.Find("FindColumn", poID);
+            if (index == -1)
+            { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
-            {
-                MyUtility.Msg.WarningBox("Data is not found!");
-            }
+            { detailgridbs.Position = index; }
         }
 
         //Expense Data
