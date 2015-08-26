@@ -192,19 +192,12 @@ left join V_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Article
         //Find
         private void button2_Click(object sender, EventArgs e)
         {
-            DataRow dr = (selectDataTable.ToList<DataRow>()).FirstOrDefault<DataRow>(x => x["OrderId"].ToString() == textBox2.Text.ToString());
-            if (dr != null)
-            {
-                int pos = (selectDataTable.ToList<DataRow>()).IndexOf(dr);
-                if (pos != -1)
-                {
-                    listControlBindingSource1.Position = pos;
-                }
-            }
+            if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
+            int index = listControlBindingSource1.Find("OrderId", textBox2.Text.ToString());
+            if (index == -1)
+            { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
-            {
-                MyUtility.Msg.WarningBox("Data is not found!");
-            }
+            { listControlBindingSource1.Position = index; }
         }
 
         //Import
