@@ -1156,6 +1156,7 @@ where ID = @INVNo";
                     dateBox6.Visible = true;
                     dateBox6.Location = new System.Drawing.Point(448, 222);
                     button4.Location = new System.Drawing.Point(591, 217);
+                    ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "TransferDate,Seq";
                     break;
                 case "Clog Cfm":
                     label24.Text = "Locate for Clog Cfm:";
@@ -1163,6 +1164,7 @@ where ID = @INVNo";
                     dateBox6.Visible = true;
                     dateBox6.Location = new System.Drawing.Point(420, 222);
                     button4.Location = new System.Drawing.Point(563, 217);
+                    ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "ReceiveDate,Seq";
                     break;
                 case "Location No":
                     label24.Text = "Locate for Location No:";
@@ -1170,6 +1172,7 @@ where ID = @INVNo";
                     textBox3.Visible = true;
                     textBox3.Location = new System.Drawing.Point(438, 222);
                     button4.Location = new System.Drawing.Point(537, 217);
+                    ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "ClogLocationId,Seq";
                     break;
                 case "ColorWay":
                     label24.Text = "Locate for ColorWay:";
@@ -1177,6 +1180,7 @@ where ID = @INVNo";
                     textBox3.Visible = true;
                     textBox3.Location = new System.Drawing.Point(426, 222);
                     button4.Location = new System.Drawing.Point(525, 217);
+                    ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "Article,Seq";
                     break;
                 case "Color":
                     label24.Text = "Locate for Color:";
@@ -1184,6 +1188,7 @@ where ID = @INVNo";
                     textBox3.Visible = true;
                     textBox3.Location = new System.Drawing.Point(397, 222);
                     button4.Location = new System.Drawing.Point(496, 217);
+                    ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "Color,Seq";
                     break;
                 case "Size":
                     label24.Text = "Locate for Size:";
@@ -1191,12 +1196,14 @@ where ID = @INVNo";
                     textBox3.Visible = true;
                     textBox3.Location = new System.Drawing.Point(391, 222);
                     button4.Location = new System.Drawing.Point(490, 217);
+                    ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "SizeCode,Seq";
                     break;
                 default:
                     label24.Visible = false;
                     button4.Visible = false;
+                    if(MyUtility.Check.Empty((DataTable)detailgridbs.DataSource)) break;
+                    ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "Seq";
                     break;
-
             }
         }
 
@@ -1597,45 +1604,37 @@ order by oq.Article,oq.SizeCode", CurrentMaintain["OrderID"].ToString(), Current
         //Find Now
         private void button4_Click(object sender, EventArgs e)
         {
-            
-            DataRow dr;
+
+            int index;
             switch (comboBox1.SelectedValue.ToString())
             {
                 case "Transfer Clog":
-                    dr = this.DetailDatas.FirstOrDefault<DataRow>(x => x["TransferDate"].ToString() == dateBox6.Value.ToString());
+                    index = detailgridbs.Find("TransferDate", dateBox6.Value.ToString());
                     break;
                 case "Clog Cfm":
-                    dr = this.DetailDatas.FirstOrDefault<DataRow>(x => x["ReceiveDate"].ToString() == dateBox6.Value.ToString());
+                    index = detailgridbs.Find("ReceiveDate", dateBox6.Value.ToString());
                     break;
                 case "Location No":
-                    dr = this.DetailDatas.FirstOrDefault<DataRow>(x => x["ClogLocationId"].ToString().Trim() == textBox3.Text.Trim());
+                    index = detailgridbs.Find("ClogLocationId", textBox3.Text.Trim());
                     break;
                 case "ColorWay":
-                    dr = this.DetailDatas.FirstOrDefault<DataRow>(x => x["Article"].ToString().Trim() == textBox3.Text.Trim());
+                    index = detailgridbs.Find("Article", textBox3.Text.Trim());
                     break;
                 case "Color":
-                    dr = this.DetailDatas.FirstOrDefault<DataRow>(x => x["Color"].ToString().Trim() == textBox3.Text.Trim());
+                    index = detailgridbs.Find("Color", textBox3.Text.Trim());
                     break;
                 case "Size":
-                    dr = this.DetailDatas.FirstOrDefault<DataRow>(x => x["SizeCode"].ToString().Trim() == textBox3.Text.Trim());
+                    index = detailgridbs.Find("SizeCode", textBox3.Text.Trim());
                     break;
                 default:
-                    dr = null;
+                    index = -1;
                     break;
             }
 
-            if (dr != null)
-            {
-                int pos = this.DetailDatas.IndexOf(dr);
-                if (pos != -1)
-                {
-                    this.detailgridbs.Position = pos;
-                }
-            }
+            if (index == -1)
+            { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
-            {
-                MyUtility.Msg.WarningBox("Data is not found!");
-            }
+            { detailgridbs.Position = index; }
         }
     }
 }
