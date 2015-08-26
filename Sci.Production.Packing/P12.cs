@@ -25,15 +25,7 @@ namespace Sci.Production.Packing
             InitializeComponent();
 
             //Exp P/out date預設帶出下個月的最後一天
-            sqlCmd = "SELECT DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()) + 2, 0) - 1 as Expdate";
-            if (result = DBProxy.Current.Select(null, sqlCmd, out dateData))
-            {
-                dateBox1.Value = Convert.ToDateTime(dateData.Rows[0]["Expdate"].ToString());
-            }
-            else
-            {
-                MyUtility.Msg.WarningBox("Get Exp P/out date fail!");
-            }
+            dateBox1.Value = (DateTime.Today.AddMonths(2)).AddDays(1 - (DateTime.Today.AddMonths(2)).Day - 1);
         }
 
         protected override void OnFormLoaded()
