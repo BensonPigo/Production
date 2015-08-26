@@ -39,11 +39,11 @@ namespace Sci.Production.Warehouse
 , LocationTrans.EditName+'-'+ (select pass1.NAME from pass1 where id = LocationTrans.EditName) editname
 , LocationTrans.EditDate
 FROM LocationTrans, LocationTrans_detail as b
-WHERE LocationTrans.status = 'Confirmed' and LocationTrans.stocktype='B'
+WHERE LocationTrans.status = 'Confirmed' and LocationTrans.stocktype='{3}'
 AND LocationTrans.ID = b.ID 
-AND b.poid = '15060032GB   '
-AND b.SEQ1 = '07 ' 
-AND b.seq2 = '02'
+AND b.poid = '{0}'
+AND b.SEQ1 = '{1}' 
+AND b.seq2 = '{2}'
 group by LocationTrans.EditName,LocationTrans.ID, LocationTrans.issuedate, LocationTrans.Remark,LocationTrans.EditDate,b.Poid,b.seq1,b.seq2) tmp
 order by EditName"
                 , dr["id"].ToString()
