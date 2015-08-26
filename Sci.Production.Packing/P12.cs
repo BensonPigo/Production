@@ -217,19 +217,12 @@ left join Country c on c.ID = od.Dest";
         //Find Now
         private void button4_Click(object sender, EventArgs e)
         {
-            DataRow dr = (gridData.ToList<DataRow>()).FirstOrDefault<DataRow>(x => x["ID"].ToString() == textBox1.Text.ToString());
-            if (dr != null)
-            {
-                int pos = (gridData.ToList<DataRow>()).IndexOf(dr);
-                if (pos != -1)
-                {
-                    listControlBindingSource1.Position = pos;
-                }
-            }
+            if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
+            int index = listControlBindingSource1.Find("ID", textBox1.Text.ToString());
+            if (index == -1)
+            { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
-            {
-                MyUtility.Msg.WarningBox("Data is not found!");
-            }
+            { listControlBindingSource1.Position = index; }
         }
     }
 }
