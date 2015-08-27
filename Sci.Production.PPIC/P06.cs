@@ -15,7 +15,7 @@ namespace Sci.Production.PPIC
 {
     public partial class P06 : Sci.Win.Tems.QueryForm
     {
-        DataTable gridData, dateData;
+        DataTable gridData;
         Ict.Win.DataGridViewGeneratorDateColumnSettings cutoffDate = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
         DataGridViewGeneratorNumericColumnSettings clogctn = new DataGridViewGeneratorNumericColumnSettings();
         public P06(ToolStripMenuItem menuitem)
