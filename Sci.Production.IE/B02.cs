@@ -57,6 +57,7 @@ namespace Sci.Production.IE
             this.dateBox1.ReadOnly = true;
             this.comboBox1.ReadOnly = true;
             this.txtfactory1.ReadOnly = true;
+            this.txtfactory1.Enabled = false;
         }
 
         protected override void ClickCopyAfter()
@@ -104,6 +105,18 @@ namespace Sci.Production.IE
             }
 
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            this.txtfactory1.Enabled = true;
+        }
+
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            this.txtfactory1.Enabled = true;
         }
 
         private void comboBox1_Validated(object sender, EventArgs e)
