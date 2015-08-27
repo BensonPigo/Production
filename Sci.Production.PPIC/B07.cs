@@ -38,6 +38,7 @@ namespace Sci.Production.PPIC
             base.ClickEditAfter();
             this.dateBox1.ReadOnly = true;
             this.txtsewingline1.ReadOnly = true;
+            this.txtsewingline1.ReadOnly = false;
         }
 
         protected override bool ClickNewBefore()
@@ -49,6 +50,18 @@ namespace Sci.Production.PPIC
                 ReloadDatas();
             }
             return false;
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            this.txtsewingline1.ReadOnly = true;
+        }
+
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            this.txtsewingline1.ReadOnly = true;
         }
 
         private void button1_Click(object sender, EventArgs e)
