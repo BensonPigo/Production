@@ -44,6 +44,7 @@ namespace Sci.Production.Shipping
         {
             base.ClickNewAfter();
             this.txtsubcon1.TextBox1.ReadOnly = true;
+            this.txtsubcon1.TextBox1.Enabled = false;
         }
 
         protected override void ClickEditAfter()
@@ -51,6 +52,7 @@ namespace Sci.Production.Shipping
             base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
             this.txtsubcon1.TextBox1.ReadOnly = true;
+            this.txtsubcon1.TextBox1.Enabled = false;
         }
 
         protected override void ClickCopyAfter()
@@ -62,6 +64,7 @@ namespace Sci.Production.Shipping
             CurrentMaintain["Price"] = DBNull.Value;
             CurrentMaintain["CanvassDate"] = DBNull.Value;
             this.txtsubcon1.TextBox1.ReadOnly = true;
+            this.txtsubcon1.TextBox1.Enabled = false;
         }
 
         protected override bool ClickSaveBefore()
@@ -88,6 +91,18 @@ namespace Sci.Production.Shipping
             }
 
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            this.txtsubcon1.TextBox1.Enabled = true;
+        }
+
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            this.txtsubcon1.TextBox1.Enabled = false;
         }
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
