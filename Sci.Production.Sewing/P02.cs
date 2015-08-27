@@ -105,7 +105,7 @@ where sd.ID = '{0}'", masterID);
                         {
                             dr["OrderID"] = e.FormattedValue.ToString();
                             //自動算出TMS值，等Trade將Prg: GetSOCpu()完成再補
-                            dr["TMS"] = MyUtility.Math.Round(Convert.ToDecimal(moData["CPU"]) * 1 * systemTMS);
+                            dr["TMS"] = MyUtility.Math.Round(Convert.ToDecimal(moData["CPU"]) * Convert.ToDecimal(moData["CPUFactor"]) * systemTMS);
                             dr["MockupID"] = moData["MockupID"].ToString();
                             dr["Qty"] = Convert.ToInt32(moData["Qty"]);
                             dr["AccuQty"] = Convert.ToInt32(MyUtility.GetValue.Lookup(string.Format("select isnull(sum(QAQty),0) from SewingOutput_Detail where OrderId = '{0}'", dr["OrderID"].ToString())));
@@ -205,6 +205,7 @@ where sd.ID = '{0}'", masterID);
             if (Convert.ToDateTime(CurrentMaintain["OutputDate"]) <= systemLockDate)
             {
                 txtsewingline1.ReadOnly = true;
+                txtsewingline1.Enabled = false;
                 numericBox1.ReadOnly = true;
                 numericBox2.ReadOnly = true;
             }
@@ -312,6 +313,18 @@ where sd.ID = '{0}'", masterID);
             CurrentMaintain["TMS"] = MyUtility.Math.Round(gridTms, 0);
             CurrentMaintain["Efficiency"] = Convert.ToDecimal(gridQaQty) / (3600 / Convert.ToDecimal(CurrentMaintain["TMS"]) * Convert.ToDecimal(CurrentMaintain["ManHour"])) * 100;
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            txtsewingline1.Enabled = true;
+        }
+
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            txtsewingline1.Enabled = true;
         }
 
         protected override bool ClickDeleteBefore()
