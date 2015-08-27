@@ -65,7 +65,7 @@ namespace Sci.Production.Packing
                 .Text("ScanAndPack", header: "S&P", width: Widths.AnsiChars(1), iseditingreadonly: true)
                 .Text("RainwearTestPassed", header: "Rainwear Test Passed", width: Widths.AnsiChars(1), iseditingreadonly: true)
                 .Numeric("CTNQty", header: "Ctn Qty", iseditingreadonly: true)
-                .Text("Dimension", header: "Carton Dimension", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .EditText("Dimension", header: "Carton Dimension", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("ProdRemark", header: "Production Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("ShipRemark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("MtlFormA", header: "Mtl. FormA", width: Widths.AnsiChars(20), iseditingreadonly: true)
