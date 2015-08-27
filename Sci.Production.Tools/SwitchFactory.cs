@@ -23,29 +23,6 @@ namespace Sci.Production.Tools
             pwd.Text = Sci.Env.User.UserPassword;
             pwd.Enabled = false;
 
-            DualResult result;
-            DataTable dtPass1;
-            string cmd = string.Format("SELECT ID, Factory FROM Pass1 WHERE ID = '{0}'", Sci.Env.User.UserID);
-            if (!(result = DBProxy.Current.Select(null, cmd, out dtPass1)))
-            {
-                MyUtility.Msg.ErrorBox(result.ToString());
-                Close();
-            }
-
-            Dictionary<String, String> factoryOption = new Dictionary<String, String>();
-            string[] factories = dtPass1.Rows[0]["Factory"].ToString().Split(new char[] { ',' });
-            if (factories.Length > 0)
-            {
-                for (int i = 0; i < factories.Length; i++)
-                {
-                    factoryOption.Add(factories[i].Trim().ToUpper(), factories[i].Trim().ToUpper());
-                }
-                comboBox1.DataSource = new BindingSource(factoryOption, null);
-                comboBox1.ValueMember = "Key";
-                comboBox1.DisplayMember = "Value";
-                comboBox1.SelectedValue = Sci.Env.User.Factory;
-            }
-
             ok.Click += (s, e) =>
                 {
                     if (MyUtility.Check.Empty((string)this.comboBox1.SelectedValue))
@@ -76,6 +53,31 @@ namespace Sci.Production.Tools
             {
                 MyUtility.Msg.WarningBox("Please close all processing forms first!");
                 Close();
+                return;
+            }
+
+            DualResult result;
+            DataTable dtPass1;
+            string cmd = string.Format("SELECT ID, Factory FROM Pass1 WHERE ID = '{0}'", Sci.Env.User.UserID);
+            if (!(result = DBProxy.Current.Select(null, cmd, out dtPass1)))
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                Close();
+                return;
+            }
+
+            Dictionary<String, String> factoryOption = new Dictionary<String, String>();
+            string[] factories = dtPass1.Rows[0]["Factory"].ToString().Split(new char[] { ',' });
+            if (factories.Length > 0)
+            {
+                for (int i = 0; i < factories.Length; i++)
+                {
+                    factoryOption.Add(factories[i].Trim().ToUpper(), factories[i].Trim().ToUpper());
+                }
+                comboBox1.DataSource = new BindingSource(factoryOption, null);
+                comboBox1.ValueMember = "Key";
+                comboBox1.DisplayMember = "Value";
+                comboBox1.SelectedValue = Sci.Env.User.Factory;
             }
         }
     }
