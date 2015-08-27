@@ -250,16 +250,21 @@ and p.Status = 'Confirmed'", dr["ID"].ToString());
             textBox1.ReadOnly = true;
             txtbrand1.ReadOnly = true;
             txtcountry1.TextBox1.ReadOnly = true;
+            txtbrand1.Enabled = false;
+            txtcountry1.TextBox1.Enabled = false;
             txtshipmode1.ReadOnly = true;
 
             if (!MyUtility.Check.Empty(CurrentMaintain["SOCFMDate"]))
             {
                 dateBox1.ReadOnly = true;
                 txtfactory1.ReadOnly = true;
+                txtfactory1.Enabled = false;
                 dateBox2.ReadOnly = true;
                 textBox4.ReadOnly = true;
                 txtuser1.TextBox1.ReadOnly = true;
+                txtuser1.TextBox1.Enabled = false;
                 txtsubcon1.TextBox1.ReadOnly = true;
+                txtsubcon1.TextBox1.Enabled = false;
                 comboBox1.ReadOnly = true;
                 textBox3.ReadOnly = true;
                 numericBox7.ReadOnly = true;
@@ -574,6 +579,26 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             {
                 return true;
             }
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            txtbrand1.Enabled = true;
+            txtcountry1.TextBox1.Enabled = true;
+            txtfactory1.Enabled = true;
+            txtuser1.TextBox1.Enabled = true;
+            txtsubcon1.TextBox1.Enabled = true;
+        }
+
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            txtbrand1.Enabled = true;
+            txtcountry1.TextBox1.Enabled = true;
+            txtfactory1.Enabled = true;
+            txtuser1.TextBox1.Enabled = true;
+            txtsubcon1.TextBox1.Enabled = true;
         }
 
         //Inv. Serial:移除空白值
