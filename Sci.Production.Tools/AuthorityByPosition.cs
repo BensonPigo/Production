@@ -152,6 +152,11 @@ namespace Sci.Production.Tools
                 .CheckBox("CanReceive", header: "Receive", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0).Get(out ckReceive)
                 .CheckBox("CanReturn", header: "Return", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0).Get(out ckReturn)
                 .CheckBox("CanJunk", header: "Junk", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0).Get(out ckJunk);
+
+            for (int i = 0; i < this.detailgrid.ColumnCount; i++)
+            {
+                this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
         }
 
         protected override void ClickNewAfter()
