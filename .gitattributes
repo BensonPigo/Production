@@ -619,6 +619,9 @@ Sci.Production.Warehouse/Properties/Resources.resx -text
 Sci.Production.Warehouse/R02.Designer.cs -text
 Sci.Production.Warehouse/R02.cs -text
 Sci.Production.Warehouse/R02.resx -text
+Sci.Production.Warehouse/R17.Designer.cs -text
+Sci.Production.Warehouse/R17.cs -text
+Sci.Production.Warehouse/R17.resx -text
 Sci.Production.Warehouse/Sci.Production.Warehouse.csproj -text
 Sci.Production/Program.cs -text
 Sci.Production/Properties/AssemblyInfo.cs -text
