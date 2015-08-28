@@ -152,7 +152,7 @@ namespace Sci.Production.PPIC
                 {
                     if (((DataTable)listControlBindingSource1.DataSource).Rows[i]["MTLDelay"].ToString() == "Y")
                     {
-                        grid1.Rows[e.RowIndex + i].Cells[0].Style.BackColor = Color.FromArgb(255,255,128);
+                        grid1.Rows[i].Cells[0].Style.BackColor = Color.FromArgb(255,255,128);
                     }
                 }
             };
@@ -163,6 +163,10 @@ namespace Sci.Production.PPIC
                         e.ToolTipText = "material shipment arranged by L/ETA";
                     }
                 };
+            for (int i = 0; i < this.grid1.ColumnCount; i++)
+            {
+                this.grid1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
         }
 
         //Query
