@@ -496,7 +496,7 @@ where o.ID in ({0})", allSP.ToString().Substring(0, allSP.ToString().Length - 1)
             {
                 // Open document
                 DualResult result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName);
-                if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName,"PPIC_P13.xlt",1); }
+                if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName,"PPIC_P13.xltx",1); }
                 else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(), "Warning"); }
             }
             else
