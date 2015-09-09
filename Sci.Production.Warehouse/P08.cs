@@ -129,7 +129,7 @@ namespace Sci.Production.Warehouse
 
             #endregion 必輸檢查
 
-            foreach (DataRow row in ((DataTable)detailgridbs.DataSource).ToList())
+            foreach (DataRow row in DetailDatas)
             {
                 if (MyUtility.Check.Empty(row["seq1"]) || MyUtility.Check.Empty(row["seq2"]))
                 {
@@ -648,7 +648,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
 ,'' Description
 ,a.Roll
 ,a.Dyelot
-,(select sum(b.Qty * isnull(c.Rate,1)) as useqty from po_artwork b inner join v_unitrate c on c.FROM_U = b.POUnit and c.TO_U = b.StockUnit
+,(select sum(b.Qty * isnull(c.Rate,1)) as useqty from po_artwork b inner join View_Unitrate c on c.FROM_U = b.POUnit and c.TO_U = b.StockUnit
 where b.id= a.poid and b.seq1 = a.seq1 and b.seq2 = a.seq2) useqty
 ,a.StockQty
 ,a.StockUnit
@@ -672,6 +672,16 @@ Where a.id = '{0}' ", masterID);
         {
             var frm = new Sci.Production.Warehouse.P08_AccumulatedQty(CurrentMaintain);
             frm.ShowDialog(this);
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
+            int index = detailgridbs.Find("poid", textBox1.Text.TrimEnd());
+            if (index == -1)
+            { MyUtility.Msg.WarningBox("Data was not found!!"); }
+            else
+            { detailgridbs.Position = index; }
         }
     }
 }

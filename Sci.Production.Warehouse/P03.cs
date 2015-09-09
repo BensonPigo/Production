@@ -97,16 +97,16 @@ namespace Sci.Production.Warehouse
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
-            string tmp = "";
-            if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
-            {
-                //(e.Details).Columns.Add("description", typeof(string));
-                foreach (DataRow dr in e.Details.Rows)
-                {
-                    dr["description"] = PublicPrg.Prgs.GetMtlDesc(dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString(), 3,tmp == dr["refno"].ToString());
-                    tmp = dr["refno"].ToString();
-                }
-            }
+            //string tmp = "";
+            //if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
+            //{
+            //    //(e.Details).Columns.Add("description", typeof(string));
+            //    foreach (DataRow dr in e.Details.Rows)
+            //    {
+            //        dr["description"] = PublicPrg.Prgs.GetMtlDesc(dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString(), 3,tmp == dr["refno"].ToString());
+            //        tmp = dr["refno"].ToString();
+            //    }
+            //}
             return base.OnRenewDataDetailPost(e);
         }
 
@@ -278,7 +278,7 @@ namespace Sci.Production.Warehouse
             .Text("eta", header: "Sup. 1st "+Environment.NewLine+"Cfm ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //3
             .Text("RevisedETD", header: "Sup. Delivery"+Environment.NewLine+"Rvsd ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //4
             .Text("refno", header: "Ref#", iseditingreadonly: true,settings:ts2)  //5
-            .Text("description", header: "Description", iseditingreadonly: true)  //6
+            .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(15))  //6
             .Text("fabrictype2", header: "Fabric Type", iseditingreadonly: true)  //7
             .Text("ColorID", header: "Color", iseditingreadonly: true)  //8
             .Text("SizeSpec", header: "Size", iseditingreadonly: true)  //9
@@ -328,7 +328,8 @@ namespace Sci.Production.Warehouse
             ,a.UsedQty unitqty,A.Qty,A.NETQty,A.NETQty+A.lossQty useqty ,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,a.Complete
             ,a.ATA,a.OrderIdList,a.InQty,a.StockUnit
             ,a.OutQty,a.AdjustQty,a.InQty - a.OutQty + a.AdjustQty balanceqty,a.LInvQty,a.LObQty,a.ALocation,a.BLocation 
-            ,s.ThirdCountry,a.junk,fabric.BomTypeCalculate,'' AS description,s.currencyid
+            ,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
+            ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.refno,a.seq1,a.seq2),1,0)) AS description,s.currencyid
             ,(Select cast(tmp.Remark as nvarchar)+',' 
                         from (select b1.remark 
                                     from receiving a1 

@@ -121,7 +121,7 @@ namespace Sci.Production.Warehouse
 
             #endregion 必輸檢查
 
-            foreach (DataRow row in ((DataTable)detailgridbs.DataSource).ToList())
+            foreach (DataRow row in DetailDatas)
             {
                 if (MyUtility.Check.Empty(row["seq1"]) || MyUtility.Check.Empty(row["seq2"]))
                 {
@@ -658,6 +658,16 @@ Where a.id = '{0}'", masterID);
             var frm = new Sci.Production.Warehouse.P12_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
+            int index = detailgridbs.Find("poid", textBox1.Text.TrimEnd());
+            if (index == -1)
+            { MyUtility.Msg.WarningBox("Data was not found!!"); }
+            else
+            { detailgridbs.Position = index; }
         }
     }
 }

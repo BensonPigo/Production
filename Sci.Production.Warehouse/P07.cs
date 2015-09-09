@@ -172,7 +172,7 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            foreach (DataRow row in ((DataTable)detailgridbs.DataSource).ToList())
+            foreach (DataRow row in DetailDatas)
             {
                 if (MyUtility.Check.Empty(row["seq1"]) || MyUtility.Check.Empty(row["seq2"]))
                 {
@@ -455,7 +455,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                 {
                     CurrentDetailData["shipqty"] = e.FormattedValue;
                     CurrentDetailData["Actualqty"] = e.FormattedValue;
-                    string rate = MyUtility.GetValue.Lookup(string.Format(@"select Rate from dbo.v_unitrate v
+                    string rate = MyUtility.GetValue.Lookup(string.Format(@"select Rate from dbo.View_Unitrate v
                     where v.FROM_U ='{0}' and v.TO_U='{1}'", CurrentDetailData["pounit"], CurrentDetailData["stockunit"]));
                     CurrentDetailData["stockqty"] = MyUtility.Math.Round(decimal.Parse(e.FormattedValue.ToString()) * decimal.Parse(rate), 2);
                 }
@@ -471,7 +471,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     CurrentDetailData["Actualqty"] = e.FormattedValue;
-                    string rate = MyUtility.GetValue.Lookup(string.Format(@"select Rate from dbo.v_unitrate v
+                    string rate = MyUtility.GetValue.Lookup(string.Format(@"select Rate from dbo.View_Unitrate v
                     where v.FROM_U ='{0}' and v.TO_U='{1}'", CurrentDetailData["pounit"], CurrentDetailData["stockunit"]));
                     CurrentDetailData["stockqty"] = MyUtility.Math.Round(decimal.Parse(e.FormattedValue.ToString()) * decimal.Parse(rate), 2);
                 }
@@ -864,7 +864,7 @@ Where a.id = '{0}' ", masterID);
 , '' as location
 from dbo.Export_Detail a inner join dbo.PO_Supp_Detail b on a.PoID= b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
 inner join orders c on c.id = a.poid
-inner join v_unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit
+inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit
 where a.id='{0}'", CurrentMaintain["exportid"]), out dt);
                     foreach (var item in dt.ToList())
                     {
@@ -933,6 +933,16 @@ where a.id='{0}'", CurrentMaintain["exportid"]), out dt);
             var frm = new Sci.Production.Warehouse.P07_UpdateActualWeight(detailgridbs.DataSource, CurrentMaintain["id"].ToString());
             frm.ShowDialog(this);
             this.RenewData();
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
+            int index = detailgridbs.Find("poid", textBox1.Text.TrimEnd());
+            if (index == -1)
+            { MyUtility.Msg.WarningBox("Data was not found!!"); }
+            else
+            { detailgridbs.Position = index; }
         }
 
     }

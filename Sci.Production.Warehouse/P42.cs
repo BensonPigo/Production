@@ -168,7 +168,7 @@ namespace Sci.Production.Warehouse
 	UNION ALL
 	SELECT B1.ATA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
 		WHERE a1.ID = B.ID AND a1.DetailType ='B' AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
-		AND LEFT(a1.StockPOID,13) = b1.ID and SUBSTRING(a1.StockPOID,14,3) = b1.SEQ1 and right(a1.StockPOID,2) = b1.SEQ2
+		AND a1.StockPOID = b1.ID and a1.Stockseq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
 	) tmp) as ETA
 	,MIN(a.SewInLine) as fstSewinline
     ,b.Special AS cutType
@@ -199,7 +199,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)";
 	UNION ALL
 	SELECT B1.ATA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
 		WHERE a1.ID = B.ID AND a1.DetailType ='B' AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
-		AND LEFT(a1.StockPOID,13) = b1.ID and SUBSTRING(a1.StockPOID,14,3) = b1.SEQ1 and right(a1.StockPOID,2) = b1.SEQ2
+		AND a1.StockPOID = b1.ID and a1.Stockseq1 = b1.SEQ1 and a1.Stockseq2 = b1.SEQ2
 	) tmp) is not null";
             else
             {
@@ -211,7 +211,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)";
 	UNION ALL
 	SELECT B1.ATA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
 		WHERE a1.ID = B.ID AND a1.DetailType ='B' AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
-		AND LEFT(a1.StockPOID,13) = b1.ID and SUBSTRING(a1.StockPOID,14,3) = b1.SEQ1 and right(a1.StockPOID,2) = b1.SEQ2
+		AND a1.StockPOID = b1.ID and a1.Stockseq1 = b1.SEQ1 and a1.Stockseq2 = b1.SEQ2
 	) tmp) is not null";
             }
             sqlcmd += @" ORDER BY A.FactoryID,A.POID";
