@@ -186,7 +186,8 @@ order by OutputDate
         //FTY GSD
         private void button1_Click(object sender, EventArgs e)
         {
-
+            Sci.Production.IE.P01 callNextForm = new Sci.Production.IE.P01(CurrentMaintain["StyleID"].ToString(), CurrentMaintain["ComboType"].ToString());
+            callNextForm.ShowDialog(this);
         }
 
         //Check List
