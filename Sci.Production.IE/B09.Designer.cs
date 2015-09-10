@@ -105,10 +105,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(900, 486);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.label29);
@@ -168,12 +164,6 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(900, 448);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 448);
-            this.detailbtm.Size = new System.Drawing.Size(900, 38);
             // 
             // browse
             // 
@@ -200,7 +190,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(900, 486);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Picture";
             // 
@@ -209,7 +199,7 @@
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button3.Location = new System.Drawing.Point(588, 7);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(59, 30);
+            this.button3.Size = new System.Drawing.Size(63, 30);
             this.button3.TabIndex = 7;
             this.button3.Text = "Delete";
             this.button3.UseVisualStyleBackColor = true;
@@ -220,7 +210,7 @@
             this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button4.Location = new System.Drawing.Point(522, 7);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(59, 30);
+            this.button4.Size = new System.Drawing.Size(63, 30);
             this.button4.TabIndex = 6;
             this.button4.Text = "Attach";
             this.button4.UseVisualStyleBackColor = true;
@@ -239,7 +229,7 @@
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button2.Location = new System.Drawing.Point(139, 7);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(59, 30);
+            this.button2.Size = new System.Drawing.Size(63, 30);
             this.button2.TabIndex = 4;
             this.button2.Text = "Delete";
             this.button2.UseVisualStyleBackColor = true;
@@ -250,7 +240,7 @@
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button1.Location = new System.Drawing.Point(73, 7);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(59, 30);
+            this.button1.Size = new System.Drawing.Size(63, 30);
             this.button1.TabIndex = 3;
             this.button1.Text = "Attach";
             this.button1.UseVisualStyleBackColor = true;
@@ -267,7 +257,7 @@
             // label31
             // 
             this.label31.Lines = 0;
-            this.label31.Location = new System.Drawing.Point(458, 7);
+            this.label31.Location = new System.Drawing.Point(458, 10);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(61, 23);
             this.label31.TabIndex = 1;
@@ -276,7 +266,7 @@
             // label30
             // 
             this.label30.Lines = 0;
-            this.label30.Location = new System.Drawing.Point(9, 7);
+            this.label30.Location = new System.Drawing.Point(9, 10);
             this.label30.Name = "label30";
             this.label30.Size = new System.Drawing.Size(61, 23);
             this.label30.TabIndex = 0;
