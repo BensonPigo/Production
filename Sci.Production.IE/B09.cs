@@ -37,8 +37,8 @@ namespace Sci.Production.IE
             this.displayBox11.Text = MyUtility.GetValue.Lookup(selectCommand, null);
             this.numericBox8.Text = MyUtility.GetValue.Lookup("MachineAllow", this.displayBox2.Text.ToString(), "MachineType", "ID");
             this.numericBox9.Text = MyUtility.GetValue.Lookup("ManAllow", this.displayBox2.Text.ToString(), "MachineType", "ID");
-            this.pictureBox1.ImageLocation = this.CurrentMaintain["Picture1"].ToString();
-            this.pictureBox2.ImageLocation = this.CurrentMaintain["Picture2"].ToString();
+            this.pictureBox1.ImageLocation = MyUtility.Check.Empty(CurrentMaintain["Picture1"]) ? null : destination_path + CurrentMaintain["Picture1"].ToString();
+            this.pictureBox2.ImageLocation = MyUtility.Check.Empty(CurrentMaintain["Picture2"]) ? null : destination_path + CurrentMaintain["Picture2"].ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)
