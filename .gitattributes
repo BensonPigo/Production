@@ -99,6 +99,9 @@ Sci.Production.Class/txtfactory.Designer.cs -text
 Sci.Production.Class/txtfactory.cs -text
 Sci.Production.Class/txtlocalitem.Designer.cs -text
 Sci.Production.Class/txtlocalitem.cs -text
+Sci.Production.Class/txtmiscbrand.cs -text
+Sci.Production.Class/txtmiscbrand.designer.cs -text
+Sci.Production.Class/txtmiscbrand.resx -text
 Sci.Production.Class/txtmultifactory.Designer.cs -text
 Sci.Production.Class/txtmultifactory.cs -text
 Sci.Production.Class/txtpayterm_fty.Designer.cs -text
