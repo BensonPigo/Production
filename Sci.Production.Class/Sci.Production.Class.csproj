@@ -111,6 +111,12 @@
     <Compile Include="txtlocalitem.Designer.cs">
       <DependentUpon>txtlocalitem.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtmiscbrand.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtmiscbrand.designer.cs">
+      <DependentUpon>txtmiscbrand.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtmultifactory.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -282,6 +288,9 @@
     <EmbeddedResource Include="txtcountry.resx">
       <DependentUpon>txtcountry.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtmiscbrand.resx">
+      <DependentUpon>txtmiscbrand.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="txtpaytermar.resx">
       <DependentUpon>txtpaytermar.cs</DependentUpon>
