@@ -286,6 +286,11 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), settings: size)
                 .Numeric("ShipQty", header: "Qty")
                 .Numeric("BalanceQty", header: "Bal. Qty", iseditingreadonly: true);
+
+            for (int i = 0; i < this.detailgrid.ColumnCount; i++)
+            {
+                this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
         }
 
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
