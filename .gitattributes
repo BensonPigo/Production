@@ -232,6 +232,12 @@ Sci.Production.Logistic/Properties/Resources.Designer.cs -text
 Sci.Production.Logistic/Properties/Resources.resx -text
 Sci.Production.Logistic/Resources/trffc15.bmp -text
 Sci.Production.Logistic/Sci.Production.Logistic.csproj -text
+Sci.Production.Miscellaneous/B01.Designer.cs -text
+Sci.Production.Miscellaneous/B01.cs -text
+Sci.Production.Miscellaneous/B01.resx -text
+Sci.Production.Miscellaneous/B02.cs -text
+Sci.Production.Miscellaneous/B02.designer.cs -text
+Sci.Production.Miscellaneous/B02.resx -text
 Sci.Production.Miscellaneous/Properties/AssemblyInfo.cs -text
 Sci.Production.Miscellaneous/Sci.Production.Miscellaneous.csproj -text
 Sci.Production.PPIC/B01.Designer.cs -text
