@@ -274,6 +274,11 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
             };
 
             #endregion
+
+            for (int i = 0; i < this.detailgrid.ColumnCount; i++)
+            {
+                this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
         }
 
         protected override void ClickNewAfter()
