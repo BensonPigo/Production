@@ -420,7 +420,7 @@ namespace Sci.Production.Logistic
                         break;
                     default:
                         comboBox2.DataSource = comboBox2_RowSource1;
-                        gridData.DefaultView.RowFilter = "'";
+                        gridData.DefaultView.RowFilter = "";
                         break;
                 }
             }
