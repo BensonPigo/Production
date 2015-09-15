@@ -146,16 +146,18 @@ namespace Sci.Production.PPIC
                 grid1.Columns[20].DefaultCellStyle.BackColor = Color.Pink;
             }
 
-            grid1.RowsAdded += (s, e) =>
+            grid1.RowPostPaint += (s, e) =>
             {
-                for (int i = 0; i < e.RowCount; i++)
+                DataRow dr = grid1.GetDataRow(e.RowIndex);
+                if (grid1.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
+
+                int i = e.RowIndex;
+                if (dr["MTLDelay"].ToString() == "Y")
                 {
-                    if (((DataTable)listControlBindingSource1.DataSource).Rows[i]["MTLDelay"].ToString() == "Y")
-                    {
-                        grid1.Rows[i].Cells[0].Style.BackColor = Color.FromArgb(255,255,128);
-                    }
+                    grid1.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
                 }
             };
+            
             grid1.CellToolTipTextNeeded += (s, e) =>
                 {
                     if (e.ColumnIndex == 7)
@@ -163,10 +165,6 @@ namespace Sci.Production.PPIC
                         e.ToolTipText = "material shipment arranged by L/ETA";
                     }
                 };
-            for (int i = 0; i < this.grid1.ColumnCount; i++)
-            {
-                this.grid1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            }
         }
 
         //Query
