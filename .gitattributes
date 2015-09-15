@@ -701,6 +701,7 @@ _Dll/Ict.dll -text
 _Dll/Microsoft.ReportViewer.Common.dll -text
 _Dll/Microsoft.ReportViewer.ProcessingObjectModel.dll -text
 _Dll/Microsoft.ReportViewer.WinForms.dll -text
+_Dll/Sci.Machine.Class.dll -text
 _Dll/Sci.Proj.dll -text
 _Dll/Sci.dll -text
 _Dll/en/Ict.Win.App.resources.dll -text
