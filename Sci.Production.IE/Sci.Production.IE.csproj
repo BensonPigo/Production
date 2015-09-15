@@ -149,6 +149,42 @@
     <Compile Include="B09.Designer.cs">
       <DependentUpon>B09.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01.Designer.cs">
+      <DependentUpon>P01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_ArtworkSummary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_ArtworkSummary.Designer.cs">
+      <DependentUpon>P01_ArtworkSummary.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_Copy.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_Copy.Designer.cs">
+      <DependentUpon>P01_Copy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_History.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_History.Designer.cs">
+      <DependentUpon>P01_History.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_SelectOperationCode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_SelectOperationCode.Designer.cs">
+      <DependentUpon>P01_SelectOperationCode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_Sketch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_Sketch.Designer.cs">
+      <DependentUpon>P01_Sketch.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -203,6 +239,24 @@
     <EmbeddedResource Include="B09.resx">
       <DependentUpon>B09.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P01.resx">
+      <DependentUpon>P01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_ArtworkSummary.resx">
+      <DependentUpon>P01_ArtworkSummary.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_Copy.resx">
+      <DependentUpon>P01_Copy.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_History.resx">
+      <DependentUpon>P01_History.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_SelectOperationCode.resx">
+      <DependentUpon>P01_SelectOperationCode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_Sketch.resx">
+      <DependentUpon>P01_Sketch.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P02.resx">
       <DependentUpon>P02.cs</DependentUpon>
     </EmbeddedResource>
@@ -220,6 +274,18 @@
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0E35FD31-4A86-4D4E-A393-B6C5E3D7C956}</Project>
       <Name>Sci.Production.Class</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.PPIC\Sci.Production.PPIC.csproj">
+      <Project>{b35ffbd5-b004-4929-bf1d-75e2ee403793}</Project>
+      <Name>Sci.Production.PPIC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
+      <Project>{4A2F17B7-EFFE-454C-8F1E-9EEBEF170BC0}</Project>
+      <Name>Sci.Production.PublicPrg</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Tools\Sci.Production.Tools.csproj">
+      <Project>{F1A7F278-EFA9-4DDA-B68A-202093B2444C}</Project>
+      <Name>Sci.Production.Tools</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
