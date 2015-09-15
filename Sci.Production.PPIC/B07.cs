@@ -26,11 +26,18 @@ namespace Sci.Production.PPIC
             this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
         }
 
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            button1.Enabled = CurrentMaintain == null ? false : true;
+        }
+
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.displayBox2.Text = Convert.ToDateTime(CurrentMaintain["Date"]).ToString("dddd");
+            this.displayBox2.Text = MyUtility.Check.Empty(CurrentMaintain["Date"])?"": Convert.ToDateTime(CurrentMaintain["Date"]).ToString("dddd");
             this.button1.ForeColor = Color.Blue;
+            button1.Enabled = CurrentMaintain == null ? false : true;
         }
 
         protected override void ClickEditAfter()
