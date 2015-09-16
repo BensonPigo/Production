@@ -17,7 +17,7 @@ namespace Sci.Production.Miscellaneous
         }
         protected override bool ClickEditBefore()
         {
-            if (CurrentMaintain["Local"].ToString() == "0")
+            if (CurrentMaintain["Local"].ToString() == "False")
             {
                 MyUtility.Msg.WarningBox("Only Local Supplier can modify.");
                 return false;

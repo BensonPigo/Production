@@ -105,9 +105,11 @@
             // 
             this.checkBox2.AutoSize = true;
             this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "Local", true));
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkBox2.IsSupportEditMode = false;
             this.checkBox2.Location = new System.Drawing.Point(280, 46);
             this.checkBox2.Name = "checkBox2";
+            this.checkBox2.ReadOnly = true;
             this.checkBox2.Size = new System.Drawing.Size(117, 21);
             this.checkBox2.TabIndex = 7;
             this.checkBox2.Text = "Local Supplier";

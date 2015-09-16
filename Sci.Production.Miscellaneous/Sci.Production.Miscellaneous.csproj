@@ -69,6 +69,9 @@
     <Reference Include="Sci">
       <HintPath>..\..\..\Machine\trunk\_Dll\Sci.dll</HintPath>
     </Reference>
+    <Reference Include="Sci.Machine.Class">
+      <HintPath>..\_Dll\Sci.Machine.Class.dll</HintPath>
+    </Reference>
     <Reference Include="Sci.Proj">
       <HintPath>..\..\..\Machine\trunk\_Dll\Sci.Proj.dll</HintPath>
     </Reference>
@@ -96,6 +99,12 @@
     <Compile Include="B02.designer.cs">
       <DependentUpon>B02.cs</DependentUpon>
     </Compile>
+    <Compile Include="B03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B03.designer.cs">
+      <DependentUpon>B03.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -103,6 +112,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B02.resx">
       <DependentUpon>B02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B03.resx">
+      <DependentUpon>B03.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

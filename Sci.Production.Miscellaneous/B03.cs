@@ -9,33 +9,26 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Miscellaneous
 {
-    public partial class B02 : Sci.Win.Tems.Input1
+    public partial class B03 : Sci.Win.Tems.Input1
     {
         private Stream fileOpened = null;
         private DialogResult deleteResult1;
         private MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-        string clippath = MyUtility.GetValue.Lookup("Select picpath from system", null);
+        string clippath = MyUtility.GetValue.Lookup("Select clippath from system", null);
         string pic = "";
         private string DelepicPath1;
 
-        public B02(ToolStripMenuItem menuitem)
+        public B03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = "PurchaseFrom = 'L'";
-            Dictionary<String, String> comboBox1_RowSource2 = new Dictionary<string, string>();
-            comboBox1_RowSource2.Add("Maintenance", "Maintenance");
-            comboBox1_RowSource2.Add("General Affair", "General Affair");
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
-            comboBox1.DataSource = new BindingSource(comboBox1_RowSource2, null);
+            this.DefaultFilter = "PurchaseFrom = 'T'";
         }
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
             if (MyUtility.Check.Empty(CurrentMaintain["Pic"])) this.pictureBox1.ImageLocation = "";
             else this.pictureBox1.ImageLocation = clippath + this.CurrentMaintain["Pic"].ToString();
-
             if ((decimal)CurrentMaintain["InspLeadTime"]==0)
             {
                 numericBox1.Text = MyUtility.GetValue.Lookup("Select MiscInspdate from System");
@@ -49,60 +42,8 @@ namespace Sci.Production.Miscellaneous
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
             this.numericBox1.Text = CurrentMaintain["InspleadTime"].ToString();
-            pic = CurrentMaintain["Pic"].ToString();
-        }
-        protected override void ClickNewAfter()
-        {
-            base.ClickNewAfter();
-            CurrentMaintain["PurchaseFrom"] = "L";
-            CurrentMaintain["PurchaseType"] = "General Affair";
-        }
-        protected override bool ClickSaveBefore()
-        {
-            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
-            {
-                MyUtility.Msg.WarningBox("<ID> can not be empty.");
-                textBox1.Focus();
-                return false;
-            }
-            if (MyUtility.Check.Empty(CurrentMaintain["MiscBrandid"]))
-            {
-                MyUtility.Msg.WarningBox("<Brand> can not be empty.");
-                txtmiscbrand1.Focus();
-                return false;
-            }
-            if (MyUtility.Check.Empty(CurrentMaintain["Suppid"]))
-            {
-                MyUtility.Msg.WarningBox("<Supplier> can not be empty.");
-                txtsubcon1.Focus();
-                return false;
-            }
-            if (MyUtility.Check.Empty(CurrentMaintain["Unitid"]))
-            {
-                MyUtility.Msg.WarningBox("<Unit> can not be empty.");
-                txtmmsunit1.Focus();
-                return false;
-            }
-            return base.ClickSaveBefore();
-        }
-        protected override void ClickSaveAfter()
-        {
-            base.ClickSaveAfter();
-            if (pic != CurrentMaintain["Pic"].ToString())
-            {
-                DelepicPath1 = clippath + pic;
-                File.Delete(DelepicPath1);
-            }
-        }
-        private void txtsubcon1_Validated(object sender, EventArgs e)
-        {
-            if (!MyUtility.Check.Empty(txtsubcon1.TextBox1.Text))
-            {
-                string currencyId = MyUtility.GetValue.Lookup("currencyId",CurrentMaintain["Suppid"].ToString(),"LocalSupp","id");
-                CurrentMaintain["Currencyid"] = currencyId;
-            }
+            pic = CurrentMaintain["PIC"].ToString();
         }
 
         private void numericBox1_Validated(object sender, EventArgs e)
@@ -113,7 +54,15 @@ namespace Sci.Production.Miscellaneous
                 CurrentMaintain["InspleadTime"] = numericBox1.Text;
             }
         }
-
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            if (pic != CurrentMaintain["Pic"].ToString())
+            {
+                DelepicPath1 = clippath + pic;
+                File.Delete(DelepicPath1);
+            }
+        }
         private void button10_Click(object sender, EventArgs e)
         {
             //呼叫File 選擇視窗
@@ -152,8 +101,6 @@ namespace Sci.Production.Miscellaneous
             deleteResult1 = MyUtility.Msg.QuestionBox("Are you sure delete the < Picture1 >?", "Warning", buttons);
             if (deleteResult1 == System.Windows.Forms.DialogResult.Yes)
             {
-                
-
                 this.CurrentMaintain["Pic"] = string.Empty; //清空Table 資料
 
                 this.pictureBox1.ImageLocation = this.CurrentMaintain["Pic"].ToString();
