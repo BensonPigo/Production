@@ -96,6 +96,7 @@ order by td.Seq", masterID);
                                 dr["SMV"] = Convert.ToDecimal(callNextForm.p01SelectOperationCode["SMV"]) * 60;
                                 dr["IETMSSMV"] = Convert.ToDecimal(callNextForm.p01SelectOperationCode["SMV"]);
                                 dr["Frequency"] = 1;
+                                dr.EndEdit();
                             }
                             else
                             {
@@ -210,8 +211,6 @@ order by td.Seq", masterID);
                         }
                         dr.EndEdit();
                     }
-
-
                 }
             };
             #endregion
@@ -230,7 +229,6 @@ order by td.Seq", masterID);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             e.EditingControl.Text = item.GetSelectedString();
-
                         }
                     }
                 }
