@@ -14,119 +14,7 @@ namespace Sci.Production.PublicPrg
     
     public static partial class Prgs
     {
-        #region GetMtlDesc
-        /// <summary>
-        /// GetMtlDesc()
-        /// </summary>
-        /// <param name="String Poid"></param>
-        /// <param name="String Seq1"></param>
-        /// <param name="String Seq2"></param>
-        /// <param name="Int ReturnFormat"></param>
-        /// <param name="Bool Repeat"></param>
-        /// <returns>String Desc</returns>
-        public static string GetMtlDesc(string Poid, string seq1, string seq2, int ReturnFormat, bool Repeat = false, System.Data.SqlClient.SqlConnection conn=null)
-        {
-            StringBuilder rtn = new StringBuilder();
-            DataRow dr;
-            DataTable dt,dt2;
-            if (null == conn)
-            {
-                MyUtility.Check.Seek(string.Format(@"select StockPOID+StockSeq1+StockSeq2,scirefno,SuppColor,colorid,ColorDetail,sizespec
-                                            ,special,SizeUnit,remark from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'
-union all
-select '',scirefno,'',colorid,'',sizespec
-                                            ,special,'',remark from po_artwork where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'"
-                                                , Poid, seq1, seq2), out dr);
-                if (MyUtility.Check.Empty(dr)) return "";
-            }
-            else
-            {
-                DBProxy.Current.SelectByConn(conn, string.Format(@"select StockPOID+StockSeq1+StockSeq2,scirefno,SuppColor,colorid,ColorDetail,sizespec
-                                            ,special,SizeUnit,remark 
-from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'
-union all
-select '',scirefno,'',colorid,'',sizespec
-                                            ,special,'',remark 
-from PO_Artwork where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'"
-                                                , Poid, seq1, seq2), out dt);
-                if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return "";
-                dr = dt.Rows[0];
-            }
-            //if (seq1.Substring(0, 1) == "7")
-            //{
-            //    rtn = "**PLS USE STOCK FROM SP#:"
-            //        + dr["StockPOID"].ToString()
-            //        + "**" + Environment.NewLine;
-            //}
-
-            switch (ReturnFormat)
-            {
-                case 1:
-                    break;
-                case 2: //Fabric.DescDetail 全部顯示
-//                    rtn = rtn + MyUtility.GetValue.Lookup(string.Format(@"
-//                                        select DescDetail from fabric where SCIRefno = '{0}'", dr["scirefno"].ToString().Replace("'", "''")));
-                    if (null == conn)
-                    {
-                        DBProxy.Current.Select(null, string.Format(@"
-                                        select DescDetail from fabric where SCIRefno = '{0}'", dr["scirefno"].ToString().Replace("'", "''")), out dt);
-                    }
-                    else
-                    {
-                        DBProxy.Current.SelectByConn(conn, string.Format(@"
-                                        select DescDetail from fabric where SCIRefno = '{0}'", dr["scirefno"].ToString().Replace("'", "''")), out dt);
-                    }
-                    if (!MyUtility.Check.Empty(dt) && dt.Rows.Count > 0)
-                    { rtn.Append( dt.Rows[0][0].ToString()); }
-                    break;
-                case 3: // 只顯示Fabric.DescDetail的第一列
-                    if (!Repeat && !MyUtility.Check.Empty(dr["scirefno"]))
-                    {
-                        string DescDetail = MyUtility.GetValue.Lookup(string.Format(@"
-                                        select DescDetail from fabric where SCIRefno = '{0}'", dr["scirefno"].ToString().Replace("'","''")));
-
-                        string[] descs = DescDetail.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-                        if (descs.Length > 0)
-                        {
-                            rtn.Append(descs[0]);
-                        }
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-
-            if (Repeat || ReturnFormat == 2 || ReturnFormat==4)
-            {
-                rtn.Append(dr["SuppColor"].ToString().TrimEnd());
-                string colorid = dr["colorid"].ToString();
-                string[] colors = colorid.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                if (colors.Length > 0)
-                {
-                    for (int i = 0; i < colors.Length; i++)
-                    {
-                        DBProxy.Current.SelectByConn(conn, string.Format(@"select name from color,orders 
-                                                                                                    where color.brandid = orders.brandid 
-                                                                                                            and orders.brandid= '{0}' 
-                                                                                                            and color.id = '{1}'", Poid, colors[i].ToString()), out dt);
-                        if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) continue;
-                        rtn.Append( colors[i] + "-" + dt.Rows[0][0].ToString());
-                    }
-                }
-                if (!MyUtility.Check.Empty(dr["ColorDetail"].ToString())) { rtn.Append( dr["ColorDetail"].ToString() + Environment.NewLine); }
-                if (!MyUtility.Check.Empty(dr["sizespec"].ToString())) { rtn.Append(dr["sizespec"].ToString() + Environment.NewLine); }
-                if (!MyUtility.Check.Empty(dr["SizeUnit"].ToString())) { rtn.Append( dr["SizeUnit"].ToString() + Environment.NewLine); }
-                if (!MyUtility.Check.Empty(dr["Special"].ToString())) { rtn.Append(dr["Special"].ToString() + Environment.NewLine); }
-                if (!MyUtility.Check.Empty(dr["Remark"].ToString())) { rtn.Append( dr["Remark"].ToString() + Environment.NewLine); }
-
-            }
-            return rtn.ToString() ;
-        }
-        #endregion
-
-        #region UpdatePO_Supp_Detail
+        #region -- UpdatePO_Supp_Detail --
         /// <summary>
         /// UpdatePO_Supp_Detail()
         /// *	更新 Po3 的庫存
@@ -277,7 +165,7 @@ where id = '{0}' and seq1 = '{1}' and seq2='{2}' ;", Poid, seq1, seq2, tablename
         /// <param name="bool encoded"></param>
         /// <param name="location"></param>
         /// <returns>String Sqlcmd</returns>
-        #region UpdateFtyInventory
+        #region -- UpdateFtyInventory --
         public static string UpdateFtyInventory(int type, string Poid, string seq1, string seq2
             , decimal qty, string roll, string dyelot, string stocktype, bool encoded, string location = null)
         {
@@ -446,7 +334,7 @@ when not matched then
         }
         #endregion
 
-        #region SelePoItem
+        #region -- SelePoItem --
         /// <summary>
         /// 右鍵開窗選取採購項
         /// </summary>
@@ -484,7 +372,7 @@ where id ='{0}'", poid);
         }
         #endregion 
 
-        #region SeleShopfloorItem
+        #region -- SeleShopfloorItem --
         /// <summary>
         /// 右鍵開窗選取採購項
         /// </summary>
