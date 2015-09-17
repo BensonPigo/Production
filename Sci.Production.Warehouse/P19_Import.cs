@@ -102,7 +102,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", sp_b
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
                 .Text("roll", header: "Roll#", iseditingreadonly: true, width: Widths.AnsiChars(10)) //2
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //3
-                .Text("Description", header: "Description", iseditingreadonly: true) //4
+                .EditText("Description", header: "Description", iseditingreadonly: true) //4
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //5
                 .Numeric("stockqty", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) //6
                 .Numeric("qty", header: "Out Qty", decimal_places: 2, integer_places: 10,settings:ns)  //7

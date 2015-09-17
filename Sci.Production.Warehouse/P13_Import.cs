@@ -49,13 +49,13 @@ namespace Sci.Production.Warehouse
                  strSQLCmd.Append(string.Format(@"select 0 as selected ,'' id, a.id as PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
 ,a.FabricType
 ,a.stockunit
-,'' Description
+,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
 ,c.Roll
 ,c.Dyelot
 ,0.00 as Qty
 ,'B' StockType
 ,c.ukey
-,'' location
+,(select cast(mtllocationid as varchar)+',' from (select mtllocationid from ftyinventory_detail where ukey = c.ukey))t for xml path('')) as location
 ,c.inqty-c.outqty + c.adjustqty as balance
 from dbo.PO_Supp_Detail a 
 inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
@@ -72,14 +72,6 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", sp))
                     if (dtArtwork.Rows.Count == 0)
                     { MyUtility.Msg.WarningBox("Data not found!!"); }
                     listControlBindingSource1.DataSource = dtArtwork;
-                    foreach (var item in dtArtwork.ToList())
-                    {
-                        item["Description"] = PublicPrg.Prgs.GetMtlDesc(item["poid"].ToString(), item["seq1"].ToString()
-                                                        , item["seq2"].ToString(), 2, false);
-                        //getlocation
-                        if (MyUtility.Check.Empty(item["ukey"])) continue;
-                        item["location"] = PublicPrg.Prgs.GetLocation(int.Parse(item["ukey"].ToString()));
-                    }
                     dtArtwork.DefaultView.Sort = "seq1,seq2,location,dyelot,balance desc";
                 }
                 else { ShowErr(strSQLCmd.ToString(), result); }
@@ -129,7 +121,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", sp))
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //5
                 .Numeric("balance", header: "Stock Qty", iseditable: true, decimal_places: 2, integer_places: 10) //6
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10,settings:ns)  //7
-               .Text("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)); //8
+               .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)); //8
 
             this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
 

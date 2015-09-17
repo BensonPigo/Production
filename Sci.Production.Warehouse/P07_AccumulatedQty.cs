@@ -28,10 +28,12 @@ namespace Sci.Production.Warehouse
             selectCommand1.Append(string.Format(@"select poid,seq1,seq2,sum(shipqty) shipqty,sum(accu_rcv) received
 , sum(rcv) receiving ,description 
 from (
-select a.PoId,a.Seq1,a.Seq2,0 as shipqty,0 as accu_rcv,sum(a.StockQty) as rcv,'' as description  
+select a.PoId,a.Seq1,a.Seq2,0 as shipqty,0 as accu_rcv,sum(a.StockQty) as rcv
+,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]  
 from dbo.Receiving_Detail a where id='{0}' group by a.PoId,a.Seq1,a.Seq2
 union all
-select a.PoId,a.Seq1,a.Seq2,0 as shipqty,sum(a.StockQty) as accu_rcv ,0 as rcv,'' as description  
+select a.PoId,a.Seq1,a.Seq2,0 as shipqty,sum(a.StockQty) as accu_rcv ,0 as rcv
+,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 from dbo.Receiving_Detail a
 ,dbo.Receiving b
 ,(select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail where id='{0}') c 
@@ -42,7 +44,7 @@ union all" + Environment.NewLine,dr["id"].ToString(),dr["exportid"].ToString()))
             if (MyUtility.Check.Empty(dr["exportid"].ToString()))
             {
                 selectCommand1.Append(string.Format(@"select a.id poid,a.Seq1,a.seq2,(a.Qty+a.Foc) as shipqty,0 as accu_rcv,0 as rcv
-,'' as description
+,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [description]
 from dbo.PO_Supp_Detail a,(select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail where id='{0}') c 
  where a.id = c.poid and a.seq1 = c.seq1 and a.seq2 = c.seq2) tmp
 group by poid,seq1,seq2,description", dr["id"].ToString()));
@@ -50,23 +52,17 @@ group by poid,seq1,seq2,description", dr["id"].ToString()));
             else
             {
                 selectCommand1.Append(string.Format(@"select a.PoID,a.Seq1,a.seq2,(a.Qty+a.Foc) as shipqty,0 as accu_rcv,0 as rcv
-,'' as description
+,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 from dbo.Export_Detail a where id='{0}') tmp
 group by poid,seq1,seq2,description"
                                 , dr["exportid"].ToString()));
             }
             DataTable selectDataTable1;
             MyUtility.Msg.WaitWindows("Data loading...");
+            DBProxy.Current.DefaultTimeout = 1200;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
             if (selectResult1 == false) { ShowErr(selectCommand1.ToString(), selectResult1); }
-            System.Data.SqlClient.SqlConnection conn;
-            DBProxy.Current.OpenConnection(null, out conn);
-            foreach (DataRow item in selectDataTable1.Rows)
-            {
-                item["Description"] = PublicPrg.Prgs.GetMtlDesc(item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), 3, false, conn);
-            }
-            conn.Close();
-            conn.Dispose();
+            DBProxy.Current.DefaultTimeout = 0;
             MyUtility.Msg.WaitClear();
             selectDataTable1.ColumnsDecimalAdd("variance", 0m, "received+receiving-shipqty");
             bindingSource1.DataSource = selectDataTable1;
@@ -82,7 +78,7 @@ group by poid,seq1,seq2,description"
                  .Numeric("received", header: "Accu. Rcvd.", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2)
                  .Numeric("receiving", header: "Rcvd. Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2)
                  .Numeric("variance", header: "Variance", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2)
-                 .Text("Description", header: "Description", width: Widths.AnsiChars(40))
+                 .EditText("Description", header: "Description", width: Widths.AnsiChars(40))
                  ;
         }
 

@@ -206,10 +206,6 @@ namespace Sci.Production.Warehouse
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
-            foreach (DataRow item in e.Details.Rows)
-            {
-                item["Description"] = PublicPrg.Prgs.GetMtlDesc(item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), 3, false);
-            }
             return base.OnRenewDataDetailPost(e);
         }
 
@@ -278,7 +274,7 @@ namespace Sci.Production.Warehouse
                         }
                         else
                         {
-                            if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,qty from po_artwork
+                            if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,qty,dbo.getmtldesc(id,seq1,seq2,2,0) as [description] from po_artwork
 where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3), e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr, null))
                             {
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
@@ -292,7 +288,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                                 CurrentDetailData["seq2"] = e.FormattedValue.ToString().Substring(3, 2);
                                 CurrentDetailData["pounit"] = dr["pounit"];
                                 CurrentDetailData["stockunit"] = dr["stockunit"];
-                                CurrentDetailData["Description"] = Prgs.GetMtlDesc(CurrentDetailData["poid"].ToString(), CurrentDetailData["seq1"].ToString(), CurrentDetailData["seq2"].ToString(), 3);
+                                CurrentDetailData["Description"] = dr["description"];
                                 CurrentDetailData["useqty"] = dr["qty"];
                             }
                         }
@@ -323,7 +319,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts)  //1
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9))    //2
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5))    //3
-            .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
+            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //5
             .Numeric("useqty", header: "Use Qty", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
             .Numeric("stockqty", header: "Receiving Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //7

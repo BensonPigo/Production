@@ -27,7 +27,7 @@ namespace Sci.Production.Warehouse
             StringBuilder selectCommand1 = new StringBuilder();
             selectCommand1.Append(string.Format(@"select A.PoId,A.Seq1,A.Seq2
 ,sum(a.Qty) as Qty
-,'' Description
+,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
 from dbo.Issue_Detail a 
 where a.Id = '{0}'
 GROUP BY A.PoId,A.Seq1,A.Seq2", dr["id"].ToString()));
@@ -38,15 +38,6 @@ GROUP BY A.PoId,A.Seq1,A.Seq2", dr["id"].ToString()));
             
             if (selectResult1 == false)
             { ShowErr(selectCommand1.ToString(), selectResult1); }
-
-            System.Data.SqlClient.SqlConnection conn;
-            DBProxy.Current.OpenConnection(null, out conn);
-            foreach (DataRow item in selectDataTable1.Rows)
-            {
-                item["Description"] = PublicPrg.Prgs.GetMtlDesc(item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), 2, false, conn);
-            }
-            conn.Close();
-            conn.Dispose();
             MyUtility.Msg.WaitClear();
 
             bindingSource1.DataSource = selectDataTable1;
@@ -59,7 +50,7 @@ GROUP BY A.PoId,A.Seq1,A.Seq2", dr["id"].ToString()));
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))
                  .Numeric("qty", header: "Accu. Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2)
-                 .Text("Description", header: "Description", width: Widths.AnsiChars(40))
+                 .EditText("Description", header: "Description", width: Widths.AnsiChars(40))
                  ;
         }
 

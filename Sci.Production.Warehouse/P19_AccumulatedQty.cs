@@ -94,7 +94,7 @@ group by cte.Poid,seq1,seq2
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))
                  .Numeric("requestqty", header: "Request Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2)
                  .Numeric("qty", header: "Accu. Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2)
-                 .Text("Description", header: "Description", width: Widths.AnsiChars(40))
+                 .EditText("Description", header: "Description", width: Widths.AnsiChars(40))
                  ;
         }
 

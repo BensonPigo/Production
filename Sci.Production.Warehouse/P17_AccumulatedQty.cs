@@ -51,7 +51,7 @@ GROUP BY A.PoId,A.Seq1,A.Seq2", dr["id"].ToString()));
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))
                  .Numeric("qty", header: "Accu. Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2)
-                 .Text("Description", header: "Description", width: Widths.AnsiChars(40))
+                 .EditText("Description", header: "Description", width: Widths.AnsiChars(40))
                  ;
         }
 

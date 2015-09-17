@@ -357,7 +357,7 @@ namespace Sci.Production.Warehouse
                     }
                     else
                     {
-                        sqlcmd = string.Format(@"select e.poid,e.seq1+e.seq2 as seq, e.Refno, e.Description
+                        sqlcmd = string.Format(@"select e.poid,e.seq1+e.seq2 as seq, e.Refno, dbo.getmtldesc(e.poid,e.seq1,e.seq2,2,0) as [Description]
 ,p.ColorID
 ,(SELECT eta from dbo.export where id = e.id) as eta
 ,p.InQty,p.pounit,p.StockUnit,p.OutQty,p.AdjustQty
@@ -370,12 +370,7 @@ from dbo.Export_Detail e left join dbo.PO_Supp_Detail p on e.PoID = p.ID and e.S
 where e.PoID ='{0}' and e.id = '{1}'", CurrentDetailData["poid"], CurrentMaintain["exportid"]);
 
                         DBProxy.Current.Select(null, sqlcmd, out poitems);
-                        string tmpdesc = "";
-                        foreach (DataRow drpo in poitems.ToList())
-                        {
-                            tmpdesc = PublicPrg.Prgs.GetMtlDesc(drpo["poid"].ToString(), drpo["seq1"].ToString(), drpo["seq2"].ToString(), 3, false);
-                            if (!MyUtility.Check.Empty(tmpdesc)) drpo["Description"] = tmpdesc;
-                        }
+                       
                         Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(poitems
                             , "Seq,refno,description,colorid,eta,inqty,stockunit,outqty,adjustqty,balanceqty,linvqty"
                             , "6,8,8,8,10,6,6,6,6,6,6", CurrentDetailData["seq"].ToString(), "Seq,Ref#,Description,Color,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty");
@@ -395,7 +390,7 @@ where e.PoID ='{0}' and e.id = '{1}'", CurrentDetailData["poid"], CurrentMaintai
             ts.CellValidating += (s, e) =>
                 {
                     if (!this.EditMode) return;
-                    if (String.Compare(e.FormattedValue.ToString(), CurrentDataRow["seq"].ToString()) != 0)
+                    if (String.Compare(e.FormattedValue.ToString(), CurrentDetailData["seq"].ToString()) != 0)
                     {
                         if (MyUtility.Check.Empty(e.FormattedValue))
                         {

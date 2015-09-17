@@ -188,7 +188,7 @@ namespace Sci.Production.Warehouse
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //1
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: true)    //2
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: true)    //3
-            .Text("Description", header: "Description", width: Widths.AnsiChars(15), iseditingreadonly: true)    //4
+            .EditText("Description", header: "Description", width: Widths.AnsiChars(15), iseditingreadonly: true)    //4
             .Text("colorid", header: "Color", width: Widths.AnsiChars(5), iseditingreadonly: true)    //5
             .Text("SizeSpec", header: "SizeSpec", width: Widths.AnsiChars(5), iseditingreadonly: true)    //6
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //7
@@ -295,6 +295,7 @@ namespace Sci.Production.Warehouse
 ,a.Qty
 ,a.FromLocation
 ,a.ToLocation
+,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 from dbo.LocationTrans_detail a
 Where a.id = '{0}' ", masterID);
 

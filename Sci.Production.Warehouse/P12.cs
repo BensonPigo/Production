@@ -166,15 +166,6 @@ namespace Sci.Production.Warehouse
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
-            foreach (DataRow item in e.Details.Rows)
-            {
-                item["Description"] = PublicPrg.Prgs.GetMtlDesc(item["poid"].ToString(), item["seq1"].ToString()
-                    , item["seq2"].ToString(), 2, false);
-                //getlocation
-                if (MyUtility.Check.Empty(item["ukey"])) continue;
-                item["Location"] = PublicPrg.Prgs.GetLocation(int.Parse(item["ukey"].ToString()));
-                
-            }
             return base.OnRenewDataDetailPost(e);
         }
 
@@ -266,7 +257,8 @@ namespace Sci.Production.Warehouse
                         }
                         else
                         {
-                            if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,qty,scirefno from po_supp_detail
+                            if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,qty,scirefno
+,dbo.getmtldesc(id,seq1,seq2,2,0) as [description] from po_supp_detail
 where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3)
                                                  , e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr, null))
                             {
@@ -289,7 +281,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                                     CurrentDetailData["seq1"] = e.FormattedValue.ToString().Substring(0, 3);
                                     CurrentDetailData["seq2"] = e.FormattedValue.ToString().Substring(3, 2);
                                     CurrentDetailData["stockunit"] = dr["stockunit"];
-                                    CurrentDetailData["Description"] = Prgs.GetMtlDesc(CurrentDetailData["poid"].ToString(), CurrentDetailData["seq1"].ToString(), CurrentDetailData["seq2"].ToString(), 2);
+                                    CurrentDetailData["Description"] = dr["description"];
                                 }
                             }
                         }
@@ -318,7 +310,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
             Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13))  //0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts)  //1
-            .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //2
+            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //2
             .Text("stockunit", header: "Unit", iseditingreadonly: true)    //3
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //4
             .Text("Location", header: "Bulk Location", iseditingreadonly: true)    //5
@@ -631,13 +623,15 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
 ,p1.FabricType
 ,p1.stockunit
-,'' Description
+,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
 ,a.Roll
 ,a.Dyelot
 ,a.Qty
 ,a.StockType
 ,(select c.ukey from dbo.ftyinventory c where c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = a.stocktype) as ukey
-,'' location
+,(select mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail fd 
+where ukey=(select c.ukey from dbo.ftyinventory c where c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = a.stocktype)) t 
+for xml path('')) location
 from dbo.issue_detail a left join PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);

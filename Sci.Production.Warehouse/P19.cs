@@ -205,7 +205,7 @@ namespace Sci.Production.Warehouse
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //1
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
-            .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
+            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
             .Numeric("qty", header: "Out Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10)    //6
             .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8),iseditable:false).Get(out cbb_stocktype)    //7

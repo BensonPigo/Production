@@ -28,7 +28,7 @@ namespace Sci.Production.Warehouse
             selectCommand1.Append(string.Format(@"select a.poid, a.seq1,a.seq2
 ,sum(b.Qty * isnull(c.Rate,1)) as useqty 
 ,sum(a.StockQty) as stockqty
-,'' Description
+,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
 from dbo.Receiving_Detail a 
 inner join PO_Artwork b on a.PoId = b.id and a.seq1 = b.seq1 and a.seq2 = b.SEQ2
 left join View_Unitrate c on c.FROM_U = b.POUnit and c.TO_U = b.StockUnit
@@ -42,14 +42,6 @@ group by a.PoId,a.seq1,a.seq2", dr["id"].ToString()));
             if (selectResult1 == false)
             { ShowErr(selectCommand1.ToString(), selectResult1); }
 
-            System.Data.SqlClient.SqlConnection conn;
-            DBProxy.Current.OpenConnection(null, out conn);
-            foreach (DataRow item in selectDataTable1.Rows)
-            {
-                item["Description"] = PublicPrg.Prgs.GetMtlDesc(item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), 3, false, conn);
-            }
-            conn.Close();
-            conn.Dispose();
             MyUtility.Msg.WaitClear();
 
             bindingSource1.DataSource = selectDataTable1;
@@ -63,7 +55,7 @@ group by a.PoId,a.seq1,a.seq2", dr["id"].ToString()));
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))
                  .Numeric("useqty", header: "Use Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2)
                  .Numeric("stockqty", header: "Accu. Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2)
-                 .Text("Description", header: "Description", width: Widths.AnsiChars(40))
+                 .EditText("Description", header: "Description", width: Widths.AnsiChars(40))
                  ;
         }
 

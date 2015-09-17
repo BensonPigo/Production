@@ -233,7 +233,8 @@ namespace Sci.Production.Warehouse
                     }
                     else
                     {
-                        if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,qty,scirefno from po_supp_detail
+                        if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,qty,scirefno
+,dbo.getmtldesc(id,seq1,seq2,2,0) as [description] from po_supp_detail
 where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3)
                                              , e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr, null))
                         {
@@ -248,7 +249,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                         CurrentDetailData["Roll"] = "";
                         CurrentDetailData["Dyelot"] = "";
                         CurrentDetailData["stockunit"] = dr["stockunit"];
-                        CurrentDetailData["Description"] = Prgs.GetMtlDesc(CurrentDetailData["poid"].ToString(), CurrentDetailData["seq1"].ToString(), CurrentDetailData["seq2"].ToString(), 2);
+                        CurrentDetailData["Description"] = dr["description"];
                     }
                 }
             };
@@ -303,7 +304,7 @@ order by poid,seq1,seq2,Roll", dr["poid"].ToString(), dr["seq1"].ToString(), dr[
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6),settings:ts)  //1
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)  //2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
-            .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
+            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
             .Numeric("qty", header: "Return Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //6
             .Text("Location", header: "Bulk Location", iseditingreadonly: true)    //7

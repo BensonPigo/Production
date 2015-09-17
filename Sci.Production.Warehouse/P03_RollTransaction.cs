@@ -28,7 +28,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             this.displayBox1.Text = dr["seq1"].ToString() + "-" + dr["seq2"].ToString();
-            this.displayBox2.Text = Production.PublicPrg.Prgs.GetMtlDesc(dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString(), 2);
+            this.displayBox2.Text = MyUtility.GetValue.Lookup(string.Format("select dbo.getmtldesc('{0}','{1}','{2}',2,0)", dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString()));
             this.numericBox1.Value = decimal.Parse(dr["inqty"].ToString());
             this.numericBox2.Value = decimal.Parse(dr["outqty"].ToString());
             this.numericBox3.Value = decimal.Parse(dr["inqty"].ToString()) - decimal.Parse(dr["outqty"].ToString()) + decimal.Parse(dr["adjustqty"].ToString());
@@ -57,7 +57,7 @@ namespace Sci.Production.Warehouse
             string selectCommand2
                 = string.Format(@"select *,
 sum(TMP.inqty - TMP.outqty+tmp.adjust) 
-over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.stocktype,tmp.IssueDate,tmp.iD desc) as [balance] 
+over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.stocktype,tmp.IssueDate,tmp.iD ) as [balance] 
 from (
 	select b.roll,b.stocktype,b.dyelot,a.IssueDate, a.id
 ,Case type when 'A' then 'P35. Adjust Bulk Qty' when 'B' then 'P34. Adjust Stock Qty' end as name

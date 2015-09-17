@@ -97,16 +97,6 @@ namespace Sci.Production.Warehouse
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
-            //string tmp = "";
-            //if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
-            //{
-            //    //(e.Details).Columns.Add("description", typeof(string));
-            //    foreach (DataRow dr in e.Details.Rows)
-            //    {
-            //        dr["description"] = PublicPrg.Prgs.GetMtlDesc(dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString(), 3,tmp == dr["refno"].ToString());
-            //        tmp = dr["refno"].ToString();
-            //    }
-            //}
             return base.OnRenewDataDetailPost(e);
         }
 
