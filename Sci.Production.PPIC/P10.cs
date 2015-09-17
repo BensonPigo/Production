@@ -456,7 +456,7 @@ where a.RequestQty > a.StockQty", CurrentMaintain["POID"].ToString()), out Excee
         {
             base.ClickConfirm();
             DualResult result;
-            string updateCmd = string.Format("update Lack set Status = 'Confirmed',ApvName = '{0}',ApvDate = GetDate(), EditName = '{0}', EditDate = GetDate()",Sci.Env.User.UserID);
+            string updateCmd = string.Format("update Lack set Status = 'Confirmed',ApvName = '{0}',ApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'",Sci.Env.User.UserID,CurrentMaintain["ID"].ToString());
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -483,7 +483,7 @@ where a.RequestQty > a.StockQty", CurrentMaintain["POID"].ToString()), out Excee
                 return;
             }
             DualResult result;
-            string updateCmd = string.Format("update Lack set Status = 'New',ApvName = '',ApvDate = null, EditName = '{0}', EditDate = GetDate()", Sci.Env.User.UserID);
+            string updateCmd = string.Format("update Lack set Status = 'New',ApvName = '',ApvDate = null, EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -498,8 +498,13 @@ where a.RequestQty > a.StockQty", CurrentMaintain["POID"].ToString()), out Excee
         protected override void ClickReceive()
         {
             base.ClickReceive();
+            if (MyUtility.Check.Empty(CurrentMaintain["IssueLackId"]))
+            {
+                MyUtility.Msg.WarningBox("< Issue No. > can't empty!");
+                return;
+            }
             DualResult result;
-            string updateCmd = string.Format("update Lack set Status = 'Received', EditName = '{0}', EditDate = GetDate()", Sci.Env.User.UserID);
+            string updateCmd = string.Format("update Lack set Status = 'Received', EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
