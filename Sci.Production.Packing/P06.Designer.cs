@@ -62,6 +62,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -261,7 +262,8 @@
             this.txtshipmode1.Name = "txtshipmode1";
             this.txtshipmode1.Size = new System.Drawing.Size(121, 24);
             this.txtshipmode1.TabIndex = 9;
-            this.txtshipmode1.SelectedIndexChanged += new System.EventHandler(this.txtshipmode1_SelectedIndexChanged);
+            this.txtshipmode1.UseFunction = null;
+            this.txtshipmode1.SelectionChangeCommitted += new System.EventHandler(this.txtshipmode1_SelectionChangeCommitted);
             // 
             // editBox1
             // 
@@ -492,6 +494,7 @@
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();

@@ -698,43 +698,6 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), C
             }
         }
 
-        //ShipMode
-        private void txtshipmode1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (this.EditMode)
-            {
-                if (!MyUtility.Check.Empty(txtshipmode1.SelectedValue))
-                {
-                    if (MyUtility.Check.Empty(CurrentMaintain["OrderShipmodeSeq"]))
-                    {
-                        MyUtility.Msg.WarningBox("ShipMode is incorrect!");
-                        txtshipmode1.SelectedValue = "";
-                        return;
-                    }
-                    else
-                    {
-                        string sqlCmd = string.Format("select ShipModeID from Order_QtyShip where ID = '{0}' and Seq = '{1}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
-                        DataRow qtyShipData;
-                        if (MyUtility.Check.Seek(sqlCmd, out qtyShipData))
-                        {
-                            if (qtyShipData["ShipModeID"].ToString() != txtshipmode1.SelectedValue.ToString())
-                            {
-                                MyUtility.Msg.WarningBox("ShipMode is incorrect!");
-                                txtshipmode1.SelectedValue = "";
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            MyUtility.Msg.WarningBox("ShipMode is incorrect!");
-                            txtshipmode1.SelectedValue = "";
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-
         //Confirm
         protected override void ClickConfirm()
         {
@@ -898,6 +861,40 @@ and p.ID = pl.PulloutID", CurrentMaintain["ID"].ToString());
             RenewData();
             OnDetailEntered();
             EnsureToolbarExt();
+        }
+
+        //ShipMode
+        private void txtshipmode1_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (!MyUtility.Check.Empty(txtshipmode1.SelectedValue))
+            {
+                if (MyUtility.Check.Empty(CurrentMaintain["OrderShipmodeSeq"]))
+                {
+                    MyUtility.Msg.WarningBox("ShipMode is incorrect!");
+                    txtshipmode1.SelectedValue = "";
+                    return;
+                }
+                else
+                {
+                    string sqlCmd = string.Format("select ShipModeID from Order_QtyShip where ID = '{0}' and Seq = '{1}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
+                    DataRow qtyShipData;
+                    if (MyUtility.Check.Seek(sqlCmd, out qtyShipData))
+                    {
+                        if (qtyShipData["ShipModeID"].ToString() != txtshipmode1.SelectedValue.ToString())
+                        {
+                            MyUtility.Msg.WarningBox("ShipMode is incorrect!");
+                            txtshipmode1.SelectedValue = "";
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("ShipMode is incorrect!");
+                        txtshipmode1.SelectedValue = "";
+                        return;
+                    }
+                }
+            }
         }
     }
 }
