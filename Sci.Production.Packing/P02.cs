@@ -349,11 +349,14 @@ namespace Sci.Production.Packing
             //當Packing Method為SOLID COLOR/ASSORTED SIZE (Order.CTNType = ‘2’)時，欄位Qty/Ctn不可被修改
             if (comboBox1.SelectedValue.ToString() == "2")
             {
-                detailgrid.Columns[5].ReadOnly = true;
+                col_qtyperctn.IsEditingReadOnly = true;
+                detailgrid.Columns[5].DefaultCellStyle.ForeColor = Color.Black;
+
             }
             else
             {
-                detailgrid.Columns[5].ReadOnly = false;
+                col_qtyperctn.IsEditingReadOnly = false;
+                detailgrid.Columns[5].DefaultCellStyle.ForeColor = Color.Red;
             }
         }
 
