@@ -370,7 +370,7 @@
             this.comboBox1.ReadOnly = true;
             this.comboBox1.Size = new System.Drawing.Size(216, 24);
             this.comboBox1.TabIndex = 22;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboBox1.SelectionChangeCommitted += new System.EventHandler(this.comboBox1_SelectionChangeCommitted);
             // 
             // numericBox2
             // 
@@ -459,7 +459,7 @@
             this.txtshipmode1.Size = new System.Drawing.Size(121, 24);
             this.txtshipmode1.TabIndex = 2;
             this.txtshipmode1.UseFunction = "ORDER";
-            this.txtshipmode1.SelectedIndexChanged += new System.EventHandler(this.txtshipmode1_SelectedIndexChanged);
+            this.txtshipmode1.SelectionChangeCommitted += new System.EventHandler(this.txtshipmode1_SelectionChangeCommitted);
             // 
             // P02
             // 

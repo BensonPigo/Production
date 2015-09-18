@@ -161,9 +161,10 @@ namespace Sci.Production.Packing
                     DualResult result;
                     if (result = DBProxy.Current.Select(null, sqlCmd, out selectedData))
                     {
-                        dr["NW"] = Convert.ToDouble(selectedData.Rows[0]["NW"].ToString()) * Convert.ToDouble(dr["QtyPerCTN"].ToString());
-                        dr["GW"] = Convert.ToDouble(dr["NW"].ToString()) + Convert.ToDouble(selectedData.Rows[0]["CTNWeight"].ToString());
-                        dr["NNW"] = Convert.ToDouble(selectedData.Rows[0]["NNW"].ToString()) * Convert.ToDouble(dr["QtyPerCTN"].ToString());
+
+                        dr["NW"] = selectedData.Rows.Count == 0 ? 0 : Convert.ToDouble(selectedData.Rows[0]["NW"].ToString()) * Convert.ToDouble(dr["QtyPerCTN"].ToString());
+                        dr["GW"] = selectedData.Rows.Count == 0 ? 0 : Convert.ToDouble(dr["NW"].ToString()) + Convert.ToDouble(selectedData.Rows[0]["CTNWeight"].ToString());
+                        dr["NNW"] = selectedData.Rows.Count == 0 ? 0 : Convert.ToDouble(selectedData.Rows[0]["NNW"].ToString()) * Convert.ToDouble(dr["QtyPerCTN"].ToString());
                     }
                     dr.EndEdit();
                 }
@@ -613,49 +614,6 @@ namespace Sci.Production.Packing
             }
             //產生表身Grid的資料
             GenDetailData(CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
-        }
-
-        //ShipMode
-        private void txtshipmode1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (this.EditMode)
-            {
-                if (!MyUtility.Check.Empty(txtshipmode1.SelectedValue))
-                {
-                    if (MyUtility.Check.Empty(CurrentMaintain["OrderShipmodeSeq"]))
-                    {
-                        MyUtility.Msg.WarningBox("ShipMode is incorrect!");
-                        txtshipmode1.SelectedValue = "";
-                    }
-                    else
-                    {
-                        string sqlCmd = string.Format("select ShipModeID from Order_QtyShip where ID = '{0}' and Seq = '{1}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
-                        DataRow qtyShipData;
-                        if (MyUtility.Check.Seek(sqlCmd, out qtyShipData))
-                        {
-                            if (qtyShipData["ShipModeID"].ToString() != txtshipmode1.SelectedValue.ToString())
-                            {
-                                MyUtility.Msg.WarningBox("ShipMode is incorrect!");
-                                txtshipmode1.SelectedValue = "";
-                            }
-                        }
-                        else
-                        {
-                            MyUtility.Msg.WarningBox("ShipMode is incorrect!");
-                            txtshipmode1.SelectedValue = "";
-                        }
-                    }
-                }
-            }
-        }
-
-        //Packing Method
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (comboBox1.SelectedIndex != -1)
-            {
-                ControlGridColumn();
-            }
         }
 
         //Special Instruction
@@ -1283,6 +1241,43 @@ ELSE
             else
             {
                 MyUtility.Msg.WarningBox("Switch fail!");
+            }
+        }
+        
+        //Packing Method
+        private void comboBox1_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            ControlGridColumn();
+        }
+
+        //ShipMode
+        private void txtshipmode1_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (!MyUtility.Check.Empty(txtshipmode1.SelectedValue))
+            {
+                if (MyUtility.Check.Empty(CurrentMaintain["OrderShipmodeSeq"]))
+                {
+                    MyUtility.Msg.WarningBox("ShipMode is incorrect!");
+                    txtshipmode1.SelectedValue = "";
+                }
+                else
+                {
+                    string sqlCmd = string.Format("select ShipModeID from Order_QtyShip where ID = '{0}' and Seq = '{1}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
+                    DataRow qtyShipData;
+                    if (MyUtility.Check.Seek(sqlCmd, out qtyShipData))
+                    {
+                        if (qtyShipData["ShipModeID"].ToString() != txtshipmode1.SelectedValue.ToString())
+                        {
+                            MyUtility.Msg.WarningBox("ShipMode is incorrect!");
+                            txtshipmode1.SelectedValue = "";
+                        }
+                    }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("ShipMode is incorrect!");
+                        txtshipmode1.SelectedValue = "";
+                    }
+                }
             }
         }
     }
