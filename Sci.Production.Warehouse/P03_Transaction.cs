@@ -44,7 +44,8 @@ namespace Sci.Production.Warehouse
             #region sql command
             StringBuilder selectCommand1 = new StringBuilder();
             selectCommand1.Append(string.Format(@"select *,
-sum(TMP.inqty - TMP.outqty+tmp.adjust) over ( order by tmp.IssueDate,tmp.iD,sum(TMP.inqty - TMP.outqty+tmp.adjust) desc) as [balance] from (
+sum(TMP.inqty - TMP.outqty+tmp.adjust) over ( order by tmp.IssueDate,TMP.inqty desc, TMP.outqty,tmp.adjust) as [balance] 
+from (
 	select a.IssueDate, a.id
 ,Case type when 'A' then 'P35. Adjust Bulk Qty' when 'B' then 'P34. Adjust Stock Qty' end as name
 ,0 as inqty,0 as outqty, sum(QtyAfter - QtyBefore) adjust, remark ,'' location
@@ -61,10 +62,10 @@ where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.
             selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate,type
 union all
 	select a.IssueDate, a.id
-,'P31. Material Borrow' name
+,'P31. Material Borrow out' name
 ,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location
 from BorrowBack a, BorrowBack_Detail b 
-where Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
+where type='A' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()));
 
@@ -76,9 +77,37 @@ where Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = 
             selectCommand1.Append(string.Format(@"group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate
 union all
 	select issuedate, a.id
-,'BorrowBack' name, sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location
+,'P31. Material Borrow In' name, sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location
 from BorrowBack a, BorrowBack_Detail b 
-where Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
+where type='A' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
+                            , dr["seq1"].ToString()
+                            , dr["seq2"].ToString()));
+            if (_byroll)
+            {
+                selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", dr["roll"], dr["dyelot"]));
+            }
+
+            selectCommand1.Append(string.Format(@"group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate
+union all
+	select a.IssueDate, a.id
+,'P32. Return Borrowing out' name
+,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location
+from BorrowBack a, BorrowBack_Detail b 
+where type='B' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
+                , dr["seq1"].ToString()
+                , dr["seq2"].ToString()));
+
+            if (_byroll)
+            {
+                selectCommand1.Append(string.Format(@" and fromroll='{0}' and fromdyelot = '{1}'", dr["roll"], dr["dyelot"]));
+            }
+
+            selectCommand1.Append(string.Format(@"group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate
+union all
+	select issuedate, a.id
+,'P32. Return Borrowing In' name, sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location
+from BorrowBack a, BorrowBack_Detail b 
+where type='B' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
                             , dr["seq1"].ToString()
                             , dr["seq2"].ToString()));
             if (_byroll)
@@ -251,7 +280,7 @@ where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.
 
             selectCommand1.Append(@"group by a.id, poid, Seq1,Seq2, remark,a.IssueDate) tmp
 group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name
-order by IssueDate,name,id");
+");
             #endregion
 
             DataTable selectDataTable1;
@@ -349,8 +378,8 @@ order by IssueDate,name,id");
             this.grid1.DataSource = bindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
                  .Date("issuedate", header: "Date", width: Widths.AnsiChars(10))
-                 .Text("id", header: "Transaction#", width: Widths.AnsiChars(13), settings: ts2)
-                .Text("name", header: "Name", width: Widths.AnsiChars(13))
+                 .Text("id", header: "Transaction#", width: Widths.AnsiChars(15), settings: ts2)
+                .Text("name", header: "Name", width: Widths.AnsiChars(25))
                  .Numeric("InQty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("OutQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("Adjust", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
