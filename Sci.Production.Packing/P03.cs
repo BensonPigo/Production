@@ -1095,43 +1095,6 @@ where ID = @INVNo";
             }
         }
 
-        //ShipMode
-        private void txtshipmode1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (this.EditMode)
-            {
-                if (!MyUtility.Check.Empty(txtshipmode1.SelectedValue))
-                {
-                    if (MyUtility.Check.Empty(CurrentMaintain["OrderShipmodeSeq"]))
-                    {
-                        MyUtility.Msg.WarningBox("ShipMode is incorrect!");
-                        txtshipmode1.SelectedValue = "";
-                        return;
-                    }
-                    else
-                    {
-                        string sqlCmd = string.Format("select ShipModeID from Order_QtyShip where ID = '{0}' and Seq = '{1}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
-                        DataRow qtyShipData;
-                        if (MyUtility.Check.Seek(sqlCmd, out qtyShipData))
-                        {
-                            if (qtyShipData["ShipModeID"].ToString() != txtshipmode1.SelectedValue.ToString())
-                            {
-                                MyUtility.Msg.WarningBox("ShipMode is incorrect!");
-                                txtshipmode1.SelectedValue = "";
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            MyUtility.Msg.WarningBox("ShipMode is incorrect!");
-                            txtshipmode1.SelectedValue = "";
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-
         //檢查箱子是否有送至Clog來決定欄位是否可被修改
         private bool CheckCanCahngeCol(string transferToClogID)
         {
@@ -1206,7 +1169,7 @@ where ID = @INVNo";
                 default:
                     label24.Visible = false;
                     button4.Visible = false;
-                    if(MyUtility.Check.Empty((DataTable)detailgridbs.DataSource)) break;
+                    if (MyUtility.Check.Empty((DataTable)detailgridbs.DataSource)) break;
                     ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "Seq";
                     break;
             }
@@ -1640,6 +1603,40 @@ order by oq.Article,oq.SizeCode", CurrentMaintain["OrderID"].ToString(), Current
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
             { detailgridbs.Position = index; }
+        }
+
+        //ShipMode
+        private void txtshipmode1_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (!MyUtility.Check.Empty(txtshipmode1.SelectedValue))
+            {
+                if (MyUtility.Check.Empty(CurrentMaintain["OrderShipmodeSeq"]))
+                {
+                    MyUtility.Msg.WarningBox("ShipMode is incorrect!");
+                    txtshipmode1.SelectedValue = "";
+                    return;
+                }
+                else
+                {
+                    string sqlCmd = string.Format("select ShipModeID from Order_QtyShip where ID = '{0}' and Seq = '{1}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
+                    DataRow qtyShipData;
+                    if (MyUtility.Check.Seek(sqlCmd, out qtyShipData))
+                    {
+                        if (qtyShipData["ShipModeID"].ToString() != txtshipmode1.SelectedValue.ToString())
+                        {
+                            MyUtility.Msg.WarningBox("ShipMode is incorrect!");
+                            txtshipmode1.SelectedValue = "";
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("ShipMode is incorrect!");
+                        txtshipmode1.SelectedValue = "";
+                        return;
+                    }
+                }
+            }
         }
     }
 }
