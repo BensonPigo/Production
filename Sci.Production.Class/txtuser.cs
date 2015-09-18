@@ -18,24 +18,24 @@ namespace Sci.Production.Class
         {
             InitializeComponent();
         }
-
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public Sci.Win.UI.TextBox TextBox1
         {
             get { return this.textBox1; }
         }
-
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public Sci.Win.UI.DisplayBox DisplayBox1
         {
             get { return this.displayBox1; }
         }
-
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [Bindable(true)]
         public string TextBox1Binding
         {
             set { this.textBox1.Text = value; }
             get { return textBox1.Text; }
         }
-
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [Bindable(true)]
         public string DisplayBox1Binding
         {
