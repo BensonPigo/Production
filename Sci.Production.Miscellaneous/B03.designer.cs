@@ -453,7 +453,6 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B03";
             this.Text = "B02.Miscellaneous Data Maintain(Local)";

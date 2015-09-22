@@ -78,6 +78,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -92,6 +93,24 @@
     <Compile Include="B01.designer.cs">
       <DependentUpon>B01.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01.designer.cs">
+      <DependentUpon>P01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02.designer.cs">
+      <DependentUpon>P02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_Import.designer.cs">
+      <DependentUpon>P02_Import.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="B02.cs">
       <SubType>Form</SubType>
@@ -105,6 +124,18 @@
     <Compile Include="B03.designer.cs">
       <DependentUpon>B03.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_Accountpayable.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_Accountpayable.designer.cs">
+      <DependentUpon>P02_Accountpayable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_Incoming.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_Incoming.designer.cs">
+      <DependentUpon>P02_Incoming.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -115,6 +146,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B03.resx">
       <DependentUpon>B03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01.resx">
+      <DependentUpon>P01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02.resx">
+      <DependentUpon>P02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_Import.resx">
+      <DependentUpon>P02_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_Accountpayable.resx">
+      <DependentUpon>P02_Accountpayable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_Incoming.resx">
+      <DependentUpon>P02_Incoming.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
