@@ -57,7 +57,7 @@ namespace Sci.Production.Warehouse
             string selectCommand2
                 = string.Format(@"select *,
 sum(TMP.inqty - TMP.outqty+tmp.adjust) 
-over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.stocktype,tmp.IssueDate,tmp.iD ) as [balance] 
+over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.stocktype,tmp.IssueDate,tmp.inqty desc,tmp.iD ) as [balance] 
 from (
 	select b.roll,b.stocktype,b.dyelot,a.IssueDate, a.id
 ,Case type when 'A' then 'P35. Adjust Bulk Qty' when 'B' then 'P34. Adjust Stock Qty' end as name
@@ -174,7 +174,7 @@ from TransferOut a, TransferOut_Detail b
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
 group by a.id, poid, Seq1,Seq2, remark,a.IssueDate,b.roll,b.stocktype,b.dyelot) tmp
 group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.stocktype,tmp.dyelot
-order by stocktype,IssueDate,name,id,Dyelot,Roll"
+"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString());
