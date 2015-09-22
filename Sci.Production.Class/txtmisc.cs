@@ -61,19 +61,29 @@ namespace Sci.Production.Class
     }
     public class cellmisc : DataGridViewGeneratorTextColumnSettings
     {
-        public static DataGridViewGeneratorTextColumnSettings GetGridCell()
+        public static DataGridViewGeneratorTextColumnSettings GetGridCell(bool pur)
         {
+            //pur 為ture 表示需判斷PurchaseFrom
             cellmisc ts = new cellmisc();
-            // 右鍵彈出功能
+
             ts.EditingMouseDown += (s, e) =>
             {
+                // 右鍵彈出功能
                 if (e.Button == MouseButtons.Right)
                 {
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
                     // Parent form 若是非編輯狀態就 return 
                     if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
-                    SelectItem sele = new SelectItem("Select id From Misc where Junk=0", "23", row["miscid"].ToString(), false, ",");
+                    SelectItem sele;
+                    if (pur)
+                    {
+                        sele = new SelectItem(string.Format("Select id From Misc where Junk=0 and PurchaseFrom = '{0}'",row["PurchaseFrom"].ToString()), "23", row["miscid"].ToString(), false, ",");
+                    }
+                    else
+                    {
+                        sele = new SelectItem("Select id From Misc where Junk=0", "23", row["miscid"].ToString(), false, ",");
+                    }
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
@@ -84,13 +94,23 @@ namespace Sci.Production.Class
             // 正確性檢查
             ts.CellValidating += (s, e) =>
             {
+
                 DataGridView grid = ((DataGridViewColumn)s).DataGridView;
                 // Parent form 若是非編輯狀態就 return 
                 if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+                // 右鍵彈出功能
                 DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
                 String oldValue = row["miscid"].ToString();
                 String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
-                string sql = string.Format("Select * from Misc where Junk = 0 and ID = '{0}'", newValue);
+                string sql;
+                if(pur)
+                {
+                    sql = string.Format("Select * from Misc where Junk = 0 and ID = '{0}' and purchaseFrom='{1}'", newValue, row["PurchaseFrom"].ToString());
+                }
+                else
+                {
+                    sql = string.Format("Select * from Misc where Junk = 0 and ID = '{0}'", newValue);
+                }
                 if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
                 {
                     if (!MyUtility.Check.Seek(sql))
