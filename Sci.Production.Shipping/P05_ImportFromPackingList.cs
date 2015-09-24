@@ -118,7 +118,7 @@ as
 (select Selected,ID,CustCDID,min(SDPDate) as SDPDate,min(BuyerDelivery) as BuyerDelivery,ShipQty,CTNQty,NW,NNW,
  GMTBookingLock,FactoryID,CargoReadyDate,PulloutDate,GW,CBM,Status,InspDate,ClogCTNQty
  from IniSamplePack 
- where id not in (select ID from InvalidData)
+ where id not in (select ID from InvalidData where ID is not null)
  group by Selected,ID,CustCDID,ShipQty,CTNQty,NW,NNW,GMTBookingLock,FactoryID,CargoReadyDate,PulloutDate,GW,CBM,Status,InspDate,ClogCTNQty
 ),
 SamplePack
