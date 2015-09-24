@@ -355,7 +355,7 @@ namespace Sci.Production.Shipping
         {
             if (apData["Type"].ToString() == "IMPORT")
             {
-                string deleteCmd = string.Format("delete ShareExpense where ShippingAPID = '{0}' and WKNo != '' and WKNo not in (select ID from Export where ID = WKNo)",apData["ID"].ToString());
+                string deleteCmd = string.Format("delete ShareExpense where ShippingAPID = '{0}' and WKNo != '' and WKNo not in (select ID from Export where ID = WKNo and ID is not null)",apData["ID"].ToString());
                 DualResult result = DBProxy.Current.Execute(null, deleteCmd);
                 if (!result)
                 {
