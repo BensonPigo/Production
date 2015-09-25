@@ -23,13 +23,13 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
+            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "1,Factory,2,Brand");
+            MyUtility.Tool.SetupCombox(comboBox2, 2, 1, "1,SCI,2,Factory,3,Sullpier,4,Brand");
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "1,Factory,2,Brand");
-            MyUtility.Tool.SetupCombox(comboBox2, 2, 1, "1,SCI,2,Factory,3,Sullpier,4,Brand");
             detailgrid.CellToolTipTextNeeded += (s, e) =>
                 {
                     e.ToolTipText = "You can show the function form to press the right key under inquiring the state.";
