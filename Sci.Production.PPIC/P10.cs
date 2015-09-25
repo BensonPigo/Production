@@ -22,6 +22,7 @@ namespace Sci.Production.PPIC
             DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "' and FabricType = 'F'";
             txtuser2.TextBox1.ReadOnly = true;
             txtuser2.TextBox1.IsSupportEditMode = false;
+            InsertDetailGridOnDoubleClick = false;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
