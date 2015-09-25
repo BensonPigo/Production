@@ -202,6 +202,13 @@ CLOSE cursor_ttlAmount", shippingAPID, Sci.Env.User.UserID);
             }
             return true;
         }
+
+        public static string ReCalculateExpress(string expressID)
+        {
+            return string.Format(@"update Express set NW = (select SUM(NW) from Express_Detail where ID = '{0}'),
+CTNQty = (select COUNT(distinct CTNNo) from Express_Detail where ID = '{0}')
+where ID = '{0}'", expressID);
+        }
         #endregion
     }
 }
