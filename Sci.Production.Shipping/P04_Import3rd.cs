@@ -58,7 +58,7 @@ namespace Sci.Production.Shipping
                 return;
             }
 
-            string sqlCmd = string.Format(@"select 1 as Selected,psd.ID as POID,psd.SEQ1,psd.SEQ2, (SUBSTRING(psd.SEQ1,1,3)+'-'+psd.SEQ2) as Seq,ps.SuppID,
+            string sqlCmd = string.Format(@"select 1 as Selected,psd.ID as POID,psd.SEQ1,psd.SEQ2, (left(psd.SEQ1+' ',3)+'-'+psd.SEQ2) as Seq,ps.SuppID,
 (ps.SuppID+'-'+(select AbbEN from Supp where ID = ps.SuppID)) as Supp,psd.Refno,psd.SCIRefno,
 isnull(f.DescDetail,'') as Description, psd.FabricType, (case when psd.FabricType = 'F' then 'Fabric' when psd.FabricType = 'A' then 'Accessory' else '' end) as Type, 
 isnull(f.MtlTypeID,'') as MtlTypeID,psd.POUnit as UnitId,psd.ShipQty,psd.ShipFOC,(psd.ShipQty+psd.ShipFOC) as Qty,0.0 as NetKg,0.0 as WeightKg,

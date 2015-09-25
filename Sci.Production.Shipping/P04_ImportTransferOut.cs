@@ -52,7 +52,7 @@ namespace Sci.Production.Shipping
                 return;
             }
 
-            string sqlCmd = string.Format(@"select 1 as Selected,td.Poid,td.Seq1,td.Seq2,(SUBSTRING(td.Seq1,1,3)+'-'+td.Seq2) as Seq,isnull(ps.SuppID,'') as SuppID,
+            string sqlCmd = string.Format(@"select 1 as Selected,td.Poid,td.Seq1,td.Seq2,(left(td.Seq1+' ',3)+'-'+td.Seq2) as Seq,isnull(ps.SuppID,'') as SuppID,
 (isnull(ps.SuppID,'')+'-'+isnull(s.AbbEN,'')) as Supp,isnull(psd.Refno,'') as RefNo,isnull(psd.SCIRefno,'') as SCIRefNo,
 isnull(f.DescDetail,'') as Description,isnull(psd.FabricType,'') as FabricType,
 (case when psd.FabricType = 'F' then 'Fabric' when psd.FabricType = 'A' then 'Accessory' else '' end) as Type,

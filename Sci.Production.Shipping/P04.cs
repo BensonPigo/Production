@@ -27,7 +27,7 @@ namespace Sci.Production.Shipping
         {
              string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
              this.DetailSelectCommand = string.Format(@"select ed.ID,isnull(o.FactoryID,'') as FactoryID,ed.PoID,isnull(o.BrandID,'') as BrandID,o.BuyerDelivery,o.SciDelivery,
-(SUBSTRING(ed.Seq1,1,3)+'-'+ed.Seq2) as Seq,(ed.SuppID+'-'+iif(fe.Type = 4,(select Abb from LocalSupp where ID = ed.SuppID),(select AbbEN from Supp where ID = ed.SuppID))) as Supp,
+(left(ed.Seq1+' ',3)+'-'+ed.Seq2) as Seq,(ed.SuppID+'-'+iif(fe.Type = 4,(select Abb from LocalSupp where ID = ed.SuppID),(select AbbEN from Supp where ID = ed.SuppID))) as Supp,
 ed.RefNo,isnull(iif(fe.Type = 4,(select Description from LocalItem where RefNo = ed.RefNo),(select DescDetail from Fabric where SCIRefno = ed.SCIRefNo)),'') as Description,
 (case when ed.FabricType = 'F' then 'Fabric' when ed.FabricType = 'A' then 'Accessory' else '' end) as Type,ed.FabricType,
 ed.MtlTypeID,ed.UnitId,ed.Qty,ed.NetKg,ed.WeightKg,ed.Seq1,ed.Seq2

@@ -68,7 +68,7 @@ namespace Sci.Production.Shipping
             string sqlCmd;
             if (MyUtility.Check.Seek(textBox1.Text.Trim(), "PO_Supp", "ID"))
             {
-                sqlCmd = string.Format(@"select 1 as Selected,ps.ID as POID,ps.SEQ1,psd.SEQ2,(SUBSTRING(ps.SEQ1,1,3)+'-'+isnull(psd.SEQ2,'')) as Seq,ps.SuppID,
+                sqlCmd = string.Format(@"select 1 as Selected,ps.ID as POID,ps.SEQ1,psd.SEQ2,(left(ps.SEQ1+' ',3)+'-'+isnull(psd.SEQ2,'')) as Seq,ps.SuppID,
 (ps.SuppID+'-'+ isnull(s.AbbEN,'')) as Supp,psd.Refno,psd.SCIRefno,f.DescDetail as Description,
 psd.FabricType, (case when psd.FabricType = 'F' then 'Fabric' when psd.FabricType = 'A' then 'Accessory' else '' end) as Type,
 isnull(f.MtlTypeID,'') as MtlTypeID,psd.POUnit as UnitID,(isnull(psd.ShipQty,0)+isnull(psd.ShipFOC,0)) as Qty,0.0 as NetKg,0.0 as WeightKg,
