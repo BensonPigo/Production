@@ -27,7 +27,7 @@ namespace Sci.Production.PPIC
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select ld.*,(SUBSTRING(ld.Seq1,1,3)+ld.Seq2) as Seq,isnull(psd.Refno,'') as Refno,isnull(f.Description,'') as Description,
+            this.DetailSelectCommand = string.Format(@"select ld.*,(left(ld.Seq1+' ',3)+ld.Seq2) as Seq,isnull(psd.Refno,'') as Refno,isnull(f.Description,'') as Description,
 (select max(i.IssueDate) from Issue i, Issue_Detail id where i.Id = id.Id and id.PoId = l.POID and id.Seq1 = ld.Seq1 and id.Seq2 = ld.seq2) as IssueDate,
 isnull(psd.InQty,0) as InQty,isnull(psd.OutQty,0) as OutQty,isnull(p.Description,'') as PPICReasonDesc
 from Lack l
