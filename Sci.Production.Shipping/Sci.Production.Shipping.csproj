@@ -143,6 +143,42 @@
     <Compile Include="P01_AirPPList.Designer.cs">
       <DependentUpon>P01_AirPPList.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02.Designer.cs">
+      <DependentUpon>P02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_AddByPOItem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_AddByPOItem.Designer.cs">
+      <DependentUpon>P02_AddByPOItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_AddNewItem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_AddNewItem.Designer.cs">
+      <DependentUpon>P02_AddNewItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_CTNDimensionAndWeight.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_CTNDimensionAndWeight.Designer.cs">
+      <DependentUpon>P02_CTNDimensionAndWeight.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_EditFromPO.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_EditFromPO.Designer.cs">
+      <DependentUpon>P02_EditFromPO.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_ImportFromFOCPackingList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_ImportFromFOCPackingList.Designer.cs">
+      <DependentUpon>P02_ImportFromFOCPackingList.cs</DependentUpon>
+    </Compile>
     <Compile Include="P03.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -246,6 +282,12 @@
     <Compile Include="P08_ShareExpense_ImportMaterial.Designer.cs">
       <DependentUpon>P08_ShareExpense_ImportMaterial.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_ImportFromPO.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_ImportFromPO.Designer.cs">
+      <DependentUpon>P02_ImportFromPO.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -271,6 +313,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_AirPPList.resx">
       <DependentUpon>P01_AirPPList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02.resx">
+      <DependentUpon>P02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_AddByPOItem.resx">
+      <DependentUpon>P02_AddByPOItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_AddNewItem.resx">
+      <DependentUpon>P02_AddNewItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_CTNDimensionAndWeight.resx">
+      <DependentUpon>P02_CTNDimensionAndWeight.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_EditFromPO.resx">
+      <DependentUpon>P02_EditFromPO.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_ImportFromFOCPackingList.resx">
+      <DependentUpon>P02_ImportFromFOCPackingList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P03.resx">
       <DependentUpon>P03.cs</DependentUpon>
@@ -322,6 +382,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P09.resx">
       <DependentUpon>P09.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_ImportFromPO.resx">
+      <DependentUpon>P02_ImportFromPO.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
