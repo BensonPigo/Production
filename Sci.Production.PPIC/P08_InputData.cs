@@ -67,7 +67,7 @@ left join Export e on r.ExportId = e.ID
 left join PO_Supp_Detail psd on f.POID = psd.ID and f.Seq1 = psd.SEQ1 and f.Seq2 = psd.SEQ2
 where f.POID = '{0}' and f.Seq1 = '{1}' and f.Seq2 = '{2}' and fp.Result = 'F'
 group by f.Seq1,f.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.ETA, e.Eta),r.ExportId,r.InvNo,dbo.getmtldesc(f.POID,f.Seq1,f.Seq2,2,0)
-", masterData["POID"].ToString(), textBox1.Text.Substring(0, 3), textBox1.Text.ToString().Substring(2, 2));
+", masterData["POID"].ToString(), textBox1.Text.Length < 3 ? textBox1.Text : textBox1.Text.Substring(0, 3), textBox1.Text.Length < 5 ? textBox1.Text.Length < 4 ? "" : textBox1.Text.ToString().Substring(3, 1) : textBox1.Text.ToString().Substring(3, 2));
                 if (MyUtility.Check.Seek(sqlCmd, out firData))
                 {
                     CurrentData["Seq"] = textBox1.Text;
@@ -89,7 +89,7 @@ group by f.Seq1,f.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.E
                     sqlCmd = string.Format(@"select Refno,SCIRefno,seq1,seq2,FabricType,ColorID, 
 dbo.getmtldesc(id,seq1,seq2,2,0) as Description 
 from dbo.PO_Supp_Detail
-where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and InQty > 0", masterData["POID"].ToString(), textBox1.Text.Substring(0, 3), textBox1.Text.ToString().Substring(2, 2));
+where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and InQty > 0", masterData["POID"].ToString(), textBox1.Text.Length < 3 ? textBox1.Text : textBox1.Text.Substring(0, 3), textBox1.Text.Length < 5 ? textBox1.Text.Length < 4 ? "" : textBox1.Text.ToString().Substring(3, 1) : textBox1.Text.ToString().Substring(3, 2));
                     if (!MyUtility.Check.Seek(sqlCmd, out poData))
                     {
                         MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > have no receive record!!!", textBox1.Text));

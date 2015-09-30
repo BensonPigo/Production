@@ -239,7 +239,7 @@ where r.ID = '{0}'", masterID);
 
                 string sqlCmd = string.Format(@"select f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2 as Seq,f.Refno,
 [dbo].getMtlDesc(f.POID,f.Seq1,f.Seq2,2,0) as Description,
-isnull(psd.ColorID,'') as ColorID,isnull(r.InvNo,'') as InvNo,e.Eta,isnull(r.ExportId,'') as ExportId,
+isnull(psd.ColorID,'') as ColorID,isnull(r.InvNo,'') as InvNo,iif(e.Eta is null,r.ETA,e.ETA) as ETA,isnull(r.ExportId,'') as ExportId,
 isnull(sum(fp.TicketYds),0) as EstInQty, isnull(sum(fp.ActualYds),0) as ActInQty
 from FIR f
 left join FIR_Physical fp on f.ID = fp.ID
@@ -247,7 +247,7 @@ left join PO_Supp_Detail psd on f.POID = psd.ID and f.Seq1 = psd.SEQ1 and f.Seq2
 left join Receiving r on f.ReceivingID = r.Id
 left join Export e on r.ExportId = e.ID
 where f.POID = '{0}' and f.Result = 'F'
-group by f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2,f.Refno,[dbo].getMtlDesc(f.POID,f.Seq1,f.Seq2,2,0),psd.ColorID,r.InvNo,e.Eta,isnull(r.ExportId,'')", textBox1.Text);
+group by f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2,f.Refno,[dbo].getMtlDesc(f.POID,f.Seq1,f.Seq2,2,0),psd.ColorID,r.InvNo,iif(e.Eta is null,r.ETA,e.ETA),isnull(r.ExportId,'')", textBox1.Text);
                 DataTable FIRData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out FIRData);
                 if (!result)
