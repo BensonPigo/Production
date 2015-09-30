@@ -185,6 +185,18 @@
     <Compile Include="P06.Designer.cs">
       <DependentUpon>P06.cs</DependentUpon>
     </Compile>
+    <Compile Include="P08.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P08.Designer.cs">
+      <DependentUpon>P08.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P08_InputData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P08_InputData.Designer.cs">
+      <DependentUpon>P08_InputData.cs</DependentUpon>
+    </Compile>
     <Compile Include="P10.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -256,6 +268,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P06.resx">
       <DependentUpon>P06.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P08.resx">
+      <DependentUpon>P08.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P08_InputData.resx">
+      <DependentUpon>P08_InputData.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P10.resx">
       <DependentUpon>P10.cs</DependentUpon>
