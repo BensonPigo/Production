@@ -115,11 +115,11 @@
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(835, 6);
+            this.undo.Location = new System.Drawing.Point(841, 6);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(749, 6);
+            this.save.Location = new System.Drawing.Point(755, 6);
             // 
             // label1
             // 
