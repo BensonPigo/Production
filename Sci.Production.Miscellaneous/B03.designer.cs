@@ -455,7 +455,7 @@
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B03";
-            this.Text = "B02.Miscellaneous Data Maintain(Local)";
+            this.Text = "B03.Miscellaneous Data Maintain(Taipei)";
             this.WorkAlias = "Misc";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();

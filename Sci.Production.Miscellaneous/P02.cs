@@ -302,7 +302,7 @@ namespace Sci.Production.Miscellaneous
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
             .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("MiscID", header: "Miscellaneous ID", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("MiscID", header: "Miscellaneous ID", width: Widths.AnsiChars(23), iseditingreadonly: true)
             .Text("Description", header: "Description", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("MiscBrand", header: "Brand", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Projectid", header: "Project Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
