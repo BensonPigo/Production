@@ -111,7 +111,7 @@ where id = '{0}' and seq1 = '{1}' and seq2='{2}';"
                     }
                     break;
             }
-            if (encoded && (type==2 || type==16) && !MyUtility.Check.Empty(stocktype))
+            if (encoded && (type == 2 || type == 8 || type == 16) && !MyUtility.Check.Empty(stocktype))
             {
                 switch (stocktype)
                 {
