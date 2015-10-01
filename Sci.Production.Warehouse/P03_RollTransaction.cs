@@ -120,25 +120,30 @@ where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate,b.roll,b.stocktype,b.dyelot                                                                           
 union all
 	select b.roll,case a.type when 'A' then 'B' when 'B' then 'I' end as stocktype,b.dyelot,issuedate, a.id
-	,case a.type when 'A' then 'P25. Transfer Bulk to Scrap' when 'B' then 'P24. Transfer Inventory to Scrap' end as name
+	,case a.type when 'A' then 'P25. Transfer Bulk to Scrap' 
+                        when 'B' then 'P24. Transfer Inventory to Scrap' end as name
 	,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
 from Scrap a, Scrap_Detail b 
-where Status='Confirmed' and Poid ='{0}' and Seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+where Status='Approved' and Poid ='{0}' and Seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
 group by a.id, Poid, Seq1,Seq2, remark,a.IssueDate,a.Type,b.roll,b.dyelot
+
 union all
 	select b.FromRoll,b.FromStock,b.FromDyelot,issuedate, a.id
 	,case type when 'B' then 'P23. Transfer Inventory to Bulk' 
                     when 'A' then 'P22. Transfer Bulk to Inventory' 
                     when 'C' then 'P36. Transfer Scrap to Inventory' end as name
-	, 0 as inqty, sum(Qty) released,0 as adjust , '' remark ,'' location
+	, 0 as inqty, sum(Qty) released,0 as adjust ,isnull(a.remark,'') remark ,'' location
 from SubTransfer a, SubTransfer_Detail b 
 where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id
-group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,b.FromRoll,b.FromStock,b.FromDyelot,a.Type                                                                             
+group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,b.FromRoll,b.FromStock,b.FromDyelot,a.Type,a.remark
+                                                                             
 union all
 	select b.ToRoll,b.ToStock,b.ToDyelot,issuedate, a.id
-	        ,'P23. Transfer Inventory to Bulk' 
+	        ,case type when 'B' then 'P23. Transfer Inventory to Bulk' 
+                    when 'A' then 'P22. Transfer Bulk to Inventory' 
+                    when 'C' then 'P36. Transfer Scrap to Inventory' end as name
 	        , sum(Qty) arrived,0 as ouqty,0 as adjust, remark
-	,(Select cast(tmp.ToLocation as nvarchar)+',' 
+	        ,isnull((Select cast(tmp.ToLocation as nvarchar)+',' 
                         from (select b1.ToLocation 
                                     from SubTransfer a1 
                                     inner join SubTransfer_Detail b1 on a1.id = b1.id 
@@ -146,10 +151,11 @@ union all
                                         and b1.ToPoid = b.ToPoid
                                         and b1.ToSeq1 = b.ToSeq1
                                         and b1.ToSeq2 = b.ToSeq2 group by b1.ToLocation) tmp 
-                        for XML PATH('')) as ToLocation
+                        for XML PATH('')),'') as ToLocation
 from SubTransfer a, SubTransfer_Detail b 
-where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id and type='B'
+where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id
 group by a.id, ToPoid, ToSeq1,ToSeq2, remark ,a.IssueDate,b.ToRoll,b.ToStock,b.ToDyelot,a.type	    
+
 union all
 	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
             ,'P18. Transfer In' name
@@ -189,8 +195,8 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             bindingSource3.DataSource = dtSummary;
 
             DualResult selectResult2 = DBProxy.Current.Select(null, selectCommand2, out dtTrans);
+            if (selectResult2 == false) ShowErr(selectCommand2, selectResult2);
             dtTrans.TableName = "dtTrans";
-            if (selectResult2 == false) ShowErr(selectCommand2, selectResult1);
             data.Tables.Add(dtFtyinventory);
             data.Tables.Add(dtTrans);
             //data.Tables.Add("dtSummary");
