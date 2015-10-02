@@ -275,9 +275,9 @@
       <Project>{0E35FD31-4A86-4D4E-A393-B6C5E3D7C956}</Project>
       <Name>Sci.Production.Class</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sci.Production.PPIC\Sci.Production.PPIC.csproj">
-      <Project>{b35ffbd5-b004-4929-bf1d-75e2ee403793}</Project>
-      <Name>Sci.Production.PPIC</Name>
+    <ProjectReference Include="..\Sci.Production.PublicForm\Sci.Production.PublicForm.csproj">
+      <Project>{a0afac1d-7488-4271-83f0-9c14baf212fe}</Project>
+      <Name>Sci.Production.PublicForm</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
       <Project>{4A2F17B7-EFFE-454C-8F1E-9EEBEF170BC0}</Project>

@@ -33,7 +33,7 @@ namespace Sci.Production.IE
         public P01(string StyleID, string ComboType)
         {
             InitializeComponent();
-            DefaultFilter = string.Format("StyleID = '{0}' and ComboType = '{1}'", StyleID, ComboType);
+            DefaultFilter = string.Format("StyleID = '{0}' {1}", StyleID, ComboType == null ? "" : "and ComboType = '" + ComboType+"'");
             detailgrid.AllowUserToOrderColumns = true;
             InsertDetailGridOnDoubleClick = false;
         }
@@ -650,7 +650,7 @@ order by id.SEQ", textBox1.Text, txtseason1.Text, textBox2.Text, comboBox1.Text)
         private void button8_Click(object sender, EventArgs e)
         {
             long styleUkey = Convert.ToInt64(MyUtility.GetValue.Lookup(string.Format("select Ukey from Style where ID = '{0}' and SeasonID = '{1}' and BrandID = '{2}'", CurrentMaintain["StyleID"].ToString(), CurrentMaintain["SeasonID"].ToString(), CurrentMaintain["BrandID"].ToString())));
-            Sci.Production.PPIC.P01_StdGSDList callNextForm = new Sci.Production.PPIC.P01_StdGSDList(styleUkey);
+            Sci.Production.PublicForm.StdGSDList callNextForm = new Sci.Production.PublicForm.StdGSDList(styleUkey);
             DialogResult result = callNextForm.ShowDialog(this);
         }
 
