@@ -86,11 +86,20 @@
     <Compile Include="EditRemark.Designer.cs">
       <DependentUpon>EditRemark.cs</DependentUpon>
     </Compile>
+    <Compile Include="StdGSDList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StdGSDList.Designer.cs">
+      <DependentUpon>StdGSDList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="EditRemark.resx">
       <DependentUpon>EditRemark.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StdGSDList.resx">
+      <DependentUpon>StdGSDList.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

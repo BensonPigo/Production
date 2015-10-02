@@ -454,6 +454,9 @@ Sci.Production.PublicForm/EditRemark.cs -text
 Sci.Production.PublicForm/EditRemark.resx -text
 Sci.Production.PublicForm/Properties/AssemblyInfo.cs -text
 Sci.Production.PublicForm/Sci.Production.PublicForm.csproj -text
+Sci.Production.PublicForm/StdGSDList.Designer.cs -text
+Sci.Production.PublicForm/StdGSDList.cs -text
+Sci.Production.PublicForm/StdGSDList.resx -text
 Sci.Production.PublicPrg/Logistic.cs -text
 Sci.Production.PublicPrg/Packing.cs -text
 Sci.Production.PublicPrg/Planning.cs -text
