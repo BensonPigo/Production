@@ -51,7 +51,7 @@ namespace Sci
                         if (MyUtility.Check.Seek(e.FormattedValue.ToString(), "ClogLocation", "id") == false)
                         {
                             MyUtility.Msg.WarningBox(string.Format("< ClogLocation : {0} > not found!!!", e.FormattedValue.ToString()));
-                            dr["ClogLocationId"] = DBNull.Value;
+                            dr["ClogLocationId"] = "";
                             e.Cancel = true;
                             return;
                         }
@@ -83,7 +83,7 @@ namespace Sci
                         if (MyUtility.Check.Seek(e.FormattedValue.ToString(), "Orders", "id") == false)
                         {
                             MyUtility.Msg.WarningBox(string.Format("< Order Id : {0} > is not found!!!", e.FormattedValue.ToString()));
-                            dr["orderid"] = DBNull.Value;
+                            dr["orderid"] = "";
                             e.Cancel = true;
                             return;
                         }
@@ -163,7 +163,7 @@ namespace Sci
                         if (MyUtility.Check.Seek(seekSql) == false)
                         {
                             MyUtility.Msg.WarningBox(string.Format("< Ref No. : {0} > not found!!!", e.FormattedValue.ToString()));
-                            dr["RefNo"] = DBNull.Value;
+                            dr["RefNo"] = "";
                             e.Cancel = true;
                             return;
                         }
