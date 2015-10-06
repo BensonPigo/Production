@@ -17,7 +17,7 @@ SELECT   a.[ID]
       ,a.[Remark]
       ,a.[Ukey]
       
-  FROM [Production].[dbo].[Order_Artwork] a ,[Production].[dbo].[Order_Qty] b
+  FROM [dbo].[Order_Artwork] a ,[dbo].[Order_Qty] b
   where a.Article = '----' and a.id = b.id
 union ALL
 SELECT   a.[ID]
@@ -35,7 +35,7 @@ SELECT   a.[ID]
       ,a.[Remark]
       ,a.[Ukey]
       
-  FROM [Production].[dbo].[Order_Artwork] a ,[Production].[dbo].[Order_Qty] b
+  FROM [dbo].[Order_Artwork] a ,[dbo].[Order_Qty] b
   where a.Article = b.Article and a.id = b.id
 
 
