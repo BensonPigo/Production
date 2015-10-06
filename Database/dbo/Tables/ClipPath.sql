@@ -1,0 +1,6 @@
+﻿CREATE TABLE [dbo].[ClipPath] (
+    [ID]   VARCHAR (10)   CONSTRAINT [DF_ClipPath_ID] DEFAULT ('') NOT NULL,
+    [Path] NVARCHAR (100) CONSTRAINT [DF_ClipPath_Path] DEFAULT ('') NULL,
+    CONSTRAINT [PK_ClipPath] PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+

@@ -1,0 +1,58 @@
+﻿CREATE TABLE [dbo].[Bundle_Detail] (
+    [BundleNo]    VARCHAR (10)  CONSTRAINT [DF_Bundle_Detail_BundleNo] DEFAULT ('') NOT NULL,
+    [Id]          BIGINT        CONSTRAINT [DF_Bundle_Detail_Id] DEFAULT ((0)) NOT NULL,
+    [BundleGroup] NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_BundleGroup] DEFAULT ((0)) NULL,
+    [Patterncode] VARCHAR (20)  CONSTRAINT [DF_Bundle_Detail_Patterncode] DEFAULT ('') NOT NULL,
+    [PatternDesc] NVARCHAR (40) CONSTRAINT [DF_Bundle_Detail_PatternDesc] DEFAULT ('') NOT NULL,
+    [SizeCode]    VARCHAR (8)   CONSTRAINT [DF_Bundle_Detail_SizeCode] DEFAULT ('') NULL,
+    [Qty]         NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_Qty] DEFAULT ((0)) NULL,
+    [Parts]       NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_Parts] DEFAULT ((0)) NULL,
+    [Farmin]      NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_Farmin] DEFAULT ((0)) NULL,
+    [FarmOut]     NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_FarmOut] DEFAULT ((0)) NULL,
+    CONSTRAINT [PK_Bundle_Detail] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [Id] ASC)
+);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Bundle Detail', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'捆包號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail', @level2type = N'COLUMN', @level2name = N'BundleNo';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Id', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail', @level2type = N'COLUMN', @level2name = N'Id';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Group', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail', @level2type = N'COLUMN', @level2name = N'BundleGroup';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'版片編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail', @level2type = N'COLUMN', @level2name = N'Patterncode';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'版片敘述', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail', @level2type = N'COLUMN', @level2name = N'PatternDesc';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'尺寸', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail', @level2type = N'COLUMN', @level2name = N'SizeCode';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail', @level2type = N'COLUMN', @level2name = N'Qty';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Part 數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail', @level2type = N'COLUMN', @level2name = N'Parts';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'外發收入數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail', @level2type = N'COLUMN', @level2name = N'Farmin';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'外發發出數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail', @level2type = N'COLUMN', @level2name = N'FarmOut';
+

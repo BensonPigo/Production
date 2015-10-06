@@ -1,0 +1,123 @@
+﻿CREATE TABLE [dbo].[MNOrder_BOA] (
+    [Id]              VARCHAR (13)   CONSTRAINT [DF_MNOrder_BOA_Id] DEFAULT ('') NULL,
+    [UKey]            BIGINT         CONSTRAINT [DF_MNOrder_BOA_UKey] DEFAULT ((0)) NOT NULL,
+    [Order_BOAUkey]   BIGINT         CONSTRAINT [DF_MNOrder_BOA_Order_BOAUkey] DEFAULT ((0)) NULL,
+    [Refno]           VARCHAR (20)   CONSTRAINT [DF_MNOrder_BOA_Refno] DEFAULT ('') NULL,
+    [SCIRefno]        VARCHAR (26)   CONSTRAINT [DF_MNOrder_BOA_SCIRefno] DEFAULT ('') NULL,
+    [SuppID]          VARCHAR (6)    CONSTRAINT [DF_MNOrder_BOA_SuppID] DEFAULT ('') NULL,
+    [Seq]             VARCHAR (3)    CONSTRAINT [DF_MNOrder_BOA_Seq] DEFAULT ('') NULL,
+    [UsedQty]         NUMERIC (8, 4) CONSTRAINT [DF_MNOrder_BOA_UsedQty] DEFAULT ((0)) NULL,
+    [BomTypeSize]     BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeSize] DEFAULT ((0)) NULL,
+    [BomTypeColor]    BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeColor] DEFAULT ((0)) NULL,
+    [BomTypeStyle]    BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeStyle] DEFAULT ((0)) NULL,
+    [BomTypeArticle]  BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeArticle] DEFAULT ((0)) NULL,
+    [BomTypeCustCD]   BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeCustCD] DEFAULT ((0)) NULL,
+    [BomTypePono]     BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypePono] DEFAULT ((0)) NULL,
+    [BomTypeBuyMonth] BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeBuyMonth] DEFAULT ((0)) NULL,
+    [BomTypeCountry]  BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeCountry] DEFAULT ((0)) NULL,
+    [PatternPanel]    VARCHAR (2)    CONSTRAINT [DF_MNOrder_BOA_PatternPanel] DEFAULT ('') NULL,
+    [SizeItem]        VARCHAR (3)    CONSTRAINT [DF_MNOrder_BOA_SizeItem] DEFAULT ('') NULL,
+    [BomTypeZipper]   BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeZipper] DEFAULT ((0)) NULL,
+    [Remark]          NVARCHAR (MAX) CONSTRAINT [DF_MNOrder_BOA_Remark] DEFAULT ('') NULL,
+    [Shell]           NVARCHAR (63)  CONSTRAINT [DF_MNOrder_BOA_Shell] DEFAULT ('') NULL,
+    [isCustCD]        TINYINT        CONSTRAINT [DF_MNOrder_BOA_isCustCD] DEFAULT ((0)) NULL,
+    [Description]     NVARCHAR (150) CONSTRAINT [DF_MNOrder_BOA_Description] DEFAULT ('') NULL,
+    CONSTRAINT [PK_MNOrder_BOA] PRIMARY KEY CLUSTERED ([UKey] ASC)
+);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Order : Bill of Accessory', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'Id';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'唯一值', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'UKey';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BOA唯一值', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'Order_BOAUkey';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'物料編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'Refno';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'飛雁料號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'SCIRefno';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'供應商', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'SuppID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購大項編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'Seq';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單件用量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'UsedQty';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BomTypeSize', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeSize';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BomTypeColor', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeColor';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BomTypeStyle', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeStyle';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BomTypeArticle', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeArticle';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BomTypeCustCD', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeCustCD';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BomTypePono', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'BomTypePono';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BomTypeBuyMonth', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeBuyMonth';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BomTypeCountry', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeCountry';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'第一參考部位的Colorway-A~Z', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'PatternPanel';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'參考那個量法的Code(S01~S99)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'SizeItem';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'檢查拉鏈否', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeZipper';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'Remark';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'記錄轉印的布種-Expend需寫入Remark', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'Shell';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客戶物料展開規則', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'isCustCD';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'描述', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'Description';
+

@@ -1,0 +1,11 @@
+﻿CREATE TABLE [dbo].[MyGridUDF] (
+    [LoginID]  VARCHAR (10) CONSTRAINT [DF_MyGridUDF_LoginID] DEFAULT ('') NOT NULL,
+    [FormName] VARCHAR (80) CONSTRAINT [DF_MyGridUDF_FormName] DEFAULT ('') NOT NULL,
+    [FKUDF1]   BIGINT       CONSTRAINT [DF_MyGridUDF_FKUDF1] DEFAULT ((0)) NULL,
+    [AddName]  VARCHAR (10) CONSTRAINT [DF_MyGridUDF_AddName] DEFAULT ('') NULL,
+    [AddDate]  DATETIME     NULL,
+    [EditName] VARCHAR (10) CONSTRAINT [DF_MyGridUDF_EditName] DEFAULT ('') NULL,
+    [EditDate] DATETIME     NULL,
+    CONSTRAINT [PK_MyGridUDF] PRIMARY KEY CLUSTERED ([LoginID] ASC, [FormName] ASC)
+);
+

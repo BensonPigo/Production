@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[MenuDetail] (
+    [PKey]          BIGINT        IDENTITY (1, 1) NOT NULL,
+    [UKey]          BIGINT        CONSTRAINT [DF_MenuDetail_UKey] DEFAULT ((0)) NULL,
+    [BarNo]         INT           CONSTRAINT [DF_MenuDetail_BarNo] DEFAULT ((0)) NULL,
+    [ObjectCode]    INT           CONSTRAINT [DF_MenuDetail_ObjectCode] DEFAULT ((0)) NULL,
+    [BarPrompt]     NVARCHAR (50) CONSTRAINT [DF_MenuDetail_BarPrompt] DEFAULT ('') NULL,
+    [FormName]      VARCHAR (80)  CONSTRAINT [DF_MenuDetail_FormName] DEFAULT ('') NULL,
+    [FormParameter] VARCHAR (50)  CONSTRAINT [DF_MenuDetail_FormParameter] DEFAULT ('') NULL,
+    [ForMISOnly]    BIT           CONSTRAINT [DF_MenuDetail_ForMISOnly] DEFAULT ((0)) NULL,
+    [CanNew]        BIT           CONSTRAINT [DF_MenuDetail_CanNew] DEFAULT ((0)) NULL,
+    [CanEdit]       BIT           CONSTRAINT [DF_MenuDetail_CanEdit] DEFAULT ((0)) NULL,
+    [CanDelete]     BIT           CONSTRAINT [DF_MenuDetail_CanDelete] DEFAULT ((0)) NULL,
+    [CanPrint]      BIT           CONSTRAINT [DF_MenuDetail_CanPrint] DEFAULT ((0)) NULL,
+    [CanConfirm]    BIT           CONSTRAINT [DF_MenuDetail_CanConfirm] DEFAULT ((0)) NULL,
+    [CanUnConfirm]  BIT           CONSTRAINT [DF_MenuDetail_CanUnConfirm] DEFAULT ((0)) NULL,
+    [CanSend]       BIT           CONSTRAINT [DF_MenuDetail_CanSend] DEFAULT ((0)) NULL,
+    [CanRecall]     BIT           CONSTRAINT [DF_MenuDetail_CanRecall] DEFAULT ((0)) NULL,
+    [CanCheck]      BIT           CONSTRAINT [DF_MenuDetail_CanCheck] DEFAULT ((0)) NULL,
+    [CanUnCheck]    BIT           CONSTRAINT [DF_MenuDetail_CanUnCheck] DEFAULT ((0)) NULL,
+    [CanClose]      BIT           CONSTRAINT [DF_MenuDetail_CanClose] DEFAULT ((0)) NULL,
+    [CanUnClose]    BIT           CONSTRAINT [DF_MenuDetail_CanUnClose] DEFAULT ((0)) NULL,
+    [CanReceive]    BIT           CONSTRAINT [DF_MenuDetail_CanReceive] DEFAULT ((0)) NULL,
+    [CanReturn]     BIT           CONSTRAINT [DF_MenuDetail_CanReturn] DEFAULT ((0)) NULL,
+    [CanJunk]       BIT           CONSTRAINT [DF_MenuDetail_CanJunk] DEFAULT ((0)) NULL,
+    CONSTRAINT [PK_MenuDetail] PRIMARY KEY CLUSTERED ([PKey] ASC)
+);
+

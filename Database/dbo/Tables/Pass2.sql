@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[Pass2] (
+    [PKey]         BIGINT        IDENTITY (1, 1) NOT NULL,
+    [FKPass0]      BIGINT        CONSTRAINT [DF_Pass2_FKPass0] DEFAULT ((0)) NULL,
+    [FKMenu]       BIGINT        CONSTRAINT [DF_Pass2_FKMenu] DEFAULT ((0)) NULL,
+    [MenuName]     NVARCHAR (50) NULL,
+    [BarPrompt]    NVARCHAR (50) CONSTRAINT [DF_Pass2_BarPrompt] DEFAULT ('') NULL,
+    [Used]         VARCHAR (1)   CONSTRAINT [DF_Pass2_Used] DEFAULT ('') NULL,
+    [CanNew]       BIT           CONSTRAINT [DF_Pass2_CanNew] DEFAULT ((0)) NULL,
+    [CanEdit]      BIT           CONSTRAINT [DF_Pass2_CanEdit] DEFAULT ((0)) NULL,
+    [CanDelete]    BIT           CONSTRAINT [DF_Pass2_CanDelete] DEFAULT ((0)) NULL,
+    [CanPrint]     BIT           CONSTRAINT [DF_Pass2_CanPrint] DEFAULT ((0)) NULL,
+    [CanConfirm]   BIT           CONSTRAINT [DF_Pass2_CanConfirm] DEFAULT ((0)) NULL,
+    [CanUnConfirm] BIT           CONSTRAINT [DF_Pass2_CanUnConfirm] DEFAULT ((0)) NULL,
+    [CanSend]      BIT           CONSTRAINT [DF_Pass2_CanSend] DEFAULT ((0)) NULL,
+    [CanRecall]    BIT           CONSTRAINT [DF_Pass2_CanRecall] DEFAULT ((0)) NULL,
+    [CanCheck]     BIT           CONSTRAINT [DF_Pass2_CanCheck] DEFAULT ((0)) NULL,
+    [CanUnCheck]   BIT           CONSTRAINT [DF_Pass2_CanUnCheck] DEFAULT ((0)) NULL,
+    [CanClose]     BIT           CONSTRAINT [DF_Pass2_CanClose] DEFAULT ((0)) NULL,
+    [CanUnClose]   BIT           CONSTRAINT [DF_Pass2_CanUnClose] DEFAULT ((0)) NULL,
+    [CanReceive]   BIT           CONSTRAINT [DF_Pass2_CanReceive] DEFAULT ((0)) NULL,
+    [CanReturn]    BIT           CONSTRAINT [DF_Pass2_CanReturn] DEFAULT ((0)) NULL,
+    [CanJunk]      BIT           CONSTRAINT [DF_Pass2_CanJunk] DEFAULT ((0)) NULL,
+    CONSTRAINT [PK_Pass2] PRIMARY KEY CLUSTERED ([PKey] ASC)
+);
+
