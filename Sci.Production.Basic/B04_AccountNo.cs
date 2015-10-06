@@ -45,6 +45,14 @@ namespace Sci.Production.Basic
             return true;
         }
 
+        protected override void OnUIConvertToMaintain()
+        {
+            base.OnUIConvertToMaintain();
+            append.Visible = false;
+            revise.Visible = false;
+            delete.Visible = false;
+        }
+
         protected override bool OnSave()
         {
             ITableSchema tableSchema;

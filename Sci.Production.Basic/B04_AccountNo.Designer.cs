@@ -48,26 +48,23 @@
             // 
             // append
             // 
-            this.append.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.append.Visible = false;
             // 
             // revise
             // 
-            this.revise.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.revise.Visible = false;
             // 
             // delete
             // 
-            this.delete.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.delete.Visible = false;
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(346, 8);
+            this.undo.Location = new System.Drawing.Point(341, 8);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(262, 8);
+            this.save.Location = new System.Drawing.Point(255, 8);
             // 
             // label1
             // 
