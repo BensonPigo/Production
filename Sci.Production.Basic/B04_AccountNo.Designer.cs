@@ -33,6 +33,8 @@
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.displayBox2 = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
+            this.btmcont.SuspendLayout();
             this.SuspendLayout();
             // 
             // btmcont
@@ -43,6 +45,29 @@
             // 
             this.gridcont.Location = new System.Drawing.Point(12, 42);
             this.gridcont.Size = new System.Drawing.Size(409, 405);
+            // 
+            // append
+            // 
+            this.append.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.append.Visible = false;
+            // 
+            // revise
+            // 
+            this.revise.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.revise.Visible = false;
+            // 
+            // delete
+            // 
+            this.delete.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.delete.Visible = false;
+            // 
+            // undo
+            // 
+            this.undo.Location = new System.Drawing.Point(346, 8);
+            // 
+            // save
+            // 
+            this.save.Location = new System.Drawing.Point(262, 8);
             // 
             // label1
             // 
@@ -87,6 +112,7 @@
             this.Controls.Add(this.displayBox1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.Name = "B04_AccountNo";
             this.Text = "Accounting chart no";
@@ -98,6 +124,8 @@
             this.Controls.SetChildIndex(this.displayBox1, 0);
             this.Controls.SetChildIndex(this.displayBox2, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
+            this.btmcont.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
