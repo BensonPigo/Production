@@ -123,6 +123,12 @@
     <Compile Include="txtmultifactory.Designer.cs">
       <DependentUpon>txtmultifactory.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtmisc.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtmisc.designer.cs">
+      <DependentUpon>txtmisc.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtpaytermar.cs">
       <SubType>UserControl</SubType>
     </Compile>
