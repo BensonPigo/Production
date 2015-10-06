@@ -10,7 +10,7 @@
     [Price]         NUMERIC (8, 4) CONSTRAINT [DF_Style_Artwork_Price] DEFAULT ((0)) NULL,
     [Cost]          NUMERIC (8, 4) CONSTRAINT [DF_Style_Artwork_Cost] DEFAULT ((0)) NULL,
     [Remark]        NVARCHAR (100) CONSTRAINT [DF_Style_Artwork_Remark] DEFAULT ('') NULL,
-    [Ukey]          BIGINT         CONSTRAINT [DF_Style_Artwork_Ukey] DEFAULT ((0)) NOT NULL IDENTITY,
+    [Ukey]          BIGINT          NOT NULL IDENTITY,
     [AddName]       VARCHAR (10)   CONSTRAINT [DF_Style_Artwork_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME       NULL,
     [EditName]      VARCHAR (10)   CONSTRAINT [DF_Style_Artwork_EditName] DEFAULT ('') NULL,
