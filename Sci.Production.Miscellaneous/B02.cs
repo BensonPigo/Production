@@ -36,7 +36,7 @@ namespace Sci.Production.Miscellaneous
             if (MyUtility.Check.Empty(CurrentMaintain["Pic"])) this.pictureBox1.ImageLocation = "";
             else this.pictureBox1.ImageLocation = clippath + this.CurrentMaintain["Pic"].ToString();
 
-            if ((decimal)CurrentMaintain["InspLeadTime"]==0)
+            if (MyUtility.Check.Empty(CurrentMaintain["InspLeadTime"]) || CurrentMaintain["InspLeadTime"].ToString() =="0")
             {
                 numericBox1.Text = MyUtility.GetValue.Lookup("Select MiscInspdate from System");
             }
