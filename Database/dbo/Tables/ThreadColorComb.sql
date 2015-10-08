@@ -2,9 +2,9 @@
     [ThreadComboID]       VARCHAR (10)   CONSTRAINT [DF_ThreadColorComb_ThreadComboID] DEFAULT ('') NULL,
     [Machinetypeid]       VARCHAR (10)   CONSTRAINT [DF_ThreadColorComb_Machinetypeid] DEFAULT ('') NULL,
     [StyleUkey]           VARCHAR (10)   CONSTRAINT [DF_ThreadColorComb_StyleUkey] DEFAULT ('') NULL,
-    [ThreadColorCombUkey] VARCHAR (10)   CONSTRAINT [DF_ThreadColorComb_ThreadColorCombUkey] DEFAULT ('') NOT NULL,
+    [Id] BIGINT   CONSTRAINT [DF_ThreadColorComb_ThreadColorCombUkey] DEFAULT ('') NOT NULL,
     [Length]              NUMERIC (8, 2) CONSTRAINT [DF_ThreadColorComb_Length] DEFAULT ((0)) NULL,
-    CONSTRAINT [PK_ThreadColorComb] PRIMARY KEY CLUSTERED ([ThreadColorCombUkey] ASC)
+    CONSTRAINT [PK_ThreadColorComb] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
 
@@ -25,7 +25,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'StyleUkey',
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ThreadColorCombUkey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ThreadColorComb', @level2type = N'COLUMN', @level2name = N'ThreadColorCombUkey';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ThreadColorCombUkey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ThreadColorComb', @level2type = N'COLUMN', @level2name = 'Id';
 
 
 GO
