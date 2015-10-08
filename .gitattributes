@@ -3,6 +3,7 @@ Database/ProductionDB.dbmdl -text
 Database/ProductionDB.sln -text
 Database/ProductionDB.sqlproj -text
 Database/ProductionDB.sqlproj.user -text
+Database/dbo/Functions/getBOFMtlDesc.sql -text
 Database/dbo/Functions/getMtlDesc.sql -text
 Database/dbo/Tables/ADIDASComplain.sql -text
 Database/dbo/Tables/ADIDASComplainDefect.sql -text
@@ -399,7 +400,7 @@ Database/dbo/Tables/WorkOrder_Distribute.sql -text
 Database/dbo/Tables/WorkOrder_Estcutdate.sql -text
 Database/dbo/Tables/WorkOrder_PatternPanel.sql -text
 Database/dbo/Tables/WorkOrder_SizeRatio.sql -text
-Database/dbo/Views/V_OrderFAColor.sql -text
+Database/dbo/Views/View_OrderFAColor.sql -text
 Database/dbo/Views/View_Order_Artworks.sql -text
 Database/dbo/Views/View_Orders_subprocess.sql -text
 Database/匯入結構描述記錄/ProductionDB_20151006014853.log -text

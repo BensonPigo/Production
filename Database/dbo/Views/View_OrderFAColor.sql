@@ -1,4 +1,4 @@
-﻿create view V_OrderFAColor
+﻿create view [View_OrderFAColor]
 as select o.ID,oa.Article,occ.ColorID
  from Order_ColorCombo occ, Orders o, Order_Article oa
  where occ.LectraCode = (select min(LectraCode) 
@@ -8,4 +8,3 @@ as select o.ID,oa.Article,occ.ColorID
  and oa.id = o.POID
  and occ.Article = oa.Article 
  and occ.PatternPanel = 'FA'
-
