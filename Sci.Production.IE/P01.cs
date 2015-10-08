@@ -30,10 +30,10 @@ namespace Sci.Production.IE
             this.detailgrid.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold);
         }
 
-        public P01(string StyleID, string ComboType)
+        public P01(string StyleID, string BrandID, string SeasonID, string ComboType)
         {
             InitializeComponent();
-            DefaultFilter = string.Format("StyleID = '{0}' {1}", StyleID, ComboType == null ? "" : "and ComboType = '" + ComboType+"'");
+            DefaultFilter = string.Format("StyleID = '{0}' and BrandID = '{1}' {2} {3}", StyleID, BrandID, SeasonID == null ? "" : "and SeasonID = '" + SeasonID + "'", ComboType == null ? "" : "and ComboType = '" + ComboType + "'");
             detailgrid.AllowUserToOrderColumns = true;
             InsertDetailGridOnDoubleClick = false;
         }
