@@ -27,12 +27,14 @@
     [MRRemark]            NVARCHAR (MAX) CONSTRAINT [DF_Style_ProductionKits_MRRemark] DEFAULT ('') NULL,
     [FtyRemark]           NVARCHAR (MAX) CONSTRAINT [DF_Style_ProductionKits_FtyRemark] DEFAULT ('') NULL,
     [FtyList]             NVARCHAR (100) CONSTRAINT [DF_Style_ProductionKits_FtyList] DEFAULT ('') NULL,
-    [Reason]              VARCHAR (5)    CONSTRAINT [DF_Style_ProductionKits_Reason] DEFAULT ('') NULL,
+    [ReasonID]            VARCHAR (5)    CONSTRAINT [DF_Style_ProductionKits_Reason] DEFAULT ('') NULL,
     [SendToQA]            DATE           NULL,
     [QAReceived]          DATE           NULL,
     [StyleCUkey1_Old]     VARCHAR (11)   CONSTRAINT [DF_Style_ProductionKits_StyleCUkey1_Old] DEFAULT ('') NULL,
     CONSTRAINT [PK_Style_ProductionKits] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO
@@ -152,7 +154,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'寄送工�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'不寄送原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_ProductionKits', @level2type = N'COLUMN', @level2name = N'Reason';
+
 
 
 GO
@@ -165,4 +167,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QA 收到�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_ProductionKits', @level2type = N'COLUMN', @level2name = N'StyleCUkey1_Old';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'不寄送原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_ProductionKits', @level2type = N'COLUMN', @level2name = N'ReasonID';
 
