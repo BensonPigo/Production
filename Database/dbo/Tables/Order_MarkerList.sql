@@ -14,7 +14,6 @@
     [StraightLength]      VARCHAR (15)   CONSTRAINT [DF_Order_MarkerList_StraightLength] DEFAULT ('') NULL,
     [CurvedLength]        VARCHAR (15)   CONSTRAINT [DF_Order_MarkerList_CurvedLength] DEFAULT ('') NULL,
     [Efficiency]          VARCHAR (9)    CONSTRAINT [DF_Order_MarkerList_Efficiency] DEFAULT ('') NULL,
-    [Article]             NVARCHAR (MAX) CONSTRAINT [DF_Order_MarkerList_Article] DEFAULT ('') NULL,
     [Remark]              NVARCHAR (100) CONSTRAINT [DF_Order_MarkerList_Remark] DEFAULT ('') NULL,
     [MixedSizeMarker]     VARCHAR (1)    CONSTRAINT [DF_Order_MarkerList_MultitudeSize] DEFAULT ('') NOT NULL,
     [MarkerNo]            VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_MarkerNo] DEFAULT ('') NULL,
@@ -34,6 +33,8 @@
     [EditDate]            DATETIME       NULL,
     CONSTRAINT [PK_Order_MarkerList] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO
@@ -101,7 +102,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'使用率',
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'指定顏色組', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_MarkerList', @level2type = N'COLUMN', @level2name = N'Article';
+
 
 
 GO

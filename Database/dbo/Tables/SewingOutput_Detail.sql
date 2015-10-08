@@ -7,13 +7,15 @@
     [TMS]                  INT            CONSTRAINT [DF_SewingOutput_Detail_TMS] DEFAULT ((0)) NULL,
     [HourlyStandardOutput] INT            CONSTRAINT [DF_SewingOutput_Detail_HourlyStandardOutput] DEFAULT ((0)) NULL,
     [WorkHour]             NUMERIC (6, 3) CONSTRAINT [DF_SewingOutput_Detail_WorkHour] DEFAULT ((0)) NOT NULL,
-    [DetailKey]            BIGINT         IDENTITY (1, 1) NOT NULL,
+    [UKey]                 BIGINT         IDENTITY (1, 1) NOT NULL,
     [QAQty]                INT            CONSTRAINT [DF_SewingOutput_Detail_QAQty] DEFAULT ((0)) NULL,
     [DefectQty]            INT            CONSTRAINT [DF_SewingOutput_Detail_DefectQty] DEFAULT ((0)) NULL,
     [InlineQty]            INT            CONSTRAINT [DF_SewingOutput_Detail_InlineQty] DEFAULT ((0)) NULL,
     [OldDetailKey]         VARCHAR (10)   CONSTRAINT [DF_SewingOutput_Detail_OldDetailKey] DEFAULT ('') NULL,
-    CONSTRAINT [PK_SewingOutput_Detail] PRIMARY KEY CLUSTERED ([DetailKey] ASC)
+    CONSTRAINT [PK_SewingOutput_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
+
+
 
 
 GO
@@ -53,7 +55,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工作時�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Detail Key', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_Detail', @level2type = N'COLUMN', @level2name = N'DetailKey';
+
 
 
 GO
@@ -70,4 +72,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'上線數�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_Detail', @level2type = N'COLUMN', @level2name = N'OldDetailKey';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Detail Key', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_Detail', @level2type = N'COLUMN', @level2name = N'UKey';
 

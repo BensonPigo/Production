@@ -1,14 +1,16 @@
 ﻿CREATE TABLE [dbo].[SewingOutput_Detail_Detail] (
-    [ID]           VARCHAR (13) CONSTRAINT [DF_SewingOutput_Detail_Detail_ID] DEFAULT ('') NOT NULL,
-    [DetailKey]    BIGINT       CONSTRAINT [DF_SewingOutput_Detail_Detail_DetailKey] DEFAULT ((0)) NOT NULL,
-    [OrderId]      VARCHAR (13) CONSTRAINT [DF_SewingOutput_Detail_Detail_OrderId] DEFAULT ('') NOT NULL,
-    [ComboType]    VARCHAR (1)  CONSTRAINT [DF_SewingOutput_Detail_Detail_ComboType] DEFAULT ('') NOT NULL,
-    [Article]      VARCHAR (8)  CONSTRAINT [DF_SewingOutput_Detail_Detail_Article] DEFAULT ('') NOT NULL,
-    [SizeCode]     VARCHAR (8)  CONSTRAINT [DF_SewingOutput_Detail_Detail_SizeCode] DEFAULT ('') NOT NULL,
-    [QAQty]        INT          CONSTRAINT [DF_SewingOutput_Detail_Detail_QAQty] DEFAULT ((0)) NOT NULL,
-    [OldDetailKey] VARCHAR (10) CONSTRAINT [DF_SewingOutput_Detail_Detail_OldDetailKey] DEFAULT ('') NULL,
-    CONSTRAINT [PK_SewingOutput_Detail_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [DetailKey] ASC, [OrderId] ASC, [ComboType] ASC, [Article] ASC, [SizeCode] ASC)
+    [ID]                      VARCHAR (13) CONSTRAINT [DF_SewingOutput_Detail_Detail_ID] DEFAULT ('') NOT NULL,
+    [SewingOutput_DetailUKey] BIGINT       CONSTRAINT [DF_SewingOutput_Detail_Detail_DetailKey] DEFAULT ((0)) NOT NULL,
+    [OrderId]                 VARCHAR (13) CONSTRAINT [DF_SewingOutput_Detail_Detail_OrderId] DEFAULT ('') NOT NULL,
+    [ComboType]               VARCHAR (1)  CONSTRAINT [DF_SewingOutput_Detail_Detail_ComboType] DEFAULT ('') NOT NULL,
+    [Article]                 VARCHAR (8)  CONSTRAINT [DF_SewingOutput_Detail_Detail_Article] DEFAULT ('') NOT NULL,
+    [SizeCode]                VARCHAR (8)  CONSTRAINT [DF_SewingOutput_Detail_Detail_SizeCode] DEFAULT ('') NOT NULL,
+    [QAQty]                   INT          CONSTRAINT [DF_SewingOutput_Detail_Detail_QAQty] DEFAULT ((0)) NOT NULL,
+    [OldDetailKey]            VARCHAR (10) CONSTRAINT [DF_SewingOutput_Detail_Detail_OldDetailKey] DEFAULT ('') NULL,
+    CONSTRAINT [PK_SewingOutput_Detail_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [SewingOutput_DetailUKey] ASC, [OrderId] ASC, [ComboType] ASC, [Article] ASC, [SizeCode] ASC)
 );
+
+
 
 
 GO
@@ -20,7 +22,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SewingOutpu
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Detail Key', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_Detail_Detail', @level2type = N'COLUMN', @level2name = N'DetailKey';
+
 
 
 GO
@@ -45,4 +47,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'產出數�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_Detail_Detail', @level2type = N'COLUMN', @level2name = N'OldDetailKey';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Detail Key', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_Detail_Detail', @level2type = N'COLUMN', @level2name = N'SewingOutput_DetailUKey';
 

@@ -136,8 +136,11 @@
     [ClogLastReceiveDate] DATE           NULL,
     [CPUFactor]           NUMERIC (3, 1) NULL,
     [SizeUnit]            VARCHAR (8)    CONSTRAINT [DF_Orders_SizeUnit] DEFAULT ('') NULL,
+    [CuttingSP]           VARCHAR (13)   CONSTRAINT [DF_Orders_CuttingSP] DEFAULT ('') NULL,
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

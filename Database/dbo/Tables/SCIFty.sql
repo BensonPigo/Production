@@ -1,21 +1,25 @@
 ﻿CREATE TABLE [dbo].[SCIFty] (
-    [ID]         VARCHAR (8)    CONSTRAINT [DF_SCIFty_ID] DEFAULT ('') NOT NULL,
-    [Junk]       BIT            CONSTRAINT [DF_SCIFty_Junk] DEFAULT ((0)) NULL,
-    [Abb]        NVARCHAR (10)  CONSTRAINT [DF_SCIFty_Abb] DEFAULT ('') NULL,
-    [NameCH]     NVARCHAR (40)  CONSTRAINT [DF_SCIFty_NameCH] DEFAULT ('') NULL,
-    [NameEN]     NVARCHAR (40)  CONSTRAINT [DF_SCIFty_NameEN] DEFAULT ('') NULL,
-    [CountryID]  VARCHAR (2)    CONSTRAINT [DF_SCIFty_CountryID] DEFAULT ('') NULL,
-    [Tel]        VARCHAR (30)   CONSTRAINT [DF_SCIFty_Tel] DEFAULT ('') NULL,
-    [Fax]        VARCHAR (30)   CONSTRAINT [DF_SCIFty_Fax] DEFAULT ('') NULL,
-    [AddressCH]  NVARCHAR (50)  CONSTRAINT [DF_SCIFty_AddressCH] DEFAULT ('') NULL,
-    [AddressEN]  NVARCHAR (MAX) CONSTRAINT [DF_SCIFty_AddressEN] DEFAULT ('') NULL,
-    [CurrencyID] VARCHAR (3)    CONSTRAINT [DF_SCIFty_CurrencyID] DEFAULT ('') NULL,
-    [AddName]    VARCHAR (10)   CONSTRAINT [DF_SCIFty_AddName] DEFAULT ('') NULL,
-    [AddDate]    DATETIME       NULL,
-    [EditName]   VARCHAR (10)   CONSTRAINT [DF_SCIFty_EditName] DEFAULT ('') NULL,
-    [EditDate]   DATETIME       NULL,
+    [ID]           VARCHAR (8)    CONSTRAINT [DF_SCIFty_ID] DEFAULT ('') NOT NULL,
+    [Junk]         BIT            CONSTRAINT [DF_SCIFty_Junk] DEFAULT ((0)) NULL,
+    [Abb]          NVARCHAR (10)  CONSTRAINT [DF_SCIFty_Abb] DEFAULT ('') NULL,
+    [NameCH]       NVARCHAR (40)  CONSTRAINT [DF_SCIFty_NameCH] DEFAULT ('') NULL,
+    [NameEN]       NVARCHAR (40)  CONSTRAINT [DF_SCIFty_NameEN] DEFAULT ('') NULL,
+    [CountryID]    VARCHAR (2)    CONSTRAINT [DF_SCIFty_CountryID] DEFAULT ('') NULL,
+    [Tel]          VARCHAR (30)   CONSTRAINT [DF_SCIFty_Tel] DEFAULT ('') NULL,
+    [Fax]          VARCHAR (30)   CONSTRAINT [DF_SCIFty_Fax] DEFAULT ('') NULL,
+    [AddressCH]    NVARCHAR (50)  CONSTRAINT [DF_SCIFty_AddressCH] DEFAULT ('') NULL,
+    [AddressEN]    NVARCHAR (MAX) CONSTRAINT [DF_SCIFty_AddressEN] DEFAULT ('') NULL,
+    [CurrencyID]   VARCHAR (3)    CONSTRAINT [DF_SCIFty_CurrencyID] DEFAULT ('') NULL,
+    [ExpressGroup] VARCHAR (8)    CONSTRAINT [DF_SCIFty_ExpressGroup] DEFAULT ('') NULL,
+    [PortAir]      VARCHAR (20)   CONSTRAINT [DF_SCIFty_PortAir] DEFAULT ('') NULL,
+    [AddName]      VARCHAR (10)   CONSTRAINT [DF_SCIFty_AddName] DEFAULT ('') NULL,
+    [AddDate]      DATETIME       NULL,
+    [EditName]     VARCHAR (10)   CONSTRAINT [DF_SCIFty_EditName] DEFAULT ('') NULL,
+    [EditDate]     DATETIME       NULL,
     CONSTRAINT [PK_SCIFty] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

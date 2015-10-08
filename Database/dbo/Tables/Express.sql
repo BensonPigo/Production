@@ -11,6 +11,7 @@
     [ETD]              DATE           NULL,
     [ETA]              DATE           NULL,
     [CTNQty]           SMALLINT       CONSTRAINT [DF_Express_CTNQty] DEFAULT ((0)) NULL,
+    [Handle]           VARCHAR (10)   CONSTRAINT [DF_Express_Handle] DEFAULT ('') NULL,
     [Manager]          VARCHAR (10)   CONSTRAINT [DF_Express_Manager] DEFAULT ('') NULL,
     [NW]               NUMERIC (8, 2) CONSTRAINT [DF_Express_NW] DEFAULT ((0)) NULL,
     [CTNNW]            NUMERIC (8, 2) CONSTRAINT [DF_Express_CTNNW] DEFAULT ((0)) NULL,
@@ -33,6 +34,8 @@
     [EditDate]         DATETIME       NULL,
     CONSTRAINT [PK_Express] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -165,4 +168,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Express', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Handle', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Express', @level2type = N'COLUMN', @level2name = N'Handle';
 

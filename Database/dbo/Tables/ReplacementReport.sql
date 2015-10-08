@@ -5,11 +5,11 @@
     [Type]        VARCHAR (1)  CONSTRAINT [DF_ReplacementReport_Type] DEFAULT ('') NOT NULL,
     [FactoryID]   VARCHAR (8)  CONSTRAINT [DF_ReplacementReport_FactoryID] DEFAULT ('') NOT NULL,
     [ApplyName]   VARCHAR (10) CONSTRAINT [DF_ReplacementReport_ApplyName] DEFAULT ('') NULL,
-    [ApplyDate]   DATE         NULL,
+    [ApplyDate]   DATETIME     NULL,
     [ApvName]     VARCHAR (10) CONSTRAINT [DF_ReplacementReport_ApvName] DEFAULT ('') NULL,
-    [ApvDate]     DATE         NULL,
+    [ApvDate]     DATETIME     NULL,
     [TPECFMName]  VARCHAR (10) CONSTRAINT [DF_ReplacementReport_TPECFMName] DEFAULT ('') NULL,
-    [TPECFMDate]  DATE         NULL,
+    [TPECFMDate]  DATETIME     NULL,
     [Status]      VARCHAR (15) CONSTRAINT [DF_ReplacementReport_Status] DEFAULT ('') NULL,
     [ExportToTPE] DATETIME     NULL,
     [AddName]     VARCHAR (10) CONSTRAINT [DF_ReplacementReport_AddName] DEFAULT ('') NULL,
@@ -20,6 +20,8 @@
     [TPEEditDate] DATETIME     NULL,
     CONSTRAINT [PK_ReplacementReport] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

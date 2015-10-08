@@ -37,6 +37,7 @@ Database/dbo/Tables/CDCode.sql -text
 Database/dbo/Tables/CDCode_Content.sql -text
 Database/dbo/Tables/Capacity.sql -text
 Database/dbo/Tables/Carrier.sql -text
+Database/dbo/Tables/Carrier_FtyRule.sql -text
 Database/dbo/Tables/Cfa.sql -text
 Database/dbo/Tables/Cfa_Detail.sql -text
 Database/dbo/Tables/ChgOver.sql -text

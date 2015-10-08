@@ -10,15 +10,17 @@
     [Price]         NUMERIC (8, 4) CONSTRAINT [DF_Style_Artwork_Price] DEFAULT ((0)) NULL,
     [Cost]          NUMERIC (8, 4) CONSTRAINT [DF_Style_Artwork_Cost] DEFAULT ((0)) NULL,
     [Remark]        NVARCHAR (100) CONSTRAINT [DF_Style_Artwork_Remark] DEFAULT ('') NULL,
-    [Ukey]          BIGINT          NOT NULL IDENTITY,
+    [Ukey]          BIGINT         IDENTITY (1, 1) NOT NULL,
     [AddName]       VARCHAR (10)   CONSTRAINT [DF_Style_Artwork_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME       NULL,
     [EditName]      VARCHAR (10)   CONSTRAINT [DF_Style_Artwork_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME       NULL,
     [TMS]           INT            CONSTRAINT [DF_Style_Artwork_TMS] DEFAULT ((0)) NULL,
-    [TradeUkey] BIGINT NULL DEFAULT ((0)), 
+    [TradeUkey]     BIGINT         CONSTRAINT [DF_Style_Artwork_TradeUkey] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Style_Artwork] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO
@@ -90,11 +92,3 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'Trade system generate Key',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Style_Artwork',
-    @level2type = N'COLUMN',
-    @level2name = N'TradeUkey'
