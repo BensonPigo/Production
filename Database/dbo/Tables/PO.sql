@@ -35,9 +35,10 @@
     [AIRLaboratoryRemark]           VARCHAR (60)   CONSTRAINT [DF_PO_AIRLaboratoryRemark] DEFAULT ('') NULL,
     [OvenLaboratoryRemark]          VARCHAR (60)   CONSTRAINT [DF_PO_OvenLaboratoryRemark] DEFAULT ('') NULL,
     [ColorFastnessLaboratoryRemark] VARCHAR (60)   CONSTRAINT [DF_PO_ColorFastnessLaboratoryRemark] DEFAULT ('') NULL,
-    [MTLDelay]                      DATE           NULL,
     CONSTRAINT [PK_PO] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

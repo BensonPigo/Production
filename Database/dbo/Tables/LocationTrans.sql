@@ -3,7 +3,7 @@
     [FactoryID] VARCHAR (8)   CONSTRAINT [DF_LocationTrans_FactoryID] DEFAULT ('') NOT NULL,
     [IssueDate] DATE          NOT NULL,
     [StockType] VARCHAR (1)   CONSTRAINT [DF_LocationTrans_StockType] DEFAULT ('') NOT NULL,
-    [Encode]    BIT           CONSTRAINT [DF_LocationTrans_Encode] DEFAULT ((0)) NULL,
+    [Status]    VARCHAR (15)  CONSTRAINT [DF_LocationTrans_Encode] DEFAULT ((0)) NOT NULL,
     [Remark]    NVARCHAR (60) CONSTRAINT [DF_LocationTrans_Remark] DEFAULT ('') NULL,
     [AddName]   VARCHAR (10)  CONSTRAINT [DF_LocationTrans_AddName] DEFAULT ('') NULL,
     [AddDate]   DATETIME      NULL,
@@ -11,6 +11,8 @@
     [EditDate]  DATETIME      NULL,
     CONSTRAINT [PK_LocationTrans] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -34,7 +36,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單別', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'確認', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocationTrans', @level2type = N'COLUMN', @level2name = N'Encode';
+
 
 
 GO
@@ -55,4 +57,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯人�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocationTrans', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'確認', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocationTrans', @level2type = N'COLUMN', @level2name = N'Status';
 

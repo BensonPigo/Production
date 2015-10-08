@@ -1,51 +1,78 @@
 ﻿
+
 -- 建立 FUNCTION
-CREATE FUNCTION getMtlDesc(@poid varchar(13),@seq1 varchar(3),@seq2 varchar(2),@type int) 
-RETURNS nvarchar(max)  -- 500若不夠，請加大 
+CREATE FUNCTION [dbo].[getMtlDesc](@poid varchar(13),@seq1 varchar(3),@seq2 varchar(2),@type int,@repeat bit) 
+RETURNS nvarchar(max)  -- 回傳Description
 BEGIN
-	declare @fabric_detaildesc nvarchar(max);
-	declare @suppcolor nvarchar(max);
-	declare @po_desc nvarchar(max);
-    DECLARE @string nvarchar(max)  -- 500若不夠，請加大 
-	declare @scirefno varchar(26)
+	DECLARE @fabric_detaildesc nvarchar(max); -- 暫存fabric description
+	DECLARE @suppcolor nvarchar(max); -- 暫存 supplier color
+	DECLARE @po_desc nvarchar(max); -- 暫存 po_supp_detail 相關欄位
+    DECLARE @string nvarchar(max)  -- 最後回傳的字串
+	DECLARE @StockSP VARCHAR(18)	-- 暫存po_supp_detail.stockpoid
+	DECLARE @scirefno varchar(26)	-- 暫存po_supp_detail.scirefno
+	DECLARE @refno varchar(23)		-- 暫存po_supp_detail.refno
+
     SET @string = ''
 	SET @po_desc=''
-   
-	IF  @type = 1
-	BEGIN
-		SELECT @string = @string + p.SuppColor
-				from dbo.po_supp_detail p WHERE ID=@poid and seq1 = @seq1 and seq2=@seq2;
-	END
 
-	if @type =2
-	begin	
-		SELECT @scirefno=p.SCIRefno
+	SELECT @scirefno=p.SCIRefno
+		, @refno = p.Refno
 		, @suppcolor = ISNULL(p.SuppColor,'')
-		, @po_desc=@po_desc + ISNULL(p.ColorDetail,'')
+		, @StockSP = isnull(p.StockPOID,'')
+		, @po_desc=@po_desc + ISNULL(p.ColorDetail,'')+ CHAR(13)+CHAR(10)
+		, @po_desc=@po_desc + ISNULL(p.sizespec,'')+ CHAR(13)+CHAR(10)
+		, @po_desc=@po_desc + ISNULL(p.SizeUnit,'')+ CHAR(13)+CHAR(10)
+		, @po_desc=@po_desc + ISNULL(p.Special,'')+ CHAR(13)+CHAR(10)
+		, @po_desc=@po_desc + ISNULL(p.Remark,'')
+		from dbo.po_supp_detail p WHERE ID=@poid and seq1 = @seq1 and seq2=@seq2;
+
+	IF @scirefno is null or @scirefno = ''
+	BEGIN
+		SELECT @scirefno=p.SCIRefno
 		, @po_desc=@po_desc + ISNULL(p.sizespec,'')
-		, @po_desc=@po_desc + ISNULL(p.SizeUnit,'')
 		, @po_desc=@po_desc + ISNULL(p.Special,'')
 		, @po_desc=@po_desc + ISNULL(p.Remark,'')
-			from dbo.po_supp_detail p WHERE ID=@poid and seq1 = @seq1 and seq2=@seq2;
-		if @scirefno is null or @scirefno = ''
-		begin
-			SELECT @scirefno=p.SCIRefno
-			, @po_desc=@po_desc + ISNULL(p.sizespec,'')
-			, @po_desc=@po_desc + ISNULL(p.Special,'')
-			, @po_desc=@po_desc + ISNULL(p.Remark,'')
-				from dbo.PO_Artwork p WHERE ID=@poid and seq1 = @seq1 and seq2=@seq2;
-		end
+			from dbo.PO_Artwork p WHERE ID=@poid and seq1 = @seq1 and seq2=@seq2;
+	END
 
-		select @fabric_detaildesc= ISNULL(DescDetail,'') from fabric where SCIRefno = @scirefno;
-		
-		set @string = rtrim(ISNULL(@fabric_detaildesc,'')) + rtrim(ISNULL(@suppcolor,''))+rtrim(ISNULL(@po_desc,''))
-	end
-
-	IF @type =3
+	IF  @type = 1
 	BEGIN
-		SELECT @string = @string + p.colorid
-			from dbo.po_supp_detail p WHERE ID=@poid and seq1 = @seq1 and seq2=@seq2;
-	end
-    
+		if @repeat = 0
+		BEGIN
+			select @fabric_detaildesc= ISNULL(DescDetail,'') from fabric where SCIRefno = @scirefno;
+			set @string = rtrim(ISNULL(@fabric_detaildesc,''))+CHAR(13)+CHAR(10);
+		END
+		ELSE
+			set @string = rtrim(ISNULL(@suppcolor,''))+ CHAR(13)+CHAR(10)+rtrim(ISNULL(@po_desc,''));
+	END
+
+	IF @type =2
+	BEGIN
+		if @repeat = 0
+		BEGIN	
+			select @fabric_detaildesc= ISNULL(DescDetail,'') from fabric where SCIRefno = @scirefno;
+			set @string = rtrim(ISNULL(@fabric_detaildesc,''))+CHAR(13)+CHAR(10)+ rtrim(ISNULL(@suppcolor,''))+rtrim(ISNULL(@po_desc,''));
+		END
+		ELSE
+			set @string = rtrim(ISNULL(@suppcolor,''))+ CHAR(13)+CHAR(10)+rtrim(ISNULL(@po_desc,''));
+	END
+
+	IF @type =4
+	BEGIN	
+		
+		if @repeat = 0
+		BEGIN
+			select @fabric_detaildesc= ISNULL([Description],'') from fabric where SCIRefno = @scirefno;
+			set @string = 'Ref#'+ @refno + ', ' + rtrim(ISNULL(@fabric_detaildesc,''))+ CHAR(13)+CHAR(10) + rtrim(ISNULL(@suppcolor,''))+rtrim(ISNULL(@po_desc,''));
+		End
+		ELSE
+			set @string = rtrim(ISNULL(@suppcolor,''))+ CHAR(13)+CHAR(10)+rtrim(ISNULL(@po_desc,''));
+	END
+
+	IF left(@SEQ1,1) = '7'
+	BEGIN
+		SET @string = '**PLS USE STOCK FROM SP#:' + ISNULL(@StockSP,'') + '**' + CHAR(13)+CHAR(10) + @string;
+	END 
+
     RETURN @string
 END

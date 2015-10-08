@@ -34,7 +34,7 @@
     [NETQty]          NUMERIC (8, 2)  CONSTRAINT [DF_PO_Supp_Detail_NETQty] DEFAULT ((0)) NULL,
     [lossQty]         NUMERIC (8, 2)  CONSTRAINT [DF_PO_Supp_Detail_lossQty] DEFAULT ((0)) NULL,
     [SystemNetQty]    NUMERIC (8, 2)  CONSTRAINT [DF_PO_Supp_Detail_SystemNetQty] DEFAULT ((0)) NULL,
-    [StockPOID]       VARCHAR (18)    CONSTRAINT [DF_PO_Supp_Detail_StockPOID] DEFAULT ('') NULL,
+    [StockPOID]       VARCHAR (13)    CONSTRAINT [DF_PO_Supp_Detail_StockPOID] DEFAULT ('') NULL,
     [InventoryUkey]   VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_InventoryUkey] DEFAULT ('') NULL,
     [OutputSeq1]      VARCHAR (3)     CONSTRAINT [DF_PO_Supp_Detail_OutputSeq1] DEFAULT ('') NULL,
     [OutputSeq2]      VARCHAR (2)     CONSTRAINT [DF_PO_Supp_Detail_OutputSeq2] DEFAULT ('') NULL,
@@ -72,8 +72,13 @@
     [ALocation]       VARCHAR (100)   CONSTRAINT [DF_PO_Supp_Detail_ALocation] DEFAULT ('') NULL,
     [BLocation]       VARCHAR (100)   CONSTRAINT [DF_PO_Supp_Detail_BLocation] DEFAULT ('') NULL,
     [StockUnit]       VARCHAR (8)     CONSTRAINT [DF_PO_Supp_Detail_StockUnit] DEFAULT ('') NULL,
+    [BrandId]         VARCHAR (8)     NULL,
+    [StockSeq1]       VARCHAR (3)     NULL,
+    [StockSeq2]       VARCHAR (2)     NULL,
     CONSTRAINT [PK_PO_Supp_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
+
+
 
 
 GO

@@ -13,6 +13,7 @@
     [LockDate]  DATETIME        NULL,
     [Lock]      BIT             CONSTRAINT [DF_FtyInventory_Lock] DEFAULT ((0)) NULL,
     [Ukey]      BIGINT          IDENTITY (1, 1) NOT NULL,
+    [ZoneID] VARCHAR(3) NULL, 
     CONSTRAINT [PK_FtyInventory] PRIMARY KEY CLUSTERED ([Poid] ASC, [Seq1] ASC, [Seq2] ASC, [Roll] ASC, [StockType] ASC)
 );
 
@@ -76,3 +77,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'鎖定狀�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ukey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FtyInventory', @level2type = N'COLUMN', @level2name = N'Ukey';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Zone',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'FtyInventory',
+    @level2type = N'COLUMN',
+    @level2name = N'ZoneID'

@@ -58,8 +58,13 @@
     [EditName]         VARCHAR (10)    CONSTRAINT [DF_Invtrans_EditName] DEFAULT ('') NULL,
     [Ukey]             BIGINT          CONSTRAINT [DF_Invtrans_Ukey] DEFAULT ((0)) NOT NULL,
     [CreateDate]       DATE            NULL,
+    [seq70poid]        VARCHAR (13)    NULL,
+    [seq70seq1]        VARCHAR (3)     NULL,
+    [seq70seq2]        VARCHAR (2)     NULL,
     CONSTRAINT [PK_Invtrans] PRIMARY KEY CLUSTERED ([ID] ASC, [Ukey] ASC)
 );
+
+
 
 
 GO

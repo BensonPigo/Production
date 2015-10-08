@@ -14,8 +14,10 @@
     [ToLocation] VARCHAR (60)    CONSTRAINT [DF_SubTransfer_Detail_ToLocation] DEFAULT ('') NOT NULL,
     [ToRoll]     VARCHAR (8)     CONSTRAINT [DF_SubTransfer_Detail_ToRoll] DEFAULT ('') NOT NULL,
     [ToDyelot]   VARCHAR (4)     CONSTRAINT [DF_SubTransfer_Detail_ToDyelot] DEFAULT ('') NOT NULL,
-    CONSTRAINT [PK_SubTransfer_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [FromPoId] ASC, [FromSeq1] ASC, [FromSeq2] ASC, [FromRoll] ASC, [FromDyelot] ASC, [FromStock] ASC, [ToPoId] ASC, [ToSeq1] ASC, [ToSeq2] ASC, [ToStock] ASC, [ToLocation] ASC, [ToRoll] ASC, [ToDyelot] ASC)
+    CONSTRAINT [PK_SubTransfer_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [FromPoId] ASC, [FromSeq1] ASC, [FromSeq2] ASC, [FromRoll] ASC, [FromDyelot] ASC, [FromStock] ASC, [ToPoId] ASC, [ToSeq1] ASC, [ToSeq2] ASC, [ToStock] ASC, [ToRoll] ASC, [ToDyelot] ASC)
 );
+
+
 
 
 GO

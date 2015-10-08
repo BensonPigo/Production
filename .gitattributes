@@ -3,8 +3,12 @@ Database/ProductionDB.dbmdl -text
 Database/ProductionDB.sln -text
 Database/ProductionDB.sqlproj -text
 Database/ProductionDB.sqlproj.user -text
+Database/dbo/Functions/dbo.getStockType.sql -text
+Database/dbo/Functions/dbo.getStockUnit.sql -text
+Database/dbo/Functions/dbo.getTPEPass1.sql -text
 Database/dbo/Functions/getBOFMtlDesc.sql -text
 Database/dbo/Functions/getMtlDesc.sql -text
+Database/dbo/Stored[!!-~]Procedures/dbo.insertMygridstd2.sql -text
 Database/dbo/Tables/ADIDASComplain.sql -text
 Database/dbo/Tables/ADIDASComplainDefect.sql -text
 Database/dbo/Tables/ADIDASComplainDefect_Detail.sql -text
@@ -400,9 +404,11 @@ Database/dbo/Tables/WorkOrder_Distribute.sql -text
 Database/dbo/Tables/WorkOrder_Estcutdate.sql -text
 Database/dbo/Tables/WorkOrder_PatternPanel.sql -text
 Database/dbo/Tables/WorkOrder_SizeRatio.sql -text
+Database/dbo/Tables/dbo.InventoryRefno.sql -text
 Database/dbo/Views/View_OrderFAColor.sql -text
 Database/dbo/Views/View_Order_Artworks.sql -text
 Database/dbo/Views/View_Orders_subprocess.sql -text
+Database/dbo/Views/dbo.View_Unitrate.sql -text
 Database/匯入結構描述記錄/ProductionDB_20151006014853.log -text
 /Production.sln -text
 Sci.Production.Basic/B01.Designer.cs -text
