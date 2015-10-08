@@ -79,7 +79,7 @@ namespace Sci.Production.IE
 
         private void button2_Click(object sender, EventArgs e)
         {
-            deleteResult1 = MyUtility.Msg.WarningBox("Are you sure delete the < Picture1 >?",buttons: MessageBoxButtons.YesNo);
+            deleteResult1 = MyUtility.Msg.QuestionBox("Are you sure delete the < Picture1 >?", buttons: MessageBoxButtons.YesNo);
             if (deleteResult1 == System.Windows.Forms.DialogResult.Yes)
             {
                 if (System.IO.File.Exists(destination_path+CurrentMaintain["Picture1"].ToString()))
@@ -153,7 +153,7 @@ namespace Sci.Production.IE
 
         private void button3_Click(object sender, EventArgs e)
         {
-            deleteResult1 = MyUtility.Msg.WarningBox("Are you sure delete the < Picture2 >?", buttons: MessageBoxButtons.YesNo);
+            deleteResult1 = MyUtility.Msg.QuestionBox("Are you sure delete the < Picture2 >?", buttons: MessageBoxButtons.YesNo);
             if (deleteResult1 == System.Windows.Forms.DialogResult.Yes)
             {
                 if (System.IO.File.Exists(destination_path+CurrentMaintain["Picture2"].ToString()))
