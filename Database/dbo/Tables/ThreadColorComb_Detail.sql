@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[ThreadColorComb_Detail] (
     [Id] BIGINT CONSTRAINT [DF_ThreadColorComb_Detail_ThreadColorCombUkey] DEFAULT ('') NOT NULL,
     [Machinetypeid]       VARCHAR (10) CONSTRAINT [DF_ThreadColorComb_Detail_Machinetypeid] DEFAULT ('') NOT NULL,
-    [ThreadComboid]       VARCHAR (10) CONSTRAINT [DF_ThreadColorComb_Detail_ThreadComboid] DEFAULT ('') NOT NULL,
+    [ThreadCombid]       VARCHAR (10) CONSTRAINT [DF_ThreadColorComb_Detail_ThreadComboid] DEFAULT ('') NOT NULL,
     [Refno]               VARCHAR (20) CONSTRAINT [DF_ThreadColorComb_Detail_Refno] DEFAULT ('') NOT NULL,
     [Article]             VARCHAR (8)  CONSTRAINT [DF_ThreadColorComb_Detail_Article] DEFAULT ('') NOT NULL,
     [ThreadColorid]       VARCHAR (15) CONSTRAINT [DF_ThreadColorComb_Detail_ThreadColorid] DEFAULT ('') NULL,
@@ -25,7 +25,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'機器工�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'線布種組合', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ThreadColorComb_Detail', @level2type = N'COLUMN', @level2name = N'ThreadComboid';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'線布種組合', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ThreadColorComb_Detail', @level2type = N'COLUMN', @level2name = 'ThreadCombid';
 
 
 GO
