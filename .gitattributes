@@ -370,7 +370,6 @@ Database/dbo/Tables/ThreadColorComb.sql -text
 Database/dbo/Tables/ThreadColorComb_Detail.sql -text
 Database/dbo/Tables/ThreadColorComb_operation.sql -text
 Database/dbo/Tables/ThreadComb.sql -text
-Database/dbo/Tables/ThreadCombo.sql -text
 Database/dbo/Tables/ThreadIncoming.sql -text
 Database/dbo/Tables/ThreadIncoming_Detail.sql -text
 Database/dbo/Tables/ThreadInventory.sql -text
