@@ -19,7 +19,7 @@
     [TotalCycle]       INT            CONSTRAINT [DF_LineMapping_TotalCycle] DEFAULT ((0)) NULL,
     [HighestGSD]       NUMERIC (7, 2) CONSTRAINT [DF_LineMapping_HighestGSD] DEFAULT ((0)) NULL,
     [HighestCycle]     NUMERIC (7, 2) CONSTRAINT [DF_LineMapping_HighestCycle] DEFAULT ((0)) NULL,
-    [DetailKey]        BIGINT         IDENTITY (1, 1) NOT NULL,
+    [UKey]             BIGINT         IDENTITY (1, 1) NOT NULL,
     [Status]           VARCHAR (15)   CONSTRAINT [DF_LineMapping_Status] DEFAULT ('') NULL,
     [IEReasonID]       VARCHAR (5)    CONSTRAINT [DF_LineMapping_IEReasonID] DEFAULT ('') NULL,
     [AddName]          VARCHAR (10)   CONSTRAINT [DF_LineMapping_AddName] DEFAULT ('') NULL,
@@ -28,6 +28,8 @@
     [EditDate]         DATETIME       NULL,
     CONSTRAINT [PK_LineMapping] PRIMARY KEY CLUSTERED ([StyleID] ASC, [SeasonID] ASC, [BrandID] ASC, [StyleUKey] ASC, [Version] ASC)
 );
+
+
 
 
 GO
@@ -115,7 +117,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'各站中�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'DetailKey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'DetailKey';
+
 
 
 GO
@@ -140,4 +142,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯者',
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'DetailKey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'UKey';
 
