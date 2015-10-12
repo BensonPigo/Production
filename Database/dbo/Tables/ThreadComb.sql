@@ -1,12 +1,12 @@
 ﻿CREATE TABLE [dbo].[ThreadComb] (
-    [ID]          VARCHAR (10)  CONSTRAINT [DF_ThreadCombo_ID] DEFAULT ('') NOT NULL,
-    [Description] NVARCHAR (60) CONSTRAINT [DF_ThreadCombo_Description] DEFAULT ('') NOT NULL,
-    [Junk]        BIT           CONSTRAINT [DF_ThreadCombo_Junk] DEFAULT ((0)) NULL,
-    [AddName]     VARCHAR (10)  CONSTRAINT [DF_ThreadCombo_AddName] DEFAULT ('') NULL,
+    [ID]          VARCHAR (10)  CONSTRAINT [DF_ThreadComb_ID] DEFAULT ('') NOT NULL,
+    [Description] NVARCHAR (60) CONSTRAINT [DF_ThreadComb_Description] DEFAULT ('') NOT NULL,
+    [Junk]        BIT           CONSTRAINT [DF_ThreadComb_Junk] DEFAULT ((0)) NULL,
+    [AddName]     VARCHAR (10)  CONSTRAINT [DF_ThreadComb_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME      NULL,
-    [EditName]    VARCHAR (10)  CONSTRAINT [DF_ThreadCombo_EditName] DEFAULT ('') NULL,
+    [EditName]    VARCHAR (10)  CONSTRAINT [DF_ThreadComb_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME      NULL,
-    CONSTRAINT [PK_ThreadCombo] PRIMARY KEY CLUSTERED ([ID] ASC)
+    CONSTRAINT [PK_ThreadComb] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
 
