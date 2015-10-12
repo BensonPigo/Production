@@ -237,6 +237,12 @@
     <Compile Include="txtscifactory.Designer.cs">
       <DependentUpon>txtscifactory.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtmachinetype.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtmachinetype.designer.cs">
+      <DependentUpon>txtmachinetype.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ict, Version=1.0.1502.1000, Culture=neutral, processorArchitecture=MSIL">
