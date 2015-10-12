@@ -5,7 +5,7 @@
     [SEQ2]         VARCHAR (2)    CONSTRAINT [DF_MiscIn_Detail_SEQ2] DEFAULT ('') NOT NULL,
     [MiscID]       VARCHAR (23)   CONSTRAINT [DF_MiscIn_Detail_MiscID] DEFAULT ('') NOT NULL,
     [POQty]        NUMERIC (8, 2) CONSTRAINT [DF_MiscIn_Detail_POQty] DEFAULT ((0)) NULL,
-    [POPrice]      NUMERIC (8, 2) CONSTRAINT [DF_MiscIn_Detail_POPrice] DEFAULT ((0)) NULL,
+    [Price]      NUMERIC (8, 2) CONSTRAINT [DF_MiscIn_Detail_POPrice] DEFAULT ((0)) NULL,
     [Qty]          NUMERIC (8, 2) CONSTRAINT [DF_MiscIn_Detail_Qty] DEFAULT ((0)) NULL,
     [OnRoad]       NUMERIC (8, 2) CONSTRAINT [DF_MiscIn_Detail_OnRoad] DEFAULT ((0)) NULL,
     [InspDeadline] DATE           NULL,
@@ -44,7 +44,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購數�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購價格', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MiscIn_Detail', @level2type = N'COLUMN', @level2name = N'POPrice';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購價格', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MiscIn_Detail', @level2type = N'COLUMN', @level2name = 'Price';
 
 
 GO

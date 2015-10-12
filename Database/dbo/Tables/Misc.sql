@@ -7,7 +7,7 @@
     [CurrencyID]   VARCHAR (3)     CONSTRAINT [DF_Misc_CurrencyID] DEFAULT ('') NULL,
     [Price]        NUMERIC (12, 4) CONSTRAINT [DF_Misc_Price] DEFAULT ((0)) NULL,
     [Suppid]       VARCHAR (6)     CONSTRAINT [DF_Misc_Suppid] DEFAULT ('') NULL,
-    [PutchaseFrom] VARCHAR (1)     CONSTRAINT [DF_Misc_PutchaseFrom] DEFAULT ('') NULL,
+    [PurchaseFrom] VARCHAR (1)     CONSTRAINT [DF_Misc_PutchaseFrom] DEFAULT ('') NULL,
     [Inspect]      BIT             CONSTRAINT [DF_Misc_Inspect] DEFAULT ((0)) NULL,
     [IsMachine]    BIT             CONSTRAINT [DF_Misc_IsMachine] DEFAULT ((0)) NULL,
     [IsAsset]      BIT             CONSTRAINT [DF_Misc_IsAsset] DEFAULT ((0)) NULL,
@@ -19,6 +19,8 @@
     [EditName]     VARCHAR (10)    CONSTRAINT [DF_Misc_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME        NULL,
     [InspLeadTime] NUMERIC (2)     CONSTRAINT [DF_Misc_InspLeadTime] DEFAULT ((0)) NULL,
+    [Accountid] VARCHAR(8) NULL, 
+    [junk] BIT NULL, 
     CONSTRAINT [PK_Misc] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -60,7 +62,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠商', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購來源', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Misc', @level2type = N'COLUMN', @level2name = N'PutchaseFrom';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購來源', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Misc', @level2type = N'COLUMN', @level2name = 'PurchaseFrom';
 
 
 GO
