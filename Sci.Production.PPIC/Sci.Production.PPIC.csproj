@@ -149,11 +149,11 @@
     <Compile Include="B08.Designer.cs">
       <DependentUpon>B08.cs</DependentUpon>
     </Compile>
-    <Compile Include="P01_StdGSDList.cs">
+    <Compile Include="P01_ProductionKit.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P01_StdGSDList.Designer.cs">
-      <DependentUpon>P01_StdGSDList.cs</DependentUpon>
+    <Compile Include="P01_ProductionKit.Designer.cs">
+      <DependentUpon>P01_ProductionKit.cs</DependentUpon>
     </Compile>
     <Compile Include="P02.cs">
       <SubType>Form</SubType>
@@ -172,6 +172,42 @@
     </Compile>
     <Compile Include="P03_Detail.Designer.cs">
       <DependentUpon>P03_Detail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P04.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04.Designer.cs">
+      <DependentUpon>P04.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P04_Artwork.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04_Artwork.Designer.cs">
+      <DependentUpon>P04_Artwork.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P04_GarmentLeadTimeByFactory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04_GarmentLeadTimeByFactory.Designer.cs">
+      <DependentUpon>P04_GarmentLeadTimeByFactory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P04_HSCode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04_HSCode.Designer.cs">
+      <DependentUpon>P04_HSCode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P04_TMSAndCost.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04_TMSAndCost.Designer.cs">
+      <DependentUpon>P04_TMSAndCost.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P04_WeightData_CopySeason.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04_WeightData_CopySeason.Designer.cs">
+      <DependentUpon>P04_WeightData_CopySeason.cs</DependentUpon>
     </Compile>
     <Compile Include="P05.cs">
       <SubType>Form</SubType>
@@ -234,6 +270,24 @@
     <Compile Include="P09.Designer.cs">
       <DependentUpon>P09.cs</DependentUpon>
     </Compile>
+    <Compile Include="P04_QtyCartonByCustCD.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04_QtyCartonByCustCD.Designer.cs">
+      <DependentUpon>P04_QtyCartonByCustCD.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P04_SimilarStyle.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04_SimilarStyle.Designer.cs">
+      <DependentUpon>P04_SimilarStyle.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P04_WeightData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04_WeightData.Designer.cs">
+      <DependentUpon>P04_WeightData.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -263,8 +317,8 @@
     <EmbeddedResource Include="B08.resx">
       <DependentUpon>B08.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P01_StdGSDList.resx">
-      <DependentUpon>P01_StdGSDList.cs</DependentUpon>
+    <EmbeddedResource Include="P01_ProductionKit.resx">
+      <DependentUpon>P01_ProductionKit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02.resx">
       <DependentUpon>P02.cs</DependentUpon>
@@ -274,6 +328,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03_Detail.resx">
       <DependentUpon>P03_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04.resx">
+      <DependentUpon>P04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04_Artwork.resx">
+      <DependentUpon>P04_Artwork.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04_GarmentLeadTimeByFactory.resx">
+      <DependentUpon>P04_GarmentLeadTimeByFactory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04_HSCode.resx">
+      <DependentUpon>P04_HSCode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04_TMSAndCost.resx">
+      <DependentUpon>P04_TMSAndCost.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04_WeightData_CopySeason.resx">
+      <DependentUpon>P04_WeightData_CopySeason.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P05.resx">
       <DependentUpon>P05.cs</DependentUpon>
@@ -305,11 +377,28 @@
     <EmbeddedResource Include="P09.resx">
       <DependentUpon>P09.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P04_QtyCartonByCustCD.resx">
+      <DependentUpon>P04_QtyCartonByCustCD.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04_SimilarStyle.resx">
+      <DependentUpon>P04_SimilarStyle.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04_WeightData.resx">
+      <DependentUpon>P04_WeightData.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0E35FD31-4A86-4D4E-A393-B6C5E3D7C956}</Project>
       <Name>Sci.Production.Class</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.IE\Sci.Production.IE.csproj">
+      <Project>{a650dc92-30e3-4f83-a0ac-eb214d7740f4}</Project>
+      <Name>Sci.Production.IE</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.PublicForm\Sci.Production.PublicForm.csproj">
+      <Project>{a0afac1d-7488-4271-83f0-9c14baf212fe}</Project>
+      <Name>Sci.Production.PublicForm</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
