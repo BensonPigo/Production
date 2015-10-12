@@ -1,5 +1,5 @@
-CREATE TABLE [dbo].[LineMapping_Detail] (
-    [ID]            BIGINT         CONSTRAINT [DF_LineMapping_Detail_DetailKey] DEFAULT ((0)) NOT NULL,
+﻿CREATE TABLE [dbo].[LineMapping_Detail] (
+    [ID]            BIGINT         CONSTRAINT [DF_LineMapping_Detail_ID] DEFAULT ((0)) NOT NULL,
     [No]            VARCHAR (4)    CONSTRAINT [DF_LineMapping_Detail_No] DEFAULT ('') NOT NULL,
     [Description]   NVARCHAR (200) CONSTRAINT [DF_LineMapping_Detail_Description] DEFAULT ('') NULL,
     [Annotation]    NVARCHAR (200) CONSTRAINT [DF_LineMapping_Detail_Annotation] DEFAULT ('') NULL,
@@ -15,6 +15,8 @@ CREATE TABLE [dbo].[LineMapping_Detail] (
     [EmployeeID]    VARCHAR (10)   CONSTRAINT [DF_LineMapping_Detail_EmployeeID] DEFAULT ('') NULL,
     CONSTRAINT [PK_LineMapping_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [No] ASC, [GroupKey] ASC)
 );
+
+
 
 
 
