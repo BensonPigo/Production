@@ -1,5 +1,7 @@
 * text=auto !eol
+Database/Production.sql -text
 Database/ProductionDB.dbmdl -text
+Database/ProductionDB.publish.xml -text
 Database/ProductionDB.sln -text
 Database/ProductionDB.sqlproj -text
 Database/ProductionDB.sqlproj.user -text
