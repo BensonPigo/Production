@@ -1,7 +1,6 @@
 ﻿CREATE TABLE [dbo].[LineMapping_Detail] (
     [ID]            BIGINT         CONSTRAINT [DF_LineMapping_Detail_ID] DEFAULT ((0)) NOT NULL,
     [No]            VARCHAR (4)    CONSTRAINT [DF_LineMapping_Detail_No] DEFAULT ('') NOT NULL,
-    [Description]   NVARCHAR (200) CONSTRAINT [DF_LineMapping_Detail_Description] DEFAULT ('') NULL,
     [Annotation]    NVARCHAR (200) CONSTRAINT [DF_LineMapping_Detail_Annotation] DEFAULT ('') NULL,
     [GSD]           NUMERIC (6, 2) CONSTRAINT [DF_LineMapping_Detail_GSD] DEFAULT ((0)) NULL,
     [TotalGSD]      NUMERIC (7, 2) CONSTRAINT [DF_LineMapping_Detail_TotalGSD] DEFAULT ((0)) NULL,
@@ -23,6 +22,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Line Mapping Detail', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping_Detail';
 
@@ -36,7 +37,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'序號', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'描述', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping_Detail', @level2type = N'COLUMN', @level2name = N'Description';
+
 
 
 GO
