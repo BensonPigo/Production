@@ -71,7 +71,23 @@ order by td.Seq", masterID);
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            #region Operation Code & Frequency & SMV & M/C & Attachment按右鍵與Validating
+            Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            #region Seq & Operation Code & Frequency & SMV & M/C & Attachment按右鍵與Validating
+            #region Seq的Valid
+            seq.CellValidating += (s, e) =>
+            {
+                if (EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (MyUtility.Check.Empty(e.FormattedValue) || (e.FormattedValue.ToString() != dr["Seq"].ToString()))
+                    {
+                        string oldValue = MyUtility.Check.Empty(dr["Seq"]) ? "" : dr["Seq"].ToString();
+                        dr["Seq"] = MyUtility.Check.Empty(e.FormattedValue) ? "" : e.FormattedValue.ToString().Trim().PadLeft(4, '0');
+                        dr.EndEdit();
+                    }
+                }
+            };
+            #endregion
             #region Operation Code
             operation.EditingMouseDown += (s, e) =>
             {
@@ -300,7 +316,7 @@ order by td.Seq", masterID);
 
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-                .Text("Seq", header: "Seq", width: Widths.AnsiChars(4))
+                .Text("Seq", header: "Seq", width: Widths.AnsiChars(4), settings: seq)
                 .Text("OperationID", header: "Operation code", width: Widths.AnsiChars(13), settings: operation)
                 .EditText("OperationDescEN", header: "Operation Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30))
