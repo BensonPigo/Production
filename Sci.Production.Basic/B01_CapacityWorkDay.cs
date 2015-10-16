@@ -64,8 +64,8 @@ namespace Sci.Production.Basic
             this.SelectGridData();
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = false;
-            this.grid1.DataSource = bindingSource1;
+            this.grid1.IsEditingReadOnly = true;
+            this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
                  .Text("Year", header: "Year", width: Widths.AnsiChars(4))
                  .Text("Month", header: "Month", width: Widths.AnsiChars(2))
@@ -73,8 +73,8 @@ namespace Sci.Production.Basic
                  .Numeric("TMS", header: "GSD", width: Widths.AnsiChars(8));
 
             //設定Grid2的顯示欄位
-            this.grid2.IsEditingReadOnly = false;
-            this.grid2.DataSource = bindingSource2;
+            this.grid2.IsEditingReadOnly = true;
+            this.grid2.DataSource = listControlBindingSource2;
             Helper.Controls.Grid.Generator(this.grid2)
                  .Text("Year", header: "Year", width: Widths.AnsiChars(4))
                  .Text("Month", header: "Month", width: Widths.AnsiChars(2))
@@ -103,12 +103,12 @@ namespace Sci.Production.Basic
             string selectCommand1 = string.Format("select * from Factory_TMS where ID = '{0}' and Year = '{1}'  and ArtworkTypeID = '{2}'", this.motherData["ID"].ToString(), this.comboBox1.SelectedValue, this.comboBox2.SelectedValue);
             DataTable selectDataTable1;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
-            bindingSource1.DataSource = selectDataTable1;
+            listControlBindingSource1.DataSource = selectDataTable1;
 
             selectCommand1 = string.Format("select * from Factory_WorkHour where ID = '{0}'  and Year = '{1}'  ", this.motherData["ID"].ToString(), this.comboBox3.SelectedValue);
             DataTable selectDataTable2;
             DualResult selectResult2 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable2);
-            bindingSource2.DataSource = selectDataTable2;
+            listControlBindingSource2.DataSource = selectDataTable2;
         }
     }
 }

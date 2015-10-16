@@ -28,8 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.bindingSource1 = new Sci.Win.UI.BindingSource();
-            this.bindingSource2 = new Sci.Win.UI.BindingSource();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.grid1 = new Sci.Win.UI.Grid();
@@ -42,13 +40,15 @@
             this.comboBox3 = new Sci.Win.UI.ComboBox();
             this.label3 = new Sci.Win.UI.Label();
             this.button1 = new Sci.Win.UI.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource2)).BeginInit();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -58,7 +58,7 @@
             this.tabControl1.Location = new System.Drawing.Point(2, 5);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(532, 346);
+            this.tabControl1.Size = new System.Drawing.Size(532, 389);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -71,7 +71,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(524, 317);
+            this.tabPage1.Size = new System.Drawing.Size(524, 360);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Capacity";
             // 
@@ -80,13 +80,12 @@
             this.grid1.AllowUserToAddRows = false;
             this.grid1.AllowUserToDeleteRows = false;
             this.grid1.AllowUserToResizeRows = false;
-            this.grid1.AutoGenerateColumns = false;
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.bindingSource1;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(5, 37);
             this.grid1.Name = "grid1";
@@ -95,8 +94,7 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(514, 274);
+            this.grid1.Size = new System.Drawing.Size(514, 320);
             this.grid1.TabIndex = 4;
             this.grid1.TabStop = false;
             // 
@@ -150,7 +148,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(524, 317);
+            this.tabPage2.Size = new System.Drawing.Size(524, 360);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Work day";
             // 
@@ -159,13 +157,13 @@
             this.grid2.AllowUserToAddRows = false;
             this.grid2.AllowUserToDeleteRows = false;
             this.grid2.AllowUserToResizeRows = false;
-            this.grid2.AutoGenerateColumns = false;
             this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid2.DataSource = this.bindingSource2;
             this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid2.Location = new System.Drawing.Point(7, 37);
             this.grid2.Name = "grid2";
@@ -175,7 +173,7 @@
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(514, 274);
+            this.grid2.Size = new System.Drawing.Size(514, 320);
             this.grid2.TabIndex = 4;
             this.grid2.TabStop = false;
             // 
@@ -204,7 +202,7 @@
             // 
             this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(430, 357);
+            this.button1.Location = new System.Drawing.Point(431, 396);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
             this.button1.TabIndex = 1;
@@ -214,26 +212,24 @@
             // B01_CapacityWorkDay
             // 
             this.CancelButton = this.button1;
-            this.ClientSize = new System.Drawing.Size(538, 395);
+            this.ClientSize = new System.Drawing.Size(538, 430);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.tabControl1);
             this.Name = "B01_CapacityWorkDay";
             this.Text = "Capacity / Work day";
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource2)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             this.tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private Win.UI.BindingSource bindingSource1;
-        private Win.UI.BindingSource bindingSource2;
         private Win.UI.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private Win.UI.Grid grid1;
@@ -246,5 +242,7 @@
         private Win.UI.ComboBox comboBox3;
         private Win.UI.Label label3;
         private Win.UI.Button button1;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.ListControlBindingSource listControlBindingSource2;
     }
 }
