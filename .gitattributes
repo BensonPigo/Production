@@ -10,6 +10,7 @@ Database/dbo/Functions/dbo.getStockUnit.sql -text
 Database/dbo/Functions/dbo.getTPEPass1.sql -text
 Database/dbo/Functions/getBOFMtlDesc.sql -text
 Database/dbo/Functions/getMtlDesc.sql -text
+Database/dbo/Functions/getPOCombList.sql -text
 Database/dbo/Stored[!!-~]Procedures/dbo.insertMygridstd2.sql -text
 Database/dbo/Tables/ADIDASComplain.sql -text
 Database/dbo/Tables/ADIDASComplainDefect.sql -text
