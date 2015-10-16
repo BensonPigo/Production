@@ -182,7 +182,7 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(1012, 206);
+            this.masterpanel.Size = new System.Drawing.Size(996, 206);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -252,19 +252,19 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 206);
-            this.detailpanel.Size = new System.Drawing.Size(1012, 417);
+            this.detailpanel.Size = new System.Drawing.Size(996, 417);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(894, 171);
+            this.gridicon.Location = new System.Drawing.Point(881, 171);
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(932, 0);
+            this.refresh.Location = new System.Drawing.Point(916, 0);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1012, 417);
+            this.detailgridcont.Size = new System.Drawing.Size(996, 417);
             // 
             // detail2
             // 
@@ -281,16 +281,16 @@
             // detail
             // 
             this.detail.Location = new System.Drawing.Point(4, 24);
-            this.detail.Size = new System.Drawing.Size(1012, 661);
+            this.detail.Size = new System.Drawing.Size(996, 661);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1012, 623);
+            this.detailcont.Size = new System.Drawing.Size(996, 623);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 623);
-            this.detailbtm.Size = new System.Drawing.Size(1012, 38);
+            this.detailbtm.Size = new System.Drawing.Size(996, 38);
             // 
             // browse
             // 
@@ -299,7 +299,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1020, 689);
+            this.tabs.Size = new System.Drawing.Size(1004, 689);
             // 
             // createby
             // 
@@ -607,7 +607,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1012, 206);
+            this.shapeContainer1.Size = new System.Drawing.Size(996, 206);
             this.shapeContainer1.TabIndex = 27;
             this.shapeContainer1.TabStop = false;
             // 
@@ -762,7 +762,7 @@
             // label16
             // 
             this.label16.Lines = 0;
-            this.label16.Location = new System.Drawing.Point(489, 7);
+            this.label16.Location = new System.Drawing.Point(481, 7);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(94, 21);
             this.label16.TabIndex = 33;
@@ -771,7 +771,7 @@
             // label17
             // 
             this.label17.Lines = 0;
-            this.label17.Location = new System.Drawing.Point(489, 35);
+            this.label17.Location = new System.Drawing.Point(481, 35);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(94, 21);
             this.label17.TabIndex = 34;
@@ -780,7 +780,7 @@
             // label18
             // 
             this.label18.Lines = 0;
-            this.label18.Location = new System.Drawing.Point(489, 63);
+            this.label18.Location = new System.Drawing.Point(481, 63);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(94, 21);
             this.label18.TabIndex = 35;
@@ -789,7 +789,7 @@
             // label21
             // 
             this.label21.Lines = 0;
-            this.label21.Location = new System.Drawing.Point(489, 147);
+            this.label21.Location = new System.Drawing.Point(481, 147);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(75, 21);
             this.label21.TabIndex = 38;
@@ -801,7 +801,7 @@
             this.numericBox9.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalGSD", true));
             this.numericBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox9.IsSupportEditMode = false;
-            this.numericBox9.Location = new System.Drawing.Point(586, 7);
+            this.numericBox9.Location = new System.Drawing.Point(578, 7);
             this.numericBox9.Name = "numericBox9";
             this.numericBox9.ReadOnly = true;
             this.numericBox9.Size = new System.Drawing.Size(50, 21);
@@ -813,7 +813,7 @@
             this.numericBox10.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalCycle", true));
             this.numericBox10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox10.IsSupportEditMode = false;
-            this.numericBox10.Location = new System.Drawing.Point(586, 35);
+            this.numericBox10.Location = new System.Drawing.Point(578, 35);
             this.numericBox10.Name = "numericBox10";
             this.numericBox10.ReadOnly = true;
             this.numericBox10.Size = new System.Drawing.Size(50, 21);
@@ -825,10 +825,10 @@
             this.numericBox12.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CurrentOperators", true));
             this.numericBox12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox12.IsSupportEditMode = false;
-            this.numericBox12.Location = new System.Drawing.Point(333, 119);
+            this.numericBox12.Location = new System.Drawing.Point(331, 119);
             this.numericBox12.Name = "numericBox12";
             this.numericBox12.ReadOnly = true;
-            this.numericBox12.Size = new System.Drawing.Size(49, 21);
+            this.numericBox12.Size = new System.Drawing.Size(55, 21);
             this.numericBox12.TabIndex = 42;
             // 
             // numericBox13
@@ -836,7 +836,7 @@
             this.numericBox13.BackColor = System.Drawing.Color.White;
             this.numericBox13.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IdealOperators", true));
             this.numericBox13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox13.Location = new System.Drawing.Point(395, 119);
+            this.numericBox13.Location = new System.Drawing.Point(395, 118);
             this.numericBox13.Name = "numericBox13";
             this.numericBox13.Size = new System.Drawing.Size(55, 21);
             this.numericBox13.TabIndex = 3;
@@ -847,7 +847,7 @@
             this.numericBox14.BackColor = System.Drawing.Color.White;
             this.numericBox14.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Workhour", true));
             this.numericBox14.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox14.Location = new System.Drawing.Point(567, 147);
+            this.numericBox14.Location = new System.Drawing.Point(559, 147);
             this.numericBox14.Name = "numericBox14";
             this.numericBox14.Size = new System.Drawing.Size(50, 21);
             this.numericBox14.TabIndex = 6;
@@ -859,7 +859,7 @@
             this.numericBox16.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NetTime", true));
             this.numericBox16.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox16.IsSupportEditMode = false;
-            this.numericBox16.Location = new System.Drawing.Point(598, 119);
+            this.numericBox16.Location = new System.Drawing.Point(590, 119);
             this.numericBox16.Name = "numericBox16";
             this.numericBox16.ReadOnly = true;
             this.numericBox16.Size = new System.Drawing.Size(50, 21);
@@ -871,7 +871,7 @@
             this.numericBox17.DecimalPlaces = 2;
             this.numericBox17.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox17.IsSupportEditMode = false;
-            this.numericBox17.Location = new System.Drawing.Point(587, 91);
+            this.numericBox17.Location = new System.Drawing.Point(579, 91);
             this.numericBox17.Name = "numericBox17";
             this.numericBox17.ReadOnly = true;
             this.numericBox17.Size = new System.Drawing.Size(50, 21);
@@ -884,7 +884,7 @@
             this.numericBox19.DecimalPlaces = 2;
             this.numericBox19.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox19.IsSupportEditMode = false;
-            this.numericBox19.Location = new System.Drawing.Point(786, 34);
+            this.numericBox19.Location = new System.Drawing.Point(773, 34);
             this.numericBox19.Name = "numericBox19";
             this.numericBox19.ReadOnly = true;
             this.numericBox19.Size = new System.Drawing.Size(50, 21);
@@ -897,7 +897,7 @@
             this.numericBox20.DecimalPlaces = 2;
             this.numericBox20.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox20.IsSupportEditMode = false;
-            this.numericBox20.Location = new System.Drawing.Point(786, 6);
+            this.numericBox20.Location = new System.Drawing.Point(773, 6);
             this.numericBox20.Name = "numericBox20";
             this.numericBox20.ReadOnly = true;
             this.numericBox20.Size = new System.Drawing.Size(50, 21);
@@ -906,7 +906,7 @@
             // label23
             // 
             this.label23.Lines = 0;
-            this.label23.Location = new System.Drawing.Point(489, 119);
+            this.label23.Location = new System.Drawing.Point(481, 119);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(107, 21);
             this.label23.TabIndex = 49;
@@ -915,7 +915,7 @@
             // label24
             // 
             this.label24.Lines = 0;
-            this.label24.Location = new System.Drawing.Point(489, 91);
+            this.label24.Location = new System.Drawing.Point(481, 91);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(94, 21);
             this.label24.TabIndex = 48;
@@ -924,7 +924,7 @@
             // label25
             // 
             this.label25.Lines = 0;
-            this.label25.Location = new System.Drawing.Point(677, 62);
+            this.label25.Location = new System.Drawing.Point(664, 62);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(107, 21);
             this.label25.TabIndex = 47;
@@ -933,7 +933,7 @@
             // label26
             // 
             this.label26.Lines = 0;
-            this.label26.Location = new System.Drawing.Point(677, 34);
+            this.label26.Location = new System.Drawing.Point(664, 34);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(107, 21);
             this.label26.TabIndex = 46;
@@ -942,7 +942,7 @@
             // label27
             // 
             this.label27.Lines = 0;
-            this.label27.Location = new System.Drawing.Point(677, 6);
+            this.label27.Location = new System.Drawing.Point(664, 6);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(106, 21);
             this.label27.TabIndex = 45;
@@ -951,7 +951,7 @@
             // label22
             // 
             this.label22.Lines = 0;
-            this.label22.Location = new System.Drawing.Point(677, 91);
+            this.label22.Location = new System.Drawing.Point(664, 91);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(75, 21);
             this.label22.TabIndex = 56;
@@ -960,7 +960,7 @@
             // label28
             // 
             this.label28.Lines = 0;
-            this.label28.Location = new System.Drawing.Point(677, 119);
+            this.label28.Location = new System.Drawing.Point(664, 119);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(75, 21);
             this.label28.TabIndex = 57;
@@ -969,7 +969,7 @@
             // label29
             // 
             this.label29.Lines = 0;
-            this.label29.Location = new System.Drawing.Point(677, 147);
+            this.label29.Location = new System.Drawing.Point(664, 147);
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(75, 21);
             this.label29.TabIndex = 58;
@@ -978,7 +978,7 @@
             // label30
             // 
             this.label30.Lines = 0;
-            this.label30.Location = new System.Drawing.Point(677, 175);
+            this.label30.Location = new System.Drawing.Point(664, 175);
             this.label30.Name = "label30";
             this.label30.Size = new System.Drawing.Size(75, 21);
             this.label30.TabIndex = 59;
@@ -990,7 +990,7 @@
             this.numericBox21.DecimalPlaces = 4;
             this.numericBox21.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox21.IsSupportEditMode = false;
-            this.numericBox21.Location = new System.Drawing.Point(756, 119);
+            this.numericBox21.Location = new System.Drawing.Point(743, 119);
             this.numericBox21.Name = "numericBox21";
             this.numericBox21.ReadOnly = true;
             this.numericBox21.Size = new System.Drawing.Size(68, 21);
@@ -1002,7 +1002,7 @@
             this.numericBox22.DecimalPlaces = 2;
             this.numericBox22.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox22.IsSupportEditMode = false;
-            this.numericBox22.Location = new System.Drawing.Point(756, 147);
+            this.numericBox22.Location = new System.Drawing.Point(743, 147);
             this.numericBox22.Name = "numericBox22";
             this.numericBox22.ReadOnly = true;
             this.numericBox22.Size = new System.Drawing.Size(68, 21);
@@ -1014,7 +1014,7 @@
             this.numericBox23.DecimalPlaces = 2;
             this.numericBox23.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox23.IsSupportEditMode = false;
-            this.numericBox23.Location = new System.Drawing.Point(756, 175);
+            this.numericBox23.Location = new System.Drawing.Point(743, 175);
             this.numericBox23.Name = "numericBox23";
             this.numericBox23.ReadOnly = true;
             this.numericBox23.Size = new System.Drawing.Size(68, 21);
@@ -1023,7 +1023,7 @@
             // button1
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Location = new System.Drawing.Point(865, 7);
+            this.button1.Location = new System.Drawing.Point(852, 7);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(139, 43);
             this.button1.TabIndex = 64;
@@ -1034,7 +1034,7 @@
             // button2
             // 
             this.button2.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button2.Location = new System.Drawing.Point(865, 54);
+            this.button2.Location = new System.Drawing.Point(852, 54);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(139, 51);
             this.button2.TabIndex = 65;
@@ -1045,7 +1045,7 @@
             // button3
             // 
             this.button3.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button3.Location = new System.Drawing.Point(865, 109);
+            this.button3.Location = new System.Drawing.Point(852, 109);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(139, 30);
             this.button3.TabIndex = 66;
@@ -1073,7 +1073,7 @@
             this.numericBox11.DecimalPlaces = 2;
             this.numericBox11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox11.IsSupportEditMode = false;
-            this.numericBox11.Location = new System.Drawing.Point(586, 63);
+            this.numericBox11.Location = new System.Drawing.Point(578, 63);
             this.numericBox11.Name = "numericBox11";
             this.numericBox11.ReadOnly = true;
             this.numericBox11.Size = new System.Drawing.Size(58, 21);
@@ -1085,7 +1085,7 @@
             this.numericBox15.DecimalPlaces = 2;
             this.numericBox15.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox15.IsSupportEditMode = false;
-            this.numericBox15.Location = new System.Drawing.Point(786, 63);
+            this.numericBox15.Location = new System.Drawing.Point(773, 63);
             this.numericBox15.Name = "numericBox15";
             this.numericBox15.ReadOnly = true;
             this.numericBox15.Size = new System.Drawing.Size(58, 21);
@@ -1097,7 +1097,7 @@
             this.numericBox18.DecimalPlaces = 2;
             this.numericBox18.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox18.IsSupportEditMode = false;
-            this.numericBox18.Location = new System.Drawing.Point(756, 91);
+            this.numericBox18.Location = new System.Drawing.Point(743, 91);
             this.numericBox18.Name = "numericBox18";
             this.numericBox18.ReadOnly = true;
             this.numericBox18.Size = new System.Drawing.Size(58, 21);
@@ -1120,7 +1120,7 @@
             // P03
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1020, 722);
+            this.ClientSize = new System.Drawing.Size(1004, 722);
             this.DefaultDetailOrder = "No";
             this.DefaultOrder = "BrandID,StyleID,SeasonID,Version";
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
