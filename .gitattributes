@@ -635,6 +635,12 @@ Sci.Production.IE/Sci.Production.IE.csproj -text
 Sci.Production.Logistic/B01.Designer.cs -text
 Sci.Production.Logistic/B01.cs -text
 Sci.Production.Logistic/B01.resx -text
+Sci.Production.Logistic/P01.Designer.cs -text
+Sci.Production.Logistic/P01.cs -text
+Sci.Production.Logistic/P01.resx -text
+Sci.Production.Logistic/P01_CFAAndRFTList.Designer.cs -text
+Sci.Production.Logistic/P01_CFAAndRFTList.cs -text
+Sci.Production.Logistic/P01_CFAAndRFTList.resx -text
 Sci.Production.Logistic/P02.Designer.cs -text
 Sci.Production.Logistic/P02.cs -text
 Sci.Production.Logistic/P02.resx -text
