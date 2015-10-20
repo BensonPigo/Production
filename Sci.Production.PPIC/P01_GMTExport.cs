@@ -37,7 +37,7 @@ order by oa.Seq,os.Seq",orderID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out QtyBDown);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query q'ty b'down fail!!");
+                MyUtility.Msg.ErrorBox("Query q'ty b'down fail!!"+result.ToString());
             }
             listControlBindingSource1.DataSource = QtyBDown;
             object orderQty = QtyBDown.Compute("sum(OrderQty)","");
@@ -92,7 +92,7 @@ select * from tmpInvAdj", orderID);
             result = DBProxy.Current.Select(null, sqlCmd, out PackingList);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query packing list fail!!");
+                MyUtility.Msg.ErrorBox("Query packing list fail!!" + result.ToString());
             }
             listControlBindingSource2.DataSource = PackingList;
 

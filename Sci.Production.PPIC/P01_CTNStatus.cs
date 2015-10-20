@@ -91,7 +91,7 @@ select * from CReturn
 order by PackingListID,Seq,UpdateDate", orderID);
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out TransferDetail);
-            if (!result) { MyUtility.Msg.ErrorBox("Query transfer detail fail!!"); }
+            if (!result) { MyUtility.Msg.ErrorBox("Query transfer detail fail!!" + result.ToString()); }
             listControlBindingSource1.DataSource = TransferDetail;
 
             sqlCmd = string.Format(@"select p.ID as PackingListID,pd.CTNStartNo,pd.TransferDate,pd.ReceiveDate,p.PulloutDate,pd.ClogLocationId,pd.Remark,pd.Seq
@@ -99,7 +99,7 @@ from PackingList p,PackingList_Detail pd
 where pd.OrderID = '{0}' and pd.CTNStartNo <> '' and pd.CTNQty > 0 and p.ID = pd.ID
 order by p.ID,pd.Seq", orderID);
             result = DBProxy.Current.Select(null, sqlCmd, out CTNLastStatus);
-            if (!result) { MyUtility.Msg.ErrorBox("Query last status fail!!"); }
+            if (!result) { MyUtility.Msg.ErrorBox("Query last status fail!!" + result.ToString()); }
 
             listControlBindingSource2.DataSource = CTNLastStatus;
 
