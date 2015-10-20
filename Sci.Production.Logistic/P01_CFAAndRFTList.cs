@@ -35,7 +35,7 @@ order by c.cDate", masterData["POID"].ToString(), masterData["Dest"].ToString(),
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out CFA);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query CFA fail!!");
+                MyUtility.Msg.ErrorBox("Query CFA fail!!"+result.ToString());
             }
             listControlBindingSource1.DataSource = CFA;
 
@@ -49,7 +49,7 @@ order by r.cDate", masterData["Dest"].ToString(), masterData["ID"].ToString());
             result = DBProxy.Current.Select(null, sqlCmd, out RFT);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query RFT fail!!");
+                MyUtility.Msg.ErrorBox("Query RFT fail!!" + result.ToString());
             }
             listControlBindingSource2.DataSource = RFT;
 
