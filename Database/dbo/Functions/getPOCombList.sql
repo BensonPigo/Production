@@ -3,7 +3,7 @@ CREATE FUNCTION [dbo].[getPOCombList](@orderid varchar(13), @poid varchar(13))
 RETURNS varchar(max)
 BEGIN
 	DECLARE @string nvarchar(max) --要回傳的字串
-	IF @orderid = @poid
+	IF @orderid <> @poid
 		BEGIN
 			SET @string = 'Master:'+@poid
 		END
