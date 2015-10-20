@@ -101,11 +101,23 @@
     <Compile Include="B01.Designer.cs">
       <DependentUpon>B01.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01.Designer.cs">
+      <DependentUpon>P01.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01_CTNData.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="P01_CTNData.Designer.cs">
       <DependentUpon>P01_CTNData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_OverrunGMTRecord.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_OverrunGMTRecord.Designer.cs">
+      <DependentUpon>P01_OverrunGMTRecord.cs</DependentUpon>
     </Compile>
     <Compile Include="P02.cs">
       <SubType>Form</SubType>
@@ -203,8 +215,14 @@
     <EmbeddedResource Include="B01.resx">
       <DependentUpon>B01.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P01.resx">
+      <DependentUpon>P01.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01_CTNData.resx">
       <DependentUpon>P01_CTNData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_OverrunGMTRecord.resx">
+      <DependentUpon>P01_OverrunGMTRecord.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02.resx">
       <DependentUpon>P02.cs</DependentUpon>
@@ -256,6 +274,10 @@
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
       <Name>Sci.Production.Class</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.PPIC\Sci.Production.PPIC.csproj">
+      <Project>{b35ffbd5-b004-4929-bf1d-75e2ee403793}</Project>
+      <Name>Sci.Production.PPIC</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
