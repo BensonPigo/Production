@@ -1,23 +1,23 @@
 ﻿
-CREATE FUNCTION [dbo].[getPOCombList](@orderid varchar(13), @poid varchar(13))
+CREATE FUNCTION [dbo].[getCuttingComboList](@orderid varchar(13), @cuttingsp varchar(13))
 RETURNS varchar(max)
 BEGIN
 	DECLARE @string nvarchar(max) --要回傳的字串
-	IF @orderid <> @poid
+	IF @orderid <> @cuttingsp
 		BEGIN
-			SET @string = 'Master:'+@poid
+			SET @string = 'Master:'+@cuttingsp
 		END
 	ELSE
 
 		BEGIN
 			DECLARE cursor_Orders CURSOR FOR
-			SELECT ID FROM Orders WHERE POID = @poid and ID <> @poid
+			SELECT ID FROM Orders WHERE CuttingSP = @cuttingsp and ID <> @cuttingsp
 
 			DECLARE @id varchar(13), --暫存Orders Id
 					@left10id varchar(10),  --暫存Orders.Id的前10碼
 					@tmpstring varchar(13)  --暫存要寫入的資料
-			SET @string = @poid;
-			SET @left10id = LEFT(@poid,10);
+			SET @string = @cuttingsp;
+			SET @left10id = LEFT(@cuttingsp,10);
 			--開始run cursor
 			OPEN cursor_Orders
 			--將第一筆資料填入變數

@@ -1702,11 +1702,15 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="Production.sql" />
-    <Build Include="dbo\Functions\getPOCombList.sql">
+    <Build Include="dbo\Tables\ThreadComb.sql" />
+    <Build Include="dbo\Functions\getPOComboList.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\ThreadComb.sql" />
+    <Build Include="dbo\Functions\getCuttingComboList.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
