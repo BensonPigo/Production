@@ -66,9 +66,9 @@ namespace Sci.Production.PPIC
             base.ClickEditAfter();
             textBox1.ReadOnly = true;
             textBox6.ReadOnly = true;
+            textBox2.ReadOnly = true;
             if (CurrentMaintain["LocalStyle"].ToString().ToUpper() == "FALSE")
             {
-                textBox2.ReadOnly = true;
                 textBox3.ReadOnly = true;
                 textBox4.ReadOnly = true;
                 textBox5.ReadOnly = true;
@@ -159,6 +159,22 @@ namespace Sci.Production.PPIC
                 CurrentMaintain["Ukey"] = StyleUkey.Rows[0]["NewUkey"].ToString();
             }
             return true;
+        }
+
+        protected override bool ClickSavePre()
+        {
+            if (CurrentMaintain["LocalStyle"].ToString().ToUpper() == "TRUE" && !MyUtility.Check.Empty(CurrentMaintain["UKey"]))
+            {
+                string sqlCmd = string.Format("update Orders set CPU = {0}, CdCodeID = '{1}', StyleUnit = '{2}' where Orders.StyleUkey = {3} and not exists (select 1 from SewingOutput_Detail where OrderId = Orders.ID)",
+                    CurrentMaintain["CPU"].ToString(), CurrentMaintain["CdCodeID"].ToString(), CurrentMaintain["StyleUnit"].ToString(), CurrentMaintain["UKey"].ToString());
+                DualResult result = DBProxy.Current.Execute(null, sqlCmd);
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox("Update order cpu fail!!" + result.ToString());
+                    return false;
+                }
+            }
+            return base.ClickSavePre();
         }
 
         #region TMS & Cost不再由此新增，改到P04_TMSAndCost新增
