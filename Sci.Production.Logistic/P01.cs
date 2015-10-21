@@ -23,7 +23,7 @@ namespace Sci.Production.Logistic
             base.OnDetailEntered();
             DataRow brandData;
             displayBox5.Value = MyUtility.GetValue.Lookup(string.Format("select Description from style where Ukey = {0}",CurrentMaintain["StyleUkey"].ToString()));
-            displayBox10.Value = MyUtility.GetValue.Lookup(string.Format("select [dbo].getPOCombList('{0}','{1}') as PoList from Orders where ID = '{0}'",CurrentMaintain["ID"].ToString(),CurrentMaintain["POID"].ToString()));
+            displayBox10.Value = MyUtility.GetValue.Lookup(string.Format("select [dbo].getPOComboList('{0}','{1}') as PoList from Orders where ID = '{0}'",CurrentMaintain["ID"].ToString(),CurrentMaintain["POID"].ToString()));
             if (MyUtility.Check.Seek(string.Format("select ID,Customize1,Customize2,Customize3 from Brand where ID = '{0}'", CurrentMaintain["BrandID"].ToString()), out brandData))
             {
                 label19.Text = brandData["Customize1"].ToString();
