@@ -106,7 +106,7 @@ order by td.Seq", masterID);
                                 dr["OperationID"] = callNextForm.p01SelectOperationCode["ID"].ToString();
                                 dr["OperationDescEN"] = callNextForm.p01SelectOperationCode["DescEN"].ToString();
                                 dr["MachineTypeID"] = callNextForm.p01SelectOperationCode["MachineTypeID"].ToString();
-                                dr["Mold"] = callNextForm.p01SelectOperationCode["Mold"].ToString();
+                                dr["Mold"] = callNextForm.p01SelectOperationCode["MoldID"].ToString();
                                 dr["OperationMtlFactorID"] = callNextForm.p01SelectOperationCode["MtlFactorID"].ToString();
                                 dr["SeamLength"] = callNextForm.p01SelectOperationCode["SeamLength"].ToString();
                                 dr["SMV"] = Convert.ToDecimal(callNextForm.p01SelectOperationCode["SMV"]) * 60;
