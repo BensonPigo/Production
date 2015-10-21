@@ -107,6 +107,9 @@
             this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
             this.txtcdcode1 = new Sci.Production.Class.txtcdcode();
             this.button15 = new Sci.Win.UI.Button();
+            this.label29 = new Sci.Win.UI.Label();
+            this.displayBox8 = new Sci.Win.UI.DisplayBox();
+            this.button16 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -124,6 +127,9 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.button16);
+            this.detailcont.Controls.Add(this.displayBox8);
+            this.detailcont.Controls.Add(this.label29);
             this.detailcont.Controls.Add(this.button15);
             this.detailcont.Controls.Add(this.comboBox2);
             this.detailcont.Controls.Add(this.displayBox5);
@@ -1008,6 +1014,35 @@
             this.button15.UseVisualStyleBackColor = true;
             this.button15.Click += new System.EventHandler(this.button15_Click);
             // 
+            // label29
+            // 
+            this.label29.Lines = 0;
+            this.label29.Location = new System.Drawing.Point(173, 142);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(30, 23);
+            this.label29.TabIndex = 71;
+            this.label29.Text = "Unit";
+            // 
+            // displayBox8
+            // 
+            this.displayBox8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox8.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StyleUnit", true));
+            this.displayBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox8.Location = new System.Drawing.Point(207, 142);
+            this.displayBox8.Name = "displayBox8";
+            this.displayBox8.Size = new System.Drawing.Size(56, 23);
+            this.displayBox8.TabIndex = 72;
+            // 
+            // button16
+            // 
+            this.button16.Location = new System.Drawing.Point(713, 336);
+            this.button16.Name = "button16";
+            this.button16.Size = new System.Drawing.Size(180, 30);
+            this.button16.TabIndex = 73;
+            this.button16.Text = "Combo Type";
+            this.button16.UseVisualStyleBackColor = true;
+            this.button16.Click += new System.EventHandler(this.button16_Click);
+            // 
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(905, 569);
@@ -1116,5 +1151,8 @@
         private Win.UI.Button button13;
         private Win.UI.Button button14;
         private Win.UI.Button button15;
+        private Win.UI.DisplayBox displayBox8;
+        private Win.UI.Label label29;
+        private Win.UI.Button button16;
     }
 }

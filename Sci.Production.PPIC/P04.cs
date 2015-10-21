@@ -51,6 +51,7 @@ namespace Sci.Production.PPIC
             button9.ForeColor = (MyUtility.Check.Seek(string.Format("select MasterStyleUkey  from Style_SimilarStyle where MasterStyleUkey = {0}", CurrentMaintain["UKey"].ToString())) || MyUtility.Check.Seek(string.Format("select ChildrenStyleUkey  from Style_SimilarStyle where ChildrenStyleUkey = {0}", CurrentMaintain["UKey"].ToString()))) ? Color.Blue : Color.Black;
             button10.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_HSCode where StyleUkey = {0}", CurrentMaintain["UKey"].ToString())) ? Color.Blue : Color.Black;
             button15.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_GMTLTFty where StyleUkey = {0}",CurrentMaintain["UKey"].ToString())) ? Color.Blue : Color.Black;
+            button16.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_Location where StyleUkey = {0}", CurrentMaintain["UKey"].ToString())) ? Color.Blue : Color.Black;
         }
 
         protected override void ClickNewAfter()
@@ -226,10 +227,14 @@ namespace Sci.Production.PPIC
                 if (MyUtility.Check.Empty(txtcdcode1.Text))
                 {
                     CurrentMaintain["CPU"] = 0;
+                    CurrentMaintain["StyleUnit"] = "";
                 }
                 else
                 {
-                    CurrentMaintain["CPU"] = MyUtility.GetValue.Lookup(string.Format("select Cpu from CDCode where ID = '{0}'", txtcdcode1.Text));
+                    DataRow CDCodeRow;
+                    if (MyUtility.Check.Seek(string.Format("select Cpu,ComboPcs from CDCode where ID = '{0}'", txtcdcode1.Text), out CDCodeRow))
+                    CurrentMaintain["CPU"] = CDCodeRow["Cpu"].ToString();
+                    CurrentMaintain["StyleUnit"] = CDCodeRow["ComboPcs"].ToString() == "1" ? "PCS" : "SETS";
                 }
             }
         }
@@ -493,6 +498,13 @@ and StyleUkey = {0} and Status = 'C'",CurrentMaintain["Ukey"].ToString()));
                     }
                 }
             }
+        }
+
+        //Combo Type
+        private void button16_Click(object sender, EventArgs e)
+        {
+            Sci.Production.PPIC.P04_ComboType callNextForm = new Sci.Production.PPIC.P04_ComboType((PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P04. Style Management", "CanEdit") && CurrentMaintain["LocalStyle"].ToString().ToUpper() == "TRUE"), CurrentMaintain["UKey"].ToString(), null, null, CurrentMaintain["StyleUnit"].ToString());
+            callNextForm.ShowDialog(this);
         }
     }
 }

@@ -137,6 +137,8 @@ where StyleUkey = {0}",KeyValue1);
 
         protected override bool OnSaveBefore()
         {
+            grid.ValidateControl();
+            gridbs.EndEdit();
             DataRow[] findData = ((DataTable)gridbs.DataSource).Select("ArtworkTypeID = '' or PatternCode = '' or ArtworkID = ''");
             if (findData.Length > 0)
             {
