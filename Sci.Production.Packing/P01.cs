@@ -26,7 +26,7 @@ namespace Sci.Production.Packing
         {
             base.OnDetailEntered();
             displayBox6.Value = MyUtility.GetValue.Lookup(string.Format("select Description from style where Ukey = {0}", CurrentMaintain["StyleUkey"].ToString()));
-            displayBox7.Value = MyUtility.GetValue.Lookup(string.Format("select [dbo].getPOCombList('{0}','{1}') as PoList from Orders where ID = '{0}'", CurrentMaintain["ID"].ToString(), CurrentMaintain["POID"].ToString()));
+            displayBox7.Value = MyUtility.GetValue.Lookup(string.Format("select [dbo].getPOComboList('{0}','{1}') as PoList from Orders where ID = '{0}'", CurrentMaintain["ID"].ToString(), CurrentMaintain["POID"].ToString()));
             //按鈕變色
             button1.ForeColor = CurrentMaintain["CtnType"].ToString() == "2" ? Color.Blue : Color.Black;
             button2.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
