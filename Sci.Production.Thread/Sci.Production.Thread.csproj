@@ -30,16 +30,152 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Compile Include="B01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B01.Designer.cs">
+      <DependentUpon>B01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01.Designer.cs">
+      <DependentUpon>P01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_CopyTo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_CopyTo.Designer.cs">
+      <DependentUpon>P01_CopyTo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_Generate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_Generate.designer.cs">
+      <DependentUpon>P01_Generate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="B02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B02.Designer.cs">
+      <DependentUpon>B02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B03.Designer.cs">
+      <DependentUpon>B03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B04.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B04.Designer.cs">
+      <DependentUpon>B04.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_Detail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_Detail.designer.cs">
+      <DependentUpon>P01_Detail.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="B01.resx">
+      <DependentUpon>B01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B02.resx">
+      <DependentUpon>B02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B03.resx">
+      <DependentUpon>B03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B04.resx">
+      <DependentUpon>B04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01.resx">
+      <DependentUpon>P01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_CopyTo.resx">
+      <DependentUpon>P01_CopyTo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_Generate.resx">
+      <DependentUpon>P01_Generate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_Detail.resx">
+      <DependentUpon>P01_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Ict, Version=1.0.1508.2800, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Ict.dll</HintPath>
+    </Reference>
+    <Reference Include="Ict.Win, Version=1.0.1412.3000, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Ict.Win.dll</HintPath>
+    </Reference>
+    <Reference Include="Ict.Win.App, Version=1.0.1507.3000, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Ict.Win.App.dll</HintPath>
+    </Reference>
+    <Reference Include="Ict.Win.Report2010, Version=1.0.1508.2700, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Ict.Win.Report2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Ict.Win.UI, Version=1.0.1509.800, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Ict.Win.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Microsoft.ReportViewer.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.ProcessingObjectModel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Microsoft.ReportViewer.ProcessingObjectModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Microsoft.ReportViewer.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Sci, Version=1.0.1509.2400, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Sci.dll</HintPath>
+    </Reference>
+    <Reference Include="Sci.Machine.Class, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Sci.Machine.Class.dll</HintPath>
+    </Reference>
+    <Reference Include="Sci.Proj, Version=1.0.1505.1800, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
+      <Project>{0E35FD31-4A86-4D4E-A393-B6C5E3D7C956}</Project>
+      <Name>Sci.Production.Class</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
+      <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
+      <Name>Sci.Production.PublicPrg</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
