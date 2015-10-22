@@ -791,6 +791,9 @@ Sci.Production.PPIC/P01_MTLImport.resx -text
 Sci.Production.PPIC/P01_ProductionKit.Designer.cs -text
 Sci.Production.PPIC/P01_ProductionKit.cs -text
 Sci.Production.PPIC/P01_ProductionKit.resx -text
+Sci.Production.PPIC/P01_ShippingMark.Designer.cs -text
+Sci.Production.PPIC/P01_ShippingMark.cs -text
+Sci.Production.PPIC/P01_ShippingMark.resx -text
 Sci.Production.PPIC/P01_TMSAndCost.Designer.cs -text
 Sci.Production.PPIC/P01_TMSAndCost.cs -text
 Sci.Production.PPIC/P01_TMSAndCost.resx -text
@@ -864,6 +867,9 @@ Sci.Production.PPIC/P13.Designer.cs -text
 Sci.Production.PPIC/P13.cs -text
 Sci.Production.PPIC/P13.resx -text
 Sci.Production.PPIC/Properties/AssemblyInfo.cs -text
+Sci.Production.PPIC/Properties/Resources.Designer.cs -text
+Sci.Production.PPIC/Properties/Resources.resx -text
+Sci.Production.PPIC/Resources/Carton.bmp -text
 Sci.Production.PPIC/Sci.Production.PPIC.csproj -text
 Sci.Production.Packing/B01.Designer.cs -text
 Sci.Production.Packing/B01.cs -text

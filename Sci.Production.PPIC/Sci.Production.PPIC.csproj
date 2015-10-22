@@ -191,6 +191,12 @@
     <Compile Include="P01_ProductionKit.Designer.cs">
       <DependentUpon>P01_ProductionKit.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_ShippingMark.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_ShippingMark.Designer.cs">
+      <DependentUpon>P01_ShippingMark.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -342,6 +348,11 @@
     <Compile Include="P01_TMSAndCost.Designer.cs">
       <DependentUpon>P01_TMSAndCost.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -391,6 +402,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_ProductionKit.resx">
       <DependentUpon>P01_ProductionKit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_ShippingMark.resx">
+      <DependentUpon>P01_ShippingMark.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02.resx">
       <DependentUpon>P02.cs</DependentUpon>
@@ -467,6 +481,10 @@
     <EmbeddedResource Include="P01_TMSAndCost.resx">
       <DependentUpon>P01_TMSAndCost.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
@@ -485,6 +503,9 @@
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
       <Name>Sci.Production.PublicPrg</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Carton.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

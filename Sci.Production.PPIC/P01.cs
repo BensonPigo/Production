@@ -136,6 +136,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             button4.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
             button5.ForeColor = haveTmsCost ? Color.Blue : Color.Black;
             button6.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Label"]) ? Color.Blue : Color.Black;
+            button9.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["MarkFront"]) || !MyUtility.Check.Empty(CurrentMaintain["MarkBack"]) || !MyUtility.Check.Empty(CurrentMaintain["MarkLeft"]) || !MyUtility.Check.Empty(CurrentMaintain["MarkRight"]) ? Color.Blue : Color.Black;
             button10.ForeColor = haveTmsCost ? Color.Blue : Color.Black;
             button11.ForeColor = MyUtility.Check.Seek(string.Format("select i.ID from Style s, IETMS i where s.Ukey = {0} and s.IETMSID = i.ID and s.IETMSVersion = i.Version", CurrentMaintain["StyleUkey"].ToString())) && MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             button12.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["CMPQRemark"]) ? Color.Blue : Color.Black;
@@ -320,7 +321,8 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
         //Shipping mark
         private void button9_Click(object sender, EventArgs e)
         {
-
+            Sci.Production.PPIC.P01_ShippingMark callNextForm = new Sci.Production.PPIC.P01_ShippingMark(false, CurrentMaintain);
+            callNextForm.ShowDialog(this);
         }
 
         //TMS & Cost
