@@ -22,6 +22,7 @@ namespace Sci.Production.PPIC
             this.Text = Type == "1" ? "P01. PPIC Master List" : "P011. PPIC Master List (History)";
             this.DefaultFilter = Type == "1" ? string.Format("FtyGroup = '{0}' AND Finished = 0", Sci.Env.User.Factory) : string.Format("FtyGroup = '{0}' AND Finished = 1", Sci.Env.User.Factory);
             dataType = Type;
+            button31.Visible = dataType == "1"; //Shipment Finished
         }
 
         protected override void OnDetailEntered()
@@ -145,6 +146,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             button19.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Export_Detail where PoID = '{0}'", CurrentMaintain["POID"].ToString())) ? Color.Blue : Color.Black;
             button24.ForeColor = MyUtility.Check.Seek(string.Format("select ID from ArtworkPO_Detail where OrderID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             button25.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits where StyleUkey = {0}", CurrentMaintain["StyleUKey"].ToString())) ? Color.Blue : Color.Black;
+            button27.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["SewLine"]) ? Color.Blue : Color.Black;
             button28.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail where OrderID = '{0}' and ClogReceiveID <> ''", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             button29.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing"]) ? Color.Blue : Color.Black;
             button30.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_PFHis where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
@@ -439,7 +441,8 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
         //Q'ty b'down by schedule
         private void button27_Click(object sender, EventArgs e)
         {
-
+            Sci.Production.PPIC.P01_QtySewingSchedule callNextForm = new Sci.Production.PPIC.P01_QtySewingSchedule(CurrentMaintain["ID"].ToString(),CurrentMaintain["StyleUKey"].ToString());
+            callNextForm.ShowDialog(this);
         }
 
         //Carton Status
@@ -466,7 +469,28 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
         //Shipment Finished
         private void button31_Click(object sender, EventArgs e)
         {
-
+            string sqlCmd;
+            if (CurrentMaintain["Category"].ToString() == "M")
+            {
+                if (!MyUtility.Check.Seek(string.Format("select ID from PO where ID = '{0}' and Complete = 1", CurrentMaintain["POID"].ToString())))
+                {
+                    if (MyUtility.Check.Seek(string.Format("select ID from PO_Supp_Detail where ID = '{0}' and (ETA > GETDATE() or InQty <> OutQty - AdjustQty)", CurrentMaintain["POID"].ToString())))
+                    {
+                        MyUtility.Msg.WarningBox("Warehouse still have material, so can't finish shipment.");
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                sqlCmd = string.Format("select (select ID+',' from Orders where POID = '{0}' and Qty > 0 and PulloutComplete = 0 for xml path('')) as SP", CurrentMaintain["POID"].ToString());
+                string spList = MyUtility.GetValue.Lookup(sqlCmd);
+                if (!MyUtility.Check.Empty(spList))
+                {
+                    MyUtility.Msg.WarningBox("Below combined SP# not yet ship!!\r\n" + spList.Substring(0, spList.Length - 1));
+                    return;
+                }
+            }
         }
 
         //VAS/SHAS Instruction

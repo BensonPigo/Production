@@ -791,6 +791,9 @@ Sci.Production.PPIC/P01_MTLImport.resx -text
 Sci.Production.PPIC/P01_ProductionKit.Designer.cs -text
 Sci.Production.PPIC/P01_ProductionKit.cs -text
 Sci.Production.PPIC/P01_ProductionKit.resx -text
+Sci.Production.PPIC/P01_QtySewingSchedule.Designer.cs -text
+Sci.Production.PPIC/P01_QtySewingSchedule.cs -text
+Sci.Production.PPIC/P01_QtySewingSchedule.resx -text
 Sci.Production.PPIC/P01_ShippingMark.Designer.cs -text
 Sci.Production.PPIC/P01_ShippingMark.cs -text
 Sci.Production.PPIC/P01_ShippingMark.resx -text
