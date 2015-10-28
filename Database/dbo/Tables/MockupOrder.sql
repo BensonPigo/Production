@@ -18,13 +18,16 @@
     [CMPUnit]     VARCHAR (8)    CONSTRAINT [DF_MockupOrder_CMPUnit] DEFAULT ('') NULL,
     [CMPPrice]    NUMERIC (5, 2) CONSTRAINT [DF_MockupOrder_CMPPrice] DEFAULT ((0)) NULL,
     [FTYGroup]    VARCHAR (8)    CONSTRAINT [DF_MockupOrder_FTYGroup] DEFAULT ('') NULL,
+    [CPUFactor]   NUMERIC (3, 1) CONSTRAINT [DF_MockupOrder_CPUFactor] DEFAULT ((1)) NULL,
+    [MDivisionID] VARCHAR (8)    CONSTRAINT [DF_MockupOrder_MDivisionID] DEFAULT ('') NULL,
     [AddName]     VARCHAR (10)   CONSTRAINT [DF_MockupOrder_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_MockupOrder_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME       NULL,
-    [CPUFactor]   NUMERIC (3, 1) CONSTRAINT [DF_MockupOrder_CPUFactor] DEFAULT ((1)) NULL,
     CONSTRAINT [PK_MockupOrder] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -121,4 +124,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MockupOrder', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MockupOrder', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

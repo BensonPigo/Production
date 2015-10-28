@@ -17,15 +17,6 @@
     [FirstOutputTime] VARCHAR (4)    CONSTRAINT [DF_ChgOver_FirstOutputTime] DEFAULT ('') NULL,
     [LastOutputTime]  VARCHAR (4)    CONSTRAINT [DF_ChgOver_LastOutputTime] DEFAULT ('') NULL,
     [Remark]          NVARCHAR (60)  CONSTRAINT [DF_ChgOver_Remark] DEFAULT ('') NULL,
-    [SewOutputDate1]  DATE           NULL,
-    [SewOutputDate2]  DATE           NULL,
-    [SewOutputDate3]  DATE           NULL,
-    [Efficiency1]     NUMERIC (6, 2) CONSTRAINT [DF_ChgOver_Efficiency1] DEFAULT ((0)) NULL,
-    [Efficiency2]     NUMERIC (6, 2) CONSTRAINT [DF_ChgOver_Efficiency2] DEFAULT ((0)) NULL,
-    [Efficiency3]     NUMERIC (6, 2) CONSTRAINT [DF_ChgOver_Efficiency3] DEFAULT ((0)) NULL,
-    [RFT1]            NUMERIC (6, 2) CONSTRAINT [DF_ChgOver_RFT1] DEFAULT ((0)) NULL,
-    [RFT2]            NUMERIC (6, 2) CONSTRAINT [DF_ChgOver_RFT2] DEFAULT ((0)) NULL,
-    [RFT3]            NUMERIC (6, 2) CONSTRAINT [DF_ChgOver_RFT3] DEFAULT ((0)) NULL,
     [Type]            VARCHAR (1)    CONSTRAINT [DF_ChgOver_Type] DEFAULT ('') NULL,
     [ApvDate]         DATETIME       NULL,
     [AddName]         VARCHAR (10)   CONSTRAINT [DF_ChgOver_AddName] DEFAULT ('') NULL,
@@ -34,8 +25,11 @@
     [EditDate]        DATETIME       NULL,
     [APSNo]           INT            CONSTRAINT [DF_ChgOver_APSSewID] DEFAULT ((0)) NULL,
     [Status]          VARCHAR (15)   CONSTRAINT [DF_ChgOver_Status] DEFAULT ('') NULL,
+    [MDivisionID]     VARCHAR (8)    CONSTRAINT [DF_ChgOver_MDivisionID] DEFAULT ('') NULL,
     CONSTRAINT [PK_ChgOver] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -115,39 +109,39 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Remark', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'第一天上線日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ChgOver', @level2type = N'COLUMN', @level2name = N'SewOutputDate1';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'第二天上線日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ChgOver', @level2type = N'COLUMN', @level2name = N'SewOutputDate2';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'第三天上線日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ChgOver', @level2type = N'COLUMN', @level2name = N'SewOutputDate3';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'第一天效能', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ChgOver', @level2type = N'COLUMN', @level2name = N'Efficiency1';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'第二天效能', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ChgOver', @level2type = N'COLUMN', @level2name = N'Efficiency2';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'第三天效能', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ChgOver', @level2type = N'COLUMN', @level2name = N'Efficiency3';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'第一天的RFT值', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ChgOver', @level2type = N'COLUMN', @level2name = N'RFT1';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'第二天的RFT值', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ChgOver', @level2type = N'COLUMN', @level2name = N'RFT2';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'第三天的RFT值', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ChgOver', @level2type = N'COLUMN', @level2name = N'RFT3';
+
+
+
+GO
+
+
+
+GO
+
+
+
+GO
+
+
+
+GO
+
 
 
 GO
@@ -180,4 +174,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'APS系統Pl
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'狀態', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ChgOver', @level2type = N'COLUMN', @level2name = N'Status';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ChgOver', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

@@ -30,8 +30,11 @@
     [EditDate]         DATETIME       NULL,
     [PriceCheckID]     VARCHAR (13)   CONSTRAINT [DF_InvAdjust_PriceCheckID] DEFAULT ('') NULL,
     [OrderShipmodeSeq] VARCHAR (2)    CONSTRAINT [DF_InvAdjust_OrderShipmodeSeq] DEFAULT ('') NULL,
+    [MDivisionID]      VARCHAR (8)    CONSTRAINT [DF_InvAdjust_MDivisionID] DEFAULT ('') NULL,
     CONSTRAINT [PK_InvAdjust] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -160,4 +163,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'價格修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Qty Breakdown Shipmode的Seq', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust', @level2type = N'COLUMN', @level2name = N'OrderShipmodeSeq';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

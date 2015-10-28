@@ -3,6 +3,7 @@
     [CDate]       DATE         NOT NULL,
     [POID]        VARCHAR (13) CONSTRAINT [DF_ReplacementReport_POID] DEFAULT ('') NOT NULL,
     [Type]        VARCHAR (1)  CONSTRAINT [DF_ReplacementReport_Type] DEFAULT ('') NOT NULL,
+    [MDivisionID] VARCHAR (8)  CONSTRAINT [DF_ReplacementReport_MDivisionID] DEFAULT ('') NOT NULL,
     [FactoryID]   VARCHAR (8)  CONSTRAINT [DF_ReplacementReport_FactoryID] DEFAULT ('') NOT NULL,
     [ApplyName]   VARCHAR (10) CONSTRAINT [DF_ReplacementReport_ApplyName] DEFAULT ('') NULL,
     [ApplyDate]   DATETIME     NULL,
@@ -20,6 +21,8 @@
     [TPEEditDate] DATETIME     NULL,
     CONSTRAINT [PK_ReplacementReport] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -102,4 +105,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠最�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ReplacementReport', @level2type = N'COLUMN', @level2name = N'TPEEditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ReplacementReport', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

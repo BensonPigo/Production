@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[ChgOverCheckList] (
     [ID]          VARCHAR (4)   CONSTRAINT [DF_ChgOverCheckList_ID] DEFAULT ('') NOT NULL,
+    [BrandID]     VARCHAR (8)   CONSTRAINT [DF_ChgOverCheckList_BrandID] DEFAULT ('') NOT NULL,
     [Description] NVARCHAR (60) CONSTRAINT [DF_ChgOverCheckList_Description] DEFAULT ('') NOT NULL,
     [DaysBefore]  SMALLINT      CONSTRAINT [DF_ChgOverCheckList_DaysBefore] DEFAULT ((0)) NULL,
     [BaseOn]      TINYINT       CONSTRAINT [DF_ChgOverCheckList_BaseOn] DEFAULT ((0)) NOT NULL,
@@ -9,8 +10,10 @@
     [AddDate]     DATETIME      NULL,
     [EditName]    VARCHAR (10)  CONSTRAINT [DF_ChgOverCheckList_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME      NULL,
-    CONSTRAINT [PK_ChgOverCheckList] PRIMARY KEY CLUSTERED ([ID] ASC)
+    CONSTRAINT [PK_ChgOverCheckList_1] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC)
 );
+
+
 
 
 GO

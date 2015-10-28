@@ -1,13 +1,17 @@
 ﻿CREATE TABLE [dbo].[LearnCurve] (
     [ID]          INT            CONSTRAINT [DF_LearnCurve_ID] DEFAULT ((0)) NOT NULL,
+    [FactoryID]   VARCHAR (8)    CONSTRAINT [DF_LearnCurve_FactoryID] DEFAULT ('') NULL,
     [Name]        VARCHAR (50)   CONSTRAINT [DF_LearnCurve_Name] DEFAULT ('') NOT NULL,
     [Description] NVARCHAR (500) CONSTRAINT [DF_LearnCurve_Description] DEFAULT ('') NULL,
+    [FromAPS]     BIT            CONSTRAINT [DF_LearnCurve_FromAPS] DEFAULT ((0)) NULL,
     [AddName]     VARCHAR (10)   CONSTRAINT [DF_LearnCurve_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_LearnCurve_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME       NULL,
     CONSTRAINT [PK_LearnCurve] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -40,4 +44,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LearnCurve', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Data from APS', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LearnCurve', @level2type = N'COLUMN', @level2name = N'FromAPS';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LearnCurve', @level2type = N'COLUMN', @level2name = N'FactoryID';
 

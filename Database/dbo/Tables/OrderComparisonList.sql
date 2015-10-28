@@ -22,6 +22,7 @@
     [NewSMnorderApv]        DATE         NULL,
     [OriginalLETA]          DATE         NULL,
     [NewLETA]               DATE         NULL,
+    [MDivisionID]           VARCHAR (8)  CONSTRAINT [DF_OrderComparisonList_MDivisionID] DEFAULT ('') NULL,
     [FactoryID]             VARCHAR (8)  CONSTRAINT [DF_OrderComparisonList_FactoryID] DEFAULT ('') NULL,
     [KPILETA]               DATE         NULL,
     [TransferToFactory]     VARCHAR (8)  CONSTRAINT [DF_OrderComparisonList_TransferToFactory] DEFAULT ('') NULL,
@@ -29,6 +30,8 @@
     [JunkOrder]             BIT          CONSTRAINT [DF_OrderComparisonList_JunkOrder] DEFAULT ((0)) NULL,
     [Ukey]                  BIGINT       IDENTITY (1, 1) NOT NULL
 );
+
+
 
 
 GO
@@ -149,4 +152,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單是�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'UKey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'OrderComparisonList', @level2type = N'COLUMN', @level2name = N'Ukey';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'OrderComparisonList', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

@@ -2,6 +2,7 @@
     [Ukey]                BIGINT         CONSTRAINT [DF_Style_ProductionKits_Ukey] DEFAULT ((0)) NOT NULL,
     [StyleUkey]           BIGINT         CONSTRAINT [DF_Style_ProductionKits_StyleUkey] DEFAULT ((0)) NULL,
     [ProductionKitsGroup] VARCHAR (8)    CONSTRAINT [DF_Style_ProductionKits_ProductionKitsGroup] DEFAULT ('') NULL,
+    [MDivisionID]         VARCHAR (8)    CONSTRAINT [DF_Style_ProductionKits_MDivisionID] DEFAULT ('') NULL,
     [FactoryID]           VARCHAR (8)    CONSTRAINT [DF_Style_ProductionKits_FactoryID] DEFAULT ('') NULL,
     [Article]             NVARCHAR (MAX) CONSTRAINT [DF_Style_ProductionKits_Article] DEFAULT ('') NULL,
     [DOC]                 VARCHAR (5)    CONSTRAINT [DF_Style_ProductionKits_DOC] DEFAULT ('') NULL,
@@ -33,6 +34,8 @@
     [StyleCUkey1_Old]     VARCHAR (11)   CONSTRAINT [DF_Style_ProductionKits_StyleCUkey1_Old] DEFAULT ('') NULL,
     CONSTRAINT [PK_Style_ProductionKits] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -171,4 +174,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0t
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'不寄送原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_ProductionKits', @level2type = N'COLUMN', @level2name = N'ReasonID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_ProductionKits', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

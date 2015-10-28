@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[PackingList] (
     [ID]                VARCHAR (13)   CONSTRAINT [DF_PackingList_ID] DEFAULT ('') NOT NULL,
     [Type]              VARCHAR (1)    CONSTRAINT [DF_PackingList_Type] DEFAULT ('') NOT NULL,
+    [MDivisionID]       VARCHAR (8)    CONSTRAINT [DF_PackingList_MDivisionID] DEFAULT ('') NOT NULL,
     [FactoryID]         VARCHAR (8)    CONSTRAINT [DF_PackingList_FactoryID] DEFAULT ('') NOT NULL,
     [OrderID]           VARCHAR (13)   CONSTRAINT [DF_PackingList_OrderID] DEFAULT ('') NULL,
     [OrderShipmodeSeq]  VARCHAR (2)    CONSTRAINT [DF_PackingList_OrderShipmodeSeq] DEFAULT ('') NULL,
@@ -36,6 +37,8 @@
     [EditDate]          DATETIME       NULL,
     CONSTRAINT [PK_PackingList] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -180,4 +183,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

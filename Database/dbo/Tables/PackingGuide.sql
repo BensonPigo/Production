@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[PackingGuide] (
     [Id]                 VARCHAR (13)   CONSTRAINT [DF_PackingGuide_Id] DEFAULT ('') NOT NULL,
+    [MDivisionID]        VARCHAR (8)    CONSTRAINT [DF_PackingGuide_MDivisionID] DEFAULT ('') NOT NULL,
     [FactoryID]          VARCHAR (8)    CONSTRAINT [DF_PackingGuide_FactoryID] DEFAULT ('') NOT NULL,
     [OrderID]            VARCHAR (13)   CONSTRAINT [DF_PackingGuide_OrderID] DEFAULT ('') NOT NULL,
     [ShipModeID]         VARCHAR (10)   CONSTRAINT [DF_PackingGuide_ShipModeID] DEFAULT ('') NOT NULL,
@@ -15,6 +16,8 @@
     [EditDate]           DATETIME       NULL,
     CONSTRAINT [PK_PackingGuide] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 GO
@@ -75,4 +78,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingGuide', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingGuide', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

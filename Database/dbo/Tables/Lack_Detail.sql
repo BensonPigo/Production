@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[Lack_Detail] (
     [ID]              VARCHAR (13)    CONSTRAINT [DF_Lack_Detail_ID] DEFAULT ('') NOT NULL,
     [Seq1]            VARCHAR (3)     CONSTRAINT [DF_Lack_Detail_Seq] DEFAULT ('') NOT NULL,
+    [Seq2]            VARCHAR (2)     CONSTRAINT [DF_Lack_Detail_Seq2] DEFAULT ('') NOT NULL,
     [WhseInQty]       NUMERIC (10, 2) CONSTRAINT [DF_Lack_Detail_WhseInQty] DEFAULT ((0)) NULL,
     [FTYLastRecvDate] DATE            NULL,
     [FTYInQty]        NUMERIC (10, 2) CONSTRAINT [DF_Lack_Detail_FTYInQty] DEFAULT ((0)) NULL,
@@ -9,9 +10,10 @@
     [RejectQty]       INT             CONSTRAINT [DF_Lack_Detail_RejectQty] DEFAULT ((0)) NULL,
     [Process]         VARCHAR (30)    CONSTRAINT [DF_Lack_Detail_Process] DEFAULT ('') NULL,
     [IssueQty]        NUMERIC (10, 2) CONSTRAINT [DF_Lack_Detail_IssueQty] DEFAULT ((0)) NULL,
-    [Seq2]            VARCHAR (2)     CONSTRAINT [DF_Lack_Detail_Seq2] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Lack_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [Seq1] ASC, [Seq2] ASC)
 );
+
+
 
 
 GO

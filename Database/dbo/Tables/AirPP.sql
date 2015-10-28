@@ -3,6 +3,7 @@
     [CDate]             DATE            NOT NULL,
     [OrderID]           VARCHAR (13)    CONSTRAINT [DF_AirPP_OrderID] DEFAULT ('') NOT NULL,
     [OrderShipmodeSeq]  VARCHAR (2)     CONSTRAINT [DF_AirPP_OrderShipmodeSeq] DEFAULT ('') NULL,
+    [MDivisionID]       VARCHAR (8)     CONSTRAINT [DF_AirPP_MDivisionID] DEFAULT ('') NULL,
     [ShipQty]           INT             CONSTRAINT [DF_AirPP_ShipQty] DEFAULT ((0)) NULL,
     [ETA]               DATE            NULL,
     [ReceiveDoxDate]    DATE            NULL,
@@ -68,6 +69,8 @@
     [TPEEditDate]       DATETIME        NULL,
     CONSTRAINT [PK_AirPP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -340,4 +343,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'台北最�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'台北最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AirPP', @level2type = N'COLUMN', @level2name = N'TPEEditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AirPP', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 
