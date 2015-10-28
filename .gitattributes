@@ -11,11 +11,14 @@ Database/dbo/Functions/dbo.getStockUnit.sql -text
 Database/dbo/Functions/dbo.getTPEPass1.sql -text
 Database/dbo/Functions/getBOFMtlDesc.sql -text
 Database/dbo/Functions/getCuttingComboList.sql -text
+Database/dbo/Functions/getGarmentLT.sql -text
 Database/dbo/Functions/getMTLExport.sql -text
 Database/dbo/Functions/getMtlDesc.sql -text
 Database/dbo/Functions/getPOComboList.sql -text
+Database/dbo/Functions/getPulloutComplete.sql -text
 Database/dbo/Stored[!!-~]Procedures/dbo.insertMygridstd2.sql -text
 Database/dbo/Stored[!!-~]Procedures/insertMygridstd2.sql -text
+Database/dbo/Stored[!!-~]Procedures/usp_closeOrder.sql -text
 Database/dbo/Tables/ADIDASComplain.sql -text
 Database/dbo/Tables/ADIDASComplainDefect.sql -text
 Database/dbo/Tables/ADIDASComplainDefect_Detail.sql -text
