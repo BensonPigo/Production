@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[Factory] (
     [ID]                   VARCHAR (8)    CONSTRAINT [DF_Factory_ID] DEFAULT ('') NOT NULL,
+    [MDivisionID]          VARCHAR (8)    CONSTRAINT [DF_Factory_MDivisionID] DEFAULT ('') NULL,
     [Junk]                 BIT            CONSTRAINT [DF_Factory_Junk] DEFAULT ((0)) NULL,
     [Abb]                  NVARCHAR (10)  CONSTRAINT [DF_Factory_Abb] DEFAULT ('') NULL,
     [NameCH]               NVARCHAR (40)  CONSTRAINT [DF_Factory_NameCH] DEFAULT ('') NULL,
@@ -40,6 +41,8 @@
     [IsSampleRoom]         BIT            CONSTRAINT [DF_Factory_IsSampleRoom] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Factory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -196,4 +199,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠地�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠排序碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Factory', @level2type = N'COLUMN', @level2name = N'FactorySort';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Factory', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

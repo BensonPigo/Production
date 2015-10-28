@@ -5,6 +5,7 @@ Database/ProductionDB.publish.xml -text
 Database/ProductionDB.sln -text
 Database/ProductionDB.sqlproj -text
 Database/ProductionDB.sqlproj.user -text
+Database/Storage/SLAVE.sql -text
 Database/dbo/Functions/dbo.getStockType.sql -text
 Database/dbo/Functions/dbo.getStockUnit.sql -text
 Database/dbo/Functions/dbo.getTPEPass1.sql -text
@@ -14,6 +15,7 @@ Database/dbo/Functions/getMTLExport.sql -text
 Database/dbo/Functions/getMtlDesc.sql -text
 Database/dbo/Functions/getPOComboList.sql -text
 Database/dbo/Stored[!!-~]Procedures/dbo.insertMygridstd2.sql -text
+Database/dbo/Stored[!!-~]Procedures/insertMygridstd2.sql -text
 Database/dbo/Tables/ADIDASComplain.sql -text
 Database/dbo/Tables/ADIDASComplainDefect.sql -text
 Database/dbo/Tables/ADIDASComplainDefect_Detail.sql -text
@@ -82,6 +84,7 @@ Database/dbo/Tables/CuttingOutput_Detail.sql -text
 Database/dbo/Tables/CuttingOutput_Detail_Detail.sql -text
 Database/dbo/Tables/CuttingOutput_WIP.sql -text
 Database/dbo/Tables/CuttingTape.sql -text
+Database/dbo/Tables/CuttingTape_Detail.sql -text
 Database/dbo/Tables/DDTable.sql -text
 Database/dbo/Tables/Debit.sql -text
 Database/dbo/Tables/Debit_Detail.sql -text
@@ -145,6 +148,7 @@ Database/dbo/Tables/Inspweight.sql -text
 Database/dbo/Tables/InvAdjust.sql -text
 Database/dbo/Tables/InvAdjust_Qty.sql -text
 Database/dbo/Tables/Inventory.sql -text
+Database/dbo/Tables/InventoryRefno.sql -text
 Database/dbo/Tables/Invtrans.sql -text
 Database/dbo/Tables/InvtransReason.sql -text
 Database/dbo/Tables/Issue.sql -text
@@ -415,6 +419,7 @@ Database/dbo/Tables/dbo.InventoryRefno.sql -text
 Database/dbo/Views/View_OrderFAColor.sql -text
 Database/dbo/Views/View_Order_Artworks.sql -text
 Database/dbo/Views/View_Orders_subprocess.sql -text
+Database/dbo/Views/View_Unitrate.sql -text
 Database/dbo/Views/dbo.View_Unitrate.sql -text
 Database/匯入結構描述記錄/ProductionDB_20151006014853.log -text
 /Production.sln -text

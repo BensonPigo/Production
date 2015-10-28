@@ -1,17 +1,18 @@
 ﻿CREATE TABLE [dbo].[CuttingTape] (
-    [ID]           VARCHAR (13) CONSTRAINT [DF_CuttingTape_ID] DEFAULT ('') NOT NULL,
-    [FactoryId]    VARCHAR (10) CONSTRAINT [DF_CuttingTape_FactoryId] DEFAULT ('') NOT NULL,
-    [OldEachcon]   DATE         NULL,
-    [TapeInline]   DATE         NULL,
-    [AddName]      VARCHAR (10) CONSTRAINT [DF_CuttingTape_AddName] DEFAULT ('') NULL,
-    [AddDate]      DATETIME     NULL,
-    [EditName]     VARCHAR (10) CONSTRAINT [DF_CuttingTape_EditName] DEFAULT ('') NULL,
-    [EditDate]     DATETIME     NULL,
-    [Sewinline]    DATE         NULL,
-    [Sewoffline]   DATE         NULL,
-    [Sewinglineid] VARCHAR (60) CONSTRAINT [DF_CuttingTape_Sewinglineid] DEFAULT ('') NULL,
-    CONSTRAINT [PK_CuttingTape] PRIMARY KEY CLUSTERED ([ID] ASC)
+    [POID]            VARCHAR (13) CONSTRAINT [DF_CuttingTape_ID] DEFAULT ('') NOT NULL,
+    [MDivisionID]     VARCHAR (8)  NOT NULL,
+    [OldEachcon]      DATE         NULL,
+    [TapeFirstInline] DATE         NULL,
+    [AddName]         VARCHAR (10) CONSTRAINT [DF_CuttingTape_AddName] DEFAULT ('') NULL,
+    [AddDate]         DATETIME     NULL,
+    [EditName]        VARCHAR (10) CONSTRAINT [DF_CuttingTape_EditName] DEFAULT ('') NULL,
+    [EditDate]        DATETIME     NULL,
+    CONSTRAINT [PK_CuttingTape] PRIMARY KEY CLUSTERED ([POID] ASC, [MDivisionID] ASC) ON [SLAVE]
 );
+
+
+
+
 
 
 GO
@@ -19,11 +20,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'外裁主�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CuttingTape', @level2type = N'COLUMN', @level2name = N'ID';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CuttingTape', @level2type = N'COLUMN', @level2name = N'FactoryId';
+
 
 
 GO
@@ -31,7 +32,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'舊each con
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'外裁最早上線日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CuttingTape', @level2type = N'COLUMN', @level2name = N'TapeInline';
+
 
 
 GO
@@ -51,13 +52,17 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯日�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最早車縫上線日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CuttingTape', @level2type = N'COLUMN', @level2name = N'Sewinline';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最晚車縫下線日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CuttingTape', @level2type = N'COLUMN', @level2name = N'Sewoffline';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'車縫線', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CuttingTape', @level2type = N'COLUMN', @level2name = N'Sewinglineid';
+
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'外裁最早上線日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CuttingTape', @level2type = N'COLUMN', @level2name = N'TapeFirstInline';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'POID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CuttingTape', @level2type = N'COLUMN', @level2name = N'POID';
 

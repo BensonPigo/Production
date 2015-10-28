@@ -15,8 +15,10 @@
     [AddDate]         DATETIME       NULL,
     [EditName]        VARCHAR (10)   CONSTRAINT [DF_Receiving_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME       NULL,
-    CONSTRAINT [PK_Receiving] PRIMARY KEY CLUSTERED ([Id] ASC)
+    CONSTRAINT [PK_Receiving] PRIMARY KEY CLUSTERED ([Id] ASC) ON [SLAVE]
 );
+
+
 
 
 GO
