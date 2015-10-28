@@ -12,6 +12,8 @@ using Sci.Data;
 using Sci;
 using Ict;
 using Sci.Win;
+using Ict.Win;
+using Sci.Win.Tools;
 
 
 namespace Sci.Production.Class
@@ -149,5 +151,84 @@ namespace Sci.Production.Class
         {
             this.Width = 150;
         }
+    }
+    public class celllocalitem : DataGridViewGeneratorTextColumnSettings
+    {
+        public static DataGridViewGeneratorTextColumnSettings GetGridCell(string category,string localSupp)
+        {
+            //pur 為ture 表示需判斷PurchaseFrom
+            celllocalitem ts = new celllocalitem();
+            string where = "Where junk=0 ";
+            if (category != null)
+            {
+                if (!string.IsNullOrWhiteSpace(category))
+                {
+                    if (category.ToUpper() == "THREAD")
+                    {
+                        where = where + string.Format(" and Category like '%{0}%'", category);
+                    }
+                    else
+                    {
+                        where = where + string.Format(" and Category = '{0}'", category);
+                    }
+                }
+            }
+            if (localSupp != null)
+            {
+                if (!string.IsNullOrWhiteSpace(localSupp))
+                {
+                    where = where + string.Format(" and Localsuppid = '{0}'", localSupp);
+                }
+
+            }
+            ts.EditingMouseDown += (s, e) =>
+            {
+                // 右鍵彈出功能
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                    // Parent form 若是非編輯狀態就 return 
+                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+                    DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                    SelectItem sele;
+
+                    sele = new SelectItem("Select Refno, LocalSuppid, category, description From LocalItem "+where, "23", row["refno"].ToString(), false, ",");
+
+                    DialogResult result = sele.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    e.EditingControl.Text = sele.GetSelectedString();
+                }
+
+
+            };
+            // 正確性檢查
+            ts.CellValidating += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                // Parent form 若是非編輯狀態就 return 
+                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+                // 右鍵彈出功能
+                DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                String oldValue = row["refno"].ToString();
+                String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
+                string sql;
+
+                sql = string.Format("Select Refno, LocalSuppid, category, description From LocalItem "+where+" and refno ='{0}'", newValue);
+                if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
+                {
+                    if (!MyUtility.Check.Seek(sql))
+                    {
+                        MyUtility.Msg.WarningBox(string.Format("< Local item> : {0} not found!!!", newValue));
+                        row["refno"] = "";
+                        row.EndEdit();
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+
+            };
+            return ts;
+        }
+
     }
 }
