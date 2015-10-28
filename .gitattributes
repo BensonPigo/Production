@@ -778,9 +778,15 @@ Sci.Production.PPIC/P01_Artwork.resx -text
 Sci.Production.PPIC/P01_ArtworkTrans.Designer.cs -text
 Sci.Production.PPIC/P01_ArtworkTrans.cs -text
 Sci.Production.PPIC/P01_ArtworkTrans.resx -text
+Sci.Production.PPIC/P01_BatchShipmentFinished.Designer.cs -text
+Sci.Production.PPIC/P01_BatchShipmentFinished.cs -text
+Sci.Production.PPIC/P01_BatchShipmentFinished.resx -text
 Sci.Production.PPIC/P01_CTNStatus.Designer.cs -text
 Sci.Production.PPIC/P01_CTNStatus.cs -text
 Sci.Production.PPIC/P01_CTNStatus.resx -text
+Sci.Production.PPIC/P01_CuttingCombo.Designer.cs -text
+Sci.Production.PPIC/P01_CuttingCombo.cs -text
+Sci.Production.PPIC/P01_CuttingCombo.resx -text
 Sci.Production.PPIC/P01_FactoryCMT.Designer.cs -text
 Sci.Production.PPIC/P01_FactoryCMT.cs -text
 Sci.Production.PPIC/P01_FactoryCMT.resx -text

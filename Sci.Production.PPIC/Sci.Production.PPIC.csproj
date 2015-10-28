@@ -161,11 +161,23 @@
     <Compile Include="P01_ArtworkTrans.Designer.cs">
       <DependentUpon>P01_ArtworkTrans.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_BatchShipmentFinished.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_BatchShipmentFinished.Designer.cs">
+      <DependentUpon>P01_BatchShipmentFinished.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01_CTNStatus.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="P01_CTNStatus.Designer.cs">
       <DependentUpon>P01_CTNStatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_CuttingCombo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_CuttingCombo.Designer.cs">
+      <DependentUpon>P01_CuttingCombo.cs</DependentUpon>
     </Compile>
     <Compile Include="P01_FactoryCMT.cs">
       <SubType>Form</SubType>
@@ -394,8 +406,14 @@
     <EmbeddedResource Include="P01_ArtworkTrans.resx">
       <DependentUpon>P01_ArtworkTrans.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P01_BatchShipmentFinished.resx">
+      <DependentUpon>P01_BatchShipmentFinished.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01_CTNStatus.resx">
       <DependentUpon>P01_CTNStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_CuttingCombo.resx">
+      <DependentUpon>P01_CuttingCombo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01_FactoryCMT.resx">
       <DependentUpon>P01_FactoryCMT.cs</DependentUpon>

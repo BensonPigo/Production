@@ -23,6 +23,19 @@ namespace Sci.Production.PPIC
             this.DefaultFilter = Type == "1" ? string.Format("FtyGroup = '{0}' AND Finished = 0", Sci.Env.User.Factory) : string.Format("FtyGroup = '{0}' AND Finished = 1", Sci.Env.User.Factory);
             dataType = Type;
             button31.Visible = dataType == "1"; //Shipment Finished
+            button33.Visible = dataType != "1"; //Back to P01. PPIC Master List
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            //新增Batch Shipment Finished按鈕
+            Sci.Win.UI.Button btn = new Sci.Win.UI.Button();
+            btn.Text = "Batch Shipment Finished";
+            btn.Click += new EventHandler(btn_Click);
+            browsetop.Controls.Add(btn);
+            btn.Size = new Size(180, 30);//預設是(80,30)
+            btn.Visible = dataType == "1";
         }
 
         protected override void OnDetailEntered()
@@ -40,22 +53,22 @@ namespace Sci.Production.PPIC
                 numericBox7.Value = Convert.ToDecimal(CurrentMaintain["PoPrice"]);
                 label44.Text = "/PCS";
                 numericBox8.Value = MyUtility.Math.Round(Convert.ToDecimal(CurrentMaintain["PoPrice"]) * Convert.ToDecimal(CurrentMaintain["Qty"]), 3);
-                tooltip.SetToolTip(numericBox8, Convert.ToString(CurrentMaintain["PoPrice"]) + '*' + Convert.ToString(CurrentMaintain["Qty"]));
+                tooltip.SetToolTip(numericBox8, Convert.ToString(CurrentMaintain["PoPrice"]) + " * " + Convert.ToString(CurrentMaintain["Qty"]));
             }
             else
             {
                 numericBox7.Value = Convert.ToDecimal(CurrentMaintain["CMPPrice"]);
                 label44.Text = "/" + CurrentMaintain["CMPUnit"].ToString();
                 numericBox8.Value = numericBox6.Value;
-                tooltip.SetToolTip(numericBox8, Convert.ToString(CurrentMaintain["CPU"]) + '*' + Convert.ToString(CurrentMaintain["CPUFactor"]) + '*' + Convert.ToString(CurrentMaintain["Qty"]));
+                tooltip.SetToolTip(numericBox8, Convert.ToString(CurrentMaintain["CPU"]) + " * " + Convert.ToString(CurrentMaintain["CPUFactor"]) + " * " + Convert.ToString(CurrentMaintain["Qty"]));
             }
             #region 填Description, Exception Form, Fty Remark, Style Apv欄位值
             DataRow StyleData;
-            string sqlCmd = string.Format("select Description,ExpectionForm,FTYRemark,ApvDate from Style where Ukey = {0}", CurrentMaintain["StyleUkey"].ToString());
+            string sqlCmd= string.Format("select Description,ExpectionForm,FTYRemark,ApvDate from Style where Ukey = {0}", CurrentMaintain["StyleUkey"].ToString());
             if (MyUtility.Check.Seek(sqlCmd, out StyleData))
             {
                 displayBox5.Value = StyleData["Description"].ToString();
-                checkBox1.Value = StyleData["ExpectionForm"].ToString();
+                checkBox11.Value = StyleData["ExpectionForm"].ToString();
                 editBox3.Text = StyleData["FTYRemark"].ToString();
                 if (MyUtility.Check.Empty(StyleData["ApvDate"]))
                 {
@@ -69,7 +82,7 @@ namespace Sci.Production.PPIC
             else
             {
                 displayBox5.Value = "";
-                checkBox1.Value = "false";
+                checkBox11.Value = "false";
                 editBox3.Text = "";
                 dateBox26.Value = null;
             }
@@ -115,11 +128,22 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             DualResult result = DBProxy.Current.Select(null,sqlCmd, out OrdersData);
             if (result)
             {
-                editBox2.Text = OrdersData.Rows[0]["PoList"].ToString();
-                editBox4.Text = OrdersData.Rows[0]["CuttingList"].ToString();
-                displayBox18.Value = OrdersData.Rows[0]["MTLExport"].ToString();
-                displayBox20.Value = OrdersData.Rows[0]["PulloutComplete"].ToString();
-                numericBox10.Value = Convert.ToDecimal(OrdersData.Rows[0]["GMTLT"]);
+                if (OrdersData.Rows.Count > 0)
+                {
+                    editBox2.Text = OrdersData.Rows[0]["PoList"].ToString();
+                    editBox4.Text = OrdersData.Rows[0]["CuttingList"].ToString();
+                    displayBox18.Value = OrdersData.Rows[0]["MTLExport"].ToString();
+                    displayBox20.Value = OrdersData.Rows[0]["PulloutComplete"].ToString();
+                    numericBox10.Value = Convert.ToDecimal(OrdersData.Rows[0]["GMTLT"]);
+                }
+                else
+                {
+                    editBox2.Text = "";
+                    editBox4.Text = "";
+                    displayBox18.Value = "";
+                    displayBox20.Value = "";
+                    numericBox10.Value = 0;
+                }
             }
             else
             {
@@ -131,6 +155,9 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
                 numericBox10.Value = 0;
             }
             #endregion
+            bool lConfirm = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P01. PPIC Master List", "CanConfirm");
+            button1.Enabled = CurrentMaintain != null && dataType == "1" && lConfirm && !EditMode;
+            button2.Enabled = CurrentMaintain != null && dataType == "1" && lConfirm && !EditMode;
 
             //按鈕變色
             bool haveTmsCost = MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost where ID = '{0}'", CurrentMaintain["ID"].ToString()));
@@ -143,6 +170,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             button12.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["CMPQRemark"]) ? Color.Blue : Color.Black;
             button14.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Artwork where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             button15.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
+            button17.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["CuttingSP"]) ? Color.Blue : Color.Black;
             button19.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Export_Detail where PoID = '{0}'", CurrentMaintain["POID"].ToString())) ? Color.Blue : Color.Black;
             button24.ForeColor = MyUtility.Check.Seek(string.Format("select ID from ArtworkPO_Detail where OrderID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             button25.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits where StyleUkey = {0}", CurrentMaintain["StyleUKey"].ToString())) ? Color.Blue : Color.Black;
@@ -151,6 +179,210 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             button29.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing"]) ? Color.Blue : Color.Black;
             button30.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_PFHis where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             button32.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing2"]) ? Color.Blue : Color.Black;
+        }
+
+        protected override void ClickNewAfter()
+        {
+            base.ClickNewAfter();
+            txtpaytermar1.TextBox1.ReadOnly = true;
+            label44.Text = "/PCS";
+            //帶入預設值
+            CurrentMaintain["Category"] = "B";
+            CurrentMaintain["LocalOrder"] = 1;
+            CurrentMaintain["MCHandle"] = Sci.Env.User.UserID;
+            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["FtyGroup"] = Sci.Env.User.Factory;
+            CurrentMaintain["CMPUnit"] = "PCS";
+            CurrentMaintain["CFMDate"] = DateTime.Today;
+            CurrentMaintain["CtnType"] = "1";
+            CurrentMaintain["CPUFactor"] = 1;
+        }
+
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            txtpaytermar1.TextBox1.ReadOnly = true;
+            if (CurrentMaintain["LocalOrder"].ToString().ToUpper() == "FALSE")
+            {
+                //非Local訂單時只能修改FactoryID
+                textBox2.ReadOnly = true;
+                textBox3.ReadOnly = true;
+                textBox4.ReadOnly = true;
+                textBox5.ReadOnly = true;
+                textBox6.ReadOnly = true;
+                textBox7.ReadOnly = true;
+                textBox8.ReadOnly = true;
+                checkBox2.ReadOnly = true;
+                checkBox4.ReadOnly = true;
+                checkBox6.ReadOnly = true;
+                checkBox7.ReadOnly = true;
+                checkBox9.ReadOnly = true;
+                checkBox12.ReadOnly = true;
+                txtuser1.TextBox1.ReadOnly = true;
+                txtuser2.TextBox1.ReadOnly = true;
+                dateBox1.ReadOnly = true;
+                dateBox2.ReadOnly = true;
+                dateBox3.ReadOnly = true;
+                dateBox4.ReadOnly = true;
+                txtcountry1.TextBox1.ReadOnly = true;
+                txtcurrency1.ReadOnly = true;
+                numericBox3.ReadOnly = true;
+                numericBox11.ReadOnly = true;
+            }
+            
+        }
+
+        protected override bool ClickSaveBefore()
+        {
+
+            if (CurrentMaintain["LocalOrder"].ToString().ToUpper() == "TRUE")
+            {
+                #region 檢查必輸欄位
+                if (MyUtility.Check.Empty(CurrentMaintain["StyleID"]))
+                {
+                    MyUtility.Msg.WarningBox("Style# can't empty!!");
+                    textBox4.Focus();
+                    return false;
+                }
+                if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
+                {
+                    MyUtility.Msg.WarningBox("Brand can't empty!!");
+                    displayBox10.Focus();
+                    return false;
+                }
+                if (MyUtility.Check.Empty(CurrentMaintain["CustPONo"]))
+                {
+                    MyUtility.Msg.WarningBox("PO No. can't empty!!");
+                    textBox3.Focus();
+                    return false;
+                }
+                if (MyUtility.Check.Empty(CurrentMaintain["MCHandle"]))
+                {
+                    MyUtility.Msg.WarningBox("MC Handle can't empty!!");
+                    txtuser1.TextBox1.Focus();
+                    return false;
+                }
+                if (MyUtility.Check.Empty(CurrentMaintain["StyleUnit"]))
+                {
+                    MyUtility.Msg.WarningBox("Unit can't empty!!");
+                    displayBox12.Focus();
+                    return false;
+                }
+                if (MyUtility.Check.Empty(CurrentMaintain["BuyerDelivery"]))
+                {
+                    MyUtility.Msg.WarningBox("Buyer Delivery can't empty!!");
+                    dateBox1.Focus();
+                    return false;
+                }
+                if (MyUtility.Check.Empty(CurrentMaintain["SCIDelivery"]))
+                {
+                    MyUtility.Msg.WarningBox("SCI Delivery# can't empty!!");
+                    dateBox3.Focus();
+                    return false;
+                }
+                if (MyUtility.Check.Empty(CurrentMaintain["SDPDate"]))
+                {
+                    MyUtility.Msg.WarningBox("Cut off date can't empty!!");
+                    dateBox4.Focus();
+                    return false;
+                }
+                if (MyUtility.Check.Empty(CurrentMaintain["FactoryID"]))
+                {
+                    MyUtility.Msg.WarningBox("Factory can't empty!!");
+                    txtfactory1.Focus();
+                    return false;
+                }
+                if (MyUtility.Check.Empty(CurrentMaintain["CurrencyID"]))
+                {
+                    MyUtility.Msg.WarningBox("Currency can't empty!!");
+                    txtcurrency1.Focus();
+                    return false;
+                }
+                if (MyUtility.Check.Empty(CurrentMaintain["CPU"]))
+                {
+                    MyUtility.Msg.WarningBox("CPU can't empty!!");
+                    numericBox5.Focus();
+                    return false;
+                }
+                if (CurrentMaintain["FOC"].ToString().ToUpper() == "FALSE" && MyUtility.Check.Empty(CurrentMaintain["PoPrice"]))
+                {
+                    MyUtility.Msg.WarningBox("Unit Price can't empty!!");
+                    numericBox3.Focus();
+                    return false;
+                }
+                #endregion
+
+                //檢查是否幫姊妹廠代工
+                if (CurrentMaintain["SubconInSisterFty"].ToString().ToUpper() == "FALSE")
+                {
+                    if (MyUtility.Check.Seek(string.Format("select ID from SCIFty where ID = '{0}'", CurrentMaintain["ProgramID"].ToString())))
+                    {
+                        CurrentMaintain["SubconInSisterFty"] = 1;
+                    }
+                }
+
+                //Buyer Delivery：要先檢查Order_QtyShip是否有資料，若有，就要填入最小的Buyer Deliver
+                DataRow OrderShip;
+                if (MyUtility.Check.Seek(string.Format("select MIN(BuyerDelivery) as BuyerDelivery from Order_QtyShip where Id = '{0}'", CurrentMaintain["ID"].ToString()), out OrderShip))
+                {
+                    if (!MyUtility.Check.Empty(OrderShip["BuyerDelivery"]))
+                    {
+                        CurrentMaintain["BuyerDelivery"] = Convert.ToDateTime(OrderShip["BuyerDelivery"]);
+                    } 
+                }
+            }
+
+            //GetID
+            if (IsDetailInserting)
+            {
+                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LO", "Orders", DateTime.Today, 2, "Id", null);
+                if (MyUtility.Check.Empty(id))
+                {
+                    MyUtility.Msg.WarningBox("GetID fail, please try again!");
+                    return false;
+                }
+                CurrentMaintain["ID"] = id;
+                CurrentMaintain["POID"] = id;
+                CurrentMaintain["CuttingSP"] = id;
+            }
+            return base.ClickSaveBefore();
+        }
+
+        protected override bool ClickSavePost()
+        {
+            if (CurrentMaintain["LocalOrder"].ToString().ToUpper() == "TRUE")
+            {
+                string insertCmd;
+                DualResult result;
+                if (!MyUtility.Check.Seek(string.Format("select ID from Order_Artwork where ID = '{0}'", CurrentMaintain["ID"].ToString())))
+                {
+                    insertCmd = string.Format(@"insert into Order_Artwork(ID,ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,ArtworkName,TMS,Qty,Price,Cost,Remark,AddName,AddDate,Ukey)
+select '{0}',ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,ArtworkName,TMS,Qty,Price,Cost,Remark,'{1}',GETDATE(),(select min(Ukey)-1 from Order_Artwork) from Style_Artwork where StyleUkey = {2}",
+    CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID, CurrentMaintain["StyleUkey"].ToString());
+
+                    result = DBProxy.Current.Execute(null, insertCmd);
+                    if (!result)
+                    {
+                        MyUtility.Msg.ErrorBox("Save Order_Artwork fail!!\r\n" + result.ToString());
+                        return false;
+                    }
+                }
+
+                if (!MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost where ID = '{0}'", CurrentMaintain["ID"].ToString())))
+                {
+                    insertCmd = string.Format(@"insert into Order_TmsCost(ID,ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,AddName,AddDate)
+select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from Style_TmsCost where StyleUkey = {2}",
+    CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID, CurrentMaintain["StyleUkey"].ToString());
+
+                    result = DBProxy.Current.Execute(null, insertCmd);
+                    if (!result)
+                    {
+                        MyUtility.Msg.ErrorBox("Save Order_TmsCost fail!!\r\n" + result.ToString());
+                        return false;
+                    }
+                }
+            }
+            return base.ClickSavePost();
         }
 
         //Style
@@ -269,22 +501,47 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             }
         }
 
+        //Batch Shipment Finished按鈕的Click事件
+        private void btn_Click(object sender, EventArgs e)
+        {
+            Sci.Production.PPIC.P01_BatchShipmentFinished callNextForm = new Sci.Production.PPIC.P01_BatchShipmentFinished();
+            callNextForm.ShowDialog(this);
+            if (callNextForm.haveupdate)
+            {
+                ReloadDatas();
+            }
+        }
+
         //MC Handle CFM
         private void button1_Click(object sender, EventArgs e)
         {
-
+            string sqlCmd = string.Format("update Orders set MCHandle = '{0}' where POID = '{1}'",Sci.Env.User.UserID,CurrentMaintain["POID"].ToString());
+            DualResult result = DBProxy.Current.Execute(null, sqlCmd);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Confirm MC Handle fail!!" + result.ToString());
+                return;
+            }
+            txtuser1.TextBox1.Text = Sci.Env.User.UserID;
         }
 
         //Local MR CFM
         private void button2_Click(object sender, EventArgs e)
         {
-
+            string sqlCmd = string.Format("update Orders set LocalMR = '{0}' where POID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["POID"].ToString());
+            DualResult result = DBProxy.Current.Execute(null, sqlCmd);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Confirm Local MR fail!!" + result.ToString());
+                return;
+            }
+            txtuser2.TextBox1.Text = Sci.Env.User.UserID;
         }
 
         //Production output
         private void button3_Click(object sender, EventArgs e)
         {
-
+            
         }
 
         //Order remark
@@ -378,7 +635,8 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
         //Cutting Combo
         private void button17_Click(object sender, EventArgs e)
         {
-
+            Sci.Production.PPIC.P01_CuttingCombo callNextForm = new Sci.Production.PPIC.P01_CuttingCombo(CurrentMaintain["POID"].ToString());
+            callNextForm.ShowDialog(this);
         }
 
         //b'down
@@ -491,6 +749,21 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
                     return;
                 }
             }
+
+            DialogResult buttonResult = MyUtility.Msg.QuestionBox("Are you sure you want to finish shipment?", "Warning", MessageBoxButtons.YesNo);
+            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            {
+                return;
+            }
+            sqlCmd = string.Format("exec [dbo].usp_closeOrder '{0}','1'",CurrentMaintain["POID"].ToString());
+            DualResult result = DBProxy.Current.Execute(null, sqlCmd);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Shipment finished fail!!"+result.ToString());
+                return;
+            }
+            ReloadDatas();
+            RenewData();
         }
 
         //VAS/SHAS Instruction
@@ -500,5 +773,29 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             callNextForm.ShowDialog(this);
         }
 
+        //Back to P01. PPIC Master List
+        private void button33_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.GetValue.Lookup(string.Format("select iif(WhseClose is null, 'TRUE','FALSE') as WHouseClose from Orders where ID = '{0}'",CurrentMaintain["ID"].ToString())) == "FALSE")
+            {
+                MyUtility.Msg.WarningBox("W/House already closed R/mtl, so can not 'Back to P01. PPIC Master List'!!");
+                return;
+            }
+
+            DialogResult buttonResult = MyUtility.Msg.QuestionBox("Are you sure you want to 'Back to P01. PPIC Master List'?", "Warning", MessageBoxButtons.YesNo);
+            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            {
+                return;
+            }
+            string sqlCmd = string.Format("exec [dbo].usp_closeOrder '{0}','2'", CurrentMaintain["POID"].ToString());
+            DualResult result = DBProxy.Current.Execute(null, sqlCmd);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("'Back to P01. PPIC Master List' fail!!" + result.ToString());
+                return;
+            }
+            ReloadDatas();
+            RenewData();
+        }
     }
 }

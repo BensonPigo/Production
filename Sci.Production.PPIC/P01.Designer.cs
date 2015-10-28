@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.button33 = new Sci.Win.UI.Button();
             this.button31 = new Sci.Win.UI.Button();
             this.button32 = new Sci.Win.UI.Button();
             this.button28 = new Sci.Win.UI.Button();
@@ -286,6 +287,11 @@
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Location = new System.Drawing.Point(4, 24);
+            this.detail.Size = new System.Drawing.Size(1000, 661);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayBox29);
@@ -417,12 +423,12 @@
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.shapeContainer1);
-            this.detailcont.Size = new System.Drawing.Size(897, 395);
+            this.detailcont.Size = new System.Drawing.Size(1000, 661);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 395);
-            this.detailbtm.Size = new System.Drawing.Size(897, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 661);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 0);
             // 
             // browse
             // 
@@ -457,6 +463,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.button33);
             this.tabPage1.Controls.Add(this.button31);
             this.tabPage1.Controls.Add(this.button32);
             this.tabPage1.Controls.Add(this.button28);
@@ -566,12 +573,22 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.txttpeuser4);
             this.tabPage1.Controls.Add(this.txttpeuser3);
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
+            // 
+            // button33
+            // 
+            this.button33.Location = new System.Drawing.Point(799, 628);
+            this.button33.Name = "button33";
+            this.button33.Size = new System.Drawing.Size(194, 27);
+            this.button33.TabIndex = 110;
+            this.button33.Text = "Back to P01. PPIC Master List";
+            this.button33.UseVisualStyleBackColor = true;
+            this.button33.Click += new System.EventHandler(this.button33_Click);
             // 
             // button31
             // 
@@ -619,6 +636,7 @@
             // 
             // button30
             // 
+            this.button30.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button30.Location = new System.Drawing.Point(600, 568);
             this.button30.Name = "button30";
             this.button30.Size = new System.Drawing.Size(194, 27);
@@ -650,6 +668,7 @@
             // 
             // button27
             // 
+            this.button27.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button27.Location = new System.Drawing.Point(402, 568);
             this.button27.Name = "button27";
             this.button27.Size = new System.Drawing.Size(194, 27);
@@ -680,6 +699,7 @@
             // 
             // button24
             // 
+            this.button24.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button24.Location = new System.Drawing.Point(204, 568);
             this.button24.Name = "button24";
             this.button24.Size = new System.Drawing.Size(194, 27);
@@ -1612,7 +1632,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
+            this.shapeContainer2.Size = new System.Drawing.Size(891, 389);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -1947,7 +1967,7 @@
             // label12
             // 
             this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(575, 6);
+            this.label12.Location = new System.Drawing.Point(575, 4);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(65, 21);
             this.label12.TabIndex = 27;
@@ -2070,7 +2090,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(992, 655);
+            this.shapeContainer1.Size = new System.Drawing.Size(1000, 661);
             this.shapeContainer1.TabIndex = 45;
             this.shapeContainer1.TabStop = false;
             // 
@@ -2700,6 +2720,7 @@
             // 
             // button5
             // 
+            this.button5.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button5.Location = new System.Drawing.Point(6, 628);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(194, 27);
@@ -2741,6 +2762,7 @@
             // 
             // button9
             // 
+            this.button9.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button9.Location = new System.Drawing.Point(402, 628);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(194, 27);
@@ -2751,6 +2773,7 @@
             // 
             // button10
             // 
+            this.button10.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button10.Location = new System.Drawing.Point(402, 598);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(194, 27);
@@ -2924,6 +2947,7 @@
             // 
             // button17
             // 
+            this.button17.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button17.Location = new System.Drawing.Point(600, 628);
             this.button17.Name = "button17";
             this.button17.Size = new System.Drawing.Size(194, 27);
@@ -3330,5 +3354,6 @@
         private Win.UI.Button button31;
         private Win.UI.Button button32;
         private Win.UI.DisplayBox displayBox29;
+        private Win.UI.Button button33;
     }
 }
