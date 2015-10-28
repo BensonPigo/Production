@@ -181,6 +181,8 @@ Database/dbo/Tables/LocationTrans_detail.sql -text
 Database/dbo/Tables/LossRateAccessory.sql -text
 Database/dbo/Tables/LossRateFabric.sql -text
 Database/dbo/Tables/MD.sql -text
+Database/dbo/Tables/MDevisionPoDetail.sql -text
+Database/dbo/Tables/MDivision.sql -text
 Database/dbo/Tables/MNOrder.sql -text
 Database/dbo/Tables/MNOrder_BOA.sql -text
 Database/dbo/Tables/MNOrder_BOF.sql -text
