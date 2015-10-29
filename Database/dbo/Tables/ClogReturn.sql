@@ -2,7 +2,6 @@
     [ID]          VARCHAR (13) CONSTRAINT [DF_ClogReturn_ID] DEFAULT ('') NOT NULL,
     [ReturnDate]  DATE         NOT NULL,
     [MDivisionID] VARCHAR (8)  CONSTRAINT [DF_ClogReturn_MDivisionID] DEFAULT ('') NOT NULL,
-    [FactoryID]   VARCHAR (8)  CONSTRAINT [DF_ClogReturn_FactoryID] DEFAULT ('') NOT NULL,
     [Status]      VARCHAR (15) CONSTRAINT [DF_ClogReturn_Status] DEFAULT ('') NULL,
     [AddName]     VARCHAR (10) CONSTRAINT [DF_ClogReturn_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME     NULL,
@@ -10,6 +9,8 @@
     [EditDate]    DATETIME     NULL,
     CONSTRAINT [PK_ClogReturn] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -27,7 +28,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Return Date
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ClogReturn', @level2type = N'COLUMN', @level2name = N'FactoryID';
+
 
 
 GO
