@@ -6,6 +6,7 @@
     [AlloQty]         INT            CONSTRAINT [DF_SewingSchedule_AlloQty] DEFAULT ((0)) NULL,
     [Inline]          DATETIME       NULL,
     [Offline]         DATETIME       NULL,
+    [MDivisionID]     VARCHAR (8)    CONSTRAINT [DF_SewingSchedule_MDivisionID] DEFAULT ('') NULL,
     [FactoryID]       VARCHAR (8)    CONSTRAINT [DF_SewingSchedule_FactoryID] DEFAULT ('') NULL,
     [Sewer]           INT            CONSTRAINT [DF_SewingSchedule_Sewer] DEFAULT ((0)) NULL,
     [TotalSewingTime] INT            CONSTRAINT [DF_SewingSchedule_TotalSewingTime] DEFAULT ((0)) NULL,
@@ -21,6 +22,8 @@
     [EditDate]        DATETIME       NULL,
     CONSTRAINT [PK_SewingSchedule] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -105,4 +108,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingSchedule', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingSchedule', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

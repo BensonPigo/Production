@@ -15,6 +15,7 @@
     [LockDate]     DATE           NULL,
     [WorkHour]     NUMERIC (5, 1) CONSTRAINT [DF_SewingOutput_WorkHour] DEFAULT ((0)) NULL,
     [FactoryID]    VARCHAR (8)    CONSTRAINT [DF_SewingOutput_FactoryID] DEFAULT ('') NULL,
+    [MDivisionID]  VARCHAR (8)    CONSTRAINT [DF_SewingOutput_MDivisionID] DEFAULT ('') NULL,
     [Category]     VARCHAR (1)    CONSTRAINT [DF_SewingOutput_Category] DEFAULT ('') NULL,
     [SFCData]      BIT            CONSTRAINT [DF_SewingOutput_SFCData] DEFAULT ((0)) NULL,
     [AddName]      VARCHAR (10)   CONSTRAINT [DF_SewingOutput_AddName] DEFAULT ('') NULL,
@@ -23,6 +24,8 @@
     [EditDate]     DATETIME       NULL,
     CONSTRAINT [PK_SewingOutput] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -115,4 +118,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 
