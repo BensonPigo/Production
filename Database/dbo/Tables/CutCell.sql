@@ -1,14 +1,16 @@
 ﻿CREATE TABLE [dbo].[CutCell] (
     [ID]          VARCHAR (2)   CONSTRAINT [DF_CutCell_ID] DEFAULT ('') NOT NULL,
-    [FactoryID]   VARCHAR (8)   CONSTRAINT [DF_CutCell_FactoryID] DEFAULT ('') NOT NULL,
+    [MDivisionid] VARCHAR (8)   CONSTRAINT [DF_CutCell_FactoryID] DEFAULT ('') NOT NULL,
     [Description] NVARCHAR (60) CONSTRAINT [DF_CutCell_Description] DEFAULT ('') NULL,
     [Junk]        BIT           CONSTRAINT [DF_CutCell_Junk] DEFAULT ((0)) NULL,
     [AddName]     VARCHAR (10)  CONSTRAINT [DF_CutCell_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME      NULL,
     [EditName]    VARCHAR (10)  CONSTRAINT [DF_CutCell_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME      NULL,
-    CONSTRAINT [PK_CutCell] PRIMARY KEY CLUSTERED ([ID] ASC, [FactoryID] ASC)
+    CONSTRAINT [PK_CutCell] PRIMARY KEY CLUSTERED ([ID] ASC, [MDivisionid] ASC)
 );
+
+
 
 
 GO
@@ -20,7 +22,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'名稱', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CutCell', @level2type = N'COLUMN', @level2name = N'FactoryID';
+
 
 
 GO
@@ -45,4 +47,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯者',
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CutCell', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CutCell', @level2type = N'COLUMN', @level2name = N'MDivisionid';
 

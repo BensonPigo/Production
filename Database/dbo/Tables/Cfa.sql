@@ -18,8 +18,11 @@
     [AddDate]       DATETIME      NULL,
     [EditName]      VARCHAR (10)  CONSTRAINT [DF_Cfa_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME      NULL,
+    [MDivisionid]   VARCHAR (8)   CONSTRAINT [DF_Cfa_MDivisionid] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Cfa] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

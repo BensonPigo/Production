@@ -3,7 +3,7 @@
     [IssueDate]   DATE         NULL,
     [IssueID]     VARCHAR (13) CONSTRAINT [DF_Cutplan_IssueID] DEFAULT ('') NULL,
     [CuttingID]   VARCHAR (13) CONSTRAINT [DF_Cutplan_CuttingID] DEFAULT ('') NULL,
-    [Factoryid]   VARCHAR (8)  CONSTRAINT [DF_Cutplan_Factoryid] DEFAULT ('') NOT NULL,
+    [MDivisionid] VARCHAR (8)  CONSTRAINT [DF_Cutplan_Factoryid] DEFAULT ('') NOT NULL,
     [CutCellID]   VARCHAR (2)  CONSTRAINT [DF_Cutplan_CutCellID] DEFAULT ('') NOT NULL,
     [EstCutdate]  DATE         NULL,
     [MarkerReqid] VARCHAR (13) CONSTRAINT [DF_Cutplan_MarkerReqid] DEFAULT ('') NULL,
@@ -14,6 +14,8 @@
     [EditDate]    DATETIME     NULL,
     CONSTRAINT [PK_Cutplan] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -37,7 +39,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁剪母�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutplan', @level2type = N'COLUMN', @level2name = N'Factoryid';
+
 
 
 GO
@@ -70,4 +72,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯者',
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutplan', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutplan', @level2type = N'COLUMN', @level2name = N'MDivisionid';
 
