@@ -25,8 +25,11 @@
     [EditName]      VARCHAR (10)   CONSTRAINT [DF_WorkOrder_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME       NULL,
     [FabricCombo]   VARCHAR (2)    CONSTRAINT [DF_WorkOrder_FabricCombo] DEFAULT ('') NULL,
+    [MDivisionId]   VARCHAR (8)    CONSTRAINT [DF_WorkOrder_MDivisionId] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_WorkOrder] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO

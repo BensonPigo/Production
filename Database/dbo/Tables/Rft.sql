@@ -15,8 +15,11 @@
     [AddDate]      DATETIME      NULL,
     [EditName]     VARCHAR (10)  CONSTRAINT [DF_Rft_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME      NULL,
+    [MDivisionid]  VARCHAR (8)   CONSTRAINT [DF_Rft_MDivisionid] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Rft] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

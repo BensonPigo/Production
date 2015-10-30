@@ -1,14 +1,17 @@
 ﻿CREATE TABLE [dbo].[ThreadTransfer] (
-    [ID]       VARCHAR (13)  CONSTRAINT [DF_ThreadTransfer_ID] DEFAULT ('') NOT NULL,
-    [CDate]    DATE          NOT NULL,
-    [Remark]   NVARCHAR (60) CONSTRAINT [DF_ThreadTransfer_Remark] DEFAULT ('') NULL,
-    [Status]   VARCHAR (15)  CONSTRAINT [DF_ThreadTransfer_Status] DEFAULT ('') NULL,
-    [AddName]  VARCHAR (10)  CONSTRAINT [DF_ThreadTransfer_AddName] DEFAULT ('') NULL,
-    [AddDate]  DATETIME      NULL,
-    [EditName] VARCHAR (10)  CONSTRAINT [DF_ThreadTransfer_EditName] DEFAULT ('') NULL,
-    [EditDate] DATETIME      NULL,
+    [ID]          VARCHAR (13)  CONSTRAINT [DF_ThreadTransfer_ID] DEFAULT ('') NOT NULL,
+    [CDate]       DATE          NOT NULL,
+    [Remark]      NVARCHAR (60) CONSTRAINT [DF_ThreadTransfer_Remark] DEFAULT ('') NULL,
+    [Status]      VARCHAR (15)  CONSTRAINT [DF_ThreadTransfer_Status] DEFAULT ('') NULL,
+    [AddName]     VARCHAR (10)  CONSTRAINT [DF_ThreadTransfer_AddName] DEFAULT ('') NULL,
+    [AddDate]     DATETIME      NULL,
+    [EditName]    VARCHAR (10)  CONSTRAINT [DF_ThreadTransfer_EditName] DEFAULT ('') NULL,
+    [EditDate]    DATETIME      NULL,
+    [MDivisionid] VARCHAR (8)   CONSTRAINT [DF_ThreadTransfer_MDivisionid] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_ThreadTransfer] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

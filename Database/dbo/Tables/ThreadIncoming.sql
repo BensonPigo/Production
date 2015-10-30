@@ -1,14 +1,17 @@
 ﻿CREATE TABLE [dbo].[ThreadIncoming] (
-    [ID]       VARCHAR (13)  CONSTRAINT [DF_ThreadIncoming_ID] DEFAULT ('') NOT NULL,
-    [Cdate]    DATE          NOT NULL,
-    [Remark]   NVARCHAR (60) CONSTRAINT [DF_ThreadIncoming_Remark] DEFAULT ('') NULL,
-    [Status]   VARCHAR (15)  CONSTRAINT [DF_ThreadIncoming_Status] DEFAULT ('') NULL,
-    [AddName]  VARCHAR (10)  CONSTRAINT [DF_ThreadIncoming_AddName] DEFAULT ('') NULL,
-    [AddDate]  DATETIME      NULL,
-    [EditName] VARCHAR (10)  CONSTRAINT [DF_ThreadIncoming_EditName] DEFAULT ('') NULL,
-    [EditDate] DATETIME      NULL,
+    [ID]          VARCHAR (13)  CONSTRAINT [DF_ThreadIncoming_ID] DEFAULT ('') NOT NULL,
+    [Cdate]       DATE          NOT NULL,
+    [MDivisionid] VARCHAR (8)   CONSTRAINT [DF_ThreadIncoming_MDivisionid] DEFAULT ('') NOT NULL,
+    [Remark]      NVARCHAR (60) CONSTRAINT [DF_ThreadIncoming_Remark] DEFAULT ('') NULL,
+    [Status]      VARCHAR (15)  CONSTRAINT [DF_ThreadIncoming_Status] DEFAULT ('') NULL,
+    [AddName]     VARCHAR (10)  CONSTRAINT [DF_ThreadIncoming_AddName] DEFAULT ('') NULL,
+    [AddDate]     DATETIME      NULL,
+    [EditName]    VARCHAR (10)  CONSTRAINT [DF_ThreadIncoming_EditName] DEFAULT ('') NULL,
+    [EditDate]    DATETIME      NULL,
     CONSTRAINT [PK_ThreadIncoming] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

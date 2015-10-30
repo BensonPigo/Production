@@ -2,6 +2,7 @@
     [ID]           VARCHAR (13)   CONSTRAINT [DF_MiscReq_ID] DEFAULT ('') NOT NULL,
     [cDate]        DATE           NULL,
     [FactoryID]    VARCHAR (8)    CONSTRAINT [DF_MiscReq_FactoryID] DEFAULT ('') NULL,
+    [MDivisionid]  VARCHAR (8)    CONSTRAINT [DF_MiscReq_MDivisionid] DEFAULT ('') NOT NULL,
     [DepartmentID] VARCHAR (8)    CONSTRAINT [DF_MiscReq_DepartmentID] DEFAULT ('') NULL,
     [PurchaseFrom] VARCHAR (1)    CONSTRAINT [DF_MiscReq_PurchaseFrom] DEFAULT ('') NULL,
     [Handle]       VARCHAR (10)   CONSTRAINT [DF_MiscReq_Handle] DEFAULT ('') NULL,
@@ -16,6 +17,8 @@
     [EditDate]     DATETIME       NULL,
     CONSTRAINT [PK_MiscReq] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

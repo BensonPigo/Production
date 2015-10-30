@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[ThreadRequisition] (
     [OrderID]       VARCHAR (13) CONSTRAINT [DF_ThreadRequisition_OrderID] DEFAULT ('') NOT NULL,
+    [MDivisionid]   VARCHAR (8)  CONSTRAINT [DF_ThreadRequisition_MDivisionid] DEFAULT ('') NOT NULL,
     [StyleID]       VARCHAR (15) CONSTRAINT [DF_ThreadRequisition_StyleID] DEFAULT ('') NOT NULL,
     [FactoryID]     VARCHAR (8)  CONSTRAINT [DF_ThreadRequisition_FactoryID] DEFAULT ('') NOT NULL,
     [SeasonID]      VARCHAR (10) CONSTRAINT [DF_ThreadRequisition_SeasonID] DEFAULT ('') NOT NULL,
@@ -13,6 +14,8 @@
     [EditDate]      DATETIME     NULL,
     CONSTRAINT [PK_ThreadRequisition] PRIMARY KEY CLUSTERED ([OrderID] ASC)
 );
+
+
 
 
 GO

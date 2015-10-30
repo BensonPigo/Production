@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[MiscAP] (
     [ID]          VARCHAR (13)    CONSTRAINT [DF_MiscAP_ID] DEFAULT ('') NOT NULL,
+    [MDivisionid] VARCHAR (8)     CONSTRAINT [DF_MiscAP_MDivisionid] DEFAULT ('') NOT NULL,
     [FactoryID]   VARCHAR (8)     CONSTRAINT [DF_MiscAP_FactoryID] DEFAULT ('') NULL,
     [cDate]       DATE            NULL,
     [LocalSuppid] VARCHAR (6)     CONSTRAINT [DF_MiscAP_LocalSuppid] DEFAULT ('') NULL,
@@ -22,6 +23,8 @@
     [EditDate]    DATETIME        NULL,
     CONSTRAINT [PK_MiscAP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
