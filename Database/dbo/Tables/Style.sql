@@ -16,7 +16,6 @@
     [CPU]                 NUMERIC (5, 3) CONSTRAINT [DF_Style_CPU] DEFAULT ((0)) NULL,
     [Factories]           NVARCHAR (180) CONSTRAINT [DF_Style_Factories] DEFAULT ('') NULL,
     [FTYRemark]           NVARCHAR (MAX) CONSTRAINT [DF_Style_FTYRemark] DEFAULT ('') NULL,
-    [Phase_Old]           TINYINT        CONSTRAINT [DF_Style_Phase] DEFAULT ((0)) NOT NULL,
     [SampleSMR]           VARCHAR (10)   CONSTRAINT [DF_Style_SampleSMR] DEFAULT ('') NULL,
     [SampleMRHandle]      VARCHAR (10)   CONSTRAINT [DF_Style_SampleMRHandle] DEFAULT ('') NULL,
     [BulkSMR]             VARCHAR (10)   CONSTRAINT [DF_Style_BulkSMR] DEFAULT ('') NULL,
@@ -25,7 +24,6 @@
     [RainwearTestPassed]  BIT            CONSTRAINT [DF_Style_PassedRainwearTest] DEFAULT ((0)) NULL,
     [SizePage]            VARCHAR (2)    CONSTRAINT [DF_Style_SizePage] DEFAULT ('') NULL,
     [SizeRange]           NVARCHAR (MAX) CONSTRAINT [DF_Style_SizeRange] DEFAULT ('') NULL,
-    [Gender_Old]          VARCHAR (1)    CONSTRAINT [DF_Style_Gender] DEFAULT ('') NULL,
     [Type]                VARCHAR (10)   CONSTRAINT [DF_Style_Type] DEFAULT ('') NULL,
     [CTNQty]              SMALLINT       CONSTRAINT [DF_Style_CTNQty] DEFAULT ((0)) NULL,
     [StdCost]             NUMERIC (7, 2) CONSTRAINT [DF_Style_StdCost] DEFAULT ((0)) NULL,
@@ -63,6 +61,8 @@
     [Gender]              VARCHAR (10)   CONSTRAINT [DF_Style_Gender1] DEFAULT ('') NULL,
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO
@@ -138,7 +138,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Planning �
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'目前階段', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'Phase_Old';
+
 
 
 GO
@@ -174,7 +174,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'尺碼範�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'性別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'Gender_Old';
+
 
 
 GO
