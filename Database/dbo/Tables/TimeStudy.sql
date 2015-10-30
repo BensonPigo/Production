@@ -12,11 +12,13 @@
     [AddDate]         DATETIME     NULL,
     [EditName]        VARCHAR (10) CONSTRAINT [DF_TimeStudy_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME     NULL,
-    [OldKey]          VARCHAR (10) CONSTRAINT [DF_TimeStudy_OldKey] DEFAULT ('') NULL,
+    [OldKey]          VARCHAR (13) CONSTRAINT [DF_TimeStudy_OldKey] DEFAULT ('') NULL,
     [IETMSID]         VARCHAR (10) CONSTRAINT [DF_TimeStudy_IETMSID] DEFAULT ('') NULL,
     [IETMSVersion]    VARCHAR (3)  CONSTRAINT [DF_TimeStudy_IETMSVersion] DEFAULT ('') NULL,
     CONSTRAINT [PK_TimeStudy] PRIMARY KEY CLUSTERED ([StyleID] ASC, [SeasonID] ASC, [ComboType] ASC, [BrandID] ASC)
 );
+
+
 
 
 

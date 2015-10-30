@@ -11,9 +11,11 @@
     [QAQty]                INT            CONSTRAINT [DF_SewingOutput_Detail_QAQty] DEFAULT ((0)) NULL,
     [DefectQty]            INT            CONSTRAINT [DF_SewingOutput_Detail_DefectQty] DEFAULT ((0)) NULL,
     [InlineQty]            INT            CONSTRAINT [DF_SewingOutput_Detail_InlineQty] DEFAULT ((0)) NULL,
-    [OldDetailKey]         VARCHAR (10)   CONSTRAINT [DF_SewingOutput_Detail_OldDetailKey] DEFAULT ('') NULL,
+    [OldDetailKey]         VARCHAR (13)   CONSTRAINT [DF_SewingOutput_Detail_OldDetailKey] DEFAULT ('') NULL,
     CONSTRAINT [PK_SewingOutput_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
+
+
 
 
 

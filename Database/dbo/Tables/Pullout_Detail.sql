@@ -14,9 +14,11 @@
     [Remark]           NVARCHAR (30) CONSTRAINT [DF_Pullout_Detail_Remark] DEFAULT ('') NULL,
     [ReviseDate]       DATETIME      NULL,
     [UKey]             BIGINT        IDENTITY (1, 1) NOT NULL,
-    [OldUkey]          VARCHAR (10)  CONSTRAINT [DF_Pullout_Detail_OldUkey] DEFAULT ('') NULL,
+    [OldUkey]          VARCHAR (13)  CONSTRAINT [DF_Pullout_Detail_OldUkey] DEFAULT ('') NULL,
     CONSTRAINT [PK_Pullout_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
+
+
 
 
 GO

@@ -5,9 +5,11 @@
     [Article]  VARCHAR (8)  CONSTRAINT [DF_Pullout_Detail_Detail_Article] DEFAULT ('') NOT NULL,
     [SizeCode] VARCHAR (8)  CONSTRAINT [DF_Pullout_Detail_Detail_SizeCode] DEFAULT ('') NOT NULL,
     [ShipQty]  INT          CONSTRAINT [DF_Pullout_Detail_Detail_ShipQty] DEFAULT ((0)) NULL,
-    [OldUkey]  VARCHAR (10) CONSTRAINT [DF_Pullout_Detail_Detail_OldUkey] DEFAULT ('') NULL,
+    [OldUkey]  VARCHAR (13) CONSTRAINT [DF_Pullout_Detail_Detail_OldUkey] DEFAULT ('') NULL,
     CONSTRAINT [PK_Pullout_Detail_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [UKey] ASC, [OrderID] ASC, [Article] ASC, [SizeCode] ASC)
 );
+
+
 
 
 GO

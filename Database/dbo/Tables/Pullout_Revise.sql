@@ -14,10 +14,12 @@
     [ShipModeID]    VARCHAR (5)   CONSTRAINT [DF_Pullout_Revise_ShipModeID] DEFAULT ('') NULL,
     [AddName]       VARCHAR (10)  CONSTRAINT [DF_Pullout_Revise_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME      NULL,
-    [OldUKey]       VARCHAR (10)  CONSTRAINT [DF_Pullout_Revise_OldUKey] DEFAULT ('') NULL,
-    [OldReviseKey]  VARCHAR (10)  CONSTRAINT [DF_Pullout_Revise_OldReviseKey] DEFAULT ('') NULL,
+    [OldUKey]       VARCHAR (13)  CONSTRAINT [DF_Pullout_Revise_OldUKey] DEFAULT ('') NULL,
+    [OldReviseKey]  VARCHAR (13)  CONSTRAINT [DF_Pullout_Revise_OldReviseKey] DEFAULT ('') NULL,
     CONSTRAINT [PK_Pullout_Revise] PRIMARY KEY CLUSTERED ([ReviseKey] ASC)
 );
+
+
 
 
 GO

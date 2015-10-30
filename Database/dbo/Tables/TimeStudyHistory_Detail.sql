@@ -10,10 +10,12 @@
     [IETMSSMV]      NUMERIC (7, 4) CONSTRAINT [DF_TimeStudyHistory_Detail_IETMSSMV] DEFAULT ((0)) NULL,
     [Mold]          NVARCHAR (65)  CONSTRAINT [DF_TimeStudyHistory_Detail_MoldID] DEFAULT ('') NULL,
     [SMV]           NUMERIC (8, 4) CONSTRAINT [DF_TimeStudyHistory_Detail_SMV] DEFAULT ((0)) NULL,
-    [OldKey]        VARCHAR (10)   CONSTRAINT [DF_TimeStudyHistory_Detail_OldKey] DEFAULT ('') NULL,
+    [OldKey]        VARCHAR (13)   CONSTRAINT [DF_TimeStudyHistory_Detail_OldKey] DEFAULT ('') NULL,
     [SeamLength]    NUMERIC (9, 2) NULL,
     CONSTRAINT [PK_TimeStudyHistory_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [Seq] ASC)
 );
+
+
 
 
 GO
