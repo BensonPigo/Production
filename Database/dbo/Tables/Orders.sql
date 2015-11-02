@@ -123,6 +123,7 @@
     [MTLExport]           VARCHAR (2)    CONSTRAINT [DF_Orders_MTLExport] DEFAULT ('') NULL,
     [DoxType]             VARCHAR (8)    CONSTRAINT [DF_Orders_DoxType] DEFAULT ('') NULL,
     [FtyGroup]            VARCHAR (8)    CONSTRAINT [DF_Orders_FtyGroup] DEFAULT ('') NULL,
+    [MDivisionID]         VARCHAR (8)    CONSTRAINT [DF_Orders_MDivisionID] DEFAULT ('') NULL,
     [CutReadyDate]        DATE           NULL,
     [SewRemark]           NVARCHAR (60)  CONSTRAINT [DF_Orders_SewRemark] DEFAULT ('') NULL,
     [WhseClose]           DATE           NULL,
@@ -139,6 +140,8 @@
     [CuttingSP]           VARCHAR (13)   CONSTRAINT [DF_Orders_CuttingSP] DEFAULT ('') NULL,
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -691,4 +694,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大貨嘜�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大貨嘜頭(右面)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MarkRight';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 
