@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[LocalItem] (
-    [RefNo]        VARCHAR (20)    CONSTRAINT [DF_LocalItem_RefNo] DEFAULT ('') NOT NULL,
+    [RefNo]        VARCHAR (21)    CONSTRAINT [DF_LocalItem_RefNo] DEFAULT ('') NOT NULL,
     [Junk]         BIT             CONSTRAINT [DF_LocalItem_Junk] DEFAULT ((0)) NULL,
     [Description]  NVARCHAR (MAX)  CONSTRAINT [DF_LocalItem_Description] DEFAULT ('') NOT NULL,
     [Category]     VARCHAR (20)    CONSTRAINT [DF_LocalItem_Category] DEFAULT ('') NOT NULL,
@@ -25,6 +25,8 @@
     [EditDate]     DATETIME        NULL,
     CONSTRAINT [PK_LocalItem] PRIMARY KEY CLUSTERED ([RefNo] ASC)
 );
+
+
 
 
 GO

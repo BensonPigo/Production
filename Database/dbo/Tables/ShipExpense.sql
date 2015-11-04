@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[ShipExpense] (
-    [ID]          VARCHAR (20)    CONSTRAINT [DF_ShipExpense_ID] DEFAULT ('') NOT NULL,
+    [ID]          VARCHAR (21)    CONSTRAINT [DF_ShipExpense_ID] DEFAULT ('') NOT NULL,
     [BrandID]     VARCHAR (8)     CONSTRAINT [DF_ShipExpense_BrandID] DEFAULT ('') NULL,
     [Junk]        BIT             CONSTRAINT [DF_ShipExpense_Junk] DEFAULT ((0)) NULL,
     [Description] NVARCHAR (MAX)  CONSTRAINT [DF_ShipExpense_Description] DEFAULT ('') NOT NULL,
@@ -14,6 +14,8 @@
     [EditDate]    DATETIME        NULL,
     CONSTRAINT [PK_ShipExpense] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

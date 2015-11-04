@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[LocalItem_Quot] (
-    [RefNo]        VARCHAR (20)    CONSTRAINT [DF_LocalItem_Quot_RefNo] DEFAULT ('') NOT NULL,
+    [RefNo]        VARCHAR (21)    CONSTRAINT [DF_LocalItem_Quot_RefNo] DEFAULT ('') NOT NULL,
     [IssueDate]    DATE            NULL,
     [LocalSuppID1] VARCHAR (8)     CONSTRAINT [DF_LocalItem_Quot_LocalSuppID1] DEFAULT ('') NULL,
     [LocalSuppID2] VARCHAR (8)     CONSTRAINT [DF_LocalItem_Quot_LocalSuppID2] DEFAULT ('') NULL,
@@ -22,6 +22,8 @@
     [Ukey]         BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_LocalItem_Quot] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO

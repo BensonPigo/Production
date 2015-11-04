@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[ShipExpense_CanVass] (
-    [ID]           VARCHAR (20)    CONSTRAINT [DF_ShipExpense_CanVass_ID] DEFAULT ('') NOT NULL,
+    [ID]           VARCHAR (21)    CONSTRAINT [DF_ShipExpense_CanVass_ID] DEFAULT ('') NOT NULL,
     [LocalSuppID1] VARCHAR (8)     CONSTRAINT [DF_ShipExpense_CanVass_LocalSuppID1] DEFAULT ('') NULL,
     [LocalSuppID2] VARCHAR (8)     CONSTRAINT [DF_ShipExpense_CanVass_LocalSuppID2] DEFAULT ('') NULL,
     [LocalSuppID3] VARCHAR (8)     CONSTRAINT [DF_ShipExpense_CanVass_LocalSuppID3] DEFAULT ('') NULL,
@@ -21,6 +21,8 @@
     [UKey]         BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_ShipExpense_CanVass] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
+
+
 
 
 GO
