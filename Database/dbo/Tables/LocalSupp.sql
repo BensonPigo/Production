@@ -8,7 +8,7 @@
     [Fax]             VARCHAR (30)   CONSTRAINT [DF_LocalSupp_Fax] DEFAULT ('') NULL,
     [Address]         NVARCHAR (MAX) CONSTRAINT [DF_LocalSupp_Address] DEFAULT ('') NULL,
     [CurrencyID]      VARCHAR (3)    CONSTRAINT [DF_LocalSupp_CurrencyID] DEFAULT ('') NULL,
-    [PayTermID]       VARCHAR (5)    CONSTRAINT [DF_LocalSupp_PayTermID] DEFAULT ('') NULL,
+    [PayTermID]       VARCHAR (6)    CONSTRAINT [DF_LocalSupp_PayTermID] DEFAULT ('') NULL,
     [WithholdingRate] TINYINT        CONSTRAINT [DF_LocalSupp_WithholdingRate] DEFAULT ((0)) NULL,
     [UseSBTS]         BIT            CONSTRAINT [DF_LocalSupp_UseSBTS] DEFAULT ((0)) NULL,
     [IsFactory]       BIT            CONSTRAINT [DF_LocalSupp_IsFactory] DEFAULT ((0)) NULL,
@@ -18,6 +18,8 @@
     [EditDate]        DATETIME       NULL,
     CONSTRAINT [PK_LocalSupp] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

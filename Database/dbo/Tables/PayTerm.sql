@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[PayTerm] (
-    [ID]       VARCHAR (5)   CONSTRAINT [DF_PayTerm_ID] DEFAULT ('') NOT NULL,
+    [ID]       VARCHAR (6)   CONSTRAINT [DF_PayTerm_ID] DEFAULT ('') NOT NULL,
     [Name]     NVARCHAR (60) CONSTRAINT [DF_PayTerm_Name] DEFAULT ('') NOT NULL,
     [Junk]     BIT           CONSTRAINT [DF_PayTerm_Junk] DEFAULT ((0)) NULL,
     [AddName]  VARCHAR (10)  CONSTRAINT [DF_PayTerm_AddName] DEFAULT ('') NULL,
@@ -8,6 +8,8 @@
     [EditDate] DATETIME      NULL,
     CONSTRAINT [PK_PayTerm] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

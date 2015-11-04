@@ -5,7 +5,7 @@
     [Type]        VARCHAR (6)     CONSTRAINT [DF_ShippingAP_Type] DEFAULT ('') NULL,
     [SubType]     VARCHAR (25)    CONSTRAINT [DF_ShippingAP_SubType] DEFAULT ('') NULL,
     [LocalSuppID] VARCHAR (8)     CONSTRAINT [DF_ShippingAP_LocalSuppID] DEFAULT ('') NOT NULL,
-    [PayTermID]   VARCHAR (5)     CONSTRAINT [DF_ShippingAP_PayTermID] DEFAULT ('') NULL,
+    [PayTermID]   VARCHAR (6)     CONSTRAINT [DF_ShippingAP_PayTermID] DEFAULT ('') NULL,
     [Remark]      NVARCHAR (60)   CONSTRAINT [DF_ShippingAP_Remark] DEFAULT ('') NULL,
     [InvNo]       VARCHAR (20)    CONSTRAINT [DF_ShippingAP_InvNo] DEFAULT ('') NULL,
     [CurrencyID]  VARCHAR (3)     CONSTRAINT [DF_ShippingAP_CurrencyID] DEFAULT ('') NULL,
@@ -24,6 +24,8 @@
     [EditDate]    DATETIME        NULL,
     CONSTRAINT [PK_ShippingAP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
