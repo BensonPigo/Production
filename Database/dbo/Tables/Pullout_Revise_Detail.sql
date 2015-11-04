@@ -7,10 +7,12 @@
     [SizeCode]     VARCHAR (8)  CONSTRAINT [DF_Pullout_Revise_Detail_SizeCode] DEFAULT ('') NOT NULL,
     [OldShipQty]   INT          CONSTRAINT [DF_Pullout_Revise_Detail_OldShipQty] DEFAULT ((0)) NOT NULL,
     [NewShipQty]   INT          CONSTRAINT [DF_Pullout_Revise_Detail_NewShipQty] DEFAULT ((0)) NOT NULL,
-    [OldUKey]      VARCHAR (10) CONSTRAINT [DF_Pullout_Revise_Detail_OldUKey] DEFAULT ('') NULL,
-    [OldReviseKey] VARCHAR (10) CONSTRAINT [DF_Pullout_Revise_Detail_OldReviseKey] DEFAULT ('') NULL,
+    [OldUKey]      VARCHAR (13) CONSTRAINT [DF_Pullout_Revise_Detail_OldUKey] DEFAULT ('') NULL,
+    [OldReviseKey] VARCHAR (13) CONSTRAINT [DF_Pullout_Revise_Detail_OldReviseKey] DEFAULT ('') NULL,
     CONSTRAINT [PK_Pullout_Revise_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [UKey] ASC, [ReviseKey] ASC, [OrderID] ASC, [Article] ASC, [SizeCode] ASC, [OldShipQty] ASC, [NewShipQty] ASC)
 );
+
+
 
 
 GO

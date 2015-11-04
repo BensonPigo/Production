@@ -6,9 +6,11 @@
     [Article]                 VARCHAR (8)  CONSTRAINT [DF_SewingOutput_Detail_Detail_Article] DEFAULT ('') NOT NULL,
     [SizeCode]                VARCHAR (8)  CONSTRAINT [DF_SewingOutput_Detail_Detail_SizeCode] DEFAULT ('') NOT NULL,
     [QAQty]                   INT          CONSTRAINT [DF_SewingOutput_Detail_Detail_QAQty] DEFAULT ((0)) NOT NULL,
-    [OldDetailKey]            VARCHAR (10) CONSTRAINT [DF_SewingOutput_Detail_Detail_OldDetailKey] DEFAULT ('') NULL,
+    [OldDetailKey]            VARCHAR (13) CONSTRAINT [DF_SewingOutput_Detail_Detail_OldDetailKey] DEFAULT ('') NULL,
     CONSTRAINT [PK_SewingOutput_Detail_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [SewingOutput_DetailUKey] ASC, [OrderId] ASC, [ComboType] ASC, [Article] ASC, [SizeCode] ASC)
 );
+
+
 
 
 

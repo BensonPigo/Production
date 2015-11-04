@@ -4,9 +4,9 @@
     [SuppID]      VARCHAR (8)    CONSTRAINT [DF_Fabric_HsCode_SuppID] DEFAULT ('') NOT NULL,
     [Year]        VARCHAR (4)    CONSTRAINT [DF_Fabric_HsCode_Year] DEFAULT ('') NOT NULL,
     [HsCode]      VARCHAR (20)   CONSTRAINT [DF_Fabric_HsCode_HsCode] DEFAULT ('') NOT NULL,
-    [ImportDuty]  NUMERIC (4, 2) CONSTRAINT [DF_Fabric_HsCode_ImportDuty] DEFAULT ((0)) NULL,
-    [ECFADuty]    NUMERIC (4, 2) CONSTRAINT [DF_Fabric_HsCode_ECFADuty] DEFAULT ((0)) NULL,
-    [ASEANDuty]   NUMERIC (4, 2) CONSTRAINT [DF_Fabric_HsCode_ASEANDuty] DEFAULT ((0)) NULL,
+    [ImportDuty]  NUMERIC (6, 2) CONSTRAINT [DF_Fabric_HsCode_ImportDuty] DEFAULT ((0)) NULL,
+    [ECFADuty]    NUMERIC (6, 2) CONSTRAINT [DF_Fabric_HsCode_ECFADuty] DEFAULT ((0)) NULL,
+    [ASEANDuty]   NUMERIC (6, 2) CONSTRAINT [DF_Fabric_HsCode_ASEANDuty] DEFAULT ((0)) NULL,
     [AddName]     VARCHAR (10)   CONSTRAINT [DF_Fabric_HsCode_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_Fabric_HsCode_EditName] DEFAULT ('') NULL,
@@ -15,6 +15,8 @@
     [OldSys_Ver]  VARCHAR (2)    CONSTRAINT [DF_Fabric_HsCode_OldSys_Ver] DEFAULT ('') NULL,
     CONSTRAINT [PK_Fabric_HsCode] PRIMARY KEY CLUSTERED ([SCIRefno] ASC, [SuppID] ASC, [Year] ASC)
 );
+
+
 
 
 GO

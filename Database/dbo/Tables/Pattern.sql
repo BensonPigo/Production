@@ -12,7 +12,7 @@
     [CheckerDate]   DATETIME       NULL,
     [Status]        VARCHAR (1)    CONSTRAINT [DF_Pattern_Status] DEFAULT ('') NULL,
     [CFMName]       VARCHAR (10)   CONSTRAINT [DF_Pattern_CFMName] DEFAULT ('') NULL,
-    [UKey]          BIGINT         CONSTRAINT [DF_Pattern_UKey] DEFAULT ((0)) NULL,
+    [UKey]          BIGINT         CONSTRAINT [DF_Pattern_UKey] DEFAULT ((0)) NOT NULL,
     [StyleRemark]   NVARCHAR (MAX) CONSTRAINT [DF_Pattern_StyleRemark] DEFAULT ('') NULL,
     [HisRemark]     NVARCHAR (MAX) CONSTRAINT [DF_Pattern_HisRemark] DEFAULT ('') NULL,
     [PendingRemark] NVARCHAR (MAX) CONSTRAINT [DF_Pattern_PendingRemark] DEFAULT ('') NULL,
@@ -24,8 +24,10 @@
     [AddDate]       DATETIME       NULL,
     [EditName]      VARCHAR (10)   CONSTRAINT [DF_Pattern_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME       NULL,
-    CONSTRAINT [PK_Pattern] PRIMARY KEY CLUSTERED ([ID] ASC, [Version] ASC)
+    CONSTRAINT [PK_Pattern] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
+
+
 
 
 GO
