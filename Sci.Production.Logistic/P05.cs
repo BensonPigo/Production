@@ -221,7 +221,7 @@ where {0}", masterID);
             return base.ClickSaveBefore();
         }
 
-        protected override bool OnSaveDetail(IList<DataRow> details, ITableSchema detailtableschema)
+        protected override DualResult OnSaveDetail(IList<DataRow> details, ITableSchema detailtableschema)
         {
             updateCmds.Clear();
             grid1.EndEdit();
@@ -238,7 +238,7 @@ where {0}", masterID);
                 if (dr.RowState == DataRowState.Deleted)
                 {
                     updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '' where ID = '{0}';", dr["ID"].ToString()));
-                    updateCmds.Add(DeletePLCmd("InvNo",dr["ID"].ToString()));
+                    updateCmds.Add(DeletePLCmd("InvNo", dr["ID"].ToString()));
                     continue;
                 }
             }
@@ -259,12 +259,11 @@ where {0}", masterID);
                 result = DBProxy.Current.Executes(null, updateCmds);
                 if (!result)
                 {
-                    MyUtility.Msg.ErrorBox(result.ToString());
-                    return false;
+                    DualResult failResult = new DualResult(false, "Update fail!!\r\n" + result.ToString());
+                    return failResult;
                 }
             }
-
-            return true;
+            return Result.True;
         }
 
         protected override bool ClickDeleteBefore()

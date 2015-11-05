@@ -30,7 +30,7 @@ namespace Sci.Production.Shipping
             return true;
         }
 
-        protected override bool OnSavePre()
+        protected override DualResult OnSavePre()
         {
             string updatecmd = "";
             try
@@ -47,8 +47,8 @@ namespace Sci.Production.Shipping
             }
             catch (Exception ex)
             {
-                MyUtility.Msg.ErrorBox("ProcessWithDatatable error.\r\n" + ex.ToString());
-                return false;
+                DualResult failResult = new DualResult(false, "ProcessWithDatatable error.\r\n" + ex.ToString());
+                return failResult;
             }
 
             if (updatecmd != "")
@@ -56,12 +56,12 @@ namespace Sci.Production.Shipping
                 DualResult result = DBProxy.Current.Execute(null, updatecmd);
                 if (!result)
                 {
-                    MyUtility.Msg.WarningBox("Update Express fail.\r\n" + result.ToString());
-                    return false;
+                    DualResult failResult = new DualResult(false, "Update Express fail.\r\n" + result.ToString());
+                    return failResult;
                 }
             }
 
-            return true;
+            return Result.True;
         }
 
 

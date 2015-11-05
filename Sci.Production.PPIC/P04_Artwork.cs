@@ -148,7 +148,7 @@ where StyleUkey = {0}",KeyValue1);
             return true;
         }
 
-        protected override bool OnSavePost()
+        protected override DualResult OnSavePost()
         {
             #region 更新Order_Artwork，已經有Sewing Daily Output的Order就不更新
             string sqlCmd = string.Format(@"declare @styleukey bigint;
@@ -201,8 +201,8 @@ select * from UpdateData", KeyValue1);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out OrderArtwork);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query Order_Artwork fail!!\r\n"+result.ToString());
-                return false;
+                DualResult failResult = new DualResult(false, "Query Order_Artwork fail!!\r\n" + result.ToString());
+                return failResult;
             }
 
             IList<string> cmds = new List<string>();
@@ -229,11 +229,11 @@ select * from UpdateData", KeyValue1);
                     }
                 }
             }
-            result = DBProxy.Current.Executes(null,cmds);
+            result = DBProxy.Current.Executes(null, cmds);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Update Order_Artwork fail!!\r\n" + result.ToString());
-                return false;
+                DualResult failResult = new DualResult(false, "Update Order_Artwork fail!!\r\n" + result.ToString());
+                return failResult;
             }
             #endregion
 
@@ -285,8 +285,8 @@ select * from StyleTMSCost", KeyValue1);
             result = DBProxy.Current.Select(null, sqlCmd, out AllTMSCost);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query TMSCost fail!!\r\n" + result.ToString());
-                return false;
+                DualResult failResult = new DualResult(false, "Query TMSCost fail!!\r\n" + result.ToString());
+                return failResult;
             }
 
             IList<string> updateCmds = new List<string>();
@@ -322,12 +322,12 @@ select * from StyleTMSCost", KeyValue1);
             result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Update TMSCost fail!!\r\n" + result.ToString());
-                return false;
+                DualResult failResult = new DualResult(false, "Update TMSCost fail!!\r\n" + result.ToString());
+                return failResult;
             }
             #endregion
 
-            return true;
+            return Result.True;
         }
     }
 }

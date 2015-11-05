@@ -495,9 +495,8 @@ where o.ID in ({0})", allSP.ToString().Substring(0, allSP.ToString().Length - 1)
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
             {
                 // Open document
-                DualResult result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName);
-                if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName,"PPIC_P13.xltx",1); }
-                else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(), "Warning"); }
+                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName, xltfile: "PPIC_P13.xltx");
+                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
             }
             else
             {

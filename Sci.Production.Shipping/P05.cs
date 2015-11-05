@@ -543,7 +543,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             return base.ClickSaveBefore();
         }
 
-        protected override bool OnSaveDetail(IList<DataRow> details, ITableSchema detailtableschema)
+        protected override DualResult OnSaveDetail(IList<DataRow> details, ITableSchema detailtableschema)
         {
             IList<string> updateCmds = new List<string>();
 
@@ -565,20 +565,13 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             if (updateCmds.Count != 0)
             {
                 result = DBProxy.Current.Executes(null, updateCmds);
-                if (result)
+                if (!result)
                 {
-                    return true;
-                }
-                else
-                {
-                    MyUtility.Msg.ErrorBox(result.ToString());
-                    return false;
+                    DualResult failResult = new DualResult(false, "Update OackingList fail\r\n" + result.ToString());
+                    return failResult;
                 }
             }
-            else
-            {
-                return true;
-            }
+            return Result.True;
         }
 
         protected override void ClickSaveAfter()

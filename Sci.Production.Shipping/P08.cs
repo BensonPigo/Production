@@ -421,15 +421,15 @@ where sd.ID = '{0}'", masterID);
             return base.ClickSaveBefore();
         }
 
-        protected override bool ClickSavePre()
+        protected override DualResult ClickSavePre()
         {
             if (haveEditShareFee)
             {
-                DualResult result = DBProxy.Current.Execute(null,string.Format("delete form ShareExpense where ShippingAPID = '{0}'",CurrentMaintain["ID"].ToString()));
+                DualResult result = DBProxy.Current.Execute(null, string.Format("delete form ShareExpense where ShippingAPID = '{0}'", CurrentMaintain["ID"].ToString()));
                 if (!result)
                 {
-                    MyUtility.Msg.ErrorBox("Delete ShareExpense fail\n\r"+result.ToString());
-                    return false;
+                    DualResult failResult = new DualResult(false, "Delete ShareExpense fail\r\n" + result.ToString());
+                    return failResult;
                 }
             }
             return base.ClickSavePre();

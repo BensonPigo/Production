@@ -238,7 +238,7 @@ namespace Sci.Production.Tools
             return base.ClickSaveBefore();
         }
 
-        protected override bool ClickSavePost()
+        protected override DualResult ClickSavePost()
         {
             DBProxy.Current.Insert(null, itsPassEdit, newRow);
             return base.ClickSavePost();

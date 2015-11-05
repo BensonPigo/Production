@@ -190,9 +190,9 @@ where td.Id = '{0}'", masterID);
         }
 
         //存檔後要更新PalcingList_Detail資料，表身資料刪除後也要更新PackingList_Detail的值
-        protected override bool ClickSavePre()
+        protected override DualResult ClickSavePre()
         {
-            DataTable t = (DataTable) detailgridbs.DataSource;
+            DataTable t = (DataTable)detailgridbs.DataSource;
 
             string sqlUpdatePackingList = "";
             DualResult result;
@@ -222,11 +222,11 @@ where td.Id = '{0}'", masterID);
 
                     if (!(result = DBProxy.Current.Execute(null, sqlUpdatePackingList)))
                     {
-                        return false;
+                        return result;
                     }
                 }
             }
-            return base.ClickSavePre();
+            return Result.True;
         }
 
         //存檔後要Update Orders的資料

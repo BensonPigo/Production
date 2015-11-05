@@ -219,15 +219,15 @@ where a.StyleUkey = ''", KeyValue1);
             return true;
         }
 
-        protected override bool OnSavePost()
+        protected override DualResult OnSavePost()
         {
             string sqlCmd = string.Format(@"select isnull(sum(TMS),0) as TtlTMS from Style_TmsCost st, ArtworkType at
 where st.ArtworkTypeID = at.ID
 and at.IsTtlTMS = 1
-and st.StyleUkey = {0}",KeyValue1);
-            decimal cpu = MyUtility.Math.Round(Convert.ToDecimal(MyUtility.GetValue.Lookup(sqlCmd))/stdTMS, 3);
+and st.StyleUkey = {0}", KeyValue1);
+            decimal cpu = MyUtility.Math.Round(Convert.ToDecimal(MyUtility.GetValue.Lookup(sqlCmd)) / stdTMS, 3);
             IList<String> updateCmds = new List<String>();
-            updateCmds.Add(string.Format("update Style set CPU = {0} where Ukey = {1};", Convert.ToString(cpu),KeyValue1));
+            updateCmds.Add(string.Format("update Style set CPU = {0} where Ukey = {1};", Convert.ToString(cpu), KeyValue1));
             updateCmds.Add(string.Format("update Orders set CPU = {0}, CMPPrice = {0}*12 where StyleUkey = {0} and not exists (select 1 from SewingOutput_Detail where OrderId = Orders.ID);", Convert.ToString(cpu), KeyValue1));
             #region 組要更新Order_TMSCost的SQL，已經有Sewing Daily Output的Order就不更新
             sqlCmd = string.Format(@"declare @styleukey bigint;
@@ -270,14 +270,14 @@ where exists (select 1 from OrderTMSCost o where o.ID = a.ID and o.ArtworkTypeID
 
 select * from InsertData
 union all
-select * from UpdateData",KeyValue1);
+select * from UpdateData", KeyValue1);
 
             DataTable OrderTMSCost;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out OrderTMSCost);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query Order_TMSCost fail!!\r\n" + result.ToString());
-                return false;
+                DualResult failResult = new DualResult(false, "Query Order_TMSCost fail!!\r\n" + result.ToString());
+                return failResult;
             }
 
             foreach (DataRow dr in OrderTMSCost.Rows)
@@ -303,11 +303,11 @@ select * from UpdateData",KeyValue1);
             result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Update Order_TMSCost fail!!\r\n" + result.ToString());
-                return false;
+                DualResult failResult = new DualResult(false, "Update Order_TMSCost fail!!\r\n" + result.ToString());
+                return failResult;
             }
 
-            return true;
+            return Result.True;
         }
     }
 }

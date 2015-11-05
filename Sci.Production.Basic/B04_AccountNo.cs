@@ -53,7 +53,7 @@ namespace Sci.Production.Basic
             delete.Visible = false;
         }
 
-        protected override bool OnSave()
+        protected override DualResult OnSave()
         {
             ITableSchema tableSchema;
             DualResult returnResult = DBProxy.Current.GetTableSchema(null, "LocalSupp_AccountNo", out tableSchema);
@@ -66,10 +66,9 @@ namespace Sci.Production.Basic
                     if (String.IsNullOrWhiteSpace(currentRecord["AccountNo"].ToString()))
                     {
                         returnResult = DBProxy.Current.Delete(null, tableSchema, currentRecord);
-                        if (returnResult != Result.True)
+                        if (!returnResult)
                         {
-                            MyUtility.Msg.WarningBox(returnResult.ToString());
-                            return false;
+                            return returnResult;
                         }
                     }
                     else
@@ -78,26 +77,24 @@ namespace Sci.Production.Basic
                         if (!MyUtility.Check.Seek(selectCommand, null))
                         {
                             returnResult = DBProxy.Current.Insert(null, tableSchema, currentRecord);
-                            if (returnResult != Result.True)
+                            if (!returnResult)
                             {
-                                MyUtility.Msg.WarningBox(returnResult.ToString());
-                                return false;
+                                return returnResult;
                             }
                         }
                         else
                         {
                             bool different;
                             returnResult = DBProxy.Current.UpdateByChanged(null, tableSchema, currentRecord, out different);
-                            if (returnResult != Result.True)
+                            if (!returnResult)
                             {
-                                MyUtility.Msg.WarningBox(returnResult.ToString());
-                                return false;
+                                return returnResult;
                             }
                         }
                     }
                 }
             }
-            return true;
+            return Result.True;
         }
     }
 }

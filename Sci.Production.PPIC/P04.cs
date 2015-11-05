@@ -161,7 +161,7 @@ namespace Sci.Production.PPIC
             return true;
         }
 
-        protected override bool ClickSavePre()
+        protected override DualResult ClickSavePre()
         {
             if (CurrentMaintain["LocalStyle"].ToString().ToUpper() == "TRUE" && !MyUtility.Check.Empty(CurrentMaintain["UKey"]))
             {
@@ -170,11 +170,11 @@ namespace Sci.Production.PPIC
                 DualResult result = DBProxy.Current.Execute(null, sqlCmd);
                 if (!result)
                 {
-                    MyUtility.Msg.ErrorBox("Update order cpu fail!!" + result.ToString());
-                    return false;
+                    DualResult failResult = new DualResult(false, "Update order cpu fail!!\r\n" + result.ToString());
+                    return failResult;
                 }
             }
-            return base.ClickSavePre();
+            return Result.True;
         }
 
         #region TMS & Cost不再由此新增，改到P04_TMSAndCost新增

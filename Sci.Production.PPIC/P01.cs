@@ -348,7 +348,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             return base.ClickSaveBefore();
         }
 
-        protected override bool ClickSavePost()
+        protected override DualResult ClickSavePost()
         {
             if (CurrentMaintain["LocalOrder"].ToString().ToUpper() == "TRUE")
             {
@@ -363,8 +363,8 @@ select '{0}',ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,ArtworkName
                     result = DBProxy.Current.Execute(null, insertCmd);
                     if (!result)
                     {
-                        MyUtility.Msg.ErrorBox("Save Order_Artwork fail!!\r\n" + result.ToString());
-                        return false;
+                        DualResult failResult = new DualResult(false, "Save Order_Artwork fail!!\r\n" + result.ToString());
+                        return failResult;
                     }
                 }
 
@@ -377,12 +377,12 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
                     result = DBProxy.Current.Execute(null, insertCmd);
                     if (!result)
                     {
-                        MyUtility.Msg.ErrorBox("Save Order_TmsCost fail!!\r\n" + result.ToString());
-                        return false;
+                        DualResult failResult = new DualResult(false, "Save Order_TmsCost fail!!\r\n" + result.ToString());
+                        return failResult;
                     }
                 }
             }
-            return base.ClickSavePost();
+            return Result.True;
         }
 
         //Style

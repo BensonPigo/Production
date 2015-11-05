@@ -607,7 +607,7 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
             return base.ClickSaveBefore();
         }
 
-        protected override bool ClickSavePre()
+        protected override DualResult ClickSavePre()
         {
             if (!MyUtility.Check.Empty(CurrentMaintain["INVNo"]))
             {
@@ -662,15 +662,20 @@ where ID = @INVNo";
                     cmds.Add(sp7);
                     #endregion
 
-                    Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds);
+                    result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds);
+                    if (!result)
+                    {
+                        DualResult failResult = new DualResult(false, "Update Garment Booking fail!\r\n" + result.ToString());
+                        return failResult;
+                    }
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox("Update Garment Booking fail!");
-                    return false;
+                    DualResult failResult = new DualResult(false, "Select PackingList fail!\r\n" + result.ToString());
+                    return failResult;
                 }
             }
-            return base.ClickSavePre();
+            return Result.True;
         }
 
         protected override void ClickSaveAfter()

@@ -193,9 +193,8 @@ order by OrderId", factoryID, MyUtility.Check.Empty(updateDate) ? "is null" : "=
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
             {
                 // Open document
-                DualResult result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName);
-                if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName, "PPIC_P02.xltx", 4); }
-                else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(), "Warning"); }
+                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName, xltfile: "PPIC_P02.xltx", headerRow: 4);
+                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
             }
             else
             {

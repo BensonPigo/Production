@@ -277,7 +277,7 @@ where o.Id = '{0}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["Ord
             return base.ClickSaveBefore();
         }
 
-        protected override bool ClickSavePost()
+        protected override DualResult ClickSavePost()
         {
             //新增資料時，要寫一筆紀錄到AirPP_History
             if (IsDetailInserting)
@@ -288,11 +288,11 @@ values ('{0}','Status','','New','{1}',GETDATE())", CurrentMaintain["ID"].ToStrin
                 DualResult result = DBProxy.Current.Execute(null, insertCmd);
                 if (!result)
                 {
-                    MyUtility.Msg.ErrorBox("Insert AirPP_History fail!\r\n" + result.ToString());
-                    return false;
+                    DualResult failResult = new DualResult(false, "Insert AirPP_History fail!\r\n" + result.ToString());
+                    return failResult;
                 }
             }
-            return base.ClickSavePost();
+            return Result.True;
         }
 
         private void textBox8_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
