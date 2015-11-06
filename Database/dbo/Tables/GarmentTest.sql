@@ -6,7 +6,7 @@
     [SeasonID]      VARCHAR (8)   CONSTRAINT [DF_GarmentTest_SeasonID] DEFAULT ('') NOT NULL,
     [BrandID]       VARCHAR (8)   CONSTRAINT [DF_GarmentTest_BrandID] DEFAULT ('') NOT NULL,
     [Article]       VARCHAR (8)   CONSTRAINT [DF_GarmentTest_Article] DEFAULT ('') NOT NULL,
-    [FactoryID]     VARCHAR (8)   CONSTRAINT [DF_GarmentTest_FactoryID] DEFAULT ('') NOT NULL,
+    [MDivisionid]     VARCHAR (8)   CONSTRAINT [DF_GarmentTest_FactoryID] DEFAULT ('') NOT NULL,
     [DeadLine]      DATE          NULL,
     [SewingInline]  DATE          NULL,
     [SewingOffline] DATE          NULL,
@@ -54,7 +54,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'色組', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GarmentTest', @level2type = N'COLUMN', @level2name = N'FactoryID';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GarmentTest', @level2type = N'COLUMN', @level2name = 'MDivisionid';
 
 
 GO

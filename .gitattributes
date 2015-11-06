@@ -92,7 +92,6 @@ Database/dbo/Tables/DDTable.sql -text
 Database/dbo/Tables/Debit.sql -text
 Database/dbo/Tables/Debit_Detail.sql -text
 Database/dbo/Tables/Debit_Schedule.sql -text
-Database/dbo/Tables/Department.sql -text
 Database/dbo/Tables/DropDownList.sql -text
 Database/dbo/Tables/EmbBatch.sql -text
 Database/dbo/Tables/Employee.sql -text

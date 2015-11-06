@@ -1,10 +1,12 @@
 ﻿CREATE TABLE [dbo].[MachineType_ThreadRatio] (
     [ID]             VARCHAR (10) CONSTRAINT [DF_MachineType_ThreadRatio_ID] DEFAULT ('') NOT NULL,
     [SEQ]            VARCHAR (2)  CONSTRAINT [DF_MachineType_ThreadRatio_SEQ] DEFAULT ('') NOT NULL,
-    [ThreadLocation] VARCHAR (5)  CONSTRAINT [DF_MachineType_ThreadRatio_ThreadLocation] DEFAULT ('') NULL,
+    [ThreadLocation] VARCHAR (5)  CONSTRAINT [DF_MachineType_ThreadRatio_ThreadLocation] DEFAULT ('') NOT NULL,
     [UseRatio]       VARCHAR (15) CONSTRAINT [DF_MachineType_ThreadRatio_UseRatio] DEFAULT ('') NULL,
-    CONSTRAINT [PK_MachineType_ThreadRatio] PRIMARY KEY CLUSTERED ([ID] ASC, [SEQ] ASC)
+    CONSTRAINT [PK_MachineType_ThreadRatio] PRIMARY KEY CLUSTERED ([ID] ASC, [SEQ] ASC, [ThreadLocation] ASC)
 );
+
+
 
 
 GO

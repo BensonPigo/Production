@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[GarmentDefectCode] (
     [ID]                  VARCHAR (3)   CONSTRAINT [DF_GarmentDefectCode_ID] DEFAULT ('') NOT NULL,
-    [Description]         NVARCHAR (60) CONSTRAINT [DF_GarmentDefectCode_Description] DEFAULT ('') NULL,
+    [Description]         NVARCHAR (100) CONSTRAINT [DF_GarmentDefectCode_Description] DEFAULT ('') NULL,
     [GarmentDefectTypeID] VARCHAR (1)   CONSTRAINT [DF_GarmentDefectCode_GarmentDefectTypeID] DEFAULT ('') NULL,
     [AddName]             VARCHAR (10)  CONSTRAINT [DF_GarmentDefectCode_AddName] DEFAULT ('') NULL,
     [AddDate]             DATETIME      NULL,
