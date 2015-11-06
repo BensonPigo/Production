@@ -14,6 +14,7 @@ namespace Sci.Production.Basic
             : base(menuitem)
         {
             InitializeComponent();
+            DefaultFilter = string.Format("MDivisionID = '{0}'",Sci.Env.User.Keyword);
         }
 
         protected override void OnDetailEntered()
@@ -39,14 +40,14 @@ namespace Sci.Production.Basic
 
         protected override bool ClickSaveBefore()
         {
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["NameEN"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["NameEN"]))
             {
                 MyUtility.Msg.WarningBox("< Name > can not be empty!");
                 this.textBox2.Focus();

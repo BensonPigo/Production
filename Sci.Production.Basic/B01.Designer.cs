@@ -55,6 +55,8 @@
             this.button1 = new Sci.Win.UI.Button();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.label1 = new Sci.Win.UI.Label();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -69,6 +71,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayBox1);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.button1);
@@ -226,7 +230,7 @@
             this.textBox1.Location = new System.Drawing.Point(124, 14);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(66, 23);
-            this.textBox1.TabIndex = 12;
+            this.textBox1.TabIndex = 0;
             // 
             // textBox2
             // 
@@ -237,7 +241,7 @@
             this.textBox2.Location = new System.Drawing.Point(124, 41);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(317, 23);
-            this.textBox2.TabIndex = 13;
+            this.textBox2.TabIndex = 2;
             // 
             // textBox3
             // 
@@ -247,7 +251,7 @@
             this.textBox3.Location = new System.Drawing.Point(124, 142);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(200, 23);
-            this.textBox3.TabIndex = 14;
+            this.textBox3.TabIndex = 5;
             // 
             // editBox1
             // 
@@ -258,7 +262,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(317, 69);
-            this.editBox1.TabIndex = 15;
+            this.editBox1.TabIndex = 3;
             // 
             // textBox4
             // 
@@ -268,7 +272,7 @@
             this.textBox4.Location = new System.Drawing.Point(124, 169);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(110, 23);
-            this.textBox4.TabIndex = 16;
+            this.textBox4.TabIndex = 6;
             // 
             // textBox5
             // 
@@ -278,7 +282,7 @@
             this.textBox5.Location = new System.Drawing.Point(124, 223);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(66, 23);
-            this.textBox5.TabIndex = 17;
+            this.textBox5.TabIndex = 8;
             // 
             // textBox6
             // 
@@ -288,7 +292,7 @@
             this.textBox6.Location = new System.Drawing.Point(124, 250);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(36, 23);
-            this.textBox6.TabIndex = 18;
+            this.textBox6.TabIndex = 9;
             // 
             // textBox7
             // 
@@ -299,7 +303,7 @@
             this.textBox7.Mask = "9999-9999";
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(70, 23);
-            this.textBox7.TabIndex = 19;
+            this.textBox7.TabIndex = 10;
             this.textBox7.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             // 
             // textBox8
@@ -311,7 +315,7 @@
             this.textBox8.Mask = "9999-9999";
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(70, 23);
-            this.textBox8.TabIndex = 20;
+            this.textBox8.TabIndex = 11;
             this.textBox8.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             // 
             // textBox9
@@ -323,13 +327,13 @@
             this.textBox9.Mask = "9999-9999";
             this.textBox9.Name = "textBox9";
             this.textBox9.Size = new System.Drawing.Size(70, 23);
-            this.textBox9.TabIndex = 21;
+            this.textBox9.TabIndex = 12;
             this.textBox9.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             // 
             // label15
             // 
             this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(331, 14);
+            this.label15.Location = new System.Drawing.Point(227, 14);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(70, 23);
             this.label15.TabIndex = 22;
@@ -340,10 +344,10 @@
             this.textBox10.BackColor = System.Drawing.Color.White;
             this.textBox10.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "KeyWord", true));
             this.textBox10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox10.Location = new System.Drawing.Point(405, 14);
+            this.textBox10.Location = new System.Drawing.Point(301, 14);
             this.textBox10.Name = "textBox10";
             this.textBox10.Size = new System.Drawing.Size(36, 23);
-            this.textBox10.TabIndex = 23;
+            this.textBox10.TabIndex = 1;
             // 
             // button1
             // 
@@ -365,7 +369,7 @@
             this.checkBox1.Location = new System.Drawing.Point(500, 74);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(92, 21);
-            this.checkBox1.TabIndex = 25;
+            this.checkBox1.TabIndex = 13;
             this.checkBox1.Text = "Use SBTS";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -376,8 +380,27 @@
             this.txtuser1.Location = new System.Drawing.Point(124, 196);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 26;
+            this.txtuser1.TabIndex = 7;
             this.txtuser1.TextBox1Binding = "";
+            // 
+            // label1
+            // 
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(376, 14);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(19, 23);
+            this.label1.TabIndex = 27;
+            this.label1.Text = "M";
+            // 
+            // displayBox1
+            // 
+            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionID", true));
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(398, 14);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(41, 23);
+            this.displayBox1.TabIndex = 28;
             // 
             // B01
             // 
@@ -430,5 +453,7 @@
         private Class.txtuser txtuser1;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.Button button1;
+        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.Label label1;
     }
 }
