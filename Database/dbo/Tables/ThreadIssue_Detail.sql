@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[ThreadIssue_Detail] (
     [ID]               VARCHAR (13)  CONSTRAINT [DF_ThreadIssue_Detail_ID] DEFAULT ('') NOT NULL,
-    [Refno]            VARCHAR (20)  CONSTRAINT [DF_ThreadIssue_Detail_Refno] DEFAULT ('') NOT NULL,
+    [Refno]            VARCHAR (21)  CONSTRAINT [DF_ThreadIssue_Detail_Refno] DEFAULT ('') NOT NULL,
     [ThreadColorID]    VARCHAR (15)  CONSTRAINT [DF_ThreadIssue_Detail_ThreadColorID] DEFAULT ('') NOT NULL,
     [IssueNewCone]     NUMERIC (5)   CONSTRAINT [DF_ThreadIssue_Detail_IssueNewCone] DEFAULT ((0)) NULL,
     [IssueUsedCone]    NUMERIC (5)   CONSTRAINT [DF_ThreadIssue_Detail_IssueUsedCone] DEFAULT ((0)) NULL,

@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[ThreadRequisition_Detail] (
     [OrderID]        VARCHAR (13)   CONSTRAINT [DF_ThreadRequisition_Detail_OrderID] DEFAULT ('') NOT NULL,
-    [Refno]          VARCHAR (20)   CONSTRAINT [DF_ThreadRequisition_Detail_Refno] DEFAULT ('') NOT NULL,
+    [Refno]          VARCHAR (21)   CONSTRAINT [DF_ThreadRequisition_Detail_Refno] DEFAULT ('') NOT NULL,
     [ThreadColorID]  VARCHAR (15)   CONSTRAINT [DF_ThreadRequisition_Detail_ThreadColorID] DEFAULT ('') NOT NULL,
     [ConsumptionQty] NUMERIC (6)    CONSTRAINT [DF_ThreadRequisition_Detail_ConsumptionQty] DEFAULT ((0)) NULL,
     [TotalQty]       NUMERIC (6)    CONSTRAINT [DF_ThreadRequisition_Detail_TotalQty] DEFAULT ((0)) NULL,
