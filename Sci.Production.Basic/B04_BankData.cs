@@ -109,25 +109,25 @@ namespace Sci.Production.Basic
 
             foreach (DataRow gridData in Datas)
             {
-                if (string.IsNullOrWhiteSpace(gridData["AccountNo"].ToString()))
+                if (MyUtility.Check.Empty(gridData["AccountNo"]))
                 {
                     MyUtility.Msg.WarningBox("The field < Account No. > can not be empty!");
                     return false;
                 }
 
-                if (string.IsNullOrWhiteSpace(gridData["AccountName"].ToString()))
+                if (MyUtility.Check.Empty(gridData["AccountName"]))
                 {
                     MyUtility.Msg.WarningBox("The field < Account Name > can not be empty!");
                     return false;
                 }
 
-                if (string.IsNullOrWhiteSpace(gridData["BankName"].ToString()))
+                if (MyUtility.Check.Empty(gridData["BankName"]))
                 {
                     MyUtility.Msg.WarningBox("The field < Bank Name > can not be empty!");
                     return false;
                 }
 
-                if (string.IsNullOrWhiteSpace(gridData["CountryID"].ToString()))
+                if (MyUtility.Check.Empty(gridData["CountryID"]))
                 {
                     MyUtility.Msg.WarningBox("The field < Country > can not be empty!");
                     return false;

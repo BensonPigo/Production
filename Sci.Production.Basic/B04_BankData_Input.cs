@@ -17,28 +17,28 @@ namespace Sci.Production.Basic
 
         protected override bool DoSave()
         {
-            if (String.IsNullOrWhiteSpace(this.textBox1.Text.ToString()))
+            if (MyUtility.Check.Empty(this.textBox1.Text.ToString()))
             {
                 MyUtility.Msg.WarningBox("< Account No. > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(this.textBox3.Text.ToString()))
+            if (MyUtility.Check.Empty(this.textBox3.Text.ToString()))
             {
                 MyUtility.Msg.WarningBox("< Account Name > can not be empty!");
                 this.textBox3.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(this.textBox4.Text.ToString()))
+            if (MyUtility.Check.Empty(this.textBox4.Text.ToString()))
             {
                 MyUtility.Msg.WarningBox("< Bank Name > can not be empty!");
                 this.textBox4.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(this.txtcountry1.TextBox1.Text.ToString()))
+            if (MyUtility.Check.Empty(this.txtcountry1.TextBox1.Text.ToString()))
             {
                 MyUtility.Msg.WarningBox("< Country > can not be empty!");
                 this.txtcountry1.TextBox1.Focus();

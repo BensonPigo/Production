@@ -52,11 +52,12 @@
             this.txtcountry1 = new Sci.Production.Class.txtcountry();
             this.editBox1 = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
+            this.btmcont.SuspendLayout();
             this.SuspendLayout();
             // 
             // btmcont
             // 
-            this.btmcont.Location = new System.Drawing.Point(0, 352);
+            this.btmcont.Location = new System.Drawing.Point(0, 354);
             // 
             // label1
             // 
@@ -165,7 +166,7 @@
             this.textBox1.Location = new System.Drawing.Point(136, 13);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(198, 23);
-            this.textBox1.TabIndex = 10;
+            this.textBox1.TabIndex = 0;
             // 
             // checkBox1
             // 
@@ -175,7 +176,7 @@
             this.checkBox1.Location = new System.Drawing.Point(377, 12);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(72, 21);
-            this.checkBox1.TabIndex = 19;
+            this.checkBox1.TabIndex = 9;
             this.checkBox1.Text = "Default";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -187,7 +188,7 @@
             this.textBox2.Location = new System.Drawing.Point(136, 40);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(85, 23);
-            this.textBox2.TabIndex = 11;
+            this.textBox2.TabIndex = 1;
             // 
             // textBox3
             // 
@@ -198,7 +199,7 @@
             this.textBox3.Location = new System.Drawing.Point(136, 67);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(378, 23);
-            this.textBox3.TabIndex = 12;
+            this.textBox3.TabIndex = 2;
             // 
             // textBox4
             // 
@@ -209,7 +210,7 @@
             this.textBox4.Location = new System.Drawing.Point(136, 94);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(438, 23);
-            this.textBox4.TabIndex = 13;
+            this.textBox4.TabIndex = 3;
             // 
             // textBox5
             // 
@@ -220,7 +221,7 @@
             this.textBox5.Location = new System.Drawing.Point(136, 148);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(140, 23);
-            this.textBox5.TabIndex = 15;
+            this.textBox5.TabIndex = 5;
             // 
             // textBox6
             // 
@@ -230,7 +231,7 @@
             this.textBox6.Location = new System.Drawing.Point(136, 175);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(438, 23);
-            this.textBox6.TabIndex = 16;
+            this.textBox6.TabIndex = 6;
             // 
             // textBox7
             // 
@@ -240,7 +241,7 @@
             this.textBox7.Location = new System.Drawing.Point(217, 202);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(84, 23);
-            this.textBox7.TabIndex = 17;
+            this.textBox7.TabIndex = 7;
             // 
             // displayBox1
             // 
@@ -269,7 +270,7 @@
             this.txtcountry1.Location = new System.Drawing.Point(136, 121);
             this.txtcountry1.Name = "txtcountry1";
             this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 14;
+            this.txtcountry1.TabIndex = 4;
             this.txtcountry1.TextBox1Binding = "";
             // 
             // editBox1
@@ -281,7 +282,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(435, 60);
-            this.editBox1.TabIndex = 18;
+            this.editBox1.TabIndex = 8;
             // 
             // B04_BankData_Input
             // 
@@ -337,6 +338,7 @@
             this.Controls.SetChildIndex(this.txtcountry1, 0);
             this.Controls.SetChildIndex(this.editBox1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
+            this.btmcont.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
