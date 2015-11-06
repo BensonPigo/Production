@@ -24,10 +24,20 @@ namespace Sci.Production.Basic
 
         protected override DualResult OnRequery()
         {
-            string selectCommand = string.Format("select '{0}' as ID,a.ID as ArtworkTypeID, a.Seq, b.AccountNo, b.AddName,b.AddDate, b.EditName, b.EditDate from (select ID,Seq from ArtworkType where IsSubprocess = 1 or Classify = 'P' or Seq BETWEEN 'A' and 'Z') a left join (select ArtworkTypeID,AccountNo,AddName,AddDate,EditName,EditDate from LocalSupp_AccountNo where ID = '{0}') b on a.ID = b.ArtworkTypeID order by a.Seq", this.KeyValue1);
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            sp1.ParameterName = "@id";
+            sp1.Value = this.KeyValue1;
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+
+            string selectCommand = @"select @id as ID,a.ID as ArtworkTypeID, a.Seq, b.AccountNo, b.AddName,b.AddDate, b.EditName, b.EditDate 
+from (select ID,Seq from ArtworkType where IsSubprocess = 1 or Classify = 'P' or SystemType = 'P') a 
+left join (select ArtworkTypeID,AccountNo,AddName,AddDate,EditName,EditDate from LocalSupp_AccountNo where ID = @id) b on a.ID = b.ArtworkTypeID 
+order by a.Seq";
             Ict.DualResult returnResult;
             DataTable ArtworkTable = new DataTable();
-            returnResult = DBProxy.Current.Select(null, selectCommand, out ArtworkTable);
+            returnResult = DBProxy.Current.Select(null, selectCommand, cmds, out ArtworkTable);
             if (!returnResult)
             {
                 return returnResult;
@@ -63,7 +73,7 @@ namespace Sci.Production.Basic
             {
                 if (currentRecord.RowState == DataRowState.Modified)
                 {
-                    if (String.IsNullOrWhiteSpace(currentRecord["AccountNo"].ToString()))
+                    if (MyUtility.Check.Empty(currentRecord["AccountNo"]))
                     {
                         returnResult = DBProxy.Current.Delete(null, tableSchema, currentRecord);
                         if (!returnResult)
