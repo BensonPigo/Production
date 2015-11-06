@@ -11,8 +11,11 @@
     [APSLoginPwd]     VARCHAR (15)  CONSTRAINT [DF_MDivision_APSLoginPwd] DEFAULT ('') NULL,
     [SQLServerName]   VARCHAR (130) CONSTRAINT [DF_MDivision_SQLServerName] DEFAULT ('') NULL,
     [APSDatabaseName] VARCHAR (15)  CONSTRAINT [DF_MDivision_APSDatabaseName] DEFAULT ('') NULL,
+    [KeyWord]         VARCHAR (3)   CONSTRAINT [DF_MDivision_KeyWord] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_MDivision] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
