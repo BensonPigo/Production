@@ -23,45 +23,15 @@ namespace Sci.Production.Basic
 
         protected override void OnFormLoaded()
         {
-            //設定ComboBox顯示資料
-            //comboBox1
-            string selectCommand = string.Format("select distinct Year from Factory_TMS where ID = '{0}'", this.motherData["ID"].ToString());
-            Ict.DualResult returnResult;
-            DataTable yearTable = new DataTable();
-            if (returnResult = DBProxy.Current.Select(null, selectCommand, out yearTable))
-            {
-                this.comboBox1.DataSource = yearTable;
-                this.comboBox1.DisplayMember = "Year";
-                this.comboBox1.ValueMember = "Year";
-            }
-
-            //comboBox2
-            selectCommand = string.Format("select distinct ArtworkTypeID from Factory_TMS where ID = '{0}'", this.motherData["ID"].ToString());
-            DataTable artworkTable = new DataTable();
-            if (returnResult = DBProxy.Current.Select(null, selectCommand, out artworkTable))
-            {
-                this.comboBox2.DataSource = artworkTable;
-                this.comboBox2.DisplayMember = "ArtworkTypeID";
-                this.comboBox2.ValueMember = "ArtworkTypeID";
-            }
-
-            //comboBox3
-            selectCommand = string.Format("select distinct Year from Factory_WorkHour where ID = '{0}'", this.motherData["ID"].ToString());
-            DataTable yearTable2 = new DataTable();
-            if (returnResult = DBProxy.Current.Select(null, selectCommand, out yearTable2))
-            {
-                this.comboBox3.DataSource = yearTable2;
-                this.comboBox3.DisplayMember = "Year";
-                this.comboBox3.ValueMember = "Year";
-            }
-
-            //設定ComboBox預設值
-            this.comboBox1.SelectedValue = DateTime.Now.Year.ToString();
-            this.comboBox2.SelectedValue = "SEWING";
-            this.comboBox3.SelectedValue = DateTime.Now.Year.ToString();
-            
             //呼叫撈Grid資料Method
             this.SelectGridData();
+
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            sp1.ParameterName = "@id";
+            sp1.Value = motherData["ID"].ToString();
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
 
             //設定Grid1的顯示欄位
             this.grid1.IsEditingReadOnly = true;
@@ -80,35 +50,84 @@ namespace Sci.Production.Basic
                  .Text("Month", header: "Month", width: Widths.AnsiChars(2))
                  .Numeric("HalfMonth1", header: "1st half month work day", width: Widths.AnsiChars(3))
                  .Numeric("HalfMonth2", header: "2nd half month work day", width: Widths.AnsiChars(3));
-        }
 
-        private void comboBox1_Validated(object sender, EventArgs e)
-        {
-            this.SelectGridData();
-        }
 
-        private void comboBox2_Validated(object sender, EventArgs e)
-        {
-            this.SelectGridData();
-        }
+            //設定ComboBox顯示資料
+            //comboBox1
+            string selectCommand = "select distinct Year from Factory_TMS where ID = @id";
 
-        private void comboBox3_Validated(object sender, EventArgs e)
-        {
-            this.SelectGridData();
+            Ict.DualResult returnResult;
+            DataTable yearTable = new DataTable();
+            if (returnResult = DBProxy.Current.Select(null, selectCommand, cmds, out yearTable))
+            {
+                MyUtility.Tool.SetupCombox(comboBox1, 1, yearTable);
+            }
+
+            //comboBox2
+            selectCommand = "select distinct ArtworkTypeID from Factory_TMS where ID = @id";
+            DataTable artworkTable = new DataTable();
+            if (returnResult = DBProxy.Current.Select(null, selectCommand, cmds, out artworkTable))
+            {
+                MyUtility.Tool.SetupCombox(comboBox2, 1, artworkTable);
+            }
+
+            //comboBox3
+            selectCommand = "select distinct Year from Factory_WorkHour where ID = @id";
+            DataTable yearTable2 = new DataTable();
+            if (returnResult = DBProxy.Current.Select(null, selectCommand, cmds, out yearTable2))
+            {
+                MyUtility.Tool.SetupCombox(comboBox3, 1, yearTable2);
+            }
+
+            //設定ComboBox預設值
+            this.comboBox1.SelectedValue = DateTime.Now.Year.ToString();
+            this.comboBox2.SelectedValue = "SEWING";
+            this.comboBox3.SelectedValue = DateTime.Now.Year.ToString();
         }
 
         // 撈取Grid資料
         private void SelectGridData()
         {
-            string selectCommand1 = string.Format("select * from Factory_TMS where ID = '{0}' and Year = '{1}'  and ArtworkTypeID = '{2}'", this.motherData["ID"].ToString(), this.comboBox1.SelectedValue, this.comboBox2.SelectedValue);
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            sp1.ParameterName = "@id";
+            sp1.Value = motherData["ID"].ToString();
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+
+            string selectCommand1 = "select * from Factory_TMS where ID = @id";
             DataTable selectDataTable1;
-            DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
+            DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, cmds, out selectDataTable1);
             listControlBindingSource1.DataSource = selectDataTable1;
 
-            selectCommand1 = string.Format("select * from Factory_WorkHour where ID = '{0}'  and Year = '{1}'  ", this.motherData["ID"].ToString(), this.comboBox3.SelectedValue);
+            selectCommand1 = "select * from Factory_WorkHour where ID = @id";
             DataTable selectDataTable2;
-            DualResult selectResult2 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable2);
+            DualResult selectResult2 = DBProxy.Current.Select(null, selectCommand1, cmds, out selectDataTable2);
             listControlBindingSource2.DataSource = selectDataTable2;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+                CapacityFilter();
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+                CapacityFilter();
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox3.SelectedIndex != -1)
+            {
+                ((DataTable)listControlBindingSource2.DataSource).DefaultView.RowFilter = "Year = " + comboBox3.SelectedValue.ToString();
+            }
+        }
+
+        private void CapacityFilter()
+        {
+            ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = "Year = " + (comboBox1.SelectedIndex != -1 ? comboBox1.SelectedValue.ToString() : "0") + " AND ArtworkTypeID = '" + (comboBox2.SelectedIndex != -1 ? comboBox2.SelectedValue.ToString() : "") + "'";
         }
     }
 }
