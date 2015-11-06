@@ -1,16 +1,18 @@
 ﻿CREATE TABLE [dbo].[Phrase] (
-    [PhraseTypeName] VARCHAR (30)   CONSTRAINT [DF_Phrase_PhraseTypeName] DEFAULT ('') NOT NULL,
+    [PhraseTypeName] VARCHAR (50)   CONSTRAINT [DF_Phrase_PhraseTypeName] DEFAULT ('') NOT NULL,
     [Junk]           BIT            CONSTRAINT [DF_Phrase_Junk] DEFAULT ((0)) NULL,
-    [Name]           VARCHAR (30)   CONSTRAINT [DF_Phrase_Name] DEFAULT ('') NOT NULL,
+    [Name]           VARCHAR (50)   CONSTRAINT [DF_Phrase_Name] DEFAULT ('') NOT NULL,
     [Seq#]           SMALLINT       CONSTRAINT [DF_Phrase_Seq#] DEFAULT ((0)) NULL,
     [Description]    NVARCHAR (MAX) CONSTRAINT [DF_Phrase_Description] DEFAULT ('') NULL,
-    [Module]         VARCHAR (3)    CONSTRAINT [DF_Phrase_Module] DEFAULT ('') NULL,
+    [Module]         VARCHAR (20)   CONSTRAINT [DF_Phrase_Module] DEFAULT ('') NULL,
     [AddName]        VARCHAR (10)   CONSTRAINT [DF_Phrase_AddName] DEFAULT ('') NULL,
     [AddDate]        DATETIME       NULL,
     [EditName]       VARCHAR (10)   CONSTRAINT [DF_Phrase_EditName] DEFAULT ('') NULL,
     [EditDate]       DATETIME       NULL,
     CONSTRAINT [PK_Phrase] PRIMARY KEY CLUSTERED ([PhraseTypeName] ASC, [Name] ASC)
 );
+
+
 
 
 GO

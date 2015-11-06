@@ -1,10 +1,12 @@
 ﻿CREATE TABLE [dbo].[OperationDesc] (
-    [ID]      VARCHAR (20)   CONSTRAINT [DF_OperationDesc_ID] DEFAULT ('') NOT NULL,
+    [ID]      VARCHAR (50)   CONSTRAINT [DF_OperationDesc_ID] DEFAULT ('') NOT NULL,
     [DescKH]  NVARCHAR (200) CONSTRAINT [DF_OperationDesc_DescKH] DEFAULT ('') NULL,
     [DescVI]  NVARCHAR (200) CONSTRAINT [DF_OperationDesc_DescVI] DEFAULT ('') NULL,
     [DescCHS] NVARCHAR (200) CONSTRAINT [DF_OperationDesc_DescCHS] DEFAULT ('') NULL,
     CONSTRAINT [PK_OperationDesc] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
