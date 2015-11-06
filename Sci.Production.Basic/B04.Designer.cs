@@ -204,7 +204,7 @@
             this.textBox1.Location = new System.Drawing.Point(156, 15);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(66, 23);
-            this.textBox1.TabIndex = 10;
+            this.textBox1.TabIndex = 0;
             // 
             // textBox2
             // 
@@ -214,7 +214,7 @@
             this.textBox2.Location = new System.Drawing.Point(156, 42);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(120, 23);
-            this.textBox2.TabIndex = 11;
+            this.textBox2.TabIndex = 1;
             // 
             // textBox3
             // 
@@ -225,7 +225,7 @@
             this.textBox3.Location = new System.Drawing.Point(156, 96);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(317, 23);
-            this.textBox3.TabIndex = 13;
+            this.textBox3.TabIndex = 3;
             // 
             // textBox4
             // 
@@ -235,7 +235,7 @@
             this.textBox4.Location = new System.Drawing.Point(156, 123);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(220, 23);
-            this.textBox4.TabIndex = 14;
+            this.textBox4.TabIndex = 4;
             // 
             // textBox5
             // 
@@ -245,7 +245,7 @@
             this.textBox5.Location = new System.Drawing.Point(156, 150);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(220, 23);
-            this.textBox5.TabIndex = 15;
+            this.textBox5.TabIndex = 5;
             // 
             // editBox1
             // 
@@ -256,7 +256,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(400, 82);
-            this.editBox1.TabIndex = 16;
+            this.editBox1.TabIndex = 6;
             // 
             // checkBox1
             // 
@@ -266,7 +266,7 @@
             this.checkBox1.Location = new System.Drawing.Point(478, 15);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 20;
+            this.checkBox1.TabIndex = 10;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -278,7 +278,7 @@
             this.checkBox2.Location = new System.Drawing.Point(478, 42);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(92, 21);
-            this.checkBox2.TabIndex = 21;
+            this.checkBox2.TabIndex = 11;
             this.checkBox2.Text = "Use SBTS";
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
@@ -290,7 +290,7 @@
             this.checkBox3.Location = new System.Drawing.Point(478, 69);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(88, 21);
-            this.checkBox3.TabIndex = 22;
+            this.checkBox3.TabIndex = 12;
             this.checkBox3.Text = "Is Factory";
             this.checkBox3.UseVisualStyleBackColor = true;
             // 
@@ -301,7 +301,7 @@
             this.button1.Location = new System.Drawing.Point(589, 15);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(163, 30);
-            this.button1.TabIndex = 23;
+            this.button1.TabIndex = 13;
             this.button1.Text = "Accounting chart no";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -313,7 +313,7 @@
             this.button2.Location = new System.Drawing.Point(589, 52);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(163, 30);
-            this.button2.TabIndex = 24;
+            this.button2.TabIndex = 14;
             this.button2.Text = "Bank detail";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -325,7 +325,7 @@
             this.txtpayterm_fty1.Location = new System.Drawing.Point(156, 290);
             this.txtpayterm_fty1.Name = "txtpayterm_fty1";
             this.txtpayterm_fty1.Size = new System.Drawing.Size(384, 23);
-            this.txtpayterm_fty1.TabIndex = 18;
+            this.txtpayterm_fty1.TabIndex = 8;
             this.txtpayterm_fty1.TextBox1Binding = "";
             // 
             // txtcurrency1
@@ -337,7 +337,7 @@
             this.txtcurrency1.Location = new System.Drawing.Point(156, 263);
             this.txtcurrency1.Name = "txtcurrency1";
             this.txtcurrency1.Size = new System.Drawing.Size(40, 23);
-            this.txtcurrency1.TabIndex = 17;
+            this.txtcurrency1.TabIndex = 7;
             // 
             // txtcountry1
             // 
@@ -346,7 +346,7 @@
             this.txtcountry1.Location = new System.Drawing.Point(156, 69);
             this.txtcountry1.Name = "txtcountry1";
             this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 12;
+            this.txtcountry1.TabIndex = 2;
             this.txtcountry1.TextBox1Binding = "";
             // 
             // numericBox1
@@ -357,7 +357,7 @@
             this.numericBox1.Location = new System.Drawing.Point(156, 317);
             this.numericBox1.Name = "numericBox1";
             this.numericBox1.Size = new System.Drawing.Size(40, 23);
-            this.numericBox1.TabIndex = 25;
+            this.numericBox1.TabIndex = 9;
             // 
             // B04
             // 

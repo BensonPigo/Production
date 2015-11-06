@@ -50,28 +50,28 @@ namespace Sci.Production.Basic
 
         protected override bool ClickSaveBefore()
         {
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["Abb"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["Abb"]))
             {
                 MyUtility.Msg.WarningBox("< Abbreviation > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["CountryID"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["CountryID"]))
             {
                 MyUtility.Msg.WarningBox("< Nationality > can not be empty!");
                 this.txtcountry1.TextBox1.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["Name"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["Name"]))
             {
                 MyUtility.Msg.WarningBox("< Company > can not be empty!");
                 this.textBox3.Focus();
