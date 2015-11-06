@@ -1,22 +1,24 @@
 ﻿CREATE TABLE [dbo].[ShareExpense] (
-    [ShippingAPID] VARCHAR (13)   CONSTRAINT [DF_ShareExpense_ShippingAPID] DEFAULT ('') NOT NULL,
-    [BLNo]         VARCHAR (20)   CONSTRAINT [DF_ShareExpense_BLNo] DEFAULT ('') NOT NULL,
-    [WKNo]         VARCHAR (13)   CONSTRAINT [DF_ShareExpense_WKNo] DEFAULT ('') NOT NULL,
-    [InvNo]        VARCHAR (25)   CONSTRAINT [DF_ShareExpense_InvNo] DEFAULT ('') NOT NULL,
-    [Type]         VARCHAR (25)   CONSTRAINT [DF_ShareExpense_Type] DEFAULT ('') NULL,
-    [GW]           NUMERIC (9, 2) CONSTRAINT [DF_ShareExpense_GW] DEFAULT ((0)) NULL,
-    [CBM]          NUMERIC (9, 2) CONSTRAINT [DF_ShareExpense_CBM] DEFAULT ((0)) NULL,
-    [CurrencyID]   VARCHAR (3)    CONSTRAINT [DF_ShareExpense_CurrencyID] DEFAULT ('') NULL,
-    [Amount]       NUMERIC (9, 2) CONSTRAINT [DF_ShareExpense_Amount] DEFAULT ((0)) NULL,
-    [ShipModeID]   VARCHAR (10)   CONSTRAINT [DF_ShareExpense_ShipModeID] DEFAULT ('') NULL,
-    [ShareBase]    VARCHAR (1)    CONSTRAINT [DF_ShareExpense_ShareBase] DEFAULT ('') NULL,
-    [FtyWK]        BIT            CONSTRAINT [DF_ShareExpense_FtyWK] DEFAULT ((0)) NULL,
-    [AccountNo]    VARCHAR (8)    CONSTRAINT [DF_ShareExpense_AccountNo] DEFAULT ('') NOT NULL,
-    [AccountName]  VARCHAR (40)   CONSTRAINT [DF_ShareExpense_AccountName] DEFAULT ('') NULL,
-    [EditName]     VARCHAR (10)   CONSTRAINT [DF_ShareExpense_EditName] DEFAULT ('') NULL,
-    [EditDate]     DATETIME       NULL,
+    [ShippingAPID] VARCHAR (13)    CONSTRAINT [DF_ShareExpense_ShippingAPID] DEFAULT ('') NOT NULL,
+    [BLNo]         VARCHAR (20)    CONSTRAINT [DF_ShareExpense_BLNo] DEFAULT ('') NOT NULL,
+    [WKNo]         VARCHAR (13)    CONSTRAINT [DF_ShareExpense_WKNo] DEFAULT ('') NOT NULL,
+    [InvNo]        VARCHAR (25)    CONSTRAINT [DF_ShareExpense_InvNo] DEFAULT ('') NOT NULL,
+    [Type]         VARCHAR (25)    CONSTRAINT [DF_ShareExpense_Type] DEFAULT ('') NULL,
+    [GW]           NUMERIC (9, 2)  CONSTRAINT [DF_ShareExpense_GW] DEFAULT ((0)) NULL,
+    [CBM]          NUMERIC (9, 2)  CONSTRAINT [DF_ShareExpense_CBM] DEFAULT ((0)) NULL,
+    [CurrencyID]   VARCHAR (3)     CONSTRAINT [DF_ShareExpense_CurrencyID] DEFAULT ('') NULL,
+    [Amount]       NUMERIC (12, 2) CONSTRAINT [DF_ShareExpense_Amount] DEFAULT ((0)) NULL,
+    [ShipModeID]   VARCHAR (10)    CONSTRAINT [DF_ShareExpense_ShipModeID] DEFAULT ('') NULL,
+    [ShareBase]    VARCHAR (1)     CONSTRAINT [DF_ShareExpense_ShareBase] DEFAULT ('') NULL,
+    [FtyWK]        BIT             CONSTRAINT [DF_ShareExpense_FtyWK] DEFAULT ((0)) NULL,
+    [AccountNo]    VARCHAR (8)     CONSTRAINT [DF_ShareExpense_AccountNo] DEFAULT ('') NOT NULL,
+    [AccountName]  VARCHAR (40)    CONSTRAINT [DF_ShareExpense_AccountName] DEFAULT ('') NULL,
+    [EditName]     VARCHAR (10)    CONSTRAINT [DF_ShareExpense_EditName] DEFAULT ('') NULL,
+    [EditDate]     DATETIME        NULL,
     CONSTRAINT [PK_ShareExpense] PRIMARY KEY CLUSTERED ([ShippingAPID] ASC, [BLNo] ASC, [WKNo] ASC, [InvNo] ASC, [AccountNo] ASC)
 );
+
+
 
 
 GO

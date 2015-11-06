@@ -38,12 +38,10 @@
     [StdFarmInDay]        TINYINT        CONSTRAINT [DF_System_StdFarmInDay] DEFAULT ((0)) NULL,
     [VNMultiple]          NUMERIC (4, 2) CONSTRAINT [DF_System_VNMultiple] DEFAULT ((0)) NULL,
     [MtlLeadTime]         TINYINT        CONSTRAINT [DF_System_MtlLeadTime] DEFAULT ((0)) NULL,
-    [APSLoginId]          VARCHAR (15)   CONSTRAINT [DF_System_APSLoginId] DEFAULT ('') NULL,
-    [APSLoginPwd]         VARCHAR (15)   CONSTRAINT [DF_System_APSLoginPwd] DEFAULT ('') NULL,
-    [SQLServerName]       VARCHAR (130)  CONSTRAINT [DF_System_SQLServerName] DEFAULT ('') NULL,
-    [APSDatabaseName]     VARCHAR (15)   CONSTRAINT [DF_System_APSDatabaseName] DEFAULT ('') NULL,
     [MiscInspdate]        TINYINT        CONSTRAINT [DF_System_MiscInspdate] DEFAULT ((0)) NULL
 );
+
+
 
 
 GO
@@ -191,19 +189,19 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Material Le
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'APS SQL Server Login Id', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'APSLoginId';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'APS SQL Server PassWord', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'APSLoginPwd';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SQL Server Name', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'SQLServerName';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'APS Database Name', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'APSDatabaseName';
+
+
+
+GO
+
 
 
 GO
