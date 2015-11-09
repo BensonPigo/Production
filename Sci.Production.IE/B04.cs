@@ -15,35 +15,5 @@ namespace Sci.Production.IE
         {
             InitializeComponent();
         }
-
-        protected override void ClickNewAfter()
-        {
-            base.ClickNewAfter();
-            CurrentMaintain["Type"] = "CP";
-        }
-
-        protected override void ClickEditAfter()
-        {
-            base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
-        }
-
-        protected override bool ClickSaveBefore()
-        {
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
-            {
-                MyUtility.Msg.WarningBox("< ID > can not be empty!");
-                this.textBox1.Focus();
-                return false;
-            }
-
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
-            {
-                MyUtility.Msg.WarningBox("< Problem > can not be empty!");
-                this.textBox2.Focus();
-                return false;
-            }
-            return base.ClickSaveBefore();
-        }
     }
 }
