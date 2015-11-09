@@ -14,21 +14,13 @@ namespace Sci.Production.IE
             : base(menuitem)
         {
             InitializeComponent();
+            DefaultFilter = string.Format("MDivisionID = '{0}'",Sci.Env.User.Keyword);
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-
-            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("LBR", "Line Balancing (%)");
-            comboBox1_RowSource.Add("LLER", "Lean Line Eff. (%)");
-            comboBox1_RowSource.Add("EFF.", "Efficiency");
-            comboBox1_RowSource.Add("COPT", "Changeover Process Time");
-            comboBox1_RowSource.Add("COT", "Changeover Time");
-            comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
+            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "LBR,Line Balancing (%),LLER,Lean Line Eff. (%),EFF.,Efficiency,COPT,Changeover Process Time,COT,Changeover Time");
         }
 
         protected override void OnDetailEntered()
@@ -48,7 +40,7 @@ namespace Sci.Production.IE
         {
             base.ClickNewAfter();
             CurrentMaintain["EffectiveDate"] = DateTime.Today;
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
         }
 
         protected override void ClickEditAfter()
@@ -56,8 +48,6 @@ namespace Sci.Production.IE
             base.ClickEditAfter();
             this.dateBox1.ReadOnly = true;
             this.comboBox1.ReadOnly = true;
-            this.txtfactory1.ReadOnly = true;
-            this.txtfactory1.Enabled = false;
         }
 
         protected override void ClickCopyAfter()
@@ -68,73 +58,43 @@ namespace Sci.Production.IE
 
         protected override bool ClickSaveBefore()
         {
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["EffectiveDate"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["EffectiveDate"]))
             {
                 MyUtility.Msg.WarningBox("< Date > can not be empty!");
                 this.dateBox1.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["Type"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["Type"]))
             {
                 MyUtility.Msg.WarningBox("< Type > can not be empty!");
                 this.comboBox1.Focus();
                 return false;
             }
-
-            if (CurrentMaintain["Type"].ToString().Trim() != "COPT" && CurrentMaintain["Type"].ToString().Trim() != "COT")
-            {
-                if (String.IsNullOrWhiteSpace(CurrentMaintain["FactoryID"].ToString()))
-                {
-                    MyUtility.Msg.WarningBox("< Factory > can not be empty!");
-                    this.txtfactory1.Focus();
-                    return false;
-                }
-            }
-
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
-            {
-                DateTime effectiveDate = (DateTime)CurrentMaintain["EffectiveDate"];
-                string effectiveDateToString = effectiveDate.ToShortDateString();
-                string selectCommand = string.Format("select ID from ChgOverTarget where EffectiveDate = '{0}' and FactoryID = '{1}' and Type = '{2}'", effectiveDateToString, CurrentMaintain["FactoryID"].ToString().Trim(), CurrentMaintain["Type"].ToString().Trim());
-                if (MyUtility.Check.Seek(selectCommand, null))
-                {
-                    MyUtility.Msg.WarningBox(string.Format("Data is Duplicate!!"));
-                    return false;
-                }
-            }
-
             return base.ClickSaveBefore();
         }
 
-        protected override void ClickSaveAfter()
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            base.ClickSaveAfter();
-            this.txtfactory1.Enabled = true;
-        }
-
-        protected override void ClickUndo()
-        {
-            base.ClickUndo();
-            this.txtfactory1.Enabled = true;
-        }
-
-        private void comboBox1_Validated(object sender, EventArgs e)
-        {
-            if (this.EditMode)
+            if (comboBox1.SelectedIndex != -1)
             {
-                if ((CurrentMaintain["Type"].ToString().Trim() == "COPT" || CurrentMaintain["Type"].ToString().Trim() == "COT"))
+                switch (comboBox1.SelectedValue.ToString())
                 {
-                    this.txtfactory1.ReadOnly = true;
-                    CurrentMaintain["FactoryID"] = "";
-                    this.label6.Text = "Target (min)";
-                }
-                else
-                {
-                    this.txtfactory1.ReadOnly = false;
-                    this.label6.Text = "Target (%)";
+                    case "COPT":
+                        label6.Text = "Target (min)";
+                        break;
+                    case "COT":
+                        label6.Text = "Target (min)";
+                        break;
+                    default:
+                        label6.Text = "Target (%)";
+                        break;
                 }
             }
-        }
+            else
+            {
+                label6.Text = "Target";
+            }
+        }   
     }
 }

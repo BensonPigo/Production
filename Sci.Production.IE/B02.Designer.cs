@@ -34,8 +34,8 @@
             this.label6 = new Sci.Win.UI.Label();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.numericBox1 = new Sci.Win.UI.NumericBox();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -50,8 +50,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayBox1);
             this.detailcont.Controls.Add(this.numericBox1);
-            this.detailcont.Controls.Add(this.txtfactory1);
             this.detailcont.Controls.Add(this.comboBox1);
             this.detailcont.Controls.Add(this.dateBox1);
             this.detailcont.Controls.Add(this.label6);
@@ -93,16 +93,16 @@
             // label5
             // 
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(70, 133);
+            this.label5.Location = new System.Drawing.Point(352, 37);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(85, 23);
+            this.label5.Size = new System.Drawing.Size(18, 23);
             this.label5.TabIndex = 2;
-            this.label5.Text = "Factory";
+            this.label5.Text = "M";
             // 
             // label6
             // 
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(70, 180);
+            this.label6.Location = new System.Drawing.Point(70, 129);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(85, 23);
             this.label6.TabIndex = 3;
@@ -114,31 +114,20 @@
             this.dateBox1.Location = new System.Drawing.Point(161, 37);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 4;
+            this.dateBox1.TabIndex = 0;
             // 
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.White;
             this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Type", true));
-            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
             this.comboBox1.Location = new System.Drawing.Point(161, 84);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(188, 24);
-            this.comboBox1.TabIndex = 5;
-            this.comboBox1.Validated += new System.EventHandler(this.comboBox1_Validated);
-            // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.Location = new System.Drawing.Point(161, 133);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 6;
+            this.comboBox1.TabIndex = 1;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // numericBox1
             // 
@@ -146,7 +135,7 @@
             this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Target", true));
             this.numericBox1.DecimalPlaces = 2;
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(161, 180);
+            this.numericBox1.Location = new System.Drawing.Point(161, 129);
             this.numericBox1.Maximum = new decimal(new int[] {
             999999,
             0,
@@ -155,7 +144,17 @@
             this.numericBox1.MaxLength = 7;
             this.numericBox1.Name = "numericBox1";
             this.numericBox1.Size = new System.Drawing.Size(66, 23);
-            this.numericBox1.TabIndex = 7;
+            this.numericBox1.TabIndex = 2;
+            // 
+            // displayBox1
+            // 
+            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionID", true));
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(374, 37);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(40, 23);
+            this.displayBox1.TabIndex = 8;
             // 
             // B02
             // 
@@ -186,8 +185,8 @@
         private Win.UI.Label label4;
         private Win.UI.Label label3;
         private Win.UI.DateBox dateBox1;
-        private Class.txtfactory txtfactory1;
         private Win.UI.ComboBox comboBox1;
         private Win.UI.NumericBox numericBox1;
+        private Win.UI.DisplayBox displayBox1;
     }
 }
