@@ -53,7 +53,7 @@ namespace Sci.Production.Basic
         protected override bool ClickSaveBefore()
         {
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["InhouseOSP"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["InhouseOSP"]))
             {
                 MyUtility.Msg.WarningBox("< InHouse/OSP > can not be empty!");
                 this.comboBox1.Focus();
