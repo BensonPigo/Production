@@ -33,8 +33,8 @@ namespace Sci.Production.Basic
             this.grid1.IsEditingReadOnly = false;
             this.grid1.DataSource = bindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
-                 .Text("ID", header: "ID", width: Widths.AnsiChars(10))
-                 .Text("Description", header: "Description", width: Widths.AnsiChars(40));
+                 .Text("ID", header: "ID", width: Widths.AnsiChars(9))
+                 .Text("Description", header: "Description", width: Widths.AnsiChars(50));
         }
     }
 }
