@@ -60,8 +60,9 @@ order by td.Seq", masterID);
         {
             base.OnDetailEntered();
             displayBox2.Value = MyUtility.GetValue.Lookup(string.Format("select CdCodeID from Style where ID = '{0}' and SeasonID = '{1}' and BrandID = '{2}'", CurrentMaintain["StyleID"].ToString(), CurrentMaintain["SeasonID"].ToString(), CurrentMaintain["BrandID"].ToString()));
-            button1.Enabled = !this.EditMode && CurrentMaintain != null && PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID,"P01. Factory GSD","CanEdit");
-            button2.Enabled = !this.EditMode && CurrentMaintain != null && PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P01. Factory GSD", "CanEdit");
+            bool canEdit = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P01. Factory GSD", "CanEdit");
+            button1.Enabled = !this.EditMode && CurrentMaintain != null && canEdit;
+            button2.Enabled = !this.EditMode && CurrentMaintain != null && canEdit;
             button3.Enabled = !this.EditMode && CurrentMaintain != null;
             button8.Enabled = !this.EditMode && CurrentMaintain != null;
             button5.Enabled = CurrentMaintain != null;
@@ -109,8 +110,8 @@ order by td.Seq", masterID);
                                 dr["Mold"] = callNextForm.p01SelectOperationCode["MoldID"].ToString();
                                 dr["OperationMtlFactorID"] = callNextForm.p01SelectOperationCode["MtlFactorID"].ToString();
                                 dr["SeamLength"] = callNextForm.p01SelectOperationCode["SeamLength"].ToString();
-                                dr["SMV"] = Convert.ToDecimal(callNextForm.p01SelectOperationCode["SMV"]) * 60;
-                                dr["IETMSSMV"] = Convert.ToDecimal(callNextForm.p01SelectOperationCode["SMV"]);
+                                dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.p01SelectOperationCode["SMV"]) * 60;
+                                dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(callNextForm.p01SelectOperationCode["SMV"]);
                                 dr["Frequency"] = 1;
                                 dr.EndEdit();
                             }
@@ -145,31 +146,41 @@ order by td.Seq", masterID);
                         }
                         else
                         {
-                            DataRow opData;
-                            if (!MyUtility.Check.Seek(string.Format("select DescEN,SMV,MachineTypeID,SeamLength,Mold,MtlFactorID from Operation where CalibratedCode = 1 and ID = '{0}'", e.FormattedValue.ToString()), out opData))
+                            //sql參數
+                            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                            sp1.ParameterName = "@id";
+                            sp1.Value = e.FormattedValue.ToString();
+
+                            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                            cmds.Add(sp1);
+
+                            string sqlCmd = "select DescEN,SMV,MachineTypeID,SeamLength,Mold,MtlFactorID from Operation where CalibratedCode = 1 and ID = @id";
+                            DataTable opData;
+                            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out opData);
+                            if (result)
                             {
-                                MyUtility.Msg.WarningBox(string.Format("< OperationCode: {0} > not found!!!", e.FormattedValue.ToString()));
-                                dr["OperationID"] = "";
-                                dr["OperationDescEN"] = "";
-                                dr["MachineTypeID"] = "";
-                                dr["Mold"] = "";
-                                dr["OperationMtlFactorID"] = "";
-                                dr["Frequency"] = 0;
-                                dr["SeamLength"] = 0;
-                                dr["SMV"] = 0;
-                                dr["IETMSSMV"] = 0;
+                                if (opData.Rows.Count <= 0)
+                                {
+                                    MyUtility.Msg.WarningBox(string.Format("< OperationCode: {0} > not found!!!", e.FormattedValue.ToString()));
+                                    ChangeToEmptyData(dr);
+                                }
+                                else
+                                {
+                                    dr["OperationID"] = e.FormattedValue.ToString();
+                                    dr["OperationDescEN"] = opData.Rows[0]["DescEN"].ToString();
+                                    dr["MachineTypeID"] = opData.Rows[0]["MachineTypeID"].ToString();
+                                    dr["Mold"] = opData.Rows[0]["Mold"].ToString();
+                                    dr["OperationMtlFactorID"] = opData.Rows[0]["MtlFactorID"].ToString();
+                                    dr["Frequency"] = 1;
+                                    dr["SeamLength"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SeamLength"]);
+                                    dr["SMV"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SMV"]) * 60;
+                                    dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SMV"]);
+                                }
                             }
                             else
                             {
-                                dr["OperationID"] = e.FormattedValue.ToString();
-                                dr["OperationDescEN"] = opData["DescEN"].ToString();
-                                dr["MachineTypeID"] = opData["MachineTypeID"].ToString();
-                                dr["Mold"] = opData["Mold"].ToString();
-                                dr["OperationMtlFactorID"] = opData["MtlFactorID"].ToString();
-                                dr["Frequency"] = 1;
-                                dr["SeamLength"] = Convert.ToDecimal(opData["SeamLength"]);
-                                dr["SMV"] = Convert.ToDecimal(opData["SMV"]) * 60;
-                                dr["IETMSSMV"] = Convert.ToDecimal(opData["SMV"]);
+                                MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n"+result.ToString());
+                                ChangeToEmptyData(dr);
                             }
                         }
                         dr.EndEdit();
@@ -184,7 +195,7 @@ order by td.Seq", masterID);
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && Convert.ToDecimal(e.FormattedValue) != Convert.ToDecimal(dr["Frequency"]))
+                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["Frequency"]))
                     {
                         if (!MyUtility.Check.Empty(dr["OperationID"]) && dr["OperationID"].ToString().Substring(0, 2) != "--")
                         {
@@ -197,8 +208,8 @@ order by td.Seq", masterID);
                             }
                             else
                             {
-                                dr["IETMSSMV"] = Convert.ToDecimal(smv) * Convert.ToDecimal(dr["Frequency"]);
-                                dr["SMV"] = Convert.ToDecimal(smv) * Convert.ToDecimal(dr["Frequency"]) * 60;
+                                dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(smv) * MyUtility.Convert.GetDecimal(dr["Frequency"]);
+                                dr["SMV"] = MyUtility.Convert.GetDecimal(smv) * MyUtility.Convert.GetDecimal(dr["Frequency"]) * 60;
                             }
                         }
 
@@ -214,16 +225,16 @@ order by td.Seq", masterID);
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && Convert.ToDecimal(e.FormattedValue) != Convert.ToDecimal(dr["SMV"]))
+                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["SMV"]))
                     {
                         dr["SMV"] = e.FormattedValue.ToString();
-                        if (e.FormattedValue.ToString() == "0")
+                        if (MyUtility.Convert.GetDecimal(e.FormattedValue) == 0)
                         {
                             dr["PcsPerHour"] = 0;
                         }
                         else
                         {
-                            dr["PcsPerHour"] = Convert.ToDouble(dr["SMV"]) == 0 ? 0 : MyUtility.Math.Round((3600.0 / Convert.ToDouble(dr["SMV"])), 1);
+                            dr["PcsPerHour"] = MyUtility.Convert.GetDouble(dr["SMV"]) == 0 ? 0 : MyUtility.Math.Round((3600.0 / MyUtility.Convert.GetDouble(dr["SMV"])), 1);
                         }
                         dr.EndEdit();
                     }
@@ -294,19 +305,37 @@ order by td.Seq", masterID);
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["Mold"].ToString())
+                    if (MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["Mold"]))
                     {
-                        DataRow moldData;
-                        if (!MyUtility.Check.Seek(string.Format("select ID,DescEN from Mold where Junk = 0 and ID = '{0}'", e.FormattedValue.ToString()), out moldData))
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                        sp1.ParameterName = "@id";
+                        sp1.Value = MyUtility.Convert.GetString(e.FormattedValue);
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+
+                        DataTable moldData;
+                        string sqlCmd = "select ID,DescEN from Mold where Junk = 0 and ID = @id";
+                        DualResult result = DBProxy.Current.Select(null,sqlCmd,cmds,out moldData);
+                        if (result)
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Attachment: {0} > not found!!!", e.FormattedValue.ToString()));
-                            dr["Mold"] = "";
-                            e.Cancel = true;
-                            return;
+                            if (moldData.Rows.Count <= 0)
+                            {
+                                MyUtility.Msg.WarningBox(string.Format("< Attachment: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
+                                dr["Mold"] = "";
+                                e.Cancel = true;
+                                return;
+                            }
+                            else
+                            {
+                                dr["Mold"] = MyUtility.Convert.GetString(e.FormattedValue);
+                            }
                         }
                         else
                         {
-                            dr["Mold"] = e.FormattedValue.ToString();
+                            MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n"+result.ToString());
+                            dr["Mold"] = "";
                         }
                     }
                 }
@@ -329,6 +358,19 @@ order by td.Seq", masterID);
                 .Numeric("Sewer", header: "Sewer", integer_places: 2, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("IETMSSMV", header: "Std. SMV", integer_places: 3, decimal_places: 4, iseditingreadonly: true)
                 .Numeric("SeamLength", header: "Sewing length", integer_places: 7, decimal_places: 2, iseditingreadonly: true);
+        }
+
+        private void ChangeToEmptyData(DataRow dr)
+        {
+            dr["OperationID"] = "";
+            dr["OperationDescEN"] = "";
+            dr["MachineTypeID"] = "";
+            dr["Mold"] = "";
+            dr["OperationMtlFactorID"] = "";
+            dr["Frequency"] = 0;
+            dr["SeamLength"] = 0;
+            dr["SMV"] = 0;
+            dr["IETMSSMV"] = 0;
         }
 
         protected override void ClickNewAfter()
@@ -422,14 +464,14 @@ order by td.Seq", masterID);
             }
             #endregion
             //回寫表頭的Total Sewing Time與表身的Sewer
-            decimal ttlSewingTime = Convert.ToDecimal(((DataTable)detailgridbs.DataSource).Compute("sum(SMV)", ""));
-            CurrentMaintain["TotalSewingTime"] = Convert.ToInt32(ttlSewingTime);
-            decimal allSewer = MyUtility.Check.Empty(CurrentMaintain["NumberSewer"])?0.0m: Convert.ToDecimal(CurrentMaintain["NumberSewer"].ToString());
+            decimal ttlSewingTime = MyUtility.Convert.GetDecimal(((DataTable)detailgridbs.DataSource).Compute("sum(SMV)", ""));
+            CurrentMaintain["TotalSewingTime"] = MyUtility.Convert.GetInt(ttlSewingTime);
+            decimal allSewer = MyUtility.Check.Empty(CurrentMaintain["NumberSewer"]) ? 0.0m : MyUtility.Convert.GetDecimal(CurrentMaintain["NumberSewer"]);
             foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
-                    dr["Sewer"] = ttlSewingTime == 0 ? 0 : MyUtility.Math.Round(allSewer * (Convert.ToDecimal(dr["SMV"].ToString()) / ttlSewingTime), 1);
+                    dr["Sewer"] = ttlSewingTime == 0 ? 0 : MyUtility.Math.Round(allSewer * (MyUtility.Convert.GetDecimal(dr["SMV"]) / ttlSewingTime), 1);
                 }
             }
             return base.ClickSaveBefore();
@@ -438,13 +480,29 @@ order by td.Seq", masterID);
         //Style
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item;
-            string sqlCmd = "select ID,SeasonID,Description,BrandID from Style where Junk = 0 order by ID";
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            sp1.ParameterName = "@brandid";
+            sp1.Value = MyUtility.Convert.GetString(CurrentMaintain["BrandID"]);
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+
+            string sqlCmd = "select ID,SeasonID,Description,BrandID,UKey from Style where Junk = 0 order by ID";
             if (!MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {
-                sqlCmd = string.Format("select ID,SeasonID,Description,BrandID,UKey from Style where Junk = 0 and BrandID = '{0}' order by ID", CurrentMaintain["BrandID"].ToString());
+                sqlCmd = "select ID,SeasonID,Description,BrandID,UKey from Style where Junk = 0 and BrandID = @brandid order by ID";
             }
-            item = new Sci.Win.Tools.SelectItem(sqlCmd, "16,10,50,8", this.Text);
+
+            DataTable styleData;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleData);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
+                return;
+            }
+
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(styleData, "ID,SeasonID,Description,BrandID", "16,10,50,8", this.Text,headercaptions: "Style,Season,Description,Brand");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             IList<DataRow> selectedData = item.GetSelecteds();
@@ -452,9 +510,9 @@ order by td.Seq", masterID);
             CurrentMaintain["SeasonID"] = (selectedData[0])["SeasonID"].ToString();
             CurrentMaintain["BrandID"] = (selectedData[0])["BrandID"].ToString();
 
-            sqlCmd = string.Format("select Location from Style_Location where StyleUkey = {0}", (selectedData[0])["UKey"].ToString());
+            sqlCmd = string.Format("select Location from Style_Location where StyleUkey = {0}", MyUtility.Convert.GetInt((selectedData[0])["UKey"]).ToString());
             DataTable LocationData;
-            DualResult result = DBProxy.Current.Select(null,sqlCmd,out LocationData);
+            result = DBProxy.Current.Select(null,sqlCmd,out LocationData);
             if (result)
             {
                 if (LocationData.Rows.Count == 1)
@@ -478,7 +536,6 @@ order by td.Seq", masterID);
         //Art. Sum
         private void button5_Click(object sender, EventArgs e)
         {
-            //Sci.Production.IE.P01_ArtworkSummary callNextForm = new Sci.Production.IE.P01_ArtworkSummary("TimeStudy_Detail", CurrentMaintain);
             Sci.Production.IE.P01_ArtworkSummary callNextForm = new Sci.Production.IE.P01_ArtworkSummary("TimeStudy_Detail", Convert.ToInt64(CurrentMaintain["ID"]));
             DialogResult result = callNextForm.ShowDialog(this);
         }
@@ -615,8 +672,29 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
                 }
             }
 
+            #region 設定sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+            sp1.ParameterName = "@id";
+            sp1.Value = textBox1.Text;
+            sp2.ParameterName = "@seasonid";
+            sp2.Value = txtseason1.Text;
+            sp3.ParameterName = "@brandid";
+            sp3.Value = textBox2.Text;
+            sp4.ParameterName = "@location";
+            sp4.Value = comboBox1.Text;
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+            cmds.Add(sp2);
+            cmds.Add(sp3);
+            cmds.Add(sp4);
+            #endregion
+
             DataTable ietmsData;
-            string sqlCmd = string.Format(@"select id.SEQ,id.OperationID,o.DescEN as OperationDescEN,id.Annotation,
+            string sqlCmd = @"select id.SEQ,id.OperationID,o.DescEN as OperationDescEN,id.Annotation,
 iif(round(id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency*60,3) = 0,0,round(3600/round(id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency*60,3),1)) as PcsPerHour,
 id.Frequency as Sewer,o.MachineTypeID,id.Frequency,
 id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency as IETMSSMV,id.Mold,o.MtlFactorID as OperationMtlFactorID,
@@ -626,8 +704,8 @@ inner join IETMS i on s.IETMSID = i.ID and s.IETMSVersion = i.Version
 inner join IETMS_Detail id on i.IETMSUkey = id.IETMSUkey
 left join Operation o on id.OperationID = o.ID
 left join MtlFactor m on o.MtlFactorID = m.ID and m.Type = 'F'
-where s.ID = '{0}' and s.SeasonID = '{1}' and s.BrandID = '{2}' and id.Location = '{3}'
-order by id.SEQ", textBox1.Text, txtseason1.Text, textBox2.Text, comboBox1.Text);
+where s.ID = @id and s.SeasonID = @seasonid and s.BrandID = @brandid and id.Location = @location
+order by id.SEQ";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out ietmsData);
             if (!result)
@@ -665,9 +743,40 @@ order by id.SEQ", textBox1.Text, txtseason1.Text, textBox2.Text, comboBox1.Text)
         //Std. GSD List
         private void button8_Click(object sender, EventArgs e)
         {
-            long styleUkey = Convert.ToInt64(MyUtility.GetValue.Lookup(string.Format("select Ukey from Style where ID = '{0}' and SeasonID = '{1}' and BrandID = '{2}'", CurrentMaintain["StyleID"].ToString(), CurrentMaintain["SeasonID"].ToString(), CurrentMaintain["BrandID"].ToString())));
-            Sci.Production.PublicForm.StdGSDList callNextForm = new Sci.Production.PublicForm.StdGSDList(styleUkey);
-            DialogResult result = callNextForm.ShowDialog(this);
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+            sp1.ParameterName = "@id";
+            sp1.Value = CurrentMaintain["StyleID"].ToString();
+            sp2.ParameterName = "@seasonid";
+            sp2.Value = CurrentMaintain["SeasonID"].ToString();
+            sp3.ParameterName = "@brandid";
+            sp3.Value = CurrentMaintain["BrandID"].ToString();
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+            cmds.Add(sp2);
+            cmds.Add(sp3);
+
+            string sqlCmd = "select Ukey from Style where ID = @id and SeasonID = @seasonid and BrandID = @brandid";
+            DataTable styleUkey;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleUkey);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
+                return;
+            }
+
+            if (styleUkey.Rows.Count > 0)
+            {
+                Sci.Production.PublicForm.StdGSDList callNextForm = new Sci.Production.PublicForm.StdGSDList(MyUtility.Convert.GetLong(styleUkey.Rows[0]["UKey"]));
+                DialogResult dresult = callNextForm.ShowDialog(this);
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox("Style not found!!");
+            }
         }
 
         //Insert、Append
@@ -679,19 +788,19 @@ order by id.SEQ", textBox1.Text, txtseason1.Text, textBox2.Text, comboBox1.Text)
                 int seq = 0;
                 if (((DataTable)detailgridbs.DataSource).DefaultView.Count > 1)
                 {
-                    seq = Convert.ToInt32(((DataTable)detailgridbs.DataSource).Compute("max(seq)", ""));
+                    seq = MyUtility.Convert.GetInt(((DataTable)detailgridbs.DataSource).Compute("max(seq)", ""));
                 }
-                CurrentDetailData["Seq"] = Convert.ToString(seq + 10).PadLeft(4, '0');
+                CurrentDetailData["Seq"] = MyUtility.Convert.GetString(seq + 10).PadLeft(4, '0');
             }
             else
             {
                 DataRow dr = DetailDatas[index + 1];
                 CurrentDetailData["Seq"] = dr["Seq"];
-                int seq = Convert.ToInt32(dr["Seq"]);
+                int seq = MyUtility.Convert.GetInt(dr["Seq"]);
                 for (int i = index + 1; i < DetailDatas.Count; i++)
                 {
                     seq += 10;
-                    DetailDatas[i]["Seq"] = Convert.ToString(seq).PadLeft(4, '0');
+                    DetailDatas[i]["Seq"] = MyUtility.Convert.GetString(seq).PadLeft(4, '0');
                 }
             }
         }
@@ -728,11 +837,11 @@ order by id.SEQ", textBox1.Text, txtseason1.Text, textBox2.Text, comboBox1.Text)
                 ((DataTable)detailgridbs.DataSource).Rows.InsertAt(newRow, ++newIndex);
             }
 
-            int seq = Convert.ToInt32(lastRow["Seq"]);
+            int seq = MyUtility.Convert.GetInt(lastRow["Seq"]);
             for (int i = lastIndex + 1; i < DetailDatas.Count; i++)
             {
                 seq += 10;
-                DetailDatas[i]["Seq"] = Convert.ToString(seq).PadLeft(4, '0');
+                DetailDatas[i]["Seq"] = MyUtility.Convert.GetString(seq).PadLeft(4, '0');
             }
         }
 
