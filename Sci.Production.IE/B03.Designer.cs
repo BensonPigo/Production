@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.editBox1 = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,11 +47,11 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.editBox1);
+            this.detailcont.Controls.Add(this.displayBox1);
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.textBox2);
-            this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Size = new System.Drawing.Size(675, 357);
             // 
             // detailbtm
@@ -65,27 +65,6 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(683, 424);
-            // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(140, 48);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(50, 23);
-            this.textBox1.TabIndex = 10;
-            // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(140, 100);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(380, 23);
-            this.textBox2.TabIndex = 11;
             // 
             // label3
             // 
@@ -109,13 +88,38 @@
             // 
             this.checkBox1.AutoSize = true;
             this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkBox1.IsSupportEditMode = false;
             this.checkBox1.Location = new System.Drawing.Point(340, 48);
             this.checkBox1.Name = "checkBox1";
+            this.checkBox1.ReadOnly = true;
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
             this.checkBox1.TabIndex = 12;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // displayBox1
+            // 
+            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(140, 48);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(50, 23);
+            this.displayBox1.TabIndex = 13;
+            // 
+            // editBox1
+            // 
+            this.editBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
+            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editBox1.IsSupportEditMode = false;
+            this.editBox1.Location = new System.Drawing.Point(140, 100);
+            this.editBox1.Multiline = true;
+            this.editBox1.Name = "editBox1";
+            this.editBox1.ReadOnly = true;
+            this.editBox1.Size = new System.Drawing.Size(406, 50);
+            this.editBox1.TabIndex = 14;
             // 
             // B03
             // 
@@ -124,6 +128,8 @@
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B03";
             this.Text = "B03. Line Mapping not hit target reason";
@@ -147,7 +153,7 @@
         private Win.UI.CheckBox checkBox1;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.EditBox editBox1;
+        private Win.UI.DisplayBox displayBox1;
     }
 }
