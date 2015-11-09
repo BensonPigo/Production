@@ -15,6 +15,8 @@ namespace Sci.Production.Basic
         {
             InitializeComponent();
             this.Text = "Shipping Mark-(" + data["id"].ToString().Trim() + ")";
+            edit.Visible = false;
+            save.Visible = false;
         }
     }
 }
