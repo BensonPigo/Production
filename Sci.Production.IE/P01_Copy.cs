@@ -5,13 +5,16 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Ict;
+using Ict.Win;
+using Sci.Data;
 
 namespace Sci.Production.IE
 {
     public partial class P01_Copy : Sci.Win.Subs.Base
     {
         private DataRow masterData;
-        public DataRow P01CopyStyleData;
+        public DataTable P01CopyStyleData;
         public P01_Copy(DataRow MasterData)
         {
             InitializeComponent();
@@ -66,7 +69,34 @@ namespace Sci.Production.IE
         {
             if (!MyUtility.Check.Empty(textBox1.Text) && !MyUtility.Check.Empty(txtseason1.Text))
             {
-                textBox2.Text = MyUtility.GetValue.Lookup(string.Format("select BrandID from Style where ID = '{0}' and SeasonID = '{1}'", textBox1.Text, txtseason1.Text));
+                //sql參數
+                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+                sp1.ParameterName = "@id";
+                sp1.Value = textBox1.Text;
+                sp2.ParameterName = "@seasonid";
+                sp2.Value = txtseason1.Text;
+
+                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                cmds.Add(sp1);
+                cmds.Add(sp2);
+                DataTable styleBrand;
+                string sqlCmd = "select BrandID from Style where ID = @id and SeasonID = @seasonid";
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleBrand);
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox("SQL connection fail!!\r\n"+result.ToString());
+                    return;
+                }
+
+                if (styleBrand.Rows.Count > 0)
+                {
+                    textBox2.Text = MyUtility.Convert.GetString(styleBrand.Rows[0]["BrandID"]);
+                }
+                else
+                {
+                    textBox2.Text = "";
+                }
             }
         }
 
@@ -102,11 +132,38 @@ namespace Sci.Production.IE
             }
 
             //檢查輸入的資料是否存在
-            string sqlCmd = string.Format(@"select s.ID, s.SeasonID, s.BrandID,sl.Location
+            #region sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+            sp1.ParameterName = "@id";
+            sp1.Value = textBox1.Text;
+            sp2.ParameterName = "@seasonid";
+            sp2.Value = txtseason1.Text;
+            sp3.ParameterName = "@brandid";
+            sp3.Value = textBox2.Text;
+            sp4.ParameterName = "@location";
+            sp4.Value = comboBox1.SelectedValue;
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+            cmds.Add(sp2);
+            cmds.Add(sp3);
+            cmds.Add(sp4);
+            #endregion
+            string sqlCmd = @"select s.ID, s.SeasonID, s.BrandID,sl.Location
 from Style s
 inner join Style_Location sl on s.Ukey = sl.StyleUkey
-where s.ID = '{0}' and s.SeasonID = '{1}' and s.BrandID = '{2}' and sl.Location = '{3}'", textBox1.Text, txtseason1.Text, textBox2.Text, comboBox1.SelectedValue);
-            if (!MyUtility.Check.Seek(sqlCmd, out P01CopyStyleData))
+where s.ID = @id and s.SeasonID = @seasonid and s.BrandID = @brandid and sl.Location = @location";
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out P01CopyStyleData);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("SQL connection fail!!\r\n" + result.ToString());
+                return;
+            }
+            if (P01CopyStyleData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not exist!!");
                 return;
