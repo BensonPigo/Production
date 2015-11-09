@@ -24,14 +24,14 @@ namespace Sci.Production.Basic
 
         protected override bool ClickSaveBefore()
         {
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("< ID > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["Name"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["Name"]))
             {
                 MyUtility.Msg.WarningBox("< Term > can not be empty!");
                 this.textBox2.Focus();
