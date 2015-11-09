@@ -386,10 +386,10 @@ order by td.Seq", masterID);
             DialogResult result = callNextForm.ShowDialog(this);
             if (result == System.Windows.Forms.DialogResult.OK)
             {
-                styleID = callNextForm.P01CopyStyleData["ID"].ToString();
-                seasonID = callNextForm.P01CopyStyleData["SeasonID"].ToString();
-                brandID = callNextForm.P01CopyStyleData["BrandID"].ToString();
-                comboType = callNextForm.P01CopyStyleData["Location"].ToString();
+                styleID = callNextForm.P01CopyStyleData.Rows[0]["ID"].ToString();
+                seasonID = callNextForm.P01CopyStyleData.Rows[0]["SeasonID"].ToString();
+                brandID = callNextForm.P01CopyStyleData.Rows[0]["BrandID"].ToString();
+                comboType = callNextForm.P01CopyStyleData.Rows[0]["Location"].ToString();
                 return true;
             }
             else
@@ -707,7 +707,7 @@ left join MtlFactor m on o.MtlFactorID = m.ID and m.Type = 'F'
 where s.ID = @id and s.SeasonID = @seasonid and s.BrandID = @brandid and id.Location = @location
 order by id.SEQ";
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out ietmsData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ietmsData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query ietms fail!\r\n"+result.ToString());
