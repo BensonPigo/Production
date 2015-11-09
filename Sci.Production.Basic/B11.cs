@@ -20,7 +20,7 @@ namespace Sci.Production.Basic
         {
             base.OnDetailEntered();
             //帶出Group/Quota的全名
-            this.displayBox5.Text = MyUtility.GetValue.Lookup("Name", "QuotaRegion                                       " + CurrentMaintain["QuotaArea"].ToString(), "Reason", "ReasonTypeID+ID");
+            this.displayBox5.Text = MyUtility.GetValue.Lookup(string.Format("select Name from Reason where ReasonTypeID = 'QuotaRegion' and ID = '{0}'", CurrentMaintain["QuotaArea"].ToString()));
 
             //在編輯模式下，下列這些欄位都不可以被修改
             if (this.EditMode)
