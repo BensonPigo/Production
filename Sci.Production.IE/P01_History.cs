@@ -22,8 +22,6 @@ namespace Sci.Production.IE
         {
             InitializeComponent();
             masterData = MasterData;
-            //comboxbs1 = new BindingSource(comboBox1_RowSource, null);
-            //comboBox1.DataSource = comboxbs1;
             this.Text = "History -- " + masterData["StyleID"].ToString();
         }
 
@@ -32,12 +30,46 @@ namespace Sci.Production.IE
             base.OnFormLoaded();
             displayBox1.Value = masterData["StyleID"].ToString();
             displayBox2.Value = masterData["SeasonID"].ToString();
-            displayBox3.Value = MyUtility.GetValue.Lookup(string.Format("select CdCodeID from Style where ID = '{0}' and SeasonID = '{1}' and BrandID = '{2}'", masterData["StyleID"].ToString(), masterData["SeasonID"].ToString(), masterData["BrandID"].ToString()));
             displayBox4.Value = masterData["ComboType"].ToString();
-            numericBox1.Value = Convert.ToInt32(masterData["TotalSewingTime"]);
-            numericBox2.Value = Convert.ToInt32(masterData["NumberSewer"]);
+            numericBox1.Value = MyUtility.Convert.GetInt(masterData["TotalSewingTime"]);
+            numericBox2.Value = MyUtility.Convert.GetInt(masterData["NumberSewer"]);
 
-            string sqlCmd = string.Format(@"select th.ID,th.TotalSewingTime,th.NumberSewer,thd.Seq,thd.OperationID,o.DescEN,
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+            sp1.ParameterName = "@styleid";
+            sp1.Value = masterData["StyleID"].ToString();
+            sp2.ParameterName = "@seasonid";
+            sp2.Value = masterData["SeasonID"].ToString();
+            sp3.ParameterName = "@brandid";
+            sp3.Value = masterData["BrandID"].ToString();
+            sp4.ParameterName = "@combotype";
+            sp4.Value = masterData["ComboType"].ToString();
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+            cmds.Add(sp2);
+            cmds.Add(sp3);
+            cmds.Add(sp4);
+
+            //撈CD Code
+            DataTable cdCode;
+            string sqlCmd = "select CdCodeID from Style where ID = @styleid and SeasonID = @seasonid and BrandID = @brandid";
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out cdCode);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Query data fail!\r\n" + result.ToString());
+                displayBox3.Value = "";
+            }
+            else
+            {
+                displayBox3.Value = cdCode.Rows.Count > 0 ? cdCode.Rows[0]["CdCodeID"].ToString() : "";
+            }
+
+            //撈Grid資料
+            sqlCmd = @"select th.ID,th.TotalSewingTime,th.NumberSewer,thd.Seq,thd.OperationID,o.DescEN,
 thd.Annotation,thd.Frequency,o.MtlFactorID,thd.SMV,thd.MachineTypeID,thd.Mold,
 thd.PcsPerHour,thd.Sewer,thd.IETMSSMV,
 LEFT(th.Phase+REPLICATE(' ',10),10)+' VER-'+th.Version as Status,
@@ -45,9 +77,9 @@ IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3,4))) as 
 from TimeStudyHistory th
 left join TimeStudyHistory_Detail thd on th.ID = thd.ID
 left join Operation o on thd.OperationID = o.ID
-where StyleID = '{0}' and SeasonID = '{1}' and ComboType = '{2}'
-order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3,4))),th.Version,thd.Seq", masterData["StyleID"].ToString(), masterData["SeasonID"].ToString(), masterData["ComboType"].ToString());
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+where StyleID = @styleid and SeasonID = @seasonid and BrandID = @brandid and ComboType = @combotype
+order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3,4))),th.Version,thd.Seq";
+            result = DBProxy.Current.Select(null, sqlCmd, cmds, out gridData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query data fail!\r\n" + result.ToString());
@@ -87,8 +119,8 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
             {
                 gridData.DefaultView.RowFilter = "Status = '" + comboBox1.SelectedValue.ToString() + "'";
 
-                numericBox1.Value = Convert.ToInt32(gridData.DefaultView[0]["TotalSewingTime"]);
-                numericBox2.Value = Convert.ToInt32(gridData.DefaultView[0]["NumberSewer"]);
+                numericBox1.Value = MyUtility.Convert.GetInt(gridData.DefaultView[0]["TotalSewingTime"]);
+                numericBox2.Value = MyUtility.Convert.GetInt(gridData.DefaultView[0]["NumberSewer"]);
             }
             else
             {
@@ -104,7 +136,7 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
             Sci.Production.IE.P01_ArtworkSummary callNextForm;
             if (gridData.DefaultView.Count > 0)
             {
-                callNextForm = new Sci.Production.IE.P01_ArtworkSummary("TimeStudyHistory_Detail", Convert.ToInt64(gridData.DefaultView[0]["ID"]));
+                callNextForm = new Sci.Production.IE.P01_ArtworkSummary("TimeStudyHistory_Detail", MyUtility.Convert.GetLong(gridData.DefaultView[0]["ID"]));
             }
             else
             {
