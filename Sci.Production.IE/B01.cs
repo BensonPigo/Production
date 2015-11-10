@@ -19,14 +19,7 @@ namespace Sci.Production.IE
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-
-            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("A", "All");
-            comboBox1_RowSource.Add("N", "New");
-            comboBox1_RowSource.Add("R", "Repeat");
-            comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
+            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "A,All,N,New,R,Repeat");
         }
 
         protected override void ClickNewAfter()
@@ -40,31 +33,50 @@ namespace Sci.Production.IE
         {
             base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
+            textBox4.ReadOnly = true;
         }
 
         protected override bool ClickSaveBefore()
         {
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["Code"]))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
+            {
+                MyUtility.Msg.WarningBox("< Brand > can not be empty!");
+                textBox4.Focus();
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(CurrentMaintain["Description"]))
             {
                 MyUtility.Msg.WarningBox("< Activities > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["UseFor"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["UseFor"]))
             {
                 MyUtility.Msg.WarningBox("< New/Repeat > can not be empty!");
                 this.comboBox1.Focus();
                 return false;
             }
             return base.ClickSaveBefore();
+        }
+
+        //Brand
+        private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WHERE Junk=0  ORDER BY Id";
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,50,50", textBox4.Text, false, ",");
+
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            textBox4.Text = item.GetSelectedString();
         }
     }
 }

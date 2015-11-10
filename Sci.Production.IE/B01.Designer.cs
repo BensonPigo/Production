@@ -41,6 +41,8 @@
             this.radioButton1 = new Sci.Win.UI.RadioButton();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.textBox4 = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -56,6 +58,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.textBox4);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.comboBox1);
             this.detailcont.Controls.Add(this.radioPanel1);
@@ -111,9 +115,9 @@
             // label6
             // 
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(218, 108);
+            this.label6.Location = new System.Drawing.Point(222, 108);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(62, 23);
+            this.label6.Size = new System.Drawing.Size(58, 23);
             this.label6.TabIndex = 3;
             this.label6.Text = "Base On";
             // 
@@ -129,7 +133,7 @@
             // textBox1
             // 
             this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Code", true));
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox1.Location = new System.Drawing.Point(149, 28);
             this.textBox1.Name = "textBox1";
@@ -197,7 +201,6 @@
             // 
             this.comboBox1.BackColor = System.Drawing.Color.White;
             this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "UseFor", true));
-            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
@@ -211,17 +214,37 @@
             this.checkBox1.AutoSize = true;
             this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(309, 30);
+            this.checkBox1.Location = new System.Drawing.Point(449, 30);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
             this.checkBox1.TabIndex = 10;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(238, 28);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(42, 23);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "Brand";
+            // 
+            // textBox4
+            // 
+            this.textBox4.BackColor = System.Drawing.Color.White;
+            this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
+            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox4.Location = new System.Drawing.Point(283, 28);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(66, 23);
+            this.textBox4.TabIndex = 13;
+            this.textBox4.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(690, 457);
-            this.DefaultOrder = "ID";
+            this.DefaultOrder = "BrandID,Code";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
@@ -259,5 +282,7 @@
         private Win.UI.Label label5;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox textBox4;
     }
 }
