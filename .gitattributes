@@ -511,6 +511,8 @@ Sci.Production.Class/txtlocalitem.Designer.cs -text
 Sci.Production.Class/txtlocalitem.cs -text
 Sci.Production.Class/txtmachinetype.cs -text
 Sci.Production.Class/txtmachinetype.designer.cs -text
+Sci.Production.Class/txtmfactory.Designer.cs -text
+Sci.Production.Class/txtmfactory.cs -text
 Sci.Production.Class/txtmisc.cs -text
 Sci.Production.Class/txtmisc.designer.cs -text
 Sci.Production.Class/txtmiscbrand.cs -text
