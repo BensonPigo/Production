@@ -59,7 +59,36 @@ order by td.Seq", masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            displayBox2.Value = MyUtility.GetValue.Lookup(string.Format("select CdCodeID from Style where ID = '{0}' and SeasonID = '{1}' and BrandID = '{2}'", CurrentMaintain["StyleID"].ToString(), CurrentMaintain["SeasonID"].ToString(), CurrentMaintain["BrandID"].ToString()));
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+            sp1.ParameterName = "@styleid";
+            sp1.Value = CurrentMaintain["StyleID"].ToString();
+            sp2.ParameterName = "@seasonid";
+            sp2.Value = CurrentMaintain["SeasonID"].ToString();
+            sp3.ParameterName = "@brandid";
+            sp3.Value = CurrentMaintain["BrandID"].ToString();
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+            cmds.Add(sp2);
+            cmds.Add(sp3);
+            //撈CD Code
+            DataTable cdCode;
+            string sqlCmd = "select CdCodeID from Style where ID = @styleid and SeasonID = @seasonid and BrandID = @brandid";
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out cdCode);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Query CdCode data fail!\r\n" + result.ToString());
+                displayBox2.Value = "";
+            }
+            else
+            {
+                displayBox2.Value = cdCode.Rows.Count > 0 ? cdCode.Rows[0]["CdCodeID"].ToString() : "";
+            }
+
             bool canEdit = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P01. Factory GSD", "CanEdit");
             button1.Enabled = !this.EditMode && CurrentMaintain != null && canEdit;
             button2.Enabled = !this.EditMode && CurrentMaintain != null && canEdit;
@@ -450,11 +479,42 @@ order by td.Seq", masterID);
             }
             #endregion
             #region 檢查輸入的資料是否存在系統
-            if (!MyUtility.Check.Seek(string.Format("select sl.Location from Style s, Style_Location sl where s.ID = '{0}' and s.SeasonID = '{1}' and s.BrandID = '{2}' and s.Ukey = sl.StyleUkey and sl.Location = '{3}'", CurrentMaintain["StyleID"].ToString(), CurrentMaintain["SeasonID"].ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["ComboType"].ToString())))
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+            sp1.ParameterName = "@styleid";
+            sp1.Value = CurrentMaintain["StyleID"].ToString();
+            sp2.ParameterName = "@seasonid";
+            sp2.Value = CurrentMaintain["SeasonID"].ToString();
+            sp3.ParameterName = "@brandid";
+            sp3.Value = CurrentMaintain["BrandID"].ToString();
+            sp4.ParameterName = "@combotype";
+            sp4.Value = CurrentMaintain["ComboType"].ToString();
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+            cmds.Add(sp2);
+            cmds.Add(sp3);
+            cmds.Add(sp4);
+            string sqlCmd = "select sl.Location from Style s, Style_Location sl where s.ID = @styleid and s.SeasonID = @seasonid and s.BrandID = @brandid and s.Ukey = sl.StyleUkey and sl.Location = @combotype";
+            DataTable LocationData;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out LocationData);
+            if (!result)
             {
-                MyUtility.Msg.WarningBox("This style not correct, can't save");
+                MyUtility.Msg.WarningBox("SQL connection fail!!\r\n"+result.ToString());
                 return false;
             }
+            else
+            {
+                if (LocationData.Rows.Count <= 0)
+                {
+                    MyUtility.Msg.WarningBox("This style not correct, can't save");
+                    return false;
+                }
+            }
+            
             #endregion
             #region 檢查表身不可為空
             if (((DataTable)detailgridbs.DataSource).DefaultView.Count == 0)

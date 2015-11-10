@@ -326,7 +326,7 @@
             this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox2.Location = new System.Drawing.Point(393, 64);
             this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(100, 23);
+            this.displayBox2.Size = new System.Drawing.Size(70, 23);
             this.displayBox2.TabIndex = 12;
             // 
             // numericBox2
