@@ -107,6 +107,12 @@
     <Compile Include="B01_CapacityWorkDay.Designer.cs">
       <DependentUpon>B01_CapacityWorkDay.cs</DependentUpon>
     </Compile>
+    <Compile Include="B03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B03.Designer.cs">
+      <DependentUpon>B03.cs</DependentUpon>
+    </Compile>
     <Compile Include="B04.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -130,12 +136,6 @@
     </Compile>
     <Compile Include="B04_BankData_Input.Designer.cs">
       <DependentUpon>B04_BankData_Input.cs</DependentUpon>
-    </Compile>
-    <Compile Include="B06.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="B06.Designer.cs">
-      <DependentUpon>B06.cs</DependentUpon>
     </Compile>
     <Compile Include="B07.cs">
       <SubType>Form</SubType>
@@ -227,6 +227,10 @@
       <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
       <Name>Sci.Production.Class</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
+      <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
+      <Name>Sci.Production.PublicPrg</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -234,6 +238,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B01_CapacityWorkDay.resx">
       <DependentUpon>B01_CapacityWorkDay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B03.resx">
+      <DependentUpon>B03.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B04.resx">
       <DependentUpon>B04.cs</DependentUpon>
@@ -246,9 +253,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B04_BankData_Input.resx">
       <DependentUpon>B04_BankData_Input.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="B06.resx">
-      <DependentUpon>B06.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B07.resx">
       <DependentUpon>B07.cs</DependentUpon>
