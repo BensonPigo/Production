@@ -24,21 +24,41 @@ namespace Sci.Production.IE
         {
             base.OnFormLoaded();
 
-            string sqlCmd = string.Format(@"select s.Picture1,s.Picture2,s1.PicPath
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+            
+            sp1.ParameterName = "@styleid";
+            sp1.Value = masterData["StyleID"].ToString();
+            sp2.ParameterName = "@seasonid";
+            sp2.Value = masterData["SeasonID"].ToString();
+            sp3.ParameterName = "@brandid";
+            sp3.Value = masterData["BrandID"].ToString();
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+            cmds.Add(sp2);
+            cmds.Add(sp3);
+
+            string sqlCmd = @"select s.Picture1,s.Picture2,s1.PicPath
 from Style s
 left join System s1 on 1=1
-where s.ID = '{0}' and s.SeasonID = '{1}' and s.BrandID = '{2}'", masterData["StyleID"].ToString(), masterData["SeasonID"].ToString(), masterData["BrandID"].ToString());
+where s.ID = @styleid and s.SeasonID = @seasonid and s.BrandID = @brandid";
             DataTable styleData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out styleData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query Style fail!\r\n"+result.ToString());
                 return;
             }
-            displayBox1.Value = styleData.Rows[0]["Picture1"].ToString().Trim();
-            displayBox2.Value = styleData.Rows[0]["Picture2"].ToString().Trim();
-            pictureBox1.ImageLocation = styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture1"].ToString().Trim();
-            pictureBox2.ImageLocation = styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture2"].ToString().Trim();
+            if (styleData.Rows.Count > 0)
+            {
+                displayBox1.Value = styleData.Rows[0]["Picture1"].ToString().Trim();
+                displayBox2.Value = styleData.Rows[0]["Picture2"].ToString().Trim();
+                pictureBox1.ImageLocation = styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture1"].ToString().Trim();
+                pictureBox2.ImageLocation = styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture2"].ToString().Trim();
+            }
         }
     }
 }
