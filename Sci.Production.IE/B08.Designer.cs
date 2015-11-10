@@ -35,14 +35,15 @@
             this.label7 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.textBox3 = new Sci.Win.UI.TextBox();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.button1 = new Sci.Win.UI.Button();
+            this.label1 = new Sci.Win.UI.Label();
+            this.displayBox2 = new Sci.Win.UI.DisplayBox();
             this.txtsewingline1 = new Sci.Production.Class.txtsewingline();
+            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -53,17 +54,19 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(714, 395);
+            this.detail.Size = new System.Drawing.Size(803, 395);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtmfactory1);
+            this.detailcont.Controls.Add(this.displayBox2);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.txtsewingline1);
             this.detailcont.Controls.Add(this.dateBox2);
             this.detailcont.Controls.Add(this.dateBox1);
             this.detailcont.Controls.Add(this.textBox3);
             this.detailcont.Controls.Add(this.textBox2);
             this.detailcont.Controls.Add(this.textBox1);
-            this.detailcont.Controls.Add(this.displayBox1);
             this.detailcont.Controls.Add(this.label9);
             this.detailcont.Controls.Add(this.label8);
             this.detailcont.Controls.Add(this.label7);
@@ -71,19 +74,19 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(714, 357);
+            this.detailcont.Size = new System.Drawing.Size(803, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(714, 38);
+            this.detailbtm.Size = new System.Drawing.Size(803, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(714, 395);
+            this.browse.Size = new System.Drawing.Size(803, 395);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(722, 424);
+            this.tabs.Size = new System.Drawing.Size(811, 424);
             // 
             // label3
             // 
@@ -148,16 +151,6 @@
             this.label9.TabIndex = 6;
             this.label9.Text = "Line";
             // 
-            // displayBox1
-            // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(132, 32);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(70, 23);
-            this.displayBox1.TabIndex = 7;
-            // 
             // textBox1
             // 
             this.textBox1.BackColor = System.Drawing.Color.White;
@@ -206,40 +199,55 @@
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
             this.dateBox2.TabIndex = 12;
             // 
-            // button1
+            // label1
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(578, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(128, 30);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Import From Excel";
-            this.button1.UseVisualStyleBackColor = true;
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(253, 32);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(16, 23);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "M";
+            // 
+            // displayBox2
+            // 
+            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionID", true));
+            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox2.Location = new System.Drawing.Point(273, 32);
+            this.displayBox2.Name = "displayBox2";
+            this.displayBox2.Size = new System.Drawing.Size(40, 23);
+            this.displayBox2.TabIndex = 15;
             // 
             // txtsewingline1
             // 
             this.txtsewingline1.BackColor = System.Drawing.Color.White;
             this.txtsewingline1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtsewingline1.factoryobjectName = this.displayBox1;
+            this.txtsewingline1.factoryobjectName = null;
             this.txtsewingline1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtsewingline1.Location = new System.Drawing.Point(479, 132);
             this.txtsewingline1.Name = "txtsewingline1";
             this.txtsewingline1.Size = new System.Drawing.Size(60, 23);
             this.txtsewingline1.TabIndex = 13;
             // 
+            // txtmfactory1
+            // 
+            this.txtmfactory1.BackColor = System.Drawing.Color.White;
+            this.txtmfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory1.Location = new System.Drawing.Point(132, 32);
+            this.txtmfactory1.Name = "txtmfactory1";
+            this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtmfactory1.TabIndex = 16;
+            // 
             // B08
             // 
-            this.ClientSize = new System.Drawing.Size(722, 457);
-            this.Controls.Add(this.button1);
-            this.DefaultOrder = "ID";
+            this.ClientSize = new System.Drawing.Size(811, 457);
+            this.DefaultOrder = "FactoryID,ID";
             this.IsSupportCopy = false;
             this.Name = "B08";
             this.Text = "B08. Employee data maintain";
             this.UniqueExpress = "FactoryID,ID";
             this.WorkAlias = "Employee";
-            this.Controls.SetChildIndex(this.tabs, 0);
-            this.Controls.SetChildIndex(this.button1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
@@ -260,7 +268,6 @@
         private Win.UI.TextBox textBox3;
         private Win.UI.TextBox textBox2;
         private Win.UI.TextBox textBox1;
-        private Win.UI.DisplayBox displayBox1;
         private Win.UI.Label label9;
         private Win.UI.Label label8;
         private Win.UI.Label label7;
@@ -269,6 +276,8 @@
         private Win.UI.Label label4;
         private Win.UI.Label label3;
         private Class.txtsewingline txtsewingline1;
-        private Win.UI.Button button1;
+        private Win.UI.DisplayBox displayBox2;
+        private Win.UI.Label label1;
+        private Class.txtmfactory txtmfactory1;
     }
 }

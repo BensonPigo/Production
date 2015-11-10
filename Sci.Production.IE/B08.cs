@@ -15,13 +15,31 @@ namespace Sci.Production.IE
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
+            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            //新增Import From Barcode按鈕
+            Sci.Win.UI.Button btn = new Sci.Win.UI.Button();
+            btn.Text = "Import From Excel";
+            btn.Click += new EventHandler(btn_Click);
+            browsetop.Controls.Add(btn);
+            btn.Size = new Size(165, 30);//預設是(80,30)
+        }
+
+        //Import From Barcode按鈕的Click事件
+        private void btn_Click(object sender, EventArgs e)
+        {
+            
         }
 
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
         }
 
         protected override void ClickEditAfter()
@@ -32,28 +50,35 @@ namespace Sci.Production.IE
 
         protected override bool ClickSaveBefore()
         {
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["FactoryID"]))
+            {
+                MyUtility.Msg.WarningBox("< Factory > can not be empty!");
+                txtmfactory1.Focus();
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("< Employee# > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["Name"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["Name"]))
             {
                 MyUtility.Msg.WarningBox("< Nick Name > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["OnBoardDate"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["OnBoardDate"]))
             {
                 MyUtility.Msg.WarningBox("< Hired on > can not be empty!");
                 this.dateBox1.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["SewingLineID"].ToString()))
+            if (MyUtility.Check.Empty(CurrentMaintain["SewingLineID"]))
             {
                 MyUtility.Msg.WarningBox("< Line > can not be empty!");
                 this.txtsewingline1.Focus();
