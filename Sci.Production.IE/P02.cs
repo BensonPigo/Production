@@ -13,14 +13,14 @@ namespace Sci.Production.IE
 {
     public partial class P02 : Sci.Win.Tems.Input1
     {
-        private string dateTimeMask = "", emptyDTMask = "", empmask, dtmask,type;
+        private string dateTimeMask = "", emptyDTMask = "", empmask, dtmask, type;
         public P02(ToolStripMenuItem menuitem, string Type)
             : base(menuitem)
         {
             InitializeComponent();
             type = Type;
             this.Text = type == "1" ? "P02. Style Changeover Monitor" : "P021. Style Changeover Monitor (History)";
-            this.DefaultFilter = type == "1" ? string.Format("FactoryID = '{0}' AND Status <> 'Closed'", Sci.Env.User.Factory) : string.Format("FactoryID = '{0}' AND Status = 'Closed'", Sci.Env.User.Factory);
+            this.DefaultFilter = type == "1" ? string.Format("MDivisionID = '{0}' AND Status <> 'Closed'", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND Status = 'Closed'", Sci.Env.User.Keyword);
             //組InLine date的mask
             for (int i = 0; i < Sci.Env.Cfg.DateTimeStringFormat.Length; i++)
             {
@@ -31,28 +31,13 @@ namespace Sci.Production.IE
             }
             textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Inline", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
             textBox4.Mask = dateTimeMask;
-
-            if (type == "2")
-            {
-                this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewOutputDate1", true));
-                this.dateBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewOutputDate2", true));
-                this.dateBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewOutputDate3", true));
-                this.numericBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Efficiency1", true));
-                this.numericBox8.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Efficiency2", true));
-                this.numericBox10.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Efficiency3", true));
-                this.numericBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RFT1", true));
-                this.numericBox9.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RFT2", true));
-                this.numericBox11.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RFT3", true));
-            }
         }
 
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
             label18.Text = CurrentMaintain["Type"].ToString() == "N" ? "New" : "Repeat";
-            if (type == "1")
-            {
-                string sqlCmd = string.Format(@"with tmpSO
+            string sqlCmd = string.Format(@"with tmpSO
 as
 (
 select distinct s.OutputDate,s.Manpower,s.ID
@@ -85,67 +70,66 @@ isnull((select top (1) iif(InspectQty = 0,0,Round((InspectQty-RejectQty)/Inspect
 from SummaryData
 order by OutputDate
 ", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["ComboType"].ToString(), CurrentMaintain["SewingLineID"].ToString(), CurrentMaintain["FactoryID"].ToString());
-                DataTable sewingOutput;
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out sewingOutput);
-                if (result)
+            DataTable sewingOutput;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out sewingOutput);
+            if (result)
+            {
+                int rec = 0;
+                foreach (DataRow dr in sewingOutput.Rows)
                 {
-                    int rec = 0;
-                    foreach (DataRow dr in sewingOutput.Rows)
+                    rec += 1;
+                    switch (rec)
                     {
-                        rec += 1;
-                        switch (rec)
-                        {
-                            case 1:
-                                dateBox2.Value = Convert.ToDateTime(dr["OutputDate"]);
-                                numericBox6.Value = Convert.ToDecimal(dr["Eff"]);
-                                numericBox7.Value = Convert.ToDecimal(dr["Rft"]);
-                                break;
-                            case 2:
-                                dateBox3.Value = Convert.ToDateTime(dr["OutputDate"]);
-                                numericBox8.Value = Convert.ToDecimal(dr["Eff"]);
-                                numericBox9.Value = Convert.ToDecimal(dr["Rft"]);
-                                break;
-                            case 3:
-                                dateBox4.Value = Convert.ToDateTime(dr["OutputDate"]);
-                                numericBox10.Value = Convert.ToDecimal(dr["Eff"]);
-                                numericBox11.Value = Convert.ToDecimal(dr["Rft"]);
-                                break;
-                            default:
-                                break;
-                        }
+                        case 1:
+                            dateBox2.Value = Convert.ToDateTime(dr["OutputDate"]);
+                            numericBox6.Value = Convert.ToDecimal(dr["Eff"]);
+                            numericBox7.Value = Convert.ToDecimal(dr["Rft"]);
+                            break;
+                        case 2:
+                            dateBox3.Value = Convert.ToDateTime(dr["OutputDate"]);
+                            numericBox8.Value = Convert.ToDecimal(dr["Eff"]);
+                            numericBox9.Value = Convert.ToDecimal(dr["Rft"]);
+                            break;
+                        case 3:
+                            dateBox4.Value = Convert.ToDateTime(dr["OutputDate"]);
+                            numericBox10.Value = Convert.ToDecimal(dr["Eff"]);
+                            numericBox11.Value = Convert.ToDecimal(dr["Rft"]);
+                            break;
+                        default:
+                            break;
                     }
+                }
 
-                    if (rec < 3)
+                if (rec < 3)
+                {
+                    switch (rec)
                     {
-                        switch (rec)
-                        {
-                            case 0:
-                                dateBox2.Value = null;
-                                numericBox6.Value = 0;
-                                numericBox7.Value = 0;
-                                dateBox3.Value = null;
-                                numericBox8.Value = 0;
-                                numericBox9.Value = 0;
-                                dateBox4.Value = null;
-                                numericBox10.Value = 0;
-                                numericBox11.Value = 0;
-                                break;
-                            case 1:
-                                dateBox3.Value = null;
-                                numericBox8.Value = 0;
-                                numericBox9.Value = 0;
-                                dateBox4.Value = null;
-                                numericBox10.Value = 0;
-                                numericBox11.Value = 0;
-                                break;
-                            case 2:
-                                dateBox4.Value = null;
-                                numericBox10.Value = 0;
-                                numericBox11.Value = 0;
-                                break;
-                            default:
-                                break;
-                        }
+                        case 0:
+                            dateBox2.Value = null;
+                            numericBox6.Value = 0;
+                            numericBox7.Value = 0;
+                            dateBox3.Value = null;
+                            numericBox8.Value = 0;
+                            numericBox9.Value = 0;
+                            dateBox4.Value = null;
+                            numericBox10.Value = 0;
+                            numericBox11.Value = 0;
+                            break;
+                        case 1:
+                            dateBox3.Value = null;
+                            numericBox8.Value = 0;
+                            numericBox9.Value = 0;
+                            dateBox4.Value = null;
+                            numericBox10.Value = 0;
+                            numericBox11.Value = 0;
+                            break;
+                        case 2:
+                            dateBox4.Value = null;
+                            numericBox10.Value = 0;
+                            numericBox11.Value = 0;
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -177,7 +161,7 @@ order by OutputDate
                 }
                 else
                 {
-                    string newValue = (MyUtility.Check.Empty(textValue.Substring(0, 2))?"00":Convert.ToInt32(textValue.Substring(0, 2)) < 10 ? "0" + Convert.ToInt32(textValue.Substring(0, 2)).ToString() : textValue.Substring(0, 2)) + (MyUtility.Check.Empty(textValue.Substring(2, 2))?"00":Convert.ToInt32(textValue.Substring(2, 2)) < 10 ? "0" + Convert.ToInt32(textValue.Substring(2, 2)).ToString() : textValue.Substring(2, 2));
+                    string newValue = (MyUtility.Check.Empty(textValue.Substring(0, 2)) ? "00" : Convert.ToInt32(textValue.Substring(0, 2)) < 10 ? "0" + Convert.ToInt32(textValue.Substring(0, 2)).ToString() : textValue.Substring(0, 2)) + (MyUtility.Check.Empty(textValue.Substring(2, 2)) ? "00" : Convert.ToInt32(textValue.Substring(2, 2)) < 10 ? "0" + Convert.ToInt32(textValue.Substring(2, 2)).ToString() : textValue.Substring(2, 2));
                     prodTextValue.Text = newValue;
                 }
             }
@@ -199,16 +183,28 @@ order by OutputDate
                 {
                     if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check where ID = '{0}'", CurrentMaintain["ID"].ToString())))
                     {
-                        string insertCmd = string.Format(@"insert into ChgOver_Check (ID,DayBe4Inline,BaseOn,ChgOverCheckListID)
-select {0},DaysBefore,BaseOn,ID from ChgOverCheckList where (UseFor = 'N' or UseFor = 'A') and Junk = 0", CurrentMaintain["ID"].ToString());
-                        DualResult result = DBProxy.Current.Execute(null, insertCmd);
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+                        sp1.ParameterName = "@id";
+                        sp1.Value = CurrentMaintain["ID"].ToString();
+                        sp2.ParameterName = "@orderid";
+                        sp2.Value = CurrentMaintain["OrderID"].ToString();
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+                        cmds.Add(sp2);
+
+                        string insertCmd = @"insert into ChgOver_Check (ID,DayBe4Inline,BaseOn,ChgOverCheckListID)
+select @id,DaysBefore,BaseOn,ID from ChgOverCheckList where (UseFor = 'N' or UseFor = 'A') and BrandID = (select BrandID from Orders where ID = @orderid) and Junk = 0";
+                        DualResult result = DBProxy.Current.Execute(null, insertCmd, cmds);
                         if (!result)
                         {
-                            MyUtility.Msg.ErrorBox("Insert ChgOver_Problem fail!!\r\n" + result.ToString());
+                            MyUtility.Msg.ErrorBox("Insert ChgOver_CheckList fail!!\r\n" + result.ToString());
                             return;
                         }
                     }
-                    
+
                 }
                 Sci.Production.IE.P02_NewCheckList callNextForm = new Sci.Production.IE.P02_NewCheckList(CurrentMaintain["Status"].ToString() == "New", CurrentMaintain["ID"].ToString(), null, null);
                 callNextForm.ShowDialog(this);
@@ -219,12 +215,24 @@ select {0},DaysBefore,BaseOn,ID from ChgOverCheckList where (UseFor = 'N' or Use
                 {
                     if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check where ID = '{0}'", CurrentMaintain["ID"].ToString())))
                     {
-                        string insertCmd = string.Format(@"insert into ChgOver_Check (ID,DayBe4Inline,BaseOn,ChgOverCheckListID)
-select {0},DaysBefore,BaseOn,ID from ChgOverCheckList where (UseFor = 'R' or UseFor = 'A') and Junk = 0", CurrentMaintain["ID"].ToString());
-                        DualResult result = DBProxy.Current.Execute(null, insertCmd);
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+                        sp1.ParameterName = "@id";
+                        sp1.Value = CurrentMaintain["ID"].ToString();
+                        sp2.ParameterName = "@orderid";
+                        sp2.Value = CurrentMaintain["OrderID"].ToString();
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+                        cmds.Add(sp2);
+
+                        string insertCmd = @"insert into ChgOver_Check (ID,DayBe4Inline,BaseOn,ChgOverCheckListID)
+select @id,DaysBefore,BaseOn,ID from ChgOverCheckList where (UseFor = 'R' or UseFor = 'A') and BrandID = (select BrandID from Orders where ID = @orderid) and Junk = 0";
+                        DualResult result = DBProxy.Current.Execute(null, insertCmd, cmds);
                         if (!result)
                         {
-                            MyUtility.Msg.ErrorBox("Insert ChgOver_Problem fail!!\r\n" + result.ToString());
+                            MyUtility.Msg.ErrorBox("Insert ChgOver_CheckList fail!!\r\n" + result.ToString());
                             return;
                         }
                     }
@@ -251,7 +259,7 @@ select {0},ID,'{1}',GETDATE() from IEReason where Type = 'CP' and Junk = 0", Cur
                         return;
                     }
                 }
-                
+
             }
             Sci.Production.IE.P02_Problem callNextForm = new Sci.Production.IE.P02_Problem(CurrentMaintain["Status"].ToString() != "Closed", CurrentMaintain["ID"].ToString(), null, null);
             callNextForm.ShowDialog(this);
@@ -291,6 +299,6 @@ select {0},ID,'{1}',GETDATE() from IEReason where Type = 'CP' and Junk = 0", Cur
             OnDetailEntered();
             EnsureToolbarExt();
         }
-        
+
     }
 }

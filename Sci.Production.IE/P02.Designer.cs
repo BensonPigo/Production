@@ -95,6 +95,8 @@
             this.label29 = new Sci.Win.UI.Label();
             this.label30 = new Sci.Win.UI.Label();
             this.textBox4 = new Sci.Win.UI.TextBox();
+            this.label31 = new Sci.Win.UI.Label();
+            this.displayBox10 = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -109,6 +111,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayBox10);
+            this.detailcont.Controls.Add(this.label31);
             this.detailcont.Controls.Add(this.textBox4);
             this.detailcont.Controls.Add(this.label30);
             this.detailcont.Controls.Add(this.label29);
@@ -854,11 +858,30 @@
             this.textBox4.Size = new System.Drawing.Size(167, 23);
             this.textBox4.TabIndex = 61;
             // 
+            // label31
+            // 
+            this.label31.Lines = 0;
+            this.label31.Location = new System.Drawing.Point(552, 4);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(20, 23);
+            this.label31.TabIndex = 62;
+            this.label31.Text = "M";
+            // 
+            // displayBox10
+            // 
+            this.displayBox10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox10.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionID", true));
+            this.displayBox10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox10.Location = new System.Drawing.Point(576, 4);
+            this.displayBox10.Name = "displayBox10";
+            this.displayBox10.Size = new System.Drawing.Size(40, 23);
+            this.displayBox10.TabIndex = 63;
+            // 
             // P02
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(803, 552);
-            this.DefaultOrder = "SewingLineID,Inline";
+            this.DefaultOrder = "FactoryID,SewingLineID,Inline";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
@@ -951,5 +974,7 @@
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape2;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
         private Win.UI.TextBox textBox4;
+        private Win.UI.DisplayBox displayBox10;
+        private Win.UI.Label label31;
     }
 }
