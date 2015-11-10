@@ -5,12 +5,16 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Ict;
+using Ict.Win;
+using Sci.Data;
 
 namespace Sci.Production.IE
 {
     public partial class P03_CopyFromOtherStyle : Sci.Win.Subs.Base
     {
         public DataRow P03CopyLineMapping;
+
         public P03_CopyFromOtherStyle()
         {
             InitializeComponent();
@@ -49,14 +53,45 @@ namespace Sci.Production.IE
                 return;
             }
 
-            if (!MyUtility.Check.Seek(string.Format("select * from LineMapping where StyleID = '{0}' and SeasonID = '{1}' and BrandID = '{2}' and Version = {3}", style, season, brand, version), out P03CopyLineMapping))
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+            sp1.ParameterName = "@styleid";
+            sp1.Value = style;
+            sp2.ParameterName = "@seasonid";
+            sp2.Value = season;
+            sp3.ParameterName = "@brandid";
+            sp3.Value = brand;
+            sp4.ParameterName = "@version";
+            sp4.Value = version;
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+            cmds.Add(sp2);
+            cmds.Add(sp3);
+            cmds.Add(sp4);
+            string sqlCmd = "select * from LineMapping where StyleID = @styleid and SeasonID = @seasonid and BrandID = @brandid and Version = @version";
+            DataTable Linemap;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out Linemap);
+            if (!result)
             {
-                MyUtility.Msg.WarningBox("Data not found!");
+                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
                 return;
             }
             else
             {
-                DialogResult = System.Windows.Forms.DialogResult.OK;
+                if (Linemap.Rows.Count <= 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                    return;
+                }
+                else
+                {
+                    P03CopyLineMapping = Linemap.Rows[0];
+                    DialogResult = System.Windows.Forms.DialogResult.OK;
+                }
             }
         }
     }

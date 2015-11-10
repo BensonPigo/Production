@@ -15,6 +15,7 @@ namespace Sci.Production.IE
     public partial class P03 : Sci.Win.Tems.Input6
     {
         private object totalGSD, totalCycleTime;
+        private DataTable EmployeeData;
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -97,21 +98,21 @@ where ld.ID = {0} order by ld.No", masterID);
                     {
                         if (e.FormattedValue.ToString() != dr["Cycle"].ToString())
                         {
-                            if (Convert.ToDecimal(e.FormattedValue) < 0)
+                            if (MyUtility.Convert.GetDecimal(e.FormattedValue) < 0)
                             {
                                 MyUtility.Msg.WarningBox("Cycle time can't less than 0!!");
                                 dr["Cycle"] = 0;
                             }
                             else
                             {
-                                if (Convert.ToDecimal(e.FormattedValue) > Convert.ToDecimal(dr["GSD"]))
+                                if (MyUtility.Convert.GetDecimal(e.FormattedValue) > MyUtility.Convert.GetDecimal(dr["GSD"]))
                                 {
                                     MyUtility.Msg.WarningBox("Cycle time can't greater than GSD Time!!");
                                     dr["Cycle"] = dr["GSD"];
                                 }
                                 else
                                 {
-                                    dr["Cycle"] = Convert.ToDecimal(e.FormattedValue);
+                                    dr["Cycle"] = MyUtility.Convert.GetDecimal(e.FormattedValue);
                                 }
                             }
                         }
@@ -132,7 +133,7 @@ where ld.ID = {0} order by ld.No", masterID);
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = "select ID,Description from MachineType where Junk = 0";
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", dr["MachineTypeID"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,40", dr["MachineTypeID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             e.EditingControl.Text = item.GetSelectedString();
@@ -148,12 +149,32 @@ where ld.ID = {0} order by ld.No", masterID);
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["MachineTypeID"].ToString())
                     {
-                        if (!MyUtility.Check.Seek(string.Format("select ID,Description from MachineType where Junk = 0 and ID = '{0}'", e.FormattedValue.ToString())))
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                        sp1.ParameterName = "@id";
+                        sp1.Value = e.FormattedValue.ToString();
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+                        string sqlCmd = "select ID from MachineType where Junk = 0 and ID = @id";
+                        DataTable MachineData;
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out MachineData);
+                        if (!result)
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Machine Type: {0} > not found!!!", e.FormattedValue.ToString()));
+                            MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
                             dr["MachineTypeID"] = "";
                             e.Cancel = true;
                             return;
+                        }
+                        else
+                        {
+                            if (MachineData.Rows.Count <= 0)
+                            {
+                                MyUtility.Msg.WarningBox(string.Format("< Machine Type: {0} > not found!!!", e.FormattedValue.ToString()));
+                                dr["MachineTypeID"] = "";
+                                e.Cancel = true;
+                                return;
+                            }
                         }
                     }
                 }
@@ -169,17 +190,10 @@ where ld.ID = {0} order by ld.No", masterID);
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = "";
-                            if (MyUtility.Check.Empty(CurrentMaintain["FactoryID"]))
-                            {
-                                sqlCmd = "select ID,Name,Skill,SewingLineID,FactoryID from Employee where ResignationDate is null";
-                            }
-                            else
-                            {
-                                sqlCmd = string.Format("select ID,Name,Skill,SewingLineID,FactoryID from Employee where ResignationDate is null and FactoryID = '{0}'", CurrentMaintain["FactoryID"].ToString());
-                            }
                             
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd,"10,30,20,2,8", dr["EmployeeID"].ToString());
+                            GetEmployee(null);
+
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(EmployeeData, "ID,Name,Skill,SewingLineID,FactoryID", "10,30,20,2,8", dr["EmployeeID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             IList<DataRow> selectedData = item.GetSelecteds();
@@ -198,41 +212,25 @@ where ld.ID = {0} order by ld.No", masterID);
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        dr["EmployeeID"] = "";
-                        dr["EmployeeName"] = "";
-                        dr["EmployeeSkill"] = "";
-                        dr.EndEdit();
+                        ReviseEmployeeToEmpty(dr);
                         return;
                     }
 
-
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["EmployeeID"].ToString())
+                    if (e.FormattedValue.ToString() != dr["EmployeeID"].ToString())
                     {
-                        string sqlCmd = "";
-                        if (MyUtility.Check.Empty(CurrentMaintain["FactoryID"]))
+                        GetEmployee(e.FormattedValue.ToString());
+                        if (EmployeeData.Rows.Count <= 0)
                         {
-                            sqlCmd = string.Format("select ID,Name,Skill,SewingLineID,FactoryID from Employee where ID = '{0}'", e.FormattedValue.ToString());
-                        }
-                        else
-                        {
-                            sqlCmd = string.Format("select ID,Name,Skill,SewingLineID,FactoryID from Employee where ID = '{0}' and FactoryID = '{1}'", e.FormattedValue.ToString(), CurrentMaintain["FactoryID"].ToString());
-                        }
-                        DataRow selectedData;
-                        if (!MyUtility.Check.Seek(sqlCmd, out selectedData))
-                        {
-                            MyUtility.Msg.WarningBox(string.Format("< Machine Type: {0} > not found!!!", e.FormattedValue.ToString()));
-                            dr["EmployeeID"] = "";
-                            dr["EmployeeName"] = "";
-                            dr["EmployeeSkill"] = "";
-                            dr.EndEdit();
+                            MyUtility.Msg.WarningBox(string.Format("< Employee ID: {0} > not found!!!", e.FormattedValue.ToString()));
+                            ReviseEmployeeToEmpty(dr);
                             e.Cancel = true;
                             return;
                         }
                         else
                         {
-                            dr["EmployeeID"] = selectedData["ID"];
-                            dr["EmployeeName"] = selectedData["Name"];
-                            dr["EmployeeSkill"] = selectedData["Skill"];
+                            dr["EmployeeID"] = EmployeeData.Rows[0]["ID"];
+                            dr["EmployeeName"] = EmployeeData.Rows[0]["Name"];
+                            dr["EmployeeSkill"] = EmployeeData.Rows[0]["Skill"];
                             dr.EndEdit();
                         }
                     }
@@ -282,6 +280,45 @@ where ld.ID = {0} order by ld.No", masterID);
                     detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 186, 117);
                 }
             };
+        }
+
+        //撈出Employee資料
+        private void GetEmployee(string ID)
+        {
+            string sqlCmd;
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", CurrentMaintain["FactoryID"].ToString());
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@id", ID);
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+            if (ID != null)
+            {
+                cmds.Add(sp2);
+            }
+
+            if (MyUtility.Check.Empty(CurrentMaintain["FactoryID"]))
+            {
+                sqlCmd = "select ID,Name,Skill,SewingLineID,FactoryID from Employee where ResignationDate is null" + (ID == null ? "" : " and ID = @id");
+            }
+            else
+            {
+                sqlCmd = "select ID,Name,Skill,SewingLineID,FactoryID from Employee where ResignationDate is null and FactoryID = @factoryid" + (ID == null ? "" : " and ID = @id");
+            }
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out EmployeeData);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
+            }
+        }
+
+        //將Employee相關欄位值清空
+        private void ReviseEmployeeToEmpty(DataRow dr)
+        {
+            dr["EmployeeID"] = "";
+            dr["EmployeeName"] = "";
+            dr["EmployeeSkill"] = "";
+            dr.EndEdit();
         }
 
         protected override void ClickNewAfter()
@@ -376,9 +413,9 @@ where ld.ID = {0} order by ld.No", masterID);
             CurrentMaintain["HighestGSD"] = maxHighGSD;
             CurrentMaintain["HighestCycle"] = maxHighCycle;
             CurrentMaintain["CurrentOperators"] = countopts;
-            CurrentMaintain["StandardOutput"] = MyUtility.Check.Empty(CurrentMaintain["TotalCycle"]) ? 0 : MyUtility.Math.Round(3600 * Convert.ToDecimal(CurrentMaintain["CurrentOperators"]) / Convert.ToDecimal(CurrentMaintain["TotalCycle"]), 0); ;
-            CurrentMaintain["DailyDemand"] = MyUtility.Math.Round(Convert.ToDecimal(CurrentMaintain["Workhour"]) * Convert.ToDecimal(CurrentMaintain["StandardOutput"]), 0);
-            CurrentMaintain["TaktTime"] = MyUtility.Check.Empty(CurrentMaintain["DailyDemand"]) ? 0 : MyUtility.Math.Round(Convert.ToDecimal(CurrentMaintain["NetTime"]) / Convert.ToDecimal(CurrentMaintain["DailyDemand"]), 0); ;
+            CurrentMaintain["StandardOutput"] = MyUtility.Check.Empty(CurrentMaintain["TotalCycle"]) ? 0 : MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCycle"]), 0); ;
+            CurrentMaintain["DailyDemand"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["Workhour"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["StandardOutput"]), 0);
+            CurrentMaintain["TaktTime"] = MyUtility.Check.Empty(CurrentMaintain["DailyDemand"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["DailyDemand"]), 0); ;
 
             //Vision為空的話就要填值
             if (MyUtility.Check.Empty(CurrentMaintain["Version"]))
@@ -432,8 +469,8 @@ where ld.ID = {0} order by ld.No", masterID);
         private void AssignNoGSDCycleTime(string GroupKey)
         {
             object countRec = ((DataTable)detailgridbs.DataSource).Compute("count(GroupKey)", string.Format("GroupKey = {0}", GroupKey));
-            decimal avgGSD = MyUtility.Check.Empty(Convert.ToDecimal(countRec)) ? Convert.ToDecimal(totalGSD) : Math.Round(Convert.ToDecimal(totalGSD) / Convert.ToDecimal(countRec), 2);
-            decimal avgCycleTime = MyUtility.Check.Empty(Convert.ToDecimal(countRec)) ? Convert.ToDecimal(totalCycleTime) : Math.Round(Convert.ToDecimal(totalCycleTime) / Convert.ToDecimal(countRec), 2);
+            decimal avgGSD = MyUtility.Check.Empty(Convert.ToDecimal(countRec)) ? MyUtility.Convert.GetDecimal(totalGSD) : Math.Round(MyUtility.Convert.GetDecimal(totalGSD) / MyUtility.Convert.GetDecimal(countRec), 2);
+            decimal avgCycleTime = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(countRec)) ? MyUtility.Convert.GetDecimal(totalCycleTime) : Math.Round(MyUtility.Convert.GetDecimal(totalCycleTime) / MyUtility.Convert.GetDecimal(countRec), 2);
             DataRow[] findRow = ((DataTable)detailgridbs.DataSource).Select(string.Format("GroupKey = {0}", GroupKey));
             int i = 0;
             decimal sumGSD = 0, sumCycleTime = 0;
@@ -442,17 +479,17 @@ where ld.ID = {0} order by ld.No", masterID);
             foreach (DataRow dr in findRow)
             {
                 i++;
-                if (i >= Convert.ToInt32(countRec))
+                if (i >= MyUtility.Convert.GetInt(countRec))
                 {
-                    dr["GSD"] = Convert.ToDecimal(totalGSD) - sumGSD;
-                    dr["Cycle"] = Convert.ToDecimal(totalCycleTime) - sumCycleTime;
+                    dr["GSD"] = MyUtility.Convert.GetDecimal(totalGSD) - sumGSD;
+                    dr["Cycle"] = MyUtility.Convert.GetDecimal(totalCycleTime) - sumCycleTime;
                 }
                 else
                 {
                     dr["GSD"] = avgGSD;
                     dr["Cycle"] = avgCycleTime;
-                    sumGSD = sumGSD + Convert.ToDecimal(dr["GSD"]);
-                    sumCycleTime = sumCycleTime + Convert.ToDecimal(dr["Cycle"]);
+                    sumGSD = sumGSD + MyUtility.Convert.GetDecimal(dr["GSD"]);
+                    sumCycleTime = sumCycleTime + MyUtility.Convert.GetDecimal(dr["Cycle"]);
                 }
             }
 
@@ -467,31 +504,30 @@ where ld.ID = {0} order by ld.No", masterID);
         {
             if (Type == 1)
             {
-                CurrentMaintain["DailyDemand"] = MyUtility.Math.Round(Convert.ToDecimal(CurrentMaintain["Workhour"]) * Convert.ToDecimal(CurrentMaintain["StandardOutput"]), 0);
-                CurrentMaintain["NetTime"] = MyUtility.Math.Round(Convert.ToDecimal(CurrentMaintain["Workhour"]) * 3600, 0);
-                CurrentMaintain["TaktTime"] = MyUtility.Check.Empty(CurrentMaintain["DailyDemand"]) ? 0 : MyUtility.Math.Round(Convert.ToDecimal(CurrentMaintain["NetTime"]) / Convert.ToDecimal(CurrentMaintain["DailyDemand"]), 0);
+                CurrentMaintain["DailyDemand"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["Workhour"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["StandardOutput"]), 0);
+                CurrentMaintain["NetTime"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["Workhour"]) * 3600, 0);
+                CurrentMaintain["TaktTime"] = MyUtility.Check.Empty(CurrentMaintain["DailyDemand"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["DailyDemand"]), 0);
             }
-            numericBox23.Value = MyUtility.Check.Empty(Convert.ToDecimal(CurrentMaintain["TaktTime"]) * Convert.ToDecimal(CurrentMaintain["CurrentOperators"])) ? 0 : MyUtility.Math.Round(Convert.ToDecimal(CurrentMaintain["TotalCycle"]) / Convert.ToDecimal(CurrentMaintain["TaktTime"]) / Convert.ToDecimal(CurrentMaintain["CurrentOperators"]) * 100,2);
-            numericBox7.Value = MyUtility.Check.Empty(CurrentMaintain["TotalGSD"]) ? 0 : MyUtility.Math.Round(3600 * Convert.ToDecimal(CurrentMaintain["IdealOperators"]) / Convert.ToDecimal(CurrentMaintain["TotalGSD"]), 0);
-            numericBox6.Value = MyUtility.Math.Round(Convert.ToDecimal(CurrentMaintain["Workhour"]) * Convert.ToDecimal(numericBox7.Value), 0);
-            numericBox5.Value = MyUtility.Check.Empty(Convert.ToDecimal(numericBox6.Value)) ? 0 : MyUtility.Math.Round(Convert.ToDecimal(CurrentMaintain["NetTime"]) / Convert.ToDecimal(numericBox6.Value), 0);
+            numericBox23.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(CurrentMaintain["TaktTime"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"])) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCycle"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["TaktTime"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"]) * 100, 2);
+            numericBox7.Value = MyUtility.Check.Empty(CurrentMaintain["TotalGSD"]) ? 0 : MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(CurrentMaintain["IdealOperators"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["TotalGSD"]), 0);
+            numericBox6.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["Workhour"]) * MyUtility.Convert.GetDecimal(numericBox7.Value), 0);
+            numericBox5.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(numericBox6.Value)) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(numericBox6.Value), 0);
         }
 
         //計算Total % time diff,Highest % time diff,Effieiency(%),Effieiency(%),PPH,LBR欄位值
         private void SaveCalculateValue()
         {
-            numericBox11.Value = MyUtility.Check.Empty(CurrentMaintain["TotalGSD"]) ? 0 : MyUtility.Math.Round(((Convert.ToDecimal(CurrentMaintain["TotalGSD"]) - Convert.ToDecimal(CurrentMaintain["TotalCycle"])) / Convert.ToDecimal(CurrentMaintain["TotalGSD"])) * 100, 2);
-            numericBox15.Value = MyUtility.Check.Empty(CurrentMaintain["HighestGSD"]) ? 0 :  MyUtility.Math.Round(((Convert.ToDecimal(CurrentMaintain["HighestGSD"]) - Convert.ToDecimal(CurrentMaintain["HighestCycle"])) / Convert.ToDecimal(CurrentMaintain["HighestGSD"])) * 100, 2);
-            numericBox17.Value = MyUtility.Check.Empty(CurrentMaintain["HighestCycle"]) ? 0 : MyUtility.Math.Round(3600 / Convert.ToDecimal(CurrentMaintain["HighestCycle"]), 2);
-            numericBox18.Value = MyUtility.Check.Empty(Convert.ToDecimal(CurrentMaintain["HighestCycle"]) * Convert.ToDecimal(CurrentMaintain["CurrentOperators"])) ? 0 : MyUtility.Math.Round((Convert.ToDecimal(CurrentMaintain["TotalGSD"]) / Convert.ToDecimal(CurrentMaintain["HighestCycle"]) / Convert.ToDecimal(CurrentMaintain["CurrentOperators"])) * 100, 2);
-            numericBox21.Value = MyUtility.Check.Empty(CurrentMaintain["CurrentOperators"]) ? 0 : MyUtility.Math.Round(Convert.ToDecimal(numericBox17.Value) * Convert.ToDecimal(numericBox8.Value) / Convert.ToDecimal(CurrentMaintain["CurrentOperators"]),4);
-            numericBox22.Value = MyUtility.Check.Empty(Convert.ToDecimal(CurrentMaintain["HighestCycle"]) * Convert.ToDecimal(CurrentMaintain["CurrentOperators"])) ? 0 : MyUtility.Math.Round(Convert.ToDecimal(CurrentMaintain["TotalCycle"]) / Convert.ToDecimal(CurrentMaintain["HighestCycle"]) / Convert.ToDecimal(CurrentMaintain["CurrentOperators"]) * 100,2);
+            numericBox11.Value = MyUtility.Check.Empty(CurrentMaintain["TotalGSD"]) ? 0 : MyUtility.Math.Round(((MyUtility.Convert.GetDecimal(CurrentMaintain["TotalGSD"]) - MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCycle"])) / MyUtility.Convert.GetDecimal(CurrentMaintain["TotalGSD"])) * 100, 2);
+            numericBox15.Value = MyUtility.Check.Empty(CurrentMaintain["HighestGSD"]) ? 0 : MyUtility.Math.Round(((MyUtility.Convert.GetDecimal(CurrentMaintain["HighestGSD"]) - MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"])) / MyUtility.Convert.GetDecimal(CurrentMaintain["HighestGSD"])) * 100, 2);
+            numericBox17.Value = MyUtility.Check.Empty(CurrentMaintain["HighestCycle"]) ? 0 : MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"]), 2);
+            numericBox18.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"])) ? 0 : MyUtility.Math.Round((MyUtility.Convert.GetDecimal(CurrentMaintain["TotalGSD"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"])) * 100, 2);
+            numericBox21.Value = MyUtility.Check.Empty(CurrentMaintain["CurrentOperators"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(numericBox17.Value) * MyUtility.Convert.GetDecimal(numericBox8.Value) / MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"]), 4);
+            numericBox22.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"])) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCycle"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"]) * 100, 2);
         }
 
         //重新計算Grid的Cycle Time
         private void ReclculateGridGSDCycleTime(string No)
         {
-
             Object GSD = ((DataTable)detailgridbs.DataSource).Compute("Sum(GSD)", string.Format("No = '{0}'", No));
             Object Cycle = ((DataTable)detailgridbs.DataSource).Compute("Sum(Cycle)", string.Format("No = '{0}'", No));
 
@@ -531,7 +567,6 @@ where ld.ID = {0} order by ld.No", masterID);
         //Style#
         private void textBox7_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-
             string sqlCmd = "select ID,SeasonID,BrandID,Description,CPU,Ukey from Style where Junk = 0 order by ID,SeasonID";
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,10,8,50,5,0", textBox7.Text, "Style#,Season,Brand,Description,CPU,Key");
@@ -543,7 +578,7 @@ where ld.ID = {0} order by ld.No", masterID);
             CurrentMaintain["BrandID"] = styleData[0]["BrandID"];
             CurrentMaintain["StyleUKey"] = styleData[0]["Ukey"];
             displayBox3.Value = styleData[0]["Description"];
-            numericBox8.Value = Convert.ToDecimal(styleData[0]["CPU"]);
+            numericBox8.Value = MyUtility.Convert.GetDecimal(styleData[0]["CPU"]);
 
             DataTable ComboType;
             DualResult result = DBProxy.Current.Select(null, string.Format("select Location from Style_Location where StyleUkey = {0}", CurrentMaintain["StyleUKey"].ToString()), out ComboType);
@@ -583,8 +618,8 @@ where ld.ID = {0} order by ld.No", masterID);
         //撈出ChgOverTarget資料
         private string FindTarget(string Type)
         {
-            return MyUtility.GetValue.Lookup(string.Format(@"select Target from ChgOverTarget where Type = '{0}' and FactoryID = '{1}' and EffectiveDate = (
-select MAX(EffectiveDate) from ChgOverTarget where Type = '{0}' and FactoryID = '{1}' and EffectiveDate <= GETDATE())", Type, CurrentMaintain["FactoryID"].ToString()));
+            return MyUtility.GetValue.Lookup(string.Format(@"select Target from ChgOverTarget where Type = '{0}' and MDivisionID = '{1}' and EffectiveDate = (
+select MAX(EffectiveDate) from ChgOverTarget where Type = '{0}' and MDivisionID = '{1}' and EffectiveDate <= GETDATE())", Type, Sci.Env.User.Keyword));
         }
 
         //Confirm
@@ -660,7 +695,6 @@ select MAX(EffectiveDate) from ChgOverTarget where Type = '{0}' and FactoryID = 
         {
             //不使用MyUtility.Msg.InfoBox的原因為MyUtility.Msg.InfoBox都有MessageBoxIcon
             MessageBox.Show(MyUtility.GetValue.Lookup(string.Format("select Description from IEReason where Type = 'LM' and ID = '{0}'", CurrentMaintain["IEReasonID"].ToString())).PadRight(60), caption: "Not hit target reason");
-            
         }
 
         //Copy from other line mapping
@@ -739,7 +773,7 @@ and s.Ukey = {0}
 and t.ComboType = '{1}'", CurrentMaintain["StyleUkey"].ToString(), CurrentMaintain["ComboType"].ToString());
             if (!MyUtility.Check.Seek(sqlCmd, out timeStudy))
             {
-                MyUtility.Msg.WarningBox("Timestudy data not found!!");
+                MyUtility.Msg.WarningBox("Fty GSD data not found!!");
                 return;
             }
 
@@ -751,7 +785,7 @@ where td.ID = {0} order by td.Seq", timeStudy["ID"].ToString());
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out timeStudy_Detail);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query timestudy detail fail!!");
+                MyUtility.Msg.ErrorBox("Query Fty GSD detail fail!!");
                 return;
             }
 
@@ -770,9 +804,9 @@ where td.ID = {0} order by td.Seq", timeStudy["ID"].ToString());
             //填入表頭資料
             CurrentMaintain["IdealOperators"] = timeStudy["NumberSewer"].ToString();
             CurrentMaintain["CurrentOperators"] = i;
-            CurrentMaintain["StandardOutput"] = Convert.ToDecimal(sumSMV) == 0 ? 0 : MyUtility.Math.Round(3600 * i / Convert.ToDecimal(sumSMV));
-            CurrentMaintain["DailyDemand"] = MyUtility.Math.Round(Convert.ToDecimal(CurrentMaintain["StandardOutput"]) * Convert.ToDecimal(CurrentMaintain["Workhour"]),0);
-            CurrentMaintain["TaktTime"] = Convert.ToDecimal(CurrentMaintain["DailyDemand"]) == 0 ? 0 : MyUtility.Math.Round(Convert.ToDecimal(CurrentMaintain["NetTime"])/Convert.ToDecimal(CurrentMaintain["DailyDemand"]),0);
+            CurrentMaintain["StandardOutput"] = MyUtility.Convert.GetDecimal(sumSMV) == 0 ? 0 : MyUtility.Math.Round(3600 * i / MyUtility.Convert.GetDecimal(sumSMV));
+            CurrentMaintain["DailyDemand"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["StandardOutput"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["Workhour"]), 0);
+            CurrentMaintain["TaktTime"] = MyUtility.Convert.GetDecimal(CurrentMaintain["DailyDemand"]) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["DailyDemand"]), 0);
             CurrentMaintain["TotalGSD"] = sumSMV;
             CurrentMaintain["TotalCycle"] = sumSMV;
             CurrentMaintain["HighestGSD"] = maxSMV;

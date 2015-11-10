@@ -295,7 +295,7 @@
             // browse
             // 
             this.browse.Location = new System.Drawing.Point(4, 24);
-            this.browse.Size = new System.Drawing.Size(1012, 661);
+            this.browse.Size = new System.Drawing.Size(996, 661);
             // 
             // tabs
             // 
