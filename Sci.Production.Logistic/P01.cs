@@ -15,7 +15,7 @@ namespace Sci.Production.Logistic
         {
             InitializeComponent();
             this.Text = Type == "1" ? "P01. Clog Master List" : "P011. Clog Master List (History)";
-            this.DefaultFilter = Type == "1" ? string.Format("FtyGroup = '{0}' AND IsForecast = 0 AND Finished = 0", Sci.Env.User.Factory) : string.Format("FtyGroup = '{0}' AND IsForecast = 0 AND Finished = 1", Sci.Env.User.Factory);
+            this.DefaultFilter = Type == "1" ? string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND Finished = 0", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND Finished = 1", Sci.Env.User.Keyword);
         }
 
         protected override void OnDetailEntered()
@@ -39,9 +39,9 @@ namespace Sci.Production.Logistic
             displayBox18.Value = CurrentMaintain["PulloutComplete"].ToString().ToUpper() == "TRUE" ? "OK" : MyUtility.GetValue.Lookup(string.Format("select COUNT(distinct ID) as CntID from Pullout_Detail where OrderID = '{0}' and ShipQty > 0", CurrentMaintain["ID"].ToString()));
             displayBox19.Value = CurrentMaintain["InspResult"].ToString() == "P" ? "Pass" : CurrentMaintain["InspResult"].ToString() == "F" ? "Fail" : "";
 
-            numericBox7.Value = Convert.ToInt32(CurrentMaintain["FtyCTN"]) - Convert.ToInt32(CurrentMaintain["ClogCTN"]);
-            numericBox8.Value = Convert.ToInt32(CurrentMaintain["TotalCTN"]) - Convert.ToInt32(CurrentMaintain["FtyCTN"]);
-            numericBox9.Value = Convert.ToDecimal(CurrentMaintain["TotalCTN"]) == 0 ? 0 : MyUtility.Math.Round(Convert.ToDecimal(CurrentMaintain["ClogCTN"]) / Convert.ToDecimal(CurrentMaintain["TotalCTN"]) * 100, 2);
+            numericBox7.Value = MyUtility.Convert.GetInt(CurrentMaintain["FtyCTN"]) - MyUtility.Convert.GetInt(CurrentMaintain["ClogCTN"]);
+            numericBox8.Value = MyUtility.Convert.GetInt(CurrentMaintain["TotalCTN"]) - MyUtility.Convert.GetInt(CurrentMaintain["FtyCTN"]);
+            numericBox9.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCTN"]) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["ClogCTN"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCTN"]) * 100, 2);
 
             //按鈕變色
             bool haveOrder_Qty = MyUtility.Check.Seek(string.Format("select ID from Order_Qty where ID = '{0}'", CurrentMaintain["ID"].ToString()));
