@@ -32,6 +32,7 @@
             this.label4 = new Sci.Win.UI.Label();
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.textBox2 = new Sci.Win.UI.TextBox();
+            this.checkBox1 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -46,6 +47,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.textBox2);
             this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Controls.Add(this.label4);
@@ -55,6 +57,10 @@
             // detailbtm
             // 
             this.detailbtm.Size = new System.Drawing.Size(688, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(688, 395);
             // 
             // tabs
             // 
@@ -99,6 +105,18 @@
             this.textBox2.Size = new System.Drawing.Size(260, 23);
             this.textBox2.TabIndex = 3;
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox1.Location = new System.Drawing.Point(325, 41);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(57, 21);
+            this.checkBox1.TabIndex = 4;
+            this.checkBox1.Text = "Junk";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(696, 457);
@@ -126,5 +144,6 @@
         private Win.UI.TextBox textBox1;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
+        private Win.UI.CheckBox checkBox1;
     }
 }

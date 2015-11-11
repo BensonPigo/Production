@@ -14,6 +14,13 @@ namespace Sci.Production.Logistic
             : base(menuitem)
         {
             InitializeComponent();
+            DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
+        }
+
+        protected override void ClickNewAfter()
+        {
+            base.ClickNewAfter();
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
         }
 
         protected override void ClickEditAfter()
