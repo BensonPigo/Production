@@ -1,4 +1,6 @@
 ﻿CREATE TABLE [dbo].[ThreadIssue] (
+    [id]          VARCHAR (13)  CONSTRAINT [DF_ThreadIssue_id] DEFAULT ('') NOT NULL,
+    [MDivisionId] VARCHAR (8)   CONSTRAINT [DF_ThreadIssue_MDivisionId] DEFAULT ('') NOT NULL,
     [CDate]       DATE          NOT NULL,
     [Remark]      NVARCHAR (60) CONSTRAINT [DF_ThreadIssue_Remark] DEFAULT ('') NULL,
     [Status]      VARCHAR (15)  CONSTRAINT [DF_ThreadIssue_Status] DEFAULT ('') NULL,
@@ -6,8 +8,10 @@
     [AddDate]     DATETIME      NULL,
     [EditName]    VARCHAR (10)  CONSTRAINT [DF_ThreadIssue_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME      NULL,
-    [MDivisionId] VARCHAR (8)   CONSTRAINT [DF_ThreadIssue_MDivisionId] DEFAULT ('') NOT NULL
+    CONSTRAINT [PK_ThreadIssue] PRIMARY KEY CLUSTERED ([id] ASC)
 );
+
+
 
 
 
