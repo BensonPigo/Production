@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[MarkerReq] (
     [ID]         VARCHAR (13) CONSTRAINT [DF_MarkerReq_ID] DEFAULT ('') NOT NULL,
     [EstCutdate] DATE         NULL,
-    [FactoryID]  VARCHAR (8)  CONSTRAINT [DF_MarkerReq_FactoryID] DEFAULT ('') NOT NULL,
+    [MDivisionid]  VARCHAR (8)  CONSTRAINT [DF_MarkerReq_FactoryID] DEFAULT ('') NOT NULL,
     [CutCellID]  VARCHAR (2)  CONSTRAINT [DF_MarkerReq_CutCellID] DEFAULT ('') NOT NULL,
     [Status]     VARCHAR (15) CONSTRAINT [DF_MarkerReq_Status] DEFAULT ('') NULL,
     [Cutplanid]  VARCHAR (13) CONSTRAINT [DF_MarkerReq_Cutplanid] DEFAULT ('') NOT NULL,
@@ -26,7 +26,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'預計裁�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MarkerReq', @level2type = N'COLUMN', @level2name = N'FactoryID';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MarkerReq', @level2type = N'COLUMN', @level2name = 'MDivisionid';
 
 
 GO
