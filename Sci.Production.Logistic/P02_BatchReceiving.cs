@@ -64,107 +64,29 @@ namespace Sci.Production.Logistic
                 return;
             }
 
-            string selectCommand1, selectCommand2, selectCommand3;
-            if (!MyUtility.Check.Empty(this.textBox1.Text) && !MyUtility.Check.Empty(this.textBox2.Text))
-            {
-                selectCommand1 = string.Format(@"Select '' as ID, 0 as selected,'' as ClogLocationId,a.*,b.StyleID,b.SeasonID,b.BrandID,b.Customize1,b.CustPONo,b.BuyerDelivery,c.Alias from 
-                                                                            ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo 
-                                                                                    from TransferToClog_Detail as a, TransferToClog as b 
-                                                                                    where a.Id >= '{0}' and a.Id <= '{1}' and a.Id = b.ID  and b.FactoryID = '{2}') 
-                                                                               except 
-                                                                              (Select TransferToClogId, PackingListId, OrderId, CTNStartNo 
-                                                                                    from ClogReceive_Detail 
-                                                                                    where TransferToClogId >= '{0}' and TransferToClogId <= '{1}')) 
-                                                                            as a ", this.textBox1.Text.Trim(), this.textBox2.Text.Trim(), Sci.Env.User.Factory);
-                selectCommand1 = selectCommand1 + "left join Orders b On a.OrderID = b.ID left join Country c On b.Dest = c.ID";
-                selectCommand2 = string.Format(@"Select count(TransferToClogId) as TTLCTN 
-                                                                            from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo 
-                                                                                            from TransferToClog_Detail as a, TransferToClog as b 
-                                                                                            where a.Id >= '{0}' and a.Id <= '{1}' and a.Id = b.ID and b.FactoryID = '{2}') 
-                                                                                     except 
-                                                                                      (Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo 
-                                                                                            from ClogReturn_Detail a, ClogReturn b 
-                                                                                            where a.TransferToClogId >= '{0}' and a.TransferToClogId <= '{1}' and a.Id = b.Id and b.Encode = 1)) 
-                                                                                    as result", this.textBox1.Text.Trim(), this.textBox2.Text.Trim(), Sci.Env.User.Factory);
-                selectCommand3 = string.Format(@"Select count(TransferToClogId) as ReceivedCTN 
-                                                                            from ((Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo 
-                                                                                            from ClogReceive_Detail a, ClogReceive b 
-                                                                                            where a.TransferToClogId >= '{0}' and a.TransferToClogId <= '{1}' and a.Id = b.Id and b.Encode = 1 and b.FactoryID = '{2}') 
-                                                                                    except 
-                                                                                      (Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo 
-                                                                                            from ClogReturn_Detail a, ClogReturn b 
-                                                                                            where a.TransferToClogId >= '{0}' and a.TransferToClogId <= '{1}' and a.Id = b.Id and b.Encode = 1)) 
-                                                                                    as result", this.textBox1.Text.Trim(), this.textBox2.Text.Trim(), Sci.Env.User.Factory);
-            }
-            else
-            {
-                if (!MyUtility.Check.Empty(this.textBox1.Text))
-                {
-                    selectCommand1 = string.Format(@"Select '' as ID, 0 as selected,'' as ClogLocationId,a.*,b.StyleID,b.SeasonID,b.BrandID,b.Customize1,b.CustPONo,b.BuyerDelivery,c.Alias 
-                                                                                from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo 
-                                                                                                from TransferToClog_Detail as a, TransferToClog as b 
-                                                                                                where a.Id >= '{0}' and a.Id = b.ID and b.FactoryID = '{1}') 
-                                                                                        except 
-                                                                                          (Select TransferToClogId, PackingListId, OrderId, CTNStartNo 
-                                                                                                from ClogReceive_Detail 
-                                                                                                where TransferToClogId >= '{0}')) 
-                                                                                        as a ", this.textBox1.Text.Trim(), Sci.Env.User.Factory);
-                    selectCommand1 = selectCommand1 + "left join Orders b On a.OrderID = b.ID left join Country c On b.Dest = c.ID";
-                    selectCommand2 = string.Format(@"Select count(TransferToClogId) as TTLCTN 
-                                                                                from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo 
-                                                                                                from TransferToClog_Detail as a, TransferToClog as b 
-                                                                                                where a.Id >= '{0}' and a.Id = b.ID and b.FactoryID = '{1}') 
-                                                                                        except 
-                                                                                          (Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo 
-                                                                                                from ClogReturn_Detail a, ClogReturn b 
-                                                                                                where a.TransferToClogId >= '{0}' and a.Id = b.Id and b.Encode = 1)) 
-                                                                                        as result", this.textBox1.Text.Trim(), Sci.Env.User.Factory);
-                    selectCommand3 = string.Format(@"Select count(TransferToClogId) as ReceivedCTN 
-                                                                                from ((Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo 
-                                                                                                from ClogReceive_Detail a, ClogReceive b 
-                                                                                                where a.TransferToClogId >= '{0}' and a.Id = b.Id and b.Encode = 1 and b.FactoryID = '{1}') 
-                                                                                        except 
-                                                                                          (Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo 
-                                                                                                from ClogReturn_Detail a, ClogReturn b 
-                                                                                                where a.TransferToClogId >= '{0}' and a.Id = b.Id and b.Encode = 1)) 
-                                                                                        as result", this.textBox1.Text.Trim(), Sci.Env.User.Factory);
-                }
-                else
-                {
-                    selectCommand1 = string.Format(@"Select '' as ID, 0 as selected,'' as ClogLocationId,a.*,b.StyleID,b.SeasonID,b.BrandID,b.Customize1,b.CustPONo,b.BuyerDelivery,c.Alias 
-                                                         from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo 
-                                                                        from TransferToClog_Detail as a, TransferToClog as b 
-                                                                        where a.Id <= '{0}' and a.Id = b.ID and b.FactoryID = '{1}') 
-                                                                  except 
-                                                                   (Select TransferToClogId, PackingListId, OrderId, CTNStartNo 
-                                                                        from ClogReceive_Detail 
-                                                                        where TransferToClogId <= '{0}')) 
-                                                                  as a ", this.textBox2.Text.Trim(), Sci.Env.User.Factory);
-                    selectCommand1 = selectCommand1 + "left join Orders b On a.OrderID = b.ID left join Country c On b.Dest = c.ID";
-                    selectCommand2 = string.Format(@"Select count(TransferToClogId) as TTLCTN 
-                                                                                from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo 
-                                                                                                from TransferToClog_Detail as a, TransferToClog as b 
-                                                                                                where a.Id <= '{0}' and a.Id = b.ID and b.FactoryID = '{1}') 
-                                                                                         except 
-                                                                                          (Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo 
-                                                                                                from ClogReturn_Detail a, ClogReturn b 
-                                                                                                where a.TransferToClogId <= '{0}' and a.Id = b.Id and b.Encode = 1)) 
-                                                                                         as result", this.textBox2.Text.Trim(), Sci.Env.User.Factory);
-                    selectCommand3 = string.Format(@"Select count(TransferToClogId) as ReceivedCTN 
-                                                                                from ((Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo 
-                                                                                                from ClogReceive_Detail a, ClogReceive b 
-                                                                                                where a.TransferToClogId <= '{0}' and a.Id = b.Id and b.Encode = 1 and b.FactoryID = '{1}') 
-                                                                                        except 
-                                                                                          (Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo 
-                                                                                                from ClogReturn_Detail a, ClogReturn b 
-                                                                                                where a.TransferToClogId <= '{0}' and a.Id = b.Id and b.Encode = 1)) 
-                                                                                        as result", this.textBox2.Text.Trim(), Sci.Env.User.Factory);
-                }
-            }
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+            sp1.ParameterName = "@id1";
+            sp1.Value = textBox1.Text;
+            sp2.ParameterName = "@id2";
+            sp2.Value = textBox2.Text;
+            sp3.ParameterName = "@mdivisionid";
+            sp3.Value = Sci.Env.User.Keyword;
 
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+            cmds.Add(sp2);
+            cmds.Add(sp3);
+
+            string selectCommand1 = GridDataSQL(); //Grid Data
+            string selectCommand2 = TTLCTNSQL(); //TTL CTN
+            string selectCommand3 = ReceivedCTNSQL(); //Received CTN
+            
             DataTable selectDataTable1, selectDataTable2, selectDataTable3;
             DualResult selectResult;
-            if (selectResult = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1))
+            if (selectResult = DBProxy.Current.Select(null, selectCommand1, cmds, out selectDataTable1))
             {
                 if (selectDataTable1.Rows.Count == 0)
                 {
@@ -178,11 +100,11 @@ namespace Sci.Production.Logistic
                 allRecord = allRecord + 1;
             }
             bindingSource1.DataSource = selectDataTable1;
-            if (selectResult = DBProxy.Current.Select(null, selectCommand2, out selectDataTable2))
+            if (selectResult = DBProxy.Current.Select(null, selectCommand2, cmds, out selectDataTable2))
             {
                 this.numericBox1.Text = selectDataTable2.Rows[0]["TTLCTN"].ToString();
             }
-            if (selectResult = DBProxy.Current.Select(null, selectCommand3, out selectDataTable3))
+            if (selectResult = DBProxy.Current.Select(null, selectCommand3, cmds, out selectDataTable3))
             {
                 this.numericBox2.Text = selectDataTable3.Rows[0]["ReceivedCTN"].ToString();
             }
@@ -190,59 +112,94 @@ namespace Sci.Production.Logistic
             this.numericBox4.Value = 0;
         }
 
+        //組撈Grid資料的SQL
+        private string GridDataSQL()
+        {
+            return string.Format(@"
+Select '' as ID, 0 as selected,'' as ClogLocationId,a.*,b.StyleID,b.SeasonID,b.BrandID,b.Customize1,b.CustPONo,b.BuyerDelivery,c.Alias 
+from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo 
+	   from TransferToClog_Detail as a, TransferToClog as b 
+	   where a.Id = b.ID
+	   {0}
+	   {1}
+	   and b.MDivisionID = @mdivisionid) 
+	  except 
+	  (Select TransferToClogId, PackingListId, OrderId, CTNStartNo 
+	   from ClogReceive_Detail 
+	   where 1=1
+	   {2}
+	   {3})) as a 
+left join Orders b On a.OrderID = b.ID 
+left join Country c On b.Dest = c.ID",
+ MyUtility.Check.Empty(this.textBox1.Text.Trim()) ? "" : " and a.Id >= @id1",
+ MyUtility.Check.Empty(this.textBox2.Text.Trim()) ? "" : " and a.Id <= @id2",
+ MyUtility.Check.Empty(this.textBox1.Text.Trim()) ? "" : " and TransferToClogId >= @id1",
+ MyUtility.Check.Empty(this.textBox2.Text.Trim()) ? "" : " and TransferToClogId <= @id2");
+        }
+
+        //組算TTL CTN的SQL
+        private string TTLCTNSQL()
+        {
+            return string.Format(@"
+Select count(TransferToClogId) as TTLCTN 
+from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo 
+	   from TransferToClog_Detail as a, TransferToClog as b 
+	   where a.Id = b.ID
+	   {0} 
+	   {1}
+	   and b.MDivisionID = @mdivisionid) 
+	  except 
+	  (Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo 
+	   from ClogReturn_Detail a, ClogReturn b 
+	   where a.Id = b.Id
+	   and a.TransferToClogId >= '{2}' 
+	   and a.TransferToClogId <= '{3}' 
+	   and b.Status = 'Confirmed')) as result",
+ MyUtility.Check.Empty(this.textBox1.Text.Trim()) ? "" : " and a.Id >= @id1",
+ MyUtility.Check.Empty(this.textBox2.Text.Trim()) ? "" : " and a.Id <= @id2", 
+ MyUtility.Check.Empty(this.textBox1.Text.Trim()) ? "" : " and a.TransferToClogId >= @id1",
+ MyUtility.Check.Empty(this.textBox2.Text.Trim()) ? "" : " and a.TransferToClogId <= @id2");
+        }
+
+        //組算Received CTN的SQL
+        private string ReceivedCTNSQL()
+        {
+            return string.Format(@"
+Select count(TransferToClogId) as ReceivedCTN 
+from ((Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo 
+	   from ClogReceive_Detail a, ClogReceive b 
+	   where a.Id = b.Id 
+	   {0}
+	   {1}
+	   and b.Status = 'Confirmed' 
+	   and b.MDivisionID = @mdivisionid) 
+	  except
+	  (Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo 
+	   from ClogReturn_Detail a, ClogReturn b 
+	   where a.Id = b.Id
+	   {0}
+	   {1}
+	   and b.Status = 'Confirmed')) as result",
+MyUtility.Check.Empty(this.textBox1.Text.Trim()) ? "" : " and a.TransferToClogId >= @id1",
+ MyUtility.Check.Empty(this.textBox2.Text.Trim()) ? "" : " and a.TransferToClogId <= @id2");
+        }
+
         //Update All Location
         private void button2_Click(object sender, EventArgs e)
         {
             string location = this.txtcloglocation1.Text.Trim();
-            //this.grid1.GetSelectedRowIndex();
-            int pos = this.bindingSource1.Position;
+            int pos = this.bindingSource1.Position;     //記錄目前指標位置
             DataTable dt = (DataTable)bindingSource1.DataSource;
             foreach (DataRow currentRecord in dt.Rows)
             {
                 currentRecord["ClogLocationId"] = location;
             }
             this.bindingSource1.Position = pos;
-            //this.grid1.Invalidate();
-            //this.bindingSource1.ResetBindings(false);
             grid1.SuspendLayout();
             this.grid1.DataSource = null;
             this.grid1.DataSource = bindingSource1;
             this.bindingSource1.Position = pos;
             grid1.ResumeLayout();
-        }
-
-        //全選的CheckBox
-        private void checkBox1_Click(object sender, EventArgs e)
-        {
-            if (null != col_chk)
-            {
-                this.grid1.SetCheckeds(col_chk);
-                if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                {
-                    if (this.grid1.IsCurrentCellInEditMode)
-                    {
-                        this.grid1.RefreshEdit();
-                    }
-                    this.numericBox4.Value = allRecord;
-                }
-            }
-        }
-
-        //全不選的CheckBox
-        private void checkBox2_Click(object sender, EventArgs e)
-        {
-            if (null != col_chk)
-            {
-                this.grid1.SetUncheckeds(col_chk);
-                if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                {
-                    if (this.grid1.IsCurrentCellInEditMode)
-                    {
-                        this.grid1.RefreshEdit();
-                    }
-                }
-                this.numericBox4.Value = 0;
-            }
         }
 
         //Save，將有勾選的資料回寫回上一層的Detail
