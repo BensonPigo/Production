@@ -21,7 +21,7 @@ namespace Sci.Production.Logistic
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
+            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
             gridicon.Append.Visible = false;
             gridicon.Insert.Visible = false;
             InsertDetailGridOnDoubleClick = false;
@@ -65,7 +65,7 @@ where crd.ID = '{0}'", masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.label1.Text = CurrentMaintain["Status"].ToString();
+            ShowStatus();
         }
 
         protected override void OnDetailGridSetup()
@@ -127,11 +127,10 @@ where crd.ID = '{0}'", masterID);
         {
             base.ClickNewAfter();
             CurrentMaintain["ReturnDate"] = returnDate;
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["Status"] = "New";
-            this.label1.Text = "New";
-            Sci.Production.Logistic.P03_BatchReturn callNextForm = new Sci.Production.Logistic.P03_BatchReturn(Convert.ToDateTime(CurrentMaintain["ReturnDate"].ToString()), (DataTable)detailgridbs.DataSource);
-            callNextForm.ShowDialog(this);
+            ShowStatus();
+            CallBatchReturn();
         }
 
         //檢查表身不可以沒有資料
@@ -161,7 +160,7 @@ where crd.ID = '{0}'", masterID);
         {
             base.ClickConfirm();
             string sqlCmd;
-            DualResult result, result1;
+            DualResult result;
             DataTable selectDate;
 
             #region update ClogReturn & PackingList_Detail data
@@ -171,7 +170,7 @@ where crd.ID = '{0}'", masterID);
             result = DBProxy.Current.Select(null, sqlCmd, out selectDate);
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Connection fail!");
+                MyUtility.Msg.WarningBox("Connection fail!\r\n"+result.ToString());
                 return;
             }
 
@@ -179,45 +178,35 @@ where crd.ID = '{0}'", masterID);
             {
                 try
                 {
-                    sqlCmd = string.Format("update ClogReturn set Status = 'Confirmed', EditName = '{0}', EditDate = '{1}' where ID = '{2}'", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"].ToString());
-                    result = DBProxy.Current.Execute(null, sqlCmd);
-                    #region 宣告Update PackingList_Detail sql參數
-                    IList<System.Data.SqlClient.SqlParameter> pckinglistcmds = new List<System.Data.SqlClient.SqlParameter>();
-                    System.Data.SqlClient.SqlParameter detail1 = new System.Data.SqlClient.SqlParameter();
-                    System.Data.SqlClient.SqlParameter detail2 = new System.Data.SqlClient.SqlParameter();
-                    System.Data.SqlClient.SqlParameter detail3 = new System.Data.SqlClient.SqlParameter();
-                    System.Data.SqlClient.SqlParameter detail4 = new System.Data.SqlClient.SqlParameter();
-                    System.Data.SqlClient.SqlParameter detail5 = new System.Data.SqlClient.SqlParameter();
-                    detail1.ParameterName = "@clogReturnID";
-                    detail2.ParameterName = "@returnDate";
-                    detail3.ParameterName = "@packingListID";
-                    detail4.ParameterName = "@orderID";
-                    detail5.ParameterName = "@CTNStartNo";
-                    pckinglistcmds.Add(detail1);
-                    pckinglistcmds.Add(detail2);
-                    pckinglistcmds.Add(detail3);
-                    pckinglistcmds.Add(detail4);
-                    pckinglistcmds.Add(detail5);
-                    #endregion
+                    IList<string> updateCmds = new List<string>();
                     foreach (DataRow eachRow in selectDate.Rows)
                     {
-                        sqlCmd = @"update PackingList_Detail 
-                                             set ClogReturnID = @clogReturnID, ReturnDate = @returnDate, TransferToClogID = '', TransferDate = null, ClogReceiveID = '', ReceiveDate = null, ClogLocationId = '' 
-                                             where ID = @packingListID and OrderID = @orderID and CTNStartNo = @CTNStartNo";
-                        #region Update PackingList_Detail sql參數資料
-                        detail1.Value = CurrentMaintain["ID"].ToString();
-                        detail2.Value = Convert.ToDateTime(CurrentMaintain["ReturnDate"].ToString()).ToString("d");
-                        detail3.Value = eachRow["ID"].ToString();
-                        detail4.Value = eachRow["OrderId"].ToString();
-                        detail5.Value = eachRow["CTNStartNo"].ToString();
-                        #endregion
-                        result1 = Sci.Data.DBProxy.Current.Execute(null, sqlCmd, pckinglistcmds);
-                        if (!result1)
-                        {
-                            MyUtility.Msg.WarningBox("Confirm failed, Pleaes re-try\r\n" + result1.ToString());
-                            break;
-                        }
+                        updateCmds.Add(string.Format(@"update PackingList_Detail 
+                                             set ClogReturnID = '{0}', ReturnDate = '{1}', TransferToClogID = '', TransferDate = null, ClogReceiveID = '', ReceiveDate = null, ClogLocationId = '' 
+                                             where ID = '{2}' and OrderID = '{3}' and CTNStartNo = '{4}';", CurrentMaintain["ID"].ToString(), Convert.ToDateTime(CurrentMaintain["ReturnDate"].ToString()).ToString("d"),
+                                                                                                         eachRow["ID"].ToString(), eachRow["OrderId"].ToString(), eachRow["CTNStartNo"].ToString()));
                     }
+                    updateCmds.Add(string.Format("update ClogReturn set Status = 'Confirmed', EditName = '{0}', EditDate = '{1}' where ID = '{2}';", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"].ToString()));
+                    result = DBProxy.Current.Executes(null, updateCmds);
+
+                    #region Update Orders的資料
+                    DataTable selectData;
+                    sqlCmd = string.Format("select OrderID from ClogReturn_Detail where ID = '{0}' group by OrderID", CurrentMaintain["ID"].ToString());
+                    DualResult result1 = DBProxy.Current.Select(null, sqlCmd, out selectData);
+                    if (!result1)
+                    {
+                        MyUtility.Msg.WarningBox("Select update orders data fail!\r\n" + result1.ToString());
+                        return;
+                    }
+
+                    DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
+                    if (!prgResult)
+                    {
+                        MyUtility.Msg.WarningBox("Update orders data fail!\r\n" + prgResult.ToString());
+                        return;
+                    }
+
+                    #endregion
 
                     if (result)
                     {
@@ -237,31 +226,6 @@ where crd.ID = '{0}'", masterID);
             }
             #endregion
 
-            #region Update Orders的資料
-            DataTable selectData;
-            sqlCmd = string.Format("select OrderID from ClogReturn_Detail where ID = '{0}' group by OrderID", CurrentMaintain["ID"].ToString());
-            result = DBProxy.Current.Select(null, sqlCmd, out selectData);
-            if (!result)
-            {
-                MyUtility.Msg.WarningBox("Update orders data fail!");
-            }
-
-            bool prgResult, lastResult = false;
-            foreach (DataRow currentRow in selectData.Rows)
-            {
-                prgResult = Prgs.UpdateOrdersCTN(currentRow["OrderID"].ToString());
-                if (!prgResult)
-                {
-                    lastResult = true;
-                }
-
-            }
-            if (lastResult)
-            {
-                MyUtility.Msg.WarningBox("Update orders data fail!");
-            }
-            #endregion
-
             RenewData();
             OnDetailEntered();
             EnsureToolbarExt();
@@ -269,6 +233,18 @@ where crd.ID = '{0}'", masterID);
 
         //Batch Return，執行LOGISTIC->P03_BatchReturn
         private void button2_Click(object sender, EventArgs e)
+        {
+            CallBatchReturn();
+        }
+
+        //Status顯示
+        private void ShowStatus()
+        {
+            this.label1.Text = CurrentMaintain["Status"].ToString();
+        }
+
+        //呼叫Batch Return
+        private void CallBatchReturn()
         {
             Sci.Production.Logistic.P03_BatchReturn callNextForm = new Sci.Production.Logistic.P03_BatchReturn(Convert.ToDateTime(CurrentMaintain["ReturnDate"].ToString()), (DataTable)detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
