@@ -46,7 +46,6 @@ namespace Sci.Production.Logistic
             comboBox1.ValueMember = "Key";
             comboBox1.DisplayMember = "Value";
 
-            //comboBox2_RowSource1.Add("");
             comboxbs2 = new BindingSource(comboBox2_RowSource1, null);
             comboBox2.DataSource = comboxbs2;
 
@@ -109,65 +108,72 @@ namespace Sci.Production.Logistic
                 return;
             }
 
-            string sqlCmd = @"select 0 as selected, d.*,
-	                                        (select sum(QtyPerCTN) from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo) as QtyPerCTN,
-	                                        (select sum(ShipQty) from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo) as ShipQty,
-	                                        substring((select cast(Article as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Article as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Article, 
-	                                        substring((select cast(Color as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Color as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Color,
-	                                        substring((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as SizeCode
-                                           from (
-                                                        select distinct b.TransferToClogID, b.ID, b.OrderID, c.CustPONo, b.CTNStartNo, b.ClogLocationId, b.Remark, b.ClogReceiveID
-                                                        from PackingList a, PackingList_Detail b, Orders c
-                                                        where (a.Type = 'B' or a.Type = 'L')
-                                                        and a.ID = b.ID
-                                                        and b.ReceiveDate is not null
-                                                        and b.CTNQty = 1
-                                                        and b.OrderID = c.ID";
+            StringBuilder sqlCmd = new StringBuilder();
+
+            sqlCmd.Append(string.Format(@"select 0 as selected, d.*,
+(select sum(QtyPerCTN) from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo) as QtyPerCTN,
+(select sum(ShipQty) from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo) as ShipQty,
+substring((select cast(Article as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Article as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Article, 
+substring((select cast(Color as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Color as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Color,
+substring((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as SizeCode
+from (
+	  select distinct b.TransferToClogID, b.ID, b.OrderID, c.CustPONo, b.CTNStartNo, b.ClogLocationId, b.Remark, b.ClogReceiveID
+	  from PackingList a, PackingList_Detail b, Orders c
+	  where (a.Type = 'B' or a.Type = 'L')
+	  and a.ID = b.ID
+	  and b.ReceiveDate is not null
+	  and b.CTNQty = 1
+	  and b.OrderID = c.ID
+	  and c.MDivisionID =  '{0}'", Sci.Env.User.Keyword));
             #region 組條件
             if (!MyUtility.Check.Empty(this.textBox1.Text))
             {
-                sqlCmd = sqlCmd + string.Format(" and c.ID >= '{0}'", this.textBox1.Text);
+                sqlCmd.Append(string.Format(" and c.ID >= '{0}'", this.textBox1.Text));
             }
             if (!MyUtility.Check.Empty(this.textBox2.Text))
             {
-                sqlCmd = sqlCmd + string.Format(" and c.ID <= '{0}'", this.textBox2.Text);
+                sqlCmd.Append(string.Format(" and c.ID <= '{0}'", this.textBox2.Text));
             }
 
             if (!MyUtility.Check.Empty(this.textBox3.Text))
             {
-                sqlCmd = sqlCmd + string.Format(" and a.ID >= '{0}'", this.textBox3.Text);
+                sqlCmd.Append(string.Format(" and a.ID >= '{0}'", this.textBox3.Text));
             }
             if (!MyUtility.Check.Empty(this.textBox4.Text))
             {
-                sqlCmd = sqlCmd + string.Format(" and a.ID <= '{0}'", this.textBox4.Text);
+                sqlCmd.Append(string.Format(" and a.ID <= '{0}'", this.textBox4.Text));
             }
 
             if (!MyUtility.Check.Empty(this.textBox5.Text))
             {
-                sqlCmd = sqlCmd + string.Format(" and b.TransferToClogID >= '{0}'", this.textBox5.Text);
+                sqlCmd.Append(string.Format(" and b.TransferToClogID >= '{0}'", this.textBox5.Text));
             }
             if (!MyUtility.Check.Empty(this.textBox6.Text))
             {
-                sqlCmd = sqlCmd + string.Format(" and b.TransferToClogID <= '{0}'", this.textBox6.Text);
+                sqlCmd.Append(string.Format(" and b.TransferToClogID <= '{0}'", this.textBox6.Text));
             }
 
             if (!MyUtility.Check.Empty(this.textBox7.Text))
             {
-                sqlCmd = sqlCmd + string.Format(" and c.CustPONo >= '{0}'", this.textBox7.Text);
+                sqlCmd.Append(string.Format(" and c.CustPONo >= '{0}'", this.textBox7.Text));
             }
             if (!MyUtility.Check.Empty(this.textBox8.Text))
             {
-                sqlCmd = sqlCmd + string.Format(" and c.CustPONo <= '{0}'", this.textBox8.Text);
+                sqlCmd.Append(string.Format(" and c.CustPONo <= '{0}'", this.textBox8.Text));
             }
             #endregion
-            sqlCmd = sqlCmd + ") d";
+            sqlCmd.Append(") d");
             DualResult result;
-            if (result = DBProxy.Current.Select(null, sqlCmd, out gridData))
+            if (result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData))
             {
                 if (gridData.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
                 }
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
             }
             listControlBindingSource1.DataSource = gridData;
 
