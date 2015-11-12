@@ -265,6 +265,9 @@ namespace Sci.Production.Logistic
             listControlBindingSource2.DataSource = grid2Data;
             this.numericBox1.Value = insertCount;
             #endregion
+
+            this.grid2.ValidateControl();
+            listControlBindingSource2.EndEdit();
         }
 
         //To Excel
@@ -287,8 +290,6 @@ namespace Sci.Production.Logistic
             dlg.RestoreDirectory = true;
             dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
             dlg.Title = "Save as Excel File";
-            dlg.FileName = "ChgOver_ChkListNew_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
-
             dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
 
             // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
