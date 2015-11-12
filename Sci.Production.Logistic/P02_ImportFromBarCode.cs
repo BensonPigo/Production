@@ -57,7 +57,6 @@ namespace Sci.Production.Logistic
                 .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(13))
                 .Text("ClogReceiveID", header: "Received ID", width: Widths.AnsiChars(13))
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(15));
-
         }
 
         //Get File開窗選檔案
@@ -142,20 +141,20 @@ namespace Sci.Production.Logistic
 
             #region 準備結構
             string selectCommand = @"select a.ClogLocationId,a.OrderID,a.CTNStartNo,b.StyleID,b.SeasonID,b.BrandID,b.Customize1,b.CustPONo,c.Alias,
-                                                            b.BuyerDelivery,a.ID as PackingListID,a.TransferToClogId,a.ClogReceiveID,'' as ID,'' as Remark, b.FactoryID, 1 as InsertData 
+                                                            b.BuyerDelivery,a.ID as PackingListID,a.TransferToClogId,a.ClogReceiveID,'' as ID,'' as Remark, b.MDivisionID, 1 as InsertData 
                                                             from PackingList_Detail a, Orders b, Country c where 1=0";
             DataTable groupTable;
             DualResult selectResult;
             if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out grid2Data)))
             {
-                MyUtility.Msg.WarningBox("Connection faile!");
+                MyUtility.Msg.WarningBox("Connection faile!\r\n"+selectResult.ToString());
                 return;
             }
 
-            selectCommand = "Select ID, ReceiveDate, FactoryID from ClogReceive where 1 = 0";
+            selectCommand = "Select ID, ReceiveDate, MDivisionID from ClogReceive where 1 = 0";
             if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out groupTable)))
             {
-                MyUtility.Msg.WarningBox("Connection faile!");
+                MyUtility.Msg.WarningBox("Connection faile!\r\n" + selectResult.ToString());
                 return;
             }
 
@@ -186,11 +185,12 @@ namespace Sci.Production.Logistic
                                 dr1["ClogLocationId"] = sl[1];
                                 dr1["PackingListID"] = sl[2].Substring(0, 13);
                                 dr1["CTNStartNo"] = sl[2].Substring(13);
-                                dr1["FactoryID"] = sl[2].Substring(0, 3);
+                                //dr1["MDivisionID"] = sl[2].Substring(0, 3);
+                                dr1["MDivisionID"] = Sci.Env.User.Keyword;
                                 dr1["InsertData"] = 1;
                                 string sqlCmd = string.Format(@"select OrderID, TransferToClogID, ClogReceiveID 
                                                                                   from PackingList_Detail
-                                                                                  where ID = '{0}' and CTNStartNo = '{1}'", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
+                                                                                  where ID = '{0}' and CTNStartNo = '{1}' and CTNQty = 1", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
                                 if (MyUtility.Check.Seek(sqlCmd, out seekPacklistData))
                                 {
                                     dr1["OrderID"] = seekPacklistData["OrderID"].ToString().Trim();
@@ -245,13 +245,13 @@ namespace Sci.Production.Logistic
 
                                 if (MyUtility.Check.Empty(dr1["ClogReceiveID"]) && (int)dr1["InsertData"] == 1)
                                 {
-                                    recordCount = groupData.Where(x => x["FactoryID"].ToString() == dr1["FactoryID"].ToString()).Count();
+                                    recordCount = groupData.Where(x => x["MDivisionID"].ToString() == dr1["MDivisionID"].ToString()).Count();
                                     if (recordCount == 0)
                                     {
                                         DataRow dr2 = groupTable.NewRow();
                                         dr2["ID"] = "";
                                         dr2["ReceiveDate"] = DBNull.Value;
-                                        dr2["FactoryID"] = dr1["FactoryID"];
+                                        dr2["MDivisionID"] = dr1["MDivisionID"];
                                         groupData.Add(dr2);
                                     }
                                 }
@@ -270,15 +270,38 @@ namespace Sci.Production.Logistic
         //To Excel
         private void button4_Click(object sender, EventArgs e)
         {
-            SaveFileDialog excelName = new SaveFileDialog();
-            excelName.Filter = "csv files (*.csv)|*.csv";
-            if (excelName.ShowDialog() == DialogResult.OK)
+            DataTable ExcelTable;
+            try
             {
-                DualResult result = this.grid2.ExportToCsv(excelName.FileName);
-                if (!result)
-                {
-                    ShowErr(result);
-                }
+                MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource2.DataSource, "ClogLocationId,OrderId,CTNStartNo,StyleID,SeasonID,BrandID,Customize1,CustPONo,Alias,BuyerDelivery,PackingListID,ClogReceiveID,Remark", "select * from #tmp", out ExcelTable);
+            }
+            catch (Exception ex)
+            {
+                MyUtility.Msg.ErrorBox("To Excel error.\r\n" + ex.ToString());
+                return;
+            }
+
+            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.RestoreDirectory = true;
+            dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
+            dlg.Title = "Save as Excel File";
+            dlg.FileName = "ChgOver_ChkListNew_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
+
+            dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
+
+            // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
+            // Get the selected file name and CopyToXls
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
+            {
+                // Open document
+                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName);
+                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+            }
+            else
+            {
+                return;
             }
         }
 
@@ -314,7 +337,7 @@ namespace Sci.Production.Logistic
             {
                 if (MyUtility.Check.Empty(dr["ID"]))
                 {
-                    newID = MyUtility.GetValue.GetID(dr["FactoryID"].ToString().Trim() + "CR", "ClogReceive", Convert.ToDateTime(this.dateBox1.Value), 2, "Id", null);
+                    newID = MyUtility.GetValue.GetID(dr["MDivisionID"].ToString().Trim() + "CR", "ClogReceive", Convert.ToDateTime(this.dateBox1.Value), 2, "Id", null);
                     if (MyUtility.Check.Empty(newID))
                     {
                         MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -326,8 +349,8 @@ namespace Sci.Production.Logistic
                         bool detailAllSuccess = true;
                         try
                         {
-                            sqlInsertMaster = @"insert into ClogReceive(ID, ReceiveDate, FactoryID,Status, AddName, AddDate) 
-                                                               values(@id, @receiveDate, @factoryID, @status, @addName, @addDate)";
+                            sqlInsertMaster = @"insert into ClogReceive(ID, ReceiveDate, MDivisionID,Status, AddName, AddDate) 
+                                                               values(@id, @receiveDate, @mdivisionid, @status, @addName, @addDate)";
 
                             #region 準備Master sql參數資料
                             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -339,8 +362,8 @@ namespace Sci.Production.Logistic
                             sp2.Value = this.dateBox1.Value;
 
                             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-                            sp3.ParameterName = "@factoryID";
-                            sp3.Value = dr["FactoryID"].ToString().Trim();
+                            sp3.ParameterName = "@mdivisionid";
+                            sp3.Value = dr["MDivisionID"].ToString().Trim();
 
                             System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
                             sp4.ParameterName = "@addName";
@@ -393,7 +416,7 @@ namespace Sci.Production.Logistic
                             #endregion
                             foreach (DataRow dr1 in grid2Data.Rows)
                             {
-                                if (dr1["FactoryID"].ToString().Trim() == dr["FactoryID"].ToString().Trim())
+                                if (dr1["MDivisionID"].ToString().Trim() == dr["MDivisionID"].ToString().Trim())
                                 {
                                     dr1["ID"] = newID; //將ID寫入Grid2的Received ID欄位
                                     dr1["ClogReceiveID"] = newID;
