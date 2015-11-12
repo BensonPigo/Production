@@ -21,7 +21,7 @@ namespace Sci.Production.Logistic
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
+            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
             gridicon.Append.Visible = false;
             gridicon.Insert.Visible = false;
             InsertDetailGridOnDoubleClick = false;
@@ -65,7 +65,7 @@ where crd.ID = '{0}'", masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.label1.Text = CurrentMaintain["Status"].ToString();
+            ShowStatus();
         }
 
         protected override void OnDetailGridSetup()
@@ -128,11 +128,10 @@ where crd.ID = '{0}'", masterID);
         {
             base.ClickNewAfter();
             CurrentMaintain["ReceiveDate"] = receiveDate;
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["Status"] = "New";
-            this.label1.Text = "New";
-            Sci.Production.Logistic.P02_BatchReceiving callNextForm = new Sci.Production.Logistic.P02_BatchReceiving(Convert.ToDateTime(CurrentMaintain["ReceiveDate"].ToString()), (DataTable)detailgridbs.DataSource);
-            callNextForm.ShowDialog(this);
+            ShowStatus();
+            CallBatchReceive();
         }
 
         //檢查表身不可以沒有資料
@@ -162,7 +161,7 @@ where crd.ID = '{0}'", masterID);
         {
             base.ClickConfirm();
             string sqlCmd, wrongCtn = "", lostCtn = "";
-            DualResult result, result1;
+            DualResult result;
             DataTable selectDate;
             //檢查收到的箱號與箱數要和Transfer to Clog一樣，若不一至則出訊息告知且不做任何事
             #region Wrong Receive
@@ -243,49 +242,16 @@ where crd.ID = '{0}'", masterID);
             {
                 try
                 {
-                    sqlCmd = string.Format("update ClogReceive set Status = 'Confirmed', EditName = '{0}', EditDate = '{1}' where ID = '{2}'", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"].ToString());
-                    result = DBProxy.Current.Execute(null, sqlCmd);
-                    #region 宣告Update PackingList_Detail sql參數
-                    IList<System.Data.SqlClient.SqlParameter> pckinglistcmds = new List<System.Data.SqlClient.SqlParameter>();
-                    System.Data.SqlClient.SqlParameter detail1 = new System.Data.SqlClient.SqlParameter();
-                    System.Data.SqlClient.SqlParameter detail2 = new System.Data.SqlClient.SqlParameter();
-                    System.Data.SqlClient.SqlParameter detail3 = new System.Data.SqlClient.SqlParameter();
-                    System.Data.SqlClient.SqlParameter detail4 = new System.Data.SqlClient.SqlParameter();
-                    System.Data.SqlClient.SqlParameter detail5 = new System.Data.SqlClient.SqlParameter();
-                    System.Data.SqlClient.SqlParameter detail6 = new System.Data.SqlClient.SqlParameter();
-                    detail1.ParameterName = "@clogReceiveId";
-                    detail2.ParameterName = "@receiveDate";
-                    detail3.ParameterName = "@clogLocationId";
-                    detail4.ParameterName = "@packingListID";
-                    detail5.ParameterName = "@orderID";
-                    detail6.ParameterName = "@CTNStartNo";
-                    pckinglistcmds.Add(detail1);
-                    pckinglistcmds.Add(detail2);
-                    pckinglistcmds.Add(detail3);
-                    pckinglistcmds.Add(detail4);
-                    pckinglistcmds.Add(detail5);
-                    pckinglistcmds.Add(detail6);
-                    #endregion
+                    IList<string> updateCmds = new List<string>();
                     foreach (DataRow eachRow in selectDate.Rows)
                     {
-                        sqlCmd = @"update PackingList_Detail 
-                                             set ClogReceiveId = @clogReceiveId, ReceiveDate = @receiveDate, ClogLocationId = @clogLocationId 
-                                             where ID = @packingListID and OrderID = @orderID and CTNStartNo = @CTNStartNo";
-                        #region Update PackingList_Detail sql參數資料
-                        detail1.Value = CurrentMaintain["ID"].ToString();
-                        detail2.Value = Convert.ToDateTime(CurrentMaintain["ReceiveDate"].ToString()).ToString("d");
-                        detail3.Value = eachRow["ClogLocationId"].ToString();
-                        detail4.Value = eachRow["ID"].ToString();
-                        detail5.Value = eachRow["OrderId"].ToString();
-                        detail6.Value = eachRow["CTNStartNo"].ToString();
-                        #endregion
-                        result1 = Sci.Data.DBProxy.Current.Execute(null, sqlCmd, pckinglistcmds);
-                        if (!result1)
-                        {
-                            MyUtility.Msg.WarningBox("Confirm failed, Pleaes re-try\r\n" + result1.ToString());
-                            break;
-                        }
+                        updateCmds.Add(string.Format(@"update PackingList_Detail 
+                                             set ClogReceiveId = '{0}', ReceiveDate = '{1}', ClogLocationId = '{2}' 
+                                             where ID = '{3}' and OrderID = '{4}' and CTNStartNo = '{5}';", CurrentMaintain["ID"].ToString(), Convert.ToDateTime(CurrentMaintain["ReceiveDate"].ToString()).ToString("d"),
+                                                                                                          eachRow["ClogLocationId"].ToString(), eachRow["ID"].ToString(), eachRow["OrderId"].ToString(), eachRow["CTNStartNo"].ToString()));
                     }
+                    updateCmds.Add(string.Format("update ClogReceive set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString()));
+                    result = DBProxy.Current.Executes(null, updateCmds);
 
                     if (result)
                     {
@@ -306,10 +272,7 @@ where crd.ID = '{0}'", masterID);
 
             //Update Orders的資料
             callGetCartonList();
-
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            RefreshToolBar();
         }
 
         //UnConfirm
@@ -333,7 +296,7 @@ where crd.ID = '{0}'", masterID);
             {
                  using (TransactionScope transactionScope = new TransactionScope())
                  {
-                        string sqlCmd1 = string.Format("update ClogReceive set Status = 'New', EditName = '{0}', EditDate = '{1}' where ID = '{2}'", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"].ToString());
+                        string sqlCmd1 = string.Format("update ClogReceive set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
                         string sqlCmd2 = string.Format("update PackingList_Detail set ClogReceiveId = '', ReceiveDate = null, ClogLocationId = '' where ClogReceiveId = '{0}'", CurrentMaintain["ID"].ToString());
                         DualResult result1 = DBProxy.Current.Execute(null, sqlCmd1);
                         DualResult result2 = DBProxy.Current.Execute(null, sqlCmd2);
@@ -358,13 +321,9 @@ where crd.ID = '{0}'", masterID);
                             return;
                         }
                  }
-
-                //Update Orders的資料
-                callGetCartonList();
-
-                RenewData();
-                OnDetailEntered();
-                EnsureToolbarExt();
+                 //Update Orders的資料
+                 callGetCartonList();
+                 RefreshToolBar();
             }
         }
 
@@ -398,8 +357,28 @@ where crd.ID = '{0}'", masterID);
         //Batch Receive，執行LOGISTIC->P02_BatchReceiving
         private void button2_Click(object sender, EventArgs e)
         {
+            CallBatchReceive();
+        }
+
+        //呼叫Batch Receive
+        private void CallBatchReceive()
+        {
             Sci.Production.Logistic.P02_BatchReceiving callNextForm = new Sci.Production.Logistic.P02_BatchReceiving(Convert.ToDateTime(CurrentMaintain["ReceiveDate"].ToString()), (DataTable)detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
+        }
+
+        //Status顯示
+        private void ShowStatus()
+        {
+            this.label1.Text = CurrentMaintain["Status"].ToString();
+        }
+
+        //(Un)Confirm後更新資料內容
+        private void RefreshToolBar()
+        {
+            RenewData();
+            OnDetailEntered();
+            EnsureToolbarExt();
         }
     }
 }
