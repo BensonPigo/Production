@@ -56,37 +56,37 @@ namespace Sci.Production.Logistic
                 this.textBox1.Focus();
                 return;
             }
+            StringBuilder sqlCmd = new StringBuilder();
 
-
-            string sqlCmd = @"select '' as ID, 0 as selected, b.TransferToClogId, b.ClogLocationId,b.ReceiveDate, b.ID as PackingListId, b.OrderId,b.CTNStartNo,a.StyleID,a.SeasonID, a.BrandID, a.CustPONo, a.Customize1, a.BuyerDelivery, c.Alias
+            sqlCmd.Append(@"select '' as ID, 0 as selected, b.TransferToClogId, b.ClogLocationId,b.ReceiveDate, b.ID as PackingListId, b.OrderId,b.CTNStartNo,a.StyleID,a.SeasonID, a.BrandID, a.CustPONo, a.Customize1, a.BuyerDelivery, c.Alias
                                            from Orders a, PackingList_Detail b, Country c
                                            where a.ID = b.OrderID
                                            and b.CTNQty = 1
                                            and b.ReceiveDate is not null
-                                           and a.Dest = c.ID";
+                                           and a.Dest = c.ID");
             if (!MyUtility.Check.Empty(this.textBox1.Text))
             {
-                sqlCmd = sqlCmd + string.Format(" and a.ID = '{0}'",this.textBox1.Text.Trim());
+                sqlCmd.Append(string.Format(" and a.ID = '{0}'",this.textBox1.Text.Trim()));
             }
 
             if (!MyUtility.Check.Empty(this.textBox2.Text))
             {
-                sqlCmd = sqlCmd + string.Format(" and b.ID = '{0}'",this.textBox2.Text.Trim());
+                sqlCmd.Append(string.Format(" and b.ID = '{0}'",this.textBox2.Text.Trim()));
             }
 
             if (!MyUtility.Check.Empty(this.dateBox1.Value))
             {
-                sqlCmd = sqlCmd + string.Format(" and b.ReceiveDate = '{0}'",Convert.ToDateTime(this.dateBox1.Text).ToString("d"));
+                sqlCmd.Append(string.Format(" and b.ReceiveDate = '{0}'",Convert.ToDateTime(this.dateBox1.Text).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.textBox3.Text))
             {
-                sqlCmd = sqlCmd + string.Format(" and a.CustPONo = '{0}'",this.textBox3.Text.Trim());
+                sqlCmd.Append(string.Format(" and a.CustPONo = '{0}'",this.textBox3.Text.Trim()));
             }
 
             DataTable selectDataTable1;
             DualResult selectResult;
-            if (selectResult = DBProxy.Current.Select(null, sqlCmd, out selectDataTable1))
+            if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), out selectDataTable1))
             {
                 if (selectDataTable1.Rows.Count == 0)
                 {
