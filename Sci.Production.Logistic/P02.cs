@@ -230,7 +230,7 @@ where crd.ID = '{0}'", masterID);
             //update ClogReceive & PackingList_Detail data
             sqlCmd = string.Format(@"select a.ID,a.OrderID,a.CTNStartNo,b.ClogLocationId 
                                                         from PackingList_Detail a, ClogReceive_Detail b 
-                                                        where b.ID = '{0}' and a.ID = b.PackingListId and a.OrderId = b.OrderId and a.CTNStartNo = b.CTNStartNo",CurrentMaintain["ID"].ToString());
+                                                        where b.ID = '{0}' and a.ID = b.PackingListId and a.OrderId = b.OrderId and a.CTNStartNo = b.CTNStartNo", CurrentMaintain["ID"].ToString());
             result = DBProxy.Current.Select(null, sqlCmd, out selectDate);
             if (!result)
             {
@@ -253,6 +253,12 @@ where crd.ID = '{0}'", masterID);
                     updateCmds.Add(string.Format("update ClogReceive set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString()));
                     result = DBProxy.Current.Executes(null, updateCmds);
 
+                    //Update Orders的資料
+                    if (!callGetCartonList())
+                    {
+                        return;
+                    }
+
                     if (result)
                     {
                         transactionScope.Complete();
@@ -270,8 +276,6 @@ where crd.ID = '{0}'", masterID);
                 }
             }
 
-            //Update Orders的資料
-            callGetCartonList();
             RefreshToolBar();
         }
 
@@ -294,64 +298,62 @@ where crd.ID = '{0}'", masterID);
             unconfirmResult = MyUtility.Msg.WarningBox("Are you sure unconfirm this data?", buttons: MessageBoxButtons.YesNo);
             if (unconfirmResult == System.Windows.Forms.DialogResult.Yes)
             {
-                 using (TransactionScope transactionScope = new TransactionScope())
-                 {
-                        string sqlCmd1 = string.Format("update ClogReceive set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
-                        string sqlCmd2 = string.Format("update PackingList_Detail set ClogReceiveId = '', ReceiveDate = null, ClogLocationId = '' where ClogReceiveId = '{0}'", CurrentMaintain["ID"].ToString());
-                        DualResult result1 = DBProxy.Current.Execute(null, sqlCmd1);
-                        DualResult result2 = DBProxy.Current.Execute(null, sqlCmd2);
-                        if (result1 && result2)
-                        {
-                            transactionScope.Complete();
-                        }
-                        else
-                        {
-                            string failMsg = "";
-                            if (!result1)
-                            {
-                                failMsg = result1.ToString() + "\r\n";
-                            }
+                using (TransactionScope transactionScope = new TransactionScope())
+                {
+                    string sqlCmd1 = string.Format("update ClogReceive set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
+                    string sqlCmd2 = string.Format("update PackingList_Detail set ClogReceiveId = '', ReceiveDate = null, ClogLocationId = '' where ClogReceiveId = '{0}'", CurrentMaintain["ID"].ToString());
+                    DualResult result1 = DBProxy.Current.Execute(null, sqlCmd1);
+                    DualResult result2 = DBProxy.Current.Execute(null, sqlCmd2);
+                    //Update Orders的資料
+                    if (!callGetCartonList())
+                    {
+                        return;
+                    }
 
-                            if (!result2)
-                            {
-                                failMsg = failMsg + result2.ToString();
-                            }
-
-                            MyUtility.Msg.WarningBox("Unconfirm fail !\r\n" + failMsg);
-                            return;
+                    if (result1 && result2)
+                    {
+                        transactionScope.Complete();
+                    }
+                    else
+                    {
+                        string failMsg = "";
+                        if (!result1)
+                        {
+                            failMsg = result1.ToString() + "\r\n";
                         }
-                 }
-                 //Update Orders的資料
-                 callGetCartonList();
-                 RefreshToolBar();
+
+                        if (!result2)
+                        {
+                            failMsg = failMsg + result2.ToString();
+                        }
+
+                        MyUtility.Msg.WarningBox("Unconfirm fail !\r\n" + failMsg);
+                        return;
+                    }
+                }
+
+                RefreshToolBar();
             }
         }
 
         //Update Orders的資料
-        private void callGetCartonList()
+        private bool callGetCartonList()
         {
             DataTable selectData;
             string sqlCmd = string.Format("select OrderID from ClogReceive_Detail where ID = '{0}' group by OrderID", CurrentMaintain["ID"].ToString());
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
-            if (!result)
+            DualResult result1 = DBProxy.Current.Select(null, sqlCmd, out selectData);
+            if (!result1)
             {
-                MyUtility.Msg.WarningBox("Update orders data fail!");
+                MyUtility.Msg.WarningBox("Select update orders data fail!\r\n" + result1.ToString());
+                return false;
             }
-
-            bool prgResult, lastResult = false;
-            foreach (DataRow currentRow in selectData.Rows)
+            DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
+            if (!prgResult)
             {
-                prgResult = Prgs.UpdateOrdersCTN(currentRow["OrderID"].ToString());
-                if (!prgResult)
-                {
-                    lastResult = true;
-                }
-
+                MyUtility.Msg.WarningBox("Update orders data fail!\r\n" + prgResult.ToString());
+                return false;
             }
-            if (lastResult)
-            {
-                MyUtility.Msg.WarningBox("Update orders data fail!");
-            }
+            return true;
         }
 
         //Batch Receive，執行LOGISTIC->P02_BatchReceiving
