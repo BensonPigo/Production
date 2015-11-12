@@ -288,14 +288,19 @@ where ld.ID = {0} order by ld.No", masterID);
             string sqlCmd;
             //sql參數
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", CurrentMaintain["FactoryID"].ToString());
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@id", ID);
-
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-            cmds.Add(sp1);
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+            sp2.ParameterName = "@id";
             if (ID != null)
             {
-                cmds.Add(sp2);
+                sp2.Value = ID;
             }
+            else
+            {
+                sp2.Value = DBNull.Value;
+            }
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+            cmds.Add(sp2);
 
             if (MyUtility.Check.Empty(CurrentMaintain["FactoryID"]))
             {
