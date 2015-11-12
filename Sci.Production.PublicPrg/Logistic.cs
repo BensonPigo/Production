@@ -38,6 +38,31 @@ namespace Sci.Production.PublicPrg
 
             return true;
         }
+
+        /// <summary>
+        /// UpdateOrdersCTN(DataTable)
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <returns>DualResult</returns>
+        public static DualResult UpdateOrdersCTN(DataTable OrderData)
+        {
+            IList<string> updateCmds = new List<string>();
+            foreach (DataRow dr in OrderData.Rows)
+            {
+                updateCmds.Add(string.Format(@"update Orders 
+                                                       set TotalCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}'), 
+                                                             FtyCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and TransferToClogID != ''), 
+                                                             ClogCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and ClogReceiveID != ''), 
+                                                            ClogLastReceiveDate = (select max(ReceiveDate) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}') 
+                                                       where ID = '{0}'", dr["OrderID"].ToString()));
+            }
+            if (updateCmds.Count > 0)
+            {
+                DualResult result = DBProxy.Current.Executes(null, updateCmds);
+                return result;
+            }
+            return Result.True;
+        }
         #endregion
     }
 }
