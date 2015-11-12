@@ -265,9 +265,6 @@ namespace Sci.Production.Logistic
             listControlBindingSource2.DataSource = grid2Data;
             this.numericBox1.Value = insertCount;
             #endregion
-
-            this.grid2.ValidateControl();
-            listControlBindingSource2.EndEdit();
         }
 
         //To Excel

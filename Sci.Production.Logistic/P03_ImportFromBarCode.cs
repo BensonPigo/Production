@@ -270,9 +270,6 @@ namespace Sci.Production.Logistic
             listControlBindingSource2.DataSource = null;
             listControlBindingSource2.DataSource = grid2Data;
             #endregion
-
-            this.grid2.ValidateControl();
-            listControlBindingSource2.EndEdit();
         }
 
         //To Excel
