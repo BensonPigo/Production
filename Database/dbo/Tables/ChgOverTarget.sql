@@ -1,15 +1,17 @@
 ﻿CREATE TABLE [dbo].[ChgOverTarget] (
     [ID]            BIGINT         IDENTITY (1, 1) NOT NULL,
-    [EffectiveDate] DATE           NULL,
-    [MDivisionID]   VARCHAR (8)    CONSTRAINT [DF_ChgOverTarget_MDivisionID] DEFAULT ('') NULL,
-    [Type]          VARCHAR (5)    CONSTRAINT [DF_ChgOverTarget_Type] DEFAULT ('') NULL,
+    [EffectiveDate] DATE           NOT NULL,
+    [MDivisionID]   VARCHAR (8)    CONSTRAINT [DF_ChgOverTarget_MDivisionID] DEFAULT ('') NOT NULL,
+    [Type]          VARCHAR (5)    CONSTRAINT [DF_ChgOverTarget_Type] DEFAULT ('') NOT NULL,
     [Target]        NUMERIC (6, 2) CONSTRAINT [DF_ChgOverTarget_Target] DEFAULT ((0)) NULL,
     [AddName]       VARCHAR (10)   CONSTRAINT [DF_ChgOverTarget_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME       NULL,
     [EditName]      VARCHAR (10)   CONSTRAINT [DF_ChgOverTarget_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME       NULL,
-    CONSTRAINT [PK_ChgOverTarget] PRIMARY KEY CLUSTERED ([ID] ASC)
+    CONSTRAINT [PK_ChgOverTarget] PRIMARY KEY CLUSTERED ([EffectiveDate] ASC, [MDivisionID] ASC, [Type] ASC)
 );
+
+
 
 
 

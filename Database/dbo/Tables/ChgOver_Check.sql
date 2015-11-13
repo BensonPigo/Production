@@ -2,12 +2,14 @@
     [ID]                 BIGINT        CONSTRAINT [DF_ChgOver_Check_ID] DEFAULT ((0)) NOT NULL,
     [DayBe4Inline]       INT           CONSTRAINT [DF_ChgOver_Check_DayBe4Inline] DEFAULT ((0)) NULL,
     [BaseOn]             TINYINT       CONSTRAINT [DF_ChgOver_Check_BaseOn] DEFAULT ((0)) NULL,
-    [ChgOverCheckListID] VARCHAR (4)   CONSTRAINT [DF_ChgOver_Check_ChgOverCheckListID] DEFAULT ('') NOT NULL,
+    [ChgOverCheckListID] BIGINT        CONSTRAINT [DF_ChgOver_Check_ChgOverCheckListID] DEFAULT ('') NOT NULL,
     [ScheduleDate]       DATE          NULL,
     [ActualDate]         DATE          NULL,
     [Remark]             NVARCHAR (60) CONSTRAINT [DF_ChgOver_Check_Remark] DEFAULT ('') NULL,
     CONSTRAINT [PK_ChgOver_Check] PRIMARY KEY CLUSTERED ([ID] ASC, [ChgOverCheckListID] ASC)
 );
+
+
 
 
 GO

@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[ChgOverCheckList] (
-    [ID]          VARCHAR (4)   CONSTRAINT [DF_ChgOverCheckList_ID] DEFAULT ('') NOT NULL,
+    [ID]          BIGINT        IDENTITY (1, 1) NOT NULL,
+    [Code]        VARCHAR (4)   CONSTRAINT [DF_ChgOverCheckList_ID] DEFAULT ('') NOT NULL,
     [BrandID]     VARCHAR (8)   CONSTRAINT [DF_ChgOverCheckList_BrandID] DEFAULT ('') NOT NULL,
     [Description] NVARCHAR (60) CONSTRAINT [DF_ChgOverCheckList_Description] DEFAULT ('') NOT NULL,
     [DaysBefore]  SMALLINT      CONSTRAINT [DF_ChgOverCheckList_DaysBefore] DEFAULT ((0)) NULL,
@@ -10,8 +11,10 @@
     [AddDate]     DATETIME      NULL,
     [EditName]    VARCHAR (10)  CONSTRAINT [DF_ChgOverCheckList_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME      NULL,
-    CONSTRAINT [PK_ChgOverCheckList_1] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC)
+    CONSTRAINT [PK_ChgOverCheckList_1] PRIMARY KEY CLUSTERED ([Code] ASC, [BrandID] ASC)
 );
+
+
 
 
 
@@ -58,4 +61,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ChgOverCheckList', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ChgOverCheckList', @level2type = N'COLUMN', @level2name = N'Code';
 

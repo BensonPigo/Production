@@ -2,12 +2,15 @@
     [ID]          VARCHAR (10)  CONSTRAINT [DF_ClogLocation_ID] DEFAULT ('') NOT NULL,
     [MDivisionID] VARCHAR (8)   CONSTRAINT [DF_ClogLocation_MDivisionID] DEFAULT ('') NOT NULL,
     [Description] NVARCHAR (40) CONSTRAINT [DF_ClogLocation_Description] DEFAULT ('') NOT NULL,
+    [Junk]        BIT           CONSTRAINT [DF_ClogLocation_Junk] DEFAULT ((0)) NULL,
     [AddName]     VARCHAR (10)  CONSTRAINT [DF_ClogLocation_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME      NULL,
     [EditName]    VARCHAR (10)  CONSTRAINT [DF_ClogLocation_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME      NULL,
     CONSTRAINT [PK_ClogLocation] PRIMARY KEY CLUSTERED ([ID] ASC, [MDivisionID] ASC)
 );
+
+
 
 
 
