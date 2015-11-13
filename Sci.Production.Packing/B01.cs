@@ -15,35 +15,5 @@ namespace Sci.Production.Packing
         {
             InitializeComponent();
         }
-
-        protected override void ClickNewAfter()
-        {
-            base.ClickNewAfter();
-            CurrentMaintain["Type"] = "OG";
-        }
-
-        protected override void ClickEditAfter()
-        {
-            base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
-        }
-
-        protected override bool ClickSaveBefore()
-        {
-            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
-            {
-                MyUtility.Msg.WarningBox("< ID > can not be empty!");
-                this.textBox1.Focus();
-                return false;
-            }
-
-            if (MyUtility.Check.Empty(CurrentMaintain["Description"]))
-            {
-                MyUtility.Msg.WarningBox("< Description > can not be empty!");
-                this.textBox2.Focus();
-                return false;
-            }
-            return base.ClickSaveBefore();
-        }
     }
 }
