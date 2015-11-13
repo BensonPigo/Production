@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[ArtworkAP] (
     [Id]            VARCHAR (13)    CONSTRAINT [DF_ArtworkAP_Id] DEFAULT ('') NOT NULL,
+    [MDivisionID]   VARCHAR (8)     NULL,
     [FactoryID]     VARCHAR (8)     CONSTRAINT [DF_ArtworkAP_FactoryID] DEFAULT ('') NOT NULL,
     [LocalSuppID]   VARCHAR (8)     CONSTRAINT [DF_ArtworkAP_LocalSuppID] DEFAULT ('') NOT NULL,
     [IssueDate]     DATE            NOT NULL,
@@ -23,6 +24,8 @@
     [Status]        VARCHAR (15)    CONSTRAINT [DF_ArtworkAP_Status] DEFAULT ('') NULL,
     CONSTRAINT [PK_ArtworkAP] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 GO

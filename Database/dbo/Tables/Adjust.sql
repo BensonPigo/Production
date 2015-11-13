@@ -1,9 +1,9 @@
 ﻿CREATE TABLE [dbo].[Adjust] (
     [ID]            VARCHAR (13)  CONSTRAINT [DF_Adjust_ID] DEFAULT ('') NOT NULL,
+    [MDivisionID]   VARCHAR (8)   CONSTRAINT [DF_Adjust_MDivisionID] DEFAULT ('') NULL,
     [IssueDate]     DATE          NOT NULL,
     [Remark]        NVARCHAR (60) CONSTRAINT [DF_Adjust_Remark] DEFAULT ('') NULL,
     [Status]        VARCHAR (15)  CONSTRAINT [DF_Adjust_Status] DEFAULT ('') NULL,
-    [FactoryID]     VARCHAR (8)   CONSTRAINT [DF_Adjust_FactoryID] DEFAULT ('') NOT NULL,
     [AddName]       VARCHAR (10)  CONSTRAINT [DF_Adjust_AddName] DEFAULT ('') NOT NULL,
     [AddDate]       DATETIME      NOT NULL,
     [EditName]      VARCHAR (10)  CONSTRAINT [DF_Adjust_EditName] DEFAULT ('') NULL,
@@ -12,6 +12,10 @@
     [StocktakingID] VARCHAR (13)  CONSTRAINT [DF_Adjust_StocktakingID] DEFAULT ('') NULL,
     CONSTRAINT [PK_Adjust] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
+
+
 
 
 GO
@@ -35,7 +39,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'狀態', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Adjust', @level2type = N'COLUMN', @level2name = N'FactoryID';
+
 
 
 GO
@@ -60,4 +64,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單據類�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'盤點單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Adjust', @level2type = N'COLUMN', @level2name = N'StocktakingID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Adjust', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

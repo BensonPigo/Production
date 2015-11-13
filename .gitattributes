@@ -2,6 +2,7 @@
 Database/Production.sql -text
 Database/ProductionDB.dbmdl -text
 Database/ProductionDB.publish.xml -text
+Database/ProductionDB.refactorlog -text
 Database/ProductionDB.sln -text
 Database/ProductionDB.sqlproj -text
 Database/ProductionDB.sqlproj.user -text
@@ -268,6 +269,7 @@ Database/dbo/Tables/PO_Artwork.sql -text
 Database/dbo/Tables/PO_Factory.sql -text
 Database/dbo/Tables/PO_Supp.sql -text
 Database/dbo/Tables/PO_Supp_Detail.sql -text
+Database/dbo/Tables/PO_Supp_Detail_OrderList.sql -text
 Database/dbo/Tables/PPICReason.sql -text
 Database/dbo/Tables/PackingGuide.sql -text
 Database/dbo/Tables/PackingGuide_Detail.sql -text

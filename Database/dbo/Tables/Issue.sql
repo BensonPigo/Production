@@ -2,7 +2,7 @@
     [Id]           VARCHAR (13)  CONSTRAINT [DF_Issue_Id] DEFAULT ('') NOT NULL,
     [Type]         VARCHAR (1)   CONSTRAINT [DF_Issue_Type] DEFAULT ('') NOT NULL,
     [IssueDate]    DATE          NOT NULL,
-    [FactoryId]    VARCHAR (8)   CONSTRAINT [DF_Issue_FactoryId] DEFAULT ('') NOT NULL,
+    [MDivisionID]  VARCHAR (8)   CONSTRAINT [DF_Issue_MDivisionID] DEFAULT ('') NOT NULL,
     [Status]       VARCHAR (15)  CONSTRAINT [DF_Issue_Status] DEFAULT ('') NULL,
     [CutplanID]    VARCHAR (13)  CONSTRAINT [DF_Issue_CutplanID] DEFAULT ('') NULL,
     [Remark]       NVARCHAR (60) CONSTRAINT [DF_Issue_Remark] DEFAULT ('') NULL,
@@ -15,6 +15,8 @@
     [EditDate]     DATETIME      NULL,
     CONSTRAINT [PK_Issue] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 GO
@@ -34,7 +36,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單據日�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue', @level2type = N'COLUMN', @level2name = N'FactoryId';
+
 
 
 GO
@@ -75,4 +77,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯人�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

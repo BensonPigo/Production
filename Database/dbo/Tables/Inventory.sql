@@ -3,6 +3,7 @@
     [POID]             VARCHAR (13)    CONSTRAINT [DF_Inventory_POID] DEFAULT ('') NOT NULL,
     [Seq1]             VARCHAR (3)     CONSTRAINT [DF_Inventory_Seq1] DEFAULT ('') NOT NULL,
     [Seq2]             VARCHAR (2)     CONSTRAINT [DF_Inventory_Seq2] DEFAULT ('') NOT NULL,
+    [MDivisionID]      VARCHAR (8)     CONSTRAINT [DF_Inventory_MDivisionID] DEFAULT ('') NOT NULL,
     [FactoryID]        VARCHAR (8)     CONSTRAINT [DF_Inventory_FactoryID] DEFAULT ('') NOT NULL,
     [UnitID]           VARCHAR (8)     CONSTRAINT [DF_Inventory_UnitID] DEFAULT ('') NOT NULL,
     [ProjectID]        VARCHAR (5)     CONSTRAINT [DF_Inventory_ProjectID] DEFAULT ('') NULL,
@@ -42,6 +43,8 @@
     [suppid]           VARCHAR (6)     NULL,
     CONSTRAINT [PK_Inventory] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO
@@ -202,4 +205,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Inventory', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Inventory', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

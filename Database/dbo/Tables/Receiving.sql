@@ -1,8 +1,8 @@
 ﻿CREATE TABLE [dbo].[Receiving] (
     [Id]              VARCHAR (13)   CONSTRAINT [DF_Receiving_Id] DEFAULT ('') NOT NULL,
+    [MDivisionID]     VARCHAR (8)    CONSTRAINT [DF_Receiving_MDivisionID] DEFAULT ('') NOT NULL,
     [InvNo]           VARCHAR (25)   CONSTRAINT [DF_Receiving_InvNo] DEFAULT ('') NULL,
     [Type]            VARCHAR (1)    CONSTRAINT [DF_Receiving_Type] DEFAULT ('') NOT NULL,
-    [FactoryId]       VARCHAR (8)    CONSTRAINT [DF_Receiving_FactoryId] DEFAULT ('') NOT NULL,
     [ExportId]        VARCHAR (13)   CONSTRAINT [DF_Receiving_ExportId] DEFAULT ('') NULL,
     [ETA]             DATE           NULL,
     [Third]           BIT            CONSTRAINT [DF_Receiving_Third] DEFAULT ((0)) NULL,
@@ -17,6 +17,8 @@
     [EditDate]        DATETIME       NULL,
     CONSTRAINT [PK_Receiving] PRIMARY KEY CLUSTERED ([Id] ASC) ON [SLAVE]
 );
+
+
 
 
 
@@ -38,7 +40,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單據類�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠代', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving', @level2type = N'COLUMN', @level2name = N'FactoryId';
+
 
 
 GO
@@ -87,4 +89,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯人�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

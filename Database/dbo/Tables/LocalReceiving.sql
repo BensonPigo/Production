@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[LocalReceiving] (
     [Id]          VARCHAR (13)  CONSTRAINT [DF_LocalReceiving_Id] DEFAULT ('') NOT NULL,
+    [MDivisionID] VARCHAR (8)   CONSTRAINT [DF_LocalReceiving_MDivisionID] DEFAULT ('') NOT NULL,
     [FactoryId]   VARCHAR (8)   CONSTRAINT [DF_LocalReceiving_FactoryId] DEFAULT ('') NOT NULL,
     [LocalSuppID] VARCHAR (8)   CONSTRAINT [DF_LocalReceiving_LocalSuppID] DEFAULT ('') NOT NULL,
     [Category]    VARCHAR (20)  CONSTRAINT [DF_LocalReceiving_Category] DEFAULT ('') NOT NULL,
@@ -13,6 +14,8 @@
     [Status]      VARCHAR (15)  CONSTRAINT [DF_LocalReceiving_Status] DEFAULT ('') NULL,
     CONSTRAINT [PK_LocalReceiving] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 GO
@@ -65,4 +68,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發票號�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'狀態', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalReceiving', @level2type = N'COLUMN', @level2name = N'Status';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalReceiving', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

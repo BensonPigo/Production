@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="bcb5e888-b02a-44d2-b686-0e8bdcdc594e" ChangeDateTime="11/06/2015 09:33:26">
+    <Property Name="ElementName" Value="[dbo].[PO_Supp_Detail].[SysetmLock]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[PO_Supp_Detail]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="SystemLock" />
+  </Operation>
+</Operations>

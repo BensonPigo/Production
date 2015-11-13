@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[LocalReceiving_Detail] (
     [Id]                 VARCHAR (13)   CONSTRAINT [DF_LocalReceiving_Detail_Id] DEFAULT ('') NOT NULL,
     [OrderId]            VARCHAR (13)   CONSTRAINT [DF_LocalReceiving_Detail_OrderId] DEFAULT ('') NOT NULL,
-    [Refno]              VARCHAR (20)   CONSTRAINT [DF_LocalReceiving_Detail_Refno] DEFAULT ('') NOT NULL,
+    [Refno]              VARCHAR (21)   CONSTRAINT [DF_LocalReceiving_Detail_Refno] DEFAULT ('') NOT NULL,
     [ThreadColorID]      VARCHAR (15)   CONSTRAINT [DF_LocalReceiving_Detail_ThreadColorID] DEFAULT ('') NULL,
     [Qty]                NUMERIC (8, 2) CONSTRAINT [DF_LocalReceiving_Detail_Qty] DEFAULT ((0)) NOT NULL,
     [LocalPoId]          VARCHAR (13)   CONSTRAINT [DF_LocalReceiving_Detail_LocalPoId] DEFAULT ('') NOT NULL,

@@ -7,6 +7,7 @@
     [BuyerID]        VARCHAR (8)     CONSTRAINT [DF_Debit_BuyerID] DEFAULT ('') NULL,
     [BrandID]        VARCHAR (8)     CONSTRAINT [DF_Debit_BrandID] DEFAULT ('') NULL,
     [BankID]         VARCHAR (6)     CONSTRAINT [DF_Debit_BankID] DEFAULT ('') NULL,
+    [MDivisionID]    VARCHAR (8)     CONSTRAINT [DF_Debit_MDivisionID] DEFAULT ('') NULL,
     [LCFNO]          VARCHAR (20)    CONSTRAINT [DF_Debit_LCFNO] DEFAULT ('') NULL,
     [LCFDate]        DATE            NULL,
     [EstPayDate]     DATE            NULL,
@@ -49,6 +50,8 @@
     [SysDate]        DATETIME        NULL,
     CONSTRAINT [PK_Debit] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -245,4 +248,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'副本', @l
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'主旨', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit', @level2type = N'COLUMN', @level2name = N'Subject';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

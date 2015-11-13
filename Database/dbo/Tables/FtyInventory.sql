@@ -1,21 +1,25 @@
-﻿CREATE TABLE [dbo].[FtyInventory] (
-    [Category]  VARCHAR (1)     CONSTRAINT [DF_FtyInventory_Category] DEFAULT ('') NULL,
-    [Poid]      VARCHAR (13)    CONSTRAINT [DF_FtyInventory_Poid] DEFAULT ('') NOT NULL,
-    [Seq1]      VARCHAR (3)     CONSTRAINT [DF_FtyInventory_Seq1] DEFAULT ('') NOT NULL,
-    [Seq2]      VARCHAR (2)     CONSTRAINT [DF_FtyInventory_Seq2] DEFAULT ('') NOT NULL,
-    [Roll]      VARCHAR (8)     CONSTRAINT [DF_FtyInventory_Roll] DEFAULT ('') NOT NULL,
-    [Dyelot]    VARCHAR (4)     CONSTRAINT [DF_FtyInventory_Dyelot] DEFAULT ('') NULL,
-    [StockType] VARCHAR (1)     CONSTRAINT [DF_FtyInventory_StockType] DEFAULT ('') NOT NULL,
-    [InQty]     NUMERIC (10, 2) CONSTRAINT [DF_FtyInventory_InQty] DEFAULT ((0)) NULL,
-    [OutQty]    NUMERIC (10, 2) CONSTRAINT [DF_FtyInventory_OutQty] DEFAULT ((0)) NULL,
-    [AdjustQty] NUMERIC (10, 2) CONSTRAINT [DF_FtyInventory_AdjustQty] DEFAULT ((0)) NULL,
-    [LockName]  VARCHAR (10)    CONSTRAINT [DF_FtyInventory_LockName] DEFAULT ('') NULL,
-    [LockDate]  DATETIME        NULL,
-    [Lock]      BIT             CONSTRAINT [DF_FtyInventory_Lock] DEFAULT ((0)) NULL,
-    [Ukey]      BIGINT          IDENTITY (1, 1) NOT NULL,
-    [ZoneID] VARCHAR(3) NULL, 
-    CONSTRAINT [PK_FtyInventory] PRIMARY KEY CLUSTERED ([Poid] ASC, [Seq1] ASC, [Seq2] ASC, [Roll] ASC, [StockType] ASC)
+CREATE TABLE [dbo].[FtyInventory] (
+    [Ukey]                  BIGINT          IDENTITY (1, 1) NOT NULL,
+    [MDivisionPoDetailUkey] BIGINT          NULL,
+    [MDivisionID]           VARCHAR (8)     CONSTRAINT [DF_FtyInventory_MDivisionID] DEFAULT ('') NULL,
+    [POID]                  VARCHAR (13)    CONSTRAINT [DF_FtyInventory_POID] DEFAULT ('') NOT NULL,
+    [Seq1]                  VARCHAR (3)     CONSTRAINT [DF_FtyInventory_Seq1] DEFAULT ('') NOT NULL,
+    [Seq2]                  VARCHAR (2)     CONSTRAINT [DF_FtyInventory_Seq2] DEFAULT ('') NOT NULL,
+    [Roll]                  VARCHAR (8)     CONSTRAINT [DF_FtyInventory_Roll] DEFAULT ('') NULL,
+    [StockType]             CHAR (1)        CONSTRAINT [DF_FtyInventory_StockType] DEFAULT ('') NOT NULL,
+    [Dyelot]                VARCHAR (4)     CONSTRAINT [DF_FtyInventory_Dyelot] DEFAULT ('') NULL,
+    [InQty]                 NUMERIC (10, 2) CONSTRAINT [DF_FtyInventory_InQty] DEFAULT ((0)) NULL,
+    [OutQty]                NUMERIC (10, 2) CONSTRAINT [DF_FtyInventory_OutQty] DEFAULT ((0)) NULL,
+    [AdjustQty]             NUMERIC (10, 2) CONSTRAINT [DF_FtyInventory_AdjustQty] DEFAULT ((0)) NULL,
+    [LockName]              VARCHAR (10)    CONSTRAINT [DF_FtyInventory_LockName] DEFAULT ('') NULL,
+    [LockDate]              DATETIME        NULL,
+    [Lock]                  BIT             CONSTRAINT [DF_FtyInventory_Lock] DEFAULT ((0)) NULL,
+    CONSTRAINT [PK_FtyInventory] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
+
+
 
 
 GO
@@ -23,19 +27,19 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠庫�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Category', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FtyInventory', @level2type = N'COLUMN', @level2name = N'Category';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FtyInventory', @level2type = N'COLUMN', @level2name = N'Poid';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FtyInventory', @level2type = N'COLUMN', @level2name = N'Seq1';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FtyInventory', @level2type = N'COLUMN', @level2name = N'Seq2';
+
+
+
+GO
+
 
 
 GO
@@ -79,11 +83,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ukey', @lev
 
 
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'Zone',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'FtyInventory',
-    @level2type = N'COLUMN',
-    @level2name = N'ZoneID'
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[FtyInventory]([Roll] ASC, [StockType] ASC)
+    INCLUDE([InQty], [OutQty], [AdjustQty]);
+

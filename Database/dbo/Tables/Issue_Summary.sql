@@ -1,11 +1,10 @@
 ﻿CREATE TABLE [dbo].[Issue_Summary] (
     [Id]              VARCHAR (13)    CONSTRAINT [DF_Issue_Summary_Id] DEFAULT ('') NOT NULL,
+    [Ukey]            BIGINT          IDENTITY (1, 1) NOT NULL,
     [Poid]            VARCHAR (13)    CONSTRAINT [DF_Issue_Summary_Poid] DEFAULT ('') NOT NULL,
     [SCIRefno]        VARCHAR (26)    CONSTRAINT [DF_Issue_Summary_SCIRefno] DEFAULT ('') NOT NULL,
     [Colorid]         VARCHAR (6)     CONSTRAINT [DF_Issue_Summary_Colorid] DEFAULT ('') NOT NULL,
     [SizeSpec]        VARCHAR (15)    CONSTRAINT [DF_Issue_Summary_SizeSpec] DEFAULT ('') NOT NULL,
-    [Qty]             NUMERIC (10, 2) CONSTRAINT [DF_Issue_Summary_Qty] DEFAULT ((0)) NULL,
-    [Ukey]            BIGINT          IDENTITY (1, 1) NOT NULL,
     [BomFactory]      VARCHAR (10)    CONSTRAINT [DF_Issue_Summary_BomFactory] DEFAULT ('') NOT NULL,
     [BomCountry]      VARCHAR (2)     CONSTRAINT [DF_Issue_Summary_BomCountry] DEFAULT ('') NOT NULL,
     [BomStyle]        VARCHAR (15)    CONSTRAINT [DF_Issue_Summary_BomStyle] DEFAULT ('') NOT NULL,
@@ -14,8 +13,11 @@
     [BomZipperInsert] VARCHAR (5)     CONSTRAINT [DF_Issue_Summary_BomZipperInsert] DEFAULT ('') NOT NULL,
     [BomBuymonth]     VARCHAR (10)    CONSTRAINT [DF_Issue_Summary_BomBuymonth] DEFAULT ('') NOT NULL,
     [BomCustPONo]     VARCHAR (30)    CONSTRAINT [DF_Issue_Summary_BomCustPONo] DEFAULT ('') NOT NULL,
-    CONSTRAINT [PK_Issue_Summary] PRIMARY KEY CLUSTERED ([Id] ASC, [Poid] ASC, [SCIRefno] ASC, [Colorid] ASC, [SizeSpec] ASC, [BomFactory] ASC, [BomCountry] ASC, [BomStyle] ASC, [BomCustCD] ASC, [BomArticle] ASC, [BomZipperInsert] ASC, [BomBuymonth] ASC, [BomCustPONo] ASC)
+    [Qty]             NUMERIC (10, 2) CONSTRAINT [DF_Issue_Summary_Qty] DEFAULT ((0)) NULL,
+    CONSTRAINT [PK_Issue_Summary_1] PRIMARY KEY CLUSTERED ([Id] ASC, [Ukey] ASC)
 );
+
+
 
 
 GO

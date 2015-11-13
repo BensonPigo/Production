@@ -2,6 +2,7 @@
     [ID]               VARCHAR (13)    CONSTRAINT [DF_LocalDebit_ID] DEFAULT ('') NOT NULL,
     [Handle]           VARCHAR (10)    CONSTRAINT [DF_LocalDebit_Handle] DEFAULT ('') NOT NULL,
     [SMR]              VARCHAR (10)    CONSTRAINT [DF_LocalDebit_SMR] DEFAULT ('') NOT NULL,
+    [MDivisionID]      VARCHAR (8)     CONSTRAINT [DF_LocalDebit_MDivisionID] DEFAULT ('') NOT NULL,
     [FactoryID]        VARCHAR (8)     CONSTRAINT [DF_LocalDebit_FactoryID] DEFAULT ('') NOT NULL,
     [LocalSuppID]      VARCHAR (6)     CONSTRAINT [DF_LocalDebit_LocalSuppID] DEFAULT ('') NOT NULL,
     [Description]      NVARCHAR (MAX)  CONSTRAINT [DF_LocalDebit_Description] DEFAULT ('') NULL,
@@ -30,6 +31,8 @@
     [EditDate]         DATETIME        NULL,
     CONSTRAINT [PK_LocalDebit] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -150,4 +153,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯者',
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalDebit', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalDebit', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

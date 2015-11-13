@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[BorrowBack] (
     [Id]          VARCHAR (13)   CONSTRAINT [DF_BorrowBack_Id] DEFAULT ('') NOT NULL,
+    [MDivisionID] VARCHAR (8)    CONSTRAINT [DF_BorrowBack_MDivisionID] DEFAULT ('') NULL,
     [Type]        VARCHAR (1)    CONSTRAINT [DF_BorrowBack_Type] DEFAULT ('') NULL,
-    [FactoryId]   VARCHAR (8)    CONSTRAINT [DF_BorrowBack_FactoryId] DEFAULT ('') NULL,
     [EstBackDate] DATE           NULL,
     [BackDate]    DATE           NULL,
     [BorrowId]    VARCHAR (13)   CONSTRAINT [DF_BorrowBack_BorrowId] DEFAULT ('') NULL,
@@ -14,6 +14,8 @@
     [EditDate]    DATETIME       NULL,
     CONSTRAINT [PK_BorrowBack] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 GO
@@ -49,7 +51,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單據類�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠代', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'BorrowBack', @level2type = N'COLUMN', @level2name = N'FactoryId';
+
 
 
 GO
@@ -70,4 +72,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單據編�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'狀態', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'BorrowBack', @level2type = N'COLUMN', @level2name = N'Status';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'BorrowBack', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

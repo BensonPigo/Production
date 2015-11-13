@@ -1,15 +1,20 @@
 ﻿CREATE TABLE [dbo].[Issue_Detail] (
     [Id]                VARCHAR (13)    CONSTRAINT [DF_Issue_Detail_Id] DEFAULT ('') NOT NULL,
-    [PoId]              VARCHAR (13)    CONSTRAINT [DF_Issue_Detail_PoId] DEFAULT ('') NOT NULL,
-    [Seq1]              VARCHAR (3)     CONSTRAINT [DF_Issue_Detail_Seq1] DEFAULT ('') NOT NULL,
-    [Seq2]              VARCHAR (2)     CONSTRAINT [DF_Issue_Detail_Seq2] DEFAULT ('') NOT NULL,
-    [Roll]              VARCHAR (8)     CONSTRAINT [DF_Issue_Detail_Roll] DEFAULT ('') NOT NULL,
-    [Dyelot]            VARCHAR (4)     CONSTRAINT [DF_Issue_Detail_Dyelot] DEFAULT ('') NOT NULL,
-    [Qty]               NUMERIC (10, 2) CONSTRAINT [DF_Issue_Detail_Qty] DEFAULT ((0)) NULL,
-    [StockType]         VARCHAR (1)     CONSTRAINT [DF_Issue_Detail_StockType] DEFAULT ('') NULL,
     [Issue_SummaryUkey] BIGINT          CONSTRAINT [DF_Issue_Detail_Issue_SummaryUkey] DEFAULT ((0)) NOT NULL,
-    CONSTRAINT [PK_Issue_Detail] PRIMARY KEY CLUSTERED ([Id] ASC, [PoId] ASC, [Seq1] ASC, [Seq2] ASC, [Roll] ASC, [Dyelot] ASC)
+    [FtyInventoryUkey]  BIGINT          NULL,
+    [Qty]               NUMERIC (10, 2) CONSTRAINT [DF_Issue_Detail_Qty] DEFAULT ((0)) NULL,
+    [MDivisionID]       VARCHAR (8)     CONSTRAINT [DF_Issue_Detail_MDivisionID] DEFAULT ('') NULL,
+    [POID]              VARCHAR (13)    CONSTRAINT [DF_Issue_Detail_POID] DEFAULT ('') NULL,
+    [Seq1]              VARCHAR (3)     CONSTRAINT [DF_Issue_Detail_Seq1] DEFAULT ('') NULL,
+    [Seq2]              VARCHAR (2)     CONSTRAINT [DF_Issue_Detail_Seq2] DEFAULT ('') NULL,
+    [Roll]              VARCHAR (8)     CONSTRAINT [DF_Issue_Detail_Roll] DEFAULT ('') NULL,
+    [Dyelot]            VARCHAR (4)     CONSTRAINT [DF_Issue_Detail_Dyelot] DEFAULT ('') NULL,
+    [StockType]         CHAR (1)        CONSTRAINT [DF_Issue_Detail_StockType] DEFAULT ('') NULL,
+    [ukey]              BIGINT          IDENTITY (1, 1) NOT NULL,
+    CONSTRAINT [PK_Issue_Detail] PRIMARY KEY CLUSTERED ([ukey] ASC)
 );
+
+
 
 
 GO
@@ -21,23 +26,23 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發料單�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'PoId';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'Seq1';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'Seq2';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'捲號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'Roll';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'缸號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'Dyelot';
+
+
+
+GO
+
+
+
+GO
+
 
 
 GO
@@ -45,7 +50,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發料數�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'倉別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'StockType';
+
 
 
 GO

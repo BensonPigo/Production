@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[LocalPO] (
     [Id]             VARCHAR (13)    CONSTRAINT [DF_LocalPO_Id] DEFAULT ('') NOT NULL,
+    [MDivisionID]    VARCHAR (8)     CONSTRAINT [DF_LocalPO_MDivisionID] DEFAULT ('') NOT NULL,
     [FactoryId]      VARCHAR (8)     CONSTRAINT [DF_LocalPO_FactoryId] DEFAULT ('') NOT NULL,
     [LocalSuppID]    VARCHAR (8)     CONSTRAINT [DF_LocalPO_LocalSuppID] DEFAULT ('') NOT NULL,
     [Category]       VARCHAR (20)    CONSTRAINT [DF_LocalPO_Category] DEFAULT ('') NOT NULL,
@@ -19,6 +20,8 @@
     [Status]         VARCHAR (15)    CONSTRAINT [DF_LocalPO_Status] DEFAULT ('') NULL,
     CONSTRAINT [PK_LocalPO] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 GO
@@ -95,4 +98,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'狀態', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalPO', @level2type = N'COLUMN', @level2name = N'Status';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalPO', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

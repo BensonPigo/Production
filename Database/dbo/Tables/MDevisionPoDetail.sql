@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[MDivisionPoDetail] (
-    [MDivisionId] VARCHAR (8)     CONSTRAINT [DF_MDivisionPoDetail_MDivisionId] DEFAULT ('') NOT NULL,
+    [MDivisionID] VARCHAR (8)     CONSTRAINT [DF_MDivisionPoDetail_MDivisionId] DEFAULT ('') NOT NULL,
     [POID]        VARCHAR (13)    CONSTRAINT [DF_MDivisionPoDetail_POID] DEFAULT ('') NOT NULL,
     [Seq1]        VARCHAR (3)     CONSTRAINT [DF_MDivisionPoDetail_Seq1] DEFAULT ('') NOT NULL,
     [Seq2]        VARCHAR (2)     CONSTRAINT [DF_MDivisionPoDetail_Seq2] DEFAULT ('') NOT NULL,
@@ -10,8 +10,11 @@
     [LObQty]      NUMERIC (10, 2) NULL,
     [ALocation]   VARCHAR (100)   CONSTRAINT [DF_MDivisionPoDetail_ALocation] DEFAULT ('') NULL,
     [BLocation]   VARCHAR (100)   CONSTRAINT [DF_MDivisionPoDetail_BLocation] DEFAULT ('') NULL,
-    CONSTRAINT [PK__MDivisio__07AF6F03481FB32F] PRIMARY KEY CLUSTERED ([MDivisionId] ASC, [POID] ASC, [Seq1] ASC, [Seq2] ASC) ON [SLAVE]
+    [Ukey]        BIGINT          IDENTITY (1, 1) NOT NULL,
+    CONSTRAINT [PK__MDivisio__07AF6F03481FB32F] PRIMARY KEY CLUSTERED ([Ukey] ASC) ON [SLAVE]
 );
+
+
 
 
 

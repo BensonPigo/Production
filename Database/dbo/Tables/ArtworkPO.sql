@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[ArtworkPO] (
     [ID]             VARCHAR (13)    CONSTRAINT [DF_ArtworkPO_ID] DEFAULT ('') NOT NULL,
+    [MDivisionID]    VARCHAR (8)     CONSTRAINT [DF_ArtworkPO_MDivisionID] DEFAULT ('') NULL,
     [FactoryId]      VARCHAR (8)     CONSTRAINT [DF_ArtworkPO_FactoryId] DEFAULT ('') NOT NULL,
     [LocalSuppID]    VARCHAR (8)     CONSTRAINT [DF_ArtworkPO_LocalSuppID] DEFAULT ('') NOT NULL,
     [IssueDate]      DATE            NOT NULL,
@@ -24,6 +25,8 @@
     [Status]         VARCHAR (15)    CONSTRAINT [DF_ArtworkPO_Status] DEFAULT ('') NULL,
     CONSTRAINT [PK_ArtworkPO] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -120,4 +123,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯日�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'狀態', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ArtworkPO', @level2type = N'COLUMN', @level2name = N'Status';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ArtworkPO', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

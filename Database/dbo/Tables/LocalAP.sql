@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[LocalAP] (
     [Id]          VARCHAR (13)    CONSTRAINT [DF_LocalAP_Id] DEFAULT ('') NOT NULL,
+    [MDivisionID] VARCHAR (8)     CONSTRAINT [DF_LocalAP_MDivisionID] DEFAULT ('') NOT NULL,
     [FactoryId]   VARCHAR (8)     CONSTRAINT [DF_LocalAP_FactoryId] DEFAULT ('') NOT NULL,
     [IssueDate]   DATE            NOT NULL,
     [LocalSuppID] VARCHAR (8)     CONSTRAINT [DF_LocalAP_LocalSuppID] DEFAULT ('') NOT NULL,
@@ -22,6 +23,10 @@
     [Status]      VARCHAR (15)    CONSTRAINT [DF_LocalAP_Status] DEFAULT ('') NULL,
     CONSTRAINT [PK_LocalAP] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
+
+
 
 
 GO
@@ -110,4 +115,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票編�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'狀態', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalAP', @level2type = N'COLUMN', @level2name = N'Status';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalAP', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

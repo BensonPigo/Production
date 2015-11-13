@@ -1690,8 +1690,15 @@
     <Build Include="dbo\Functions\getGarmentLT.sql" />
     <Build Include="dbo\Functions\getPulloutComplete.sql" />
     <Build Include="dbo\Stored Procedures\usp_closeOrder.sql" />
+    <Build Include="dbo\Tables\PO_Supp_Detail_OrderList.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="ProductionDB.refactorlog" />
   </ItemGroup>
 </Project>

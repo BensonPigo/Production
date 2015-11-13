@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[Receiving_Detail] (
     [Id]           VARCHAR (13)    CONSTRAINT [DF_Receiving_Detail_Id] DEFAULT ('') NOT NULL,
+    [MDivisionID]  VARCHAR (8)     CONSTRAINT [DF_Receiving_Detail_MDivisionID] DEFAULT ('') NULL,
     [PoId]         VARCHAR (13)    CONSTRAINT [DF_Receiving_Detail_PoId] DEFAULT ('') NOT NULL,
     [Seq1]         VARCHAR (3)     CONSTRAINT [DF_Receiving_Detail_Seq1] DEFAULT ('') NOT NULL,
     [Seq2]         VARCHAR (2)     CONSTRAINT [DF_Receiving_Detail_Seq2] DEFAULT ('') NOT NULL,
@@ -16,8 +17,11 @@
     [Remark]       NVARCHAR (100)  CONSTRAINT [DF_Receiving_Detail_Remark] DEFAULT ('') NULL,
     [StockQty]     NUMERIC (10, 2) CONSTRAINT [DF_Receiving_Detail_StockQty] DEFAULT ((0)) NULL,
     [StockType]    VARCHAR (1)     CONSTRAINT [DF_Receiving_Detail_StockType] DEFAULT ('') NULL,
-    CONSTRAINT [PK_Receiving_Detail] PRIMARY KEY CLUSTERED ([Id] ASC, [PoId] ASC, [Seq1] ASC, [Seq2] ASC, [Roll] ASC, [Dyelot] ASC)
+    [Ukey]         BIGINT          IDENTITY (1, 1) NOT NULL,
+    CONSTRAINT [PK_Receiving_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO
@@ -90,4 +94,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'庫存實�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'倉別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'StockType';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

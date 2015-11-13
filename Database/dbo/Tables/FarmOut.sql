@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[FarmOut] (
     [Id]            VARCHAR (13)  CONSTRAINT [DF_FarmOut_Id] DEFAULT ('') NOT NULL,
+    [MDivisionID]   VARCHAR (8)   CONSTRAINT [DF_FarmOut_MDivisionID] DEFAULT ('') NOT NULL,
     [FactoryId]     VARCHAR (8)   CONSTRAINT [DF_FarmOut_FactoryId] DEFAULT ('') NOT NULL,
     [IssueDate]     DATE          NOT NULL,
     [Remark]        NVARCHAR (60) CONSTRAINT [DF_FarmOut_Remark] DEFAULT ('') NULL,
@@ -13,6 +14,8 @@
     [ArtworkTypeId] VARCHAR (20)  CONSTRAINT [DF_FarmOut_ArtworkTypeId] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_FarmOut] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 GO
@@ -65,4 +68,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯日�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FarmOut', @level2type = N'COLUMN', @level2name = N'ArtworkTypeId';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FarmOut', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 

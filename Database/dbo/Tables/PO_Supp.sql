@@ -2,17 +2,16 @@
     [ID]          VARCHAR (13)   CONSTRAINT [DF_PO_Supp_ID] DEFAULT ('') NOT NULL,
     [SEQ1]        VARCHAR (3)    CONSTRAINT [DF_PO_Supp_SEQ1] DEFAULT ('') NOT NULL,
     [SuppID]      VARCHAR (6)    CONSTRAINT [DF_PO_Supp_SuppID] DEFAULT ('') NOT NULL,
-    [ShipTermID]  VARCHAR (5)    CONSTRAINT [DF_PO_Supp_ShipTermID] DEFAULT ('') NOT NULL,
-    [PayTermAPID] VARCHAR (5)    CONSTRAINT [DF_PO_Supp_PayTermAPID] DEFAULT ('') NOT NULL,
     [Remark]      NVARCHAR (MAX) CONSTRAINT [DF_PO_Supp_Remark] DEFAULT ('') NULL,
     [Description] NVARCHAR (MAX) CONSTRAINT [DF_PO_Supp_Description] DEFAULT ('') NULL,
-    [CompanyID]   NUMERIC (1)    CONSTRAINT [DF_PO_Supp_CompanyID] DEFAULT ((0)) NOT NULL,
     [AddName]     VARCHAR (10)   CONSTRAINT [DF_PO_Supp_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_PO_Supp_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME       NULL,
     CONSTRAINT [PK_PO_Supp] PRIMARY KEY CLUSTERED ([ID] ASC, [SEQ1] ASC)
 );
+
+
 
 
 GO
@@ -32,11 +31,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠商代�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'FOB/FOR/EX.WORK', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp', @level2type = N'COLUMN', @level2name = N'ShipTermID';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'T/T ,L/C', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp', @level2type = N'COLUMN', @level2name = N'PayTermAPID';
+
 
 
 GO
@@ -48,7 +47,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大項說�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SCI的公司別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp', @level2type = N'COLUMN', @level2name = N'CompanyID';
+
 
 
 GO

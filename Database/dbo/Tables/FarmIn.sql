@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[FarmIn] (
     [ID]            VARCHAR (13)  CONSTRAINT [DF_FarmIn_ID] DEFAULT ('') NOT NULL,
+    [MDivisionID]   VARCHAR (8)   CONSTRAINT [DF_FarmIn_MDivisionID] DEFAULT ('') NOT NULL,
     [FactoryId]     VARCHAR (8)   CONSTRAINT [DF_FarmIn_FactoryId] DEFAULT ('') NOT NULL,
     [IssueDate]     DATE          NOT NULL,
     [Handle]        VARCHAR (10)  CONSTRAINT [DF_FarmIn_Handle] DEFAULT ('') NOT NULL,
@@ -12,6 +13,8 @@
     [ArtworkTypeId] VARCHAR (20)  CONSTRAINT [DF_FarmIn_ArtworkTypeId] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_FarmIn] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -60,4 +63,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯日�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FarmIn', @level2type = N'COLUMN', @level2name = N'ArtworkTypeId';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FarmIn', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 
