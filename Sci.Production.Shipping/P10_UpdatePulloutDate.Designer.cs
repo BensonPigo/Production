@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(P10_UpdatePulloutDate));
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
@@ -36,15 +35,15 @@
             this.label1 = new Sci.Win.UI.Label();
             this.button2 = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
-            this.pictureBox1 = new Sci.Win.UI.PictureBox();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
+            this.pictureBox1 = new Sci.Win.UI.PictureBox();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             this.panel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -74,10 +73,10 @@
             // 
             // panel4
             // 
+            this.panel4.Controls.Add(this.pictureBox1);
             this.panel4.Controls.Add(this.label1);
             this.panel4.Controls.Add(this.button2);
             this.panel4.Controls.Add(this.button1);
-            this.panel4.Controls.Add(this.pictureBox1);
             this.panel4.Controls.Add(this.dateBox1);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(5, 464);
@@ -113,16 +112,6 @@
             this.button1.Text = "Save";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(436, 6);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(25, 30);
-            this.pictureBox1.TabIndex = 1;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // dateBox1
             // 
@@ -168,6 +157,16 @@
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::Sci.Production.Shipping.Properties.Resources.trffc15;
+            this.pictureBox1.Location = new System.Drawing.Point(436, 6);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(24, 30);
+            this.pictureBox1.TabIndex = 5;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            // 
             // P10_UpdatePulloutDate
             // 
             this.AcceptButton = this.button1;
@@ -182,9 +181,9 @@
             this.Name = "P10_UpdatePulloutDate";
             this.Text = "Update Pullout Date";
             this.panel4.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -196,7 +195,6 @@
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
         private Win.UI.Panel panel4;
-        private Win.UI.PictureBox pictureBox1;
         private Win.UI.DateBox dateBox1;
         private Win.UI.Panel panel5;
         private Win.UI.Grid grid1;
@@ -204,5 +202,6 @@
         private Win.UI.Button button2;
         private Win.UI.Button button1;
         private Win.UI.Label label1;
+        private Win.UI.PictureBox pictureBox1;
     }
 }
