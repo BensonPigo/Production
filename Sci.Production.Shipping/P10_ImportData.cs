@@ -11,7 +11,7 @@ using Sci;
 using Sci.Data;
 using System.Linq;
 
-namespace Sci.Production.Logistic
+namespace Sci.Production.Shipping
 {
     public partial class P10_ImportData : Sci.Win.Subs.Base
     {

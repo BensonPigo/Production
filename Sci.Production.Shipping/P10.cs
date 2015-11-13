@@ -9,7 +9,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 
-namespace Sci.Production.Logistic
+namespace Sci.Production.Shipping
 {
     public partial class P10 : Sci.Win.Tems.Input6
     {
@@ -320,14 +320,14 @@ where {0}", masterID);
         //Import Data
         private void button2_Click(object sender, EventArgs e)
         {
-            Sci.Production.Logistic.P10_ImportData callNextForm = new Sci.Production.Logistic.P10_ImportData(CurrentMaintain, (DataTable)detailgridbs.DataSource, (DataTable)listControlBindingSource1.DataSource);
+            Sci.Production.Shipping.P10_ImportData callNextForm = new Sci.Production.Shipping.P10_ImportData(CurrentMaintain, (DataTable)detailgridbs.DataSource, (DataTable)listControlBindingSource1.DataSource);
             callNextForm.ShowDialog(this);
         }
 
         //Update Pullout Date
         private void button1_Click(object sender, EventArgs e)
         {
-            Sci.Production.Logistic.P10_UpdatePulloutDate callNextForm = new Sci.Production.Logistic.P10_UpdatePulloutDate(CurrentMaintain);
+            Sci.Production.Shipping.P10_UpdatePulloutDate callNextForm = new Sci.Production.Shipping.P10_UpdatePulloutDate(CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 

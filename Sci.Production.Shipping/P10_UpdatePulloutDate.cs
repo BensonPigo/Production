@@ -9,7 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 
-namespace Sci.Production.Logistic
+namespace Sci.Production.Shipping
 {
     public partial class P10_UpdatePulloutDate : Sci.Win.Subs.Base
     {

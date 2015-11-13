@@ -1,4 +1,4 @@
-﻿namespace Sci.Production.Logistic
+﻿namespace Sci.Production.Shipping
 {
     partial class P10_ImportData
     {

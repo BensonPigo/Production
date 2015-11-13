@@ -306,6 +306,11 @@
     <Compile Include="P02_ImportFromPO.Designer.cs">
       <DependentUpon>P02_ImportFromPO.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -412,6 +417,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P10_UpdatePulloutDate.resx">
       <DependentUpon>P10_UpdatePulloutDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

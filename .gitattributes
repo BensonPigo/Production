@@ -1091,6 +1091,8 @@ Sci.Production.Shipping/P10_UpdatePulloutDate.Designer.cs -text
 Sci.Production.Shipping/P10_UpdatePulloutDate.cs -text
 Sci.Production.Shipping/P10_UpdatePulloutDate.resx -text
 Sci.Production.Shipping/Properties/AssemblyInfo.cs -text
+Sci.Production.Shipping/Properties/Resources.Designer.cs -text
+Sci.Production.Shipping/Properties/Resources.resx -text
 Sci.Production.Shipping/Sci.Production.Shipping.csproj -text
 Sci.Production.Subcon/B01.Designer.cs -text
 Sci.Production.Subcon/B01.cs -text
