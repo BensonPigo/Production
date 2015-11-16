@@ -172,6 +172,54 @@ namespace Sci
             };
             return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
         }
+         //ThreadColor
+        public static IDataGridViewGenerator CellThreadColor(this IDataGridViewGenerator gen, string propertyname, string header, IWidth width = null, DataGridViewGeneratorTextColumnSettings settings = null, bool? iseditable = null, bool? iseditingreadonly = null, DataGridViewContentAlignment? alignment = null)
+        {
+            if (settings == null) settings = new DataGridViewGeneratorTextColumnSettings();
+            settings.CharacterCasing = CharacterCasing.Upper;
+            settings.EditingMouseDown += (s, e) =>
+            {
+                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                if (frm.EditMode)
+                {
+                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    {
+                        if (e.RowIndex != -1)
+                        {
+                            DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ThreadColor order by ID", "10,40", dr["ThreadColorid"].ToString().Trim());
+                            DialogResult returnResult = item.ShowDialog();
+                            if (returnResult == DialogResult.Cancel) { return; }
+                            e.EditingControl.Text = item.GetSelectedString();
+                        }
+                    }
+                }
+            };
+            
+            settings.CellValidating += (s, e) =>
+            {
+                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                if (frm.EditMode)
+                {
+                    DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue.ToString()))
+                    {
+                        string seekSql = string.Format("select id from ThreadColorid where Junk = 0 and id = '{0}'", e.FormattedValue.ToString());
+                        if (MyUtility.Check.Seek(seekSql) == false)
+                        {
+                            MyUtility.Msg.WarningBox(string.Format("< Thread Color : {0} > not found!!!", e.FormattedValue.ToString()));
+                            dr["Threadcolorid"] = "";
+                            e.Cancel = true;
+                            return;
+                        }
+                    }
+                }
+            };
+            return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
+        }
+    
     }
 
     public class CartonRefnoCommon
