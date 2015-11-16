@@ -15,7 +15,7 @@ namespace Sci.Production.Packing
         {
             InitializeComponent();
             this.Text = Type == "1" ? "P01. Packing Master List" : "P011. Packing Master List (History)";
-            this.DefaultFilter = Type == "1" ? string.Format("FtyGroup = '{0}' AND IsForecast = 0 AND GMTClose is null", Sci.Env.User.Factory) : string.Format("FtyGroup = '{0}' AND IsForecast = 0 AND GMTClose is not null", Sci.Env.User.Factory);
+            this.DefaultFilter = Type == "1" ? string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND GMTClose is null", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND GMTClose is not null", Sci.Env.User.Keyword);
             txtcountry1.TextBox1.ReadOnly = true;
             txtcountry1.TextBox1.IsSupportEditMode = false;
             txtuser1.TextBox1.ReadOnly = true;
