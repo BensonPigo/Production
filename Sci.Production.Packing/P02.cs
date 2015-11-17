@@ -21,7 +21,7 @@ namespace Sci.Production.Packing
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
+            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
             InsertDetailGridOnDoubleClick = false;
         }
 
@@ -36,7 +36,7 @@ namespace Sci.Production.Packing
                                                                                        left join Order_Article e on b.OrderID = e.Id and a.Article = e.Article
                                                                                        left join Order_SizeCode f on d.POID = f.Id and a.SizeCode = f.SizeCode
                                                                                        where a.Id ='{0}'
-                                                                                       order by e.Seq,f.Seq",masterID);
+                                                                                       order by e.Seq,f.Seq", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -73,6 +73,15 @@ namespace Sci.Production.Packing
                     numericBox4.Value = Convert.ToInt32(orderData["Qty"].ToString());
                 }
             }
+            else
+            {
+                displayBox2.Value = "";
+                displayBox3.Value = "";
+                displayBox4.Value = "";
+                numericBox1.Value = 0;
+                comboBox1.SelectedValue = "";
+                numericBox4.Value = 0;
+            }
 
             //Special Instruction按鈕變色
             if (MyUtility.Check.Empty(CurrentMaintain["SpecialInstruction"].ToString()))
@@ -95,7 +104,7 @@ namespace Sci.Production.Packing
             }
 
             //Switch to Packing list是否有權限使用
-            this.button3.Enabled = !this.EditMode && this.IsSupportEdit;
+            this.button3.Enabled = !this.EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, "P02. Packing Guide", "CanEdit");
         }
 
         protected override void OnDetailGridSetup()
@@ -123,21 +132,30 @@ namespace Sci.Production.Packing
                     if (MyUtility.Check.Empty(dr["RefNo"]))
                     {
                         dr["Description"] = "";
-                        dr["GW"] = dr["NW"].ToString();
+                        dr["GW"] = dr["NW"];
                     }
                     else
                     {
-                        string seekSql = string.Format("select Description,Weight from LocalItem where RefNo = '{0}'", dr["RefNo"].ToString());
-                        DataRow localItem;
-                        if (MyUtility.Check.Seek(seekSql, out localItem))
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                        sp1.ParameterName = "@refno";
+                        sp1.Value = dr["RefNo"].ToString();
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+
+                        string sqlCmd = "select Description,Weight from LocalItem where RefNo = @refno";
+                        DataTable LocalItemData;
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out LocalItemData);
+                        if (result)
                         {
-                            dr["Description"] = localItem["Description"].ToString();
-                            dr["GW"] = Convert.ToDouble(dr["NW"].ToString()) + Convert.ToDouble(localItem["Weight"].ToString());
+                            dr["Description"] = LocalItemData.Rows[0]["Description"].ToString();
+                            dr["GW"] = MyUtility.Convert.GetDouble(dr["NW"]) + MyUtility.Convert.GetDouble(LocalItemData.Rows[0]["Weight"]);
                         }
                         else
                         {
                             dr["Description"] = "";
-                            dr["GW"] = dr["NW"].ToString();
+                            dr["GW"] = dr["NW"];
                         }
                     }
                     dr.EndEdit();
@@ -148,23 +166,48 @@ namespace Sci.Production.Packing
                 if (detailgrid.Columns[e.ColumnIndex].DataPropertyName == col_qtyperctn.DataPropertyName)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    //sql參數
+                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+                    System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+                    System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+                    sp1.ParameterName = "@article";
+                    sp1.Value = dr["Article"].ToString();
+                    sp2.ParameterName = "@sizecode";
+                    sp2.Value = dr["SizeCode"].ToString();
+                    sp3.ParameterName = "@refno";
+                    sp3.Value = dr["RefNo"].ToString();
+                    sp4.ParameterName = "@orderid";
+                    sp4.Value = CurrentMaintain["OrderID"].ToString();
 
-                    string sqlCmd = string.Format(@"select isnull(li.Weight, 0) as CTNWeight,
+                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                    cmds.Add(sp1);
+                    cmds.Add(sp2);
+                    cmds.Add(sp3);
+                    cmds.Add(sp4);
+
+                    string sqlCmd = @"select isnull(li.Weight, 0) as CTNWeight,
                                                                                      isnull(sw.NW, isnull(sw2.NW, 0)) as NW,
                                                                                      isnull(sw.NNW, isnull(sw2.NNW, 0)) as NNW
                                                                           from Orders o
-                                                                          left join Style_WeightData sw on sw.StyleUkey = o.StyleUkey and sw.Article = '{0}' and sw.SizeCode = '{1}'
-                                                                          left join Style_WeightData sw2 on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = '{1}'
-                                                                          left join LocalItem li on li.RefNo = '{2}' and li.Category = 'CARTON'
-                                                                          where o.ID = '{3}'", dr["Article"].ToString(), dr["SizeCode"].ToString(), dr["RefNo"].ToString(), CurrentMaintain["OrderID"].ToString());
+                                                                          left join Style_WeightData sw on sw.StyleUkey = o.StyleUkey and sw.Article = @article and sw.SizeCode = @sizecode
+                                                                          left join Style_WeightData sw2 on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = @sizecode
+                                                                          left join LocalItem li on li.RefNo = @refno and li.Category = 'CARTON'
+                                                                          where o.ID = @orderid";
                     DataTable selectedData;
                     DualResult result;
-                    if (result = DBProxy.Current.Select(null, sqlCmd, out selectedData))
+                    if (result = DBProxy.Current.Select(null, sqlCmd, cmds, out selectedData))
                     {
-
-                        dr["NW"] = selectedData.Rows.Count == 0 ? 0 : Convert.ToDouble(selectedData.Rows[0]["NW"].ToString()) * Convert.ToDouble(dr["QtyPerCTN"].ToString());
-                        dr["GW"] = selectedData.Rows.Count == 0 ? 0 : Convert.ToDouble(dr["NW"].ToString()) + Convert.ToDouble(selectedData.Rows[0]["CTNWeight"].ToString());
-                        dr["NNW"] = selectedData.Rows.Count == 0 ? 0 : Convert.ToDouble(selectedData.Rows[0]["NNW"].ToString()) * Convert.ToDouble(dr["QtyPerCTN"].ToString());
+                        dr["NW"] = selectedData.Rows.Count == 0 ? 0 : MyUtility.Convert.GetDouble(selectedData.Rows[0]["NW"]) * MyUtility.Convert.GetDouble(dr["QtyPerCTN"]);
+                        dr["GW"] = selectedData.Rows.Count == 0 ? 0 : MyUtility.Convert.GetDouble(dr["NW"]) + MyUtility.Convert.GetDouble(selectedData.Rows[0]["CTNWeight"]);
+                        dr["NNW"] = selectedData.Rows.Count == 0 ? 0 : MyUtility.Convert.GetDouble(selectedData.Rows[0]["NNW"]) * MyUtility.Convert.GetDouble(dr["QtyPerCTN"]);
+                    }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
+                        dr["NW"] = 0;
+                        dr["GW"] = 0;
+                        dr["NNW"] = 0;
                     }
                     dr.EndEdit();
                 }
@@ -176,7 +219,7 @@ namespace Sci.Production.Packing
         {
             base.ClickNewAfter();
 
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["CTNStartNo"] = 1;
             displayBox2.Value = "";
             displayBox3.Value = "";
@@ -250,7 +293,7 @@ namespace Sci.Production.Packing
             }
 
             #region 計算Total Cartons & CBM
-            //Total Cartons: 單色混碼裝：min(同一顏色不同Size的訂單件數/每箱件數無條件捨去) + 1(若其中一個Size有餘數) or 0(完全整除沒有餘數)
+            //Total Cartons: 單色混碼裝：min(無條件捨去(同一顏色不同Size的訂單件數/每箱件數)) + (1(若其中一個Size有餘數) or 0(完全整除沒有餘數))
             int ttlCTN = 0, ctns = 0;
             double ctn, ttlCBM = 0.0;
             string cbm;
@@ -268,27 +311,26 @@ namespace Sci.Production.Packing
                         if (article != dr["Article"].ToString())
                         {
                             article = dr["Article"].ToString();
-                            cbm = MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo");
                             DataRow dr1 = groupData.NewRow();
                             dr1["Article"] = article;
-                            dr1["CBM"] = Convert.ToDouble(cbm);
+                            dr1["CBM"] = MyUtility.Convert.GetDouble(MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo"));
                             groupData.Rows.Add(dr1);
                             recordNo += 1;
                         }
-                        if (MyUtility.Check.Empty(Convert.ToDouble(dr["QtyPerCTN"])))
+                        if (MyUtility.Check.Empty(MyUtility.Convert.GetDouble(dr["QtyPerCTN"])))
                         {
                             ctn = 0;
                         }
                         else
                         {
-                            ctn = Convert.ToDouble(dr["ShipQty"].ToString()) / Convert.ToDouble(dr["QtyPerCTN"].ToString());
-                            if ((Convert.ToInt32(dr["ShipQty"].ToString()) % Convert.ToInt32(dr["QtyPerCTN"].ToString())) != 0)
+                            ctn = MyUtility.Convert.GetDouble(dr["ShipQty"]) / MyUtility.Convert.GetDouble(dr["QtyPerCTN"]);
+                            if ((MyUtility.Convert.GetInt(dr["ShipQty"].ToString()) % MyUtility.Convert.GetInt(dr["QtyPerCTN"].ToString())) != 0)
                             {
                                 groupData.Rows[recordNo]["Remainder"] = 1;
                             }
                         }
                         ctns = (int)Math.Floor(ctn);
-                        if (MyUtility.Check.Empty(groupData.Rows[recordNo]["ctn"]) || (Convert.ToInt32(groupData.Rows[recordNo]["ctn"].ToString()) > ctns))
+                        if (MyUtility.Check.Empty(groupData.Rows[recordNo]["ctn"]) || (MyUtility.Convert.GetInt(groupData.Rows[recordNo]["ctn"]) > ctns))
                         {
                             groupData.Rows[recordNo]["ctn"] = ctns;
                         }
@@ -301,8 +343,8 @@ namespace Sci.Production.Packing
                         {
                             remainder = 1;
                         }
-                        ttlCTN = ttlCTN + Convert.ToInt32(dr["ctn"].ToString()) + remainder;
-                        ttlCBM = ttlCBM + Convert.ToDouble(dr["CBM"].ToString()) * (Convert.ToInt32(dr["ctn"].ToString()) + remainder);
+                        ttlCTN = ttlCTN + MyUtility.Convert.GetInt(dr["ctn"].ToString()) + remainder;
+                        ttlCBM = ttlCBM + MyUtility.Convert.GetDouble(dr["CBM"]) * (MyUtility.Convert.GetInt(dr["ctn"]) + remainder);
                     }
                 }
             }
@@ -311,18 +353,18 @@ namespace Sci.Production.Packing
                 //Total Cartons: 表身每一列資料的訂單件數/每箱件數無條件進位後加總
                 foreach (DataRow dr in detailData)
                 {
-                    if (MyUtility.Check.Empty(Convert.ToDouble(dr["QtyPerCTN"])))
+                    if (MyUtility.Check.Empty(MyUtility.Convert.GetDouble(dr["QtyPerCTN"])))
                     {
                         ctn = 0;
                     }
                     else
                     {
-                        ctn = Convert.ToDouble(dr["ShipQty"].ToString()) / Convert.ToDouble(dr["QtyPerCTN"].ToString());
+                        ctn = MyUtility.Convert.GetDouble(dr["ShipQty"]) / MyUtility.Convert.GetDouble(dr["QtyPerCTN"]);
                     }
                     ctns = (int)Math.Ceiling(ctn);
                     ttlCTN = ttlCTN + ctns;
                     cbm = MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo");
-                    ttlCBM = ttlCBM + Convert.ToDouble(cbm) * ctns;
+                    ttlCBM = ttlCBM + MyUtility.Convert.GetDouble(cbm) * ctns;
                 }
             }
             #endregion
@@ -332,7 +374,7 @@ namespace Sci.Production.Packing
             //GetID
             if (IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PG", "PackingGuide", DateTime.Today, 2, "Id", null);
+                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup",CurrentMaintain["OrderID"].ToString(),"Orders","ID") + "PG", "PackingGuide", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -347,11 +389,10 @@ namespace Sci.Production.Packing
         private void ControlGridColumn()
         {
             //當Packing Method為SOLID COLOR/ASSORTED SIZE (Order.CTNType = ‘2’)時，欄位Qty/Ctn不可被修改
-            if (comboBox1.SelectedValue.ToString() == "2")
+            if (comboBox1.SelectedIndex != -1 && comboBox1.SelectedValue.ToString() == "2")
             {
                 col_qtyperctn.IsEditingReadOnly = true;
                 detailgrid.Columns[5].DefaultCellStyle.ForeColor = Color.Black;
-
             }
             else
             {
@@ -372,7 +413,7 @@ namespace Sci.Production.Packing
                     if (!MyUtility.Check.Empty(textBox1.Text))
                     {
                         DataRow orderData;
-                        string sqlCmd = string.Format("select Category, LocalOrder, IsForecast from Orders where ID = '{0}' and FtyGroup = '{1}'", textBox1.Text, Sci.Env.User.Factory);
+                        string sqlCmd = string.Format("select Category, LocalOrder, IsForecast from Orders where ID = '{0}' and MDivisionID = '{1}'", textBox1.Text, Sci.Env.User.Keyword);
                         if (MyUtility.Check.Seek(sqlCmd, out orderData))
                         {
                             string msg = "";
@@ -461,6 +502,7 @@ namespace Sci.Production.Packing
                 //OrderID為空值時，要把其他相關欄位值清空
                 CurrentMaintain["OrderShipmodeSeq"] = "";
                 CurrentMaintain["ShipModeID"] = "";
+                CurrentMaintain["FactoryID"] = "";
                 displayBox2.Value = "";
                 displayBox3.Value = "";
                 displayBox4.Value = "";
@@ -472,19 +514,20 @@ namespace Sci.Production.Packing
             {
                 DataRow orderData;
                 string sqlCmd;
-                sqlCmd = string.Format("select StyleID,SeasonID,CustPONo,Qty,CtnType,Packing from Orders where ID = '{0}'", orderID);
+                sqlCmd = string.Format("select StyleID,SeasonID,CustPONo,Qty,CtnType,Packing,FtyGroup from Orders where ID = '{0}'", orderID);
                 if (MyUtility.Check.Seek(sqlCmd, out orderData))
                 {
                     //帶出相關欄位的資料
                     displayBox2.Value = orderData["StyleID"].ToString();
                     displayBox3.Value = orderData["SeasonID"].ToString();
                     displayBox4.Value = orderData["CustPONo"].ToString();
-                    numericBox1.Value = Convert.ToInt32(orderData["Qty"].ToString());
+                    numericBox1.Value = MyUtility.Convert.GetInt(orderData["Qty"]);
                     comboBox1.SelectedValue = orderData["CtnType"].ToString();
                     CurrentMaintain["SpecialInstruction"] = orderData["Packing"].ToString();
+                    CurrentMaintain["FactoryID"] = orderData["FtyGroup"].ToString();
 
                     #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
-                    int orderQty = Convert.ToInt32(orderData["Qty"].ToString());
+                    int orderQty = MyUtility.Convert.GetInt(orderData["Qty"]);
                     sqlCmd = string.Format("select count(ID) as CountID from Order_QtyShip where ID = '{0}'", orderID);
                     if (MyUtility.Check.Seek(sqlCmd, out orderData))
                     {
@@ -515,7 +558,7 @@ namespace Sci.Production.Packing
                                 orderQtyShipData = item.GetSelecteds();
                                 CurrentMaintain["OrderShipmodeSeq"] = item.GetSelectedString();
                                 CurrentMaintain["ShipModeID"] = orderQtyShipData[0]["ShipmodeID"].ToString();
-                                numericBox4.Value = Convert.ToInt32(orderQtyShipData[0]["Qty"].ToString());
+                                numericBox4.Value = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"].ToString());
                             }
                         }
                     }
@@ -535,7 +578,7 @@ namespace Sci.Production.Packing
             {
                 dr.Delete();
             }
-            if (!MyUtility.Check.Empty(orderID) && !MyUtility.Check.Empty(orderID))
+            if (!MyUtility.Check.Empty(orderID) && !MyUtility.Check.Empty(seq))
             {
                 string sqlCmd;
                 if (comboBox1.SelectedValue.ToString() == "2")
@@ -547,37 +590,37 @@ namespace Sci.Production.Packing
                         return;
                     }
                     sqlCmd = string.Format(@"select '' as ID, '' as RefNo, '' as Description, oqd.Article, voc.ColorID as Color, oqd.SizeCode, oqd.Qty as ShipQty, oqc.Qty as QtyPerCTN, os.Seq,
-                                                                           sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
-                                                                           isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as NW,
-                                                                           isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as GW,
-                                                                           isnull(sw.NNW, isnull(sw2.NNW, 0))*oqc.Qty as NNW 
-                                                                from Order_QtyShip_Detail oqd
-                                                                left Join Orders o on o.ID = oqd.Id
-                                                                left Join Order_QtyCTN oqc on oqc.id = oqd.Id and oqc.Article = oqd.Article and oqc.SizeCode = oqd.SizeCode
-                                                                left join V_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
-                                                                left join Style_WeightData sw on sw.StyleUkey = o.StyleUkey and sw.Article = oqd.Article and sw.SizeCode = oqd.SizeCode
-                                                                left join Style_WeightData sw2 on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = oqd.SizeCode
-                                                                left join Order_SizeCode os on os.id = o.POID and os.SizeCode = oqd.SizeCode
-                                                                left join Order_Article oa on oa.id = oqd.Id and oa.Article = oqd.Article
-                                                                where oqd.ID = '{0}' and oqd.Seq = '{1}'
-                                                                order by oa.Seq,os.Seq", orderID, seq);
+	   sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
+	   isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as NW,
+	   isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as GW,
+	   isnull(sw.NNW, isnull(sw2.NNW, 0))*oqc.Qty as NNW 
+from Order_QtyShip_Detail oqd
+left Join Orders o on o.ID = oqd.Id
+left Join Order_QtyCTN oqc on oqc.id = oqd.Id and oqc.Article = oqd.Article and oqc.SizeCode = oqd.SizeCode
+left join View_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
+left join Style_WeightData sw on sw.StyleUkey = o.StyleUkey and sw.Article = oqd.Article and sw.SizeCode = oqd.SizeCode
+left join Style_WeightData sw2 on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = oqd.SizeCode
+left join Order_SizeCode os on os.id = o.POID and os.SizeCode = oqd.SizeCode
+left join Order_Article oa on oa.id = oqd.Id and oa.Article = oqd.Article
+where oqd.ID = '{0}' and oqd.Seq = '{1}'
+order by oa.Seq,os.Seq", orderID, seq);
                 }
                 else
                 {
                     sqlCmd = string.Format(@"select '' as ID, '' as RefNo, '' as Description, oqd.Article, voc.ColorID as Color, oqd.SizeCode, oqd.Qty as ShipQty, o.CTNQty as QtyPerCTN, os.Seq,
-                                                                           sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
-                                                                           isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW,
-                                                                           isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW,
-                                                                           isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW 
-                                                                from Order_QtyShip_Detail oqd
-                                                                left Join Orders o on o.ID = oqd.Id
-                                                                left join V_OrderFAColor voc on voc.id = oqd.Id and oc.Article = oqd.Article
-                                                                left join Style_WeightData sw on sw.StyleUkey = o.StyleUkey and sw.Article = oqd.Article and sw.SizeCode = oqd.SizeCode
-                                                                left join Style_WeightData sw2 on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = oqd.SizeCode
-                                                                left join Order_SizeCode os on os.id = o.POID and os.SizeCode = oqd.SizeCode
-                                                                left join Order_Article oa on oa.id = oqd.Id and oa.Article = oqd.Article
-                                                                where oqd.ID = '{0}' and oqd.Seq = '{1}'
-                                                                order by oa.Seq,os.Seq", orderID, seq);
+	   sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
+	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW,
+	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW,
+	   isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW 
+from Order_QtyShip_Detail oqd
+left Join Orders o on o.ID = oqd.Id
+left join View_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
+left join Style_WeightData sw on sw.StyleUkey = o.StyleUkey and sw.Article = oqd.Article and sw.SizeCode = oqd.SizeCode
+left join Style_WeightData sw2 on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = oqd.SizeCode
+left join Order_SizeCode os on os.id = o.POID and os.SizeCode = oqd.SizeCode
+left join Order_Article oa on oa.id = oqd.Id and oa.Article = oqd.Article
+where oqd.ID = '{0}' and oqd.Seq = '{1}'
+order by oa.Seq,os.Seq", orderID, seq);
                 }
 
                 DataTable selectedData;
@@ -613,7 +656,7 @@ namespace Sci.Production.Packing
                 orderQtyShipData = item.GetSelecteds();
                 CurrentMaintain["OrderShipmodeSeq"] = item.GetSelectedString();
                 CurrentMaintain["ShipModeID"] = orderQtyShipData[0]["ShipmodeID"].ToString();
-                numericBox4.Value = Convert.ToInt32(orderQtyShipData[0]["Qty"].ToString());
+                numericBox4.Value = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
             }
             //產生表身Grid的資料
             GenDetailData(CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
@@ -622,7 +665,7 @@ namespace Sci.Production.Packing
         //Special Instruction
         private void button1_Click(object sender, EventArgs e)
         {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(CurrentMaintain["SpecialInstruction"].ToString(), "Special Instruction", false,null);
+            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(CurrentMaintain["SpecialInstruction"].ToString(), "Special Instruction", false, null);
             callNextForm.ShowDialog(this);
         }
 
@@ -653,7 +696,7 @@ namespace Sci.Production.Packing
 
             //檢查PackingList狀態：(1)PackingList如果已經Confirm就出訊息告知使用者且不做任事 (2)如果已經有Invoice No就出訊息告知使用者且不做任事
             DataRow seekData;
-            string seekCmd = "select Status, INVNo from PackingList where ID = '" + CurrentMaintain["ID"].ToString() + "'";
+            string seekCmd = "select Status, INVNo from PackingList where ID = '" + CurrentMaintain["ID"].ToString().Trim() + "'";
             if (MyUtility.Check.Seek(seekCmd, out seekData))
             {
                 if (seekData["Status"].ToString() == "Confirmed")
@@ -679,11 +722,12 @@ namespace Sci.Production.Packing
 
             #region 組Insert SQL
             string insertCmd;
-            if (comboBox1.SelectedValue.ToString() == "2")
+            if (comboBox1.SelectedIndex != -1 && comboBox1.SelectedValue.ToString() == "2")
             {
                 #region 單色混碼
                 insertCmd = string.Format(@"--宣告變數: PackingGuide帶入的參數
 DECLARE @id VARCHAR(13),
+		@mdivisionid VARCHAR(8),
 		@factoryid VARCHAR(8),
 		@orderid VARCHAR(13),
 		@ordershipmodeseq VARCHAR(2),
@@ -693,7 +737,7 @@ DECLARE @id VARCHAR(13),
 		@remark NVARCHAR(125)
 --設定變數值
 SET @id = '{0}'
-SELECT @factoryid = FactoryID, @orderid = OrderID, @ordershipmodeseq = OrderShipmodeSeq, @shipmodeid = ShipModeID, @ctnstartno = CTNStartNo, @cbm = CBM, @remark = Remark  FROM PackingGuide WHERE Id = @id
+SELECT @mdivisionid = MDivisionID, @factoryid = FactoryID, @orderid = OrderID, @ordershipmodeseq = OrderShipmodeSeq, @shipmodeid = ShipModeID, @ctnstartno = CTNStartNo, @cbm = CBM, @remark = Remark  FROM PackingGuide WHERE Id = @id
 
 --宣告變數: Orders相關的參數
 DECLARE @brandid VARCHAR(8),
@@ -704,7 +748,7 @@ SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID FROM Orders WHERE 
 
 --建立tmpe table存放展開後結果
 DECLARE @tempPackingList TABLE (
-   RefNo VARCHAR(20),
+   RefNo VARCHAR(21),
    CTNStartNo VARCHAR(6),
    CTNQty INT,
    Seq VARCHAR(6),
@@ -723,7 +767,7 @@ DECLARE @tempPackingList TABLE (
 
 --建立tmpe table存放餘箱資料
 DECLARE @tempRemainder TABLE (
-   RefNo VARCHAR(20),
+   RefNo VARCHAR(21),
    CTNQty INT,
    Seq INT,
    Article VARCHAR(8),
@@ -743,7 +787,7 @@ DECLARE cursor_groupbyarticle CURSOR FOR
 	SELECT Distinct a.Article, b.Seq FROM PackingGuide_Detail a, Order_Article b WHERE a.Id = @id AND b.id = @orderid AND a.Article = b.Article ORDER BY b.Seq
 
 --宣告變數: PackingGuide_Detail相關的參數
-DECLARE @refno VARCHAR(20),
+DECLARE @refno VARCHAR(21),
 		@article VARCHAR(8),
 		@color VARCHAR(6),
 		@sizecode VARCHAR(8),
@@ -919,7 +963,7 @@ CLOSE cursor_@temppacklistgroup
 DEALLOCATE cursor_@temppacklistgroup
 
 --全部總重量
-SELECT @ttlnw = SUM(NW), @ttlgw = SUM(GW), @ttlnnw = SUM(NNW), @ttlshipqty = SUM(ShipQty), @seqcount = MAX(CtnNo) FROM @tempPackingList
+SELECT @ttlnw = SUM(NW), @ttlgw = SUM(GW), @ttlnnw = SUM(NNW), @ttlshipqty = SUM(ShipQty), @seqcount = SUM(CtnQty) FROM @tempPackingList
 
 --刪除PackingList_Detail資料
 DELETE PackingList_Detail WHERE ID = @id
@@ -938,15 +982,14 @@ BEGIN TRANSACTION
 SELECT @havepl = count(ID) FROM PackingList WHERE ID = @id
 IF @havepl = 0
 	BEGIN --新增PackingList
-		INSERT INTO PackingList (ID,Type,FactoryID,OrderID,OrderShipmodeSeq,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate)
-			VALUES (@id, 'B', @factoryid, @orderid,@ordershipmodeseq, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate)
+		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate)
+			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate)
 	END
 ELSE
 	BEGIN --更新PackingList
 		UPDATE PackingList 
-		SET FactoryID = @factoryid,
-			OrderID = @orderid,
-			OrderShipmodeSeq = @ordershipmodeseq,
+		SET MDivisionID = @mdivisionid,
+			FactoryID = @factoryid,
 			ShipModeID = @shipmodeid,
 			BrandID = @brandid,
 			Dest = @dest,
@@ -998,6 +1041,7 @@ ELSE
                 #region 單色單碼
                 insertCmd = string.Format(@"--宣告變數: PackingGuide帶入的參數
 DECLARE @id VARCHAR(13),
+		@mdivisionid VARCHAR(8),
 		@factoryid VARCHAR(8),
 		@orderid VARCHAR(13),
 		@ordershipmodeseq VARCHAR(2),
@@ -1007,7 +1051,7 @@ DECLARE @id VARCHAR(13),
 		@remark NVARCHAR(125)
 --設定變數值
 SET @id = '{0}'
-SELECT @factoryid = FactoryID, @orderid = OrderID, @ordershipmodeseq = OrderShipmodeSeq, @shipmodeid = ShipModeID, @ctnstartno = CTNStartNo, @cbm = CBM, @remark = Remark  FROM PackingGuide WHERE Id = @id
+SELECT @mdivisionid = MDivisionID, @factoryid = FactoryID, @orderid = OrderID, @ordershipmodeseq = OrderShipmodeSeq, @shipmodeid = ShipModeID, @ctnstartno = CTNStartNo, @cbm = CBM, @remark = Remark  FROM PackingGuide WHERE Id = @id
 
 --宣告變數: Orders相關的參數
 DECLARE @brandid VARCHAR(8),
@@ -1018,7 +1062,7 @@ SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID FROM Orders WHERE 
 
 --建立tmpe table存放展開後結果
 DECLARE @tempPackingList TABLE (
-   RefNo VARCHAR(20),
+   RefNo VARCHAR(21),
    CTNStartNo VARCHAR(6),
    CTNQty INT,
    Seq VARCHAR(6),
@@ -1035,7 +1079,7 @@ DECLARE @tempPackingList TABLE (
 
 --建立tmpe table存放餘箱資料
 DECLARE @tempRemainder TABLE (
-   RefNo VARCHAR(20),
+   RefNo VARCHAR(21),
    CTNQty INT,
    Seq INT,
    Article VARCHAR(8),
@@ -1059,7 +1103,7 @@ DECLARE cursor_packguide CURSOR FOR
 	WHERE a.ID = @id ORDER BY c.Seq,d.Seq
 
 --宣告變數: PackingGuide_Detail相關的參數
-DECLARE @refno VARCHAR(20),
+DECLARE @refno VARCHAR(21),
 		@article VARCHAR(8),
 		@color VARCHAR(6),
 		@sizecode VARCHAR(8),
@@ -1179,15 +1223,14 @@ BEGIN TRANSACTION
 SELECT @havepl = count(ID) FROM PackingList WHERE ID = @id
 IF @havepl = 0
 	BEGIN --新增PackingList
-		INSERT INTO PackingList (ID,Type,FactoryID,OrderID,OrderShipmodeSeq,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate)
-			VALUES (@id, 'B', @factoryid, @orderid,@ordershipmodeseq, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate)
+		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate)
+			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate)
 	END
 ELSE
 	BEGIN --更新PackingList
 		UPDATE PackingList 
-		SET FactoryID = @factoryid,
-			OrderID = @orderid,
-			OrderShipmodeSeq = @ordershipmodeseq,
+		SET MDivisionID = @mdivisionid,
+			FactoryID = @factoryid,
 			ShipModeID = @shipmodeid,
 			BrandID = @brandid,
 			Dest = @dest,
@@ -1246,7 +1289,7 @@ ELSE
                 MyUtility.Msg.WarningBox("Switch fail!");
             }
         }
-        
+
         //Packing Method
         private void comboBox1_SelectionChangeCommitted(object sender, EventArgs e)
         {

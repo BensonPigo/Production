@@ -57,6 +57,8 @@
             this.button2 = new Sci.Win.UI.Button();
             this.button3 = new Sci.Win.UI.Button();
             this.txtshipmode1 = new Sci.Production.Class.txtshipmode();
+            this.label14 = new Sci.Win.UI.Label();
+            this.displayBox5 = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -73,6 +75,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayBox5);
+            this.masterpanel.Controls.Add(this.label14);
             this.masterpanel.Controls.Add(this.txtshipmode1);
             this.masterpanel.Controls.Add(this.button3);
             this.masterpanel.Controls.Add(this.button2);
@@ -133,6 +137,8 @@
             this.masterpanel.Controls.SetChildIndex(this.button2, 0);
             this.masterpanel.Controls.SetChildIndex(this.button3, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtshipmode1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label14, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBox5, 0);
             // 
             // detailpanel
             // 
@@ -146,6 +152,18 @@
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(892, 243);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -300,6 +318,7 @@
             this.textBox2.IsSupportEditMode = false;
             this.textBox2.Location = new System.Drawing.Point(258, 39);
             this.textBox2.Name = "textBox2";
+            this.textBox2.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(28, 23);
             this.textBox2.TabIndex = 1;
@@ -308,7 +327,7 @@
             // label8
             // 
             this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(366, 11);
+            this.label8.Location = new System.Drawing.Point(372, 11);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(107, 23);
             this.label8.TabIndex = 15;
@@ -317,7 +336,7 @@
             // label9
             // 
             this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(366, 38);
+            this.label9.Location = new System.Drawing.Point(372, 38);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(107, 23);
             this.label9.TabIndex = 16;
@@ -326,7 +345,7 @@
             // label10
             // 
             this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(366, 65);
+            this.label10.Location = new System.Drawing.Point(372, 65);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(107, 23);
             this.label10.TabIndex = 17;
@@ -335,7 +354,7 @@
             // label11
             // 
             this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(366, 92);
+            this.label11.Location = new System.Drawing.Point(372, 92);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(107, 23);
             this.label11.TabIndex = 18;
@@ -344,7 +363,7 @@
             // label12
             // 
             this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(366, 119);
+            this.label12.Location = new System.Drawing.Point(372, 119);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(107, 23);
             this.label12.TabIndex = 19;
@@ -354,7 +373,7 @@
             // 
             this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(477, 11);
+            this.displayBox4.Location = new System.Drawing.Point(483, 11);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(200, 23);
             this.displayBox4.TabIndex = 20;
@@ -362,10 +381,11 @@
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(477, 64);
+            this.comboBox1.Location = new System.Drawing.Point(483, 64);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.ReadOnly = true;
             this.comboBox1.Size = new System.Drawing.Size(216, 24);
@@ -377,7 +397,7 @@
             this.numericBox2.BackColor = System.Drawing.Color.White;
             this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CTNStartNo", true));
             this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox2.Location = new System.Drawing.Point(477, 93);
+            this.numericBox2.Location = new System.Drawing.Point(483, 93);
             this.numericBox2.Name = "numericBox2";
             this.numericBox2.Size = new System.Drawing.Size(65, 23);
             this.numericBox2.TabIndex = 3;
@@ -388,7 +408,7 @@
             this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CTNQty", true));
             this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox3.IsSupportEditMode = false;
-            this.numericBox3.Location = new System.Drawing.Point(477, 120);
+            this.numericBox3.Location = new System.Drawing.Point(483, 120);
             this.numericBox3.Name = "numericBox3";
             this.numericBox3.ReadOnly = true;
             this.numericBox3.Size = new System.Drawing.Size(65, 23);
@@ -397,7 +417,7 @@
             // label13
             // 
             this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(555, 93);
+            this.label13.Location = new System.Drawing.Point(561, 93);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(96, 23);
             this.label13.TabIndex = 25;
@@ -408,7 +428,7 @@
             this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox4.IsSupportEditMode = false;
-            this.numericBox4.Location = new System.Drawing.Point(655, 93);
+            this.numericBox4.Location = new System.Drawing.Point(661, 93);
             this.numericBox4.Name = "numericBox4";
             this.numericBox4.ReadOnly = true;
             this.numericBox4.Size = new System.Drawing.Size(65, 23);
@@ -454,12 +474,31 @@
             this.txtshipmode1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtshipmode1.FormattingEnabled = true;
             this.txtshipmode1.IsSupportUnselect = true;
-            this.txtshipmode1.Location = new System.Drawing.Point(477, 37);
+            this.txtshipmode1.Location = new System.Drawing.Point(483, 37);
             this.txtshipmode1.Name = "txtshipmode1";
             this.txtshipmode1.Size = new System.Drawing.Size(121, 24);
             this.txtshipmode1.TabIndex = 2;
             this.txtshipmode1.UseFunction = "ORDER";
             this.txtshipmode1.SelectionChangeCommitted += new System.EventHandler(this.txtshipmode1_SelectionChangeCommitted);
+            // 
+            // label14
+            // 
+            this.label14.Lines = 0;
+            this.label14.Location = new System.Drawing.Point(221, 11);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(51, 23);
+            this.label14.TabIndex = 27;
+            this.label14.Text = "Factory";
+            // 
+            // displayBox5
+            // 
+            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
+            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox5.Location = new System.Drawing.Point(276, 11);
+            this.displayBox5.Name = "displayBox5";
+            this.displayBox5.Size = new System.Drawing.Size(63, 23);
+            this.displayBox5.TabIndex = 28;
             // 
             // P02
             // 
@@ -526,5 +565,7 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayBox5;
+        private Win.UI.Label label14;
     }
 }
