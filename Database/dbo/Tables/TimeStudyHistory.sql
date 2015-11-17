@@ -2,7 +2,7 @@
     [StyleID]         VARCHAR (15) CONSTRAINT [DF_TimeStudyHistory_StyleID] DEFAULT ('') NOT NULL,
     [SeasonID]        VARCHAR (10) CONSTRAINT [DF_TimeStudyHistory_SeasonID] DEFAULT ('') NOT NULL,
     [ComboType]       VARCHAR (1)  CONSTRAINT [DF_TimeStudyHistory_ComboType] DEFAULT ('') NOT NULL,
-    [BrandID]         VARCHAR (8)  CONSTRAINT [DF_TimeStudyHistory_BrandID] DEFAULT ('') NULL,
+    [BrandID]         VARCHAR (8)  CONSTRAINT [DF_TimeStudyHistory_BrandID] DEFAULT ('') NOT NULL,
     [Version]         VARCHAR (2)  CONSTRAINT [DF_TimeStudyHistory_Version] DEFAULT ('') NOT NULL,
     [Phase]           VARCHAR (10) CONSTRAINT [DF_TimeStudyHistory_Phase] DEFAULT ('') NOT NULL,
     [TotalSewingTime] INT          CONSTRAINT [DF_TimeStudyHistory_TotalSewingTime] DEFAULT ((0)) NULL,
@@ -15,8 +15,10 @@
     [OldKey]          VARCHAR (13) CONSTRAINT [DF_TimeStudyHistory_OldKey] DEFAULT ('') NULL,
     [IETMSID]         VARCHAR (10) CONSTRAINT [DF_TimeStudyHistory_IETMSID] DEFAULT ('') NULL,
     [IETMSVersion]    VARCHAR (3)  CONSTRAINT [DF_TimeStudyHistory_IETMSVersion] DEFAULT ('') NULL,
-    CONSTRAINT [PK_TimeStudyHistory] PRIMARY KEY CLUSTERED ([StyleID] ASC, [SeasonID] ASC, [ComboType] ASC, [Version] ASC, [Phase] ASC)
+    CONSTRAINT [PK_TimeStudyHistory] PRIMARY KEY CLUSTERED ([StyleID] ASC, [SeasonID] ASC, [ComboType] ASC, [BrandID] ASC, [Version] ASC, [Phase] ASC)
 );
+
+
 
 
 
