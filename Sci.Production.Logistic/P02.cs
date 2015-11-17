@@ -30,12 +30,12 @@ namespace Sci.Production.Logistic
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select crd.*, o.StyleID,o.SeasonID,o.BrandID,o.Customize1,o.CustPONo,c.Alias,oqs.BuyerDelivery
+            this.DetailSelectCommand = string.Format(@"select distinct crd.*, o.StyleID,o.SeasonID,o.BrandID,o.Customize1,o.CustPONo,c.Alias,oqs.BuyerDelivery
 from ClogReceive_Detail crd
 left join Orders o on o.ID = crd.OrderID
 left join Country c on c.ID = o.Dest
-left join PackingList pl on pl.ID = crd.PackingListId
-left join Order_QtyShip oqs on oqs.Id = pl.OrderId and oqs.Seq = pl.OrderShipmodeSeq
+left join PackingList_Detail pld on pld.ID = crd.PackingListId and pld.CTNQty = 1
+left join Order_QtyShip oqs on oqs.Id = pld.OrderId and oqs.Seq = pld.OrderShipmodeSeq
 where crd.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -228,9 +228,9 @@ where crd.ID = '{0}'", masterID);
             }
 
             //update ClogReceive & PackingList_Detail data
-            sqlCmd = string.Format(@"select a.ID,a.OrderID,a.CTNStartNo,b.ClogLocationId 
-                                                        from PackingList_Detail a, ClogReceive_Detail b 
-                                                        where b.ID = '{0}' and a.ID = b.PackingListId and a.OrderId = b.OrderId and a.CTNStartNo = b.CTNStartNo", CurrentMaintain["ID"].ToString());
+            sqlCmd = string.Format(@"select PackingListId,CTNStartNo,ClogLocationId 
+                                                        from ClogReceive_Detail 
+                                                        where ID = '{0}'", CurrentMaintain["ID"].ToString());
             result = DBProxy.Current.Select(null, sqlCmd, out selectDate);
             if (!result)
             {
@@ -247,8 +247,8 @@ where crd.ID = '{0}'", masterID);
                     {
                         updateCmds.Add(string.Format(@"update PackingList_Detail 
                                              set ClogReceiveId = '{0}', ReceiveDate = '{1}', ClogLocationId = '{2}' 
-                                             where ID = '{3}' and OrderID = '{4}' and CTNStartNo = '{5}';", CurrentMaintain["ID"].ToString(), Convert.ToDateTime(CurrentMaintain["ReceiveDate"].ToString()).ToString("d"),
-                                                                                                          eachRow["ClogLocationId"].ToString(), eachRow["ID"].ToString(), eachRow["OrderId"].ToString(), eachRow["CTNStartNo"].ToString()));
+                                             where ID = '{3}' and CTNStartNo = '{4}';", CurrentMaintain["ID"].ToString(), Convert.ToDateTime(CurrentMaintain["ReceiveDate"].ToString()).ToString("d"),
+                                                                                                          eachRow["ClogLocationId"].ToString(), eachRow["ID"].ToString(), eachRow["CTNStartNo"].ToString()));
                     }
                     updateCmds.Add(string.Format("update ClogReceive set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString()));
                     result = DBProxy.Current.Executes(null, updateCmds);

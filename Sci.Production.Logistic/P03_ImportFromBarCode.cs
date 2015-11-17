@@ -190,7 +190,7 @@ namespace Sci.Production.Logistic
                                 dr1["InsertData"] = 1;
                                 string sqlCmd = string.Format(@"select OrderID, TransferToClogID, ClogReceiveID, ClogLocationId, ReceiveDate,ClogReturnID 
                                                                                       from PackingList_Detail
-                                                                                      where ID = '{0}' and CTNStartNo = '{1}'", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
+                                                                                      where ID = '{0}' and CTNStartNo = '{1}' and  CTNQty = 1", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
                                 if (MyUtility.Check.Seek(sqlCmd, out seekPacklistData))
                                 {
                                     dr1["OrderID"] = seekPacklistData["OrderID"].ToString().Trim();
