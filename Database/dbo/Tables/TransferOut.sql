@@ -4,6 +4,7 @@
     [IssueDate]   DATE           NOT NULL,
     [Status]      VARCHAR (15)   CONSTRAINT [DF_TransferOut_Status] DEFAULT ('') NOT NULL,
     [Remark]      NVARCHAR (100) CONSTRAINT [DF_TransferOut_Remark] DEFAULT ('') NULL,
+    [RequestID]   VARCHAR (13)   CONSTRAINT [DF_TransferOut_RequestID] DEFAULT ('') NULL,
     [ToFtyId]     VARCHAR (8)    CONSTRAINT [DF_TransferOut_ToFtyId] DEFAULT ('') NOT NULL,
     [AddName]     VARCHAR (10)   CONSTRAINT [DF_TransferOut_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME       NULL,
@@ -11,6 +12,8 @@
     [EditDate]    DATETIME       NULL,
     CONSTRAINT [PK_TransferOut] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
