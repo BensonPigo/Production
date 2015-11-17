@@ -2,7 +2,7 @@
     [ID]               VARCHAR (13)   CONSTRAINT [DF_PackingList_Detail_ID] DEFAULT ('') NOT NULL,
     [OrderID]          VARCHAR (13)   CONSTRAINT [DF_PackingList_Detail_OrderID] DEFAULT ('') NOT NULL,
     [OrderShipmodeSeq] VARCHAR (2)    CONSTRAINT [DF_PackingList_Detail_OrderShipmodeSeq] DEFAULT ('') NOT NULL,
-    [RefNo]            VARCHAR (20)   CONSTRAINT [DF_PackingList_Detail_RefNo] DEFAULT ('') NULL,
+    [RefNo]            VARCHAR (21)   CONSTRAINT [DF_PackingList_Detail_RefNo] DEFAULT ('') NULL,
     [CTNStartNo]       VARCHAR (6)    CONSTRAINT [DF_PackingList_Detail_CTNStartNo] DEFAULT ('') NOT NULL,
     [CTNEndNo]         VARCHAR (6)    CONSTRAINT [DF_PackingList_Detail_CTNEndNo] DEFAULT ('') NULL,
     [CTNQty]           INT            CONSTRAINT [DF_PackingList_Detail_CTNQty] DEFAULT ((0)) NULL,
@@ -29,6 +29,8 @@
     [Remark]           NVARCHAR (40)  CONSTRAINT [DF_PackingList_Detail_Remark] DEFAULT ('') NULL,
     CONSTRAINT [PK_PackingList_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC)
 );
+
+
 
 
 GO

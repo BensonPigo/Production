@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[PackingGuide_Detail] (
     [Id]        VARCHAR (13)   CONSTRAINT [DF_PackingGuide_Detail_Id] DEFAULT ('') NOT NULL,
-    [RefNo]     VARCHAR (20)   CONSTRAINT [DF_PackingGuide_Detail_RefNo] DEFAULT ('') NOT NULL,
+    [RefNo]     VARCHAR (21)   CONSTRAINT [DF_PackingGuide_Detail_RefNo] DEFAULT ('') NOT NULL,
     [Article]   VARCHAR (8)    CONSTRAINT [DF_PackingGuide_Detail_Article] DEFAULT ('') NOT NULL,
     [Color]     VARCHAR (6)    CONSTRAINT [DF_PackingGuide_Detail_Color] DEFAULT ('') NULL,
     [SizeCode]  VARCHAR (8)    CONSTRAINT [DF_PackingGuide_Detail_SizeCode] DEFAULT ('') NOT NULL,
@@ -11,6 +11,8 @@
     [GW]        NUMERIC (6, 3) CONSTRAINT [DF_PackingGuide_Detail_GW] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_PackingGuide_Detail] PRIMARY KEY CLUSTERED ([Id] ASC, [Article] ASC, [SizeCode] ASC)
 );
+
+
 
 
 GO
