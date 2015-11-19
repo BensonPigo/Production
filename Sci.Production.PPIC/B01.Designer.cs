@@ -43,10 +43,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(683, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkBox1);
@@ -56,11 +52,6 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(683, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(683, 38);
             // 
             // browse
             // 
@@ -122,7 +113,6 @@
             // 
             this.comboBox1.BackColor = System.Drawing.Color.White;
             this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "TypeForUse", true));
-            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
@@ -150,6 +140,8 @@
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B01";
             this.Text = "B01. Fabric Lacking & Replacement Reason";
