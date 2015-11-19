@@ -57,57 +57,59 @@ namespace Sci.Production.Packing
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            string sqlCmd = @"with OrderData
+            StringBuilder sqlCmd = new StringBuilder();
+
+            sqlCmd.Append(@"with OrderData
 as
-(select ID as OrderID,StyleID,SeasonID,CustCDID,SeasonID,OrderTypeID,CustPONo,POID
+(select ID as OrderID,StyleID,SeasonID,CustCDID,OrderTypeID,CustPONo,POID
  from Orders
  where Category = 'S'
- and BrandID = @brand";
+ and BrandID = @brand");
             if (!MyUtility.Check.Empty(txtcustcd1.Text))
             {
-                sqlCmd = sqlCmd + "\r\n and CustCDID = @custcd";
+                sqlCmd.Append("\r\n and CustCDID = @custcd");
             }
             if (!MyUtility.Check.Empty(textBox1.Text))
             {
-                sqlCmd = sqlCmd + "\r\n and OrderTypeID = @orderType";
+                sqlCmd.Append("\r\n and OrderTypeID = @orderType");
             }
             if (!MyUtility.Check.Empty(txtseason1.Text))
             {
-                sqlCmd = sqlCmd + "\r\n and SeasonID = @season";
+                sqlCmd.Append("\r\n and SeasonID = @season");
             }
             if (!MyUtility.Check.Empty(txtdropdownlist1.SelectedValue))
             {
-                sqlCmd = sqlCmd + "\r\n and BuyMonth = @buyMonth";
+                sqlCmd.Append("\r\n and BuyMonth = @buyMonth");
             }
             if (!MyUtility.Check.Empty(dateRange1.Value1))
             {
-                sqlCmd = sqlCmd + "\r\n and BuyerDelivery >= @buyerDelivery1";
+                sqlCmd.Append("\r\n and BuyerDelivery >= @buyerDelivery1");
             }
             if (!MyUtility.Check.Empty(dateRange1.Value2))
             {
-                sqlCmd = sqlCmd + "\r\n and BuyerDelivery <= @buyerDelivery2";
+                sqlCmd.Append("\r\n and BuyerDelivery <= @buyerDelivery2");
             }
-            sqlCmd = sqlCmd + @"),
+            sqlCmd.Append(@"),
 OrderQty
 as
 (select o.*, oqsd.Seq as OrderShipmodeSeq, oqs.ShipmodeID, oqsd.Article, oqsd.SizeCode, oqsd.Qty as ShipQty
 from OrderData o, Order_QtyShip oqs, Order_QtyShip_Detail oqsd
 where oqs.Id = o.OrderID
 and oqs.Id = oqsd.Id
-and oqs.Seq = oqsd.Seq";
+and oqs.Seq = oqsd.Seq");
             if (!MyUtility.Check.Empty(dateRange1.Value1))
             {
-                sqlCmd = sqlCmd + "\r\n and oqs.BuyerDelivery >= @buyerDelivery1";
+                sqlCmd.Append("\r\n and oqs.BuyerDelivery >= @buyerDelivery1");
             }
             if (!MyUtility.Check.Empty(dateRange1.Value2))
             {
-                sqlCmd = sqlCmd + "\r\n and oqs.BuyerDelivery <= @buyerDelivery2";
+                sqlCmd.Append("\r\n and oqs.BuyerDelivery <= @buyerDelivery2");
             }
-            sqlCmd = sqlCmd + @"),
+            sqlCmd.Append(@"),
 PackData
 as
 (select b.* 
- from (select oq.OrderID,oq.StyleID,oq.SeasonID,oq.CustCDID,oq.SeasonID,oq.OrderTypeID,oq.CustPONo,oq.POID,oq.OrderShipmodeSeq,oq.ShipmodeID,oq.Article,oq.SizeCode,(oq.ShipQty-isnull(a.PulloutQty,0)) as ShipQty
+ from (select oq.OrderID,oq.StyleID,oq.SeasonID,oq.CustCDID,oq.OrderTypeID,oq.CustPONo,oq.POID,oq.OrderShipmodeSeq,oq.ShipmodeID,oq.Article,oq.SizeCode,(oq.ShipQty-isnull(a.PulloutQty,0)) as ShipQty
        from OrderQty oq
 	   left Join (select oq1.OrderID,oq1.OrderShipmodeSeq,pdd.Article,pdd.SizeCode,sum(pdd.ShipQty) as PulloutQty
                   from OrderQty oq1, Pullout_Detail pd, Pullout_Detail_Detail pdd
@@ -122,35 +124,19 @@ as
 )
 select 0 as Selected,pd.OrderID,pd.StyleID,pd.SeasonID,pd.CustCDID,pd.SeasonID,pd.OrderTypeID,pd.CustPONo,pd.POID,pd.OrderShipmodeSeq,pd.ShipmodeID,pd.Article,pd.SizeCode,pd.ShipQty, isnull(voc.ColorID,'') as Color
 from PackData pd
-left join V_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Article";
+left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Article");
             #region 準備sql參數資料
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            sp1.ParameterName = "@brand";
-            sp1.Value = displayBox1.Value;
-
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-            sp2.ParameterName = "@custcd";
-            sp2.Value = txtcustcd1.Text;
-
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-            sp3.ParameterName = "@orderType";
-            sp3.Value = textBox1.Text;
-
-            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
-            sp4.ParameterName = "@season";
-            sp4.Value = txtseason1.Text;
-
-            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
-            sp5.ParameterName = "@buyMonth";
-            sp5.Value = txtdropdownlist1.SelectedValue;
-
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@brand", displayBox1.Value);
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@custcd",txtcustcd1.Text);
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@orderType", textBox1.Text);
+            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter("@season", txtseason1.Text);
+            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter("@buyMonth", txtdropdownlist1.SelectedValue);
             System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
-            sp6.ParameterName = "@buyerDelivery1";
-            sp6.Value = dateRange1.Value1;
-
             System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
+            sp6.ParameterName = "@buyerDelivery1";
+            sp6.Value = !MyUtility.Check.Empty(dateRange1.Value1) ? dateRange1.Value1 : DateTime.Now;
             sp7.ParameterName = "@buyerDelivery2";
-            sp7.Value = dateRange1.Value2;
+            sp7.Value = !MyUtility.Check.Empty(dateRange1.Value2) ? dateRange1.Value2 : DateTime.Now;
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
@@ -162,7 +148,7 @@ left join V_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Article
             cmds.Add(sp7);
             #endregion
             DualResult selectResult;
-            if (selectResult = DBProxy.Current.Select(null, sqlCmd, cmds, out selectDataTable))
+            if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out selectDataTable))
             {
                 if (selectDataTable.Rows.Count == 0)
                 {
@@ -228,7 +214,7 @@ left join V_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Article
                     else
                     {
                         findrow[0]["Color"] = currentRow["Color"].ToString();
-                        findrow[0]["ShipQty"] = Convert.ToInt32(currentRow["ShipQty"]);
+                        findrow[0]["ShipQty"] = MyUtility.Convert.GetInt(currentRow["ShipQty"]);
                     }
                 }
             }

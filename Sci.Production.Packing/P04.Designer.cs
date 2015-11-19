@@ -44,7 +44,6 @@
             this.label9 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
             this.txtshipmode1 = new Sci.Production.Class.txtshipmode();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.dateBox2 = new Sci.Win.UI.DateBox();
@@ -66,10 +65,12 @@
             this.button5 = new Sci.Win.UI.Button();
             this.numericBox1 = new Sci.Win.UI.NumericBox();
             this.displayBox5 = new Sci.Win.UI.DisplayBox();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -81,6 +82,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtfactory1);
             this.masterpanel.Controls.Add(this.displayBox5);
             this.masterpanel.Controls.Add(this.button5);
             this.masterpanel.Controls.Add(this.button4);
@@ -100,7 +102,6 @@
             this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Controls.Add(this.txtshipmode1);
-            this.masterpanel.Controls.Add(this.displayBox2);
             this.masterpanel.Controls.Add(this.label11);
             this.masterpanel.Controls.Add(this.label10);
             this.masterpanel.Controls.Add(this.label9);
@@ -138,7 +139,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label9, 0);
             this.masterpanel.Controls.SetChildIndex(this.label10, 0);
             this.masterpanel.Controls.SetChildIndex(this.label11, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtshipmode1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
@@ -159,6 +159,7 @@
             this.masterpanel.Controls.SetChildIndex(this.button5, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox5, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtfactory1, 0);
             // 
             // detailpanel
             // 
@@ -176,6 +177,18 @@
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(992, 328);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -349,16 +362,6 @@
             this.label11.TabIndex = 17;
             this.label11.Text = "Purchase CTN";
             // 
-            // displayBox2
-            // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(403, 4);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(80, 23);
-            this.displayBox2.TabIndex = 18;
-            // 
             // txtshipmode1
             // 
             this.txtshipmode1.BackColor = System.Drawing.Color.White;
@@ -366,10 +369,11 @@
             this.txtshipmode1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtshipmode1.FormattingEnabled = true;
             this.txtshipmode1.IsSupportUnselect = true;
-            this.txtshipmode1.Location = new System.Drawing.Point(403, 28);
+            this.txtshipmode1.Location = new System.Drawing.Point(403, 29);
             this.txtshipmode1.Name = "txtshipmode1";
             this.txtshipmode1.Size = new System.Drawing.Size(121, 24);
             this.txtshipmode1.TabIndex = 19;
+            this.txtshipmode1.UseFunction = null;
             // 
             // dateBox1
             // 
@@ -574,6 +578,16 @@
             this.displayBox5.Size = new System.Drawing.Size(27, 23);
             this.displayBox5.TabIndex = 54;
             // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.Location = new System.Drawing.Point(403, 4);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 55;
+            // 
             // P04
             // 
             this.ApvChkValue = "New";
@@ -598,6 +612,7 @@
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
@@ -642,7 +657,6 @@
         private Win.UI.DateBox dateBox2;
         private Win.UI.DateBox dateBox1;
         private Class.txtshipmode txtshipmode1;
-        private Win.UI.DisplayBox displayBox2;
         private Win.UI.Button button5;
         private Win.UI.Button button4;
         private Win.UI.Button button3;
@@ -651,5 +665,6 @@
         private Win.UI.Label label23;
         private Win.UI.DisplayBox displayBox5;
         private Win.UI.NumericBox numericBox1;
+        private Class.txtfactory txtfactory1;
     }
 }

@@ -52,49 +52,7 @@ namespace Sci.Production.Packing
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"with AllOrderID
-as
-(select Distinct OrderID,OrderShipmodeSeq
- from PackingList_Detail
- where ID = '{0}'
-),
-AccuPKQty
-as
-(select pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode,sum(pd.ShipQty) as TtlShipQty
- from PackingList_Detail pd, AllOrderID a
- where ID != '{0}'
- and a.OrderID = pd.OrderID
- and a.OrderShipmodeSeq = pd.OrderShipmodeSeq
- group by pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode
-),
-PulloutAdjQty
-as
-(select ia.OrderID,ia.OrderShipmodeSeq,iaq.Article,iaq.SizeCode,sum(iaq.DiffQty) as TtlDiffQty
- from InvAdjust ia, InvAdjust_Qty iaq, AllOrderID a
- where ia.OrderID = a.OrderID
- and ia.OrderShipmodeSeq = a.OrderShipmodeSeq
- and ia.ID = iaq.ID
- group by ia.OrderID,ia.OrderShipmodeSeq,iaq.Article,iaq.SizeCode
-),
-PackQty
-as
-(select OrderID,OrderShipmodeSeq,Article,SizeCode,sum(ShipQty) as ShipQty
- from PackingList_Detail
- where ID = '{0}'
- group by OrderID,OrderShipmodeSeq,Article,SizeCode
-)
-select a.ID,a.OrderID,a.OrderShipmodeSeq,a.CTNStartNo,a.CTNQty, a.RefNo, a.Article, a.Color, a.SizeCode, a.QtyPerCTN, a.ShipQty, a.NW, a.GW, a.NNW, a.NWPerPcs, a.ScanQty,a.TransferToClogID, a.TransferDate, a.ReceiveDate, a.ClogLocationId, a.ReturnDate, b.Description, oqd.Qty-isnull(pd.TtlShipQty,0)+isnull(paq.TtlDiffQty,0)-pk.ShipQty as BalanceQty, a.Seq,
-o.StyleID,o.CustPONo,o.SeasonID
-from PackingList_Detail a
-left join LocalItem b on b.RefNo = a.RefNo
-left join AccuPKQty pd on a.OrderID = pd.OrderID and a.OrderShipmodeSeq = pd.OrderShipmodeSeq and pd.Article = a.Article and pd.SizeCode = a.SizeCode
-left join PulloutAdjQty paq on a.OrderID = paq.OrderID and a.OrderShipmodeSeq = paq.OrderShipmodeSeq and paq.Article = a.Article and paq.SizeCode = a.SizeCode
-left join PackQty pk on a.OrderID = pk.OrderID and a.OrderShipmodeSeq = pk.OrderShipmodeSeq and pk.Article = a.Article and pk.SizeCode = a.SizeCode
-left join Order_QtyShip_Detail oqd on oqd.Id = a.OrderID and oqd.Seq = a.OrderShipmodeSeq and oqd.Article = a.Article and oqd.SizeCode = a.SizeCode
-left join Orders o on o.ID = a.OrderID
-where a.id = '{0}'
-order by a.Seq", masterID);
-
+            this.DetailSelectCommand = Prgs.QueryPackingListSQLCmd(masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 

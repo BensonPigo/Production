@@ -18,14 +18,14 @@ namespace Sci.Production.Packing
         DataRow packingListData;
         DataTable selectDataTable, detailData;
         DualResult result;
-        string sqlCmd;
+        
         public P05_BatchImport(DataRow packingListData, DataTable detailData)
         {
             InitializeComponent();
             this.packingListData = packingListData;
             this.detailData = detailData;
             displayBox1.Value = packingListData["BrandID"].ToString();
-            displayBox2.Value = packingListData["FactoryID"].ToString();
+            displayBox2.Value = packingListData["MDivisionID"].ToString();
         }
 
         protected override void OnFormLoaded()
@@ -53,44 +53,45 @@ namespace Sci.Production.Packing
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            sqlCmd = @"with OrderData
+            StringBuilder sqlCmd = new StringBuilder();
+            sqlCmd.Append(@"with OrderData
 as
 (select o.ID, oq.Seq, o.StyleID, oq.BuyerDelivery, o.CustPONo, oqd.Article, oqd.SizeCode, oqd.Qty, o.POID
  from Orders o, Order_QtyShip oq, Order_QtyShip_Detail oqd
  where o.BrandID = @brand
- and o.FtyGroup = @factory
+ and o.MDivisionID = @mdivisionid
  and o.IsForecast = 0
  and o.PulloutComplete = 0
  and o.LocalOrder = 0
  and o.Junk = 0
  and oq.Id = o.ID
  and oqd.Id = oq.Id
- and oqd.Seq = oq.Seq";
+ and oqd.Seq = oq.Seq");
             if (!MyUtility.Check.Empty(textBox1.Text))
             {
-                sqlCmd = sqlCmd + "\r\n and o.ID >= @orderID1";
+                sqlCmd.Append("\r\n and o.ID >= @orderID1");
             }
             if (!MyUtility.Check.Empty(textBox2.Text))
             {
-                sqlCmd = sqlCmd + "\r\n and o.ID >= @orderID2";
+                sqlCmd.Append("\r\n and o.ID >= @orderID2");
             }
             if (!MyUtility.Check.Empty(dateRange1.Value1))
             {
-                sqlCmd = sqlCmd + "\r\n and oq.BuyerDelivery >= @buyerDelivery1";
+                sqlCmd.Append("\r\n and oq.BuyerDelivery >= @buyerDelivery1");
             }
             if (!MyUtility.Check.Empty(dateRange1.Value2))
             {
-                sqlCmd = sqlCmd + "\r\n and oq.BuyerDelivery <= @buyerDelivery2";
+                sqlCmd.Append("\r\n and oq.BuyerDelivery <= @buyerDelivery2");
             }
             if (!MyUtility.Check.Empty(dateRange2.Value1))
             {
-                sqlCmd = sqlCmd + "\r\n and o.SciDelivery >= @sciDelivery1";
+                sqlCmd.Append("\r\n and o.SciDelivery >= @sciDelivery1");
             }
             if (!MyUtility.Check.Empty(dateRange2.Value2))
             {
-                sqlCmd = sqlCmd + "\r\n and o.SciDelivery <= @sciDelivery2";
+                sqlCmd.Append("\r\n and o.SciDelivery <= @sciDelivery2");
             }
-            sqlCmd = sqlCmd + @"),
+            sqlCmd.Append(@"),
 DistOrderData
 as
 (select distinct ID,Article,SizeCode
@@ -117,25 +118,13 @@ select 0 as Selected, od.ID as OrderID, od.Seq as OrderShipmodeSeq, od.StyleID, 
 from OrderData od
 left join FOCData fd on od.ID = fd.ID and od.Article = fd.Article and od.SizeCode = fd.SizeCode
 left join PulloutData pd on pd.OrderID = od.ID and pd.OrderShipmodeSeq = od.Seq and pd.Article = od.Article and pd.SizeCode = od.SizeCode
-left join V_OrderFAColor voc on voc.ID = od.ID and voc.Article = od.Article
-where (od.Qty-isnull(pd.PulloutQty,0)) > 0 and isnull(fd.Price,-1) = 0";
+left join View_OrderFAColor voc on voc.ID = od.ID and voc.Article = od.Article
+where (od.Qty-isnull(pd.PulloutQty,0)) > 0 and isnull(fd.Price,-1) = 0");
             #region 準備sql參數資料
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            sp1.ParameterName = "@brand";
-            sp1.Value = displayBox1.Value;
-
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-            sp2.ParameterName = "@factory";
-            sp2.Value = displayBox2.Value;
-
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-            sp3.ParameterName = "@orderID1";
-            sp3.Value = textBox1.Text;
-
-            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
-            sp4.ParameterName = "@orderID2";
-            sp4.Value = textBox2.Text;
-
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@brand", displayBox1.Value);
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", displayBox2.Value);
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@orderID1", textBox1.Text);
+            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter("@orderID2", textBox2.Text);
             System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
             sp5.ParameterName = "@buyerDelivery1";
             sp5.Value = !MyUtility.Check.Empty(dateRange1.Value1) ? dateRange1.Value1 : DateTime.Now;
@@ -163,7 +152,7 @@ where (od.Qty-isnull(pd.PulloutQty,0)) > 0 and isnull(fd.Price,-1) = 0";
             cmds.Add(sp8);
             #endregion
 
-            if (result = DBProxy.Current.Select(null, sqlCmd, cmds, out selectDataTable))
+            if (result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out selectDataTable))
             {
                 if (selectDataTable.Rows.Count == 0)
                 {
