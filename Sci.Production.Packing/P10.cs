@@ -19,7 +19,7 @@ namespace Sci.Production.Packing
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
+            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
             gridicon.Append.Visible = false;
             gridicon.Insert.Visible = false;
             InsertDetailGridOnDoubleClick = false;
@@ -32,11 +32,11 @@ namespace Sci.Production.Packing
 from TransferToClog_Detail td
 left join Orders o on o.ID = td.OrderID
 left join Country c on c.ID = o.Dest
-left join PackingList pl on pl.ID = td.PackingListId
+left join PackingList_Detail pl on pl.ID = td.PackingListId and pl.CTNStartNo = td.CTNStartNo and pl.CTNQty = 1
 left join Order_QtyShip oqs on oqs.Id = pl.OrderId and oqs.Seq = pl.OrderShipmodeSeq
 left join ClogReceive_Detail crd on crd.TransferToClogId = td.Id and crd.PackingListId = td.PackingListID and crd.OrderId = td.OrderID and crd.CTNStartNo = td.CTNStartNo
 left join ClogReceive cr on cr.Status = 'Confirmed' and cr.ID = crd.ID
-where td.Id = '{0}'", masterID);
+where td.Id = '{0}' order by td.PackingListID,td.OrderID,td.CTNStartNo", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -94,7 +94,7 @@ where td.Id = '{0}'", masterID);
                     DataRow newrow = CurrentDataRow.Table.NewRow();
                     newrow["ID"] = callNextForm.newID;
                     newrow["TransferDate"] = callNextForm.transDate;
-                    newrow["FactoryID"] = Sci.Env.User.Factory;
+                    newrow["MDivisionID"] = Sci.Env.User.Keyword;
 
                     CurrentDataRow.Table.Rows.Add(newrow);
                     newrow.AcceptChanges();
@@ -143,12 +143,12 @@ where td.Id = '{0}'", masterID);
             string sqlUpdatePackingList = string.Format(@"update PackingList_Detail 
                                                                                         set TransferToClogID = '', 
                                                                                               TransferDate = null, 
-                                                                                              ClogReturnID = (select max(a.ID)
+                                                                                              ClogReturnID = isnull((select max(a.ID)
                                                                                                                          from ClogReturn a, ClogReturn_Detail b 
 					                                                                                                     where a.id = b.id 
 					                                                                                                     and b.PackingListId = PackingList_Detail.ID
 					                                                                                                     and b.OrderId = PackingList_Detail.OrderID
-					                                                                                                     and b.CTNStartNo = PackingList_Detail.CTNStartNo), 
+					                                                                                                     and b.CTNStartNo = PackingList_Detail.CTNStartNo),''), 
                                                                                               ReturnDate = (select ReturnDate
                                                                                                                       from ClogReturn 
                                                                                                                       where ID = (select max(a.ID) 
@@ -163,30 +163,15 @@ where td.Id = '{0}'", masterID);
             {
                 return false;
             }
-            return base.ClickDeletePost();
-        }
 
-        //刪除後要Update Orders的資料
-        protected override void ClickDeleteAfter()
-        {
-            if (detailOrderID.Rows.Count > 0)
+            //Update Orders的資料
+            DualResult prgResult = Prgs.UpdateOrdersCTN(detailOrderID);
+            if (!prgResult)
             {
-                bool prgResult, lastResult = false;
-                foreach (DataRow currentRow in detailOrderID.Rows)
-                {
-                    prgResult = Prgs.UpdateOrdersCTN(currentRow["OrderID"].ToString());
-                    if (!prgResult)
-                    {
-                        lastResult = true;
-                    }
-
-                }
-                if (lastResult)
-                {
-                    MyUtility.Msg.WarningBox("Update orders data fail!");
-                }
+                MyUtility.Msg.WarningBox("Update orders data fail!\r\n" + prgResult.ToString());
+                return false;
             }
-            base.ClickDeleteAfter();
+            return true;
         }
 
         //存檔後要更新PalcingList_Detail資料，表身資料刪除後也要更新PackingList_Detail的值
@@ -194,13 +179,13 @@ where td.Id = '{0}'", masterID);
         {
             DataTable t = (DataTable)detailgridbs.DataSource;
 
-            string sqlUpdatePackingList = "";
+            IList<string> updateCmds = new List<string>();
             DualResult result;
             foreach (DataRow dr in t.Rows)
             {
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    sqlUpdatePackingList = string.Format(@"update PackingList_Detail 
+                    updateCmds.Add(string.Format(@"update PackingList_Detail 
                                                                                        set TransferToClogID = '', 
                                                                                              TransferDate = null,
                                                                                              ClogReturnID = (select max(a.ID)
@@ -218,19 +203,22 @@ where td.Id = '{0}'", masterID);
                                                                                                                                          and b.OrderId = PackingList_Detail.OrderID
                                                                                                                                          and b.CTNStartNo = PackingList_Detail.CTNStartNo))
                                                                                        where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}';
-                                                                                        ", dr["PackingListID", DataRowVersion.Original].ToString(), dr["OrderID", DataRowVersion.Original].ToString(), dr["CTNStartNo", DataRowVersion.Original].ToString());
-
-                    if (!(result = DBProxy.Current.Execute(null, sqlUpdatePackingList)))
-                    {
-                        return result;
-                    }
+                                                                                        ", dr["PackingListID", DataRowVersion.Original].ToString(), dr["OrderID", DataRowVersion.Original].ToString(), dr["CTNStartNo", DataRowVersion.Original].ToString()));
                 }
             }
+            if (updateCmds.Count > 0)
+            {
+                result = DBProxy.Current.Executes(null, updateCmds);
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
             return Result.True;
         }
 
-        //存檔後要Update Orders的資料
-        protected override void ClickSaveAfter()
+        protected override DualResult ClickSavePost()
         {
             //Update Orders的資料
             DataTable selectData;
@@ -238,24 +226,18 @@ where td.Id = '{0}'", masterID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Update orders data fail!");
+                DualResult selectResult = new DualResult(false, "Select orders data fail!\r\n" + result.ToString());
+                return selectResult;
             }
 
-            bool prgResult, lastResult = false;
-            foreach (DataRow currentRow in selectData.Rows)
+            DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
+            if (!prgResult)
             {
-                prgResult = Prgs.UpdateOrdersCTN(currentRow["OrderID"].ToString());
-                if (!prgResult)
-                {
-                    lastResult = true;
-                }
-
+                DualResult updateResult = new DualResult(false, "Update orders ctn data fail!\r\n" + prgResult.ToString());
+                return updateResult;
             }
-            if (lastResult)
-            {
-                MyUtility.Msg.WarningBox("Update orders data fail!");
-            }
-            base.ClickSaveAfter();
+            
+            return Result.True;
         }
 
         //Select Trans PO or Import From Barcode

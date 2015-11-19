@@ -37,6 +37,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -77,6 +78,10 @@
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(779, 247);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
@@ -148,9 +153,9 @@
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(612, 9);
+            this.button1.Location = new System.Drawing.Point(592, 9);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(157, 50);
+            this.button1.Size = new System.Drawing.Size(177, 50);
             this.button1.TabIndex = 5;
             this.button1.Text = "Select Trans PO or Import From Barcode";
             this.button1.UseVisualStyleBackColor = true;
@@ -159,7 +164,6 @@
             // P10
             // 
             this.ClientSize = new System.Drawing.Size(787, 449);
-            this.DefaultDetailOrder = "PackingListID";
             this.DefaultOrder = "ID";
             this.GridAlias = "TransferToClog_Detail";
             this.GridUniqueKey = "ID,PackingListID,CTNStartNo";
@@ -175,6 +179,7 @@
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();

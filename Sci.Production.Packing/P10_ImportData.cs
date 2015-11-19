@@ -35,7 +35,7 @@ namespace Sci.Production.Packing
 
             Helper.Controls.Grid.Generator(this.grid1)
                  .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-                 .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                 .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(4), iseditingreadonly: true)
                  .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -55,31 +55,32 @@ namespace Sci.Production.Packing
                 MyUtility.Msg.WarningBox("< SP# > or < Order# > or < PackID > can not be empty!");
                 return;
             }
+            StringBuilder sqlCmd = new StringBuilder();
 
-            string selectCommand = @"Select Distinct '' as ID, 0 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery 
+            sqlCmd.Append(string.Format(@"Select Distinct '' as ID, 0 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery 
                                                          from PackingList a, PackingList_Detail b, Orders c, Country d 
-                                                         where a.OrderId = c.Id 
+                                                         where b.OrderId = c.Id 
                                                          and a.Id = b.Id 
                                                          and b.CTNStartNo != '' 
                                                          and ((b.ClogReturnId = '' and TransferToClogId = '') or b.ClogReturnId != '') 
                                                          and c.Dest = d.ID 
-                                                         and a.FactoryID = '" + Sci.Env.User.Factory + "' and (a.Type = 'B' or a.Type = 'L') and c.FTYGroup = '" + Sci.Env.User.Factory + "'";
+                                                         and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.textBox1.Text))
             {
-                selectCommand = selectCommand + string.Format(" and a.OrderID = '{0}'", this.textBox1.Text.ToString().Trim());
+                sqlCmd.Append(string.Format(" and a.OrderID = '{0}'", this.textBox1.Text.ToString().Trim()));
             }
             if (!MyUtility.Check.Empty(this.textBox2.Text))
             {
-                selectCommand = selectCommand + string.Format(" and c.CustPONo = '{0}'", this.textBox2.Text.ToString().Trim());
+                sqlCmd.Append(string.Format(" and c.CustPONo = '{0}'", this.textBox2.Text.ToString().Trim()));
             }
             if (!MyUtility.Check.Empty(this.textBox3.Text))
             {
-                selectCommand = selectCommand + string.Format(" and a.ID = '{0}'", this.textBox3.Text.ToString().Trim());
+                sqlCmd.Append(string.Format(" and a.ID = '{0}'", this.textBox3.Text.ToString().Trim()));
             }
 
             DataTable selectDataTable;
             DualResult selectResult;
-            if (selectResult = DBProxy.Current.Select(null, selectCommand, out selectDataTable))
+            if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), out selectDataTable))
             {
                 if (selectDataTable.Rows.Count == 0)
                 {
@@ -89,42 +90,9 @@ namespace Sci.Production.Packing
             listControlBindingSource1.DataSource = selectDataTable;
         }
 
-        //全選的CheckBox
-        private void checkBox1_Click(object sender, EventArgs e)
-        {
-            if (null != col_chk)
-            {
-                this.grid1.SetCheckeds(col_chk);
-                if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                {
-                    if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                }
-            }
-        }
-
-        //全不選的CheckBox
-        private void checkBox2_Click(object sender, EventArgs e)
-        {
-            if (null != col_chk)
-            {
-                this.grid1.SetUncheckeds(col_chk);
-                if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                {
-                    if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                }
-            }
-        }
-
         //Save
         private void button3_Click(object sender, EventArgs e)
         {
-            string sqlCommand;
-            bool insertData;
-            string sqlInsertMaster = "";
-            string sqlInsert = "";
-            string sqlUpdatePackingList = "";
-            DateTime nowTime = DateTime.Now;
-
             //檢查是否有勾選資料
             this.grid1.ValidateControl();
             listControlBindingSource1.EndEdit();
@@ -137,7 +105,6 @@ namespace Sci.Production.Packing
             }
 
             //設定參數值
-
             if (MyUtility.Check.Empty(idValue))
             {
                 string getID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "CS", "TransferToClog", DateTime.Today, 2, "Id", null);
@@ -155,73 +122,49 @@ namespace Sci.Production.Packing
                 transDate = Convert.ToDateTime(MyUtility.GetValue.Lookup("TransferDate", newID, "TransferToClog", "ID")).ToString("d");
             }
 
-            //組表身資料
-            foreach (DataRow currentRecord in selectedData)
+            //找出要新增的資料'
+            DataTable ResultData;
+            try
             {
-                insertData = true;
-                if (!MyUtility.Check.Empty(idValue))
-                {
-                    sqlCommand = string.Format(@"select ID
-                                                                              from TransferToClog_Detail  
-                                                                              where ID = '{0}' and PackingListID = '{1}' and CTNStartNo = '{2}'
-                                                                              ", idValue, currentRecord["PackingListID"].ToString(), currentRecord["CTNStartNo"].ToString());
-                    if (MyUtility.Check.Seek(sqlCommand, null))
-                    {
-                        insertData = false;
-                    }
-                }
+                MyUtility.Tool.ProcessWithDatatable(dt, "Selected,PackingListID,OrderID,CTNStartNo", string.Format(@"select a.Selected,a.PackingListID,a.OrderID,a.CTNStartNo,iif(td.Id is null, 1, 0) as InsertData 
+from #tmp a
+left join TransferToClog_Detail td on td.Id = '{0}' and td.PackingListID = a.PackingListID and td.CTNStartNo = a.CTNStartNo
+where a.Selected = 1", MyUtility.Convert.GetString(idValue)), out ResultData);
+            }
+            catch (Exception ex)
+            {
+                MyUtility.Msg.ErrorBox("ProcessWithDatatable error.\r\n" + ex.ToString());
+                return;
+            }
 
-                if (insertData)
+            IList<string> insertCmds = new List<string>();
+            IList<string> updateCmds = new List<string>();
+            //組表身資料
+            foreach (DataRow currentRecord in ResultData.Rows)
+            {
+                if (currentRecord["InsertData"].ToString() == "1")
                 {
-                    sqlInsert = sqlInsert + "Insert into TransferToClog_Detail (Id,PackingListID,OrderID,CTNStartNo,AddName,AddDate)\r\n ";
-                    sqlInsert = sqlInsert + string.Format("Values('{5}','{0}','{1}','{2}','{3}','{4}');\r\n ", currentRecord["PackingListID"].ToString(), currentRecord["OrderID"].ToString(), currentRecord["CTNStartNo"].ToString(), Sci.Env.User.UserID, nowTime.ToString("yyyy/MM/dd HH:mm:ss"), newID);
+                    insertCmds.Add(string.Format(@"Insert into TransferToClog_Detail (Id,PackingListID,OrderID,CTNStartNo,AddName,AddDate) 
+Values('{4}','{0}','{1}','{2}','{3}',GETDATE()); ", currentRecord["PackingListID"].ToString(), currentRecord["OrderID"].ToString(), currentRecord["CTNStartNo"].ToString(), Sci.Env.User.UserID, newID));
                     //要順便更新PackingList_Detail
-                    sqlUpdatePackingList = sqlUpdatePackingList + string.Format(@"update PackingList_Detail 
-                                                                                                                                  set TransferToClogID = '{3}', TransferDate = '{4}', ClogReceiveID = '', ReceiveDate = null, ClogLocationId = '', ClogReturnID = '', ReturnDate = null 
-                                                                                                                                  where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}'; ", currentRecord["PackingListID"].ToString(), currentRecord["OrderID"].ToString(), currentRecord["CTNStartNo"].ToString(), newID, transDate);
+                    updateCmds.Add(string.Format(@"update PackingList_Detail 
+set TransferToClogID = '{3}', TransferDate = '{4}', ClogReceiveID = '', ReceiveDate = null, ClogLocationId = '', ClogReturnID = '', ReturnDate = null 
+where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}'; ", currentRecord["PackingListID"].ToString(), currentRecord["OrderID"].ToString(), currentRecord["CTNStartNo"].ToString(), newID, transDate));
                 }
             }
 
             //組表頭資料
             if (MyUtility.Check.Empty(idValue))
             {
-                sqlInsertMaster = sqlInsertMaster + "Insert into TransferToClog (Id,TransferDate,FactoryID,AddName,AddDate)\r\n ";
-                sqlInsertMaster = sqlInsertMaster + string.Format("Values('{3}','{4}','{0}','{1}','{2}');\r\n ", Sci.Env.User.Factory, Sci.Env.User.UserID, nowTime.ToString("yyyy/MM/dd HH:mm:ss"), newID, transDate);
+                insertCmds.Add(string.Format(@"Insert into TransferToClog (Id,TransferDate,MDivisionID,AddName,AddDate) 
+                Values('{2}','{3}','{0}','{1}',GETDATE());", Sci.Env.User.Keyword, Sci.Env.User.UserID, newID, transDate));
             }
             else
             {
-                sqlInsertMaster = string.Format("update TransferToClog set EditName = '{0}', EditDate = '{1}' where ID = '{2}'", Sci.Env.User.UserID, nowTime.ToString("yyyy/MM/dd HH:mm:ss"), newID);
+                updateCmds.Add(string.Format("update TransferToClog set EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, newID));
             }
-
-            if (!MyUtility.Check.Empty(sqlInsert))
-            {
-                DualResult result1, result2, result3;
-                using (TransactionScope transactionScope = new TransactionScope())
-                {
-                    try
-                    {
-                        result1 = Sci.Data.DBProxy.Current.Execute(null, sqlInsertMaster);
-                        result2 = Sci.Data.DBProxy.Current.Execute(null, sqlInsert);
-                        result3 = Sci.Data.DBProxy.Current.Execute(null, sqlUpdatePackingList);
-
-                        if (result1 && result2 && result3)
-                        {
-                            transactionScope.Complete();
-                        }
-                        else
-                        {
-                            MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
-                            return;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        ShowErr("Commit transaction error.", ex);
-                        return;
-                    }
-                }
-
-                //Update Orders的資料
+            
+            //Update Orders的資料
                 DataTable selectData;
                 string sqlCmd = string.Format("select OrderID from TransferToClog_Detail where ID = '{0}' group by OrderID", newID);
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
@@ -230,30 +173,42 @@ namespace Sci.Production.Packing
                     MyUtility.Msg.WarningBox("Update orders data fail!");
                 }
 
-                bool prgResult, lastResult = false;
-                foreach (DataRow currentRow in selectData.Rows)
+            DualResult result1 = Result.True, result2 = Result.True;
+            using (TransactionScope transactionScope = new TransactionScope())
+            {
+                try
                 {
-                    prgResult = Prgs.UpdateOrdersCTN(currentRow["OrderID"].ToString());
-                    if (!prgResult)
+                    if (updateCmds.Count > 0)
                     {
-                        lastResult = true;
+                        result1 = Sci.Data.DBProxy.Current.Executes(null, updateCmds);
                     }
+                    if(insertCmds.Count > 0)
+                    {
+                        result2 = Sci.Data.DBProxy.Current.Executes(null, insertCmds);
+                    }   
+                    DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
 
+                    if (result1 && result2 && prgResult)
+                    {
+                        transactionScope.Complete();
+                    }
+                    else
+                    {
+                        transactionScope.Dispose();
+                        MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
+                        return;
+                    }
                 }
-                if (lastResult)
+                catch (Exception ex)
                 {
-                    MyUtility.Msg.WarningBox("Update orders data fail!");
+                    transactionScope.Dispose();
+                    ShowErr("Commit transaction error.", ex);
+                    return;
                 }
-
+            }
                 //系統會自動有回傳值
                 DialogResult = System.Windows.Forms.DialogResult.OK;
             }
-            else
-            {
-                MyUtility.Msg.WarningBox("No data need to import!");
-                return;
-            }
-        }
 
         //Import From Barcode
         private void button2_Click(object sender, EventArgs e)
@@ -306,7 +261,7 @@ namespace Sci.Production.Packing
                                 sqlCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,a.BuyerDelivery 
                                                                             from Orders a
                                                                              left join Country b on b.ID = a.Dest
-                                                                            where a.ID = '{0}' and a.FtyGroup = '{1}'", dr["OrderID"].ToString(), Sci.Env.User.Factory);
+                                                                            where a.ID = '{0}' and a.MDivisionID = '{1}'", dr["OrderID"].ToString(), Sci.Env.User.Keyword);
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
                                     dr["StyleID"] = seekData["StyleID"].ToString().Trim();
@@ -325,7 +280,7 @@ namespace Sci.Production.Packing
                     }
                     if (insertCount == 0)
                     {
-                        MyUtility.Msg.WarningBox("This data were all be transferred or order factory is not equal to login factory.");
+                        MyUtility.Msg.WarningBox("This data were all be transferred or order's M is not equal to login M.");
                         return;
                     }
                 }
