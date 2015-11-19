@@ -248,7 +248,7 @@ where crd.ID = '{0}'", masterID);
                         updateCmds.Add(string.Format(@"update PackingList_Detail 
                                              set ClogReceiveId = '{0}', ReceiveDate = '{1}', ClogLocationId = '{2}' 
                                              where ID = '{3}' and CTNStartNo = '{4}';", CurrentMaintain["ID"].ToString(), Convert.ToDateTime(CurrentMaintain["ReceiveDate"].ToString()).ToString("d"),
-                                                                                                          eachRow["ClogLocationId"].ToString(), eachRow["ID"].ToString(), eachRow["CTNStartNo"].ToString()));
+                                                                                                          eachRow["ClogLocationId"].ToString(), eachRow["PackingListId"].ToString(), eachRow["CTNStartNo"].ToString()));
                     }
                     updateCmds.Add(string.Format("update ClogReceive set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString()));
                     result = DBProxy.Current.Executes(null, updateCmds);
@@ -265,12 +265,14 @@ where crd.ID = '{0}'", masterID);
                     }
                     else
                     {
+                        transactionScope.Dispose();
                         MyUtility.Msg.WarningBox("Confirm failed !\r\n" + result.ToString());
                         return;
                     }
                 }
                 catch (Exception ex)
                 {
+                    transactionScope.Dispose();
                     ShowErr("Confirm transaction error.", ex);
                     return;
                 }
