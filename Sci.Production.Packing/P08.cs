@@ -199,30 +199,34 @@ and o.ID = pld.OrderID");
                                                    set ApvToPurchase = 1, ApvToPurchaseDate = GETDATE()
                                                    where ID = '{0}' and ApvToPurchase = 0;", currentRow["ID"].ToString()));
             }
-            using (TransactionScope transactionScope = new TransactionScope())
+
+            if (updateCmds.Count > 0)
             {
-                try
+                using (TransactionScope transactionScope = new TransactionScope())
                 {
-                    DualResult result = DBProxy.Current.Executes(null, updateCmds);
-                    if (result)
+                    try
                     {
-                        transactionScope.Complete();
-                        MyUtility.Msg.InfoBox("Approve completed!");
-                        foreach (DataRow currentRow in dr)
+                        DualResult result = DBProxy.Current.Executes(null, updateCmds);
+                        if (result)
                         {
-                            currentRow.Delete();
+                            transactionScope.Complete();
+                            MyUtility.Msg.InfoBox("Approve completed!");
+                            foreach (DataRow currentRow in dr)
+                            {
+                                currentRow.Delete();
+                            }
+                        }
+                        else
+                        {
+                            MyUtility.Msg.WarningBox("Approve failed, Pleaes re-try");
+                            return;
                         }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        MyUtility.Msg.WarningBox("Approve failed, Pleaes re-try");
+                        ShowErr("Commit transaction error.", ex);
                         return;
                     }
-                }
-                catch (Exception ex)
-                {
-                    ShowErr("Commit transaction error.", ex);
-                    return;
                 }
             }
             #endregion
