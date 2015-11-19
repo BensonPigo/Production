@@ -25,7 +25,7 @@ namespace Sci.Production.Packing
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
+            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
             detailgrid.AllowUserToOrderColumns = true;
             InsertDetailGridOnDoubleClick = false;
         }
@@ -37,7 +37,7 @@ namespace Sci.Production.Packing
             this.DetailSelectCommand = string.Format(@"select od.*,pr.Description
 from OverrunGMT_Detail od
 left join PackingReason pr on pr.Type = 'OG' and pr.ID = od.PackingReasonID
-where od.ID = '{0}'",masterID);
+where od.ID = '{0}'", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -89,17 +89,39 @@ where od.ID = '{0}'",masterID);
                     dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["Article"].ToString())
                     {
-                        if (!MyUtility.Check.Seek(string.Format("Select Article from Order_Qty where ID = '{0}' and Article = '{1}'", CurrentMaintain["OrderID"].ToString(), e.FormattedValue.ToString())))
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@orderid",CurrentMaintain["ID"].ToString());
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@article",e.FormattedValue.ToString());
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+                        cmds.Add(sp2);
+
+                        string sqlCmd = "Select Article from Order_Qty where ID = @orderid and Article = @article";
+                        DataTable OrderQtyData;
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderQtyData);
+                        if (!result || OrderQtyData.Rows.Count <= 0)
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Article: {0} > not found!!!", e.FormattedValue.ToString()));
+                            if (!result)
+                            {
+                                MyUtility.Msg.WarningBox(string.Format("Sql connection fail!!\r\n"+result.ToString()));
+                            }
+                            else
+                            {
+                                MyUtility.Msg.WarningBox(string.Format("< Article: {0} > not found!!!", e.FormattedValue.ToString()));
+                            }
                             dr["Article"] = "";
+                            dr["SizeCode"] = "";
+                            dr.EndEdit();
+                            e.Cancel = true;
+                            return;
                         }
                         else
                         {
                             dr["Article"] = e.FormattedValue.ToString();
+                            dr["SizeCode"] = "";
+                            dr.EndEdit();
                         }
-                        dr["SizeCode"] = "";
-                        dr.EndEdit();
                     }
                 }
             };
@@ -113,7 +135,7 @@ where od.ID = '{0}'",masterID);
                         if (e.RowIndex != -1)
                         {
                             dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            sqlCmd = string.Format("Select distinct SizeCode from Order_Qty where ID = '{0}' and Article = '{1}'", CurrentMaintain["OrderID"].ToString(), dr["Article"].ToString());
+                            sqlCmd = string.Format("Select distinct SizeCode from Order_Qty where ID = '{0}' and Article = '{1}'", CurrentMaintain["ID"].ToString(), dr["Article"].ToString());
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", dr["SizeCode"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
@@ -130,9 +152,29 @@ where od.ID = '{0}'",masterID);
                     dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["SizeCode"].ToString())
                     {
-                        if (!MyUtility.Check.Seek(string.Format("Select SizeCode from Order_Qty where ID = '{0}' and Article = '{1}' SizeCode = '{2}'", CurrentMaintain["OrderID"].ToString(), dr["Article"].ToString(), e.FormattedValue.ToString())))
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@orderid",CurrentMaintain["ID"].ToString());
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@article",dr["Article"].ToString());
+                        System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@sizecode",e.FormattedValue.ToString());
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+                        cmds.Add(sp2);
+                        cmds.Add(sp3);
+
+                        string sqlCmd = "Select SizeCode from Order_Qty where ID = @orderid and Article = @article and SizeCode = @sizecode";
+                        DataTable OrderQtyData;
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderQtyData);
+                        if (!result || OrderQtyData.Rows.Count <= 0)
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< SizeCode: {0} > not found!!!", e.FormattedValue.ToString()));
+                            if (!result)
+                            {
+                                MyUtility.Msg.WarningBox(string.Format("Sql connection fail!!\r\n"+result.ToString()));
+                            }
+                            else
+                            {
+                                MyUtility.Msg.WarningBox(string.Format("< SizeCode: {0} > not found!!!", e.FormattedValue.ToString()));
+                            }
                             dr["SizeCode"] = "";
                             e.Cancel = true;
                             return;
@@ -189,13 +231,13 @@ where od.ID = '{0}'",masterID);
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), settings: size)
                 .Numeric("Qty", header: "Q'ty")
                 .Text("PackingReasonID", header: "Reason ID", width: Widths.AnsiChars(5), settings: reason)
-                .Text("Description", header: "Reason Description", width: Widths.AnsiChars(40),iseditingreadonly: true);
+                .Text("Description", header: "Reason Description", width: Widths.AnsiChars(40), iseditingreadonly: true);
         }
 
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["CloseDate"] = DateTime.Today;
         }
@@ -276,22 +318,42 @@ where od.ID = '{0}'",masterID);
                 {
                     if (!MyUtility.Check.Empty(textBox1.Text))
                     {
-                        string sqlCmd = string.Format("select ID, StyleID, SeasonID from Orders where ID = '{0}' and FtyGroup = '{1}' and GMTClose is not null", textBox1.Text, Sci.Env.User.Factory);
-                        if (MyUtility.Check.Seek(sqlCmd, out dr))
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id",textBox1.Text);
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+                        cmds.Add(sp2);
+
+                        string sqlCmd = "select ID, StyleID, SeasonID, FtyGroup from Orders where ID = @id and MDivisionID = @mdivisionid and GMTClose is not null";
+                        DataTable OrdersData;
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrdersData);
+                        if (!result || OrdersData.Rows.Count <= 0)
                         {
-                            //OrderID異動，其他相關欄位要跟著異動
-                            displayBox1.Value = dr["StyleID"].ToString();
-                            displayBox2.Value = dr["SeasonID"].ToString();
-                        }
-                        else
-                        {
-                            MyUtility.Msg.WarningBox("This SP# is not local order!");
+                            if (!result)
+                            {
+                                MyUtility.Msg.WarningBox("Sql connection fail!\r\n" + result.ToString());
+                            }
+                            else
+                            {
+                                MyUtility.Msg.WarningBox("SP# not found!");
+                            }
                             //OrderID異動，其他相關欄位要跟著異動
                             textBox1.Text = "";
                             displayBox1.Value = "";
                             displayBox2.Value = "";
+                            CurrentMaintain["FactoryID"] = "";
                             e.Cancel = true;
                             return;
+                        }
+                        else
+                        {
+                            //OrderID異動，其他相關欄位要跟著異動
+                            displayBox1.Value = OrdersData.Rows[0]["StyleID"].ToString();
+                            displayBox2.Value = OrdersData.Rows[0]["SeasonID"].ToString();
+                            CurrentMaintain["ID"] = textBox1.Text;
+                            CurrentMaintain["FactoryID"] = OrdersData.Rows[0]["FtyGroup"].ToString();
                         }
                     }
                 }
@@ -302,7 +364,7 @@ where od.ID = '{0}'",masterID);
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            sqlCmd = string.Format("update OverrunGMT set Status = 'Confirmed', EditName = '{0}', EditDate = '{1}' where ID = '{2}'", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"].ToString());
+            sqlCmd = string.Format("update OverrunGMT set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
 
             result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
@@ -319,7 +381,7 @@ where od.ID = '{0}'",masterID);
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            
+
             //問是否要做Unconfirm，確定才繼續往下做
             buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unconfirm > this data?", "Warning", MessageBoxButtons.YesNo);
             if (buttonResult == System.Windows.Forms.DialogResult.No)
@@ -327,7 +389,7 @@ where od.ID = '{0}'",masterID);
                 return;
             }
 
-            sqlCmd = string.Format("update OverrunGMT set Status = 'New', EditName = '{0}', EditDate = '{1}' where ID = '{2}'", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"].ToString());
+            sqlCmd = string.Format("update OverrunGMT set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
 
             result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
