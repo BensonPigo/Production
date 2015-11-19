@@ -16,8 +16,6 @@ namespace Sci.Production.Packing
     public partial class P08 : Sci.Win.Tems.QueryForm
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        DualResult result;
-        string sqlCmd,updateCmd;
         DataTable gridData;
 
         public P08(ToolStripMenuItem menuitem)
@@ -55,70 +53,63 @@ namespace Sci.Production.Packing
                 return;
             }
 
-            sqlCmd = @"select distinct 0 as Selected, pl.ID, iif(pl.Type = 'B','Bulk','Sample') as Type, pld.OrderID, o.SciDelivery, o.SewInLine, pl.EstCTNBooking, pl.EstCTNArrive
+            StringBuilder sqlCmd = new StringBuilder();
+            sqlCmd.Append(@"select distinct 0 as Selected, pl.ID, iif(pl.Type = 'B','Bulk','Sample') as Type, pld.OrderID, o.SciDelivery, o.SewInLine, pl.EstCTNBooking, pl.EstCTNArrive
 from PackingList pl, PackingList_Detail pld, Orders o
-where pl.FactoryID = @factoryid
+where pl.MDivisionID = @mdivisionid
 and (pl.Type = 'B' or pl.Type = 'S')
 and pl.ApvToPurchase = 0
 and pl.EstCTNBooking is not null
 and pl.EstCTNArrive is not null
 and pld.ID = pl.ID
-and o.ID = pld.OrderID";
+and o.ID = pld.OrderID");
             #region 組條件
             if (!MyUtility.Check.Empty(this.textBox1.Text))
             {
-                sqlCmd = sqlCmd + "\r\nand o.ID >= @orderid1";
+                sqlCmd.Append("\r\nand o.ID >= @orderid1");
             }
             if (!MyUtility.Check.Empty(this.textBox2.Text))
             {
-                sqlCmd = sqlCmd + "\r\nand o.ID <= @orderid2";
+                sqlCmd.Append("\r\nand o.ID <= @orderid2");
             }
             if (!MyUtility.Check.Empty(dateRange1.Value1))
             {
-                sqlCmd = sqlCmd + "\r\nand o.SciDelivery >= @scidelivery1";
+                sqlCmd.Append("\r\nand o.SciDelivery >= @scidelivery1");
             }
             if (!MyUtility.Check.Empty(dateRange1.Value2))
             {
-                sqlCmd = sqlCmd + "\r\nand o.SciDelivery <= @scidelivery2";
+                sqlCmd.Append("\r\nand o.SciDelivery <= @scidelivery2");
             }
             if (!MyUtility.Check.Empty(dateRange2.Value1))
             {
-                sqlCmd = sqlCmd + "\r\nand o.SewInLine >= @sewingline1";
+                sqlCmd.Append("\r\nand o.SewInLine >= @sewinline1");
             }
             if (!MyUtility.Check.Empty(dateRange2.Value2))
             {
-                sqlCmd = sqlCmd + "\r\nand o.SewInLine <= @sewingline2";
+                sqlCmd.Append("\r\nand o.SewInLine <= @sewinline2");
             }
             if (!MyUtility.Check.Empty(dateRange3.Value1))
             {
-                sqlCmd = sqlCmd + "\r\nand pl.EstCTNBooking >= @estbooking1";
+                sqlCmd.Append("\r\nand pl.EstCTNBooking >= @estbooking1");
             }
             if (!MyUtility.Check.Empty(dateRange3.Value2))
             {
-                sqlCmd = sqlCmd + "\r\nand pl.EstCTNBooking <= @estbooking2";
+                sqlCmd.Append("\r\nand pl.EstCTNBooking <= @estbooking2");
             }
             if (!MyUtility.Check.Empty(dateRange4.Value1))
             {
-                sqlCmd = sqlCmd + "\r\nand pl.EstCTNArrive >= @estarrive1";
+                sqlCmd.Append("\r\nand pl.EstCTNArrive >= @estarrive1");
             }
             if (!MyUtility.Check.Empty(dateRange4.Value2))
             {
-                sqlCmd = sqlCmd + "\r\nand pl.EstCTNArrive <= @estarrive2";
+                sqlCmd.Append("\r\nand pl.EstCTNArrive <= @estarrive2");
             }
             #endregion
 
             #region 準備sql參數資料
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            sp1.ParameterName = "@factoryid";
-            sp1.Value = Sci.Env.User.Factory;
-
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-            sp2.ParameterName = "@orderid1";
-            sp2.Value = this.textBox1.Text;
-
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-            sp3.ParameterName = "@orderid2";
-            sp3.Value = this.textBox2.Text;
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@orderid1", this.textBox1.Text);
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@orderid2", this.textBox2.Text);
 
             System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
             sp4.ParameterName = "@scidelivery1";
@@ -129,11 +120,11 @@ and o.ID = pld.OrderID";
             sp5.Value = !MyUtility.Check.Empty(dateRange1.Value2) ? dateRange1.Value2 : DateTime.Now;
 
             System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
-            sp6.ParameterName = "@sewingline1";
+            sp6.ParameterName = "@sewinline1";
             sp6.Value = !MyUtility.Check.Empty(dateRange2.Value1) ? dateRange2.Value1 : DateTime.Now;
 
             System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
-            sp7.ParameterName = "@sewingline2";
+            sp7.ParameterName = "@sewinline2";
             sp7.Value = !MyUtility.Check.Empty(dateRange2.Value2) ? dateRange2.Value2 : DateTime.Now;
 
             System.Data.SqlClient.SqlParameter sp8 = new System.Data.SqlClient.SqlParameter();
@@ -165,9 +156,14 @@ and o.ID = pld.OrderID";
             cmds.Add(sp10);
             cmds.Add(sp11);
             #endregion
-            if (result = DBProxy.Current.Select(null, sqlCmd, cmds, out gridData))
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out gridData);
+            if (!result)
             {
-                if (gridData.Rows.Count == 0)
+                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
+            }
+            else
+            {
+                if (gridData.Rows.Count <= 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
                 }
@@ -196,38 +192,19 @@ and o.ID = pld.OrderID";
             }
 
             #region 更新資料到PackingList.ApvToPurchase
+            IList<string> updateCmds = new List<string>();
+            foreach (DataRow currentRow in dr)
+            {
+                updateCmds.Add(string.Format(@"update PackingList 
+                                                   set ApvToPurchase = 1, ApvToPurchaseDate = GETDATE()
+                                                   where ID = '{0}' and ApvToPurchase = 0;", currentRow["ID"].ToString()));
+            }
             using (TransactionScope transactionScope = new TransactionScope())
             {
                 try
                 {
-                    bool lastResult = true;
-                    #region 宣告sql參數資料
-                    IList<System.Data.SqlClient.SqlParameter> cmds1 = new List<System.Data.SqlClient.SqlParameter>();
-                    System.Data.SqlClient.SqlParameter sp12 = new System.Data.SqlClient.SqlParameter();
-                    System.Data.SqlClient.SqlParameter sp13 = new System.Data.SqlClient.SqlParameter();
-                    sp12.ParameterName = "@id";
-                    sp13.ParameterName = "@date";
-                                                          
-                    cmds1.Add(sp12);
-                    cmds1.Add(sp13);
-                    #endregion
-                    foreach (DataRow currentRow in dr)
-                    {
-                        updateCmd = @"update PackingList 
-                                                   set ApvToPurchase = 1, ApvToPurchaseDate = @date 
-                                                   where ID = @id and ApvToPurchase = 0";
-                        #region 準備sql參數資料
-                        sp12.Value = currentRow["ID"].ToString();
-                        sp13.Value = DateTime.Today; 
-                        #endregion
-                        result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds1);
-                        if (!result)
-                        {
-                            lastResult = false;
-                        }
-                    }
-
-                    if (lastResult)
+                    DualResult result = DBProxy.Current.Executes(null, updateCmds);
+                    if (result)
                     {
                         transactionScope.Complete();
                         MyUtility.Msg.InfoBox("Approve completed!");
