@@ -38,6 +38,7 @@
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.textBox3 = new Sci.Win.UI.TextBox();
             this.numericBox1 = new Sci.Win.UI.NumericBox();
+            this.checkBox1 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -52,6 +53,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.numericBox1);
             this.detailcont.Controls.Add(this.textBox3);
             this.detailcont.Controls.Add(this.textBox2);
@@ -172,10 +174,23 @@
             this.numericBox1.Size = new System.Drawing.Size(40, 23);
             this.numericBox1.TabIndex = 9;
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox1.Location = new System.Drawing.Point(313, 23);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(57, 21);
+            this.checkBox1.TabIndex = 10;
+            this.checkBox1.Text = "Junk";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // B06
             // 
             this.ClientSize = new System.Drawing.Size(687, 457);
             this.DefaultOrder = "ID";
+            this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B06";
             this.Text = "B06. Sewing Line";
@@ -206,5 +221,6 @@
         private Win.UI.Label label5;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
+        private Win.UI.CheckBox checkBox1;
     }
 }
