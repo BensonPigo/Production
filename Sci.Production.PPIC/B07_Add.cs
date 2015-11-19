@@ -21,31 +21,31 @@ namespace Sci.Production.PPIC
         private void button1_Click(object sender, EventArgs e)
         {
             //檢查Date, Hours不可為空值
-            if (string.IsNullOrWhiteSpace(this.dateRange1.Text1))
+            if (MyUtility.Check.Empty(this.dateRange1.Value1))
             {
                 MyUtility.Msg.WarningBox("< Date > can not be empty!");
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(this.dateRange1.Text2))
+            if (MyUtility.Check.Empty(this.dateRange1.Value2))
             {
                 MyUtility.Msg.WarningBox("< Date > can not be empty!");
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(this.numericBox1.Text))
+            if (MyUtility.Check.Empty(this.numericBox1.Value))
             {
                 MyUtility.Msg.WarningBox("< Hours > can not be empty!");
                 return;
             }
-            else
-            {
-                if (this.numericBox1.Text == "0")
-                {
-                    MyUtility.Msg.WarningBox("< Hours > can not be empty!");
-                    return;
-                }
-            }
+            //else
+            //{
+            //    if (this.numericBox1.Text == "0")
+            //    {
+            //        MyUtility.Msg.WarningBox("< Hours > can not be empty!");
+            //        return;
+            //    }
+            //}
 
             //先將屬於登入的工廠的SewingLine資料給撈出來
             DataTable sewingLine;
@@ -60,7 +60,7 @@ namespace Sci.Production.PPIC
             //組出要新增的資料
             DateTime startDate = Convert.ToDateTime(this.dateRange1.Text1);
             bool doInsert;
-            string sqlInsert = "";
+            IList<string> insertCmds = new List<string>();
             while (startDate <= Convert.ToDateTime(this.dateRange1.Text2))
             {
                 doInsert = true;
@@ -80,8 +80,8 @@ namespace Sci.Production.PPIC
                               sqlCommand = string.Format("select Date from WorkHour where SewingLineID = '{0}' and FactoryID = '{1}' and Date = '{2}'", currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d"));
                               if (!MyUtility.Check.Seek(sqlCommand, null))
                                {
-                                    sqlInsert = sqlInsert + "Insert into WorkHour (SewingLineID,FactoryID,Date,Hours,AddName,AddDate)\r\n ";
-                                    sqlInsert = sqlInsert + string.Format("Values('{0}','{1}','{2}','{3}','{4}','{5}');\r\n", currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d"),this.numericBox1.Text.ToString(),Sci.Env.User.UserID,DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+                                   insertCmds.Add(string.Format(@"Insert into WorkHour (SewingLineID,FactoryID,Date,Hours,AddName,AddDate) 
+Values('{0}','{1}','{2}','{3}','{4}','{5}');", currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d"),this.numericBox1.Text.ToString(),Sci.Env.User.UserID,DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
                                 }
                             }
                         }
@@ -92,32 +92,32 @@ namespace Sci.Production.PPIC
 
             //將資料新增至Table
             DualResult insertReturnResult = Result.True;
-            if(!string.IsNullOrWhiteSpace(sqlInsert))
+            if(insertCmds.Count > 0)
             {
                 using (TransactionScope transactionScope = new TransactionScope())
                 {
                     try 
                     {
-                        insertReturnResult = DBProxy.Current.Execute(null, sqlInsert);
+                        insertReturnResult = DBProxy.Current.Executes(null, insertCmds);
                         if (insertReturnResult)
                         {
                             transactionScope.Complete();
+                            DialogResult = System.Windows.Forms.DialogResult.OK;
                         }
                         else
                         {
+                            transactionScope.Dispose();
                             MyUtility.Msg.WarningBox("Create failed, Pleaes re-try");
+                            return;
                         }
                     }
                     catch (Exception ex)
                     {
+                        transactionScope.Dispose();
                         ShowErr("Commit transaction error.", ex);
                         return;
                     }
                 }
-            }
-            if (insertReturnResult)
-            {
-                DialogResult = System.Windows.Forms.DialogResult.OK;
             }
         }
     }

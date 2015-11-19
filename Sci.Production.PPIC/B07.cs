@@ -30,6 +30,10 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
             button1.Enabled = CurrentMaintain == null ? false : true;
+            if (!IsSupportNew)
+            {
+                button1.Visible = false;
+            }
         }
 
         protected override void OnDetailEntered()
