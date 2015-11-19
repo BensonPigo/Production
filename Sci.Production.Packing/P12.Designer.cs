@@ -179,7 +179,7 @@
             // 
             this.button2.Location = new System.Drawing.Point(614, 8);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(105, 30);
+            this.button2.Size = new System.Drawing.Size(113, 30);
             this.button2.TabIndex = 5;
             this.button2.Text = "Print/Preview";
             this.button2.UseVisualStyleBackColor = true;
@@ -234,7 +234,7 @@
             this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
