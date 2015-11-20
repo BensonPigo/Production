@@ -138,7 +138,7 @@ order by p.ID,pd.Seq", orderID);
         //Packing List ID
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //SetFilter();
+            SetFilter();
         }
 
         //CTN#

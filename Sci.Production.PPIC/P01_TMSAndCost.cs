@@ -77,7 +77,7 @@ namespace Sci.Production.PPIC
 where ot.ArtworkTypeID = at.ID
 and at.IsTtlTMS = 1
 and ot.ID = '{0}'",KeyValue1);
-            numericBox1.Value = Convert.ToDecimal(MyUtility.GetValue.Lookup(sqlCmd));
+            numericBox1.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlCmd));
             #endregion
 
             #region 撈新增的ArtworkType

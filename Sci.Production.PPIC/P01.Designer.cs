@@ -272,12 +272,12 @@
             this.txtpaytermar1 = new Sci.Production.Class.txtpaytermar();
             this.txtcurrency1 = new Sci.Production.Class.txtcurrency();
             this.txtcountry1 = new Sci.Production.Class.txtcountry();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.txtuser2 = new Sci.Production.Class.txtuser();
             this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
             this.txttpeuser2 = new Sci.Production.Class.txttpeuser();
             this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
+            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -294,6 +294,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtmfactory1);
             this.detailcont.Controls.Add(this.displayBox29);
             this.detailcont.Controls.Add(this.checkBox13);
             this.detailcont.Controls.Add(this.button17);
@@ -364,7 +365,6 @@
             this.detailcont.Controls.Add(this.label29);
             this.detailcont.Controls.Add(this.textBox5);
             this.detailcont.Controls.Add(this.displayBox7);
-            this.detailcont.Controls.Add(this.txtfactory1);
             this.detailcont.Controls.Add(this.label28);
             this.detailcont.Controls.Add(this.label27);
             this.detailcont.Controls.Add(this.label26);
@@ -381,10 +381,10 @@
             this.detailcont.Controls.Add(this.numericBox1);
             this.detailcont.Controls.Add(this.label19);
             this.detailcont.Controls.Add(this.label18);
-            this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Controls.Add(this.txtuser2);
-            this.detailcont.Controls.Add(this.txttpeuser1);
+            this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
+            this.detailcont.Controls.Add(this.txttpeuser1);
             this.detailcont.Controls.Add(this.label17);
             this.detailcont.Controls.Add(this.label16);
             this.detailcont.Controls.Add(this.label15);
@@ -3010,17 +3010,6 @@
             this.txtcountry1.TabIndex = 68;
             this.txtcountry1.TextBox1Binding = "";
             // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.Location = new System.Drawing.Point(278, 197);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 21);
-            this.txtfactory1.TabIndex = 60;
-            this.txtfactory1.Validated += new System.EventHandler(this.txtfactory1_Validated);
-            // 
             // txtuser1
             // 
             this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "MCHandle", true));
@@ -3075,6 +3064,17 @@
             this.txtdropdownlist1.Size = new System.Drawing.Size(100, 23);
             this.txtdropdownlist1.TabIndex = 23;
             this.txtdropdownlist1.Type = "Category";
+            // 
+            // txtmfactory1
+            // 
+            this.txtmfactory1.BackColor = System.Drawing.Color.White;
+            this.txtmfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory1.Location = new System.Drawing.Point(278, 197);
+            this.txtmfactory1.Name = "txtmfactory1";
+            this.txtmfactory1.Size = new System.Drawing.Size(66, 21);
+            this.txtmfactory1.TabIndex = 133;
+            this.txtmfactory1.Validated += new System.EventHandler(this.txtmfactory1_Validated);
             // 
             // P01
             // 
@@ -3158,7 +3158,6 @@
         private Win.UI.DateBox dateBox5;
         private Win.UI.TextBox textBox5;
         private Win.UI.DisplayBox displayBox7;
-        private Class.txtfactory txtfactory1;
         private Win.UI.Label label28;
         private Win.UI.Label label27;
         private Win.UI.Label label26;
@@ -3355,5 +3354,6 @@
         private Win.UI.Button button32;
         private Win.UI.DisplayBox displayBox29;
         private Win.UI.Button button33;
+        private Class.txtmfactory txtmfactory1;
     }
 }

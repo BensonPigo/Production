@@ -31,7 +31,7 @@ as
 select distinct POID
 from Orders o
 where o.Finished = 0 
-and o.FtyGroup = '{0}'
+and o.MDivisionID = '{0}'
 and (o.Junk = 1 or o.PulloutComplete = 1)
 and (o.Category = 'B' or o.Category = 'S')
 ),
@@ -41,7 +41,7 @@ as
 select distinct POID
 from Orders o
 where o.Finished = 0 
-and o.FtyGroup = '{0}'
+and o.MDivisionID = '{0}'
 and o.PulloutComplete = 0
 and o.Junk = 0
 and (o.Category = 'B' or o.Category = 'S')
@@ -51,7 +51,7 @@ from (select * from wantToClose
 	  except
 	  select * from canNotClose) a
 left join Orders o on a.POID = o.ID
-left join Brand b on o.BrandID = b.ID", Sci.Env.User.Factory);
+left join Brand b on o.BrandID = b.ID", Sci.Env.User.Keyword);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out GridData);
             if (!result)
             {
@@ -124,6 +124,11 @@ left join Brand b on o.BrandID = b.ID", Sci.Env.User.Factory);
         {
             if (textBox1.OldValue != textBox1.Text)
             {
+                if (textBox1.Text.IndexOf("'") != -1)
+                {
+                    MyUtility.Msg.WarningBox("Input errror!!");
+                    return;
+                }
                 setFilter();
             }
         }
@@ -133,6 +138,11 @@ left join Brand b on o.BrandID = b.ID", Sci.Env.User.Factory);
         {
             if (textBox2.OldValue != textBox2.Text)
             {
+                if (textBox2.Text.IndexOf("'") != -1)
+                {
+                    MyUtility.Msg.WarningBox("Input errror!!");
+                    return;
+                }
                 setFilter();
             }
         }
@@ -190,12 +200,14 @@ left join Brand b on o.BrandID = b.ID", Sci.Env.User.Factory);
                     }
                     else
                     {
+                        transactionScope.Dispose();
                         MyUtility.Msg.WarningBox("Update failed, Pleaes re-try"+result.ToString());
                         return;
                     }
                 }
                 catch (Exception ex)
                 {
+                    transactionScope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }

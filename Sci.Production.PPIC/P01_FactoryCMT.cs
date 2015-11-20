@@ -51,18 +51,18 @@ order by ot.Seq", orderData["ID"].ToString());
                 .Numeric("Price", header: "Price", decimal_places: 3, width: Widths.AnsiChars(6))
                 .Text("ttlTMS", header: "Ttl TMS", width: Widths.AnsiChars(1));
 
-            numericBox1.Value = Convert.ToDecimal(orderData["CPU"]);
+            numericBox1.Value = MyUtility.Convert.GetDecimal(orderData["CPU"]);
             numericBox2.Value = 0;
-            numericBox3.Value = Convert.ToDecimal(GridData.Compute("sum(Price)", "Classify = 'I' and ttlTMS = 'N'")) + Convert.ToDecimal(GridData.Compute("sum(Price)", "Classify = 'A'"));
+            numericBox3.Value = MyUtility.Convert.GetDecimal(GridData.Compute("sum(Price)", "Classify = 'I' and ttlTMS = 'N'")) + MyUtility.Convert.GetDecimal(GridData.Compute("sum(Price)", "Classify = 'A'"));
             if (MyUtility.GetValue.Lookup(string.Format("select LocalCMT from Factory where ID = '{0}'", orderData["FactoryID"].ToString())).ToUpper() == "TRUE")
             {
-                numericBox4.Value = Convert.ToDecimal(GridData.Compute("sum(Price)", "Classify = 'P'"));
+                numericBox4.Value = MyUtility.Convert.GetDecimal(GridData.Compute("sum(Price)", "Classify = 'P'"));
             }
             else
             {
                 numericBox4.Value = 0;
             }
-            numericBox5.Value = MyUtility.Math.Round(Convert.ToDecimal(numericBox1.Value + numericBox2.Value + numericBox3.Value + numericBox4.Value), 2);
+            numericBox5.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(numericBox1.Value + numericBox2.Value + numericBox3.Value + numericBox4.Value), 2);
         }
     }
 }
