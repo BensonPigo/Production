@@ -47,11 +47,11 @@
             this.dateBox4 = new Sci.Win.UI.DateBox();
             this.dateBox5 = new Sci.Win.UI.DateBox();
             this.dateBox6 = new Sci.Win.UI.DateBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
+            this.btModifyRollDyelot = new Sci.Win.UI.Button();
+            this.btDownloadSample = new Sci.Win.UI.Button();
+            this.btPrintSticker = new Sci.Win.UI.Button();
             this.button5 = new Sci.Win.UI.Button();
-            this.button6 = new Sci.Win.UI.Button();
+            this.btImportFromExcel = new Sci.Win.UI.Button();
             this.button7 = new Sci.Win.UI.Button();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
@@ -67,6 +67,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -87,11 +88,11 @@
             this.masterpanel.Controls.Add(this.label5);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.button7);
-            this.masterpanel.Controls.Add(this.button6);
+            this.masterpanel.Controls.Add(this.btImportFromExcel);
             this.masterpanel.Controls.Add(this.button5);
-            this.masterpanel.Controls.Add(this.button3);
-            this.masterpanel.Controls.Add(this.button2);
-            this.masterpanel.Controls.Add(this.button1);
+            this.masterpanel.Controls.Add(this.btPrintSticker);
+            this.masterpanel.Controls.Add(this.btDownloadSample);
+            this.masterpanel.Controls.Add(this.btModifyRollDyelot);
             this.masterpanel.Controls.Add(this.dateBox6);
             this.masterpanel.Controls.Add(this.dateBox5);
             this.masterpanel.Controls.Add(this.dateBox4);
@@ -134,11 +135,11 @@
             this.masterpanel.Controls.SetChildIndex(this.dateBox4, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox5, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btModifyRollDyelot, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btDownloadSample, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btPrintSticker, 0);
             this.masterpanel.Controls.SetChildIndex(this.button5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button6, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btImportFromExcel, 0);
             this.masterpanel.Controls.SetChildIndex(this.button7, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
@@ -168,6 +169,18 @@
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(1058, 262);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -369,39 +382,39 @@
             this.dateBox6.Size = new System.Drawing.Size(130, 23);
             this.dateBox6.TabIndex = 8;
             // 
-            // button1
+            // btModifyRollDyelot
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(755, 76);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(121, 43);
-            this.button1.TabIndex = 10;
-            this.button1.Text = "Modify Roll & Dyelot";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btModifyRollDyelot.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btModifyRollDyelot.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btModifyRollDyelot.Location = new System.Drawing.Point(755, 76);
+            this.btModifyRollDyelot.Name = "btModifyRollDyelot";
+            this.btModifyRollDyelot.Size = new System.Drawing.Size(121, 43);
+            this.btModifyRollDyelot.TabIndex = 10;
+            this.btModifyRollDyelot.Text = "Modify Roll & Dyelot";
+            this.btModifyRollDyelot.UseVisualStyleBackColor = true;
+            this.btModifyRollDyelot.Click += new System.EventHandler(this.btModifyRollDyelot_Click);
             // 
-            // button2
+            // btDownloadSample
             // 
-            this.button2.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(882, 125);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(156, 30);
-            this.button2.TabIndex = 13;
-            this.button2.Text = "Download Sample File";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btDownloadSample.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btDownloadSample.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btDownloadSample.Location = new System.Drawing.Point(882, 125);
+            this.btDownloadSample.Name = "btDownloadSample";
+            this.btDownloadSample.Size = new System.Drawing.Size(156, 30);
+            this.btDownloadSample.TabIndex = 13;
+            this.btDownloadSample.Text = "Download Sample File";
+            this.btDownloadSample.UseVisualStyleBackColor = true;
             // 
-            // button3
+            // btPrintSticker
             // 
-            this.button3.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button3.Location = new System.Drawing.Point(882, 76);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(156, 43);
-            this.button3.TabIndex = 11;
-            this.button3.Text = "Print Fabric Sticker for SMS";
-            this.button3.UseVisualStyleBackColor = true;
+            this.btPrintSticker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btPrintSticker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btPrintSticker.Location = new System.Drawing.Point(882, 76);
+            this.btPrintSticker.Name = "btPrintSticker";
+            this.btPrintSticker.Size = new System.Drawing.Size(156, 43);
+            this.btPrintSticker.TabIndex = 11;
+            this.btPrintSticker.Text = "Print Fabric Sticker for SMS";
+            this.btPrintSticker.UseVisualStyleBackColor = true;
             // 
             // button5
             // 
@@ -413,18 +426,18 @@
             this.button5.TabIndex = 9;
             this.button5.Text = "Accumulated Qty";
             this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.button5.Click += new System.EventHandler(this.btAccumulated_Click);
             // 
-            // button6
+            // btImportFromExcel
             // 
-            this.button6.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button6.Location = new System.Drawing.Point(755, 175);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(139, 30);
-            this.button6.TabIndex = 14;
-            this.button6.Text = "Import From Excel";
-            this.button6.UseVisualStyleBackColor = true;
+            this.btImportFromExcel.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btImportFromExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btImportFromExcel.Location = new System.Drawing.Point(755, 175);
+            this.btImportFromExcel.Name = "btImportFromExcel";
+            this.btImportFromExcel.Size = new System.Drawing.Size(139, 30);
+            this.btImportFromExcel.TabIndex = 14;
+            this.btImportFromExcel.Text = "Import From Excel";
+            this.btImportFromExcel.UseVisualStyleBackColor = true;
             // 
             // button7
             // 
@@ -435,7 +448,7 @@
             this.button7.TabIndex = 12;
             this.button7.Text = "Update Act. (kg)";
             this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
+            this.button7.Click += new System.EventHandler(this.btUpdateActWeight_Click);
             // 
             // shapeContainer1
             // 
@@ -477,7 +490,7 @@
             this.button8.TabIndex = 5;
             this.button8.Text = "Find";
             this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
+            this.button8.Click += new System.EventHandler(this.btFind_Click);
             // 
             // textBox1
             // 
@@ -532,7 +545,7 @@
             this.button9.TabIndex = 7;
             this.button9.Text = "Delete all";
             this.button9.UseVisualStyleBackColor = true;
-            this.button9.Click += new System.EventHandler(this.button9_Click);
+            this.button9.Click += new System.EventHandler(this.btDeleteAllDetail_Click);
             // 
             // checkBox1
             // 
@@ -574,6 +587,7 @@
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
@@ -602,11 +616,11 @@
         private Win.UI.Label label25;
         private Win.UI.Label label4;
         private Win.UI.Button button7;
-        private Win.UI.Button button6;
+        private Win.UI.Button btImportFromExcel;
         private Win.UI.Button button5;
-        private Win.UI.Button button3;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
+        private Win.UI.Button btPrintSticker;
+        private Win.UI.Button btDownloadSample;
+        private Win.UI.Button btModifyRollDyelot;
         private Win.UI.DateBox dateBox6;
         private Win.UI.DateBox dateBox5;
         private Win.UI.DateBox dateBox4;

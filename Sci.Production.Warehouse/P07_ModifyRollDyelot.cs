@@ -171,18 +171,12 @@ and roll='{3}' and dyelot='{4}'
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate                                                                               
             union all
             select issuedate, a.id
-            ,case a.type when 'A' then 'P25. Transfer Bulk to Scrap' 
-                              when 'B' then 'P24. Transfer Inventory to Scrap' end as name
-            ,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
-            from Scrap a, Scrap_Detail b 
-            where Status='Confirmed' and Poid ='{0}' and Seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-and roll='{3}' and dyelot='{4}'
-group by a.id, Poid, Seq1,Seq2, remark,a.IssueDate,a.Type
-            union all
-            select issuedate, a.id
             ,case a.type when 'A' then 'P22. Transfer Bulk to Inventory'
                               when 'B' then 'P23. Transfer Inventory to Bulk'
-                              when 'C' then 'P36. Transfer Scrap to Inventory' end as name
+                              when 'C' then 'P36. Transfer Scrap to Inventory' 
+                                when 'D' then 'P25. Transfer Bulk to Scrap' 
+                                when 'E' then 'P24. Transfer Inventory to Scrap' 
+             end as name
             , 0 as inqty, sum(Qty) released,0 as adjust , '' remark ,'' location
             from SubTransfer a, SubTransfer_Detail b 
             where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id
