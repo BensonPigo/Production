@@ -484,6 +484,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(140, 23);
             this.textBox1.TabIndex = 16;
+            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // textBox2
             // 
@@ -506,6 +507,7 @@
             this.textBox3.Size = new System.Drawing.Size(110, 23);
             this.textBox3.TabIndex = 18;
             this.textBox3.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
+            this.textBox3.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
             // 
             // textBox4
             // 
@@ -651,6 +653,7 @@
             this.textBox6.Size = new System.Drawing.Size(90, 23);
             this.textBox6.TabIndex = 34;
             this.textBox6.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox6_PopUp);
+            this.textBox6.Validating += new System.ComponentModel.CancelEventHandler(this.textBox6_Validating);
             // 
             // checkBox1
             // 

@@ -51,19 +51,29 @@ namespace Sci.Production.PPIC
                     DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
                     if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()))
                     {
-                        
-                        if (!MyUtility.Check.Seek(string.Format("select ID from DropDownList where TYPE = 'Location' and ID = '{0}'", e.FormattedValue.ToString())))
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@combotype", e.FormattedValue.ToString());
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+                        DataTable ComboType;
+                        string sqlCmd = "select ID from DropDownList where TYPE = 'Location' and ID = @combotype";
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ComboType);
+
+                        if (!result || ComboType.Rows.Count <= 0)
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Combo Type: {0} > not found!!!", e.FormattedValue.ToString()));
+                            if (!result)
+                            {
+                                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
+                            }
+                            else
+                            {
+                                MyUtility.Msg.WarningBox(string.Format("< Combo Type: {0} > not found!!!", e.FormattedValue.ToString()));
+                            }
                             dr["Location"] = "";
                             e.Cancel = true;
                             dr.EndEdit();
                             return;
-                        }
-                        else
-                        {
-                            dr["Location"] = e.FormattedValue.ToString();
-                            dr.EndEdit();
                         }
                     }
                 }
@@ -93,7 +103,7 @@ namespace Sci.Production.PPIC
                     continue;
                 }
                 cnt++;
-                sumRate = sumRate - (MyUtility.Check.Empty(dr["Rate"]) ? 0 : Convert.ToDecimal(dr["Rate"]));
+                sumRate = sumRate - (MyUtility.Check.Empty(dr["Rate"]) ? 0 : MyUtility.Convert.GetDecimal(dr["Rate"]));
             }
             //如果此Style為PCS，則輸入的資料只能為1筆
             if (styleUnit == "PCS" && cnt != 1)

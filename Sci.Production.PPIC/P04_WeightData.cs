@@ -47,20 +47,32 @@ namespace Sci.Production.PPIC
                 if (this.EditMode)
                 {
                     DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()))
+                    if (!MyUtility.Check.Empty(e.FormattedValue.ToString()))
                     {
-                        if (!MyUtility.Check.Seek(string.Format("select SizeCode from Style_SizeCode where StyleUkey = {0} and SizeCode = '{1}'", KeyValue1, e.FormattedValue.ToString())))
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@styleukey", KeyValue1);
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@sizecode", e.FormattedValue.ToString());
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+                        cmds.Add(sp2);
+                        DataTable StyleSizeCode;
+                        string sqlCmd = "select SizeCode from Style_SizeCode where StyleUkey = @styleukey and SizeCode = @sizecode";
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out StyleSizeCode);
+                        if (!result || StyleSizeCode.Rows.Count <= 0)
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Size: {0} > not found!!!", e.FormattedValue.ToString()));
+                            if (!result)
+                            {
+                                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
+                            }
+                            else
+                            {
+                                MyUtility.Msg.WarningBox(string.Format("< Size: {0} > not found!!!", e.FormattedValue.ToString()));
+                            }
                             dr["SizeCode"] = "";
                             e.Cancel = true;
                             dr.EndEdit();
                             return;
-                        }
-                        else
-                        {
-                            dr["SizeCode"] = e.FormattedValue.ToString();
-                            dr.EndEdit();
                         }
                     }
                 }
@@ -93,18 +105,30 @@ namespace Sci.Production.PPIC
                     DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
                     if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()) && e.FormattedValue.ToString() != "----")
                     {
-                        if (!MyUtility.Check.Seek(string.Format("select Article from Style_Article where StyleUkey = {0} and Article = '{1}'", KeyValue1, e.FormattedValue.ToString())))
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@styleukey", KeyValue1);
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@article", e.FormattedValue.ToString());
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+                        cmds.Add(sp2);
+                        DataTable StyleArticle;
+                        string sqlCmd = "select Article from Style_Article where StyleUkey = @styleukey and Article = @article";
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out StyleArticle);
+                        if (!result || StyleArticle.Rows.Count <= 0)
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Article: {0} > not found!!!", e.FormattedValue.ToString()));
+                            if (!result)
+                            {
+                                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
+                            }
+                            else
+                            {
+                                MyUtility.Msg.WarningBox(string.Format("< Article: {0} > not found!!!", e.FormattedValue.ToString()));
+                            }
                             dr["Article"] = "";
                             e.Cancel = true;
                             dr.EndEdit();
                             return;
-                        }
-                        else
-                        {
-                            dr["Article"] = e.FormattedValue.ToString();
-                            dr.EndEdit();
                         }
                     }
                 }
@@ -187,8 +211,8 @@ where s.ID = '{0}' and s.BrandID = '{1}' and s.SeasonID = '{2}'", styleData["ID"
                             }
                             else
                             {
-                                dr["NW"] = Convert.ToDecimal(findrow[0]["NW"]);
-                                dr["NNW"] = Convert.ToDecimal(findrow[0]["NNW"]);
+                                dr["NW"] = MyUtility.Convert.GetDecimal(findrow[0]["NW"]);
+                                dr["NNW"] = MyUtility.Convert.GetDecimal(findrow[0]["NNW"]);
                             }
                         }
 
@@ -200,7 +224,7 @@ where s.ID = '{0}' and s.BrandID = '{1}' and s.SeasonID = '{2}'", styleData["ID"
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox("Get Style ID fail!!");
+                    MyUtility.Msg.WarningBox("Data not found!!");
                 }
             }
         }

@@ -58,10 +58,25 @@ namespace Sci.Production.PPIC
                     DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
                     if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()))
                     {
-                        DataRow artworkType;
-                        if (!MyUtility.Check.Seek(string.Format("select ArtworkUnit from ArtworkType where Junk = 0 and IsArtwork = 1 and ID = '{0}'", e.FormattedValue.ToString()), out artworkType))
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@artworktype", e.FormattedValue.ToString());
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+
+                        DataTable artworkType;
+                        string sqlCmd = "select ArtworkUnit from ArtworkType where Junk = 0 and IsArtwork = 1 and ID = @artworktype";
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out artworkType);
+                        if (!result || artworkType.Rows.Count <= 0)
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Artwork Type: {0} > not found!!!", e.FormattedValue.ToString()));
+                            if (!result)
+                            {
+                                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
+                            }
+                            else
+                            {
+                                MyUtility.Msg.WarningBox(string.Format("< Artwork Type: {0} > not found!!!", e.FormattedValue.ToString()));
+                            }
                             dr["ArtworkTypeID"] = "";
                             dr["UnitID"] = "";
                             e.Cancel = true;
@@ -71,7 +86,7 @@ namespace Sci.Production.PPIC
                         else
                         {
                             dr["ArtworkTypeID"] = e.FormattedValue.ToString();
-                            dr["UnitID"] = artworkType["ArtworkUnit"].ToString();
+                            dr["UnitID"] = artworkType.Rows[0]["ArtworkUnit"];
                             dr["Article"] = "----";
                             dr.EndEdit();
                         }
@@ -229,11 +244,14 @@ select * from UpdateData", KeyValue1);
                     }
                 }
             }
-            result = DBProxy.Current.Executes(null, cmds);
-            if (!result)
+            if (cmds.Count > 0)
             {
-                DualResult failResult = new DualResult(false, "Update Order_Artwork fail!!\r\n" + result.ToString());
-                return failResult;
+                result = DBProxy.Current.Executes(null, cmds);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Update Order_Artwork fail!!\r\n" + result.ToString());
+                    return failResult;
+                }
             }
             #endregion
 
@@ -319,11 +337,14 @@ select * from StyleTMSCost", KeyValue1);
                     }
                 }
             }
-            result = DBProxy.Current.Executes(null, updateCmds);
-            if (!result)
+            if (updateCmds.Count > 0)
             {
-                DualResult failResult = new DualResult(false, "Update TMSCost fail!!\r\n" + result.ToString());
-                return failResult;
+                result = DBProxy.Current.Executes(null, updateCmds);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Update TMSCost fail!!\r\n" + result.ToString());
+                    return failResult;
+                }
             }
             #endregion
 

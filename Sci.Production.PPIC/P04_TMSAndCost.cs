@@ -23,7 +23,7 @@ namespace Sci.Production.PPIC
         {
             InitializeComponent();
             this.Text = "TMS & Cost (" + styleid + ")";
-            stdTMS = Convert.ToDecimal(MyUtility.GetValue.Lookup("select StdTMS from System"));
+            stdTMS = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup("select StdTMS from System"));
         }
 
         protected override bool OnGridSetup()
@@ -42,7 +42,7 @@ namespace Sci.Production.PPIC
                 {
                     DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
                     dr["TMS"] = e.FormattedValue.ToString();
-                    dr["Price"] = MyUtility.Check.Empty(e.FormattedValue.ToString()) ? 0 : MyUtility.Math.Round(Convert.ToDecimal(e.FormattedValue.ToString()) / stdTMS, 3);
+                    dr["Price"] = MyUtility.Check.Empty(e.FormattedValue.ToString()) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(e.FormattedValue.ToString()) / stdTMS, 3);
                     dr.EndEdit();
                     CalculateTtlTMS();
                 }
@@ -83,10 +83,10 @@ namespace Sci.Production.PPIC
                 DataRow[] findrow = ArtworkType.Select(string.Format("ID = '{0}'", gridData["ArtworkTypeID"].ToString()));
                 if (findrow.Length > 0)
                 {
-                    gridData["isTms"] = findrow[0]["isTms"].ToString();
-                    gridData["isPrice"] = findrow[0]["isPrice"].ToString();
+                    gridData["isTms"] = findrow[0]["isTms"];
+                    gridData["isPrice"] = findrow[0]["isPrice"];
                     gridData["IsTtlTMS"] = findrow[0]["IsTtlTMS"].ToString().ToUpper() == "TRUE" ? "Y" : "N";
-                    gridData["Classify"] = findrow[0]["Classify"].ToString();
+                    gridData["Classify"] = findrow[0]["Classify"];
                     gridData["NewData"] = 0;
                 }
                 gridData.AcceptChanges();
@@ -97,7 +97,7 @@ namespace Sci.Production.PPIC
 where st.ArtworkTypeID = at.ID
 and at.IsTtlTMS = 1
 and st.StyleUkey = {0}",KeyValue1);
-            numericBox1.Value = Convert.ToDecimal(MyUtility.GetValue.Lookup(sqlCmd));
+            numericBox1.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlCmd));
             #endregion
 
             #region 撈新增的ArtworkType
@@ -120,18 +120,18 @@ where a.StyleUkey = ''", KeyValue1);
             {
                 newdr = datas.NewRow();
                 newdr["StyleUkey"] = KeyValue1;
-                newdr["ArtworkTypeID"] = dr["ID"].ToString();
-                newdr["Seq"] = dr["Seq"].ToString();
+                newdr["ArtworkTypeID"] = dr["ID"];
+                newdr["Seq"] = dr["Seq"];
                 newdr["Qty"] = 0;
-                newdr["ArtworkUnit"] = dr["ArtworkUnit"].ToString();
+                newdr["ArtworkUnit"] = dr["ArtworkUnit"];
                 newdr["TMS"] = 0;
                 newdr["Price"] = 0;
                 newdr["AddName"] = Sci.Env.User.UserID;
                 newdr["AddDate"] = DateTime.Now;
-                newdr["isTms"] = dr["isTms"].ToString();
-                newdr["isPrice"] = dr["isPrice"].ToString();
+                newdr["isTms"] = dr["isTms"];
+                newdr["isPrice"] = dr["isPrice"];
                 newdr["IsTtlTMS"] = dr["IsTtlTMS"].ToString().ToUpper() == "TRUE" ? "Y" : "N";
-                newdr["Classify"] = dr["Classify"].ToString();
+                newdr["Classify"] = dr["Classify"];
                 newdr["NewData"] = 1;
                 datas.Rows.Add(newdr);
             }
@@ -143,7 +143,7 @@ where a.StyleUkey = ''", KeyValue1);
         protected override void OnGridRowChanged()
         {
             base.OnGridRowChanged();
-            #region -- 控制Qty,Tms,price 是否允許修改.
+            #region 控制Qty,Tms,price 是否允許修改.
             if (EditMode)
             {
                 int rowid = grid.GetSelectedRowIndex();
@@ -189,7 +189,7 @@ where a.StyleUkey = ''", KeyValue1);
             else
             {
                 Object ttlTMS = ((DataTable)gridbs.DataSource).Compute("Sum(Tms)", "IsTtlTMS = 'Y'");
-                numericBox1.Value = Convert.ToDecimal(ttlTMS);
+                numericBox1.Value = MyUtility.Convert.GetDecimal(ttlTMS);
             }
         }
 
@@ -225,10 +225,10 @@ where a.StyleUkey = ''", KeyValue1);
 where st.ArtworkTypeID = at.ID
 and at.IsTtlTMS = 1
 and st.StyleUkey = {0}", KeyValue1);
-            decimal cpu = MyUtility.Math.Round(Convert.ToDecimal(MyUtility.GetValue.Lookup(sqlCmd)) / stdTMS, 3);
+            decimal cpu = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlCmd)) / stdTMS, 3);
             IList<String> updateCmds = new List<String>();
-            updateCmds.Add(string.Format("update Style set CPU = {0} where Ukey = {1};", Convert.ToString(cpu), KeyValue1));
-            updateCmds.Add(string.Format("update Orders set CPU = {0}, CMPPrice = {0}*12 where StyleUkey = {0} and not exists (select 1 from SewingOutput_Detail where OrderId = Orders.ID);", Convert.ToString(cpu), KeyValue1));
+            updateCmds.Add(string.Format("update Style set CPU = {0} where Ukey = {1};", MyUtility.Convert.GetString(cpu), KeyValue1));
+            updateCmds.Add(string.Format("update Orders set CPU = {0}, CMPPrice = {0}*12 where StyleUkey = {0} and not exists (select 1 from SewingOutput_Detail where OrderId = Orders.ID);", MyUtility.Convert.GetString(cpu), KeyValue1));
             #region 組要更新Order_TMSCost的SQL，已經有Sewing Daily Output的Order就不更新
             sqlCmd = string.Format(@"declare @styleukey bigint;
 set @styleukey = {0};

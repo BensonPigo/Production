@@ -5,6 +5,9 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Ict;
+using Ict.Win;
+using Sci.Data;
 
 namespace Sci.Production.PPIC
 {
@@ -34,12 +37,30 @@ and exists (select 1 from Style_WeightData sw where sw.StyleUkey = s.Ukey)", sty
         {
             if (textBox1.OldValue != textBox1.Text)
             {
-                if (!MyUtility.Check.Seek(string.Format(@"select s.SeasonID from Style s
-where exists (select 1 from Style ss where ss.Ukey = {0} and ss.ID = s.ID and ss.BrandID = s.BrandID)
+                //sql參數
+                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@styleukey", styleUkey);
+                System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@seasonid", textBox1.Text);
+
+                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                cmds.Add(sp1);
+                cmds.Add(sp2);
+                DataTable StyleData;
+                string sqlCmd = @"select s.SeasonID from Style s
+where exists (select 1 from Style ss where ss.Ukey = @styleukey and ss.ID = s.ID and ss.BrandID = s.BrandID)
 and exists (select 1 from Style_WeightData sw where sw.StyleUkey = s.Ukey)
-and s.SeasonID = '{1}'", styleUkey, textBox1.Text)))
+and s.SeasonID = @seasonid";
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out StyleData);
+
+                if (!result || StyleData.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.WarningBox("The season has no weight data!");
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
+                    }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("The season has no weight data!");
+                    }
                     textBox1.Text = "";
                     e.Cancel = true;
                     return;

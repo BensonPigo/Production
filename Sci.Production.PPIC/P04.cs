@@ -33,25 +33,25 @@ namespace Sci.Production.PPIC
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            displayBox4.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason where ReasonTypeID = 'Style_SpecialMark' and ID = '{0}'", CurrentMaintain["SpecialMark"].ToString()));
-            txttpeuser1.DisplayBox1Binding = CurrentMaintain["Phase"].ToString() == "1" ? CurrentMaintain["SampleSMR"].ToString() : CurrentMaintain["BulkSMR"].ToString();
-            txttpeuser2.DisplayBox1Binding = CurrentMaintain["Phase"].ToString() == "1" ? CurrentMaintain["SampleMRHandle"].ToString() : CurrentMaintain["BulkMRHandle"].ToString();
-            displayBox2.Value = CurrentMaintain["ApvName"].ToString() + " " + MyUtility.GetValue.Lookup(string.Format("select (Name + ' #' + ExtNo) as NameExtNo from TPEPass1 where ID = '{0}'", CurrentMaintain["ApvName"].ToString()));
-            numericBox4.Value = MyUtility.Check.Empty(CurrentMaintain["CPUAdjusted"]) ? 0 : Convert.ToDecimal(CurrentMaintain["CPUAdjusted"]) * 100m;
-            pictureBox1.ImageLocation = MyUtility.Check.Empty(CurrentMaintain["Picture1"]) ? null : destination_path + CurrentMaintain["Picture1"].ToString();
-            pictureBox2.ImageLocation = MyUtility.Check.Empty(CurrentMaintain["Picture2"]) ? null : destination_path + CurrentMaintain["Picture2"].ToString();
-            button1.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_TMSCost where StyleUkey = {0}", CurrentMaintain["UKey"].ToString())) ? Color.Blue : Color.Black;
-            button2.ForeColor = MyUtility.Check.Seek(string.Format("select ID from IETMS where ID = '{0}' and Version = '{1}'", CurrentMaintain["IETMSID"].ToString(), CurrentMaintain["IETMSVersion"].ToString())) ? Color.Blue : Color.Black;
-            button3.ForeColor = MyUtility.Check.Seek(string.Format("select StyleID from TimeStudy where StyleID = '{0}' and BrandID = '{1}' and SeasonID = '{2}'", CurrentMaintain["ID"].ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["SeasonID"].ToString())) ? Color.Blue : Color.Black;
-            button4.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits where StyleUkey = {0}", CurrentMaintain["UKey"].ToString())) ? Color.Blue : Color.Black;
-            button5.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_Artwork where StyleUkey = {0}", CurrentMaintain["UKey"].ToString())) ? Color.Blue : Color.Black;
-            button6.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_QtyCTN where StyleUkey = {0}", CurrentMaintain["UKey"].ToString())) ? Color.Blue : Color.Black;
-            button7.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_WeightData where StyleUkey = {0}", CurrentMaintain["UKey"].ToString())) ? Color.Blue : Color.Black;
-            button8.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Pattern where StyleUkey = {0}", CurrentMaintain["UKey"].ToString())) ? Color.Blue : Color.Black;
-            button9.ForeColor = (MyUtility.Check.Seek(string.Format("select MasterStyleUkey  from Style_SimilarStyle where MasterStyleUkey = {0}", CurrentMaintain["UKey"].ToString())) || MyUtility.Check.Seek(string.Format("select ChildrenStyleUkey  from Style_SimilarStyle where ChildrenStyleUkey = {0}", CurrentMaintain["UKey"].ToString()))) ? Color.Blue : Color.Black;
-            button10.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_HSCode where StyleUkey = {0}", CurrentMaintain["UKey"].ToString())) ? Color.Blue : Color.Black;
-            button15.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_GMTLTFty where StyleUkey = {0}",CurrentMaintain["UKey"].ToString())) ? Color.Blue : Color.Black;
-            button16.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_Location where StyleUkey = {0}", CurrentMaintain["UKey"].ToString())) ? Color.Blue : Color.Black;
+            displayBox4.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason where ReasonTypeID = 'Style_SpecialMark' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["SpecialMark"])));
+            txttpeuser1.DisplayBox1Binding = MyUtility.Convert.GetString(CurrentMaintain["Phase"]) == "1" ? MyUtility.Convert.GetString(CurrentMaintain["SampleSMR"]) : MyUtility.Convert.GetString(CurrentMaintain["BulkSMR"]);
+            txttpeuser2.DisplayBox1Binding = MyUtility.Convert.GetString(CurrentMaintain["Phase"]) == "1" ? MyUtility.Convert.GetString(CurrentMaintain["SampleMRHandle"]) : MyUtility.Convert.GetString(CurrentMaintain["BulkMRHandle"]);
+            displayBox2.Value = MyUtility.Convert.GetString(CurrentMaintain["ApvName"]) + " " + MyUtility.GetValue.Lookup(string.Format("select (Name + ' #' + ExtNo) as NameExtNo from TPEPass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ApvName"])));
+            numericBox4.Value = MyUtility.Check.Empty(CurrentMaintain["CPUAdjusted"]) ? 0 : MyUtility.Convert.GetDecimal(CurrentMaintain["CPUAdjusted"]) * 100m;
+            pictureBox1.ImageLocation = MyUtility.Check.Empty(CurrentMaintain["Picture1"]) ? null : destination_path + MyUtility.Convert.GetString(CurrentMaintain["Picture1"]);
+            pictureBox2.ImageLocation = MyUtility.Check.Empty(CurrentMaintain["Picture2"]) ? null : destination_path + MyUtility.Convert.GetString(CurrentMaintain["Picture2"]);
+            button1.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_TMSCost where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
+            button2.ForeColor = MyUtility.Check.Seek(string.Format("select ID from IETMS where ID = '{0}' and Version = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["IETMSID"]), MyUtility.Convert.GetString(CurrentMaintain["IETMSVersion"]))) ? Color.Blue : Color.Black;
+            button3.ForeColor = MyUtility.Check.Seek(string.Format("select StyleID from TimeStudy where StyleID = '{0}' and BrandID = '{1}' and SeasonID = '{2}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(CurrentMaintain["SeasonID"]))) ? Color.Blue : Color.Black;
+            button4.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
+            button5.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_Artwork where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
+            button6.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_QtyCTN where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
+            button7.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_WeightData where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
+            button8.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Pattern where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
+            button9.ForeColor = (MyUtility.Check.Seek(string.Format("select MasterStyleUkey from Style_SimilarStyle where MasterStyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) || MyUtility.Check.Seek(string.Format("select ChildrenStyleUkey  from Style_SimilarStyle where ChildrenStyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"])))) ? Color.Blue : Color.Black;
+            button10.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_HSCode where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
+            button15.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_GMTLTFty where StyleUkey = {0}",MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
+            button16.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_Location where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
         }
 
         protected override void ClickNewAfter()
@@ -67,7 +67,7 @@ namespace Sci.Production.PPIC
             textBox1.ReadOnly = true;
             textBox6.ReadOnly = true;
             textBox2.ReadOnly = true;
-            if (CurrentMaintain["LocalStyle"].ToString().ToUpper() == "FALSE")
+            if (MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "FALSE")
             {
                 textBox3.ReadOnly = true;
                 textBox4.ReadOnly = true;
@@ -83,7 +83,7 @@ namespace Sci.Production.PPIC
                 comboBox1.ReadOnly = true;
                 comboBox2.ReadOnly = true;
             }
-            if (CurrentMaintain["NoNeedPPMeeting"].ToString().ToUpper() == "TRUE")
+            if (MyUtility.Convert.GetString(CurrentMaintain["NoNeedPPMeeting"]).ToUpper() == "TRUE")
             {
                 dateBox1.ReadOnly = true;
             }
@@ -92,7 +92,7 @@ namespace Sci.Production.PPIC
         protected override bool ClickSaveBefore()
         {
             #region 檢查必輸欄位
-            if (CurrentMaintain["LocalStyle"].ToString().ToUpper() == "TRUE")
+            if (MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE")
             {
                 if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
                 {
@@ -142,7 +142,7 @@ namespace Sci.Production.PPIC
             if (IsDetailInserting)
             {
                 //檢查Style+Brand+Season是否已存在
-                if (MyUtility.Check.Seek(string.Format("select Id from Style where ID = '{0}' and BrandID = '{1}' and SeasonID = '{2}'", CurrentMaintain["ID"].ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["SeasonID"].ToString())))
+                if (MyUtility.Check.Seek(string.Format("select Id from Style where ID = '{0}' and BrandID = '{1}' and SeasonID = '{2}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(CurrentMaintain["SeasonID"]))))
                 {
                     MyUtility.Msg.WarningBox("This style already exist!!");
                     return false;
@@ -156,17 +156,17 @@ namespace Sci.Production.PPIC
                     MyUtility.Msg.ErrorBox("Get Ukey fail!!\r\n"+result.ToString());
                     return false;
                 }
-                CurrentMaintain["Ukey"] = StyleUkey.Rows[0]["NewUkey"].ToString();
+                CurrentMaintain["Ukey"] = MyUtility.Convert.GetString(StyleUkey.Rows[0]["NewUkey"]);
             }
             return true;
         }
 
         protected override DualResult ClickSavePre()
         {
-            if (CurrentMaintain["LocalStyle"].ToString().ToUpper() == "TRUE" && !MyUtility.Check.Empty(CurrentMaintain["UKey"]))
+            if (MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE" && !MyUtility.Check.Empty(CurrentMaintain["UKey"]))
             {
                 string sqlCmd = string.Format("update Orders set CPU = {0}, CdCodeID = '{1}', StyleUnit = '{2}' where Orders.StyleUkey = {3} and not exists (select 1 from SewingOutput_Detail where OrderId = Orders.ID)",
-                    CurrentMaintain["CPU"].ToString(), CurrentMaintain["CdCodeID"].ToString(), CurrentMaintain["StyleUnit"].ToString(), CurrentMaintain["UKey"].ToString());
+                    MyUtility.Convert.GetString(CurrentMaintain["CPU"]), MyUtility.Convert.GetString(CurrentMaintain["CdCodeID"]), MyUtility.Convert.GetString(CurrentMaintain["StyleUnit"]), MyUtility.Convert.GetString(CurrentMaintain["UKey"]));
                 DualResult result = DBProxy.Current.Execute(null, sqlCmd);
                 if (!result)
                 {
@@ -176,26 +176,6 @@ namespace Sci.Production.PPIC
             }
             return Result.True;
         }
-
-        #region TMS & Cost不再由此新增，改到P04_TMSAndCost新增
-        //        protected override bool ClickSavePre()
-//        {
-//            if (!MyUtility.Check.Seek(string.Format("select * from Style_TmsCost where StyleUkey = {0}", CurrentMaintain["Ukey"].ToString())))
-//            {
-//                string insertCmd = string.Format(@"insert into Style_TmsCost (StyleUkey,ArtworkTypeID,Seq,ArtworkUnit,AddName,AddDate)
-//select {0},ID,Seq,ArtworkUnit,'{1}',GETDATE() from ArtworkType where SystemType = 1 and Junk = 0", CurrentMaintain["Ukey"].ToString(), Sci.Env.User.UserID);
-//                DualResult result = DBProxy.Current.Execute(null, insertCmd);
-//                if (!result)
-//                {
-//                    MyUtility.Msg.ErrorBox("Insert TMS & Cost fail!!\r\n"+result.ToString());
-//                    return false;
-//                }
-//            }
-//            return true;
-//        }
-
-        //Season
-        #endregion
 
         private void textBox6_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
@@ -210,16 +190,25 @@ namespace Sci.Production.PPIC
         //Brand
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && CurrentMaintain["LocalStyle"].ToString().ToUpper() == "TRUE" && textBox2.OldValue != textBox2.Text)
+            if (EditMode && MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE" && textBox2.OldValue != textBox2.Text)
             {
                 if (!MyUtility.Check.Empty(textBox2.Text))
                 {
-                    if (MyUtility.Check.Seek(string.Format("select ID from Brand where ID = '{0}'", textBox2.Text)))
+                    if (EnterWrongChar(textBox2.Text))
                     {
-                        MyUtility.Msg.WarningBox("Brand:{0} is belong to SCI, Factory can't use!!");
                         CurrentMaintain["BrandID"] = "";
                         e.Cancel = true;
                         return;
+                    }
+                    else
+                    {
+                        if (MyUtility.Check.Seek(string.Format("select ID from Brand where ID = '{0}'", textBox2.Text)))
+                        {
+                            MyUtility.Msg.WarningBox(string.Format("Brand:{0} is belong to SCI, Factory can't use!!", textBox2.Text));
+                            CurrentMaintain["BrandID"] = "";
+                            e.Cancel = true;
+                            return;
+                        }
                     }
                 }
             }
@@ -228,7 +217,7 @@ namespace Sci.Production.PPIC
         //Program
         private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlCmd = string.Format("Select id,BrandID from Program where BrandID = '{0}'", CurrentMaintain["BrandID"].ToString());
+            string sqlCmd = string.Format("Select id,BrandID from Program where BrandID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]));
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "12,8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
@@ -238,7 +227,7 @@ namespace Sci.Production.PPIC
         //CD
         private void txtcdcode1_Validated(object sender, EventArgs e)
         {
-            if (EditMode && CurrentMaintain["LocalStyle"].ToString().ToUpper() == "TRUE" && txtcdcode1.OldValue != txtcdcode1.Text)
+            if (EditMode && MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE" && txtcdcode1.OldValue != txtcdcode1.Text)
             {
                 if (MyUtility.Check.Empty(txtcdcode1.Text))
                 {
@@ -249,8 +238,8 @@ namespace Sci.Production.PPIC
                 {
                     DataRow CDCodeRow;
                     if (MyUtility.Check.Seek(string.Format("select Cpu,ComboPcs from CDCode where ID = '{0}'", txtcdcode1.Text), out CDCodeRow))
-                    CurrentMaintain["CPU"] = CDCodeRow["Cpu"].ToString();
-                    CurrentMaintain["StyleUnit"] = CDCodeRow["ComboPcs"].ToString() == "1" ? "PCS" : "SETS";
+                    CurrentMaintain["CPU"] = CDCodeRow["Cpu"];
+                    CurrentMaintain["StyleUnit"] = MyUtility.Convert.GetString(CDCodeRow["ComboPcs"]) == "1" ? "PCS" : "SETS";
                 }
             }
         }
@@ -268,43 +257,46 @@ namespace Sci.Production.PPIC
         //TMS & Cost
         private void button1_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P04_TMSAndCost callNextForm = new Sci.Production.PPIC.P04_TMSAndCost((PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P04. Style Management", "CanEdit") && CurrentMaintain["LocalStyle"].ToString().ToUpper() == "TRUE"), CurrentMaintain["UKey"].ToString(), null, null, CurrentMaintain["ID"].ToString());
+            Sci.Production.PPIC.P04_TMSAndCost callNextForm = new Sci.Production.PPIC.P04_TMSAndCost((PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P04. Style Management", "CanEdit") && MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE"), MyUtility.Convert.GetString(CurrentMaintain["UKey"]), null, null, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
+            //按鈕變色
+            button1.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_TMSCost where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
         }
 
         //Std. GSD
         private void button2_Click(object sender, EventArgs e)
         {
-            Sci.Production.PublicForm.StdGSDList callNextForm = new Sci.Production.PublicForm.StdGSDList(Convert.ToInt64(CurrentMaintain["UKey"]));
+            Sci.Production.PublicForm.StdGSDList callNextForm = new Sci.Production.PublicForm.StdGSDList(MyUtility.Convert.GetLong(CurrentMaintain["UKey"]));
             callNextForm.ShowDialog(this);
         }
 
         //FTY GSD
         private void button3_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P01 callNextForm = new Sci.Production.IE.P01(CurrentMaintain["ID"].ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["SeasonID"].ToString(), null);
+            Sci.Production.IE.P01 callNextForm = new Sci.Production.IE.P01(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(CurrentMaintain["SeasonID"]), null);
             callNextForm.ShowDialog(this);
         }
 
         //Production Kits
         private void button4_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_ProductionKit callNextForm = new Sci.Production.PPIC.P01_ProductionKit(true, CurrentMaintain["UKey"].ToString(), null, null, CurrentMaintain["ID"].ToString());
+            Sci.Production.PPIC.P01_ProductionKit callNextForm = new Sci.Production.PPIC.P01_ProductionKit(true, MyUtility.Convert.GetString(CurrentMaintain["UKey"]), null, null, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
 
         //Artwork
         private void button5_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P04_Artwork callNextForm = new Sci.Production.PPIC.P04_Artwork((PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P04. Style Management", "CanEdit") && CurrentMaintain["LocalStyle"].ToString().ToUpper() == "TRUE"), CurrentMaintain["UKey"].ToString(), null, null, CurrentMaintain["ID"].ToString(), CurrentMaintain["SeasonID"].ToString());
+            Sci.Production.PPIC.P04_Artwork callNextForm = new Sci.Production.PPIC.P04_Artwork((PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P04. Style Management", "CanEdit") && MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE"), MyUtility.Convert.GetString(CurrentMaintain["UKey"]), null, null, MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["SeasonID"]));
             callNextForm.ShowDialog(this);
-            OnDetailEntered();
+            //按鈕變色
+            button5.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_Artwork where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
         }
 
         //Q'ty/Carton by CustCD
         private void button6_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P04_QtyCartonByCustCD callNextForm = new Sci.Production.PPIC.P04_QtyCartonByCustCD(CurrentMaintain["UKey"].ToString());
+            Sci.Production.PPIC.P04_QtyCartonByCustCD callNextForm = new Sci.Production.PPIC.P04_QtyCartonByCustCD(MyUtility.Convert.GetString(CurrentMaintain["UKey"]));
             callNextForm.ShowDialog(this);
         }
 
@@ -319,16 +311,17 @@ select ss.StyleUkey,ss.SizeCode,sw.Article
 from Style_SizeCode ss
 left join Style_WeightData sw on ss.StyleUkey = sw.StyleUkey and ss.SizeCode = sw.SizeCode
 where ss.StyleUkey = {1}) a
-where a.Article is null", Sci.Env.User.UserID, CurrentMaintain["UKey"].ToString());
+where a.Article is null", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["UKey"]));
             DualResult result = DBProxy.Current.Execute(null, insertCmd);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Insert data to Style_WeightData fail!\r\n"+result.ToString());
             }
 
-            Sci.Production.PPIC.P04_WeightData callNextForm = new Sci.Production.PPIC.P04_WeightData(PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P04. Style Management", "CanEdit"), CurrentMaintain["UKey"].ToString(), null, null);
+            Sci.Production.PPIC.P04_WeightData callNextForm = new Sci.Production.PPIC.P04_WeightData(PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P04. Style Management", "CanEdit"), MyUtility.Convert.GetString(CurrentMaintain["UKey"]), null, null);
             callNextForm.ShowDialog(this);
-            OnDetailEntered();
+            //按鈕變色
+            button7.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_WeightData where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
         }
 
         //Garment List
@@ -336,7 +329,7 @@ where a.Article is null", Sci.Env.User.UserID, CurrentMaintain["UKey"].ToString(
         {
             string patternUkey = MyUtility.GetValue.Lookup(string.Format(@"select UKey from Pattern
 where EditDate = (select max(EditDate) from Pattern where StyleUkey = {0} and Status = 'C')
-and StyleUkey = {0} and Status = 'C'",CurrentMaintain["Ukey"].ToString()));
+and StyleUkey = {0} and Status = 'C'",MyUtility.Convert.GetString(CurrentMaintain["Ukey"])));
 
             MyUtility.Msg.InfoBox("Wait for Cutting P01_Garment"+patternUkey);
         }
@@ -344,21 +337,21 @@ and StyleUkey = {0} and Status = 'C'",CurrentMaintain["Ukey"].ToString()));
         //Similar Style
         private void button9_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P04_SimilarStyle callNextForm = new Sci.Production.PPIC.P04_SimilarStyle(CurrentMaintain["UKey"].ToString());
+            Sci.Production.PPIC.P04_SimilarStyle callNextForm = new Sci.Production.PPIC.P04_SimilarStyle(MyUtility.Convert.GetString(CurrentMaintain["UKey"]));
             callNextForm.ShowDialog(this);
         }
 
         //HS Code
         private void button10_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P04_HSCode callNextForm = new Sci.Production.PPIC.P04_HSCode(CurrentMaintain["UKey"].ToString());
+            Sci.Production.PPIC.P04_HSCode callNextForm = new Sci.Production.PPIC.P04_HSCode(MyUtility.Convert.GetString(CurrentMaintain["UKey"]));
             callNextForm.ShowDialog(this);
         }
 
         //Fty L/T
         private void button15_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P04_GarmentLeadTimeByFactory callNextForm = new Sci.Production.PPIC.P04_GarmentLeadTimeByFactory(false, CurrentMaintain["UKey"].ToString(), null, null);
+            Sci.Production.PPIC.P04_GarmentLeadTimeByFactory callNextForm = new Sci.Production.PPIC.P04_GarmentLeadTimeByFactory(false, MyUtility.Convert.GetString(CurrentMaintain["UKey"]), null, null);
             callNextForm.ShowDialog(this);
         }
 
@@ -382,14 +375,14 @@ and StyleUkey = {0} and Status = 'C'",CurrentMaintain["Ukey"].ToString()));
                         {
                             string local_path_file = file.FileName;
                             string local_file_type = Path.GetExtension(local_path_file);
-                            string destination_fileName = (this.CurrentMaintain["UKey"].ToString()).Trim() + "-1" + local_file_type;
+                            string destination_fileName = (MyUtility.Convert.GetString(CurrentMaintain["UKey"])).Trim() + "-1" + local_file_type;
 
                             System.IO.File.Copy(local_path_file, destination_path + destination_fileName, true);
 
                             //update picture1 path
                             DualResult result = Sci.Data.DBProxy.Current.Execute(null, "update Style set Picture1 ='" + destination_fileName.Trim() + "' where ukey=" + this.CurrentMaintain["UKey"]); ;
                             this.CurrentMaintain["Picture1"] = destination_path.Trim() + destination_fileName.Trim();
-                            this.pictureBox1.ImageLocation = this.CurrentMaintain["Picture1"].ToString();
+                            this.pictureBox1.ImageLocation = MyUtility.Convert.GetString(CurrentMaintain["Picture1"]);
                         }
                     }
                 }
@@ -406,14 +399,14 @@ and StyleUkey = {0} and Status = 'C'",CurrentMaintain["Ukey"].ToString()));
             DialogResult deleteResult1 = MyUtility.Msg.QuestionBox("Are you sure delete the < Picture1 >?", buttons: MessageBoxButtons.YesNo);
             if (deleteResult1 == System.Windows.Forms.DialogResult.Yes)
             {
-                if (System.IO.File.Exists(destination_path + CurrentMaintain["Picture1"].ToString()))
+                if (System.IO.File.Exists(destination_path + MyUtility.Convert.GetString(CurrentMaintain["Picture1"])))
                 {
                     try
                     {
-                        System.IO.File.Delete(destination_path + CurrentMaintain["Picture1"].ToString());
+                        System.IO.File.Delete(destination_path + MyUtility.Convert.GetString(CurrentMaintain["Picture1"]));
                         this.CurrentMaintain["Picture1"] = string.Empty;
-                        this.pictureBox1.ImageLocation = this.CurrentMaintain["Picture1"].ToString();
-                        DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Style set Picture1='' where UKey={0}", this.CurrentMaintain["UKey"].ToString()));
+                        this.pictureBox1.ImageLocation = MyUtility.Convert.GetString(CurrentMaintain["Picture1"]);
+                        DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Style set Picture1='' where UKey={0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"])));
                         if (!result)
                         {
                             MyUtility.Msg.ErrorBox("Update data fail!!\r\n" + result.ToString());
@@ -428,8 +421,8 @@ and StyleUkey = {0} and Status = 'C'",CurrentMaintain["Ukey"].ToString()));
                 else
                 {
                     this.CurrentMaintain["Picture1"] = string.Empty;
-                    this.pictureBox1.ImageLocation = this.CurrentMaintain["Picture1"].ToString();
-                    DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Style set Picture1='' where UKey={0}", this.CurrentMaintain["UKey"].ToString()));
+                    this.pictureBox1.ImageLocation = MyUtility.Convert.GetString(CurrentMaintain["Picture1"]);
+                    DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Style set Picture1='' where UKey={0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"])));
                     if (!result)
                     {
                         MyUtility.Msg.ErrorBox("Update data fail!!\r\n" + result.ToString());
@@ -459,14 +452,14 @@ and StyleUkey = {0} and Status = 'C'",CurrentMaintain["Ukey"].ToString()));
                         {
                             string local_path_file = file.FileName;
                             string local_file_type = Path.GetExtension(local_path_file);
-                            string destination_fileName = (this.CurrentMaintain["UKey"].ToString()).Trim() + "-2" + local_file_type;
+                            string destination_fileName = (MyUtility.Convert.GetString(CurrentMaintain["UKey"])).Trim() + "-2" + local_file_type;
 
                             System.IO.File.Copy(local_path_file, destination_path + destination_fileName, true);
 
                             //update picture1 path
                             DualResult result = Sci.Data.DBProxy.Current.Execute(null, "update Style set Picture2 ='" + destination_fileName.Trim() + "' where ukey=" + this.CurrentMaintain["UKey"]); ;
                             this.CurrentMaintain["Picture2"] = destination_path.Trim() + destination_fileName.Trim();
-                            this.pictureBox2.ImageLocation = this.CurrentMaintain["Picture2"].ToString();
+                            this.pictureBox2.ImageLocation = MyUtility.Convert.GetString(CurrentMaintain["Picture2"]);
                         }
                     }
                 }
@@ -483,14 +476,14 @@ and StyleUkey = {0} and Status = 'C'",CurrentMaintain["Ukey"].ToString()));
             DialogResult deleteResult1 = MyUtility.Msg.QuestionBox("Are you sure delete the < Picture2 >?", buttons: MessageBoxButtons.YesNo);
             if (deleteResult1 == System.Windows.Forms.DialogResult.Yes)
             {
-                if (System.IO.File.Exists(destination_path + CurrentMaintain["Picture2"].ToString()))
+                if (System.IO.File.Exists(destination_path + MyUtility.Convert.GetString(CurrentMaintain["Picture2"])))
                 {
                     try
                     {
-                        System.IO.File.Delete(destination_path + CurrentMaintain["Picture2"].ToString());
+                        System.IO.File.Delete(destination_path + MyUtility.Convert.GetString(CurrentMaintain["Picture2"]));
                         this.CurrentMaintain["Picture2"] = string.Empty;
-                        this.pictureBox2.ImageLocation = this.CurrentMaintain["Picture2"].ToString();
-                        DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Style set Picture2='' where UKey={0}", this.CurrentMaintain["UKey"].ToString()));
+                        this.pictureBox2.ImageLocation = MyUtility.Convert.GetString(CurrentMaintain["Picture2"]);
+                        DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Style set Picture2='' where UKey={0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"])));
                         if (!result)
                         {
                             MyUtility.Msg.ErrorBox("Update data fail!!\r\n" + result.ToString());
@@ -505,8 +498,8 @@ and StyleUkey = {0} and Status = 'C'",CurrentMaintain["Ukey"].ToString()));
                 else
                 {
                     this.CurrentMaintain["Picture2"] = string.Empty;
-                    this.pictureBox2.ImageLocation = this.CurrentMaintain["Picture2"].ToString();
-                    DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Style set Picture2='' where UKey={0}", this.CurrentMaintain["UKey"].ToString()));
+                    this.pictureBox2.ImageLocation = MyUtility.Convert.GetString(CurrentMaintain["Picture2"]);
+                    DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Style set Picture2='' where UKey={0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"])));
                     if (!result)
                     {
                         MyUtility.Msg.ErrorBox("Update data fail!!\r\n" + result.ToString());
@@ -519,8 +512,72 @@ and StyleUkey = {0} and Status = 'C'",CurrentMaintain["Ukey"].ToString()));
         //Combo Type
         private void button16_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P04_ComboType callNextForm = new Sci.Production.PPIC.P04_ComboType((PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P04. Style Management", "CanEdit") && CurrentMaintain["LocalStyle"].ToString().ToUpper() == "TRUE"), CurrentMaintain["UKey"].ToString(), null, null, CurrentMaintain["StyleUnit"].ToString());
+            Sci.Production.PPIC.P04_ComboType callNextForm = new Sci.Production.PPIC.P04_ComboType((PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P04. Style Management", "CanEdit") && MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE"), MyUtility.Convert.GetString(CurrentMaintain["UKey"]), null, null, MyUtility.Convert.GetString(CurrentMaintain["StyleUnit"]));
             callNextForm.ShowDialog(this);
+            //按鈕變色
+            button16.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_Location where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
+        }
+
+        //檢查是否有輸入'字元
+        private bool EnterWrongChar(string EnterData)
+        {
+            if (EnterData.IndexOf("'") != -1)
+            {
+                MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
+                return true;
+            }
+            return false;
+        }
+
+        //Style
+        private void textBox1_Validating(object sender, CancelEventArgs e)
+        {
+            if (EditMode && MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE" && textBox1.OldValue != textBox1.Text)
+            {
+                if (!MyUtility.Check.Empty(textBox1.Text))
+                {
+                    if (EnterWrongChar(textBox1.Text))
+                    {
+                        CurrentMaintain["StyleID"] = "";
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+            }
+        }
+
+        //Season
+        private void textBox6_Validating(object sender, CancelEventArgs e)
+        {
+            if (EditMode && MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE" && textBox6.OldValue != textBox6.Text)
+            {
+                if (!MyUtility.Check.Empty(textBox6.Text))
+                {
+                    if (EnterWrongChar(textBox6.Text))
+                    {
+                        CurrentMaintain["SeasonID"] = "";
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+            }
+        }
+
+        //Program
+        private void textBox3_Validating(object sender, CancelEventArgs e)
+        {
+            if (EditMode && MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE" && textBox3.OldValue != textBox3.Text)
+            {
+                if (!MyUtility.Check.Empty(textBox3.Text))
+                {
+                    if (EnterWrongChar(textBox3.Text))
+                    {
+                        CurrentMaintain["ProgramID"] = "";
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+            }
         }
     }
 }
