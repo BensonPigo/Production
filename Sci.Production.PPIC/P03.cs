@@ -45,8 +45,8 @@ namespace Sci.Production.PPIC
             grid1.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid1)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Text("StyleID", header: "Style", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8))
+                .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .EditText("Article", header: "Colorway", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("ReasonName", header: "Doc", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("SendDate", header: "TW Send date", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -107,7 +107,7 @@ iif(sp.IsPF = 1,'Y','N') as CPF
 from Style_ProductionKits sp
 left join Style s on s.Ukey = sp.StyleUkey
 where sp.ReceiveDate is null
-and sp.FactoryID in (select ID from Factory where FTYGroup = '{0}')", Sci.Env.User.Factory));
+and sp.MDivisionID = '{0}' order by FactoryID, StyleID", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(textBox1.Text))
             {
                 sqlCmd.Append(string.Format(" and s.ID = '{0}'",textBox1.Text));
