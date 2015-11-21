@@ -38,7 +38,7 @@ group by b.Roll,b.Dyelot
 union all
 select b.ToRoll,b.ToDyelot,0,sum(b.Qty) as a2b,0,0,0,0,0,0,0,0,0
 from SubTransfer a inner join SubTransfer_Detail b on a.Id = b.id
-where a.Status = 'Confirmed' and b.ToStock = 'I'
+where a.Status = 'Confirmed' and b.ToStockType = 'I'
 and b.ToPoId ='{0}'
 and b.ToSeq1 = '{1}'
 and b.ToSeq2 = '{2}'
@@ -46,10 +46,18 @@ group by b.ToRoll,b.ToDyelot
 union all
 select b.ToRoll,b.ToDyelot,0,0,sum(b.Qty) C2B,0,0,0,0,0,0,0,0
 from SubTransfer a inner join SubTransfer_Detail b on a.Id=b.id
-where a.Status = 'Approved' and a.Type='C' and b.ToStock = 'I'
+where a.Status = 'Confirmed' and a.Type='C' and b.ToStockType = 'I'
 and b.ToPoId ='{0}'
 and b.ToSeq1 = '{1}'
 and b.ToSeq2 = '{2}'
+group by b.ToRoll,b.ToDyelot
+union all
+select b.ToRoll,b.ToDyelot,0,0,0,0,0,0,0,SUM(b.Qty) B2C,0,0,0
+from SubTransfer a inner join SubTransfer_Detail b on a.Id=b.id
+where a.Status = 'Confirmed' and a.Type='E' and b.FromStockType = 'I'
+and b.FromPoId ='{0}'
+and b.FromSeq1 = '{1}'
+and b.FromSeq2 = '{2}'
 group by b.ToRoll,b.ToDyelot
 union all
 select b.Roll,b.Dyelot,0,0,0,sum(b.Qty) TransIn,0,0,0,0,0,0,0
@@ -63,7 +71,7 @@ group by b.Roll,b.Dyelot
 union all
 select B.ToRoll,B.ToDyelot,0,0,0,0,SUM(B.QTY) backin,0,0,0,0,0,0
 from BorrowBack a inner join BorrowBack_Detail b on a.id =b.ID
-where a.Status = 'Confirmed' and B.ToStock = 'B'
+where a.Status = 'Confirmed' and B.ToStockType = 'B'
 and b.ToPoId ='{0}'
 and b.ToSeq1 = '{1}'
 and b.ToSeq2 = '{2}'
@@ -79,19 +87,11 @@ group by b.Roll,b.Dyelot
 union all
 select b.FromRoll,b.FromDyelot,0,0,0,0,0,0,sum(b.Qty) as B2A,0,0,0,0
 from SubTransfer a inner join SubTransfer_Detail b on a.Id = b.id
-where a.Status = 'Confirmed' and b.FromStock = 'I'
+where a.Status = 'Confirmed' and b.FromStockType = 'I'
 and b.FromPoId ='{0}'
 and b.FromSeq1 = '{1}'
 and b.FromSeq2 = '{2}'
 group by b.FromRoll,b.FromDyelot
-union all
-select B.Roll,B.Dyelot,0,0,0,0,0,0,0,SUM(b.Qty) B2C,0,0,0
-from Scrap a inner join Scrap_Detail b on a.id=b.id
-where a.Status = 'Approved' and a.Type='B'
-and b.Poid ='{0}'
-and b.Seq1 = '{1}'
-and b.Seq2 = '{2}'
-group by b.Roll,b.Dyelot
 union all
 select b.Roll,b.Dyelot,0,0,0,0,0,0,0,0,sum(b.Qty) as transout,0,0
 from TransferOut a inner join TransferOut_Detail b on a.Id=b.id
@@ -103,7 +103,7 @@ group by b.Roll,b.Dyelot
 union all
 select b.FromRoll,b.FromDyelot,0,0,0,0,0,0,0,0,0,sum(b.Qty) as borrowout,0
 from BorrowBack a inner join BorrowBack_Detail b on a.Id=b.id
-where a.Status = 'Confirmed' and FromStock ='I'
+where a.Status = 'Confirmed' and FromStockType ='I'
 and b.FromPoId ='{0}'
 and b.FromSeq1 = '{1}'
 and b.FromSeq2 = '{2}'

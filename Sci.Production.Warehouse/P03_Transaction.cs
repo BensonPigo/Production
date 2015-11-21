@@ -34,7 +34,7 @@ namespace Sci.Production.Warehouse
 
             if (_byroll)
             {
-                this.Text += string.Format(@" ({0}-{1}-{2}-{3}-{4})", dr["id"], dr["seq1"], dr["seq2"],dr["roll"],dr["dyelot"]);
+                this.Text += string.Format(@" ({0}-{1}-{2}-{3}-{4})", dr["id"], dr["seq1"], dr["seq2"], dr["roll"], dr["dyelot"]);
             }
             else
             {
@@ -193,21 +193,6 @@ where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.
             selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate                                                                               
 union all
 	select issuedate, a.id
-	,case a.type when 'A' then 'P25. Transfer Bulk to Scrap' 
-                    when 'B' then 'P24. Transfer Inventory to Scrap' end as name
-	,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
-from Scrap a, Scrap_Detail b 
-where Status='Confirmed' and Poid ='{0}' and Seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
-                , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
-            if (_byroll)
-            {
-                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
-            }
-
-            selectCommand1.Append(string.Format(@"group by a.id, Poid, Seq1,Seq2, remark,a.IssueDate,a.Type
-union all
-	select issuedate, a.id
 	,'P23. Transfer Inventory to Bulk' as name
 	, 0 as inqty, sum(Qty) released,0 as adjust , '' remark ,'' location
 from SubTransfer a, SubTransfer_Detail b 
@@ -300,76 +285,101 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name
             bindingSource1.DataSource = selectDataTable1;
             MyUtility.Tool.SetGridFrozen(grid1);
 
-            #region Farm In qty 開窗
+            #region 開窗
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.CellMouseDoubleClick += (s, e) =>
             {
-                if (!this.EditMode)
+                var frm =new Sci.Win.Tems.Input6(null);
+                var dr2 = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr2) return;
+                switch (dr2["id"].ToString().Substring(3, 2))
                 {
-                    var dr2 = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                    if (null == dr2) return;
-                    switch (dr2["id"].ToString().Substring(3, 2))
-                    {
-                        case "PR":
-                            //P07
-                            break;
-                        case "RF":
-                            //	P08
-                            break;
-                        case "RL":
-                            //	P09
-                            break;
-                        case "PI":
-                            //	
-                            break;
-                        case "MB":
-                            //	P31
-                            break;
-                        case "RB":
-                            //	P32
-                            break;
-                        case "IP":
-                            //	P12
-                            break;
-                        case "RT":
-                            //	P37
-                            break;
-                        case "II":
-                            //	P13
-                            break;
-                        case "RR":
-                            //	P17
-                            break;
-                        case "TI":
-                            //	P18
-                            break;
-                        case "TO":
-                            //	P19
-                            break;
-                        case "IL":
-                            //	P15
-                            break;
-                        case "IC":
-                            //	P10
-                            break;
-                        case "IS":
-                            //	P11
-                            break;
-                        case "IF":
-                            //	P16
-                            break;
-                        case "BA":
-                            //	P50
-                            break;
-                        case "BB":
-                            //	P51
-                            break;
+                    case "PR":
+                        //P07
+                        frm = new Sci.Production.Warehouse.P07(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+                    case "RF":
+                        //	P08
+                        frm = new Sci.Production.Warehouse.P08(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+                    case "RL":
+                        //	P09
+                        //frm = new Sci.Production.Warehouse.P09(null, dr2["id"].ToString());
+                        //frm.ShowDialog(this);
+                        break;
+                    case "PI":
+                        //	
+
+                        break;
+                    case "MB":
+                        //	P31
+                        frm = new Sci.Production.Warehouse.P31(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+                    case "RB":
+                        //	P32
+                        frm = new Sci.Production.Warehouse.P32(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+                    case "IP":
+                        //	P12
+                        frm = new Sci.Production.Warehouse.P12(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+                    case "RT":
+                        //	P37
+
+                        break;
+                    case "II":
+                        //	P13
+                        frm = new Sci.Production.Warehouse.P13(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+                    case "RR":
+                        //	P17
+                        frm = new Sci.Production.Warehouse.P17(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+                    case "TI":
+                        //	P18
+                        frm = new Sci.Production.Warehouse.P18(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+                    case "TO":
+                        //	P19
+                        frm = new Sci.Production.Warehouse.P19(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+                    case "IL":
+                        //	P15
+                        frm = new Sci.Production.Warehouse.P15(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+                    case "IC":
+                        //	P10
+                        break;
+                    case "IS":
+                        //	P11
+                        break;
+                    case "IF":
+                        //	P16
+                        frm = new Sci.Production.Warehouse.P16(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+                    case "BA":
+                        //	P50
+                        break;
+                    case "BB":
+                        //	P51
+                        break;
 
 
-                    }
-                    //var frm = new Sci.Production.Subcon.P01_FarmInList(dr);
-                    //frm.ShowDialog(this);
                 }
+                //var frm = new Sci.Production.Subcon.P01_FarmInList(dr);
+                //frm.ShowDialog(this);
+
             };
             #endregion
 

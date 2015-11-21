@@ -66,21 +66,21 @@ from Adjust a, Adjust_Detail b
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate,type,b.roll,b.stocktype,b.dyelot
 union all
-	select b.FromRoll,b.FromStock,b.FromDyelot,a.IssueDate, a.id
+	select b.FromRoll,b.FromStockType,b.FromDyelot,a.IssueDate, a.id
 ,case type when 'A' then 'P31. Material Borrow From' 
                             when 'B' then 'P32. Material Give Back From' end as name
 ,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location
 from BorrowBack a, BorrowBack_Detail b 
 where Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id 
-group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,b.FromRoll,b.FromStock,b.FromDyelot,a.type
+group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,b.FromRoll,b.FromStockType,b.FromDyelot,a.type
 union all
-	select b.ToRoll,b.ToStock,b.ToDyelot,issuedate, a.id
+	select b.ToRoll,b.ToStockType,b.ToDyelot,issuedate, a.id
 ,case type when 'A' then 'P31. Material Borrow To' 
                             when 'B' then 'P32. Material Give Back To' end as name
 , sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location
 from BorrowBack a, BorrowBack_Detail b 
 where Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id 
-group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,b.ToRoll,b.ToStock,b.ToDyelot,a.type
+group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,b.ToRoll,b.ToStockType,b.ToDyelot,a.type
 union all
 	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
 	,case type when 'A' then 'P10. Issue Fabric to Cutting Section' 
@@ -119,26 +119,20 @@ from ReturnReceipt a, ReturnReceipt_Detail b
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate,b.roll,b.stocktype,b.dyelot                                                                           
 union all
-	select b.roll,case a.type when 'A' then 'B' when 'B' then 'I' end as stocktype,b.dyelot,issuedate, a.id
-	,case a.type when 'A' then 'P25. Transfer Bulk to Scrap' 
-                        when 'B' then 'P24. Transfer Inventory to Scrap' end as name
-	,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
-from Scrap a, Scrap_Detail b 
-where Status='Approved' and Poid ='{0}' and Seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-group by a.id, Poid, Seq1,Seq2, remark,a.IssueDate,a.Type,b.roll,b.dyelot
-
-union all
-	select b.FromRoll,b.FromStock,b.FromDyelot,issuedate, a.id
+	select b.FromRoll,b.FromStockType,b.FromDyelot,issuedate, a.id
 	,case type when 'B' then 'P23. Transfer Inventory to Bulk' 
                     when 'A' then 'P22. Transfer Bulk to Inventory' 
-                    when 'C' then 'P36. Transfer Scrap to Inventory' end as name
+                    when 'C' then 'P36. Transfer Scrap to Inventory' 
+                    when 'D' then 'P25. Transfer Bulk to Scrap' 
+                    when 'E' then 'P24. Transfer Inventory to Scrap'
+    end as name
 	, 0 as inqty, sum(Qty) released,0 as adjust ,isnull(a.remark,'') remark ,'' location
 from SubTransfer a, SubTransfer_Detail b 
 where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id
-group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,b.FromRoll,b.FromStock,b.FromDyelot,a.Type,a.remark
+group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,b.FromRoll,b.FromStockType,b.FromDyelot,a.Type,a.remark
                                                                              
 union all
-	select b.ToRoll,b.ToStock,b.ToDyelot,issuedate, a.id
+	select b.ToRoll,b.ToStockType,b.ToDyelot,issuedate, a.id
 	        ,case type when 'B' then 'P23. Transfer Inventory to Bulk' 
                     when 'A' then 'P22. Transfer Bulk to Inventory' 
                     when 'C' then 'P36. Transfer Scrap to Inventory' end as name
@@ -154,7 +148,7 @@ union all
                         for XML PATH('')),'') as ToLocation
 from SubTransfer a, SubTransfer_Detail b 
 where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id
-group by a.id, ToPoid, ToSeq1,ToSeq2, remark ,a.IssueDate,b.ToRoll,b.ToStock,b.ToDyelot,a.type	    
+group by a.id, ToPoid, ToSeq1,ToSeq2, remark ,a.IssueDate,b.ToRoll,b.ToStockType,b.ToDyelot,a.type	    
 
 union all
 	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
@@ -277,7 +271,28 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
 
         private void bindingSource1_PositionChanged(object sender, EventArgs e)
         {
-            var tmp = (from b in dtFtyinventory.AsEnumerable()
+            string[] tmpStocktype = new string[] { "", "" };
+            
+            switch (comboBox1.SelectedIndex)
+            {
+                case -1:
+                    tmpStocktype[0] = "B";
+                    tmpStocktype[1] = "I";
+                    break;
+                case 0:
+                    tmpStocktype[0]="B";
+                    tmpStocktype[1]="I";
+                    break;
+                case 1:
+                    tmpStocktype[0]="B";
+                    break;
+                case 2:
+                    tmpStocktype[0]="I";
+                    break;
+            }
+
+            var tmp = from b in dtFtyinventory.AsEnumerable()
+                      where tmpStocktype.Contains(b.Field<string>("StockType"))
                        group b by new
                        {
                            Dyelot = b.Field<string>("Dyelot")
@@ -291,7 +306,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                            outQty = m.Sum(w => w.Field<decimal>("outqty")),
                            Adjust = m.Sum(i => i.Field<decimal>("AdjustQty")),
                            balance = m.Sum(w => w.Field<decimal>("inqty")) - m.Sum(w => w.Field<decimal>("outqty")) + m.Sum(i => i.Field<decimal>("AdjustQty"))
-                       });
+                       };
 
             dtSummary.Rows.Clear();
             tmp.ToList().ForEach(q2 => dtSummary.Rows.Add(q2.roll, q2.dyelot, null, q2.inqty, q2.outQty, q2.Adjust, q2.balance, null, q2.rollcount));
