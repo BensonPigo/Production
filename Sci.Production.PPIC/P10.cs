@@ -19,7 +19,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             InitializeComponent();
-            DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "' and FabricType = 'F'";
+            DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' and FabricType = 'F'";
             txtuser2.TextBox1.ReadOnly = true;
             txtuser2.TextBox1.IsSupportEditMode = false;
             InsertDetailGridOnDoubleClick = false;
@@ -27,7 +27,7 @@ namespace Sci.Production.PPIC
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select ld.*,(left(ld.Seq1+' ',3)+ld.Seq2) as Seq,isnull(psd.Refno,'') as Refno,isnull(f.Description,'') as Description,
 (select max(i.IssueDate) from Issue i, Issue_Detail id where i.Id = id.Id and id.PoId = l.POID and id.Seq1 = ld.Seq1 and id.Seq2 = ld.seq2) as IssueDate,
 isnull(psd.InQty,0) as InQty,isnull(psd.OutQty,0) as OutQty,isnull(p.Description,'') as PPICReasonDesc
@@ -75,18 +75,18 @@ order by ld.Seq1,ld.Seq2", masterID);
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = Prgs.SelePoItem(CurrentMaintain["POID"].ToString(), dr["Seq"].ToString(), "FabricType = 'F'");
+                            Sci.Win.Tools.SelectItem item = Prgs.SelePoItem(MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(dr["Seq"]), "FabricType = 'F'");
                             DialogResult result = item.ShowDialog();
                             if (result == DialogResult.Cancel) { return; }
                             IList<DataRow> selectData = item.GetSelecteds();
                             dr["Seq"] = item.GetSelectedString();
-                            dr["Seq1"] = selectData[0]["Seq1"].ToString();
-                            dr["Seq2"] = selectData[0]["Seq2"].ToString();
-                            dr["RefNo"] = selectData[0]["RefNo"].ToString();
-                            dr["Description"] = selectData[0]["Description"].ToString();
-                            dr["InQty"] = Convert.ToDecimal(selectData[0]["InQty"]);
-                            dr["OutQty"] = Convert.ToDecimal(selectData[0]["OutQty"]);
-                            DateTime? maxIssueDate = MaxIssueDate(selectData[0]["Seq1"].ToString(), selectData[0]["Seq2"].ToString());
+                            dr["Seq1"] = selectData[0]["Seq1"];
+                            dr["Seq2"] = selectData[0]["Seq2"];
+                            dr["RefNo"] = selectData[0]["RefNo"];
+                            dr["Description"] = selectData[0]["Description"];
+                            dr["InQty"] = MyUtility.Convert.GetDecimal(selectData[0]["InQty"]);
+                            dr["OutQty"] = MyUtility.Convert.GetDecimal(selectData[0]["OutQty"]);
+                            DateTime? maxIssueDate = MaxIssueDate(MyUtility.Convert.GetString(selectData[0]["Seq1"]), MyUtility.Convert.GetString(selectData[0]["Seq2"]));
                             if (MyUtility.Check.Empty(maxIssueDate))
                             {
                                 dr["IssueDate"] = DBNull.Value;
@@ -107,13 +107,21 @@ order by ld.Seq1,ld.Seq2", masterID);
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["Seq"].ToString())
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["Seq"]))
                     {
+                        if (MyUtility.Convert.GetString(e.FormattedValue).IndexOf("'") != -1)
+                        {
+                            MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
+                            dr["Seq"] = "";
+                            e.Cancel = true;
+                            return;
+                        }
+
                         DataRow poData;
                         string sqlCmd = string.Format(@"select left(seq1+' ',3)+seq2 as Seq, Refno,InQty,OutQty,seq1,seq2, 
 dbo.getmtldesc(id,seq1,seq2,2,0) as Description 
 from dbo.PO_Supp_Detail
-where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", CurrentMaintain["POID"].ToString(), e.FormattedValue.ToString().Substring(0, 3), e.FormattedValue.ToString().Substring(2, 2));
+where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(e.FormattedValue).Substring(0, 3), MyUtility.Convert.GetString(e.FormattedValue).Substring(2, 2));
                         if (MyUtility.Check.Empty(CurrentMaintain["POID"]) || !MyUtility.Check.Seek(sqlCmd, out poData))
                         {
                             if (MyUtility.Check.Empty(CurrentMaintain["POID"]))
@@ -122,7 +130,7 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", Current
                             }
                             else
                             {
-                                MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > not found!!!", e.FormattedValue.ToString()));
+                                MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
                             }
                             dr["Seq"] = "";
                             dr["Seq1"] = "";
@@ -138,14 +146,14 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", Current
                         }
                         else
                         {
-                            dr["Seq"] = poData["Seq"].ToString();
-                            dr["Seq1"] = poData["Seq1"].ToString();
-                            dr["Seq2"] = poData["Seq2"].ToString();
-                            dr["RefNo"] = poData["RefNo"].ToString();
-                            dr["Description"] = poData["Description"].ToString();
-                            dr["InQty"] = Convert.ToDecimal(poData["InQty"]);
-                            dr["OutQty"] = Convert.ToDecimal(poData["OutQty"]);
-                            DateTime? maxIssueDate = MaxIssueDate(poData["Seq1"].ToString(), poData["Seq2"].ToString());
+                            dr["Seq"] = poData["Seq"];
+                            dr["Seq1"] = poData["Seq1"];
+                            dr["Seq2"] = poData["Seq2"];
+                            dr["RefNo"] = poData["RefNo"];
+                            dr["Description"] = poData["Description"];
+                            dr["InQty"] = MyUtility.Convert.GetDecimal(poData["InQty"]);
+                            dr["OutQty"] = MyUtility.Convert.GetDecimal(poData["OutQty"]);
+                            DateTime? maxIssueDate = MaxIssueDate(MyUtility.Convert.GetString(poData["Seq1"]), MyUtility.Convert.GetString(poData["Seq2"]));
                             if (MyUtility.Check.Empty(maxIssueDate))
                             {
                                 dr["IssueDate"] = DBNull.Value;
@@ -170,7 +178,7 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", Current
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                        Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(dr["Description"].ToString(), "Description", false, null);
+                        Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(dr["Description"]), "Description", false, null);
                         callNextForm.ShowDialog(this);
 
                     }
@@ -188,12 +196,12 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", Current
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,Description from PPICReason where Type = 'FL' and Junk = 0 and TypeForUse = '{0}'", CurrentMaintain["Type"].ToString()), "5,40", dr["PPICReasonID"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,Description from PPICReason where Type = 'FL' and Junk = 0 and TypeForUse = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Type"])), "5,40", MyUtility.Convert.GetString(dr["PPICReasonID"]));
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             IList<DataRow> selectData = item.GetSelecteds();
                             dr["PPICReasonID"] = item.GetSelectedString();
-                            dr["PPICReasonDesc"] = selectData[0]["Description"].ToString();
+                            dr["PPICReasonDesc"] = selectData[0]["Description"];
                             dr.EndEdit();
                         }
                     }
@@ -206,13 +214,23 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", Current
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["Seq"].ToString())
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["Seq"]))
                     {
+                        if (MyUtility.Convert.GetString(e.FormattedValue).IndexOf("'") != -1)
+                        {
+                            MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
+                            dr["PPICReasonID"] = "";
+                            dr["PPICReasonDesc"] = "";
+                            dr.EndEdit();
+                            e.Cancel = true;
+                            return;
+                        }
+
                         DataRow reasonData;
-                        string sqlCmd = string.Format(@"select ID,Description from PPICReason where Type = 'FL' and Junk = 0 and TypeForUse = '{0}' and ID = '{1}'", CurrentMaintain["Type"].ToString(), e.FormattedValue.ToString());
+                        string sqlCmd = string.Format(@"select ID,Description from PPICReason where Type = 'FL' and Junk = 0 and TypeForUse = '{0}' and ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["Type"]), MyUtility.Convert.GetString(e.FormattedValue));
                         if (!MyUtility.Check.Seek(sqlCmd, out reasonData))
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Reason Id: {0} > not found!!!", e.FormattedValue.ToString()));
+                            MyUtility.Msg.WarningBox(string.Format("< Reason Id: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
                             dr["PPICReasonID"] = "";
                             dr["PPICReasonDesc"] = "";
                             dr.EndEdit();
@@ -221,8 +239,8 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", Current
                         }
                         else
                         {
-                            dr["PPICReasonID"] = e.FormattedValue.ToString();
-                            dr["PPICReasonDesc"] = reasonData["Description"].ToString();
+                            dr["PPICReasonID"] = MyUtility.Convert.GetString(e.FormattedValue);
+                            dr["PPICReasonDesc"] = reasonData["Description"];
                             dr.EndEdit();
                         }
                     }
@@ -248,7 +266,7 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", Current
         {
             base.ClickNewAfter();
             CurrentMaintain["IssueDate"] = DateTime.Today;
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["FabricType"] = "F";
             CurrentMaintain["ApplyName"] = Sci.Env.User.UserID;
             CurrentMaintain["Status"] = "New";
@@ -256,7 +274,7 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", Current
 
         protected override bool ClickEditBefore()
         {
-            if (CurrentMaintain["Status"].ToString() != "New")
+            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "New")
             {
                 MyUtility.Msg.WarningBox("This record was approved, can't modify.");
                 return false;
@@ -266,7 +284,7 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", Current
 
         protected override bool ClickDeleteBefore()
         {
-            if (CurrentMaintain["Status"].ToString() != "New")
+            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "New")
             {
                 MyUtility.Msg.WarningBox("This record was approved, can't delete.");
                 return false;
@@ -320,7 +338,7 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", Current
                 #endregion
                 i++;
                 #region 表身的RequestQty不可小於0、Reason不可為空 、Type='R'時RejectQty不可小(等)於0
-                if (MyUtility.Check.Empty(dr["RequestQty"]) || Convert.ToDecimal(dr["RequestQty"]) <= 0)
+                if (MyUtility.Check.Empty(dr["RequestQty"]) || MyUtility.Convert.GetDecimal(dr["RequestQty"]) <= 0)
                 {
                     MyUtility.Msg.WarningBox("< Request Qty >  can't equal or less 0!");
                     return false;
@@ -332,7 +350,7 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", Current
                     return false;
                 }
 
-                if (CurrentMaintain["Type"].ToString() == "R" && (MyUtility.Check.Empty(dr["RejectQty"]) || Convert.ToInt32(dr["RejectQty"]) <= 0))
+                if (MyUtility.Convert.GetString(CurrentMaintain["Type"]) == "R" && (MyUtility.Check.Empty(dr["RejectQty"]) || MyUtility.Convert.GetInt(dr["RejectQty"]) <= 0))
                 {
                     MyUtility.Msg.WarningBox("< # of pcs rejected >  can't equal or less 0!");
                     return false;
@@ -356,7 +374,7 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", Current
 SELECT l.Seq,l.Seq1,l.Seq2,l.RequestQty,isnull(p.InQty-p.OutQty+p.AdjustQty-p.LInvQty,0) as StockQty
 FROM #tmp l
 left join PO_Supp_Detail p on p.ID = '{0}' and p.SEQ1 = l.Seq1 and p.SEQ2 = l.Seq2) a
-where a.RequestQty > a.StockQty", CurrentMaintain["POID"].ToString()), out ExceedData);
+where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["POID"])), out ExceedData);
             }
             catch (Exception ex)
             {
@@ -366,7 +384,7 @@ where a.RequestQty > a.StockQty", CurrentMaintain["POID"].ToString()), out Excee
             StringBuilder msg = new StringBuilder();
             foreach (DataRow dr in ExceedData.Rows)
             {
-                msg.Append(string.Format("Seq#:{0}  < Request Qty >:{1} exceed stock qty:{2}\r\n",dr["Seq"].ToString(),dr["RequestQty"].ToString(),dr["StockQty"].ToString()));
+                msg.Append(string.Format("Seq#:{0}  < Request Qty >:{1} exceed stock qty:{2}\r\n",MyUtility.Convert.GetString(dr["Seq"]),MyUtility.Convert.GetString(dr["RequestQty"]),MyUtility.Convert.GetString(dr["StockQty"])));
             }
             if (msg.Length != 0)
             {
@@ -377,7 +395,7 @@ where a.RequestQty > a.StockQty", CurrentMaintain["POID"].ToString()), out Excee
             //GetID
             if (IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "FR", "Lack", DateTime.Today, 2, "Id", null);
+                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("KeyWord", MyUtility.GetValue.Lookup("FtyGroup", CurrentMaintain["OrderID"].ToString(), "Orders", "ID"), "Factory", "ID") + "FR", "Lack", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -393,11 +411,11 @@ where a.RequestQty > a.StockQty", CurrentMaintain["POID"].ToString()), out Excee
         {
             DateTime? maxIssueDate = null;
             DataTable issueData;
-            string sqlCmd = string.Format("select max(i.IssueDate) as IssueDate from Issue i, Issue_Detail id where i.Id = id.Id and id.PoId = '{0}' and id.Seq1 = '{1}' and id.Seq2 = '{2}'", CurrentMaintain["POID"].ToString(), Seq1, Seq2);
+            string sqlCmd = string.Format("select max(i.IssueDate) as IssueDate from Issue i, Issue_Detail id where i.Id = id.Id and id.PoId = '{0}' and id.Seq1 = '{1}' and id.Seq2 = '{2}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), Seq1, Seq2);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out issueData);
             if (result)
             {
-                maxIssueDate = MyUtility.Check.Empty(issueData.Rows[0]["IssueDate"]) ? (DateTime?)null : Convert.ToDateTime(issueData.Rows[0]["IssueDate"]);
+                maxIssueDate = MyUtility.Convert.GetDate(issueData.Rows[0]["IssueDate"]);
             }
 
             return maxIssueDate;
@@ -428,18 +446,29 @@ where a.RequestQty > a.StockQty", CurrentMaintain["POID"].ToString()), out Excee
                 {
                     if (!MyUtility.Check.Empty(textBox2.Text))
                     {
-                        DataRow OrderPOID;
-                        string sqlCmd = string.Format("select POID from Orders where ID = '{0}' and FtyGroup = '{1}'", textBox2.Text, Sci.Env.User.Factory);
-                        if (MyUtility.Check.Seek(sqlCmd, out OrderPOID))
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", textBox2.Text);
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+                        cmds.Add(sp2);
+
+                        DataTable OrderPOID;
+                        string sqlCmd = "select POID,FtyGroup from Orders where ID = @id and MDivisionID = @mdivisionid";
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderPOID);
+                        if (result && OrderPOID.Rows.Count > 0)
                         {
                             CurrentMaintain["OrderID"] = textBox2.Text;
-                            CurrentMaintain["POID"] = OrderPOID["POID"].ToString();
+                            CurrentMaintain["POID"] = OrderPOID.Rows[0]["POID"];
+                            CurrentMaintain["FactoryID"] = OrderPOID.Rows[0]["FtyGroup"];
                         }
                         else
                         {
                             MyUtility.Msg.WarningBox("SP# not exist!!");
                             CurrentMaintain["OrderID"] = "";
                             CurrentMaintain["POID"] = "";
+                            CurrentMaintain["FactoryID"] = "";
                             e.Cancel = true;
                             return;
                         }
@@ -448,6 +477,7 @@ where a.RequestQty > a.StockQty", CurrentMaintain["POID"].ToString()), out Excee
                     {
                         CurrentMaintain["OrderID"] = "";
                         CurrentMaintain["POID"] = "";
+                        CurrentMaintain["FactoryID"] = "";
                     }
                 }
             }
@@ -457,7 +487,7 @@ where a.RequestQty > a.StockQty", CurrentMaintain["POID"].ToString()), out Excee
         {
             base.ClickConfirm();
             DualResult result;
-            string updateCmd = string.Format("update Lack set Status = 'Confirmed',ApvName = '{0}',ApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'",Sci.Env.User.UserID,CurrentMaintain["ID"].ToString());
+            string updateCmd = string.Format("update Lack set Status = 'Confirmed',ApvName = '{0}',ApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'",Sci.Env.User.UserID,MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -484,7 +514,7 @@ where a.RequestQty > a.StockQty", CurrentMaintain["POID"].ToString()), out Excee
                 return;
             }
             DualResult result;
-            string updateCmd = string.Format("update Lack set Status = 'New',ApvName = '',ApvDate = null, EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
+            string updateCmd = string.Format("update Lack set Status = 'New',ApvName = '',ApvDate = null, EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -505,7 +535,7 @@ where a.RequestQty > a.StockQty", CurrentMaintain["POID"].ToString()), out Excee
                 return;
             }
             DualResult result;
-            string updateCmd = string.Format("update Lack set Status = 'Received', EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
+            string updateCmd = string.Format("update Lack set Status = 'Received', EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
