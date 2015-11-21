@@ -23,19 +23,18 @@ namespace Sci.Production.PPIC
             InitializeComponent();
             DataTable dtFactory;
             DualResult cbResult;
-            if (cbResult = DBProxy.Current.Select(null, "select ID from Factory", out dtFactory))
+            if (cbResult = DBProxy.Current.Select(null, string.Format("select ID from Factory where MDivisionID = '{0}'",Sci.Env.User.Keyword), out dtFactory))
             {
-                this.comboBox1.DisplayMember = "ID";
-                this.comboBox1.ValueMember = "ID";
-                this.comboBox1.DataSource = dtFactory;
+                MyUtility.Tool.SetupCombox(comboBox1, 1, dtFactory);
             }
 
-            comboBox1.SelectedValue = Sci.Env.User.Factory;
+            comboBox1.SelectedIndex = -1;
+            //comboBox1.SelectedValue = "";
             DataRow drOC;
             if (MyUtility.Check.Seek(string.Format(@"select top 1 UpdateDate 
 from OrderComparisonList
-where FactoryID = '{0}' 
-and UpdateDate = (select max(UpdateDate) from OrderComparisonList where FactoryID = '{0}')", Sci.Env.User.Factory), out drOC))
+where MDivisionID = '{0}' 
+and UpdateDate = (select max(UpdateDate) from OrderComparisonList where MDivisionID = '{0}')", Sci.Env.User.Keyword), out drOC))
             {
                 dateBox2.Value = Convert.ToDateTime(drOC["UpdateDate"]);
             }
@@ -56,6 +55,7 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList where FactoryI
             newqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
 
             Helper.Controls.Grid.Generator(this.grid1)
+                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5))
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(14))
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(10))
                 .Numeric("OriginalQty", header: "Order\r\nQty", settings: oriqty, width: Widths.AnsiChars(5))
@@ -102,12 +102,12 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList where FactoryI
         //Query Data
         private void QueryDate(string factoryID, DateTime? updateDate)
         {
-            string sqlCmd = string.Format(@"select OrderId,OriginalStyleID,OriginalQty,
+            string sqlCmd = string.Format(@"select FactoryID,OrderId,OriginalStyleID,iif(convert(varchar,OriginalQty) = 0,'',convert(varchar,OriginalQty)) as OriginalQty,
 RIGHT(CONVERT(VARCHAR(20),OriginalBuyerDelivery,111),5) as OriginalBuyerDelivery,
 RIGHT(CONVERT(VARCHAR(20),OriginalSCIDelivery,111),5) as OriginalSCIDelivery,
 RIGHT(CONVERT(VARCHAR(20),OriginalLETA,111),5) as OriginalLETA,
 RIGHT(CONVERT(VARCHAR(20),KPILETA,111),5) as KPILETA,
-TransferToFactory,NewQty,
+TransferToFactory,iif(convert(varchar,NewQty) = 0,'',convert(varchar,NewQty)) as NewQty,
 RIGHT(CONVERT(VARCHAR(20),NewBuyerDelivery,111),5) as NewBuyerDelivery,
 RIGHT(CONVERT(VARCHAR(20),NewSCIDelivery,111),5) as NewSCIDelivery,
 RIGHT(CONVERT(VARCHAR(20),NewLETA,111),5) as NewLETA,
@@ -118,8 +118,8 @@ iif(NewEachConsApv is null,iif(OriginalEachConsApv is null,'','★'),'V') as Eac
 iif(NewMnorderApv is null,'','V') as NewMnorder,iif(NewSMnorderApv is null,'','V') as NewSMnorderApv,
 iif(MnorderApv2 is null,'','V') as MnorderApv2, TransferDate
 from OrderComparisonList 
-where FactoryID = '{0}' and UpdateDate {1}
-order by OrderId", factoryID, MyUtility.Check.Empty(updateDate) ? "is null" : "='" + Convert.ToDateTime(updateDate).ToString("d")+"'");
+where {0} and UpdateDate {1}
+order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword) : string.Format("FactoryID = '{0}'", factoryID), MyUtility.Check.Empty(updateDate) ? "is null" : "='" + Convert.ToDateTime(updateDate).ToString("d") + "'");
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
             if (!result)
             {
@@ -170,7 +170,7 @@ order by OrderId", factoryID, MyUtility.Check.Empty(updateDate) ? "is null" : "=
             DataTable ExcelTable;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource1.DataSource, "OrderId,OriginalStyleID,OriginalQty,OriginalBuyerDelivery,OriginalSCIDelivery,OriginalLETA,KPILETA,TransferToFactory,NewQty,NewBuyerDelivery,NewSCIDelivery,NewLETA,NewOrder,DeleteOrder,JunkOrder,CMPQDate,EachConsApv,NewMnorder,NewSMnorderApv,MnorderApv2", "select * from #tmp", out ExcelTable);
+                MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource1.DataSource, "FactoryID,OrderId,OriginalStyleID,OriginalQty,OriginalBuyerDelivery,OriginalSCIDelivery,OriginalLETA,KPILETA,TransferToFactory,NewQty,NewBuyerDelivery,NewSCIDelivery,NewLETA,NewOrder,DeleteOrder,JunkOrder,CMPQDate,EachConsApv,NewMnorder,NewSMnorderApv,MnorderApv2", "select * from #tmp", out ExcelTable);
             }
             catch (Exception ex)
             {
@@ -184,7 +184,7 @@ order by OrderId", factoryID, MyUtility.Check.Empty(updateDate) ? "is null" : "=
             dlg.RestoreDirectory = true;
             dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
             dlg.Title = "Save as Excel File";
-            dlg.FileName = "ComparisonList_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
+            //dlg.FileName = "ComparisonList_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
 
             dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
 
@@ -193,7 +193,7 @@ order by OrderId", factoryID, MyUtility.Check.Empty(updateDate) ? "is null" : "=
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
             {
                 // Open document
-                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName, xltfile: "PPIC_P02.xltx", headerRow: 4);
+                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName, xltfile: "PPIC_P02.xltx", headerRow: 3);
                 if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
             }
             else
