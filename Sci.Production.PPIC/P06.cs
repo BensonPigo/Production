@@ -33,11 +33,11 @@ namespace Sci.Production.PPIC
             {
 
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                if ((!MyUtility.Check.Empty(e.FormattedValue) && !MyUtility.Check.Empty(dr["SDPDate"]) && Convert.ToDateTime(e.FormattedValue) != Convert.ToDateTime(dr["SDPDate"])) || !(MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Check.Empty(dr["SDPDate"])))
+                if (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["SDPDate"]))
                 {
                     if (!MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        if ((Convert.ToDateTime(e.FormattedValue) > Convert.ToDateTime(DateTime.Today).AddYears(1) || Convert.ToDateTime(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddYears(-1)))
+                        if ((MyUtility.Convert.GetDate(e.FormattedValue) > Convert.ToDateTime(DateTime.Today).AddYears(1) || MyUtility.Convert.GetDate(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddYears(-1)))
                         {
                             MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
                             dr["SDPDate"] = DBNull.Value;
@@ -98,7 +98,6 @@ namespace Sci.Production.PPIC
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            string sqlCmd;
             DualResult result;
             if (MyUtility.Check.Empty(dateBox1.Value))
             {
@@ -112,8 +111,9 @@ namespace Sci.Production.PPIC
                 txtdropdownlist1.Focus();
                 return;
             }
+            StringBuilder sqlCmd = new StringBuilder();
             # region 組SQL
-            sqlCmd = string.Format(@"with OrderData
+            sqlCmd.Append(string.Format(@"with OrderData
 as
 (select o.FactoryID,o.BrandID,o.SewLine,o.ID,o.StyleID,o.CustPONo,o.CustCDID,o.Customize2,o.DoxType,
         oq.Qty,o.Dest,o.SewOffLine,oq.SDPDate,oq.EstPulloutDate,oq.Seq,oq.ShipmodeID,oq.BuyerDelivery,
@@ -122,21 +122,21 @@ as
 	    isnull(o.InspDate,iif(oq.EstPulloutDate is null,dateadd(day,2,o.SewOffLine),dateadd(day,-2,oq.EstPulloutDate))) as InspDate,
 	    iif(oq.BuyerDelivery > o.CRDDate, o.CRDDate, null) as CRDDate
  from Orders o, Order_QtyShip oq
- where o.FtyGroup = '{0}'
+ where o.MDivisionID = '{0}'
  and o.PulloutComplete = 0
  and o.Finished = 0
  and o.Qty > 0
  and o.ID = oq.Id
- and (oq.EstPulloutDate <= '{1}' or dateadd(day,4,o.SewOffLine) <= '{1}')", Sci.Env.User.Factory, Convert.ToDateTime(dateBox1.Value).ToString("d"));
+ and (oq.EstPulloutDate <= '{1}' or dateadd(day,4,o.SewOffLine) <= '{1}')", Sci.Env.User.Keyword, Convert.ToDateTime(dateBox1.Value).ToString("d")));
             if (txtdropdownlist1.SelectedValue.ToString() == "BS")
             {
-                sqlCmd = sqlCmd + " and (o.Category = 'B' or o.Category = 'S')";
+                sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S')");
             }
             else
             {
-                sqlCmd = sqlCmd + string.Format(" and o.Category = '{0}'", txtdropdownlist1.SelectedValue);
+                sqlCmd.Append(string.Format(" and o.Category = '{0}'", txtdropdownlist1.SelectedValue));
             }
-            sqlCmd = sqlCmd + @"),
+            sqlCmd.Append(@"),
 distinctOrder
 as
 (select distinct ID,Seq
@@ -204,10 +204,10 @@ left join CBM on od.ID = cbm.ID and od.Seq = cbm.Seq
 left join CTNDim on od.ID = CTNDim.ID and od.Seq = CTNDim.Seq
 left join BinLocation bl on od.ID = bl.ID and od.Seq = bl.Seq
 left join LastMtlFormA lm on od.id = lm.ID
-left join Country c on c.ID = od.Dest";
+left join Country c on c.ID = od.Dest");
             #endregion
 
-            if (result = DBProxy.Current.Select(null, sqlCmd, out gridData))
+            if (result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData))
             {
                 if (gridData.Rows.Count == 0)
                 {
