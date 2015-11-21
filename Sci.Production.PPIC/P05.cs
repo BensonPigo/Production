@@ -42,11 +42,11 @@ namespace Sci.Production.PPIC
                 if (EditMode)
                 {
                     DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                    if ((!MyUtility.Check.Empty(e.FormattedValue) && !MyUtility.Check.Empty(dr["ReadyDate"]) && Convert.ToDateTime(e.FormattedValue) != Convert.ToDateTime(dr["ReadyDate"])) || !(MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Check.Empty(dr["ReadyDate"])))
+                    if (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["ReadyDate"]))
                     {
                         if (!MyUtility.Check.Empty(e.FormattedValue))
                         {
-                            if ((Convert.ToDateTime(e.FormattedValue) > Convert.ToDateTime(DateTime.Today).AddYears(1) || Convert.ToDateTime(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddYears(-1)))
+                            if ((MyUtility.Convert.GetDate(e.FormattedValue) > Convert.ToDateTime(DateTime.Today).AddYears(1) || MyUtility.Convert.GetDate(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddYears(-1)))
                             {
                                 MyUtility.Msg.WarningBox("< Ready date > is invalid!!");
                                 dr["ReadyDate"] = DBNull.Value;
@@ -58,8 +58,20 @@ namespace Sci.Production.PPIC
                                 dr["ReadyDate"] = e.FormattedValue;
                                 if (!MyUtility.Check.Empty(dr["BuyerDelivery"]) && MyUtility.Check.Empty(dr["EstPulloutDate"]))
                                 {
-                                    dr["Diff"] = ((TimeSpan)(Convert.ToDateTime(dr["BuyerDelivery"]) - Convert.ToDateTime(dr["ReadyDate"]))).Days;
+                                    dr["Diff"] = ((TimeSpan)(MyUtility.Convert.GetDate(dr["BuyerDelivery"]) - MyUtility.Convert.GetDate(dr["ReadyDate"]))).Days;
                                 }
+                                else
+                                {
+                                    dr["Diff"] = DBNull.Value;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            dr["ReadyDate"] = DBNull.Value;
+                            if (MyUtility.Check.Empty(dr["EstPulloutDate"]))
+                            {
+                                dr["Diff"] = DBNull.Value;
                             }
                         }
                     }
@@ -71,18 +83,22 @@ namespace Sci.Production.PPIC
                 if (EditMode)
                 {
                     DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                    if ((!MyUtility.Check.Empty(e.FormattedValue) && !MyUtility.Check.Empty(dr["EstPulloutDate"]) && Convert.ToDateTime(e.FormattedValue) != Convert.ToDateTime(dr["EstPulloutDate"])) || !(MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Check.Empty(dr["EstPulloutDate"])))
+                    if (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["EstPulloutDate"]))
                     {
                         if (!MyUtility.Check.Empty(e.FormattedValue))
                         {
-                            if ((Convert.ToDateTime(e.FormattedValue) > Convert.ToDateTime(DateTime.Today).AddYears(1) || Convert.ToDateTime(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddYears(-1)))
+                            if ((MyUtility.Convert.GetDate(e.FormattedValue) > Convert.ToDateTime(DateTime.Today).AddYears(1) || MyUtility.Convert.GetDate(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddYears(-1)))
                             {
                                 MyUtility.Msg.WarningBox("< Exp P/Out > is invalid!!");
                                 dr["EstPulloutDate"] = DBNull.Value;
                                 if (!MyUtility.Check.Empty(dr["BuyerDelivery"]) && !MyUtility.Check.Empty(dr["ReadyDate"]))
                                  {
-                                     dr["Diff"] = ((TimeSpan)(Convert.ToDateTime(dr["BuyerDelivery"]) - Convert.ToDateTime(dr["ReadyDate"]))).Days;
+                                     dr["Diff"] = ((TimeSpan)(MyUtility.Convert.GetDate(dr["BuyerDelivery"]) - MyUtility.Convert.GetDate(dr["ReadyDate"]))).Days;
                                  }
+                                else
+                                {
+                                    dr["Diff"] = DBNull.Value;
+                                }
 
                                 e.Cancel = true;
                                 return;
@@ -92,7 +108,11 @@ namespace Sci.Production.PPIC
                                 dr["EstPulloutDate"] = e.FormattedValue;
                                 if (!MyUtility.Check.Empty(dr["BuyerDelivery"]))
                                 {
-                                    dr["Diff"] = ((TimeSpan)(Convert.ToDateTime(dr["BuyerDelivery"]) - Convert.ToDateTime(dr["EstPulloutDate"]))).Days;
+                                    dr["Diff"] = ((TimeSpan)(MyUtility.Convert.GetDate(dr["BuyerDelivery"]) - MyUtility.Convert.GetDate(dr["EstPulloutDate"]))).Days;
+                                }
+                                else
+                                {
+                                    dr["Diff"] = DBNull.Value;
                                 }
                             }
                         }
@@ -101,7 +121,11 @@ namespace Sci.Production.PPIC
                             dr["EstPulloutDate"] = DBNull.Value;
                             if (!MyUtility.Check.Empty(dr["BuyerDelivery"]) && !MyUtility.Check.Empty(dr["ReadyDate"]))
                             {
-                                dr["Diff"] = ((TimeSpan)(Convert.ToDateTime(dr["BuyerDelivery"]) - Convert.ToDateTime(dr["ReadyDate"]))).Days;
+                                dr["Diff"] = ((TimeSpan)(MyUtility.Convert.GetDate(dr["BuyerDelivery"]) - MyUtility.Convert.GetDate(dr["ReadyDate"]))).Days;
+                            }
+                            else
+                            {
+                                dr["Diff"] = DBNull.Value;
                             }
                         }
                     }
