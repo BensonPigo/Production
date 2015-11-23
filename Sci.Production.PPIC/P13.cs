@@ -41,24 +41,21 @@ namespace Sci.Production.PPIC
             {
 
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                if (!MyUtility.Check.Empty(e.FormattedValue) && dr["CuttingSP"].ToString() != dr["ID"].ToString())
+                if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetString(dr["CuttingSP"]) != MyUtility.Convert.GetString(dr["ID"]))
                 {
                     MyUtility.Msg.WarningBox("This SP is not cutting sp, no need input Cutting Ready Date.");
                     dr["CutReadyDate"] = DBNull.Value;
                     return;
                 }
 
-                if ((!MyUtility.Check.Empty(e.FormattedValue) && !MyUtility.Check.Empty(dr["CutReadyDate"]) && Convert.ToDateTime(e.FormattedValue) != Convert.ToDateTime(dr["CutReadyDate"])) || !(MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Check.Empty(dr["CutReadyDate"])))
+                if (!MyUtility.Check.Empty(e.FormattedValue) && (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["CutReadyDate"])))
                 {
-                    if (!MyUtility.Check.Empty(e.FormattedValue))
+                    if (MyUtility.Convert.GetDate(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddDays(-30))
                     {
-                        if (Convert.ToDateTime(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddDays(-30))
-                        {
-                            MyUtility.Msg.WarningBox("< Cutting Ready Date > is invalid!!");
-                            dr["CutReadyDate"] = DBNull.Value;
-                            e.Cancel = true;
-                            return;
-                        }
+                        MyUtility.Msg.WarningBox("< Cutting Ready Date > is invalid!!");
+                        dr["CutReadyDate"] = DBNull.Value;
+                        e.Cancel = true;
+                        return;
                     }
                 }
             };
@@ -66,17 +63,14 @@ namespace Sci.Production.PPIC
             sewInLine.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                if ((!MyUtility.Check.Empty(e.FormattedValue) && !MyUtility.Check.Empty(dr["SewInLine"]) && Convert.ToDateTime(e.FormattedValue) != Convert.ToDateTime(dr["SewInLine"])) || !(MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Check.Empty(dr["SewInLine"])))
+                if (!MyUtility.Check.Empty(e.FormattedValue) && (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["SewInLine"])))
                 {
-                    if (!MyUtility.Check.Empty(e.FormattedValue))
+                    if (MyUtility.Convert.GetDate(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddDays(-30))
                     {
-                        if (Convert.ToDateTime(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddDays(-30))
-                        {
-                            MyUtility.Msg.WarningBox("< In Line Date > is invalid!!");
-                            dr["SewInLine"] = DBNull.Value;
-                            e.Cancel = true;
-                            return;
-                        }
+                        MyUtility.Msg.WarningBox("< In Line Date > is invalid!!");
+                        dr["SewInLine"] = DBNull.Value;
+                        e.Cancel = true;
+                        return;
                     }
                 }
             };
@@ -84,7 +78,7 @@ namespace Sci.Production.PPIC
             sewOffLine.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                if (!MyUtility.Check.Empty(e.FormattedValue) && (MyUtility.Check.Empty(dr["SewInLine"]) || (!MyUtility.Check.Empty(dr["SewInLine"]) && (Convert.ToDateTime(e.FormattedValue) < Convert.ToDateTime(dr["SewInLine"])))))
+                if (!MyUtility.Check.Empty(e.FormattedValue) && (MyUtility.Check.Empty(dr["SewInLine"]) || (MyUtility.Convert.GetDate(e.FormattedValue) < MyUtility.Convert.GetDate(dr["SewInLine"]))))
                 {
                     MyUtility.Msg.WarningBox("< Off Line Date > is invalid!!");
                     dr["SewOffLine"] = DBNull.Value;
@@ -100,7 +94,7 @@ namespace Sci.Production.PPIC
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("Select ID,Description From SewingLine Where FactoryId = '{0}'", Sci.Env.User.Factory), "2,16", dr["SewLine"].ToString());
+                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("Select ID,Description From SewingLine Where FactoryId = '{0}'", Sci.Env.User.Factory), "2,16", MyUtility.Convert.GetString(dr["SewLine"]));
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel) { return; }
                         e.EditingControl.Text = item.GetSelectedString();
@@ -111,12 +105,30 @@ namespace Sci.Production.PPIC
             {
 
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                if (!MyUtility.Check.Empty(e.FormattedValue.ToString()))
+                if (!MyUtility.Check.Empty(MyUtility.Convert.GetString(e.FormattedValue)))
                 {
+                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", Sci.Env.User.Factory);
+                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@sewinglineid", MyUtility.Convert.GetString(e.FormattedValue));
 
-                    if (MyUtility.Check.Seek(string.Format("Select ID From SewingLine Where FactoryId = '{0}' and ID = '{1}'", Sci.Env.User.Factory, e.FormattedValue.ToString())) == false)
+
+                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                    cmds.Add(sp1);
+                    cmds.Add(sp2);
+
+                    DataTable SewLineData;
+                    string sqlCmd = "Select ID From SewingLine Where FactoryId = @factoryid and ID = @sewinglineid";
+                    DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out SewLineData);
+
+                    if (!result || SewLineData.Rows.Count <= 0)
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Sewing Line : {0} > not found!!!", e.FormattedValue.ToString()));
+                        if (!result)
+                        {
+                            MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
+                        }
+                        else
+                        {
+                            MyUtility.Msg.WarningBox(string.Format("< Sewing Line : {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
+                        }
                         dr["SewLine"] = "";
                         e.Cancel = true;
                         return;
@@ -236,10 +248,10 @@ namespace Sci.Production.PPIC
             if (MyUtility.Check.Seek(selectSql, out dr))
             {
                 string userName;
-                userName = MyUtility.Check.Empty(dr["extNo"]) ? "" : dr["Name"].ToString();
+                userName = MyUtility.Convert.GetString(dr["Name"]);
                 if (!MyUtility.Check.Empty(dr["extNo"]))
                 {
-                    userName = userName + " #" + dr["extNo"].ToString();
+                    userName = userName + " #" + MyUtility.Convert.GetString(dr["extNo"]);
                 }
                 return userName;
             }
@@ -348,12 +360,12 @@ select *,iif(isnull(SewOutQty,0) >= Qty, tmpActSewOffLine, null) as ActSewOffLin
                     if (dr.RowState == DataRowState.Modified)
                     {
                         updateCmds.Add(string.Format(@"update Orders set SewLine = '{0}', SewInLine = {1}, SewOffLine = {2}, CutReadyDate = {3}, SewRemark = '{4}' where ID = '{5}'",
-                            dr["SewLine"].ToString(),
+                            MyUtility.Convert.GetString(dr["SewLine"]),
                             MyUtility.Check.Empty(dr["SewInLine"]) ? "null" : "'" + Convert.ToDateTime(dr["SewInLine"]).ToString("d") + "'",
                             MyUtility.Check.Empty(dr["SewOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["SewOffLine"]).ToString("d") + "'",
                             MyUtility.Check.Empty(dr["CutReadyDate"]) ? "null" : "'" + Convert.ToDateTime(dr["CutReadyDate"]).ToString("d") + "'",
-                            dr["SewRemark"].ToString(), dr["ID"].ToString()));
-                        allSP.Append(string.Format("'{0}',", dr["ID"].ToString()));
+                            MyUtility.Convert.GetString(dr["SewRemark"]), MyUtility.Convert.GetString(dr["ID"])));
+                        allSP.Append(string.Format("'{0}',", MyUtility.Convert.GetString(dr["ID"])));
                     }
                 }
                 if (allSP.Length != 0)
@@ -363,7 +375,7 @@ select *,iif(isnull(SewOutQty,0) >= Qty, tmpActSewOffLine, null) as ActSewOffLin
                     try
                     {
                         MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource1.DataSource, "Id,SewInLine,SewOffLine",
-                            string.Format("select o.ID,iif(isnull(o.SewInLine,'1900-01-01') <> isnull(t.SewInLine,'1900-01-01'),'1','') as InlineDiff,iif(isnull(o.SewOffLine,'1900-01-01') <> isnull(t.SewOffLine,'1900-01-01'),'1','') as OfflineDiff,o.SewInLine as OInline,t.SewInLine as TInLine,o.SewOffLine as OOffLine,t.SewOffLine as TOffLine from Orders o, #tmp t where o.ID in ({0}) and o.ID = t.ID", allSP.ToString().Substring(0, allSP.ToString().Length - 1)),
+                            string.Format("select o.ID,iif(isnull(o.SewInLine,'1900-01-01') <> isnull(t.SewInLine,'1900-01-01'),'1','') as InlineDiff,iif(isnull(o.SewOffLine,'1900-01-01') <> isnull(t.SewOffLine,'1900-01-01'),'1','') as OfflineDiff,o.SewInLine as OInline,t.SewInLine as TInLine,o.SewOffLine as OOffLine,t.SewOffLine as TOffLine from Orders o, #tmp t where o.ID in ({0}) and o.ID = t.ID", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.Convert.GetString(allSP).Length - 1)),
                             out OrderData);
                     }
                     catch (Exception ex)
@@ -374,18 +386,18 @@ select *,iif(isnull(SewOutQty,0) >= Qty, tmpActSewOffLine, null) as ActSewOffLin
 
                     foreach (DataRow dr in OrderData.Rows)
                     {
-                        if (dr["InlineDiff"].ToString() == "1")
+                        if (MyUtility.Convert.GetString(dr["InlineDiff"]) == "1")
                         {
-                            updateCmds.Add(string.Format(@"insert into Order_History (ID,ColumnName,OldValue,NewValue,Remark,AddName,AddDate)
-values ('{0}','SewInLine',{1},{2},'Sewing Inline Update','{3}',GETDATE()) ", dr["ID"].ToString(),
+                            updateCmds.Add(string.Format(@"insert into Order_History (ID,HisType,OldValue,NewValue,Remark,AddName,AddDate)
+values ('{0}','SewInLine',{1},{2},'Sewing Inline Update','{3}',GETDATE()) ", MyUtility.Convert.GetString(dr["ID"]),
                             MyUtility.Check.Empty(dr["OInline"]) ? "null" : "'" + Convert.ToDateTime(dr["OInline"]).ToString("d") + "'",
                             MyUtility.Check.Empty(dr["TInLine"]) ? "null" : "'" + Convert.ToDateTime(dr["TInLine"]).ToString("d") + "'",
                             Sci.Env.User.UserID));
                         }
-                        if (dr["OfflineDiff"].ToString() == "1")
+                        if (MyUtility.Convert.GetString(dr["OfflineDiff"]) == "1")
                         {
-                            updateCmds.Add(string.Format(@"insert into Order_History (ID,ColumnName,OldValue,NewValue,Remark,AddName,AddDate)
-values ('{0}','SewOffLine',{1},{2},'Sewing Offline Update','{3}',GETDATE()) ", dr["ID"].ToString(),
+                            updateCmds.Add(string.Format(@"insert into Order_History (ID,HisType,OldValue,NewValue,Remark,AddName,AddDate)
+values ('{0}','SewOffLine',{1},{2},'Sewing Offline Update','{3}',GETDATE()) ", MyUtility.Convert.GetString(dr["ID"]),
                             MyUtility.Check.Empty(dr["OOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["OOffLine"]).ToString("d") + "'",
                             MyUtility.Check.Empty(dr["TOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["TOffLine"]).ToString("d") + "'",
                             Sci.Env.User.UserID));
@@ -402,7 +414,7 @@ values ('{0}','SewOffLine',{1},{2},'Sewing Offline Update','{3}',GETDATE()) ", d
                         }
                     }
 
-                    DualResult result1 = DBProxy.Current.Select(null, string.Format(@"with ttlSewTime
+                    string sqlCmd = string.Format(@"with ttlSewTime
 as
 (select o.ID, isnull(sum(t.TotalSewingTime),0) as ttlSewTime
  from Orders o, TimeStudy t
@@ -410,7 +422,7 @@ as
  and t.StyleID = o.StyleID
  and t.SeasonID = o.SeasonID
  and o.ID in ({0})
- group by ID
+ group by o.ID
 )
 
 select isnull(s.ID,0) as ID, o.ID as OrderID, SUBSTRING(o.SewLine,1,2) as SewingLineID,o.Qty as AlloQty,
@@ -422,8 +434,10 @@ from Orders o
 left join SewingSchedule s on s.OrderID = o.ID
 left join SewingLine sl on sl.ID = o.SewLine and sl.FactoryID = o.FtyGroup
 left join ttlSewTime st on st.ID = o.ID
-where o.ID in ({0})", allSP.ToString().Substring(0, allSP.ToString().Length - 1), Sci.Env.User.UserID), out SewingData);
-                    
+where o.ID in ({0})", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.Convert.GetString(allSP).Length - 1), Sci.Env.User.UserID);
+
+                    DualResult result1 = DBProxy.Current.Select(null, sqlCmd, out SewingData);
+
                     if (!result1)
                     {
                         MyUtility.Msg.ErrorBox("Query Sewing faill.\r\n" + result1.ToString());
@@ -432,8 +446,8 @@ where o.ID in ({0})", allSP.ToString().Substring(0, allSP.ToString().Length - 1)
                     if (MyUtility.Tool.CursorUpdateTable(SewingData, "SewingSchedule", null))
                     {
                         //先刪除已不存在訂單中的資料
-                        result1 = DBProxy.Current.Execute(null,string.Format(@"delete from SewingSchedule_Detail where OrderID in ({0})
-and not exists (select * from Order_Qty where ID = OrderID and Article = Article and SizeCode = SizeCode)", allSP.ToString().Substring(0, allSP.ToString().Length - 1)));
+                        result1 = DBProxy.Current.Execute(null, string.Format(@"delete from SewingSchedule_Detail where OrderID in ({0})
+and not exists (select * from Order_Qty where ID = OrderID and Article = Article and SizeCode = SizeCode)", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.Convert.GetString(allSP).Length - 1)));
                         if (!result1)
                         {
                             MyUtility.Msg.ErrorBox("Delete Sewing faill.\r\n" + result1.ToString());
@@ -445,7 +459,7 @@ o.SewLine as SewingLineID,oq.Article,oq.SizeCode,oq.Qty as AlloQty
 from Orders o
 left join Order_Qty oq on oq.ID = o.ID
 left join SewingSchedule s on oq.ID = s.OrderID
-where o.ID in ({0})", allSP.ToString().Substring(0, allSP.ToString().Length - 1)), out SewingData);
+where o.ID in ({0})", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.Convert.GetString(allSP).Length - 1)), out SewingData);
                         if (!result1)
                         {
                             MyUtility.Msg.ErrorBox("Query Sewing faill.\r\n" + result1.ToString());
@@ -476,7 +490,7 @@ where o.ID in ({0})", allSP.ToString().Substring(0, allSP.ToString().Length - 1)
             }
             catch (Exception ex)
             {
-                MyUtility.Msg.ErrorBox("To Excel error.\r\n"+ex.ToString());
+                MyUtility.Msg.ErrorBox("To Excel error.\r\n" + ex.ToString());
                 return;
             }
 
@@ -486,7 +500,7 @@ where o.ID in ({0})", allSP.ToString().Substring(0, allSP.ToString().Length - 1)
             dlg.RestoreDirectory = true;
             dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
             dlg.Title = "Save as Excel File";
-            dlg.FileName = "SampleSewingSchedule_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
+            //dlg.FileName = "SampleSewingSchedule_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
 
             dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
 
