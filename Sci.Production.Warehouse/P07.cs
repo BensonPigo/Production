@@ -349,7 +349,7 @@ namespace Sci.Production.Warehouse
                     IList<DataRow> x;
                     if (MyUtility.Check.Empty(CurrentMaintain["exportid"]))
                     {
-                        Sci.Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(CurrentDetailData["poid"].ToString(), CurrentDetailData["seq"].ToString(), "seq1 !='7'");
+                        Sci.Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(CurrentDetailData["poid"].ToString(), CurrentDetailData["seq"].ToString(), "left(m.seq1,1) !='7'");
                         DialogResult result = selepoitem.ShowDialog();
                         if (result == DialogResult.Cancel) { return; }
                         x = selepoitem.GetSelecteds();
@@ -372,7 +372,7 @@ where e.PoID ='{0}' and e.id = '{1}'", CurrentDetailData["poid"], CurrentMaintai
                        
                         Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(poitems
                             , "Seq,refno,description,colorid,eta,inqty,stockunit,outqty,adjustqty,balanceqty,linvqty"
-                            , "6,8,8,8,10,6,6,6,6,6,6", CurrentDetailData["seq"].ToString(), "Seq,Ref#,Description,Color,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty");
+                            , "6,15,25,8,10,6,6,6,6,6,6", CurrentDetailData["seq"].ToString(), "Seq,Ref#,Description,Color,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty");
                         item.Width = 1024;
                         DialogResult result = item.ShowDialog();
                         if (result == DialogResult.Cancel) { return; }
