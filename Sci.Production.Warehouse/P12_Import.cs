@@ -52,14 +52,16 @@ namespace Sci.Production.Warehouse
 ,'' Dyelot
 ,0.00 as Qty
 ,'B' StockType
-,c.ukey
+,c.ukey as ftyinventoryukey
+,c.mdivisionid
 ,(select mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where ukey = c.ukey) t for xml path('')) location
 ,c.inqty-c.outqty + c.adjustqty as balance
 from dbo.PO_Supp_Detail a 
 inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join fabric on fabric.scirefno = a.scirefno
 inner join mtltype on mtltype.id = fabric.mtltypeid
-Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and upper(dbo.mtltype.productiontype) = 'PACKING'", sp_b);
+Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and upper(dbo.mtltype.Issuetype) = 'PACKING' 
+and mdivisionid = '{1}' ", sp_b, Sci.Env.User.Keyword);
 
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
@@ -85,7 +87,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and upp
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //3
                 .Numeric("balance", header: "Stock Qty", iseditable: true, decimal_places: 2, integer_places: 10) //4
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10)  //5
-               .EditText("Description", header: "Description", iseditingreadonly: true); //6
+               .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(40)); //6
 
             this.grid1.Columns[5].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
 

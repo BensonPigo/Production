@@ -46,7 +46,7 @@ namespace Sci.Production.Warehouse
             {
                 // 建立可以符合回傳的Cursor
                 
-                 strSQLCmd.Append(string.Format(@"select 0 as selected ,'' id, a.id as PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+                 strSQLCmd.Append(string.Format(@"select 0 as selected ,'' id, c.mdivisionid,a.id as PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
 ,a.FabricType
 ,a.stockunit
 ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
@@ -54,12 +54,12 @@ namespace Sci.Production.Warehouse
 ,c.Dyelot
 ,0.00 as Qty
 ,'B' StockType
-,c.ukey
-,(select cast(mtllocationid as varchar)+',' from (select mtllocationid from ftyinventory_detail where ukey = c.ukey))t for xml path('')) as location
+,c.ukey as ftyinventoryukey
+,(select cast(mtllocationid as varchar)+',' from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')) as location
 ,c.inqty-c.outqty + c.adjustqty as balance
 from dbo.PO_Supp_Detail a 
 inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
-Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", sp)); // 
+Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid='{1}'", sp, Sci.Env.User.Keyword)); // 
                 if (!MyUtility.Check.Empty(seq))
                 {
                     strSQLCmd.Append(string.Format(@" and a.seq1 = '{0}' and a.seq2='{1}'",seq.Substring(0,3),seq.Substring(3,2)));
