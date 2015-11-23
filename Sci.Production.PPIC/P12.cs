@@ -14,13 +14,13 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = "FTYGroup = '" + Sci.Env.User.Factory + "'";
+            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
         }
 
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            numericBox3.Value = Convert.ToDecimal(MyUtility.GetValue.Lookup(string.Format("select isnull(sum(QAQty),0) as QAQty from SewingOutput_Detail where OrderId = '{0}'",CurrentMaintain["ID"].ToString())));
+            numericBox3.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format("select isnull(sum(QAQty),0) as QAQty from SewingOutput_Detail where OrderId = '{0}'",MyUtility.Convert.GetString(CurrentMaintain["ID"]))));
         }
     }
 }
