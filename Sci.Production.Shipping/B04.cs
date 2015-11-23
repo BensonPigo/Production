@@ -16,13 +16,7 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
-            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("C", "CBM");
-            comboBox1_RowSource.Add("G", "G.W.");
-            comboBox1_RowSource.Add(" ", "Number of Deliver Sheets");
-            comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
+            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "C,CBM,G,G.W.,,Number of Deliver Sheets");
         }
 
         protected override void OnDetailEntered()
@@ -34,7 +28,7 @@ namespace Sci.Production.Shipping
             DualResult selectResult = DBProxy.Current.Select("Finance", selectCommand, out AccountNoTable);
             if (AccountNoTable != null && AccountNoTable.Rows.Count > 0)
             {
-                this.displayBox2.Text = AccountNoTable.Rows[0]["Name"].ToString();
+                this.displayBox2.Text = MyUtility.Convert.GetString(AccountNoTable.Rows[0]["Name"]);
             }
             else
             {
