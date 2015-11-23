@@ -354,7 +354,7 @@ when not matched then
 ,m.seq1
 ,m.seq2
 ,p.scirefno
-from dbo.mdivisionpodetail m left join dbo.PO_Supp_Detail p on m.poid = p.id and m.seq1 = p.seq2 and m.seq2 = p.seq2
+from dbo.mdivisionpodetail m left join dbo.PO_Supp_Detail p on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
 where m.mdivisionid = '{1}' and m.poid ='{0}'", poid, Sci.Env.User.Keyword);
 
             if(!(MyUtility.Check.Empty(filters)))
