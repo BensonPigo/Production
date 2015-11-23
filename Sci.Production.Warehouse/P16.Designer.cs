@@ -45,11 +45,9 @@
             this.label2 = new Sci.Win.UI.Label();
             this.button1 = new Sci.Win.UI.Button();
             this.button2 = new Sci.Win.UI.Button();
-            this.label4 = new Sci.Win.UI.Label();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
             this.displayBox3 = new Sci.Win.UI.DisplayBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
@@ -70,11 +68,9 @@
             // 
             this.masterpanel.Controls.Add(this.comboBox1);
             this.masterpanel.Controls.Add(this.displayBox3);
-            this.masterpanel.Controls.Add(this.displayBox2);
             this.masterpanel.Controls.Add(this.label7);
             this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.textBox2);
-            this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.button2);
             this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.label2);
@@ -109,11 +105,9 @@
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.button1, 0);
             this.masterpanel.Controls.SetChildIndex(this.button2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
             // 
@@ -136,6 +130,18 @@
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(1058, 293);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -330,15 +336,6 @@
             this.button2.Text = "UnFinish";
             this.button2.UseVisualStyleBackColor = true;
             // 
-            // label4
-            // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(540, 13);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 65;
-            this.label4.Text = "Factory";
-            // 
             // textBox2
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
@@ -368,23 +365,13 @@
             this.label7.TabIndex = 68;
             this.label7.Text = "Apv. Date";
             // 
-            // displayBox2
-            // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "factoryid", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(618, 13);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(120, 23);
-            this.displayBox2.TabIndex = 69;
-            // 
             // displayBox3
             // 
             this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox3.Location = new System.Drawing.Point(618, 45);
             this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(120, 23);
+            this.displayBox3.Size = new System.Drawing.Size(147, 23);
             this.displayBox3.TabIndex = 70;
             // 
             // comboBox1
@@ -407,11 +394,11 @@
             this.ClientSize = new System.Drawing.Size(1066, 577);
             this.DefaultControl = "textBox2";
             this.DefaultControlForEdit = "textBox2";
-            this.DefaultOrder = "ID";
+            this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;
             this.GridAlias = "issuelack_detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "poid,seq1,seq2,roll,Dyelot";
+            this.GridUniqueKey = "mdivisionid,poid,seq1,seq2,roll,Dyelot";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;
@@ -461,11 +448,9 @@
         private Win.UI.Button button1;
         private Win.UI.ComboBox comboBox1;
         private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
         private Win.UI.Label label7;
         private Win.UI.Label label6;
         private Win.UI.TextBox textBox2;
-        private Win.UI.Label label4;
         private Win.UI.Button button2;
     }
 }
