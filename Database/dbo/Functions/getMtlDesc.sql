@@ -26,15 +26,6 @@ BEGIN
 		, @po_desc=@po_desc + ISNULL(p.Remark,'')
 		from dbo.po_supp_detail p WHERE ID=@poid and seq1 = @seq1 and seq2=@seq2;
 
-	IF @scirefno is null or @scirefno = ''
-	BEGIN
-		SELECT @scirefno=p.SCIRefno
-		, @po_desc=@po_desc + ISNULL(p.sizespec,'')
-		, @po_desc=@po_desc + ISNULL(p.Special,'')
-		, @po_desc=@po_desc + ISNULL(p.Remark,'')
-			from dbo.PO_Artwork p WHERE ID=@poid and seq1 = @seq1 and seq2=@seq2;
-	END
-
 	IF  @type = 1
 	BEGIN
 		if @repeat = 0
