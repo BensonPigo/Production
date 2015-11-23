@@ -30,8 +30,8 @@ namespace Sci.Production.Sewing
             DataRow sysData;
             if (MyUtility.Check.Seek("select SewLock,StdTMS from System", out sysData))
             {
-                systemLockDate = Convert.ToDateTime(sysData["SewLock"]);
-                systemTMS = Convert.ToDecimal(sysData["StdTMS"]);
+                systemLockDate = (DateTime)MyUtility.Convert.GetDate(sysData["SewLock"]);
+                systemTMS = MyUtility.Convert.GetDecimal(sysData["StdTMS"]);
             }
             else
             {
@@ -80,12 +80,30 @@ where sd.ID = '{0}'", masterID);
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["OrderID"].ToString())
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["OrderID"]))
                     {
-                        DataRow moData;
-                        if (!MyUtility.Check.Seek(string.Format("select * from MockupOrder where Junk = 0 and FTYGroup = '{0}' and ID = '{1}'", Sci.Env.User.Factory, e.FormattedValue.ToString()), out moData))
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid",Sci.Env.User.Factory);
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@id", MyUtility.Convert.GetString(e.FormattedValue));
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+                        cmds.Add(sp2);
+
+                        DataTable moData;
+                        string sqlCmd = "select * from MockupOrder where Junk = 0 and FTYGroup = @factoryid and ID = @id";
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out moData);
+                        if (!result || moData.Rows.Count <= 0)
                         {
-                            MyUtility.Msg.WarningBox(string.Format("Data not found!!!"));
+                            if (!result)
+                            {
+                                MyUtility.Msg.WarningBox("Sql connection fail!\r\n"+result.ToString());
+                            }
+                            else
+                            {
+                                MyUtility.Msg.WarningBox(string.Format("Data not found!!!"));
+                            }
+                            
                             dr["OrderID"] = "";
                             dr["TMS"] = 0;
                             dr["MockupID"] = "";
@@ -93,7 +111,7 @@ where sd.ID = '{0}'", masterID);
                             dr["AccuQty"] = 0;
                             dr["VarQty"] = 0;
                             dr["QAQty"] = 0;
-                            dr["BalQty"] = Convert.ToInt32(dr["Qty"]) - Convert.ToInt32(dr["AccuQty"]) - Convert.ToInt32(dr["QAQty"]);
+                            dr["BalQty"] = 0;
                             dr["InlineQty"] = 0;
                             dr["DefectQty"] = 0;
                             dr["WorkHour"] = 0;
@@ -104,14 +122,13 @@ where sd.ID = '{0}'", masterID);
                         else
                         {
                             dr["OrderID"] = e.FormattedValue.ToString();
-                            //自動算出TMS值，等Trade將Prg: GetSOCpu()完成再補
-                            dr["TMS"] = MyUtility.Math.Round(Convert.ToDecimal(moData["CPU"]) * Convert.ToDecimal(moData["CPUFactor"]) * systemTMS);
-                            dr["MockupID"] = moData["MockupID"].ToString();
-                            dr["Qty"] = Convert.ToInt32(moData["Qty"]);
-                            dr["AccuQty"] = Convert.ToInt32(MyUtility.GetValue.Lookup(string.Format("select isnull(sum(QAQty),0) from SewingOutput_Detail where OrderId = '{0}'", dr["OrderID"].ToString())));
-                            dr["VarQty"] = Convert.ToInt32(dr["Qty"]) - Convert.ToInt32(dr["AccuQty"]);
+                            dr["TMS"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(moData.Rows[0]["CPU"]) * MyUtility.Convert.GetDecimal(moData.Rows[0]["CPUFactor"]) * systemTMS);
+                            dr["MockupID"] = MyUtility.Convert.GetString(moData.Rows[0]["MockupID"]);
+                            dr["Qty"] = MyUtility.Convert.GetInt(moData.Rows[0]["Qty"]);
+                            dr["AccuQty"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("select isnull(sum(QAQty),0) from SewingOutput_Detail where OrderId = '{0}'", MyUtility.Convert.GetString(dr["OrderID"]))));
+                            dr["VarQty"] = MyUtility.Convert.GetInt(dr["Qty"]) - MyUtility.Convert.GetInt(dr["AccuQty"]);
                             dr["QAQty"] = 0;
-                            dr["BalQty"] = Convert.ToInt32(dr["Qty"]) - Convert.ToInt32(dr["AccuQty"]) - Convert.ToInt32(dr["QAQty"]);
+                            dr["BalQty"] = MyUtility.Convert.GetInt(dr["Qty"]) - MyUtility.Convert.GetInt(dr["AccuQty"]) - MyUtility.Convert.GetInt(dr["QAQty"]);
                             dr["InlineQty"] = 0;
                             dr["DefectQty"] = 0;
                             dr["WorkHour"] = 0;
@@ -126,18 +143,18 @@ where sd.ID = '{0}'", masterID);
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["QAQty"].ToString())
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetInt(e.FormattedValue) != MyUtility.Convert.GetInt(dr["QAQty"]))
                     {
-                        if (Convert.ToInt32(e.FormattedValue) > Convert.ToInt32(dr["VarQty"]))
+                        if (MyUtility.Convert.GetInt(e.FormattedValue) > MyUtility.Convert.GetInt(dr["VarQty"]))
                         {
                             MyUtility.Msg.WarningBox("Output Qty can't exceed Variance!");
-                            dr["QAQty"] = dr["QAQty"].ToString();
+                            dr["QAQty"] = dr["QAQty"];
                             return;
                         }
                         else
                         {
-                            dr["QAQty"] = e.FormattedValue.ToString();
-                            dr["BalQty"] = Convert.ToInt32(dr["Qty"]) - Convert.ToInt32(dr["AccuQty"]) - Convert.ToInt32(dr["QAQty"]);
+                            dr["QAQty"] = MyUtility.Convert.GetInt(e.FormattedValue);
+                            dr["BalQty"] = MyUtility.Convert.GetInt(dr["Qty"]) - MyUtility.Convert.GetInt(dr["AccuQty"]) - MyUtility.Convert.GetInt(dr["QAQty"]);
                             ReCalculateDefectAndRFT(dr);
                         }
                     }
@@ -149,9 +166,9 @@ where sd.ID = '{0}'", masterID);
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["InlineQty"].ToString())
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetInt(e.FormattedValue) != MyUtility.Convert.GetInt(dr["InlineQty"]))
                     {
-                        dr["InlineQty"] = e.FormattedValue.ToString();
+                        dr["InlineQty"] = MyUtility.Convert.GetInt(e.FormattedValue);
                         ReCalculateDefectAndRFT(dr);
                     }
                 }
@@ -184,11 +201,12 @@ where sd.ID = '{0}'", masterID);
             CurrentMaintain["Team"] = "A";
             CurrentMaintain["WorkHour"] = 0;
             CurrentMaintain["Status"] = "New";
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
         }
 
         protected override bool ClickEditBefore()
         {
-            if (CurrentMaintain["Status"].ToString() == "Locked")
+            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Locked")
             {
                 MyUtility.Msg.WarningBox("This resord is < Locked >, can't modify!!");
                 return false;
@@ -202,10 +220,9 @@ where sd.ID = '{0}'", masterID);
 
             dateBox1.ReadOnly = true;
 
-            if (Convert.ToDateTime(CurrentMaintain["OutputDate"]) <= systemLockDate)
+            if (MyUtility.Convert.GetDate(CurrentMaintain["OutputDate"]) <= systemLockDate)
             {
                 txtsewingline1.ReadOnly = true;
-                txtsewingline1.Enabled = false;
                 numericBox1.ReadOnly = true;
                 numericBox2.ReadOnly = true;
             }
@@ -264,10 +281,10 @@ where sd.ID = '{0}'", masterID);
             }
             else
             {
-                gridQaQty = Convert.ToInt32(SumQty.Rows[0]["sumQAQty"]);
-                gridInlineQty = Convert.ToInt32(SumQty.Rows[0]["sumInlineQty"]);
-                gridDefectQty = Convert.ToInt32(SumQty.Rows[0]["sumDefectQty"]);
-                gridWHours = Convert.ToDecimal(SumQty.Rows[0]["sumWorkHour"]);
+                gridQaQty = MyUtility.Convert.GetInt(SumQty.Rows[0]["sumQAQty"]);
+                gridInlineQty = MyUtility.Convert.GetInt(SumQty.Rows[0]["sumInlineQty"]);
+                gridDefectQty = MyUtility.Convert.GetInt(SumQty.Rows[0]["sumDefectQty"]);
+                gridWHours = MyUtility.Convert.GetDecimal(SumQty.Rows[0]["sumWorkHour"]);
             }
 
 
@@ -278,7 +295,7 @@ where sd.ID = '{0}'", masterID);
                     dr.Delete();
                     continue;
                 }
-                gridTms = gridTms + gridQaQty == 0 ? 0 : (Convert.ToDecimal(dr["TMS"]) * Convert.ToDecimal(dr["QAQty"]) / Convert.ToDecimal(gridQaQty));
+                gridTms = gridTms + gridQaQty == 0 ? 0 : (MyUtility.Convert.GetDecimal(dr["TMS"]) * MyUtility.Convert.GetDecimal(dr["QAQty"]) / MyUtility.Convert.GetDecimal(gridQaQty));
                 recCnt += 1;
             }
 
@@ -289,7 +306,7 @@ where sd.ID = '{0}'", masterID);
                 return false;
             }
 
-            if (gridWHours != Convert.ToDecimal(CurrentMaintain["WorkHour"]))
+            if (gridWHours != MyUtility.Convert.GetDecimal(CurrentMaintain["WorkHour"]))
             {
                 MyUtility.Msg.WarningBox("The working hours summary is not equal to working hours/day, please correct, or else can't be saved.");
                 return false;
@@ -298,7 +315,7 @@ where sd.ID = '{0}'", masterID);
             //GetID
             if (IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "MM", "SewingOutput", DateTime.Today, 3, "Id", null);
+                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", Sci.Env.User.Factory,"Factory","ID") + "MM", "SewingOutput", DateTime.Today, 3, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -311,7 +328,7 @@ where sd.ID = '{0}'", masterID);
             CurrentMaintain["InlineQty"] = gridInlineQty;
             CurrentMaintain["DefectQty"] = gridDefectQty;
             CurrentMaintain["TMS"] = MyUtility.Math.Round(gridTms, 0);
-            CurrentMaintain["Efficiency"] = Convert.ToDecimal(gridQaQty) / (3600 / Convert.ToDecimal(CurrentMaintain["TMS"]) * Convert.ToDecimal(CurrentMaintain["ManHour"])) * 100;
+            CurrentMaintain["Efficiency"] = MyUtility.Convert.GetDecimal(CurrentMaintain["TMS"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["ManHour"]) == 0 ? 0 : MyUtility.Convert.GetDecimal(gridQaQty) / (3600 / MyUtility.Convert.GetDecimal(CurrentMaintain["TMS"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["ManHour"])) * 100;
             return base.ClickSaveBefore();
         }
 
@@ -321,21 +338,15 @@ where sd.ID = '{0}'", masterID);
             txtsewingline1.Enabled = true;
         }
 
-        protected override void ClickUndo()
-        {
-            base.ClickUndo();
-            txtsewingline1.Enabled = true;
-        }
-
         protected override bool ClickDeleteBefore()
         {
-            if (CurrentMaintain["Status"].ToString() == "Locked")
+            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Locked")
             {
                 MyUtility.Msg.WarningBox("This resord is < Locked >, can't delete!!");
                 return false;
             }
 
-            if (Convert.ToDateTime(CurrentMaintain["OutputDate"]) <= systemLockDate)
+            if (MyUtility.Convert.GetDate(CurrentMaintain["OutputDate"]) <= systemLockDate)
             {
                 MyUtility.Msg.WarningBox("The date less then System.sewLock date, can't deleted.");
                 return false;
@@ -368,8 +379,8 @@ where sd.ID = '{0}'", masterID);
 
         private void CalculateManHour()
         {
-            decimal manpower = MyUtility.Check.Empty(CurrentMaintain["Manpower"]) ? 0 : Convert.ToDecimal(CurrentMaintain["Manpower"]);
-            decimal workHour = MyUtility.Check.Empty(CurrentMaintain["WorkHour"]) ? 0 : Convert.ToDecimal(CurrentMaintain["WorkHour"]);
+            decimal manpower = MyUtility.Convert.GetDecimal(CurrentMaintain["Manpower"]);
+            decimal workHour = MyUtility.Convert.GetDecimal(CurrentMaintain["WorkHour"]);
             CurrentMaintain["ManHour"] = Convert.ToString(manpower * workHour);
         }
 
@@ -387,8 +398,8 @@ where sd.ID = '{0}'", masterID);
 
         private void ReCalculateDefectAndRFT(DataRow dr)
         {
-            dr["DefectQty"] = (MyUtility.Check.Empty(dr["InlineQty"]) ? 0 : Convert.ToInt32(dr["InlineQty"])) - (MyUtility.Check.Empty(dr["QAQty"]) ? 0 : Convert.ToInt32(dr["QAQty"]));
-            dr["RFT"] = MyUtility.Check.Empty(dr["InlineQty"]) ? 0 : MyUtility.Math.Round(((MyUtility.Check.Empty(dr["QAQty"]) ? 0 : Convert.ToInt32(dr["QAQty"])) / Convert.ToDecimal(dr["InlineQty"])), 2) * 100;
+            dr["DefectQty"] = MyUtility.Convert.GetInt(dr["InlineQty"]) - MyUtility.Convert.GetInt(dr["QAQty"]);
+            dr["RFT"] = MyUtility.Check.Empty(dr["InlineQty"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetInt(dr["QAQty"]) / MyUtility.Convert.GetDecimal(dr["InlineQty"]), 2) * 100;
         }
 
         //Share < working hours > to SP#
@@ -410,8 +421,8 @@ where sd.ID = '{0}'", masterID);
                 return;
             }
             
-            int recCnt = Convert.ToInt32(SumQaQty.Rows[0]["RecCnt"]);
-            decimal ttlQaqty = Convert.ToDecimal(SumQaQty.Rows[0]["sumQaqty"]);
+            int recCnt = MyUtility.Convert.GetInt(SumQaQty.Rows[0]["RecCnt"]);
+            decimal ttlQaqty = MyUtility.Convert.GetDecimal(SumQaQty.Rows[0]["sumQaqty"]);
             
             decimal subSum = 0;
             foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
@@ -420,13 +431,13 @@ where sd.ID = '{0}'", masterID);
 
                 if (recCnt == 0)
                 {
-                    dr["WorkHour"] = Convert.ToDecimal(CurrentMaintain["WorkHour"]) - subSum;
+                    dr["WorkHour"] = MyUtility.Convert.GetDecimal(CurrentMaintain["WorkHour"]) - subSum;
                 }
                 else
                 {
-                    dr["WorkHour"] = ttlQaqty == 0 ? 0 : MyUtility.Math.Round(Convert.ToDecimal(dr["QAQty"]) * Convert.ToDecimal(dr["TMS"]) / ttlQaqty * Convert.ToDecimal(CurrentMaintain["WorkHour"]), 3);
+                    dr["WorkHour"] = ttlQaqty == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["QAQty"]) * MyUtility.Convert.GetDecimal(dr["TMS"]) / ttlQaqty * MyUtility.Convert.GetDecimal(CurrentMaintain["WorkHour"]), 3);
                 }
-                subSum = subSum + Convert.ToDecimal(dr["WorkHour"]);
+                subSum = subSum + MyUtility.Convert.GetDecimal(dr["WorkHour"]);
             }
         }
 
