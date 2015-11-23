@@ -20,7 +20,11 @@ namespace Sci.Production.Shipping
         {
             InitializeComponent();
             motherData = data;
-            this.DefaultFilter = "ID = '" + motherData["ID"].ToString().Trim() + "'";
+            this.DefaultFilter = "ID = '" + MyUtility.Convert.GetString(motherData["ID"]).Trim() + "'";
+            if (CurrentMaintain == null)
+            {
+                label1.Text = "";
+            }
 
             //選完Supp後要將回寫CurrencyID
             this.txtsubcon1.TextBox1.Validating += (s, e) =>
@@ -56,13 +60,13 @@ namespace Sci.Production.Shipping
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.label1.Text = CurrentMaintain["Status"].ToString();
+            this.label1.Text = MyUtility.Convert.GetString(CurrentMaintain["Status"]);
         }
 
         //檢查是否還有建立的紀錄尚未被confirm，若有則無法新增資料
         protected override bool ClickNewBefore()
         {
-            string sqlCmd = string.Format("select ID from ShipExpense_CanVass where ID = '{0}' and Status = 'New'", this.motherData["ID"].ToString());
+            string sqlCmd = string.Format("select ID from ShipExpense_CanVass where ID = '{0}' and Status = 'New'", MyUtility.Convert.GetString(motherData["ID"]));
             if (MyUtility.Check.Seek(sqlCmd, null))
             {
                 MyUtility.Msg.WarningBox("Still have data not yet confirm, so can't create new record!");
@@ -75,7 +79,7 @@ namespace Sci.Production.Shipping
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["ID"] = motherData["ID"].ToString().Trim();
+            CurrentMaintain["ID"] = MyUtility.Convert.GetString(motherData["ID"]).Trim();
             CurrentMaintain["ChooseSupp"] = 1;
             CurrentMaintain["Status"] = "New";
             this.label1.Text = "New";
@@ -85,7 +89,7 @@ namespace Sci.Production.Shipping
         protected override bool ClickEditBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["Status"].ToString() == "Confirmed")
+            if (MyUtility.Convert.GetString(dr["Status"]) == "Confirmed")
             {
                 MyUtility.Msg.WarningBox("Record is confirmed, can't modify!");
                 return false;
@@ -97,7 +101,7 @@ namespace Sci.Production.Shipping
         protected override bool ClickDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["Status"].ToString() == "Confirmed")
+            if (MyUtility.Convert.GetString(dr["Status"]) == "Confirmed")
             {
                 MyUtility.Msg.WarningBox("Record is confirmed, can't delete!");
                 return false;
@@ -121,32 +125,32 @@ namespace Sci.Production.Shipping
             var currencyId = "";
 
             #region 選取的報價資料
-            switch (CurrentMaintain["ChooseSupp"].ToString())
+            switch (MyUtility.Convert.GetString(CurrentMaintain["ChooseSupp"]))
             {
                 case "1":
-                    suppId = CurrentMaintain["LocalSuppID1"].ToString();
-                    price = double.Parse(CurrentMaintain["Price1"].ToString());
-                    currencyId = CurrentMaintain["CurrencyID1"].ToString();
+                    suppId = MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID1"]);
+                    price = MyUtility.Convert.GetDouble(CurrentMaintain["Price1"]);
+                    currencyId = MyUtility.Convert.GetString(CurrentMaintain["CurrencyID1"]);
                     break;
                 case "2":
-                    suppId = CurrentMaintain["LocalSuppID2"].ToString();
-                    price = double.Parse(CurrentMaintain["Price2"].ToString());
-                    currencyId = CurrentMaintain["CurrencyID2"].ToString();
+                    suppId = MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID2"]);
+                    price = MyUtility.Convert.GetDouble(CurrentMaintain["Price2"]);
+                    currencyId = MyUtility.Convert.GetString(CurrentMaintain["CurrencyID2"]);
                     break;
                 case "3":
-                    suppId = CurrentMaintain["LocalSuppID3"].ToString();
-                    price = double.Parse(CurrentMaintain["Price3"].ToString());
-                    currencyId = CurrentMaintain["CurrencyID3"].ToString();
+                    suppId = MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID3"]);
+                    price = MyUtility.Convert.GetDouble(CurrentMaintain["Price3"]);
+                    currencyId = MyUtility.Convert.GetString(CurrentMaintain["CurrencyID3"]);
                     break;
                 case "4":
-                    suppId = CurrentMaintain["LocalSuppID4"].ToString();
-                    price = double.Parse(CurrentMaintain["Price4"].ToString());
-                    currencyId = CurrentMaintain["CurrencyID4"].ToString();
+                    suppId = MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID4"]);
+                    price = MyUtility.Convert.GetDouble(CurrentMaintain["Price4"]);
+                    currencyId = MyUtility.Convert.GetString(CurrentMaintain["CurrencyID4"]);
                     break;
             }
             #endregion
 
-            if (string.IsNullOrWhiteSpace(suppId) || string.IsNullOrWhiteSpace(currencyId) || price == 0.0)
+            if (MyUtility.Check.Empty(suppId) || MyUtility.Check.Empty(currencyId) || MyUtility.Check.Empty(price))
             {
                 MyUtility.Msg.WarningBox("Choosed Set of data can't be empty!!");
                 return;
@@ -157,15 +161,12 @@ namespace Sci.Production.Shipping
             {
                 try
                 {
-                    string updateCommand = string.Format("Update ShipExpense_CanVass set Status = 'Confirmed', EditName ='{0}', EditDate = '{1}' where UKey = '{2}'", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["UKey"].ToString());
-                    result = Sci.Data.DBProxy.Current.Execute(null, updateCommand);
-
-                    string s1 = "Update ShipExpense set LocalSuppID = @suppId, Price = @price, CurrencyID = @currencyId, CanvassDate = @canvassDate, EditName = @editName, EditDate = @editDate where ID = @id";
-
+                    string updateCommand = string.Format("Update ShipExpense_CanVass set Status = 'Confirmed', EditName ='{0}', EditDate = GETDATE() where UKey = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["UKey"]));
+                    string s1 = "Update ShipExpense set LocalSuppID = @suppId, Price = @price, CurrencyID = @currencyId, CanvassDate = @canvassDate, EditName = @editName, EditDate = GETDATE() where ID = @id";
                     #region 準備sql參數資料
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
                     sp1.ParameterName = "@id";
-                    sp1.Value = CurrentMaintain["ID"].ToString();
+                    sp1.Value = MyUtility.Convert.GetString(CurrentMaintain["ID"]);
 
                     System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
                     sp2.ParameterName = "@suppId";
@@ -187,10 +188,6 @@ namespace Sci.Production.Shipping
                     sp6.ParameterName = "@editName";
                     sp6.Value = Sci.Env.User.UserID;
 
-                    System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
-                    sp7.ParameterName = "@editDate";
-                    sp7.Value = DateTime.Now;
-
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                     cmds.Add(sp1);
                     cmds.Add(sp2);
@@ -198,9 +195,9 @@ namespace Sci.Production.Shipping
                     cmds.Add(sp4);
                     cmds.Add(sp5);
                     cmds.Add(sp6);
-                    cmds.Add(sp7);
                     #endregion
 
+                    result = Sci.Data.DBProxy.Current.Execute(null, updateCommand);
                     result2 = Sci.Data.DBProxy.Current.Execute(null, s1, cmds);
 
                     if (result && result2)
@@ -209,12 +206,14 @@ namespace Sci.Production.Shipping
                     }
                     else
                     {
+                        transactionScope.Dispose();
                         MyUtility.Msg.WarningBox("Confirm failed, Pleaes re-try");
                     }
 
                 }
                 catch (Exception ex)
                 {
+                    transactionScope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }

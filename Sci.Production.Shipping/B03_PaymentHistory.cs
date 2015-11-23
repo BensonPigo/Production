@@ -18,15 +18,15 @@ namespace Sci.Production.Shipping
         {
             InitializeComponent();
             this.motherData = data;
-            this.displayBox1.Text = motherData["ID"].ToString();
-            this.editBox1.Text = motherData["Description"].ToString();
+            this.displayBox1.Text = MyUtility.Convert.GetString(motherData["ID"]);
+            this.editBox1.Text = MyUtility.Convert.GetString(motherData["Description"]);
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            string selectCommand = string.Format("select a.CDate, a.ID, b.Qty, b.CurrencyID, b.Price,b.Rate, b.Amount, c.Abb from ShippingAP a, ShippingAP_Detail b, LocalSupp c where a.ID = b.ID and b.ShipExpenseID = '{0}' and a.LocalSuppID = c.ID order by a.CDate", this.motherData["ID"].ToString());
+            string selectCommand = string.Format("select a.CDate, a.ID, b.Qty, b.CurrencyID, b.Price,b.Rate, b.Amount, c.Abb from ShippingAP a, ShippingAP_Detail b, LocalSupp c where a.ID = b.ID and b.ShipExpenseID = '{0}' and a.LocalSuppID = c.ID order by a.CDate", MyUtility.Convert.GetString(motherData["ID"]));
             DataTable selectDataTable;
             DualResult selectResult = DBProxy.Current.Select(null, selectCommand, out selectDataTable);
             bindingSource1.DataSource = selectDataTable;
@@ -43,11 +43,6 @@ namespace Sci.Production.Shipping
                  .Numeric("Rate", header: "Rate", decimal_places: 6)
                  .Numeric("Amount", header: "Amount", decimal_places: 4)
                  .Text("Abb", header: "Supplier - Abb", width: Widths.AnsiChars(3));
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            this.Close();
         }
     }
 }
