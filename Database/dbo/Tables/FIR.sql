@@ -1,10 +1,11 @@
 ﻿CREATE TABLE [dbo].[FIR] (
     [ID]                  BIGINT          IDENTITY (1, 1) NOT NULL,
     [POID]                VARCHAR (13)    CONSTRAINT [DF_FIR_POID] DEFAULT ('') NOT NULL,
-    [SEQ]                 VARCHAR (5)     CONSTRAINT [DF_FIR_SEQ] DEFAULT ('') NOT NULL,
+    [SEQ1]                VARCHAR (3)     CONSTRAINT [DF_FIR_SEQ] DEFAULT ('') NOT NULL,
+    [SEQ2]                VARCHAR (2)     CONSTRAINT [DF_FIR_SEQ2] DEFAULT ('') NOT NULL,
     [Suppid]              VARCHAR (6)     CONSTRAINT [DF_FIR_Suppid] DEFAULT ('') NOT NULL,
     [SCIRefno]            VARCHAR (26)    CONSTRAINT [DF_FIR_SCIRefno] DEFAULT ('') NOT NULL,
-    [BrandRefno]          VARCHAR (20)    CONSTRAINT [DF_FIR_BrandRefno] DEFAULT ('') NOT NULL,
+    [Refno]               VARCHAR (20)    CONSTRAINT [DF_FIR_BrandRefno] DEFAULT ('') NOT NULL,
     [ReceivingID]         VARCHAR (13)    CONSTRAINT [DF_FIR_ReceivingID] DEFAULT ('') NULL,
     [ReplacementReportID] VARCHAR (13)    CONSTRAINT [DF_FIR_ReplacementReportID] DEFAULT ('') NULL,
     [ArriveQty]           NUMERIC (10, 2) CONSTRAINT [DF_FIR_ArriveQty] DEFAULT ((0)) NULL,
@@ -40,6 +41,8 @@
 );
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Fabric Inspection Report', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR';
 
@@ -53,7 +56,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購單�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'SEQ';
+
 
 
 GO
@@ -65,7 +68,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SCI Refno',
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠商Refno', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'BrandRefno';
+
 
 
 GO
@@ -190,4 +193,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'狀態', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'Status';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'SEQ1';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠商Refno', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'Refno';
 

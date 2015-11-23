@@ -4,7 +4,8 @@
     [SEQ1]                VARCHAR (3)     CONSTRAINT [DF_AIR_SEQ] DEFAULT ('') NOT NULL,
     [Suppid]              VARCHAR (6)     CONSTRAINT [DF_AIR_Suppid] DEFAULT ('') NOT NULL,
     [SCIRefno]            VARCHAR (26)    CONSTRAINT [DF_AIR_SCIRefno] DEFAULT ('') NOT NULL,
-    [BrandRefno]          VARCHAR (20)    CONSTRAINT [DF_AIR_BrandRefno] DEFAULT ('') NOT NULL,
+    [SEQ2]                VARCHAR (2)     CONSTRAINT [DF__tmp_ms_xx___Seq2__2568315E] DEFAULT ('') NULL,
+    [Refno]               VARCHAR (20)    CONSTRAINT [DF_AIR_BrandRefno] DEFAULT ('') NOT NULL,
     [ArriveQty]           NUMERIC (10, 2) CONSTRAINT [DF_AIR_ArriveQty] DEFAULT ((0)) NULL,
     [InspQty]             NUMERIC (10, 2) CONSTRAINT [DF_AIR_InspQty] DEFAULT ((0)) NULL,
     [RejectQty]           NUMERIC (10, 2) CONSTRAINT [DF_AIR_RejectQty] DEFAULT ((0)) NULL,
@@ -21,9 +22,10 @@
     [AddDate]             DATETIME        NULL,
     [EditName]            VARCHAR (10)    CONSTRAINT [DF_AIR_EditName] DEFAULT ('') NULL,
     [EditDate]            DATETIME        NULL,
-    [Seq2]                VARCHAR (2)     NULL DEFAULT (''),
     CONSTRAINT [PK_AIR] PRIMARY KEY CLUSTERED ([ID] ASC, [ReceivingID] ASC)
 );
+
+
 
 
 GO
@@ -51,7 +53,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SCI Refno',
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Brand Refno', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AIR', @level2type = N'COLUMN', @level2name = N'BrandRefno';
+
 
 
 GO
@@ -116,4 +118,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AIR', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Brand Refno', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AIR', @level2type = N'COLUMN', @level2name = N'Refno';
 

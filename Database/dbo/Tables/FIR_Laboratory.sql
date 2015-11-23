@@ -1,7 +1,8 @@
 ﻿CREATE TABLE [dbo].[FIR_Laboratory] (
     [ID]                BIGINT        CONSTRAINT [DF_FIR_Laboratory_ID] DEFAULT ((0)) NOT NULL,
     [POID]              VARCHAR (13)  CONSTRAINT [DF_FIR_Laboratory_POID] DEFAULT ('') NOT NULL,
-    [SEQ]               VARCHAR (5)   CONSTRAINT [DF_FIR_Laboratory_SEQ] DEFAULT ('') NOT NULL,
+    [SEQ1]              VARCHAR (3)   CONSTRAINT [DF_FIR_Laboratory_SEQ] DEFAULT ('') NOT NULL,
+    [SEQ2]              VARCHAR (2)   CONSTRAINT [DF_FIR_Laboratory_SEQ2] DEFAULT ('') NOT NULL,
     [InspDeadline]      DATE          NULL,
     [Crocking]          VARCHAR (1)   CONSTRAINT [DF_FIR_Laboratory_Crocking] DEFAULT ('') NULL,
     [Heat]              VARCHAR (1)   CONSTRAINT [DF_FIR_Laboratory_Heat] DEFAULT ('') NULL,
@@ -24,6 +25,8 @@
 );
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Laboratory Crocking & shrinkage Test', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Laboratory';
 
@@ -37,7 +40,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購單�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Laboratory', @level2type = N'COLUMN', @level2name = N'SEQ';
+
 
 
 GO
@@ -110,4 +113,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'熱縮確�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'水洗確認', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Laboratory', @level2type = N'COLUMN', @level2name = N'WashEncode';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Laboratory', @level2type = N'COLUMN', @level2name = N'SEQ1';
 

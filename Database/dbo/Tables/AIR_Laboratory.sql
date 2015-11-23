@@ -1,7 +1,8 @@
 ﻿CREATE TABLE [dbo].[AIR_Laboratory] (
     [ID]            BIGINT          CONSTRAINT [DF_AIR_Laboratory_ID] DEFAULT ((0)) NOT NULL,
     [POID]          VARCHAR (13)    CONSTRAINT [DF_AIR_Laboratory_POID] DEFAULT ('') NOT NULL,
-    [SEQ]           VARCHAR (5)     CONSTRAINT [DF_AIR_Laboratory_SEQ] DEFAULT ('') NOT NULL,
+    [SEQ1]          VARCHAR (3)     CONSTRAINT [DF_AIR_Laboratory_SEQ] DEFAULT ('') NOT NULL,
+    [SEQ2]          VARCHAR (2)     CONSTRAINT [DF_AIR_Laboratory_SEQ2] DEFAULT ('') NOT NULL,
     [Qty]           NUMERIC (10, 2) CONSTRAINT [DF_AIR_Laboratory_Qty] DEFAULT ((0)) NULL,
     [Result]        VARCHAR (1)     CONSTRAINT [DF_AIR_Laboratory_Result] DEFAULT ('') NULL,
     [InspDeadLine]  DATE            NULL,
@@ -23,8 +24,10 @@
     [AddDate]       DATETIME        NULL,
     [EditName]      VARCHAR (10)    CONSTRAINT [DF_AIR_Laboratory_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME        NULL,
-    CONSTRAINT [PK_AIR_Laboratory] PRIMARY KEY CLUSTERED ([ID] ASC, [POID] ASC, [SEQ] ASC)
+    CONSTRAINT [PK_AIR_Laboratory] PRIMARY KEY CLUSTERED ([ID] ASC, [POID] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
+
+
 
 
 GO
@@ -104,7 +107,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購單',
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AIR_Laboratory', @level2type = N'COLUMN', @level2name = N'SEQ';
+
 
 
 GO
@@ -125,4 +128,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'不檢驗�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'烘箱結果', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AIR_Laboratory', @level2type = N'COLUMN', @level2name = N'Oven';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AIR_Laboratory', @level2type = N'COLUMN', @level2name = N'SEQ1';
 
