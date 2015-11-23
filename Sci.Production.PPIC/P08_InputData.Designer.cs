@@ -115,11 +115,22 @@
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(841, 6);
+            this.undo.Location = new System.Drawing.Point(839, 5);
+            this.undo.Size = new System.Drawing.Size(80, 32);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(755, 6);
+            this.save.Location = new System.Drawing.Point(759, 5);
+            this.save.Size = new System.Drawing.Size(80, 32);
+            this.save.TabIndex = 0;
+            // 
+            // left
+            // 
+            this.left.Size = new System.Drawing.Size(80, 32);
+            // 
+            // right
+            // 
+            this.right.Size = new System.Drawing.Size(80, 32);
             // 
             // label1
             // 
@@ -171,7 +182,7 @@
             this.textBox1.Location = new System.Drawing.Point(93, 20);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(50, 23);
-            this.textBox1.TabIndex = 98;
+            this.textBox1.TabIndex = 0;
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // editBox1
@@ -654,7 +665,7 @@
             this.editBox2.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.editBox2.ReadOnly = true;
             this.editBox2.Size = new System.Drawing.Size(234, 36);
-            this.editBox2.TabIndex = 126;
+            this.editBox2.TabIndex = 7;
             this.editBox2.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.editBox2_PopUp);
             // 
             // label19
@@ -732,7 +743,7 @@
             0});
             this.numericBox6.Name = "numericBox6";
             this.numericBox6.Size = new System.Drawing.Size(100, 23);
-            this.numericBox6.TabIndex = 131;
+            this.numericBox6.TabIndex = 2;
             this.numericBox6.Validated += new System.EventHandler(this.numericBox6_Validated);
             // 
             // numericBox7
@@ -754,7 +765,7 @@
             0});
             this.numericBox7.Name = "numericBox7";
             this.numericBox7.Size = new System.Drawing.Size(100, 23);
-            this.numericBox7.TabIndex = 132;
+            this.numericBox7.TabIndex = 4;
             this.numericBox7.Validated += new System.EventHandler(this.numericBox7_Validated);
             // 
             // numericBox8
@@ -776,7 +787,7 @@
             0});
             this.numericBox8.Name = "numericBox8";
             this.numericBox8.Size = new System.Drawing.Size(100, 23);
-            this.numericBox8.TabIndex = 133;
+            this.numericBox8.TabIndex = 6;
             this.numericBox8.Validated += new System.EventHandler(this.numericBox8_Validated);
             // 
             // numericBox9
@@ -798,7 +809,7 @@
             0});
             this.numericBox9.Name = "numericBox9";
             this.numericBox9.Size = new System.Drawing.Size(100, 23);
-            this.numericBox9.TabIndex = 134;
+            this.numericBox9.TabIndex = 8;
             this.numericBox9.Validated += new System.EventHandler(this.numericBox9_Validated);
             // 
             // label23
@@ -880,7 +891,7 @@
             this.textBox2.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(591, 23);
-            this.textBox2.TabIndex = 140;
+            this.textBox2.TabIndex = 9;
             this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
             // 
             // numericBox11
@@ -902,7 +913,7 @@
             0});
             this.numericBox11.Name = "numericBox11";
             this.numericBox11.Size = new System.Drawing.Size(100, 23);
-            this.numericBox11.TabIndex = 141;
+            this.numericBox11.TabIndex = 10;
             // 
             // label27
             // 
@@ -966,7 +977,7 @@
             this.dateBox2.Location = new System.Drawing.Point(193, 478);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(110, 23);
-            this.dateBox2.TabIndex = 146;
+            this.dateBox2.TabIndex = 11;
             // 
             // dateBox3
             // 
@@ -974,7 +985,7 @@
             this.dateBox3.Location = new System.Drawing.Point(193, 505);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(110, 23);
-            this.dateBox3.TabIndex = 147;
+            this.dateBox3.TabIndex = 12;
             // 
             // comboBox1
             // 
@@ -986,7 +997,7 @@
             this.comboBox1.Location = new System.Drawing.Point(238, 532);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(190, 24);
-            this.comboBox1.TabIndex = 148;
+            this.comboBox1.TabIndex = 15;
             // 
             // textBox3
             // 
@@ -997,7 +1008,7 @@
             this.textBox3.Location = new System.Drawing.Point(350, 559);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(384, 23);
-            this.textBox3.TabIndex = 149;
+            this.textBox3.TabIndex = 17;
             // 
             // label31
             // 
@@ -1049,7 +1060,7 @@
             this.textBox4.Location = new System.Drawing.Point(557, 478);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(280, 23);
-            this.textBox4.TabIndex = 153;
+            this.textBox4.TabIndex = 13;
             // 
             // numericBox12
             // 
@@ -1070,7 +1081,7 @@
             0});
             this.numericBox12.Name = "numericBox12";
             this.numericBox12.Size = new System.Drawing.Size(100, 23);
-            this.numericBox12.TabIndex = 154;
+            this.numericBox12.TabIndex = 14;
             // 
             // textBox5
             // 
@@ -1081,7 +1092,7 @@
             this.textBox5.Location = new System.Drawing.Point(485, 532);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(425, 23);
-            this.textBox5.TabIndex = 155;
+            this.textBox5.TabIndex = 16;
             // 
             // textBox6
             // 
@@ -1105,7 +1116,7 @@
             this.textBox7.Location = new System.Drawing.Point(143, 261);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(170, 23);
-            this.textBox7.TabIndex = 157;
+            this.textBox7.TabIndex = 1;
             this.textBox7.Validated += new System.EventHandler(this.textBox7_Validated);
             // 
             // textBox8
@@ -1116,7 +1127,7 @@
             this.textBox8.Location = new System.Drawing.Point(321, 261);
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(170, 23);
-            this.textBox8.TabIndex = 158;
+            this.textBox8.TabIndex = 3;
             // 
             // textBox9
             // 
@@ -1126,7 +1137,7 @@
             this.textBox9.Location = new System.Drawing.Point(499, 261);
             this.textBox9.Name = "textBox9";
             this.textBox9.Size = new System.Drawing.Size(170, 23);
-            this.textBox9.TabIndex = 159;
+            this.textBox9.TabIndex = 5;
             // 
             // P08_InputData
             // 

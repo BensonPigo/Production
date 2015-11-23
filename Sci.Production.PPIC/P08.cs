@@ -19,13 +19,13 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             InitializeComponent();
-            DefaultFilter = string.Format("Type = 'F' and FactoryID = '{0}'",Sci.Env.User.Factory);
+            DefaultFilter = string.Format("Type = 'F' and MDivisionID = '{0}'",Sci.Env.User.Keyword);
             InsertDetailGridOnDoubleClick = false;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select rd.*,(left(rd.Seq1+' ',3)+rd.Seq2) as Seq, [dbo].[getMtlDesc](r.POID,rd.Seq1,rd.Seq2,2,0) as Description,
 isnull((select top(1) ExportId from Receiving where InvNo = rd.INVNo),'') as ExportID,
 CASE rd.Responsibility
@@ -45,31 +45,31 @@ where r.ID = '{0}'", masterID);
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
-            toolbar.cmdJunk.Enabled = !EditMode && CurrentMaintain != null && CurrentMaintain["Status"].ToString() != "Junked" && PublicPrg.Prgs.GetAuthority(CurrentMaintain["ApplyName"].ToString()) && MyUtility.Check.Empty(CurrentMaintain["ApplyDate"]) ? true : false;
-            toolbar.cmdCheck.Enabled = !EditMode && CurrentMaintain != null && CurrentMaintain["Status"].ToString() == "New" && PublicPrg.Prgs.GetAuthority(CurrentMaintain["ApplyName"].ToString()) ? true : false;
-            toolbar.cmdUncheck.Enabled = !EditMode && CurrentMaintain != null && CurrentMaintain["Status"].ToString() == "Checked" && PublicPrg.Prgs.GetAuthority(CurrentMaintain["ApplyName"].ToString()) ? true : false;
-            toolbar.cmdConfirm.Enabled = !EditMode && CurrentMaintain != null && CurrentMaintain["Status"].ToString() == "Checked" && PublicPrg.Prgs.GetAuthority(CurrentMaintain["ApvName"].ToString()) ? true : false;
-            toolbar.cmdUnconfirm.Enabled = !EditMode && CurrentMaintain != null && CurrentMaintain["Status"].ToString() == "Approved" && PublicPrg.Prgs.GetAuthority(CurrentMaintain["ApvName"].ToString()) && MyUtility.Check.Empty(CurrentMaintain["TPECFMDate"]) ? true : false;
+            toolbar.cmdJunk.Enabled = !EditMode && CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "Junked" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["ApplyName"])) && MyUtility.Check.Empty(CurrentMaintain["ApplyDate"]) ? true : false;
+            toolbar.cmdCheck.Enabled = !EditMode && CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "New" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["ApplyName"])) ? true : false;
+            toolbar.cmdUncheck.Enabled = !EditMode && CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Checked" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["ApplyName"])) ? true : false;
+            toolbar.cmdConfirm.Enabled = !EditMode && CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Checked" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["ApvName"])) ? true : false;
+            toolbar.cmdUnconfirm.Enabled = !EditMode && CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Approved" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["ApvName"])) && MyUtility.Check.Empty(CurrentMaintain["TPECFMDate"]) ? true : false;
         }
 
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
 
-            button1.Enabled = !EditMode && CurrentMaintain != null && CurrentMaintain["Status"].ToString() != "Junked" && !MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? true : false;
-            label15.Visible = CurrentMaintain["Status"].ToString() == "Junked";
-            displayBox4.Value = MyUtility.GetValue.Lookup("StyleID", CurrentMaintain["POID"].ToString(), "Orders", "ID");
+            button1.Enabled = !EditMode && CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "Junked" && !MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? true : false;
+            label15.Visible = MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Junked";
+            displayBox4.Value = MyUtility.GetValue.Lookup("StyleID", MyUtility.Convert.GetString(CurrentMaintain["POID"]), "Orders", "ID");
             displayBox5.Value = MyUtility.Check.Empty(CurrentMaintain["ApplyDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApplyDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             displayBox6.Value = MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             displayBox7.Value = MyUtility.Check.Empty(CurrentMaintain["TPECFMDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPECFMDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             displayBox2.Value = MyUtility.Check.Empty(CurrentMaintain["TPEEditDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             DataRow POData;
-            if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO where ID = '{0}'", CurrentMaintain["POID"].ToString()), out POData))
+            if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])), out POData))
             {
-                txttpeuser1.DisplayBox1Binding = POData["POSMR"].ToString();
-                txttpeuser2.DisplayBox1Binding = POData["POHandle"].ToString();
-                txttpeuser4.DisplayBox1Binding = POData["PCSMR"].ToString();
-                txttpeuser5.DisplayBox1Binding = POData["PCHandle"].ToString();
+                txttpeuser1.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POSMR"]);
+                txttpeuser2.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POHandle"]);
+                txttpeuser4.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCSMR"]);
+                txttpeuser5.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCHandle"]);
             }
             else
             {
@@ -128,7 +128,7 @@ where r.ID = '{0}'", masterID);
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["CDate"] = DateTime.Today;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Type"] = "F";
@@ -142,7 +142,7 @@ where r.ID = '{0}'", masterID);
                 return false;
             }
 
-            if (CurrentMaintain["Status"].ToString() == "Junked")
+            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Junked")
             {
                 MyUtility.Msg.WarningBox("This record is junked, can't be modified!!");
                 return false;
@@ -197,7 +197,7 @@ where r.ID = '{0}'", masterID);
             //GetID
             if (IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + CurrentMaintain["POID"].ToString().Substring(0, 8), "ReplacementReport", DateTime.Today, 6, "Id", null);
+                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("KeyWord",MyUtility.GetValue.Lookup("FtyGroup", CurrentMaintain["POID"].ToString(), "Orders", "ID"),"Factory","ID") + MyUtility.Convert.GetString(CurrentMaintain["POID"]).Substring(0, 8), "ReplacementReport", DateTime.Today, 6, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -215,12 +215,36 @@ where r.ID = '{0}'", masterID);
             {
                 if (!MyUtility.Check.Empty(textBox1.Text) && textBox1.OldValue != textBox1.Text)
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from Orders where POID = '{0}' and FtyGroup = '{1}'", textBox1.Text, Sci.Env.User.Factory)))
+                    //sql參數
+                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", textBox1.Text);
+                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
+
+                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                    cmds.Add(sp1);
+                    cmds.Add(sp2);
+                    string sqlCmd = "select ID,FtyGroup from Orders where POID = @poid and MDivisionID = @mdivisionid";
+                    DataTable OrdersData;
+                    DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrdersData);
+
+                    if (!result || OrdersData.Rows.Count <= 0)
                     {
-                        MyUtility.Msg.WarningBox("SP No. not found!!");
+                        if (!result)
+                        {
+                            MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
+                        }
+                        else
+                        {
+                            MyUtility.Msg.WarningBox("SP No. not found!!");
+                        }
                         CurrentMaintain["POID"] = "";
+                        CurrentMaintain["FactoryID"] = "";
                         e.Cancel = true;
                         return;
+                    }
+                    else
+                    {
+                        CurrentMaintain["POID"] = textBox1.Text;
+                        CurrentMaintain["FactoryID"] = OrdersData.Rows[0]["FtyGroup"];
                     }
                 }
             }
@@ -263,7 +287,6 @@ group by f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2,f.Refno,[dbo].getMtlDesc(f.POI
                         ((DataTable)detailgridbs.DataSource).ImportRow(dr);
                     }
                 }
-
             }
         }
 
@@ -272,7 +295,7 @@ group by f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2,f.Refno,[dbo].getMtlDesc(f.POI
         {
             base.ClickJunk();
             DualResult result;
-            string updateCmd = string.Format("update ReplacementReport set Status = 'Junked', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
+            string updateCmd = string.Format("update ReplacementReport set Status = 'Junked', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -294,14 +317,14 @@ group by f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2,f.Refno,[dbo].getMtlDesc(f.POI
             {
                 if (MyUtility.Check.Empty(dr["Responsibility"]) || MyUtility.Check.Empty(dr["ResponsibilityReason"]) || MyUtility.Check.Empty(dr["Suggested"]))
                 {
-                    check.Append(string.Format("SEQ# {0}\r\n",dr["Seq"].ToString()));
+                    check.Append(string.Format("SEQ# {0}\r\n",MyUtility.Convert.GetString(dr["Seq"])));
                 }
                 updateCmds.Add(string.Format(@"update FIR set ReplacementReportID = '{0}' where ReceivingID in (select distinct r.Id
 from ReplacementReport rr
 inner join ReplacementReport_Detail rrd on rr.ID = rrd.ID
 inner join Receiving r on rrd.INVNo = r.InvNo
 inner join Receiving_Detail rd on rd.Id = r.Id and rr.POID = rd.PoId and rrd.Seq1 = rd.Seq1 and rrd.Seq2 = rd.Seq2
-where rr.ID = '{0}') and POID = '{1}' and Seq1 = '{2}' and Seq2 = '{3}' and ReplacementReportID = '';",CurrentMaintain["ID"].ToString(),CurrentMaintain["POID"].ToString(),dr["Seq1"].ToString(),dr["Seq2"].ToString()));
+where rr.ID = '{0}') and POID = '{1}' and Seq1 = '{2}' and Seq2 = '{3}' and ReplacementReportID = '';",MyUtility.Convert.GetString(CurrentMaintain["ID"]),MyUtility.Convert.GetString(CurrentMaintain["POID"]),MyUtility.Convert.GetString(dr["Seq1"]),MyUtility.Convert.GetString(dr["Seq2"])));
             }
             if (check.Length > 0)
             {
@@ -309,7 +332,7 @@ where rr.ID = '{0}') and POID = '{1}' and Seq1 = '{2}' and Seq2 = '{3}' and Repl
                 return;
             }
 
-            updateCmds.Add(string.Format("update ReplacementReport set Status = 'Checked', ApplyDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString()));
+            updateCmds.Add(string.Format("update ReplacementReport set Status = 'Checked', ApplyDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"])));
 
             DualResult result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -333,7 +356,7 @@ where rr.ID = '{0}') and POID = '{1}' and Seq1 = '{2}' and Seq2 = '{3}' and Repl
                 return;
             }
             IList<string> updateCmds = new List<string>();
-            updateCmds.Add(string.Format("update ReplacementReport set Status = 'New', ApplyDate = Null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString()));
+            updateCmds.Add(string.Format("update ReplacementReport set Status = 'New', ApplyDate = Null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"])));
             updateCmds.Add(string.Format(@"update FIR 
 set ReplacementReportID = isnull((select top(1) rr.ID
 						   from ReplacementReport rr
@@ -344,7 +367,7 @@ set ReplacementReportID = isnull((select top(1) rr.ID
 											 inner join Receiving rc on rd.INVNo = rc.InvNo
 											 where r.ID != '{0}' and r.ApplyDate is not null and r.POID = FIR.POID and rd.Seq1 = FIR.Seq1 and rd.Seq2 = FIR.Seq2 and rc.Id = FIR.ReceivingID)
 						   and rr.ID != '{0}' and rr.ApplyDate is not null and rr.POID = FIR.POID and rrd.Seq1 = FIR.Seq1 and rrd.Seq2 = FIR.Seq2),'') 
-where ReplacementReportID = '{0}'", CurrentMaintain["ID"].ToString()));
+where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
 
             DualResult result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -362,7 +385,7 @@ where ReplacementReportID = '{0}'", CurrentMaintain["ID"].ToString()));
         {
             base.ClickConfirm();
             DualResult result;
-            string updateCmd = string.Format("update ReplacementReport set Status = 'Approved', ApvDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
+            string updateCmd = string.Format("update ReplacementReport set Status = 'Approved', ApvDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -388,7 +411,7 @@ where ReplacementReportID = '{0}'", CurrentMaintain["ID"].ToString()));
             }
 
             DualResult result;
-            string updateCmd = string.Format("update ReplacementReport set Status = 'Checked', ApvDate = null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
+            string updateCmd = string.Format("update ReplacementReport set Status = 'Checked', ApvDate = null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -421,7 +444,7 @@ isnull((select EMail from TPEPass1 where ID = p.PCSMR),'') as PCSMR
 from ReplacementReport r
 left join Orders o on o.ID = r.POID
 left join PO p on p.ID = o.POID
-where r.ID = '{0}'", CurrentMaintain["ID"].ToString());
+where r.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out allMail);
                 if (!result)
                 {
@@ -429,9 +452,9 @@ where r.ID = '{0}'", CurrentMaintain["ID"].ToString());
                     return;
                 }
 
-                string mailto = allMail.Rows[0]["POSMR"].ToString() + ";" + allMail.Rows[0]["POHandle"].ToString() + ";" + allMail.Rows[0]["PCSMR"].ToString() + ";" + allMail.Rows[0]["PCHandle"].ToString() + ";" + allMail.Rows[0]["SMR"].ToString() + ";" + allMail.Rows[0]["MRHandle"].ToString() + ";";
-                string cc = allMail.Rows[0]["ApplyName"].ToString() + ";" + allMail.Rows[0]["ApvName"].ToString() + ";";
-                string subject = string.Format("{0} - Fabric Replacement report",CurrentMaintain["ID"].ToString());
+                string mailto = MyUtility.Convert.GetString(allMail.Rows[0]["POSMR"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["POHandle"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["PCSMR"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["PCHandle"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["SMR"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["MRHandle"]) + ";";
+                string cc = MyUtility.Convert.GetString(allMail.Rows[0]["ApplyName"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["ApvName"]) + ";";
+                string subject = string.Format("{0} - Fabric Replacement report",MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 StringBuilder content = new StringBuilder();
                 #region 組Content
                 content.Append(@"Hi PO Handle,
