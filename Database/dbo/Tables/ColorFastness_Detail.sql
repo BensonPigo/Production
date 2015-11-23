@@ -1,7 +1,8 @@
 ﻿CREATE TABLE [dbo].[ColorFastness_Detail] (
     [ID]                 VARCHAR (13) CONSTRAINT [DF_ColorFastness_Detail_ID] DEFAULT ('') NOT NULL,
     [ColorFastnessGroup] VARCHAR (2)  CONSTRAINT [DF_ColorFastness_Detail_ColorFastnessGroup] DEFAULT ('') NOT NULL,
-    [SEQ]                VARCHAR (5)  CONSTRAINT [DF_ColorFastness_Detail_SEQ] DEFAULT ('') NOT NULL,
+    [SEQ1]               VARCHAR (3)  CONSTRAINT [DF_ColorFastness_Detail_SEQ] DEFAULT ('') NOT NULL,
+    [SEQ2]               VARCHAR (2)  CONSTRAINT [DF_ColorFastness_Detail_SEQ2] DEFAULT ('') NOT NULL,
     [Roll]               VARCHAR (8)  CONSTRAINT [DF_ColorFastness_Detail_Roll] DEFAULT ('') NOT NULL,
     [Dyelot]             VARCHAR (4)  CONSTRAINT [DF_ColorFastness_Detail_Dyelot] DEFAULT ('') NULL,
     [Result]             VARCHAR (4)  CONSTRAINT [DF_ColorFastness_Detail_Result] DEFAULT ('') NULL,
@@ -12,8 +13,10 @@
     [AddDate]            DATETIME     NULL,
     [EditName]           VARCHAR (10) CONSTRAINT [DF_ColorFastness_Detail_EditName] DEFAULT ('') NULL,
     [EditDate]           DATETIME     NULL,
-    CONSTRAINT [PK_ColorFastness_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [ColorFastnessGroup] ASC, [SEQ] ASC)
+    CONSTRAINT [PK_ColorFastness_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [ColorFastnessGroup] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
+
+
 
 
 GO
@@ -29,7 +32,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'分組', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ColorFastness_Detail', @level2type = N'COLUMN', @level2name = N'SEQ';
+
 
 
 GO
@@ -70,4 +73,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯者',
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ColorFastness_Detail', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ColorFastness_Detail', @level2type = N'COLUMN', @level2name = N'SEQ1';
 
