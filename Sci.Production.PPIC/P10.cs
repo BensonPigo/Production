@@ -30,14 +30,15 @@ namespace Sci.Production.PPIC
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select ld.*,(left(ld.Seq1+' ',3)+ld.Seq2) as Seq,isnull(psd.Refno,'') as Refno,isnull(f.Description,'') as Description,
 (select max(i.IssueDate) from Issue i, Issue_Detail id where i.Id = id.Id and id.PoId = l.POID and id.Seq1 = ld.Seq1 and id.Seq2 = ld.seq2) as IssueDate,
-isnull(psd.InQty,0) as InQty,isnull(psd.OutQty,0) as OutQty,isnull(p.Description,'') as PPICReasonDesc
+isnull(mpd.InQty,0) as InQty,isnull(mpd.OutQty,0) as OutQty,isnull(p.Description,'') as PPICReasonDesc
 from Lack l
 inner join Lack_Detail ld on l.ID = ld.ID
 left join PO_Supp_Detail psd on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
+left join MDivisionPoDetail mpd on mpd.POID = l.POID and mpd.SEQ1 = ld.Seq1 and mpd.SEQ2 = ld.Seq2 and mpd.MDivisionId = '{1}'
 left join Fabric f on psd.SCIRefno = f.SCIRefno
 left join PPICReason p on p.Type = 'FL' and ld.PPICReasonID = p.ID
 where l.ID = '{0}'
-order by ld.Seq1,ld.Seq2", masterID);
+order by ld.Seq1,ld.Seq2", masterID,Sci.Env.User.Keyword);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -109,10 +110,18 @@ order by ld.Seq1,ld.Seq2", masterID);
 
                     if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["Seq"]))
                     {
+                        if (MyUtility.Check.Empty(CurrentMaintain["POID"]))
+                        {
+                            MyUtility.Msg.WarningBox("SP# can't empty!!");
+                            ClearGridData(dr);
+                            e.Cancel = true;
+                            return;
+                        }
+
                         if (MyUtility.Convert.GetString(e.FormattedValue).IndexOf("'") != -1)
                         {
                             MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
-                            dr["Seq"] = "";
+                            ClearGridData(dr);
                             e.Cancel = true;
                             return;
                         }
@@ -122,25 +131,11 @@ order by ld.Seq1,ld.Seq2", masterID);
 dbo.getmtldesc(id,seq1,seq2,2,0) as Description 
 from dbo.PO_Supp_Detail
 where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(e.FormattedValue).Substring(0, 3), MyUtility.Convert.GetString(e.FormattedValue).Substring(2, 2));
-                        if (MyUtility.Check.Empty(CurrentMaintain["POID"]) || !MyUtility.Check.Seek(sqlCmd, out poData))
+                        if (!MyUtility.Check.Seek(sqlCmd, out poData))
                         {
-                            if (MyUtility.Check.Empty(CurrentMaintain["POID"]))
-                            {
-                                MyUtility.Msg.WarningBox("SP# can't empty!!");
-                            }
-                            else
-                            {
-                                MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
-                            }
-                            dr["Seq"] = "";
-                            dr["Seq1"] = "";
-                            dr["Seq2"] = "";
-                            dr["RefNo"] = "";
-                            dr["Description"] = "";
-                            dr["InQty"] = 0;
-                            dr["OutQty"] = 0;
-                            dr["IssueDate"] = null;
-                            dr.EndEdit();
+                            MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
+
+                            ClearGridData(dr);
                             e.Cancel = true;
                             return;
                         }
@@ -262,6 +257,19 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", MyUtili
                 .EditText("PPICReasonDesc", header: "Reason", width: Widths.AnsiChars(20), iseditingreadonly: true);
         }
 
+        private void ClearGridData(DataRow dr)
+        {
+            dr["Seq"] = "";
+            dr["Seq1"] = "";
+            dr["Seq2"] = "";
+            dr["RefNo"] = "";
+            dr["Description"] = "";
+            dr["InQty"] = 0;
+            dr["OutQty"] = 0;
+            dr["IssueDate"] = null;
+            dr.EndEdit();
+        }
+
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -371,9 +379,9 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", MyUtili
             try
             {
                 MyUtility.Tool.ProcessWithDatatable((DataTable)detailgridbs.DataSource, "Seq,Seq1,Seq2,RequestQty", string.Format(@"select * from (
-SELECT l.Seq,l.Seq1,l.Seq2,l.RequestQty,isnull(p.InQty-p.OutQty+p.AdjustQty-p.LInvQty,0) as StockQty
+SELECT l.Seq,l.Seq1,l.Seq2,l.RequestQty,isnull(mpd.InQty-mpd.OutQty+mpd.AdjustQty-mpd.LInvQty,0) as StockQty
 FROM #tmp l
-left join PO_Supp_Detail p on p.ID = '{0}' and p.SEQ1 = l.Seq1 and p.SEQ2 = l.Seq2) a
+left join MDivisionPoDetail mpd on mpd.POID = '{0}' and mpd.SEQ1 = l.Seq1 and mpd.SEQ2 = l.Seq2) a
 where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["POID"])), out ExceedData);
             }
             catch (Exception ex)
@@ -469,6 +477,7 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                             CurrentMaintain["OrderID"] = "";
                             CurrentMaintain["POID"] = "";
                             CurrentMaintain["FactoryID"] = "";
+                            DeleteAllGridData();
                             e.Cancel = true;
                             return;
                         }
@@ -479,7 +488,17 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                         CurrentMaintain["POID"] = "";
                         CurrentMaintain["FactoryID"] = "";
                     }
+                    DeleteAllGridData();
                 }
+            }
+        }
+
+        //刪除表身Grid資料
+        private void DeleteAllGridData()
+        {
+            foreach (DataRow dr in DetailDatas)
+            {
+                dr.Delete();
             }
         }
 
