@@ -35,7 +35,7 @@ namespace Sci.Production.PublicPrg
         /// <param name="string stocktype"></param>
         /// <param name="string m"></param>
         /// <returns>String Sqlcmd</returns>
-        public static string UpdateMPoDetail(int type, string Poid, string seq1, string seq2,decimal qty,bool encoded, string stocktype,string m)
+        public static string UpdateMPoDetail(int type, string Poid, string seq1, string seq2,decimal qty,bool encoded, string stocktype,string m,string location="")
         {
             string sqlcmd=null;
             switch (type)
@@ -43,9 +43,16 @@ namespace Sci.Production.PublicPrg
                 case 2:
                     if (encoded)
                     {
-                        sqlcmd = string.Format(@"update mdivisionpodetail set  inqty = isnull(inqty,0.00) + {3} 
-where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
-                            ,Poid,seq1,seq2,qty, m);
+                        sqlcmd = string.Format(@"
+merge dbo.mdivisionpodetail as target
+using (values('{0}','{1}','{2}','{3}','{4}','{5}')) as src (poid,seq1,seq2,qty,m,alocation) 
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.m
+when matched then
+update 
+set  inqty = isnull(inqty,0.00) + src.qty , alocation = src.alocation
+when not matched then
+    insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[alocation])
+    values (src.poid,src.seq1,src.seq2,src.m,src.qty,src.alocation);", Poid,seq1,seq2,qty, m, location);
                     }
                     else
                     {
@@ -72,8 +79,8 @@ where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
                     if (encoded)
                     {
                         sqlcmd = string.Format(@"update mdivisionpodetail set  LInvQty = isnull(LInvQty,0.00) + {3} 
-where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
-                            , Poid, seq1, seq2, qty, m);
+where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}' and blocation = '{5}';"
+                            , Poid, seq1, seq2, qty, m, location);
                     }
                     else
                     {
@@ -111,35 +118,35 @@ where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
                     }
                     break;
             }
-            if (encoded && (type == 2 || type == 8 || type == 16) && !MyUtility.Check.Empty(stocktype))
-            {
-                switch (stocktype)
-                {
-                    case "B":
-                        sqlcmd += string.Format(@"update mdivisionpodetail set ALocation 
-= (Select cast(tmp.MtlLocationID as nvarchar)+',' 
-from (select d.mtllocationid from ftyinventory_detail d inner join ftyinventory f
-on d.ukey = f.ukey
-where f.poid = '{0}' and f.seq1 ='{1}' and f.seq2 ='{2}' and stocktype = 'B' 
-group by d.MtlLocationID) tmp 
-for XML PATH(''))
-where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{3}';", Poid, seq1, seq2,m);
-                        break;
-                    case "I":
-                        sqlcmd += string.Format(@"update mdivisionpodetail set BLocation 
-= (Select cast(tmp.MtlLocationID as nvarchar)+',' 
-from (select d.mtllocationid from ftyinventory_detail d inner join ftyinventory f
-on d.ukey = f.ukey
-where f.poid = '{0}' and f.seq1 ='{1}' and f.seq2 ='{2}' and stocktype = 'I' 
-group by d.MtlLocationID) tmp 
-for XML PATH(''))
-where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{3}';", Poid, seq1, seq2,m);
-                        break;
-                    default:
-                        break;
-                }
+//            if (encoded && (type == 2 || type == 8 || type == 16) && !MyUtility.Check.Empty(stocktype))
+//            {
+//                switch (stocktype)
+//                {
+//                    case "B":
+//                        sqlcmd += string.Format(@"update mdivisionpodetail set ALocation 
+//= (Select cast(tmp.MtlLocationID as nvarchar)+',' 
+//from (select d.mtllocationid from ftyinventory_detail d inner join ftyinventory f
+//on d.ukey = f.ukey
+//where f.poid = '{0}' and f.seq1 ='{1}' and f.seq2 ='{2}' and stocktype = 'B' 
+//group by d.MtlLocationID) tmp 
+//for XML PATH(''))
+//where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{3}';", Poid, seq1, seq2,m);
+//                        break;
+//                    case "I":
+//                        sqlcmd += string.Format(@"update mdivisionpodetail set BLocation 
+//= (Select cast(tmp.MtlLocationID as nvarchar)+',' 
+//from (select d.mtllocationid from ftyinventory_detail d inner join ftyinventory f
+//on d.ukey = f.ukey
+//where f.poid = '{0}' and f.seq1 ='{1}' and f.seq2 ='{2}' and stocktype = 'I' 
+//group by d.MtlLocationID) tmp 
+//for XML PATH(''))
+//where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{3}';", Poid, seq1, seq2,m);
+//                        break;
+//                    default:
+//                        break;
+//                }
                 
-            }
+//            }
             return sqlcmd;
         }
         #endregion
@@ -382,7 +389,7 @@ where m.mdivisionid = '{1}' and m.poid ='{0}'", poid, Sci.Env.User.Keyword);
         /// <returns>Sci.Win.Tools.SelectItem2</returns>
         public static Sci.Win.Tools.SelectItem2 SelectLocation(string stocktype, string defaultseq = "")
         {
-            string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}'", stocktype);
+            string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", stocktype, Sci.Env.User.Keyword);
            
             Sci.Win.Tools.SelectItem2 selectlocation= new Win.Tools.SelectItem2(sqlcmd,
                             "Location ID,Description,Stock Type", "13,60,10", defaultseq);
