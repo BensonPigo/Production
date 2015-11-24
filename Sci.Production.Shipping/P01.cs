@@ -20,6 +20,7 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
+            DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
             label34.Text = "MR's \r\nComments";
             label35.Text = "Cause &\r\nResponsible\r\nDetails";
             txtuser1.TextBox1.ReadOnly = true;
@@ -31,11 +32,12 @@ namespace Sci.Production.Shipping
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            button5.Enabled = CurrentMaintain["Status"].ToString() == "Approved";
+            button5.Enabled = MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Approved";
+
             if (MyUtility.GetValue.Lookup(string.Format(@"select a.ShipQty-b.Qty as BalQty from 
 (select isnull(sum(ShipQty),0) as ShipQty from AirPP where Status <> 'Junked' and OrderID = '{0}') a,
 (select isnull(sum(Qty),0) as Qty from Order_QtyShip where Id = '{0}' and ShipmodeID in (select ID from ShipMode where UseFunction like '%AirPP%')) b
-", CurrentMaintain["OrderID"].ToString())) != "0")
+", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]))) != "0")
             {
                 this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
                 this.button2.ForeColor = System.Drawing.Color.Red;
@@ -45,49 +47,46 @@ namespace Sci.Production.Shipping
                 this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
                 this.button2.ForeColor = System.Drawing.Color.Black;
             }
+
             DataTable orderData;
             DualResult result = DBProxy.Current.Select(null, string.Format(@"select o.FactoryID,o.BrandID,o.StyleID,o.Dest,isnull(oq.ShipmodeID,'') as ShipmodeID,isnull(oq.Qty,0) as Qty,oq.BuyerDelivery,isnull(s.Description,'') as Description
 from Orders o
 left join Order_QtyShip oq on oq.Id = o.ID and oq.Seq = '{1}'
 left join Style s on s.Ukey = o.StyleUkey
-where o.Id = '{0}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString()), out orderData);
-            if (!result)
+where o.Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), MyUtility.Convert.GetString(CurrentMaintain["OrderShipmodeSeq"])), out orderData);
+
+            if (!result || orderData.Rows.Count == 0)
             {
-                MyUtility.Msg.ErrorBox("Query order fail.\r\n" + result.ToString());
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox("Query order fail.\r\n" + result.ToString());
+                }
+                displayBox2.Value = "";
+                displayBox3.Value = "";
+                displayBox4.Value = "";
+                displayBox5.Value = "";
+                displayBox6.Value = "";
+                numericBox1.Value = 0;
+                dateBox2.Value = null;
+                txtcountry1.TextBox1.Text = "";
             }
             else
             {
-                if (orderData.Rows.Count == 0)
-                {
-                    displayBox2.Value = "";
-                    displayBox3.Value = "";
-                    displayBox4.Value = "";
-                    displayBox5.Value = "";
-                    displayBox6.Value = "";
-                    numericBox1.Value = 0;
-                    dateBox2.Value = null;
-                    txtcountry1.TextBox1.Text = "";
-                }
-                else
-                {
-                    displayBox2.Value = orderData.Rows[0]["StyleID"].ToString();
-                    displayBox3.Value = orderData.Rows[0]["BrandID"].ToString();
-                    displayBox4.Value = orderData.Rows[0]["Description"].ToString();
-                    displayBox5.Value = orderData.Rows[0]["FactoryID"].ToString();
-                    displayBox6.Value = orderData.Rows[0]["ShipmodeID"].ToString();
-                    numericBox1.Value = Convert.ToInt32(orderData.Rows[0]["Qty"]);
-                    if (MyUtility.Check.Empty(orderData.Rows[0]["BuyerDelivery"]))
-                    { dateBox2.Value = null; }
-                    else
-                    { dateBox2.Value = Convert.ToDateTime(orderData.Rows[0]["BuyerDelivery"]); }
-                    txtcountry1.TextBox1.Text = orderData.Rows[0]["Dest"].ToString();
-                }
+                displayBox2.Value = MyUtility.Convert.GetString(orderData.Rows[0]["StyleID"]);
+                displayBox3.Value = MyUtility.Convert.GetString(orderData.Rows[0]["BrandID"]);
+                displayBox4.Value = MyUtility.Convert.GetString(orderData.Rows[0]["Description"]);
+                displayBox5.Value = MyUtility.Convert.GetString(orderData.Rows[0]["FactoryID"]);
+                displayBox6.Value = MyUtility.Convert.GetString(orderData.Rows[0]["ShipmodeID"]);
+                numericBox1.Value = MyUtility.Convert.GetInt(orderData.Rows[0]["Qty"]);
+                dateBox2.Value = MyUtility.Convert.GetDate(orderData.Rows[0]["BuyerDelivery"]);
+                txtcountry1.TextBox1.Text = MyUtility.Convert.GetString(orderData.Rows[0]["Dest"]);
             }
-            displayBox8.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason where ReasonTypeID = 'Air_Prepaid_Reason' and ID = '{0}'", CurrentMaintain["ReasonID"].ToString()));
-            displayBox19.Value = MyUtility.Check.Empty(CurrentMaintain["TPEEditDate"]) ? null : Convert.ToDateTime(CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
-            displayBox20.Value = MyUtility.Check.Empty(CurrentMaintain["FtySendDate"]) ? null : Convert.ToDateTime(CurrentMaintain["FtySendDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+
+            displayBox8.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason where ReasonTypeID = 'Air_Prepaid_Reason' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ReasonID"])));
+            displayBox19.Value = MyUtility.Check.Empty(CurrentMaintain["TPEEditDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+            displayBox20.Value = MyUtility.Check.Empty(CurrentMaintain["FtySendDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["FtySendDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             //狀態顯示
-            switch (CurrentMaintain["Status"].ToString())
+            switch (MyUtility.Convert.GetString(CurrentMaintain["Status"]))
             {
                 case "New":
                     label30.Text = "New";
@@ -118,12 +117,13 @@ where o.Id = '{0}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["Ord
             base.ClickNewAfter();
             CurrentMaintain["CDate"] = DateTime.Today;
             CurrentMaintain["Status"] = "New";
-            CurrentMaintain["FtyMgr"] = MyUtility.GetValue.Lookup("Manager", Sci.Env.User.Factory, "Factory", "ID");
+            //CurrentMaintain["FtyMgr"] = MyUtility.GetValue.Lookup("Manager", Sci.Env.User.Factory, "Factory", "ID");
             CurrentMaintain["RatioFty"] = 0;
             CurrentMaintain["RatioSubcon"] = 0;
             CurrentMaintain["RatioSCI"] = 0;
             CurrentMaintain["RatioSupp"] = 0;
             CurrentMaintain["RatioBuyer"] = 0;
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
 
             ControlFactoryRatio(true);
             ControlSubconRatio(true);
@@ -132,12 +132,12 @@ where o.Id = '{0}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["Ord
             ControlBuyerRatio(true);
 
         }
-        
+
         protected override bool ClickEditBefore()
         {
-            if (CurrentMaintain["Status"].ToString() == "New")
+            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "New")
             {
-                if (!Prgs.GetAuthority(CurrentMaintain["AddName"].ToString()))
+                if (!Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["AddName"])))
                 {
                     MyUtility.Msg.WarningBox("You have no permission!");
                     return false;
@@ -145,7 +145,7 @@ where o.Id = '{0}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["Ord
             }
             else
             {
-                if (CurrentMaintain["Status"].ToString() == "Junked")
+                if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Junked")
                 {
                     MyUtility.Msg.WarningBox("This.record is cancel. Can't be modify!");
                     return false;
@@ -158,7 +158,7 @@ where o.Id = '{0}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["Ord
             }
             return base.ClickEditBefore();
         }
-        
+
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -250,14 +250,14 @@ where o.Id = '{0}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["Ord
             }
 
             //Ratio加總要等於100
-            if (Convert.ToDecimal(CurrentMaintain["RatioFty"]) + Convert.ToDecimal(CurrentMaintain["RatioSubcon"]) + Convert.ToDecimal(CurrentMaintain["RatioSCI"]) + Convert.ToDecimal(CurrentMaintain["RatioSupp"]) + Convert.ToDecimal(CurrentMaintain["RatioBuyer"]) != 100)
+            if (MyUtility.Convert.GetDecimal(CurrentMaintain["RatioFty"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["RatioSubcon"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["RatioSCI"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["RatioSupp"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["RatioBuyer"]) != 100)
             {
                 MyUtility.Msg.WarningBox("Total ratio% of cause & responsible detail is not 100%.");
                 return false;
             }
 
             //Air Qty要等於Order Qty
-            if (Convert.ToInt32(CurrentMaintain["ShipQty"]) != Convert.ToInt32(numericBox1.Value))
+            if (MyUtility.Convert.GetInt(CurrentMaintain["ShipQty"]) != MyUtility.Convert.GetInt(numericBox1.Value))
             {
                 MyUtility.Msg.WarningBox("Air Q'ty not equal to Order Q'ty!!");
                 return false;
@@ -266,7 +266,7 @@ where o.Id = '{0}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["Ord
             //GetID
             if (IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "AP", "AirPP", DateTime.Today, 2, "Id", null);
+                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("KeyWord",MyUtility.GetValue.Lookup("FtyGroup", CurrentMaintain["OrderID"].ToString(), "Orders", "ID"),"Factory","ID") + "AP", "AirPP", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -283,7 +283,7 @@ where o.Id = '{0}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["Ord
             if (IsDetailInserting)
             {
                 string insertCmd = string.Format(@"insert into AirPP_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
-values ('{0}','Status','','New','{1}',GETDATE())", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
+values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(CurrentMaintain["ID"]), Sci.Env.User.UserID);
 
                 DualResult result = DBProxy.Current.Execute(null, insertCmd);
                 if (!result)
@@ -306,16 +306,16 @@ values ('{0}','Status','','New','{1}',GETDATE())", CurrentMaintain["ID"].ToStrin
 
                 IList<DataRow> reasonData = item.GetSelecteds();
                 CurrentMaintain["ReasonID"] = item.GetSelectedString();
-                displayBox8.Value = reasonData[0]["Name"].ToString();
+                displayBox8.Value = MyUtility.Convert.GetString(reasonData[0]["Name"]);
             }
         }
 
         //Calculate Est. Amount
         private void CalculateEstAmt()
         {
-            decimal gw = MyUtility.Check.Empty(CurrentMaintain["GW"]) ? 0 : Convert.ToDecimal(CurrentMaintain["GW"]);
-            decimal vw = MyUtility.Check.Empty(CurrentMaintain["VW"]) ? 0 : Convert.ToDecimal(CurrentMaintain["VW"]);
-            decimal qt = MyUtility.Check.Empty(CurrentMaintain["Quotation"]) ? 0 : Convert.ToDecimal(CurrentMaintain["Quotation"]);
+            decimal gw = MyUtility.Convert.GetDecimal(CurrentMaintain["GW"]);
+            decimal vw = MyUtility.Convert.GetDecimal(CurrentMaintain["VW"]);
+            decimal qt = MyUtility.Convert.GetDecimal(CurrentMaintain["Quotation"]);
             CurrentMaintain["EstAmount"] = MyUtility.Math.Round((gw > vw ? gw : vw) * qt, 4);
         }
 
@@ -422,23 +422,12 @@ values ('{0}','Status','','New','{1}',GETDATE())", CurrentMaintain["ID"].ToStrin
 
         private void ControlFactoryRatio(bool ReadOnly)
         {
-            //if (ReadOnly)
-            //{
-            //    numericBox11.Value = 0;
-            //    txtfactory1.Text = "";
-            //}
             numericBox11.ReadOnly = ReadOnly;
             txtfactory1.ReadOnly = ReadOnly;
         }
 
         private void ControlSubconRatio(bool ReadOnly)
         {
-            //if (ReadOnly)
-            //{
-            //    numericBox12.Value = 0;
-            //    textBox5.Text = "";
-            //    textBox6.Text = "";
-            //}
             numericBox12.ReadOnly = ReadOnly;
             textBox5.ReadOnly = ReadOnly;
             textBox6.ReadOnly = ReadOnly;
@@ -446,29 +435,16 @@ values ('{0}','Status','','New','{1}',GETDATE())", CurrentMaintain["ID"].ToStrin
 
         private void ControlSCIRatio(bool ReadOnly)
         {
-            //if (ReadOnly)
-            //{
-            //    numericBox13.Value = 0;
-            //}
             numericBox13.ReadOnly = ReadOnly;
         }
 
         private void ControlSupplierRatio(bool ReadOnly)
         {
-            //if (ReadOnly)
-            //{
-            //    numericBox14.Value = 0;
-            //}
             numericBox14.ReadOnly = ReadOnly;
         }
 
         private void ControlBuyerRatio(bool ReadOnly)
         {
-            //if (ReadOnly)
-            //{
-            //    numericBox15.Value = 0;
-            //    textBox7.Text = "";
-            //}
             numericBox15.ReadOnly = ReadOnly;
             textBox7.ReadOnly = ReadOnly;
         }
@@ -483,15 +459,32 @@ values ('{0}','Status','','New','{1}',GETDATE())", CurrentMaintain["ID"].ToStrin
                     #region 檢查輸入的值是否符合條件
                     if (!MyUtility.Check.Empty(textBox1.Text))
                     {
-                        DataRow orderData;
-                        string sqlCmd = string.Format("select ID from Orders where ID = '{0}' and FtyGroup = '{1}'", textBox1.Text, Sci.Env.User.Factory);
-                        if (!MyUtility.Check.Seek(sqlCmd, out orderData))
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", textBox1.Text);
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+                        cmds.Add(sp2);
+
+                        DataTable orderData;
+                        string sqlCmd = "select ID from Orders where ID = @id and MDivisionID = @mdivisionid";
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
+                        if (!result || orderData.Rows.Count <= 0)
                         {
-                            MyUtility.Msg.WarningBox("< SP No. > not found!");
+                            if (!result)
+                            {
+                                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
+                            }
+                            else
+                            {
+                                MyUtility.Msg.WarningBox("< SP No. > not found!");
+                            }
                             //OrderID異動，其他相關欄位要跟著異動
                             ChangeOtherData("");
                             textBox1.Text = "";
                             e.Cancel = true;
+                            return;
                         }
                     }
                     #endregion
@@ -519,12 +512,13 @@ values ('{0}','Status','','New','{1}',GETDATE())", CurrentMaintain["ID"].ToStrin
                 CurrentMaintain["MRHandle"] = "";
                 CurrentMaintain["SMR"] = "";
                 CurrentMaintain["ShipQty"] = 0;
+                CurrentMaintain["FtyMgr"] = "";
             }
             else
             {
                 DataRow orderData;
                 string sqlCmd;
-                sqlCmd = string.Format(@"select o.FactoryID,o.BrandID,o.StyleID,o.Dest,isnull(s.Description,'') as Description,p.POHandle,p.POSMR,o.MRHandle,o.SMR
+                sqlCmd = string.Format(@"select o.FactoryID,o.FtyGroup,o.BrandID,o.StyleID,o.Dest,isnull(s.Description,'') as Description,p.POHandle,p.POSMR,o.MRHandle,o.SMR
 from Orders o
 left join Style s on s.Ukey = o.StyleUkey
 left join PO p on p.ID = o.POID
@@ -532,15 +526,16 @@ where o.Id = '{0}'", orderID);
                 if (MyUtility.Check.Seek(sqlCmd, out orderData))
                 {
                     //帶出相關欄位的資料
-                    displayBox2.Value = orderData["StyleID"].ToString();
-                    displayBox3.Value = orderData["BrandID"].ToString();
-                    displayBox4.Value = orderData["Description"].ToString();
-                    displayBox5.Value = orderData["FactoryID"].ToString();
-                    txtcountry1.TextBox1.Text = orderData["Dest"].ToString();
-                    CurrentMaintain["POHandle"] = orderData["POHandle"].ToString();
-                    CurrentMaintain["POSMR"] = orderData["POSMR"].ToString();
-                    CurrentMaintain["MRHandle"] = orderData["MRHandle"].ToString();
-                    CurrentMaintain["SMR"] = orderData["SMR"].ToString();
+                    displayBox2.Value = MyUtility.Convert.GetString(orderData["StyleID"]);
+                    displayBox3.Value = MyUtility.Convert.GetString(orderData["BrandID"]);
+                    displayBox4.Value = MyUtility.Convert.GetString(orderData["Description"]);
+                    displayBox5.Value = MyUtility.Convert.GetString(orderData["FactoryID"]);
+                    txtcountry1.TextBox1.Text = MyUtility.Convert.GetString(orderData["Dest"]);
+                    CurrentMaintain["POHandle"] = orderData["POHandle"];
+                    CurrentMaintain["POSMR"] = orderData["POSMR"];
+                    CurrentMaintain["MRHandle"] = orderData["MRHandle"];
+                    CurrentMaintain["SMR"] = orderData["SMR"];
+                    CurrentMaintain["FtyMgr"] = MyUtility.GetValue.Lookup("Manager", MyUtility.Convert.GetString(orderData["FtyGroup"]),"Factory","ID");
 
                     #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
                     sqlCmd = string.Format(@"select oq.Seq,oq.BuyerDelivery,oq.ShipmodeID,oq.Qty from Order_QtyShip oq,(
@@ -548,7 +543,7 @@ select Id,Seq from Order_QtyShip where Id = '{0}' and
 ShipmodeID in (select ID from ShipMode where UseFunction like '%AirPP%')
 except
 select OrderID as ID,OrderShipmodeSeq as Seq from AirPP where OrderID = '{0}' and ID != '{1}' and Status <> 'Junked') b
-where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Check.Empty(CurrentMaintain["ID"]) ? "" : CurrentMaintain["ID"].ToString());
+where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                     DataTable orderQtyData;
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, out orderQtyData);
 
@@ -556,14 +551,11 @@ where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Check.Empty(CurrentMa
                     {
                         if (orderQtyData.Rows.Count == 1)
                         {
-                            CurrentMaintain["OrderShipmodeSeq"] = orderQtyData.Rows[0]["Seq"].ToString();
-                            displayBox6.Value = orderQtyData.Rows[0]["ShipmodeID"].ToString();
-                            numericBox1.Value = Convert.ToInt32(orderQtyData.Rows[0]["Qty"]);
-                            CurrentMaintain["ShipQty"] = Convert.ToInt32(orderQtyData.Rows[0]["Qty"]);
-                            if (MyUtility.Check.Empty(orderQtyData.Rows[0]["BuyerDelivery"]))
-                            { dateBox2.Value = null; }
-                            else
-                            { dateBox2.Value = Convert.ToDateTime(orderQtyData.Rows[0]["BuyerDelivery"]); }
+                            CurrentMaintain["OrderShipmodeSeq"] = orderQtyData.Rows[0]["Seq"];
+                            displayBox6.Value = MyUtility.Convert.GetString(orderQtyData.Rows[0]["ShipmodeID"]);
+                            numericBox1.Value = MyUtility.Convert.GetInt(orderQtyData.Rows[0]["Qty"]);
+                            CurrentMaintain["ShipQty"] = MyUtility.Convert.GetInt(orderQtyData.Rows[0]["Qty"]);
+                            dateBox2.Value = Convert.ToDateTime(orderQtyData.Rows[0]["BuyerDelivery"]);
                         }
                         else
                         {
@@ -582,13 +574,10 @@ where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Check.Empty(CurrentMa
                             {
                                 orderQtyShipData = item.GetSelecteds();
                                 CurrentMaintain["OrderShipmodeSeq"] = item.GetSelectedString();
-                                displayBox6.Value = orderQtyShipData[0]["ShipmodeID"].ToString();
-                                numericBox1.Value = Convert.ToInt32(orderQtyShipData[0]["Qty"]);
-                                CurrentMaintain["ShipQty"] = Convert.ToInt32(orderQtyShipData[0]["Qty"]);
-                                if (MyUtility.Check.Empty(orderQtyShipData[0]["BuyerDelivery"]))
-                                { dateBox2.Value = null; }
-                                else
-                                { dateBox2.Value = Convert.ToDateTime(orderQtyShipData[0]["BuyerDelivery"]); }
+                                displayBox6.Value = MyUtility.Convert.GetString(orderQtyShipData[0]["ShipmodeID"]);
+                                numericBox1.Value = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
+                                CurrentMaintain["ShipQty"] = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
+                                dateBox2.Value = Convert.ToDateTime(orderQtyShipData[0]["BuyerDelivery"]);
                             }
                         }
                     }
@@ -642,8 +631,8 @@ where oq.Id = b.Id and oq.Seq = b.Seq", MyUtility.Check.Empty(CurrentMaintain["O
                 orderQtyShipData = item.GetSelecteds();
                 CurrentMaintain["OrderShipmodeSeq"] = item.GetSelectedString();
                 displayBox6.Value = orderQtyShipData[0]["ShipmodeID"].ToString();
-                numericBox1.Value = Convert.ToInt32(orderQtyShipData[0]["Qty"]);
-                CurrentMaintain["ShipQty"] = Convert.ToInt32(orderQtyShipData[0]["Qty"]);
+                numericBox1.Value = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
+                CurrentMaintain["ShipQty"] = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
                 if (MyUtility.Check.Empty(orderQtyShipData[0]["BuyerDelivery"]))
                 { dateBox2.Value = null; }
                 else
@@ -654,7 +643,7 @@ where oq.Id = b.Id and oq.Seq = b.Seq", MyUtility.Check.Empty(CurrentMaintain["O
         //Junk
         protected override void ClickJunk()
         {
-            if (!Prgs.GetAuthority(CurrentMaintain["AddName"].ToString()))
+            if (!Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["AddName"])))
             {
                 MyUtility.Msg.WarningBox("Sorry, you don't have permission to junk this data. ");
                 return;
@@ -671,8 +660,8 @@ where oq.Id = b.Id and oq.Seq = b.Seq", MyUtility.Check.Empty(CurrentMaintain["O
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
                 string insertCmd = string.Format(@"insert into AirPP_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
-values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())", CurrentMaintain["ID"].ToString(), callReason.ReturnReason, callReason.ReturnRemark, Sci.Env.User.UserID);
-                string updateCmd = string.Format(@"update AirPP set Status = 'Junked', EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
+values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())", MyUtility.Convert.GetString(CurrentMaintain["ID"]), callReason.ReturnReason, callReason.ReturnRemark, Sci.Env.User.UserID);
+                string updateCmd = string.Format(@"update AirPP set Status = 'Junked', EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
                 using (TransactionScope transactionScope = new TransactionScope())
                 {
@@ -687,11 +676,14 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())", CurrentMain
                         }
                         else
                         {
+                            transactionScope.Dispose();
                             MyUtility.Msg.WarningBox("Junk failed, Pleaes re-try");
+                            return;
                         }
                     }
                     catch (Exception ex)
                     {
+                        transactionScope.Dispose();
                         ShowErr("Commit transaction error.", ex);
                         return;
                     }
@@ -706,7 +698,7 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())", CurrentMain
         //PPIC mgr Approve
         protected override void ClickCheck()
         {
-            if (!Prgs.GetAuthority(CurrentMaintain["PPICMgr"].ToString()))
+            if (!Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["PPICMgr"])))
             {
                 MyUtility.Msg.WarningBox("Sorry, you don't have permission to check this data. ");
                 return;
@@ -787,8 +779,8 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())", CurrentMain
             #endregion
 
             string insertCmd = string.Format(@"insert into AirPP_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
-values ('{0}','Status','New','Checked','{1}',GetDate())", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
-            string updateCmd = string.Format(@"update AirPP set Status = 'Checked', PPICMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
+values ('{0}','Status','New','Checked','{1}',GetDate())", MyUtility.Convert.GetString(CurrentMaintain["ID"]), Sci.Env.User.UserID);
+            string updateCmd = string.Format(@"update AirPP set Status = 'Checked', PPICMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
@@ -803,11 +795,14 @@ values ('{0}','Status','New','Checked','{1}',GetDate())", CurrentMaintain["ID"].
                     }
                     else
                     {
+                        transactionScope.Dispose();
                         MyUtility.Msg.WarningBox("UnCheck failed, Pleaes re-try");
+                        return;
                     }
                 }
                 catch (Exception ex)
                 {
+                    transactionScope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -821,7 +816,7 @@ values ('{0}','Status','New','Checked','{1}',GetDate())", CurrentMaintain["ID"].
         //PPIC mgr UnApprove
         protected override void ClickUncheck()
         {
-            if (!Prgs.GetAuthority(CurrentMaintain["PPICMgr"].ToString()))
+            if (!Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["PPICMgr"])))
             {
                 MyUtility.Msg.WarningBox("Sorry, you don't have permission to uncheck this data. ");
                 return;
@@ -831,8 +826,8 @@ values ('{0}','Status','New','Checked','{1}',GetDate())", CurrentMaintain["ID"].
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
                 string insertCmd = string.Format(@"insert into AirPP_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
-values ('{0}','Status','Checked','New','{1}','{2}','{3}',GetDate())", CurrentMaintain["ID"].ToString(), callReason.ReturnReason, callReason.ReturnRemark, Sci.Env.User.UserID);
-                string updateCmd = string.Format(@"update AirPP set Status = 'New', PPICMgrApvDate = null, EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
+values ('{0}','Status','Checked','New','{1}','{2}','{3}',GetDate())", MyUtility.Convert.GetString(CurrentMaintain["ID"]), callReason.ReturnReason, callReason.ReturnRemark, Sci.Env.User.UserID);
+                string updateCmd = string.Format(@"update AirPP set Status = 'New', PPICMgrApvDate = null, EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
                 using (TransactionScope transactionScope = new TransactionScope())
                 {
@@ -847,11 +842,14 @@ values ('{0}','Status','Checked','New','{1}','{2}','{3}',GetDate())", CurrentMai
                         }
                         else
                         {
+                            transactionScope.Dispose();
                             MyUtility.Msg.WarningBox("UnCheck failed, Pleaes re-try");
+                            return;
                         }
                     }
                     catch (Exception ex)
                     {
+                        transactionScope.Dispose();
                         ShowErr("Commit transaction error.", ex);
                         return;
                     }
@@ -865,15 +863,15 @@ values ('{0}','Status','Checked','New','{1}','{2}','{3}',GetDate())", CurrentMai
         //Factory mgr Approve
         protected override void ClickConfirm()
         {
-            if (!Prgs.GetAuthority(CurrentMaintain["FtyMgr"].ToString()))
+            if (!Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["FtyMgr"])))
             {
                 MyUtility.Msg.WarningBox("Sorry, you don't have permission to check this data. ");
                 return;
             }
 
             string insertCmd = string.Format(@"insert into AirPP_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
-values ('{0}','Status','Checked','Approved','{1}',GetDate())", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
-            string updateCmd = string.Format(@"update AirPP set Status = 'Approved', FtyMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
+values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert.GetString(CurrentMaintain["ID"]), Sci.Env.User.UserID);
+            string updateCmd = string.Format(@"update AirPP set Status = 'Approved', FtyMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
@@ -888,11 +886,14 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())", CurrentMaintain["
                     }
                     else
                     {
+                        transactionScope.Dispose();
                         MyUtility.Msg.WarningBox("Confirm failed, Pleaes re-try");
+                        return;
                     }
                 }
                 catch (Exception ex)
                 {
+                    transactionScope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -907,7 +908,7 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())", CurrentMaintain["
         //Status update history
         private void button6_Click(object sender, EventArgs e)
         {
-            Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("AirPP_History", CurrentMaintain["ID"].ToString(), "Status", reasonType: "Air_Prepaid_unApprove", caption: "Status Update History");
+            Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("AirPP_History", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "Status", reasonType: "Air_Prepaid_unApprove", caption: "Status Update History");
             callNextForm.ShowDialog(this);
         }
 
@@ -945,7 +946,7 @@ isnull((select ExtNo from TPEPass1 where ID = p.POSMR),'') as POSMRExtNo
 from AirPP a
 left join Orders o on o.ID = a.OrderID
 left join PO p on p.ID = o.POID
-where a.ID = '{0}'",CurrentMaintain["ID"].ToString());
+where a.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out allMail);
                 if (!result)
                 {
@@ -953,10 +954,10 @@ where a.ID = '{0}'",CurrentMaintain["ID"].ToString());
                     return;
                 }
 
-                string mailto = allMail.Rows[0]["POSMRMail"].ToString() + ";" + allMail.Rows[0]["POHandleMail"].ToString() + ";" + allMail.Rows[0]["MRHandleMail"].ToString() + ";" + allMail.Rows[0]["SMRMail"].ToString() + ";";
-                string cc = allMail.Rows[0]["PPICMgrMail"].ToString() + ";" + allMail.Rows[0]["FtyMgrMail"].ToString() + ";" + dr["ToAddress"].ToString();
+                string mailto = MyUtility.Convert.GetString(allMail.Rows[0]["POSMRMail"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["POHandleMail"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["MRHandleMail"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["SMRMail"]) + ";";
+                string cc = MyUtility.Convert.GetString(allMail.Rows[0]["PPICMgrMail"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["FtyMgrMail"]) + ";" + MyUtility.Convert.GetString(dr["ToAddress"]);
                 string subject = string.Format(@"<{0}> {1} for SP#{2}, DD{3} - {4}",
-                    (string)displayBox5.Value, CurrentMaintain["ID"].ToString(), CurrentMaintain["OrderID"].ToString(), Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("yyyyMMdd"), CurrentMaintain["Status"].ToString() == "Junked" ? "cancel" : "request");
+                    MyUtility.Convert.GetString(displayBox5.Value), MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("yyyyMMdd"), MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Junked" ? "cancel" : "request");
                 StringBuilder content = new StringBuilder();
                 #region 組Content
                 content.Append(string.Format(@"Hi MR team, cc.Production team/Task Team
@@ -968,14 +969,14 @@ Responsibility: {9}{10}{11}{12}{13}
 -Be remind!! ---
 If the responsibility is belong to the supplier or SCI-MR team (posmr team), please key in Debit Note and ICR#, tks!
 If the responsibility is belong to “Buyer”, please remark the reason, tks!
-Remind:Please return the air pp request – approved  within 24hrs to avoid any shipment delay.", allMail.Rows[0]["SMRName"].ToString(), allMail.Rows[0]["SMRExtNo"].ToString(),
-                                                                                              allMail.Rows[0]["POSMRName"].ToString(), allMail.Rows[0]["POSMRExtNo"].ToString(), displayBox5.Value, CurrentMaintain["ID"].ToString(),
-                                                                                              CurrentMaintain["OrderID"].ToString(), Convert.ToDateTime(dateBox2.Value).ToString("yyyy.MM.dd"), CurrentMaintain["ShipQty"].ToString(),
-                                                                                              CurrentMaintain["ResponsibleFty"].ToString() == "True" ? "Factory:" + CurrentMaintain["ResponsibleFtyNo"].ToString() + "\r\n" : "",
-                                                                                              CurrentMaintain["ResponsibleSubcon"].ToString() == "True" ? "Subcon:DBC #:" + CurrentMaintain["SubconDBCNo"].ToString() + "\r\n" : "",
-                                                                                              CurrentMaintain["ResponsibleSCI"].ToString() == "True" ? "SCI ICR #:" + CurrentMaintain["SCIICRNo"].ToString() + "\r\n" : "",
-                                                                                              CurrentMaintain["ResponsibleSupp"].ToString() == "True" ? "Supplier:DBC #:" + CurrentMaintain["SuppDBCNo"].ToString() + "\r\n" : "",
-                                                                                              CurrentMaintain["ResponsibleBuyer"].ToString() == "True" ? "Buyer:Debit Memo:" + CurrentMaintain["BuyerDBCNo"].ToString() + ", ICR #" + CurrentMaintain["BuyerICRNo"].ToString() + "\r\n" : ""));
+Remind:Please return the air pp request – approved  within 24hrs to avoid any shipment delay.", MyUtility.Convert.GetString(allMail.Rows[0]["SMRName"]), MyUtility.Convert.GetString(allMail.Rows[0]["SMRExtNo"]),
+                                                                                              MyUtility.Convert.GetString(allMail.Rows[0]["POSMRName"]), MyUtility.Convert.GetString(allMail.Rows[0]["POSMRExtNo"]), MyUtility.Convert.GetString(displayBox5.Value), MyUtility.Convert.GetString(CurrentMaintain["ID"]),
+                                                                                              MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), Convert.ToDateTime(dateBox2.Value).ToString("yyyy.MM.dd"), MyUtility.Convert.GetString(CurrentMaintain["ShipQty"]),
+                                                                                              MyUtility.Convert.GetString(CurrentMaintain["ResponsibleFty"]) == "True" ? "Factory:" + MyUtility.Convert.GetString(CurrentMaintain["ResponsibleFtyNo"]) + "\r\n" : "",
+                                                                                              MyUtility.Convert.GetString(CurrentMaintain["ResponsibleSubcon"]) == "True" ? "Subcon:DBC #:" + MyUtility.Convert.GetString(CurrentMaintain["SubconDBCNo"]) + "\r\n" : "",
+                                                                                              MyUtility.Convert.GetString(CurrentMaintain["ResponsibleSCI"]) == "True" ? "SCI ICR #:" + MyUtility.Convert.GetString(CurrentMaintain["SCIICRNo"]) + "\r\n" : "",
+                                                                                              MyUtility.Convert.GetString(CurrentMaintain["ResponsibleSupp"]) == "True" ? "Supplier:DBC #:" + MyUtility.Convert.GetString(CurrentMaintain["SuppDBCNo"]) + "\r\n" : "",
+                                                                                              MyUtility.Convert.GetString(CurrentMaintain["ResponsibleBuyer"]) == "True" ? "Buyer:Debit Memo:" + MyUtility.Convert.GetString(CurrentMaintain["BuyerDBCNo"]) + ", ICR #" + MyUtility.Convert.GetString(CurrentMaintain["BuyerICRNo"]) + "\r\n" : ""));
                 #endregion
 
                 var email = new MailTo(Sci.Env.User.MailAddress, mailto, cc, subject, "", content.ToString(), visibleForm, visibleForm);
@@ -986,7 +987,7 @@ Remind:Please return the air pp request – approved  within 24hrs to avoid any 
         //AirPP List
         private void button2_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P01_AirPPList callNextForm = new Sci.Production.Shipping.P01_AirPPList(CurrentMaintain["OrderID"].ToString());
+            Sci.Production.Shipping.P01_AirPPList callNextForm = new Sci.Production.Shipping.P01_AirPPList(MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
             callNextForm.ShowDialog(this);
         }
 

@@ -418,7 +418,7 @@
             this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox1.Location = new System.Drawing.Point(69, 3);
             this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(105, 21);
+            this.displayBox1.Size = new System.Drawing.Size(110, 21);
             this.displayBox1.TabIndex = 5;
             // 
             // textBox1
@@ -428,7 +428,7 @@
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox1.Location = new System.Drawing.Point(69, 25);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(105, 21);
+            this.textBox1.Size = new System.Drawing.Size(110, 21);
             this.textBox1.TabIndex = 0;
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
@@ -466,7 +466,7 @@
             // label6
             // 
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(180, 26);
+            this.label6.Location = new System.Drawing.Point(187, 26);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(29, 18);
             this.label6.TabIndex = 10;
@@ -478,7 +478,7 @@
             this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderShipmodeSeq", true));
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.textBox2.IsSupportEditMode = false;
-            this.textBox2.Location = new System.Drawing.Point(211, 25);
+            this.textBox2.Location = new System.Drawing.Point(218, 25);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(25, 21);
@@ -546,7 +546,7 @@
             this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox3.Location = new System.Drawing.Point(340, 25);
             this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(66, 21);
+            this.displayBox3.Size = new System.Drawing.Size(88, 21);
             this.displayBox3.TabIndex = 18;
             // 
             // displayBox4
@@ -1764,6 +1764,7 @@
             this.textBox8.IsSupportEditMode = false;
             this.textBox8.Location = new System.Drawing.Point(155, 234);
             this.textBox8.Name = "textBox8";
+            this.textBox8.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.textBox8.ReadOnly = true;
             this.textBox8.Size = new System.Drawing.Size(32, 21);
             this.textBox8.TabIndex = 14;
