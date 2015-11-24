@@ -215,8 +215,15 @@ namespace Sci.Production.Warehouse
 
             #endregion Status Label
             //Lack.ApvDate
-            DateTime dt  = Convert.ToDateTime(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack where id = '{0}'", CurrentMaintain["requestid"])));
-            this.displayBox3.Text = dt.ToString(string.Format("{0}",Sci.Env.Cfg.DateTimeStringFormat));
+            if (!MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack where id = '{0}'", CurrentMaintain["requestid"]))))
+            {
+                DateTime dt = Convert.ToDateTime(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack where id = '{0}'", CurrentMaintain["requestid"])));
+                this.displayBox3.Text = dt.ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+            }
+            else
+            {
+                this.displayBox3.Text = "";
+            }
         }
 
         // detail 新增時設定預設值
@@ -340,7 +347,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                            group b by new
                            {
-                               mdiivisionid = b.Field<string>("mdiivisionid"),
+                               mdivisionid = b.Field<string>("mdivisionid"),
                                poid = b.Field<string>("poid"),
                                seq1 = b.Field<string>("seq1"),
                                seq2 = b.Field<string>("seq2"),
@@ -348,7 +355,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            } into m
                            select new
                            {
-                               mdiivisionid = m.First().Field<string>("mdiivisionid"),
+                               mdivisionid = m.First().Field<string>("mdivisionid"),
                                poid = m.First().Field<string>("poid"),
                                seq1 = m.First().Field<string>("seq1"),
                                seq2 = m.First().Field<string>("seq2"),
@@ -358,7 +365,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
                 foreach (var item in bs1)
                 {
-                    sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdiivisionid));
+                    sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid));
                 }
 
                 #endregion 更新庫存數量  ftyinventory
@@ -649,13 +656,30 @@ Where a.id = '{0}'", masterID);
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
             DataRow dr;
-            if (!MyUtility.Check.Seek(string.Format(@"select [type] from dbo.lack 
-where id='{0}' and fabrictype='F' and apvdate is not null and (issuelackid ='' or issuelackid is null)"
-                , textBox2.Text), out dr, null))
+            if (!MyUtility.Check.Seek(string.Format(@"select [type],[apvdate],[issuelackid] from dbo.lack 
+where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
+                , textBox2.Text, Sci.Env.User.Keyword), out dr, null))
             {
                 e.Cancel = true;
-                MyUtility.Msg.WarningBox("Data not found!!");
+                MyUtility.Msg.WarningBox("Please check requestid is Fabric.", "Data not found!!");
                 return;
+            }
+            else
+            {
+                if (MyUtility.Check.Empty(dr["apvdate"]))
+                {
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Request is not approved!!");
+                    return;
+                }
+
+                if (!MyUtility.Check.Empty(dr["issuelackid"]))
+                {
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("This request# ({0}) already issued by {1}.", textBox2.Text, dr["issuelackid"]));
+                    return;
+                }
+
             }
             CurrentMaintain["requestid"] = textBox2.Text;
             CurrentMaintain["type"] = dr["type"].ToString();

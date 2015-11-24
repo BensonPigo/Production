@@ -215,8 +215,15 @@ namespace Sci.Production.Warehouse
 
             #endregion Status Label
             //Lack.ApvDate
-            DateTime dt = Convert.ToDateTime(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack where id = '{0}'", CurrentMaintain["requestid"])));
-            this.displayBox3.Text = dt.ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+            if (!MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack where id = '{0}'", CurrentMaintain["requestid"]))))
+            {
+                DateTime dt = Convert.ToDateTime(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack where id = '{0}'", CurrentMaintain["requestid"])));
+                this.displayBox3.Text = dt.ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+            }
+            else
+            {
+                this.displayBox3.Text = "";
+            }
         }
 
         // detail 新增時設定預設值
@@ -624,7 +631,7 @@ Where a.id = '{0}'", masterID);
         // Accumulated Qty
         private void button1_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P16_AccumulatedQty(CurrentMaintain);
+            var frm = new Sci.Production.Warehouse.P15_AccumulatedQty(CurrentMaintain);
             frm.ShowDialog(this);
         }
 
@@ -648,13 +655,30 @@ Where a.id = '{0}'", masterID);
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
             DataRow dr;
-            if (!MyUtility.Check.Seek(string.Format(@"select [type] from dbo.lack 
-where id='{0}' and fabrictype='A' and apvdate is not null and (issuelackid ='' or issuelackid is null)"
-                , textBox2.Text), out dr, null))
+            if (!MyUtility.Check.Seek(string.Format(@"select [type],[apvdate],[issuelackid] from dbo.lack 
+where id='{0}' and fabrictype='A' and mdivisionid='{1}'" 
+                , textBox2.Text, Sci.Env.User.Keyword), out dr, null))
             {
                 e.Cancel = true;
-                MyUtility.Msg.WarningBox("Data not found!!");
+                MyUtility.Msg.WarningBox("Please check requestid is Accessory.", "Data not found!!");
                 return;
+            }
+            else
+            {
+                if (MyUtility.Check.Empty(dr["apvdate"]))
+                {
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Request is not approved!!");
+                    return;
+                }
+
+                if (!MyUtility.Check.Empty(dr["issuelackid"]))
+                {
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("This request# ({0}) already issued by {1}.", textBox2.Text, dr["issuelackid"]));
+                    return;
+                }
+
             }
             CurrentMaintain["requestid"] = textBox2.Text;
             CurrentMaintain["type"] = dr["type"].ToString();

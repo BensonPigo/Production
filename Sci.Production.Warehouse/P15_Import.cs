@@ -55,15 +55,16 @@ where a.id = '{0}';", dr_master["requestid"]));
 ,c.Dyelot
 ,0.00 as Qty
 ,'B' StockType
-,c.ukey
+,c.ukey as ftyinventoryukey
 ,isnull((select cast(MtlLocationid as varchar)+',' from (select MtlLocationid from FtyInventory_Detail where ukey=c.Ukey) t for xml path('')),'') as location
 ,c.inqty-c.outqty + c.adjustqty as balance
 ,(select stockunit from po_supp_detail where id = c.poid and seq1 =c.seq1 and seq2 = c.seq2 ) as stockunit
 ,dbo.getMtlDesc(c.poid,c.seq1,c.seq2,2,0) as [description]
+,'{1}' as mdivisionid
 from dbo.Lack_Detail a
 inner join dbo.Lack b on b.ID= a.ID
 inner join dbo.ftyinventory c on c.poid = b.POID and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
-Where a.id = '{0}' and c.lock = 0 and (c.inqty-c.outqty + c.adjustqty) > 0  ", dr_master["requestid"])); // 
+Where a.id = '{0}' and c.lock = 0 and (c.inqty-c.outqty + c.adjustqty) > 0  and c.mdivisionid='{1}' ", dr_master["requestid"], Sci.Env.User.Keyword)); // 
             #endregion
 
             MyUtility.Msg.WaitWindows("Data Loading....");
@@ -118,12 +119,13 @@ Where a.id = '{0}' and c.lock = 0 and (c.inqty-c.outqty + c.adjustqty) > 0  ", d
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
-                .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //0
-                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)) //1
-                .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //2
-                .Numeric("balance", header: "Request Qty", iseditable: true, decimal_places: 2, integer_places: 10) //3
-                .Numeric("Issueqty", header: "Accu. Issue Qty", decimal_places: 2, integer_places: 10)  //4
-                .Numeric("balance", header: "Balance Qty", iseditable: true, decimal_places: 2, integer_places: 10) //5
+                .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //0
+                .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
+                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)) //2
+                .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //3
+                .Numeric("balance", header: "Request Qty", iseditable: true, decimal_places: 2, integer_places: 10) //4
+                .Numeric("Issueqty", header: "Accu. Issue Qty", decimal_places: 2, integer_places: 10)  //5
+                .Numeric("balance", header: "Balance Qty", iseditable: true, decimal_places: 2, integer_places: 10) //6
                 ;
             #endregion
             #region --  Grid2 Setting --
