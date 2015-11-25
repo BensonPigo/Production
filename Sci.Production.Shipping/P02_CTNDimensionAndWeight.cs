@@ -41,7 +41,7 @@ namespace Sci.Production.Shipping
                 {
                     foreach (DataRow dr in weightData.Rows)
                     {
-                        updatecmd = string.Format(@"update Express set CTNNW = {0}, VW = {1} where ID = '{2}'", dr["CTNNW"].ToString(), dr["VW"].ToString(), KeyValue1);
+                        updatecmd = string.Format(@"update Express set CTNNW = {0}, VW = {1} where ID = '{2}'", MyUtility.Convert.GetString(dr["CTNNW"]), MyUtility.Convert.GetString(dr["VW"]), KeyValue1);
                     }
                 }
             }
@@ -63,7 +63,6 @@ namespace Sci.Production.Shipping
 
             return Result.True;
         }
-
 
         private void save_Click(object sender, EventArgs e)
         {

@@ -30,15 +30,16 @@ namespace Sci.Production.Shipping
             {
                 MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "2,SMS,3,Bulk");
             }
-
-            if (data["Category"].ToString() == "1" && OperationMode == 3)
+            
+            if (MyUtility.Convert.GetString(data["Category"]) == "1")
             {
-                MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "1,Sample");
                 label12.Text = "FOC PL#";
-                textBox4.ReadOnly = true;
-                textBox4.IsSupportEditMode = false;
-                textBox1.ReadOnly = true;
-                textBox1.IsSupportEditMode = false;
+                if (OperationMode == 3)
+                {
+                    MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "1,Sample");
+                    textBox4.ReadOnly = true;
+                    textBox4.IsSupportEditMode = false;
+                }
             }
 
             if (OperationMode == 3)
@@ -60,9 +61,18 @@ namespace Sci.Production.Shipping
         //SP#
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && textBox1.OldValue != textBox1.Text)
+            if (EditMode && !MyUtility.Check.Empty(textBox1.Text) && textBox1.OldValue != textBox1.Text)
             {
-                if (MyUtility.Check.Seek(string.Format("select ID from Orders where ID = '{0}'", textBox1.Text)))
+                //sql參數
+                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", textBox1.Text);
+
+                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                cmds.Add(sp1);
+
+                string sqlCmd = "select ID from Orders where ID = @id";
+                DataTable OrderData;
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderData);
+                if (result && OrderData.Rows.Count > 0)
                 {
                     if (!MyUtility.Check.Seek(string.Format(@"select oq.Id
 from Order_QtyShip oq
@@ -83,7 +93,14 @@ for xml path('')) as ShipModeID");
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox("SP# not found!!");
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox("Sql connection fail!\r\n" + result.ToString());
+                    }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("SP# not found!!");
+                    }
                     CurrentData["OrderID"] = "";
                     e.Cancel = true;
                     return;
@@ -101,13 +118,13 @@ for xml path('')) as ShipModeID");
 from Orders where ID = '{0}'",textBox1.Text), out OrderData))
                 {
                     CurrentData["OrderID"] = textBox1.Text;
-                    CurrentData["SeasonID"] = OrderData["SeasonID"].ToString();
-                    CurrentData["StyleID"] = OrderData["StyleID"].ToString();
-                    CurrentData["BrandID"] = OrderData["BrandID"].ToString();
-                    CurrentData["Leader"] = OrderData["SMR"].ToString();
+                    CurrentData["SeasonID"] = OrderData["SeasonID"];
+                    CurrentData["StyleID"] = OrderData["StyleID"];
+                    CurrentData["BrandID"] = OrderData["BrandID"];
+                    CurrentData["Leader"] = OrderData["SMR"];
                     if (MyUtility.Check.Empty(CurrentData["Description"]))
                     {
-                        CurrentData["Description"] = OrderData["Description"].ToString();
+                        CurrentData["Description"] = OrderData["Description"];
                     }
                 }
                 else
@@ -155,9 +172,9 @@ from Orders where ID = '{0}'",textBox1.Text), out OrderData))
             if (MyUtility.Check.Seek(string.Format(@"select ed.ID 
 from Express_Detail ed
 inner join Express e on ed.ID = e.ID and e.Status <> 'Junked'
-where DutyNo = '{0}' and ed.ID <> '{1}'", textBox4.Text, CurrentData["ID"].ToString()), out AirPPData))
+where DutyNo = '{0}' and ed.ID <> '{1}'", textBox4.Text, MyUtility.Convert.GetString(CurrentData["ID"])), out AirPPData))
             {
-                MyUtility.Msg.WarningBox(string.Format("This Air PP No. already in HC#{0}, so can't be assign!!", AirPPData["ID"].ToString()));
+                MyUtility.Msg.WarningBox(string.Format("This Air PP No. already in HC#{0}, so can't be assign!!", MyUtility.Convert.GetString(AirPPData["ID"])));
                 return false;
             }
             return true;
@@ -231,12 +248,12 @@ where DutyNo = '{0}' and ed.ID <> '{1}'", textBox4.Text, CurrentData["ID"].ToStr
                 }
                 DataRow Seq;
                 if (!MyUtility.Check.Seek(string.Format(@"select RIGHT(REPLICATE('0',3)+CAST(MAX(CAST(Seq1 as int))+1 as varchar),3) as Seq1
-from Express_Detail where ID = '{0}' and Seq2 = ''", CurrentData["ID"].ToString()), out Seq))
+from Express_Detail where ID = '{0}' and Seq2 = ''", MyUtility.Convert.GetString(CurrentData["ID"])), out Seq))
                 {
                     MyUtility.Msg.WarningBox("Get seq fail, pls try again");
                     return false;
                 }
-                CurrentData["Seq1"] = Seq["Seq1"].ToString();
+                CurrentData["Seq1"] = Seq["Seq1"];
                 CurrentData["InCharge"] = Sci.Env.User.UserID;
             }
 
@@ -245,7 +262,7 @@ from Express_Detail where ID = '{0}' and Seq2 = ''", CurrentData["ID"].ToString(
 
         protected override DualResult OnSavePost()
         {
-            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(CurrentData["ID"].ToString()));
+            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(CurrentData["ID"])));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
@@ -256,16 +273,16 @@ from Express_Detail where ID = '{0}' and Seq2 = ''", CurrentData["ID"].ToString(
 
         protected override bool OnDeletePre()
         {
-            if (CurrentData["Category"].ToString() == "1")
+            if (MyUtility.Convert.GetString(CurrentData["Category"]) == "1")
             {
-                DualResult result = DBProxy.Current.Execute(null, string.Format("update PackingList set ExpressID = '' where ID = '{0}'", CurrentData["DutyNo"].ToString()));
+                DualResult result = DBProxy.Current.Execute(null, string.Format("update PackingList set ExpressID = '' where ID = '{0}'", MyUtility.Convert.GetString(CurrentData["DutyNo"])));
                 if (!result)
                 {
                     MyUtility.Msg.WarningBox("Update packing list fail!! Pls try again.\r\n" + result.ToString());
                     return false;
                 }
 
-                result = DBProxy.Current.Execute(null, string.Format("delete Express_Detail where ID = '{0}' and DutyNo = '{1}'", CurrentData["ID"].ToString(), CurrentData["DutyNo"].ToString()));
+                result = DBProxy.Current.Execute(null, string.Format("delete Express_Detail where ID = '{0}' and DutyNo = '{1}'", MyUtility.Convert.GetString(CurrentData["ID"]), MyUtility.Convert.GetString(CurrentData["DutyNo"])));
                 if (!result)
                 {
                     MyUtility.Msg.WarningBox("Delete fail!! Pls try again.\r\n" + result.ToString());
@@ -277,7 +294,7 @@ from Express_Detail where ID = '{0}' and Seq2 = ''", CurrentData["ID"].ToString(
 
         protected override bool OnDeletePost()
         {
-            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(CurrentData["ID"].ToString()));
+            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(CurrentData["ID"])));
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Re-Calculate fail!! Pls try again.\r\n" + result.ToString());

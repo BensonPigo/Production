@@ -33,7 +33,7 @@ namespace Sci.Production.Shipping
                 if (this.EditMode)
                 {
                     DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                    dr["CTNNo"] = e.FormattedValue.ToString().Trim();
+                    dr["CTNNo"] = MyUtility.Convert.GetString(e.FormattedValue).Trim();
                 }
             };
             receiver.CharacterCasing = CharacterCasing.Normal;
@@ -77,7 +77,7 @@ namespace Sci.Production.Shipping
             }
 
             string sqlCmd = string.Format(@"select pd.ID,pd.OrderID,o.SeasonID,o.StyleID,'Sample' as Category,
-'' as CTNNo, 0 as NW, 0 as Price,pd.ShipQty,o.StyleUnit as UnitID,'' as Receiver,
+'' as CTNNo, 0.0 as NW, 0.0 as Price,pd.ShipQty,o.StyleUnit as UnitID,'' as Receiver,
 t.Name as Leader, o.BrandID, [dbo].[getBOFMtlDesc](o.StyleUkey) as Description
 from PackingList_Detail pd
 left join Orders o on pd.OrderID = o.ID
@@ -96,10 +96,18 @@ where pd.ID = '{0}'", textBox1.Text);
         //檢查FOC PL#是否正確
         private bool CheckPLNo(string PLNo)
         {
-            DataRow PackListData;
-            if (MyUtility.Check.Seek(string.Format("select ExpressID from PackingList where ID = '{0}' and Type = 'F'", PLNo), out PackListData))
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", PLNo);
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+
+            DataTable PackListData;
+            string sqlCmd = "select ExpressID from PackingList where ID = @id and Type = 'F'";
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out PackListData);
+            if (result && PackListData.Rows.Count > 0)
             {
-                if (!MyUtility.Check.Empty(PackListData["ExpressID"]))
+                if (!MyUtility.Check.Empty(PackListData.Rows[0]["ExpressID"]))
                 {
                     MyUtility.Msg.WarningBox("The FOC PL# already be assign HC#, so can't assign again!!");
                     return false;
@@ -107,7 +115,14 @@ where pd.ID = '{0}'", textBox1.Text);
             }
             else
             {
-                MyUtility.Msg.WarningBox("Data not found!!");
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                }
                 return false;
             }
             return true;
@@ -126,7 +141,7 @@ where pd.ID = '{0}'", textBox1.Text);
                 return;
             }
             //檢查FOC PL#是否正確
-            if (!CheckPLNo(dt.Rows[0]["ID"].ToString()))
+            if (!CheckPLNo(MyUtility.Convert.GetString(dt.Rows[0]["ID"])))
             {
                 return;
             }
@@ -156,21 +171,21 @@ where pd.ID = '{0}'", textBox1.Text);
                 }
 
                 insertCmds.Add(string.Format(@"insert into Express_Detail(ID,OrderID,Seq1,SeasonID,StyleID,Description,Qty,NW,CTNNo,Category,DutyNo,Price,UnitID,Receiver,BrandID,Leader,InCharge,AddName,AddDate)
- values('{0}','{1}',(select RIGHT(REPLICATE('0',3)+CAST(MAX(CAST(Seq1 as int))+1 as varchar),3)
+ values('{0}','{1}',(select ISNULL(RIGHT(REPLICATE('0',3)+CAST(MAX(CAST(Seq1 as int))+1 as varchar),3),'001')
 from Express_Detail where ID = '{0}' and Seq2 = ''),'{2}','{3}','{4}',{5},{6},'{7}','1','{8}',{9},'{10}','{11}','{12}','{13}','{14}','{14}',GETDATE());",
-                                            masterData["ID"].ToString(), dr["OrderID"].ToString(), dr["SeasonID"].ToString(), dr["StyleID"].ToString(), dr["Description"].ToString(), dr["ShipQty"].ToString(),
-                                            dr["NW"].ToString(), dr["CTNNo"].ToString(), dr["ID"].ToString(), dr["Price"].ToString(), dr["UnitID"].ToString(), dr["Receiver"].ToString(), dr["BrandID"].ToString(),
-                                            dr["Leader"].ToString(),Sci.Env.User.UserID));
+                                            MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["SeasonID"]), MyUtility.Convert.GetString(dr["StyleID"]), MyUtility.Convert.GetString(dr["Description"]), MyUtility.Convert.GetString(dr["ShipQty"]),
+                                            MyUtility.Convert.GetString(dr["NW"]), MyUtility.Convert.GetString(dr["CTNNo"]), MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Price"]), MyUtility.Convert.GetString(dr["UnitID"]), MyUtility.Convert.GetString(dr["Receiver"]), MyUtility.Convert.GetString(dr["BrandID"]),
+                                            MyUtility.Convert.GetString(dr["Leader"]),Sci.Env.User.UserID));
             }
 
-            insertCmds.Add(string.Format("update PackingList set ExpressID = '{0}' where ID = '{1}'", masterData["ID"].ToString(), dt.Rows[0]["ID"].ToString()));
+            insertCmds.Add(string.Format("update PackingList set ExpressID = '{0}' where ID = '{1}'", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(dt.Rows[0]["ID"])));
             DualResult result1, result2;
             using (TransactionScope transactionScope = new TransactionScope())
             {
                 try
                 {
                     result1 = DBProxy.Current.Executes(null, insertCmds);
-                    result2 = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(masterData["ID"].ToString()));
+                    result2 = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(masterData["ID"])));
                     if (result1 && result2)
                     {
                         transactionScope.Complete();

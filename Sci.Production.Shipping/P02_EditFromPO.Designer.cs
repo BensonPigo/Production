@@ -67,11 +67,11 @@
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(605, 7);
+            this.undo.Location = new System.Drawing.Point(599, 5);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(519, 7);
+            this.save.Location = new System.Drawing.Point(519, 5);
             // 
             // editBox2
             // 
@@ -409,7 +409,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "P02_EditFromPO";
-            this.Text = "International Air/Express - Import From Purchase";
+            this.Text = "International Air/Express - Import from Purchase";
             this.WorkAlias = "Express_Detail";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.label1, 0);

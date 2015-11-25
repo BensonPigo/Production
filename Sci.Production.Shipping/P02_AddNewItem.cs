@@ -39,9 +39,26 @@ namespace Sci.Production.Shipping
         {
             if (EditMode && textBox1.OldValue != textBox1.Text)
             {
-                if (!MyUtility.Check.Seek(string.Format("select ID from Orders where ID = '{0}'", textBox1.Text)))
+                //sql參數
+                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", textBox1.Text);
+
+                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                cmds.Add(sp1);
+
+                string sqlCmd = "select ID from Orders where ID = @id";
+                DataTable OrderData;
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderData);
+
+                if (!result && OrderData.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.WarningBox("SP# not found!!");
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox("Sql connection fail!\r\n" + result.ToString());
+                    }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("SP# not found!!");
+                    }
                     CurrentData["OrderID"] = "";
                     e.Cancel = true;
                     return;
@@ -59,13 +76,13 @@ namespace Sci.Production.Shipping
 from Orders where ID = '{0}'", textBox1.Text), out OrderData))
                 {
                     CurrentData["OrderID"] = textBox1.Text;
-                    CurrentData["SeasonID"] = OrderData["SeasonID"].ToString();
-                    CurrentData["StyleID"] = OrderData["StyleID"].ToString();
-                    CurrentData["BrandID"] = OrderData["BrandID"].ToString();
-                    CurrentData["Leader"] = OrderData["SMR"].ToString();
+                    CurrentData["SeasonID"] = OrderData["SeasonID"];
+                    CurrentData["StyleID"] = OrderData["StyleID"];
+                    CurrentData["BrandID"] = OrderData["BrandID"];
+                    CurrentData["Leader"] = OrderData["SMR"];
                     if (MyUtility.Check.Empty(CurrentData["Description"]))
                     {
-                        CurrentData["Description"] = OrderData["Description"].ToString();
+                        CurrentData["Description"] = OrderData["Description"];
                     }
                 }
                 else
@@ -85,8 +102,8 @@ from Orders where ID = '{0}'", textBox1.Text), out OrderData))
             if (MyUtility.Check.Seek(string.Format(@"select s.BulkSMR,[dbo].[getBOFMtlDesc](s.Ukey) as Description
 from Style s where s.ID = '{0}' and s.SeasonID = '{1}'",txtstyle1.Text,txtseason1.Text),out dr))
             {
-                CurrentData["Leader"] = dr["BulkSMR"].ToString();
-                CurrentData["Description"] = dr["Description"].ToString();
+                CurrentData["Leader"] = dr["BulkSMR"];
+                CurrentData["Description"] = dr["Description"];
             }
         }
 
@@ -163,7 +180,7 @@ from Style s where s.ID = '{0}' and s.SeasonID = '{1}'",txtstyle1.Text,txtseason
                 return false;
             }
 
-            if (CurrentData["Category"].ToString() == "7")
+            if (MyUtility.Convert.GetString(CurrentData["Category"]) == "7")
             {
                 if (MyUtility.Check.Empty(CurrentData["StyleID"]))
                 {
@@ -179,12 +196,12 @@ from Style s where s.ID = '{0}' and s.SeasonID = '{1}'",txtstyle1.Text,txtseason
             {
                 DataRow Seq;
                 if (!MyUtility.Check.Seek(string.Format(@"select RIGHT(REPLICATE('0',3)+CAST(MAX(CAST(Seq1 as int))+1 as varchar),3) as Seq1
-from Express_Detail where ID = '{0}' and Seq2 = ''", CurrentData["ID"].ToString()), out Seq))
+from Express_Detail where ID = '{0}' and Seq2 = ''", MyUtility.Convert.GetString(CurrentData["ID"])), out Seq))
                 {
                     MyUtility.Msg.WarningBox("Get seq fail, pls try again");
                     return false;
                 }
-                CurrentData["Seq1"] = Seq["Seq1"].ToString();
+                CurrentData["Seq1"] = Seq["Seq1"];
                 CurrentData["InCharge"] = Sci.Env.User.UserID;
             }
 
@@ -193,7 +210,7 @@ from Express_Detail where ID = '{0}' and Seq2 = ''", CurrentData["ID"].ToString(
 
         protected override DualResult OnSavePost()
         {
-            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(CurrentData["ID"].ToString()));
+            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(CurrentData["ID"])));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
@@ -204,7 +221,7 @@ from Express_Detail where ID = '{0}' and Seq2 = ''", CurrentData["ID"].ToString(
 
         protected override bool OnDeletePost()
         {
-            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(CurrentData["ID"].ToString()));
+            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(CurrentData["ID"])));
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
@@ -248,14 +265,14 @@ from Express_Detail where ID = '{0}' and Seq2 = ''", CurrentData["ID"].ToString(
 
         private void GetLeaderName()
         {
-            string selectSql = string.Format("Select Name,ExtNo from TPEPass1 Where id='{0}'", CurrentData["Leader"].ToString());
+            string selectSql = string.Format("Select Name,ExtNo from TPEPass1 Where id='{0}'", MyUtility.Convert.GetString(CurrentData["Leader"]));
             DataRow dr;
             if (MyUtility.Check.Seek(selectSql, out dr))
             {
-                displayBox2.Text = MyUtility.Check.Empty(dr["extNo"]) ? "" : dr["Name"].ToString();
+                displayBox2.Text = MyUtility.Convert.GetString(dr["Name"]);
                 if (!MyUtility.Check.Empty(dr["extNo"]))
                 {
-                    displayBox2.Text = this.displayBox2.Text + " #" + dr["extNo"].ToString();
+                    displayBox2.Text = this.displayBox2.Text + " #" + MyUtility.Convert.GetString(dr["extNo"]);
                 }
             }
             else

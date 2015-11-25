@@ -35,7 +35,7 @@ namespace Sci.Production.Shipping
                 if (this.EditMode)
                 {
                     DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                    dr["CTNNo"] = e.FormattedValue.ToString().Trim();
+                    dr["CTNNo"] = MyUtility.Convert.GetString(e.FormattedValue).Trim();
                 }
             };
             receiver.CharacterCasing = CharacterCasing.Normal;
@@ -72,13 +72,27 @@ namespace Sci.Production.Shipping
                 textBox1.Focus();
                 return;
             }
+            if (MyUtility.Convert.GetString(textBox1.Text).IndexOf("'") != -1)
+            {
+                textBox1.Text = textBox1.Text.Replace("'","");
+            }
+
+            if (MyUtility.Convert.GetString(textBox2.Text).IndexOf("'") != -1)
+            {
+                textBox2.Text = textBox2.Text.Replace("'", "");
+            }
+
+            if (MyUtility.Convert.GetString(textBox3.Text).IndexOf("'") != -1)
+            {
+                textBox3.Text = textBox3.Text.Replace("'", "");
+            }
 
             string sqlCmd = string.Format(@"select 0 as Selected, a.*, iif(a.POQty-a.ExpressQty>0,a.POQty-a.ExpressQty,0) as Qty
 from (
 select psd.ID,psd.SEQ1,psd.SEQ2,psd.Price,psd.POUnit as UnitID,isnull(o.BrandID,'') as BrandID,
 isnull(t.Name,'') as Leader,ps.SuppID,ps.SuppID+'-'+s.AbbEN as Supplier,psd.Qty as POQty,
 (select isnull(sum(ed.Qty),0) from Express_Detail ed where ed.OrderID = psd.ID and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2) as ExpressQty,
-'' as Receiver,'' as CTNNo, 0 as NW
+'' as Receiver,'' as CTNNo, 0.0 as NW
 from PO_Supp_Detail psd
 left join PO_Supp ps on psd.ID = ps.ID and psd.SEQ1 = ps.SEQ1
 left join Supp s on ps.SuppID = s.ID
@@ -132,7 +146,7 @@ where psd.ID = '{0}'{1}{2}) a", textBox1.Text, MyUtility.Check.Empty(textBox2.Te
             //檢查重複資料
             try
             {
-                MyUtility.Tool.ProcessWithDatatable(dt, "Selected,ID,Seq1,Seq2", string.Format("select e.ID,e.Seq1,e.Seq2 from #tmp e inner join Express_Detail ed on ed.ID = '{0}' and ed.OrderID = e.ID and ed.Seq1 = e.Seq1 and ed.Seq2 = e.Seq2 where e.Selected = 1",masterData["ID"].ToString()), out checkData);
+                MyUtility.Tool.ProcessWithDatatable(dt, "Selected,ID,Seq1,Seq2", string.Format("select e.ID,e.Seq1,e.Seq2 from #tmp e inner join Express_Detail ed on ed.ID = '{0}' and ed.OrderID = e.ID and ed.Seq1 = e.Seq1 and ed.Seq2 = e.Seq2 where e.Selected = 1",MyUtility.Convert.GetString(masterData["ID"])), out checkData);
             }
             catch (Exception ex)
             {
@@ -144,7 +158,7 @@ where psd.ID = '{0}'{1}{2}) a", textBox1.Text, MyUtility.Check.Empty(textBox2.Te
                 StringBuilder msgStr = new StringBuilder();
                 foreach (DataRow dr in checkData.Rows)
                 {
-                    msgStr.Append(string.Format("SP#:{0}, Seq1#:{1}, Seq2#:{2}\r\n", dr["ID"].ToString(), dr["Seq1"].ToString(), dr["Seq2"].ToString()));
+                    msgStr.Append(string.Format("SP#:{0}, Seq1#:{1}, Seq2#:{2}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"])));
                 }
                 msgStr.Append("Data already exists!!");
                 MyUtility.Msg.WarningBox(msgStr.ToString());
@@ -156,6 +170,12 @@ where psd.ID = '{0}'{1}{2}) a", textBox1.Text, MyUtility.Check.Empty(textBox2.Te
 
             foreach (DataRow dr in selectedRow)
             {
+                if (MyUtility.Check.Empty(dr["Receiver"]))
+                {
+                    MyUtility.Msg.WarningBox("Receiver can't empty!!");
+                    return;
+                }
+
                 if (MyUtility.Check.Empty(dr["CTNNo"]))
                 {
                     MyUtility.Msg.WarningBox("CTN No. can't empty!!");
@@ -168,22 +188,16 @@ where psd.ID = '{0}'{1}{2}) a", textBox1.Text, MyUtility.Check.Empty(textBox2.Te
                     return;
                 }
 
-                if (MyUtility.Check.Empty(dr["Receiver"]))
-                {
-                    MyUtility.Msg.WarningBox("Receiver can't empty!!");
-                    return;
-                }
-
                 if (MyUtility.Check.Empty(dr["Qty"]))
                 {
-                    chkQty.Append(string.Format("SP#:{0}, Seq1#:{1}, Seq2#:{2}\r\n", dr["ID"].ToString(), dr["Seq1"].ToString(), dr["Seq2"].ToString()));
+                    chkQty.Append(string.Format("SP#:{0}, Seq1#:{1}, Seq2#:{2}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"])));
                 }
 
                 insertCmds.Add(string.Format(@"insert into Express_Detail(ID,OrderID,Seq1,Seq2,Qty,NW,CTNNo,Category,SuppID,Price,UnitID,Receiver,BrandID,Leader,Remark,InCharge,AddName,AddDate)
  values('{0}','{1}','{2}','{3}',{4},{5},'{6}','4','{7}',{8},'{9}','{10}','{11}','{12}','{13}','{14}','{14}',GETDATE());",
-                                            masterData["ID"].ToString(), dr["ID"].ToString(), dr["Seq1"].ToString(), dr["Seq2"].ToString(), dr["Qty"].ToString(),
-                                            dr["NW"].ToString(), dr["CTNNo"].ToString(), dr["SuppID"].ToString(), dr["Price"].ToString(), dr["UnitID"].ToString(), dr["Receiver"].ToString(), dr["BrandID"].ToString(),
-                                            dr["Leader"].ToString(), textBox4.Text, Sci.Env.User.UserID));
+                                            MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"]), MyUtility.Convert.GetString(dr["Qty"]),
+                                            MyUtility.Convert.GetString(dr["NW"]), MyUtility.Convert.GetString(dr["CTNNo"]), MyUtility.Convert.GetString(dr["SuppID"]), MyUtility.Convert.GetString(dr["Price"]), MyUtility.Convert.GetString(dr["UnitID"]), MyUtility.Convert.GetString(dr["Receiver"]), MyUtility.Convert.GetString(dr["BrandID"]),
+                                            MyUtility.Convert.GetString(dr["Leader"]), textBox4.Text, Sci.Env.User.UserID));
             }
 
             //Qty不可為0
@@ -214,7 +228,7 @@ where a.TtlQty > a.POQty", out checkData);
                 StringBuilder msgStr = new StringBuilder();
                 foreach (DataRow dr in checkData.Rows)
                 {
-                    msgStr.Append(string.Format("SP#:{0}, Seq1#:{1}, Seq2#:{2}\r\n", dr["ID"].ToString(), dr["Seq1"].ToString(), dr["Seq2"].ToString()));
+                    msgStr.Append(string.Format("SP#:{0}, Seq1#:{1}, Seq2#:{2}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"])));
                 }
                 msgStr.Append("Total Qty > PO Qty, pls check!!");
                 MyUtility.Msg.WarningBox(msgStr.ToString());
@@ -226,7 +240,7 @@ where a.TtlQty > a.POQty", out checkData);
                 try
                 {
                     result1 = DBProxy.Current.Executes(null, insertCmds);
-                    result2 = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(masterData["ID"].ToString()));
+                    result2 = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(masterData["ID"])));
                     if (result1 && result2)
                     {
                         transactionScope.Complete();
