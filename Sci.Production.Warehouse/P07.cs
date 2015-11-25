@@ -156,10 +156,10 @@ namespace Sci.Production.Warehouse
             {
                 // 到倉日如果早於ETA 3天，則提示窗請USER再確認是否存檔。
                 t1 = DateTime.Parse(dateBox1.Text);//eta
-                t2 = DateTime.Parse(dateBox3.Text).AddDays(-3);//warehouse
+                t2 = DateTime.Parse(dateBox3.Text).AddDays(3);//warehouse
                 if (DateTime.Compare(t1, t2) > 0)
                 {
-                    DialogResult dResult = MyUtility.Msg.QuestionBox("Arrive Warehouse date is early than ETA 3 days, do you save it?");
+                    DialogResult dResult = MyUtility.Msg.QuestionBox("Arrive Warehouse date is earlier than ETA 3 days, do you save it?");
                     if (dResult.ToString().ToUpper() == "NO") return false;
                 }
                     // 到倉日如果晚於ETA 15天，則提示窗請USER再確認是否存檔。
@@ -167,7 +167,7 @@ namespace Sci.Production.Warehouse
                 t2 = DateTime.Parse(dateBox3.Text);//warehouse
                 if (DateTime.Compare(t1, t2) < 0)
                 {
-                    DialogResult dResult = MyUtility.Msg.QuestionBox("Arrive Warehouse date is late than ETA 15 days, do you save it?");
+                    DialogResult dResult = MyUtility.Msg.QuestionBox("Arrive Warehouse date is later than ETA 15 days, do you save it?");
                     if (dResult.ToString().ToUpper() == "NO") return false;
                 }
             }
@@ -552,11 +552,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.StockQty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Receiving_Detail d left join FtyInventory f
-on d.PoId = f.PoId
-and d.Seq1 = f.Seq1
-and d.Seq2 = f.seq2
-and d.StockType = f.StockType
-and d.Roll = f.Roll
+on d.ftyinventoryukey = f.ukey
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -584,16 +580,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
                                 where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
             #endregion 更新表頭狀態資料
-            #region 更新庫存數量 po_supp_detail & ftyinventory
 
-            sqlupd2.Append("declare @iden as bigint;");
-            sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
-            foreach (DataRow item in DetailDatas)
-            {
-                sqlupd2.Append(Prgs.UpdateFtyInventory(2, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), (decimal)item["stockqty"]
-                    , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), true, item["location"].ToString()));
-            }
-            sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
+            #region 更新庫存數量 mdivisionPoDetail & ftyinventory
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
@@ -610,17 +598,28 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
                            stocktype = m.First().Field<string>("stocktype"),
-                           stockqty = m.Sum(w => w.Field<decimal>("stockqty"))
+                           stockqty = m.Sum(w => w.Field<decimal>("stockqty")),
+                           location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
                        }).ToList();
 
             foreach (var item in bs1)
             {
-                sqlupd2.Append(Prgs.UpdateMPoDetail(2, item.poid, item.seq1, item.seq2, item.stockqty, true, item.stocktype,item.mdivisionid));
-                if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, item.stockqty, true, item.stocktype,item.mdivisionid));
+                sqlupd2.Append(Prgs.UpdateMPoDetail(2, item.poid, item.seq1, item.seq2, item.stockqty, true, item.stocktype,item.mdivisionid,item.location));
+                if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, item.stockqty, true, item.stocktype,item.mdivisionid,item.location));
             }
 
+            sqlupd2.Append("declare @iden as bigint;");
+            sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
+            foreach (DataRow item in DetailDatas)
+            {
+                sqlupd2.Append(Prgs.UpdateFtyInventory(2, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), (decimal)item["stockqty"]
+                    , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), true, item["location"].ToString()));
+            }
+            sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
+            
+
             #endregion 更新庫存數量 po_supp_detail & ftyinventory
-            #region 收wkno時回寫export
+            #region Base on wkno 收料時，需回寫export
             sqlcmd4 = string.Format(@"update dbo.export set whsearrival =(select WhseArrival from dbo.receiving where id='{2}')
 ,packingarrival = (select PackingReceive from dbo.receiving where id='{2}'), editname = '{0}' , editdate = GETDATE()
                                 where id = '{1}'", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain["id"]);
@@ -689,11 +688,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.StockQty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Receiving_Detail d left join FtyInventory f
-on d.PoId = f.PoId
-and d.Seq1 = f.Seq1
-and d.Seq2 = f.seq2
-and d.StockType = f.StockType
-and d.Roll = f.Roll
+on d.ftyinventoryukey = f.ukey
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {

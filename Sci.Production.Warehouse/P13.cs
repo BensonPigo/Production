@@ -249,123 +249,6 @@ namespace Sci.Production.Warehouse
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
-            #region SP# Vaild 判斷
-
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
-            DataRow dr;
-            ts4.CellValidating += (s, e) =>
-            {
-                if (this.EditMode && string.Compare(CurrentDetailData["poid"].ToString(),e.FormattedValue.ToString()) != 0)
-                {
-                    if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po where id = '{0}')", e.FormattedValue), null))
-                    {
-                        MyUtility.Msg.WarningBox("SP# is not exist!!", "Data not found");
-                        e.Cancel = true;
-                        return;
-                    }
-                    CurrentDetailData["poid"] = e.FormattedValue;
-                    CurrentDetailData["seq"]="";
-                    CurrentDetailData["seq1"] = "";
-                    CurrentDetailData["seq2"] = "";
-                }
-            };
-
-            #endregion SP# Vaild 判斷
-
-            #region Seq 右鍵開窗
-
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
-            ts.EditingMouseDown += (s, e) =>
-            {
-                if (this.EditMode && e.Button == MouseButtons.Right)
-                {
-                    IList<DataRow> x;
-                    
-                    Sci.Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(CurrentDetailData["poid"].ToString(), CurrentDetailData["seq"].ToString(),"fabrictype !='F'");
-                    DialogResult result = selepoitem.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
-                    x = selepoitem.GetSelecteds();
-                    string productiontype = MyUtility.GetValue.Lookup(string.Format(@"select productiontype from fabric inner join mtltype on fabric.mtltypeid = mtltype.id where SCIRefno = '{0}'", x[0]["scirefno"]), null);
-                    if (productiontype.ToUpper().TrimEnd() != "PACKING")
-                    {
-                        MyUtility.Msg.WarningBox(string.Format("Seq ({1}) : Production type is  {0}  not packing!!", productiontype, x[0]["seq"]), "Seq");
-                        return;
-                    }
-                    else
-                    {
-                        CurrentDetailData["seq"] = x[0]["seq"];
-                        CurrentDetailData["seq1"] = x[0]["seq1"];
-                        CurrentDetailData["seq2"] = x[0]["seq2"];
-                        CurrentDetailData["stockunit"] = x[0]["stockunit"];
-                        CurrentDetailData["Description"] = x[0]["Description"];
-                    }
-                    
-                }
-            };
-            ts.CellValidating += (s, e) =>
-                {
-                    if (!this.EditMode) return;
-                    if (String.Compare(e.FormattedValue.ToString(), CurrentDetailData["seq"].ToString()) != 0)
-                    {
-                        if (MyUtility.Check.Empty(e.FormattedValue))
-                        {
-                            CurrentDetailData["seq"] = "";
-                            CurrentDetailData["seq1"] = "";
-                            CurrentDetailData["seq2"] = "";
-                            CurrentDetailData["stockunit"] = "";
-                            CurrentDetailData["Description"] = "";
-                        }
-                        else
-                        {
-                            if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,qty,scirefno
-,dbo.getmtldesc(id,seq1,seq2,2,0) as [description] from po_supp_detail
-where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3)
-                                                 , e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr, null))
-                            {
-                                MyUtility.Msg.WarningBox("Data not found!", "Seq");
-                                e.Cancel = true;
-                                return;
-                            }
-                            else
-                            {
-                                string productiontype = MyUtility.GetValue.Lookup(string.Format(@"select productiontype from fabric inner join mtltype on fabric.mtltypeid = mtltype.id where SCIRefno = '{0}'", dr["scirefno"]), null);
-                                if (productiontype.ToUpper().TrimEnd() != "PACKING")
-                                {
-                                    MyUtility.Msg.WarningBox(string.Format("Seq ({1}) : Production type is  {0}  not packing!!", productiontype,e.FormattedValue), "Seq");
-                                    e.Cancel = true;
-                                    return;
-                                }
-                                else
-                                {
-                                    CurrentDetailData["seq"] = e.FormattedValue;
-                                    CurrentDetailData["seq1"] = e.FormattedValue.ToString().Substring(0, 3);
-                                    CurrentDetailData["seq2"] = e.FormattedValue.ToString().Substring(3, 2);
-                                    CurrentDetailData["stockunit"] = dr["stockunit"];
-                                    CurrentDetailData["Description"] = dr["description"];
-                                }
-                            }
-                        }
-                    }
-                };
-
-            #endregion Seq 右鍵開窗
-
-            #region Location 右鍵開窗
-
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
-            ts2.EditingMouseDown += (s, e) =>
-            {
-                if (this.EditMode && e.Button == MouseButtons.Right)
-                {
-                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation("B", CurrentDetailData["location"].ToString());
-                    DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
-                    CurrentDetailData["location"] = item.GetSelectedString();
-                }
-            };
-
-            #endregion Location 右鍵開窗
-
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
@@ -427,11 +310,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Issue_Detail d left join FtyInventory f
-on d.PoId = f.PoId
-and d.Seq1 = f.Seq1
-and d.Seq2 = f.seq2
-and d.StockType = f.StockType
-and d.Roll = f.Roll
+on d.ftyinventoryukey = f.ukey
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -579,11 +458,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Issue_Detail d left join FtyInventory f
-on d.PoId = f.PoId
-and d.Seq1 = f.Seq1
-and d.Seq2 = f.seq2
-and d.StockType = f.StockType
-and d.Roll = f.Roll
+on d.ftyinventoryukey = f.ukey
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
