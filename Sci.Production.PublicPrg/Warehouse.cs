@@ -8,6 +8,7 @@ using Sci.Data;
 using Sci;
 using Ict;
 using Ict.Win;
+using System.Text.RegularExpressions;
 
 namespace Sci.Production.PublicPrg
 {
@@ -43,7 +44,22 @@ namespace Sci.Production.PublicPrg
                 case 2:
                     if (encoded)
                     {
-                        sqlcmd = string.Format(@"
+                        switch (stocktype)
+                        {
+                            case "I":
+                                sqlcmd = string.Format(@"
+merge dbo.mdivisionpodetail as target
+using (values('{0}','{1}','{2}','{3}','{4}','{5}')) as src (poid,seq1,seq2,qty,m,blocation) 
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.m
+when matched then
+update 
+set  inqty = isnull(inqty,0.00) + src.qty , blocation = src.blocation
+when not matched then
+    insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[blocation])
+    values (src.poid,src.seq1,src.seq2,src.m,src.qty,src.blocation);", Poid, seq1, seq2, qty, m, DistinctString(location));
+                                break;
+                            case "B":
+                                sqlcmd = string.Format(@"
 merge dbo.mdivisionpodetail as target
 using (values('{0}','{1}','{2}','{3}','{4}','{5}')) as src (poid,seq1,seq2,qty,m,alocation) 
 on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.m
@@ -52,7 +68,11 @@ update
 set  inqty = isnull(inqty,0.00) + src.qty , alocation = src.alocation
 when not matched then
     insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[alocation])
-    values (src.poid,src.seq1,src.seq2,src.m,src.qty,src.alocation);", Poid,seq1,seq2,qty, m, location);
+    values (src.poid,src.seq1,src.seq2,src.m,src.qty,src.alocation);", Poid, seq1, seq2, qty, m, DistinctString(location));
+                                break;
+                        }
+
+                        
                     }
                     else
                     {
@@ -79,8 +99,8 @@ where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
                     if (encoded)
                     {
                         sqlcmd = string.Format(@"update mdivisionpodetail set  LInvQty = isnull(LInvQty,0.00) + {3} 
-where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}' and blocation = '{5}';"
-                            , Poid, seq1, seq2, qty, m, location);
+where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}' ;"
+                            , Poid, seq1, seq2, qty, m);
                     }
                     else
                     {
@@ -341,7 +361,6 @@ when not matched then
             return sqlcmd;
         }
         #endregion
-
         #region -- SelePoItem --
         /// <summary>
         /// 右鍵開窗選取採購項
@@ -379,8 +398,7 @@ where m.mdivisionid = '{1}' and m.poid ='{0}'", poid, Sci.Env.User.Keyword);
             return selepoitem;
         }
         #endregion 
-
-        #region SelectLocation
+        #region-- SelectLocation --
         /// <summary>
         /// 右鍵開窗選取物料儲位
         /// </summary>
@@ -398,8 +416,7 @@ where m.mdivisionid = '{1}' and m.poid ='{0}'", poid, Sci.Env.User.Keyword);
             return selectlocation;
         }
         #endregion 
-
-        #region GetLocation
+        #region-- GetLocation --
         public static string GetLocation(int ukey, System.Data.SqlClient.SqlConnection conn = null)
         {
             string rtn = "";
@@ -421,6 +438,18 @@ for xml path('') ", ukey), out dt);
                 dr = dt.Rows[0];
             }
             return dr[0].ToString();
+        }
+        #endregion
+        #region-- Distinct Array--
+        public static string DistinctString(string str)
+        {
+            string[] strA = Regex.Split(str, ",");
+            string rtn = "";
+            foreach (string i in strA.Distinct())
+            {
+                rtn += i + ",";
+            }
+            return rtn;
         }
         #endregion
     }
