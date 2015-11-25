@@ -23,7 +23,7 @@ namespace Sci.Production.Shipping
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select (case when ed.FabricType = 'M' then (select mpo.FactoryID from [Machine].dbo.MachinePO mpo, [Machine].dbo.MachinePO_Detail mpod where mpo.ID = mpod.ID and mpod.TPEPOID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2)
              when ed.FabricType = 'P' then (select ppo.FactoryID from [Machine].dbo.PartPO ppo, [Machine].dbo.PartPO_Detail ppod where ppo.ID = ppod.ID and ppod.TPEPOID = ed.PoID and ppod.Seq1 = ed.Seq1 and ppod.seq2 = ed.Seq2) 
 			 when ed.FabricType = 'O' then (select mpo.Factoryid from MiscPO mpo, MiscPO_Detail mpod where mpo.ID = mpod.ID and mpod.TPEPOID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2) else o.FactoryID end) as FactoryID,
@@ -49,8 +49,8 @@ where ed.ID = '{0}'", masterID);
             base.OnDetailEntered();
             textBox1.ReadOnly = false;
             textBox2.ReadOnly = false;
-            label21.Visible = CurrentMaintain["Junk"].ToString() == "True" ? true : false;
-            switch (CurrentMaintain["Payer"].ToString())
+            label21.Visible = MyUtility.Convert.GetString(CurrentMaintain["Junk"]) == "True" ? true : false;
+            switch (MyUtility.Convert.GetString(CurrentMaintain["Payer"]))
             {
                 case "S":
                     displayBox7.Value = "By Sci Taipei Office(Sender)";
@@ -146,14 +146,14 @@ where ed.ID = '{0}'", masterID);
         //Expense Data
         private void button1_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P05_ExpenseData callNextForm = new Sci.Production.Shipping.P05_ExpenseData(CurrentMaintain["ID"].ToString(), "WKNo");
+            Sci.Production.Shipping.P05_ExpenseData callNextForm = new Sci.Production.Shipping.P05_ExpenseData(MyUtility.Convert.GetString(CurrentMaintain["ID"]), "WKNo");
             callNextForm.ShowDialog(this);
         }
 
         //Shipping Mark
         private void button2_Click(object sender, EventArgs e)
         {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(CurrentMaintain["ShipMarkDesc"].ToString(), "Shipping Mark", false, null);
+            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(CurrentMaintain["ShipMarkDesc"]), "Shipping Mark", false, null);
             callNextForm.ShowDialog(this);
         }
 
