@@ -3,7 +3,6 @@
     [BrandID]    VARCHAR (8)    CONSTRAINT [DF_ForwarderWhse_BrandID] DEFAULT ('') NULL,
     [ShipModeID] VARCHAR (10)   CONSTRAINT [DF_ForwarderWhse_ShipModeID] DEFAULT ('') NULL,
     [Forwarder]  VARCHAR (6)    CONSTRAINT [DF_ForwarderWhse_Forwarder] DEFAULT ('') NOT NULL,
-    [WhseNo]     NVARCHAR (50)  CONSTRAINT [DF_ForwarderWhse_WhseNo] DEFAULT ('') NOT NULL,
     [Address]    NVARCHAR (MAX) CONSTRAINT [DF_ForwarderWhse_Address] DEFAULT ('') NULL,
     [Contact]    NVARCHAR (30)  CONSTRAINT [DF_ForwarderWhse_Contact] DEFAULT ('') NULL,
     [Tel]        VARCHAR (30)   CONSTRAINT [DF_ForwarderWhse_Tel] DEFAULT ('') NULL,
@@ -15,6 +14,8 @@
     [EditDate]   DATETIME       NULL,
     CONSTRAINT [PK_ForwarderWhse] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -38,7 +39,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'船公司',
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'貨代倉庫', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ForwarderWhse', @level2type = N'COLUMN', @level2name = N'WhseNo';
+
 
 
 GO
