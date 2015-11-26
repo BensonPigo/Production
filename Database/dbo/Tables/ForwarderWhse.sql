@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[ForwarderWhse] (
     [ID]         BIGINT         IDENTITY (1, 1) NOT NULL,
-    [BrandID]    VARCHAR (8)    CONSTRAINT [DF_ForwarderWhse_BrandID] DEFAULT ('') NULL,
-    [ShipModeID] VARCHAR (10)   CONSTRAINT [DF_ForwarderWhse_ShipModeID] DEFAULT ('') NULL,
+    [BrandID]    VARCHAR (8)    CONSTRAINT [DF_ForwarderWhse_BrandID] DEFAULT ('') NOT NULL,
+    [ShipModeID] VARCHAR (10)   CONSTRAINT [DF_ForwarderWhse_ShipModeID] DEFAULT ('') NOT NULL,
     [Forwarder]  VARCHAR (6)    CONSTRAINT [DF_ForwarderWhse_Forwarder] DEFAULT ('') NOT NULL,
     [Address]    NVARCHAR (MAX) CONSTRAINT [DF_ForwarderWhse_Address] DEFAULT ('') NULL,
     [Contact]    NVARCHAR (30)  CONSTRAINT [DF_ForwarderWhse_Contact] DEFAULT ('') NULL,
@@ -12,8 +12,10 @@
     [AddDate]    DATETIME       NULL,
     [EditName]   VARCHAR (10)   CONSTRAINT [DF_ForwarderWhse_EditName] DEFAULT ('') NULL,
     [EditDate]   DATETIME       NULL,
-    CONSTRAINT [PK_ForwarderWhse] PRIMARY KEY CLUSTERED ([ID] ASC)
+    CONSTRAINT [PK_ForwarderWhse] PRIMARY KEY CLUSTERED ([BrandID] ASC, [ShipModeID] ASC, [Forwarder] ASC)
 );
+
+
 
 
 
