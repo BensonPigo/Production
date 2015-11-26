@@ -374,7 +374,8 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.TransferIn_Detail d inner join FtyInventory f
-on d.PoId = f.PoId
+on d.mdivisionid = f.mdivisionid
+and d.PoId = f.PoId
 and d.Seq1 = f.Seq1
 and d.Seq2 = f.seq2
 and d.StockType = f.StockType
@@ -594,7 +595,8 @@ where d.Id = '{0}' and t.POID is not null;" + Environment.NewLine,CurrentMaintai
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.TransferIn_Detail d inner join FtyInventory f
-on d.PoId = f.PoId
+on d.mdivisionid = f.mdivisionid
+and d.PoId = f.PoId
 and d.Seq1 = f.Seq1
 and d.Seq2 = f.seq2
 and d.StockType = f.StockType
