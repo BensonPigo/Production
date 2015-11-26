@@ -39,7 +39,7 @@ namespace Sci.Production.Shipping
                 .Text("UnitId", header: "Unit", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("Qty", header: "Import Q'ty", decimal_places: 2)
                 .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2)
-                .Numeric("WeightKg", header: "N.W.(kg)", decimal_places: 2);
+                .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2);
         }
 
         //Qurey
@@ -58,7 +58,15 @@ namespace Sci.Production.Shipping
                 return;
             }
 
-            string sqlCmd = string.Format(@"select 1 as Selected,psd.ID as POID,psd.SEQ1,psd.SEQ2, (left(psd.SEQ1+' ',3)+'-'+psd.SEQ2) as Seq,ps.SuppID,
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", textBox1.Text.Trim());
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@suppid", txtsupplier1.TextBox1.Text.Trim());
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+            cmds.Add(sp2);
+
+            string sqlCmd = @"select 1 as Selected,psd.ID as POID,psd.SEQ1,psd.SEQ2, (left(psd.SEQ1+' ',3)+'-'+psd.SEQ2) as Seq,ps.SuppID,
 (ps.SuppID+'-'+(select AbbEN from Supp where ID = ps.SuppID)) as Supp,psd.Refno,psd.SCIRefno,
 isnull(f.DescDetail,'') as Description, psd.FabricType, (case when psd.FabricType = 'F' then 'Fabric' when psd.FabricType = 'A' then 'Accessory' else '' end) as Type, 
 isnull(f.MtlTypeID,'') as MtlTypeID,psd.POUnit as UnitId,psd.ShipQty,psd.ShipFOC,(psd.ShipQty+psd.ShipFOC) as Qty,0.0 as NetKg,0.0 as WeightKg,
@@ -67,10 +75,10 @@ from PO_Supp ps
 left join PO_Supp_Detail psd on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
 left join Fabric f on f.SCIRefno = psd.SCIRefno
 left join Orders o on o.ID = ps.ID
-where ps.ID = '{0}'
-and ps.SuppID = '{1}'", textBox1.Text.Trim(), txtsupplier1.TextBox1.Text.Trim());
+where ps.ID = @poid
+and ps.SuppID = @suppid";
             DataTable selectData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out selectData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query error."+result.ToString());
@@ -100,7 +108,7 @@ and ps.SuppID = '{1}'", textBox1.Text.Trim(), txtsupplier1.TextBox1.Text.Trim())
             {
                 foreach (DataRow currentRow in dr)
                 {
-                    DataRow[] findrow = detailData.Select(string.Format("POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}'", currentRow["POID"].ToString(), currentRow["Seq1"].ToString(), currentRow["Seq2"].ToString()));
+                    DataRow[] findrow = detailData.Select(string.Format("POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}'", MyUtility.Convert.GetString(currentRow["POID"]), MyUtility.Convert.GetString(currentRow["Seq1"]), MyUtility.Convert.GetString(currentRow["Seq2"])));
                     if (findrow.Length == 0)
                     {
                         currentRow.AcceptChanges();
@@ -109,9 +117,9 @@ and ps.SuppID = '{1}'", textBox1.Text.Trim(), txtsupplier1.TextBox1.Text.Trim())
                     }
                     else
                     {
-                        findrow[0]["Qty"] = Convert.ToDouble(currentRow["Qty"]);
-                        findrow[0]["NetKg"] = Convert.ToDouble(currentRow["NetKg"]);
-                        findrow[0]["WeightKg"] = Convert.ToDouble(currentRow["WeightKg"]);
+                        findrow[0]["Qty"] = MyUtility.Convert.GetDouble(currentRow["Qty"]);
+                        findrow[0]["NetKg"] = MyUtility.Convert.GetDouble(currentRow["NetKg"]);
+                        findrow[0]["WeightKg"] = MyUtility.Convert.GetDouble(currentRow["WeightKg"]);
                     }
                 }
             }

@@ -91,7 +91,7 @@ from Invtrans i
 where i.InventoryPOID = '{0}'
 and (i.Type = '2' or i.Type = '3')
 and i.FactoryID = '{1}'
-and i.TransferFactory = '{2}'", textBox1.Text.Trim(), txtscifactory2.Text.Trim(), txtscifactory2.Text.Trim());
+and i.TransferFactory = '{2}'", textBox1.Text.Trim(), txtscifactory1.Text.Trim(), txtscifactory2.Text.Trim());
             }
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
@@ -124,7 +124,7 @@ and i.TransferFactory = '{2}'", textBox1.Text.Trim(), txtscifactory2.Text.Trim()
             {
                 foreach (DataRow currentRow in dr)
                 {
-                    DataRow[] findrow = detailData.Select(string.Format("POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}'", currentRow["POID"].ToString(), currentRow["Seq1"].ToString(), currentRow["Seq2"].ToString()));
+                    DataRow[] findrow = detailData.Select(string.Format("POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}'", MyUtility.Convert.GetString(currentRow["POID"]), MyUtility.Convert.GetString(currentRow["Seq1"]), MyUtility.Convert.GetString(currentRow["Seq2"])));
                     if (findrow.Length == 0)
                     {
                         currentRow.AcceptChanges();
@@ -133,9 +133,9 @@ and i.TransferFactory = '{2}'", textBox1.Text.Trim(), txtscifactory2.Text.Trim()
                     }
                     else
                     {
-                        findrow[0]["Qty"] = Convert.ToDouble(currentRow["Qty"]);
-                        findrow[0]["NetKg"] = Convert.ToDouble(currentRow["NetKg"]);
-                        findrow[0]["WeightKg"] = Convert.ToDouble(currentRow["WeightKg"]);
+                        findrow[0]["Qty"] = currentRow["Qty"];
+                        findrow[0]["NetKg"] = currentRow["NetKg"];
+                        findrow[0]["WeightKg"] = currentRow["WeightKg"];
                     }
                 }
             }

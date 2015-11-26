@@ -51,8 +51,13 @@ namespace Sci.Production.Shipping
                 textBox1.Focus();
                 return;
             }
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", textBox1.Text.Trim());
 
-            string sqlCmd = string.Format(@"select 1 as Selected,td.Poid,td.Seq1,td.Seq2,(left(td.Seq1+' ',3)+'-'+td.Seq2) as Seq,isnull(ps.SuppID,'') as SuppID,
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+
+            string sqlCmd = @"select 1 as Selected,td.Poid,td.Seq1,td.Seq2,(left(td.Seq1+' ',3)+'-'+td.Seq2) as Seq,isnull(ps.SuppID,'') as SuppID,
 (isnull(ps.SuppID,'')+'-'+isnull(s.AbbEN,'')) as Supp,isnull(psd.Refno,'') as RefNo,isnull(psd.SCIRefno,'') as SCIRefNo,
 isnull(f.DescDetail,'') as Description,isnull(psd.FabricType,'') as FabricType,
 (case when psd.FabricType = 'F' then 'Fabric' when psd.FabricType = 'A' then 'Accessory' else '' end) as Type,
@@ -64,9 +69,9 @@ left join PO_Supp_Detail psd on psd.ID = td.Poid and psd.SEQ1= td.Seq1 and psd.S
 left join Supp s on s.ID = ps.SuppID
 left join Fabric f on f.SCIRefno = psd.SCIRefno
 left join Orders o on o.ID = td.Poid
-where td.ID = '{0}'", textBox1.Text.Trim());
+where td.ID = @id";
             DataTable selectData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out selectData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query error."+result.ToString());
@@ -96,7 +101,7 @@ where td.ID = '{0}'", textBox1.Text.Trim());
             {
                 foreach (DataRow currentRow in dr)
                 {
-                    DataRow[] findrow = detailData.Select(string.Format("POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}'", currentRow["POID"].ToString(), currentRow["Seq1"].ToString(), currentRow["Seq2"].ToString()));
+                    DataRow[] findrow = detailData.Select(string.Format("POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}'", MyUtility.Convert.GetString(currentRow["POID"]), MyUtility.Convert.GetString(currentRow["Seq1"]), MyUtility.Convert.GetString(currentRow["Seq2"])));
                     if (findrow.Length == 0)
                     {
                         currentRow.AcceptChanges();
@@ -105,9 +110,9 @@ where td.ID = '{0}'", textBox1.Text.Trim());
                     }
                     else
                     {
-                        findrow[0]["Qty"] = Convert.ToDouble(currentRow["Qty"]);
-                        findrow[0]["NetKg"] = Convert.ToDouble(currentRow["NetKg"]);
-                        findrow[0]["WeightKg"] = Convert.ToDouble(currentRow["WeightKg"]);
+                        findrow[0]["Qty"] = currentRow["Qty"];
+                        findrow[0]["NetKg"] = currentRow["NetKg"];
+                        findrow[0]["WeightKg"] = currentRow["WeightKg"];
                     }
                 }
             }

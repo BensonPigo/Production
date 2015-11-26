@@ -25,7 +25,7 @@ namespace Sci.Production.Shipping
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
              this.DetailSelectCommand = string.Format(@"select ed.ID,isnull(o.FactoryID,'') as FactoryID,ed.PoID,isnull(o.BrandID,'') as BrandID,o.BuyerDelivery,o.SciDelivery,
 (left(ed.Seq1+' ',3)+'-'+ed.Seq2) as Seq,(ed.SuppID+'-'+iif(fe.Type = 4,(select Abb from LocalSupp where ID = ed.SuppID),(select AbbEN from Supp where ID = ed.SuppID))) as Supp,
 ed.RefNo,isnull(iif(fe.Type = 4,(select Description from LocalItem where RefNo = ed.RefNo),(select DescDetail from Fabric where SCIRefno = ed.SCIRefNo)),'') as Description,
@@ -84,7 +84,13 @@ where ed.ID = '{0}'", masterID);
             //提單號碼不可重複
             if (!MyUtility.Check.Empty(CurrentMaintain["BLNo"]))
             {
-                string sqlCmd = string.Format("select ID from FtyExport where BLNo = '{0}' and ID != '{1}'", CurrentMaintain["BLNo"].ToString(), CurrentMaintain["ID"].ToString());
+                if (MyUtility.Convert.GetString(CurrentMaintain["BLNo"]).IndexOf("'") != -1)
+                {
+                    MyUtility.Msg.WarningBox("B/L(AWB) No. can not enter the  '  character!!");
+                    return false;
+                }
+
+                string sqlCmd = string.Format("select ID from FtyExport where BLNo = '{0}' and ID != '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BLNo"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 if (MyUtility.Check.Seek(sqlCmd))
                 {
                     MyUtility.Msg.WarningBox("B/L(AWB) No. already exist.");
@@ -99,8 +105,8 @@ where ed.ID = '{0}'", masterID);
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
-                    nw = MyUtility.Math.Round(nw + Convert.ToDouble(dr["NetKg"]), 2);
-                    gw = MyUtility.Math.Round(gw + Convert.ToDouble(dr["WeightKg"]), 2);
+                    nw = MyUtility.Math.Round(nw + MyUtility.Convert.GetDouble(dr["NetKg"]), 2);
+                    gw = MyUtility.Math.Round(gw + MyUtility.Convert.GetDouble(dr["WeightKg"]), 2);
                 }
             }
             CurrentMaintain["NetKg"] = nw;
@@ -123,7 +129,7 @@ where ed.ID = '{0}'", masterID);
         protected override bool ClickDeleteBefore()
         {
             //已經有做出口費用分攤就不可以被刪除
-            if (MyUtility.Check.Seek(string.Format(@"select ShippingAPID from ShareExpense where InvNo = '{0}' or WKNO = '{0}'", CurrentMaintain["ID"].ToString())))
+            if (MyUtility.Check.Seek(string.Format(@"select ShippingAPID from ShareExpense where InvNo = '{0}' or WKNO = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
             {
                 MyUtility.Msg.WarningBox("This record have expense data, can't be deleted!");
                 return false;
@@ -142,7 +148,7 @@ where ed.ID = '{0}'", masterID);
             IList<DataRow> portData;
             portData = item.GetSelecteds();
             CurrentMaintain["ExportPort"] = item.GetSelectedString();
-            CurrentMaintain["ExportCountry"] = portData[0]["CountryID"].ToString();
+            CurrentMaintain["ExportCountry"] = portData[0]["CountryID"];
         }
 
         //Port of Discharge按右鍵
@@ -156,7 +162,7 @@ where ed.ID = '{0}'", masterID);
             IList<DataRow> portData;
             portData = item.GetSelecteds();
             CurrentMaintain["ImportPort"] = item.GetSelectedString();
-            CurrentMaintain["ImportCountry"] = portData[0]["CountryID"].ToString();
+            CurrentMaintain["ImportCountry"] = portData[0]["CountryID"];
         }
 
         //Radio
@@ -193,7 +199,7 @@ where ed.ID = '{0}'", masterID);
         //Expense Data
         private void button1_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P05_ExpenseData callNextForm = new Sci.Production.Shipping.P05_ExpenseData(CurrentMaintain["ID"].ToString(), CurrentMaintain["Type"].ToString() == "3"?"InvNo":"WKNo");
+            Sci.Production.Shipping.P05_ExpenseData callNextForm = new Sci.Production.Shipping.P05_ExpenseData(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["Type"]) == "3"?"InvNo":"WKNo");
             callNextForm.ShowDialog(this);
         }
 
