@@ -12,12 +12,15 @@
     [CurrencyID]   VARCHAR (3)    CONSTRAINT [DF_SCIFty_CurrencyID] DEFAULT ('') NULL,
     [ExpressGroup] VARCHAR (8)    CONSTRAINT [DF_SCIFty_ExpressGroup] DEFAULT ('') NULL,
     [PortAir]      VARCHAR (20)   CONSTRAINT [DF_SCIFty_PortAir] DEFAULT ('') NULL,
+    [MDivisionID]  VARCHAR (8)    CONSTRAINT [DF_SCIFty_MDivisionID] DEFAULT ('') NULL,
     [AddName]      VARCHAR (10)   CONSTRAINT [DF_SCIFty_AddName] DEFAULT ('') NULL,
     [AddDate]      DATETIME       NULL,
     [EditName]     VARCHAR (10)   CONSTRAINT [DF_SCIFty_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME       NULL,
     CONSTRAINT [PK_SCIFty] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
