@@ -24,6 +24,10 @@
 
 
 
+
+
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Receiving Detail', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail';
 
@@ -98,4 +102,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'倉別', @l
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'MDivisionID';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[Receiving_Detail]([PoId] ASC, [Seq1] ASC, [Seq2] ASC, [Remark] ASC)
+    INCLUDE([Id]);
 

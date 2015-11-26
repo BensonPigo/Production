@@ -6,13 +6,17 @@
     [InQty]       NUMERIC (10, 2) CONSTRAINT [DF_MDivisionPoDetail_InQty] DEFAULT ((0)) NULL,
     [OutQty]      NUMERIC (10, 2) CONSTRAINT [DF_MDivisionPoDetail_OutQty] DEFAULT ((0)) NULL,
     [AdjustQty]   NUMERIC (10, 2) CONSTRAINT [DF_MDivisionPoDetail_AdjustQty] DEFAULT ((0)) NULL,
-    [LInvQty]     NUMERIC (10, 2) NULL,
-    [LObQty]      NUMERIC (10, 2) NULL,
+    [LInvQty]     NUMERIC (10, 2) CONSTRAINT [DF_MDivisionPoDetail_LInvQty] DEFAULT ((0)) NULL,
+    [LObQty]      NUMERIC (10, 2) CONSTRAINT [DF_MDivisionPoDetail_LObQty] DEFAULT ((0)) NULL,
     [ALocation]   VARCHAR (100)   CONSTRAINT [DF_MDivisionPoDetail_ALocation] DEFAULT ('') NULL,
     [BLocation]   VARCHAR (100)   CONSTRAINT [DF_MDivisionPoDetail_BLocation] DEFAULT ('') NULL,
     [Ukey]        BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK__MDivisio__07AF6F03481FB32F] PRIMARY KEY CLUSTERED ([Ukey] ASC) ON [SLAVE]
 );
+
+
+
+
 
 
 
@@ -74,4 +78,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'A倉儲位'
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'調整數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MDivisionPoDetail', @level2type = N'COLUMN', @level2name = N'AdjustQty';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[MDivisionPoDetail]([MDivisionID] ASC, [POID] ASC)
+    ON [SLAVE];
 

@@ -15,7 +15,6 @@
     [InventorySeq1]    VARCHAR (3)     CONSTRAINT [DF_Invtrans_InventorySeq1] DEFAULT ('') NULL,
     [InventorySeq2]    VARCHAR (2)     CONSTRAINT [DF_Invtrans_InventorySeq2] DEFAULT ('') NULL,
     [Remark]           NVARCHAR (100)  CONSTRAINT [DF_Invtrans_Remark] DEFAULT ('') NULL,
-    [Po3Seq70]         VARCHAR (20)    CONSTRAINT [DF_Invtrans_Po3Seq70] DEFAULT ('') NULL,
     [CurrencyID]       VARCHAR (3)     CONSTRAINT [DF_Invtrans_CurrencyID] DEFAULT ('') NOT NULL,
     [JunkPo3]          VARCHAR (1)     CONSTRAINT [DF_Invtrans_JunkPo3] DEFAULT ('') NULL,
     [Deadline]         DATE            NULL,
@@ -63,6 +62,8 @@
     [seq70seq2]        VARCHAR (2)     NULL,
     CONSTRAINT [PK_Invtrans] PRIMARY KEY CLUSTERED ([ID] ASC, [Ukey] ASC)
 );
+
+
 
 
 
@@ -136,7 +137,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'備註', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'產生70大項的SP#', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Invtrans', @level2type = N'COLUMN', @level2name = N'Po3Seq70';
+
 
 
 GO
