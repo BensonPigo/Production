@@ -129,6 +129,7 @@ Database/dbo/Tables/FarmIn_Detail.sql -text
 Database/dbo/Tables/FarmOut.sql -text
 Database/dbo/Tables/FarmOut_Detail.sql -text
 Database/dbo/Tables/ForwarderWhse.sql -text
+Database/dbo/Tables/ForwarderWhse_Detail.sql -text
 Database/dbo/Tables/FtyExport.sql -text
 Database/dbo/Tables/FtyExport_Detail.sql -text
 Database/dbo/Tables/FtyInventory.sql -text
