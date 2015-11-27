@@ -31,35 +31,30 @@ select A.PoId,A.Seq1,A.Seq2,isnull(sum(a1.qty),0 ) requestqty
 	,A1.UnitID
 	,sum(a.Qty) as Qty 
 	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
-	from dbo.TransferOut_Detail A LEFT JOIN DBO.Invtrans A1 
-	ON a1.InventoryPOID = a.PoId AND A1.InventorySeq1 =a.seq1 AND A1.InventorySeq2 = a.seq2
-	where a1.type = 2 AND a.Id = '{0}' 
-AND A1.TransferFactory ='{1}' 
-and a1.FactoryID='{2}'
-	GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.QTY,A1.FactoryID,A1.TransferFactory,A1.UnitID
+from dbo.TransferOut_Detail A LEFT JOIN DBO.Invtrans A1 on a1.InventoryPOID = a.PoId AND A1.InventorySeq1 =a.seq1 AND A1.InventorySeq2 = a.seq2
+where a1.type = 2 AND a.Id = '{0}' 
+AND (select mdivisionid FROM dbo.scifty where id=A1.TransferFactory) = '{1}' 
+and (select mdivisionid FROM dbo.scifty where id=a1.FactoryID) = '{2}'
+GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.QTY,A1.FactoryID,A1.TransferFactory,A1.UnitID
 union all
 select A.PoId,A.Seq1,A.Seq2,isnull(sum(0 - a1.Qty),0) requestqty
 	,A1.UnitID
 	,sum(a.Qty) as Qty 
 	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
-	from dbo.TransferOut_Detail a LEFT JOIN DBO.Invtrans A1 
-	ON a1.InventoryPOID = a.PoId AND A1.InventorySeq1 =a.seq1 AND A1.InventorySeq2 = a.seq2
-	where a1.type = 6 AND a.Id = '{0}'  
-AND A1.TransferFactory ='{1}' 
-and a1.FactoryID='{2}'
-	GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.UnitID
+from dbo.TransferOut_Detail a LEFT JOIN DBO.Invtrans A1 ON a1.InventoryPOID = a.PoId AND A1.InventorySeq1 =a.seq1 AND A1.InventorySeq2 = a.seq2
+where a1.type = 6 AND a.Id = '{0}'  
+AND (select mdivisionid FROM dbo.scifty where id=A1.TransferFactory) ='{1}' 
+and (select mdivisionid FROM dbo.scifty where id=a1.FactoryID) = '{2}'
+GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.UnitID
 union all
 select A.PoId,A.Seq1,A.Seq2,isnull(sum(a1.qty),0) requestqty
 	,A1.UnitID
 	,sum(a.Qty) as Qty 
 	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
-	from dbo.TransferOut_Detail a LEFT JOIN DBO.Invtrans A1 
-	ON  a1.InventoryPOID = a.PoId and a1.InventorySeq1 = a.Seq1 and a1.InventorySeq2 = a.Seq2
-					WHERE TransferFactory = '{1}' 
-					and a1.FactoryID='{2}'
-					and a1.Type = 3  
-                    AND a.Id = '{0}'
-	GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.UnitID
+from dbo.TransferOut_Detail a LEFT JOIN DBO.Invtrans A1 ON  a1.InventoryPOID = a.PoId and a1.InventorySeq1 = a.Seq1 and a1.InventorySeq2 = a.Seq2
+WHERE (select mdivisionid FROM dbo.scifty where id=a1.TransferFactory) = '{1}' 
+and (select mdivisionid FROM dbo.scifty where id=a1.FactoryID)='{2}'	and a1.Type = 3  AND a.Id = '{0}'
+GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.UnitID
 )
 select cte.Poid,seq1,seq2
 ,sum(cte.requestqty) * (select v.Rate from View_unitrate v where v.FROM_U = cte.UnitID and v.TO_U = cte.stockunit) requestqty
@@ -72,7 +67,7 @@ group by cte.Poid,seq1,seq2
 ,dbo.getmtldesc(cte.poid,cte.seq1,cte.seq2,2,0)
 ,cte.UnitID
 ,cte.stockunit ;
-", dr["id"].ToString(), dr["toftyid"].ToString(), dr["factoryid"].ToString()));
+", dr["id"].ToString(), dr["tomdivisionid"].ToString(), dr["mdivisionid"].ToString()));
 
             DataTable selectDataTable1;
             MyUtility.Msg.WaitWindows("Data Loading...");

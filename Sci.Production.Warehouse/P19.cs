@@ -33,7 +33,7 @@ namespace Sci.Production.Warehouse
 
             Controls.Add(viewer);
 
-            this.DefaultFilter = string.Format("FactoryID = '{0}'", Sci.Env.User.Factory);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
             gridicon.Append.Enabled = false;
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
@@ -64,7 +64,7 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["IssueDate"] = DateTime.Now;
         }
@@ -168,12 +168,6 @@ namespace Sci.Production.Warehouse
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
-            foreach (DataRow item in e.Details.Rows)
-            {
-                //getlocation
-                if (MyUtility.Check.Empty(item["ukey"])) continue;
-                item["Location"] = PublicPrg.Prgs.GetLocation(int.Parse(item["ukey"].ToString()));
-            }
             return base.OnRenewDataDetailPost(e);
         }
 
@@ -193,6 +187,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnDetailGridInsert(index);
             CurrentDetailData["Stocktype"] = 'B';
+            CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
         }
 
         // Detail Grid 設定
@@ -235,11 +230,7 @@ namespace Sci.Production.Warehouse
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.TransferOut_Detail d inner join FtyInventory f
-on d.PoId = f.PoId
-and d.Seq1 = f.Seq1
-and d.Seq2 = f.seq2
-and d.StockType = f.StockType
-and d.Roll = f.Roll
+on d.ftyinventoryukey = f.ukey
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -266,11 +257,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.TransferOut_Detail d left join FtyInventory f
-on d.PoId = f.PoId
-and d.Seq1 = f.Seq1
-and d.Seq2 = f.seq2
-and d.StockType = f.StockType
-and d.Roll = f.Roll
+on d.ftyinventoryukey = f.ukey
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -300,13 +287,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             #endregion 更新表頭狀態資料
 
-            #region 更新庫存數量 Po_artwork & ftyinventory
+            #region 更新庫存數量  ftyinventory
 
             sqlupd2.Append("declare @iden as bigint;");
             sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
             foreach (DataRow item in DetailDatas)
             {
-                sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString()
+                sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString()
                     , (decimal)item["qty"]
                     , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), true, item["location"].ToString()));
             }
@@ -315,6 +302,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
+                           mdivisionid = b.Field<string>("mdivisionid"),
                            poid = b.Field<string>("poid"),
                            seq1 = b.Field<string>("seq1"),
                            seq2 = b.Field<string>("seq2"),
@@ -322,6 +310,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        } into m
                        select new
                        {
+                           mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
@@ -331,11 +320,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             foreach (var item in bs1)
             {
-                sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(4, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype));
-                if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(8, item.poid, item.seq1, item.seq2, 0m-item.qty, true, item.stocktype));
+                sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype,item.mdivisionid));
+                if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, 0m-item.qty, true, item.stocktype,item.mdivisionid));
             }
 
-            #endregion 更新庫存數量 Po_artwork & ftyinventory
+            #endregion 更新庫存數量  ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
@@ -387,11 +376,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.TransferOut_Detail d inner join FtyInventory f
-on d.PoId = f.PoId
-and d.Seq1 = f.Seq1
-and d.Seq2 = f.seq2
-and d.StockType = f.StockType
-and d.Roll = f.Roll
+on d.ftyinventoryukey = f.ukey
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -418,11 +403,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.TransferOut_Detail d left join FtyInventory f
-on d.PoId = f.PoId
-and d.Seq1 = f.Seq1
-and d.Seq2 = f.seq2
-and d.StockType = f.StockType
-and d.Roll = f.Roll
+on d.ftyinventoryukey = f.ukey
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -452,19 +433,20 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             #endregion 更新表頭狀態資料
 
-            #region 更新庫存數量 Po_artwork & ftyinventory
+            #region 更新庫存數量  ftyinventory
 
             sqlupd2.Append("declare @iden as bigint;");
             sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
             foreach (DataRow item in DetailDatas)
             {
-                sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), (decimal)item["qty"]
+                sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), (decimal)item["qty"]
                     , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), false, item["location"].ToString()));
             }
             sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
+                           mdivisionid = b.Field<string>("mdivisionid"),
                            poid = b.Field<string>("poid"),
                            seq1 = b.Field<string>("seq1"),
                            seq2 = b.Field<string>("seq2"),
@@ -472,6 +454,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                        } into m
                        select new
                        {
+                           mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
@@ -481,11 +464,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             foreach (var item in bs1)
             {
-                sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(4, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype));
-                if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(8, item.poid, item.seq1, item.seq2, 0m-item.qty, false, item.stocktype));
+                sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype, item.mdivisionid));
+                if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, 0m-item.qty, false, item.stocktype, item.mdivisionid));
             }
 
-            #endregion 更新庫存數量 Po_artwork & ftyinventory
+            #endregion 更新庫存數量  ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
@@ -524,16 +507,16 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+            this.DetailSelectCommand = string.Format(@"select a.id,a.mdivisionid,a.PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
 ,a.Roll
 ,a.Dyelot
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
 ,p1.StockUnit
 ,a.Qty
 ,a.StockType
-,(select c.ukey from dbo.ftyinventory c 
-    where c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = a.stocktype and c.roll=a.roll and c.dyelot = a.dyelot) as ukey
-,'' location
+,a.ukey
+,(select t.mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail fd where ukey = a.ftyinventoryukey) t for xml path('')) location
+,a.ftyinventoryukey
 from dbo.TransferOut_Detail a left join PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);

@@ -41,16 +41,15 @@
             this.button9 = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.editBox1 = new Sci.Win.UI.EditBox();
-            this.label2 = new Sci.Win.UI.Label();
             this.button1 = new Sci.Win.UI.Button();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
-            this.label4 = new Sci.Win.UI.Label();
-            this.txtfactory2 = new Sci.Production.Class.txtfactory();
             this.button5 = new Sci.Win.UI.Button();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtToMdivision1 = new Sci.Production.Class.txtToMdivision();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -62,12 +61,10 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.button5);
-            this.masterpanel.Controls.Add(this.txtfactory2);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.txtfactory1);
-            this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.label2);
+            this.masterpanel.Controls.Add(this.txtToMdivision1);
+            this.masterpanel.Controls.Add(this.button5);
+            this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.editBox1);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.button9);
@@ -94,12 +91,10 @@
             this.masterpanel.Controls.SetChildIndex(this.button9, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.button1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtfactory1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtfactory2, 0);
             this.masterpanel.Controls.SetChildIndex(this.button5, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtToMdivision1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             // 
             // detailpanel
             // 
@@ -120,6 +115,18 @@
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(1058, 293);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -253,7 +260,7 @@
             // label1
             // 
             this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(16, 78);
+            this.label1.Location = new System.Drawing.Point(16, 43);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
             this.label1.TabIndex = 59;
@@ -264,20 +271,11 @@
             this.editBox1.BackColor = System.Drawing.Color.White;
             this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(97, 78);
+            this.editBox1.Location = new System.Drawing.Point(97, 43);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(658, 51);
+            this.editBox1.Size = new System.Drawing.Size(658, 86);
             this.editBox1.TabIndex = 3;
-            // 
-            // label2
-            // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(509, 13);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 62;
-            this.label2.Text = "Factory";
             // 
             // button1
             // 
@@ -291,37 +289,6 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtfactory1.IsSupportEditMode = false;
-            this.txtfactory1.Location = new System.Drawing.Point(591, 13);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.ReadOnly = true;
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 65;
-            // 
-            // label4
-            // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(17, 45);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 67;
-            this.label4.Text = "To Factory";
-            // 
-            // txtfactory2
-            // 
-            this.txtfactory2.BackColor = System.Drawing.Color.White;
-            this.txtfactory2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "toftyId", true));
-            this.txtfactory2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory2.Location = new System.Drawing.Point(98, 45);
-            this.txtfactory2.Name = "txtfactory2";
-            this.txtfactory2.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory2.TabIndex = 68;
-            // 
             // button5
             // 
             this.button5.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
@@ -333,6 +300,25 @@
             this.button5.Text = "Import";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click_1);
+            // 
+            // label2
+            // 
+            this.label2.Lines = 0;
+            this.label2.Location = new System.Drawing.Point(508, 13);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(71, 23);
+            this.label2.TabIndex = 71;
+            this.label2.Text = "To M";
+            // 
+            // txtToMdivision1
+            // 
+            this.txtToMdivision1.BackColor = System.Drawing.Color.White;
+            this.txtToMdivision1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "tomdivisionid", true));
+            this.txtToMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtToMdivision1.Location = new System.Drawing.Point(582, 13);
+            this.txtToMdivision1.Name = "txtToMdivision1";
+            this.txtToMdivision1.Size = new System.Drawing.Size(66, 23);
+            this.txtToMdivision1.TabIndex = 2;
             // 
             // P19
             // 
@@ -360,6 +346,7 @@
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
@@ -388,11 +375,9 @@
         private Win.UI.Button button9;
         private Win.UI.EditBox editBox1;
         private Win.UI.Label label1;
-        private Win.UI.Label label2;
         private Win.UI.Button button1;
-        private Win.UI.Label label4;
-        private Class.txtfactory txtfactory1;
-        private Class.txtfactory txtfactory2;
         private Win.UI.Button button5;
+        private Win.UI.Label label2;
+        private Class.txtToMdivision txtToMdivision1;
     }
 }

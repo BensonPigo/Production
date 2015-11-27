@@ -44,7 +44,7 @@ namespace Sci.Production.Warehouse
             {
                 // 建立可以符合回傳的Cursor
 
-                string strSQLCmd = string.Format(@"select 0 as selected ,'' id, a.id as PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+                string strSQLCmd = string.Format(@"select 0 as selected ,'' id, c.mdivisionid,a.id as PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
 ,a.FabricType
 ,a.stockunit
 ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) Description
@@ -52,12 +52,12 @@ namespace Sci.Production.Warehouse
 ,c.Dyelot
 ,0.00 as Qty
 ,'I' StockType
-,c.ukey
-,'' location
+,c.ukey as ftyinventoryukey
+,(select t.mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail fd where fd.ukey = c.ukey) t for xml path('') ) location
 ,c.inqty-c.outqty + c.adjustqty as stockqty
 from dbo.PO_Supp_Detail a 
 inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'I'
-Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", sp_b);
+Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid='{1}'", sp_b, Sci.Env.User.Keyword);
 
                 Ict.DualResult result;
                 MyUtility.Msg.WaitWindows("Data loading....");
@@ -68,12 +68,6 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", sp_b
                     listControlBindingSource1.DataSource = dtArtwork;
                     dtArtwork.Columns.Add("Balance", typeof(decimal));
                     dtArtwork.Columns["Balance"].Expression = "stockqty - qty";
-                    foreach (var item in dtArtwork.ToList())
-                    {
-                        //getlocation
-                        if (MyUtility.Check.Empty(item["ukey"])) continue;
-                        item["location"] = PublicPrg.Prgs.GetLocation(int.Parse(item["ukey"].ToString()));
-                    }
                 }
                 else { ShowErr(strSQLCmd, result); }
                 MyUtility.Msg.WaitClear();
