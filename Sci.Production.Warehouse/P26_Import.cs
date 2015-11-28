@@ -17,8 +17,6 @@ namespace Sci.Production.Warehouse
         DataRow dr_master;
         DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        bool flag;
-        string poType;
         protected DataTable dtArtwork;
 
         public P26_Import(DataRow master, DataTable detail)
@@ -52,11 +50,12 @@ namespace Sci.Production.Warehouse
                     else
                     {
                         // 建立可以符合回傳的Cursor
-                        strSQLCmd.Append(string.Format(@"select distinct 0 as selected,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] ,'' fromlocation,'' tolocation, '' id
-,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 
-    union all
-    select refno from dbo.PO_Artwork P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2) refno
+                        strSQLCmd.Append(string.Format(@"select distinct 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey ftyinventoryukey
+,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
+,(select t.mtllocationid +',' from (select mtllocationid from dbo.ftyinventory_detail where ukey = a.ukey) t for xml path('')) fromlocation
+,'' tolocation, '' id
+,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
 from dbo.FtyInventory a
     left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
 where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0
@@ -67,9 +66,7 @@ and a.poid='{0}'", sp,dr_master["stocktype"].ToString())); //
                         }
                         if (!MyUtility.Check.Empty(refno))
                         {
-                            strSQLCmd.Append(string.Format(@" and (select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 
-union all
-select refno from dbo.PO_Artwork P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2)='{0}'", refno));
+                            strSQLCmd.Append(string.Format(@" and (select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 )='{0}'", refno));
                         }
                         if (!MyUtility.Check.Empty(locationid))
                         {
@@ -89,63 +86,65 @@ select refno from dbo.PO_Artwork P where P.id = a.poid and P.seq1 = a.seq1 and P
                         textBox4.Focus();
                         return;
                     }
-                    strSQLCmd.Append(string.Format(@"select distinct 0 as selected,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey,MtlLocationID
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] ,'' fromlocation,'' tolocation, '' id
-,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 
-    union all
-    select refno from dbo.PO_Artwork P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2) refno
+                    strSQLCmd.Append(string.Format(@"select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
+,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
+,(select t.mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')) as fromlocation
+,'' tolocation
+, '' id
+,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
+,a.ukey as ftyinventoryukey
 from dbo.Receiving r1 
     inner join dbo.Receiving_Detail r2 on r2.id = r1.Id
-    inner join dbo.FtyInventory a on a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll
-    left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
+    inner join dbo.FtyInventory a on a.mdivisionid = r2.mdivisionid and a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype
 where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed'
 and r1.id = '{0}'
 union all
-select distinct 0 as selected,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey,MtlLocationID
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] ,'' fromlocation,'' tolocation, '' id
-,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 
-    union all
-    select refno from dbo.PO_Artwork P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2) refno
+select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
+,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
+,(select t.mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')) as fromlocation
+,'' tolocation
+, '' id
+,a.ukey ftyinventoryukey
+,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2) refno
 from dbo.SubTransfer r1 
     inner join dbo.SubTransfer_Detail r2 on r2.id = r1.Id
-    inner join dbo.FtyInventory a on a.Poid = r2.FromPoId and a.Seq1 = r2.FromSeq1 and a.seq2  = r2.FromSeq2 and a.Roll = r2.FromRoll
-    left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
+    inner join dbo.FtyInventory a on a.ukey = r2.fromftyinventoryukey
 where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed'
 and r1.id = '{0}'
 union all
-select distinct 0 as selected,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey,MtlLocationID
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] ,'' fromlocation,'' tolocation, '' id
-,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 
-    union all
-    select refno from dbo.PO_Artwork P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2) refno
+select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
+,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
+,(select t.mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')) as fromlocation
+,'' tolocation, '' id
+,a.ukey ftyinventoryukey
+,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
 from dbo.Issue r1 
     inner join dbo.Issue_Detail r2 on r2.id = r1.Id
-    inner join dbo.FtyInventory a on a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll
-    left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
+    inner join dbo.FtyInventory a on a.ukey = r2.ftyinventoryukey
 where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed'
 and r1.id = '{0}'
 union all
-select distinct 0 as selected,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey,MtlLocationID
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] ,'' fromlocation,'' tolocation, '' id
-,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 
-    union all
-    select refno from dbo.PO_Artwork P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2) refno
+select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
+,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
+,(select t.mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')) as fromlocation
+,'' tolocation, '' id
+,a.ukey ftyinventoryukey
+,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
 from dbo.ReturnReceipt r1 
     inner join dbo.ReturnReceipt_Detail r2 on r2.id = r1.Id
-    inner join dbo.FtyInventory a on a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll
-    left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
+    inner join dbo.FtyInventory a on a.ukey = r2.ftyinventoryukey
 where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed'
 and r1.id = '{0}'
 union
-select distinct 0 as selected,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey,MtlLocationID
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] ,'' fromlocation,'' tolocation, '' id
-,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 
-    union all
-    select refno from dbo.PO_Artwork P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2) refno
-from dbo.Receiving r1 
+select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
+,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
+,(select t.mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')) as fromlocation
+,'' tolocation, '' id
+,a.ukey ftyinventoryukey 
+,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
+from dbo.TransferIn r1 
     inner join dbo.TransferIn_Detail r2 on r2.id = r1.Id
-    inner join dbo.FtyInventory a on a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll
-    left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
+    inner join dbo.FtyInventory a on a.mdivisionid = r2.mdivisionid and a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype
 where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed'
 and r1.id = '{0}' ", transid,dr_master["stocktype"].ToString())); // 
 
@@ -165,12 +164,6 @@ and r1.id = '{0}' ", transid,dr_master["stocktype"].ToString())); //
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
 
                 listControlBindingSource1.DataSource = dtArtwork;
-                foreach (var item in dtArtwork.ToList())
-                {
-                    //getlocation
-                    if (MyUtility.Check.Empty(item["ukey"])) continue;
-                    item["fromlocation"] = PublicPrg.Prgs.GetLocation(int.Parse(item["ukey"].ToString()));
-                }
                 //dtArtwork.DefaultView.Sort = "seq1,seq2,location,dyelot,balance desc";
             }
             MyUtility.Msg.WaitClear();

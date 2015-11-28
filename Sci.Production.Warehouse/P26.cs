@@ -23,7 +23,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = string.Format("FactoryID = '{0}'", Sci.Env.User.Factory);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
             Dictionary<string, string> di_Stocktype = new Dictionary<string, string>();
             di_Stocktype.Add("B", "Bulk");
             di_Stocktype.Add("I", "Inventory");
@@ -43,7 +43,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = string.Format("FactoryID = '{0}'", Sci.Env.User.Factory);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
             this.IsSupportNew = false;
             this.IsSupportEdit = false;
             this.IsSupportDelete = false;
@@ -61,7 +61,7 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["IssueDate"] = DateTime.Now;
             CurrentMaintain["Status"] = "New";
             comboBox1.SelectedIndex = 0;
@@ -136,8 +136,6 @@ namespace Sci.Production.Warehouse
 
             return base.ClickSaveBefore();
         }
-
-        
 
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
@@ -219,34 +217,40 @@ namespace Sci.Production.Warehouse
 
             #endregion 更新表頭狀態資料
 
-            #region 更新庫存數量 po_supp_detail & ftyinventory
-
-            sqlupd2.Append("declare @iden as bigint;");
-            sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
-            foreach (DataRow item in DetailDatas)
-            {
-                sqlupd2.Append(Prgs.UpdateFtyInventory(2, item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), 0m
-                    , item["roll"].ToString(), item["dyelot"].ToString(),  CurrentMaintain["stocktype"].ToString(), true, item["tolocation"].ToString()));
-            }
-            sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
+            #region 更新庫存數量 mdivisionPoDetail
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
+                           mdivisionid = b.Field<string>("mdivisionid"),
                            poid = b.Field<string>("poid"),
                            seq1 = b.Field<string>("seq1"),
                            seq2 = b.Field<string>("seq2")
                        } into m
                        select new
                        {
+                           mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2")
+                           seq2 = m.First().Field<string>("seq2"),
+                           location = string.Join(",", m.Select(r => r.Field<string>("ToLocation")).Distinct()),
                        }).ToList();
 
             foreach (var item in bs1)
             {
-                sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(2, item.poid, item.seq1, item.seq2,0m, true, CurrentMaintain["stocktype"].ToString()));
+                sqlupd2.Append(Prgs.UpdateMPoDetail(2, item.poid, item.seq1, item.seq2,0m, true, CurrentMaintain["stocktype"].ToString(),item.mdivisionid,item.location,false));
             }
+            #endregion
+            #region 更新庫存數量 po_supp_detail & ftyinventory
+
+            sqlupd2.Append("declare @iden as bigint;");
+            sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
+            foreach (DataRow item in DetailDatas)
+            {
+                sqlupd2.Append(Prgs.UpdateFtyInventory(2, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), 0m
+                    , item["roll"].ToString(), item["dyelot"].ToString(),  CurrentMaintain["stocktype"].ToString(), true, item["tolocation"].ToString()));
+            }
+            sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
+            
 
             #endregion 更新庫存數量 po_supp_detail & ftyinventory
 
@@ -287,7 +291,7 @@ namespace Sci.Production.Warehouse
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
-            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+            this.DetailSelectCommand = string.Format(@"select a.id,a.mdivisionid,a.PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
 ,(select p1.colorid from PO_Supp_Detail p1 where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as colorid
 ,(select p1.sizespec from PO_Supp_Detail p1 where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as sizespec
 ,a.Roll
@@ -295,6 +299,8 @@ namespace Sci.Production.Warehouse
 ,a.Qty
 ,a.FromLocation
 ,a.ToLocation
+,a.ftyinventoryukey
+,ukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 from dbo.LocationTrans_detail a
 Where a.id = '{0}' ", masterID);

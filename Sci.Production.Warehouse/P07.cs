@@ -384,6 +384,8 @@ where e.PoID ='{0}' and e.id = '{1}'", CurrentDetailData["poid"], CurrentMaintai
                     CurrentDetailData["pounit"] = x[0]["pounit"];
                     CurrentDetailData["stockunit"] = x[0]["stockunit"];
                     CurrentDetailData["fabrictype"] = x[0]["fabrictype"];
+                    CurrentDetailData["shipqty"] = 0m;
+                    CurrentDetailData["Actualqty"] = 0m;
                 }
             };
             ts.CellValidating += (s, e) =>
@@ -399,6 +401,8 @@ where e.PoID ='{0}' and e.id = '{1}'", CurrentDetailData["poid"], CurrentMaintai
                             CurrentDetailData["pounit"] ="";
                             CurrentDetailData["stockunit"] = "";
                             CurrentDetailData["fabrictype"] = "";
+                            CurrentDetailData["shipqty"] = 0m;
+                            CurrentDetailData["Actualqty"] = 0m;
                         }
                         else
                         {
@@ -417,6 +421,8 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                                 CurrentDetailData["pounit"] = dr["pounit"];
                                 CurrentDetailData["stockunit"] = dr["stockunit"];
                                 CurrentDetailData["fabrictype"] = dr["fabrictype"];
+                                CurrentDetailData["shipqty"] = 0m;
+                                CurrentDetailData["Actualqty"] = 0m;
                             }
                         }
                     }
@@ -465,9 +471,12 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     CurrentDetailData["Actualqty"] = e.FormattedValue;
-                    string rate = MyUtility.GetValue.Lookup(string.Format(@"select Rate from dbo.View_Unitrate v
+                    if (!MyUtility.Check.Empty(CurrentDetailData["pounit"]) && !MyUtility.Check.Empty(CurrentDetailData["stockunit"]))
+                    {
+                        string rate = MyUtility.GetValue.Lookup(string.Format(@"select Rate from dbo.View_Unitrate v
                     where v.FROM_U ='{0}' and v.TO_U='{1}'", CurrentDetailData["pounit"], CurrentDetailData["stockunit"]));
-                    CurrentDetailData["stockqty"] = MyUtility.Math.Round(decimal.Parse(e.FormattedValue.ToString()) * decimal.Parse(rate), 2);
+                        CurrentDetailData["stockqty"] = MyUtility.Math.Round(decimal.Parse(e.FormattedValue.ToString()) * decimal.Parse(rate), 2);
+                    }
                 }
             };
 
@@ -552,7 +561,12 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.StockQty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Receiving_Detail d left join FtyInventory f
-on d.ftyinventoryukey = f.ukey
+on d.mdivisionid = f.mdivisionid
+and d.PoId = f.PoId
+and d.Seq1 = f.Seq1
+and d.Seq2 = f.seq2
+and d.StockType = f.StockType
+and d.Roll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -688,7 +702,12 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.StockQty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Receiving_Detail d left join FtyInventory f
-on d.ftyinventoryukey = f.ukey
+on d.mdivisionid = f.mdivisionid
+and d.PoId = f.PoId
+and d.Seq1 = f.Seq1
+and d.Seq2 = f.seq2
+and d.StockType = f.StockType
+and d.Roll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {

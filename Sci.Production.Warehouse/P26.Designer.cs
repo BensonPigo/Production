@@ -42,6 +42,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -84,7 +85,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(795, 47);
+            this.gridicon.Location = new System.Drawing.Point(839, 47);
             this.gridicon.TabIndex = 15;
             // 
             // refresh
@@ -95,6 +96,18 @@
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(1058, 367);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -140,7 +153,7 @@
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.label25.Lines = 0;
-            this.label25.Location = new System.Drawing.Point(761, 13);
+            this.label25.Location = new System.Drawing.Point(925, 13);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(115, 23);
             this.label25.TabIndex = 43;
@@ -169,11 +182,11 @@
             // 
             this.button6.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button6.Location = new System.Drawing.Point(901, 47);
+            this.button6.Location = new System.Drawing.Point(945, 47);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(139, 30);
+            this.button6.Size = new System.Drawing.Size(95, 30);
             this.button6.TabIndex = 14;
-            this.button6.Text = "Import From Excel";
+            this.button6.Text = "Import";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
@@ -244,6 +257,7 @@
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
