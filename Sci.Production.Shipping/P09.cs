@@ -13,9 +13,8 @@ namespace Sci.Production.Shipping
 {
     public partial class P09 : Sci.Win.Tems.QueryForm
     {
-        DataTable FtyGroup;
-        IList<string> comboBox2_RowSource = new List<string>();
-        BindingSource comboxbs2;
+        DataTable MDivision;
+
         public P09(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -27,11 +26,9 @@ namespace Sci.Production.Shipping
             base.OnFormLoaded();
             DualResult result;
             #region Combox
-            if (result = DBProxy.Current.Select(null, "select distinct FtyGroup from Factory where Junk = 0 ", out FtyGroup))
+            if (result = DBProxy.Current.Select(null, "select distinct MDivisionID from Factory where Junk = 0 ", out MDivision))
             {
-                this.comboBox1.DataSource = FtyGroup;
-                this.comboBox1.DisplayMember = "FtyGroup";
-                this.comboBox1.ValueMember = "FtyGroup";
+                MyUtility.Tool.SetupCombox(comboBox1, 1, MDivision);
             }
             else
             {
@@ -39,11 +36,7 @@ namespace Sci.Production.Shipping
             }
             comboBox1.SelectedIndex = -1;
 
-            comboBox2_RowSource.Add("Shipped");
-            comboBox2_RowSource.Add("Not Ship");
-            comboBox2_RowSource.Add("All");
-            comboxbs2 = new BindingSource(comboBox2_RowSource, null);
-            comboBox2.DataSource = comboxbs2;
+            MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "Shipped,Not Ship,All");
             comboBox2.SelectedIndex = 0;
             #endregion 
 
@@ -97,7 +90,7 @@ as
 
             if (!MyUtility.Check.Empty(comboBox1.SelectedValue))
             {
-                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'",comboBox1.SelectedValue.ToString().Trim()));
+                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'",MyUtility.Convert.GetString(comboBox1.SelectedValue).Trim()));
             }
             sqlCmd.Append(@") 
 select ID,Seq,StyleID,BrandID,FactoryID,CustPONo,Customize1,CustCDID,Alias,Qty,
@@ -108,20 +101,20 @@ where iif(PulloutDate is null,EstPulloutDate,PulloutDate) > BuyerDelivery
 and iif(PulloutDate is null,EstPulloutDate,PulloutDate) is not null ");
             if (comboBox2.SelectedIndex != -1)
             {
-                if (comboBox2.SelectedValue.ToString() == "Shipped")
+                if (MyUtility.Convert.GetString(comboBox2.SelectedValue) == "Shipped")
                 {
                     sqlCmd.Append("and PulloutDate is not null");
                 }
                 else
                 {
-                    if (comboBox2.SelectedValue.ToString() == "Not Ship")
+                    if (MyUtility.Convert.GetString(comboBox2.SelectedValue) == "Not Ship")
                     {
                         sqlCmd.Append("and PulloutDate is null");
                     }
                 }
             }
             DataTable gridData;
-            DualResult result = DBProxy.Current.Select(null, Convert.ToString(sqlCmd), out gridData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query fail!\r\n" + result.ToString());
