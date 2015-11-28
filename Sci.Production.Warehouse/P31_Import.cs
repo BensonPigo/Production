@@ -51,21 +51,23 @@ namespace Sci.Production.Warehouse
                 strSQLCmd.Append(string.Format(@"select 0 as selected ,'' id
 ,c.Roll FromRoll
 ,c.Dyelot FromDyelot
+,c.ukey as fromftyinventoryukey
+,c.mdivisionid as FromMdivisionid
 , a.id as FromPoId
 ,a.Seq1 as FromSeq1
 ,a.Seq2 as FromSeq2
 ,left(a.seq1+' ',3)+a.Seq2 as fromseq
 ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
 ,a.stockunit
-,c.StockType as fromstock
+,c.StockType as fromstocktype
 ,c.InQty - c.OutQty + c.AdjustQty balance
 ,(select mtllocationid +',' from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')) as location
 ,left(b.seq1+' ',3)+b.Seq2 as toseq
 ,c.Roll toroll
 ,c.Dyelot todyelot
 ,0.00 as Qty
-,'B' ToStock
-,c.ukey
+,'B' ToStocktype
+,'{4}' as tomdivisionid
 ,b.id topoid
 ,b.seq1 toseq1
 ,b.seq2 toseq2
@@ -73,8 +75,8 @@ namespace Sci.Production.Warehouse
 from dbo.PO_Supp_Detail a 
 inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 left join dbo.po_supp_detail b on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec and b.ColorID = a.ColorID and b.BrandId = a.BrandId
-Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}' 
-and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substring(0, 3), seq.Substring(3, 2))); // 
+Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}' and c.mdivisionid='{4}'
+and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substring(0, 3), seq.Substring(3, 2),Sci.Env.User.Keyword)); // 
 
                 MyUtility.Msg.WaitWindows("Data Loading....");
                 Ict.DualResult result;
@@ -127,12 +129,12 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substri
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
-                .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
-                .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+                .Text("fromroll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
+                .Text("fromdyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
                 .Text("fromseq", header: "From" + Environment.NewLine + "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //3
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)) //4
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //5
-                .ComboBox("fromstock", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)    //6
+                .ComboBox("fromstocktype", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)    //6
                 .Numeric("balance", header: "Stock Qty", iseditable: true, decimal_places: 2, integer_places: 10) //7
                 .Text("location", header: "From Location", iseditingreadonly: true)      //8
                 .Text("toseq", header: "To" + Environment.NewLine + "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //9
@@ -207,7 +209,7 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substri
             dr2 = dtBorrow.Select("qty <> 0 and Selected = 1");
             foreach (DataRow row in dr2)
             {
-                if (row["fabrictype"].ToString().ToUpper() == "F" && (MyUtility.Check.Empty(row["roll"]) || MyUtility.Check.Empty(row["dyelot"])))
+                if (row["fabrictype"].ToString().ToUpper() == "F" && (MyUtility.Check.Empty(row["toroll"]) || MyUtility.Check.Empty(row["todyelot"])))
                 {
                     warningmsg.Append(string.Format(@"To SP#: {0} To Seq#: {1}-{2} To Roll#:{3} To Dyelot:{4} Roll and Dyelot can't be empty"
                         , row["topoid"], row["toseq1"], row["toseq2"], row["toroll"], row["todyelot"]) + Environment.NewLine);
@@ -227,9 +229,10 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substri
             foreach (DataRow tmp in dr2)
             {
                 DataRow[] findrow = dt_detail.Select(
-                    string.Format("frompoid = '{0}' and fromseq1 = '{1}' and fromseq2 = '{2}' and fromroll ='{3}'and fromdyelot='{4}' and fromstock = '{5}' and topoid = '{6}' and toseq1 = '{7}' and toseq2 = '{8}' and toroll ='{9}'and todyelot='{10}' and tostock='{11}' "
-                    , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["fromdyelot"], tmp["fromstock"]
-                    , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["todyelot"], tmp["tostock"]));
+                    string.Format(@"fromftyinventoryukey = {0} 
+                    and tomdivisionid = '{1}' and topoid = '{2}' and toseq1 = '{3}' and toseq2 = '{4}' and toroll ='{5}'and todyelot='{6}' and tostocktype='{7}' "
+                    , tmp["fromftyinventoryukey"]
+                    , tmp["tomdivisionid"], tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["todyelot"], tmp["tostocktype"]));
 
                 if (findrow.Length > 0)
                 {
@@ -248,6 +251,7 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substri
             this.Close();
         }
 
+        // To SP# Valid
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
             string sp = textBox1.Text.TrimEnd();
@@ -287,7 +291,7 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substri
                 }
             }
         }
-
+        // To Seq# Valid
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
             DataRow tmp;

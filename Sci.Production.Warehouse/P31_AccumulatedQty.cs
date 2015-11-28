@@ -29,12 +29,12 @@ namespace Sci.Production.Warehouse
 ,sum(a.Qty) as Qty
 ,pd.Refno
 ,c.Name as color_name
-,case when a.FromStock ='B' then 'Bulk' when a.FromStock='I' then 'Inventory' else a.fromstock end as stocktype
+,case when a.FromStocktype ='B' then 'Bulk' when a.FromStocktype='I' then 'Inventory' else a.fromstocktype end as stocktype
 ,dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0) as [Description]
-from dbo.BorrowBack_Detail a left join (PO_Supp_Detail pd inner join color c on c.id = pd.ColorID AND C.BrandId = PD.BrandId) 
-		on a.FromPoId = pd.ID and a.FromSeq1= pd.seq1 and a.FromSeq2 =  pd.seq2
+from dbo.BorrowBack_Detail a left join 
+        (PO_Supp_Detail pd inner join color c on c.id = pd.ColorID AND C.BrandId = PD.BrandId) on a.FromPoId = pd.ID and a.FromSeq1= pd.seq1 and a.FromSeq2 =  pd.seq2
 where a.Id = '{0}'
-GROUP BY A.FromPoId,A.FromSeq1,A.FromSeq2,a.FromStock,pd.Refno,c.Name", dr["id"].ToString()));
+GROUP BY A.FromPoId,A.FromSeq1,A.FromSeq2,a.FromStocktype,pd.Refno,c.Name", dr["id"].ToString()));
 
             DataTable selectDataTable1;
             MyUtility.Msg.WaitWindows("Data Loading...");
