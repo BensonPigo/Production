@@ -17,8 +17,7 @@ namespace Sci.Production.Shipping
         Ict.Win.UI.DataGridViewTextBoxColumn col_lock;
         Ict.Win.UI.DataGridViewDateBoxColumn col_crd;
         Ict.Win.DataGridViewGeneratorNumericColumnSettings shipqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        private string sqlCmd, masterID, insertCmd, updateCmd;
-        private DualResult result, result2;
+        private string masterID;
         private DataTable selectData;
         private DataRow dr;
         string dateTimeMask = "", emptyDTMask = "",empmask,dtmask;
@@ -46,14 +45,14 @@ namespace Sci.Production.Shipping
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            masterID = (e.Master == null) ? "1=0" : string.Format("p.INVNo = '{0}'",e.Master["ID"].ToString());
+            masterID = (e.Master == null) ? "1=0" : string.Format("p.INVNo = '{0}'",MyUtility.Convert.GetString(e.Master["ID"]));
             this.DetailSelectCommand = string.Format(@"select p.GMTBookingLock,p.FactoryID,p.ID,
-iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd where pd.ID = p.id) a for xml path('')),p.OrderID) as OrderID,
-p.CargoReadyDate,iif(p.type = 'B',(select BuyerDelivery from Order_QtyShip where ID = p.OrderID and Seq = p.OrderShipmodeSeq),(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq)) as BuyerDelivery,
-iif(p.type = 'B',(select SDPDate from Order_QtyShip where ID = p.OrderID and Seq = p.OrderShipmodeSeq),(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq)) as SDPDate,
+(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd where pd.ID = p.id) a for xml path('')) as OrderID,
+p.CargoReadyDate,(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
+(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate,
 p.PulloutDate,p.ShipQty,p.CTNQty,p.GW,p.CBM,p.InvNo,
-iif(p.type = 'B',(select CustCDID from Orders where ID = p.OrderID),(select o.CustCDID from Orders o, (select top 1 OrderID from PackingList_Detail pd where pd.ID = p.ID) a where o.ID = a.OrderID)) as CustCDID,
-iif(p.type = 'B',(select Dest from Orders where ID = p.OrderID),(select o.Dest from Orders o, (select top 1 OrderID from PackingList_Detail pd where pd.ID = p.ID) a where o.ID = a.OrderID)) as Dest,
+(select o.CustCDID from Orders o, (select top 1 OrderID from PackingList_Detail pd where pd.ID = p.ID) a where o.ID = a.OrderID) as CustCDID,
+(select o.Dest from Orders o, (select top 1 OrderID from PackingList_Detail pd where pd.ID = p.ID) a where o.ID = a.OrderID) as Dest,
 p.NW,p.NNW,p.Status,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ClogReceiveID != '') as ClogCTNQty,p.InspDate,p.ShipModeID
 from PackingList p
 where {0}", masterID);
@@ -63,28 +62,21 @@ where {0}", masterID);
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-  
-            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("", "");
-            comboBox1_RowSource.Add("CY-CY", "CY-CY");
-            comboBox1_RowSource.Add("CFS-CY", "CFS-CY");
-            comboBox1_RowSource.Add("CFS-CFS", "CFS-CFS");
-            comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
-
+            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, ",CY-CY,CFS-CY,CFS-CFS");
         }
 
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
 
+            textBox7.Text = MyUtility.GetValue.Lookup("WhseNo", MyUtility.Convert.GetString(CurrentMaintain["ForwarderWhse_DetailUKey"]), "ForwarderWhse_Detail", "UKey");
+
             #region AirPP List按鈕變色
             if (!this.EditMode)
             {
-                sqlCmd = string.Format(@"select pd.ID
+                string sqlCmd = string.Format(@"select pd.ID
 from PackingList p, PackingList_Detail pd, AirPP a
-where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShipmodeSeq = pd.OrderShipmodeSeq", CurrentMaintain["ID"].ToString());
+where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShipmodeSeq = pd.OrderShipmodeSeq", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
                 if (MyUtility.Check.Seek(sqlCmd))
                 {
@@ -102,7 +94,7 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
             #region S/O CFM按鈕權限
             if (!this.EditMode)
             {
-                if (CurrentMaintain["Status"].ToString() == "New")
+                if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "New")
                 {
                     button4.Enabled = true;
                 }
@@ -172,9 +164,9 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                         {
                             if (!MyUtility.Check.Empty(e.FormattedValue))
                             {
-                                if (e.FormattedValue.ToString() != dr["GMTBookingLock"].ToString())
+                                if (MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["GMTBookingLock"]))
                                 {
-                                    if (e.FormattedValue.ToString() != "Y")
+                                    if (MyUtility.Convert.GetString(e.FormattedValue) != "Y")
                                     {
                                         MyUtility.Msg.WarningBox("It should be only 'Y' or ''!");
                                         dr["GMTBookingLock"] = "Y";
@@ -187,11 +179,11 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                             {
                                 if (dr["GMTBookingLock"].ToString() == "Y")
                                 {
-                                    sqlCmd = string.Format(@"select p.ID
+                                    string sqlCmd = string.Format(@"select p.ID
 from PackingList pl, Pullout p
 where pl.ID = '{0}'
 and pl.PulloutID = p.ID
-and p.Status = 'Confirmed'", dr["ID"].ToString());
+and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
 
                                     if (MyUtility.Check.Seek(sqlCmd))
                                     {
@@ -226,7 +218,7 @@ and p.Status = 'Confirmed'", dr["ID"].ToString());
         {
             base.ClickNewAfter();
             CurrentMaintain["Status"] = "New";
-            CurrentMaintain["Shipper"] = Sci.Env.User.Factory;
+            CurrentMaintain["Shipper"] = Sci.Env.User.Keyword;
             CurrentMaintain["InvDate"] = DateTime.Today;
             CurrentMaintain["Handle"] = Sci.Env.User.UserID;
             CurrentMaintain["ShipModeID"] = "SEA";
@@ -235,7 +227,7 @@ and p.Status = 'Confirmed'", dr["ID"].ToString());
 
         protected override bool ClickEditBefore()
         {
-            if (CurrentMaintain["Status"].ToString() == "Confirmed")
+            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Confirmed")
             {
                 MyUtility.Msg.WarningBox("This record is < Confirmed >, can't be modified!");
                 return false;
@@ -250,24 +242,19 @@ and p.Status = 'Confirmed'", dr["ID"].ToString());
             textBox1.ReadOnly = true;
             txtbrand1.ReadOnly = true;
             txtcountry1.TextBox1.ReadOnly = true;
-            txtbrand1.Enabled = false;
-            txtcountry1.TextBox1.Enabled = false;
             txtshipmode1.ReadOnly = true;
 
             if (!MyUtility.Check.Empty(CurrentMaintain["SOCFMDate"]))
             {
                 dateBox1.ReadOnly = true;
                 txtfactory1.ReadOnly = true;
-                txtfactory1.Enabled = false;
                 dateBox2.ReadOnly = true;
                 textBox4.ReadOnly = true;
                 txtuser1.TextBox1.ReadOnly = true;
-                txtuser1.TextBox1.Enabled = false;
                 txtsubcon1.TextBox1.ReadOnly = true;
-                txtsubcon1.TextBox1.Enabled = false;
                 comboBox1.ReadOnly = true;
                 textBox3.ReadOnly = true;
-                numericBox7.ReadOnly = true;
+                textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndNonReadOnly;
                 textBox6.ReadOnly = true;
                 col_lock.IsEditingReadOnly = true;
                 col_crd.IsEditingReadOnly = true;
@@ -283,12 +270,13 @@ and p.Status = 'Confirmed'", dr["ID"].ToString());
                 col_crd.IsEditingReadOnly = false;
                 detailgrid.Columns[0].DefaultCellStyle.ForeColor = Color.Red;
                 detailgrid.Columns[4].DefaultCellStyle.ForeColor = Color.Red;
+                textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             }
         }
 
         protected override bool ClickDeleteBefore()
         {
-            if (CurrentMaintain["Status"].ToString() == "Confirmed")
+            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Confirmed")
             {
                 MyUtility.Msg.WarningBox("This record is < Confirmed >, can't be deleted!");
                 return false;
@@ -301,19 +289,19 @@ and p.Status = 'Confirmed'", dr["ID"].ToString());
             }
 
             //已經有做出口費用分攤就不可以被刪除
-            if (MyUtility.Check.Seek(string.Format(@"select ShippingAPID from ShareExpense where InvNo = '{0}'", CurrentMaintain["ID"].ToString())))
+            if (MyUtility.Check.Seek(string.Format(@"select ShippingAPID from ShareExpense where InvNo = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
             {
                 MyUtility.Msg.WarningBox("This record have expense data, can't be deleted!");
                 return false;
             }
 
             //只要Pullout Report已經Confirmed就不可以被刪除
-            sqlCmd = string.Format(@"select distinct pl.PulloutID
+            string sqlCmd = string.Format(@"select distinct pl.PulloutID
 from PackingList pl, Pullout p
 where pl.INVNo = '{0}'
 and pl.PulloutID = p.ID
-and p.Status = 'Confirmed'", CurrentMaintain["ID"].ToString());
-            result = DBProxy.Current.Select(null, sqlCmd, out selectData);
+and p.Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
             if (result)
             {
                 if (selectData.Rows.Count > 0)
@@ -333,8 +321,8 @@ and p.Status = 'Confirmed'", CurrentMaintain["ID"].ToString());
 
         protected override bool OnDeleteDetails()
         {
-            updateCmd = string.Format("update PackingList set GMTBookingLock = '', INVNo = '' where INVNo = '{0}';", CurrentMaintain["ID"].ToString());
-            result = DBProxy.Current.Execute(null, updateCmd);
+            string updateCmd = string.Format("update PackingList set GMTBookingLock = '', INVNo = '' where INVNo = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (result)
             {
                 return true;
@@ -422,54 +410,55 @@ and p.Status = 'Confirmed'", CurrentMaintain["ID"].ToString());
                 return false;
             }
             #endregion
-            string newID = "";
+            
             //新增單狀態下，取ID且檢查此ID是否存在
             if (IsDetailInserting)
             {
-                newID = MyUtility.GetValue.Lookup("NegoRegion", CurrentMaintain["Shipper"].ToString(), "Factory", "ID").Trim() + Convert.ToDateTime(CurrentMaintain["InvDate"]).ToString("yyMM") + "-" + CurrentMaintain["InvSerial"].ToString().Trim() + "-" + MyUtility.GetValue.Lookup("ShipCode",CurrentMaintain["BrandID"].ToString(),"Brand","ID").Trim();
+                string newID = MyUtility.GetValue.Lookup("NegoRegion", MyUtility.Convert.GetString(CurrentMaintain["Shipper"]), "Factory", "ID").Trim() + Convert.ToDateTime(CurrentMaintain["InvDate"]).ToString("yyMM") + "-" + MyUtility.Convert.GetString(CurrentMaintain["InvSerial"]).Trim() + "-" + MyUtility.GetValue.Lookup("ShipCode",MyUtility.Convert.GetString(CurrentMaintain["BrandID"]),"Brand","ID").Trim();
                 if (MyUtility.Check.Seek(newID, "GMTBooking", "ID"))
                 {
                     MyUtility.Msg.WarningBox("Inv. Serial already exist!!");
                     textBox1.Focus();
                     return false;
                 }
+                CurrentMaintain["ID"] = newID;
             }
 
             //組出表身所有的PackingListID與加總ShipQty,CTNQty,NW,GW,NNW,CBM
-            string allPackID = "";
+            StringBuilder allPackID = new StringBuilder();
             int ttlshipqty = 0, ttlctnqty = 0;
             double ttlnw = 0.0, ttlgw = 0.0, ttlnnw = 0.0, ttlcbm = 0.0;
             foreach (DataRow dr in DetailDatas)
             {
-                allPackID = allPackID + "'" + dr["ID"].ToString() + "',";
-                ttlshipqty = ttlshipqty + Convert.ToInt32(dr["ShipQty"]);
-                ttlctnqty = ttlctnqty + Convert.ToInt32(dr["CTNQty"]);
-                ttlnw = MyUtility.Math.Round(ttlnw + Convert.ToDouble(dr["NW"]), 3);
-                ttlgw = MyUtility.Math.Round(ttlgw + Convert.ToDouble(dr["GW"]), 3);
-                ttlnnw = MyUtility.Math.Round(ttlnnw + Convert.ToDouble(dr["NNW"]), 3);
-                ttlcbm = MyUtility.Math.Round(ttlcbm + Convert.ToDouble(dr["CBM"]), 3);
+                allPackID.Append(string.Format("'{0}',",MyUtility.Convert.GetString(dr["ID"])));
+                ttlshipqty = ttlshipqty + MyUtility.Convert.GetInt(dr["ShipQty"]);
+                ttlctnqty = ttlctnqty + MyUtility.Convert.GetInt(dr["CTNQty"]);
+                ttlnw = MyUtility.Math.Round(ttlnw + MyUtility.Convert.GetDouble(dr["NW"]), 3);
+                ttlgw = MyUtility.Math.Round(ttlgw + MyUtility.Convert.GetDouble(dr["GW"]), 3);
+                ttlnnw = MyUtility.Math.Round(ttlnnw + MyUtility.Convert.GetDouble(dr["NNW"]), 3);
+                ttlcbm = MyUtility.Math.Round(ttlcbm + MyUtility.Convert.GetDouble(dr["CBM"]), 3);
             }
             #region 檢查訂單的Currency是否一致與Payterm與表頭是否一致
-            if (allPackID != "")
+            if (allPackID.Length > 0)
             {
-                sqlCmd = string.Format(@"with OrderData
+                string sqlCmd = string.Format(@"with OrderData
 as
-(select distinct pd.ID,pd.OrderID,o.CurrecnyID,o.PayTermARID
+(select distinct pd.ID,pd.OrderID,o.CurrencyID,o.PayTermARID
  from PackingList_Detail pd, Orders o
  where pd.ID in ({0})
  and pd.OrderID = o.ID
  ),
 CurrencyCount
 as
-(select CurrecnyID, isnull(COUNT(CurrecnyID),0) as CNT
+(select CurrencyID, isnull(COUNT(CurrencyID),0) as CNT
  from OrderData
- group by CurrecnyID
+ group by CurrencyID
 )
-Select od.ID,od.OrderID,od.CurrecnyID,od.PayTermARID,cc.CNT
+Select od.ID,od.OrderID,od.CurrencyID,od.PayTermARID,cc.CNT
 from OrderData od
-left join CurrencyCount cc on od.CurrecnyID = cc.CurrecnyID
-order by cc.CNT desc", allPackID.Substring(0, allPackID.Length - 1));
-                result = DBProxy.Current.Select(null, sqlCmd, out selectData);
+left join CurrencyCount cc on od.CurrencyID = cc.CurrencyID
+order by cc.CNT desc", allPackID.ToString().Substring(0, allPackID.Length - 1));
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString());
@@ -477,25 +466,25 @@ order by cc.CNT desc", allPackID.Substring(0, allPackID.Length - 1));
                 }
                 if (selectData.Rows.Count > 0)
                 {
-                    string msg = "";
-                    foreach (DataRow dr in selectData.Select(string.Format("CurrecnyID <> '{0}'", selectData.Rows[0]["CurrecnyID"].ToString())))
+                    StringBuilder msg = new StringBuilder();
+                    foreach (DataRow dr in selectData.Select(string.Format("CurrencyID <> '{0}'", MyUtility.Convert.GetString(selectData.Rows[0]["CurrencyID"]))))
                     {
-                        msg = msg + "Packing#:" + dr["ID"].ToString() + ",   SP No.:" + dr["OrderID"].ToString() + ",   Currency:" + dr["CurrecnyID"].ToString() + "\r\n";
+                        msg.Append(string.Format("Packing#:{0},   SP No.:{1},   Currency:{2}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CurrencyID"])));
                     }
-                    if (msg != "")
+                    if (msg.Length > 0)
                     {
-                        MyUtility.Msg.WarningBox("Currency is inconsistent!!\r\nThe currency of most SP No. is " + selectData.Rows[0]["CurrecnyID"].ToString() + "\r\n" + msg);
+                        MyUtility.Msg.WarningBox("Currency is inconsistent!!\r\nThe currency of most SP No. is " + MyUtility.Convert.GetString(selectData.Rows[0]["CurrencyID"]) + "\r\n" + msg.ToString());
                         return false;
                     }
 
-                    msg = "";
-                    foreach (DataRow dr in selectData.Select(string.Format("PayTermARID <> '{0}'", CurrentMaintain["PayTermARID"].ToString())))
+                    msg.Clear();
+                    foreach (DataRow dr in selectData.Select(string.Format("PayTermARID <> '{0}'", MyUtility.Convert.GetString(CurrentMaintain["PayTermARID"]))))
                     {
-                        msg = msg + "Packing#:" + dr["ID"].ToString() + ",   Payment Term:" + dr["PayTermARID"].ToString() + "\r\n";
+                        msg.Append(string.Format("Packing#:{0},   Payment Term:{1}\r\n", MyUtility.Convert.GetString(dr["ID"]),MyUtility.Convert.GetString(dr["PayTermARID"])));
                     }
-                    if (msg != "")
+                    if (msg.Length > 0)
                     {
-                        MyUtility.Msg.WarningBox("Payment term in detail SP is different from garment booking!!\r\n"+ msg);
+                        MyUtility.Msg.WarningBox("Payment term in detail SP is different from garment booking!!\r\n"+ msg.ToString());
                     }
                 }
             }
@@ -503,9 +492,9 @@ order by cc.CNT desc", allPackID.Substring(0, allPackID.Length - 1));
 
             #region 組Description
             string season = "", category = "";
-            if (allPackID != "")
+            if (allPackID.Length > 0)
             {
-                sqlCmd = string.Format(@"with OrderData
+                string sqlCmd = string.Format(@"with OrderData
 as
 (select distinct o.Category,o.SeasonID
  from PackingList_Detail pd, Orders o
@@ -513,8 +502,8 @@ as
  and pd.OrderID = o.ID
 )
 select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category from OrderData) a for xml path('')) as Category,
-(select CAST(a.SeasonID as nvarchar)+'/' from (select distinct SeasonID from OrderData) a for xml path('')) as Season", allPackID.Substring(0, allPackID.Length - 1));
-                result = DBProxy.Current.Select(null, sqlCmd, out selectData);
+(select CAST(a.SeasonID as nvarchar)+'/' from (select distinct SeasonID from OrderData) a for xml path('')) as Season", allPackID.ToString().Substring(0, allPackID.Length - 1));
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString());
@@ -522,11 +511,11 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                 }
                 if (selectData.Rows.Count > 0)
                 {
-                    season = selectData.Rows[0]["Season"].ToString().Substring(0, selectData.Rows[0]["Season"].ToString().Length-1);
-                    category = selectData.Rows[0]["Category"].ToString().Substring(0, selectData.Rows[0]["Category"].ToString().Length - 1);
+                    season = MyUtility.Convert.GetString(selectData.Rows[0]["Season"]).Substring(0, MyUtility.Convert.GetString(selectData.Rows[0]["Season"]).Length-1);
+                    category = MyUtility.Convert.GetString(selectData.Rows[0]["Category"]).Substring(0, MyUtility.Convert.GetString(selectData.Rows[0]["Category"]).Length - 1);
                 }
             }
-            CurrentMaintain["Description"] = CurrentMaintain["BrandID"].ToString() + ',' + season + ',' + CurrentMaintain["CustCDID"].ToString() + "," + CurrentMaintain["Dest"].ToString() + "," + category;
+            CurrentMaintain["Description"] = MyUtility.Convert.GetString(CurrentMaintain["BrandID"]) + ',' + season + ',' + MyUtility.Convert.GetString(CurrentMaintain["CustCDID"]) + "," + MyUtility.Convert.GetString(CurrentMaintain["Dest"]) + "," + category;
             #endregion
 
             //將表身加總的資料回寫回表頭
@@ -536,10 +525,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             CurrentMaintain["TotalGW"] = MyUtility.Math.Round(ttlgw, 2);
             CurrentMaintain["TotalNNW"] = MyUtility.Math.Round(ttlnnw, 2);
             CurrentMaintain["TotalCBM"] = MyUtility.Math.Round(ttlcbm, 2);
-            if (IsDetailInserting)
-            {
-                CurrentMaintain["ID"] = newID;
-            }
+
             return base.ClickSaveBefore();
         }
 
@@ -551,20 +537,20 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             {
                 if (dr.RowState == DataRowState.Modified)
                 {
-                    updateCmds.Add(string.Format("update PackingList set GMTBookingLock = '{0}' where ID = '{1}';", dr["GMTBookingLock"].ToString(), dr["ID"].ToString()));
+                    updateCmds.Add(string.Format("update PackingList set GMTBookingLock = '{0}' where ID = '{1}';", MyUtility.Convert.GetString(dr["GMTBookingLock"]), MyUtility.Convert.GetString(dr["ID"])));
                 }
                 if (dr.RowState == DataRowState.Added)
                 {
-                    updateCmds.Add(string.Format("update PackingList set GMTBookingLock = '{0}', INVNo = '{1}' where ID = '{2}';", dr["GMTBookingLock"].ToString(), CurrentMaintain["ID"].ToString(), dr["ID"].ToString()));
+                    updateCmds.Add(string.Format("update PackingList set GMTBookingLock = '{0}', INVNo = '{1}' where ID = '{2}';", MyUtility.Convert.GetString(dr["GMTBookingLock"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
                 }
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    updateCmds.Add(string.Format("update PackingList set GMTBookingLock = '', INVNo = '' where ID = '{0}';", dr["ID"].ToString()));
+                    updateCmds.Add(string.Format("update PackingList set GMTBookingLock = '', INVNo = '' where ID = '{0}';", MyUtility.Convert.GetString(dr["ID"])));
                 }
             }
             if (updateCmds.Count != 0)
             {
-                result = DBProxy.Current.Executes(null, updateCmds);
+                DualResult result = DBProxy.Current.Executes(null, updateCmds);
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Update OackingList fail\r\n" + result.ToString());
@@ -597,7 +583,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         //Inv. Serial:移除空白值
         private void textBox1_Validated(object sender, EventArgs e)
         {
-            CurrentMaintain["InvSerial"] = CurrentMaintain["InvSerial"].ToString().Replace(" ", "");
+            CurrentMaintain["InvSerial"] = MyUtility.Convert.GetString(CurrentMaintain["InvSerial"]).Replace(" ", "");
         }
 
         //檢查輸入的Inv. Date是否正確
@@ -629,7 +615,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         {
             if (this.EditMode && !MyUtility.Check.Empty(dateBox2.Value))
             {
-                if (dateBox2.Value > DateTime.Today.AddMonths(12) || dateBox2.Value < DateTime.Today.AddMonths(-12))
+                if (!CheckDate((DateTime)MyUtility.Convert.GetDate(dateBox2.Value), -12, 12))
                 {
                     MyUtility.Msg.WarningBox("< FCR Date > is invalid!!");
                     dateBox2.Value = null;
@@ -654,14 +640,14 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                 Sci.Win.Tools.SelectItem item;
                 if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
                 {
-                    item = new Sci.Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD where BrandID = '{0}' order by ID", CurrentMaintain["BrandID"].ToString()), "17,3,17", textBox4.Text);
+                    item = new Sci.Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD where BrandID = '{0}' order by ID", MyUtility.Convert.GetString(CurrentMaintain["BrandID"])), "17,3,17", textBox4.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel) { return; }
                     textBox4.Text = item.GetSelectedString();
                 }
                 else
                 {
-                    item = new Sci.Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD where BrandID = '{0}' and CountryID = '{1}' order by ID", CurrentMaintain["BrandID"].ToString(), CurrentMaintain["Dest"].ToString()), "17,3,17", textBox4.Text);
+                    item = new Sci.Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD where BrandID = '{0}' and CountryID = '{1}' order by ID", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(CurrentMaintain["Dest"])), "17,3,17", textBox4.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel) { return; }
                     textBox4.Text = item.GetSelectedString();
@@ -676,9 +662,28 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             {
                 if (!MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID, CountryID, City from CustCD where BrandID = '{0}' and ID = '{1}' order by ID", CurrentMaintain["BrandID"].ToString(), textBox4.Text), null))
+                    //sql參數
+                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@brandid", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]));
+                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@custcdid", textBox4.Text);
+
+                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                    cmds.Add(sp1);
+                    cmds.Add(sp2);
+
+                    DataTable CustCDData;
+                    string sqlCmd = "select ID, CountryID, City from CustCD where BrandID = @brandid and ID = @custcdid order by ID";
+                    DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out CustCDData);
+
+                    if (!result || CustCDData.Rows.Count <= 0)
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< CustCD: {0} > not found!!!", textBox4.Text));
+                        if (!result)
+                        {
+                            MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
+                        }
+                        else
+                        {
+                            MyUtility.Msg.WarningBox(string.Format("< CustCD: {0} > not found!!!", textBox4.Text));
+                        }
                         textBox4.Text = "";
                         e.Cancel = true;
                         return;
@@ -713,7 +718,6 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
 
                 if (paytermAR != "")
                 {
-                    //txtpaytermar1.TextBox1.Text = paytermAR;
                     CurrentMaintain["PayTermARID"] = paytermAR;
                 }
             }
@@ -725,7 +729,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             if (this.EditMode && textBox6.Text != emptyDTMask)
             {
                 string cutOffDate = textBox6.Text.Substring(0, 10).Replace(" ","1");
-                if (Convert.ToDateTime(cutOffDate) > DateTime.Today.AddMonths(12) || Convert.ToDateTime(cutOffDate) < DateTime.Today.AddMonths(-12))
+                if (!CheckDate((DateTime)MyUtility.Convert.GetDate(cutOffDate), -12, 12))
                 {
                     MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
                     textBox6.Text = null;
@@ -740,7 +744,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         {
             if (this.EditMode && !MyUtility.Check.Empty(dateBox5.Value))
             {
-                if (dateBox5.Value > DateTime.Today.AddMonths(12) || dateBox5.Value < DateTime.Today.AddMonths(-12))
+                if (!CheckDate((DateTime)MyUtility.Convert.GetDate(dateBox5.Value), -12, 12))
                 {
                     MyUtility.Msg.WarningBox("< ETD > is invalid!!");
                     dateBox5.Value = null;
@@ -755,7 +759,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         {
             if (this.EditMode && !MyUtility.Check.Empty(dateBox6.Value))
             {
-                if (dateBox6.Value > DateTime.Today.AddMonths(12) || dateBox6.Value < DateTime.Today.AddMonths(-12))
+                if (!CheckDate((DateTime)MyUtility.Convert.GetDate(dateBox6.Value), -12, 12))
                 {
                     MyUtility.Msg.WarningBox("< ETA > is invalid!!");
                     dateBox6.Value = null;
@@ -765,13 +769,22 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             }
         }
 
+        private bool CheckDate(DateTime DT, int Before, int After)
+        {
+            if (DT > DateTime.Today.AddMonths(After) || DT < DateTime.Today.AddMonths(Before))
+            {
+                return false;
+            }
+            return true;
+        }
+
         //表身Grid的Delete
         protected override void OnDetailGridDelete()
         {
             //檢查此筆記錄的Pullout Report是否已經Confirmed，若是則出訊息告知且無法刪除
             if (this.DetailDatas.Count > 0)
             {
-                if (MyUtility.GetValue.Lookup(string.Format("select p.Status from Pullout p, PackingList pl where pl.ID = '{0}' and p.ID = pl.PulloutID", CurrentDetailData["ID"].ToString())) == "Confirmed")
+                if (MyUtility.GetValue.Lookup(string.Format("select p.Status from Pullout p, PackingList pl where pl.ID = '{0}' and p.ID = pl.PulloutID", MyUtility.Convert.GetString(CurrentDetailData["ID"]))) == "Confirmed")
                 {
                     MyUtility.Msg.WarningBox("Pullout report already confirmed, can't be deleted!");
                     return;
@@ -783,21 +796,21 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         //AirPP List
         private void button1_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P05_AirPrePaidList callNextForm = new Sci.Production.Shipping.P05_AirPrePaidList(CurrentMaintain["ID"].ToString());
+            Sci.Production.Shipping.P05_AirPrePaidList callNextForm = new Sci.Production.Shipping.P05_AirPrePaidList(MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
 
         //Expense Data
         private void button2_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P05_ExpenseData callNextForm = new Sci.Production.Shipping.P05_ExpenseData(CurrentMaintain["ID"].ToString(), "InvNo");
+            Sci.Production.Shipping.P05_ExpenseData callNextForm = new Sci.Production.Shipping.P05_ExpenseData(MyUtility.Convert.GetString(CurrentMaintain["ID"]), "InvNo");
             callNextForm.ShowDialog(this);
         }
 
         // S/O Confirm History
         private void button5_Click(object sender, EventArgs e)
         {
-            Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("GMTBooking_History", CurrentMaintain["ID"].ToString(), "SOCFMDate", reasonType: "GMTBooking_SO", caption: "S/O Revised History");
+            Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("GMTBooking_History", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "SOCFMDate", reasonType: "GMTBooking_SO", caption: "S/O Revised History");
             callNextForm.ShowDialog(this);
         }
 
@@ -807,7 +820,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             if (MyUtility.Check.Empty(CurrentMaintain["SOCFMDate"]))
             {
                 #region Confirm
-                if (MyUtility.Check.Empty(CurrentMaintain["SONo"]) || MyUtility.Check.Empty(CurrentMaintain["ForwarderWhseID"]) || MyUtility.Check.Empty(CurrentMaintain["CutOffDate"]))
+                if (MyUtility.Check.Empty(CurrentMaintain["SONo"]) || MyUtility.Check.Empty(CurrentMaintain["ForwarderWhse_DetailUKey"]) || MyUtility.Check.Empty(CurrentMaintain["CutOffDate"]))
                 {
                     MyUtility.Msg.WarningBox("< S/O # > , < Terminal/Whse# > and < Cut-off Date > can't be empty!!");
                     return;
@@ -819,17 +832,17 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                     return;
                 }
 
-                bool firstCFM = !MyUtility.Check.Seek(string.Format("select ID from GMTBooking_History where ID = '{0}' and HisType = '{1}'", CurrentMaintain["ID"].ToString(), "SOCFMDate"));
-                insertCmd = string.Format(@"insert into GMTBooking_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
-values ('{0}','{1}','{2}','{3}','{4}','{5}')", CurrentMaintain["ID"].ToString(), "SOCFMDate", firstCFM ? "" : "CFM", "Un CFM", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-                updateCmd = string.Format(@"update GMTBooking set SOCFMDate = '{0}' where ID = '{1}';
-update PackingList set GMTBookingLock = 'Y' where INVNo = '{1}';", DateTime.Today.ToString("d"), CurrentMaintain["ID"].ToString());
+                bool firstCFM = !MyUtility.Check.Seek(string.Format("select ID from GMTBooking_History where ID = '{0}' and HisType = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "SOCFMDate"));
+                string insertCmd = string.Format(@"insert into GMTBooking_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
+values ('{0}','{1}','{2}','{3}','{4}',GETDATE())", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "SOCFMDate", firstCFM ? "" : "CFM", "Un CFM", Sci.Env.User.UserID);
+                string updateCmd = string.Format(@"update GMTBooking set SOCFMDate = '{0}' where ID = '{1}';
+update PackingList set GMTBookingLock = 'Y' where INVNo = '{1}';", DateTime.Today.ToString("d"), MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 using (TransactionScope transactionScope = new TransactionScope())
                 {
                     try
                     {
-                        result = DBProxy.Current.Execute(null, insertCmd);
-                        result2 = DBProxy.Current.Execute(null, updateCmd);
+                        DualResult result = DBProxy.Current.Execute(null, insertCmd);
+                        DualResult result2 = DBProxy.Current.Execute(null, updateCmd);
 
                         if (result && result2)
                         {
@@ -837,11 +850,14 @@ update PackingList set GMTBookingLock = 'Y' where INVNo = '{1}';", DateTime.Toda
                         }
                         else
                         {
+                            transactionScope.Dispose();
                             MyUtility.Msg.WarningBox("Confirm failed, Pleaes re-try");
+                            return;
                         }
                     }
                     catch (Exception ex)
                     {
+                        transactionScope.Dispose();
                         ShowErr("Commit transaction error.", ex);
                         return;
                     }
@@ -851,7 +867,7 @@ update PackingList set GMTBookingLock = 'Y' where INVNo = '{1}';", DateTime.Toda
             else
             {
                 #region UnConfirm
-                if (MyUtility.GetValue.Lookup("Status", CurrentMaintain["ShipPlanID"].ToString(), "ShipPlan", "ID") == "Confirmed")
+                if (MyUtility.GetValue.Lookup("Status", MyUtility.Convert.GetString(CurrentMaintain["ShipPlanID"]), "ShipPlan", "ID") == "Confirmed")
                 {
                     MyUtility.Msg.WarningBox("Ship Plan already confirmed, can't Un CFM!!");
                     return;
@@ -861,16 +877,16 @@ update PackingList set GMTBookingLock = 'Y' where INVNo = '{1}';", DateTime.Toda
                 DialogResult dResult = callReason.ShowDialog(this);
                 if (dResult == System.Windows.Forms.DialogResult.OK)
                 {
-                    insertCmd = string.Format(@"insert into GMTBooking_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
-values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')", CurrentMaintain["ID"].ToString(), "SOCFMDate", "Un CFM", "CFM", callReason.ReturnReason, callReason.ReturnRemark, Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-                    updateCmd = string.Format(@"update GMTBooking set SOCFMDate = null where ID = '{0}'", CurrentMaintain["ID"].ToString());
+                    string insertCmd = string.Format(@"insert into GMTBooking_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
+values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "SOCFMDate", "Un CFM", "CFM", callReason.ReturnReason, callReason.ReturnRemark, Sci.Env.User.UserID);
+                    string updateCmd = string.Format(@"update GMTBooking set SOCFMDate = null where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
                     using (TransactionScope transactionScope = new TransactionScope())
                     {
                         try
                         {
-                            result = DBProxy.Current.Execute(null, insertCmd);
-                            result2 = DBProxy.Current.Execute(null, updateCmd);
+                            DualResult result = DBProxy.Current.Execute(null, insertCmd);
+                            DualResult result2 = DBProxy.Current.Execute(null, updateCmd);
 
                             if (result && result2)
                             {
@@ -878,11 +894,14 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')", CurrentMaintain["ID"]
                             }
                             else
                             {
+                                transactionScope.Dispose();
                                 MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
+                                return;
                             }
                         }
                         catch (Exception ex)
                         {
+                            transactionScope.Dispose();
                             ShowErr("Commit transaction error.", ex);
                             return;
                         }
@@ -897,14 +916,14 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')", CurrentMaintain["ID"]
         //檢查表身的ShipMode與表頭的ShipMode要相同
         private bool CheckShipMode()
         {
-            string msg = "";
-            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Select(string.Format("ShipModeID <> '{0}'", CurrentMaintain["ShipModeID"].ToString())))
+            StringBuilder msg = new StringBuilder();
+            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Select(string.Format("ShipModeID <> '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]))))
             {
-                msg = msg + "Packing#:" + dr["ID"].ToString() + ",   Shipping Mode:" + dr["ShipModeID"].ToString() + "\r\n";
+                msg.Append(string.Format("Packing#:{0},   Shipping Mode:{1}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["ShipModeID"])));
             }
-            if (msg != "")
+            if (msg.Length > 0)
             {
-                MyUtility.Msg.WarningBox("Shipping mode is inconsistent!!\r\n" + msg);
+                MyUtility.Msg.WarningBox("Shipping mode is inconsistent!!\r\n" + msg.ToString());
                 return false;
             }
             return true;
@@ -913,7 +932,7 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')", CurrentMaintain["ID"]
         //Container/Truck
         private void button3_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P05_ContainerTruck callNextForm = new Sci.Production.Shipping.P05_ContainerTruck(this.IsSupportEdit, CurrentMaintain["ID"].ToString(), null, null);
+            Sci.Production.Shipping.P05_ContainerTruck callNextForm = new Sci.Production.Shipping.P05_ContainerTruck(this.IsSupportEdit, MyUtility.Convert.GetString(CurrentMaintain["ID"]), null, null);
             callNextForm.ShowDialog(this);
         }
 
@@ -974,14 +993,15 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')", CurrentMaintain["ID"]
                 return;
             }
 
-            if (MyUtility.Check.Seek(string.Format("select ID from ShipMode where UseFunction like '%AirPP%' and ID = '{0}'", CurrentMaintain["ShipModeID"].ToString())))
+            //當ShipMode為A/P,A/P-C,E/P,S-A/P時，要檢查是否都有AirPP單號
+            if (MyUtility.Check.Seek(string.Format("select ID from ShipMode where UseFunction like '%AirPP%' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]))))
             {
-                sqlCmd = string.Format(@"select p.OrderID, p.OrderShipmodeSeq, isnull(a.ID,'') as AirPPID
+                string sqlCmd = string.Format(@"select p.OrderID, p.OrderShipmodeSeq, isnull(a.ID,'') as AirPPID
 from (Select distinct b.OrderID,b.OrderShipmodeSeq 
       from PackingList a, PackingList_Detail b 
       where a.INVNo = '{0}' and a.ID = b.ID) p
-left join AirPP a on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipmodeSeq and a.Status != 'Junked'",CurrentMaintain["ID"].ToString());
-                result = DBProxy.Current.Select(null, sqlCmd, out selectData);
+left join AirPP a on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipmodeSeq and a.Status != 'Junked'",MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
                 if (result)
                 {
                     DataRow[] row = selectData.Select("AirPPID = ''");
@@ -998,11 +1018,11 @@ left join AirPP a on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipm
                 }
             }
 
-            sqlCmd = string.Format("update GMTBooking set Status = 'Confirmed', EditName = '{0}', EditDate = '{1}' where ID = '{2}'", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"].ToString());
-            result = DBProxy.Current.Execute(null, sqlCmd);
-            if (!result)
+            string updateCmd = string.Format("update GMTBooking set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            DualResult result1 = DBProxy.Current.Execute(null, updateCmd);
+            if (!result1)
             {
-                MyUtility.Msg.ErrorBox("Confirm fail !\r\n" + result.ToString());
+                MyUtility.Msg.ErrorBox("Confirm fail !\r\n" + result1.ToString());
                 return;
             }
 
@@ -1016,7 +1036,7 @@ left join AirPP a on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipm
         {
             base.ClickUnconfirm();
             //Ship plan已經Confirm就不可以做Unconfirm
-            if (MyUtility.GetValue.Lookup("Status", CurrentMaintain["ShipPlanID"].ToString(),"ShipPlan","ID") == "Confirmed")
+            if (MyUtility.GetValue.Lookup("Status", MyUtility.Convert.GetString(CurrentMaintain["ShipPlanID"]),"ShipPlan","ID") == "Confirmed")
             {
                 MyUtility.Msg.WarningBox("Ship Plan already confirmed, can't unconfirm!");
                 return;
@@ -1029,9 +1049,9 @@ left join AirPP a on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipm
                 return;
             }
 
-            sqlCmd = string.Format("update GMTBooking set Status = 'New', EditName = '{0}', EditDate = '{1}' where ID = '{2}'", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"].ToString());
+            string updateCmd = string.Format("update GMTBooking set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
-            result = DBProxy.Current.Execute(null, sqlCmd);
+            DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("UnConfirm fail !\r\n" + result.ToString());
@@ -1040,6 +1060,27 @@ left join AirPP a on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipm
             RenewData();
             OnDetailEntered();
             EnsureToolbarExt();
+        }
+
+        //Terminal/Whse#
+        private void textBox7_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            DataTable dt;
+            string sqlCmd = string.Format(@"select fwd.WhseNo,fwd.UKey from ForwarderWhse fw, ForwarderWhse_Detail fwd
+where fw.ID = fwd.ID
+and fw.BrandID = '{0}'
+and fw.Forwarder = '{1}'
+and fw.ShipModeID = '{2}'
+order by fwd.WhseNo", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(CurrentMaintain["Forwarder"]), MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]));
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
+
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "WhseNo", "50", MyUtility.Convert.GetString(textBox7.Text));
+
+            DialogResult result1 = item.ShowDialog();
+            if (result1 == DialogResult.Cancel) { return; }
+            IList<DataRow> dr =  item.GetSelecteds();
+            textBox7.Text = item.GetSelectedString();
+            CurrentMaintain["ForwarderWhse_DetailUKey"] = dr[0]["Ukey"];
         }        
     }
 }

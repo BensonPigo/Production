@@ -16,7 +16,7 @@ namespace Sci.Production.Shipping
         public P05_QtyBreakDown(DataRow MasterData)
         {
             InitializeComponent();
-            displayBox1.Text = MasterData["ID"].ToString();
+            displayBox1.Text = MyUtility.Convert.GetString(MasterData["ID"]);
         }
 
         protected override void OnFormLoaded()

@@ -16,8 +16,6 @@ namespace Sci.Production.Shipping
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataRow masterData;
-        private string sqlCmd, allPackID;
-        private DualResult result;
         private DataTable gridData, detailData,selectData;
 
         public P05_ImportFromPackingList(DataRow MasterData, DataTable DetailData)
@@ -49,90 +47,76 @@ namespace Sci.Production.Shipping
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
+            StringBuilder sqlCmd = new StringBuilder();
             #region 組SQL語法
-            sqlCmd = string.Format(@"with BulkPack
+            sqlCmd.Append(string.Format(@"with IniBulkPack
 as
-(select iif(p.CustCDID = 'ASIA',1,0) as Selected,p.id,p.OrderID,p.CustCDID,oq.SDPDate,oq.BuyerDelivery,p.ShipQty,p.CTNQty,p.NW,p.NNW,
-'Y' as GMTBookingLock,p.FactoryID,p.CargoReadyDate,p.PulloutDate,p.GW,p.CBM,p.Status,p.InspDate,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ClogReceiveID != '') as ClogCTNQty
- from PackingList p, Order_QtyShip oq
+(select 1 as Selected,p.id,pd.OrderID,p.CustCDID,oq.SDPDate,oq.BuyerDelivery,p.ShipQty,p.CTNQty,p.NW,p.NNW,
+'Y' as GMTBookingLock,p.MDivisionID,p.CargoReadyDate,p.PulloutDate,p.GW,p.CBM,p.Status,p.InspDate,(select sum(CTNQty) from PackingList_Detail pd1 where pd1.ID = p.ID and pd1.ClogReceiveID != '') as ClogCTNQty
+ from PackingList p 
+ left Join PackingList_Detail pd on p.ID = pd.ID
+ Left Join Order_QtyShip oq on pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
  where p.Type = 'B'
- and '{1}' like '%'+rtrim(p.FactoryID)+'%'
+ and '{0}' like '%'+rtrim(p.FactoryID)+'%'
  and p.INVNo = ''
- and p.ShipModeID = '{2}'
- and p.BrandID = '{3}'
- and p.Dest = '{4}'
- and p.CustCDID = '{0}'
- and p.OrderID = oq.Id
- and p.OrderShipmodeSeq = oq.Seq", masterData["CustCDID"].ToString(),txtmultifactory1.Text,masterData["ShipModeID"].ToString(),masterData["BrandID"].ToString(),masterData["Dest"].ToString());
-            if (!MyUtility.Check.Empty(dateRange1.Value1))
-            {
-                sqlCmd = sqlCmd + string.Format(" and oq.SDPDate >= '{0}'",Convert.ToDateTime(dateRange1.Value1).ToString("d"));
-            }
-            if (!MyUtility.Check.Empty(dateRange1.Value2))
-            {
-                sqlCmd = sqlCmd + string.Format(" and oq.SDPDate <= '{0}'",Convert.ToDateTime(dateRange1.Value2).ToString("d"));
-            }
-            if (!MyUtility.Check.Empty(dateRange2.Value1))
-            {
-                sqlCmd = sqlCmd + string.Format(" and oq.BuyerDelivery >= '{0}'",Convert.ToDateTime(dateRange2.Value1).ToString("d"));
-            }
-            if (!MyUtility.Check.Empty(dateRange2.Value2))
-            {
-                sqlCmd = sqlCmd + string.Format(" and oq.BuyerDelivery <= '{0}'",Convert.ToDateTime(dateRange2.Value2).ToString("d"));
-            }
-            sqlCmd = sqlCmd + string.Format(@"),
+ and p.ShipModeID = '{1}'
+ and p.BrandID = '{2}'
+ and p.Dest = '{3}'
+ and p.CustCDID = '{4}'
+),
 IniSamplePack
 as
-(select iif(p.CustCDID = 'ASIA',1,0) as Selected,p.id,p.OrderID,p.CustCDID,oq.SDPDate,oq.BuyerDelivery,p.ShipQty,p.CTNQty,p.NW,p.NNW,
- 'Y' as GMTBookingLock,p.FactoryID,p.CargoReadyDate,p.PulloutDate,p.GW,p.CBM,p.Status,p.InspDate,0 as ClogCTNQty
+(select iif(p.CustCDID = '{4}',1,0) as Selected,p.id,p.OrderID,p.CustCDID,oq.SDPDate,oq.BuyerDelivery,p.ShipQty,p.CTNQty,p.NW,p.NNW,
+ 'Y' as GMTBookingLock,p.MDivisionID,p.CargoReadyDate,p.PulloutDate,p.GW,p.CBM,p.Status,p.InspDate,0 as ClogCTNQty
  from PackingList p
  left join PackingList_Detail pd on pd.ID = p.ID
  left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
- where p.INVNo = '' and p.Type = 'S' and '{1}' like '%'+rtrim(p.FactoryID)+'%' and p.Dest = '{2}' and p.ShipModeID = '{3}'
+ where p.INVNo = '' and p.Type = 'S' and '{0}' like '%'+rtrim(p.FactoryID)+'%' and p.Dest = '{3}' and p.ShipModeID = '{1}'
+),
+AllPackData
+as
+(select * from IniBulkPack
+ union all
+ select * from IniSamplePack
 ),
 InvalidData
 as
 (select distinct ID
- from IniSamplePack
- where 1=1", masterData["CustCDID"].ToString(), txtmultifactory1.Text, masterData["Dest"].ToString(), masterData["ShipModeID"].ToString());
+ from AllPackData
+ where 1=0", txtmultifactory1.Text, MyUtility.Convert.GetString(masterData["ShipModeID"]), MyUtility.Convert.GetString(masterData["BrandID"]), MyUtility.Convert.GetString(masterData["Dest"]), MyUtility.Convert.GetString(masterData["CustCDID"])));
             if (!MyUtility.Check.Empty(dateRange1.Value1))
             {
-                sqlCmd = sqlCmd + string.Format(" and SDPDate < '{0}'",Convert.ToDateTime(dateRange1.Value1).ToString("d"));
+                sqlCmd.Append(string.Format(" and SDPDate <= '{0}'", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateRange1.Value2))
             {
-                sqlCmd = sqlCmd + string.Format(" and SDPDate > '{0}'",Convert.ToDateTime(dateRange1.Value2).ToString("d"));
+                sqlCmd.Append(string.Format(" and SDPDate >= '{0}'", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateRange2.Value1))
             {
-                sqlCmd = sqlCmd + string.Format(" and BuyerDelivery < '{0}'",Convert.ToDateTime(dateRange2.Value1).ToString("d"));
+                sqlCmd.Append(string.Format(" and BuyerDelivery <= '{0}'", Convert.ToDateTime(dateRange2.Value1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateRange2.Value2))
             {
-                sqlCmd = sqlCmd + string.Format(" and BuyerDelivery > '{0}'",Convert.ToDateTime(dateRange2.Value2).ToString("d"));
+                sqlCmd.Append(string.Format(" and BuyerDelivery >= '{0}'", Convert.ToDateTime(dateRange2.Value2).ToString("d")));
             }
 
-            sqlCmd = sqlCmd + @"),
-PackSample
+            sqlCmd.Append(@"
+),
+PackData
 as
 (select Selected,ID,CustCDID,min(SDPDate) as SDPDate,min(BuyerDelivery) as BuyerDelivery,ShipQty,CTNQty,NW,NNW,
- GMTBookingLock,FactoryID,CargoReadyDate,PulloutDate,GW,CBM,Status,InspDate,ClogCTNQty
- from IniSamplePack 
+ GMTBookingLock,MDivisionID,CargoReadyDate,PulloutDate,GW,CBM,Status,InspDate,ClogCTNQty
+ from AllPackData 
  where id not in (select ID from InvalidData where ID is not null)
- group by Selected,ID,CustCDID,ShipQty,CTNQty,NW,NNW,GMTBookingLock,FactoryID,CargoReadyDate,PulloutDate,GW,CBM,Status,InspDate,ClogCTNQty
-),
-SamplePack
-as
-(select ps.Selected,ps.ID,((select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd where pd.ID = ps.ID) a for xml path(''))) as OrderID,
- ps.CustCDID,ps.SDPDate,ps.BuyerDelivery,ps.ShipQty,ps.CTNQty,ps.NW,ps.NNW,ps.GMTBookingLock,ps.FactoryID,ps.CargoReadyDate,ps.PulloutDate,ps.GW,ps.CBM,ps.Status,ps.InspDate,ps.ClogCTNQty
- from PackSample ps
+ group by Selected,ID,CustCDID,ShipQty,CTNQty,NW,NNW,GMTBookingLock,MDivisionID,CargoReadyDate,PulloutDate,GW,CBM,Status,InspDate,ClogCTNQty
 )
-select * from BulkPack
-union all
-select * from SamplePack";
+select pd.Selected,pd.ID,((select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pl where pl.ID = pd.ID) a for xml path(''))) as OrderID,
+pd.CustCDID,pd.SDPDate,pd.BuyerDelivery,pd.ShipQty,pd.CTNQty,pd.NW,pd.NNW,pd.GMTBookingLock,pd.MDivisionID,pd.CargoReadyDate,pd.PulloutDate,pd.GW,pd.CBM,pd.Status,pd.InspDate,pd.ClogCTNQty
+from PackData pd");
             #endregion
 
-            result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData);
             if (result)
             {
                 if (gridData.Rows.Count == 0)
@@ -156,41 +140,42 @@ select * from SamplePack";
             gridData = (DataTable)listControlBindingSource1.DataSource;
             if (gridData.Rows.Count > 0)
             {
-                allPackID = "";
+                StringBuilder allPackID = new StringBuilder();
+
                 DataRow[] dr = gridData.Select("Selected = 1");
                 if (dr.Length > 0)
                 {
                     //檢查相同SP#不同PackingList#不可以匯入到同一張GarmentBooking中
                     foreach (DataRow currentRow in dr)
                     {
-                        allPackID = allPackID + "'" + currentRow["ID"].ToString() + "',";
+                        allPackID.Append("'" + MyUtility.Convert.GetString(currentRow["ID"]) + "',");
                     }
 
                     foreach (DataRow currentRow in detailData.Rows)
                     {
-                        allPackID = allPackID + "'" + currentRow["ID"].ToString() + "',";
+                        allPackID.Append("'" + MyUtility.Convert.GetString(currentRow["ID"]) + "',");
                     }
 
-                    if (allPackID != "")
+                    if (allPackID.Length > 0)
                     {
-                        sqlCmd = string.Format(@"select distinct b.OrderID,b.ID
+                        string sqlCmd = string.Format(@"select distinct b.OrderID,b.ID
 from (select OrderID,COUNT(OrderID) as CNT
       from (select distinct ID,OrderID from PackingList_Detail where ID in ({0})) a
       group by OrderID
       Having COUNT(OrderID) > 1) a, PackingList_Detail b
 where b.ID in ({0})
-and a.OrderID = b.OrderID", allPackID.Substring(0, allPackID.Length - 1));
-                        result = DBProxy.Current.Select(null, sqlCmd, out selectData);
+and a.OrderID = b.OrderID", allPackID.ToString().Substring(0, allPackID.Length - 1));
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
                         if (result)
                         {
                             if (selectData.Rows.Count > 0)
                             {
-                                allPackID = "";
+                                StringBuilder allID = new StringBuilder();
                                 foreach (DataRow currentRow in selectData.Rows)
                                 {
-                                    allPackID = allPackID + "SP#:" + currentRow["OrderID"].ToString() + "   Packing#:" + currentRow["ID"].ToString() + "\r\n";
+                                    allID.Append("SP#:" + MyUtility.Convert.GetString(currentRow["OrderID"]) + "   Packing#:" + MyUtility.Convert.GetString(currentRow["ID"]) + "\r\n");
                                 }
-                                MyUtility.Msg.WarningBox("Can't import SP# with different Packing# in the same Inv# !!\r\n" + allPackID);
+                                MyUtility.Msg.WarningBox("Can't import SP# with different Packing# in the same Inv# !!\r\n" + allID.ToString());
                                 return;
                             }
                         }
@@ -203,7 +188,7 @@ and a.OrderID = b.OrderID", allPackID.Substring(0, allPackID.Length - 1));
 
                     foreach (DataRow currentRow in dr)
                     {
-                        DataRow[] findrow = detailData.Select(string.Format("OrderID = '{0}'", currentRow["ID"].ToString()));
+                        DataRow[] findrow = detailData.Select(string.Format("OrderID = '{0}'", MyUtility.Convert.GetString(currentRow["ID"])));
                         if (findrow.Length == 0)
                         {
                             currentRow.AcceptChanges();

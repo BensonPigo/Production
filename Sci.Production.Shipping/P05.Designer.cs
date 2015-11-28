@@ -76,7 +76,6 @@
             this.dateBox5 = new Sci.Win.UI.DateBox();
             this.dateBox6 = new Sci.Win.UI.DateBox();
             this.dateBox7 = new Sci.Win.UI.DateBox();
-            this.numericBox7 = new Sci.Win.UI.NumericBox();
             this.label31 = new Sci.Win.UI.Label();
             this.button1 = new Sci.Win.UI.Button();
             this.button2 = new Sci.Win.UI.Button();
@@ -96,10 +95,12 @@
             this.txtcountry1 = new Sci.Production.Class.txtcountry();
             this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.textBox7 = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -111,18 +112,18 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.button6);
+            this.masterpanel.Controls.Add(this.textBox7);
             this.masterpanel.Controls.Add(this.textBox6);
             this.masterpanel.Controls.Add(this.comboBox1);
             this.masterpanel.Controls.Add(this.textBox4);
             this.masterpanel.Controls.Add(this.displayBox3);
-            this.masterpanel.Controls.Add(this.button6);
             this.masterpanel.Controls.Add(this.button5);
             this.masterpanel.Controls.Add(this.button4);
             this.masterpanel.Controls.Add(this.button3);
             this.masterpanel.Controls.Add(this.button2);
             this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.label31);
-            this.masterpanel.Controls.Add(this.numericBox7);
             this.masterpanel.Controls.Add(this.textBox5);
             this.masterpanel.Controls.Add(this.textBox3);
             this.masterpanel.Controls.Add(this.txtsubcon1);
@@ -180,7 +181,6 @@
             this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Size = new System.Drawing.Size(990, 311);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox7, 0);
@@ -237,18 +237,19 @@
             this.masterpanel.Controls.SetChildIndex(this.txtsubcon1, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox7, 0);
             this.masterpanel.Controls.SetChildIndex(this.label31, 0);
             this.masterpanel.Controls.SetChildIndex(this.button1, 0);
             this.masterpanel.Controls.SetChildIndex(this.button2, 0);
             this.masterpanel.Controls.SetChildIndex(this.button3, 0);
             this.masterpanel.Controls.SetChildIndex(this.button4, 0);
             this.masterpanel.Controls.SetChildIndex(this.button5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button6, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox4, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox6, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox7, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.button6, 0);
             // 
             // detailpanel
             // 
@@ -266,6 +267,18 @@
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(990, 251);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -782,16 +795,6 @@
             this.dateBox7.Size = new System.Drawing.Size(130, 23);
             this.dateBox7.TabIndex = 61;
             // 
-            // numericBox7
-            // 
-            this.numericBox7.BackColor = System.Drawing.Color.White;
-            this.numericBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ForwarderWhseID", true));
-            this.numericBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox7.Location = new System.Drawing.Point(657, 112);
-            this.numericBox7.Name = "numericBox7";
-            this.numericBox7.Size = new System.Drawing.Size(60, 23);
-            this.numericBox7.TabIndex = 15;
-            // 
             // label31
             // 
             this.label31.Lines = 0;
@@ -895,7 +898,7 @@
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "CYCFS", true));
+            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CYCFS", true));
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
@@ -986,7 +989,7 @@
             this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand1.Location = new System.Drawing.Point(73, 112);
             this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand1.Size = new System.Drawing.Size(84, 23);
             this.txtbrand1.TabIndex = 3;
             this.txtbrand1.Validated += new System.EventHandler(this.txtbrand1_Validated);
             // 
@@ -999,6 +1002,19 @@
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
             this.txtfactory1.TabIndex = 2;
+            // 
+            // textBox7
+            // 
+            this.textBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.textBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.textBox7.IsSupportEditMode = false;
+            this.textBox7.Location = new System.Drawing.Point(658, 112);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.textBox7.ReadOnly = true;
+            this.textBox7.Size = new System.Drawing.Size(153, 23);
+            this.textBox7.TabIndex = 71;
+            this.textBox7.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox7_PopUp);
             // 
             // P05
             // 
@@ -1023,6 +1039,7 @@
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
@@ -1097,7 +1114,6 @@
         private Win.UI.Button button2;
         private Win.UI.Button button1;
         private Win.UI.Label label31;
-        private Win.UI.NumericBox numericBox7;
         private Win.UI.DateBox dateBox7;
         private Win.UI.DateBox dateBox6;
         private Win.UI.DateBox dateBox5;
@@ -1106,5 +1122,6 @@
         private Win.UI.TextBox textBox3;
         private Win.UI.ComboBox comboBox1;
         private Win.UI.TextBox textBox6;
+        private Win.UI.TextBox textBox7;
     }
 }

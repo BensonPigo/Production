@@ -35,23 +35,23 @@
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.displayBox2 = new Sci.Win.UI.DisplayBox();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.numericBox4 = new Sci.Win.UI.NumericBox();
+            this.numericBox3 = new Sci.Win.UI.NumericBox();
+            this.label6 = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
+            this.numericBox2 = new Sci.Win.UI.NumericBox();
+            this.numericBox1 = new Sci.Win.UI.NumericBox();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.panel4 = new Sci.Win.UI.Panel();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.numericBox3 = new Sci.Win.UI.NumericBox();
-            this.numericBox4 = new Sci.Win.UI.NumericBox();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             this.grid1 = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // btmcont
@@ -61,11 +61,21 @@
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(537, 6);
+            this.undo.Location = new System.Drawing.Point(536, 5);
+            this.undo.Size = new System.Drawing.Size(80, 32);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(451, 6);
+            this.save.Location = new System.Drawing.Point(456, 5);
+            this.save.Size = new System.Drawing.Size(80, 32);
+            // 
+            // left
+            // 
+            this.left.Size = new System.Drawing.Size(80, 32);
+            // 
+            // right
+            // 
+            this.right.Size = new System.Drawing.Size(80, 32);
             // 
             // label1
             // 
@@ -142,6 +152,74 @@
             this.panel1.Size = new System.Drawing.Size(626, 62);
             this.panel1.TabIndex = 101;
             // 
+            // numericBox4
+            // 
+            this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CBM", true));
+            this.numericBox4.DecimalPlaces = 3;
+            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBox4.IsSupportEditMode = false;
+            this.numericBox4.Location = new System.Drawing.Point(505, 33);
+            this.numericBox4.Name = "numericBox4";
+            this.numericBox4.ReadOnly = true;
+            this.numericBox4.Size = new System.Drawing.Size(70, 23);
+            this.numericBox4.TabIndex = 106;
+            // 
+            // numericBox3
+            // 
+            this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "GW", true));
+            this.numericBox3.DecimalPlaces = 3;
+            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBox3.IsSupportEditMode = false;
+            this.numericBox3.Location = new System.Drawing.Point(505, 6);
+            this.numericBox3.Name = "numericBox3";
+            this.numericBox3.ReadOnly = true;
+            this.numericBox3.Size = new System.Drawing.Size(70, 23);
+            this.numericBox3.TabIndex = 105;
+            // 
+            // label6
+            // 
+            this.label6.Lines = 0;
+            this.label6.Location = new System.Drawing.Point(464, 33);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(38, 23);
+            this.label6.TabIndex = 104;
+            this.label6.Text = "CBM";
+            // 
+            // label5
+            // 
+            this.label5.Lines = 0;
+            this.label5.Location = new System.Drawing.Point(464, 6);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(38, 23);
+            this.label5.TabIndex = 103;
+            this.label5.Text = "G.W.";
+            // 
+            // numericBox2
+            // 
+            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CTNQty", true));
+            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBox2.IsSupportEditMode = false;
+            this.numericBox2.Location = new System.Drawing.Point(355, 33);
+            this.numericBox2.Name = "numericBox2";
+            this.numericBox2.ReadOnly = true;
+            this.numericBox2.Size = new System.Drawing.Size(60, 23);
+            this.numericBox2.TabIndex = 102;
+            // 
+            // numericBox1
+            // 
+            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ShipQty", true));
+            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBox1.IsSupportEditMode = false;
+            this.numericBox1.Location = new System.Drawing.Point(355, 6);
+            this.numericBox1.Name = "numericBox1";
+            this.numericBox1.ReadOnly = true;
+            this.numericBox1.Size = new System.Drawing.Size(60, 23);
+            this.numericBox1.TabIndex = 101;
+            // 
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
@@ -167,74 +245,6 @@
             this.panel4.Size = new System.Drawing.Size(612, 327);
             this.panel4.TabIndex = 104;
             // 
-            // numericBox1
-            // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ShipQty", true));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(355, 6);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(60, 23);
-            this.numericBox1.TabIndex = 101;
-            // 
-            // numericBox2
-            // 
-            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CTNQty", true));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(355, 33);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.ReadOnly = true;
-            this.numericBox2.Size = new System.Drawing.Size(60, 23);
-            this.numericBox2.TabIndex = 102;
-            // 
-            // label5
-            // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(464, 6);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(38, 23);
-            this.label5.TabIndex = 103;
-            this.label5.Text = "G.W.";
-            // 
-            // label6
-            // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(464, 33);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(38, 23);
-            this.label6.TabIndex = 104;
-            this.label6.Text = "CBM";
-            // 
-            // numericBox3
-            // 
-            this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "GW", true));
-            this.numericBox3.DecimalPlaces = 3;
-            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox3.IsSupportEditMode = false;
-            this.numericBox3.Location = new System.Drawing.Point(505, 6);
-            this.numericBox3.Name = "numericBox3";
-            this.numericBox3.ReadOnly = true;
-            this.numericBox3.Size = new System.Drawing.Size(70, 23);
-            this.numericBox3.TabIndex = 105;
-            // 
-            // numericBox4
-            // 
-            this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CBM", true));
-            this.numericBox4.DecimalPlaces = 3;
-            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox4.IsSupportEditMode = false;
-            this.numericBox4.Location = new System.Drawing.Point(505, 33);
-            this.numericBox4.Name = "numericBox4";
-            this.numericBox4.ReadOnly = true;
-            this.numericBox4.Size = new System.Drawing.Size(70, 23);
-            this.numericBox4.TabIndex = 106;
-            // 
             // grid1
             // 
             this.grid1.AllowUserToAddRows = false;
@@ -249,7 +259,7 @@
             this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
@@ -282,8 +292,8 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel4.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }

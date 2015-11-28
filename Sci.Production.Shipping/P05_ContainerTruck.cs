@@ -40,10 +40,10 @@ namespace Sci.Production.Shipping
             datas.Columns.Add("EditBy");
             foreach (DataRow gridData in datas.Rows)
             {
-                gridData["AddBy"] = gridData["AddName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", gridData["AddName"].ToString(),"Pass1","ID") + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
-                if (gridData["EditDate"] != System.DBNull.Value)
+                gridData["AddBy"] = MyUtility.Convert.GetString(gridData["AddName"]) + " - " + MyUtility.GetValue.Lookup("Name", MyUtility.Convert.GetString(gridData["AddName"]),"Pass1","ID") + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                if (!MyUtility.Check.Empty(gridData["EditDate"]))
                 {
-                    gridData["EditBy"] = gridData["EditName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", gridData["EditName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                    gridData["EditBy"] = MyUtility.Convert.GetString(gridData["EditName"]) + " - " + MyUtility.GetValue.Lookup("Name", MyUtility.Convert.GetString(gridData["EditName"]), "Pass1", "ID") + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
                 }
                 gridData.AcceptChanges();
             }
