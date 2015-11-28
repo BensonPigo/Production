@@ -64,7 +64,7 @@
             this.masterpanel.Controls.Add(this.label9);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(1058, 110);
+            this.masterpanel.Size = new System.Drawing.Size(892, 110);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label9, 0);
@@ -80,7 +80,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 110);
-            this.detailpanel.Size = new System.Drawing.Size(1058, 367);
+            this.detailpanel.Size = new System.Drawing.Size(892, 239);
             // 
             // gridicon
             // 
@@ -90,12 +90,11 @@
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(978, 0);
             this.refresh.TabIndex = 0;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1058, 367);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 239);
             // 
             // detail2
             // 
@@ -108,19 +107,6 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1058, 515);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1058, 477);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
             // 
             // browse
             // 
@@ -238,11 +224,11 @@
             this.DefaultControl = "comboBox1";
             this.DefaultControlForEdit = "comboBox1";
             this.DefaultDetailOrder = "poid,seq1,seq2,roll";
-            this.DefaultOrder = "ID";
+            this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;
             this.GridAlias = "LocationTrans_detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "poid,seq1,seq2,roll";
+            this.GridUniqueKey = "mdivisionid,poid,seq1,seq2,roll";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
