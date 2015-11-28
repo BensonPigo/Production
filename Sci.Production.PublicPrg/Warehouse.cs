@@ -36,9 +36,12 @@ namespace Sci.Production.PublicPrg
         /// <param name="string stocktype"></param>
         /// <param name="string m"></param>
         /// <returns>String Sqlcmd</returns>
-        public static string UpdateMPoDetail(int type, string Poid, string seq1, string seq2,decimal qty,bool encoded, string stocktype,string m,string location="")
+        public static string UpdateMPoDetail(int type, string Poid, string seq1, string seq2,decimal qty,bool encoded, string stocktype,string m,string location="",bool attachLocation=true)
         {
-            string sqlcmd=null;
+            string sqlcmd=null, tmplocation="";
+            if (attachLocation) tmplocation = MyUtility.GetValue.Lookup(string.Format(@"select t.mtllocationid+','
+from (select distinct mtllocationid from ftyinventory f inner join ftyinventory_detail fd on f.ukey = fd.ukey 
+where f.mdivisionid ='{0}' and f.poid = '{1}' and f.seq1='{2}' and f.seq2='{3}' and stocktype='{4}') t for xml path('')",m,Poid,seq1,seq2,stocktype));
             switch (type)
             {
                 case 2:
@@ -47,6 +50,7 @@ namespace Sci.Production.PublicPrg
                         switch (stocktype)
                         {
                             case "I":
+                                
                                 sqlcmd = string.Format(@"
 merge dbo.mdivisionpodetail as target
 using (values('{0}','{1}','{2}','{3}','{4}','{5}')) as src (poid,seq1,seq2,qty,m,blocation) 
@@ -56,7 +60,7 @@ update
 set  inqty = isnull(inqty,0.00) + src.qty , blocation = src.blocation
 when not matched then
     insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[blocation])
-    values (src.poid,src.seq1,src.seq2,src.m,src.qty,src.blocation);", Poid, seq1, seq2, qty, m, DistinctString(location));
+    values (src.poid,src.seq1,src.seq2,src.m,src.qty,src.blocation);", Poid, seq1, seq2, qty, m, DistinctString(tmplocation+location));
                                 break;
                             case "B":
                                 sqlcmd = string.Format(@"
@@ -68,7 +72,7 @@ update
 set  inqty = isnull(inqty,0.00) + src.qty , alocation = src.alocation
 when not matched then
     insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[alocation])
-    values (src.poid,src.seq1,src.seq2,src.m,src.qty,src.alocation);", Poid, seq1, seq2, qty, m, DistinctString(location));
+    values (src.poid,src.seq1,src.seq2,src.m,src.qty,src.alocation);", Poid, seq1, seq2, qty, m, DistinctString(tmplocation+location));
                                 break;
                         }
 
