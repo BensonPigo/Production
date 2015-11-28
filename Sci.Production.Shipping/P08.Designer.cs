@@ -41,8 +41,6 @@
             this.comboBox2 = new Sci.Win.UI.ComboBox();
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.textBox2 = new Sci.Win.UI.TextBox();
-            this.label8 = new Sci.Win.UI.Label();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
             this.label9 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
@@ -67,10 +65,13 @@
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.txtpayterm_fty1 = new Sci.Production.Class.txtpayterm_fty();
             this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
+            this.displayBox2 = new Sci.Win.UI.DisplayBox();
+            this.label8 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -122,7 +123,6 @@
             this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Size = new System.Drawing.Size(990, 183);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -162,6 +162,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
             this.masterpanel.Controls.SetChildIndex(this.button1, 0);
             this.masterpanel.Controls.SetChildIndex(this.button2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             // 
             // detailpanel
             // 
@@ -179,6 +180,18 @@
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(990, 246);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -327,25 +340,6 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(185, 23);
             this.textBox2.TabIndex = 15;
-            // 
-            // label8
-            // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(249, 64);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(52, 23);
-            this.label8.TabIndex = 16;
-            this.label8.Text = "Factory";
-            // 
-            // displayBox2
-            // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(302, 64);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(72, 23);
-            this.displayBox2.TabIndex = 17;
             // 
             // label9
             // 
@@ -596,6 +590,25 @@
             this.txtsubcon1.TabIndex = 12;
             this.txtsubcon1.TextBox1Binding = "";
             // 
+            // displayBox2
+            // 
+            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionID", true));
+            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox2.Location = new System.Drawing.Point(273, 64);
+            this.displayBox2.Name = "displayBox2";
+            this.displayBox2.Size = new System.Drawing.Size(72, 23);
+            this.displayBox2.TabIndex = 17;
+            // 
+            // label8
+            // 
+            this.label8.Lines = 0;
+            this.label8.Location = new System.Drawing.Point(249, 64);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(21, 23);
+            this.label8.TabIndex = 16;
+            this.label8.Text = "M";
+            // 
             // P08
             // 
             this.ClientSize = new System.Drawing.Size(998, 529);
@@ -616,6 +629,7 @@
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
@@ -653,8 +667,6 @@
         private Win.UI.Label label11;
         private Win.UI.Label label10;
         private Win.UI.Label label9;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.Label label8;
         private Win.UI.TextBox textBox2;
         private Win.UI.TextBox textBox1;
         private Class.txtpayterm_fty txtpayterm_fty1;
@@ -670,5 +682,7 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayBox2;
+        private Win.UI.Label label8;
     }
 }

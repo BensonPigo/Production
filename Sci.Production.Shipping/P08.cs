@@ -29,7 +29,6 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
-            DefaultFilter = string.Format("FactoryID='{0}'", Sci.Env.User.Factory);
             detailgrid.AllowUserToOrderColumns = true;
             InsertDetailGridOnDoubleClick = false;
             txtuser2.TextBox1.IsSupportEditMode = false;
@@ -48,10 +47,10 @@ namespace Sci.Production.Shipping
                         else
                         {
                             DataRow dr;
-                            if (MyUtility.Check.Seek(string.Format("select * from LocalSupp where ID = '{0}'", CurrentMaintain["LocalSuppID"].ToString()), out dr))
+                            if (MyUtility.Check.Seek(string.Format("select * from LocalSupp where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID"])), out dr))
                             {
-                                CurrentMaintain["CurrencyID"] = MyUtility.Check.Empty(dr["CurrencyID"]) ? "" : dr["CurrencyID"].ToString();
-                                CurrentMaintain["PayTermID"] = MyUtility.Check.Empty(dr["PayTermID"]) ? "" : dr["PayTermID"].ToString();
+                                CurrentMaintain["CurrencyID"] = dr["CurrencyID"];
+                                CurrentMaintain["PayTermID"] = dr["PayTermID"];
                             }
                             else
                             {
@@ -94,7 +93,7 @@ namespace Sci.Production.Shipping
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select sd.*,isnull(se.Description,'') as Description, (isnull(se.AccountNo,'') + '-' + isnull(a.Name,'')) as Account
 from ShippingAP_Detail sd
 left join ShipExpense se on se.ID = sd.ShipExpenseID
@@ -107,11 +106,11 @@ where sd.ID = '{0}'", masterID);
         {
             if (e.Data != null)
             {
-                int decimalPlaces = Convert.ToInt32(MyUtility.GetValue.Lookup("Exact", e.Data["CurrencyID"].ToString(), "Currency", "ID"));
+                int decimalPlaces = Convert.ToInt32(MyUtility.GetValue.Lookup("Exact", MyUtility.Convert.GetString(e.Data["CurrencyID"]), "Currency", "ID"));
                 numericBox1.DecimalPlaces = decimalPlaces;
                 numericBox3.DecimalPlaces = decimalPlaces;
                 numericBox4.DecimalPlaces = decimalPlaces;
-                numericBox4.Value = Convert.ToDecimal(e.Data["Amount"]) + Convert.ToDecimal(e.Data["VAT"]);
+                numericBox4.Value = MyUtility.Convert.GetDecimal(e.Data["Amount"]) + MyUtility.Convert.GetDecimal(e.Data["VAT"]);
             }
             return base.OnRenewDataPost(e);
         }
@@ -141,9 +140,9 @@ where sd.ID = '{0}'", masterID);
                             if (MyUtility.Check.Empty(CurrentMaintain["Accountant"]))
                             {
                                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                                string localSuppID = MyUtility.Check.Empty(CurrentMaintain["LocalSuppID"]) ? "" : CurrentMaintain["LocalSuppID"].ToString();
+                                string localSuppID = MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID"]);
                                 string sqlCmd = string.Format("select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense where Junk = 0 and LocalSuppID = '{0}'", localSuppID);
-                                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,50,6,3,11,8", dr["ShipExpenseID"].ToString());
+                                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,50,6,3,11,8", MyUtility.Convert.GetString(dr["ShipExpenseID"]));
                                 DialogResult returnResult = item.ShowDialog();
                                 if (returnResult == DialogResult.Cancel) { return; }
                                 e.EditingControl.Text = item.GetSelectedString();
@@ -157,13 +156,30 @@ where sd.ID = '{0}'", masterID);
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["ShipExpenseID"].ToString())
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["ShipExpenseID"]))
                     {
-                        string localSuppID = MyUtility.Check.Empty(CurrentMaintain["LocalSuppID"]) ? "" : CurrentMaintain["LocalSuppID"].ToString();
-                        DataRow ExpenseData;
-                        if (!MyUtility.Check.Seek(string.Format("select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense where Junk = 0 and LocalSuppID = '{0}' and ID = '{1}'", localSuppID, e.FormattedValue.ToString()), out ExpenseData))
+                        
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@localsuppid",MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID"]));
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@shipexpenseid",MyUtility.Convert.GetString(MyUtility.Convert.GetString(e.FormattedValue)));
+                        
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+                        cmds.Add(sp2);
+
+                        DataTable ExpenseData;
+                        string sqlCmd = "select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense where Junk = 0 and LocalSuppID = @localsuppid and ID = @shipexpenseid";
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ExpenseData);
+                        if (!result || ExpenseData.Rows.Count <= 0)
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Code: {0} > not found!!!", e.FormattedValue.ToString()));
+                            if (!result)
+                            {
+                                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
+                            }
+                            else
+                            {
+                                MyUtility.Msg.WarningBox(string.Format("< Code: {0} > not found!!!", e.FormattedValue.ToString()));
+                            }
                             dr["ShipExpenseID"] = "";
                             dr["Description"] = "";
                             dr["Price"] = 0;
@@ -171,18 +187,21 @@ where sd.ID = '{0}'", masterID);
                             dr["CurrencyID"] = "";
                             dr["Rate"] = 0;
                             dr["Amount"] = 0;
+                            dr.EndEdit();
+                            e.Cancel = true;
+                            return;
                         }
                         else
                         {
-                            dr["ShipExpenseID"] = e.FormattedValue.ToString().ToUpper();
-                            dr["Description"] = ExpenseData["Description"].ToString();
-                            dr["Price"] = Convert.ToDecimal(ExpenseData["Price"]);
+                            dr["ShipExpenseID"] = MyUtility.Convert.GetString(e.FormattedValue).ToUpper();
+                            dr["Description"] = ExpenseData.Rows[0]["Description"];
+                            dr["Price"] = MyUtility.Convert.GetDecimal(ExpenseData.Rows[0]["Price"]);
                             dr["Qty"] = 1;
-                            dr["CurrencyID"] = ExpenseData["CurrencyID"].ToString();
+                            dr["CurrencyID"] = ExpenseData.Rows[0]["CurrencyID"];
                             dr["Rate"] = 1;
-                            dr["Amount"] = Convert.ToDecimal(ExpenseData["Price"]);
+                            dr["Amount"] = MyUtility.Convert.GetDecimal(ExpenseData.Rows[0]["Price"]);
+                            dr.EndEdit();
                         }
-                        dr.EndEdit();
                     }
                 }
             };
@@ -228,7 +247,7 @@ where sd.ID = '{0}'", masterID);
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["CDate"] = DateTime.Today;
             CurrentMaintain["Handle"] = Sci.Env.User.UserID;
             CurrentMaintain["VATRate"] = 0;
@@ -251,14 +270,11 @@ where sd.ID = '{0}'", masterID);
                 comboBox1.ReadOnly = true;
                 comboBox2.ReadOnly = true;
                 txtsubcon1.TextBox1.ReadOnly = true;
-                txtsubcon1.TextBox1.Enabled = false;
                 txtpayterm_fty1.TextBox1.ReadOnly = true;
-                txtpayterm_fty1.TextBox1.Enabled = false;
                 textBox2.ReadOnly = true;
                 numericBox2.ReadOnly = true;
                 textBox3.ReadOnly = true;
                 txtuser1.TextBox1.ReadOnly = true;
-                txtuser1.TextBox1.Enabled = false;
                 gridicon.Append.Enabled = false;
                 gridicon.Insert.Enabled = false;
                 gridicon.Remove.Enabled = false;
@@ -272,15 +288,11 @@ where sd.ID = '{0}'", masterID);
                 DetailGridEditing(true);
             }
             txtsubcon1.TextBox1.ReadOnly = true;
-            txtsubcon1.TextBox1.Enabled = false;
         }
 
         protected override void ClickUndo()
         {
             ChangeCombo2DataSource();
-            txtsubcon1.TextBox1.Enabled = true;
-            txtpayterm_fty1.TextBox1.Enabled = true;
-            txtuser1.TextBox1.Enabled = true;
             base.ClickUndo();
         }
 
@@ -335,9 +347,9 @@ where sd.ID = '{0}'", masterID);
             if (!MyUtility.Check.Empty(CurrentMaintain["InvNo"]))
             {
                 DataRow dr;
-                if (MyUtility.Check.Seek(string.Format("select ID from ShippingAp where InvNo = '{0}' and BLNo = '{1}' and ID != '{2}'", CurrentMaintain["InvNo"].ToString(), CurrentMaintain["Handle"].ToString(), IsDetailInserting ? "" : CurrentMaintain["ID"].ToString()), out dr))
+                if (MyUtility.Check.Seek(string.Format("select ID from ShippingAp where InvNo = '{0}' and BLNo = '{1}' and ID != '{2}'", MyUtility.Convert.GetString(CurrentMaintain["InvNo"]), MyUtility.Convert.GetString(CurrentMaintain["Handle"]), MyUtility.Convert.GetString(CurrentMaintain["ID"])), out dr))
                 {
-                    MyUtility.Msg.WarningBox("< Invoice# > and < B/L No. > duplicate with No."+ dr["ID"].ToString());
+                    MyUtility.Msg.WarningBox("< Invoice# > and < B/L No. > duplicate with No."+ MyUtility.Convert.GetString(dr["ID"]));
                     return false;
                 }
             }
@@ -352,7 +364,7 @@ where sd.ID = '{0}'", masterID);
                     dr.Delete();
                     continue;
                 }
-                detailAmt = detailAmt + Convert.ToDecimal(dr["Amount"]);
+                detailAmt = detailAmt + MyUtility.Convert.GetDecimal(dr["Amount"]);
                 countRec = countRec + 1;
             }
 
@@ -367,11 +379,11 @@ where sd.ID = '{0}'", masterID);
             if (!IsDetailInserting)
             {
                 DataRow seekRow;
-                if (MyUtility.Check.Seek(string.Format("select Type,SubType from ShippingAP where ID = '{0}'", CurrentMaintain["ID"].ToString()), out seekRow))
+                if (MyUtility.Check.Seek(string.Format("select Type,SubType from ShippingAP where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])), out seekRow))
                 {
-                    if (CurrentMaintain["Type"].ToString() != seekRow["Type"].ToString())
+                    if (MyUtility.Convert.GetString(CurrentMaintain["Type"]) != MyUtility.Convert.GetString(seekRow["Type"]))
                     {
-                        DialogResult buttonResult = MyUtility.Msg.WarningBox(string.Format("Already have expense data. Are you sure want to change the type from '{0}' to '{1}'", seekRow["Type"].ToString(), CurrentMaintain["Type"].ToString()), "Warning", MessageBoxButtons.YesNo);
+                        DialogResult buttonResult = MyUtility.Msg.WarningBox(string.Format("Already have expense data. Are you sure want to change the type from '{0}' to '{1}'", MyUtility.Convert.GetString(seekRow["Type"]), MyUtility.Convert.GetString(CurrentMaintain["Type"])), "Warning", MessageBoxButtons.YesNo);
                         if (buttonResult == System.Windows.Forms.DialogResult.No)
                         {
                             return false;
@@ -381,9 +393,9 @@ where sd.ID = '{0}'", masterID);
                             haveEditShareFee = true;
                         }
                     }
-                    if (!haveEditShareFee && CurrentMaintain["SubType"].ToString() != seekRow["SubType"].ToString())
+                    if (!haveEditShareFee && MyUtility.Convert.GetString(CurrentMaintain["SubType"]) != MyUtility.Convert.GetString(seekRow["SubType"]))
                     {
-                        DialogResult buttonResult = MyUtility.Msg.WarningBox(string.Format("Already have expense data. Are you sure want to change the type from '{0}' to '{1}'", seekRow["SubType"].ToString(), CurrentMaintain["SubType"].ToString()), "Warning", MessageBoxButtons.YesNo);
+                        DialogResult buttonResult = MyUtility.Msg.WarningBox(string.Format("Already have expense data. Are you sure want to change the type from '{0}' to '{1}'", MyUtility.Convert.GetString(seekRow["SubType"]), MyUtility.Convert.GetString(CurrentMaintain["SubType"])), "Warning", MessageBoxButtons.YesNo);
                         if (buttonResult == System.Windows.Forms.DialogResult.No)
                         {
                             return false;
@@ -402,9 +414,9 @@ where sd.ID = '{0}'", masterID);
             }
 
             //將表身Amount加總值回寫回表頭
-            int exact = Convert.ToInt32(MyUtility.GetValue.Lookup("Exact", CurrentMaintain["CurrencyID"].ToString(), "Currency", "ID"));
+            int exact = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup("Exact", MyUtility.Convert.GetString(CurrentMaintain["CurrencyID"]), "Currency", "ID"));
             CurrentMaintain["Amount"] = MyUtility.Math.Round(detailAmt, exact);
-            CurrentMaintain["VAT"] = Convert.ToDecimal(CurrentMaintain["VATRate"]) > 0 ? MyUtility.Math.Round(MyUtility.Math.Round(detailAmt, exact) / Convert.ToDecimal(CurrentMaintain["VATRate"]) * 100, exact) : 0;
+            CurrentMaintain["VAT"] = MyUtility.Convert.GetDecimal(CurrentMaintain["VATRate"]) > 0 ? MyUtility.Math.Round(MyUtility.Math.Round(detailAmt, exact) / MyUtility.Convert.GetDecimal(CurrentMaintain["VATRate"]) * 100, exact) : 0;
 
             //Get ID
             if (IsDetailInserting)
@@ -425,7 +437,7 @@ where sd.ID = '{0}'", masterID);
         {
             if (haveEditShareFee)
             {
-                DualResult result = DBProxy.Current.Execute(null, string.Format("delete form ShareExpense where ShippingAPID = '{0}'", CurrentMaintain["ID"].ToString()));
+                DualResult result = DBProxy.Current.Execute(null, string.Format("delete form ShareExpense where ShippingAPID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Delete ShareExpense fail\r\n" + result.ToString());
@@ -435,18 +447,15 @@ where sd.ID = '{0}'", masterID);
             return base.ClickSavePre();
         }
 
-        protected override void ClickSaveAfter()
+        protected override DualResult ClickSavePost()
         {
-            base.ClickSaveAfter();
-            txtsubcon1.TextBox1.Enabled = true;
-            txtpayterm_fty1.TextBox1.Enabled = true;
-            txtuser1.TextBox1.Enabled = true;
-            
-            bool result = Prgs.CalculateShareExpense(CurrentMaintain["ID"].ToString());
+            bool result = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Re-calcute share expense failed, please retry 'Share expense Re-Calculate' later." );
+                DualResult failResult = new DualResult(false, "Re-calcute share expense failed!");
+                return failResult;
             }
+            return base.ClickSavePost();
         }
 
         protected override bool ClickDeleteBefore()
@@ -461,7 +470,7 @@ where sd.ID = '{0}'", masterID);
 
         protected override bool ClickDeletePre()
         {
-            string sqlCmd = string.Format("delete from ShareExpense where ShippingAPID = '{0}'",CurrentMaintain["ID"].ToString());
+            string sqlCmd = string.Format("delete from ShareExpense where ShippingAPID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
@@ -474,9 +483,9 @@ where sd.ID = '{0}'", masterID);
         //Type
         private void comboBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode == true && comboBox1.SelectedValue.ToString() != CurrentMaintain["Type"].ToString())
+            if (EditMode == true && MyUtility.Convert.GetString(comboBox1.SelectedValue) != MyUtility.Convert.GetString(CurrentMaintain["Type"]))
             {
-                CurrentMaintain["Type"] = comboBox1.SelectedValue.ToString();
+                CurrentMaintain["Type"] = comboBox1.SelectedValue;
                 if (comboBox1.SelectedIndex != -1)
                 {
                     ChangeCombo2DataSource();
@@ -489,7 +498,7 @@ where sd.ID = '{0}'", masterID);
         //設定Combo2的DataSource
         private void ChangeCombo2DataSource()
         {
-            switch (CurrentMaintain["Type"].ToString())
+            switch (MyUtility.Convert.GetString(CurrentMaintain["Type"]))
             {
                 case "IMPORT":
                     comboBox2.DataSource = comboxbs2_1;
@@ -506,9 +515,10 @@ where sd.ID = '{0}'", masterID);
         //計算表身Grid欄位的Amount值
         private void CalculateGridAmount(DataRow dr)
         {
-            decimal qty = MyUtility.Check.Empty(dr["Qty"]) ? 0 : Convert.ToDecimal(dr["Qty"]);
-            decimal rate = MyUtility.Check.Empty(dr["Rate"]) ? 0 : Convert.ToDecimal(dr["Rate"]);
-            dr["Amount"] = MyUtility.Math.Round(MyUtility.Math.Round(qty * Convert.ToDecimal(dr["Price"]), 2) * rate, 2);
+            decimal qty = MyUtility.Convert.GetDecimal(dr["Qty"]);
+            decimal rate = MyUtility.Convert.GetDecimal(dr["Rate"]);
+            dr["Amount"] = MyUtility.Math.Round(MyUtility.Math.Round(qty * MyUtility.Convert.GetDecimal(dr["Price"]), 2) * rate, 2);
+            dr.EndEdit();
         }
 
         //控制表身Grid欄位是否可被編輯
@@ -552,15 +562,15 @@ where sd.ID = '{0}'", masterID);
         //Acct. Approve
         private void button2_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format("select Accountant from ShippingAP where ID = '{0}'", CurrentMaintain["ID"].ToString()))))
+            if (MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format("select Accountant from ShippingAP where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])))))
             {
                 //Approve
-                if (MyUtility.Check.Empty(CurrentMaintain["SubType"]) || (CurrentMaintain["SubType"].ToString() != "OTHER" && !MyUtility.Check.Seek(string.Format("select ShippingAPID from ShareExpense where ShippingAPID = '{0}'", CurrentMaintain["ID"].ToString()))))
+                if (MyUtility.Check.Empty(CurrentMaintain["SubType"]) || (MyUtility.Convert.GetString(CurrentMaintain["SubType"]) != "OTHER" && !MyUtility.Check.Seek(string.Format("select ShippingAPID from ShareExpense where ShippingAPID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])))))
                 {
                     MyUtility.Msg.WarningBox("No share expense, can't approve!");
                     return;
                 }
-                string sqlCmd = string.Format("update ShippingAP set Accountant = '{0}', ApvDate = '{1}', Status = 'Approved' where ID = '{2}'",Sci.Env.User.UserID,DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),CurrentMaintain["ID"].ToString());
+                string sqlCmd = string.Format("update ShippingAP set Accountant = '{0}', ApvDate = GETDATE(), Status = 'Approved' where ID = '{1}'",Sci.Env.User.UserID,MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 DualResult result = DBProxy.Current.Execute(null, sqlCmd);
                 if (!result)
                 {
@@ -580,7 +590,7 @@ where sd.ID = '{0}'", masterID);
                     return;
                 }
 
-                string sqlCmd = string.Format("update ShippingAP set Accountant = '', ApvDate = null, Status = 'New' where ID = '{0}'", CurrentMaintain["ID"].ToString());
+                string sqlCmd = string.Format("update ShippingAP set Accountant = '', ApvDate = null, Status = 'New' where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
                 DualResult result = DBProxy.Current.Execute(null, sqlCmd);
                 if (!result)

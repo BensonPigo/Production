@@ -28,11 +28,7 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            comboBox1_RowSource.Add("Garment Booking");
-            comboBox1_RowSource.Add("Packing FOC");
-            comboBox1_RowSource.Add("Packing Local Order");
-            comboxbs1 = new BindingSource(comboBox1_RowSource, null);
-            comboBox1.DataSource = comboxbs1;
+            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "Garment Booking,Packing FOC,Packing Local Order");
             comboBox1.SelectedIndex = -1;
 
             //Grid設定
@@ -61,7 +57,7 @@ namespace Sci.Production.Shipping
             StringBuilder sqlCmd = new StringBuilder();
             #region 組SQL
             #region Garment Booking
-            if (MyUtility.Check.Empty(comboBox1.SelectedValue) || comboBox1.SelectedValue.ToString() == "Garment Booking")
+            if (MyUtility.Check.Empty(comboBox1.SelectedValue) || MyUtility.Convert.GetString(comboBox1.SelectedValue) == "Garment Booking")
             {
                 sqlCmd.Append(@"with GB 
 as 
@@ -90,7 +86,7 @@ as
 
                 if (!MyUtility.Check.Empty(txtshipmode1.SelectedValue))
                 {
-                    sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}' ", txtshipmode1.SelectedValue.ToString()));
+                    sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}' ", MyUtility.Convert.GetString(txtshipmode1.SelectedValue)));
                 }
 
                 if (!MyUtility.Check.Empty(txtbrand1.Text))
@@ -132,7 +128,7 @@ as
             #endregion
 
             #region PackingList
-            if (!MyUtility.Check.Empty(comboBox1.SelectedValue) && comboBox1.SelectedValue.ToString() == "Garment Booking")
+            if (!MyUtility.Check.Empty(comboBox1.SelectedValue) && MyUtility.Convert.GetString(comboBox1.SelectedValue) == "Garment Booking")
             {
                 sqlCmd.Append(@"PL 
 as 
@@ -157,7 +153,7 @@ as
                 }
                 else
                 {
-                    if (comboBox1.SelectedValue.ToString() == "Packing FOC")
+                    if (MyUtility.Convert.GetString(comboBox1.SelectedValue) == "Packing FOC")
                     {
                         sqlCmd.Append(" Type = 'F' ");
                     }
@@ -179,7 +175,7 @@ as
 
                 if (!MyUtility.Check.Empty(txtshipmode1.SelectedValue))
                 {
-                    sqlCmd.Append(string.Format(" and ShipModeID = '{0}' ", txtshipmode1.SelectedValue.ToString()));
+                    sqlCmd.Append(string.Format(" and ShipModeID = '{0}' ", MyUtility.Convert.GetString(txtshipmode1.SelectedValue)));
                 }
 
                 if (!MyUtility.Check.Empty(txtbrand1.Text))
@@ -196,7 +192,7 @@ union all
 select * from PL");
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null,Convert.ToString(sqlCmd),out gridData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query fail!\r\n" + result.ToString());
@@ -224,7 +220,7 @@ select * from PL");
                 {
                     foreach (DataRow currentRow in dr)
                     {
-                        DataRow[] findrow = detailData.Select(string.Format("BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", currentRow["BLNo"].ToString(), currentRow["WKNo"].ToString(), currentRow["InvNo"].ToString()));
+                        DataRow[] findrow = detailData.Select(string.Format("BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", MyUtility.Convert.GetString(currentRow["BLNo"]), MyUtility.Convert.GetString(currentRow["WKNo"]), MyUtility.Convert.GetString(currentRow["InvNo"])));
                         if (findrow.Length == 0)
                         {
                             currentRow.AcceptChanges();
@@ -233,9 +229,9 @@ select * from PL");
                         }
                         else
                         {
-                            findrow[0]["GW"] = Convert.ToDecimal(currentRow["GW"]);
-                            findrow[0]["CBM"] = Convert.ToDecimal(currentRow["CBM"]);
-                            findrow[0]["ShipModeID"] = currentRow["ShipModeID"].ToString();
+                            findrow[0]["GW"] = MyUtility.Convert.GetDecimal(currentRow["GW"]);
+                            findrow[0]["CBM"] = MyUtility.Convert.GetDecimal(currentRow["CBM"]);
+                            findrow[0]["ShipModeID"] = MyUtility.Convert.GetString(currentRow["ShipModeID"]);
                         }
                     }
                 }

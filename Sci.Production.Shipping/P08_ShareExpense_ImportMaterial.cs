@@ -54,7 +54,7 @@ namespace Sci.Production.Shipping
 
             StringBuilder sqlCmd = new StringBuilder();
             #region 組SQL
-            if (apData["Type"].ToString() == "EXPORT")
+            if (MyUtility.Convert.GetString(apData["Type"]) == "EXPORT")
             {
                 #region FtyExport (Type = 3)
                 sqlCmd.Append(@"select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, ID as InvNo, '' as ShippingAPID, 
@@ -90,7 +90,7 @@ where Type = 3 ");
             else
             {
                 #region Export, FtyExport(Type != 3)
-                if (apData["SubType"].ToString() == "MATERIAL" || apData["SubType"].ToString() == "Other")
+                if (MyUtility.Convert.GetString(apData["SubType"]) == "MATERIAL" || MyUtility.Convert.GetString(apData["SubType"]) == "Other")
                 {
                     sqlCmd.Append(@"with ExportData 
 as 
@@ -133,7 +133,7 @@ as
  from Export where 1 = 0), ");
                 }
 
-                if (apData["SubType"].ToString() == "SISTER FACTORY TRANSFER" || apData["SubType"].ToString() == "Other")
+                if (MyUtility.Convert.GetString(apData["SubType"]) == "SISTER FACTORY TRANSFER" || MyUtility.Convert.GetString(apData["SubType"]) == "Other")
                 {
                     sqlCmd.Append(@"FtyExportData 
 as 
@@ -184,7 +184,7 @@ select * from FtyExportData");
             }
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, Convert.ToString(sqlCmd), out gridData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query fail!\r\n" + result.ToString());
@@ -212,7 +212,7 @@ select * from FtyExportData");
                 {
                     foreach (DataRow currentRow in dr)
                     {
-                        DataRow[] findrow = detailData.Select(string.Format("BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", currentRow["BLNo"].ToString(), currentRow["WKNo"].ToString(), currentRow["InvNo"].ToString()));
+                        DataRow[] findrow = detailData.Select(string.Format("BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", MyUtility.Convert.GetString(currentRow["BLNo"]), MyUtility.Convert.GetString(currentRow["WKNo"]), MyUtility.Convert.GetString(currentRow["InvNo"])));
                         if (findrow.Length == 0)
                         {
                             currentRow.AcceptChanges();
@@ -221,9 +221,9 @@ select * from FtyExportData");
                         }
                         else
                         {
-                            findrow[0]["GW"] = Convert.ToDecimal(currentRow["GW"]);
-                            findrow[0]["CBM"] = Convert.ToDecimal(currentRow["CBM"]);
-                            findrow[0]["ShipModeID"] = currentRow["ShipModeID"].ToString();
+                            findrow[0]["GW"] = MyUtility.Convert.GetDecimal(currentRow["GW"]);
+                            findrow[0]["CBM"] = MyUtility.Convert.GetDecimal(currentRow["CBM"]);
+                            findrow[0]["ShipModeID"] = MyUtility.Convert.GetString(currentRow["ShipModeID"]);
                         }
                     }
                 }

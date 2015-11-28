@@ -21,9 +21,9 @@ namespace Sci.Production.Shipping
         {
             InitializeComponent();
             apData = APData;
-            displayBox1.Value = apData["CurrencyID"].ToString();
-            numericBox1.DecimalPlaces = Convert.ToInt32(MyUtility.GetValue.Lookup("Exact", apData["CurrencyID"].ToString(), "Currency", "ID"));
-            numericBox1.Value = Convert.ToDecimal(apData["Amount"]);
+            displayBox1.Value = MyUtility.Convert.GetString(apData["CurrencyID"]);
+            numericBox1.DecimalPlaces = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup("Exact", MyUtility.Convert.GetString(apData["CurrencyID"]), "Currency", "ID"));
+            numericBox1.Value = MyUtility.Convert.GetDecimal(apData["Amount"]);
             ControlButton();
         }
 
@@ -35,7 +35,7 @@ namespace Sci.Production.Shipping
             grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
                 .Text("BLNo", header: "B/L No.", width: Widths.AnsiChars(13))
-                .Text(apData["Type"].ToString() == "IMPORT" ? "WKNo" : "InvNo", header: apData["Type"].ToString() == "IMPORT" ? "WK#/Fty WK#" : "GB#/Fty WK#/Packing#", width: Widths.AnsiChars(18))
+                .Text(MyUtility.Convert.GetString(apData["Type"]) == "IMPORT" ? "WKNo" : "InvNo", header: MyUtility.Convert.GetString(apData["Type"]) == "IMPORT" ? "WK#/Fty WK#" : "GB#/Fty WK#/Packing#", width: Widths.AnsiChars(18))
                 .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(5))
                 .Numeric("GW", header: "G.W.", decimal_places: 2)
                 .Numeric("CBM", header: "CBM", decimal_places: 2)
@@ -55,7 +55,7 @@ namespace Sci.Production.Shipping
                 {
                     if (dr != null)
                     {
-                        string filter = string.Format("BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", dr["BLNo"].ToString(), dr["WKNo"].ToString(), dr["InvNo"].ToString());
+                        string filter = string.Format("BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", MyUtility.Convert.GetString(dr["BLNo"]), MyUtility.Convert.GetString(dr["WKNo"]), MyUtility.Convert.GetString(dr["InvNo"]));
                         SEData.DefaultView.RowFilter = filter;
                     }
                 }
@@ -74,13 +74,13 @@ namespace Sci.Production.Shipping
         private void QueryData()
         {
             DataRow queryData;
-            string sqlCmd = string.Format("select isnull(sum(GW),0) as GW,isnull(sum(CBM),0) as CBM,isnull(Count(BLNo),0) as RecCount from (select distinct BLNo,WKNo,InvNo,GW,CBM from ShareExpense where ShippingAPID = '{0}') a", apData["ID"].ToString());
+            string sqlCmd = string.Format("select isnull(sum(GW),0) as GW,isnull(sum(CBM),0) as CBM,isnull(Count(BLNo),0) as RecCount from (select distinct BLNo,WKNo,InvNo,GW,CBM from ShareExpense where ShippingAPID = '{0}') a", MyUtility.Convert.GetString(apData["ID"]));
             MyUtility.Check.Seek(sqlCmd, out queryData);
-            numericBox2.Value = Convert.ToDecimal(queryData["GW"]);
-            numericBox3.Value = Convert.ToDecimal(queryData["CBM"]);
-            numericBox4.Value = Convert.ToInt32(queryData["RecCount"]);
+            numericBox2.Value = MyUtility.Convert.GetDecimal(queryData["GW"]);
+            numericBox3.Value = MyUtility.Convert.GetDecimal(queryData["CBM"]);
+            numericBox4.Value = MyUtility.Convert.GetInt(queryData["RecCount"]);
 
-            sqlCmd = string.Format("select *,case when ShareBase = 'G' then 'G.W.' when ShareBase = 'C' then 'CBM' else ' Number od Deliver Sheets' end as ShareRule from ShareExpense where ShippingAPID = '{0}' order by AccountNo", apData["ID"].ToString());
+            sqlCmd = string.Format("select *,case when ShareBase = 'G' then 'G.W.' when ShareBase = 'C' then 'CBM' else ' Number od Deliver Sheets' end as ShareRule from ShareExpense where ShippingAPID = '{0}' order by AccountNo", MyUtility.Convert.GetString(apData["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out SEData);
             if (!result)
             {
@@ -89,7 +89,7 @@ namespace Sci.Production.Shipping
             }
             listControlBindingSource2.DataSource = SEData;
 
-            sqlCmd = string.Format("select ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK,isnull(sum(Amount),0) as Amount from ShareExpense where ShippingAPID = '{0}' group by ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK", apData["ID"].ToString());
+            sqlCmd = string.Format("select ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK,isnull(sum(Amount),0) as Amount from ShareExpense where ShippingAPID = '{0}' group by ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK", MyUtility.Convert.GetString(apData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out SEGroupData);
             if (!result)
             {
@@ -116,7 +116,7 @@ namespace Sci.Production.Shipping
         //Import
         private void button4_Click(object sender, EventArgs e)
         {
-            if (apData["SubType"].ToString() == "OTHER")
+            if (MyUtility.Convert.GetString(apData["SubType"]) == "OTHER")
             {
 
                 DialogResult buttonResult = MyUtility.Msg.InfoBox("If you want to import \"Garment Data\" please click 'Yes'.\r\nIf you want to import \"Material Data\" please click 'No'.\r\nIf you don't want to import data please click 'Cancel'.", "Warning", MessageBoxButtons.YesNoCancel);
@@ -140,7 +140,7 @@ namespace Sci.Production.Shipping
             }
             else
             {
-                if (apData["SubType"].ToString() == "GARMENT")
+                if (MyUtility.Convert.GetString(apData["SubType"]) == "GARMENT")
                 {
                     Sci.Production.Shipping.P08_ShareExpense_ImportGarment callNextForm = new Sci.Production.Shipping.P08_ShareExpense_ImportGarment(SEGroupData);
                     callNextForm.ShowDialog(this);
@@ -179,7 +179,7 @@ namespace Sci.Production.Shipping
             }
             else
             {
-                bool forwarderFee = MyUtility.Check.Seek(string.Format("select se.AccountNo from ShippingAP_Detail sd, ShipExpense se where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and (se.AccountNo = '61022001' or se.AccountNo = '61012001')", apData["ID"].ToString()));
+                bool forwarderFee = MyUtility.Check.Seek(string.Format("select se.AccountNo from ShippingAP_Detail sd, ShipExpense se where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and (se.AccountNo = '61022001' or se.AccountNo = '61012001')", MyUtility.Convert.GetString(apData["ID"])));
                 bool haveSea = false, noExistNotSea = true;
                 DataTable duplicData;
                 DBProxy.Current.Select(null, "select BLNo,WKNo,InvNo from ShareExpense where 1=0", out duplicData);
@@ -196,33 +196,33 @@ namespace Sci.Production.Shipping
                         }
 
                         //檢查重複值
-                        DataRow[] findrow = duplicData.Select(string.Format("BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", dr["BLNo"].ToString(), dr["WKNo"].ToString(), dr["InvNo"].ToString()));
+                        DataRow[] findrow = duplicData.Select(string.Format("BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", MyUtility.Convert.GetString(dr["BLNo"]), MyUtility.Convert.GetString(dr["WKNo"]), MyUtility.Convert.GetString(dr["InvNo"])));
                         if (findrow.Length == 0)
                         {
                             duplicData.ImportRow(dr);
                         }
                         else
                         {
-                            if (apData["Type"].ToString() == "IMPORT")
+                            if (MyUtility.Convert.GetString(apData["Type"]) == "IMPORT")
                             {
-                                msg.Append(string.Format("{0}\r\n", dr["WKno"].ToString()));
+                                msg.Append(string.Format("{0}\r\n", MyUtility.Convert.GetString(dr["WKno"])));
                             }
                             else
                             {
-                                msg.Append(string.Format("{0}\r\n", dr["InvNo"].ToString()));
+                                msg.Append(string.Format("{0}\r\n", MyUtility.Convert.GetString(dr["InvNo"])));
                             }
                         }
 
                         //當有Forwarder費用且SubType不是Material時，要檢查如果有一筆Ship Mode為SEA時，全部的Ship Mode就都要為SEA
-                        if (forwarderFee && (apData["Type"].ToString() == "EXPORT" || apData["SubType"].ToString() == "SISTER FACTORY TRANSFER"))
+                        if (forwarderFee && (MyUtility.Convert.GetString(apData["Type"]) == "EXPORT" || MyUtility.Convert.GetString(apData["SubType"]) == "SISTER FACTORY TRANSFER"))
                         {
-                            haveSea = haveSea || dr["ShipModeID"].ToString() == "SEA";
-                            noExistNotSea = noExistNotSea && dr["ShipModeID"].ToString() == "SEA";
+                            haveSea = haveSea || MyUtility.Convert.GetString(dr["ShipModeID"]) == "SEA";
+                            noExistNotSea = noExistNotSea && MyUtility.Convert.GetString(dr["ShipModeID"]) == "SEA";
                         }
                     }
                 }
 
-                if (msg.ToString() != "")
+                if (msg.Length > 0)
                 {
                     MyUtility.Msg.WarningBox("Data is duplicate!\r\n"+msg.ToString());
                     return;
@@ -238,13 +238,13 @@ namespace Sci.Production.Shipping
                 IList<string> deleteCmds = new List<string>();
                 IList<string> addCmds = new List<string>();
 
-                string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountNo from ShippingAP_Detail sd, ShipExpense se where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountNo != ''", apData["ID"].ToString()));
+                string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountNo from ShippingAP_Detail sd, ShipExpense se where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountNo != ''", MyUtility.Convert.GetString(apData["ID"])));
                 //刪除實體資料
                 foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
                 {
                     if (dr.RowState == DataRowState.Deleted)
                     {
-                        deleteCmds.Add(string.Format("delete ShareExpense where ShippingAPID = '{0}' and BLNo = '{1}' and WKNo = '{2}' and InvNo = '{3}';",apData["ID"].ToString(),dr["BLNo", DataRowVersion.Original].ToString().Trim(),dr["WKNo", DataRowVersion.Original].ToString().Trim(),dr["InvNo", DataRowVersion.Original].ToString().Trim()));
+                        deleteCmds.Add(string.Format("delete ShareExpense where ShippingAPID = '{0}' and BLNo = '{1}' and WKNo = '{2}' and InvNo = '{3}';", MyUtility.Convert.GetString(apData["ID"]), MyUtility.Convert.GetString(dr["BLNo", DataRowVersion.Original]).Trim(), MyUtility.Convert.GetString(dr["WKNo", DataRowVersion.Original]).Trim(), MyUtility.Convert.GetString(dr["InvNo", DataRowVersion.Original]).Trim()));
                         
                     }
                 }
@@ -254,14 +254,14 @@ namespace Sci.Production.Shipping
                     if (dr.RowState == DataRowState.Added)
                     {
                         addCmds.Add(string.Format(@"insert into ShareExpense (ShippingAPID,BLNo,WKNo,InvNo,Type,GW,CBM,CurrencyID,ShipModeID,FtyWK,AccountNo)
- values ('{0}','{1}','{2}','{3}','{4}',{5},{6},'{7}','{8}',{9},'{10}');", apData["ID"].ToString(), dr["BLNo"].ToString(), dr["WKNo"].ToString(), dr["InvNo"].ToString(),
-                                                                 apData["SubType"].ToString(), dr["GW"].ToString(), dr["CBM"].ToString(), apData["CurrencyID"].ToString(), dr["ShipModeID"].ToString(),
-                                                                 dr["FtyWK"].ToString() == "True"?"1":"0", accNo));
+ values ('{0}','{1}','{2}','{3}','{4}',{5},{6},'{7}','{8}',{9},'{10}');", MyUtility.Convert.GetString(apData["ID"]), MyUtility.Convert.GetString(dr["BLNo"]), MyUtility.Convert.GetString(dr["WKNo"]), MyUtility.Convert.GetString(dr["InvNo"]),
+                                                                 MyUtility.Convert.GetString(apData["SubType"]), MyUtility.Convert.GetString(dr["GW"]), MyUtility.Convert.GetString(dr["CBM"]), MyUtility.Convert.GetString(apData["CurrencyID"]), MyUtility.Convert.GetString(dr["ShipModeID"]),
+                                                                 MyUtility.Convert.GetString(dr["FtyWK"]) == "True" ? "1" : "0", accNo));
                     }
                     if (dr.RowState == DataRowState.Modified)
                     {
                         addCmds.Add(string.Format(@"update ShareExpense set ShipModeID = '{0}', GW = {1}, CBM = {2} where ShippingAPID = '{3}' and BLNo = '{4}' and WKNo = '{5}' and InvNo = '{6}';",
-                                                                 dr["ShipModeID"].ToString(),dr["GW"].ToString(),dr["CBM"].ToString(),apData["ID"].ToString(), dr["BLNo"].ToString(), dr["WKNo"].ToString(), dr["InvNo"].ToString()));
+                                                                 MyUtility.Convert.GetString(dr["ShipModeID"]), MyUtility.Convert.GetString(dr["GW"]), MyUtility.Convert.GetString(dr["CBM"]), MyUtility.Convert.GetString(apData["ID"]), MyUtility.Convert.GetString(dr["BLNo"]), MyUtility.Convert.GetString(dr["WKNo"]), MyUtility.Convert.GetString(dr["InvNo"])));
                     }
                 }
                 if (deleteCmds.Count != 0 || addCmds.Count != 0)
@@ -296,8 +296,15 @@ namespace Sci.Production.Shipping
                                 else
                                 {
                                     lastResult = false;
-                                    errmsg = errmsg + result1.ToString();
+                                    errmsg = errmsg + result1.ToString() + "\r\n";
                                 }
+                            }
+
+                            bool returnValue = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(apData["ID"]));
+                            if (!returnValue)
+                            {
+                                errmsg = errmsg +"Calcute share expense failed.";
+                                lastResult = false;
                             }
 
                             if (lastResult)
@@ -306,12 +313,14 @@ namespace Sci.Production.Shipping
                             }
                             else
                             {
+                                transactionScope.Dispose();
                                 MyUtility.Msg.WarningBox("Confirm failed, Pleaes re-try\r\n" + errmsg);
                                 return;
                             }
                         }
                         catch (Exception ex)
                         {
+                            transactionScope.Dispose();
                             ShowErr("Commit transaction error.", ex);
                             return;
                         }
@@ -319,11 +328,6 @@ namespace Sci.Production.Shipping
                 }
                 #endregion 
 
-                bool returnValue = Prgs.CalculateShareExpense(apData["ID"].ToString());
-                if (!returnValue)
-                {
-                    MyUtility.Msg.WarningBox("Calcute share expense failed, please retry 'Re-Calculate' later.");
-                }
                 this.EditMode = false;
             }
             ControlButton();
@@ -353,9 +357,9 @@ namespace Sci.Production.Shipping
         //Re-Calculate
         private void button7_Click(object sender, EventArgs e)
         {
-            if (apData["Type"].ToString() == "IMPORT")
+            if (MyUtility.Convert.GetString(apData["Type"]) == "IMPORT")
             {
-                string deleteCmd = string.Format("delete ShareExpense where ShippingAPID = '{0}' and WKNo != '' and WKNo not in (select ID from Export where ID = WKNo and ID is not null)",apData["ID"].ToString());
+                string deleteCmd = string.Format("delete ShareExpense where ShippingAPID = '{0}' and WKNo != '' and WKNo not in (select ID from Export where ID = WKNo and ID is not null)",MyUtility.Convert.GetString(apData["ID"]));
                 DualResult result = DBProxy.Current.Execute(null, deleteCmd);
                 if (!result)
                 {
@@ -389,7 +393,7 @@ BEGIN
 
 	FETCH NEXT FROM cursor_allExport INTO @id,@shipmode,@blno,@gw,@cbm,@currency,@subtype
 END
-CLOSE cursor_allExport", apData["ID"].ToString());
+CLOSE cursor_allExport", MyUtility.Convert.GetString(apData["ID"]));
                 #endregion
                 result = DBProxy.Current.Execute(null, updateCmd);
                 if (!result)
@@ -401,7 +405,7 @@ CLOSE cursor_allExport", apData["ID"].ToString());
             }
             else
             {
-                string deleteCmd = string.Format("delete ShareExpense where ShippingAPID = '{0}' and InvNo != '' and (InvNo not in (select ID from GMTBooking where ID = InvNo) and InvNo not in (select INVNo from PackingList where INVNo = ShareExpense.InvNo) and InvNo not in (select ID from FtyExport  where ID = InvNo))", apData["ID"].ToString());
+                string deleteCmd = string.Format("delete ShareExpense where ShippingAPID = '{0}' and InvNo != '' and (InvNo not in (select ID from GMTBooking where ID = InvNo and ID is not null) and InvNo not in (select INVNo from PackingList where INVNo = ShareExpense.InvNo and INVNo is not null) and InvNo not in (select ID from FtyExport  where ID = InvNo and ID is not null))", MyUtility.Convert.GetString(apData["ID"]));
                 DualResult result = DBProxy.Current.Execute(null, deleteCmd);
                 if (!result)
                 {
@@ -478,7 +482,7 @@ BEGIN
 
 	FETCH NEXT FROM cursor_PackingList INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
 END
-CLOSE cursor_PackingList",apData["ID"].ToString());
+CLOSE cursor_PackingList",MyUtility.Convert.GetString(apData["ID"]));
                 #endregion
                 result = DBProxy.Current.Execute(null, updateCmd);
                 if (!result)
@@ -488,7 +492,7 @@ CLOSE cursor_PackingList",apData["ID"].ToString());
                 }
 
             }
-            bool returnValue = Prgs.CalculateShareExpense(apData["ID"].ToString());
+            bool returnValue = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(apData["ID"]));
             if (!returnValue)
             {
                 MyUtility.Msg.WarningBox("Re-calcute share expense failed, please retry later.");
