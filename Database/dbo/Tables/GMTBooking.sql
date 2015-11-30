@@ -1,42 +1,44 @@
 ﻿CREATE TABLE [dbo].[GMTBooking] (
-    [ID]              VARCHAR (25)   CONSTRAINT [DF_GMTBooking_ID] DEFAULT ('') NOT NULL,
-    [Shipper]         VARCHAR (8)    CONSTRAINT [DF_GMTBooking_Shipper] DEFAULT ('') NOT NULL,
-    [InvSerial]       VARCHAR (10)   CONSTRAINT [DF_GMTBooking_InvSerial] DEFAULT ('') NOT NULL,
-    [InvDate]         DATE           NOT NULL,
-    [BrandID]         VARCHAR (8)    CONSTRAINT [DF_GMTBooking_BrandID] DEFAULT ('') NOT NULL,
-    [CustCDID]        VARCHAR (16)   CONSTRAINT [DF_GMTBooking_CustCDID] DEFAULT ('') NOT NULL,
-    [Dest]            VARCHAR (2)    CONSTRAINT [DF_GMTBooking_Dest] DEFAULT ('') NOT NULL,
-    [ShipModeID]      VARCHAR (10)   CONSTRAINT [DF_GMTBooking_ShipModeID] DEFAULT ('') NOT NULL,
-    [ShipTermID]      VARCHAR (5)    CONSTRAINT [DF_GMTBooking_ShipTermID] DEFAULT ('') NOT NULL,
-    [PayTermARID]     VARCHAR (5)    CONSTRAINT [DF_GMTBooking_PayTermARID] DEFAULT ('') NOT NULL,
-    [Forwarder]       VARCHAR (6)    CONSTRAINT [DF_GMTBooking_Forwarder] DEFAULT ('') NOT NULL,
-    [FCRDate]         DATE           NULL,
-    [Vessel]          VARCHAR (30)   CONSTRAINT [DF_GMTBooking_Vessel] DEFAULT ('') NULL,
-    [CutOffDate]      DATETIME       NULL,
-    [ETD]             DATE           NULL,
-    [ETA]             DATE           NULL,
-    [SONo]            VARCHAR (16)   CONSTRAINT [DF_GMTBooking_SONo] DEFAULT ('') NULL,
-    [SOCFMDate]       DATE           NULL,
-    [ForwarderWhseID] BIGINT         CONSTRAINT [DF_GMTBooking_ForwarderWhseID] DEFAULT ((0)) NULL,
-    [Remark]          NVARCHAR (60)  CONSTRAINT [DF_GMTBooking_Remark] DEFAULT ('') NULL,
-    [TotalShipQty]    INT            CONSTRAINT [DF_GMTBooking_TotalShipQty] DEFAULT ((0)) NULL,
-    [TotalCTNQty]     INT            CONSTRAINT [DF_GMTBooking_TotalCTNQty] DEFAULT ((0)) NULL,
-    [TotalNW]         NUMERIC (8, 2) CONSTRAINT [DF_GMTBooking_TotalNW] DEFAULT ((0)) NULL,
-    [TotalGW]         NUMERIC (8, 2) CONSTRAINT [DF_GMTBooking_TotalGW] DEFAULT ((0)) NULL,
-    [TotalNNW]        NUMERIC (8, 2) CONSTRAINT [DF_GMTBooking_TotalNNW] DEFAULT ((0)) NULL,
-    [TotalCBM]        NUMERIC (8, 2) CONSTRAINT [DF_GMTBooking_TotalCBM] DEFAULT ((0)) NULL,
-    [Status]          VARCHAR (15)   CONSTRAINT [DF_GMTBooking_Status] DEFAULT ('') NULL,
-    [Handle]          VARCHAR (10)   CONSTRAINT [DF_GMTBooking_Handle] DEFAULT ('') NOT NULL,
-    [Description]     NVARCHAR (80)  CONSTRAINT [DF_GMTBooking_Description] DEFAULT ('') NULL,
-    [SendToTPE]       DATE           NULL,
-    [ShipPlanID]      VARCHAR (13)   CONSTRAINT [DF_GMTBooking_ShipPlanID] DEFAULT ('') NULL,
-    [CYCFS]           VARCHAR (7)    CONSTRAINT [DF_GMTBooking_CYCFS] DEFAULT ('') NULL,
-    [AddName]         VARCHAR (10)   CONSTRAINT [DF_GMTBooking_AddName] DEFAULT ('') NULL,
-    [AddDate]         DATETIME       NULL,
-    [EditName]        VARCHAR (10)   CONSTRAINT [DF_GMTBooking_EditName] DEFAULT ('') NULL,
-    [EditDate]        DATETIME       NULL,
+    [ID]                       VARCHAR (25)   CONSTRAINT [DF_GMTBooking_ID] DEFAULT ('') NOT NULL,
+    [Shipper]                  VARCHAR (8)    CONSTRAINT [DF_GMTBooking_Shipper] DEFAULT ('') NOT NULL,
+    [InvSerial]                VARCHAR (10)   CONSTRAINT [DF_GMTBooking_InvSerial] DEFAULT ('') NOT NULL,
+    [InvDate]                  DATE           NOT NULL,
+    [BrandID]                  VARCHAR (8)    CONSTRAINT [DF_GMTBooking_BrandID] DEFAULT ('') NOT NULL,
+    [CustCDID]                 VARCHAR (16)   CONSTRAINT [DF_GMTBooking_CustCDID] DEFAULT ('') NOT NULL,
+    [Dest]                     VARCHAR (2)    CONSTRAINT [DF_GMTBooking_Dest] DEFAULT ('') NOT NULL,
+    [ShipModeID]               VARCHAR (10)   CONSTRAINT [DF_GMTBooking_ShipModeID] DEFAULT ('') NOT NULL,
+    [ShipTermID]               VARCHAR (5)    CONSTRAINT [DF_GMTBooking_ShipTermID] DEFAULT ('') NOT NULL,
+    [PayTermARID]              VARCHAR (5)    CONSTRAINT [DF_GMTBooking_PayTermARID] DEFAULT ('') NOT NULL,
+    [Forwarder]                VARCHAR (6)    CONSTRAINT [DF_GMTBooking_Forwarder] DEFAULT ('') NOT NULL,
+    [FCRDate]                  DATE           NULL,
+    [Vessel]                   VARCHAR (30)   CONSTRAINT [DF_GMTBooking_Vessel] DEFAULT ('') NULL,
+    [CutOffDate]               DATETIME       NULL,
+    [ETD]                      DATE           NULL,
+    [ETA]                      DATE           NULL,
+    [SONo]                     VARCHAR (16)   CONSTRAINT [DF_GMTBooking_SONo] DEFAULT ('') NULL,
+    [SOCFMDate]                DATE           NULL,
+    [ForwarderWhse_DetailUKey] BIGINT         CONSTRAINT [DF_GMTBooking_ForwarderWhseID] DEFAULT ((0)) NULL,
+    [Remark]                   NVARCHAR (60)  CONSTRAINT [DF_GMTBooking_Remark] DEFAULT ('') NULL,
+    [TotalShipQty]             INT            CONSTRAINT [DF_GMTBooking_TotalShipQty] DEFAULT ((0)) NULL,
+    [TotalCTNQty]              INT            CONSTRAINT [DF_GMTBooking_TotalCTNQty] DEFAULT ((0)) NULL,
+    [TotalNW]                  NUMERIC (8, 2) CONSTRAINT [DF_GMTBooking_TotalNW] DEFAULT ((0)) NULL,
+    [TotalGW]                  NUMERIC (8, 2) CONSTRAINT [DF_GMTBooking_TotalGW] DEFAULT ((0)) NULL,
+    [TotalNNW]                 NUMERIC (8, 2) CONSTRAINT [DF_GMTBooking_TotalNNW] DEFAULT ((0)) NULL,
+    [TotalCBM]                 NUMERIC (8, 2) CONSTRAINT [DF_GMTBooking_TotalCBM] DEFAULT ((0)) NULL,
+    [Status]                   VARCHAR (15)   CONSTRAINT [DF_GMTBooking_Status] DEFAULT ('') NULL,
+    [Handle]                   VARCHAR (10)   CONSTRAINT [DF_GMTBooking_Handle] DEFAULT ('') NOT NULL,
+    [Description]              NVARCHAR (80)  CONSTRAINT [DF_GMTBooking_Description] DEFAULT ('') NULL,
+    [SendToTPE]                DATE           NULL,
+    [ShipPlanID]               VARCHAR (13)   CONSTRAINT [DF_GMTBooking_ShipPlanID] DEFAULT ('') NULL,
+    [CYCFS]                    VARCHAR (7)    CONSTRAINT [DF_GMTBooking_CYCFS] DEFAULT ('') NULL,
+    [AddName]                  VARCHAR (10)   CONSTRAINT [DF_GMTBooking_AddName] DEFAULT ('') NULL,
+    [AddDate]                  DATETIME       NULL,
+    [EditName]                 VARCHAR (10)   CONSTRAINT [DF_GMTBooking_EditName] DEFAULT ('') NULL,
+    [EditDate]                 DATETIME       NULL,
     CONSTRAINT [PK_GMTBooking] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -116,7 +118,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'艙位確�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'貨代倉庫', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GMTBooking', @level2type = N'COLUMN', @level2name = N'ForwarderWhseID';
+
 
 
 GO
@@ -185,4 +187,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GMTBooking', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'貨代倉庫', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GMTBooking', @level2type = N'COLUMN', @level2name = N'ForwarderWhse_DetailUKey';
 

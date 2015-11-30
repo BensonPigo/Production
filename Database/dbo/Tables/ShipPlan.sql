@@ -2,7 +2,7 @@
     [ID]          VARCHAR (13)   CONSTRAINT [DF_ShipPlan_ID] DEFAULT ('') NOT NULL,
     [MDivisionID] VARCHAR (8)    CONSTRAINT [DF_ShipPlan_MDivisionID] DEFAULT ('') NOT NULL,
     [CDate]       DATE           NOT NULL,
-    [Remark]      NVARCHAR (100) CONSTRAINT [DF_ShipPlan_Remark] DEFAULT ('') NULL,
+    [Remark]      NVARCHAR (MAX) CONSTRAINT [DF_ShipPlan_Remark] DEFAULT ('') NULL,
     [CFMDate]     DATE           NULL,
     [Status]      VARCHAR (15)   CONSTRAINT [DF_ShipPlan_Status] DEFAULT ('') NULL,
     [AddName]     VARCHAR (10)   CONSTRAINT [DF_ShipPlan_AddName] DEFAULT ('') NULL,
@@ -11,6 +11,8 @@
     [EditDate]    DATETIME       NULL,
     CONSTRAINT [PK_ShipPlan] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

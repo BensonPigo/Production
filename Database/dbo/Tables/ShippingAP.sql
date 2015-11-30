@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[ShippingAP] (
     [ID]          VARCHAR (13)    CONSTRAINT [DF_ShippingAP_ID] DEFAULT ('') NOT NULL,
     [CDate]       DATE            NOT NULL,
-    [FactoryID]   VARCHAR (8)     CONSTRAINT [DF_ShippingAP_FactoryID] DEFAULT ('') NOT NULL,
+    [MDivisionID] VARCHAR (8)     CONSTRAINT [DF_ShippingAP_FactoryID] DEFAULT ('') NOT NULL,
     [Type]        VARCHAR (6)     CONSTRAINT [DF_ShippingAP_Type] DEFAULT ('') NULL,
     [SubType]     VARCHAR (25)    CONSTRAINT [DF_ShippingAP_SubType] DEFAULT ('') NULL,
     [LocalSuppID] VARCHAR (8)     CONSTRAINT [DF_ShippingAP_LocalSuppID] DEFAULT ('') NOT NULL,
@@ -28,6 +28,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Shipping Accounts payable', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP';
 
@@ -41,7 +43,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'申請日�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'FactoryID';
+
 
 
 GO
@@ -122,4 +124,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 
