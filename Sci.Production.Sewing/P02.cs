@@ -466,11 +466,14 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')", CurrentMaintain["ID"]
                         }
                         else
                         {
+                            transactionScope.Dispose();
                             MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
+                            return;
                         }
                     }
                     catch (Exception ex)
                     {
+                        transactionScope.Dispose();
                         ShowErr("Commit transaction error.", ex);
                         return;
                     }
