@@ -642,12 +642,14 @@ where ID = {0}",CurrentMaintain["ID"].ToString(),Sci.Env.User.UserID);
                         }
                         else
                         {
+                            transactionScope.Dispose();
                             MyUtility.Msg.WarningBox("Click new version  failed, Pleaes re-try");
                             return;
                         }
                     }
                     catch (Exception ex)
                     {
+                        transactionScope.Dispose();
                         MyUtility.Msg.ErrorBox("Connection transaction error.\r\n" + ex.ToString());
                         return;
                     }
@@ -698,12 +700,14 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
                         }
                         else
                         {
+                            transactionScope.Dispose();
                             MyUtility.Msg.WarningBox("Click new version  failed, Pleaes re-try");
                             return;
                         }
                     }
                     catch (Exception ex)
                     {
+                        transactionScope.Dispose();
                         MyUtility.Msg.ErrorBox("Connection transaction error.\r\n" + ex.ToString());
                         return;
                     }
