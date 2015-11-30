@@ -15,10 +15,9 @@ namespace Sci.Production.Shipping
     {
         Ict.Win.UI.DataGridViewDateBoxColumn col_inspdate;
         Ict.Win.UI.DataGridViewDateBoxColumn col_pulloutdate;
-        DataTable gbData,plData;
+        DataTable plData;
         DataSet allData = new DataSet();
         IList<string> updateCmds = new List<string>();
-
 
         public P10(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -32,24 +31,31 @@ namespace Sci.Production.Shipping
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "1=0" : string.Format("p.ShipPlanID ='{0}'",e.Master["ID"].ToString());
+            string masterID = (e.Master == null) ? "1=0" : string.Format("p.ShipPlanID ='{0}'", MyUtility.Convert.GetString(e.Master["ID"]));
             string sqlCmd = string.Format(@"select p.ID,
 iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd where pd.ID = p.id) a for xml path('')),p.OrderID) as OrderID,
 iif(p.type = 'B',(select BuyerDelivery from Order_QtyShip where ID = p.OrderID and Seq = p.OrderShipmodeSeq),(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq)) as BuyerDelivery,
 p.Status,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ClogReceiveID != '') as ClogCTNQty,
-p.InspDate,p.InspStatus,p.PulloutDate,p.InvNo
+p.InspDate,p.InspStatus,p.PulloutDate,p.InvNo,p.MDivisionID
 from PackingList p
 where {0}", masterID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out plData);
-            
 
-            masterID = (e.Master == null) ? "1=0" : string.Format("g.ShipPlanID ='{0}'", e.Master["ID"].ToString());
-            this.DetailSelectCommand = string.Format(@"select g.ID,g.BrandID,g.ShipModeID,(g.Forwarder+' - '+(select ls.Abb from LocalSupp ls where ls.ID = g.Forwarder)) as Forwarder,g.CYCFS,g.SONo,g.CutOffDate,g.ForwarderWhseID,iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')) as Status,g.TotalCTNQty,g.TotalCBM,
+
+            masterID = (e.Master == null) ? "1=0" : string.Format("g.ShipPlanID ='{0}'", MyUtility.Convert.GetString(e.Master["ID"]));
+            this.DetailSelectCommand = string.Format(@"select g.ID,g.BrandID,g.ShipModeID,(g.Forwarder+' - '+(select ls.Abb from LocalSupp ls where ls.ID = g.Forwarder)) as Forwarder,g.CYCFS,g.SONo,g.CutOffDate,g.ForwarderWhse_DetailUKey, isnull(fd.WhseNo,'') as WhseNo,iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')) as Status,g.TotalCTNQty,g.TotalCBM,
 (select isnull(sum(pd.CTNQty),0) from PackingList p,PackingList_Detail pd where p.INVNo = g.ID and p.ID = pd.ID and pd.ReceiveDate is not null) as ClogCTNQty
 from GMTBooking g
+left join ForwarderWhse_Detail fd on g.ForwarderWhse_DetailUKey = fd.UKey
 where {0}", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
+        }
+
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+            button1.Enabled = !EditMode && MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "Confirmed" && PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P10. Ship Plan", "CanEdit");
         }
 
         protected override void OnDetailUIConvertToMaintain()
@@ -69,28 +75,29 @@ where {0}", masterID);
             base.OnDetailGridSetup();
 
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("ID", header: "GB#", width: Widths.AnsiChars(25),iseditingreadonly: true)
+                .Text("ID", header: "GB#", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("ShipModeID", header: "Ship Mode", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Forwarder", header: "Forwarder", width: Widths.AnsiChars(17), iseditingreadonly: true)
                 .Text("CYCFS", header: "Container Type", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("SONo", header: "S/O No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .DateTime("CutOffdate", header: "Cut-off Date/Time", iseditingreadonly: true)
-                .Numeric("ForwarderWhseID", header: "Container Terminals", iseditingreadonly: true)
+                .Numeric("WhseNo", header: "Container Terminals", iseditingreadonly: true)
                 .Text("Status", header: "GB Status", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Numeric("TotalCTNQty", header: "Total Cartons", iseditingreadonly: true)
                 .Numeric("TotalCBM", header: "Total CBM", decimal_places: 2, iseditingreadonly: true)
                 .Numeric("ClogCTNQty", header: "Total CTN Q'ty at C-Logs", iseditingreadonly: true);
             detailgrid.SelectionChanged += (s, e) =>
             {
+                grid1.ValidateControl();
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(detailgrid.GetSelectedRowIndex());
                 if (dr != null)
                 {
-                    string filter = string.Format("InvNo = '{0}'", dr["ID"].ToString());
+                    string filter = string.Format("InvNo = '{0}'", MyUtility.Convert.GetString(dr["ID"]));
                     plData.DefaultView.RowFilter = filter;
                 }
             };
-            
+
             grid1.DataSource = listControlBindingSource1;
             grid1.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid1)
@@ -114,9 +121,9 @@ where {0}", masterID);
                     {
                         if (!MyUtility.Check.Empty(e.FormattedValue))
                         {
-                            if ((!MyUtility.Check.Empty(dr["InspDate"]) && Convert.ToDateTime(e.FormattedValue) != Convert.ToDateTime(dr["InspDate"])) || MyUtility.Check.Empty(dr["InspDate"]))
+                            if (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["InspDate"]))
                             {
-                                if (Convert.ToDateTime(e.FormattedValue) > DateTime.Today.AddMonths(1) || Convert.ToDateTime(e.FormattedValue) < DateTime.Today.AddMonths(-1))
+                                if (MyUtility.Convert.GetDate(e.FormattedValue) > DateTime.Today.AddMonths(1) || MyUtility.Convert.GetDate(e.FormattedValue) < DateTime.Today.AddMonths(-1))
                                 {
                                     MyUtility.Msg.WarningBox("< Est. Inspection Date > is invalid!!");
                                     dr["InspDate"] = null;
@@ -130,47 +137,24 @@ where {0}", masterID);
                     //輸入的Pullout date或原本的Pullout date的Pullout Report如果已經Confirmed的話，就不可以被修改
                     if (grid1.Columns[e.ColumnIndex].DataPropertyName == col_pulloutdate.DataPropertyName)
                     {
-                        if (!(MyUtility.Check.Empty(e.FormattedValue) || MyUtility.Check.Empty(dr["PulloutDate"])))
+
+                        if (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["PulloutDate"]))
                         {
-                            if (e.FormattedValue.ToString() != dr["PulloutDate"].ToString())
+                            object newPulloutDate = MyUtility.Convert.GetDate(e.FormattedValue);
+                            if (!MyUtility.Check.Empty(dr["PulloutDate"]) && CheckPullout((DateTime)MyUtility.Convert.GetDate(dr["PulloutDate"]), MyUtility.Convert.GetString(dr["MDivisionID"])))
                             {
-                                if (CheckPullout(Convert.ToDateTime(dr["PulloutDate"]), dr["FactoryID"].ToString()))
-                                {
-                                    PulloutMsg(dr, Convert.ToDateTime(dr["PulloutDate"]));
-                                    e.Cancel = true;
-                                    dr.EndEdit();
-                                    return;
-                                }
-                                if (CheckPullout(Convert.ToDateTime(e.FormattedValue), dr["FactoryID"].ToString()))
-                                {
-                                    PulloutMsg(dr, Convert.ToDateTime(e.FormattedValue));
-                                    e.Cancel = true;
-                                    dr.EndEdit();
-                                    return;
-                                }
+                                PulloutMsg(dr, (DateTime)MyUtility.Convert.GetDate(dr["PulloutDate"]));
+                                e.Cancel = true;
+                                dr.EndEdit();
+                                return;
                             }
-                        }
-                        else
-                        {
-                            if (MyUtility.Check.Empty(dr["PulloutDate"]))
+
+                            if (!MyUtility.Check.Empty(e.FormattedValue) && CheckPullout((DateTime)MyUtility.Convert.GetDate(e.FormattedValue), MyUtility.Convert.GetString(dr["MDivisionID"])))
                             {
-                                if (CheckPullout(Convert.ToDateTime(e.FormattedValue), dr["FactoryID"].ToString()))
-                                {
-                                    PulloutMsg(dr, Convert.ToDateTime(e.FormattedValue));
-                                    e.Cancel = true;
-                                    dr.EndEdit();
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                if (CheckPullout(Convert.ToDateTime(dr["PulloutDate"]), dr["FactoryID"].ToString()))
-                                {
-                                    PulloutMsg(dr, Convert.ToDateTime(dr["PulloutDate"]));
-                                    e.Cancel = true;
-                                    dr.EndEdit();
-                                    return;
-                                }
+                                PulloutMsg(dr, (DateTime)MyUtility.Convert.GetDate(e.FormattedValue));
+                                e.Cancel = true;
+                                dr.EndEdit();
+                                return;
                             }
                         }
                     }
@@ -181,7 +165,6 @@ where {0}", masterID);
 
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
-            //listControlBindingSource1.DataSource = null;
             listControlBindingSource1.DataSource = plData;
             return base.OnRenewDataDetailPost(e);
         }
@@ -191,18 +174,32 @@ where {0}", masterID);
             base.ClickNewAfter();
             CurrentMaintain["CDate"] = DateTime.Today;
             CurrentMaintain["Status"] = "New";
-            //listControlBindingSource1.DataSource = null;
             listControlBindingSource1.DataSource = plData;
         }
 
         protected override bool ClickEditBefore()
         {
-            if (CurrentMaintain["Status"].ToString() != "New")
+            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Confirmed")
             {
-                MyUtility.Msg.WarningBox(string.Format("This record status is < {0} >, can't be edit!",CurrentMaintain["Status"].ToString()));
+                MyUtility.Msg.WarningBox(string.Format("This record status is < {0} >, can't be edit!", MyUtility.Convert.GetString(CurrentMaintain["Status"])));
                 return false;
             }
             return base.ClickEditBefore();
+        }
+
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "New")
+            {
+                button2.Enabled = false;
+            }
+        }
+
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            ((DataTable)listControlBindingSource1.DataSource).RejectChanges();
         }
 
         protected override bool ClickSaveBefore()
@@ -210,7 +207,7 @@ where {0}", masterID);
             //GetID
             if (IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("NegoRegion", Sci.Env.User.Factory, "Factory", "ID").Trim(), "ShipPlan", DateTime.Today, 4, "Id", null);
+                string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword+"SH", "ShipPlan", DateTime.Today, 3, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -231,14 +228,14 @@ where {0}", masterID);
             {
                 if (dr.RowState == DataRowState.Modified || dr.RowState == DataRowState.Added)
                 {
-                    updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '{0}' where ID = '{1}';", CurrentMaintain["ID"].ToString(), dr["ID"].ToString()));
+                    updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '{0}' where ID = '{1}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
                     continue;
                 }
 
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '' where ID = '{0}';", dr["ID"].ToString()));
-                    updateCmds.Add(DeletePLCmd("InvNo", dr["ID"].ToString()));
+                    updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '' where ID = '{0}';", MyUtility.Convert.GetString(dr["ID",DataRowVersion.Original])));
+                    updateCmds.Add(DeletePLCmd("InvNo", MyUtility.Convert.GetString(dr["ID",DataRowVersion.Original])));
                     continue;
                 }
             }
@@ -268,9 +265,9 @@ where {0}", masterID);
 
         protected override bool ClickDeleteBefore()
         {
-            if (CurrentMaintain["Status"].ToString() != "New")
+            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "New")
             {
-                MyUtility.Msg.WarningBox(string.Format("This record status is < {0} >, can't be delete!", CurrentMaintain["Status"].ToString()));
+                MyUtility.Msg.WarningBox(string.Format("This record status is < {0} >, can't be delete!", MyUtility.Convert.GetString(CurrentMaintain["Status"])));
                 return false;
             }
             return base.ClickDeleteBefore();
@@ -279,8 +276,8 @@ where {0}", masterID);
         protected override bool OnDeleteDetails()
         {
             updateCmds.Clear();
-            updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '' where ShipPlanID = '{0}';", CurrentMaintain["ID"].ToString()));
-            updateCmds.Add(DeletePLCmd("ShipPlanID", CurrentMaintain["ID"].ToString()));
+            updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '' where ShipPlanID = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+            updateCmds.Add(DeletePLCmd("ShipPlanID", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
             DualResult result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
             {
@@ -294,8 +291,8 @@ where {0}", masterID);
         private void UpdatePLCmd(DataRow pldatarow)
         {
             updateCmds.Add(string.Format("update PackingList set ShipPlanID = '{0}', InspDate = {1}, InspStatus = '{2}', PulloutDate = {3} where ID = '{4}';"
-                        , CurrentMaintain["ID"].ToString(), MyUtility.Check.Empty(pldatarow["InspDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["InspDate"]).ToString("d") + "'"
-                        , pldatarow["InspStatus"].ToString(), MyUtility.Check.Empty(pldatarow["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("d") + "'", pldatarow["ID"].ToString()));
+                        , MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Check.Empty(pldatarow["InspDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["InspDate"]).ToString("d") + "'"
+                        , MyUtility.Convert.GetString(pldatarow["InspStatus"]), MyUtility.Check.Empty(pldatarow["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("d") + "'", MyUtility.Convert.GetString(pldatarow["ID"])));
         }
 
         //組(Delete)Update PackingList的SQL
@@ -305,16 +302,16 @@ where {0}", masterID);
         }
 
         //檢查Pullout report是否已經Confirm
-        private bool CheckPullout(DateTime pulloutDate, string factory)
+        private bool CheckPullout(DateTime pulloutDate, string mdivisionid)
         {
-            return MyUtility.Check.Seek(string.Format("select ID from Pullout where PulloutDate = '{0}' and FactoryID = '{1}' and Status = 'Confirmed'", Convert.ToDateTime(pulloutDate).ToString("d"), factory.ToString()));
+            return MyUtility.Check.Seek(string.Format("select ID from Pullout where PulloutDate = '{0}' and MDivisionID = '{1}' and Status <> 'New'", Convert.ToDateTime(pulloutDate).ToString("d"), mdivisionid));
         }
 
         //Process Pullout Date Message
         private void PulloutMsg(DataRow dr, DateTime dt)
         {
             MyUtility.Msg.WarningBox("Pullout date:" + Convert.ToDateTime(dt).ToString("d") + " already exist pullout report and have been confirmed, can't modify!");
-            dr["PulloutDate"] = MyUtility.Check.Empty(dr["PulloutDate"], null, dr["PulloutDate"].ToString());
+            dr["PulloutDate"] = dr["PulloutDate"];
         }
 
         //Import Data
@@ -337,13 +334,20 @@ where {0}", masterID);
             //檢查此筆記錄的Pullout Data是否還有值，若是則出訊息告知且無法刪除
             if (this.DetailDatas.Count > 0)
             {
-                foreach (DataRow pldr in plData.Select(string.Format("InvNo = '{0}'", CurrentDetailData["ID"].ToString())))
+                grid1.ValidateControl();
+                foreach (DataRow pldr in plData.Select(string.Format("InvNo = '{0}'", MyUtility.Convert.GetString(CurrentDetailData["ID"]))))
                 {
                     if (!MyUtility.Check.Empty(pldr["PulloutDate"]))
                     {
-                        MyUtility.Msg.WarningBox(string.Format("Pullout date of Packing No.:{0} is not empty, can't delete!",pldr["ID"].ToString()));
+                        MyUtility.Msg.WarningBox(string.Format("Pullout date of Packing No.:{0} is not empty, can't delete!", MyUtility.Convert.GetString(pldr["ID"])));
                         return;
                     }
+                }
+
+                if (this.DetailDatas.Count-1 <= 0)
+                {
+                    string filter = "InvNo = ''";
+                    plData.DefaultView.RowFilter = filter;
                 }
             }
             base.OnDetailGridDelete();
@@ -353,7 +357,7 @@ where {0}", masterID);
         protected override void ClickCheck()
         {
             base.ClickCheck();
-            string updateCmd = string.Format("update ShipPlan set Status = 'Checked', CFMDate = '{0}', EditName = '{1}', EditDate = '{2}' where ID = '{3}'", DateTime.Today.ToString("d"), Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"].ToString());
+            string updateCmd = string.Format("update ShipPlan set Status = 'Checked', CFMDate = '{0}', EditName = '{1}', EditDate = GETDATE() where ID = '{2}'", DateTime.Today.ToString("d"), Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
@@ -370,7 +374,7 @@ where {0}", masterID);
         protected override void ClickUncheck()
         {
             base.ClickUncheck();
-            string updateCmd = string.Format("update ShipPlan set Status = 'New', CFMDate = null, EditName = '{0}', EditDate = '{1}' where ID = '{2}'", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"].ToString());
+            string updateCmd = string.Format("update ShipPlan set Status = 'New', CFMDate = null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
@@ -388,7 +392,7 @@ where {0}", masterID);
         {
             base.ClickConfirm();
             //Pullout Date有空值就不可以Confirm
-            string sqlCmd = string.Format("select ID,InvNo from PackingList where ShipPlanID = '{0}' and PulloutDate is null", CurrentMaintain["ID"].ToString());
+            string sqlCmd = string.Format("select ID,InvNo from PackingList where ShipPlanID = '{0}' and PulloutDate is null", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DataTable dt;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
             if (!result)
@@ -403,14 +407,14 @@ where {0}", masterID);
                 {
                     foreach (DataRow dr in dt.Rows)
                     {
-                        msg.Append(string.Format("GB#: {0}, Packing No:{1}\n\r", dr["InvNo"].ToString(), dr["ID"].ToString()));
+                        msg.Append(string.Format("GB#: {0}, Packing No:{1}\n\r", MyUtility.Convert.GetString(dr["InvNo"]), MyUtility.Convert.GetString(dr["ID"])));
                     }
                     MyUtility.Msg.WarningBox("Below data's pullout date is empty, can' confirm!!\r\n" + msg.ToString());
                     return;
                 }
             }
             //Inspection date不為空但是Inspection status為空就不可以Confirm
-            sqlCmd = string.Format("select ID,InvNo from PackingList where ShipPlanID = '{0}' and InspDate is not null and InspStatus = ''", CurrentMaintain["ID"].ToString());
+            sqlCmd = string.Format("select ID,InvNo from PackingList where ShipPlanID = '{0}' and InspDate is not null and InspStatus = ''", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out dt);
             if (!result)
             {
@@ -424,7 +428,7 @@ where {0}", masterID);
                 {
                     foreach (DataRow dr in dt.Rows)
                     {
-                        msg1.Append(string.Format("GB#: {0}, Packing No:{1}\n\r", dr["InvNo"].ToString(), dr["ID"].ToString()));
+                        msg1.Append(string.Format("GB#: {0}, Packing No:{1}\n\r", MyUtility.Convert.GetString(dr["InvNo"]), MyUtility.Convert.GetString(dr["ID"])));
                     }
                     MyUtility.Msg.WarningBox("Below data's est. inspection date not empty but inspection status is empty, can' confirm!!\r\n" + msg1.ToString());
                     return;
@@ -432,7 +436,7 @@ where {0}", masterID);
             }
 
             //Garment Booking還沒Confirm就不可以做Confirm
-            sqlCmd = string.Format("select ID from GMTBooking where ShipPlanID = '{0}' and Status = 'New'",CurrentMaintain["ID"].ToString());
+            sqlCmd = string.Format("select ID from GMTBooking where ShipPlanID = '{0}' and Status = 'New'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out dt);
             if (!result)
             {
@@ -446,13 +450,13 @@ where {0}", masterID);
                 {
                     foreach (DataRow dr in dt.Rows)
                     {
-                        msg2.Append(string.Format("GB#:{0}",dr["ID"].ToString()));
+                        msg2.Append(string.Format("GB#:{0}", MyUtility.Convert.GetString(dr["ID"])));
                     }
                     MyUtility.Msg.WarningBox("Garment Booking's status not yet confirm, can' confirm!!\r\n" + msg2.ToString());
                     return;
                 }
             }
-            string updateCmd = string.Format("update ShipPlan set Status = 'Confirmed', EditName = '{0}', EditDate = '{1}' where ID = '{2}'", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"].ToString());
+            string updateCmd = string.Format("update ShipPlan set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
@@ -469,7 +473,7 @@ where {0}", masterID);
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            string updateCmd = string.Format("update ShipPlan set Status = 'Checked', EditName = '{0}', EditDate = '{1}' where ID = '{2}'", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"].ToString());
+            string updateCmd = string.Format("update ShipPlan set Status = 'Checked', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)

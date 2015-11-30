@@ -45,6 +45,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -67,7 +68,7 @@
             this.masterpanel.Controls.Add(this.displayBox1);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(877, 88);
+            this.masterpanel.Size = new System.Drawing.Size(877, 87);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -80,15 +81,15 @@
             // 
             this.detailpanel.Controls.Add(this.panel4);
             this.detailpanel.Controls.Add(this.panel1);
-            this.detailpanel.Location = new System.Drawing.Point(0, 88);
-            this.detailpanel.Size = new System.Drawing.Size(877, 398);
+            this.detailpanel.Location = new System.Drawing.Point(0, 87);
+            this.detailpanel.Size = new System.Drawing.Size(877, 399);
             this.detailpanel.Controls.SetChildIndex(this.panel1, 0);
             this.detailpanel.Controls.SetChildIndex(this.panel4, 0);
             this.detailpanel.Controls.SetChildIndex(this.detailgridcont, 0);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(655, 53);
+            this.gridicon.Location = new System.Drawing.Point(655, 52);
             // 
             // refresh
             // 
@@ -96,15 +97,19 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(877, 221);
+            this.detailgridcont.Size = new System.Drawing.Size(877, 222);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(871, 478);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(871, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -202,7 +207,7 @@
             this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
@@ -211,14 +216,14 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(877, 135);
+            this.grid1.Size = new System.Drawing.Size(877, 145);
             this.grid1.TabIndex = 2;
             this.grid1.TabStop = false;
             // 
             // label3
             // 
             this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(4, 8);
+            this.label3.Location = new System.Drawing.Point(4, 5);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(42, 23);
             this.label3.TabIndex = 3;
@@ -229,7 +234,7 @@
             this.panel1.Controls.Add(this.panel3);
             this.panel1.Controls.Add(this.panel2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 221);
+            this.panel1.Location = new System.Drawing.Point(0, 222);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(877, 177);
             this.panel1.TabIndex = 4;
@@ -238,9 +243,9 @@
             // 
             this.panel3.Controls.Add(this.grid1);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(0, 42);
+            this.panel3.Location = new System.Drawing.Point(0, 32);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(877, 135);
+            this.panel3.Size = new System.Drawing.Size(877, 145);
             this.panel3.TabIndex = 5;
             // 
             // panel2
@@ -249,7 +254,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(877, 42);
+            this.panel2.Size = new System.Drawing.Size(877, 32);
             this.panel2.TabIndex = 4;
             // 
             // panel4
@@ -257,7 +262,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel4.Location = new System.Drawing.Point(0, 0);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(877, 221);
+            this.panel4.Size = new System.Drawing.Size(877, 222);
             this.panel4.TabIndex = 5;
             // 
             // P10
@@ -288,6 +293,7 @@
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
