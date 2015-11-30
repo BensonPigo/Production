@@ -22,7 +22,8 @@ namespace Sci.Production.Tools
             act.Enabled = false;
             pwd.Text = Sci.Env.User.UserPassword;
             pwd.Enabled = false;
-
+            DataTable dtFactory;
+            DualResult result;
             ok.Click += (s, e) =>
                 {
                     if (MyUtility.Check.Empty((string)this.comboBox1.SelectedValue))
@@ -32,6 +33,20 @@ namespace Sci.Production.Tools
                     else
                     {
                         UserInfo user = (UserInfo) Sci.Env.User;
+                        if (!(result = DBProxy.Current.Select(null, string.Format("SELECT MDivisionid FROM Factory WHERE ID = '{0}'", (string)this.comboBox1.SelectedValue), out dtFactory)))
+                        {
+                            ShowErr(result.ToString());
+                            return;
+                        }
+                        if (dtFactory.Rows.Count > 0 && !MyUtility.Check.Empty(dtFactory.Rows[0]["MDivisionid"].ToString()))
+                        {
+                            user.Keyword = dtFactory.Rows[0]["MDivisionid"].ToString();
+                        }
+                        else
+                        {
+                            ShowErr("MDivisionid is not exist!");
+                            return;
+                        }
                         user.Factory = (string)this.comboBox1.SelectedValue;
                         Env.User = user;
                         Close();
