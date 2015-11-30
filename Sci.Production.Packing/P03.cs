@@ -1230,11 +1230,14 @@ where ID = @INVNo";
                             }
                             else
                             {
+                                transactionScope.Dispose();
                                 MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
+                                return;
                             }
                         }
                         catch (Exception ex)
                         {
+                            transactionScope.Dispose();
                             ShowErr("Commit transaction error.", ex);
                             return;
                         }
