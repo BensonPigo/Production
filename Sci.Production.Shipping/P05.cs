@@ -321,7 +321,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))
 
         protected override bool OnDeleteDetails()
         {
-            string updateCmd = string.Format("update PackingList set GMTBookingLock = '', INVNo = '' where INVNo = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update PackingList set GMTBookingLock = '', INVNo = '', ShipPlanID = '' where INVNo = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (result)
             {
@@ -541,11 +541,11 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                 }
                 if (dr.RowState == DataRowState.Added)
                 {
-                    updateCmds.Add(string.Format("update PackingList set GMTBookingLock = '{0}', INVNo = '{1}' where ID = '{2}';", MyUtility.Convert.GetString(dr["GMTBookingLock"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
+                    updateCmds.Add(string.Format("update PackingList set GMTBookingLock = '{0}', INVNo = '{1}', ShipPlanID = '{2}' where ID = '{3}';", MyUtility.Convert.GetString(dr["GMTBookingLock"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["ShipPlanID"]), MyUtility.Convert.GetString(dr["ID"])));
                 }
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    updateCmds.Add(string.Format("update PackingList set GMTBookingLock = '', INVNo = '' where ID = '{0}';", MyUtility.Convert.GetString(dr["ID"])));
+                    updateCmds.Add(string.Format("update PackingList set GMTBookingLock = '', INVNo = '', ShipPlanID = '' where ID = '{0}';", MyUtility.Convert.GetString(dr["ID", DataRowVersion.Original])));
                 }
             }
             if (updateCmds.Count != 0)
@@ -558,26 +558,6 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                 }
             }
             return Result.True;
-        }
-
-        protected override void ClickSaveAfter()
-        {
-            base.ClickSaveAfter();
-            txtbrand1.Enabled = true;
-            txtcountry1.TextBox1.Enabled = true;
-            txtfactory1.Enabled = true;
-            txtuser1.TextBox1.Enabled = true;
-            txtsubcon1.TextBox1.Enabled = true;
-        }
-
-        protected override void ClickUndo()
-        {
-            base.ClickUndo();
-            txtbrand1.Enabled = true;
-            txtcountry1.TextBox1.Enabled = true;
-            txtfactory1.Enabled = true;
-            txtuser1.TextBox1.Enabled = true;
-            txtsubcon1.TextBox1.Enabled = true;
         }
 
         //Inv. Serial:移除空白值
