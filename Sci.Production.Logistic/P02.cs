@@ -302,34 +302,44 @@ where crd.ID = '{0}'", masterID);
             {
                 using (TransactionScope transactionScope = new TransactionScope())
                 {
-                    string sqlCmd1 = string.Format("update ClogReceive set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
-                    string sqlCmd2 = string.Format("update PackingList_Detail set ClogReceiveId = '', ReceiveDate = null, ClogLocationId = '' where ClogReceiveId = '{0}'", CurrentMaintain["ID"].ToString());
-                    DualResult result1 = DBProxy.Current.Execute(null, sqlCmd1);
-                    DualResult result2 = DBProxy.Current.Execute(null, sqlCmd2);
-                    //Update Orders的資料
-                    if (!callGetCartonList())
+                    try
                     {
-                        return;
-                    }
-
-                    if (result1 && result2)
-                    {
-                        transactionScope.Complete();
-                    }
-                    else
-                    {
-                        string failMsg = "";
-                        if (!result1)
+                        string sqlCmd1 = string.Format("update ClogReceive set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
+                        string sqlCmd2 = string.Format("update PackingList_Detail set ClogReceiveId = '', ReceiveDate = null, ClogLocationId = '' where ClogReceiveId = '{0}'", CurrentMaintain["ID"].ToString());
+                        DualResult result1 = DBProxy.Current.Execute(null, sqlCmd1);
+                        DualResult result2 = DBProxy.Current.Execute(null, sqlCmd2);
+                        //Update Orders的資料
+                        if (!callGetCartonList())
                         {
-                            failMsg = result1.ToString() + "\r\n";
+                            return;
                         }
 
-                        if (!result2)
+                        if (result1 && result2)
                         {
-                            failMsg = failMsg + result2.ToString();
+                            transactionScope.Complete();
                         }
+                        else
+                        {
+                            transactionScope.Dispose();
+                            string failMsg = "";
+                            if (!result1)
+                            {
+                                failMsg = result1.ToString() + "\r\n";
+                            }
 
-                        MyUtility.Msg.WarningBox("Unconfirm fail !\r\n" + failMsg);
+                            if (!result2)
+                            {
+                                failMsg = failMsg + result2.ToString();
+                            }
+
+                            MyUtility.Msg.WarningBox("Unconfirm fail !\r\n" + failMsg);
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        transactionScope.Dispose();
+                        MyUtility.Msg.ErrorBox("Connection transaction error.\r\n" + ex.ToString());
                         return;
                     }
                 }

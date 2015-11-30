@@ -464,12 +464,14 @@ namespace Sci.Production.Logistic
                             }
                             else
                             {
+                                transactionScope.Dispose();
                                 MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
                                 return;
                             }
                         }
                         catch (Exception ex)
                         {
+                            transactionScope.Dispose();
                             ShowErr("Commit transaction error.", ex);
                             return;
                         }

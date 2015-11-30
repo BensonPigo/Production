@@ -195,6 +195,7 @@ where crd.ID = '{0}'", masterID);
                     DualResult result1 = DBProxy.Current.Select(null, sqlCmd, out selectData);
                     if (!result1)
                     {
+                        transactionScope.Dispose();
                         MyUtility.Msg.WarningBox("Select update orders data fail!\r\n" + result1.ToString());
                         return;
                     }
@@ -202,6 +203,7 @@ where crd.ID = '{0}'", masterID);
                     DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
                     if (!prgResult)
                     {
+                        transactionScope.Dispose();
                         MyUtility.Msg.WarningBox("Update orders data fail!\r\n" + prgResult.ToString());
                         return;
                     }
@@ -214,12 +216,14 @@ where crd.ID = '{0}'", masterID);
                     }
                     else
                     {
+                        transactionScope.Dispose();
                         MyUtility.Msg.WarningBox("Confirm failed !\r\n" + result.ToString());
                         return;
                     }
                 }
                 catch (Exception ex)
                 {
+                    transactionScope.Dispose();
                     ShowErr("Confirm transaction error.", ex);
                     return;
                 }
