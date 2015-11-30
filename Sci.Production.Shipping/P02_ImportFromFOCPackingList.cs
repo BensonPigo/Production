@@ -192,12 +192,14 @@ from Express_Detail where ID = '{0}' and Seq2 = ''),'{2}','{3}','{4}',{5},{6},'{
                     }
                     else
                     {
+                        transactionScope.Dispose();
                         MyUtility.Msg.WarningBox("Update failed, Pleaes re-try");
                         return;
                     }
                 }
                 catch (Exception ex)
                 {
+                    transactionScope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }

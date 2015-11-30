@@ -247,12 +247,14 @@ where a.TtlQty > a.POQty", out checkData);
                     }
                     else
                     {
+                        transactionScope.Dispose();
                         MyUtility.Msg.WarningBox("Update failed, Pleaes re-try");
                         return;
                     }
                 }
                 catch (Exception ex)
                 {
+                    transactionScope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }
