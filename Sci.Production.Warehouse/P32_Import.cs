@@ -49,16 +49,19 @@ namespace Sci.Production.Warehouse
                 // 建立可以符合回傳的Cursor
 
                 strSQLCmd.Append(string.Format(@"select 0 as selected ,'' id
+,c.ukey as FromFtyinventoryUkey
+,bd.Tomdivisionid as FromMdivisionId
 ,bd.ToPoid as FromPoId
 ,bd.ToSeq1 as FromSeq1
 ,bd.ToSeq2 as FromSeq2
 ,left(bd.ToSeq1+' ',3)+bd.ToSeq2 as fromseq
 ,c.dyelot as FromDyelot
 ,c.roll as FromRoll
-,c.StockType as FromStock
+,c.StockType as FromStocktype
 ,c.InQty - c.OutQty + c.AdjustQty balance
 ,0.00 as qty
-,bd.FromStock  as tostock
+,bd.FromMdivisionid as toMdivisionid
+,bd.FromStocktype  as tostocktype
 ,bd.FromPoId as topoid
 ,bd.FromSeq1 as toseq1
 ,bd.FromSeq2 as toseq2
@@ -69,8 +72,8 @@ namespace Sci.Production.Warehouse
 ,dbo.getMtlDesc(bd.topoid,bd.toseq1,bd.toseq2,2,0) as [description]
 ,p.StockUnit
 ,p.FabricType
-from dbo.BorrowBack_Detail as bd
-inner join ftyinventory c on bd.topoid = c.poid and bd.toseq1 = c.seq1 and bd.toseq2 = c.seq2
+from dbo.BorrowBack_Detail as bd inner join ftyinventory c 
+    on bd.topoid = c.poid and bd.toseq1 = c.seq1 and bd.toseq2 = c.seq2 and bd.tomdivisionid = c.mdivisionid
 left join PO_Supp_Detail p on p.ID= bd.ToPoid and p.SEQ1 = bd.ToSeq1 and p.SEQ2 = bd.ToSeq2
 where bd.id='{0}' and bd.FromPoId = '{1}' and bd.FromSeq1 = '{2}' and bd.FromSeq2 = '{3}' 
 and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and c.stocktype !='O'"
@@ -133,21 +136,21 @@ and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and c.stocktype !='O'"
             sqlcmd = string.Format(@";with cte1
 as
 (
-	select bd.FromPoId,bd.FromSeq1,bd.FromSeq2,bd.FromStock,sum(qty)qty from borrowback_detail bd where id='{0}'
-	group by bd.FromPoId,bd.FromSeq1,bd.FromSeq2,bd.FromStock
+	select bd.FromPoId,bd.FromSeq1,bd.FromSeq2,bd.FromStocktype,sum(qty)qty from borrowback_detail bd where id='{0}'
+	group by bd.FromPoId,bd.FromSeq1,bd.FromSeq2,bd.FromStocktype
 ),
 cte2
 as
 (
-	select bd.ToPoid,bd.ToSeq1,bd.ToSeq2,bd.ToStock,sum(qty)qty 
+	select bd.ToPoid,bd.ToSeq1,bd.ToSeq2,bd.ToStocktype,sum(qty)qty 
 	from borrowback b inner join borrowback_detail bd on b.Id= bd.ID 
 	where b.BorrowId='{0}' and b.Status = 'Confirmed'
-	group by bd.ToPoid,bd.ToSeq1,bd.ToSeq2,bd.ToStock
+	group by bd.ToPoid,bd.ToSeq1,bd.ToSeq2,bd.ToStocktype
 )
-select cte1.FromPoId,cte1.FromSeq1,cte1.FromSeq2,left(cte1.FromSeq1+' ',3)+cte1.FromSeq2 as fromseq,cte1.FromStock,cte1.qty
+select cte1.FromPoId,cte1.FromSeq1,cte1.FromSeq2,left(cte1.FromSeq1+' ',3)+cte1.FromSeq2 as fromseq,cte1.FromStocktype,cte1.qty
 ,isnull(cte2.qty,0.00) as returnqty, cte1.qty - isnull(cte2.qty,0.00) as balance 
 from cte1 
-left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 and cte2.ToSeq2 =  cte1.FromSeq2 and cte2.ToStock = cte1.FromStock;
+left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 and cte2.ToSeq2 =  cte1.FromSeq2 and cte2.ToStocktype = cte1.FromStocktype;
 ", dr_master["BorrowId"]);
             DataTable datas;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out datas);
@@ -192,7 +195,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
                 .Text("toroll", header: "To" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6)) //9
                 .Numeric("balance", header: "Stock Qty", iseditable: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //10
                 .Numeric("qty", header: "Issue" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6))  //11
-                .ComboBox("Tostock", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)    //12
+                .ComboBox("Tostocktype", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)    //12
                 ;
 
             this.grid1.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
@@ -262,7 +265,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             dr2 = dtBorrow.Select("qty <> 0 and Selected = 1");
             foreach (DataRow row in dr2)
             {
-                if (row["fabrictype"].ToString().ToUpper() == "F" && (MyUtility.Check.Empty(row["roll"]) || MyUtility.Check.Empty(row["dyelot"])))
+                if (row["fabrictype"].ToString().ToUpper() == "F" && (MyUtility.Check.Empty(row["toroll"]) || MyUtility.Check.Empty(row["todyelot"])))
                 {
                     warningmsg.Append(string.Format(@"To SP#: {0} To Seq#: {1}-{2} To Roll#:{3} To Dyelot:{4} Roll and Dyelot can't be empty"
                         , row["topoid"], row["toseq1"], row["toseq2"], row["toroll"], row["todyelot"]) + Environment.NewLine);
@@ -290,9 +293,10 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             foreach (DataRow tmp in dr2)
             {
                 DataRow[] findrow = dt_detail.Select(
-                    string.Format("frompoid = '{0}' and fromseq1 = '{1}' and fromseq2 = '{2}' and fromroll ='{3}'and fromdyelot='{4}' and fromstock = '{5}' and topoid = '{6}' and toseq1 = '{7}' and toseq2 = '{8}' and toroll ='{9}'and todyelot='{10}' and tostock='{11}' "
-                    , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["fromdyelot"], tmp["fromstock"]
-                    , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["todyelot"], tmp["tostock"]));
+                    string.Format(@"fromFtyinventoryukey = {0}
+                and ToMdivisionId ='{1}' and topoid = '{2}' and toseq1 = '{3}' and toseq2 = '{4}' and toroll ='{5}'and todyelot='{6}' and tostocktype='{7}' "
+                    , tmp["fromFtyinventoryukey"]
+                    , tmp["tomdivisionid"], tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["todyelot"], tmp["tostocktype"]));
 
                 if (findrow.Length > 0)
                 {
@@ -330,8 +334,8 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             {
                 if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail where id ='{0}')"
-                        , sp), null))
+                    if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.mdivisionpodetail where poid ='{0}' and mdivisionid='{1}')"
+                        , sp,Sci.Env.User.Keyword), null))
                     {
                         MyUtility.Msg.WarningBox("SP# is not found!!");
                         e.Cancel = true;

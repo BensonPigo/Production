@@ -30,7 +30,7 @@ namespace Sci.Production.Warehouse
             viewer.Dock = DockStyle.Fill;
             Controls.Add(viewer);
 
-            this.DefaultFilter = string.Format("Type='B' and FactoryID = '{0}'", Sci.Env.User.Factory);
+            this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
             gridicon.Append.Enabled = false;
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
@@ -63,7 +63,7 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Type"] = "B";
             CurrentMaintain["IssueDate"] = DateTime.Now;
@@ -172,7 +172,7 @@ namespace Sci.Production.Warehouse
                         , row["frompoid"], row["fromseq1"], row["fromseq2"], row["fromroll"], row["fromdyelot"]) + Environment.NewLine);
                 }
 
-                if (row["fabrictype"].ToString().ToUpper() == "F" && (MyUtility.Check.Empty(row["roll"]) || MyUtility.Check.Empty(row["dyelot"])))
+                if (row["fabrictype"].ToString().ToUpper() == "F" && (MyUtility.Check.Empty(row["Toroll"]) || MyUtility.Check.Empty(row["Todyelot"])))
                 {
                     warningmsg.Append(string.Format(@"To SP#: {0} To Seq#: {1}-{2} To Roll#:{3} To Dyelot:{4} Roll and Dyelot can't be empty"
                         , row["topoid"], row["toseq1"], row["toseq2"], row["toroll"], row["todyelot"]) + Environment.NewLine);
@@ -250,7 +250,7 @@ namespace Sci.Production.Warehouse
             .Text("fromroll", header: "From" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
             .Text("fromdyelot", header: "From" + Environment.NewLine + "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
-            .ComboBox("fromstock", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)    //5
+            .ComboBox("fromstocktype", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)    //5
             .Text("Location", header: "From" + Environment.NewLine + "Location", iseditingreadonly: true)    //6
             .Text("topoid", header: "To" + Environment.NewLine + "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //7
             .Text("toseq", header: "To" + Environment.NewLine + "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //8
@@ -258,7 +258,7 @@ namespace Sci.Production.Warehouse
             .Text("todyelot", header: "To" + Environment.NewLine + "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //10
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //11
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))    //12
-            .ComboBox("tostock", header: "To" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype2)    //13
+            .ComboBox("tostocktype", header: "To" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype2)    //13
             ;     //
             #endregion 欄位設定
             this.detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
@@ -285,15 +285,19 @@ namespace Sci.Production.Warehouse
             DualResult result, result2;
             DataTable datacheck;
 
+            string backdate = MyUtility.GetValue.Lookup(string.Format(@"select [backdate] from dbo.borrowback where id='{0}' and type='A' and mdivisionid='{1}'"
+                , CurrentMaintain["borrowid"], Sci.Env.User.Keyword));
+            if (!MyUtility.Check.Empty(backdate))
+            {
+                MyUtility.Msg.WarningBox(string.Format("This borrow id ({0}) already returned.", CurrentMaintain["borrowid"]), "Can't Confirmed");
+                return;
+            }
+
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.BorrowBack_Detail d inner join FtyInventory f
-on d.fromPoId = f.PoId
-and d.fromSeq1 = f.Seq1
-and d.fromSeq2 = f.seq2
-and d.fromStock = f.StockType
-and d.fromRoll = f.Roll
+on d.fromftyinventoryukey = f.ukey
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -320,11 +324,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.BorrowBack_Detail d left join FtyInventory f
-on d.fromPoId = f.PoId
-and d.fromSeq1 = f.Seq1
-and d.fromSeq2 = f.seq2
-and d.fromStock = f.StockType
-and d.fromRoll = f.Roll
+on d.fromftyinventoryukey = f.ukey
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -352,10 +352,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             sqlcmd = string.Format(@"Select d.ToPoid,d.ToSeq1,d.toseq2,d.ToRoll,d.ToDyelot,d.Qty
 ,f.InQty
 from dbo.BorrowBack_Detail d inner join FtyInventory f
-on d.ToPoid = f.PoId
+on d.ToMdivisionid = f.mdivisionid
+and d.ToPoid = f.PoId
 and d.ToSeq1 = f.Seq1
 and d.toseq2 = f.seq2
-and d.ToStock = f.StockType
+and d.ToStocktype = f.StockType
 and d.ToRoll = f.Roll
 and d.ToDyelot != f.dyelot
 where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -386,72 +387,77 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
                                 where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
             #endregion 更新表頭狀態資料
+            #region -- 更新mdivisionPoDetail 還出數 --
+            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                       group b by new
+                       {
+                           mdivisionid = b.Field<string>("frommdivisionid"),
+                           poid = b.Field<string>("frompoid"),
+                           seq1 = b.Field<string>("fromseq1"),
+                           seq2 = b.Field<string>("fromseq2"),
+                           stocktype = b.Field<string>("fromstocktype")
+                       } into m
+                       select new
+                       {
+                           mdivisionid = m.First().Field<string>("frommdivisionid"),
+                           poid = m.First().Field<string>("frompoid"),
+                           seq1 = m.First().Field<string>("fromseq1"),
+                           seq2 = m.First().Field<string>("fromseq2"),
+                           stocktype = m.First().Field<string>("fromstocktype"),
+                           qty = m.Sum(w => w.Field<decimal>("qty"))
+                       }).ToList();
 
-            #region -- 更新庫存數量 Po_artwork & ftyinventory --
+            foreach (var item in bs1)
+            {
+                sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid));
+                if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid));
+            }
+            #endregion
+            #region -- 更新mdivisionPoDetail 還回數 --
+            bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                   group b by new
+                   {
+                       mdivisionid = b.Field<string>("tomdivisionid"),
+                       poid = b.Field<string>("topoid"),
+                       seq1 = b.Field<string>("toseq1"),
+                       seq2 = b.Field<string>("toseq2"),
+                       stocktype = b.Field<string>("tostocktype")
+                   } into m
+                   select new
+                   {
+                       mdivisionid = m.First().Field<string>("tomdivisionid"),
+                       poid = m.First().Field<string>("topoid"),
+                       seq1 = m.First().Field<string>("toseq1"),
+                       seq2 = m.First().Field<string>("toseq2"),
+                       stocktype = m.First().Field<string>("tostocktype"),
+                       qty = m.Sum(w => w.Field<decimal>("qty"))
+                   }).ToList();
+
+            foreach (var item in bs1)
+            {
+                sqlupd2.Append(Prgs.UpdateMPoDetail(2, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid));
+            }
+
+            #endregion 
+
+            #region -- 更新庫存數量  ftyinventory --
 
             sqlupd2.Append("declare @iden as bigint;");
             sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
             foreach (DataRow item in DetailDatas)
             {
                 // 借出扣數
-                sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["frompoid"].ToString(), item["fromseq1"].ToString(), item["fromseq2"].ToString()
-                    , (decimal)item["qty"], item["fromroll"].ToString(), item["fromdyelot"].ToString(), item["fromstock"].ToString(), true, item["location"].ToString()));
+                sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["frommdivisionid"].ToString(), item["frompoid"].ToString(), item["fromseq1"].ToString(), item["fromseq2"].ToString()
+                    , (decimal)item["qty"], item["fromroll"].ToString(), item["fromdyelot"].ToString(), item["fromstocktype"].ToString(), true, item["location"].ToString()));
                 // 借出加量
-                sqlupd2.Append(Prgs.UpdateFtyInventory(2, item["topoid"].ToString(), item["toseq1"].ToString(), item["toseq2"].ToString()
-                    , (decimal)item["qty"], item["toroll"].ToString(), item["todyelot"].ToString(), item["tostock"].ToString(), true, item["location"].ToString()));
+                sqlupd2.Append(Prgs.UpdateFtyInventory(2, item["tomdivisionid"].ToString(), item["topoid"].ToString(), item["toseq1"].ToString(), item["toseq2"].ToString()
+                    , (decimal)item["qty"], item["toroll"].ToString(), item["todyelot"].ToString(), item["tostocktype"].ToString(), true));
             }
             sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
 
-            #region -- 更新po_supp_detail 借出數 -- 
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                       group b by new
-                       {
-                           poid = b.Field<string>("frompoid"),
-                           seq1 = b.Field<string>("fromseq1"),
-                           seq2 = b.Field<string>("fromseq2"),
-                           stocktype = b.Field<string>("fromstock")
-                       } into m
-                       select new
-                       {
-                           poid = m.First().Field<string>("frompoid"),
-                           seq1 = m.First().Field<string>("fromseq1"),
-                           seq2 = m.First().Field<string>("fromseq2"),
-                           stocktype = m.First().Field<string>("fromstock"),
-                           qty = m.Sum(w => w.Field<decimal>("qty"))
-                       }).ToList();
+            
 
-            foreach (var item in bs1)
-            {
-                sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(4, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype));
-                if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(8, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype));
-            }
-            #endregion
-            #region -- 更新po_supp_detail 借入數 --
-            bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                   group b by new
-                   {
-                       poid = b.Field<string>("topoid"),
-                       seq1 = b.Field<string>("toseq1"),
-                       seq2 = b.Field<string>("toseq2"),
-                       stocktype = b.Field<string>("tostock")
-                   } into m
-                   select new
-                   {
-                       poid = m.First().Field<string>("topoid"),
-                       seq1 = m.First().Field<string>("toseq1"),
-                       seq2 = m.First().Field<string>("toseq2"),
-                       stocktype = m.First().Field<string>("tostock"),
-                       qty = m.Sum(w => w.Field<decimal>("qty"))
-                   }).ToList();
-
-            foreach (var item in bs1)
-            {
-                sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(2, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype));
-            }
-
-            #endregion 
-
-            #endregion 更新庫存數量 Po_artwork & ftyinventory
+            #endregion 更新庫存數量  ftyinventory
 
             #region -- 更新全數歸還日期 --
             sqlupd2.Append(string.Format(@";declare @reccount as int;
@@ -536,10 +542,11 @@ end", CurrentMaintain["id"].ToString(), CurrentMaintain["borrowid"], DateTime.Pa
             sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.BorrowBack_Detail d inner join FtyInventory f
-on d.toPoId = f.PoId
+on d.toMdivisionid = f.Mdivisionid
+and d.toPoId = f.PoId
 and d.toSeq1 = f.Seq1
 and d.toSeq2 = f.seq2
-and d.toStock = f.StockType
+and d.toStocktype = f.StockType
 and d.toRoll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -567,10 +574,11 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.BorrowBack_Detail d left join FtyInventory f
-on d.toPoId = f.PoId
+on d.toMdivisionid = f.Mdivisionid
+and d.toPoId = f.PoId
 and d.toSeq1 = f.Seq1
 and d.toSeq2 = f.seq2
-and d.toStock = f.StockType
+and d.toStocktype = f.StockType
 and d.toRoll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -601,68 +609,74 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             #endregion 更新表頭狀態資料
 
-            #region -- 更新庫存數量 Po_artwork & ftyinventory --
+            #region -- 更新MdivisionPoDetail 借出數 --
+            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                       group b by new
+                       {
+                           mdivisionid = b.Field<string>("frommdivisionid"),
+                           poid = b.Field<string>("frompoid"),
+                           seq1 = b.Field<string>("fromseq1"),
+                           seq2 = b.Field<string>("fromseq2"),
+                           stocktype = b.Field<string>("fromstocktype")
+                       } into m
+                       select new
+                       {
+                           mdivisionid = m.First().Field<string>("frommdivisionid"),
+                           poid = m.First().Field<string>("frompoid"),
+                           seq1 = m.First().Field<string>("fromseq1"),
+                           seq2 = m.First().Field<string>("fromseq2"),
+                           stocktype = m.First().Field<string>("fromstocktype"),
+                           qty = m.Sum(w => w.Field<decimal>("qty"))
+                       }).ToList();
+
+            foreach (var item in bs1)
+            {
+                sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype, item.mdivisionid));
+                if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype, item.mdivisionid));
+            }
+            #endregion
+            #region -- 更新MdivisionPoDetail 借入數 --
+            bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                   group b by new
+                   {
+                       mdivisionid = b.Field<string>("tomdivisionid"),
+                       poid = b.Field<string>("topoid"),
+                       seq1 = b.Field<string>("toseq1"),
+                       seq2 = b.Field<string>("toseq2"),
+                       stocktype = b.Field<string>("tostocktype")
+                   } into m
+                   select new
+                   {
+                       mdivisionid = m.First().Field<string>("tomdivisionid"),
+                       poid = m.First().Field<string>("topoid"),
+                       seq1 = m.First().Field<string>("toseq1"),
+                       seq2 = m.First().Field<string>("toseq2"),
+                       stocktype = m.First().Field<string>("tostocktype"),
+                       qty = m.Sum(w => w.Field<decimal>("qty"))
+                   }).ToList();
+
+            foreach (var item in bs1)
+            {
+                sqlupd2.Append(Prgs.UpdateMPoDetail(2, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype, item.mdivisionid));
+            }
+            #endregion
+
+            #region -- 更新庫存數量  ftyinventory --
 
             sqlupd2.Append("declare @iden as bigint;");
             sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
             foreach (DataRow item in DetailDatas)
             {
                 // 借出扣數
-                sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["frompoid"].ToString(), item["fromseq1"].ToString(), item["fromseq2"].ToString(), (decimal)item["qty"]
-                    , item["fromroll"].ToString(), item["fromdyelot"].ToString(), item["fromstock"].ToString(), false, item["location"].ToString()));
+                sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["frommdivisionid"].ToString(), item["frompoid"].ToString(), item["fromseq1"].ToString(), item["fromseq2"].ToString(), (decimal)item["qty"]
+                    , item["fromroll"].ToString(), item["fromdyelot"].ToString(), item["fromstocktype"].ToString(), false, item["location"].ToString()));
                 // 借出加量
-                sqlupd2.Append(Prgs.UpdateFtyInventory(2, item["topoid"].ToString(), item["toseq1"].ToString(), item["toseq2"].ToString(), (decimal)item["qty"]
-                    , item["toroll"].ToString(), item["todyelot"].ToString(), item["tostock"].ToString(), false, item["location"].ToString()));
+                sqlupd2.Append(Prgs.UpdateFtyInventory(2, item["tomdivisionid"].ToString(), item["topoid"].ToString(), item["toseq1"].ToString(), item["toseq2"].ToString(), (decimal)item["qty"]
+                    , item["toroll"].ToString(), item["todyelot"].ToString(), item["tostocktype"].ToString(), false, item["location"].ToString()));
             }
             sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
-            #region -- 更新po_supp_detail 借出數 --
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                       group b by new
-                       {
-                           poid = b.Field<string>("frompoid"),
-                           seq1 = b.Field<string>("fromseq1"),
-                           seq2 = b.Field<string>("fromseq2"),
-                           stocktype = b.Field<string>("fromstock")
-                       } into m
-                       select new
-                       {
-                           poid = m.First().Field<string>("frompoid"),
-                           seq1 = m.First().Field<string>("fromseq1"),
-                           seq2 = m.First().Field<string>("fromseq2"),
-                           stocktype = m.First().Field<string>("fromstock"),
-                           qty = m.Sum(w => w.Field<decimal>("qty"))
-                       }).ToList();
-
-            foreach (var item in bs1)
-            {
-                sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(4, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype));
-                if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(8, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype));
-            }
-            #endregion
-            #region -- 更新po_supp_detail 借入數 --
-            bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                   group b by new
-                   {
-                       poid = b.Field<string>("topoid"),
-                       seq1 = b.Field<string>("toseq1"),
-                       seq2 = b.Field<string>("toseq2"),
-                       stocktype = b.Field<string>("tostock")
-                   } into m
-                   select new
-                   {
-                       poid = m.First().Field<string>("topoid"),
-                       seq1 = m.First().Field<string>("toseq1"),
-                       seq2 = m.First().Field<string>("toseq2"),
-                       stocktype = m.First().Field<string>("tostock"),
-                       qty = m.Sum(w => w.Field<decimal>("qty"))
-                   }).ToList();
-
-            foreach (var item in bs1)
-            {
-                sqlupd2.Append(Prgs.UpdatePO_Supp_Detail(2, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype));
-            }
-            #endregion
-            #endregion 更新庫存數量 Po_artwork & ftyinventory
+            
+            #endregion 更新庫存數量  ftyinventory
 
             #region -- 更新全數歸還日期 --
             sqlupd2.Append(string.Format(@";declare @reccount as int;
@@ -733,24 +747,22 @@ end", CurrentMaintain["id"].ToString(),CurrentMaintain["borrowid"],DateTime.Pars
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.FromPoId,a.FromSeq1,a.FromSeq2
+            this.DetailSelectCommand = string.Format(@"select a.id,a.FromFtyinventoryUkey,a.FromMdivisionid,a.FromPoId,a.FromSeq1,a.FromSeq2
 ,left(a.FromSeq1+' ',3)+a.FromSeq2 as Fromseq
 ,p1.FabricType
 ,p1.stockunit
 ,dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0) as [description]
 ,a.FromRoll
 ,a.FromDyelot
-,a.FromStock
+,a.FromStocktype
 ,a.Qty
+,a.ToMdivisionId
 ,a.ToPoid,a.ToSeq1,a.ToSeq2,left(a.ToSeq1+' ',3)+a.ToSeq2 as toseq
 ,a.ToRoll
 ,a.ToDyelot
-,a.ToStock
-,(select c.ukey from dbo.ftyinventory c 
-    where c.poid = a.FromPoId and c.seq1 = a.FromDyelot and c.seq2  = a.FromSeq2 and c.stocktype = a.FromStock and c.roll=a.FromRoll and c.dyelot = a.FromDyelot) as ukey
-,(select mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail fd 
-where ukey=(select c.ukey from dbo.ftyinventory c 
-    where c.poid = a.FromPoId and c.seq1 = a.FromSeq1 and c.seq2  = a.FromSeq2 and c.stocktype = a.FromStock and c.roll=a.FromRoll and c.dyelot = a.FromDyelot))t for xml path('')) location
+,a.ToStocktype
+,a.ukey
+,(select mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail fd where ukey= a.fromftyinventoryukey)t for xml path('')) location
 from dbo.BorrowBack_detail a left join PO_Supp_Detail p1 on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -798,6 +810,37 @@ Where a.id = '{0}'", masterID);
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
             { detailgridbs.Position = index; }
+        }
+
+        //borrow id
+        private void textBox2_Validating(object sender, CancelEventArgs e)
+        {
+            DataRow dr;
+            if (!MyUtility.Check.Seek(string.Format(@"select [status],[backdate] from dbo.borrowback where id='{0}' and type='A' and mdivisionid='{1}'"
+                , textBox2.Text, Sci.Env.User.Keyword), out dr, null))
+            {
+                e.Cancel = true;
+                MyUtility.Msg.WarningBox("Please check borrow id is existed.", "Data not found!!");
+                return;
+            }
+            else
+            {
+                if (dr["status"].ToString().ToUpper() == "NEW")
+                {
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Borrow Id is not confirmed!!");
+                    return;
+                }
+
+                if (!MyUtility.Check.Empty(dr["backdate"]))
+                {
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("This borrow# ({0}) already returned.", textBox2.Text));
+                    return;
+                }
+
+            }
+            CurrentMaintain["BorrowId"] = textBox2.Text;
         }
     }
 }
