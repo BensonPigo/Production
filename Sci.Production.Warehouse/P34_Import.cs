@@ -48,25 +48,24 @@ namespace Sci.Production.Warehouse
             {
                 // 建立可以符合回傳的Cursor
 
-                strSQLCmd.Append(@"select 0 as selected 
-,'' id, a.id as PoId,a.Seq1,a.Seq2
+                strSQLCmd.Append(string.Format(@"select 0 as selected 
+,'' id,c.mdivisionid, c.PoId,a.Seq1,a.Seq2
 ,left(a.seq1+' ',3)+a.Seq2 as seq
 ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
 ,c.Roll
 ,c.Dyelot
 ,c.inqty-c.outqty + c.adjustqty as QtyBefore
 ,0.00 as QtyAfter
-,isnull((select cast(mtllocationid as varchar)+',' 
-from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')),'') as location
+,isnull((select cast(mtllocationid as varchar)+',' from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')),'') as location
 ,'' reasonid
 ,'' reason_nm
 ,a.FabricType
 ,a.stockunit
 ,c.stockType
-,c.ukey
+,c.ukey as ftyinventoryukey
 from dbo.PO_Supp_Detail a 
 inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'I'
-Where c.lock = 0 ");
+Where c.lock = 0 and c.mdivisionid = '{0}'",Sci.Env.User.Keyword));
 
                 if (!MyUtility.Check.Empty(sp))
                 {
@@ -289,8 +288,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             dr2 = dtGridBS1.Select("adjustqty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and roll ='{3}'and dyelot='{4}'"
-                    , tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString(), tmp["roll"].ToString(), tmp["dyelot"].ToString()));
+                DataRow[] findrow = dt_detail.Select(string.Format("ftyinventoryukey = {0}",tmp["ftyinventoryukey"]));
 
                 if (findrow.Length > 0)
                 {
@@ -322,8 +320,8 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             {
                 if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail where id ='{0}')"
-                        , sp), null))
+                    if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from MdivisionPoDetail where poid ='{0}' and mdivisionid='{1}')"
+                        , sp, Sci.Env.User.Keyword), null))
                     {
                         MyUtility.Msg.WarningBox("SP# is not found!!");
                         e.Cancel = true;
@@ -332,8 +330,8 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
                 }
                 else
                 {
-                    if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail where id ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}')", sp, seq.Substring(0, 3), seq.Substring(3, 2)), null))
+                    if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from MdivisionPoDetail where poid ='{0}' 
+                        and seq1 = '{1}' and seq2 = '{2}', mdivisionid='{3}')", sp, seq.Substring(0, 3), seq.Substring(3, 2), Sci.Env.User.Keyword), null))
                     {
                         MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
                         e.Cancel = true;
@@ -350,8 +348,8 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             if (MyUtility.Check.Empty(sp) || MyUtility.Check.Empty(textBox2.Text.TrimEnd())) return;
             string seq = textBox2.Text.PadRight(5, ' ');
 
-            if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail where id ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}')", sp, seq.Substring(0, 3), seq.Substring(3, 2)), null))
+            if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from mdivisionpoDetail where poid ='{0}' 
+                        and seq1 = '{1}' and seq2 = '{2}' and mdivisionid='{3}')", sp, seq.Substring(0, 3), seq.Substring(3, 2),Sci.Env.User.Keyword), null))
             {
                 MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
                 e.Cancel = true;
@@ -369,7 +367,8 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
 
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(@"select id,[Description] from dbo.MtlLocation where StockType='I'", "10,40", textBox4.Text, "ID,Desc");
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"select id,[Description] from dbo.MtlLocation 
+                        where StockType='I' and mdivisionid='{0}'",Sci.Env.User.Keyword), "10,40", textBox4.Text, "ID,Desc");
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     textBox4.Text = item.GetSelectedString();
@@ -397,7 +396,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
 
         private void textBox4_Validating(object sender, CancelEventArgs e)
         {
-            if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.MtlLocation where StockType='I' and id = '{0}')", textBox4.Text), null))
+            if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.MtlLocation where StockType='I' and id = '{0}' and mdivisionid='{1}')", textBox4.Text, Sci.Env.User.Keyword), null))
             {
                 MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
                 e.Cancel = true;

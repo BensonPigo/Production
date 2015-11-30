@@ -110,6 +110,18 @@
             // 
             this.detailgridcont.Size = new System.Drawing.Size(1058, 293);
             // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
             // detail
             // 
             this.detail.Size = new System.Drawing.Size(1058, 515);
@@ -287,11 +299,11 @@
             this.ClientSize = new System.Drawing.Size(1066, 577);
             this.DefaultControl = "textBox3";
             this.DefaultControlForEdit = "textBox3";
-            this.DefaultOrder = "ID";
+            this.DefaultOrder = "Issuedate,ID";
             this.Grid2New = 0;
             this.GridAlias = "Adjust_detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "poid,seq1,seq2,Dyelot,roll";
+            this.GridUniqueKey = "mdivisionid,poid,seq1,seq2,Dyelot,roll";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;

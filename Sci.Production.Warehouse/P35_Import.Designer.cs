@@ -321,7 +321,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Name = "P35_Import";
-            this.Text = "P34. Import Detail";
+            this.Text = "P35. Import Detail";
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
