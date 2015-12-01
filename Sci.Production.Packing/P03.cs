@@ -171,11 +171,11 @@ namespace Sci.Production.Packing
                                     DialogResult returnResult = item.ShowDialog();
                                     if (returnResult == DialogResult.Cancel)
                                     {
-                                        CurrentMaintain["OrderShipmodeSeq"] = "";
+                                        dr["OrderShipmodeSeq"] = "";
                                     }
                                     else
                                     {
-                                        CurrentMaintain["OrderShipmodeSeq"] = item.GetSelectedString();
+                                        dr["OrderShipmodeSeq"] = item.GetSelectedString();
                                     }
                                 }
                             }
