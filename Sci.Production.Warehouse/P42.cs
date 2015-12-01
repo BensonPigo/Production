@@ -107,7 +107,7 @@ namespace Sci.Production.Warehouse
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-                .Text("FactoryID", header: "Fac", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true)
+                .Text("MdivisionID", header: "M", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
                  .Text("EachConsApv", header: "Each Cons.", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
                  .Text("ETA", header: "Mtl. ETA", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
@@ -160,29 +160,31 @@ namespace Sci.Production.Warehouse
             }
 
             string sqlcmd
-                = @"select 0 as Selected,a.FactoryID,a.POID,a.EachConsApv
-,(SELECT MAX(ATA) FROM 
-	(SELECT PO_SUPP_DETAIL.ATA FROM PO_Supp_Detail 
-		WHERE PO_Supp_Detail.ID = B.ID AND PO_Supp_Detail.DetailType ='A' 
+                = string.Format(@"select 0 as Selected,c.MdivisionId,c.POID,a.EachConsApv
+,(select max(ata) from 
+	(select po_supp_detail.ata from PO_Supp_Detail 
+		WHERE PO_Supp_Detail.ID = B.ID 
 		AND PO_Supp_Detail.SCIRefno = B.SCIRefno AND PO_Supp_Detail.ColorID = b.ColorID 
-	UNION ALL
-	SELECT B1.ATA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
-		WHERE a1.ID = B.ID AND a1.DetailType ='B' AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
+	union all
+	select b1.ata from PO_Supp_Detail a1, PO_Supp_Detail b1
+		where a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
 		AND a1.StockPOID = b1.ID and a1.Stockseq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
 	) tmp) as ETA
-	,MIN(a.SewInLine) as fstSewinline
+	,MIN(a.SewInLine) as FstSewinline
     ,b.Special AS cutType
 	,round(cast(b.Qty as float)* (select unit_rate.rate from unit_rate where Unit_Rate.UnitFrom = b.POUnit and Unit_Rate.UnitTo = b.StockUnit)
 			,(select unit.Round from unit where id = b.StockUnit)) as qty
 	,b.stockunit
-	,b.SizeSpec cutwidth,B.Refno,B.SEQ1,B.SEQ2,B.TapeInline,B.TapeOffline
-	,min(a.SciDelivery) fstSCIdlv
-	,min(a.BuyerDelivery) fstBuyerDlv
+	,b.SizeSpec cutwidth,B.Refno,B.SEQ1,B.SEQ2
+    ,c.TapeInline,c.TapeOffline
+	,min(a.SciDelivery) FstSCIdlv
+	,min(a.BuyerDelivery) FstBuyerDlv
 	,(select color.Name from color where color.id = b.ColorID and color.BrandId = a.brandid ) as color
-from orders a inner join PO_Artwork b on a.poid = b.id
+from orders a inner join Po_supp_detail b on a.poid = b.id
+inner join dbo.cuttingtape_detail c on c.mdivisionid = '{0}' and c.poid = b.id and c.seq1 = b.seq1 and c.seq2 = b.seq2
 WHERE A.IsForecast = 0 AND A.Junk = 0 AND A.LocalOrder = 0
 AND B.SEQ1 = 'A1'
-AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)";
+AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)",Sci.Env.User.Keyword);
             if (!(MyUtility.Check.Empty(sciDelivery_b)))
             { sqlcmd += string.Format(@" and a.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
             if (!(string.IsNullOrWhiteSpace(sewinline_b)))
@@ -191,14 +193,14 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)";
             {
                 sqlcmd += string.Format(@" and a.BuyerDelivery between '{0}' and '{1}'", buyerdlv_b, buyerdlv_e);
             }
-            sqlcmd += "GROUP BY a.FactoryID,a.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,B.TapeInline,B.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit,b.stockunit";
+            sqlcmd += "GROUP BY c.MdivisionID,c.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,c.TapeInline,c.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit,b.stockunit";
             if (eachchk && mtletachk) sqlcmd += @" having EachConsApv is not null and (SELECT MAX(ATA) FROM 
 	(SELECT PO_SUPP_DETAIL.ATA FROM PO_Supp_Detail 
-		WHERE PO_Supp_Detail.ID = B.ID AND PO_Supp_Detail.DetailType ='A' 
+		WHERE PO_Supp_Detail.ID = B.ID 
 		AND PO_Supp_Detail.SCIRefno = B.SCIRefno AND PO_Supp_Detail.ColorID = b.ColorID 
 	UNION ALL
 	SELECT B1.ATA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
-		WHERE a1.ID = B.ID AND a1.DetailType ='B' AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
+		WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
 		AND a1.StockPOID = b1.ID and a1.Stockseq1 = b1.SEQ1 and a1.Stockseq2 = b1.SEQ2
 	) tmp) is not null";
             else
@@ -206,15 +208,15 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)";
                 if (eachchk) sqlcmd += " having EachConsApv is not null";
                 if (mtletachk) sqlcmd += @" having (SELECT MAX(ATA) FROM 
 	(SELECT PO_SUPP_DETAIL.ATA FROM PO_Supp_Detail 
-		WHERE PO_Supp_Detail.ID = B.ID AND PO_Supp_Detail.DetailType ='A' 
+		WHERE PO_Supp_Detail.ID = B.ID 
 		AND PO_Supp_Detail.SCIRefno = B.SCIRefno AND PO_Supp_Detail.ColorID = b.ColorID 
 	UNION ALL
 	SELECT B1.ATA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
-		WHERE a1.ID = B.ID AND a1.DetailType ='B' AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
+		WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
 		AND a1.StockPOID = b1.ID and a1.Stockseq1 = b1.SEQ1 and a1.Stockseq2 = b1.SEQ2
 	) tmp) is not null";
             }
-            sqlcmd += @" ORDER BY A.FactoryID,A.POID";
+            sqlcmd += @" ORDER BY c.MdivisionID,c.POID";
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
             {
@@ -253,7 +255,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)";
             foreach (DataRow item in find)
             {
 
-                sqlcmd += @"update po_artwork ";
+                sqlcmd += @"update cuttingtape_detail ";
                 if (MyUtility.Check.Empty(item["TapeInline"]))
                 {sqlcmd += "set tapeinline = null ";}
                 else
@@ -263,10 +265,11 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)";
                 else
                 { sqlcmd += string.Format(@",tapeoffline = '{0}'", ((DateTime)item["TapeOffline"]).ToShortDateString()); }
 
-                sqlcmd += string.Format(@" where id ='{0}' and seq1 = '{1}' and seq2 = '{2}';"
+                sqlcmd += string.Format(@" where poid ='{0}' and seq1 = '{1}' and seq2 = '{2}' and mdivisionid='{3}';"
                                                         , item["POID"]
                                                         , item["seq1"]
-                                                        , item["seq2"]);
+                                                        , item["seq2"]
+                                                        , item["mdivisionid"]);
                 
             }
             if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd)))

@@ -48,14 +48,14 @@ namespace Sci.Production.Warehouse
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
-                .Text("FactoryID", header: "Fac", width: Widths.AnsiChars(5),  iseditingreadonly: true)
+                .Text("Mdivisionid", header: "M", width: Widths.AnsiChars(5),  iseditingreadonly: true)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
                  .Text("EachConsApv", header: "Each Cons.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("ETA", header: "Mtl. ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Text("fstSewinline", header: "1st. Sewing" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Text("Special", header: "Special", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                 .Text("FstSewinline", header: "1st. Sewing" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("Special", header: "Special", width: Widths.AnsiChars(25), iseditingreadonly: true)
                  .Text("SizeSpec", header: "SizeSpec", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -99,29 +99,33 @@ namespace Sci.Production.Warehouse
             }
 
             string sqlcmd
-                = @"select a.FactoryID,a.POID,a.EachConsApv
+                = string.Format(@"select c.mdivisionid,c.POID,a.EachConsApv
 ,(SELECT MAX(ATA) FROM 
 	(SELECT PO_SUPP_DETAIL.ATA FROM PO_Supp_Detail 
-		WHERE PO_Supp_Detail.ID = B.ID AND PO_Supp_Detail.DetailType ='A' 
+		WHERE PO_Supp_Detail.ID = B.ID 
 		AND PO_Supp_Detail.SCIRefno = B.SCIRefno AND PO_Supp_Detail.ColorID = b.ColorID 
 	UNION ALL
 	SELECT B1.ATA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
-		WHERE a1.ID = B.ID AND a1.DetailType ='B' AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
+		WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
 		AND a1.StockPOID = b1.ID and a1.StockSeq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
 	) tmp) as ETA
-	,MIN(a.SewInLine) as fstSewinline
+	,MIN(a.SewInLine) as FstSewinline
     ,b.Special
 	,round(cast(b.Qty as float)* (select unit_rate.rate from unit_rate where Unit_Rate.UnitFrom = b.POUnit and Unit_Rate.UnitTo = b.StockUnit)
 			,(select unit.Round from unit where id = b.StockUnit)) as qty
 	,b.stockunit
-	,b.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,B.TapeInline,B.TapeOffline
-	,min(a.SciDelivery) fstSCIdlv
-	,min(a.BuyerDelivery) fstBuyerDlv
+	,b.SizeSpec
+    ,B.Refno
+    ,B.SEQ1
+    ,B.SEQ2
+    ,c.TapeInline,c.TapeOffline
+	,min(a.SciDelivery) FstSCIdlv
+	,min(a.BuyerDelivery) FstBuyerDlv
 	,(select color.Name from color where color.id = b.ColorID and color.BrandId = a.brandid ) as color
-from orders a inner join PO_Artwork b on a.poid = b.id
+from dbo.orders a inner join dbo.po_supp_detail b on a.poid = b.id
+inner join dbo.cuttingtape_detail c on c.mdivisionid = '{0}' and c.poid = b.id and c.seq1 = b.seq1 and c.seq2 = b.seq2
 WHERE A.IsForecast = 0 AND A.Junk = 0 AND A.LocalOrder = 0
-AND B.SEQ1 = 'A1'
-AND B.Special LIKE ('%EMB APPLIQUE%')";
+AND B.Special LIKE ('%EMB APPLIQUE%')",Sci.Env.User.Keyword);
             if (!(MyUtility.Check.Empty(sciDelivery_b)))
             { sqlcmd += string.Format(@" and a.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
             if (!(string.IsNullOrWhiteSpace(sewinline_b)))
@@ -130,30 +134,22 @@ AND B.Special LIKE ('%EMB APPLIQUE%')";
             {
                 sqlcmd += string.Format(@" and a.BuyerDelivery between '{0}' and '{1}'", buyerdlv_b, buyerdlv_e);
             }
-            sqlcmd += "GROUP BY a.FactoryID,a.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,B.TapeInline,B.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit,b.stockunit";
+            sqlcmd += "GROUP BY c.mdivisionid,c.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,c.TapeInline,c.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit,b.stockunit";
             if (eachchk && mtletachk) sqlcmd += @" having EachConsApv is not null and (SELECT MAX(ATA) FROM 
-	(SELECT PO_SUPP_DETAIL.ATA FROM PO_Supp_Detail 
-		WHERE PO_Supp_Detail.ID = B.ID AND PO_Supp_Detail.DetailType ='A' 
-		AND PO_Supp_Detail.SCIRefno = B.SCIRefno AND PO_Supp_Detail.ColorID = b.ColorID 
-	UNION ALL
-	SELECT B1.ATA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
-		WHERE a1.ID = B.ID AND a1.DetailType ='B' AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
+	(SELECT B1.ATA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
+		WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
 		AND a1.StockPOID = b1.ID and a1.StockSeq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
 	) tmp) is not null";
             else
             {
                 if (eachchk) sqlcmd += " having EachConsApv is not null";
                 if (mtletachk) sqlcmd += @" having (SELECT MAX(ATA) FROM 
-	(SELECT PO_SUPP_DETAIL.ATA FROM PO_Supp_Detail 
-		WHERE PO_Supp_Detail.ID = B.ID AND PO_Supp_Detail.DetailType ='A' 
-		AND PO_Supp_Detail.SCIRefno = B.SCIRefno AND PO_Supp_Detail.ColorID = b.ColorID 
-	UNION ALL
-	SELECT B1.ATA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
-		WHERE a1.ID = B.ID AND a1.DetailType ='B' AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
+	(SELECT B1.ATA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
+		WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
 		AND a1.StockPOID = b1.ID and a1.StockSeq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
 	) tmp) is not null";
             }
-            sqlcmd += @" ORDER BY A.FactoryID,A.POID";
+            sqlcmd += @" ORDER BY c.mdivisionid,c.POID";
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
             {
@@ -186,28 +182,29 @@ AND B.Special LIKE ('%EMB APPLIQUE%')";
         {
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return;
-            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
-            SaveFileDialog dlg = new SaveFileDialog();
-            dlg.RestoreDirectory = true;
-            dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
-            dlg.Title = "Save as Excel File";
-            dlg.FileName = "P41_EmbApplique_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
+            MyUtility.Excel.CopyToXls(dt, "");
+            //string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            //System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
+            //SaveFileDialog dlg = new SaveFileDialog();
+            //dlg.RestoreDirectory = true;
+            //dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
+            //dlg.Title = "Save as Excel File";
+            //dlg.FileName = "P41_EmbApplique_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
 
-            dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
+            //dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
 
-            // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
-            // Get the selected file name and CopyToXls
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
-            {
-                DualResult result = MyUtility.Excel.CopyToXls(dt, dlg.FileName);
-                if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName); }   //XlsAutoFit(dlg.FileName, "MMDR030.xlt", 12);
-                else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(), "Warning"); }
-            }
-            else
-            {
-                return;
-            }
+            //// Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
+            //// Get the selected file name and CopyToXls
+            //if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
+            //{
+            //    //DualResult result = MyUtility.Excel.CopyToXls(dt, dlg.FileName);
+            //    //if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName); }   //XlsAutoFit(dlg.FileName, "MMDR030.xlt", 12);
+            //    //else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(), "Warning"); }
+            //}
+            //else
+            //{
+            //    return;
+            //}
         }
     }
 }
