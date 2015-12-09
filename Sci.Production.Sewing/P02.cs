@@ -55,7 +55,7 @@ where sd.ID = '{0}'", masterID);
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            #region Reght click & Validating
+            #region Right click & Validating
             orderID.EditingMouseDown += (s, e) =>
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -450,8 +450,8 @@ where sd.ID = '{0}'", masterID);
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
                 string insertCmd = string.Format(@"insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
-values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')", CurrentMaintain["ID"].ToString(), "Status", "Locked", "New", callReason.ReturnReason, callReason.ReturnRemark, Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-                string updateCmd = string.Format(@"update SewingOutput set LockDate = null, Status = 'New' where ID = '{0}'", CurrentMaintain["ID"].ToString());
+values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "Status", "Locked", "New", callReason.ReturnReason, callReason.ReturnRemark, Sci.Env.User.UserID);
+                string updateCmd = string.Format(@"update SewingOutput set LockDate = null, Status = 'New' where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
                 using (TransactionScope transactionScope = new TransactionScope())
                 {
