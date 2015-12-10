@@ -986,6 +986,12 @@ Sci.Production.PublicPrg/System.cs -text
 Sci.Production.PublicPrg/Warehouse.cs -text
 Sci.Production.Quality/Properties/AssemblyInfo.cs -text
 Sci.Production.Quality/Sci.Production.Quality.csproj -text
+Sci.Production.Sewing/P01.Designer.cs -text
+Sci.Production.Sewing/P01.cs -text
+Sci.Production.Sewing/P01.resx -text
+Sci.Production.Sewing/P01_QAOutput.Designer.cs -text
+Sci.Production.Sewing/P01_QAOutput.cs -text
+Sci.Production.Sewing/P01_QAOutput.resx -text
 Sci.Production.Sewing/P02.Designer.cs -text
 Sci.Production.Sewing/P02.cs -text
 Sci.Production.Sewing/P02.resx -text
