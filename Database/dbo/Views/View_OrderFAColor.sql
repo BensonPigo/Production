@@ -1,10 +1,11 @@
-﻿create view [View_OrderFAColor]
-as select o.ID,oa.Article,occ.ColorID
- from Order_ColorCombo occ, Orders o, Order_Article oa
- where occ.LectraCode = (select min(LectraCode) 
-                         from Order_ColorCombo 
-                         where id = occ.Id and  Article = oa.Article and PatternPanel = 'FA') 
- and occ.Id = o.POID
- and oa.id = o.POID
- and occ.Article = oa.Article 
- and occ.PatternPanel = 'FA'
+﻿create view [dbo].[View_OrderFAColor]
+as select a.ID,a.Article,isnull(oc.ColorID ,'') as ColorID
+from (select distinct o.ID,o.POID,oq.Article 
+	  from Orders o, Order_Qty oq
+	  where o.ID = oq.ID) a
+left join Order_ColorCombo oc on oc.Id = a.POID 
+							  and oc.Article = a.Article 
+							  and oc.PatternPanel = 'FA' 
+							  and oc.LectraCode = (select min(LectraCode) 
+												   from Order_ColorCombo 
+												   where id = oc.Id and  Article = a.Article and PatternPanel = 'FA')
