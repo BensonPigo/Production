@@ -3,12 +3,14 @@
     [NewSciDelivery] DATE           NULL,
     [OldSciDelivery] DATE           NULL,
     [LETA]           DATE           NULL,
-    [Reamrk]         NVARCHAR (100) CONSTRAINT [DF_Order_PFHis_Reamrk] DEFAULT ('') NULL,
+    [Remark]         NVARCHAR (100) CONSTRAINT [DF_Order_PFHis_Reamrk] DEFAULT ('') NULL,
     [AddName]        VARCHAR (10)   CONSTRAINT [DF_Order_PFHis_AddName] DEFAULT ('') NULL,
     [AddDate]        DATETIME       NULL,
     [Ukey]           BIGINT         CONSTRAINT [DF_Order_PFHis_Ukey] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Order_PFHis] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO
@@ -32,7 +34,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Last ETA', 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Remark', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_PFHis', @level2type = N'COLUMN', @level2name = N'Reamrk';
+
 
 
 GO
@@ -45,4 +47,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增時�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'唯一值', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_PFHis', @level2type = N'COLUMN', @level2name = N'Ukey';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Remark', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_PFHis', @level2type = N'COLUMN', @level2name = N'Remark';
 

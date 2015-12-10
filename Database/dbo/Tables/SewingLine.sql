@@ -4,12 +4,15 @@
     [FactoryID]   VARCHAR (8)    CONSTRAINT [DF_SewingLine_FactoryID] DEFAULT ('') NOT NULL,
     [SewingCell]  VARCHAR (2)    CONSTRAINT [DF_SewingLine_SewingCell] DEFAULT ('') NULL,
     [Sewer]       INT            CONSTRAINT [DF_SewingLine_Sewer] DEFAULT ((0)) NULL,
+    [Junk]        BIT            CONSTRAINT [DF_SewingLine_Junk] DEFAULT ((0)) NULL,
     [AddName]     VARCHAR (10)   CONSTRAINT [DF_SewingLine_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_SewingLine_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME       NULL,
     CONSTRAINT [PK_SewingLine] PRIMARY KEY CLUSTERED ([ID] ASC, [FactoryID] ASC)
 );
+
+
 
 
 GO

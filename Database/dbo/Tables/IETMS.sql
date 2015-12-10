@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[IETMS] (
     [ID]            VARCHAR (10)  CONSTRAINT [DF_IETMS_ID] DEFAULT ('') NOT NULL,
     [Version]       VARCHAR (3)   CONSTRAINT [DF_IETMS_Version] DEFAULT ('') NOT NULL,
-    [IETMSUkey]     BIGINT        CONSTRAINT [DF_IETMS_IETMSUkey] DEFAULT ((0)) NULL,
+    [Ukey]          BIGINT        CONSTRAINT [DF_IETMS_IETMSUkey] DEFAULT ((0)) NULL,
     [IEName]        VARCHAR (10)  CONSTRAINT [DF_IETMS_IEName] DEFAULT ('') NULL,
     [ActFinDate]    DATETIME      NULL,
     [GSDStyleCode]  VARCHAR (15)  CONSTRAINT [DF_IETMS_GSDStyleCode] DEFAULT ('') NULL,
@@ -12,6 +12,8 @@
     [EditDate]      DATETIME      NULL,
     CONSTRAINT [PK_IETMS] PRIMARY KEY CLUSTERED ([ID] ASC, [Version] ASC)
 );
+
+
 
 
 GO
@@ -27,7 +29,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'版本', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'IEUKEY', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'IETMS', @level2type = N'COLUMN', @level2name = N'IETMSUkey';
+
 
 
 GO
@@ -60,4 +62,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'IETMS', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'IEUKEY', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'IETMS', @level2type = N'COLUMN', @level2name = N'Ukey';
 
