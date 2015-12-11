@@ -335,30 +335,30 @@ when not matched then
                     if (encoded)
                     {
                         sqlcmd = string.Format(@"merge dbo.FtyInventory as target
-using (values ({3}))
+using (values ({6}))
     as source (field1)
-    on target.mdivisionid ='{7}' and target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
+    on target.mdivisionid ='{7}' and target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and target.roll='{3}' and stocktype='{5}' 
 when matched then
     update
     set adjustqty = isnull(adjustqty,0.00) + source.field1
 when not matched then
     insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[adjustqty])
     values ((select ukey from dbo.MDivisionPoDetail where mdivisionid = '{7}' and poid='{0}' and seq1='{1}' and seq2='{2}'),'{7}'
-	,'{0}','{1}','{2}','{4}','{5}','{6}',{3});	", Poid, seq1, seq2, qty, roll, dyelot, stocktype,m);
+	,'{0}','{1}','{2}','{3}','{4}','{5}',{6});	", Poid, seq1, seq2, roll, dyelot, stocktype, qty, m);
                     }
                     else
                     {
                         sqlcmd = string.Format(@"merge dbo.FtyInventory as target
-using (values ({3}))
+using (values ({6}))
     as source (field1)
-    on target.mdivisionid ='{7}' and target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
+    on target.mdivisionid ='{7}' and target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and target.roll='{3}' and stocktype='{5}'
 when matched then
     update
-    set outqty = isnull(outqty,0.00) - source.field1
+    set adjustqty = isnull(adjustqty,0.00) - source.field1
 when not matched then
-    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
+    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[adjustqty])
     values ((select ukey from dbo.MDivisionPoDetail where mdivisionid = '{7}' and poid='{0}' and seq1='{1}' and seq2='{2}'),'{7}'
-	,'{0}','{1}','{2}','{4}','{5}','{6}',{3});", Poid, seq1, seq2, qty, roll, dyelot, stocktype, m);
+	,'{0}','{1}','{2}','{3}','{4}','{5}',{6});", Poid, seq1, seq2, roll, dyelot, stocktype, qty, m);
                     }
                     break;
             }
