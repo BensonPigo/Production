@@ -380,11 +380,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 {
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlupd2.ToString(), result2);
                         return;
                     }
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlupd3, result);
                         return;
                     }
@@ -394,6 +396,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 }
                 catch (Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -523,12 +526,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 {
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlupd2.ToString(), result2);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlupd3, result);
                         return;
                     }
@@ -538,6 +543,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 }
                 catch (Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }

@@ -271,12 +271,14 @@ where poid ='{0}' and seq1='{1}' and seq2='{2}' and roll='{3}' and dyelot='{4}' 
                 {
                     if (!(result1 = DBProxy.Current.Execute(null, sqlupd1)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlupd1, result1);
                         return;
                     }
 
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlupd2, result2);
                         return;
                     }
@@ -286,6 +288,7 @@ where poid ='{0}' and seq1='{1}' and seq2='{2}' and roll='{3}' and dyelot='{4}' 
                 }
                 catch (Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }

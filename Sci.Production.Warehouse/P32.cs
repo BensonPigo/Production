@@ -499,11 +499,13 @@ end", CurrentMaintain["id"].ToString(), CurrentMaintain["borrowid"], DateTime.Pa
                     
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlupd3, result);
                         return;
                     }
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlupd2.ToString(), result2);
                         return;
                     }
@@ -513,6 +515,7 @@ end", CurrentMaintain["id"].ToString(), CurrentMaintain["borrowid"], DateTime.Pa
                 }
                 catch (Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -717,12 +720,14 @@ end", CurrentMaintain["id"].ToString(),CurrentMaintain["borrowid"],DateTime.Pars
                 {
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlupd3, result);
                         return;
                     }
 
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlupd2.ToString(), result2);
                         return;
                     }
@@ -732,6 +737,7 @@ end", CurrentMaintain["id"].ToString(),CurrentMaintain["borrowid"],DateTime.Pars
                 }
                 catch (Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }

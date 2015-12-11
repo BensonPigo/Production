@@ -29,13 +29,15 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             string selectCommand1
-                = string.Format(@"Select a.factoryid,  b.id, b.seq1+b.seq2 seq
+                = string.Format(@"Select md.mdivisionid ,  b.id, b.seq1+b.seq2 seq
                                             , b.colorid,  b.sizespec
                                             , c.suppid, a.sewinline
                                             , a.sewline, b.FinalETD
-                                            , b.inqty - b.outqty + b.adjustqty Balance
+                                            , md.inqty - md.outqty + md.adjustqty Balance
                                             , b.stockunit 
-                                            from orders a, po_supp_detail b, po_supp c
+                                            from orders a
+											, po_supp_detail b left join dbo.MDivisionPoDetail md on md.POID = b.id and md.seq1 = b.seq2 and md.seq2 = b.seq2
+											, po_supp c
                                             where b.scirefno = '{0}'
                                             and a.id = b.id
                                             and a.id = c.id
@@ -56,7 +58,7 @@ namespace Sci.Production.Warehouse
             this.grid1.IsEditingReadOnly = true;
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
-                 .Text("factoryid", header: "Factory", width: Widths.AnsiChars(8))
+                 .Text("mdivisionid", header: "M", width: Widths.AnsiChars(8))
                  .Text("id", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("seq", header: "Seq", width: Widths.AnsiChars(5))
                  .Text("colorid", header: "Color", width: Widths.AnsiChars(6))

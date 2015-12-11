@@ -32,7 +32,7 @@ namespace Sci.Production.Warehouse
             //
             detailgrid.StatusNotification += (s, e) =>
             {
-                if (this.EditMode&&e.Notification == Ict.Win.UI.DataGridViewStatusNotification.NoMoreRowOnEnterPress)
+                if (this.EditMode && e.Notification == Ict.Win.UI.DataGridViewStatusNotification.NoMoreRowOnEnterPress)
                 {
                     DataRow tmp = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
                     this.OnDetailGridInsert();
@@ -138,8 +138,8 @@ namespace Sci.Production.Warehouse
             // 到倉日不可早於到港日，如果有到港日的話。
             DateTime t1 = new DateTime();
             DateTime t2 = new DateTime();
-            
-            if (!MyUtility.Check.Empty(dateBox2.Value)&&!MyUtility.Check.Empty(dateBox4.Value))
+
+            if (!MyUtility.Check.Empty(dateBox2.Value) && !MyUtility.Check.Empty(dateBox4.Value))
             {
                 t1 = DateTime.Parse(dateBox2.Text);//port
                 t2 = DateTime.Parse(dateBox3.Text);//warehouse
@@ -162,7 +162,7 @@ namespace Sci.Production.Warehouse
                     DialogResult dResult = MyUtility.Msg.QuestionBox("Arrive Warehouse date is earlier than ETA 3 days, do you save it?");
                     if (dResult.ToString().ToUpper() == "NO") return false;
                 }
-                    // 到倉日如果晚於ETA 15天，則提示窗請USER再確認是否存檔。
+                // 到倉日如果晚於ETA 15天，則提示窗請USER再確認是否存檔。
                 t1 = DateTime.Parse(dateBox1.Text).AddDays(15);//eta
                 t2 = DateTime.Parse(dateBox3.Text);//warehouse
                 if (DateTime.Compare(t1, t2) < 0)
@@ -369,7 +369,7 @@ from dbo.Export_Detail e left join dbo.PO_Supp_Detail p on e.PoID = p.ID and e.S
 where e.PoID ='{0}' and e.id = '{1}'", CurrentDetailData["poid"], CurrentMaintain["exportid"]);
 
                         DBProxy.Current.Select(null, sqlcmd, out poitems);
-                       
+
                         Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(poitems
                             , "Seq,refno,description,colorid,eta,inqty,stockunit,outqty,adjustqty,balanceqty,linvqty"
                             , "6,15,25,8,10,6,6,6,6,6,6", CurrentDetailData["seq"].ToString(), "Seq,Ref#,Description,Color,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty");
@@ -398,7 +398,7 @@ where e.PoID ='{0}' and e.id = '{1}'", CurrentDetailData["poid"], CurrentMaintai
                             CurrentDetailData["seq"] = "";
                             CurrentDetailData["seq1"] = "";
                             CurrentDetailData["seq2"] = "";
-                            CurrentDetailData["pounit"] ="";
+                            CurrentDetailData["pounit"] = "";
                             CurrentDetailData["stockunit"] = "";
                             CurrentDetailData["fabrictype"] = "";
                             CurrentDetailData["shipqty"] = 0m;
@@ -538,7 +538,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
             if (null == dr) return;
 
             StringBuilder sqlupd2 = new StringBuilder();
-            String sqlcmd = "", sqlupd3 = "", ids = "",sqlcmd4 ="";
+            String sqlcmd = "", sqlupd3 = "", ids = "", sqlcmd4 = "";
             DualResult result, result2, result3;
             DataTable datacheck;
 
@@ -618,8 +618,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
 
             foreach (var item in bs1)
             {
-                sqlupd2.Append(Prgs.UpdateMPoDetail(2, item.poid, item.seq1, item.seq2, item.stockqty, true, item.stocktype,item.mdivisionid,item.location));
-                if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, item.stockqty, true, item.stocktype,item.mdivisionid,item.location));
+                sqlupd2.Append(Prgs.UpdateMPoDetail(2, item.poid, item.seq1, item.seq2, item.stockqty, true, item.stocktype, item.mdivisionid, item.location));
+                if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, item.stockqty, true, item.stocktype, item.mdivisionid, item.location));
             }
 
             sqlupd2.Append("declare @iden as bigint;");
@@ -630,7 +630,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
                     , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), true, item["location"].ToString()));
             }
             sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
-            
+
 
             #endregion 更新庫存數量 po_supp_detail & ftyinventory
             #region Base on wkno 收料時，需回寫export
@@ -646,11 +646,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
                 {
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlupd2.ToString(), result2);
                         return;
                     }
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlupd3, result);
                         return;
                     }
@@ -659,6 +661,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
                     {
                         if (!(result3 = DBProxy.Current.Execute(null, sqlcmd4)))
                         {
+                            _transactionscope.Dispose();
                             ShowErr(sqlcmd4, result);
                             return;
                         }
@@ -669,6 +672,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
                 }
                 catch (Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -694,7 +698,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
             if (dResult.ToString().ToUpper() == "NO") return;
             var dr = this.CurrentMaintain; if (null == dr) return;
             StringBuilder sqlupd2 = new StringBuilder();
-            string sqlcmd = "", sqlupd3 = "", ids = "", sqlcmd4="";
+            string sqlcmd = "", sqlupd3 = "", ids = "", sqlcmd4 = "";
             DualResult result, result2, result3;
 
             #region 檢查負數庫存
@@ -784,12 +788,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
                 {
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlupd2.ToString(), result2);
                         return;
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlupd3, result);
                         return;
                     }
@@ -798,6 +804,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
                     {
                         if (!(result3 = DBProxy.Current.Execute(null, sqlcmd4)))
                         {
+                            _transactionscope.Dispose();
                             ShowErr(sqlcmd4, result);
                             return;
                         }
@@ -808,6 +815,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
                 }
                 catch (Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -937,7 +945,7 @@ where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword), out dt);
                 MyUtility.Msg.InfoBox("Please modify data directly!!");
                 return;
             }
-            var frm = new Sci.Production.Warehouse.P07_ModifyRollDyelot(detailgridbs.DataSource,CurrentMaintain["id"].ToString());
+            var frm = new Sci.Production.Warehouse.P07_ModifyRollDyelot(detailgridbs.DataSource, CurrentMaintain["id"].ToString());
             frm.ShowDialog(this);
             this.RenewData();
         }

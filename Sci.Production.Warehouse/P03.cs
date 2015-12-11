@@ -312,12 +312,14 @@ namespace Sci.Production.Warehouse
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
-            this.DetailSelectCommand = string.Format(@"select a.id,a.seq1,seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
+            this.DetailSelectCommand = string.Format(@"select m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
             ,substring(convert(varchar,a.RevisedETD, 101),1,5) as RevisedETD,a.Refno,a.SCIRefno
             ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',a.FabricType)) as fabrictype2,a.ColorID,a.SizeSpec
             ,a.UsedQty unitqty,A.Qty,A.NETQty,A.NETQty+A.lossQty useqty ,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,a.Complete
-            ,a.ATA,a.OrderIdList,a.InQty,a.StockUnit
-            ,a.OutQty,a.AdjustQty,a.InQty - a.OutQty + a.AdjustQty balanceqty,a.LInvQty,a.LObQty,a.ALocation,a.BLocation 
+            ,a.ATA,m.InQty,a.StockUnit
+            ,m.OutQty,m.AdjustQty
+			,m.InQty - m.OutQty + m.AdjustQty balanceqty
+			,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
             ,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
             ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.refno,a.seq1,a.seq2),1,0)) AS description,s.currencyid
             ,(Select cast(tmp.Remark as nvarchar)+',' 
@@ -330,10 +332,11 @@ namespace Sci.Production.Warehouse
                                         and b1.seq2 = a.seq2 group by b1.remark) tmp 
                         for XML PATH('')) as  Remark
             from PO_Supp_Detail a
-                inner join fabric on fabric.SCIRefno = a.scirefno
+				inner join dbo.MDivisionPoDetail m on m.MDivisionID='{1}' and m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
+                left join fabric on fabric.SCIRefno = a.scirefno
 	            left join po_supp b on a.id = b.id and a.SEQ1 = b.SEQ1
                 left join supp s on s.id = b.suppid
-            where a.id='{0}' order by a.refno,a.colorid", masterID);
+            where a.id='{0}' order by a.refno,a.colorid", masterID, Sci.Env.User.Keyword);
             return base.OnDetailSelectCommandPrepare(e);
         }
 

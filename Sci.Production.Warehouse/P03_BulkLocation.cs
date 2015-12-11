@@ -26,30 +26,33 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            string selectCommand1 = string.Format(@"select * from (SELECT LocationTrans.ID, LocationTrans.issuedate, LocationTrans.Remark
-, sum(b.Qty) as qty
-, (select cast(FromLocation as nvarchar )+',' 
-	from LocationTrans_detail b1
-	where id = LocationTrans.id and b1.Poid = b.Poid and b1.Seq1 = b.seq1 and b1.Seq2 = b.Seq2 and b1.tolocation !=''
-	for xml path('')) as fromlocation
-, (select cast(ToLocation as nvarchar )+',' 
-	from LocationTrans_detail b2 
-	where id = LocationTrans.id and b2.Poid = b.Poid and b2.Seq1 = b.seq1 and b2.Seq2 = b.Seq2 and b2.tolocation !=''
-    for xml path('')) as ToLocation 
-, LocationTrans.EditName+'-'+ (select pass1.NAME from pass1 where id = LocationTrans.EditName) editname
-, LocationTrans.EditDate
-FROM LocationTrans, LocationTrans_detail as b
-WHERE LocationTrans.status = 'Confirmed' and LocationTrans.stocktype='{3}'
-AND LocationTrans.ID = b.ID 
-AND b.poid = '{0}'
-AND b.SEQ1 = '{1}' 
-AND b.seq2 = '{2}'
-group by LocationTrans.EditName,LocationTrans.ID, LocationTrans.issuedate, LocationTrans.Remark,LocationTrans.EditDate,b.Poid,b.seq1,b.seq2) tmp
-order by EditName"
+            string selectCommand1 = string.Format(@";with tmp as
+(SELECT a.ID, a.issuedate, a.Remark
+, sum(b.Qty) qty
+, b.FromLocation
+, b.ToLocation
+, a.EditName
+, a.EditDate
+FROM LocationTrans a inner join  LocationTrans_detail as b on a.ID = b.ID 
+WHERE a.status = 'Confirmed' and a.stocktype='{3}'
+AND B.Poid='{0}' and b.Seq1='{1}' and b.Seq2='{2}'
+and b.mdivisionid='{4}'
+group by 
+a.ID, a.issuedate, a.Remark, b.FromLocation, b.ToLocation, a.EditName, a.EditDate
+)
+select issuedate,id,sum(qty) qty
+,(select FromLocation+',' from (select distinct tmp_b.FromLocation from tmp tmp_b where tmp_b.id=a.ID) t for xml path('') ) fromlocation
+,(select tolocation+',' from (select distinct tmp_c.ToLocation from tmp tmp_c where tmp_c.id=a.ID) t for xml path('') ) tolocation
+,remark
+,EditName+'-'+ isnull((select pass1.NAME from pass1 where id = EditName),'') editname
+,EditDate from  tmp a
+group by EditName,ID,issuedate, Remark,EditDate
+order by EditName,ID"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
-                , stocktype);
+                , stocktype
+                , dr["mdivisionid"]);
             DataTable selectDataTable1;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
             if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);

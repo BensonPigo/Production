@@ -104,6 +104,16 @@
     <Compile Include="B04.Designer.cs">
       <DependentUpon>B04.cs</DependentUpon>
     </Compile>
+    <Compile Include="IssueDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IssueDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="IssueDetailDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IssueDetailDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="P12_Import.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -260,6 +270,198 @@
     <Compile Include="P13_AccumulatedQty.Designer.cs">
       <DependentUpon>P13_AccumulatedQty.cs</DependentUpon>
     </Compile>
+    <Compile Include="P26.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P26.Designer.cs">
+      <DependentUpon>P26.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P26_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P26_Import.Designer.cs">
+      <DependentUpon>P26_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R17.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R17.Designer.cs">
+      <DependentUpon>R17.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P17.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P17.Designer.cs">
+      <DependentUpon>P17.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P17_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P17_AccumulatedQty.Designer.cs">
+      <DependentUpon>P17_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P19.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P19.Designer.cs">
+      <DependentUpon>P19.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P19_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P19_AccumulatedQty.Designer.cs">
+      <DependentUpon>P19_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P19_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P19_Import.Designer.cs">
+      <DependentUpon>P19_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P18.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P18.Designer.cs">
+      <DependentUpon>P18.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P18_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P18_AccumulatedQty.Designer.cs">
+      <DependentUpon>P18_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P20.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P20.Designer.cs">
+      <DependentUpon>P20.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P16.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P16.Designer.cs">
+      <DependentUpon>P16.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P16_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P16_AccumulatedQty.Designer.cs">
+      <DependentUpon>P16_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P16_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P16_Import.Designer.cs">
+      <DependentUpon>P16_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P15.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P15.Designer.cs">
+      <DependentUpon>P15.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P15_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P15_Import.Designer.cs">
+      <DependentUpon>P15_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P31.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P31.Designer.cs">
+      <DependentUpon>P31.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P31_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P31_AccumulatedQty.Designer.cs">
+      <DependentUpon>P31_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P32.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P32.Designer.cs">
+      <DependentUpon>P32.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P32_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P32_AccumulatedQty.Designer.cs">
+      <DependentUpon>P32_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P31_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P31_Import.Designer.cs">
+      <DependentUpon>P31_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P32_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P32_Import.Designer.cs">
+      <DependentUpon>P32_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P34.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P34.Designer.cs">
+      <DependentUpon>P34.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P34_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P34_Import.Designer.cs">
+      <DependentUpon>P34_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P35.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P35.Designer.cs">
+      <DependentUpon>P35.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P35_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P35_Import.Designer.cs">
+      <DependentUpon>P35_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P36.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P36.Designer.cs">
+      <DependentUpon>P36.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P36_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P36_AccumulatedQty.Designer.cs">
+      <DependentUpon>P36_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P36_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P36_Import.Designer.cs">
+      <DependentUpon>P36_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="test_input8.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="test_input8.Designer.cs">
+      <DependentUpon>test_input8.cs</DependentUpon>
+    </Compile>
+    <Compile Include="test_Input8A.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="test_Input8A.Designer.cs">
+      <DependentUpon>test_Input8A.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P15_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P15_AccumulatedQty.Designer.cs">
+      <DependentUpon>P15_AccumulatedQty.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -320,6 +522,8 @@
       <DependentUpon>P07.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="P13Detail.rdlc" />
+    <EmbeddedResource Include="P13Master.rdlc" />
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
     </EmbeddedResource>
@@ -363,6 +567,127 @@
       <DependentUpon>P13_AccumulatedQty.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="P26.resx">
+      <DependentUpon>P26.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P26_Import.resx">
+      <DependentUpon>P26_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R17.resx">
+      <DependentUpon>R17.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P17.resx">
+      <DependentUpon>P17.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P17_AccumulatedQty.resx">
+      <DependentUpon>P17_AccumulatedQty.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P19.resx">
+      <DependentUpon>P19.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P19_AccumulatedQty.resx">
+      <DependentUpon>P19_AccumulatedQty.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P19_Import.resx">
+      <DependentUpon>P19_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P18.resx">
+      <DependentUpon>P18.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P18_AccumulatedQty.resx">
+      <DependentUpon>P18_AccumulatedQty.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P20.resx">
+      <DependentUpon>P20.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P16.resx">
+      <DependentUpon>P16.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P16_AccumulatedQty.resx">
+      <DependentUpon>P16_AccumulatedQty.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P16_Import.resx">
+      <DependentUpon>P16_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P15.resx">
+      <DependentUpon>P15.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P15_Import.resx">
+      <DependentUpon>P15_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P31.resx">
+      <DependentUpon>P31.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P31_AccumulatedQty.resx">
+      <DependentUpon>P31_AccumulatedQty.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P32.resx">
+      <DependentUpon>P32.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P32_AccumulatedQty.resx">
+      <DependentUpon>P32_AccumulatedQty.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P31_Import.resx">
+      <DependentUpon>P31_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P32_Import.resx">
+      <DependentUpon>P32_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P34.resx">
+      <DependentUpon>P34.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P34_Import.resx">
+      <DependentUpon>P34_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P35.resx">
+      <DependentUpon>P35.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P35_Import.resx">
+      <DependentUpon>P35_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P36.resx">
+      <DependentUpon>P36.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P36_AccumulatedQty.resx">
+      <DependentUpon>P36_AccumulatedQty.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P36_Import.resx">
+      <DependentUpon>P36_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="test_input8.resx">
+      <DependentUpon>test_input8.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P15_AccumulatedQty.resx">
+      <DependentUpon>P15_AccumulatedQty.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
@@ -377,6 +702,59 @@
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
       <Name>Sci.Production.PublicPrg</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="IssueDataSet.xsc">
+      <DependentUpon>IssueDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="IssueDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>IssueDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="IssueDataSet.xss">
+      <DependentUpon>IssueDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="IssueDetailDataSet.xsc">
+      <DependentUpon>IssueDetailDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="IssueDetailDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>IssueDetailDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="IssueDetailDataSet.xss">
+      <DependentUpon>IssueDetailDataSet.xsd</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>5</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>7</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

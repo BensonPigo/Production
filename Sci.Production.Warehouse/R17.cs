@@ -39,18 +39,19 @@ namespace Sci.Production.Warehouse
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            DualResult result = Result.True;
             if (dt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!!");
-                return false;
+                return result;
             }
             t2 = DateTime.Now;
             //label7.Text = string.Format("{0}~{1} Records:{2}",t1,t2,dt.Rows.Count.ToString());
-            DualResult result = Result.True;
+            
             SaveFileDialog sfldg = new SaveFileDialog();
-            if(!MyUtility.Excel.SaveXlsFile("Warehouse_R17_Location_List", out sfldg)) return false;
-            result = MyUtility.Excel.CopyToXls(dt, sfldg.FileName);
-            return result;
+            if (!MyUtility.Excel.SaveXlsFile("Warehouse_R17_Location_List", out sfldg)) return result;
+            //result = MyUtility.Excel.CopyToXls(dt, sfldg.FileName);
+            return false;
 
         }
 
@@ -98,35 +99,6 @@ where 1=1");
                             sqlcmd.Append(@" And a.stocktype = 'I'");
                             break;
                     }
-                    sqlcmd.Append(@"union all
-select distinct (select orders.Factoryid from orders where orders.id = a.poid) Factory
-,a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
-,(select cast(MtlLocationID as varchar)+',' from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')) as location
-,p.Width,p.ColorID Color,p.SizeSpec Size
-,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2) AS description 
-,a.StockType
-,(select max(Deadline) from dbo.Inventory i 
-	where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = (select orders.Factoryid from orders where orders.id = a.poid)) deadline
-,a.InQty,a.OutQty,a.AdjustQty
-,a.inqty- a.outqty + a.adjustqty Balance
-from dbo.FtyInventory a left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
-inner join dbo.PO_Artwork p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
-where 1=1");
-                    if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@"And a.Poid like '{0}%'", spno));
-                    if (!MyUtility.Check.Empty(seq)) sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq.Substring(0, 3), seq.Substring(3)));
-                    if (chkbalance) sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
-                    switch (selectindex)
-                    {
-                        case 0:
-                            sqlcmd.Append(@" And (a.stocktype = 'B' or a.stocktype = 'I')");
-                            break;
-                        case 1:
-                            sqlcmd.Append(@" And a.stocktype = 'B'");
-                            break;
-                        case 2:
-                            sqlcmd.Append(@" And a.stocktype = 'I'");
-                            break;
-                    }
                 }
                 else
                 {
@@ -142,35 +114,6 @@ a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
 ,a.InQty,a.OutQty,a.AdjustQty,a.inqty- a.outqty + a.adjustqty Balance
 from dbo.FtyInventory a left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
-where 1=1 And b.mtllocationid >= '{0}' and b.mtllocationid <= '{1}'", location1, location2));
-                    if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
-                    if (!MyUtility.Check.Empty(seq)) sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq.Substring(0, 3), seq.Substring(3)));
-                    if (chkbalance) sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
-                    switch (selectindex)
-                    {
-                        case 0:
-                            sqlcmd.Append(@" And (a.stocktype = 'B' or a.stocktype = 'I')");
-                            break;
-                        case 1:
-                            sqlcmd.Append(@" And a.stocktype = 'B'");
-                            break;
-                        case 2:
-                            sqlcmd.Append(@" And a.stocktype = 'I'");
-                            break;
-                    }
-                    sqlcmd.Append(string.Format(@"union all
-select distinct (select orders.Factoryid from orders where orders.id = a.poid) as factory,
-a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
-,(select cast(MtlLocationID as varchar)+',' from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')) as location
-,p.Width,p.ColorID,p.SizeSpec
-,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2) AS description 
-,a.StockType
-,(select max(Deadline) from dbo.Inventory i 
-					where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2
-						and i.FactoryID = (select FactoryID from orders where id = a.Poid)) deadline
-,a.InQty,a.OutQty,a.AdjustQty,a.inqty- a.outqty + a.adjustqty Balance
-from dbo.FtyInventory a left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
-inner join dbo.po_artwork p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 where 1=1 And b.mtllocationid >= '{0}' and b.mtllocationid <= '{1}'", location1, location2));
                     if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
                     if (!MyUtility.Check.Empty(seq)) sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq.Substring(0, 3), seq.Substring(3)));
@@ -221,35 +164,6 @@ And orders.scidelivery between '{0}' and '{1}'", dateRange1.Text1, dateRange1.Te
                             sqlcmd.Append(@" And a.stocktype = 'I'");
                             break;
                     }
-                    sqlcmd.Append(string.Format(@"union all
-select distinct orders.factoryid as factory, a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
-,(select cast(MtlLocationID as varchar)+',' from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')) as location
-,p.Width,p.ColorID,p.SizeSpec
-,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2) AS description 
-,a.StockType
-,(select max(Deadline) from dbo.Inventory i 
-	where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = orders.Factoryid) deadline
-,a.InQty,a.OutQty,a.AdjustQty,a.inqty- a.outqty + a.adjustqty Balance
-from dbo.FtyInventory a left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
-inner join dbo.PO_Artwork p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
-inner join dbo.orders on orders.id = p.id
-where 1=1
-And orders.scidelivery between '{0}' and '{1}'", dateRange1.Text1, dateRange1.Text2));
-                    if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
-                    if (!MyUtility.Check.Empty(seq)) sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq.Substring(0, 3), seq.Substring(3)));
-                    if (chkbalance) sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
-                    switch (selectindex)
-                    {
-                        case 0:
-                            sqlcmd.Append(@" And (a.stocktype = 'B' or a.stocktype = 'I')");
-                            break;
-                        case 1:
-                            sqlcmd.Append(@" And a.stocktype = 'B'");
-                            break;
-                        case 2:
-                            sqlcmd.Append(@" And a.stocktype = 'I'");
-                            break;
-                    }
                 }
                 else
                 {
@@ -264,37 +178,6 @@ And orders.scidelivery between '{0}' and '{1}'", dateRange1.Text1, dateRange1.Te
 from dbo.FtyInventory a 
 left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
-inner join dbo.orders on orders.ID = p.ID
-where 1=1
-And b.mtllocationid >= '{0}' and b.mtllocationid <= '{1}'
-And orders.scidelivery between '{2}' and '{3}'", location1, location2, dateRange1.Text1, dateRange1.Text2));
-                    if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
-                    if (!MyUtility.Check.Empty(seq)) sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq.Substring(0, 3), seq.Substring(3)));
-                    if (chkbalance) sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
-                    switch (selectindex)
-                    {
-                        case 0:
-                            sqlcmd.Append(@" And (a.stocktype = 'B' or a.stocktype = 'I')");
-                            break;
-                        case 1:
-                            sqlcmd.Append(@" And a.stocktype = 'B'");
-                            break;
-                        case 2:
-                            sqlcmd.Append(@" And a.stocktype = 'I'");
-                            break;
-                    }
-                    sqlcmd.Append(string.Format(@"union all
-select distinct orders.factoryid as factory,a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
-,(select cast(MtlLocationID as varchar)+',' from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')) as location
-,p.Width,p.ColorID,p.SizeSpec
-,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2) AS description 
-,a.StockType
-,(select max(Deadline) from dbo.Inventory i 
-	where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = orders.FactoryID) deadline
-,a.InQty,a.OutQty,a.AdjustQty,a.inqty- a.outqty + a.adjustqty Balance
-from dbo.FtyInventory a 
-left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
-inner join dbo.PO_Artwork p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 inner join dbo.orders on orders.ID = p.ID
 where 1=1
 And b.mtllocationid >= '{0}' and b.mtllocationid <= '{1}'
