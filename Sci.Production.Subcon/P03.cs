@@ -436,12 +436,14 @@ where b.bundleno !='' and b.id = '{0}'and a.artworktypeid = '{1}'", CurrentMaint
                 {
                     if (!(result = DBProxy.Current.Execute(null, sqlcmd3)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlcmd3, result);
                         return;
                     }
 
                     if (!(result2 = DBProxy.Current.Execute(null, sqlcmd2)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlcmd2, result2);
                         return;
                     }
@@ -451,6 +453,7 @@ where b.bundleno !='' and b.id = '{0}'and a.artworktypeid = '{1}'", CurrentMaint
                 }
                 catch (Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -588,12 +591,14 @@ and a.artworktypeid = '{1}'", CurrentMaintain["id"], CurrentMaintain["artworktyp
                 {
                     if (!(result = DBProxy.Current.Execute(null, sqlcmd3)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlcmd3, result);
                         return;
                     }
 
                     if (!(result2 = DBProxy.Current.Execute(null, sqlcmd2)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlcmd2, result2);
                         return;
                     }
@@ -603,6 +608,7 @@ and a.artworktypeid = '{1}'", CurrentMaintain["id"], CurrentMaintain["artworktyp
                 }
                 catch (Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }

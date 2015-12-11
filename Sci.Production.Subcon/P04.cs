@@ -407,12 +407,14 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
                 {
                     if (!(result = DBProxy.Current.Execute(null, sqlcmd3)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlcmd3, result);
                         return;
                     }
 
                     if (!(result2 = DBProxy.Current.Execute(null, sqlcmd2)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlcmd2, result2);
                         return;
                     }
@@ -422,6 +424,7 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
                 }
                 catch (Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -544,12 +547,14 @@ group by b.artworkpo_detailukey ", dr["artworkpo_detailukey"]);
                 {
                     if (!(result = DBProxy.Current.Execute(null, sqlcmd3)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlcmd3, result);
                         return;
                     }
 
                     if (!(result2 = DBProxy.Current.Execute(null, sqlcmd2)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlcmd2, result2);
                         return;
                     }
@@ -559,6 +564,7 @@ group by b.artworkpo_detailukey ", dr["artworkpo_detailukey"]);
                 }
                 catch (Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }

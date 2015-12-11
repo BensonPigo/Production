@@ -205,12 +205,14 @@ namespace Sci.Production.Subcon
                     }
                     else
                     {
+                        _transactionscope.Dispose();
                         MyUtility.Msg.WarningBox("Approved failed, Pleaes re-try");
                     }
                     
                 }
                 catch (Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }
