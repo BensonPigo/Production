@@ -52,9 +52,6 @@ namespace Sci.Production.Planning
             comboBox3.DisplayMember = "Value";
             comboBox3.SelectedIndex = 1;  //inhouse
 
-            string[] items = Sci.Env.User.FactoryList.Split(',');
-            comboBox2.Items.AddRange(items);
-
             MyUtility.Tool.SetGridFrozen(this.grid1);
             grid1.RowPostPaint += (s, e) =>
             {
@@ -203,6 +200,7 @@ namespace Sci.Production.Planning
             col_inhouseosp.DataSource = new BindingSource(di_inhouseOsp2, null);
             col_inhouseosp.ValueMember = "Key";
             col_inhouseosp.DisplayMember = "Value";
+            grid1.Columns[5].Frozen = true;  //SP#
 
             Helper.Controls.Grid.Generator(this.grid2)
                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(6))
@@ -227,7 +225,7 @@ namespace Sci.Production.Planning
             styleid = txtstyle1.Text;
             seasonid = txtseason1.Text;
             localsuppid = txtsubcon1.TextBox1.Text;
-            factoryid = comboBox2.Text;
+            factoryid = txtmfactory1.Text;
             inhouseosp = comboBox1.SelectedValue.ToString();
 
             if (dateRange1.Value1 != null) {sewinline_b = this.dateRange1.Text1;}
@@ -315,8 +313,9 @@ namespace Sci.Production.Planning
 ,b.artworktypeid
  FROM (Orders a inner join  Order_tmscost b on a.ID = b.ID) 
 inner join SewingSchedule c on a.id = c.OrderID
+inner join factory on factory.id = a.factoryid
  where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'LASER'
-and b.tms > 0", numericBox3.Text,numericBox2.Text);
+and b.tms > 0  and factory.mdivisionid='{2}'", numericBox3.Text, numericBox2.Text,Sci.Env.User.Keyword);
 
             if (!(MyUtility.Check.Empty(styleid)))
             { sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid); }

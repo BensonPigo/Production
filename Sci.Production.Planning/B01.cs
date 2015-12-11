@@ -139,7 +139,7 @@ namespace Sci.Production.Planning
         private void radioPanel1_Validated(object sender, EventArgs e)
         {
             Sci.Win.UI.RadioPanel rdoG = (RadioPanel)sender;
-            if (rdoG.Value == "2")
+            if (rdoG.Value == "2" && !MyUtility.Check.Empty(CurrentMaintain["issuedate"]))
             {
                 int yy = DateTime.Parse(CurrentMaintain["issuedate"].ToString()).Year;
                 int mm = DateTime.Parse(CurrentMaintain["issuedate"].ToString()).Month;

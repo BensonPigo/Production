@@ -60,7 +60,6 @@
             this.label11 = new Sci.Win.UI.Label();
             this.txtstyle1 = new Sci.Production.Class.txtstyle();
             this.label2 = new Sci.Win.UI.Label();
-            this.comboBox2 = new Sci.Win.UI.ComboBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.label10 = new Sci.Win.UI.Label();
             this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
@@ -69,6 +68,7 @@
             this.txtseason1 = new Sci.Production.Class.txtseason();
             this.button6 = new Sci.Win.UI.Button();
             this.label8 = new Sci.Win.UI.Label();
+            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -98,7 +98,7 @@
             this.button1.Location = new System.Drawing.Point(6, 237);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 5;
+            this.button1.TabIndex = 8;
             this.button1.Text = "Query";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -128,7 +128,7 @@
             this.checkBox1.Location = new System.Drawing.Point(246, 161);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(83, 21);
-            this.checkBox1.TabIndex = 3;
+            this.checkBox1.TabIndex = 6;
             this.checkBox1.Text = "Price > 0";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -137,7 +137,7 @@
             this.dateRange1.Location = new System.Drawing.Point(120, 102);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 1;
+            this.dateRange1.TabIndex = 3;
             // 
             // label1
             // 
@@ -153,7 +153,7 @@
             this.dateRange2.Location = new System.Drawing.Point(120, 73);
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 0;
+            this.dateRange2.TabIndex = 2;
             // 
             // label3
             // 
@@ -313,7 +313,7 @@
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(3, 3);
             this.grid1.Name = "grid1";
@@ -384,7 +384,7 @@
             this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid2.Location = new System.Drawing.Point(9, 405);
             this.grid2.Name = "grid2";
@@ -399,12 +399,12 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.txtmfactory1);
             this.groupBox2.Controls.Add(this.label11);
             this.groupBox2.Controls.Add(this.txtstyle1);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.checkBox1);
             this.groupBox2.Controls.Add(this.dateRange1);
-            this.groupBox2.Controls.Add(this.comboBox2);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.comboBox1);
             this.groupBox2.Controls.Add(this.dateRange2);
@@ -440,7 +440,7 @@
             this.txtstyle1.Location = new System.Drawing.Point(87, 15);
             this.txtstyle1.Name = "txtstyle1";
             this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 23;
+            this.txtstyle1.TabIndex = 0;
             // 
             // label2
             // 
@@ -451,17 +451,6 @@
             this.label2.TabIndex = 31;
             this.label2.Text = "OSP/InHouse";
             // 
-            // comboBox2
-            // 
-            this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Location = new System.Drawing.Point(119, 189);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 24);
-            this.comboBox2.TabIndex = 29;
-            // 
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.White;
@@ -471,7 +460,7 @@
             this.comboBox1.Location = new System.Drawing.Point(119, 159);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 28;
+            this.comboBox1.TabIndex = 5;
             // 
             // label10
             // 
@@ -489,7 +478,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(120, 130);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 26;
+            this.txtsubcon1.TabIndex = 4;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // label9
@@ -506,7 +495,7 @@
             this.button5.Location = new System.Drawing.Point(100, 237);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(106, 30);
-            this.button5.TabIndex = 20;
+            this.button5.TabIndex = 9;
             this.button5.Text = "Update Inline";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
@@ -519,14 +508,14 @@
             this.txtseason1.Location = new System.Drawing.Point(87, 44);
             this.txtseason1.Name = "txtseason1";
             this.txtseason1.Size = new System.Drawing.Size(80, 23);
-            this.txtseason1.TabIndex = 24;
+            this.txtseason1.TabIndex = 1;
             // 
             // button6
             // 
             this.button6.Location = new System.Drawing.Point(222, 237);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(179, 43);
-            this.button6.TabIndex = 21;
+            this.button6.TabIndex = 10;
             this.button6.Text = "Set Default Supp from Style";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
@@ -539,6 +528,15 @@
             this.label8.Size = new System.Drawing.Size(75, 23);
             this.label8.TabIndex = 22;
             this.label8.Text = "Style";
+            // 
+            // txtmfactory1
+            // 
+            this.txtmfactory1.BackColor = System.Drawing.Color.White;
+            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory1.Location = new System.Drawing.Point(119, 189);
+            this.txtmfactory1.Name = "txtmfactory1";
+            this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtmfactory1.TabIndex = 7;
             // 
             // P02
             // 
@@ -593,7 +591,6 @@
         private Win.UI.GroupBox groupBox1;
         private Win.UI.CheckBox checkBox4;
         private Win.UI.CheckBox checkBox3;
-        private Win.UI.ComboBox comboBox2;
         private Win.UI.ComboBox comboBox1;
         private Win.UI.Label label10;
         private Class.txtsubcon txtsubcon1;
@@ -611,5 +608,6 @@
         private Win.UI.ComboBox comboBox3;
         private Class.txtsubcon txtsubcon2;
         private Win.UI.Button button7;
+        private Class.txtmfactory txtmfactory1;
     }
 }

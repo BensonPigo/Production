@@ -23,45 +23,30 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             InitializeComponent();
-            //this.DefaultFilter = "Finished = 0 and IsForecast = 0";
-            
+            this.detailgrid.CellValueChanged += new DataGridViewCellEventHandler(ComboxChange);
+            this.DefaultFilter = string.Format(@"qty > 0 and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 and factoryid  
+in (select id from dbo.factory where mdivisionid='{0}'", Sci.Env.User.Keyword);
         }
-        public P01(ToolStripMenuItem menuitem ,bool history=false): base(menuitem)
+        public P01(ToolStripMenuItem menuitem, string history)
+            : base(menuitem)
         {
             InitializeComponent();
             this.detailgrid.CellValueChanged += new DataGridViewCellEventHandler(ComboxChange);
-            if (history)
+            if (history.ToUpper() == "Y")
             {
-                this.DefaultFilter = "Finished = 1 and IsForecast = 0";
+                this.DefaultFilter = string.Format(@"qty > 0 and (category ='B' or category='S') and Finished = 1 and IsForecast = 0 and factoryid  in 
+(select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
             }
             else
             {
-                this.DefaultFilter = "Finished = 0 and IsForecast = 0";
+                this.DefaultFilter = string.Format(@"qty > 0 and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 and factoryid  
+in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
             }
-            
-//            this.DetailSelectCommand = @"select order_tmscost.*
-//                                                                    ,osp.poqty osp_qty,osp.farmout as osp_farmout,osp.farmin as osp_farmin
-//                                                                    ,osp.poqty inhouse_qty,osp.farmout as inhouse_farmout,osp.farmin as inhouse_farmin
-//                                                                    ,(select localsupp.abb from localsupp where id = order_tmscost.localsuppid) as localsuppname
-//                                                            from order_tmscost 
-//                                                            inner join artworktype on order_tmscost.artworktypeid = artworktype.id 
-//                                                          left join (select artworkpo.artworktypeid,orderid,poqty,Farmout,farmin 
-//                                                                         from artworkpo,artworkpo_detail 
-//                                                                        where artworkpo.potype = 'O' and artworkpo.id = artworkpo_detail.id 
-//                                                                            and artworkpo_detail.orderid = @id and artworkpo.status = 'Approved'  group by artworkpo.artworktypeid,orderid,poqty,Farmout,farmin) osp
-//                                                                on Order_TmsCost.id = osp.orderid and osp.artworktypeid = Order_TmsCost.ArtworkTypeID
-//                                                            left join (select artworkpo.artworktypeid,orderid,poqty,Farmout,farmin 
-//                                                                         from artworkpo,artworkpo_detail 
-//                                                                        where artworkpo.potype = 'I' and artworkpo.id = artworkpo_detail.id 
-//                                                                            and artworkpo_detail.orderid = @id and artworkpo.status = 'Approved'  group by artworkpo.artworktypeid,orderid,poqty,Farmout,farmin) inhouse
-//                                                                on Order_TmsCost.id = inhouse.orderid and inhouse.artworktypeid = Order_TmsCost.ArtworkTypeID
-//                                                         where order_tmscost.id = @id and (order_tmscost.qty > 0 or order_tmscost.tms >0 )
-//                                                            and artworktype.isSubprocess = 1;--";
         }
-        
-        private void ComboxChange(object o,  DataGridViewCellEventArgs e)
+
+        private void ComboxChange(object o, DataGridViewCellEventArgs e)
         {
-            
+
             if (this.EditMode && e.ColumnIndex == 4)
             {
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
@@ -77,7 +62,7 @@ namespace Sci.Production.Planning
                                                         AND OT.ARTWORKTYPEID = '{1}' 
                                                     GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup"
                                                 , CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"]), null);
-                    
+
                 }
                 if (dr["inhouseosp"].ToString() == "I")
                 {
@@ -90,10 +75,10 @@ namespace Sci.Production.Planning
         {
             DataRow dr;
             bool result;
-            
+
             base.OnDetailEntered();
-            
-            if (!(CurrentMaintain==null))
+
+            if (!(CurrentMaintain == null))
             {
                 result = MyUtility.Check.Seek(string.Format(@"select isnull(sum(qty),0) as cutqty from cuttingOutput_detail_detail where CuttingID='{0}'", CurrentMaintain["id"]), out dr, null);
                 if (result) numericBox_cutqty.Value = (decimal)dr[0];
@@ -126,7 +111,7 @@ namespace Sci.Production.Planning
                     if (order_dt.Rows.Count > 0 && !MyUtility.Check.Empty(order_dt.Rows[0]["mockup"]))
                     {
                         dr["mockupdate"] = order_dt.Rows[0]["mockup"];
-                    } 
+                    }
                 }
             }
             return base.OnRenewDataDetailPost(e);
@@ -135,23 +120,33 @@ namespace Sci.Production.Planning
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
-            
+
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
             #region Supplier 右鍵開窗
             ts4.EditingMouseDown += (s, e) =>
             {
-                if (this.EditMode && e.Button == MouseButtons.Right && CurrentDetailData["InhouseOSP"].ToString() == "O")
+
+                if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                        (string.Format(@"SELECT QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup
+                    Sci.Win.Tools.SelectItem item;
+                    string sqlcmd;
+                    if (CurrentDetailData["InhouseOSP"].ToString() == "O")
+                    {
+                        sqlcmd = string.Format(@"SELECT QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup
                                                     FROM Order_TmsCost OT
                                                     INNER JOIN ORDERS ON OT.ID = ORDERS.ID
                                                     INNER JOIN Style_Artwork SA ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
                                                     LEFT JOIN Style_Artwork_Quot QU ON QU.Ukey = SA.Ukey
                                                     INNER JOIN LocalSupp ON LocalSupp.ID = QU.LocalSuppId
                                                     WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' AND OT.ARTWORKTYPEID='{1}'
-                                                    GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup", CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"])
-                                                                                                                                                                                     , "10,15,12", null,null);
+                                                    GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup", CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"]);
+                        item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,15,12", null, null);
+                    }
+                    else
+                    {
+                        sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 1 order by ID";
+                        item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30", null);
+                    }
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     CurrentDetailData["localsuppid"] = item.GetSelectedString();
@@ -159,13 +154,13 @@ namespace Sci.Production.Planning
             };
             #endregion
 
-            ts4.CellValidating+=(s,e)=>
+            ts4.CellValidating += (s, e) =>
             {
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
                     if (CurrentDetailData["InhouseOSP"].ToString() == "O")
                     {
-                        bool exist =false;
+                        bool exist = false;
                         DualResult result = DBProxy.Current.Exists(null, string.Format(@"SELECT QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup
                                                     FROM Order_TmsCost OT
                                                     INNER JOIN ORDERS ON OT.ID = ORDERS.ID
@@ -175,7 +170,7 @@ namespace Sci.Production.Planning
                                                     WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' 
                                                         AND OT.ARTWORKTYPEID = '{1}' AND qu.Localsuppid = '{2}'
                                                     GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup"
-                                                    , CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"],e.FormattedValue), null, out exist);
+                                                    , CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"], e.FormattedValue), null, out exist);
                         if (!exist)
                         {
                             e.Cancel = true;
@@ -224,8 +219,8 @@ namespace Sci.Production.Planning
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //1
             .Text("artworkunit", header: "Unit", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)  //2
             .Numeric("tms", header: "TMS", width: Widths.AnsiChars(6), iseditingreadonly: true)    //3
-            .ComboBox("InhouseOSP", header: "InHouse OSP",settings:cs).Get(out col_inhouse_osp)  //4
-            .Text("localsuppid", header: "Subcon",settings:ts4)  //5
+            .ComboBox("InhouseOSP", header: "InHouse OSP", settings: cs).Get(out col_inhouse_osp)  //4
+            .Text("localsuppid", header: "Subcon", settings: ts4)  //5
             .Text("localsuppname", header: "Subcon Name", iseditingreadonly: true)  //6
             .Date("mockupdate", header: "Mock-up", width: Widths.AnsiChars(10), iseditingreadonly: true)   //7
              .Numeric("osp_qty", header: "OSP Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //8
@@ -244,7 +239,7 @@ namespace Sci.Production.Planning
             col_inhouse_osp.DataSource = new BindingSource(comboBox1_RowSource, null);
             col_inhouse_osp.ValueMember = "Key";
             col_inhouse_osp.DisplayMember = "Value";
-            
+
             #region 可編輯欄位變色
             detailgrid.Columns[4].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
             detailgrid.Columns[5].DefaultCellStyle.BackColor = Color.Pink;  //Cutpart Name
@@ -261,8 +256,10 @@ namespace Sci.Production.Planning
             this.RenewData();
         }
 
-        protected override DualResult OnRenewDataPost(Win.Tems.Input1.RenewDataPostEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
+            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+
             this.DetailSelectCommand = string.Format(@"select convert(date,null) as mockupdate,order_tmscost.*
                                                                     ,osp.poqty osp_qty,osp.farmout as osp_farmout,osp.farmin as osp_farmin
                                                                     ,osp.poqty inhouse_qty,osp.farmout as inhouse_farmout,osp.farmin as inhouse_farmin
@@ -280,8 +277,10 @@ namespace Sci.Production.Planning
                                                                             and artworkpo_detail.orderid = '{0}' and artworkpo.status = 'Approved'  group by artworkpo.artworktypeid,orderid,poqty,Farmout,farmin) inhouse
                                                                 on Order_TmsCost.id = inhouse.orderid and inhouse.artworktypeid = Order_TmsCost.ArtworkTypeID
                                                          where order_tmscost.id = '{0}' and (order_tmscost.qty > 0 or order_tmscost.tms >0 )
-                                                            and artworktype.isSubprocess = 1;--", e.Data["id"].ToString());
-            return base.OnRenewDataPost(e);
+                                                            and artworktype.isSubprocess = 1;--", masterID);
+
+            return base.OnDetailSelectCommandPrepare(e);
+
         }
     }
 }

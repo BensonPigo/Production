@@ -54,9 +54,6 @@ namespace Sci.Production.Planning
             comboBox3.DisplayMember = "Value";
             comboBox3.SelectedIndex = 0;  //OSP
 
-            string[] items = Sci.Env.User.FactoryList.Split(',');
-            comboBox2.Items.AddRange(items);
-
             MyUtility.Tool.SetGridFrozen(this.grid1);
             grid1.RowPostPaint += (s, e) =>
             {
@@ -183,7 +180,7 @@ namespace Sci.Production.Planning
                 .Numeric("totalqty", header: "Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
                 .ComboBox("inhouseosp", header: "OSP/Inhouse").Get(out col_inhouseosp)
                 .Text("localSuppid", header: "Supp Id", width: Widths.AnsiChars(6),settings:ts)
-                .Text("suppnm", header: "Supplierd", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("suppnm", header: "Supplier", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Date("cutinline", header: "Cut Inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Date("cutoffline", header: "Cut Offline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Date("Sewinline", header: "Sew Inline" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -199,6 +196,8 @@ namespace Sci.Production.Planning
             col_inhouseosp.DataSource = new BindingSource(di_inhouseOsp2, null);
             col_inhouseosp.ValueMember = "Key";
             col_inhouseosp.DisplayMember = "Value";
+
+            grid1.Columns[5].Frozen = true;  //SP#
         }
 
         //Query
@@ -215,7 +214,7 @@ namespace Sci.Production.Planning
             styleid = txtstyle1.Text;
             seasonid = txtseason1.Text;
             localsuppid = txtsubcon1.TextBox1.Text;
-            factoryid = comboBox2.Text;
+            factoryid = txtmfactory1.Text;
             inhouseosp = comboBox1.SelectedValue.ToString();
 
             if (dateRange1.Value1 != null) sewinline_b = this.dateRange1.Text1;
@@ -233,7 +232,7 @@ namespace Sci.Production.Planning
             }
 
             string sqlcmd
-                = @"SELECT 0 as selected,a.id, a.SciDelivery, a.CutInline, a.CutOffline, a.FactoryID
+                = string.Format(@"SELECT 0 as selected,a.id, a.SciDelivery, a.CutInline, a.CutOffline, a.FactoryID
 , a.StyleID, a.SeasonID, a.Qty AS OrderQty, a.isforecast,a.poid
 , (select cast(t.article as varchar)+',' from (select article from order_qty where id = a.ID group by article )t for xml path('')) as article
 ,b.qty,b.InhouseOSP,b.LocalSuppID
@@ -243,15 +242,10 @@ namespace Sci.Production.Planning
 ,a.SewInLine
 ,a.SewOffLine
 ,a.StyleUkey
-,isnull((select sum(tmp3.qaqty)  
-    from 
+,isnull((select sum(tmp3.qaqty)  from 
     (SELECT article,min(isnull(qaqty,0)) qaqty
 	    FROM style_location 
-	    left join (
-				    SELECT 
-					      [ComboType]
-					      ,[Article]
-					      ,SUM([QAQty]) QAQTY
+	    left join (select [ComboType] ,[Article] ,SUM([QAQty]) QAQTY
 				      FROM [Production].[dbo].[SewingOutput_Detail] WHERE ORDERID=a.id
 				      GROUP BY ComboType,Article) TMP 
 	    on style_location.Location = tmp.ComboType where style_location.StyleUkey = a.styleukey
@@ -259,8 +253,9 @@ namespace Sci.Production.Planning
 , 0 as stdq
 , 0 as err
 ,'' as msg
- FROM (Orders a inner join  Order_tmscost b on a.ID = b.ID)
- where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'PRINTING'";
+ FROM Orders a inner join  Order_tmscost b on a.ID = b.ID
+            inner join factory on factory.id = a.factoryid
+ where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'PRINTING' and factory.mdivisionid='{0}'",Sci.Env.User.Keyword);
 
             if (!(MyUtility.Check.Empty(styleid)))
             { sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid); }

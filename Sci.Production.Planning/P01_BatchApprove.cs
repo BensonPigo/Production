@@ -20,7 +20,6 @@ namespace Sci.Production.Planning
             InitializeComponent();
             this.textBoxSp1.Text = orderid;
             this.textBoxSp2.Text = orderid;
-            this.txtfactory1.Text = Env.User.Factory;
             dateRangeApvDate.Enabled = false;
             btnUnApprove.Enabled = false;
         }
@@ -120,21 +119,23 @@ namespace Sci.Production.Planning
             {
                 // 建立可以符合回傳的Cursor
 
-                string strSQLCmd = @"select 1 as Selected
-                                                ,ods.FactoryID
-                                                ,ot.ID
-                                                ,ot.ArtworkTypeID
-                                                ,ot.LocalSuppID
-                                                ,ls.Abb SupplierName
-                                                ,ot.ArtworkInLine
-                                                ,ods.SciDelivery
-                                                ,ot.ApvDate
-                                                from Order_TmsCost ot 
-                                                inner join orders ods on ot.ID = ods.ID
-                                                inner join LocalSupp ls on ls.id = ot.LocalSuppID
-                                                where ods.finished=0 and ods.isforecast = 0 
-                                                    and (ods.category = 'B' or ods.category = 'S')
-                                                    and ods.qty > 0 and (ot.qty > 0 or ot.tms > 0)";
+                string strSQLCmd = string.Format(@"select 1 as Selected
+,ods.FactoryID
+,ot.ID
+,ot.ArtworkTypeID
+,ot.LocalSuppID
+,ls.Abb SupplierName
+,ot.ArtworkInLine
+,ods.SciDelivery
+,ot.ApvDate
+from Order_TmsCost ot 
+inner join orders ods on ot.ID = ods.ID
+inner join LocalSupp ls on ls.id = ot.LocalSuppID
+inner join dbo.factory on factory.id = ods.factoryid
+where ods.finished=0 and ods.isforecast = 0 
+    and (ods.category = 'B' or ods.category = 'S')
+    and ods.qty > 0 and (ot.qty > 0 or ot.tms > 0)
+    and factory.mdivisionid='{0}'",Sci.Env.User.Keyword);
                 if (!chkApprove) { strSQLCmd += " and  ot.apvdate is null"; }
                 if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and  ot.id  between @sp1 and  @sp2"; }
                 if (!MyUtility.Check.Empty(inline_b)) { strSQLCmd += string.Format(" and not(ot.artworkinline > '{1}' or ot.artworkoffline < '{0}')", inline_b, inline_e); }
@@ -145,9 +146,9 @@ namespace Sci.Production.Planning
                 if (!MyUtility.Check.Empty(factory)) { strSQLCmd += " and ods.factoryid = @factoryid"; }
                 
                 strSQLCmd += @" order by ods.FactoryID
-                                                ,ot.ID
-                                                ,ot.ArtworkTypeID
-                                                ,ot.LocalSuppID,ot.ArtworkInLine,ods.SciDelivery";
+,ot.ID
+,ot.ArtworkTypeID
+,ot.LocalSuppID,ot.ArtworkInLine,ods.SciDelivery";
 
                 #region 準備sql參數資料
                 System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -256,30 +257,8 @@ namespace Sci.Production.Planning
         //To Excel
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
-            SaveFileDialog dlg = new SaveFileDialog();
-            dlg.RestoreDirectory = true;
-            dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
-            dlg.Title = "Save as Excel File";
-            dlg.FileName = "P01_BatchApprove_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
-
-            dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
-
-            // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
-            // Get the selected file name and CopyToXls
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
-            {
-                // Open document
-                DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-                DualResult result = MyUtility.Excel.CopyToXls(dt, dlg.FileName);
-                if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName); }   //XlsAutoFit(dlg.FileName, "MMDR030.xlt", 12);
-                else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(), "Warning"); }
-            }
-            else
-            {
-                return;
-            }
+            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            MyUtility.Excel.CopyToXls(dt, "");
         }
 
         //unApprove

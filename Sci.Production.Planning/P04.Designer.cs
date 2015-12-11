@@ -66,7 +66,6 @@
             this.label11 = new Sci.Win.UI.Label();
             this.txtstyle1 = new Sci.Production.Class.txtstyle();
             this.label2 = new Sci.Win.UI.Label();
-            this.comboBox2 = new Sci.Win.UI.ComboBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.label10 = new Sci.Win.UI.Label();
             this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
@@ -83,6 +82,7 @@
             this.checkBox3 = new Sci.Win.UI.CheckBox();
             this.button5 = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
+            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -142,7 +142,7 @@
             this.dateRange1.Location = new System.Drawing.Point(648, 44);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 6;
+            this.dateRange1.TabIndex = 9;
             // 
             // label1
             // 
@@ -158,7 +158,7 @@
             this.dateRange2.Location = new System.Drawing.Point(648, 15);
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 5;
+            this.dateRange2.TabIndex = 8;
             // 
             // label3
             // 
@@ -350,6 +350,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.txtmfactory1);
             this.groupBox2.Controls.Add(this.label13);
             this.groupBox2.Controls.Add(this.comboBox4);
             this.groupBox2.Controls.Add(this.label16);
@@ -363,7 +364,6 @@
             this.groupBox2.Controls.Add(this.txtstyle1);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.dateRange1);
-            this.groupBox2.Controls.Add(this.comboBox2);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.comboBox1);
             this.groupBox2.Controls.Add(this.dateRange2);
@@ -398,7 +398,7 @@
             this.comboBox4.Location = new System.Drawing.Point(358, 71);
             this.comboBox4.Name = "comboBox4";
             this.comboBox4.Size = new System.Drawing.Size(159, 24);
-            this.comboBox4.TabIndex = 42;
+            this.comboBox4.TabIndex = 6;
             // 
             // label16
             // 
@@ -428,7 +428,7 @@
             65536});
             this.numericBox3.Name = "numericBox3";
             this.numericBox3.Size = new System.Drawing.Size(100, 23);
-            this.numericBox3.TabIndex = 10;
+            this.numericBox3.TabIndex = 7;
             this.numericBox3.Value = new decimal(new int[] {
             150,
             0,
@@ -453,7 +453,7 @@
             0});
             this.numericBox2.Name = "numericBox2";
             this.numericBox2.Size = new System.Drawing.Size(39, 23);
-            this.numericBox2.TabIndex = 8;
+            this.numericBox2.TabIndex = 3;
             this.numericBox2.Value = new decimal(new int[] {
             90,
             0,
@@ -483,7 +483,7 @@
             this.dateRange3.Location = new System.Drawing.Point(648, 73);
             this.dateRange3.Name = "dateRange3";
             this.dateRange3.Size = new System.Drawing.Size(280, 23);
-            this.dateRange3.TabIndex = 7;
+            this.dateRange3.TabIndex = 10;
             // 
             // label6
             // 
@@ -522,17 +522,6 @@
             this.label2.TabIndex = 31;
             this.label2.Text = "OSP/InHouse";
             // 
-            // comboBox2
-            // 
-            this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Location = new System.Drawing.Point(358, 14);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 24);
-            this.comboBox2.TabIndex = 3;
-            // 
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.White;
@@ -560,7 +549,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(359, 44);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 4;
+            this.txtsubcon1.TabIndex = 5;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // label9
@@ -604,7 +593,7 @@
             this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid2.Location = new System.Drawing.Point(956, 12);
             this.grid2.Name = "grid2";
@@ -720,7 +709,7 @@
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(3, 3);
             this.grid1.Name = "grid1";
@@ -732,6 +721,15 @@
             this.grid1.Size = new System.Drawing.Size(1226, 368);
             this.grid1.TabIndex = 34;
             this.grid1.TabStop = false;
+            // 
+            // txtmfactory1
+            // 
+            this.txtmfactory1.BackColor = System.Drawing.Color.White;
+            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory1.Location = new System.Drawing.Point(358, 15);
+            this.txtmfactory1.Name = "txtmfactory1";
+            this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtmfactory1.TabIndex = 4;
             // 
             // P04
             // 
@@ -784,7 +782,6 @@
         private Win.UI.GroupBox groupBox1;
         private Win.UI.CheckBox checkBox4;
         private Win.UI.CheckBox checkBox3;
-        private Win.UI.ComboBox comboBox2;
         private Win.UI.ComboBox comboBox1;
         private Win.UI.Label label10;
         private Class.txtsubcon txtsubcon1;
@@ -819,5 +816,6 @@
         private Win.UI.NumericBox numericBox4;
         private Win.UI.Label label13;
         private Win.UI.ComboBox comboBox4;
+        private Class.txtmfactory txtmfactory1;
     }
 }

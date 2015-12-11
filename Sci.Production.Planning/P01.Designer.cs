@@ -63,6 +63,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -104,7 +105,7 @@
             this.masterpanel.Controls.Add(this.dateBox3);
             this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 191);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 191);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
@@ -140,16 +141,45 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 191);
-            this.detailpanel.Size = new System.Drawing.Size(892, 158);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 438);
             // 
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(896, 156);
             this.gridicon.Visible = false;
             // 
+            // refresh
+            // 
+            this.refresh.Location = new System.Drawing.Point(920, 0);
+            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 158);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 438);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1000, 667);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(1000, 629);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 629);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             // 
             // browse
             // 
@@ -465,9 +495,8 @@
             // 
             this.ClientSize = new System.Drawing.Size(1008, 729);
             this.Controls.Add(this.button_batchApprove);
-            this.DefaultOrder = "scidelivery,id";
+            this.DefaultOrder = "id";
             this.GridAlias = "order_tmscost";
-            this.GridUniqueKey = "ID,ARTWORKTYPEID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
@@ -478,7 +507,6 @@
             this.Text = "P01 Sub-process master list";
             this.UniqueExpress = "ID";
             this.WorkAlias = "orders";
-            this.WorkView = "view_orders_subprocess";
             this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.button_batchApprove, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
@@ -486,6 +514,7 @@
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
