@@ -75,6 +75,9 @@
             this.button2 = new Sci.Win.UI.Button();
             this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
             this.dateBox1 = new Sci.Win.UI.DateBox();
+            this.numericBox9 = new Sci.Win.UI.NumericBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -138,7 +141,8 @@
             this.txtartworktype_fty1.Location = new System.Drawing.Point(92, 41);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(209, 23);
-            this.txtartworktype_fty1.TabIndex = 2;
+            this.txtartworktype_fty1.TabIndex = 1;
+            this.txtartworktype_fty1.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_fty1_Validating);
             this.txtartworktype_fty1.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
             // 
             // label3
@@ -338,7 +342,7 @@
             this.textBox1.Location = new System.Drawing.Point(92, 12);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(209, 23);
-            this.textBox1.TabIndex = 1;
+            this.textBox1.TabIndex = 0;
             // 
             // txtunit_fty1
             // 
@@ -348,7 +352,7 @@
             this.txtunit_fty1.Location = new System.Drawing.Point(93, 72);
             this.txtunit_fty1.Name = "txtunit_fty1";
             this.txtunit_fty1.Size = new System.Drawing.Size(88, 23);
-            this.txtunit_fty1.TabIndex = 3;
+            this.txtunit_fty1.TabIndex = 2;
             // 
             // textBox2
             // 
@@ -359,7 +363,7 @@
             this.textBox2.Location = new System.Drawing.Point(92, 101);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(687, 23);
-            this.textBox2.TabIndex = 4;
+            this.textBox2.TabIndex = 3;
             // 
             // txtcurrency1
             // 
@@ -406,7 +410,7 @@
             this.textBox8.Location = new System.Drawing.Point(408, 25);
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(100, 23);
-            this.textBox8.TabIndex = 17;
+            this.textBox8.TabIndex = 1;
             // 
             // textBox12
             // 
@@ -416,13 +420,13 @@
             this.textBox12.Location = new System.Drawing.Point(104, 390);
             this.textBox12.Name = "textBox12";
             this.textBox12.Size = new System.Drawing.Size(100, 23);
-            this.textBox12.TabIndex = 21;
+            this.textBox12.TabIndex = 6;
             // 
             // label25
             // 
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Lines = 0;
-            this.label25.Location = new System.Drawing.Point(258, 52);
+            this.label25.Location = new System.Drawing.Point(233, 52);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(326, 23);
             this.label25.TabIndex = 42;
@@ -442,6 +446,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.numericBox9);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.numericBox7);
             this.groupBox1.Controls.Add(this.numericBox3);
             this.groupBox1.Controls.Add(this.numericBox2);
@@ -455,7 +462,7 @@
             this.groupBox1.Controls.Add(this.comboBox1);
             this.groupBox1.Location = new System.Drawing.Point(15, 159);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(786, 88);
+            this.groupBox1.Size = new System.Drawing.Size(877, 88);
             this.groupBox1.TabIndex = 9;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Carton Only";
@@ -480,7 +487,7 @@
             196608});
             this.numericBox7.Name = "numericBox7";
             this.numericBox7.Size = new System.Drawing.Size(95, 23);
-            this.numericBox7.TabIndex = 12;
+            this.numericBox7.TabIndex = 2;
             this.numericBox7.Validated += new System.EventHandler(this.textBox3_Validated);
             // 
             // numericBox3
@@ -503,7 +510,7 @@
             262144});
             this.numericBox3.Name = "numericBox3";
             this.numericBox3.Size = new System.Drawing.Size(135, 23);
-            this.numericBox3.TabIndex = 14;
+            this.numericBox3.TabIndex = 3;
             // 
             // numericBox2
             // 
@@ -525,7 +532,7 @@
             196608});
             this.numericBox2.Name = "numericBox2";
             this.numericBox2.Size = new System.Drawing.Size(95, 23);
-            this.numericBox2.TabIndex = 11;
+            this.numericBox2.TabIndex = 1;
             this.numericBox2.Validated += new System.EventHandler(this.textBox3_Validated);
             // 
             // numericBox1
@@ -548,7 +555,7 @@
             196608});
             this.numericBox1.Name = "numericBox1";
             this.numericBox1.Size = new System.Drawing.Size(95, 23);
-            this.numericBox1.TabIndex = 10;
+            this.numericBox1.TabIndex = 0;
             this.numericBox1.Validated += new System.EventHandler(this.textBox3_Validated);
             // 
             // groupBox2
@@ -570,7 +577,7 @@
             this.groupBox2.Location = new System.Drawing.Point(15, 254);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(786, 124);
-            this.groupBox2.TabIndex = 15;
+            this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Thread Only";
             // 
@@ -594,7 +601,7 @@
             65536});
             this.numericBox8.Name = "numericBox8";
             this.numericBox8.Size = new System.Drawing.Size(100, 23);
-            this.numericBox8.TabIndex = 16;
+            this.numericBox8.TabIndex = 0;
             // 
             // numericBox6
             // 
@@ -637,7 +644,7 @@
             0});
             this.numericBox5.Name = "numericBox5";
             this.numericBox5.Size = new System.Drawing.Size(100, 23);
-            this.numericBox5.TabIndex = 18;
+            this.numericBox5.TabIndex = 2;
             // 
             // numericBox4
             // 
@@ -659,7 +666,7 @@
             393216});
             this.numericBox4.Name = "numericBox4";
             this.numericBox4.Size = new System.Drawing.Size(100, 23);
-            this.numericBox4.TabIndex = 19;
+            this.numericBox4.TabIndex = 3;
             // 
             // checkBox1
             // 
@@ -705,7 +712,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(93, 130);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
-            this.txtsubcon1.TabIndex = 5;
+            this.txtsubcon1.TabIndex = 4;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // dateBox1
@@ -717,6 +724,46 @@
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
             this.dateBox1.TabIndex = 8;
+            // 
+            // numericBox9
+            // 
+            this.numericBox9.BackColor = System.Drawing.Color.White;
+            this.numericBox9.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CtnWeight", true));
+            this.numericBox9.DecimalPlaces = 6;
+            this.numericBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox9.Location = new System.Drawing.Point(664, 51);
+            this.numericBox9.Maximum = new decimal(new int[] {
+            999999999,
+            0,
+            0,
+            262144});
+            this.numericBox9.MaxLength = 12;
+            this.numericBox9.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            262144});
+            this.numericBox9.Name = "numericBox9";
+            this.numericBox9.Size = new System.Drawing.Size(100, 23);
+            this.numericBox9.TabIndex = 4;
+            // 
+            // label1
+            // 
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(767, 51);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(27, 23);
+            this.label1.TabIndex = 43;
+            this.label1.Text = "kg";
+            // 
+            // label2
+            // 
+            this.label2.Lines = 0;
+            this.label2.Location = new System.Drawing.Point(551, 51);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(110, 23);
+            this.label2.TabIndex = 44;
+            this.label2.Text = "CTN. Weight";
             // 
             // B01
             // 
@@ -795,5 +842,8 @@
         private Win.UI.NumericBox numericBox3;
         private Win.UI.NumericBox numericBox2;
         private Win.UI.NumericBox numericBox8;
+        private Win.UI.NumericBox numericBox9;
+        private Win.UI.Label label1;
+        private Win.UI.Label label2;
     }
 }

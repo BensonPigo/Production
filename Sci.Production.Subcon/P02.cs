@@ -26,7 +26,7 @@ namespace Sci.Production.Subcon
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = "POTYPE='I' AND FactoryID = '" + Sci.Env.User.Factory + "'";
+            this.DefaultFilter = "MdivisionID = '" + Sci.Env.User.Keyword + "' and POTYPE='I'";
             gridicon.Append.Enabled = false;
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
@@ -47,6 +47,7 @@ namespace Sci.Production.Subcon
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
+            CurrentMaintain["Mdivisionid"] = Sci.Env.User.Keyword;
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
             CurrentMaintain["POType"] = "I";
@@ -153,6 +154,14 @@ namespace Sci.Production.Subcon
                 txtuser1.TextBox1.Focus();
                 return false;
             }
+
+            if (MyUtility.Check.Empty(CurrentMaintain["factoryid"]))
+            {
+                MyUtility.Msg.WarningBox("< Factory Id >  can't be empty!", "Warning");
+                txtmfactory1.Focus();
+                return false;
+            }
+
             #endregion
 
             if (DetailDatas.Count == 0)
@@ -164,7 +173,13 @@ namespace Sci.Production.Subcon
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "OS", "artworkpo", (DateTime)CurrentMaintain["issuedate"]);
+                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory where ID ='{0}'", CurrentMaintain["factoryid"]));
+                if (MyUtility.Check.Empty(factorykeyword))
+                {
+                    MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
+                    return false;
+                }
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(factorykeyword + "OS", "artworkpo", (DateTime)CurrentMaintain["issuedate"]);
             }
 
             return base.ClickSaveBefore();
@@ -198,12 +213,15 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            #region --動態unit header --
             string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype where id='{0}'", CurrentMaintain["artworktypeid"])).ToString().Trim();
             if (artworkunit == "") artworkunit = "PCS";
             this.detailgrid.Columns[6].HeaderText = "Cost(" + artworkunit + ")";
             this.detailgrid.Columns[7].HeaderText = artworkunit;
+            #endregion
             txtsubcon1.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
+            txtmfactory1.Enabled = !this.EditMode || IsDetailInserting;
             #region Status Label
             label25.Text = CurrentMaintain["Status"].ToString();
             #endregion
@@ -442,6 +460,7 @@ namespace Sci.Production.Subcon
             detailgridbs.EndEdit();
         }
 
+        // batch create
         private void button3_Click(object sender, EventArgs e)
         {
             if (this.EditMode) return;

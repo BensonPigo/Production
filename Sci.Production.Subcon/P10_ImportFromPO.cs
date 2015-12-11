@@ -67,8 +67,9 @@ namespace Sci.Production.Subcon
                                                                         from artworkpo a, artworkpo_detail b 
                                                                         where a.id = b.id and a.status='Approved' and b.apqty < farmin
                                                                         and a.artworktypeid = '{0}' 
-                                                                        and a.localsuppid = '{1}'", dr_artworkAp["artworktypeid"].ToString(),
-                                                                                                            dr_artworkAp["localsuppid"].ToString());
+                                                                        and a.localsuppid = '{1}' and a.mdivisionid='{2}'", dr_artworkAp["artworktypeid"],
+                                                                                                            dr_artworkAp["localsuppid"]
+                                                                                                            ,Sci.Env.User.Keyword);
                 if(!MyUtility.Check.Empty(sp_b)){strSQLCmd+= " and b.orderid between @sp1 and @sp2";}
                 if (!MyUtility.Check.Empty(poid_b)) { strSQLCmd += " and b.id between @artworkpoid1 and  @artworkpoid2"; }
                 strSQLCmd += " order by b.id,b.ukey";

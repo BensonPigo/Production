@@ -77,38 +77,24 @@ namespace Sci.Production.Subcon
             {
                 // 建立可以符合回傳的Cursor
 
-                string strSQLCmd = @"select 0 as Selected, '' as id, q.id as orderid ,sum(q.qty) poqty
-                                            , artwk.ArtworkTypeID,artwk.ArtworkID,artwk.PatternCode,o.SewInLIne,o.SciDelivery
-                                             ,oa.qty as coststitch,oa.qty Stitch,oa.PatternDesc,1 as qtygarment,oa.Cost
-                                            , oa.Cost unitprice, oa.Cost as  price, sum(q.qty)*cost as amount
-                                    from orders o,order_qty q, order_artwork oa,
-                                            (select c.ID,c.ArtworkTypeID,d.ArtworkID,d.PatternCode
-                                                from orders b, Order_TmsCost c, Order_Artwork d
-                                                where b.id= c.id and b.ID=d.id and c.ArtworkTypeID = d.ArtworkTypeID and c.apvdate is not null and c.localsuppid !=''";
+                string strSQLCmd = string.Format(@"select 0 as Selected, '' as id, q.id as orderid ,sum(q.qty) poqty
+, oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
+,oa.qty as coststitch,oa.qty Stitch,oa.PatternDesc,1 as qtygarment,oa.Cost
+, oa.Cost unitprice, oa.Cost as  price, sum(q.qty)*cost as amount
+from orders o inner join order_qty q on q.id = o.ID
+inner join dbo.View_Order_Artworks oa on oa.ID = o.ID
+inner join dbo.Order_TmsCost ot on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
+where not exists (select * from artworkpo a inner join ArtworkPO_Detail ap on a.ID=ap.ID where a.POType = '{0}' 
+and a.ArtworkTypeID = oa.ArtworkTypeID and a.LocalSuppID = ot.localsuppid  and ap.OrderID = o.ID)", poType);
 
-                                            strSQLCmd += string.Format("     and c.ArtworkTypeID = '{0}'", dr_artworkpo["artworktypeid"]);
-                                            if (poType == "O") { strSQLCmd += "     and ((b.Category = 'B' and c.InhouseOSP='O' and c.price > 0) or (b.category !='B'))"; }
-                                            if (!(dateRange2.Value1 == null)) { strSQLCmd += string.Format(" and b.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
-                                            if (!(dateRange1.Value1 == null)) { strSQLCmd += string.Format(" and c.ApvDate between '{0}' and '{1}'", apvdate_b, apvdate_e); }
-                                            if (!(dateRange3.Value1 == null)) { strSQLCmd += string.Format(" and not (c.ArtworkInLine > '{0}' or c.ArtworkOffLine < '{1}') ", Inline_b, Inline_e); }
-                                            if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and b.ID between '{0}' and '{1}'", sp_b, sp_e); }
-                            
-                                            strSQLCmd += string.Format(@" except
-                                                  select b1.orderid,a1.ArtworkTypeID, b1.ArtworkId,b1.PatternCode
-                                                  from artworkpo a1,ArtworkPO_Detail b1
-                                                  where a1.id = b1.id
-                                                  and a1.POType = '{0}'", poType);
-                                            if (!(string.IsNullOrWhiteSpace(dr_artworkpo["id"].ToString()))) { strSQLCmd += string.Format("  and a1.id !='{0}'", dr_artworkpo["id"]); }
-                                            if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format(" and b1.orderID between '{0}' and '{1}'", sp_b, sp_e); }
-                                            strSQLCmd += string.Format(" and a1.ArtworkTypeID= '{0}') as artwk" , dr_artworkpo["artworktypeid"]);
-                strSQLCmd += @" where o.ID = q.ID and o.id = oa.id 
-                                and o.ID = artwk.ID and oa.ArtworkTypeID = artwk.ArtworkTypeID 
-                                and oa.artworkid = artwk.artworkid and oa.PatternCode = artwk.PatternCode";
-
-                if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("  and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
+                strSQLCmd += string.Format("     and oa.ArtworkTypeID = '{0}' and ot.localsuppid='{1}'", dr_artworkpo["artworktypeid"], dr_artworkpo["localsuppid"]);
+                if (poType == "O") { strSQLCmd += "     and ((o.Category = 'B' and ot.InhouseOSP='O' and ot.price > 0) or (o.category !='B'))"; }
                 if (!(dateRange2.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
+                if (!(dateRange1.Value1 == null)) { strSQLCmd += string.Format(" and ot.ApvDate between '{0}' and '{1}'", apvdate_b, apvdate_e); }
+                if (!(dateRange3.Value1 == null)) { strSQLCmd += string.Format(" and not (ot.ArtworkInLine > '{0}' or ot.ArtworkOffLine < '{1}') ", Inline_b, Inline_e); }
+                if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
 
-                strSQLCmd += " group by q.id,artwk.ArtworkTypeID,artwk.ArtworkID,artwk.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.Cost,oa.PatternDesc";
+                strSQLCmd += " group by q.id,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.Cost,oa.PatternDesc";
 
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))

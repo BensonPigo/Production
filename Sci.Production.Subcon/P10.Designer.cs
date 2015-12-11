@@ -47,7 +47,6 @@
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
             this.displayBox7 = new Sci.Win.UI.DisplayBox();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.numericBox1 = new Sci.Win.UI.NumericBox();
@@ -64,10 +63,12 @@
             this.label2 = new Sci.Win.UI.Label();
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.label8 = new Sci.Win.UI.Label();
+            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -79,6 +80,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtmfactory1);
             this.masterpanel.Controls.Add(this.displayBox4);
             this.masterpanel.Controls.Add(this.label8);
             this.masterpanel.Controls.Add(this.textBox3);
@@ -94,7 +96,6 @@
             this.masterpanel.Controls.Add(this.textBox2);
             this.masterpanel.Controls.Add(this.displayBox7);
             this.masterpanel.Controls.Add(this.txtartworktype_fty1);
-            this.masterpanel.Controls.Add(this.displayBox3);
             this.masterpanel.Controls.Add(this.displayBox2);
             this.masterpanel.Controls.Add(this.txtsubcon1);
             this.masterpanel.Controls.Add(this.displayBox1);
@@ -137,7 +138,6 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtsubcon1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtartworktype_fty1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox7, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
@@ -153,6 +153,7 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtmfactory1, 0);
             // 
             // detailpanel
             // 
@@ -172,6 +173,10 @@
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(1058, 219);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
@@ -379,16 +384,6 @@
             this.displayBox2.Size = new System.Drawing.Size(100, 23);
             this.displayBox2.TabIndex = 5;
             // 
-            // displayBox3
-            // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "factoryid", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(342, 49);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(100, 23);
-            this.displayBox3.TabIndex = 7;
-            // 
             // displayBox7
             // 
             this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -571,6 +566,16 @@
             this.label8.TabIndex = 51;
             this.label8.Text = "Transfer A/C";
             // 
+            // txtmfactory1
+            // 
+            this.txtmfactory1.BackColor = System.Drawing.Color.White;
+            this.txtmfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
+            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory1.Location = new System.Drawing.Point(342, 49);
+            this.txtmfactory1.Name = "txtmfactory1";
+            this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtmfactory1.TabIndex = 52;
+            // 
             // P10
             // 
             this.ApvChkValue = "New";
@@ -592,6 +597,7 @@
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
@@ -625,7 +631,6 @@
         private Win.UI.TextBox textBox2;
         private Win.UI.DisplayBox displayBox7;
         private Class.txtartworktype_fty txtartworktype_fty1;
-        private Win.UI.DisplayBox displayBox3;
         private Win.UI.DisplayBox displayBox2;
         private Win.UI.DateBox dateBox1;
         private Class.txtsubcon txtsubcon1;
@@ -643,5 +648,6 @@
         private Win.UI.Label label2;
         private Class.txtpayterm_fty txtpayterm_fty1;
         private Win.UI.Label label1;
+        private Class.txtmfactory txtmfactory1;
     }
 }

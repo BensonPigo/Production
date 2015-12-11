@@ -22,7 +22,7 @@ namespace Sci.Production.Subcon
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = string.Format("FactoryID = '{0}'", Sci.Env.User.Factory);
+            this.DefaultFilter = "MdivisionID = '" + Sci.Env.User.Keyword + "'";
         }
 
         // detail 新增時設定預設值
@@ -48,6 +48,7 @@ namespace Sci.Production.Subcon
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
+            CurrentMaintain["Mdivisionid"] = Sci.Env.User.Keyword;
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
             CurrentMaintain["HANDLE"] = Sci.Env.User.UserID;
@@ -111,6 +112,13 @@ namespace Sci.Production.Subcon
                 txtuser1.TextBox1.Focus();
                 return false;
             }
+
+            if (MyUtility.Check.Empty(CurrentMaintain["factoryid"]))
+            {
+                MyUtility.Msg.WarningBox("< Factory Id >  can't be empty!", "Warning");
+                txtmfactory1.Focus();
+                return false;
+            }
             #endregion
 
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty = 0"))
@@ -133,10 +141,16 @@ namespace Sci.Production.Subcon
             }
 
 
-            //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
+            //取單號： 
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "FO", "FarmOut", (DateTime)CurrentMaintain["issuedate"]);
+                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory where ID ='{0}'", CurrentMaintain["factoryid"]));
+                if (MyUtility.Check.Empty(factorykeyword))
+                {
+                    MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
+                    return false;
+                }
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(factorykeyword + "FO", "FarmOut", (DateTime)CurrentMaintain["issuedate"]);
             }
 
             #region 加總明細Qty至表頭
@@ -240,12 +254,12 @@ namespace Sci.Production.Subcon
                                                         ,b.poqty
                                                         ,b.farmout
                                                         ,b.ukey
-                                                        FROM ArtworkPO A, ArtworkPO_Detail B
-                                                        WHERE A.ID = B.ID
+                                                        FROM ArtworkPO A inner join ArtworkPO_Detail B on A.ID = B.ID
+                                                        WHERE a.mdivisionid = '{2}'
                                                         AND A.ApvName IS NOT NULL
                                                         AND A.Closed = 0
                                                         AND B.OrderID ='{0}'
-                                                        AND B.ArtworkTypeID = '{1}' order by B.ID", dr["OrderID"].ToString(), CurrentMaintain["artworktypeid"].ToString());
+                                                        AND B.ArtworkTypeID = '{1}' order by B.ID", dr["OrderID"], CurrentMaintain["artworktypeid"],Sci.Env.User.Keyword);
                         Sci.Win.Tools.SelectItem item
                             = new Sci.Win.Tools.SelectItem(sqlcmd, "13,13,13,13,15,5,5,0", dr["artworkpoID"].ToString(), "POID,Artwork Type,Artwork,Cutpart,Cutpart Name,PoQty,FarmOut,Ukey");
                         item.Width = 1024;
@@ -274,14 +288,14 @@ namespace Sci.Production.Subcon
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("BundleNo", header: "Bundle No", width: Widths.AnsiChars(10), iseditingreadonly: true)  //0
             .CellOrderId("OrderID", header: "SP#", width: Widths.AnsiChars(13), settings: ts)
-            .Text("StyleID", header: "Style", width: Widths.AnsiChars(6), iseditingreadonly: false)    //2
+            .Text("StyleID", header: "Style", width: Widths.AnsiChars(6), iseditingreadonly: true)    //2
             .Text("ArtworkPoID", header: "POID", settings: ts4, iseditingreadonly: true, width: Widths.AnsiChars(13))   //3
             .Text("ArtworkId", header: "Artwork", iseditingreadonly: false)   //4
             .Text("PatternCode", header: "Cutpart ID", iseditingreadonly: false)    //5
-            .Text("PatternDesc", header: "Cutpart Name", iseditingreadonly: false)//6
-            .Numeric("ArtworkPoQty", header: "P/O Qty", width: Widths.AnsiChars(5), iseditingreadonly: false)    //7
-            .Numeric("OnHand", header: "Accum. Qty", width: Widths.AnsiChars(5), iseditingreadonly: false) //8
-            .Numeric("Variance", header: "Variance", width: Widths.AnsiChars(5), iseditingreadonly: false)   //9
+            .Text("PatternDesc", header: "Cutpart Name", iseditingreadonly: true)//6
+            .Numeric("ArtworkPoQty", header: "P/O Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)    //7
+            .Numeric("OnHand", header: "Accum. Qty", width: Widths.AnsiChars(5), iseditingreadonly: true) //8
+            .Numeric("Variance", header: "Variance", width: Widths.AnsiChars(5), iseditingreadonly: true)   //9
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5))     //10
             .Numeric("BalQty", header: "Bal. Qty", width: Widths.AnsiChars(5), iseditingreadonly: true);  //11
 
@@ -296,7 +310,7 @@ namespace Sci.Production.Subcon
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            if (!(Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["handle"].ToString() != Env.User.UserID))
+            if ((!(Prgs.GetAuthority(Env.User.UserID)) && CurrentMaintain["handle"].ToString() != Env.User.UserID))
             {
                 MyUtility.Msg.WarningBox("Only Handle or Leader have authority to Confirm!");
                 return;
@@ -321,12 +335,9 @@ namespace Sci.Production.Subcon
             }
 
             sqlcmd = string.Format(@"select b.id,b.bundleno 
-                                    from farmin a,farmin_detail b, farmout_detail c 
-                                    where a.id = b.id 
-                                    and b.bundleno = c.bundleno 
-                                    and c.id = '{0}'
-                                    and a.artworktypeid = '{1}'", CurrentMaintain["id"], CurrentMaintain["artworktypeid"]);
-
+from farmin a inner join farmin_detail c on a.id = c.id
+inner join farmout_detail b on b.bundleno = c.bundleno and b.ArtworkID = c.ArtworkID
+where b.bundleno !='' and b.id = '{0}'and a.artworktypeid = '{1}'", CurrentMaintain["id"], CurrentMaintain["artworktypeid"]);
 
             ids = "";
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck))) { ShowErr(sqlcmd, result); }
@@ -337,11 +348,11 @@ namespace Sci.Production.Subcon
                     ids += dr[0].ToString() + ",";
                     bundlenos += dr[1].ToString() + ",";
                 }
-                MyUtility.Msg.WarningBox(String.Format("These Bundle# <{0}> already exist in farm-in data <{1}> , can't Confirmed", bundlenos, ids));
+                MyUtility.Msg.WarningBox(String.Format("These Bundle# <{0}> already exist in farm in data <{1}> , can't Confirmed", bundlenos, ids));
                 return;
             }
 
-            // Confirmed 提示是否超過po qty
+            #region Confirmed 提示是否超過po qty
             if (CurrentMaintain["status"].ToString().ToUpper() == "NEW")
             {
                 ids = "";
@@ -357,7 +368,8 @@ namespace Sci.Production.Subcon
                     {
                         if ((decimal)dr["qty"] + (decimal)datacheck.Rows[0]["farmout"] > (decimal)datacheck.Rows[0]["poqty"])
                         {
-                            ids += string.Format("{0}-{1}-{2}-{3}-{4} is over PO Qty", datacheck.Rows[0]["id"], datacheck.Rows[0]["orderid"], datacheck.Rows[0]["artworktypeid"], datacheck.Rows[0]["artworkid"], datacheck.Rows[0]["patterncode"]) + Environment.NewLine;
+                            ids += string.Format("{0}-{1}-{2}-{3}-{4} is over PO Qty", datacheck.Rows[0]["id"], datacheck.Rows[0]["orderid"],
+                                datacheck.Rows[0]["artworktypeid"], datacheck.Rows[0]["artworkid"], datacheck.Rows[0]["patterncode"]) + Environment.NewLine;
                         }
                     }
                 }
@@ -366,9 +378,7 @@ namespace Sci.Production.Subcon
                     MyUtility.Msg.WarningBox(ids);
                 }
             }
-
-
-
+            #endregion
 
             // update farmout status
             if (CurrentMaintain["Status"].ToString().ToUpper() == "NEW")
@@ -376,7 +386,6 @@ namespace Sci.Production.Subcon
                 sqlcmd3 = string.Format("update Farmout set Status = 'Confirmed' , editname = '{0}' , editdate = GETDATE() " +
                                 "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             }
-
 
             // update artworkpo_detail farmout
             DataTable detailgroup;
@@ -416,7 +425,6 @@ namespace Sci.Production.Subcon
                     {
                          sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
                                 + Environment.NewLine, (decimal)dr["qty"], dr["artworkpo_detailukey"]);
-                        
                     }
                 }
             }
@@ -457,7 +465,7 @@ namespace Sci.Production.Subcon
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            if (!(Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["handle"].ToString() != Env.User.UserID))
+            if ((!(Prgs.GetAuthority(Env.User.UserID)) && CurrentMaintain["handle"].ToString() != Env.User.UserID))
             {
                 MyUtility.Msg.WarningBox("Only Handle & Leader have authority to UnConfirm!");
                 return;
@@ -482,12 +490,10 @@ namespace Sci.Production.Subcon
             }
 
             sqlcmd = string.Format(@"select b.id,b.bundleno 
-                                    from farmin a,farmin_detail b, farmout_detail c 
-                                    where a.id = b.id 
-                                    and b.bundleno = c.bundleno 
-                                    and c.id = '{0}'
-                                    and a.artworktypeid = '{1}'", CurrentMaintain["id"], CurrentMaintain["artworktypeid"]);
-
+from farmin a inner join farmin_detail b on b.id = a.id 
+inner join farmout_detail c on b.bundleno = c.bundleno and b.artworkid = c.artworkid
+where c.bundleno !='' and c.id = '{0}'
+and a.artworktypeid = '{1}'", CurrentMaintain["id"], CurrentMaintain["artworktypeid"]);
 
             ids = "";
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck))) { ShowErr(sqlcmd, result); }

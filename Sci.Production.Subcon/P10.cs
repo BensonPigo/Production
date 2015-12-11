@@ -26,7 +26,7 @@ namespace Sci.Production.Subcon
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory +"'";
+            this.DefaultFilter = "Mdivisionid = '" + Sci.Env.User.Keyword +"'";
             gridicon.Append.Enabled = false;
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
@@ -62,6 +62,7 @@ namespace Sci.Production.Subcon
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
+            CurrentMaintain["Mdivisionid"] = Sci.Env.User.Keyword;
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
             CurrentMaintain["HANDLE"] = Sci.Env.User.UserID;
@@ -119,7 +120,6 @@ namespace Sci.Production.Subcon
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
         {
-
             #region 必輸檢查
             if (CurrentMaintain["LocalSuppID"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["LocalSuppID"].ToString()))
 		    {
@@ -134,8 +134,6 @@ namespace Sci.Production.Subcon
                 dateBox1.Focus();
                 return false;
             }
-
-           
 
             if (CurrentMaintain["ArtworktypeId"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["ArtworktypeId"].ToString()))
 		    {
@@ -156,6 +154,13 @@ namespace Sci.Production.Subcon
                 txtuser1.TextBox1.Focus();
                 return false;
             }
+
+            if (MyUtility.Check.Empty(CurrentMaintain["factoryid"]))
+            {
+                MyUtility.Msg.WarningBox("< Factory Id >  can't be empty!", "Warning");
+                txtmfactory1.Focus();
+                return false;
+            }
             #endregion
 
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("apqty = 0"))
@@ -169,10 +174,16 @@ namespace Sci.Production.Subcon
                 return false;
             }
 
-            //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
+            //取單號： 
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword+"FA", "artworkAP", (DateTime)CurrentMaintain["issuedate"]);
+                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory where ID ='{0}'", CurrentMaintain["factoryid"]));
+                if (MyUtility.Check.Empty(factorykeyword))
+                {
+                    MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
+                    return false;
+                }
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(factorykeyword + "FA", "artworkAP", (DateTime)CurrentMaintain["issuedate"]);
                 if (MyUtility.Check.Empty(CurrentMaintain["id"]))
                 {
                     MyUtility.Msg.WarningBox("Server is busy, Please re-try it again", "GetID() Failed");
@@ -233,7 +244,7 @@ namespace Sci.Production.Subcon
             txtsubcon1.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
             txtpayterm_fty1.Enabled =  !this.EditMode || IsDetailInserting;
-
+            txtmfactory1.Enabled = !this.EditMode || IsDetailInserting;
             #region Status Label
             label25.Text = CurrentMaintain["status"].ToString();
             #endregion

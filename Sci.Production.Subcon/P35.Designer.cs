@@ -47,7 +47,6 @@
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
             this.displayBox7 = new Sci.Win.UI.DisplayBox();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.numericBox1 = new Sci.Win.UI.NumericBox();
@@ -64,10 +63,12 @@
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
             this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
+            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -79,6 +80,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtmfactory1);
             this.masterpanel.Controls.Add(this.displayBox4);
             this.masterpanel.Controls.Add(this.label8);
             this.masterpanel.Controls.Add(this.textBox3);
@@ -94,7 +96,6 @@
             this.masterpanel.Controls.Add(this.textBox2);
             this.masterpanel.Controls.Add(this.displayBox7);
             this.masterpanel.Controls.Add(this.txtartworktype_fty1);
-            this.masterpanel.Controls.Add(this.displayBox3);
             this.masterpanel.Controls.Add(this.displayBox2);
             this.masterpanel.Controls.Add(this.txtsubcon1);
             this.masterpanel.Controls.Add(this.displayBox1);
@@ -115,7 +116,7 @@
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 258);
+            this.masterpanel.Size = new System.Drawing.Size(1058, 258);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -137,7 +138,6 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtsubcon1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtartworktype_fty1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox7, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
@@ -153,11 +153,12 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtmfactory1, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 258);
-            this.detailpanel.Size = new System.Drawing.Size(892, 91);
+            this.detailpanel.Size = new System.Drawing.Size(1058, 219);
             // 
             // gridicon
             // 
@@ -165,9 +166,38 @@
             this.gridicon.Location = new System.Drawing.Point(928, 210);
             this.gridicon.TabIndex = 21;
             // 
+            // refresh
+            // 
+            this.refresh.Location = new System.Drawing.Point(978, 0);
+            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 91);
+            this.detailgridcont.Size = new System.Drawing.Size(1058, 219);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1058, 515);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(1058, 477);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 477);
+            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
             // 
             // browse
             // 
@@ -354,16 +384,6 @@
             this.displayBox2.Size = new System.Drawing.Size(100, 23);
             this.displayBox2.TabIndex = 5;
             // 
-            // displayBox3
-            // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "factoryid", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(342, 49);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(100, 23);
-            this.displayBox3.TabIndex = 7;
-            // 
             // displayBox7
             // 
             this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -546,6 +566,16 @@
             this.txtsubcon1.TabIndex = 2;
             this.txtsubcon1.TextBox1Binding = "";
             // 
+            // txtmfactory1
+            // 
+            this.txtmfactory1.BackColor = System.Drawing.Color.White;
+            this.txtmfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
+            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory1.Location = new System.Drawing.Point(342, 49);
+            this.txtmfactory1.Name = "txtmfactory1";
+            this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtmfactory1.TabIndex = 52;
+            // 
             // P35
             // 
             this.ApvChkValue = "New";
@@ -572,6 +602,7 @@
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
@@ -605,7 +636,6 @@
         private Win.UI.TextBox textBox2;
         private Win.UI.DisplayBox displayBox7;
         private Class.txtartworktype_fty txtartworktype_fty1;
-        private Win.UI.DisplayBox displayBox3;
         private Win.UI.DisplayBox displayBox2;
         private Win.UI.DateBox dateBox1;
         private Class.txtsubcon txtsubcon1;
@@ -623,5 +653,6 @@
         private Win.UI.Label label2;
         private Class.txtpayterm_fty txtpayterm_fty1;
         private Win.UI.Label label1;
+        private Class.txtmfactory txtmfactory1;
     }
 }

@@ -78,8 +78,8 @@ namespace Sci.Production.Subcon
                                                                         from localpo a, localpo_detail b 
                                                                         where a.id = b.id and a.status='Approved' and b.apqty < inqty
                                                                         and a.category = '{0}' 
-                                                                        and a.localsuppid = '{1}'", dr_localAp["category"].ToString(),
-                                                                                                            dr_localAp["localsuppid"].ToString());
+                                                                        and a.localsuppid = '{1}' and a.mdivisionid = '{2}'", dr_localAp["category"],
+                                                                                                            dr_localAp["localsuppid"],Env.User.Keyword);
                 if(!MyUtility.Check.Empty(sp_b)){strSQLCmd+= " and b.orderid between @sp1 and @sp2";}
                 if (!MyUtility.Check.Empty(poid_b)) { strSQLCmd += " and b.id between @localpoid1 and  @localpoid2"; }
                 if (!MyUtility.Check.Empty(delivery_b)) { strSQLCmd += string.Format(" and b.Delivery between '{0}' and '{1}'", delivery_b, delivery_e); }

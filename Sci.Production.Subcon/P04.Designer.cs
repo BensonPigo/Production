@@ -36,16 +36,17 @@
             this.label5 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.label25 = new Sci.Win.UI.Label();
+            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -57,11 +58,11 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtmfactory1);
             this.masterpanel.Controls.Add(this.label25);
             this.masterpanel.Controls.Add(this.textBox2);
             this.masterpanel.Controls.Add(this.txtuser1);
             this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.txtfactory1);
             this.masterpanel.Controls.Add(this.txtartworktype_fty1);
             this.masterpanel.Controls.Add(this.label7);
             this.masterpanel.Controls.Add(this.label5);
@@ -82,11 +83,11 @@
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtartworktype_fty1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtfactory1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtuser1, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label25, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtmfactory1, 0);
             // 
             // detailpanel
             // 
@@ -107,6 +108,18 @@
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(1000, 490);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -154,7 +167,7 @@
             this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(252, 14);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
+            this.label2.Size = new System.Drawing.Size(99, 23);
             this.label2.TabIndex = 4;
             this.label2.Text = "Factory";
             // 
@@ -207,18 +220,6 @@
             this.txtartworktype_fty1.TabIndex = 0;
             this.txtartworktype_fty1.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
             // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtfactory1.IsSupportEditMode = false;
-            this.txtfactory1.Location = new System.Drawing.Point(331, 14);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.ReadOnly = true;
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 11;
-            // 
             // displayBox1
             // 
             this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -269,6 +270,16 @@
             this.label25.Text = "Confirmed";
             this.label25.TextStyle.Color = System.Drawing.Color.Red;
             // 
+            // txtmfactory1
+            // 
+            this.txtmfactory1.BackColor = System.Drawing.Color.White;
+            this.txtmfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
+            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory1.Location = new System.Drawing.Point(354, 14);
+            this.txtmfactory1.Name = "txtmfactory1";
+            this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtmfactory1.TabIndex = 46;
+            // 
             // P04
             // 
             this.ApvChkValue = "New";
@@ -291,6 +302,7 @@
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
@@ -311,7 +323,6 @@
         private Win.UI.TextBox textBox2;
         private Class.txtuser txtuser1;
         private Win.UI.DisplayBox displayBox1;
-        private Class.txtfactory txtfactory1;
         private Class.txtartworktype_fty txtartworktype_fty1;
         private Win.UI.Label label7;
         private Win.UI.Label label5;
@@ -320,5 +331,6 @@
         private Win.UI.Label label2;
         private Win.UI.DateBox dateBox1;
         private Win.UI.Label label25;
+        private Class.txtmfactory txtmfactory1;
     }
 }

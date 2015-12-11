@@ -137,7 +137,7 @@ namespace Sci.Production.Subcon
                 }
                 if (string.IsNullOrWhiteSpace(CurrentMaintain["ThreadTypeID"].ToString()))
                 {
-                    MyUtility.Msg.WarningBox("< ThreadTypeID > can not be empty!");
+                    MyUtility.Msg.WarningBox("< Thread Item > can not be empty!");
                     this.textBox8.Focus();
                     return false;
                 }
@@ -196,47 +196,7 @@ namespace Sci.Production.Subcon
         //改變artworktype時，控制可輸入的欄位
         private void txtartworktype_fty1_Validated(object sender, EventArgs e)
         {
-            switch (this.txtartworktype_fty1.Text.Trim())
-            {
-                case "CARTON":
-                    this.groupBox1.Enabled = true;
-                    this.groupBox2.Enabled = false;
-                    CurrentMaintain["MeterToCone"] = DBNull.Value;
-                    CurrentMaintain["ThreadTypeID"] = DBNull.Value;
-                    CurrentMaintain["ThreadTex"] = DBNull.Value;
-                    CurrentMaintain["Weight"] = DBNull.Value;
-                    CurrentMaintain["AxleWeight"] = DBNull.Value;
-                    if (string.IsNullOrWhiteSpace(comboBox1.SelectedText.ToString()))
-                    {
-                        comboBox1.SelectedIndex = 0;
-                    }
-                    break;
-                case "EMB_THREAD":
-                case "SP_THREAD":
-                    this.groupBox1.Enabled = false;
-                    this.groupBox2.Enabled = true;
-                    CurrentMaintain["CtnLength"] = DBNull.Value;
-                    CurrentMaintain["CtnWidth"] = DBNull.Value;
-                    CurrentMaintain["CtnHeight"] = DBNull.Value;
-                    CurrentMaintain["CtnUnit"] = DBNull.Value;
-                    CurrentMaintain["CBM"] = DBNull.Value;
-                    break;
-                default:
-                    this.groupBox1.Enabled = false;
-                    this.groupBox2.Enabled = false;
-                    CurrentMaintain["MeterToCone"] = DBNull.Value;
-                    CurrentMaintain["ThreadTypeID"] = DBNull.Value;
-                    CurrentMaintain["ThreadTex"] = DBNull.Value;
-                    CurrentMaintain["Weight"] = DBNull.Value;
-                    CurrentMaintain["AxleWeight"] = DBNull.Value;
-                    CurrentMaintain["CtnLength"] = DBNull.Value;
-                    CurrentMaintain["CtnWidth"] = DBNull.Value;
-                    CurrentMaintain["CtnHeight"] = DBNull.Value;
-                    CurrentMaintain["CtnUnit"] = DBNull.Value;
-                    CurrentMaintain["CBM"] = DBNull.Value;
-                    break;
-
-            }
+            
         }
 
         //計算cbm相關欄位的valid事件
@@ -292,6 +252,53 @@ namespace Sci.Production.Subcon
             var frm = new Sci.Production.Subcon.B01_History(dr);
             frm.ShowDialog(this);
             this.RenewData();
+        }
+
+        private void txtartworktype_fty1_Validating(object sender, CancelEventArgs e)
+        {
+            CurrentMaintain["category"] = txtartworktype_fty1.Text;
+            switch (this.txtartworktype_fty1.Text.Trim())
+            {
+                case "CARTON":
+                    this.groupBox1.Enabled = true;
+                    this.groupBox2.Enabled = false;
+                    CurrentMaintain["MeterToCone"] = DBNull.Value;
+                    CurrentMaintain["ThreadTypeID"] = DBNull.Value;
+                    CurrentMaintain["ThreadTex"] = DBNull.Value;
+                    CurrentMaintain["Weight"] = DBNull.Value;
+                    CurrentMaintain["AxleWeight"] = DBNull.Value;
+                    if (string.IsNullOrWhiteSpace(comboBox1.SelectedText.ToString()))
+                    {
+                        comboBox1.SelectedIndex = 0;
+                    }
+                    break;
+                case "EMB_THREAD":
+                case "SP_THREAD":
+                    this.groupBox1.Enabled = false;
+                    this.groupBox2.Enabled = true;
+                    CurrentMaintain["CtnLength"] = DBNull.Value;
+                    CurrentMaintain["CtnWidth"] = DBNull.Value;
+                    CurrentMaintain["CtnHeight"] = DBNull.Value;
+                    CurrentMaintain["CtnUnit"] = DBNull.Value;
+                    CurrentMaintain["CBM"] = DBNull.Value;
+                    CurrentMaintain["CTNWeight"] = DBNull.Value;
+                    break;
+                default:
+                    this.groupBox1.Enabled = false;
+                    this.groupBox2.Enabled = false;
+                    CurrentMaintain["MeterToCone"] = DBNull.Value;
+                    CurrentMaintain["ThreadTypeID"] = DBNull.Value;
+                    CurrentMaintain["ThreadTex"] = DBNull.Value;
+                    CurrentMaintain["Weight"] = DBNull.Value;
+                    CurrentMaintain["AxleWeight"] = DBNull.Value;
+                    CurrentMaintain["CtnLength"] = DBNull.Value;
+                    CurrentMaintain["CtnWidth"] = DBNull.Value;
+                    CurrentMaintain["CtnHeight"] = DBNull.Value;
+                    CurrentMaintain["CtnUnit"] = DBNull.Value;
+                    CurrentMaintain["CBM"] = DBNull.Value;
+                    break;
+
+            }
         }
     }
 }

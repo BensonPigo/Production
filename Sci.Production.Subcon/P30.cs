@@ -26,7 +26,7 @@ namespace Sci.Production.Subcon
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
+            this.DefaultFilter = "mdivisionid = '" + Sci.Env.User.Keyword + "'";
             
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
@@ -56,6 +56,7 @@ namespace Sci.Production.Subcon
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
+            CurrentMaintain["Mdivisionid"] = Sci.Env.User.Keyword;
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
             CurrentMaintain["VatRate"] = 0;
@@ -146,7 +147,12 @@ namespace Sci.Production.Subcon
                 return false;
             }
 
-
+            if (MyUtility.Check.Empty(CurrentMaintain["factoryid"]))
+            {
+                MyUtility.Msg.WarningBox("< Factory Id >  can't be empty!", "Warning");
+                txtmfactory1.Focus();
+                return false;
+            }
             #endregion
 
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty = 0 or qty = null"))
@@ -164,7 +170,13 @@ namespace Sci.Production.Subcon
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'LocalPO1'), 'LocalPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LP", "Localpo", (DateTime)CurrentMaintain["issuedate"]);
+                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory where ID ='{0}'", CurrentMaintain["factoryid"]));
+                if (MyUtility.Check.Empty(factorykeyword))
+                {
+                    MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
+                    return false;
+                }
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(factorykeyword + "LP", "Localpo", (DateTime)CurrentMaintain["issuedate"]);
             }
 
             #region 加總明細金額至表頭
@@ -225,6 +237,7 @@ namespace Sci.Production.Subcon
             }
             txtsubcon1.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
+            txtmfactory1.Enabled = !this.EditMode || IsDetailInserting;
             #region Status Label
             label25.Text = CurrentMaintain["status"].ToString();
             #endregion

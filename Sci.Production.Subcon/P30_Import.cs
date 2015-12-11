@@ -96,8 +96,9 @@ namespace Sci.Production.Subcon
                                                                     and b.RefNo = d.RefNo
                                                                     and a.ApvToPurchase = 1 
                                                                     and a.LocalPOID =''
-                                                                    and a.factoryid = '{0}'"
-                                                                ,Env.User.Factory);
+                                                                    and a.factoryid = '{0}'
+and a.mdivisionid='{1}'"
+                                                                ,Env.User.Factory,Env.User.Keyword);
 
                     if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
                     if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
@@ -148,8 +149,9 @@ namespace Sci.Production.Subcon
                                                                     and b.RefNo = d.RefNo
                                                                     and a.status = 'Approved' 
                                                                     and a.factoryid = '{0}'
+and a.Mdivisionid = '{1}'
                                                                 "
-                        , Env.User.Factory);
+                        , Env.User.Factory,Env.User.Keyword);
 
                     if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
                     if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
@@ -336,30 +338,8 @@ namespace Sci.Production.Subcon
         // To Excel
         private void button4_Click(object sender, EventArgs e)
         {
-            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
-            SaveFileDialog dlg = new SaveFileDialog();
-            dlg.RestoreDirectory = true;
-            dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
-            dlg.Title = "Save as Excel File";
-            dlg.FileName = "P30_Import_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
-
-            dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
-
-            // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
-            // Get the selected file name and CopyToXls
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
-            {
-                // Open document
-                DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-                DualResult result = MyUtility.Excel.CopyToXls(dt, dlg.FileName);
-                if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName); }   //XlsAutoFit(dlg.FileName, "MMDR030.xlt", 12);
-                else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(), "Warning"); }
-            }
-            else
-            {
-                return;
-            }
+            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            MyUtility.Excel.CopyToXls(dt,"");
         }
     }
 }

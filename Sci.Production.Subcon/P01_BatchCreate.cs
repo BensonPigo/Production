@@ -11,8 +11,8 @@ using Ict;
 using Ict.Win;
 using System.Linq;
 using System.Transactions;
-
-
+using MsExcel = Microsoft.Office.Interop.Excel;
+using System.Reflection;
 
 namespace Sci.Production.Subcon
 {
@@ -89,179 +89,136 @@ namespace Sci.Production.Subcon
                 return;
             }
 
+            // 建立可以符合回傳的Cursor
+            if (isArtwork.ToUpper() == "TRUE")
+            {
+                #region -- Artwork類 的 sql command --
+                SqlCmd = string.Format(@"SELECT 0 Selected, 
+orders.FTYGroup,
+Order_TmsCost.ID as orderid,                  
+rtrim(v.article) article,                     
+rtrim(Orders.Styleid) Styleid,                
+orders.ordertypeid,
+Orders.SeasonID,                              
+Orders.SciDelivery,                           
+Order_TmsCost.ArtworkTypeID,                  
+rtrim(v.ArtworkID) ArtworkID,                 
+v.PatternCode,                                
+v.PatternDesc,                                
+rtrim(order_tmscost.LocalSuppID) LocalSuppID, 
+v.Cost,                                       
+v.qty costStitch,                          
+v.qty stitch,                                     
+isnull((select b.Price from style_artwork a,Style_Artwork_Quot b where a.StyleUkey = orders.StyleUkey and a.Ukey = b.Ukey and a.Article =v.article and a.ArtworkTypeID=v.ArtworkTypeID 
+            and a.ArtworkID = v.ArtworkID and a.PatternCode = v.PatternCode and b.LocalSuppId = Order_TmsCost.LocalSuppID and b.PriceApv = 'Y'),0) as unitprice,
+order_tmscost.Qty qtygarment, 
+sum(v.poqty) poqty , 
+Order_TmsCost.ArtworkInLine, 
+Order_TmsCost.artworkoffline,
+'' message            
+,Order_TmsCost.apvdate 
+FROM Order_TmsCost inner join Orders on Order_TmsCost.id = Orders.id
+inner join factory on orders.ftygroup = factory.id
+inner join view_order_artworks v on v.id = Order_TmsCost.id and v.artworktypeid = Order_TmsCost.artworktypeid
+WHERE not exists(select * from artworkpo a inner join artworkpo_detail ap on ap.id = a.id where a.potype='{0}' and a.localsuppid = Order_TmsCost.localsuppid 
+and a.artworktypeid = Order_TmsCost.artworktypeid and ap.OrderID = orders.ID) 
+and orders.Finished=0                                                                 
+AND orders.IsForecast = 0                                                             
+AND orders.Junk = 0 
+and factory.mdivisionid = '{1}'
+and Order_TmsCost.localsuppid !=''", poType, Sci.Env.User.Keyword);
+
+                SqlCmd += string.Format(" AND Order_TmsCost.InhouseOSP = '{0}'", poType);
+
+                if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }
+                if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate between '{0}' and '{1}'", apvdate_b, apvdate_e); }
+                if (!(string.IsNullOrWhiteSpace(Inline_b))) { SqlCmd += string.Format(" and not (Order_TmsCost.ArtworkInLine > '{0}' or Order_TmsCost.ArtworkOffLine < '{1}') ", Inline_b, Inline_e); }
+                if (!(string.IsNullOrWhiteSpace(sciDelivery_b))) { SqlCmd += string.Format(" and Orders.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
+                if (!(string.IsNullOrWhiteSpace(sp_b))) { SqlCmd += string.Format(" and orders.ID between '{0}' and '{1}'", sp_b, sp_e); }
+                SqlCmd += @"
+group by
+orders.FTYGroup,
+Order_TmsCost.ID,           
+v.article,                  
+Orders.Styleid,             
+Orders.SeasonID,            
+Orders.OrderTypeId,
+Orders.SciDelivery,         
+Order_TmsCost.ArtworkTypeID,
+order_tmscost.LocalSuppID,  
+order_tmscost.Qty ,         
+Order_TmsCost.ArtworkInLine,
+Order_TmsCost.artworkoffline,
+Orders.SewInLine,           
+Order_TmsCost.ApvDate       
+,orders.StyleUkey           
+,V.ArtworkID                
+,V.PatternCode              
+,V.PatternDesc              
+,V.Cost                     
+,V.ArtworkTypeID,v.qty";
+                #endregion
+            }
             else
             {
-                // 建立可以符合回傳的Cursor
-
-                if (isArtwork.ToUpper() == "TRUE")
-                {
-                    SqlCmd = @"SELECT 0 Selected, 									
-                                orders.FTYGroup,															
-                                Order_TmsCost.ID as orderid,                  
-                                rtrim(v.article) article,                     
-                                rtrim(Orders.Styleid) Styleid,                
-                                Orders.SeasonID,                              
-                                Orders.SciDelivery,                           
-                                Order_TmsCost.ArtworkTypeID,                  
-                                rtrim(v.ArtworkID) ArtworkID,                 
-                                v.PatternCode,                                
-                                v.PatternDesc,                                
-                                rtrim(order_tmscost.LocalSuppID) LocalSuppID, 
-                                v.Cost,                                       
-                                v.qty costStitch,                          
-                                v.qty stitch,                                     
-                                isnull((select b.Price from                   
-	                                style_artwork a,Style_Artwork_Quot b        
-	                                where a.StyleUkey = orders.StyleUkey        
-	                                and a.Ukey = b.Ukey                         
-	                                and a.Article =v.article                    
-	                                and a.ArtworkTypeID=v.ArtworkTypeID         
-	                                and a.ArtworkID = v.ArtworkID               
-	                                and a.PatternCode = v.PatternCode 
-	                                and b.LocalSuppId = Order_TmsCost.LocalSuppID and b.PriceApv = 'Y'),0) as unitprice,
-
-                                order_tmscost.Qty qtygarment,                                                         
-                                sum(v.poqty) poqty ,                                                                  
-                                Order_TmsCost.ArtworkInLine,                                                          
-                                Order_TmsCost.artworkoffline, rtrim(orders.factoryid) factoryid,'' message            
-                                ,Order_TmsCost.apvdate                                                                
-                                ,Orders.Factoryid                                                                     
-                               
-                                FROM Order_TmsCost, Orders,view_order_artworks v 
-	                                ,(	select c.ID,c.ArtworkTypeID,d.ArtworkID,d.PatternCode
-		                                from Order_TmsCost c, Order_Artwork d
-		                                where c.ID=d.id 
-		                                and c.ArtworkTypeID = d.ArtworkTypeID 
-		                                and c.apvdate is not null 
-		                                and c.localsuppid !='' ";
-                    SqlCmd += string.Format(" AND c.InhouseOSP = '{0}'", poType);
-                    if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and c.ArtworkTypeID = '{0}'", artworktype); }
-                    if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and c.ApvDate between '{0}' and '{1}'", apvdate_b, apvdate_e); }
-                    if (!(string.IsNullOrWhiteSpace(Inline_b)))
-                    {
-                        SqlCmd += string.Format(" and not (c.ArtworkInLine > '{0}' or c.ArtworkOffLine < '{1}') ", Inline_b, Inline_e);
-                    }
-                    SqlCmd += string.Format(@"
-                                        except
-		                                select b1.orderid
-		                                    ,a1.ArtworkTypeID
-		                                    ,b1.ArtworkId,b1.PatternCode
-		                                from artworkpo a1, ArtworkPO_Detail b1
-		                                where a1.id = b1.id
-		                                and a1.POType = '{0}'
-                                    ) awk 
-                                WHERE  awk.ID = Order_TmsCost.ID                                                   
-                                and awk.ArtworkTypeID = Order_TmsCost.ArtworkTypeID
-                                and awk.ID = Orders.ID                                                   
-                                and awk.ArtworkTypeID = v.ArtworkTypeID
-                                and awk.ArtworkID = v.ArtworkID
-                                and awk.PatternCode = v.PatternCode                                  
-                                and awk.id = v.id                                                 
-                                and orders.Finished=0                                                                 
-                                AND orders.IsForecast = 0                                                             
-                                AND orders.Junk = 0 ", poType);
-
-                    SqlCmd += string.Format(" AND orders.factoryid = '{0}'", Env.User.Factory);
-                    SqlCmd += string.Format(" AND Order_TmsCost.InhouseOSP = '{0}'", poType);
-
-
-                    if (!(string.IsNullOrWhiteSpace(sciDelivery_b))) { SqlCmd += string.Format(" and Orders.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
-                    if (!(string.IsNullOrWhiteSpace(sp_b))) { SqlCmd += string.Format(" and orders.ID between '{0}' and '{1}'", sp_b, sp_e); }
-
-                    SqlCmd += @" group by
-                                orders.FTYGroup,
-                                Order_TmsCost.ID,           
-                                v.article,                  
-                                Orders.Styleid,             
-                                Orders.SeasonID,            
-                                Orders.SciDelivery,         
-                                Order_TmsCost.ArtworkTypeID,
-                                order_tmscost.LocalSuppID,  
-                                order_tmscost.Qty ,         
-                                Order_TmsCost.ArtworkInLine,
-                                Order_TmsCost.artworkoffline,
-                                Orders.SewInLine,           
-                                Order_TmsCost.ApvDate       
-                                ,orders.StyleUkey           
-                                ,V.ArtworkID                
-                                ,V.PatternCode              
-                                ,V.PatternDesc              
-                                ,V.Cost                     
-                                ,V.ArtworkTypeID,orders.factoryid,v.qty";
-                }
-                else
-                {
-                    SqlCmd = string.Format(@" SELECT 0 Selected
-                                    , orders.FTYGroup,														
-                                    Order_TmsCost.ID as orderid,                 
-                                    rtrim(v.article) article,                    
-                                    rtrim(Orders.Styleid) Styleid,               
-                                    rtrim(Orders.SeasonID) SeasonID,             
-                                    Orders.SciDelivery,                          
-                                    Order_TmsCost.ArtworkTypeID,                 
-                                    Order_TmsCost.ArtworkTypeID ArtworkID,       
-                                    Order_TmsCost.ArtworkTypeID PatternCode,     
-                                    Order_TmsCost.ArtworkTypeID PatternDesc,     
-                                    rtrim(order_tmscost.LocalSuppID) LocalSuppID,
-                                    0.0 Cost,                                    
-                                    1 costStitch,                              
-                                    1 stitch,                                  
-                                isnull((select b.Price 
-                                        from style_artwork a,Style_Artwork_Quot b         
-                                        where a.StyleUkey = orders.StyleUkey         
-                                        and a.Ukey = b.Ukey                          
-                                        and a.Article =v.article                     
-                                        and b.LocalSuppId = Order_TmsCost.LocalSuppID and b.PriceApv = 'Y'),0) as unitprice,
-                                isnull(order_tmscost.Qty,1) qtygarment,                           
-                                sum(v.Qty) poqty ,                                                
-                                Order_TmsCost.ArtworkInLine,                                      
-                                Order_TmsCost.artworkoffline,                                     
-                                Orders.SewInLine,
-                                Order_TmsCost.ApvDate,rtrim(orders.factoryid) factoryid,'' message
-                                FROM Order_TmsCost, Orders, order_qty v
-                                     ,(	select c.ID,c.ArtworkTypeID
-		                                from Order_TmsCost c
-		                                where c.InhouseOSP = '{0}' 
-                                        AND LocalSuppID is not null 
-                                        and LocalSuppID !=''
-                                        and c.apvdate is not null", poType);
-                    if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and c.ArtworkTypeID = '{0}'", artworktype); }
-                    SqlCmd += string.Format(@"
-                                        except
-		                                select b1.orderid
-		                                    ,a1.ArtworkTypeID
-		                                from artworkpo a1, ArtworkPO_Detail b1
-		                                where a1.id = b1.id
-		                                and a1.POType = '{0}'
-                                    ) awk     
-                                WHERE  Order_TmsCost.ID = Orders.ID
-                                and awk.id = orders.id                               
-                                AND LocalSuppID is not null and LocalSuppID !=''                                      
-                                and orders.Finished=0                                             
-                                AND orders.IsForecast = 0                                         
-                                AND orders.Junk = 0                                               
-                                and Orders.id = v.id", poType);
-                    SqlCmd += string.Format(" AND orders.factoryid = '{0}'", Env.User.Factory);
-                    SqlCmd += string.Format(" AND Order_TmsCost.InhouseOSP = '{0}'", poType);
-                    if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }
-                    if (!(string.IsNullOrWhiteSpace(sciDelivery_b))) { SqlCmd += string.Format(" and Orders.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
-                    if (!(string.IsNullOrWhiteSpace(sp_b))) { SqlCmd += string.Format(" and orders.ID between '{0}' and '{1}'", sp_b, sp_e); }
-                    SqlCmd += @" group by                      
-                                orders.FTYGroup,							
-                                Order_TmsCost.ID,             
-                                v.article,                    
-                                Orders.Styleid,               
-                                Orders.SeasonID,              
-                                Orders.SciDelivery,           
-                                Order_TmsCost.ArtworkTypeID,  
-                                order_tmscost.LocalSuppID,    
-                                order_tmscost.Qty ,           
-                                Order_TmsCost.ArtworkInLine,  
-                                Order_TmsCost.artworkoffline, 
-                                Orders.SewInLine,             
-                                Order_TmsCost.ApvDate         
-                                ,orders.StyleUkey,orders.factoryid";
-                }
+                #region -- 非ArtworK類 的sql command --
+                SqlCmd = string.Format(@" SELECT 0 Selected,
+Orders.FTYGroup,
+Order_TmsCost.ID as orderid,                 
+rtrim(v.article) article,                    
+rtrim(Orders.Styleid) Styleid,               
+rtrim(Orders.SeasonID) SeasonID,             
+orders.ordertypeid,
+Orders.SciDelivery,                          
+Order_TmsCost.ArtworkTypeID,                 
+Order_TmsCost.ArtworkTypeID ArtworkID,       
+Order_TmsCost.ArtworkTypeID PatternCode,     
+Order_TmsCost.ArtworkTypeID PatternDesc,     
+rtrim(order_tmscost.LocalSuppID) LocalSuppID,
+0.0 Cost,                                    
+1 costStitch,                              
+1 stitch,                                  
+isnull((select b.Price from style_artwork a,Style_Artwork_Quot b where a.StyleUkey = orders.StyleUkey and a.Ukey = b.Ukey and a.Article =v.article and b.LocalSuppId = Order_TmsCost.LocalSuppID and b.PriceApv = 'Y'),0) as unitprice,
+isnull(order_tmscost.Qty,1) qtygarment,
+sum(v.Qty) poqty ,
+Order_TmsCost.ArtworkInLine,
+Order_TmsCost.artworkoffline,
+Orders.SewInLine,
+Order_TmsCost.ApvDate,
+'' message
+FROM Order_TmsCost inner join Orders on orders.id = order_tmscost.id
+inner join factory on orders.ftygroup = factory.id
+inner join order_qty v on v.id = order_tmscost.id
+WHERE not exists(select * from artworkpo a inner join artworkpo_detail ap on ap.id = a.id where a.potype='{0}' and a.localsuppid = Order_TmsCost.localsuppid 
+and a.artworktypeid = Order_TmsCost.artworktypeid and ap.OrderID = orders.ID ) 
+and factory.mdivisionid = '{1}' 
+and orders.Finished=0
+and orders.IsForecast = 0
+and orders.Junk = 0
+and Order_TmsCost.localsuppid !=''", poType, Sci.Env.User.Keyword);
+                SqlCmd += string.Format(" and Order_TmsCost.InhouseOSP = '{0}'", poType);
+                if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }
+                if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate between '{0}' and '{1}'", apvdate_b, apvdate_e); }
+                if (!(string.IsNullOrWhiteSpace(Inline_b))) { SqlCmd += string.Format(" and not (Order_TmsCost.ArtworkInLine > '{0}' or Order_TmsCost.ArtworkOffLine < '{1}') ", Inline_b, Inline_e); }
+                if (!(string.IsNullOrWhiteSpace(sciDelivery_b))) { SqlCmd += string.Format(" and Orders.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
+                if (!(string.IsNullOrWhiteSpace(sp_b))) { SqlCmd += string.Format(" and orders.ID between '{0}' and '{1}'", sp_b, sp_e); }
+                SqlCmd += @" 
+group by orders.FTYGroup,
+Order_TmsCost.ID,             
+v.article,                    
+Orders.Styleid,               
+Orders.SeasonID,              
+Orders.OrderTypeId,
+Orders.SciDelivery,           
+Order_TmsCost.ArtworkTypeID,  
+order_tmscost.LocalSuppID,    
+order_tmscost.Qty ,           
+Order_TmsCost.ArtworkInLine,  
+Order_TmsCost.artworkoffline, 
+Orders.SewInLine,             
+Order_TmsCost.ApvDate         
+,orders.StyleUkey";
+                #endregion
             }
 
 
@@ -285,23 +242,16 @@ namespace Sci.Production.Subcon
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-
-            //Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
-            //ns2.CellValidating += (s, e) =>
-            //{
-            //    DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
-            //    ddr["Price"] = (decimal)e.FormattedValue * (decimal)ddr["UnitPrice"];
-            //    ddr["Amount"] = (decimal)e.FormattedValue * (int)ddr["poqty"] * (decimal)ddr["UnitPrice"];
-            //};
-
+            #region -- Grid 設定 --
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-                .Text("Factoryid", header: "Fty", iseditingreadonly: true)
-                .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
-                .Text("Styleid", header: "Style", iseditingreadonly: true)
-                .Text("SeasonID", header: "Season", iseditingreadonly: true)
+                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
+                .Text("FTYGroup", header: "Fty", iseditingreadonly: true)   //1
+                .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))   //2
+                .Text("Styleid", header: "Style", iseditingreadonly: true)  //3
+                .Text("SeasonID", header: "Season", iseditingreadonly: true)    //4
+                .Text("orderTypeId", header: "Order Type", iseditingreadonly: true)    //5
                 .Date("SciDelivery", header: "Sci Delivery", iseditingreadonly: true)
                 .Text("Article", header: "Article", iseditingreadonly: true)
                 .Text("ArtworkTypeID", header: "Artwork Type", iseditingreadonly: true)
@@ -316,12 +266,11 @@ namespace Sci.Production.Subcon
                 .Date("artworkoffline", header: "offline", iseditingreadonly: true)
                 .Text("message", header: "Message", iseditingreadonly: true, width: Widths.AnsiChars(30))
                 ;
-            
-            this.grid1.Columns[12].Visible = poType=="O";
+            #endregion
+            this.grid1.Columns[12].Visible = poType == "O";
             this.grid1.Columns[13].Visible = poType == "O";
-            
 
-            // 全選
+            #region -- 全選 --
             checkBox1.Click += (s, e) =>
             {
                 if (null != col_chk)
@@ -333,8 +282,8 @@ namespace Sci.Production.Subcon
                     }
                 }
             };
-
-            // 全不選
+            #endregion
+            #region -- 全不選 --
             checkBox2.Click += (s, e) =>
             {
                 if (null != col_chk)
@@ -346,6 +295,7 @@ namespace Sci.Production.Subcon
                     }
                 }
             };
+            #endregion
         }
 
         // Cancel
@@ -387,7 +337,7 @@ namespace Sci.Production.Subcon
                 return;
             }
 
-            if (poType == "O")
+            if (poType == "O")  // 外發加工需核可且外發單價 > 0
             {
                 find = dt.Select("(unitprice = 0 or apvdate is null) and Selected = 1");
                 if (find.Length > 0)
@@ -396,13 +346,13 @@ namespace Sci.Production.Subcon
                     {
                         dr["message"] = "Unit price = 0 or Approve Date is null";
                     }
-                    MyUtility.Msg.WarningBox("Unit Price or Approve Date can't be zero or empty", "Warning");
+                    MyUtility.Msg.WarningBox("Unit Price and Approve Date of out sourcing can't be zero or empty", "Warning");
                     grid1.Sort(grid1.Columns[17], ListSortDirection.Descending);
                     return;
                 }
             }
 
-            #region 表頭資料group by --- LINQ
+            #region -- 表頭資料 query --- LINQ
             var query = (from row in dt.AsEnumerable()
                          where row.Field<int>("Selected").ToString() == "1"
                          group row by new
@@ -419,29 +369,42 @@ namespace Sci.Production.Subcon
                          });
             #endregion
 
-
             if (query.ToList().Count > 0)
             {
-                TransactionScope _transactionscope = new TransactionScope();
-                DualResult result;
+
                 string sqlcmd;
 
                 foreach (var q in query.ToList())
                 {
+                    TransactionScope _transactionscope = new TransactionScope();
+                    DualResult result;
                     using (_transactionscope)
                     {
                         try
                         {
                             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
+                            string ftyKeyWord = MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory where id='{0}'", q.ftygroup));
                             ITableSchema tableSchema = null;
-                            result = DBProxy.Current.GetTableSchema(null, "artworkpo", out tableSchema);
-                            string id = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "OS", "artworkpo", DateTime.Parse(dateBox1.Text));
+                            result = DBProxy.Current.GetTableSchema(null, "dbo.Artworkpo", out tableSchema);
+                            if (!result)
+                            {
+                                _transactionscope.Dispose();
+                                MyUtility.Msg.WarningBox("Get Schema(dbo.Artworkpo) Faild!!, Please re-try it later!!");
+                                return;
+                            }
+                            string id = Sci.MyUtility.GetValue.GetID(ftyKeyWord + "OS", "artworkpo", DateTime.Parse(dateBox1.Text));
+                            if (MyUtility.Check.Empty(id))
+                            {
+                                _transactionscope.Dispose();
+                                MyUtility.Msg.WarningBox("Get Id Faild!!, Please re-try it later!!");
+                                return;
+                            }
                             decimal ttlamt = 0;
                             string currency = "";
                             string str = "";
                             int exact = 0;
 
-                            #region 加總明細金額至表頭
+                            #region -- 加總明細金額至表頭 --
                             if (poType == "O")
                             {
                                 currency = MyUtility.GetValue.Lookup("CurrencyID", q.localsuppid, "LocalSupp", "ID");
@@ -474,7 +437,7 @@ namespace Sci.Production.Subcon
 
                             #endregion
 
-                            #region 表身資料 group by -- LINQ
+                            #region 表身資料 query2 -- LINQ
                             var query2 = from row in dt.AsEnumerable()
                                          where row.Field<int>("Selected").ToString() == "1"
                                                && row.Field<string>("ftygroup").ToString() == q.ftygroup
@@ -513,7 +476,8 @@ namespace Sci.Production.Subcon
 
                             #region 表頭sql
                             sqlcmd = string.Format(@"INSERT INTO [dbo].[ArtworkPO]
-                                                    ([ID]							
+                                                    ([ID]
+                                                    ,[MdivisionId]
                                                     ,[FactoryId]      
                                                     ,[LocalSuppID]    
                                                     ,[IssueDate]      
@@ -530,6 +494,7 @@ namespace Sci.Production.Subcon
                                                     ,[AddDate],[Status])       
                                                     VALUES            
                                                     ('{0}'    
+                                                    ,'{12}'
                                                     ,'{1}'   
                                                     ,'{2}'
                                                     ,'{3}'
@@ -542,9 +507,9 @@ namespace Sci.Production.Subcon
                                                     ,'{10}'  
                                                     ,'{11}'
                                                     ,getdate(),'New')",
-                                        id, Env.User.Factory, q.localsuppid, issuedate, delivery, q.artworktypeid,
+                                        id, q.ftygroup, q.localsuppid, issuedate, delivery, q.artworktypeid,
                                         currency, MyUtility.Math.Round(ttlamt, exact),
-                                        "'by batch create!'", Env.User.UserID, poType, Env.User.UserID);
+                                        "'by batch create!'", Env.User.UserID, poType, Env.User.UserID, Env.User.Keyword);
 
                             #endregion
 
@@ -554,9 +519,9 @@ namespace Sci.Production.Subcon
                                 break;
                             }
 
-                            #region 新增明細
-                            foreach (var q2 in query2.ToList())
+                            foreach (var q2 in query2.ToList()) // 明細資料
                             {
+                                #region 新增明細 Sql Command
                                 sqlcmd = string.Format(@"INSERT INTO [dbo].[ArtworkPO_Detail]
                                 ([ID]
                                 ,[OrderID]    
@@ -597,18 +562,16 @@ namespace Sci.Production.Subcon
                                 , q2.coststitch, q2.stitch, q2.unitprice, q2.cost, q2.QtyGarment, q2.poqty
                                 , q2.unitprice * q2.QtyGarment, q2.poqty * q2.unitprice * q2.QtyGarment
                                 , q2.ArtworkTypeID);
-
+                                #endregion
                                 if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd)))
                                 {
                                     MyUtility.Msg.WarningBox("Create failed, Pleaes re-try");
                                     break;
                                 }
                             }
-                            #endregion
                             _transactionscope.Complete();
                             MyUtility.Msg.WarningBox("Complete!");
                         }
-
                         catch (Exception ex)
                         {
                             ShowErr("Commit transaction error.", ex);
@@ -619,45 +582,24 @@ namespace Sci.Production.Subcon
                     _transactionscope = null;
                 }
             }
-
-
         }
 
         private void txtartworktype_fty1_Validated(object sender, EventArgs e)
         {
-            isArtwork = MyUtility.GetValue.Lookup(string.Format("select isartwork from artworktype where id = '{0}'", ((Sci.Production.Class.txtartworktype_fty)sender).Text), null);
-            this.dateRange1.Enabled = (isArtwork.ToUpper() == "TRUE");
-            this.dateRange3.Enabled = (isArtwork.ToUpper() == "TRUE");
+
         }
 
         //excel
         private void button4_Click(object sender, EventArgs e)
         {
-            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
-            SaveFileDialog dlg = new SaveFileDialog();
-            dlg.RestoreDirectory = true;
-            dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
-            dlg.Title = "Save as Excel File";
-            dlg.FileName = "P01_BatchCreate_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
+            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            MyUtility.Excel.CopyToXls(dt, "");
+        }
 
-            dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
-
-            // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
-            // Get the selected file name and CopyToXls
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
-            {
-                // Open document
-                DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-                DualResult result = MyUtility.Excel.CopyToXls(dt, dlg.FileName);
-                if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName); }   //XlsAutoFit(dlg.FileName, "MMDR030.xlt", 12);
-                else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(), "Warning"); }
-            }
-            else
-            {
-                return;
-            }
-
+        private void txtartworktype_fty1_Validating(object sender, CancelEventArgs e)
+        {
+            isArtwork = MyUtility.GetValue.Lookup(string.Format("select isartwork from artworktype where id = '{0}'"
+                , ((Sci.Production.Class.txtartworktype_fty)sender).Text), null);
         }
     }
 }

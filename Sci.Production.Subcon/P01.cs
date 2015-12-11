@@ -24,7 +24,7 @@ namespace Sci.Production.Subcon
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "' and POTYPE='O'";
+            this.DefaultFilter = "MdivisionID = '" + Sci.Env.User.Keyword + "' and POTYPE='O'";
             gridicon.Append.Enabled = false;
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
@@ -45,12 +45,12 @@ namespace Sci.Production.Subcon
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
+            CurrentMaintain["MdivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
-            CurrentMaintain["POType"] = "O";
-            CurrentMaintain["HANDLE"] = Sci.Env.User.UserID;
+            CurrentMaintain["issuedate"] = System.DateTime.Today;
+            CurrentMaintain["potype"] = "O";
+            CurrentMaintain["handle"] = Sci.Env.User.UserID;
             CurrentMaintain["VatRate"] = 0;
-            CurrentMaintain["closed"] = 0;
             CurrentMaintain["Status"] = "New";
             ((DataTable)(detailgridbs.DataSource)).Rows[0].Delete();
         }
@@ -74,11 +74,11 @@ namespace Sci.Production.Subcon
             paras.Add(sp1);
 
             string sqlcmd;
-            sqlcmd = "select fd.ID from ArtworkPO_Detail ad, FarmOut_Detail fd where ad.Ukey = fd.ArtworkPo_DetailUkey and ad.id = @id" +
-                     "   union all " +
-                     "   select fo.ID from ArtworkPO_Detail ad, FarmOut_Detail fo where ad.Ukey = fo.ArtworkPo_DetailUkey and ad.id = @id " +
-                     "      union all" +
-                     "   select fi.ID from ArtworkPO_Detail ad, FarmIn_Detail fi where ad.Ukey = fi.ArtworkPo_DetailUkey and ad.id = @id";
+            sqlcmd = @"select fd.ID from ArtworkPO_Detail ad, FarmOut_Detail fd where ad.Ukey = fd.ArtworkPo_DetailUkey and ad.id = @id
+                        union all 
+                        select fo.ID from ArtworkPO_Detail ad, FarmOut_Detail fo where ad.Ukey = fo.ArtworkPo_DetailUkey and ad.id = @id 
+                           union all
+                        select fi.ID from ArtworkPO_Detail ad, FarmIn_Detail fi where ad.Ukey = fi.ArtworkPo_DetailUkey and ad.id = @id";
 
             DataTable dt;
             DBProxy.Current.Select(null, sqlcmd, paras, out dt);
@@ -156,6 +156,13 @@ namespace Sci.Production.Subcon
                 txtuser1.TextBox1.Focus();
                 return false;
             }
+
+            if (MyUtility.Check.Empty(CurrentMaintain["factoryid"]))
+            {
+                MyUtility.Msg.WarningBox("< Factory Id >  can't be empty!", "Warning");
+                txtmfactory1.Focus();
+                return false;
+            }
             #endregion
 
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("poqty = 0"))
@@ -172,7 +179,13 @@ namespace Sci.Production.Subcon
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "OS", "artworkpo", (DateTime)CurrentMaintain["issuedate"]);
+                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory where ID ='{0}'",CurrentMaintain["factoryid"]));
+                if (MyUtility.Check.Empty(factorykeyword))
+                {
+                    MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
+                    return false;
+                }
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(factorykeyword + "OS", "artworkpo", (DateTime)CurrentMaintain["issuedate"]);
             }
 
             #region 加總明細金額至表頭
@@ -210,7 +223,6 @@ namespace Sci.Production.Subcon
                     dr["style"] = order_dt.Rows[0]["styleid"].ToString();
                     dr["sewinline"] = order_dt.Rows[0]["sewinline"];
                     dr["scidelivery"] = order_dt.Rows[0]["scidelivery"];
-
                 }
             }
             return base.OnRenewDataDetailPost(e);
@@ -220,10 +232,13 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            #region --動態unit header --
             string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype where id='{0}'", CurrentMaintain["artworktypeid"])).ToString().Trim();
             if (artworkunit == "") artworkunit = "PCS";
-            this.detailgrid.Columns[6].HeaderText = "Cost(" + artworkunit + ")";
+            this.detailgrid.Columns[6].HeaderText = "Cost"+ Environment.NewLine+"(" + artworkunit + ")";
             this.detailgrid.Columns[7].HeaderText = artworkunit;
+            #endregion
+            #region -- 加總明細金額，顯示於表頭 --
             if (!(CurrentMaintain == null))
             {
                 if (!(CurrentMaintain["amount"] == DBNull.Value) && !(CurrentMaintain["vat"] == DBNull.Value))
@@ -232,25 +247,21 @@ namespace Sci.Production.Subcon
                     numericBox4.Text = amount.ToString();
                 }
             }
+            #endregion
             txtsubcon1.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
+            txtmfactory1.Enabled = !this.EditMode || IsDetailInserting;
             #region Status Label
             label25.Text = CurrentMaintain["Status"].ToString();
             #endregion
             #region exceed status
             label17.Visible = CurrentMaintain["Exceed"].ToString().ToUpper() == "TRUE";
             #endregion
-            #region Approve Button
-            DataTable dt = (DataTable)detailgridbs.DataSource;
-            DataRow[] dr = dt.Select("apqty > 0");
-
-            #endregion
-
             #region Batch Import, Special record button
             button4.Enabled = this.EditMode;
             button5.Enabled = this.EditMode;
             #endregion
-            #region
+            #region Batch create
             button3.Enabled = !this.EditMode;
             #endregion
         }
@@ -356,15 +367,15 @@ namespace Sci.Production.Subcon
             .Date("sewinline", header: "SewInLine", width: Widths.AnsiChars(10), iseditingreadonly: true)   //3
             .Date("scidelivery", header: "SciDelivery", width: Widths.AnsiChars(10), iseditingreadonly: true)   //4
             .Text("ArtworkId", header: "Artwork", width: Widths.AnsiChars(8), iseditingreadonly: true)    //5
-            .Numeric("coststitch", header: "Cost(PCS/Stitch)", width: Widths.AnsiChars(5), iseditingreadonly: true)//6
-            .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(5))    //7
-            .Text("patterncode", header: "CutpartID", width: Widths.AnsiChars(10), iseditingreadonly: true) //8
+            .Numeric("coststitch", header: "Cost"+ Environment.NewLine+"(PCS/Stitch)", width: Widths.AnsiChars(3), iseditingreadonly: true)//6
+            .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(3))    //7
+            .Text("patterncode", header: "Cutpart"+ Environment.NewLine+"ID", width: Widths.AnsiChars(5), iseditingreadonly: true) //8
             .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(15))   //9
             .Numeric("unitprice", header: "Unit Price", width: Widths.AnsiChars(5), settings: ns, decimal_places: 4, integer_places: 4)     //10
-            .Numeric("cost", header: "Cost(USD)", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 4, integer_places: 4)  //11
+            .Numeric("cost", header: "Cost"+ Environment.NewLine+"(USD)", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 4, integer_places: 4)  //11
             .Numeric("qtygarment", header: "Qty/GMT", width: Widths.AnsiChars(5), settings: ns2, integer_places: 2)  //12
             .Numeric("Price", header: "Price/GMT", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 4, integer_places: 5)   //13
-            .Numeric("amount", header: "Amount", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 4, integer_places: 14)   //14
+            .Numeric("amount", header: "Amount", width: Widths.AnsiChars(8), iseditingreadonly: true, decimal_places: 4, integer_places: 14)   //14
             .Text("farmout", header: "Farm Out", width: Widths.AnsiChars(5), settings: ts, iseditingreadonly: true) //15
             .Text("farmin", header: "Farm In", width: Widths.AnsiChars(5), settings: ts2, iseditingreadonly: true)  //16
             .Text("apqty", header: "A/P Qty", width: Widths.AnsiChars(5), settings: ts3, iseditingreadonly: true)   //17
@@ -423,14 +434,14 @@ namespace Sci.Production.Subcon
         {
             base.ClickClose();
 
-            if (!(Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["apvname"].ToString() != Env.User.UserID))
+            if ((!(Prgs.GetAuthority(Env.User.UserID)) && CurrentMaintain["apvname"].ToString() != Env.User.UserID))
             {
                 MyUtility.Msg.InfoBox("Only Apporver & leader can close!");
                 return;
             }
 
             String sqlcmd;
-            sqlcmd = string.Format("update artworkpo set status = 'Closed', closed=1 , editname = '{0}' , editdate = GETDATE() " +
+            sqlcmd = string.Format("update artworkpo set status = 'Closed' , editname = '{0}' , editdate = GETDATE() " +
                             "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
             DualResult result;
@@ -447,7 +458,7 @@ namespace Sci.Production.Subcon
         protected override void ClickUnclose()
         {
             base.ClickUnclose();
-            if (!(Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["apvname"].ToString() != Env.User.UserID))
+            if ((!(Prgs.GetAuthority(Env.User.UserID)) && CurrentMaintain["apvname"].ToString() != Env.User.UserID))
             {
                 MyUtility.Msg.InfoBox("Only Apporver & leader can unclose!");
                 return;
@@ -455,7 +466,7 @@ namespace Sci.Production.Subcon
             String sqlcmd;
             DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to unclose it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO") return;
-            sqlcmd = string.Format("update artworkpo set Status = 'Approved', closed=0  , editname = '{0}' , editdate = GETDATE() " +
+            sqlcmd = string.Format("update artworkpo set Status = 'Approved'  , editname = '{0}' , editdate = GETDATE() " +
                             "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
 
@@ -508,6 +519,7 @@ namespace Sci.Production.Subcon
             detailgridbs.EndEdit();
         }
 
+        // batch create
         private void button3_Click(object sender, EventArgs e)
         {
             if (this.EditMode) return;

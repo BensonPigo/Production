@@ -122,12 +122,14 @@ namespace Sci.Production.Subcon
                     }
                     else
                     {
+                        _transactionscope.Dispose();
                         MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
                         return;
                     }
                 }
                 catch (Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Save Error.", ex);
                     return;
                 }
