@@ -68,6 +68,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'庫存交易紀錄明細', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Invtrans';
 
@@ -306,4 +308,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Unique Key'
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單據日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Invtrans', @level2type = N'COLUMN', @level2name = N'CreateDate';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[Invtrans]([InventoryPOID] ASC, [InventorySeq1] ASC, [InventorySeq2] ASC)
+    INCLUDE([Qty], [Type], [TransferFactory], [FactoryID], [UnitID]);
 

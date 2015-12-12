@@ -1,17 +1,19 @@
 ﻿CREATE TABLE [dbo].[TransferOut] (
-    [Id]          VARCHAR (13)   CONSTRAINT [DF_TransferOut_Id] DEFAULT ('') NOT NULL,
-    [MDivisionID] VARCHAR (8)    CONSTRAINT [DF_TransferOut_MDivisionID] DEFAULT ('') NOT NULL,
-    [IssueDate]   DATE           NOT NULL,
-    [Status]      VARCHAR (15)   CONSTRAINT [DF_TransferOut_Status] DEFAULT ('') NOT NULL,
-    [Remark]      NVARCHAR (100) CONSTRAINT [DF_TransferOut_Remark] DEFAULT ('') NULL,
-    [RequestID]   VARCHAR (13)   CONSTRAINT [DF_TransferOut_RequestID] DEFAULT ('') NULL,
-    [ToFtyId]     VARCHAR (8)    CONSTRAINT [DF_TransferOut_ToFtyId] DEFAULT ('') NOT NULL,
-    [AddName]     VARCHAR (10)   CONSTRAINT [DF_TransferOut_AddName] DEFAULT ('') NULL,
-    [AddDate]     DATETIME       NULL,
-    [EditName]    VARCHAR (10)   CONSTRAINT [DF_TransferOut_EditName] DEFAULT ('') NULL,
-    [EditDate]    DATETIME       NULL,
+    [Id]            VARCHAR (13)   CONSTRAINT [DF_TransferOut_Id] DEFAULT ('') NOT NULL,
+    [MDivisionID]   VARCHAR (8)    CONSTRAINT [DF_TransferOut_MDivisionID] DEFAULT ('') NOT NULL,
+    [IssueDate]     DATE           NOT NULL,
+    [Status]        VARCHAR (15)   CONSTRAINT [DF_TransferOut_Status] DEFAULT ('') NOT NULL,
+    [Remark]        NVARCHAR (100) CONSTRAINT [DF_TransferOut_Remark] DEFAULT ('') NULL,
+    [RequestID]     VARCHAR (13)   CONSTRAINT [DF_TransferOut_RequestID] DEFAULT ('') NULL,
+    [ToMDivisionId] VARCHAR (8)    CONSTRAINT [DF_TransferOut_ToFtyId] DEFAULT ('') NOT NULL,
+    [AddName]       VARCHAR (10)   CONSTRAINT [DF_TransferOut_AddName] DEFAULT ('') NULL,
+    [AddDate]       DATETIME       NULL,
+    [EditName]      VARCHAR (10)   CONSTRAINT [DF_TransferOut_EditName] DEFAULT ('') NULL,
+    [EditDate]      DATETIME       NULL,
     CONSTRAINT [PK_TransferOut] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
@@ -43,7 +45,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'備註', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'目的工廠', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TransferOut', @level2type = N'COLUMN', @level2name = N'ToFtyId';
+
 
 
 GO
@@ -64,4 +66,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯日�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TransferOut', @level2type = N'COLUMN', @level2name = N'MDivisionID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'目的工廠', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TransferOut', @level2type = N'COLUMN', @level2name = N'ToMDivisionId';
 

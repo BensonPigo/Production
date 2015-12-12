@@ -392,6 +392,7 @@ Database/dbo/Tables/TimeStudy.sql -text
 Database/dbo/Tables/TimeStudyHistory.sql -text
 Database/dbo/Tables/TimeStudyHistory_Detail.sql -text
 Database/dbo/Tables/TimeStudy_Detail.sql -text
+Database/dbo/Tables/ToMDivision.sql -text
 Database/dbo/Tables/TransferIn.sql -text
 Database/dbo/Tables/TransferIn_Detail.sql -text
 Database/dbo/Tables/TransferOut.sql -text

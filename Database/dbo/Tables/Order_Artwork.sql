@@ -20,9 +20,10 @@
 );
 
 
+
+
 GO
-CREATE NONCLUSTERED INDEX [ID]
-    ON [dbo].[Order_Artwork]([ID] ASC, [ArtworkTypeID] ASC, [Article] ASC, [ArtworkID] ASC, [PatternCode] ASC);
+
 
 
 GO
@@ -91,4 +92,16 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_Artwork', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name2 of Missing Index, sysname,>]
+    ON [dbo].[Order_Artwork]([ID] ASC, [Article] ASC)
+    INCLUDE([ArtworkTypeID], [PatternCode], [PatternDesc], [ArtworkID], [Qty], [Cost]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[Order_Artwork]([ArtworkTypeID] ASC)
+    INCLUDE([ID], [PatternCode], [PatternDesc], [ArtworkID], [Qty], [Cost]);
 

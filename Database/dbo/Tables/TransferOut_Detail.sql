@@ -16,6 +16,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'轉廠出明細', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TransferOut_Detail';
 
@@ -50,4 +52,9 @@ GO
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TransferOut_Detail', @level2type = N'COLUMN', @level2name = N'Qty';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[TransferOut_Detail]([ID] ASC);
 

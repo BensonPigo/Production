@@ -1,25 +1,26 @@
 ﻿CREATE TABLE [dbo].[BorrowBack_Detail] (
-    [ID]                      VARCHAR (13)    CONSTRAINT [DF_BorrowBack_Detail_ID] DEFAULT ('') NOT NULL,
-    [FromFtyInventoryUkey]    BIGINT          NULL,
-    [FromMDivisionID]         VARCHAR (8)     CONSTRAINT [DF_BorrowBack_Detail_FromMDivisionID] DEFAULT ('') NULL,
-    [FromPOID]                VARCHAR (13)    CONSTRAINT [DF_BorrowBack_Detail_FromPOID] DEFAULT ('') NOT NULL,
-    [FromSeq1]                VARCHAR (3)     CONSTRAINT [DF_BorrowBack_Detail_FromSeq1] DEFAULT ('') NOT NULL,
-    [FromSeq2]                VARCHAR (2)     CONSTRAINT [DF_BorrowBack_Detail_FromSeq2] DEFAULT ('') NOT NULL,
-    [FromRoll]                VARCHAR (8)     CONSTRAINT [DF_BorrowBack_Detail_FromRoll] DEFAULT ('') NULL,
-    [FromDyelot]              VARCHAR (4)     CONSTRAINT [DF_BorrowBack_Detail_FromDyelot] DEFAULT ('') NULL,
-    [FromStockType]           CHAR (1)        CONSTRAINT [DF_BorrowBack_Detail_FromStockType] DEFAULT ('') NOT NULL,
-    [ToMDivisionPoDetailUkey] BIGINT          NULL,
-    [ToMDivisionID]           VARCHAR (8)     CONSTRAINT [DF_BorrowBack_Detail_ToMDivisionID] DEFAULT ('') NULL,
-    [ToPOID]                  VARCHAR (13)    CONSTRAINT [DF_BorrowBack_Detail_ToPOID] DEFAULT ('') NOT NULL,
-    [ToSeq1]                  VARCHAR (3)     CONSTRAINT [DF_BorrowBack_Detail_ToSeq1] DEFAULT ('') NOT NULL,
-    [ToSeq2]                  VARCHAR (2)     CONSTRAINT [DF_BorrowBack_Detail_ToSeq2] DEFAULT ('') NOT NULL,
-    [ToRoll]                  VARCHAR (8)     CONSTRAINT [DF_BorrowBack_Detail_ToRoll] DEFAULT ('') NULL,
-    [ToStockType]             CHAR (1)        CONSTRAINT [DF_BorrowBack_Detail_ToStock] DEFAULT ('') NOT NULL,
-    [ToDyelot]                VARCHAR (4)     CONSTRAINT [DF_BorrowBack_Detail_ToDyelot] DEFAULT ('') NULL,
-    [Qty]                     NUMERIC (10, 2) CONSTRAINT [DF_BorrowBack_Detail_Qty] DEFAULT ((0)) NOT NULL,
-    [Ukey]                    BIGINT          IDENTITY (1, 1) NOT NULL,
+    [ID]                   VARCHAR (13)    CONSTRAINT [DF_BorrowBack_Detail_ID] DEFAULT ('') NOT NULL,
+    [FromFtyInventoryUkey] BIGINT          NULL,
+    [FromMDivisionID]      VARCHAR (8)     CONSTRAINT [DF_BorrowBack_Detail_FromMDivisionID] DEFAULT ('') NULL,
+    [FromPOID]             VARCHAR (13)    CONSTRAINT [DF_BorrowBack_Detail_FromPOID] DEFAULT ('') NOT NULL,
+    [FromSeq1]             VARCHAR (3)     CONSTRAINT [DF_BorrowBack_Detail_FromSeq1] DEFAULT ('') NOT NULL,
+    [FromSeq2]             VARCHAR (2)     CONSTRAINT [DF_BorrowBack_Detail_FromSeq2] DEFAULT ('') NOT NULL,
+    [FromRoll]             VARCHAR (8)     CONSTRAINT [DF_BorrowBack_Detail_FromRoll] DEFAULT ('') NULL,
+    [FromDyelot]           VARCHAR (4)     CONSTRAINT [DF_BorrowBack_Detail_FromDyelot] DEFAULT ('') NULL,
+    [FromStockType]        CHAR (1)        CONSTRAINT [DF_BorrowBack_Detail_FromStockType] DEFAULT ('') NOT NULL,
+    [ToMDivisionID]        VARCHAR (8)     CONSTRAINT [DF_BorrowBack_Detail_ToMDivisionID] DEFAULT ('') NULL,
+    [ToPOID]               VARCHAR (13)    CONSTRAINT [DF_BorrowBack_Detail_ToPOID] DEFAULT ('') NOT NULL,
+    [ToSeq1]               VARCHAR (3)     CONSTRAINT [DF_BorrowBack_Detail_ToSeq1] DEFAULT ('') NOT NULL,
+    [ToSeq2]               VARCHAR (2)     CONSTRAINT [DF_BorrowBack_Detail_ToSeq2] DEFAULT ('') NOT NULL,
+    [ToRoll]               VARCHAR (8)     CONSTRAINT [DF_BorrowBack_Detail_ToRoll] DEFAULT ('') NULL,
+    [ToStockType]          CHAR (1)        CONSTRAINT [DF_BorrowBack_Detail_ToStock] DEFAULT ('') NOT NULL,
+    [ToDyelot]             VARCHAR (4)     CONSTRAINT [DF_BorrowBack_Detail_ToDyelot] DEFAULT ('') NULL,
+    [Qty]                  NUMERIC (10, 2) CONSTRAINT [DF_BorrowBack_Detail_Qty] DEFAULT ((0)) NOT NULL,
+    [Ukey]                 BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_BorrowBack_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

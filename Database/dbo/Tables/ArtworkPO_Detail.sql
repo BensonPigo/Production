@@ -22,6 +22,8 @@
 );
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工明細檔', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ArtworkPO_Detail';
 
@@ -100,4 +102,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'作工類�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'額外加工數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ArtworkPO_Detail', @level2type = N'COLUMN', @level2name = N'ExceedQty';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[ArtworkPO_Detail]([OrderID] ASC);
 
