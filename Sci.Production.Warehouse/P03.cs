@@ -235,7 +235,9 @@ namespace Sci.Production.Warehouse
             string sqlcmd
                 = string.Format(@"select m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
             ,substring(convert(varchar,a.RevisedETD, 101),1,5) as RevisedETD,a.Refno,a.SCIRefno
-            ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',a.FabricType)) as fabrictype2,a.ColorID,a.SizeSpec
+            ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',a.FabricType)) as fabrictype2
+            , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
+            ,a.ColorID,a.SizeSpec
             ,a.UsedQty unitqty,A.Qty,A.NETQty,A.NETQty+A.lossQty useqty ,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,a.Complete
             ,a.ATA,m.InQty,a.StockUnit
             ,m.OutQty,m.AdjustQty
@@ -261,7 +263,9 @@ namespace Sci.Production.Warehouse
             union
             select m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
             ,substring(convert(varchar,a.RevisedETD, 101),1,5) as RevisedETD,a.Refno,a.SCIRefno
-            ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',a.FabricType)) as fabrictype2,a.ColorID,a.SizeSpec
+            ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',a.FabricType)) as fabrictype2
+             , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
+            ,a.ColorID,a.SizeSpec
             ,a.UsedQty unitqty,A.Qty,A.NETQty,A.NETQty+A.lossQty useqty ,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,a.Complete
             ,a.ATA,m.InQty,a.StockUnit
             ,m.OutQty,m.AdjustQty
@@ -297,6 +301,7 @@ namespace Sci.Production.Warehouse
             cmds.Add(sp1);
             #endregion
 
+            MyUtility.Msg.WaitWindows("Data Loading....");
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtData))
             {
@@ -309,6 +314,7 @@ namespace Sci.Production.Warehouse
             {
                 ShowErr(sqlcmd, result);
             }
+            MyUtility.Msg.WaitClear();
         }
 
         private void grid1_sorting()
@@ -319,7 +325,7 @@ namespace Sci.Production.Warehouse
                 {
                     case 0:
                         if (MyUtility.Check.Empty(grid1)) break;
-                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.Sort = "id,refno , colorid";
+                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.Sort = "id,fabrictypeOrderby, refno , colorid";
                         break;
                     case 1:
                         if (MyUtility.Check.Empty(grid1)) break;

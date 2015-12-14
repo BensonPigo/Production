@@ -38,7 +38,7 @@ group by b.Roll,b.Dyelot
 union all
 select b.ToRoll,b.ToDyelot,0,sum(b.Qty) as a2b,0,0,0,0,0,0,0,0,0
 from SubTransfer a inner join SubTransfer_Detail b on a.Id = b.id
-where a.Status = 'Confirmed' and b.ToStockType = 'I'
+where a.Status = 'Confirmed' and a.type='A' and b.ToStockType = 'I'
 and b.ToPoId ='{0}'
 and b.ToSeq1 = '{1}'
 and b.ToSeq2 = '{2}'
@@ -87,7 +87,7 @@ group by b.Roll,b.Dyelot
 union all
 select b.FromRoll,b.FromDyelot,0,0,0,0,0,0,sum(b.Qty) as B2A,0,0,0,0
 from SubTransfer a inner join SubTransfer_Detail b on a.Id = b.id
-where a.Status = 'Confirmed' and b.FromStockType = 'I'
+where a.Status = 'Confirmed' and a.type='B' and b.FromStockType = 'I'
 and b.FromPoId ='{0}'
 and b.FromSeq1 = '{1}'
 and b.FromSeq2 = '{2}'

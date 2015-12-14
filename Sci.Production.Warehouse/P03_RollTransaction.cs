@@ -60,7 +60,8 @@ sum(TMP.inqty - TMP.outqty+tmp.adjust)
 over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.stocktype,tmp.IssueDate,tmp.inqty desc,tmp.iD ) as [balance] 
 from (
 	select b.roll,b.stocktype,b.dyelot,a.IssueDate, a.id
-,Case type when 'A' then 'P35. Adjust Bulk Qty' when 'B' then 'P34. Adjust Stock Qty' end as name
+,Case type when 'A' then 'P35. Adjust Bulk Qty' 
+                when 'B' then 'P34. Adjust Stock Qty' end as name
 ,0 as inqty,0 as outqty, sum(QtyAfter - QtyBefore) adjust, remark ,'' location
 from Adjust a, Adjust_Detail b 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
@@ -68,7 +69,7 @@ group by a.id, poid, seq1,Seq2, remark,a.IssueDate,type,b.roll,b.stocktype,b.dye
 union all
 	select b.FromRoll,b.FromStockType,b.FromDyelot,a.IssueDate, a.id
 ,case type when 'A' then 'P31. Material Borrow From' 
-                            when 'B' then 'P32. Material Give Back From' end as name
+                when 'B' then 'P32. Material Give Back From' end as name
 ,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location
 from BorrowBack a, BorrowBack_Detail b 
 where Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id 
@@ -76,7 +77,7 @@ group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,b.FromRoll,b.From
 union all
 	select b.ToRoll,b.ToStockType,b.ToDyelot,issuedate, a.id
 ,case type when 'A' then 'P31. Material Borrow To' 
-                            when 'B' then 'P32. Material Give Back To' end as name
+                when 'B' then 'P32. Material Give Back To' end as name
 , sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location
 from BorrowBack a, BorrowBack_Detail b 
 where Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id 
@@ -94,7 +95,7 @@ group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type,b.roll,b.stocktype,b.d
 union all
 	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
 	,case FabricType when 'A' then 'P15. Issue Accessory Lacking & Replacement' 
-                            when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
+                              when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
 	, 0 as inqty,sum(b.Qty) outqty ,0 as adjust, remark ,'' location
 from IssueLack a, IssueLack_Detail b 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
@@ -106,7 +107,8 @@ where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.
 group by a.Id, poid, seq1,Seq2, remark,a.IssueDate,b.roll,b.stocktype,b.dyelot                                                                           
 union all
 	select b.roll,b.stocktype,b.dyelot
-        ,case type when 'A' then a.ETA else a.WhseArrival end as issuedate, a.id
+        ,case type when 'A' then a.ETA else a.WhseArrival end as issuedate
+        , a.id
 	    ,case type when 'A' then 'P07. Material Receiving' 
                         when 'B' then 'P08. Warehouse Shopfloor Receiving' end name
 	    , sum(b.StockQty) inqty,0 as outqty,0 as adjust,'' remark ,'' location
@@ -114,7 +116,9 @@ union all
     where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
     group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,b.roll,b.stocktype,b.dyelot,a.eta
 union all
-	select b.roll,b.stocktype,b.dyelot,issuedate,'P37. Return Receiving Material' name, a.id, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
+	select b.roll,b.stocktype,b.dyelot,issuedate
+    ,'P37. Return Receiving Material' name
+, a.id, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
 from ReturnReceipt a, ReturnReceipt_Detail b 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate,b.roll,b.stocktype,b.dyelot                                                                           
@@ -128,12 +132,12 @@ union all
     end as name
 	, 0 as inqty, sum(Qty) released,0 as adjust ,isnull(a.remark,'') remark ,'' location
 from SubTransfer a, SubTransfer_Detail b 
-where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id
+where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}' and FromSeq2 = '{2}'  and a.id = b.id
 group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,b.FromRoll,b.FromStockType,b.FromDyelot,a.Type,a.remark
                                                                              
 union all
 	select b.ToRoll,b.ToStockType,b.ToDyelot,issuedate, a.id
-	        ,case type when 'B' then 'P23. Transfer Inventory to Bulk' 
+	,case type when 'B' then 'P23. Transfer Inventory to Bulk' 
                     when 'A' then 'P22. Transfer Bulk to Inventory' 
                     when 'C' then 'P36. Transfer Scrap to Inventory' end as name
 	        , sum(Qty) arrived,0 as ouqty,0 as adjust, remark

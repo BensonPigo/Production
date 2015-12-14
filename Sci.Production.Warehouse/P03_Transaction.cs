@@ -50,9 +50,11 @@ from (
 ,Case type when 'A' then 'P35. Adjust Bulk Qty' when 'B' then 'P34. Adjust Stock Qty' end as name
 ,0 as inqty,0 as outqty, sum(QtyAfter - QtyBefore) adjust, remark ,'' location
 from Adjust a, Adjust_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+                , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
+                , dr["seq2"].ToString()
+                ,Sci.Env.User.Keyword));
 
             if (_byroll)
             {
@@ -65,9 +67,11 @@ union all
 ,'P31. Material Borrow out' name
 ,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location
 from BorrowBack a, BorrowBack_Detail b 
-where type='A' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
+where type='A' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id and b.frommdivisionid='{3}'"
+                , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword));
 
             if (_byroll)
             {
@@ -79,9 +83,11 @@ union all
 	select issuedate, a.id
 ,'P31. Material Borrow In' name, sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location
 from BorrowBack a, BorrowBack_Detail b 
-where type='A' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
-                            , dr["seq1"].ToString()
-                            , dr["seq2"].ToString()));
+where type='A' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id and b.tomdivisionid='{3}'"
+                , dr["id"].ToString()
+                , dr["seq1"].ToString()
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -93,9 +99,11 @@ union all
 ,'P32. Return Borrowing out' name
 ,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location
 from BorrowBack a, BorrowBack_Detail b 
-where type='B' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
+where type='B' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id and b.frommdivisionid='{3}'"
+                , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword));
 
             if (_byroll)
             {
@@ -107,9 +115,11 @@ union all
 	select issuedate, a.id
 ,'P32. Return Borrowing In' name, sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location
 from BorrowBack a, BorrowBack_Detail b 
-where type='B' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
-                            , dr["seq1"].ToString()
-                            , dr["seq2"].ToString()));
+where type='B' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id and b.tomdivisionid='{3}'"
+                , dr["id"].ToString()
+                , dr["seq1"].ToString()
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -124,9 +134,11 @@ when 'C' then 'P12. Issue Packing Material by Transfer Guide'
 when 'D' then 'P13. Issue Material by Item' end name
 	,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
 from Issue a, Issue_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
-                            , dr["seq1"].ToString()
-                            , dr["seq2"].ToString()));
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+                , dr["id"].ToString()
+                , dr["seq1"].ToString()
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -136,12 +148,14 @@ where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.
 union all
 	select issuedate, a.id
 	,case FabricType when 'A' then 'P15. Issue Accessory Lacking & Replacement' 
-when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
+                              when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
 	, 0 as inqty,sum(b.Qty) outqty ,0 as adjust, remark ,'' location
 from IssueLack a, IssueLack_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+                , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -153,9 +167,11 @@ union all
 ,'P17. R/Mtl Return' name
 , 0 as inqty, sum(b.Qty) released,0 as adjust, remark,'' location
 from IssueReturn a, IssueReturn_Detail b 
-where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
+where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+                , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -168,9 +184,11 @@ union all
                     when 'B' then 'P08. Warehouse Shopfloor Receiving' end name
 	, sum(b.StockQty) arrived,0 as ouqty,0 as adjust,'' remark ,'' location
 from Receiving a, Receiving_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+                , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -182,9 +200,11 @@ union all
     ,'P37. Return Receiving Material' name
     , a.id, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
 from ReturnReceipt a, ReturnReceipt_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+                , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -196,9 +216,11 @@ union all
 	,'P23. Transfer Inventory to Bulk' as name
 	, 0 as inqty, sum(Qty) released,0 as adjust , '' remark ,'' location
 from SubTransfer a, SubTransfer_Detail b 
-where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id and type = 'B' ", dr["id"].ToString()
+where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id and type = 'B' and b.frommdivisionid='{3}'"
+                , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and fromroll='{0}' and fromdyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -219,9 +241,11 @@ union all
                                         and b1.ToSeq2 = b.ToSeq2 group by b1.ToLocation) tmp 
                         for XML PATH('')) as ToLocation
 from SubTransfer a, SubTransfer_Detail b 
-where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id and type = 'B' ", dr["id"].ToString()
+where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id and type = 'B' and b.frommdivisionid='{3}'"
+                , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -242,9 +266,11 @@ union all
                                         and b1.Seq2 = b.Seq2 group by b1.Location) tmp 
                         for XML PATH('')) as Location
 from TransferIn a, TransferIn_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+                , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -255,17 +281,52 @@ union all
 	select issuedate, a.id
 ,'P19. TransferOut' name, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
 from TransferOut a, TransferOut_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ", dr["id"].ToString()
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+                , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()));
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(@"group by a.id, poid, Seq1,Seq2, remark,a.IssueDate) tmp
-group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name
-");
+            selectCommand1.Append(string.Format(@"group by a.id, poid, Seq1,Seq2, remark,a.IssueDate
+union all
+	select issuedate, a.id
+	,'P36. Transfer Scrap to Inventory' as name
+	, sum(qty) as inqty, 0 as released,0 as adjust ,isnull(a.remark,'') remark ,'' location
+from SubTransfer a, SubTransfer_Detail b 
+where type='C' and Status='Confirmed' and topoid='{0}' and toseq1 = '{1}' and toSeq2 = '{2}'  and a.id = b.id and b.tomdivisionid='{3}'"
+                , dr["id"].ToString()
+                , dr["seq1"].ToString()
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword));
+            if (_byroll)
+            {
+                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+            }
+
+            selectCommand1.Append(string.Format(@"group by a.id, topoid, toSeq1, toSeq2,a.IssueDate,a.Type,a.remark
+union all
+	select issuedate, a.id
+	,case type when 'D' then 'P25. Transfer Bulk to Scrap' 
+                    when 'E' then 'P24. Transfer Inventory to Scrap'
+    end as name
+	, 0 as inqty, sum(Qty) released,0 as adjust ,isnull(a.remark,'') remark ,'' location
+from SubTransfer a, SubTransfer_Detail b 
+where (type='D' or type='E') and Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}' and FromSeq2 = '{2}'  and a.id = b.id and b.frommdivisionid='{3}'"
+                , dr["id"].ToString()
+                , dr["seq1"].ToString()
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword));
+if (_byroll)
+            {
+                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+            }
+selectCommand1.Append(@"group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,a.remark) tmp
+group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name");
+
             #endregion
 
             DataTable selectDataTable1;
