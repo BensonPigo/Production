@@ -102,9 +102,16 @@ where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
                 case 8:
                     if (encoded)
                     {
-                        sqlcmd = string.Format(@"update mdivisionpodetail set  LInvQty = isnull(LInvQty,0.00) + {3} 
-where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}' ;"
-                            , Poid, seq1, seq2, qty, m);
+                        sqlcmd = string.Format(@"
+merge dbo.mdivisionpodetail as target
+using (values('{0}','{1}','{2}','{3}','{4}','{5}')) as src (poid,seq1,seq2,qty,m,blocation) 
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.m
+when matched then
+update 
+set  LInvQty = isnull(LInvQty,0.00) + src.qty , blocation = src.blocation
+when not matched then
+    insert ([Poid],[Seq1],[Seq2],[MDivisionID],[LInvQty],[blocation])
+    values (src.poid,src.seq1,src.seq2,src.m,src.qty,src.blocation);", Poid, seq1, seq2, qty, m, DistinctString(tmplocation + location));
                     }
                     else
                     {
