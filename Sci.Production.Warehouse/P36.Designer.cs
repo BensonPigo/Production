@@ -43,8 +43,6 @@
             this.label1 = new Sci.Win.UI.Label();
             this.editBox1 = new Sci.Win.UI.EditBox();
             this.button1 = new Sci.Win.UI.Button();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.label4 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -61,8 +59,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.displayBox2);
             this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.editBox1);
             this.masterpanel.Controls.Add(this.label1);
@@ -93,8 +89,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.button1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             // 
             // detailpanel
             // 
@@ -303,36 +297,17 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // displayBox2
-            // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(686, 13);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(100, 23);
-            this.displayBox2.TabIndex = 64;
-            // 
-            // label4
-            // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(575, 13);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(108, 23);
-            this.label4.TabIndex = 65;
-            this.label4.Text = "Factory";
-            // 
             // P36
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1033, 577);
             this.DefaultControl = "textBox3";
             this.DefaultControlForEdit = "textBox3";
-            this.DefaultOrder = "ID";
+            this.DefaultOrder = "Issuedate,ID";
             this.Grid2New = 0;
             this.GridAlias = "SubTransfer_detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "Frompoid,Fromseq1,Fromseq2,Fromroll,FromDyelot,ToPoid,ToSeq1,ToSeq2,ToRoll,ToDyel" +
-    "ot";
+            this.GridUniqueKey = "FromFtyInventoryUkey,ToMdivisionid,ToPoid,ToSeq1,ToSeq2,ToRoll,ToDyelot";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;
@@ -379,7 +354,5 @@
         private Win.UI.EditBox editBox1;
         private Win.UI.Label label1;
         private Win.UI.Button button1;
-        private Win.UI.Label label4;
-        private Win.UI.DisplayBox displayBox2;
     }
 }

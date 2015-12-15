@@ -34,7 +34,7 @@ namespace Sci.Production.Warehouse
             String sp = this.textBox1.Text.TrimEnd();
             String seq = this.textBox2.Text.TrimEnd();
 
-            if (string.IsNullOrWhiteSpace(sp) )
+            if (string.IsNullOrWhiteSpace(sp))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
                 textBox1.Focus();
@@ -44,7 +44,7 @@ namespace Sci.Production.Warehouse
             else
             {
                 // 建立可以符合回傳的Cursor
-                #region -- SQL Command -- 
+                #region -- SQL Command --
                 strSQLCmd.Append(string.Format(@"select 0 as selected 
 ,'' id
 , c.ukey as FromFtyinventoryUkey
@@ -64,7 +64,6 @@ namespace Sci.Production.Warehouse
 ,a.FabricType
 ,a.stockunit
 ,a.InputQty
-,V.Rate
 ,a.id as topoid
 ,a.SEQ1 as toseq1
 ,a.SEQ2 as toseq2
@@ -75,7 +74,6 @@ namespace Sci.Production.Warehouse
 ,'{0}' as toMdivisionid
 from dbo.PO_Supp_Detail a 
 inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
-left join View_Unitrate V on V.FROM_U = A.POUnit and V.TO_U = A.StockUnit
 Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O' and c.mdivisionid='{0}'", Sci.Env.User.Keyword));
                 #endregion
 
@@ -89,7 +87,7 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O' and 
                 seq2.ParameterName = "@seq2";
 
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                
+
                 if (!MyUtility.Check.Empty(sp))
                 {
                     strSQLCmd.Append(@" and a.id = @sp1 ");
@@ -108,7 +106,7 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O' and 
 
                 MyUtility.Msg.WaitWindows("Data Loading....");
                 Ict.DualResult result;
-                if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(),cmds, out dtScrap))
+                if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), cmds, out dtScrap))
                 {
                     if (dtScrap.Rows.Count == 0)
                     { MyUtility.Msg.WarningBox("Data not found!!"); }
@@ -162,12 +160,12 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O' and 
                 .Text("fromroll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //3
                 .Text("fromdyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //4
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) //5
-                .Text("unit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6)) //6
-                .Numeric("balance", header: "Balance"+Environment.NewLine+"Qty", iseditable: false, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //7
+                .Text("stockunit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6)) //6
+                .Numeric("balance", header: "Balance" + Environment.NewLine + "Qty", iseditable: false, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //7
                 .Numeric("Qty", header: "Transfer" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6))  //8
                 .Text("tolocation", header: "Location", settings: ts2, width: Widths.AnsiChars(20))    //9
                ;
-             
+
             this.grid1.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
             this.grid1.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
 
@@ -257,29 +255,28 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O' and 
             string seq = textBox2.Text.PadRight(5, ' ');
 
             if (MyUtility.Check.Empty(sp)) return;
-            if (string.Compare(sp, textBox1.OldValue) != 0)
+
+            if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
             {
-                if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
+                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from ftyinventory where poid ='{0}' and mdivisionid='{1}')"
+                    , sp, Sci.Env.User.Keyword), null))
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from ftyinventory where poid ='{0}' and mdivisionid='{1}')"
-                        , sp,Sci.Env.User.Keyword), null))
-                    {
-                        MyUtility.Msg.WarningBox("SP# is not found!!");
-                        e.Cancel = true;
-                        return;
-                    }
-                }
-                else
-                {
-                    if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from mdivisionpodetail where poid ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}' and mdivisionid='{3}')", sp, seq.Substring(0, 3), seq.Substring(3, 2),Sci.Env.User.Keyword), null))
-                    {
-                        MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-                        e.Cancel = true;
-                        return;
-                    }
+                    MyUtility.Msg.WarningBox("SP# is not found!!");
+                    e.Cancel = true;
+                    return;
                 }
             }
+            else
+            {
+                if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from mdivisionpodetail where poid ='{0}' 
+                        and seq1 = '{1}' and seq2 = '{2}' and mdivisionid='{3}')", sp, seq.Substring(0, 3), seq.Substring(3, 2), Sci.Env.User.Keyword), null))
+                {
+                    MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
+                    e.Cancel = true;
+                    return;
+                }
+            }
+
         }
 
         //Seq Valid
@@ -320,7 +317,7 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O' and 
 
             if (this.EditMode && e.Button == MouseButtons.Right)
             {
-                Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation("I",displayBox1.Text);
+                Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation("I", displayBox1.Text);
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
                 displayBox1.Text = item.GetSelectedString();

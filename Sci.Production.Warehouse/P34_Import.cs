@@ -65,7 +65,7 @@ namespace Sci.Production.Warehouse
 ,c.ukey as ftyinventoryukey
 from dbo.PO_Supp_Detail a 
 inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'I'
-Where c.lock = 0 and c.mdivisionid = '{0}'",Sci.Env.User.Keyword));
+Where c.lock = 0 and c.mdivisionid = '{0}'", Sci.Env.User.Keyword));
 
                 if (!MyUtility.Check.Empty(sp))
                 {
@@ -288,7 +288,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             dr2 = dtGridBS1.Select("adjustqty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.Select(string.Format("ftyinventoryukey = {0}",tmp["ftyinventoryukey"]));
+                DataRow[] findrow = dt_detail.Select(string.Format("ftyinventoryukey = {0}", tmp["ftyinventoryukey"]));
 
                 if (findrow.Length > 0)
                 {
@@ -316,29 +316,28 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             string seq = textBox2.Text.PadRight(5, ' ');
 
             if (MyUtility.Check.Empty(sp)) return;
-            if (string.Compare(sp, textBox1.OldValue) != 0)
+
+            if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
             {
-                if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
+                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from MdivisionPoDetail where poid ='{0}' and mdivisionid='{1}')"
+                    , sp, Sci.Env.User.Keyword), null))
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from MdivisionPoDetail where poid ='{0}' and mdivisionid='{1}')"
-                        , sp, Sci.Env.User.Keyword), null))
-                    {
-                        MyUtility.Msg.WarningBox("SP# is not found!!");
-                        e.Cancel = true;
-                        return;
-                    }
-                }
-                else
-                {
-                    if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from MdivisionPoDetail where poid ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}', mdivisionid='{3}')", sp, seq.Substring(0, 3), seq.Substring(3, 2), Sci.Env.User.Keyword), null))
-                    {
-                        MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-                        e.Cancel = true;
-                        return;
-                    }
+                    MyUtility.Msg.WarningBox("SP# is not found!!");
+                    e.Cancel = true;
+                    return;
                 }
             }
+            else
+            {
+                if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from MdivisionPoDetail where poid ='{0}' 
+                        and seq1 = '{1}' and seq2 = '{2}', mdivisionid='{3}')", sp, seq.Substring(0, 3), seq.Substring(3, 2), Sci.Env.User.Keyword), null))
+                {
+                    MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
+                    e.Cancel = true;
+                    return;
+                }
+            }
+
         }
 
         //Seq Valid
@@ -349,7 +348,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             string seq = textBox2.Text.PadRight(5, ' ');
 
             if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from mdivisionpoDetail where poid ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}' and mdivisionid='{3}')", sp, seq.Substring(0, 3), seq.Substring(3, 2),Sci.Env.User.Keyword), null))
+                        and seq1 = '{1}' and seq2 = '{2}' and mdivisionid='{3}')", sp, seq.Substring(0, 3), seq.Substring(3, 2), Sci.Env.User.Keyword), null))
             {
                 MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
                 e.Cancel = true;
@@ -363,17 +362,17 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         {
             #region Location 右鍵開窗
 
-            
-                if (this.EditMode && e.Button == MouseButtons.Right)
-                {
 
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"select id,[Description] from dbo.MtlLocation 
-                        where StockType='I' and mdivisionid='{0}'",Sci.Env.User.Keyword), "10,40", textBox4.Text, "ID,Desc");
-                    DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
-                    textBox4.Text = item.GetSelectedString();
-                }
-            
+            if (this.EditMode && e.Button == MouseButtons.Right)
+            {
+
+                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"select id,[Description] from dbo.MtlLocation 
+                        where StockType='I' and mdivisionid='{0}'", Sci.Env.User.Keyword), "10,40", textBox4.Text, "ID,Desc");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                textBox4.Text = item.GetSelectedString();
+            }
+
 
             #endregion Location 右鍵開窗
         }

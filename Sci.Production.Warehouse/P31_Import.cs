@@ -76,7 +76,7 @@ from dbo.PO_Supp_Detail a
 inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 left join dbo.po_supp_detail b on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec and b.ColorID = a.ColorID and b.BrandId = a.BrandId
 Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}' and c.mdivisionid='{4}'
-and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substring(0, 3), seq.Substring(3, 2),Sci.Env.User.Keyword)); // 
+and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substring(0, 3), seq.Substring(3, 2), Sci.Env.User.Keyword)); // 
 
                 MyUtility.Msg.WaitWindows("Data Loading....");
                 Ict.DualResult result;
@@ -186,7 +186,7 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substri
         private void button2_Click(object sender, EventArgs e)
         {
             StringBuilder warningmsg = new StringBuilder();
-            
+
             grid1.ValidateControl();
             grid1.EndEdit();
 
@@ -200,7 +200,7 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substri
             }
 
             dr2 = dtBorrow.Select("qty = 0 and Selected = 1");
-            if (dr2.Length > 0 )
+            if (dr2.Length > 0)
             {
                 MyUtility.Msg.WarningBox("Qty of selected row can't be zero!", "Warning");
                 return;
@@ -247,7 +247,7 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substri
                 }
             }
 
-            
+
             this.Close();
         }
 
@@ -255,41 +255,40 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substri
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
             string sp = textBox1.Text.TrimEnd();
-            string seq =  textBox2.Text.PadRight(5,' ');
+            string seq = textBox2.Text.PadRight(5, ' ');
 
             DataRow tmp;
 
             if (MyUtility.Check.Empty(sp)) return;
-            if (string.Compare(sp, textBox1.OldValue) != 0)
+
+            if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
             {
-                if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
+                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail where id ='{0}')"
+                    , sp), null))
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail where id ='{0}')"
-                        , sp), null))
-                    {
-                        MyUtility.Msg.WarningBox("SP# is not found!!");
-                        e.Cancel = true;
-                        return;
-                    }
+                    MyUtility.Msg.WarningBox("SP# is not found!!");
+                    e.Cancel = true;
+                    return;
+                }
+            }
+            else
+            {
+                if (!MyUtility.Check.Seek(string.Format(@"select sizespec,refno,colorid,dbo.getmtldesc(id,seq1,seq2,2,0) as [description]
+                        from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, seq.Substring(0, 3), seq.Substring(3, 2)), out tmp, null))
+                {
+                    MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
+                    e.Cancel = true;
+                    return;
                 }
                 else
                 {
-                    if (!MyUtility.Check.Seek(string.Format(@"select sizespec,refno,colorid,dbo.getmtldesc(id,seq1,seq2,2,0) as [description]
-                        from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, seq.Substring(0, 3), seq.Substring(3, 2)), out tmp, null))
-                    {
-                        MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-                        e.Cancel = true;
-                        return;
-                    }
-                    else
-                    {
-                        this.displayBox2.Value = tmp["sizespec"];
-                        this.displayBox3.Value = tmp["refno"];
-                        this.displayBox4.Value = tmp["colorid"];
-                        this.editBox1.Text = tmp["description"].ToString();
-                    }
+                    this.displayBox2.Value = tmp["sizespec"];
+                    this.displayBox3.Value = tmp["refno"];
+                    this.displayBox4.Value = tmp["colorid"];
+                    this.editBox1.Text = tmp["description"].ToString();
                 }
             }
+
         }
         // To Seq# Valid
         private void textBox2_Validating(object sender, CancelEventArgs e)
@@ -300,7 +299,7 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substri
             string seq = textBox2.Text.PadRight(5, ' ');
 
             if (!MyUtility.Check.Seek(string.Format(@"select sizespec,refno,colorid,dbo.getmtldesc(id,seq1,seq2,2,0) as [description] from po_supp_detail where id ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}'", sp, seq.Substring(0, 3), seq.Substring(3, 2)),out tmp, null))
+                        and seq1 = '{1}' and seq2 = '{2}'", sp, seq.Substring(0, 3), seq.Substring(3, 2)), out tmp, null))
             {
                 MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
                 e.Cancel = true;

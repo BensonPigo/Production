@@ -59,7 +59,7 @@ namespace Sci.Production.Warehouse
 from dbo.FtyInventory a
     left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
 where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0
-and a.poid='{0}'", sp,dr_master["stocktype"].ToString())); // 
+and a.poid='{0}'", sp, dr_master["stocktype"].ToString())); // 
                         if (!MyUtility.Check.Empty(seq))
                         {
                             strSQLCmd.Append(string.Format(@" and a.seq1 = '{0}' and a.seq2='{1}'", seq.Substring(0, 3), seq.Substring(3, 2)));
@@ -146,7 +146,7 @@ from dbo.TransferIn r1
     inner join dbo.TransferIn_Detail r2 on r2.id = r1.Id
     inner join dbo.FtyInventory a on a.mdivisionid = r2.mdivisionid and a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype
 where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed'
-and r1.id = '{0}' ", transid,dr_master["stocktype"].ToString())); // 
+and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString())); // 
 
                     break;
             }
@@ -282,29 +282,28 @@ and r1.id = '{0}' ", transid,dr_master["stocktype"].ToString())); //
             string seq = textBox2.Text.PadRight(5, ' ');
 
             if (MyUtility.Check.Empty(sp)) return;
-            if (string.Compare(sp, textBox1.OldValue) != 0)
+
+            if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
             {
-                if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
+                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail where id ='{0}')"
+                    , sp), null))
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail where id ='{0}')"
-                        , sp), null))
-                    {
-                        MyUtility.Msg.WarningBox("SP# is not found!!");
-                        e.Cancel = true;
-                        return;
-                    }
-                }
-                else
-                {
-                    if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail where id ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}')", sp, seq.Substring(0, 3), seq.Substring(3, 2)), null))
-                    {
-                        MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-                        e.Cancel = true;
-                        return;
-                    }
+                    MyUtility.Msg.WarningBox("SP# is not found!!");
+                    e.Cancel = true;
+                    return;
                 }
             }
+            else
+            {
+                if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail where id ='{0}' 
+                        and seq1 = '{1}' and seq2 = '{2}')", sp, seq.Substring(0, 3), seq.Substring(3, 2)), null))
+                {
+                    MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
+                    e.Cancel = true;
+                    return;
+                }
+            }
+
         }
 
         private void textBox2_Validating(object sender, CancelEventArgs e)
