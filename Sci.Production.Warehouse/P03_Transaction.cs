@@ -353,90 +353,122 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name");
                 var frm =new Sci.Win.Tems.Input6(null);
                 var dr2 = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr2) return;
-                switch (dr2["id"].ToString().Substring(3, 2))
+                switch (dr2["name"].ToString().Substring(0,3))
                 {
-                    case "PR":
+                    case "P07":
                         //P07
                         frm = new Sci.Production.Warehouse.P07(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
-                    case "RF":
+                    case "P08":
                         //	P08
                         frm = new Sci.Production.Warehouse.P08(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
-                    case "RL":
+                    case "P09":
                         //	P09
                         //frm = new Sci.Production.Warehouse.P09(null, dr2["id"].ToString());
                         //frm.ShowDialog(this);
                         break;
-                    case "PI":
-                        //	
+                    case "P37":
+                    //	P37
 
-                        break;
-                    case "MB":
-                        //	P31
-                        frm = new Sci.Production.Warehouse.P31(null, dr2["id"].ToString());
-                        frm.ShowDialog(this);
-                        break;
-                    case "RB":
-                        //	P32
-                        frm = new Sci.Production.Warehouse.P32(null, dr2["id"].ToString());
-                        frm.ShowDialog(this);
-                        break;
-                    case "IP":
+                    break;
+                    case "P10":
+                    //	P10
+                    break;
+                    case "IS":
+                    //	P11
+                    break;
+                    case "P12":
                         //	P12
                         frm = new Sci.Production.Warehouse.P12(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
-                    case "RT":
-                        //	P37
-
-                        break;
-                    case "II":
+                    case "P13":
                         //	P13
                         frm = new Sci.Production.Warehouse.P13(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
-                    case "RR":
-                        //	P17
-                        frm = new Sci.Production.Warehouse.P17(null, dr2["id"].ToString());
-                        frm.ShowDialog(this);
-                        break;
-                    case "TI":
-                        //	P18
-                        frm = new Sci.Production.Warehouse.P18(null, dr2["id"].ToString());
-                        frm.ShowDialog(this);
-                        break;
-                    case "TO":
-                        //	P19
-                        frm = new Sci.Production.Warehouse.P19(null, dr2["id"].ToString());
-                        frm.ShowDialog(this);
-                        break;
-                    case "IL":
+
+                    case "P15":
                         //	P15
                         frm = new Sci.Production.Warehouse.P15(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
-                        break;
-                    case "IC":
-                        //	P10
-                        break;
-                    case "IS":
-                        //	P11
                         break;
                     case "IF":
                         //	P16
                         frm = new Sci.Production.Warehouse.P16(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
-                    case "BA":
-                        //	P50
+
+                    case "P17":
+                        //	P17
+                        frm = new Sci.Production.Warehouse.P17(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
                         break;
-                    case "BB":
-                        //	P51
+
+                    case "P18":
+                        //	P18
+                        frm = new Sci.Production.Warehouse.P18(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+                    case "P19":
+                        //	P19
+                        frm = new Sci.Production.Warehouse.P19(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+
+                    case "P22":
+                        //	P22
+                        //frm = new Sci.Production.Warehouse.P22(null, dr2["id"].ToString());
+                        //frm.ShowDialog(this);
+                        break;
+                    case "P23":
+                        //	P23
+                        //frm = new Sci.Production.Warehouse.P23(null, dr2["id"].ToString());
+                        //frm.ShowDialog(this);
+                        break;
+
+                    case "P24":
+                        //	P24
+                        //frm = new Sci.Production.Warehouse.P24(null, dr2["id"].ToString());
+                        //frm.ShowDialog(this);
+                        break;
+                    case "P25":
+                        //	P25
+                        //frm = new Sci.Production.Warehouse.P25(null, dr2["id"].ToString());
+                        //frm.ShowDialog(this);
                         break;
 
 
+                    case "P31":
+                        //	P31 borrow
+                        frm = new Sci.Production.Warehouse.P31(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+                    case "P32":
+                        //	P32 give back
+                        frm = new Sci.Production.Warehouse.P32(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+
+                    case "P34":
+                        //	P34 adjust Inventory
+                        frm = new Sci.Production.Warehouse.P34(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+                    case "P35": 
+                        //	P35 adjust Bulk
+                        frm = new Sci.Production.Warehouse.P35(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
+
+                    case "P36":
+                        //	P36
+                        frm = new Sci.Production.Warehouse.P36(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
                 }
                 //var frm = new Sci.Production.Subcon.P01_FarmInList(dr);
                 //frm.ShowDialog(this);
