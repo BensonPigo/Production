@@ -35,9 +35,9 @@ namespace Sci.Production.Warehouse
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.textBox1.Text.TrimEnd();
             String seq = this.textBox2.Text.TrimEnd();
-            
 
-            if (string.IsNullOrWhiteSpace(sp) || string.IsNullOrWhiteSpace(seq) )
+
+            if (string.IsNullOrWhiteSpace(sp) || string.IsNullOrWhiteSpace(seq))
             {
                 MyUtility.Msg.WarningBox("< Return to SP# & Seq>  can't be empty!!");
                 textBox1.Focus();
@@ -120,8 +120,8 @@ and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and c.stocktype !='O'"
             this.grid2.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid2.DataSource = listControlBindingSource2;
             Helper.Controls.Grid.Generator(this.grid2)
-                .Text("FromPoId", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13),settings:ts) //0
-                .Text("fromseq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(2),settings:ts) //1
+                .Text("FromPoId", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13), settings: ts) //0
+                .Text("fromseq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(2), settings: ts) //1
                 .Text("fromseq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(2), settings: ts) //2
                 .ComboBox("fromstock", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false, width: Widths.AnsiChars(6)).Get(out cbb_stocktype)    //3
                 .Numeric("qty", header: "Borrow" + Environment.NewLine + "Qty", iseditable: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //4
@@ -256,7 +256,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             }
 
             dr2 = dtBorrow.Select("qty = 0 and Selected = 1");
-            if (dr2.Length > 0 )
+            if (dr2.Length > 0)
             {
                 MyUtility.Msg.WarningBox("Qty of selected row can't be zero!", "Warning");
                 return;
@@ -287,7 +287,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             if (!MyUtility.Check.Empty(warningmsg.ToString()))
             {
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
-                return ;
+                return;
             }
 
             foreach (DataRow tmp in dr2)
@@ -311,7 +311,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
                 }
             }
 
-            
+
             this.Close();
         }
 
@@ -319,7 +319,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
             string sp = textBox1.Text.TrimEnd();
-            string seq =  textBox2.Text.PadRight(5,' ');
+            string seq = textBox2.Text.PadRight(5, ' ');
 
             if (MyUtility.Check.Empty(sp))
             {
@@ -330,26 +330,25 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
                 return;
             }
 
-            if (string.Compare(sp, textBox1.OldValue) != 0)
+
+            if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
             {
-                if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
+                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.mdivisionpodetail where poid ='{0}' and mdivisionid='{1}')"
+                    , sp, Sci.Env.User.Keyword), null))
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.mdivisionpodetail where poid ='{0}' and mdivisionid='{1}')"
-                        , sp,Sci.Env.User.Keyword), null))
-                    {
-                        MyUtility.Msg.WarningBox("SP# is not found!!");
-                        e.Cancel = true;
-                        return;
-                    }
-                }
-                else
-                {
-                    e.Cancel = CheckAndShowInfo(sp, seq.Substring(0, 3), seq.Substring(3, 2));
+                    MyUtility.Msg.WarningBox("SP# is not found!!");
+                    e.Cancel = true;
+                    return;
                 }
             }
+            else
+            {
+                e.Cancel = CheckAndShowInfo(sp, seq.Substring(0, 3), seq.Substring(3, 2));
+            }
+
         }
 
-        private bool CheckAndShowInfo(string sp,string seq1,string seq2)
+        private bool CheckAndShowInfo(string sp, string seq1, string seq2)
         {
             this.displayBox2.Value = "";
             this.displayBox3.Value = "";
@@ -358,7 +357,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
 
             DataRow tmp;
             if (!MyUtility.Check.Seek(string.Format(@"select sizespec,refno,colorid,dbo.getmtldesc(id,seq1,seq2,2,0) as [description]
-                        from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp,seq1,seq2), out tmp, null))
+                        from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2), out tmp, null))
             {
                 MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
                 return true;
