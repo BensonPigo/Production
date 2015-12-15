@@ -892,16 +892,18 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
             foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
             {
                 recCnt = recCnt - 1;
-
-                if (recCnt == 0)
+                if (dr.RowState != DataRowState.Deleted)
                 {
-                    dr["WorkHour"] = MyUtility.Convert.GetDecimal(CurrentMaintain["WorkHour"]) - subSum;
+                    if (recCnt == 0)
+                    {
+                        dr["WorkHour"] = MyUtility.Convert.GetDecimal(CurrentMaintain["WorkHour"]) - subSum;
+                    }
+                    else
+                    {
+                        dr["WorkHour"] = ttlQaqty == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["QAQty"]) * MyUtility.Convert.GetDecimal(dr["TMS"]) / ttlQaqty * MyUtility.Convert.GetDecimal(CurrentMaintain["WorkHour"]), 3);
+                    }
+                    subSum = subSum + MyUtility.Convert.GetDecimal(dr["WorkHour"]);
                 }
-                else
-                {
-                    dr["WorkHour"] = ttlQaqty == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["QAQty"]) * MyUtility.Convert.GetDecimal(dr["TMS"]) / ttlQaqty * MyUtility.Convert.GetDecimal(CurrentMaintain["WorkHour"]), 3);
-                }
-                subSum = subSum + MyUtility.Convert.GetDecimal(dr["WorkHour"]);
             }
         }
 
