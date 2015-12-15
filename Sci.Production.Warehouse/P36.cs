@@ -302,7 +302,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             }
             #endregion
             #region -- 更新mdivisionpodetail Inventory 數 --
-            bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+            var bs2 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                    group b by new
                    {
                        mdivisionid = b.Field<string>("tomdivisionid"),
@@ -318,12 +318,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        seq1 = m.First().Field<string>("toseq1"),
                        seq2 = m.First().Field<string>("toseq2"),
                        stocktype = m.First().Field<string>("tostocktype"),
-                       qty = m.Sum(w => w.Field<decimal>("qty"))
+                       qty = m.Sum(w => w.Field<decimal>("qty")),
+                       tolocation = string.Join(",", m.Select(r => r.Field<string>("tolocation")).Distinct())
                    }).ToList();
 
-            foreach (var item in bs1)
+            foreach (var item in bs2)
             {
-                sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid));
+                sqlupd2.Append(Prgs.UpdateMPoDetail(2, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid, item.tolocation));
             }
             #endregion 
 
