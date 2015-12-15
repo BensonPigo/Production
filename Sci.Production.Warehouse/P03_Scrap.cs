@@ -19,21 +19,25 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             dr = data;
+            this.Text += string.Format(" ({0}-{1}- {2})", dr["id"].ToString()
+, dr["seq1"].ToString()
+, dr["seq2"].ToString());
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             string selectCommand1 = string.Format(@"Select roll, dyelot, (inqty - OutQty + adjustqty) as qty
-                                                                            From ftyinventory
-                                                                            Where poid = '{0}'
-                                                                            And Seq1 = '{1}'
-                                                                            And Seq2 = '{2}'
-                                                                            And stocktype = 'O'
-                                                                            and (inqty - OutQty + adjustqty) > 0"
-                                                                        , dr["id"].ToString()
-                                                                        , dr["seq1"].ToString()
-                                                                        , dr["seq2"].ToString());
+From ftyinventory
+Where poid = '{0}'
+And Seq1 = '{1}'
+And Seq2 = '{2}'
+And stocktype = 'O'
+and (inqty - OutQty + adjustqty) > 0
+and mdivisionid='{3}'"
+, dr["id"].ToString()
+, dr["seq1"].ToString()
+, dr["seq2"].ToString(), Sci.Env.User.Keyword);
             DataTable selectDataTable1;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
             if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);

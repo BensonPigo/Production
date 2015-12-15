@@ -22,6 +22,7 @@ namespace Sci.Production.Warehouse
             dr = data;
             //Helper.Controls.ContextMenu.Generator(myCMS).Menu("item1", onclick: (s, e) => DoMyCMS());
             grid1.ContextMenuStrip = myCMS;
+            this.Text+=string.Format(" ({0})",dr["refno"]);
             
         }
 
@@ -30,21 +31,22 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
             string selectCommand1
                 = string.Format(@"Select md.mdivisionid ,  b.id, b.seq1+b.seq2 seq
-                                            , b.colorid,  b.sizespec
-                                            , c.suppid, a.sewinline
-                                            , a.sewline, b.FinalETD
-                                            , md.inqty - md.outqty + md.adjustqty Balance
-                                            , b.stockunit 
-                                            from orders a
-											, po_supp_detail b left join dbo.MDivisionPoDetail md on md.POID = b.id and md.seq1 = b.seq2 and md.seq2 = b.seq2
-											, po_supp c
-                                            where b.scirefno = '{0}'
-                                            and a.id = b.id
-                                            and a.id = c.id
-                                            and b.seq1 = c.seq1
-                                            and a.WhseClose is null
-                                            order by ColorID, SizeSpec ,SewinLine
-                                            ", dr["scirefno"].ToString());
+, b.colorid,  b.sizespec
+, c.suppid, a.sewinline
+, a.sewline, b.FinalETD
+, md.inqty - md.outqty + md.adjustqty Balance
+, b.stockunit 
+from orders a
+, po_supp_detail b left join dbo.MDivisionPoDetail md on md.POID = b.id and md.seq1 = b.seq2 and md.seq2 = b.seq2
+, po_supp c
+where b.scirefno = '{0}'
+and a.id = b.id
+and a.id = c.id
+and b.seq1 = c.seq1
+and a.WhseClose is null
+and md.mdivisionid='{1}'
+order by ColorID, SizeSpec ,SewinLine
+", dr["scirefno"].ToString(),Sci.Env.User.Keyword);
             DataTable selectDataTable1;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
             if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);

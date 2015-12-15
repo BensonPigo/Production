@@ -21,6 +21,9 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             dr = data;
             comboBox1.SelectedIndex = 0;
+            this.Text += string.Format(" ({0}-{1}- {2})", dr["id"].ToString()
+, dr["seq1"].ToString()
+, dr["seq2"].ToString());
         }
 
         protected override void OnFormLoaded()
