@@ -249,6 +249,12 @@
     <Compile Include="txtmfactory.Designer.cs">
       <DependentUpon>txtmfactory.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtToMdivision.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtToMdivision.Designer.cs">
+      <DependentUpon>txtToMdivision.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ict, Version=1.0.1502.1000, Culture=neutral, processorArchitecture=MSIL">

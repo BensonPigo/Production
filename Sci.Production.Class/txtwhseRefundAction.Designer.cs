@@ -34,7 +34,7 @@
             // 
             // displayBox1
             // 
-            this.displayBox1.Location = new System.Drawing.Point(77, 0);
+            this.displayBox1.Location = new System.Drawing.Point(76, 2);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(259, 22);
             this.displayBox1.TabIndex = 1;
@@ -42,7 +42,7 @@
             // textBox1
             // 
             this.textBox1.IsSupportEditMode = false;
-            this.textBox1.Location = new System.Drawing.Point(3, 0);
+            this.textBox1.Location = new System.Drawing.Point(2, 2);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(73, 22);
             this.textBox1.TabIndex = 2;
@@ -57,7 +57,7 @@
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.displayBox1);
             this.Name = "txtwhseRefundAction";
-            this.Size = new System.Drawing.Size(340, 22);
+            this.Size = new System.Drawing.Size(344, 27);
             this.ResumeLayout(false);
             this.PerformLayout();
 
