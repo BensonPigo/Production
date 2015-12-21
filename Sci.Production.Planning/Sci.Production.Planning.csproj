@@ -92,6 +92,12 @@
     <Compile Include="B02.Designer.cs">
       <DependentUpon>B02.cs</DependentUpon>
     </Compile>
+    <Compile Include="B03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B03.Designer.cs">
+      <DependentUpon>B03.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -134,6 +140,12 @@
     <Compile Include="P03.Designer.cs">
       <DependentUpon>P03.cs</DependentUpon>
     </Compile>
+    <Compile Include="B03_Copy.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B03_Copy.Designer.cs">
+      <DependentUpon>B03_Copy.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
@@ -156,6 +168,9 @@
     <EmbeddedResource Include="B02.resx">
       <DependentUpon>B02.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B03.resx">
+      <DependentUpon>B03.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>
@@ -177,6 +192,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03.resx">
       <DependentUpon>P03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B03_Copy.resx">
+      <DependentUpon>B03_Copy.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
