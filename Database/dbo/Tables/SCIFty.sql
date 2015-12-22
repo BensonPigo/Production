@@ -17,7 +17,6 @@
     [AddDate]      DATETIME       NULL,
     [EditName]     VARCHAR (10)   CONSTRAINT [DF_SCIFty_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME       NULL,
-    [MDivisionID]  VARCHAR (8)    NULL,
     CONSTRAINT [PK_SCIFty] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

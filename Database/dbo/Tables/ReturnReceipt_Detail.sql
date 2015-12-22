@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[ReturnReceipt_Detail] (
     [Id]               VARCHAR (13)    CONSTRAINT [DF_ReturnReceipt_Detail_Id] DEFAULT ('') NOT NULL,
     [FtyInventoryUkey] BIGINT          NULL,
-    [MDivsionID]       VARCHAR (8)     CONSTRAINT [DF_ReturnReceipt_Detail_MDivsionID] DEFAULT ('') NULL,
+    [MDivisionID]      VARCHAR (8)     CONSTRAINT [DF_ReturnReceipt_Detail_MDivsionID] DEFAULT ('') NULL,
     [POID]             VARCHAR (13)    CONSTRAINT [DF_ReturnReceipt_Detail_POID] DEFAULT ('') NULL,
     [Seq1]             VARCHAR (3)     CONSTRAINT [DF_ReturnReceipt_Detail_Seq1] DEFAULT ('') NULL,
     [Seq2]             VARCHAR (2)     CONSTRAINT [DF_ReturnReceipt_Detail_Seq2] DEFAULT ('') NULL,
@@ -12,6 +12,8 @@
     [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_ReturnReceipt_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

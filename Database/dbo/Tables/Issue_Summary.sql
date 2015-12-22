@@ -14,8 +14,12 @@
     [BomBuymonth]     VARCHAR (10)    CONSTRAINT [DF_Issue_Summary_BomBuymonth] DEFAULT ('') NOT NULL,
     [BomCustPONo]     VARCHAR (30)    CONSTRAINT [DF_Issue_Summary_BomCustPONo] DEFAULT ('') NOT NULL,
     [Qty]             NUMERIC (10, 2) CONSTRAINT [DF_Issue_Summary_Qty] DEFAULT ((0)) NULL,
+    [seq1]            VARCHAR (3)     NULL,
+    [seq2]            VARCHAR (2)     NULL,
     CONSTRAINT [PK_Issue_Summary_1] PRIMARY KEY CLUSTERED ([Id] ASC, [Ukey] ASC)
 );
+
+
 
 
 
