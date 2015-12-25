@@ -38,7 +38,7 @@ iif(p.type = 'B',(select BuyerDelivery from Order_QtyShip where ID = p.OrderID a
 p.Status,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ClogReceiveID != '') as ClogCTNQty,
 p.InspDate,p.InspStatus,p.PulloutDate,p.InvNo,p.MDivisionID
 from PackingList p
-where {0}", masterID);
+where {0} order by p.ID", masterID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out plData);
 
 
@@ -47,7 +47,7 @@ where {0}", masterID);
 (select isnull(sum(pd.CTNQty),0) from PackingList p,PackingList_Detail pd where p.INVNo = g.ID and p.ID = pd.ID and pd.ReceiveDate is not null) as ClogCTNQty
 from GMTBooking g
 left join ForwarderWhse_Detail fd on g.ForwarderWhse_DetailUKey = fd.UKey
-where {0}", masterID);
+where {0} order by g.ID", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -224,6 +224,15 @@ where {0}", masterID);
             grid1.EndEdit();
             listControlBindingSource1.EndEdit();
 
+            foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
+            {
+                if (dr.RowState == DataRowState.Modified || dr.RowState == DataRowState.Added)
+                {
+                    UpdatePLCmd(dr);
+                    continue;
+                }
+            }
+
             foreach (DataRow dr in details)
             {
                 if (dr.RowState == DataRowState.Modified || dr.RowState == DataRowState.Added)
@@ -236,15 +245,6 @@ where {0}", masterID);
                 {
                     updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '' where ID = '{0}';", MyUtility.Convert.GetString(dr["ID",DataRowVersion.Original])));
                     updateCmds.Add(DeletePLCmd("InvNo", MyUtility.Convert.GetString(dr["ID",DataRowVersion.Original])));
-                    continue;
-                }
-            }
-
-            foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
-            {
-                if (dr.RowState == DataRowState.Modified || dr.RowState == DataRowState.Added)
-                {
-                    UpdatePLCmd(dr);
                     continue;
                 }
             }

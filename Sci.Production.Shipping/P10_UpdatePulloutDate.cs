@@ -64,14 +64,14 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(masterDate["ID"]));
                     {
                         if (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["PulloutDate"]))
                         {
-                            if (CheckPullout((DateTime)MyUtility.Convert.GetDate(dr["PulloutDate"]), MyUtility.Convert.GetString(dr["MDivisionID"])))
+                            if (!MyUtility.Check.Empty(dr["PulloutDate"]) && CheckPullout((DateTime)MyUtility.Convert.GetDate(dr["PulloutDate"]), MyUtility.Convert.GetString(dr["MDivisionID"])))
                             {
                                 PulloutMsg(dr, (DateTime)MyUtility.Convert.GetDate(dr["PulloutDate"]));
                                 e.Cancel = true;
                                 dr.EndEdit();
                                 return;
                             }
-                            if (CheckPullout((DateTime)MyUtility.Convert.GetDate(e.FormattedValue), MyUtility.Convert.GetString(dr["MDivisionID"])))
+                            if (!MyUtility.Check.Empty(e.FormattedValue) && CheckPullout((DateTime)MyUtility.Convert.GetDate(e.FormattedValue), MyUtility.Convert.GetString(dr["MDivisionID"])))
                             {
                                 PulloutMsg(dr, (DateTime)MyUtility.Convert.GetDate(e.FormattedValue));
                                 e.Cancel = true;
@@ -141,7 +141,14 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(masterDate["ID"]));
                     continue;
                 }
 
-                dr["PulloutDate"] = dateBox1.Value;
+                if (MyUtility.Check.Empty(dateBox1.Value))
+                {
+                    dr["PulloutDate"] = DBNull.Value;
+                }
+                else
+                {
+                    dr["PulloutDate"] = dateBox1.Value;
+                }
             }
             if (warningMsg.Length > 0)
             {
@@ -153,6 +160,7 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(masterDate["ID"]));
         private void button1_Click(object sender, EventArgs e)
         {
             IList<string> updateCmds = new List<string>();
+            grid1.ValidateControl();
             listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             foreach (DataRow dr in dt.Rows)
