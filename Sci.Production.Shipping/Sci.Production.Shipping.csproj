@@ -233,6 +233,36 @@
     <Compile Include="P05_QtyBreakDown.Designer.cs">
       <DependentUpon>P05_QtyBreakDown.cs</DependentUpon>
     </Compile>
+    <Compile Include="P06.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P06.Designer.cs">
+      <DependentUpon>P06.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P06_Append.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P06_Append.Designer.cs">
+      <DependentUpon>P06_Append.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P06_ReviseHistory_Detail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P06_ReviseHistory_Detail.Designer.cs">
+      <DependentUpon>P06_ReviseHistory_Detail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P06_ReviseHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P06_ReviseHistory.Designer.cs">
+      <DependentUpon>P06_ReviseHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P06_ShipQtyDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P06_ShipQtyDetail.Designer.cs">
+      <DependentUpon>P06_ShipQtyDetail.cs</DependentUpon>
+    </Compile>
     <Compile Include="P08.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -390,6 +420,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P04_ImportTransferIn.resx">
       <DependentUpon>P04_ImportTransferIn.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P06.resx">
+      <DependentUpon>P06.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P06_Append.resx">
+      <DependentUpon>P06_Append.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P06_ReviseHistory_Detail.resx">
+      <DependentUpon>P06_ReviseHistory_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P06_ReviseHistory.resx">
+      <DependentUpon>P06_ReviseHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P06_ShipQtyDetail.resx">
+      <DependentUpon>P06_ShipQtyDetail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P08.resx">
       <DependentUpon>P08.cs</DependentUpon>
