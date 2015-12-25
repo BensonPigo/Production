@@ -1,23 +1,25 @@
 ﻿CREATE TABLE [dbo].[Pullout_Revise] (
-    [ID]            VARCHAR (13)  CONSTRAINT [DF_Pullout_Revise_ID] DEFAULT ('') NOT NULL,
-    [Type]          VARCHAR (1)   CONSTRAINT [DF_Pullout_Revise_Type] DEFAULT ('') NOT NULL,
-    [OrderID]       VARCHAR (13)  CONSTRAINT [DF_Pullout_Revise_OrderID] DEFAULT ('') NOT NULL,
-    [OldShipQty]    INT           CONSTRAINT [DF_Pullout_Revise_OldShipQty] DEFAULT ((0)) NULL,
-    [NewShipQty]    INT           CONSTRAINT [DF_Pullout_Revise_NewShipQty] DEFAULT ((0)) NULL,
-    [OldStatus]     VARCHAR (1)   CONSTRAINT [DF_Pullout_Revise_OldStatus] DEFAULT ('') NULL,
-    [NewStatus]     VARCHAR (1)   CONSTRAINT [DF_Pullout_Revise_NewStatus] DEFAULT ('') NULL,
-    [PackingListID] VARCHAR (13)  CONSTRAINT [DF_Pullout_Revise_PackingListID] DEFAULT ('') NULL,
-    [Remark]        NVARCHAR (30) CONSTRAINT [DF_Pullout_Revise_Remark] DEFAULT ('') NULL,
-    [UKey]          BIGINT        CONSTRAINT [DF_Pullout_Revise_UKey] DEFAULT ((0)) NULL,
-    [ReviseKey]     BIGINT        IDENTITY (1, 1) NOT NULL,
-    [INVNo]         VARCHAR (25)  CONSTRAINT [DF_Pullout_Revise_INVNo] DEFAULT ('') NULL,
-    [ShipModeID]    VARCHAR (5)   CONSTRAINT [DF_Pullout_Revise_ShipModeID] DEFAULT ('') NULL,
-    [AddName]       VARCHAR (10)  CONSTRAINT [DF_Pullout_Revise_AddName] DEFAULT ('') NULL,
-    [AddDate]       DATETIME      NULL,
-    [OldUKey]       VARCHAR (13)  CONSTRAINT [DF_Pullout_Revise_OldUKey] DEFAULT ('') NULL,
-    [OldReviseKey]  VARCHAR (13)  CONSTRAINT [DF_Pullout_Revise_OldReviseKey] DEFAULT ('') NULL,
+    [ID]                 VARCHAR (13)  CONSTRAINT [DF_Pullout_Revise_ID] DEFAULT ('') NOT NULL,
+    [Type]               VARCHAR (1)   CONSTRAINT [DF_Pullout_Revise_Type] DEFAULT ('') NOT NULL,
+    [OrderID]            VARCHAR (13)  CONSTRAINT [DF_Pullout_Revise_OrderID] DEFAULT ('') NOT NULL,
+    [OldShipQty]         INT           CONSTRAINT [DF_Pullout_Revise_OldShipQty] DEFAULT ((0)) NULL,
+    [NewShipQty]         INT           CONSTRAINT [DF_Pullout_Revise_NewShipQty] DEFAULT ((0)) NULL,
+    [OldStatus]          VARCHAR (1)   CONSTRAINT [DF_Pullout_Revise_OldStatus] DEFAULT ('') NULL,
+    [NewStatus]          VARCHAR (1)   CONSTRAINT [DF_Pullout_Revise_NewStatus] DEFAULT ('') NULL,
+    [PackingListID]      VARCHAR (13)  CONSTRAINT [DF_Pullout_Revise_PackingListID] DEFAULT ('') NULL,
+    [Remark]             NVARCHAR (30) CONSTRAINT [DF_Pullout_Revise_Remark] DEFAULT ('') NULL,
+    [Pullout_DetailUKey] BIGINT        CONSTRAINT [DF_Pullout_Revise_UKey] DEFAULT ((0)) NULL,
+    [ReviseKey]          BIGINT        IDENTITY (1, 1) NOT NULL,
+    [INVNo]              VARCHAR (25)  CONSTRAINT [DF_Pullout_Revise_INVNo] DEFAULT ('') NULL,
+    [ShipModeID]         VARCHAR (5)   CONSTRAINT [DF_Pullout_Revise_ShipModeID] DEFAULT ('') NULL,
+    [AddName]            VARCHAR (10)  CONSTRAINT [DF_Pullout_Revise_AddName] DEFAULT ('') NULL,
+    [AddDate]            DATETIME      NULL,
+    [OldUKey]            VARCHAR (13)  CONSTRAINT [DF_Pullout_Revise_OldUKey] DEFAULT ('') NULL,
+    [OldReviseKey]       VARCHAR (13)  CONSTRAINT [DF_Pullout_Revise_OldReviseKey] DEFAULT ('') NULL,
     CONSTRAINT [PK_Pullout_Revise] PRIMARY KEY CLUSTERED ([ReviseKey] ASC)
 );
+
+
 
 
 
@@ -63,7 +65,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'備註', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'UKey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Pullout_Revise', @level2type = N'COLUMN', @level2name = N'UKey';
+
 
 
 GO
@@ -92,4 +94,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0t
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Pullout_Revise', @level2type = N'COLUMN', @level2name = N'OldReviseKey';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'UKey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Pullout_Revise', @level2type = N'COLUMN', @level2name = N'Pullout_DetailUKey';
 
