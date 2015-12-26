@@ -230,10 +230,6 @@
       <Project>{105a668a-8233-4d5f-a340-e8e9a743531d}</Project>
       <Name>Sci.Production.Logistic</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sci.Production.Miscellaneous\Sci.Production.Miscellaneous.csproj">
-      <Project>{a61e6d69-1468-4a81-bcbf-c5211c932f9c}</Project>
-      <Name>Sci.Production.Miscellaneous</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Packing\Sci.Production.Packing.csproj">
       <Project>{0ac9e701-ee86-459b-bdb9-213a79e59017}</Project>
       <Name>Sci.Production.Packing</Name>

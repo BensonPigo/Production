@@ -31,8 +31,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.Production.Quality", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.Production.Shipping", "Sci.Production.Shipping\Sci.Production.Shipping.csproj", "{558A6AE9-F802-4D9B-BAD4-73FDF0A33326}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.Production.Miscellaneous", "Sci.Production.Miscellaneous\Sci.Production.Miscellaneous.csproj", "{A61E6D69-1468-4A81-BCBF-C5211C932F9C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.Production.PublicPrg", "Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj", "{4A2F17B7-EFFE-454C-8F1E-9EEBEF170BC0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.Production.PublicForm", "Sci.Production.PublicForm\Sci.Production.PublicForm.csproj", "{A0AFAC1D-7488-4271-83F0-9C14BAF212FE}"
@@ -105,10 +103,6 @@ Global
 		{558A6AE9-F802-4D9B-BAD4-73FDF0A33326}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{558A6AE9-F802-4D9B-BAD4-73FDF0A33326}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{558A6AE9-F802-4D9B-BAD4-73FDF0A33326}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A61E6D69-1468-4A81-BCBF-C5211C932F9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A61E6D69-1468-4A81-BCBF-C5211C932F9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A61E6D69-1468-4A81-BCBF-C5211C932F9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A61E6D69-1468-4A81-BCBF-C5211C932F9C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4A2F17B7-EFFE-454C-8F1E-9EEBEF170BC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4A2F17B7-EFFE-454C-8F1E-9EEBEF170BC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A2F17B7-EFFE-454C-8F1E-9EEBEF170BC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
