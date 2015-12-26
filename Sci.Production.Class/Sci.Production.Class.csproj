@@ -183,6 +183,10 @@
     <Compile Include="txtsupplier.Designer.cs">
       <DependentUpon>txtsupplier.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtthreadcomb.cs" />
+    <Compile Include="txtthreadcomb.designer.cs">
+      <DependentUpon>txtthreadcomb.cs</DependentUpon>
+    </Compile>
     <Compile Include="txttpeuser.cs">
       <SubType>UserControl</SubType>
     </Compile>
