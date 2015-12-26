@@ -154,7 +154,7 @@ namespace Sci.Production.Class
     }
     public class celllocalitem : DataGridViewGeneratorTextColumnSettings
     {
-        public static DataGridViewGeneratorTextColumnSettings GetGridCell(string category,string localSupp)
+        public static DataGridViewGeneratorTextColumnSettings GetGridCell(string category,string localSupp=null)
         {
             //pur 為ture 表示需判斷PurchaseFrom
             celllocalitem ts = new celllocalitem();
