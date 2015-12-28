@@ -37,9 +37,10 @@
     [SubConBCS]           VARCHAR (4)    CONSTRAINT [DF_System_SubConBCS] DEFAULT ('') NULL,
     [StdFarmInDay]        TINYINT        CONSTRAINT [DF_System_StdFarmInDay] DEFAULT ((0)) NULL,
     [VNMultiple]          NUMERIC (4, 2) CONSTRAINT [DF_System_VNMultiple] DEFAULT ((0)) NULL,
-    [MtlLeadTime]         TINYINT        CONSTRAINT [DF_System_MtlLeadTime] DEFAULT ((0)) NULL,
-    [MiscInspdate]        TINYINT        CONSTRAINT [DF_System_MiscInspdate] DEFAULT ((0)) NULL
+    [MtlLeadTime]         TINYINT        CONSTRAINT [DF_System_MtlLeadTime] DEFAULT ((0)) NULL
 );
+
+
 
 
 
@@ -205,7 +206,7 @@ GO
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Misc 檢驗Lead Time', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'MiscInspdate';
+
 
 
 GO
