@@ -132,11 +132,11 @@
     <Compile Include="P03_Wkno.Designer.cs">
       <DependentUpon>P03_Wkno.cs</DependentUpon>
     </Compile>
-    <Compile Include="P03.cs">
+    <Compile Include="P03back.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P03.Designer.cs">
-      <DependentUpon>P03.cs</DependentUpon>
+    <Compile Include="P03back.Designer.cs">
+      <DependentUpon>P03back.cs</DependentUpon>
     </Compile>
     <Compile Include="P07.cs">
       <SubType>Form</SubType>
@@ -462,6 +462,90 @@
     <Compile Include="P15_AccumulatedQty.Designer.cs">
       <DependentUpon>P15_AccumulatedQty.cs</DependentUpon>
     </Compile>
+    <Compile Include="P03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03.Designer.cs">
+      <DependentUpon>P03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P24.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P24.Designer.cs">
+      <DependentUpon>P24.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P24_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P24_AccumulatedQty.Designer.cs">
+      <DependentUpon>P24_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P24_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P24_Import.Designer.cs">
+      <DependentUpon>P24_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P25.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P25.Designer.cs">
+      <DependentUpon>P25.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P25_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P25_Import.Designer.cs">
+      <DependentUpon>P25_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P25_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P25_AccumulatedQty.Designer.cs">
+      <DependentUpon>P25_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P37.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P37.Designer.cs">
+      <DependentUpon>P37.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P37_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P37_AccumulatedQty.Designer.cs">
+      <DependentUpon>P37_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P37_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P37_Import.Designer.cs">
+      <DependentUpon>P37_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P10.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10.Designer.cs">
+      <DependentUpon>P10.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P10_Detail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_Detail.Designer.cs">
+      <DependentUpon>P10_Detail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P10_Detail_Detail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_Detail_Detail.Designer.cs">
+      <DependentUpon>P10_Detail_Detail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P10_CutRef.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_CutRef.Designer.cs">
+      <DependentUpon>P10_CutRef.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -470,12 +554,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B02.resx">
       <DependentUpon>B02.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="B03.resx">
       <DependentUpon>B03.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="B04.resx">
       <DependentUpon>B04.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P10_Detail.resx">
+      <DependentUpon>P10_Detail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P12_Import.resx">
       <DependentUpon>P12_Import.cs</DependentUpon>
@@ -488,8 +578,8 @@
     <EmbeddedResource Include="P03_Wkno.resx">
       <DependentUpon>P03_Wkno.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P03.resx">
-      <DependentUpon>P03.cs</DependentUpon>
+    <EmbeddedResource Include="P03back.resx">
+      <DependentUpon>P03back.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P03_BulkLocation.resx">
       <DependentUpon>P03_BulkLocation.cs</DependentUpon>
@@ -686,6 +776,56 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P15_AccumulatedQty.resx">
       <DependentUpon>P15_AccumulatedQty.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P03.resx">
+      <DependentUpon>P03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P24.resx">
+      <DependentUpon>P24.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P24_AccumulatedQty.resx">
+      <DependentUpon>P24_AccumulatedQty.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P24_Import.resx">
+      <DependentUpon>P24_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P25.resx">
+      <DependentUpon>P25.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P25_Import.resx">
+      <DependentUpon>P25_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P25_AccumulatedQty.resx">
+      <DependentUpon>P25_AccumulatedQty.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P37.resx">
+      <DependentUpon>P37.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P37_AccumulatedQty.resx">
+      <DependentUpon>P37_AccumulatedQty.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P37_Import.resx">
+      <DependentUpon>P37_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P10.resx">
+      <DependentUpon>P10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P10_Detail_Detail.resx">
+      <DependentUpon>P10_Detail_Detail.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P10_CutRef.resx">
+      <DependentUpon>P10_CutRef.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
