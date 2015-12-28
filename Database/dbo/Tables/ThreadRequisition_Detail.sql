@@ -7,12 +7,14 @@
     [AllowanceQty]   NUMERIC (6)    CONSTRAINT [DF_ThreadRequisition_Detail_AllowanceQty] DEFAULT ((0)) NULL,
     [UseStockQty]    NUMERIC (6)    CONSTRAINT [DF_ThreadRequisition_Detail_UseStockQty] DEFAULT ((0)) NULL,
     [PurchaseQty]    NUMERIC (6)    CONSTRAINT [DF_ThreadRequisition_Detail_PurchaseQty] DEFAULT ((0)) NOT NULL,
-    [PoId]           VARCHAR (18)   CONSTRAINT [DF_ThreadRequisition_Detail_PoId] DEFAULT ('') NULL,
+    [PoId]           VARCHAR (13)   CONSTRAINT [DF_ThreadRequisition_Detail_PoId] DEFAULT ('') NULL,
     [Remark]         NVARCHAR (100) CONSTRAINT [DF_ThreadRequisition_Detail_Remark] DEFAULT ('') NULL,
     [Ukey]           BIGINT         IDENTITY (1, 1) NOT NULL,
     [AutoCreate]     BIT            CONSTRAINT [DF_ThreadRequisition_Detail_AutoCreate] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_ThreadRequisition_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO

@@ -7,12 +7,14 @@
     [MarkName]      VARCHAR (5)    CONSTRAINT [DF_CuttingOutput_Detail_MarkName] DEFAULT ('') NOT NULL,
     [Marker]        VARCHAR (12)   CONSTRAINT [DF_CuttingOutput_Detail_Marker] DEFAULT ('') NOT NULL,
     [Layers]        NUMERIC (5)    CONSTRAINT [DF_CuttingOutput_Detail_Layers] DEFAULT ((0)) NOT NULL,
-    [Cons]          NUMERIC (6, 2) CONSTRAINT [DF_CuttingOutput_Detail_Cons] DEFAULT ((0)) NOT NULL,
+    [Cons]          NUMERIC (7, 2) CONSTRAINT [DF_CuttingOutput_Detail_Cons] DEFAULT ((0)) NOT NULL,
     [WorkOrderUkey] BIGINT         CONSTRAINT [DF_CuttingOutput_Detail_WorkOrderUkey] DEFAULT ((0)) NOT NULL,
     [Colorid]       VARCHAR (6)    CONSTRAINT [DF_CuttingOutput_Detail_Colorid] DEFAULT ('') NOT NULL,
     [Ukey]          BIGINT         IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_CuttingOutput_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO

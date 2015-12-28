@@ -1,7 +1,8 @@
 ﻿CREATE TABLE [dbo].[WorkOrder] (
     [ID]            VARCHAR (13)   CONSTRAINT [DF_WorkOrder_ID] DEFAULT ('') NOT NULL,
     [FactoryID]     VARCHAR (8)    CONSTRAINT [DF_WorkOrder_FactoryID] DEFAULT ('') NOT NULL,
-    [SEQ]           VARCHAR (5)    CONSTRAINT [DF_WorkOrder_SEQ] DEFAULT ('') NOT NULL,
+    [SEQ1]          VARCHAR (3)    CONSTRAINT [DF_WorkOrder_SEQ] DEFAULT ('') NOT NULL,
+    [SEQ2]          VARCHAR (2)    NOT NULL,
     [CutRef]        VARCHAR (6)    CONSTRAINT [DF_WorkOrder_CutRef] DEFAULT ('') NULL,
     [OrderID]       VARCHAR (13)   CONSTRAINT [DF_WorkOrder_OrderID] DEFAULT ('') NULL,
     [CutplanID]     VARCHAR (13)   CONSTRAINT [DF_WorkOrder_CutplanID] DEFAULT ('') NULL,
@@ -32,6 +33,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'WorkOrder', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrder';
 
@@ -45,7 +48,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠代�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrder', @level2type = N'COLUMN', @level2name = N'SEQ';
+
 
 
 GO
@@ -138,4 +141,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'部位別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrder', @level2type = N'COLUMN', @level2name = N'FabricCombo';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrder', @level2type = N'COLUMN', @level2name = N'SEQ1';
 
