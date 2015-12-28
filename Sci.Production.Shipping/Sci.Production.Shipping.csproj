@@ -341,6 +341,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Shipping.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Shipping.xsd</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -439,6 +449,7 @@
     <EmbeddedResource Include="P08.resx">
       <DependentUpon>P08.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P08_Print.rdlc" />
     <EmbeddedResource Include="P08_ShareExpense.resx">
       <DependentUpon>P08_ShareExpense.cs</DependentUpon>
     </EmbeddedResource>
@@ -479,7 +490,23 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Resources\trffc15.bmp" />
+    <None Include="Shipping.xsc">
+      <DependentUpon>Shipping.xsd</DependentUpon>
+    </None>
+    <None Include="Shipping.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>Shipping.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Shipping.xss">
+      <DependentUpon>Shipping.xsd</DependentUpon>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

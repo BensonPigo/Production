@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Shipping" targetNamespace="http://tempuri.org/Shipping.xsd" xmlns:mstns="http://tempuri.org/Shipping.xsd" xmlns="http://tempuri.org/Shipping.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="ProductionConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="ProductionConnectionString (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.Sci.Production.Shipping.Properties.Settings.GlobalReference.Default.ProductionConnectionString" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="Shipping" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="True" msprop:Generator_DataSetName="Shipping" msprop:Generator_UserDSName="Shipping">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Report_ShippingAPDetail" msprop:Generator_TableClassName="Report_ShippingAPDetailDataTable" msprop:Generator_TableVarName="tableReport_ShippingAPDetail" msprop:Generator_TablePropName="Report_ShippingAPDetail" msprop:Generator_RowDeletingName="Report_ShippingAPDetailRowDeleting" msprop:Generator_RowChangingName="Report_ShippingAPDetailRowChanging" msprop:Generator_RowEvHandlerName="Report_ShippingAPDetailRowChangeEventHandler" msprop:Generator_RowDeletedName="Report_ShippingAPDetailRowDeleted" msprop:Generator_UserTableName="Report_ShippingAPDetail" msprop:Generator_RowChangedName="Report_ShippingAPDetailRowChanged" msprop:Generator_RowEvArgName="Report_ShippingAPDetailRowChangeEvent" msprop:Generator_RowClassName="Report_ShippingAPDetailRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ShipExpenseID" msprop:Generator_ColumnVarNameInTable="columnShipExpenseID" msprop:Generator_ColumnPropNameInRow="ShipExpenseID" msprop:Generator_ColumnPropNameInTable="ShipExpenseIDColumn" msprop:Generator_UserColumnName="ShipExpenseID" type="xs:string" minOccurs="0" />
+              <xs:element name="Description" msprop:Generator_ColumnVarNameInTable="columnDescription" msprop:Generator_ColumnPropNameInRow="Description" msprop:Generator_ColumnPropNameInTable="DescriptionColumn" msprop:Generator_UserColumnName="Description" type="xs:string" minOccurs="0" />
+              <xs:element name="CurrencyID" msprop:Generator_ColumnVarNameInTable="columnCurrencyID" msprop:Generator_ColumnPropNameInRow="CurrencyID" msprop:Generator_ColumnPropNameInTable="CurrencyIDColumn" msprop:Generator_UserColumnName="CurrencyID" type="xs:string" minOccurs="0" />
+              <xs:element name="Price" msprop:Generator_ColumnVarNameInTable="columnPrice" msprop:Generator_ColumnPropNameInRow="Price" msprop:Generator_ColumnPropNameInTable="PriceColumn" msprop:Generator_UserColumnName="Price" type="xs:double" minOccurs="0" />
+              <xs:element name="Qty" msprop:Generator_ColumnVarNameInTable="columnQty" msprop:Generator_ColumnPropNameInRow="Qty" msprop:Generator_ColumnPropNameInTable="QtyColumn" msprop:Generator_UserColumnName="Qty" type="xs:long" minOccurs="0" />
+              <xs:element name="Rate" msprop:Generator_ColumnVarNameInTable="columnRate" msprop:Generator_ColumnPropNameInRow="Rate" msprop:Generator_ColumnPropNameInTable="RateColumn" msprop:Generator_UserColumnName="Rate" type="xs:long" minOccurs="0" />
+              <xs:element name="Amount" msprop:Generator_ColumnVarNameInTable="columnAmount" msprop:Generator_ColumnPropNameInRow="Amount" msprop:Generator_ColumnPropNameInTable="AmountColumn" msprop:Generator_UserColumnName="Amount" type="xs:double" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
