@@ -10,6 +10,7 @@
     [CtnWidth]     NUMERIC (8, 4)  CONSTRAINT [DF_LocalItem_CtnWidth] DEFAULT ((0)) NULL,
     [CtnHeight]    NUMERIC (8, 4)  CONSTRAINT [DF_LocalItem_CtnHeight] DEFAULT ((0)) NULL,
     [CtnUnit]      VARCHAR (8)     CONSTRAINT [DF_LocalItem_CtnUnit] DEFAULT ('') NULL,
+    [CtnWeight]    NUMERIC (11, 6) CONSTRAINT [DF_LocalItem_CtnWeight] DEFAULT ((0)) NULL,
     [CBM]          NUMERIC (13, 4) CONSTRAINT [DF_LocalItem_CBM] DEFAULT ((0)) NULL,
     [MeterToCone]  NUMERIC (7, 1)  CONSTRAINT [DF_LocalItem_MeterToCone] DEFAULT ((0)) NULL,
     [ThreadTypeID] VARCHAR (15)    CONSTRAINT [DF_LocalItem_ThreadTypeID] DEFAULT ('') NULL,
@@ -25,6 +26,8 @@
     [EditDate]     DATETIME        NULL,
     CONSTRAINT [PK_LocalItem] PRIMARY KEY CLUSTERED ([RefNo] ASC)
 );
+
+
 
 
 

@@ -11,8 +11,11 @@
     [Dyelot]            VARCHAR (4)     CONSTRAINT [DF_Issue_Detail_Dyelot] DEFAULT ('') NULL,
     [StockType]         CHAR (1)        CONSTRAINT [DF_Issue_Detail_StockType] DEFAULT ('') NULL,
     [ukey]              BIGINT          IDENTITY (1, 1) NOT NULL,
-    CONSTRAINT [PK_Issue_Detail] PRIMARY KEY CLUSTERED ([ukey] ASC)
+    CONSTRAINT [PK_Issue_Detail] PRIMARY KEY CLUSTERED ([ukey] ASC),
+    CONSTRAINT [FK_Issue_Detail_Issue_Detail] FOREIGN KEY ([ukey]) REFERENCES [dbo].[Issue_Detail] ([ukey])
 );
+
+
 
 
 
@@ -55,4 +58,9 @@ GO
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ukey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'Issue_SummaryUkey';
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Issue_Detail]
+    ON [dbo].[Issue_Detail]([Id] ASC, [POID] ASC, [Seq1] ASC, [Seq2] ASC);
 
