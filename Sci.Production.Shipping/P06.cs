@@ -362,7 +362,8 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 
                 worksheet.Range[String.Format("A{0}:M{0}", rownum)].Value2 = objArray;
             }
-            
+            worksheet.Range[String.Format("A5:M{0}", rownum)].Borders.Weight = 2; //1: 虛線, 2:實線, 3:粗體線
+            worksheet.Range[String.Format("A5:M{0}", rownum)].Borders.LineStyle = 1;
             worksheet.Cells[rownum + 1, 6] = "TTL:";
             worksheet.Cells[rownum + 1, 7] = TtlQty.Rows[0]["TtlQty"];
             worksheet.Cells[rownum + 1, 8] = ExcelData.Compute("sum(ShipQty)", "");
