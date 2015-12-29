@@ -20,7 +20,6 @@ namespace Sci.Production.Shipping
         Ict.Win.DataGridViewGeneratorTextColumnSettings status = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         ITableSchema revisedTS, revised_detailTS;
         DataTable PulloutReviseData, PulloutReviseDetailData;
-        DataTable IdentytyValue;
 
         public P06(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -294,6 +293,82 @@ where ID in (select distinct OrderID from Pullout_Detail where ID = '{0}');", My
                 return failResult;
             }
             return base.ClickSavePost();
+        }
+
+        protected override bool ClickPrint()
+        {
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            {
+                return false;
+            }
+
+            string sqlCmd = string.Format(@"select pd.OrderID,o.StyleID,o.CustPONo,o.BrandID,c.NameEN,o.StyleUnit,o.Qty,pd.ShipQty,
+(select isnull(sum(ShipQty),0) from Pullout_Detail where OrderID = pd.OrderID) as TtlShipQty,
+(select isnull(sum(CTNQty),0) from PackingList_Detail where ID = pd.PackingListID and OrderID = pd.OrderID) as CtnQty,
+pd.Remark,pd.ShipmodeID,pd.INVNo
+from Pullout_Detail pd
+left join Orders o on pd.OrderID = o.ID
+left join Country c on o.Dest = c.ID
+where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+
+            DataTable ExcelData;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out ExcelData);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("Query data fail!!\r\n" + result.ToString());
+                return false;
+            }
+
+            DataTable TtlQty;
+            try
+            {
+                MyUtility.Tool.ProcessWithDatatable(ExcelData, "OrderId,Qty", "select isnull(sum(a.Qty),0) as TtlQty from (select distinct OrderId,Qty from #tmp) a", out TtlQty);
+            }
+            catch (Exception ex)
+            {
+                MyUtility.Msg.ErrorBox("Prepare data error.\r\n" + ex.ToString());
+                return false;
+            }
+
+            string strXltName = Sci.Env.Cfg.XltPathDir + "Shipping_P06.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null) return false;
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            worksheet.Cells[1, 1] = MyUtility.Convert.GetString(CurrentMaintain["MDivisionID"]);
+            worksheet.Cells[3, 2] = Convert.ToDateTime(CurrentMaintain["PulloutDate"]).ToString("d");
+            worksheet.Cells[3, 12] = DateTime.Now.ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+
+            int intRowsStart = 5;
+            int dataRowCount = ExcelData.Rows.Count;
+            int rownum = 0;
+            object[,] objArray = new object[1, 13];
+            for (int i = 0; i < dataRowCount; i++)
+            {
+                DataRow dr = ExcelData.Rows[i];
+                rownum = intRowsStart + i;
+                objArray[0, 0] = dr["OrderID"];
+                objArray[0, 1] = dr["StyleID"];
+                objArray[0, 2] = dr["CustPONo"];
+                objArray[0, 3] = dr["BrandID"];
+                objArray[0, 4] = dr["NameEN"];
+                objArray[0, 5] = dr["StyleUnit"];
+                objArray[0, 6] = dr["Qty"];
+                objArray[0, 7] = dr["ShipQty"];
+                objArray[0, 8] = dr["TtlShipQty"];
+                objArray[0, 9] = dr["CtnQty"];
+                objArray[0, 10] = dr["Remark"];
+                objArray[0, 11] = dr["ShipmodeID"];
+                objArray[0, 12] = dr["INVNo"];
+                
+                worksheet.Range[String.Format("A{0}:M{0}", rownum)].Value2 = objArray;
+            }
+            
+            worksheet.Cells[rownum + 1, 6] = "TTL:";
+            worksheet.Cells[rownum + 1, 7] = TtlQty.Rows[0]["TtlQty"];
+            worksheet.Cells[rownum + 1, 8] = ExcelData.Compute("sum(ShipQty)", "");
+
+            excel.Visible = true;
+            return base.ClickPrint();
         }
 
         //Confirm
