@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[WorkOrder] (
     [ID]            VARCHAR (13)   CONSTRAINT [DF_WorkOrder_ID] DEFAULT ('') NOT NULL,
     [FactoryID]     VARCHAR (8)    CONSTRAINT [DF_WorkOrder_FactoryID] DEFAULT ('') NOT NULL,
+    [MDivisionId]   VARCHAR (8)    CONSTRAINT [DF_WorkOrder_MDivisionId] DEFAULT ('') NOT NULL,
     [SEQ1]          VARCHAR (3)    CONSTRAINT [DF_WorkOrder_SEQ] DEFAULT ('') NOT NULL,
     [SEQ2]          VARCHAR (2)    NOT NULL,
     [CutRef]        VARCHAR (6)    CONSTRAINT [DF_WorkOrder_CutRef] DEFAULT ('') NULL,
@@ -26,9 +27,10 @@
     [EditName]      VARCHAR (10)   CONSTRAINT [DF_WorkOrder_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME       NULL,
     [FabricCombo]   VARCHAR (2)    CONSTRAINT [DF_WorkOrder_FabricCombo] DEFAULT ('') NULL,
-    [MDivisionId]   VARCHAR (8)    CONSTRAINT [DF_WorkOrder_MDivisionId] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_WorkOrder] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
