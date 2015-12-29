@@ -33,8 +33,8 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? "1=0" : string.Format("p.ShipPlanID ='{0}'", MyUtility.Convert.GetString(e.Master["ID"]));
             string sqlCmd = string.Format(@"select p.ID,
-iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd where pd.ID = p.id) a for xml path('')),p.OrderID) as OrderID,
-iif(p.type = 'B',(select BuyerDelivery from Order_QtyShip where ID = p.OrderID and Seq = p.OrderShipmodeSeq),(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq)) as BuyerDelivery,
+(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd where pd.ID = p.id) a for xml path('')) as OrderID,
+(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
 p.Status,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ClogReceiveID != '') as ClogCTNQty,
 p.InspDate,p.InspStatus,p.PulloutDate,p.InvNo,p.MDivisionID
 from PackingList p
@@ -285,6 +285,78 @@ where {0} order by g.ID", masterID);
                 return false;
             }
             return true;
+        }
+
+        protected override bool ClickPrint()
+        {
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            {
+                return false;
+            }
+
+            string sqlCmd = string.Format(@"select p.ShipPlanID,p.INVNo,g.BrandID,g.ShipModeID, (g.Forwarder+'-'+ls.Abb) as Forwarder, g.CYCFS,
+g.SONo,g.CutOffDate,isnull(fd.WhseNo,'') as WhseNo,
+iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')) as Status,
+g.TotalCTNQty,g.TotalCBM,
+(select isnull(sum(pd1.CTNQty),0) from PackingList p1,PackingList_Detail pd1 where p1.INVNo = g.ID and p1.ID = pd1.ID and pd1.ReceiveDate is not null) as ClogCTNQty,
+p.ID,(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd where pd.ID = p.id) a for xml path('')) as OrderID,
+(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
+p.Status as PLStatus,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ClogReceiveID != '') as PLClogCTNQty,
+p.InspDate,p.InspStatus,p.PulloutDate
+from PackingList p
+left join GMTBooking g on p.INVNo = g.ID
+left join ForwarderWhse_Detail fd on g.ForwarderWhse_DetailUKey = fd.UKey
+left join LocalSupp ls on g.Forwarder = ls.ID
+where p.ShipPlanID = '{0}'
+order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            DataTable ExcelData;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out ExcelData);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("Query data fail!!\r\n" + result.ToString());
+                return false;
+            }
+
+            string strXltName = Sci.Env.Cfg.XltPathDir + "Shipping_P10.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null) return false;
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+
+            int intRowsStart = 2;
+            int dataRowCount = ExcelData.Rows.Count;
+            object[,] objArray = new object[1, 23];
+            for (int i = 0; i < dataRowCount; i++)
+            {
+                DataRow dr = ExcelData.Rows[i];
+                int rownum = intRowsStart + i;
+                objArray[0, 0] = dr["ShipPlanID"];
+                objArray[0, 1] = dr["INVNo"];
+                objArray[0, 2] = dr["BrandID"];
+                objArray[0, 3] = dr["ShipModeID"];
+                objArray[0, 4] = dr["Forwarder"];
+                objArray[0, 5] = dr["CYCFS"];
+                objArray[0, 6] = dr["SONo"];
+                objArray[0, 7] = MyUtility.Check.Empty(dr["CutOffDate"]) ? "" : Convert.ToDateTime(dr["CutOffDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                objArray[0, 8] = dr["WhseNo"];
+                objArray[0, 9] = dr["Status"];
+                objArray[0, 10] = dr["TotalCTNQty"];
+                objArray[0, 11] = dr["TotalCBM"];
+                objArray[0, 12] = dr["ClogCTNQty"];
+                objArray[0, 13] = dr["ID"];
+                objArray[0, 14] = dr["OrderID"];
+                objArray[0, 15] = dr["BuyerDelivery"];
+                objArray[0, 16] = dr["PLStatus"];
+                objArray[0, 17] = dr["CTNQty"];
+                objArray[0, 18] = dr["CBM"];
+                objArray[0, 19] = dr["PLClogCTNQty"];
+                objArray[0, 20] = dr["InspDate"];
+                objArray[0, 21] = dr["InspStatus"];
+                objArray[0, 22] = dr["PulloutDate"];
+                worksheet.Range[String.Format("A{0}:W{0}", rownum)].Value2 = objArray;
+            }
+            excel.Visible = true;
+
+            return base.ClickPrint();
         }
 
         //組Update PackingList的SQL
