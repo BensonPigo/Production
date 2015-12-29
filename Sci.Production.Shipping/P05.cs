@@ -560,6 +560,73 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             return Result.True;
         }
 
+        protected override bool ClickPrint()
+        {
+            string strXltName = Sci.Env.Cfg.XltPathDir + "Shipping_P05.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null) return false;
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            worksheet.Cells[1, 1] = MyUtility.Convert.GetString(CurrentMaintain["Shipper"]);
+            worksheet.Cells[3, 2] = MyUtility.Convert.GetString(CurrentMaintain["ID"]);
+            worksheet.Cells[4, 2] = MyUtility.Convert.GetString(CurrentMaintain["InvSerial"]);
+            worksheet.Cells[5, 2] = MyUtility.Check.Empty(CurrentMaintain["InvDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["InvDate"]).ToString("d");
+            worksheet.Cells[6, 2] = MyUtility.Convert.GetString(CurrentMaintain["Shipper"]);
+            worksheet.Cells[7, 2] = MyUtility.Convert.GetString(CurrentMaintain["BrandID"]);
+            worksheet.Cells[8, 2] = MyUtility.Check.Empty(CurrentMaintain["FCRDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["FCRDate"]).ToString("d");
+            worksheet.Cells[9, 2] = MyUtility.Convert.GetString(CurrentMaintain["CustCDID"]);
+            worksheet.Cells[10, 2] = MyUtility.Convert.GetString(CurrentMaintain["PayTermARID"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Description from PayTermAR where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["PayTermARID"])));
+            worksheet.Cells[11, 2] = MyUtility.Convert.GetString(CurrentMaintain["Description"]);
+            worksheet.Cells[12, 2] = MyUtility.Convert.GetString(CurrentMaintain["Remark"]);
+
+            worksheet.Cells[3, 5] = MyUtility.Convert.GetString(CurrentMaintain["Dest"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select NameEN from Country where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Dest"])));
+            worksheet.Cells[4, 5] = MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]);
+            worksheet.Cells[5, 5] = MyUtility.Convert.GetString(CurrentMaintain["ShipTermID"]);
+            worksheet.Cells[6, 5] = MyUtility.Convert.GetInt(CurrentMaintain["TotalShipQty"]);
+            worksheet.Cells[7, 5] = MyUtility.Convert.GetInt(CurrentMaintain["TotalCTNQty"]);
+            worksheet.Cells[8, 5] = MyUtility.Convert.GetDecimal(CurrentMaintain["TotalGW"]);
+            worksheet.Cells[9, 5] = MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCBM"]);
+            worksheet.Cells[10, 5] = MyUtility.Convert.GetDecimal(CurrentMaintain["TotalNW"]);
+            worksheet.Cells[11, 5] = MyUtility.Convert.GetDecimal(CurrentMaintain["TotalNNW"]);
+
+            worksheet.Cells[3, 9] = MyUtility.Convert.GetString(CurrentMaintain["Handle"]) + "  " + MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Handle"])));
+            worksheet.Cells[4, 9] = MyUtility.Convert.GetString(CurrentMaintain["Forwarder"]) + "  " + MyUtility.GetValue.Lookup(string.Format("select Name from LocalSupp where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Forwarder"])));
+            worksheet.Cells[5, 9] = MyUtility.Convert.GetString(CurrentMaintain["CYCFS"]);
+            worksheet.Cells[6, 9] = MyUtility.Convert.GetString(CurrentMaintain["SONo"]);
+            worksheet.Cells[7, 9] = MyUtility.GetValue.Lookup("WhseNo", MyUtility.Convert.GetString(CurrentMaintain["ForwarderWhse_DetailUKey"]), "ForwarderWhse_Detail", "UKey");
+            worksheet.Cells[8, 9] = MyUtility.Check.Empty(CurrentMaintain["CutOffDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["CutOffDate"]).ToString("yyyy/MM/dd HH:mm:ss");
+            worksheet.Cells[9, 9] = MyUtility.Check.Empty(CurrentMaintain["SOCFMDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["SOCFMDate"]).ToString("d");
+            worksheet.Cells[10, 9] = MyUtility.Convert.GetString(CurrentMaintain["Vessel"]);
+            worksheet.Cells[11, 9] = MyUtility.Check.Empty(CurrentMaintain["ETD"]) ? "" : Convert.ToDateTime(CurrentMaintain["ETD"]).ToString("d");
+            worksheet.Cells[12, 9] = MyUtility.Check.Empty(CurrentMaintain["ETA"]) ? "" : Convert.ToDateTime(CurrentMaintain["ETA"]).ToString("d");
+
+            int intRowsStart = 14;
+            DataTable GridData = (DataTable)detailgridbs.DataSource;
+            int dataRowCount = GridData.Rows.Count;
+            object[,] objArray = new object[1, 13];
+            for (int i = 0; i < dataRowCount; i++)
+            {
+                DataRow dr = GridData.Rows[i];
+                int rownum = intRowsStart + i;
+                objArray[0, 0] = dr["FactoryID"];
+                objArray[0, 1] = dr["ID"];
+                objArray[0, 2] = dr["OrderID"];
+                objArray[0, 3] = dr["CargoReadyDate"];
+                objArray[0, 4] = dr["BuyerDelivery"];
+                objArray[0, 5] = dr["SDPDate"];
+                objArray[0, 6] = dr["PulloutDate"];
+                objArray[0, 7] = dr["ShipQty"];
+                objArray[0, 8] = dr["CTNQty"];
+                objArray[0, 9] = dr["GW"];
+                objArray[0, 10] = dr["CBM"];
+                objArray[0, 11] = dr["NW"];
+                objArray[0, 12] = dr["NNW"];
+                worksheet.Range[String.Format("A{0}:M{0}", rownum)].Value2 = objArray;
+            }
+            excel.Visible = true;
+            
+            return base.ClickPrint();
+        }
+
         //Inv. Serial:移除空白值
         private void textBox1_Validated(object sender, EventArgs e)
         {

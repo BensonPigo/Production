@@ -124,7 +124,7 @@
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(537, 11);
+            this.comboBox1.Location = new System.Drawing.Point(561, 11);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(74, 24);
             this.comboBox1.TabIndex = 5;
@@ -132,7 +132,7 @@
             // label3
             // 
             this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(513, 12);
+            this.label3.Location = new System.Drawing.Point(537, 12);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(20, 23);
             this.label3.TabIndex = 4;
@@ -145,7 +145,7 @@
             this.txtbrand1.IsSupportEditMode = false;
             this.txtbrand1.Location = new System.Drawing.Point(427, 12);
             this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand1.Size = new System.Drawing.Size(88, 23);
             this.txtbrand1.TabIndex = 3;
             // 
             // label2

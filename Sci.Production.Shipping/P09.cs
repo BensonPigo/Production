@@ -74,7 +74,7 @@ as
 (select o.ID,oq.Seq,o.StyleID,o.BrandID,o.FactoryID,o.CustPONo,o.Customize1,o.CustCDID,
  c.Alias,oq.Qty,oq.BuyerDelivery,oq.EstPulloutDate,
  (select max(PulloutDate) from Pullout_Detail where OrderID = o.ID and OrderShipmodeSeq = oq.Seq and ShipQty > 0) as PulloutDate,
- oq.OutstandingReason+' - '+isnull(r.Name,'') as OSReason,o.OutstandingRemark 
+ oq.OutstandingReason+' - '+isnull(r.Name,'') as OSReason,o.OutstandingRemark
  from Orders o 
  left join Order_QtyShip oq on oq.Id = o.ID 
  left join Country c on c.ID = o.Dest 
@@ -95,7 +95,7 @@ as
             sqlCmd.Append(@") 
 select ID,Seq,StyleID,BrandID,FactoryID,CustPONo,Customize1,CustCDID,Alias,Qty,
 BuyerDelivery,iif(PulloutDate is null,EstPulloutDate,PulloutDate) as PulloutDate,
-OSReason,OutstandingRemark 
+OSReason,OutstandingRemark as OSRemark  
 from tempData 
 where iif(PulloutDate is null,EstPulloutDate,PulloutDate) > BuyerDelivery
 and iif(PulloutDate is null,EstPulloutDate,PulloutDate) is not null ");
@@ -132,7 +132,45 @@ and iif(PulloutDate is null,EstPulloutDate,PulloutDate) is not null ");
         //To Excel
         private void button2_Click(object sender, EventArgs e)
         {
+            DataTable GridData = (DataTable)listControlBindingSource1.DataSource;
+            int dataRowCount = GridData.Rows.Count;
+            if (dataRowCount <= 0)
+            {
+                MyUtility.Msg.WarningBox("No data!!");
+                return;
+            }
+            string strXltName = Sci.Env.Cfg.XltPathDir + "Shipping_P09.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null) return;
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            worksheet.Cells[2, 1] = "Buyer Delivery: " + Convert.ToDateTime(dateRange1.Value1).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)) + " ~ " + Convert.ToDateTime(dateRange1.Value2).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
+            worksheet.Cells[2, 6] = "Brand: " + (MyUtility.Check.Empty(txtbrand1.Text) ? "" : txtbrand1.Text);
+            worksheet.Cells[2, 9] = "M: " + (MyUtility.Check.Empty(comboBox1.SelectedValue) ? "" : comboBox1.SelectedValue.ToString());
+            worksheet.Cells[2, 12] = "Data Type: " + (MyUtility.Check.Empty(comboBox2.SelectedValue) ? "" : comboBox2.SelectedValue.ToString());
 
+            int intRowsStart = 4;
+            object[,] objArray = new object[1, 14];
+            for (int i = 0; i < dataRowCount; i++)
+            {
+                DataRow dr = GridData.Rows[i];
+                int rownum = intRowsStart + i;
+                objArray[0, 0] = dr["ID"];
+                objArray[0, 1] = dr["Seq"];
+                objArray[0, 2] = dr["StyleID"];
+                objArray[0, 3] = dr["BrandID"];
+                objArray[0, 4] = dr["FactoryID"];
+                objArray[0, 5] = dr["CustPONo"];
+                objArray[0, 6] = dr["Customize1"];
+                objArray[0, 7] = dr["CustCDID"];
+                objArray[0, 8] = dr["Alias"];
+                objArray[0, 9] = dr["Qty"];
+                objArray[0, 10] = dr["BuyerDelivery"];
+                objArray[0, 11] = dr["PulloutDate"];
+                objArray[0, 12] = dr["OSReason"];
+                objArray[0, 13] = dr["OSRemark"];
+                worksheet.Range[String.Format("A{0}:N{0}", rownum)].Value2 = objArray;
+            }
+            excel.Visible = true;
         }
 
         //Close
