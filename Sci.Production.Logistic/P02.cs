@@ -156,6 +156,69 @@ where crd.ID = '{0}'", masterID);
             return base.ClickSaveBefore();
         }
 
+        protected override bool ClickPrint()
+        {
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            {
+                return false;
+            }
+
+            string sqlCmd = string.Format(@"with CTNData
+as
+(select cd.PackingListId,cd.OrderId,cd.CTNStartNo,pd.Seq
+ from ClogReceive_Detail cd
+ left join PackingList_Detail pd on pd.ID = cd.PackingListId and pd.CTNStartNo = cd.CTNStartNo and pd.CTNQty >=1
+ where cd.ID = '{0}'
+),
+CTNDataXML
+as
+(select distinct c.PackingListId,c.OrderId, (select CTNStartNo+', ' from CTNData c1 where c1.PackingListId = c.PackingListId and c1.OrderId = c.OrderId order by c1.Seq for XML Path('')) as CtnNo
+ from CTNData c
+)
+select distinct cd.ID,cd.TransferToClogId,cd.PackingListId,cd.OrderId,isnull(o.CustPONo,'') as CustPONo,isnull(o.Customize1,'') as Customize1,isnull(c.Alias,'') as Alias, cx.CtnNo
+from ClogReceive_Detail cd
+left join Orders o on cd.OrderId = o.ID
+left join Country c on o.Dest = c.ID
+left join CTNDataXML cx on cx.PackingListId = cd.PackingListId and cx.OrderId = cd.OrderId
+where cd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+
+            DataTable ExcelData;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out ExcelData);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("Query data fail!!\r\n" + result.ToString());
+                return false;
+            }
+
+            string strXltName = Sci.Env.Cfg.XltPathDir + "Logistic_P02.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null) return false;
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            worksheet.Cells[2, 2] = MyUtility.Convert.GetString(CurrentMaintain["ID"]);
+            worksheet.Cells[2, 4] = Convert.ToDateTime(CurrentMaintain["ReceiveDate"]).ToString("d");
+
+            int intRowsStart = 4;
+            int dataRowCount = ExcelData.Rows.Count;
+            int rownum = 0;
+            object[,] objArray = new object[1, 7];
+            for (int i = 0; i < dataRowCount; i++)
+            {
+                DataRow dr = ExcelData.Rows[i];
+                rownum = intRowsStart + i;
+                objArray[0, 0] = dr["TransferToClogId"];
+                objArray[0, 1] = dr["PackingListId"];
+                objArray[0, 2] = dr["OrderId"];
+                objArray[0, 3] = dr["CustPONo"];
+                objArray[0, 4] = dr["Customize1"];
+                objArray[0, 5] = dr["Alias"];
+                objArray[0, 6] = MyUtility.Convert.GetString(dr["CtnNo"]).Substring(0,MyUtility.Convert.GetString(dr["CtnNo"]).Length-2);
+                
+                worksheet.Range[String.Format("A{0}:G{0}", rownum)].Value2 = objArray;
+            }
+            excel.Visible = true;
+            return base.ClickPrint();
+        }
+
         //Confirm
         protected override void ClickConfirm()
         {
