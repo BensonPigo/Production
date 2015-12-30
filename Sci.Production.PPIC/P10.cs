@@ -28,7 +28,7 @@ namespace Sci.Production.PPIC
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(@"select ld.*,(left(ld.Seq1+' ',3)+ld.Seq2) as Seq,isnull(psd.Refno,'') as Refno,isnull(f.Description,'') as Description,
+            this.DetailSelectCommand = string.Format(@"select ld.*,(left(ld.Seq1+' ',3)+ld.Seq2) as Seq,isnull(psd.Refno,'') as Refno,dbo.getMtlDesc(l.POID,ld.Seq1,ld.Seq2,1,0) as Description,
 (select max(i.IssueDate) from Issue i, Issue_Detail id where i.Id = id.Id and id.PoId = l.POID and id.Seq1 = ld.Seq1 and id.Seq2 = ld.seq2) as IssueDate,
 isnull(mpd.InQty,0) as InQty,isnull(mpd.OutQty,0) as OutQty,isnull(p.Description,'') as PPICReasonDesc
 from Lack l
@@ -412,6 +412,72 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                 CurrentMaintain["ID"] = id;
             }
             return base.ClickSaveBefore();
+        }
+
+        protected override bool ClickPrint()
+        {
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            {
+                MyUtility.Msg.WarningBox("No Data!!");
+                return false;
+            }
+
+            string sqlCmd = string.Format(@"select (left(ld.Seq1+' ',3)+'-'+ld.Seq2) as Seq, dbo.getMtlDesc(l.POID,ld.Seq1,ld.Seq2,1,0) as Description,
+(Select Max(IssueDate) from Issue i, Issue_Detail id where i.ID = id.ID and id.POID = l.POID and id.Seq1 = ld.Seq1 and id.Seq2 = ld.Seq2) as RecvDate,
+isnull(mp.InQty,0) as InQty,isnull(mp.OutQty,0) as OutQty,ld.RequestQty,ld.IssueQty
+from Lack l
+left join Lack_Detail ld on l.ID = ld.ID
+left join MDivisionPoDetail mp on mp.POID = l.POID and mp.Seq1 = ld.Seq1 and mp.Seq2 = ld.Seq2 and mp.MDivisionId = l.MDivisionID
+where l.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+
+            DataTable ExcelData;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out ExcelData);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("Query data fail!!\r\n" + result.ToString());
+                return false;
+            }
+
+            string strXltName = Sci.Env.Cfg.XltPathDir + "PPIC_P10.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null) return false;
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            worksheet.Cells[1, 1] = MyUtility.Convert.GetString(CurrentMaintain["MDivisionID"]);
+            worksheet.Cells[4, 2] = MyUtility.Convert.GetString(CurrentMaintain["ID"]);
+            worksheet.Cells[5, 2] = Convert.ToDateTime(CurrentMaintain["IssueDate"]).ToString("d");
+            worksheet.Cells[6, 2] = MyUtility.Convert.GetString(CurrentMaintain["OrderID"]);
+            worksheet.Cells[7, 2] = MyUtility.Convert.GetString(CurrentMaintain["Remark"]);
+
+            worksheet.Cells[4, 4] = MyUtility.Convert.GetString(CurrentMaintain["Type"]) == "R" ? "Replacement" : "Lacking";
+            worksheet.Cells[5, 4] = MyUtility.Convert.GetString(CurrentMaintain["Shift"]) == "D" ? "Day" : MyUtility.Convert.GetString(CurrentMaintain["Shift"]) == "N" ? "Night" : "Subcon-Out";
+            worksheet.Cells[6, 4] = MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]);
+
+            worksheet.Cells[4, 6] = txtuser1.DisplayBox1.Value;
+            worksheet.Cells[5, 6] = txtuser2.DisplayBox1.Value;
+            worksheet.Cells[6, 6] = MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToString("d");
+
+            int intRowsStart = 10;
+            int dataRowCount = ExcelData.Rows.Count;
+            int rownum = 0;
+            object[,] objArray = new object[1, 7];
+            for (int i = 0; i < dataRowCount; i++)
+            {
+                DataRow dr = ExcelData.Rows[i];
+                rownum = intRowsStart + i;
+                objArray[0, 0] = dr["Seq"];
+                objArray[0, 1] = dr["Description"];
+                objArray[0, 2] = dr["RecvDate"];
+                objArray[0, 3] = dr["InQty"];
+                objArray[0, 4] = dr["OutQty"];
+                objArray[0, 5] = dr["RequestQty"];
+                objArray[0, 6] = dr["IssueQty"];
+
+                worksheet.Range[String.Format("A{0}:G{0}", rownum)].Value2 = objArray;
+            }
+
+            excel.Visible = true;
+
+            return base.ClickPrint();
         }
 
         //撈取最後發料日
