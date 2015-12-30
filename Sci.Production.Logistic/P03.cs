@@ -155,6 +155,74 @@ where crd.ID = '{0}'", masterID);
             return base.ClickSaveBefore();
         }
 
+        protected override bool ClickPrint()
+        {
+
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            {
+                return false;
+            }
+
+            string sqlCmd = string.Format(@"with CTNData
+as
+(select distinct cd.ID,cd.TransferToClogId,cd.PackingListId,cd.OrderId,cd.CTNStartNo,isnull(pd.Seq,'999999') as Seq
+ from ClogReturn_Detail cd
+ left join PackingList_Detail pd on pd.ID = cd.PackingListId and pd.CTNStartNo = cd.CTNStartNo and pd.CTNQty >=1
+ where cd.ID = '{0}'
+),
+CTNDataXML
+as
+(select distinct c.ID,c.TransferToClogId,c.PackingListId,c.OrderId, (select CTNStartNo+', ' from CTNData c1 where c1.ID = c.ID and c1.TransferToClogId = c.TransferToClogId and c1.PackingListId = c.PackingListId and c1.OrderId = c.OrderId order by c1.Seq for XML Path('')) as CtnNo
+ from CTNData c
+)
+select distinct cd.ID,cd.TransferToClogId,cd.PackingListId,cd.OrderId,isnull(o.CustPONo,'') as CustPONo,isnull(o.Customize1,'') as Customize1,isnull(c.Alias,'') as Alias,cx.CtnNo
+	,(select count(cd1.ID) from ClogReturn_Detail cd1 where cd1.ID = cd.ID and cd1.TransferToClogId = cd.TransferToClogId and cd1.PackingListId = cd.PackingListId and cd1.OrderId = cd.OrderId) as TtlCtn
+	,(select ClogLocationId+', ' from (select distinct cr.ClogLocationId from ClogReceive_Detail cr where cr.TransferToClogId = cd.TransferToClogId and cr.PackingListId = cd.PackingListId and cr.OrderId = cd.OrderId) a for XML Path('')) as Location
+from ClogReturn_Detail cd
+left join Orders o on cd.OrderId = o.ID
+left join Country c on o.Dest = c.ID
+left join CTNDataXML cx on cx.ID = cd.ID and cx.TransferToClogId = cd.TransferToClogId and cx.PackingListId = cd.PackingListId and cx.OrderId = cd.OrderId
+where cd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+
+            DataTable ExcelData;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out ExcelData);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("Query data fail!!\r\n" + result.ToString());
+                return false;
+            }
+
+            string strXltName = Sci.Env.Cfg.XltPathDir + "Logistic_P03.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null) return false;
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            worksheet.Cells[2, 2] = MyUtility.Convert.GetString(CurrentMaintain["ID"]);
+            worksheet.Cells[2, 4] = Convert.ToDateTime(CurrentMaintain["ReturnDate"]).ToString("d");
+
+            int intRowsStart = 4;
+            int dataRowCount = ExcelData.Rows.Count;
+            int rownum = 0;
+            object[,] objArray = new object[1, 9];
+            for (int i = 0; i < dataRowCount; i++)
+            {
+                DataRow dr = ExcelData.Rows[i];
+                rownum = intRowsStart + i;
+                objArray[0, 0] = dr["TransferToClogId"];
+                objArray[0, 1] = dr["PackingListId"];
+                objArray[0, 2] = dr["OrderId"];
+                objArray[0, 3] = dr["CustPONo"];
+                objArray[0, 4] = dr["Customize1"];
+                objArray[0, 5] = dr["Alias"];
+                objArray[0, 6] = dr["TtlCtn"];
+                objArray[0, 7] = MyUtility.Convert.GetString(dr["CtnNo"]).Substring(0, MyUtility.Convert.GetString(dr["CtnNo"]).Length - 2);
+                objArray[0, 8] = MyUtility.Convert.GetString(dr["Location"]).Substring(0, MyUtility.Convert.GetString(dr["Location"]).Length - 2);
+
+                worksheet.Range[String.Format("A{0}:I{0}", rownum)].Value2 = objArray;
+            }
+            excel.Visible = true;
+            return base.ClickPrint();
+        }
+
         //Confirm
         protected override void ClickConfirm()
         {
