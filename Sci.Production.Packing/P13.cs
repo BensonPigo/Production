@@ -98,14 +98,14 @@ as
                 sqlCmd.Append(@" ),
 POData
 as
-(select od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id as LocalPOID,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,sum(ld.Qty) as POQty
+(select od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id as LocalPOID,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,sum(ld.Qty) as POQty,ld.Delivery
  from OrderData od, LocalPO_Detail ld, LocalItem li
  where od.ID = ld.OrderId
  and li.RefNo = ld.Refno
- group by od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4),li.CtnUnit
+ group by od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4),li.CtnUnit,ld.Delivery
 )
-select isnull(od.ID,pd.ID) as ID,isnull(od.BrandID,pd.BrandID) as BrandID,isnull(od.SciDelivery,pd.SciDelivery) as SciDelivery,isnull(od.SewInLine,pd.SewInLine) as SewInLine,isnull(od.Alias,isnull(pd.Alias,'')) as Alias,isnull(od.Refno,pd.Refno) as Refno,
-isnull(pd.LocalPOID,'') as LocalPOID,isnull(od.Dimension,isnull(pd.Dimension,'')) as Dimension,isnull(od.CtnUnit,isnull(pd.CtnUnit,'')) as CtnUnit,isnull(od.CTNQty,0) as CTNQty,isnull(pd.POQty,0) as POQty,isnull(od.CTNQty,0)-isnull(pd.POQty,0) as AccuQty
+select isnull(od.BrandID,pd.BrandID) as BrandID,isnull(od.ID,pd.ID) as ID,isnull(od.Alias,isnull(pd.Alias,'')) as Alias,isnull(od.SciDelivery,pd.SciDelivery) as SciDelivery,isnull(od.SewInLine,pd.SewInLine) as SewInLine,isnull(od.Refno,pd.Refno) as Refno,
+isnull(od.Dimension,isnull(pd.Dimension,'')) as Dimension,isnull(od.CtnUnit,isnull(pd.CtnUnit,'')) as CtnUnit,isnull(od.CTNQty,0) as CTNQty,isnull(od.CTNQty,0)-isnull(pd.POQty,0) as AccuQty,isnull(pd.LocalPOID,'') as LocalPOID, pd.Delivery,isnull(pd.POQty,0) as POQty
 from OrderData od
 full outer join POData pd on pd.ID = od.ID and pd.Refno = od.RefNo
 order by SciDelivery,ID");
@@ -162,14 +162,14 @@ as
                 sqlCmd.Append(@" ),
 POData
 as
-(select od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id as LocalPOID,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,sum(ld.Qty) as POQty
+(select od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id as LocalPOID,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,sum(ld.Qty) as POQty,ld.Delivery
  from OrderData od, LocalPO_Detail ld, LocalItem li
  where od.ID = ld.OrderId
  and li.RefNo = ld.Refno
- group by od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4),li.CtnUnit
+ group by od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4),li.CtnUnit,ld.Delivery
 )
-select isnull(od.ID,pd.ID) as ID,isnull(od.BrandID,pd.BrandID) as BrandID,isnull(od.SciDelivery,pd.SciDelivery) as SciDelivery,isnull(od.SewInLine,pd.SewInLine) as SewInLine,isnull(od.Alias,isnull(pd.Alias,'')) as Alias,isnull(od.Refno,pd.Refno) as Refno,
-isnull(pd.LocalPOID,'') as LocalPOID,isnull(od.Dimension,isnull(pd.Dimension,'')) as Dimension,isnull(od.CtnUnit,isnull(pd.CtnUnit,'')) as CtnUnit,isnull(od.CTNQty,0) as CTNQty,isnull(pd.POQty,0) as POQty,isnull(od.CTNQty,0)-isnull(pd.POQty,0) as AccuQty
+select isnull(od.BrandID,pd.BrandID) as BrandID,isnull(od.ID,pd.ID) as ID,isnull(od.Alias,isnull(pd.Alias,'')) as Alias,isnull(od.SciDelivery,pd.SciDelivery) as SciDelivery,isnull(od.SewInLine,pd.SewInLine) as SewInLine,isnull(od.Refno,pd.Refno) as Refno,
+isnull(od.Dimension,isnull(pd.Dimension,'')) as Dimension,isnull(od.CtnUnit,isnull(pd.CtnUnit,'')) as CtnUnit,isnull(od.CTNQty,0) as CTNQty,isnull(od.CTNQty,0)-isnull(pd.POQty,0) as AccuQty,isnull(pd.LocalPOID,'') as LocalPOID,pd.Delivery,isnull(pd.POQty,0) as POQty
 from OrderData od
 full outer join POData pd on pd.ID = od.ID and pd.Refno = od.RefNo
 order by SciDelivery,ID");
@@ -188,7 +188,34 @@ order by SciDelivery,ID");
         //To Excel
         private void button2_Click(object sender, EventArgs e)
         {
+            DataTable ExcelTable = (DataTable)listControlBindingSource1.DataSource;
 
+            if (ExcelTable == null || ExcelTable.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("No data!!");
+                return;
+            }
+
+            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.RestoreDirectory = true;
+            dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
+            dlg.Title = "Save as Excel File";
+            dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
+
+            // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
+            // Get the selected file name and CopyToXls
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
+            {
+                // Open document
+                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName, xltfile: "Packing_P13.xltx", headerRow: 2);
+                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+            }
+            else
+            {
+                return;
+            }
         }
 
         //Close
