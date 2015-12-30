@@ -299,7 +299,7 @@ namespace Sci.Production.Logistic
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
             {
                 // Open document
-                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName);
+                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName, xltfile: "Logistic_P03_ImportFromBarCode.xltx", headerRow: 1);
                 if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
             }
             else
