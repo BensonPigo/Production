@@ -174,7 +174,44 @@ and o.ID = pld.OrderID");
         //To Excel
         private void button2_Click(object sender, EventArgs e)
         {
+            DataTable GridData = (DataTable)listControlBindingSource1.DataSource;
+            
+            if (GridData == null || GridData.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("No data!!");
+                return;
+            }
 
+            DataTable ExcelTable;
+            try
+            {
+                MyUtility.Tool.ProcessWithDatatable(GridData, "ID,Type,OrderId,SciDelivery,SewInLine,EstCTNBooking,EstCTNArrive", "select * from #tmp", out ExcelTable);
+            }
+            catch (Exception ex)
+            {
+                MyUtility.Msg.ErrorBox("To Excel error.\r\n" + ex.ToString());
+                return;
+            }
+            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.RestoreDirectory = true;
+            dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
+            dlg.Title = "Save as Excel File";
+            dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
+
+            // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
+            // Get the selected file name and CopyToXls
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
+            {
+                // Open document
+                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName, xltfile: "Packing_P08.xltx", headerRow: 2);
+                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+            }
+            else
+            {
+                return;
+            }
         }
 
         //Approve
