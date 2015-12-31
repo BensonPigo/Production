@@ -206,8 +206,8 @@ namespace Sci
                     DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
                     if (!MyUtility.Check.Empty(e.FormattedValue.ToString()))
                     {
-                        string seekSql = string.Format("select id from ThreadColorid where Junk = 0 and id = '{0}'", e.FormattedValue.ToString());
-                        if (MyUtility.Check.Seek(seekSql) == false)
+                        string seekSql = string.Format("select id from ThreadColor where Junk = 0 and id = '{0}'", e.FormattedValue.ToString());
+                        if (!MyUtility.Check.Seek(seekSql))
                         {
                             MyUtility.Msg.WarningBox(string.Format("< Thread Color : {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["Threadcolorid"] = "";
