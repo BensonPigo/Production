@@ -46,12 +46,13 @@ and o.PulloutComplete = 0
 and o.Junk = 0
 and (o.Category = 'B' or o.Category = 'S')
 )
-select 1 as Selected,a.POID,isnull(o.StyleID,'') as StyleID,isnull(b.BuyerID,'') as BuyerID,o.BuyerDelivery,[dbo].getPOComboList(a.POID,a.POID) as POCombo
+select 1 as Selected,a.POID,isnull(o.StyleID,'') as StyleID,isnull(b.BuyerID,'') as BuyerID,o.BuyerDelivery,[dbo].getPOComboList(a.POID,a.POID) as POCombo,(o.MCHandle+' - '+isnull(p.Name,'')) as MCHandle
 from (select * from wantToClose
 	  except
 	  select * from canNotClose) a
 left join Orders o on a.POID = o.ID
-left join Brand b on o.BrandID = b.ID", Sci.Env.User.Keyword);
+left join Brand b on o.BrandID = b.ID
+left join Pass1 p on p.ID = o.MCHandle", Sci.Env.User.Keyword);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out GridData);
             if (!result)
             {
@@ -213,6 +214,40 @@ left join Brand b on o.BrandID = b.ID", Sci.Env.User.Keyword);
                 }
             }
             #endregion
+        }
+
+        //To Excel
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DataTable GridData = (DataTable)listControlBindingSource1.DataSource;
+            if (GridData.DefaultView.Count <= 0)
+            {
+                MyUtility.Check.Empty("No data!!");
+                return;
+            }
+
+            string strXltName = Sci.Env.Cfg.XltPathDir + "PPIC_P01_BatchShipmentFinished.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null) return;
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            int intRowsStart = 2;
+            int dataRowCount = GridData.DefaultView.Count;
+            int rownum = 0;
+            object[,] objArray = new object[1, 6];
+            foreach (DataRowView dr in GridData.DefaultView)
+            {
+                objArray[0, 0] = dr["POID"];
+                objArray[0, 1] = dr["StyleID"];
+                objArray[0, 2] = dr["BuyerID"];
+                objArray[0, 3] = dr["BuyerDelivery"];
+                objArray[0, 4] = dr["POCombo"];
+                objArray[0, 5] = dr["MCHandle"];
+
+                worksheet.Range[String.Format("A{0}:F{0}", intRowsStart+rownum)].Value2 = objArray;
+                rownum++;
+            }
+
+            excel.Visible = true;
         }
     }
 }
