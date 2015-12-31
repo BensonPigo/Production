@@ -34,11 +34,11 @@ isnull(mpd.InQty,0) as InQty,isnull(mpd.OutQty,0) as OutQty,isnull(p.Description
 from Lack l
 inner join Lack_Detail ld on l.ID = ld.ID
 left join PO_Supp_Detail psd on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
-left join MDivisionPoDetail mpd on mpd.POID = l.POID and mpd.SEQ1 = ld.Seq1 and mpd.SEQ2 = ld.Seq2 and mpd.MDivisionId = '{1}'
+left join MDivisionPoDetail mpd on mpd.POID = l.POID and mpd.SEQ1 = ld.Seq1 and mpd.SEQ2 = ld.Seq2 and mpd.MDivisionId = l.MDivisionId
 left join Fabric f on psd.SCIRefno = f.SCIRefno
 left join PPICReason p on p.Type = 'FL' and ld.PPICReasonID = p.ID
 where l.ID = '{0}'
-order by ld.Seq1,ld.Seq2", masterID,Sci.Env.User.Keyword);
+order by ld.Seq1,ld.Seq2", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -421,14 +421,13 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                 MyUtility.Msg.WarningBox("No Data!!");
                 return false;
             }
-
             string sqlCmd = string.Format(@"select (left(ld.Seq1+' ',3)+'-'+ld.Seq2) as Seq, dbo.getMtlDesc(l.POID,ld.Seq1,ld.Seq2,1,0) as Description,
-(Select Max(IssueDate) from Issue i, Issue_Detail id where i.ID = id.ID and id.POID = l.POID and id.Seq1 = ld.Seq1 and id.Seq2 = ld.Seq2) as RecvDate,
-isnull(mp.InQty,0) as InQty,isnull(mp.OutQty,0) as OutQty,ld.RequestQty,ld.IssueQty
-from Lack l
-left join Lack_Detail ld on l.ID = ld.ID
-left join MDivisionPoDetail mp on mp.POID = l.POID and mp.Seq1 = ld.Seq1 and mp.Seq2 = ld.Seq2 and mp.MDivisionId = l.MDivisionID
-where l.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            (Select Max(IssueDate) from Issue i, Issue_Detail id where i.ID = id.ID and id.POID = l.POID and id.Seq1 = ld.Seq1 and id.Seq2 = ld.Seq2) as IssueDate,
+            isnull(mp.InQty,0) as InQty,isnull(mp.OutQty,0) as OutQty,ld.RequestQty,ld.IssueQty
+            from Lack l
+            left join Lack_Detail ld on l.ID = ld.ID
+            left join MDivisionPoDetail mp on mp.POID = l.POID and mp.Seq1 = ld.Seq1 and mp.Seq2 = ld.Seq2 and mp.MDivisionId = l.MDivisionID
+            where l.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             DataTable ExcelData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out ExcelData);
@@ -466,7 +465,7 @@ where l.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 rownum = intRowsStart + i;
                 objArray[0, 0] = dr["Seq"];
                 objArray[0, 1] = dr["Description"];
-                objArray[0, 2] = dr["RecvDate"];
+                objArray[0, 2] = dr["IssueDate"];
                 objArray[0, 3] = dr["InQty"];
                 objArray[0, 4] = dr["OutQty"];
                 objArray[0, 5] = dr["RequestQty"];
