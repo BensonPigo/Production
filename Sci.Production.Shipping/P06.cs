@@ -691,6 +691,7 @@ select 'S' as DataType,*,(isnull((select sum(ShipQty) from Pullout_Detail where 
                 MyUtility.Msg.WarningBox("Query data fail!!\r\n" + result.ToString());
                 return false;
             }
+            detailgridbs.SuspendBinding();
 
             #region 檢查現有資料的異動
             //foreach (DataRow dr in DetailDatas)
@@ -866,12 +867,21 @@ select 'S' as DataType,*,(isnull((select sum(ShipQty) from Pullout_Detail where 
             }
             #endregion
 
+            detailgridbs.ResumeBinding();
+
             return true;
         }
 
         //Revise from ship plan and FOC/LO packing list
         private void button1_Click(object sender, EventArgs e)
         {
+            //先Load第3層資料
+            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
+            {
+                DataTable SubDetailData;
+                GetSubDetailDatas(dr, out SubDetailData);
+            }
+
             if (ReviseData())
             {
                 MyUtility.Msg.InfoBox("Revise completed!");
