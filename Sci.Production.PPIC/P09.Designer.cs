@@ -108,7 +108,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(818, 222);
+            this.masterpanel.Size = new System.Drawing.Size(892, 222);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -146,19 +146,15 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 222);
-            this.detailpanel.Size = new System.Drawing.Size(818, 230);
+            this.detailpanel.Size = new System.Drawing.Size(892, 127);
             // 
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(711, 187);
             // 
-            // refresh
-            // 
-            this.refresh.Location = new System.Drawing.Point(738, 0);
-            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(818, 230);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 127);
             // 
             // detail2
             // 
@@ -171,19 +167,6 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(818, 490);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(818, 452);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 452);
-            this.detailbtm.Size = new System.Drawing.Size(818, 38);
             // 
             // browse
             // 
@@ -508,7 +491,7 @@
             this.CheckChkValue = "New";
             this.ClientSize = new System.Drawing.Size(826, 552);
             this.DefaultDetailOrder = "Seq1,Seq2";
-            this.DefaultOrder = "ID";
+            this.DefaultOrder = "CDate,ID";
             this.GridAlias = "ReplacementReport_Detail";
             this.GridNew = 0;
             this.IsSupportCheck = true;

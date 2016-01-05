@@ -15,6 +15,8 @@ namespace Sci.Production.PPIC
 {
     public partial class P09 : Sci.Win.Tems.Input6
     {
+        string excelFile;
+
         public P09(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -26,7 +28,7 @@ namespace Sci.Production.PPIC
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(@"select rd.*,(left(rd.Seq1+' ',3)+rd.Seq2) as Seq, [dbo].[getMtlDesc](r.POID,rd.Seq1,rd.Seq2,2,0) as Description,
+            this.DetailSelectCommand = string.Format(@"select rd.*,(left(rd.Seq1+' ',3)+rd.Seq2) as Seq, f.Description, [dbo].[getMtlDesc](r.POID,rd.Seq1,rd.Seq2,2,0) as DescriptionDetail,
 isnull((select top(1) ExportId from Receiving where InvNo = rd.INVNo),'') as ExportID,
 CASE rd.Responsibility
 WHEN 'M' THEN N'Mill'
@@ -37,7 +39,10 @@ ELSE N''
 END as CategoryName
 from ReplacementReport r
 inner join ReplacementReport_Detail rd on rd.ID = r.ID
-where r.ID = '{0}'", masterID);
+left join PO_Supp_Detail psd on psd.ID = r.POID and psd.SEQ1 = rd.Seq1 and psd.SEQ2 = rd.Seq2
+left join Fabric f on f.SCIRefno = psd.SCIRefno
+where r.ID = '{0}'
+order by rd.Seq1,rd.Seq2", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -101,7 +106,7 @@ where r.ID = '{0}'", masterID);
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Seq", header: "SEQ#", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("RefNo", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .EditText("DescriptionDetail", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("INVNo", header: "Invoice#", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Date("ETA", header: "ETA", iseditingreadonly: true)
             .Text("ColorID", header: "Color Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -210,6 +215,118 @@ where r.ID = '{0}'", masterID);
                     return false;
                 }
                 CurrentMaintain["ID"] = id;
+            }
+            return true;
+        }
+
+        protected override bool ClickPrint()
+        {
+            ToExcel(false);
+
+            return base.ClickPrint();
+        }
+
+        private bool ToExcel(bool autoSave)
+        {
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            {
+                MyUtility.Msg.WarningBox("No data!!");
+                return false;
+            }
+
+            string strXltName = Sci.Env.Cfg.XltPathDir + "PPIC_P09.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null) return false;
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+
+            DataTable gridData = (DataTable)detailgridbs.DataSource;
+            //計算總輸出頁數
+            int totalPage = (int)Math.Ceiling(MyUtility.Convert.GetDecimal(gridData.Rows.Count) / 4);
+
+            if (totalPage > 1)
+            {
+                //選取要被複製的資料
+                Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range("A1:A31").EntireRow;
+                for (int i = 2; i <= totalPage; i++)
+                {
+                    //選擇要被貼上的位置
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}", MyUtility.Convert.GetString(31 * (i - 1) + 1)), Type.Missing).EntireRow;
+                    //貼上
+                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
+                }
+            }
+
+            string attention = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 where ID = '{0}'", MyUtility.Convert.GetString(txttpeuser5.DisplayBox1.Value)));
+            string apply = MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ApplyName"])));
+            string approve = MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ApvName"])));
+            string style = MyUtility.GetValue.Lookup(string.Format("select top 1 StyleID from Orders where POID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])));
+            string confirm = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["TPECFMName"])));
+            int j = 0;
+            foreach (DataRow dr in gridData.Rows)
+            {
+                j++;
+                int row = 31 * ((int)Math.Ceiling(MyUtility.Convert.GetDecimal(j) / 4)-1);
+                int column = 8;
+
+                //填表頭資料
+                if (j % 4 == 1)
+                {
+                    worksheet.Cells[row + 3, 2] = MyUtility.Convert.GetString(CurrentMaintain["ID"]) + " - " + MyUtility.Convert.GetString(row + 1) + "/" + MyUtility.Convert.GetString(totalPage);
+                    worksheet.Cells[row + 4, 2] = MyUtility.Convert.GetString(CurrentMaintain["FactoryID"]);
+                    worksheet.Cells[row + 4, 6] = MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToString("yyyy/MM/dd HH:mm:ss");
+                    worksheet.Cells[row + 4, 8] = MyUtility.Check.Empty(CurrentMaintain["ApplyDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApplyDate"]).ToString("yyyy/MM/dd HH:mm:ss");
+                    worksheet.Cells[row + 5, 2] = MyUtility.Convert.GetString(CurrentMaintain["POID"]);
+                    worksheet.Cells[row + 5, 6] = MyUtility.Check.Empty(CurrentMaintain["TPECFMDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPECFMDate"]).ToString("yyyy/MM/dd HH:mm:ss");
+                    worksheet.Cells[row + 5, 7] = attention;
+                    worksheet.Cells[row + 6, 2] = apply + "/" + approve;
+                    worksheet.Cells[row + 6, 8] = style;
+                    column = 5;
+                }
+                else if (j % 4 == 2)
+                {
+                    column = 6;
+                }
+                else if (j % 4 == 3)
+                {
+                    column = 7;
+                }
+
+                worksheet.Cells[row + 7, column] = MyUtility.Convert.GetString(dr["Description"]) + "(" + MyUtility.Convert.GetString(dr["Seq1"]) + " -" + MyUtility.Convert.GetString(dr["Seq2"]) + ")";
+                worksheet.Cells[row + 8, column] = MyUtility.Convert.GetString(dr["INVNo"]) + ", " + (MyUtility.Check.Empty(dr["ETA"]) ? "" : "ETA" + Convert.ToDateTime(dr["ETA"]).ToString("d"));
+                worksheet.Cells[row + 9, column] = MyUtility.Convert.GetString(dr["ColorID"]);
+                worksheet.Cells[row + 10, column] = MyUtility.Convert.GetString(dr["EstInQty"]) + "/" + MyUtility.Convert.GetString(dr["ActInQty"]);
+                worksheet.Cells[row + 11, column] = MyUtility.Convert.GetString(dr["AGradeRequest"]);
+                worksheet.Cells[row + 12, column] = MyUtility.Convert.GetString(dr["BGradeRequest"]);
+                worksheet.Cells[row + 13, column] = MyUtility.Convert.GetString(dr["NarrowRequest"]);
+                worksheet.Cells[row + 14, column] = MyUtility.Convert.GetString(dr["TotalRequest"]);
+                worksheet.Cells[row + 15, column] = MyUtility.Check.Empty(dr["DamageSendDate"]) ? "" : Convert.ToDateTime(dr["DamageSendDate"]).ToString("d");
+                worksheet.Cells[row + 16, column] = MyUtility.Convert.GetString(dr["AWBNo"]);
+                worksheet.Cells[row + 17, column] = MyUtility.Check.Empty(dr["ReplacementETA"]) ? "" : Convert.ToDateTime(dr["ReplacementETA"]).ToString("d");
+                worksheet.Cells[row + 18, 3] = MyUtility.Convert.GetString(dr["Responsibility"]) == "M" ? "V" : "";
+                worksheet.Cells[row + 18, column] = MyUtility.Convert.GetString(dr["Responsibility"]) == "M" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : "";
+                worksheet.Cells[row + 19, 3] = MyUtility.Convert.GetString(dr["Responsibility"]) == "T" ? "V" : "";
+                worksheet.Cells[row + 19, column] = MyUtility.Convert.GetString(dr["Responsibility"]) == "T" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : "";
+                worksheet.Cells[row + 20, 3] = MyUtility.Convert.GetString(dr["Responsibility"]) == "F" ? "V" : "";
+                worksheet.Cells[row + 20, column] = MyUtility.Convert.GetString(dr["Responsibility"]) == "F" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : "";
+                worksheet.Cells[row + 21, 3] = MyUtility.Convert.GetString(dr["Responsibility"]) == "S" ? "V" : "";
+                worksheet.Cells[row + 21, column] = MyUtility.Convert.GetString(dr["Responsibility"]) == "S" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : "";
+                worksheet.Cells[row + 22, column] = MyUtility.Convert.GetString(dr["Suggested"]);
+                worksheet.Cells[row + 23, column] = apply;
+                worksheet.Cells[row + 24, column] = approve;
+                worksheet.Cells[row + 25, column] = MyUtility.Convert.GetString(dr["OccurCost"]);
+                worksheet.Cells[row + 26, column] = confirm;
+            }
+
+            worksheet.Protect(Password: "Sport2006");
+            if (autoSave)
+            {
+                Random random = new Random();
+                excelFile = Env.Cfg.ReportTempDir + "Accessory replacement report - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000));
+                worksheet.SaveAs(excelFile);
+            }
+            else
+            {
+                excel.Visible = true;
             }
             return true;
         }
@@ -471,13 +588,45 @@ Please refer attached replacement report and confirm rcvd in reply. The defect s
 If the replacement report can be accept and cfm to proceed, please approve it through system
 
 ");
-                if (true) //當To Excel的檔案與迴紋針裡的檔案加起來超過10MB的話，就在信件中顯示下面訊息，附件只夾To Excel的檔案
-                {
-                    content.Append("Due to the attach files is more than 10MB, please ask factory's related person to provide the attach file.");
-                }
                 #endregion
 
-                var email = new MailTo(Sci.Env.User.MailAddress, mailto, cc, subject, "", content.ToString(), false, true);
+                //產生Excel
+                ToExcel(true);
+
+                //帶出夾檔的檔案
+                sqlCmd = string.Format("select *, YEAR(AddDate) as Year, MONTH(AddDate) as Month from Clip where TableName = '{0}' and UniqueKey = '{1}'", "ReplacementReport", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+                DataTable clipData;
+                double totalSize = 0;
+                string totalFile;
+                StringBuilder allFile = new StringBuilder();
+                result = DBProxy.Current.Select(null, sqlCmd, out clipData);
+                if (result && clipData.Rows.Count > 0)
+                {
+                    foreach (DataRow dr in clipData.Rows)
+                    {
+                        //var dataFile = dr;
+                        //string targetFile;
+                        //Sci.Win.PrivUtils.GetClipFileName(dataFile, out targetFile);
+                        string targetFile = Env.Cfg.ClipDir + "\\" + MyUtility.Convert.GetString(dr["Year"]) + Convert.ToString(dr["Month"]).PadLeft(2, '0') + "\\" + MyUtility.Convert.GetString(dr["TableName"]) + MyUtility.Convert.GetString(dr["PKey"]) + MyUtility.Convert.GetString(dr["SourceFile"]).Substring(MyUtility.Convert.GetString(dr["SourceFile"]).LastIndexOf('.'));
+                        allFile.Append(string.Format(",{0}", targetFile));
+                        System.IO.FileInfo fi = new System.IO.FileInfo(targetFile);
+                        totalSize += (double)fi.Length;
+                    }
+                }
+                if (totalSize > 10485760)
+                {
+                    //當To Excel的檔案與迴紋針裡的檔案加起來超過10MB的話，就在信件中顯示下面訊息，附件只夾To Excel的檔案
+                    content.Append("Due to the attach files is more than 10MB, please ask factory's related person to provide the attach file.");
+                    totalFile = excelFile;
+                }
+                else
+                {
+                    totalFile = excelFile + allFile.ToString();
+                }
+
+
+
+                var email = new MailTo(Sci.Env.User.MailAddress, mailto, cc, subject, totalFile, content.ToString(), false, true);
                 email.ShowDialog(this);
         }
     }
