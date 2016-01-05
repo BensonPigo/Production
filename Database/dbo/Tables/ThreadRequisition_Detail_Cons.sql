@@ -1,19 +1,21 @@
 ﻿CREATE TABLE [dbo].[ThreadRequisition_Detail_Cons] (
     [OrderID]                      VARCHAR (13)   CONSTRAINT [DF_ThreadRequisition_Detail_Cons_OrderID] DEFAULT ('') NULL,
     [Article]                      VARCHAR (8)    CONSTRAINT [DF_ThreadRequisition_Detail_Cons_Article] DEFAULT ('') NULL,
-    [ThreadColorid]                VARCHAR (15)   CONSTRAINT [DF_ThreadRequisition_Detail_Cons_Colorid] DEFAULT ('') NULL,
     [ThreadCombID]                 VARCHAR (10)   CONSTRAINT [DF_ThreadRequisition_Detail_Cons_ThreadCombID] DEFAULT ('') NULL,
-    [ThreadRequisition_DetailUkey] VARCHAR (10)   CONSTRAINT [DF_ThreadRequisition_Detail_Cons_ThreadRequisition_DetailUkey] DEFAULT ('') NULL,
+    [ThreadRequisition_DetailUkey] BIGINT         CONSTRAINT [DF_ThreadRequisition_Detail_Cons_ThreadRequisition_DetailUkey] DEFAULT ('') NOT NULL,
     [Operationid]                  VARCHAR (20)   CONSTRAINT [DF_ThreadRequisition_Detail_Cons_Operationid] DEFAULT ('') NULL,
     [SeamLength]                   NUMERIC (6, 2) CONSTRAINT [DF_ThreadRequisition_Detail_Cons_SeamLength] DEFAULT ((0)) NULL,
     [SEQ]                          VARCHAR (2)    CONSTRAINT [DF_ThreadRequisition_Detail_Cons_SEQ] DEFAULT ('') NULL,
     [ThreadLocationID]             VARCHAR (5)    CONSTRAINT [DF_ThreadRequisition_Detail_Cons_ThreadLocationID] DEFAULT ('') NULL,
     [UseRatio]                     VARCHAR (15)   CONSTRAINT [DF_ThreadRequisition_Detail_Cons_UseRatio] DEFAULT ('') NULL,
+    [UseRatioNumeric]              NUMERIC (4, 2) NULL,
     [Machinetypeid]                VARCHAR (2)    CONSTRAINT [DF_ThreadRequisition_Detail_Cons_Machinetypeid] DEFAULT ('') NULL,
     [OrderQty]                     NUMERIC (6)    CONSTRAINT [DF_ThreadRequisition_Detail_Cons_OrderQty] DEFAULT ((0)) NULL,
     [Ukey]                         BIGINT         IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_ThreadRequisition_Detail_Cons] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -75,5 +77,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ukey', @lev
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布顏色', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ThreadRequisition_Detail_Cons', @level2type = N'COLUMN', @level2name = N'ThreadColorid';
+
 

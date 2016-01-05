@@ -1,11 +1,13 @@
 ﻿CREATE TABLE [dbo].[ThreadColorComb] (
-    [ThreadCombID]       VARCHAR (10)   CONSTRAINT [DF_ThreadColorComb_ThreadComboID] DEFAULT ('') NULL,
-    [Machinetypeid]       VARCHAR (10)   CONSTRAINT [DF_ThreadColorComb_Machinetypeid] DEFAULT ('') NULL,
-    [StyleUkey]           VARCHAR (10)   CONSTRAINT [DF_ThreadColorComb_StyleUkey] DEFAULT ('') NULL,
-    [Id] BIGINT   CONSTRAINT [DF_ThreadColorComb_ThreadColorCombUkey] DEFAULT ('') NOT NULL,
-    [Length]              NUMERIC (8, 2) CONSTRAINT [DF_ThreadColorComb_Length] DEFAULT ((0)) NULL,
-    CONSTRAINT [PK_ThreadColorComb] PRIMARY KEY CLUSTERED ([Id] ASC)
+    [ID]            BIGINT         IDENTITY (1, 1) NOT NULL,
+    [ThreadCombID]  VARCHAR (10)   CONSTRAINT [DF_ThreadColorComb_ThreadComboID] DEFAULT ('') NULL,
+    [Machinetypeid] VARCHAR (10)   CONSTRAINT [DF_ThreadColorComb_Machinetypeid] DEFAULT ('') NULL,
+    [StyleUkey]     VARCHAR (10)   CONSTRAINT [DF_ThreadColorComb_StyleUkey] DEFAULT ('') NULL,
+    [Length]        NUMERIC (8, 2) CONSTRAINT [DF_ThreadColorComb_Length] DEFAULT ((0)) NULL,
+    CONSTRAINT [PK_ThreadColorComb_1] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
