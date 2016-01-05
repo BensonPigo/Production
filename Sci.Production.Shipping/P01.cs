@@ -16,6 +16,7 @@ namespace Sci.Production.Shipping
 {
     public partial class P01 : Sci.Win.Tems.Input1
     {
+        string excelFile;
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -293,6 +294,89 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
                 }
             }
             return Result.True;
+        }
+
+        protected override bool ClickPrint()
+        {
+            ToExcel(false);
+            return base.ClickPrint();
+        }
+
+        private bool ToExcel(bool autoSave)
+        {
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            {
+                MyUtility.Msg.WarningBox("No data!!");
+                return false;
+            }
+
+            string strXltName = Sci.Env.Cfg.XltPathDir + "Shipping_P01.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null) return false;
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+
+            worksheet.Cells[3, 5] = label30.Text;
+            worksheet.Cells[3, 8] = Convert.ToDateTime(DateTime.Today).ToString("d");
+            worksheet.Cells[4, 2] = MyUtility.Convert.GetString(CurrentMaintain["ID"]);
+            worksheet.Cells[4, 7] = MyUtility.Check.Empty(dateBox2.Value)?"": Convert.ToDateTime(dateBox2.Value).ToString("d");
+            worksheet.Cells[5, 7] = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["MRHandle"])));
+            worksheet.Cells[6, 2] = MyUtility.Convert.GetString(CurrentMaintain["OrderID"]);
+            worksheet.Cells[6, 6] = displayBox5.Value;
+            worksheet.Cells[7, 2] = displayBox3.Value;
+            worksheet.Cells[7, 4] = MyUtility.GetValue.Lookup(string.Format("select Alias from Country where ID = '{0}'", txtcountry1.TextBox1.Text));
+            worksheet.Cells[8, 2] = displayBox2.Value;
+            worksheet.Cells[8, 4] = displayBox4.Value;
+            worksheet.Cells[9, 2] = numericBox1.Value;
+            worksheet.Cells[10, 2] = MyUtility.Convert.GetString(CurrentMaintain["ShipQty"]);
+            worksheet.Cells[10, 4] = MyUtility.Convert.GetString(CurrentMaintain["Forwarder"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Forwarder"])));
+            worksheet.Cells[10, 6] = MyUtility.Convert.GetString(CurrentMaintain["Quotation"]) + "/KG";
+            worksheet.Cells[11, 2] = MyUtility.Convert.GetString(CurrentMaintain["GW"]);
+            worksheet.Cells[11, 4] = MyUtility.Convert.GetString(CurrentMaintain["Forwarder1"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Forwarder1"])));
+            worksheet.Cells[11, 6] = MyUtility.Convert.GetString(CurrentMaintain["Quotation1"]) + "/KG";
+            worksheet.Cells[12, 2] = MyUtility.Convert.GetString(CurrentMaintain["VW"]);
+            worksheet.Cells[12, 4] = MyUtility.Convert.GetString(CurrentMaintain["Forwarder2"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Forwarder2"])));
+            worksheet.Cells[12, 6] = MyUtility.Convert.GetString(CurrentMaintain["Quotation2"]) + "/KG";
+            worksheet.Cells[13, 2] = MyUtility.Convert.GetString(CurrentMaintain["Rate"]);
+            worksheet.Cells[13, 5] = MyUtility.Convert.GetString(CurrentMaintain["EstAmount"]);
+            worksheet.Cells[13, 8] = MyUtility.Convert.GetString(CurrentMaintain["ActualAmount"]);
+            worksheet.Cells[14, 2] = MyUtility.Convert.GetString(CurrentMaintain["ReasonID"]) + "." + displayBox8.Value;
+            worksheet.Cells[15, 2] = MyUtility.Convert.GetString(CurrentMaintain["ResponsibleFty"]).ToUpper() == "TRUE" ? "Y" : "";
+            worksheet.Cells[15, 4] = MyUtility.Convert.GetString(CurrentMaintain["RatioFty"]) + "%";
+            worksheet.Cells[15, 6] = MyUtility.Convert.GetString(CurrentMaintain["ResponsibleFtyNo"]);
+            worksheet.Cells[16, 2] = MyUtility.Convert.GetString(CurrentMaintain["ResponsibleSubcon"]).ToUpper() == "TRUE" ? "Y" : "";
+            worksheet.Cells[16, 4] = MyUtility.Convert.GetString(CurrentMaintain["RatioSubcon"]) + "%";
+            worksheet.Cells[16, 6] = MyUtility.Convert.GetString(CurrentMaintain["SubconDBCNo"]);
+            worksheet.Cells[16, 8] = MyUtility.Convert.GetString(CurrentMaintain["SubConName"]);
+            worksheet.Cells[17, 2] = MyUtility.Convert.GetString(CurrentMaintain["ResponsibleSCI"]).ToUpper() == "TRUE" ? "Y" : "";
+            worksheet.Cells[17, 4] = MyUtility.Convert.GetString(CurrentMaintain["RatioSCI"]) + "%";
+            worksheet.Cells[17, 6] = MyUtility.Convert.GetString(CurrentMaintain["SCIICRNo"]);
+            worksheet.Cells[17, 8] = MyUtility.Convert.GetString(CurrentMaintain["SCIICRRemark"]);
+            worksheet.Cells[18, 2] = MyUtility.Convert.GetString(CurrentMaintain["ResponsibleSupp"]).ToUpper() == "TRUE" ? "Y" : "";
+            worksheet.Cells[18, 4] = MyUtility.Convert.GetString(CurrentMaintain["RatioSupp"]) + "%";
+            worksheet.Cells[18, 6] = MyUtility.Convert.GetString(CurrentMaintain["SuppDBCNo"]);
+            worksheet.Cells[18, 8] = MyUtility.Convert.GetString(CurrentMaintain["SuppDBCRemark"]);
+            worksheet.Cells[19, 2] = MyUtility.Convert.GetString(CurrentMaintain["ResponsibleBuyer"]).ToUpper() == "TRUE" ? "Y" : "";
+            worksheet.Cells[19, 4] = MyUtility.Convert.GetString(CurrentMaintain["RatioBuyer"]) + "%";
+            worksheet.Cells[19, 6] = MyUtility.Convert.GetString(CurrentMaintain["BuyerDBCNo"]);
+            worksheet.Cells[19, 8] = MyUtility.Convert.GetString(CurrentMaintain["BuyerDBCRemark"]);
+            worksheet.Cells[20, 6] = MyUtility.Convert.GetString(CurrentMaintain["BuyerICRNo"]);
+            worksheet.Cells[20, 8] = MyUtility.Convert.GetString(CurrentMaintain["BuyerICRRemark"]);
+            worksheet.Cells[21, 6] = MyUtility.Convert.GetString(CurrentMaintain["BuyerRemark"]);
+            worksheet.Cells[22, 2] = MyUtility.Convert.GetString(CurrentMaintain["FtyDesc"]);
+            worksheet.Cells[23, 2] = MyUtility.Convert.GetString(CurrentMaintain["MRComment"]);
+
+
+            if (autoSave)
+            {
+                Random random = new Random();
+                excelFile = Env.Cfg.ReportTempDir + "AirPP - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000));
+                worksheet.SaveAs(excelFile);
+            }
+            else
+            {
+                excel.Visible = true;
+            }
+            return true;
         }
 
         private void textBox8_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -971,7 +1055,7 @@ If the responsibility is belong to the supplier or SCI-MR team (posmr team), ple
 If the responsibility is belong to “Buyer”, please remark the reason, tks!
 Remind:Please return the air pp request – approved  within 24hrs to avoid any shipment delay.", MyUtility.Convert.GetString(allMail.Rows[0]["SMRName"]), MyUtility.Convert.GetString(allMail.Rows[0]["SMRExtNo"]),
                                                                                               MyUtility.Convert.GetString(allMail.Rows[0]["POSMRName"]), MyUtility.Convert.GetString(allMail.Rows[0]["POSMRExtNo"]), MyUtility.Convert.GetString(displayBox5.Value), MyUtility.Convert.GetString(CurrentMaintain["ID"]),
-                                                                                              MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), Convert.ToDateTime(dateBox2.Value).ToString("yyyy.MM.dd"), MyUtility.Convert.GetString(CurrentMaintain["ShipQty"]),
+                                                                                              MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), MyUtility.Check.Empty(dateBox2.Value) ? "" : Convert.ToDateTime(dateBox2.Value).ToString("yyyyMMdd"), MyUtility.Convert.GetString(CurrentMaintain["ShipQty"]),
                                                                                               MyUtility.Convert.GetString(CurrentMaintain["ResponsibleFty"]) == "True" ? "Factory:" + MyUtility.Convert.GetString(CurrentMaintain["ResponsibleFtyNo"]) + "\r\n" : "",
                                                                                               MyUtility.Convert.GetString(CurrentMaintain["ResponsibleSubcon"]) == "True" ? "Subcon:DBC #:" + MyUtility.Convert.GetString(CurrentMaintain["SubconDBCNo"]) + "\r\n" : "",
                                                                                               MyUtility.Convert.GetString(CurrentMaintain["ResponsibleSCI"]) == "True" ? "SCI ICR #:" + MyUtility.Convert.GetString(CurrentMaintain["SCIICRNo"]) + "\r\n" : "",
@@ -979,8 +1063,24 @@ Remind:Please return the air pp request – approved  within 24hrs to avoid any 
                                                                                               MyUtility.Convert.GetString(CurrentMaintain["ResponsibleBuyer"]) == "True" ? "Buyer:Debit Memo:" + MyUtility.Convert.GetString(CurrentMaintain["BuyerDBCNo"]) + ", ICR #" + MyUtility.Convert.GetString(CurrentMaintain["BuyerICRNo"]) + "\r\n" : ""));
                 #endregion
 
-                var email = new MailTo(Sci.Env.User.MailAddress, mailto, cc, subject, "", content.ToString(), visibleForm, visibleForm);
+                //產生Excel
+                ToExcel(true);
+
+                var email = new MailTo(Sci.Env.User.MailAddress, mailto, cc, subject, excelFile, content.ToString(), visibleForm, visibleForm);
                 email.ShowDialog(this);
+
+                ////刪除Excel File
+                //if (System.IO.File.Exists(excelFile))
+                //{
+                //    try
+                //    {
+                //        System.IO.File.Delete(excelFile);
+                //    }
+                //    catch (System.IO.IOException e)
+                //    {
+                //        MyUtility.Msg.WarningBox("Delete excel file fail!!");
+                //    }
+                //}
             }
         }
 
