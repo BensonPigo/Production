@@ -826,5 +826,14 @@ where ID = @INVNo";
             OnDetailEntered();
             EnsureToolbarExt();
         }
+
+        //Download excel format
+        private void button4_Click(object sender, EventArgs e)
+        {
+            string strXltName = Sci.Env.Cfg.XltPathDir + "Packing_P04_ImportExcelFormat.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null) return;
+            excel.Visible = true;
+        }
     }
 }
