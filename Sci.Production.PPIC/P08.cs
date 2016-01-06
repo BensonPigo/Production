@@ -313,8 +313,11 @@ order by rd.Seq1,rd.Seq2", masterID);
             if (autoSave)
             {
                 Random random = new Random();
-                excelFile = Env.Cfg.ReportTempDir + "Fabric replacement report - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000));
+                excelFile = Env.Cfg.ReportTempDir + "Fabric replacement report - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000))+".xlsx";
                 worksheet.SaveAs(excelFile);
+                excel.Workbooks.Close();
+                excel.Quit();
+                excel = null;
             }
             else
             {
@@ -616,6 +619,19 @@ If the replacement report can be accept and cfm to proceed, please approve it th
 
                 var email = new MailTo(Sci.Env.User.MailAddress, mailto, cc, subject, totalFile, content.ToString(), false, true);
                 email.ShowDialog(this);
+
+                //刪除Excel File
+                if (System.IO.File.Exists(excelFile))
+                {
+                    try
+                    {
+                        System.IO.File.Delete(excelFile);
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                        MyUtility.Msg.WarningBox("Delete excel file fail!!");
+                    }
+                }
         }
     }
 }
