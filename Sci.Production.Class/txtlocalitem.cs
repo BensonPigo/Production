@@ -60,7 +60,14 @@ namespace Sci.Production.Class
                 category = categoryObject.Text;
                 if (!string.IsNullOrWhiteSpace(category))
                 {
-                    where = where + string.Format(" and Category = '{0}'", category);
+                    if (category.ToUpper() == "THREAD")
+                    {
+                        where = where + string.Format(" and Category like '%{0}%'", category);
+                    }
+                    else
+                    {
+                        where = where + string.Format(" and Category = '{0}'", category);
+                    }
                 }
             }
             if (localSuppObject != null)
