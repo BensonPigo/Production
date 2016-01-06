@@ -369,8 +369,11 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
             if (autoSave)
             {
                 Random random = new Random();
-                excelFile = Env.Cfg.ReportTempDir + "AirPP - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000));
+                excelFile = Env.Cfg.ReportTempDir + "AirPP - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000))+".xlsx";
                 worksheet.SaveAs(excelFile);
+                excel.Workbooks.Close();
+                excel.Quit();
+                excel = null;
             }
             else
             {
@@ -1069,18 +1072,18 @@ Remind:Please return the air pp request – approved  within 24hrs to avoid any 
                 var email = new MailTo(Sci.Env.User.MailAddress, mailto, cc, subject, excelFile, content.ToString(), visibleForm, visibleForm);
                 email.ShowDialog(this);
 
-                ////刪除Excel File
-                //if (System.IO.File.Exists(excelFile))
-                //{
-                //    try
-                //    {
-                //        System.IO.File.Delete(excelFile);
-                //    }
-                //    catch (System.IO.IOException e)
-                //    {
-                //        MyUtility.Msg.WarningBox("Delete excel file fail!!");
-                //    }
-                //}
+                //刪除Excel File
+                if (System.IO.File.Exists(excelFile))
+                {
+                    try
+                    {
+                        System.IO.File.Delete(excelFile);
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                        MyUtility.Msg.WarningBox("Delete excel file fail!!");
+                    }
+                }
             }
         }
 
