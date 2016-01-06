@@ -835,5 +835,12 @@ where ID = @INVNo";
             if (excel == null) return;
             excel.Visible = true;
         }
+
+        //Import from excel
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Packing.P04_ExcelImport callNextForm = new Sci.Production.Packing.P04_ExcelImport((DataTable)detailgridbs.DataSource);
+            callNextForm.ShowDialog(this);
+        }
     }
 }
