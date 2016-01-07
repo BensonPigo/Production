@@ -442,7 +442,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             if (excel == null) return false;
             MyUtility.Msg.WaitWindows("Starting to excel...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            excel.Visible = true;
+            excel.Visible = false;
             
             worksheet.Cells[2, 2] = MyUtility.Check.Empty(PrintData.Rows[0]["BuyerDelivery"]) ? "" : Convert.ToDateTime(PrintData.Rows[0]["BuyerDelivery"]).ToString("d");
             worksheet.Cells[2, 19] = Convert.ToDateTime(DateTime.Today).ToString("d");
@@ -467,9 +467,9 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                 int ship = MyUtility.Convert.GetInt(dr["QtyPerCTN"]) * ctnQty;
                 tmpCtnQty = tmpCtnQty + ctn + (ship >= MyUtility.Convert.GetInt(dr["ShipQty"]) ? 0 : 1);
             }
-            if (tmpCtnQty > 3)
+            if (tmpCtnQty > 258) //範本已先有258 row，不夠的話再新增
             {
-                for (int i = 1; i <= tmpCtnQty - 3; i++) //Insert row
+                for (int i = 1; i <= tmpCtnQty - 258; i++) //Insert row
                 {
                     Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range("A8:A8").EntireRow;
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A8:A8", Type.Missing).EntireRow;
@@ -478,9 +478,9 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             }
             else
             {
-                if (tmpCtnQty < 3) //刪除多餘的Row
+                if (tmpCtnQty < 258) //刪除多餘的Row
                 {
-                    for (int i = 1; i <= 3-tmpCtnQty; i++) //Insert row
+                    for (int i = 1; i <= 258-tmpCtnQty; i++) //Insert row
                     {
                         Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[7, Type.Missing];
                         rng.Select();
@@ -557,9 +557,6 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             worksheet.Cells[row + 12, 2] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0,ctnDimension.ToString().Length-2) : "";
 
             MyUtility.Msg.WaitClear();
-            //為了要讓畫面複製的移除
-            worksheet.Protect(Password: "Sport2006");
-            worksheet.Unprotect(Password: "Sport2006");
             
             excel.Visible = true;
             return base.ClickPrint();
