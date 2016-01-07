@@ -148,7 +148,7 @@ namespace Sci.Production.Thread
                     if (!MyUtility.Check.Seek(sql))
                     {
                         MyUtility.Msg.WarningBox(string.Format("<Thread Color> : {0} not found!!!", newValue));
-                        row["threadcolorid"] = "";
+                        row["Refno"] = "";
                         row.EndEdit();
                         e.Cancel = true;
                         return;

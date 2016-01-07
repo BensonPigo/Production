@@ -102,6 +102,7 @@
             // B04
             // 
             this.ClientSize = new System.Drawing.Size(905, 457);
+            this.DefaultOrder = "id";
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B04";

@@ -10,6 +10,7 @@ namespace Sci.Production.Thread
 {
     public partial class B04 : Sci.Win.Tems.Input1
     {
+        private string keyword = Sci.Env.User.Keyword;
         public B04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -19,6 +20,11 @@ namespace Sci.Production.Thread
         {
             base.ClickEditAfter();
             textBox1.ReadOnly = true;
+        }
+        protected override void ClickNewAfter()
+        {
+            base.ClickNewAfter();
+            CurrentMaintain["mDivisionid"] = keyword;
         }
         protected override bool ClickSaveBefore()
         {
