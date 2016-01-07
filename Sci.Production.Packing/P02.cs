@@ -442,7 +442,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             if (excel == null) return false;
             MyUtility.Msg.WaitWindows("Starting to excel...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            excel.Visible = false;
+            excel.Visible = true;
             
             worksheet.Cells[2, 2] = MyUtility.Check.Empty(PrintData.Rows[0]["BuyerDelivery"]) ? "" : Convert.ToDateTime(PrintData.Rows[0]["BuyerDelivery"]).ToString("d");
             worksheet.Cells[2, 19] = Convert.ToDateTime(DateTime.Today).ToString("d");
@@ -457,6 +457,39 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             worksheet.Cells[5, 19] = ttlShipQty;
             worksheet.Cells[5, 20] = "=Q5-S5";
             int row = 7, ctnNum = MyUtility.Convert.GetInt(CurrentMaintain["CTNStartNo"]), ttlCtn = 0;
+
+            #region 先算出總共會有幾筆record
+            int tmpCtnQty = 0;
+            foreach (DataRow dr in PrintData.Rows)
+            {
+                int ctnQty = (printPackMethod == "2" ? MyUtility.Convert.GetInt(minCtnQty) : MyUtility.Convert.GetInt(dr["CtnQty"]));
+                int ctn = ctnQty == 0 ? 0 : (int)Math.Ceiling(MyUtility.Convert.GetDecimal(ctnQty) / 15);
+                int ship = MyUtility.Convert.GetInt(dr["QtyPerCTN"]) * ctnQty;
+                tmpCtnQty = tmpCtnQty + ctn + (ship >= MyUtility.Convert.GetInt(dr["ShipQty"]) ? 0 : 1);
+            }
+            if (tmpCtnQty > 3)
+            {
+                for (int i = 1; i <= tmpCtnQty - 3; i++) //Insert row
+                {
+                    Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range("A8:A8").EntireRow;
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A8:A8", Type.Missing).EntireRow;
+                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
+                }
+            }
+            else
+            {
+                if (tmpCtnQty < 3) //刪除多餘的Row
+                {
+                    for (int i = 1; i <= 3-tmpCtnQty; i++) //Insert row
+                    {
+                        Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[7, Type.Missing];
+                        rng.Select();
+                        rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    }
+                }
+            }
+            #endregion
+
             #region 寫入完整箱的資料
             foreach (DataRow dr in PrintData.Rows)
             {
@@ -482,9 +515,6 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                             ctnNum++;
                         }
                         row++;
-                        Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(row))).EntireRow;
-                        Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(row)), Type.Missing).EntireRow;
-                        rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
                     }
                 }
             }
@@ -504,19 +534,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                     worksheet.Cells[row, 19] = remain;
                     ctnNum++;
                     row++;
-                    Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(row))).EntireRow;
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(row)), Type.Missing).EntireRow;
-                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
                 }
-            }
-            #endregion
-
-            #region 刪除多餘的Row
-            for (int i = 0; i < 3; i++)
-            {
-                Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[row, Type.Missing];
-                rng.Select();
-                rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
             }
             #endregion
 
@@ -539,6 +557,10 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             worksheet.Cells[row + 12, 2] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0,ctnDimension.ToString().Length-2) : "";
 
             MyUtility.Msg.WaitClear();
+            //為了要讓畫面複製的移除
+            worksheet.Protect(Password: "Sport2006");
+            worksheet.Unprotect(Password: "Sport2006");
+            
             excel.Visible = true;
             return base.ClickPrint();
         }
