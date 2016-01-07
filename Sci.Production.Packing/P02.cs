@@ -422,13 +422,13 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             DataTable CtnDim, QtyCtn;
             sqlCmd = string.Format(@"select distinct pd.RefNo, li.Description, STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension, li.CtnUnit
-from PackingList_Detail pd
+from PackingGuide_Detail pd
 left join LocalItem li on li.RefNo = pd.RefNo
 left join LocalSupp ls on ls.ID = li.LocalSuppid
 where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out CtnDim);
 
-            sqlCmd = string.Format(@"select oq.Article,oq.SizeCode,oq.Qty 
+            sqlCmd = string.Format(@"select isnull(oq.Article,'') as Article,isnull(oq.SizeCode,'') as SizeCode,isnull(oq.Qty,0) as Qty
 from Orders o
 left join Order_QtyCTN oq on o.ID = oq.Id
 left join Order_Article oa on o.ID = oa.id and oq.Article = oa.Article
@@ -444,11 +444,11 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             excel.Visible = false;
             
-            worksheet.Cells[2, 3] = MyUtility.Check.Empty(PrintData.Rows[0]["BuyerDelivery"]) ? "" : Convert.ToDateTime(PrintData.Rows[0]["BuyerDelivery"]).ToString("d");
+            worksheet.Cells[2, 2] = MyUtility.Check.Empty(PrintData.Rows[0]["BuyerDelivery"]) ? "" : Convert.ToDateTime(PrintData.Rows[0]["BuyerDelivery"]).ToString("d");
             worksheet.Cells[2, 19] = Convert.ToDateTime(DateTime.Today).ToString("d");
-            worksheet.Cells[3, 3] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustCDID"]);
+            worksheet.Cells[3, 2] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustCDID"]);
             worksheet.Cells[5, 1] = MyUtility.Convert.GetString(CurrentMaintain["OrderID"]);
-            worksheet.Cells[5, 3] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
+            worksheet.Cells[5, 2] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
             worksheet.Cells[5, 5] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
             worksheet.Cells[5, 8] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
             worksheet.Cells[5, 11] = MyUtility.Convert.GetInt(CurrentMaintain["CTNQty"]);
@@ -461,21 +461,15 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             foreach (DataRow dr in PrintData.Rows)
             {
                 int ctnQty = (printPackMethod == "2" ? MyUtility.Convert.GetInt(minCtnQty) : MyUtility.Convert.GetInt(dr["CtnQty"]));
-                worksheet.Cells[row, 1] = MyUtility.Convert.GetString(dr["Article"]) + " " + MyUtility.Convert.GetString(dr["Color"]);
-                worksheet.Cells[row, 2] = MyUtility.Convert.GetString(dr["SizeCode"]);
-                worksheet.Cells[row, 3] = MyUtility.Convert.GetInt(dr["QtyPerCTN"]);
-                worksheet.Cells[row, 19] = MyUtility.Convert.GetInt(dr["QtyPerCTN"]) * ctnQty;
-                ttlCtn = 0;
-                if (MyUtility.Check.Empty(ctnQty))
+                if (!MyUtility.Check.Empty(ctnQty))
                 {
-                    row++;
-                    Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(row))).EntireRow;
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(row)), Type.Missing).EntireRow;
-                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
-                }
-                else
-                {
-                    for (int i = 1; i <= Math.Floor(MyUtility.Convert.GetDecimal(ctnQty-1)/15)+1; i++)
+                    worksheet.Cells[row, 1] = MyUtility.Convert.GetString(dr["Article"]) + " " + MyUtility.Convert.GetString(dr["Color"]);
+                    worksheet.Cells[row, 2] = MyUtility.Convert.GetString(dr["SizeCode"]);
+                    worksheet.Cells[row, 3] = MyUtility.Convert.GetInt(dr["QtyPerCTN"]);
+                    worksheet.Cells[row, 19] = MyUtility.Convert.GetInt(dr["QtyPerCTN"]) * ctnQty;
+                    ttlCtn = 0;
+
+                    for (int i = 1; i <= Math.Floor(MyUtility.Convert.GetDecimal(ctnQty - 1) / 15) + 1; i++)
                     {
                         for (int j = 1; j <= 15; j++)
                         {
@@ -527,18 +521,22 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             #endregion
 
             worksheet.Cells[row, 1] = "Remark: " + MyUtility.Convert.GetString(CurrentMaintain["Remark"]);
-            worksheet.Cells[row + 1, 3] = MyUtility.Convert.GetString(CurrentMaintain["SpecialInstruction"]);
+            worksheet.Cells[row + 1, 2] = MyUtility.Convert.GetString(CurrentMaintain["SpecialInstruction"]);
             StringBuilder ctnDimension = new StringBuilder();
             foreach (DataRow dr in CtnDim.Rows)
             {
                 ctnDimension.Append(string.Format("{0} / {1} / {2} {3}  \r\n", MyUtility.Convert.GetString(dr["RefNo"]), MyUtility.Convert.GetString(dr["Description"]), MyUtility.Convert.GetString(dr["Dimension"]), MyUtility.Convert.GetString(dr["CtnUnit"])));
             }
+
             foreach (DataRow dr in QtyCtn.Rows)
             {
-                ctnDimension.Append(string.Format("{0} -> {1} / {2}, ", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"])));
+                if (!MyUtility.Check.Empty(dr["Article"]))
+                {
+                    ctnDimension.Append(string.Format("{0} -> {1} / {2}, ", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"])));
+                }
             }
 
-            worksheet.Cells[row + 12, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0,ctnDimension.ToString().Length-2) : "";
+            worksheet.Cells[row + 12, 2] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0,ctnDimension.ToString().Length-2) : "";
 
             MyUtility.Msg.WaitClear();
             excel.Visible = true;
