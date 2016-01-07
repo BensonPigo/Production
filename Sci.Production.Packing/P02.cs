@@ -16,7 +16,8 @@ namespace Sci.Production.Packing
     {
         Ict.Win.UI.DataGridViewTextBoxColumn col_refno;
         Ict.Win.UI.DataGridViewNumericBoxColumn col_qtyperctn;
-
+        private string printPackMethod = "";
+        private int orderQty = 0, ttlShipQty = 0;
         public P02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -59,19 +60,16 @@ namespace Sci.Production.Packing
             base.OnDetailEntered();
             DataRow orderData;
             string sqlCmd;
-            sqlCmd = string.Format("select StyleID,SeasonID,CustPONo,Qty,CtnType from Orders where ID = '{0}'", CurrentMaintain["OrderID"].ToString());
+            sqlCmd = string.Format("select StyleID,SeasonID,CustPONo,Qty,CtnType from Orders where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
             if (MyUtility.Check.Seek(sqlCmd, out orderData))
             {
                 displayBox2.Value = orderData["StyleID"].ToString();
                 displayBox3.Value = orderData["SeasonID"].ToString();
                 displayBox4.Value = orderData["CustPONo"].ToString();
-                numericBox1.Value = Convert.ToInt32(orderData["Qty"].ToString());
+                numericBox1.Value = MyUtility.Convert.GetInt(orderData["Qty"]);
+                orderQty = MyUtility.Convert.GetInt(orderData["Qty"]);
                 comboBox1.SelectedValue = orderData["CtnType"].ToString();
-                sqlCmd = string.Format("select Qty from Order_QtyShip where ID = '{0}' and Seq = '{1}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
-                if (MyUtility.Check.Seek(sqlCmd, out orderData))
-                {
-                    numericBox4.Value = Convert.ToInt32(orderData["Qty"].ToString());
-                }
+                printPackMethod = orderData["CtnType"].ToString();            
             }
             else
             {
@@ -81,7 +79,13 @@ namespace Sci.Production.Packing
                 numericBox1.Value = 0;
                 comboBox1.SelectedValue = "";
                 numericBox4.Value = 0;
+                orderQty = 0;
+                ttlShipQty = 0;
+                printPackMethod = "";
             }
+            sqlCmd = string.Format("select isnull(SUM(ShipQty),0) from PackingGuide_Detail where Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            numericBox4.Value = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd));
+            ttlShipQty = MyUtility.Convert.GetInt(numericBox4.Value);    
 
             //Special Instruction按鈕變色
             if (MyUtility.Check.Empty(CurrentMaintain["SpecialInstruction"].ToString()))
@@ -383,6 +387,162 @@ namespace Sci.Production.Packing
                 CurrentMaintain["ID"] = id;
             }
             return base.ClickSaveBefore();
+        }
+
+        protected override bool ClickPrint()
+        {
+            string minCtnQty = "0";
+            //如果是單色混碼包裝，就先算出最少箱數
+            if (printPackMethod == "2")
+            {
+                minCtnQty = MyUtility.GetValue.Lookup(string.Format("select isnull(min(ShipQty/QtyPerCTN),0) from PackingGuide_Detail where Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+            }
+            string sqlCmd = string.Format(@"select pd.Article,pd.Color,pd.SizeCode,pd.QtyPerCTN,pd.ShipQty,isnull((pd.ShipQty/pd.QtyPerCTN),0) as CtnQty,o.CustCDID,o.StyleID,o.CustPONo,o.Customize1,c.Alias,oq.BuyerDelivery
+from PackingGuide p
+left join PackingGuide_Detail pd on p.Id = pd.Id
+left join Orders o on o.ID = p.OrderID
+left join Order_Article oa on oa.id = o.ID and oa.Article = pd.Article
+left join Order_SizeCode os on os.Id = o.POID and os.SizeCode = pd.SizeCode
+left join Country c on c.ID = o.Dest
+left join Order_QtyShip oq on oq.Id = o.ID and oq.Seq = p.OrderShipmodeSeq
+where p.Id = '{0}'
+order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            DataTable PrintData;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out PrintData);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("Query data fail! \r\n"+result.ToString());
+                return false;
+            }
+            if (PrintData.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("No data!");
+                return false;
+            }
+
+            DataTable CtnDim, QtyCtn;
+            sqlCmd = string.Format(@"select distinct pd.RefNo, li.Description, STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension, li.CtnUnit
+from PackingList_Detail pd
+left join LocalItem li on li.RefNo = pd.RefNo
+left join LocalSupp ls on ls.ID = li.LocalSuppid
+where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            result = DBProxy.Current.Select(null, sqlCmd, out CtnDim);
+
+            sqlCmd = string.Format(@"select oq.Article,oq.SizeCode,oq.Qty 
+from Orders o
+left join Order_QtyCTN oq on o.ID = oq.Id
+left join Order_Article oa on o.ID = oa.id and oq.Article = oa.Article
+left join Order_SizeCode os on o.POID = os.Id and oq.SizeCode = os.SizeCode
+where o.ID = '{0}'
+order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
+            result = DBProxy.Current.Select(null, sqlCmd, out QtyCtn);
+
+            string strXltName = Sci.Env.Cfg.XltPathDir + "Packing_P02.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null) return false;
+            MyUtility.Msg.WaitWindows("Starting to excel...");
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            excel.Visible = false;
+            
+            worksheet.Cells[2, 3] = MyUtility.Check.Empty(PrintData.Rows[0]["BuyerDelivery"]) ? "" : Convert.ToDateTime(PrintData.Rows[0]["BuyerDelivery"]).ToString("d");
+            worksheet.Cells[2, 19] = Convert.ToDateTime(DateTime.Today).ToString("d");
+            worksheet.Cells[3, 3] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustCDID"]);
+            worksheet.Cells[5, 1] = MyUtility.Convert.GetString(CurrentMaintain["OrderID"]);
+            worksheet.Cells[5, 3] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
+            worksheet.Cells[5, 5] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
+            worksheet.Cells[5, 8] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
+            worksheet.Cells[5, 11] = MyUtility.Convert.GetInt(CurrentMaintain["CTNQty"]);
+            worksheet.Cells[5, 13] = MyUtility.Convert.GetString(PrintData.Rows[0]["Alias"]);
+            worksheet.Cells[5, 17] = orderQty;
+            worksheet.Cells[5, 19] = ttlShipQty;
+            worksheet.Cells[5, 20] = "=Q5-S5";
+            int row = 7, ctnNum = MyUtility.Convert.GetInt(CurrentMaintain["CTNStartNo"]), ttlCtn = 0;
+            #region 寫入完整箱的資料
+            foreach (DataRow dr in PrintData.Rows)
+            {
+                int ctnQty = (printPackMethod == "2" ? MyUtility.Convert.GetInt(minCtnQty) : MyUtility.Convert.GetInt(dr["CtnQty"]));
+                worksheet.Cells[row, 1] = MyUtility.Convert.GetString(dr["Article"]) + " " + MyUtility.Convert.GetString(dr["Color"]);
+                worksheet.Cells[row, 2] = MyUtility.Convert.GetString(dr["SizeCode"]);
+                worksheet.Cells[row, 3] = MyUtility.Convert.GetInt(dr["QtyPerCTN"]);
+                worksheet.Cells[row, 19] = MyUtility.Convert.GetInt(dr["QtyPerCTN"]) * ctnQty;
+                ttlCtn = 0;
+                if (MyUtility.Check.Empty(ctnQty))
+                {
+                    row++;
+                    Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(row))).EntireRow;
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(row)), Type.Missing).EntireRow;
+                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
+                }
+                else
+                {
+                    for (int i = 1; i <= Math.Floor(MyUtility.Convert.GetDecimal(ctnQty-1)/15)+1; i++)
+                    {
+                        for (int j = 1; j <= 15; j++)
+                        {
+                            ttlCtn++;
+                            if (ttlCtn > MyUtility.Convert.GetInt(dr["CtnQty"]))
+                            {
+                                break;
+                            }
+                            worksheet.Cells[row, j + 3] = ctnNum;
+                            ctnNum++;
+                        }
+                        row++;
+                        Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(row))).EntireRow;
+                        Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(row)), Type.Missing).EntireRow;
+                        rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
+                    }
+                }
+            }
+            #endregion
+
+            #region 處理餘箱部分
+            foreach (DataRow dr in PrintData.Rows)
+            {
+                int ctnQty = (printPackMethod == "2" ? MyUtility.Convert.GetInt(minCtnQty) : MyUtility.Convert.GetInt(dr["CtnQty"]));
+                int remain = MyUtility.Convert.GetInt(dr["ShipQty"]) - (MyUtility.Convert.GetInt(dr["QtyPerCTN"]) * ctnQty);
+                if (remain > 0)
+                {
+                    worksheet.Cells[row, 1] = MyUtility.Convert.GetString(dr["Article"]) + " " + MyUtility.Convert.GetString(dr["Color"]);
+                    worksheet.Cells[row, 2] = MyUtility.Convert.GetString(dr["SizeCode"]);
+                    worksheet.Cells[row, 3] = remain;
+                    worksheet.Cells[row, 4] = ctnNum;
+                    worksheet.Cells[row, 19] = remain;
+                    ctnNum++;
+                    row++;
+                    Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(row))).EntireRow;
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(row)), Type.Missing).EntireRow;
+                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
+                }
+            }
+            #endregion
+
+            #region 刪除多餘的Row
+            for (int i = 0; i < 3; i++)
+            {
+                Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[row, Type.Missing];
+                rng.Select();
+                rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+            }
+            #endregion
+
+            worksheet.Cells[row, 1] = "Remark: " + MyUtility.Convert.GetString(CurrentMaintain["Remark"]);
+            worksheet.Cells[row + 1, 3] = MyUtility.Convert.GetString(CurrentMaintain["SpecialInstruction"]);
+            StringBuilder ctnDimension = new StringBuilder();
+            foreach (DataRow dr in CtnDim.Rows)
+            {
+                ctnDimension.Append(string.Format("{0} / {1} / {2} {3}  \r\n", MyUtility.Convert.GetString(dr["RefNo"]), MyUtility.Convert.GetString(dr["Description"]), MyUtility.Convert.GetString(dr["Dimension"]), MyUtility.Convert.GetString(dr["CtnUnit"])));
+            }
+            foreach (DataRow dr in QtyCtn.Rows)
+            {
+                ctnDimension.Append(string.Format("{0} -> {1} / {2}, ", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"])));
+            }
+
+            worksheet.Cells[row + 12, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0,ctnDimension.ToString().Length-2) : "";
+
+            MyUtility.Msg.WaitClear();
+            excel.Visible = true;
+            return base.ClickPrint();
         }
 
         //控制Grid欄位的可修改性
