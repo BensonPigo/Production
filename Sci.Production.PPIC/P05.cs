@@ -320,7 +320,13 @@ iif(AlloQty = OrderQty,'','*') as Inconsistent from tempData");
         //To Excel
         private void button5_Click(object sender, EventArgs e)
         {
-
+            if ((DataTable)listControlBindingSource1.DataSource == null || ((DataTable)listControlBindingSource1.DataSource).Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("No data!!");
+                return;
+            }
+            Sci.Production.PPIC.P05_Print callNextForm = new Sci.Production.PPIC.P05_Print((DataTable)listControlBindingSource1.DataSource);
+            callNextForm.ShowDialog(this);
         }
     }
 }
