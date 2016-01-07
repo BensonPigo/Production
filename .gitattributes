@@ -557,8 +557,12 @@ Sci.Production.Class/txtsubprocess.cs -text
 Sci.Production.Class/txtsupplier.Designer.cs -text
 Sci.Production.Class/txtsupplier.cs -text
 Sci.Production.Class/txtsupplier.resx -text
+Sci.Production.Class/txtthreadcolor.cs -text
+Sci.Production.Class/txtthreadcolor.designer.cs -text
 Sci.Production.Class/txtthreadcomb.cs -text
 Sci.Production.Class/txtthreadcomb.designer.cs -text
+Sci.Production.Class/txtthreadlocation.Designer.cs -text
+Sci.Production.Class/txtthreadlocation.cs -text
 Sci.Production.Class/txttpeuser.Designer.cs -text
 Sci.Production.Class/txttpeuser.cs -text
 Sci.Production.Class/txttpeuser.resx -text

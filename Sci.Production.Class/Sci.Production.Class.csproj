@@ -11,6 +11,10 @@
     <AssemblyName>Sci.Production.Class</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -183,7 +187,9 @@
     <Compile Include="txtsupplier.Designer.cs">
       <DependentUpon>txtsupplier.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtthreadcomb.cs" />
+    <Compile Include="txtthreadcomb.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="txtthreadcomb.designer.cs">
       <DependentUpon>txtthreadcomb.cs</DependentUpon>
     </Compile>
@@ -246,6 +252,18 @@
     </Compile>
     <Compile Include="txtToMdivision.Designer.cs">
       <DependentUpon>txtToMdivision.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtthreadlocation.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtthreadlocation.Designer.cs">
+      <DependentUpon>txtthreadlocation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtthreadcolor.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtthreadcolor.designer.cs">
+      <DependentUpon>txtthreadcolor.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

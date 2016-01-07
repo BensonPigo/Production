@@ -99,7 +99,14 @@ namespace Sci.Production.Class
 
                     if (!string.IsNullOrWhiteSpace(category))
                     {
-                        where = where + " and Category = @Category ";
+                        if (category.ToUpper() == "THREAD")
+                        {
+                            where = where + string.Format(" and Category like '%{0}%'", category);
+                        }
+                        else
+                        {
+                            where = where + string.Format(" and Category = '{0}'", category);
+                        }
                     }
                 }
                 if (localSuppObject != null)
