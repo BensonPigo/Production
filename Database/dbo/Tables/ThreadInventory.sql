@@ -1,15 +1,19 @@
 ﻿CREATE TABLE [dbo].[ThreadInventory] (
-    [ID]          VARCHAR (13)  CONSTRAINT [DF_ThreadInventory_ID] DEFAULT ('') NOT NULL,
-    [MDivisionid] VARCHAR (8)   CONSTRAINT [DF_ThreadInventory_MDivisionid] DEFAULT ('') NOT NULL,
-    [CDate]       DATE          NULL,
-    [Remark]      NVARCHAR (60) CONSTRAINT [DF_ThreadInventory_Remark] DEFAULT ('') NULL,
-    [Status]      VARCHAR (15)  CONSTRAINT [DF_ThreadInventory_Status] DEFAULT ('') NULL,
-    [AddName]     VARCHAR (10)  CONSTRAINT [DF_ThreadInventory_AddName] DEFAULT ('') NULL,
-    [AddDate]     DATETIME      NULL,
-    [EditName]    VARCHAR (10)  CONSTRAINT [DF_ThreadInventory_EditName] DEFAULT ('') NULL,
-    [EditDate]    DATETIME      NULL,
+    [ID]             VARCHAR (13)  CONSTRAINT [DF_ThreadInventory_ID] DEFAULT ('') NOT NULL,
+    [MDivisionid]    VARCHAR (8)   CONSTRAINT [DF_ThreadInventory_MDivisionid] DEFAULT ('') NOT NULL,
+    [CDate]          DATE          NULL,
+    [ThreadAdjustid] VARCHAR (13)  NULL,
+    [Remark]         NVARCHAR (60) CONSTRAINT [DF_ThreadInventory_Remark] DEFAULT ('') NULL,
+    [Status]         VARCHAR (15)  CONSTRAINT [DF_ThreadInventory_Status] DEFAULT ('') NULL,
+    [AddName]        VARCHAR (10)  CONSTRAINT [DF_ThreadInventory_AddName] DEFAULT ('') NULL,
+    [AddDate]        DATETIME      NULL,
+    [EditName]       VARCHAR (10)  CONSTRAINT [DF_ThreadInventory_EditName] DEFAULT ('') NULL,
+    [EditDate]       DATETIME      NULL,
+    [StockType]      VARCHAR (8)   NOT NULL,
     CONSTRAINT [PK_ThreadInventory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

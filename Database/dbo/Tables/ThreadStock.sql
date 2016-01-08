@@ -8,8 +8,11 @@
     [AddDate]          DATETIME     NULL,
     [EditName]         VARCHAR (10) CONSTRAINT [DF_ThreadStock_EditName] DEFAULT ('') NULL,
     [EditDate]         DATETIME     NULL,
+    [mDivisionid]      VARCHAR (8)  NULL,
     CONSTRAINT [PK_ThreadStock] PRIMARY KEY CLUSTERED ([Refno] ASC, [ThreadColorID] ASC, [ThreadLocationID] ASC)
 );
+
+
 
 
 GO

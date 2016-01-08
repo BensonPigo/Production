@@ -370,6 +370,8 @@ Database/dbo/Tables/Supp.sql -text
 Database/dbo/Tables/SuppLevel.sql -text
 Database/dbo/Tables/System.sql -text
 Database/dbo/Tables/TPEPass1.sql -text
+Database/dbo/Tables/ThreadAdjust.sql -text
+Database/dbo/Tables/ThreadAdjust_Detail.sql -text
 Database/dbo/Tables/ThreadColor.sql -text
 Database/dbo/Tables/ThreadColorComb.sql -text
 Database/dbo/Tables/ThreadColorComb_Detail.sql -text
