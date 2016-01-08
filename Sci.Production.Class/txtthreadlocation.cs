@@ -15,7 +15,7 @@ namespace Sci.Production.Class
 {
     public partial class txtthreadlocation : Sci.Win.UI.TextBox
     {
-        private string keyword = Sci.Env.User.Keyword;
+        
         public txtthreadlocation()
         {
             this.Size = new System.Drawing.Size(90, 23);
@@ -27,7 +27,7 @@ namespace Sci.Production.Class
             base.OnPopUp(e);
             if (e.IsHandled) return;
 
-
+            string keyword = Sci.Env.User.Keyword;
             string sql = string.Format("select ID,Description from ThreadLocation where mDivisionid ='{0}' order by ID", keyword);
             DataTable tbthLocation;
             DBProxy.Current.Select("Production", sql, out tbthLocation);
@@ -43,7 +43,7 @@ namespace Sci.Production.Class
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
-
+            string keyword = Sci.Env.User.Keyword;
             string str = this.Text;
             if (!MyUtility.Check.Empty(str) && str != this.OldValue)
             {
