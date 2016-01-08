@@ -287,5 +287,17 @@ left join Country c on c.ID = od.Dest");
                 this.Close();
             }
         }
+
+        //To Excel
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if ((DataTable)listControlBindingSource1.DataSource == null || ((DataTable)listControlBindingSource1.DataSource).Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("No data!!");
+                return;
+            }
+            Sci.Production.PPIC.P06_Print callNextForm = new Sci.Production.PPIC.P06_Print((DataTable)listControlBindingSource1.DataSource);
+            callNextForm.ShowDialog(this);
+        }
     }
 }

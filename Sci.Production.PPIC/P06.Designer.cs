@@ -31,23 +31,23 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.panel4 = new Sci.Win.UI.Panel();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
-            this.panel5 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.button5 = new Sci.Win.UI.Button();
+            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.button4 = new Sci.Win.UI.Button();
+            this.button3 = new Sci.Win.UI.Button();
+            this.button2 = new Sci.Win.UI.Button();
+            this.button1 = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.label2 = new Sci.Win.UI.Label();
             this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
-            this.button4 = new Sci.Win.UI.Button();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.button5 = new Sci.Win.UI.Button();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label3 = new Sci.Win.UI.Label();
+            this.panel4 = new Sci.Win.UI.Panel();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.panel5 = new Sci.Win.UI.Panel();
+            this.grid1 = new Sci.Win.UI.Grid();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel5.SuspendLayout();
@@ -90,49 +90,75 @@
             this.panel3.Size = new System.Drawing.Size(846, 108);
             this.panel3.TabIndex = 3;
             // 
-            // panel4
+            // button5
             // 
-            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(5, 468);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(846, 15);
-            this.panel4.TabIndex = 4;
+            this.button5.Location = new System.Drawing.Point(243, 73);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(80, 30);
+            this.button5.TabIndex = 15;
+            this.button5.Text = "Find Now";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
-            // panel5
+            // textBox1
             // 
-            this.panel5.Controls.Add(this.grid1);
-            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(5, 108);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(846, 360);
-            this.panel5.TabIndex = 5;
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.IsSupportEditMode = false;
+            this.textBox1.Location = new System.Drawing.Point(107, 77);
+            this.textBox1.MaxLength = 13;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(120, 23);
+            this.textBox1.TabIndex = 14;
             // 
-            // grid1
+            // label3
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.AutoGenerateColumns = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(846, 360);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.label3.Lines = 0;
+            this.label3.Location = new System.Drawing.Point(4, 77);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(99, 23);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "Locate for SP#";
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(702, 34);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(139, 30);
+            this.button4.TabIndex = 11;
+            this.button4.Text = "Quit without Save";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(702, 3);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(139, 30);
+            this.button3.TabIndex = 10;
+            this.button3.Text = "Save and Quit";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(602, 20);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(80, 30);
+            this.button2.TabIndex = 9;
+            this.button2.Text = "To Excel";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(509, 20);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(80, 30);
+            this.button1.TabIndex = 8;
+            this.button1.Text = "Query";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // label1
             // 
@@ -173,45 +199,6 @@
             this.txtdropdownlist1.TabIndex = 7;
             this.txtdropdownlist1.Type = "Fty_GMT_Simple";
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(509, 20);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Query";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(602, 20);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 9;
-            this.button2.Text = "To Excel";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(702, 3);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(139, 30);
-            this.button3.TabIndex = 10;
-            this.button3.Text = "Save and Quit";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(702, 34);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(139, 30);
-            this.button4.TabIndex = 11;
-            this.button4.Text = "Quit without Save";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
-            // 
             // shapeContainer1
             // 
             this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
@@ -231,35 +218,49 @@
             this.lineShape1.Y1 = 69;
             this.lineShape1.Y2 = 69;
             // 
-            // button5
+            // panel4
             // 
-            this.button5.Location = new System.Drawing.Point(243, 73);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(80, 30);
-            this.button5.TabIndex = 15;
-            this.button5.Text = "Find Now";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel4.Location = new System.Drawing.Point(5, 468);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(846, 15);
+            this.panel4.TabIndex = 4;
             // 
-            // textBox1
+            // panel5
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.IsSupportEditMode = false;
-            this.textBox1.Location = new System.Drawing.Point(107, 77);
-            this.textBox1.MaxLength = 13;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(120, 23);
-            this.textBox1.TabIndex = 14;
+            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel5.Location = new System.Drawing.Point(5, 108);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(846, 360);
+            this.panel5.TabIndex = 5;
             // 
-            // label3
+            // grid1
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(4, 77);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(99, 23);
-            this.label3.TabIndex = 13;
-            this.label3.Text = "Locate for SP#";
+            this.grid1.AllowUserToAddRows = false;
+            this.grid1.AllowUserToDeleteRows = false;
+            this.grid1.AllowUserToResizeRows = false;
+            this.grid1.AutoGenerateColumns = false;
+            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid1.DataSource = this.listControlBindingSource1;
+            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.grid1.Location = new System.Drawing.Point(0, 0);
+            this.grid1.Name = "grid1";
+            this.grid1.RowHeadersVisible = false;
+            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.grid1.RowTemplate.Height = 24;
+            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid1.Size = new System.Drawing.Size(846, 360);
+            this.grid1.TabIndex = 0;
+            this.grid1.TabStop = false;
             // 
             // P06
             // 
