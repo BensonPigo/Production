@@ -13,24 +13,15 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Thread
 {
-    public partial class P05 : Sci.Win.Tems.Input6
+    public partial class P06 : Sci.Win.Tems.Input6
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
-        public P05(ToolStripMenuItem menuitem)
+        public P06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.DefaultFilter = string.Format("mDivisionid = '{0}'", keyWord);
-
-
             InitializeComponent();
-            Dictionary<String, String> comboBox1_RowSource2 = new Dictionary<string, string>();
-            comboBox1_RowSource2.Add("Fordward", "Fordward");
-            comboBox1_RowSource2.Add("Backward", "Backward");
-
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
-            comboBox1.DataSource = new BindingSource(comboBox1_RowSource2, null);
         }
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
@@ -38,7 +29,7 @@ namespace Sci.Production.Thread
             this.DetailSelectCommand = string.Format(@"select a.*,b.description,c.description as colordesc,
             b.threadTex,b.category,b.Localsuppid,newcone - newconebook as newConevar,usedcone - usedconebook as usedConevar,b.threadtypeid,
             (b.Localsuppid+'-'+(Select name from LocalSupp d where b.localsuppid = d.id)) as supp
-            from ThreadInventory_Detail a 
+            from ThreadAdjust_Detail a 
             left join Localitem b on a.refno = b.refno 
             left join threadcolor c on a.threadcolorid = c.id where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -194,7 +185,8 @@ namespace Sci.Production.Thread
             .Text("ThreadTypeid", header: "Thread Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Numeric("ThreadTex", header: "Tex", width: Widths.AnsiChars(5), integer_places: 3, iseditingreadonly: true)
             .Text("category", header: "Category", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Text("supp", header: "Supplier", width: Widths.AnsiChars(20), iseditingreadonly: true);
+            .Text("supp", header: "Supplier", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("remark", header: "Remark", width: Widths.AnsiChars(60));
             #endregion
 
             this.detailgrid.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
@@ -219,7 +211,6 @@ namespace Sci.Production.Thread
             CurrentMaintain["AddName"] = loginID;
             CurrentMaintain["AddDate"] = DateTime.Now;
             CurrentMaintain["mDivisionid"] = keyWord;
-            CurrentMaintain["StockType"] = "Fordward";
             
         }
         protected override bool ClickDeleteBefore()
@@ -276,7 +267,7 @@ namespace Sci.Production.Thread
             #region 填入ID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(keyWord + "TV", "ThreadInventory", (DateTime)CurrentMaintain["cDate"]);
+                string id = MyUtility.GetValue.GetID(keyWord + "TA", "ThreadAdjust", (DateTime)CurrentMaintain["cDate"]);
 
                 if (string.IsNullOrWhiteSpace(id))
                 {
@@ -287,23 +278,6 @@ namespace Sci.Production.Thread
             #endregion
 
             return base.ClickSaveBefore();
-        }
-        protected override bool ClickNewBefore()
-        {
-            try
-            {
-                if (MyUtility.Check.Seek(string.Format("Select id from ThreadInventory where status = 'New' and mDivisionid ='{0}'", keyWord)))
-                {
-                    MyUtility.Msg.WarningBox("Some inventory not yet confirm.");
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                ShowErr("Commit transaction error.", ex);
-                return false;
-            }
-            return base.ClickNewBefore();
         }
         protected override void OnDetailUIConvertToUpdate()
         {
@@ -317,12 +291,8 @@ namespace Sci.Production.Thread
             List<string> stockSqlupLi = new List<string>();
             List<string> stockSqlQuLi = new List<string>();
             string checksql;
-            string sql, insertSql = "";
-            bool linsertad = false;
-            string id = MyUtility.GetValue.GetID(keyWord + "TA", "ThreadAdjust", DateTime.Now);
-            string insertAd = string.Format("Insert Into ThreadAdjust(ID,cDate,Status,mDivisionid,ThreadInventoryid,AddName,AddDate) values('{0}',getDate(),'Confirmed','{1}','{2}','{3}',GETDate());", id, keyWord, CurrentMaintain["ID"], loginID);
-            
-            sql = String.Format("Update ThreadInventory set Status = 'Confirmed',editname='{0}', editdate = GETDATE() where id='{1}'", loginID, CurrentMaintain["ID"].ToString());
+            string sql, insertSql = "";            
+            sql = String.Format("Update ThreadAdjust set Status = 'Confirmed',editname='{0}', editdate = GETDATE() where id='{1}'", loginID, CurrentMaintain["ID"].ToString());
 
             foreach (DataRow dr in this.DetailDatas)
             {
@@ -335,12 +305,7 @@ namespace Sci.Production.Thread
                 {
                     insertSql = insertSql + string.Format("insert ThreadStock(refno,mDivisionid,threadcolorid,threadlocationid,newcone,usedcone,addName,AddDate) values('{0}','{1}','{2}','{3}',{4},{5},'{6}',GetDate())", dr["refno"],keyWord,dr["ThreadColorid"], dr["ThreadLocationid"],(decimal)dr["NewCone"] - (decimal)dr["NewConeBook"], (decimal)dr["UsedCone"] - (decimal)dr["UsedConeBook"],loginID );
                 }
-                if ((decimal)dr["NewCone"] - (decimal)dr["NewConeBook"] > 0 || (decimal)dr["UsedCone"] - (decimal)dr["UsedConeBook"] > 0)
-                {
-                    insertAd = insertAd + string.Format("Insert into ThreadAdjust_Detail(ID,Refno,ThreadColorid,ThreadLocationid,NewConeBook,NewCone,UsedConeBook,UsedCone) Values('{0}','{1}','{2}','{3}',{4},{5},{6},{7});", id, dr["refno"], dr["threadcolorid"], dr["ThreadLocationid"], dr["NewConeBook"], dr["NewCone"], dr["UsedConeBook"], dr["UsedCone"]);
-                    sql = String.Format("Update ThreadInventory set Status = 'Confirmed',editname='{0}', editdate = GETDATE(),ThreadAdjustid = '{2}' where id='{1}'", loginID, CurrentMaintain["ID"].ToString(), id);
-                    linsertad = true;
-                }
+
             }
             #region update Inqty,Status
             DualResult upResult;
@@ -354,15 +319,6 @@ namespace Sci.Production.Thread
                         _transactionscope.Dispose();
                         ShowErr(insertSql, upResult);
                         return;
-                    }
-                    if (linsertad)
-                    {
-                        if (!(upResult = DBProxy.Current.Execute(null, insertAd)))
-                        {
-                            _transactionscope.Dispose();
-                            ShowErr(insertAd, upResult);
-                            return;
-                        }
                     }
                     if (!(upResult = DBProxy.Current.Execute(null, sql)))
                     {
@@ -387,18 +343,6 @@ namespace Sci.Production.Thread
             this.OnDetailEntered();
             EnsureToolbarExt();
         }
- 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            foreach (DataRow dr in DetailDatas)
-            {
-                dr["NewCone"] = dr["NewConeBook"];
-                dr["UsedCone"] = dr["UsedConeBook"];
-                dr["NewConevar"] = 0;
-                dr["UsedConeVar"] = 0;
-            }
-        }
-
         private void button2_Click(object sender, EventArgs e)
         {
             //移到指定那筆
@@ -417,22 +361,8 @@ namespace Sci.Production.Thread
         private void button3_Click(object sender, EventArgs e)
         {
             DataTable detTable = ((DataTable)this.detailgridbs.DataSource);
-            Form P05_import = new Sci.Production.Thread.P05_Import(detTable);
-            P05_import.ShowDialog();
-        }
-
-        private void comboBox1_SelectionChangeCommitted(object sender, EventArgs e)
-        {
-            if (comboBox1.SelectedValue.ToString() == comboBox1.OldValue.ToString()) return;
-            DialogResult diresult = MyUtility.Msg.QuestionBox("The detail grid will be cleared, are you sure change type?");
-            if (diresult == DialogResult.No)
-            {
-                return;
-            }
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                dr.Delete();
-            }
+            Form P06_import = new Sci.Production.Thread.P06_Import(detTable);
+            P06_import.ShowDialog();
         }
         private void reqty()
         {

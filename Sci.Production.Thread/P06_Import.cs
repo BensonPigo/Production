@@ -16,12 +16,12 @@ using Ict.Data;
 
 namespace Sci.Production.Thread
 {
-    public partial class P05_Import : Sci.Win.Subs.Base
+    public partial class P06_Import : Sci.Win.Subs.Base
     {
         private DataTable detTable;
         private DataTable gridTable;
         private string keyword = Sci.Env.User.Keyword;
-        public P05_Import(DataTable detTable)
+        public P06_Import(DataTable detTable)
         {
             InitializeComponent();
             this.detTable = detTable;
@@ -42,8 +42,8 @@ namespace Sci.Production.Thread
                 .CellThreadColor("ThreadColorid", header: "Color", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Colordesc", header: "Color Description", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .CellThreadLocation("ThreadLocationid", header: "Location", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("NewConebook", header: "New Cone\nperbooks", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
-                .Numeric("UsedConebook", header: "Used cone\nperbooks", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly:
+                .Numeric("NewConebook", header: "New Cone\nper books", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
+                .Numeric("UsedConebook", header: "Used cone\nper books", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly:
                 true)
                 .Text("threadtypeid", header: "Thread Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Numeric("ThreadTex", header: "Tex", width: Widths.AnsiChars(5), integer_places: 3, iseditingreadonly: true)
@@ -58,9 +58,7 @@ namespace Sci.Production.Thread
             string threadlocation1 = this.txtthreadlocation1.Text, threadlocation2 = this.txtthreadlocation2.Text;
             string thradrefno1 = txtlocalitem1.Text, thradrefno2 = txtlocalitem2.Text;
             string color1 = txtthreadcolor1.Text, color2 = txtthreadcolor2.Text;
-            string allpart = checkBox1.Value;
-            int rand = (int)numericBox1.Value;
-            if (MyUtility.Check.Empty(threadlocation1) && MyUtility.Check.Empty(threadlocation2) && MyUtility.Check.Empty(thradrefno1) && MyUtility.Check.Empty(thradrefno2) && allpart == "False")
+            if (MyUtility.Check.Empty(threadlocation1) && MyUtility.Check.Empty(threadlocation2) && MyUtility.Check.Empty(thradrefno1) && MyUtility.Check.Empty(thradrefno2))
             {
                 MyUtility.Msg.WarningBox("At least one condition <Refno> <Location> must be entried.");
                 this.txtlocalitem1.Focus();
@@ -95,71 +93,14 @@ namespace Sci.Production.Thread
             {
                 DualResult rst;
                 DataTable dt;
-                if (!(rst = DBProxy.Current.Select("Production", sql, out dt)))
+                DBProxy.Current.Select("Production", sql, out gridTable);
+                if (gridTable.Rows.Count == 0)
                 {
-                    ShowErr(sql, rst);
+                    MyUtility.Msg.WarningBox("Data not found");
                     return;
                 }
-                else
-                {
-                    if (dt.Rows.Count == 0)
-                    {
-                        MyUtility.Msg.WarningBox("Data not found");
-                        return;
-                    }
-                    int rowcount = dt.Rows.Count; //因Random是小於此數字，因此要+1
-                    if (rowcount <= rand) allpart = "True"; //Random多於找出來的就全部寫入 
-                    int[] intlist = new int[rand];
-                    int danom1;
-                    Random dr = new Random();
-                    bool zerorand = false;
-                    if (allpart != "True" && rand != 0)
-                    {
-                        
-                        for (int i = 0; i < rand; i++)
-                        {
-                            danom1 = dr.Next(rowcount);
-                            if (Array.IndexOf(intlist, danom1) == -1 || (danom1 == 0 && zerorand == false))
-                            {
-                                intlist[i] = danom1;
-                                if (danom1 == 0) zerorand = true;
-                                DataRow ndtdr = dt.Rows[danom1];
-                                DataRow ndr = gridTable.NewRow();
-                                ndr["sel"] = 1;
-                                ndr["refno"] = ndtdr["refno"];
-                                ndr["Description"] = ndtdr["Description"];
-                                ndr["threadtypeid"] = ndtdr["threadtypeid"];
-                                ndr["threadcolorid"] = ndtdr["threadcolorid"];
-                                ndr["threadlocationid"] = ndtdr["threadlocationid"];
-                                ndr["colordesc"] = ndtdr["colordesc"];
-                                ndr["category"] = ndtdr["category"];
-                                ndr["supp"] = ndtdr["supp"];
-                                ndr["LocalSuppid"] = ndtdr["LocalSuppid"];
-                                ndr["threadTex"] = ndtdr["threadTex"];
-                                ndr["NewConeBook"] = ndtdr["NewConeBook"];
-                                ndr["UsedConeBook"] = ndtdr["UsedConeBook"];
-                                ndr["NewConevar"] = ndtdr["NewConevar"];
-                                ndr["UsedConevar"] = ndtdr["UsedConevar"];
-                                ndr["NewCone"] = 0;
-                                ndr["UsedCone"] = 0;
-
-                                gridTable.Rows.Add(ndr);
-
-                            }
-                            else
-                            {
-                                i--;
-                            }
-                        }
-
-
-                    }
-                    else
-                    {
-                        gridTable = dt;
-                    }
-                    this.grid1.DataSource = gridTable;
-                }
+                this.grid1.DataSource = gridTable;
+                
             }
             catch (Exception ex)
             {
