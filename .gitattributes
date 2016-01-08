@@ -19,6 +19,7 @@ Database/dbo/Functions/getPOComboList.sql -text
 Database/dbo/Functions/getPulloutComplete.sql -text
 Database/dbo/Stored[!!-~]Procedures/dbo.insertMygridstd2.sql -text
 Database/dbo/Stored[!!-~]Procedures/insertMygridstd2.sql -text
+Database/dbo/Stored[!!-~]Procedures/usp_ThreadTransactionList.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_closeOrder.sql -text
 Database/dbo/Tables/ADIDASComplain.sql -text
 Database/dbo/Tables/ADIDASComplainDefect.sql -text
