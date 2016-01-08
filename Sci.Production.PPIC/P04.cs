@@ -177,6 +177,13 @@ namespace Sci.Production.PPIC
             return Result.True;
         }
 
+        protected override bool ClickPrint()
+        {
+            Sci.Production.PPIC.P04_Print callNextForm = new Sci.Production.PPIC.P04_Print();
+            callNextForm.ShowDialog(this);
+            return base.ClickPrint();
+        }
+
         private void textBox6_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item;

@@ -836,6 +836,9 @@ Sci.Production.PPIC/P04_GarmentLeadTimeByFactory.resx -text
 Sci.Production.PPIC/P04_HSCode.Designer.cs -text
 Sci.Production.PPIC/P04_HSCode.cs -text
 Sci.Production.PPIC/P04_HSCode.resx -text
+Sci.Production.PPIC/P04_Print.Designer.cs -text
+Sci.Production.PPIC/P04_Print.cs -text
+Sci.Production.PPIC/P04_Print.resx -text
 Sci.Production.PPIC/P04_QtyCartonByCustCD.Designer.cs -text
 Sci.Production.PPIC/P04_QtyCartonByCustCD.cs -text
 Sci.Production.PPIC/P04_QtyCartonByCustCD.resx -text
