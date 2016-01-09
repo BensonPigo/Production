@@ -91,6 +91,14 @@ namespace Sci.Production.Shipping
             return base.ClickSaveBefore();
         }
 
+        protected override bool ClickPrint()
+        {
+
+            Sci.Production.Shipping.B03_PrintReviseList callNextForm = new Sci.Production.Shipping.B03_PrintReviseList();
+            callNextForm.ShowDialog(this);
+            return base.ClickPrint();
+        }
+
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
             if (!MyUtility.Check.Empty(textBox1.Text) && textBox1.Text != textBox1.OldValue)
