@@ -32,7 +32,7 @@ namespace Sci.Production.PPIC
         // 非同步取資料
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            printData = gridData.Select(string.Format("{0}{1}", (MyUtility.Check.Empty(readyDate1) ? "1 = 1" : "ReadyDate >= '" + readyDate1 + "'"), (MyUtility.Check.Empty(readyDate2) ? " and 1 = 1" : " and ReadyDate <= '" + readyDate2 + "'")));
+            printData = gridData.Select(string.Format("{0}{1}", (MyUtility.Check.Empty(readyDate1) ? "1 = 1" : "ReadyDate >= '" + readyDate1 + "'"), (MyUtility.Check.Empty(readyDate2) ? "" : " and ReadyDate <= '" + readyDate2 + "'")));
             return Result.True;
         }
 
