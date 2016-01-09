@@ -211,6 +211,7 @@ namespace Sci.Production.Warehouse
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
+            CurrentDetailData["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentDetailData["Stocktype"] = 'B';
         }
 
