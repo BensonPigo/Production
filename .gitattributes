@@ -1082,6 +1082,9 @@ Sci.Production.Shipping/P02_ImportFromPO.resx -text
 Sci.Production.Shipping/P03.Designer.cs -text
 Sci.Production.Shipping/P03.cs -text
 Sci.Production.Shipping/P03.resx -text
+Sci.Production.Shipping/P03_Print.Designer.cs -text
+Sci.Production.Shipping/P03_Print.cs -text
+Sci.Production.Shipping/P03_Print.resx -text
 Sci.Production.Shipping/P04.Designer.cs -text
 Sci.Production.Shipping/P04.cs -text
 Sci.Production.Shipping/P04.resx -text

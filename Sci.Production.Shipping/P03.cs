@@ -130,6 +130,13 @@ where ed.ID = '{0}'", masterID);
             return base.ClickSaveBefore();
         }
 
+        protected override bool ClickPrint()
+        {
+            Sci.Production.Shipping.P03_Print callNextForm = new Sci.Production.Shipping.P03_Print(CurrentMaintain,(DataTable)detailgridbs.DataSource);
+            callNextForm.ShowDialog(this);
+            return base.ClickPrint();
+        }
+
         //Find
         private void button3_Click(object sender, EventArgs e)
         {
