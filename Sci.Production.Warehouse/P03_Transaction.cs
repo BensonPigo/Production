@@ -376,7 +376,9 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name");
                     break;
                     case "P10":
                     //	P10
-                    break;
+                        frm = new Sci.Production.Warehouse.P10(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
                     case "IS":
                     //	P11
                     break;
@@ -396,7 +398,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name");
                         frm = new Sci.Production.Warehouse.P15(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
-                    case "IF":
+                    case "P16":
                         //	P16
                         frm = new Sci.Production.Warehouse.P16(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
@@ -420,25 +422,25 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name");
                         break;
 
                     case "P22":
-                        //	P22
-                        //frm = new Sci.Production.Warehouse.P22(null, dr2["id"].ToString());
-                        //frm.ShowDialog(this);
+                            //P22
+                        frm = new Sci.Production.Warehouse.P22(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
                         break;
                     case "P23":
                         //	P23
-                        //frm = new Sci.Production.Warehouse.P23(null, dr2["id"].ToString());
-                        //frm.ShowDialog(this);
+                        frm = new Sci.Production.Warehouse.P23(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
                         break;
 
                     case "P24":
                         //	P24
-                        //frm = new Sci.Production.Warehouse.P24(null, dr2["id"].ToString());
-                        //frm.ShowDialog(this);
+                        frm = new Sci.Production.Warehouse.P24(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
                         break;
                     case "P25":
                         //	P25
-                        //frm = new Sci.Production.Warehouse.P25(null, dr2["id"].ToString());
-                        //frm.ShowDialog(this);
+                        frm = new Sci.Production.Warehouse.P25(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
                         break;
 
 
