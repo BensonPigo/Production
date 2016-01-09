@@ -208,8 +208,9 @@ left join ATData a2 on a2.FakeID = st.Seq+'Pri'";
                 worksheet.Range[String.Format("A{0}:{1}{0}", intRowsStart, excelColEng)].Value2 = objArray;
                 intRowsStart++;
             }
-            excel.Cells.EntireRow.AutoFit();
+
             excel.Cells.EntireColumn.AutoFit();
+            excel.Cells.EntireRow.AutoFit();
 
             excel.Visible = true;
             return true;
