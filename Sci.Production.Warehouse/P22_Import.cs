@@ -46,7 +46,7 @@ namespace Sci.Production.Warehouse
                 #region -- Sql Command --
                 strSQLCmd.Append(string.Format(@"
 with cte as 
-(select pd.id as poid, pd.seq1,pd.seq2,pd.Qty,pd.ShipQty,pd.StockQty,pd.InputQty,pd.OutputQty
+(select o.MDivisionID,pd.id as poid, pd.seq1,pd.seq2,pd.Qty,pd.ShipQty,pd.StockQty,pd.InputQty,pd.OutputQty
 	,x.taipei_issue_date,x.taipei_qty,pd.POUnit,pd.StockUnit 
 	from dbo.PO_Supp_Detail pd
 	inner join dbo.orders o on o.id = pd.id
@@ -89,7 +89,7 @@ select 0 AS selected,'' as id,fi.MDivisionID FromMDivisionID,fi.POID FromPOID,fi
 ,fi.roll ToRoll,fi.dyelot ToDyelot,'I' as [ToStockType]
 ,'' as [ToLocation]
 from #tmp cte 
-inner join dbo.FtyInventory fi on fi.POID = cte.poid and fi.seq1 = cte.seq1 and fi.seq2 = cte.SEQ2 and fi.StockType = 'B'
+inner join dbo.FtyInventory fi on fi.mdivisionid = cte.mdivisionid and fi.POID = cte.poid and fi.seq1 = cte.seq1 and fi.seq2 = cte.SEQ2 and fi.StockType = 'B'
 where fi.Lock = 0 
 Order by frompoid,fromseq1,fromseq2,fromdyelot,fromroll,balanceQty desc
 drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));

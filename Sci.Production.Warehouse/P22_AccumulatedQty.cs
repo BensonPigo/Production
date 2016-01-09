@@ -39,7 +39,7 @@ cross apply
 		from dbo.Invtrans i inner join dbo.Factory f on f.ID = i.FactoryID and f.MDivisionID = '{1}'
 		where (i.type=1 OR I.TYPE=4) and i.InventoryPOID = pd.ID and i.InventorySeq1 = pd.seq1 and i.InventorySeq2 = pd.SEQ2
 	) x
-where o.MDivisionID ='MWI' AND X.taipei_qty > 0
+where o.MDivisionID ='{1}' AND X.taipei_qty > 0
 )
 
 select m.poid,m.seq1,m.seq2,m.StockUnit,m.Qty*isnull(u.Rate,1) as poqty,m.InputQty*isnull(u.Rate,1) as inputQty

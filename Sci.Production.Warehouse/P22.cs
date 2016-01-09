@@ -189,21 +189,19 @@ namespace Sci.Production.Warehouse
             #endregion
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("frompoid", header: "From SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
-            .Text("fromseq", header: "From" + Environment.NewLine + "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //1
-            .Text("fromroll", header: "From" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
-            .Text("fromdyelot", header: "From" + Environment.NewLine + "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
+            .Text("frompoid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
+            .Text("fromseq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //1
+            .Text("fromroll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
+            .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
-            .Text("fromstocktype", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false)  //5
+            .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //5
             .Text("Location", header: "From" + Environment.NewLine + "Location", iseditingreadonly: true)    //6
-
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10,settings:ns)    //7
-            .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //8
-            .Text("toLocation", header: "To Location", settings: ts2, iseditingreadonly: true)    //9
+            .Text("toLocation", header: "To Location", settings: ts2, iseditingreadonly: true, width: Widths.AnsiChars(18))    //8
             ;     //
             #endregion 欄位設定
             this.detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Confirm
