@@ -45,12 +45,12 @@ where f.mdivisionid ='{0}' and f.poid = '{1}' and f.seq1='{2}' and f.seq2='{3}' 
             switch (type)
             {
                 case 2:
+                    #region -- Case 2 InQty --
                     if (encoded)
                     {
                         switch (stocktype)
                         {
                             case "I":
-
                                 sqlcmd = string.Format(@"
 merge dbo.mdivisionpodetail as target
 using (values('{0}','{1}','{2}','{3}','{4}','{5}')) as src (poid,seq1,seq2,qty,m,blocation) 
@@ -62,6 +62,7 @@ when not matched then
     insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[blocation])
     values (src.poid,src.seq1,src.seq2,src.m,src.qty,src.blocation);", Poid, seq1, seq2, qty, m, DistinctString(tmplocation + location));
                                 break;
+
                             case "B":
                                 sqlcmd = string.Format(@"
 merge dbo.mdivisionpodetail as target
@@ -84,8 +85,10 @@ when not matched then
 where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
                             , Poid, seq1, seq2, qty, m);
                     }
+                    #endregion
                     break;
                 case 4:
+                    #region -- Case 4 OutQty --
                     if (encoded)
                     {
                         sqlcmd = string.Format(@"update mdivisionpodetail set  OutQty = isnull(OutQty,0.00) + {3} 
@@ -98,8 +101,10 @@ where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
 where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
                             , Poid, seq1, seq2, qty, m);
                     }
+                    #endregion
                     break;
                 case 8:
+                    #region -- Case 8 LInvQty --
                     if (encoded)
                     {
                         sqlcmd = string.Format(@"
@@ -119,8 +124,10 @@ when not matched then
 where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
                             , Poid, seq1, seq2, qty, m);
                     }
+                    #endregion
                     break;
                 case 16:
+                    #region -- LObQty --
                     if (encoded)
                     {
                         sqlcmd = string.Format(@"update mdivisionpodetail set  LObQty = isnull(LObQty,0.00) + {3} 
@@ -133,8 +140,10 @@ where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
 where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
                             , Poid, seq1, seq2, qty, m);
                     }
+                    #endregion
                     break;
                 case 32:
+                    #region -- AdjustQty --
                     if (encoded)
                     {
                         sqlcmd = string.Format(@"update mdivisionpodetail set  AdjustQty = isnull(AdjustQty,0.00) + {3} 
@@ -147,6 +156,7 @@ where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
 where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
                             , Poid, seq1, seq2, qty, m);
                     }
+                    #endregion
                     break;
             }
             //            if (encoded && (type == 2 || type == 8 || type == 16) && !MyUtility.Check.Empty(stocktype))
@@ -181,7 +191,7 @@ where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
             return sqlcmd;
         }
         #endregion
-
+        #region -- UpdateFtyInventory --
         /// <summary>
         /// UpdateFtyInventory()
         /// *	更新 FtyInventory 的庫存
@@ -203,7 +213,7 @@ where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
         /// <param name="bool encoded"></param>
         /// <param name="location"></param>
         /// <returns>String Sqlcmd</returns>
-        #region -- UpdateFtyInventory --
+
         public static string UpdateFtyInventory(int type, string m, string Poid, string seq1, string seq2
             , decimal qty, string roll, string dyelot, string stocktype, bool encoded, string location = null)
         {
@@ -451,7 +461,12 @@ for xml path('') ", ukey), out dt);
             return dr[0].ToString();
         }
         #endregion
-        #region-- Distinct Array--
+        #region-- Distinct String--
+        /// <summary>
+        /// 將字串依逗點分隔拆開，剔除重覆後重新以逗點分隔連接字串
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns>String</returns>
         public static string DistinctString(string str)
         {
             string[] strA = Regex.Split(str, ",");
@@ -509,9 +524,9 @@ order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["p
                 {
                     decimal balance = request - accu_issue;
                     //dt.DefaultView.Sort = "Dyelot,location,Seq1,seq2,Qty asc";
-                    for (int i=dt.Rows.Count-1;i>=0;i--)
+                    for (int i = dt.Rows.Count - 1; i >= 0; i--)
                     {
-                        DataRow find = items.Find(item => item["ftyinventoryukey"].ToString()==dt.Rows[i]["ftyinventoryukey"].ToString());
+                        DataRow find = items.Find(item => item["ftyinventoryukey"].ToString() == dt.Rows[i]["ftyinventoryukey"].ToString());
                         if (MyUtility.Check.Empty(find))// if overlape
                         {
                             if (balance > 0m)
@@ -541,6 +556,47 @@ order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["p
                 }
             }
             return items;
+        }
+        /// <summary>
+        /// 檢查實際到倉日不可早於到港日
+        /// </summary>
+        /// <param name="ArrivedPortDate"></param>
+        /// <param name="ArrivedWhseDate"></param>
+        /// <param name="msg"></param>
+        /// <returns>bool</returns>
+        public static bool CheckArrivedWhseDateWithArrivedPortDate(DateTime ArrivedPortDate, DateTime ArrivedWhseDate, out String msg)
+        {
+            msg = "";
+            if (ArrivedPortDate > ArrivedWhseDate)
+            {
+                msg = "Arrive Warehouse date can't be earlier than arrive port date!!";
+                return false;
+            }
+            return true;
+        }
+        /// <summary>
+        /// 檢查實際到倉日若早於ETA 3天或晚於 15天都回傳訊息。
+        /// </summary>
+        /// <param name="Eta"></param>
+        /// <param name="ArrivedWhseDate"></param>
+        /// <param name="msg"></param>
+        /// <returns>bool</returns>
+        public static bool CheckArrivedWhseDateWithEta(DateTime Eta, DateTime ArrivedWhseDate,out String msg)
+        {
+            msg = "";
+            // 到倉日如果早於ETA 3天，則提示窗請USER再確認是否存檔。
+            if (DateTime.Compare(Eta, ArrivedWhseDate.AddDays(3)) > 0)
+            {
+                msg = "Arrive Warehouse date is earlier than ETA 3 days, do you save it?";
+                return false;
+            }
+            // 到倉日如果晚於ETA 15天，則提示窗請USER再確認是否存檔。
+            if (DateTime.Compare(Eta.AddDays(15), ArrivedWhseDate) < 0)
+            {
+                msg = "Arrive Warehouse date is later than ETA 15 days, do you save it?";
+                return false;
+            }
+            return true;
         }
     }
 
