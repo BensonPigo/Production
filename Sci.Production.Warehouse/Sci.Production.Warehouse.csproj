@@ -138,12 +138,6 @@
     <Compile Include="P03_Wkno.Designer.cs">
       <DependentUpon>P03_Wkno.cs</DependentUpon>
     </Compile>
-    <Compile Include="P03back.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P03back.Designer.cs">
-      <DependentUpon>P03back.cs</DependentUpon>
-    </Compile>
     <Compile Include="P07.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -600,6 +594,30 @@
     <Compile Include="P22_Import.Designer.cs">
       <DependentUpon>P22_Import.cs</DependentUpon>
     </Compile>
+    <Compile Include="P23.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P23.Designer.cs">
+      <DependentUpon>P23.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P23_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P23_AccumulatedQty.Designer.cs">
+      <DependentUpon>P23_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P23_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P23_Import.Designer.cs">
+      <DependentUpon>P23_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02.Designer.cs">
+      <DependentUpon>P02.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -634,9 +652,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03_Wkno.resx">
       <DependentUpon>P03_Wkno.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P03back.resx">
-      <DependentUpon>P03back.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P03_BulkLocation.resx">
       <DependentUpon>P03_BulkLocation.cs</DependentUpon>
@@ -913,6 +928,21 @@
       <DependentUpon>P22_Import.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="P23.resx">
+      <DependentUpon>P23.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P23_AccumulatedQty.resx">
+      <DependentUpon>P23_AccumulatedQty.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P23_Import.resx">
+      <DependentUpon>P23_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02.resx">
+      <DependentUpon>P02.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
@@ -926,6 +956,10 @@
     <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
       <Name>Sci.Production.PublicPrg</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Shipping\Sci.Production.Shipping.csproj">
+      <Project>{558a6ae9-f802-4d9b-bad4-73fdf0a33326}</Project>
+      <Name>Sci.Production.Shipping</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sci.Trade.Class\Sci.Trade.Class.csproj">
       <Project>{23a1d79e-68ab-4d45-8c1d-11a34edd3369}</Project>

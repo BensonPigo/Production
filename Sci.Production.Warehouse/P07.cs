@@ -135,40 +135,37 @@ namespace Sci.Production.Warehouse
 
             #endregion 必輸檢查
 
-            // 到倉日不可早於到港日，如果有到港日的話。
-            DateTime t1 = new DateTime();
-            DateTime t2 = new DateTime();
+            
+            DateTime ArrivePortDate ;
+            DateTime WhseArrival ;
+            DateTime ETA;
+            bool chk;
+            String msg;
 
-            if (!MyUtility.Check.Empty(dateBox2.Value) && !MyUtility.Check.Empty(dateBox4.Value))
+            if (!MyUtility.Check.Empty(dateBox2.Value) && !MyUtility.Check.Empty(CurrentMaintain["WhseArrival"]))
             {
-                t1 = DateTime.Parse(dateBox2.Text);//port
-                t2 = DateTime.Parse(dateBox3.Text);//warehouse
-
-                if (DateTime.Compare(t1, t2) > 0)
+                ArrivePortDate = DateTime.Parse(dateBox2.Text);//port
+                WhseArrival = DateTime.Parse(CurrentMaintain["WhseArrival"].ToString());//warehouse
+                // 到倉日不可早於到港日
+                if (!(chk=Prgs.CheckArrivedWhseDateWithArrivedPortDate(ArrivePortDate, WhseArrival, out msg)))
                 {
-                    MyUtility.Msg.WarningBox("Arrive Warehouse date can't be early than arrive port date");
+                    MyUtility.Msg.WarningBox(msg);
                     dateBox3.Focus();
                     return false;
                 }
             }
 
-            if (!MyUtility.Check.Empty(dateBox4.Value))
+            if (!MyUtility.Check.Empty(CurrentMaintain["WhseArrival"]) && !MyUtility.Check.Empty(CurrentMaintain["eta"]))
             {
+                ETA = DateTime.Parse(CurrentMaintain["eta"].ToString());//eta
+                WhseArrival = DateTime.Parse(CurrentMaintain["WhseArrival"].ToString());//warehouse+
+
                 // 到倉日如果早於ETA 3天，則提示窗請USER再確認是否存檔。
-                t1 = DateTime.Parse(dateBox1.Text);//eta
-                t2 = DateTime.Parse(dateBox3.Text).AddDays(3);//warehouse
-                if (DateTime.Compare(t1, t2) > 0)
-                {
-                    DialogResult dResult = MyUtility.Msg.QuestionBox("Arrive Warehouse date is earlier than ETA 3 days, do you save it?");
-                    if (dResult.ToString().ToUpper() == "NO") return false;
-                }
                 // 到倉日如果晚於ETA 15天，則提示窗請USER再確認是否存檔。
-                t1 = DateTime.Parse(dateBox1.Text).AddDays(15);//eta
-                t2 = DateTime.Parse(dateBox3.Text);//warehouse
-                if (DateTime.Compare(t1, t2) < 0)
+                if (!(chk= Prgs.CheckArrivedWhseDateWithEta(ETA,WhseArrival,out msg)))
                 {
-                    DialogResult dResult = MyUtility.Msg.QuestionBox("Arrive Warehouse date is later than ETA 15 days, do you save it?");
-                    if (dResult.ToString().ToUpper() == "NO") return false;
+                    DialogResult dResult = MyUtility.Msg.QuestionBox(msg);
+                    if (dResult == DialogResult.No) return false;
                 }
             }
 
