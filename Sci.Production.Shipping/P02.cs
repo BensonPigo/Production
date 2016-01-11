@@ -10,6 +10,8 @@ using Ict;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
+using Sci.Win;
+using System.Reflection;
 
 namespace Sci.Production.Shipping
 {
@@ -163,11 +165,37 @@ namespace Sci.Production.Shipping
         //Context Menu選擇Print
         private void Print()
         {
+            DualResult result;
+            IReportResource reportresource;
+            ReportDefinition rd = new ReportDefinition();
+            if (!(result = ReportResources.ByEmbeddedResource(Assembly.GetAssembly(GetType()), GetType(), "P02_DetailPrint.rdlc", out reportresource)))
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+            }
+            else
+            {
+                rd.ReportResource = reportresource;
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("barCode", '*' + MyUtility.Convert.GetString(CurrentDetailData["ID"]) + MyUtility.Convert.GetString(CurrentDetailData["OrderID"]) + MyUtility.Convert.GetString(CurrentDetailData["Seq1"]) + MyUtility.Convert.GetString(CurrentDetailData["Seq2"]) + MyUtility.Convert.GetString(CurrentDetailData["Category"]) + '*'));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("from", (MyUtility.Convert.GetString(CurrentMaintain["FromTag"]) == "1" ? "Factory" : "Brand") + "(" + MyUtility.Convert.GetString(CurrentMaintain["FromSite"]) + ")"));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("to", (MyUtility.Convert.GetString(CurrentMaintain["ToTag"]) == "1" ? "SCI" : MyUtility.Convert.GetString(CurrentMaintain["ToTag"]) == "2" ? "Factory" : MyUtility.Convert.GetString(CurrentMaintain["ToTag"]) == "3" ? "Supplier" : "Brand") + "(" + MyUtility.Convert.GetString(CurrentMaintain["ToSite"]) + ")"));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("hcNo", MyUtility.Convert.GetString(CurrentDetailData["ID"])));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("serialNo", MyUtility.Convert.GetString(CurrentDetailData["OrderID"]) + "-" + MyUtility.Convert.GetString(CurrentDetailData["Seq1"]) + "-" + MyUtility.Convert.GetString(CurrentDetailData["Seq2"])));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("brand", MyUtility.Convert.GetString(CurrentDetailData["BrandID"])));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("incharge", MyUtility.GetValue.Lookup(string.Format("select Name+ iif(ExtNo <> '',' #' + ExtNo,'') as Incharge from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentDetailData["InCharge"])))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("teamLeader", MyUtility.Convert.GetString(CurrentDetailData["LeaderName"])));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("receiver", MyUtility.Convert.GetString(CurrentDetailData["ReceiverName"])));
+                using (var frm = new Sci.Win.Subs.ReportView(rd))
+                {
+                    frm.ShowDialog(this);
+                }
+            }
         }
 
         //Context Menu選擇Batch Print
         private void BatchPrint()
         {
+            Sci.Production.Shipping.P02_BatchPrint callPurchaseForm = new Sci.Production.Shipping.P02_BatchPrint(CurrentMaintain);
+            callPurchaseForm.ShowDialog(this);
         }
 
         protected override void OnDetailEntered()
@@ -253,7 +281,7 @@ left join PO_Supp_Detail p on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2
 left join Supp s on ed.SuppID = s.ID
 left join Express_CTNData ec on ed.ID = ec.ID and ed.CTNNo = ec.CTNNo
 where ed.ID = '{0}'
-Order by ed.CTNNo,ed.Seq1", masterID);
+Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -469,6 +497,13 @@ Order by ed.CTNNo,ed.Seq1", masterID);
                 CurrentMaintain["ID"] = id;
             }
             return base.ClickSaveBefore();
+        }
+
+        protected override bool ClickPrint()
+        {
+            Sci.Production.Shipping.P02_Print callPurchaseForm = new Sci.Production.Shipping.P02_Print(CurrentMaintain,(DataTable)detailgridbs.DataSource);
+            callPurchaseForm.ShowDialog(this);
+            return base.ClickPrint();
         }
 
         //From

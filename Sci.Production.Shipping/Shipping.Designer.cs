@@ -26,6 +26,8 @@ namespace Sci.Production.Shipping {
         
         private Report_ShippingAPDetailDataTable tableReport_ShippingAPDetail;
         
+        private Report_ExpressDetailDataTable tableReport_ExpressDetail;
+        
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -57,6 +59,9 @@ namespace Sci.Production.Shipping {
                 if ((ds.Tables["Report_ShippingAPDetail"] != null)) {
                     base.Tables.Add(new Report_ShippingAPDetailDataTable(ds.Tables["Report_ShippingAPDetail"]));
                 }
+                if ((ds.Tables["Report_ExpressDetail"] != null)) {
+                    base.Tables.Add(new Report_ExpressDetailDataTable(ds.Tables["Report_ExpressDetail"]));
+                }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
                 this.Namespace = ds.Namespace;
@@ -82,6 +87,16 @@ namespace Sci.Production.Shipping {
         public Report_ShippingAPDetailDataTable Report_ShippingAPDetail {
             get {
                 return this.tableReport_ShippingAPDetail;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public Report_ExpressDetailDataTable Report_ExpressDetail {
+            get {
+                return this.tableReport_ExpressDetail;
             }
         }
         
@@ -155,6 +170,9 @@ namespace Sci.Production.Shipping {
                 if ((ds.Tables["Report_ShippingAPDetail"] != null)) {
                     base.Tables.Add(new Report_ShippingAPDetailDataTable(ds.Tables["Report_ShippingAPDetail"]));
                 }
+                if ((ds.Tables["Report_ExpressDetail"] != null)) {
+                    base.Tables.Add(new Report_ExpressDetailDataTable(ds.Tables["Report_ExpressDetail"]));
+                }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
                 this.Namespace = ds.Namespace;
@@ -194,6 +212,12 @@ namespace Sci.Production.Shipping {
                     this.tableReport_ShippingAPDetail.InitVars();
                 }
             }
+            this.tableReport_ExpressDetail = ((Report_ExpressDetailDataTable)(base.Tables["Report_ExpressDetail"]));
+            if ((initTable == true)) {
+                if ((this.tableReport_ExpressDetail != null)) {
+                    this.tableReport_ExpressDetail.InitVars();
+                }
+            }
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -206,11 +230,19 @@ namespace Sci.Production.Shipping {
             this.SchemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
             this.tableReport_ShippingAPDetail = new Report_ShippingAPDetailDataTable();
             base.Tables.Add(this.tableReport_ShippingAPDetail);
+            this.tableReport_ExpressDetail = new Report_ExpressDetailDataTable();
+            base.Tables.Add(this.tableReport_ExpressDetail);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private bool ShouldSerializeReport_ShippingAPDetail() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private bool ShouldSerializeReport_ExpressDetail() {
             return false;
         }
         
@@ -271,6 +303,9 @@ namespace Sci.Production.Shipping {
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         public delegate void Report_ShippingAPDetailRowChangeEventHandler(object sender, Report_ShippingAPDetailRowChangeEvent e);
+        
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public delegate void Report_ExpressDetailRowChangeEventHandler(object sender, Report_ExpressDetailRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -604,6 +639,329 @@ namespace Sci.Production.Shipping {
         }
         
         /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class Report_ExpressDetailDataTable : global::System.Data.TypedTableBase<Report_ExpressDetailRow> {
+            
+            private global::System.Data.DataColumn columnOrderID;
+            
+            private global::System.Data.DataColumn columnSeq1;
+            
+            private global::System.Data.DataColumn columnSeq2;
+            
+            private global::System.Data.DataColumn columnBrandID;
+            
+            private global::System.Data.DataColumn columnReceiver;
+            
+            private global::System.Data.DataColumn columnBarCode;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public Report_ExpressDetailDataTable() {
+                this.TableName = "Report_ExpressDetail";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal Report_ExpressDetailDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected Report_ExpressDetailDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn OrderIDColumn {
+                get {
+                    return this.columnOrderID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn Seq1Column {
+                get {
+                    return this.columnSeq1;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn Seq2Column {
+                get {
+                    return this.columnSeq2;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn BrandIDColumn {
+                get {
+                    return this.columnBrandID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn ReceiverColumn {
+                get {
+                    return this.columnReceiver;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn BarCodeColumn {
+                get {
+                    return this.columnBarCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public Report_ExpressDetailRow this[int index] {
+                get {
+                    return ((Report_ExpressDetailRow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event Report_ExpressDetailRowChangeEventHandler Report_ExpressDetailRowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event Report_ExpressDetailRowChangeEventHandler Report_ExpressDetailRowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event Report_ExpressDetailRowChangeEventHandler Report_ExpressDetailRowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event Report_ExpressDetailRowChangeEventHandler Report_ExpressDetailRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void AddReport_ExpressDetailRow(Report_ExpressDetailRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public Report_ExpressDetailRow AddReport_ExpressDetailRow(string OrderID, string Seq1, string Seq2, string BrandID, string Receiver, string BarCode) {
+                Report_ExpressDetailRow rowReport_ExpressDetailRow = ((Report_ExpressDetailRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        OrderID,
+                        Seq1,
+                        Seq2,
+                        BrandID,
+                        Receiver,
+                        BarCode};
+                rowReport_ExpressDetailRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowReport_ExpressDetailRow);
+                return rowReport_ExpressDetailRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                Report_ExpressDetailDataTable cln = ((Report_ExpressDetailDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new Report_ExpressDetailDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal void InitVars() {
+                this.columnOrderID = base.Columns["OrderID"];
+                this.columnSeq1 = base.Columns["Seq1"];
+                this.columnSeq2 = base.Columns["Seq2"];
+                this.columnBrandID = base.Columns["BrandID"];
+                this.columnReceiver = base.Columns["Receiver"];
+                this.columnBarCode = base.Columns["BarCode"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            private void InitClass() {
+                this.columnOrderID = new global::System.Data.DataColumn("OrderID", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnOrderID);
+                this.columnSeq1 = new global::System.Data.DataColumn("Seq1", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSeq1);
+                this.columnSeq2 = new global::System.Data.DataColumn("Seq2", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSeq2);
+                this.columnBrandID = new global::System.Data.DataColumn("BrandID", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnBrandID);
+                this.columnReceiver = new global::System.Data.DataColumn("Receiver", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnReceiver);
+                this.columnBarCode = new global::System.Data.DataColumn("BarCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnBarCode);
+                this.columnOrderID.MaxLength = 13;
+                this.columnSeq1.MaxLength = 3;
+                this.columnSeq2.MaxLength = 2;
+                this.columnBrandID.MaxLength = 8;
+                this.columnReceiver.MaxLength = 20;
+                this.columnBarCode.MaxLength = 34;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public Report_ExpressDetailRow NewReport_ExpressDetailRow() {
+                return ((Report_ExpressDetailRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new Report_ExpressDetailRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(Report_ExpressDetailRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.Report_ExpressDetailRowChanged != null)) {
+                    this.Report_ExpressDetailRowChanged(this, new Report_ExpressDetailRowChangeEvent(((Report_ExpressDetailRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.Report_ExpressDetailRowChanging != null)) {
+                    this.Report_ExpressDetailRowChanging(this, new Report_ExpressDetailRowChangeEvent(((Report_ExpressDetailRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.Report_ExpressDetailRowDeleted != null)) {
+                    this.Report_ExpressDetailRowDeleted(this, new Report_ExpressDetailRowChangeEvent(((Report_ExpressDetailRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.Report_ExpressDetailRowDeleting != null)) {
+                    this.Report_ExpressDetailRowDeleting(this, new Report_ExpressDetailRowChangeEvent(((Report_ExpressDetailRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void RemoveReport_ExpressDetailRow(Report_ExpressDetailRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                Shipping ds = new Shipping();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "Report_ExpressDetailDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
         public partial class Report_ShippingAPDetailRow : global::System.Data.DataRow {
@@ -815,6 +1173,189 @@ namespace Sci.Production.Shipping {
         }
         
         /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class Report_ExpressDetailRow : global::System.Data.DataRow {
+            
+            private Report_ExpressDetailDataTable tableReport_ExpressDetail;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal Report_ExpressDetailRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableReport_ExpressDetail = ((Report_ExpressDetailDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string OrderID {
+                get {
+                    try {
+                        return ((string)(this[this.tableReport_ExpressDetail.OrderIDColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("資料表 \'Report_ExpressDetail\' 中資料行 \'OrderID\' 的值是 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableReport_ExpressDetail.OrderIDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string Seq1 {
+                get {
+                    try {
+                        return ((string)(this[this.tableReport_ExpressDetail.Seq1Column]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("資料表 \'Report_ExpressDetail\' 中資料行 \'Seq1\' 的值是 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableReport_ExpressDetail.Seq1Column] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string Seq2 {
+                get {
+                    try {
+                        return ((string)(this[this.tableReport_ExpressDetail.Seq2Column]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("資料表 \'Report_ExpressDetail\' 中資料行 \'Seq2\' 的值是 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableReport_ExpressDetail.Seq2Column] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string BrandID {
+                get {
+                    try {
+                        return ((string)(this[this.tableReport_ExpressDetail.BrandIDColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("資料表 \'Report_ExpressDetail\' 中資料行 \'BrandID\' 的值是 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableReport_ExpressDetail.BrandIDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string Receiver {
+                get {
+                    try {
+                        return ((string)(this[this.tableReport_ExpressDetail.ReceiverColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("資料表 \'Report_ExpressDetail\' 中資料行 \'Receiver\' 的值是 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableReport_ExpressDetail.ReceiverColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string BarCode {
+                get {
+                    try {
+                        return ((string)(this[this.tableReport_ExpressDetail.BarCodeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("資料表 \'Report_ExpressDetail\' 中資料行 \'BarCode\' 的值是 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableReport_ExpressDetail.BarCodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsOrderIDNull() {
+                return this.IsNull(this.tableReport_ExpressDetail.OrderIDColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetOrderIDNull() {
+                this[this.tableReport_ExpressDetail.OrderIDColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsSeq1Null() {
+                return this.IsNull(this.tableReport_ExpressDetail.Seq1Column);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetSeq1Null() {
+                this[this.tableReport_ExpressDetail.Seq1Column] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsSeq2Null() {
+                return this.IsNull(this.tableReport_ExpressDetail.Seq2Column);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetSeq2Null() {
+                this[this.tableReport_ExpressDetail.Seq2Column] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsBrandIDNull() {
+                return this.IsNull(this.tableReport_ExpressDetail.BrandIDColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetBrandIDNull() {
+                this[this.tableReport_ExpressDetail.BrandIDColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsReceiverNull() {
+                return this.IsNull(this.tableReport_ExpressDetail.ReceiverColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetReceiverNull() {
+                this[this.tableReport_ExpressDetail.ReceiverColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsBarCodeNull() {
+                return this.IsNull(this.tableReport_ExpressDetail.BarCodeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetBarCodeNull() {
+                this[this.tableReport_ExpressDetail.BarCodeColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
@@ -834,6 +1375,40 @@ namespace Sci.Production.Shipping {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public Report_ShippingAPDetailRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public class Report_ExpressDetailRowChangeEvent : global::System.EventArgs {
+            
+            private Report_ExpressDetailRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public Report_ExpressDetailRowChangeEvent(Report_ExpressDetailRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public Report_ExpressDetailRow Row {
                 get {
                     return this.eventRow;
                 }

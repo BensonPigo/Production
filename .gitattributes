@@ -1067,9 +1067,14 @@ Sci.Production.Shipping/P02_AddByPOItem.resx -text
 Sci.Production.Shipping/P02_AddNewItem.Designer.cs -text
 Sci.Production.Shipping/P02_AddNewItem.cs -text
 Sci.Production.Shipping/P02_AddNewItem.resx -text
+Sci.Production.Shipping/P02_BatchPrint.Designer.cs -text
+Sci.Production.Shipping/P02_BatchPrint.cs -text
+Sci.Production.Shipping/P02_BatchPrint.rdlc -text
+Sci.Production.Shipping/P02_BatchPrint.resx -text
 Sci.Production.Shipping/P02_CTNDimensionAndWeight.Designer.cs -text
 Sci.Production.Shipping/P02_CTNDimensionAndWeight.cs -text
 Sci.Production.Shipping/P02_CTNDimensionAndWeight.resx -text
+Sci.Production.Shipping/P02_DetailPrint.rdlc -text
 Sci.Production.Shipping/P02_EditFromPO.Designer.cs -text
 Sci.Production.Shipping/P02_EditFromPO.cs -text
 Sci.Production.Shipping/P02_EditFromPO.resx -text
@@ -1079,6 +1084,9 @@ Sci.Production.Shipping/P02_ImportFromFOCPackingList.resx -text
 Sci.Production.Shipping/P02_ImportFromPO.Designer.cs -text
 Sci.Production.Shipping/P02_ImportFromPO.cs -text
 Sci.Production.Shipping/P02_ImportFromPO.resx -text
+Sci.Production.Shipping/P02_Print.Designer.cs -text
+Sci.Production.Shipping/P02_Print.cs -text
+Sci.Production.Shipping/P02_Print.resx -text
 Sci.Production.Shipping/P03.Designer.cs -text
 Sci.Production.Shipping/P03.cs -text
 Sci.Production.Shipping/P03.resx -text

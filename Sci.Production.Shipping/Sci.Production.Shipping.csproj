@@ -170,6 +170,12 @@
     <Compile Include="P02_AddNewItem.Designer.cs">
       <DependentUpon>P02_AddNewItem.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_BatchPrint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_BatchPrint.Designer.cs">
+      <DependentUpon>P02_BatchPrint.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02_CTNDimensionAndWeight.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -187,6 +193,12 @@
     </Compile>
     <Compile Include="P02_ImportFromFOCPackingList.Designer.cs">
       <DependentUpon>P02_ImportFromFOCPackingList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_Print.Designer.cs">
+      <DependentUpon>P02_Print.cs</DependentUpon>
     </Compile>
     <Compile Include="P03.cs">
       <SubType>Form</SubType>
@@ -404,14 +416,22 @@
     <EmbeddedResource Include="P02_AddNewItem.resx">
       <DependentUpon>P02_AddNewItem.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P02_BatchPrint.rdlc" />
+    <EmbeddedResource Include="P02_BatchPrint.resx">
+      <DependentUpon>P02_BatchPrint.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P02_CTNDimensionAndWeight.resx">
       <DependentUpon>P02_CTNDimensionAndWeight.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P02_DetailPrint.rdlc" />
     <EmbeddedResource Include="P02_EditFromPO.resx">
       <DependentUpon>P02_EditFromPO.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_ImportFromFOCPackingList.resx">
       <DependentUpon>P02_ImportFromFOCPackingList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_Print.resx">
+      <DependentUpon>P02_Print.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P03.resx">
       <DependentUpon>P03.cs</DependentUpon>
