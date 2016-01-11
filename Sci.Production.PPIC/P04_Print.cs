@@ -123,23 +123,8 @@ left join ATData a2 on a2.FakeID = st.Seq+'Pri'";
             }
 
             //算出Excel的Column的英文位置
-            string excelColEng;
-            if (lastCol <= 26)
-            {
-                excelColEng = MyUtility.Convert.GetString(Convert.ToChar(lastCol + 64));
-            }
-            else
-            {
-                if ((lastCol + 64) % 26 == 0)
-                {
-                    excelColEng = MyUtility.Convert.GetString(Convert.ToChar((int)((lastCol - 1) / 26) + 64)) + 'Z';
-                }
-                else
-                {
-                    excelColEng = MyUtility.Convert.GetString(Convert.ToChar((int)((lastCol) / 26) + 64)) + MyUtility.Convert.GetString(Convert.ToChar(lastCol - ((int)(lastCol / 26) * 26) + 64));
-                }
-            }
-
+            string excelColEng = PublicPrg.Prgs.GetExcelEnglishColumnName(lastCol);
+            
             //合併儲存格,文字置中
             worksheet.Range[String.Format("A1:{0}1", excelColEng)].Merge(Type.Missing);
             worksheet.Range[String.Format("A1:{0}1", excelColEng)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;

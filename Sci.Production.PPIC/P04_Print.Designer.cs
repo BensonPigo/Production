@@ -59,7 +59,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(64, 23);
             this.label1.TabIndex = 94;
-            this.label1.Text = " Style No.";
+            this.label1.Text = "Style No.";
             // 
             // label2
             // 
