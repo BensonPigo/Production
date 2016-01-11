@@ -1010,6 +1010,7 @@ Sci.Production.PublicForm/StdGSDList.Designer.cs -text
 Sci.Production.PublicForm/StdGSDList.cs -text
 Sci.Production.PublicForm/StdGSDList.resx -text
 Sci.Production.PublicPrg/Logistic.cs -text
+Sci.Production.PublicPrg/PPIC.cs -text
 Sci.Production.PublicPrg/Packing.cs -text
 Sci.Production.PublicPrg/Planning.cs -text
 Sci.Production.PublicPrg/Properties/AssemblyInfo.cs -text
