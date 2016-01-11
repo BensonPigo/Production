@@ -26,7 +26,7 @@ namespace Sci.Production.Shipping
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select (case when ed.FabricType = 'M' then (select mpo.FactoryID from [Machine].dbo.MachinePO mpo, [Machine].dbo.MachinePO_Detail mpod where mpo.ID = mpod.ID and mpod.TPEPOID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2)
              when ed.FabricType = 'P' then (select ppo.FactoryID from [Machine].dbo.PartPO ppo, [Machine].dbo.PartPO_Detail ppod where ppo.ID = ppod.ID and ppod.TPEPOID = ed.PoID and ppod.Seq1 = ed.Seq1 and ppod.seq2 = ed.Seq2) 
-			 when ed.FabricType = 'O' then (select mpo.Factoryid from MiscPO mpo, MiscPO_Detail mpod where mpo.ID = mpod.ID and mpod.TPEPOID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2) else o.FactoryID end) as FactoryID,
+			 when ed.FabricType = 'O' then (select mpo.Factoryid from [Machine].dbo.MiscPO mpo, [Machine].dbo.MiscPO_Detail mpod where mpo.ID = mpod.ID and mpod.TPEPOID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2) else o.FactoryID end) as FactoryID,
 o.ProjectID,ed.PoID,(select min(SciDelivery) from Orders where POID = ed.PoID and (Category = 'B' or Category = o.Category)) as SCIDlv,
 (case when o.Category = 'B' then 'Bulk' when o.Category = 'S' then 'Sample' when o.Category = 'M' then 'Material' else '' end) as Category,
 iif(o.PFOrder = 1,dateadd(day,-10,o.SciDelivery),iif((select CountryID from Factory where ID = o.factoryID)='PH',iif((select MrTeam from Brand where ID = o.BrandID) = '01',dateadd(day,-15,o.SciDelivery),dateadd(day,-24,o.SciDelivery)),dateadd(day,-34,o.SciDelivery))) as InspDate,
