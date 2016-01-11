@@ -198,10 +198,16 @@ left join Country c on c.ID = od.Dest");
             listControlBindingSource1.DataSource = gridData;
         }
 
-        //Print/Preview
+        //To Excel
         private void button2_Click(object sender, EventArgs e)
         {
-
+            if ((DataTable)listControlBindingSource1.DataSource == null || ((DataTable)listControlBindingSource1.DataSource).Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("No data!!");
+                return;
+            }
+            Sci.Production.Packing.P12_Print callNextForm = new Sci.Production.Packing.P12_Print((DataTable)listControlBindingSource1.DataSource);
+            callNextForm.ShowDialog(this);
         }
 
         //Close

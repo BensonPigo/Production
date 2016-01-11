@@ -181,7 +181,7 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(113, 30);
             this.button2.TabIndex = 5;
-            this.button2.Text = "Print/Preview";
+            this.button2.Text = "To Excel";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -228,6 +228,7 @@
             this.grid1.AllowUserToResizeRows = false;
             this.grid1.AutoGenerateColumns = false;
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid1.DataSource = this.listControlBindingSource1;
