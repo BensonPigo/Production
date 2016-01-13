@@ -598,6 +598,9 @@ Sci.Production.Cutting/P01.resx -text
 Sci.Production.Cutting/P01_BundleCard.Designer.cs -text
 Sci.Production.Cutting/P01_BundleCard.cs -text
 Sci.Production.Cutting/P01_BundleCard.resx -text
+Sci.Production.Cutting/P01_MarkerList.cs -text
+Sci.Production.Cutting/P01_MarkerList.designer.cs -text
+Sci.Production.Cutting/P01_MarkerList.resx -text
 Sci.Production.Cutting/Properties/AssemblyInfo.cs -text
 Sci.Production.Cutting/Sci.Production.Cutting.csproj -text
 Sci.Production.IE/B01.Designer.cs -text
