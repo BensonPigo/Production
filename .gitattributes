@@ -1395,6 +1395,9 @@ Sci.Production.Warehouse/P07.resx -text
 Sci.Production.Warehouse/P07_AccumulatedQty.Designer.cs -text
 Sci.Production.Warehouse/P07_AccumulatedQty.cs -text
 Sci.Production.Warehouse/P07_AccumulatedQty.resx -text
+Sci.Production.Warehouse/P07_ExcelImport.Designer.cs -text
+Sci.Production.Warehouse/P07_ExcelImport.cs -text
+Sci.Production.Warehouse/P07_ExcelImport.resx -text
 Sci.Production.Warehouse/P07_ModifyRollDyelot.Designer.cs -text
 Sci.Production.Warehouse/P07_ModifyRollDyelot.cs -text
 Sci.Production.Warehouse/P07_ModifyRollDyelot.resx -text

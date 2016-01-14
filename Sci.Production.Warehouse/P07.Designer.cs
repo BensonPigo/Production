@@ -404,6 +404,7 @@
             this.btDownloadSample.TabIndex = 13;
             this.btDownloadSample.Text = "Download Sample File";
             this.btDownloadSample.UseVisualStyleBackColor = true;
+            this.btDownloadSample.Click += new System.EventHandler(this.btDownloadSample_Click);
             // 
             // btPrintSticker
             // 
@@ -438,6 +439,7 @@
             this.btImportFromExcel.TabIndex = 14;
             this.btImportFromExcel.Text = "Import From Excel";
             this.btImportFromExcel.UseVisualStyleBackColor = true;
+            this.btImportFromExcel.Click += new System.EventHandler(this.btImportFromExcel_Click);
             // 
             // button7
             // 
