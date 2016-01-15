@@ -16,7 +16,7 @@ namespace Sci.Production.Warehouse
     public partial class R17 : Sci.Win.Tems.PrintForm
     {
         DataTable dt;
-        DateTime t1, t2;
+
         int selectindex = 0;
         public R17(ToolStripMenuItem menuitem)
             :base(menuitem)
@@ -39,20 +39,16 @@ namespace Sci.Production.Warehouse
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            SetCount(dt.Rows.Count);
             DualResult result = Result.True;
             if (dt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!!");
                 return result;
             }
-            t2 = DateTime.Now;
-            //label7.Text = string.Format("{0}~{1} Records:{2}",t1,t2,dt.Rows.Count.ToString());
-            
-            SaveFileDialog sfldg = new SaveFileDialog();
-            if (!MyUtility.Excel.SaveXlsFile("Warehouse_R17_Location_List", out sfldg)) return result;
-            //result = MyUtility.Excel.CopyToXls(dt, sfldg.FileName);
-            return false;
 
+            MyUtility.Excel.CopyToXls(dt,"","Warehouse_R17_Location_List.xltx");
+            return false;
         }
 
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
@@ -75,7 +71,7 @@ namespace Sci.Production.Warehouse
 ,a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
 ,(select cast(MtlLocationID as varchar)+',' from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')) as location
 ,p.Width,p.ColorID Color,p.SizeSpec Size
-,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2) AS description 
+,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) AS description 
 ,a.StockType
 ,(select max(Deadline) from dbo.Inventory i 
 	where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = (select orders.Factoryid from orders where orders.id = a.poid)) deadline
@@ -106,7 +102,7 @@ where 1=1");
 a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
 ,(select cast(MtlLocationID as varchar)+',' from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')) as location
 ,p.Width,p.ColorID,p.SizeSpec
-,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2) AS description 
+,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) AS description 
 ,a.StockType
 ,(select max(Deadline) from dbo.Inventory i 
 					where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2
@@ -139,7 +135,7 @@ where 1=1 And b.mtllocationid >= '{0}' and b.mtllocationid <= '{1}'", location1,
                     sqlcmd.Append(string.Format(@"select distinct orders.factoryid factory,a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
 ,(select cast(MtlLocationID as varchar)+',' from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')) as location
 ,p.Width,p.ColorID,p.SizeSpec
-,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2) AS description 
+,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) AS description 
 ,a.StockType
 ,(select max(Deadline) from dbo.Inventory i 
 	where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = orders.Factoryid) deadline
@@ -170,7 +166,7 @@ And orders.scidelivery between '{0}' and '{1}'", dateRange1.Text1, dateRange1.Te
                     sqlcmd.Append(string.Format(@"select distinct orders.factoryid as factory,a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
 ,(select cast(MtlLocationID as varchar)+',' from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')) as location
 ,p.Width,p.ColorID,p.SizeSpec
-,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2) AS description 
+,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) AS description 
 ,a.StockType
 ,(select max(Deadline) from dbo.Inventory i 
 	where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = orders.FactoryID) deadline
@@ -202,7 +198,6 @@ And orders.scidelivery between '{2}' and '{3}'", location1, location2, dateRange
             #endregion
             try
             {
-                t1 = DateTime.Now;
                 DBProxy.Current.DefaultTimeout = 600;
                 result = DBProxy.Current.Select(null, sqlcmd.ToString(), out dt);
                 DBProxy.Current.DefaultTimeout = 30;
