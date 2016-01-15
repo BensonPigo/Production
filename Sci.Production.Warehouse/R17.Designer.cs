@@ -47,19 +47,19 @@
             // print
             // 
             this.print.Enabled = false;
-            this.print.Location = new System.Drawing.Point(371, 12);
+            this.print.Location = new System.Drawing.Point(440, 12);
             this.print.TabIndex = 7;
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(371, 48);
+            this.toexcel.Location = new System.Drawing.Point(440, 48);
             this.toexcel.TabIndex = 8;
             this.toexcel.Click += new System.EventHandler(this.toexcel_Click);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(371, 84);
+            this.close.Location = new System.Drawing.Point(440, 84);
             this.close.TabIndex = 9;
             // 
             // dateRange1
@@ -212,7 +212,7 @@
             // 
             // R17
             // 
-            this.ClientSize = new System.Drawing.Size(490, 205);
+            this.ClientSize = new System.Drawing.Size(559, 237);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.checkBox1);
