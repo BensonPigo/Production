@@ -35,7 +35,7 @@ round(isnull(o.smv,0)*id.Frequency*(isnull(mf.Rate,0)/100+1),4) as newSMV,isnull
 round(isnull(o.smv,0)*id.Frequency*(isnull(mf.Rate,0)/100+1)*60,4) as gsdsec
 from Style s
 inner join IETMS i on s.IETMSID = i.ID and s.IETMSVersion = i.Version
-inner join IETMS_Detail id on i.IETMSUkey = id.IETMSUkey
+inner join IETMS_Detail id on i.Ukey = id.IETMSUkey
 left join Operation o on id.OperationID = o.ID
 left join MachineType m on o.MachineTypeID = m.ID
 left join MtlFactor mf on mf.Type = 'F' and o.MtlFactorID = mf.ID
@@ -54,7 +54,7 @@ iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I'
 round(sum(isnull(o.smv,0)*id.Frequency*(isnull(mf.Rate,0)/100+1)*60),0) as tms
 from Style s
 inner join IETMS i on s.IETMSID = i.ID and s.IETMSVersion = i.Version
-inner join IETMS_Detail id on i.IETMSUkey = id.IETMSUkey
+inner join IETMS_Detail id on i.Ukey = id.IETMSUkey
 inner join Operation o on id.OperationID = o.ID
 inner join MachineType m on o.MachineTypeID = m.ID
 left join MtlFactor mf on mf.Type = 'F' and o.MtlFactorID = mf.ID
@@ -75,7 +75,7 @@ iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I'
 round(sum(isnull(o.smv,0)*id.Frequency*(isnull(mf.Rate,0)/100+1)*60),0) as tms
 from Style s
 inner join IETMS i on s.IETMSID = i.ID and s.IETMSVersion = i.Version
-inner join IETMS_Detail id on i.IETMSUkey = id.IETMSUkey
+inner join IETMS_Detail id on i.Ukey = id.IETMSUkey
 inner join Operation o on id.OperationID = o.ID
 left join MachineType m on o.MachineTypeID = m.ID
 left join MtlFactor mf on mf.Type = 'F' and o.MtlFactorID = mf.ID
@@ -149,7 +149,7 @@ group by id.Location,o.MachineTypeID,isnull(m.Description,''),isnull(m.DescCH,''
  round(sum(isnull(o.SMV,0)*isnull(id.Frequency,0)*(isnull(m.Rate,0)/100+1)*60),4) as ttlTMS
  from Style s
  left join IETMS i on s.IETMSID = i.ID and s.IETMSVersion = i.Version
- left join IETMS_Detail id on i.IETMSUkey = id.IETMSUkey
+ left join IETMS_Detail id on i.Ukey = id.IETMSUkey
  left join Operation o on id.OperationID = o.ID
  left join MtlFactor m on m.Type = 'F' and o.MtlFactorID = m.ID
  left join MachineType mt on o.MachineTypeID = mt.ID
@@ -253,14 +253,14 @@ group by id.Location,o.MachineTypeID,isnull(m.Description,''),isnull(m.DescCH,''
             dlg.RestoreDirectory = true;
             dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
             dlg.Title = "Save as Excel File";
-            dlg.FileName = "StdGSDList_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
+            //dlg.FileName = "StdGSDList_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
 
             dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
             {
                 // Open document
-                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName, xltfile: "PPIC_P01_StdGSDList.xltx",headerRow:2);
+                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName, xltfile: "PPIC_P01_StdGSDList.xltx",headerRow:1);
                 if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
             }
             else
