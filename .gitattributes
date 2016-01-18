@@ -643,6 +643,12 @@ Sci.Production.IE/P01_Copy.resx -text
 Sci.Production.IE/P01_History.Designer.cs -text
 Sci.Production.IE/P01_History.cs -text
 Sci.Production.IE/P01_History.resx -text
+Sci.Production.IE/P01_History_Print.Designer.cs -text
+Sci.Production.IE/P01_History_Print.cs -text
+Sci.Production.IE/P01_History_Print.resx -text
+Sci.Production.IE/P01_Print.Designer.cs -text
+Sci.Production.IE/P01_Print.cs -text
+Sci.Production.IE/P01_Print.resx -text
 Sci.Production.IE/P01_SelectOperationCode.Designer.cs -text
 Sci.Production.IE/P01_SelectOperationCode.cs -text
 Sci.Production.IE/P01_SelectOperationCode.resx -text

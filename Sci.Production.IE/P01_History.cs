@@ -100,7 +100,7 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
             Helper.Controls.Grid.Generator(this.grid1)
                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("OperationID", header: "Operation code", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .EditText("OperationDescEN", header: "Operation Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .EditText("DescEN", header: "Operation Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Numeric("Frequency", header: "Frequency", decimal_places: 2, iseditingreadonly: true)
                 .Text("OperationMtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -144,6 +144,13 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
             }
             DialogResult result = callNextForm.ShowDialog(this);
 
+        }
+
+        //To Excel
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Sci.Production.IE.P01_History_Print callNextForm = new Sci.Production.IE.P01_History_Print(masterData, MyUtility.Convert.GetString(comboBox1.SelectedValue), MyUtility.Convert.GetString(displayBox3.Value), MyUtility.Convert.GetInt(numericBox1.Value), MyUtility.Convert.GetInt(numericBox2.Value));
+            DialogResult result = callNextForm.ShowDialog(this);
         }
     }
 }

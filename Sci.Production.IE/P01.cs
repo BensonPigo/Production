@@ -537,6 +537,18 @@ order by td.Seq", masterID);
             return base.ClickSaveBefore();
         }
 
+        protected override bool ClickPrint()
+        {
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            {
+                MyUtility.Msg.WarningBox("No data!!");
+                return false;
+            }
+            Sci.Production.IE.P01_Print callNextForm = new Sci.Production.IE.P01_Print(CurrentMaintain);
+            DialogResult result = callNextForm.ShowDialog(this);
+            return base.ClickPrint();
+        }
+
         //Style
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
