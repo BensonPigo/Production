@@ -1639,6 +1639,7 @@ Sci.Production/app.config -text
 XLT/Warehouse_R02.xltx -text
 XLT/Warehouse_R17_Location_List.xltx -text
 XLT/Warehouse_R18_Material_Tracking.xltx -text
+XLT/Warehouse_R19_Material_Borrowing.xltx -text
 _Dll/Ict.Win.App.dll -text
 _Dll/Ict.Win.Report2010.dll -text
 _Dll/Ict.Win.UI.dll -text
