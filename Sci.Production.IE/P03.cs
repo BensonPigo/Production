@@ -33,7 +33,7 @@ namespace Sci.Production.IE
 from LineMapping_Detail ld
 left join Employee e on ld.EmployeeID = e.ID
 left join Operation o on ld.OperationID = o.ID
-where ld.ID = {0} order by ld.No", masterID);
+where ld.ID = {0} order by ld.No,ld.GroupKey", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -461,6 +461,13 @@ where ld.ID = {0} order by ld.No", masterID);
             base.OnDetailGridDelete();
             AssignNoGSDCycleTime(groupkey);
             ReclculateGridGSDCycleTime(no);//傳算被刪除掉的No的TotalGSD & Total Cycle Time
+        }
+
+        protected override bool ClickPrint()
+        {
+            Sci.Production.IE.P03_Print callNextForm = new Sci.Production.IE.P03_Print(CurrentMaintain, MyUtility.Convert.GetDecimal(numericBox8.Value));
+            callNextForm.ShowDialog(this);
+            return base.ClickPrint();
         }
 
         //加總傳入的GroupKey的GSD & Cycle Time
