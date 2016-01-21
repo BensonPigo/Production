@@ -681,6 +681,11 @@ Sci.Production.IE/Sci.Production.IE.csproj -text
 Sci.Production.Logistic/B01.Designer.cs -text
 Sci.Production.Logistic/B01.cs -text
 Sci.Production.Logistic/B01.resx -text
+Sci.Production.Logistic/Logistic.Designer.cs -text
+Sci.Production.Logistic/Logistic.cs -text
+Sci.Production.Logistic/Logistic.xsc -text
+Sci.Production.Logistic/Logistic.xsd -text
+Sci.Production.Logistic/Logistic.xss -text
 Sci.Production.Logistic/P01.Designer.cs -text
 Sci.Production.Logistic/P01.cs -text
 Sci.Production.Logistic/P01.resx -text
@@ -712,6 +717,7 @@ Sci.Production.Logistic/P03_ImportFromBarCode.resx -text
 Sci.Production.Logistic/P04.Designer.cs -text
 Sci.Production.Logistic/P04.cs -text
 Sci.Production.Logistic/P04.resx -text
+Sci.Production.Logistic/P04_PrintMoveTicket.rdlc -text
 Sci.Production.Logistic/Properties/AssemblyInfo.cs -text
 Sci.Production.Logistic/Properties/Resources.Designer.cs -text
 Sci.Production.Logistic/Properties/Resources.resx -text

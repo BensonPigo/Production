@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Logistic" targetNamespace="http://tempuri.org/Logistic.xsd" xmlns:mstns="http://tempuri.org/Logistic.xsd" xmlns="http://tempuri.org/Logistic.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection ConnectionStringObject="Data Source=127.0.0.1;Initial Catalog=PMS;Persist Security Info=True;User ID=sa;Password=123456" IsAppSettingsProperty="false" Modifier="Assembly" Name="j1-7573a.PMS.dbo" ParameterPrefix="@" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="Logistic" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="True" msprop:Generator_DataSetName="Logistic" msprop:Generator_UserDSName="Logistic">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Report_UpdateLocation" msprop:Generator_TableClassName="Report_UpdateLocationDataTable" msprop:Generator_TableVarName="tableReport_UpdateLocation" msprop:Generator_TablePropName="Report_UpdateLocation" msprop:Generator_RowDeletingName="Report_UpdateLocationRowDeleting" msprop:Generator_RowChangingName="Report_UpdateLocationRowChanging" msprop:Generator_RowEvHandlerName="Report_UpdateLocationRowChangeEventHandler" msprop:Generator_RowDeletedName="Report_UpdateLocationRowDeleted" msprop:Generator_UserTableName="Report_UpdateLocation" msprop:Generator_RowChangedName="Report_UpdateLocationRowChanged" msprop:Generator_RowEvArgName="Report_UpdateLocationRowChangeEvent" msprop:Generator_RowClassName="Report_UpdateLocationRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="OrderID" msprop:Generator_ColumnVarNameInTable="columnOrderID" msprop:Generator_ColumnPropNameInRow="OrderID" msprop:Generator_ColumnPropNameInTable="OrderIDColumn" msprop:Generator_UserColumnName="OrderID" type="xs:string" minOccurs="0" />
+              <xs:element name="CustPONo" msprop:Generator_ColumnVarNameInTable="columnCustPONo" msprop:Generator_ColumnPropNameInRow="CustPONo" msprop:Generator_ColumnPropNameInTable="CustPONoColumn" msprop:Generator_UserColumnName="CustPONo" type="xs:string" minOccurs="0" />
+              <xs:element name="BrandID" msprop:Generator_ColumnVarNameInTable="columnBrandID" msprop:Generator_ColumnPropNameInRow="BrandID" msprop:Generator_ColumnPropNameInTable="BrandIDColumn" msprop:Generator_UserColumnName="BrandID" type="xs:string" minOccurs="0" />
+              <xs:element name="StyleID" msprop:Generator_ColumnVarNameInTable="columnStyleID" msprop:Generator_ColumnPropNameInRow="StyleID" msprop:Generator_ColumnPropNameInTable="StyleIDColumn" msprop:Generator_UserColumnName="StyleID" type="xs:string" minOccurs="0" />
+              <xs:element name="BuyerDelivery" msprop:Generator_ColumnVarNameInTable="columnBuyerDelivery" msprop:Generator_ColumnPropNameInRow="BuyerDelivery" msprop:Generator_ColumnPropNameInTable="BuyerDeliveryColumn" msprop:Generator_UserColumnName="BuyerDelivery" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="Dest" msprop:Generator_ColumnVarNameInTable="columnDest" msprop:Generator_ColumnPropNameInRow="Dest" msprop:Generator_ColumnPropNameInTable="DestColumn" msprop:Generator_UserColumnName="Dest" type="xs:string" minOccurs="0" />
+              <xs:element name="FtyGroup" msprop:Generator_ColumnVarNameInTable="columnFtyGroup" msprop:Generator_ColumnPropNameInRow="FtyGroup" msprop:Generator_ColumnPropNameInTable="FtyGroupColumn" msprop:Generator_UserColumnName="FtyGroup" type="xs:string" minOccurs="0" />
+              <xs:element name="TotalCTN" msprop:Generator_ColumnVarNameInTable="columnTotalCTN" msprop:Generator_ColumnPropNameInRow="TotalCTN" msprop:Generator_ColumnPropNameInTable="TotalCTNColumn" msprop:Generator_UserColumnName="TotalCTN" type="xs:int" minOccurs="0" />
+              <xs:element name="ClogCTN" msprop:Generator_ColumnVarNameInTable="columnClogCTN" msprop:Generator_ColumnPropNameInRow="ClogCTN" msprop:Generator_ColumnPropNameInTable="ClogCTNColumn" msprop:Generator_UserColumnName="ClogCTN" type="xs:int" minOccurs="0" />
+              <xs:element name="TransferPerCent" msprop:Generator_ColumnVarNameInTable="columnTransferPerCent" msprop:Generator_ColumnPropNameInRow="TransferPerCent" msprop:Generator_ColumnPropNameInTable="TransferPerCentColumn" msprop:Generator_UserColumnName="TransferPerCent" type="xs:decimal" minOccurs="0" />
+              <xs:element name="CTNStartNo" msprop:Generator_ColumnVarNameInTable="columnCTNStartNo" msprop:Generator_ColumnPropNameInRow="CTNStartNo" msprop:Generator_ColumnPropNameInTable="CTNStartNoColumn" msprop:Generator_UserColumnName="CTNStartNo" type="xs:string" minOccurs="0" />
+              <xs:element name="Article" msprop:Generator_ColumnVarNameInTable="columnArticle" msprop:Generator_ColumnPropNameInRow="Article" msprop:Generator_ColumnPropNameInTable="ArticleColumn" msprop:Generator_UserColumnName="Article" type="xs:string" minOccurs="0" />
+              <xs:element name="Color" msprop:Generator_ColumnVarNameInTable="columnColor" msprop:Generator_ColumnPropNameInRow="Color" msprop:Generator_ColumnPropNameInTable="ColorColumn" msprop:Generator_UserColumnName="Color" type="xs:string" minOccurs="0" />
+              <xs:element name="SizeCode" msprop:Generator_ColumnVarNameInTable="columnSizeCode" msprop:Generator_ColumnPropNameInRow="SizeCode" msprop:Generator_ColumnPropNameInTable="SizeCodeColumn" msprop:Generator_UserColumnName="SizeCode" type="xs:string" minOccurs="0" />
+              <xs:element name="ShipQty" msprop:Generator_ColumnVarNameInTable="columnShipQty" msprop:Generator_ColumnPropNameInRow="ShipQty" msprop:Generator_ColumnPropNameInTable="ShipQtyColumn" msprop:Generator_UserColumnName="ShipQty" type="xs:int" minOccurs="0" />
+              <xs:element name="ClogLocationId" msprop:Generator_ColumnVarNameInTable="columnClogLocationId" msprop:Generator_ColumnPropNameInRow="ClogLocationId" msprop:Generator_ColumnPropNameInTable="ClogLocationIdColumn" msprop:Generator_UserColumnName="ClogLocationId" type="xs:string" minOccurs="0" />
+              <xs:element name="Remark" msprop:Generator_ColumnVarNameInTable="columnRemark" msprop:Generator_ColumnPropNameInRow="Remark" msprop:Generator_ColumnPropNameInTable="RemarkColumn" msprop:Generator_UserColumnName="Remark" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

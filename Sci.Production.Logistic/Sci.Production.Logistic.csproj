@@ -116,6 +116,15 @@
     <Compile Include="B01.Designer.cs">
       <DependentUpon>B01.cs</DependentUpon>
     </Compile>
+    <Compile Include="Logistic.cs">
+      <DependentUpon>Logistic.xsd</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Logistic.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Logistic.xsd</DependentUpon>
+    </Compile>
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -218,6 +227,7 @@
     <EmbeddedResource Include="P04.resx">
       <DependentUpon>P04.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P04_PrintMoveTicket.rdlc" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -242,6 +252,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Logistic.xsc">
+      <DependentUpon>Logistic.xsd</DependentUpon>
+    </None>
+    <None Include="Logistic.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>Logistic.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Logistic.xss">
+      <DependentUpon>Logistic.xsd</DependentUpon>
+    </None>
     <None Include="Resources\trffc15.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

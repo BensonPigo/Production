@@ -10,6 +10,8 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using Sci;
+using Sci.Win;
+using System.Reflection;
 
 namespace Sci.Production.Logistic
 {
@@ -110,14 +112,14 @@ namespace Sci.Production.Logistic
 
             StringBuilder sqlCmd = new StringBuilder();
 
-            sqlCmd.Append(string.Format(@"select 0 as selected, d.*,
+            sqlCmd.Append(string.Format(@"select 0 as selected, d.*,iif(d.TotalCTN > 0,ROUND((CONVERT(decimal,d.ClogCTN)/d.TotalCTN),4),0) as TransferPerCent,
 (select sum(QtyPerCTN) from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo) as QtyPerCTN,
 (select sum(ShipQty) from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo) as ShipQty,
 substring((select cast(Article as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Article as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Article, 
 substring((select cast(Color as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Color as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Color,
 substring((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as SizeCode
 from (
-	  select distinct b.TransferToClogID, b.ID, b.OrderID, c.CustPONo, b.CTNStartNo, b.ClogLocationId, b.Remark, b.ClogReceiveID
+	  select distinct b.TransferToClogID, b.ID, b.OrderID, c.CustPONo, b.CTNStartNo, b.ClogLocationId, b.Remark, b.ClogReceiveID,c.BrandID,c.BuyerDelivery,c.StyleID,c.FtyGroup,'('+c.Dest+')'+isnull((select Alias from Country where ID = c.Dest),'') as Dest,c.TotalCTN,c.ClogCTN
 	  from PackingList a, PackingList_Detail b, Orders c
 	  where (a.Type = 'B' or a.Type = 'L')
 	  and a.ID = b.ID
@@ -174,6 +176,7 @@ from (
             else
             {
                 MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
+                return;
             }
             listControlBindingSource1.DataSource = gridData;
 
@@ -430,6 +433,42 @@ from (
                         comboBox2.DataSource = comboBox2_RowSource1;
                         gridData.DefaultView.RowFilter = "";
                         break;
+                }
+            }
+        }
+
+        //Print Move Ticket
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+            DualResult result;
+            IReportResource reportresource;
+            ReportDefinition rd = new ReportDefinition();
+            if (!(result = ReportResources.ByEmbeddedResource(Assembly.GetAssembly(GetType()), GetType(), "P04_PrintMoveTicket.rdlc", out reportresource)))
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+            }
+            else
+            {
+                DataTable Report_UpdateLocation;
+                try
+                {
+                    MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource1.DataSource, "Selected,OrderId,CustPONo,BrandID,StyleID,BuyerDelivery,Dest,FtyGroup,TotalCTN,ClogCTN,TransferPerCent,CTNStartNo,Article,Color,SizeCode,ShipQty,ClogLocationId,Remark", "select * from #tmp where Selected = 1 order by OrderID, CTNStartNo", out Report_UpdateLocation);
+                }
+                catch (Exception ex)
+                {
+                    MyUtility.Msg.ErrorBox("Prepare data error.\r\n" + ex.ToString());
+                    return;
+                }
+
+                rd.ReportResource = reportresource;
+                rd.ReportDataSources.Add(new System.Collections.Generic.KeyValuePair<string, object>("Report_UpdateLocation", Report_UpdateLocation));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("title", MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where ID = '{0}'",Sci.Env.User.Keyword))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("request", MyUtility.Convert.GetString(comboBox3.SelectedValue)));
+                
+                using (var frm = new Sci.Win.Subs.ReportView(rd))
+                {
+                    frm.ShowDialog(this);
                 }
             }
         }
