@@ -86,6 +86,12 @@
     <Compile Include="EditRemark.Designer.cs">
       <DependentUpon>EditRemark.cs</DependentUpon>
     </Compile>
+    <Compile Include="ColorCombination.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ColorCombination.Designer.cs">
+      <DependentUpon>ColorCombination.cs</DependentUpon>
+    </Compile>
     <Compile Include="StdGSDList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -97,6 +103,9 @@
   <ItemGroup>
     <EmbeddedResource Include="EditRemark.resx">
       <DependentUpon>EditRemark.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorCombination.resx">
+      <DependentUpon>ColorCombination.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="StdGSDList.resx">
       <DependentUpon>StdGSDList.cs</DependentUpon>
