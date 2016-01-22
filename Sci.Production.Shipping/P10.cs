@@ -273,18 +273,14 @@ where {0} order by g.ID", masterID);
             return base.ClickDeleteBefore();
         }
 
-        protected override bool OnDeleteDetails()
+        protected override DualResult OnDeleteDetails()
         {
             updateCmds.Clear();
             updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '' where ShipPlanID = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
             updateCmds.Add(DeletePLCmd("ShipPlanID", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
             DualResult result = DBProxy.Current.Executes(null, updateCmds);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox(result.ToString());
-                return false;
-            }
-            return true;
+
+            return result;
         }
 
         protected override bool ClickPrint()

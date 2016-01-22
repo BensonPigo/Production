@@ -74,15 +74,15 @@ namespace Sci.Production.Shipping
             return Result.True;
         }
 
-        protected override bool OnDeletePost()
+        protected override DualResult OnDeletePost()
         {
             DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(CurrentData["ID"])));
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
-                return false;
+                DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
+                return failResult;
             }
-            return true;
+            return Result.True;
         }
     }
 }

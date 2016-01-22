@@ -472,16 +472,16 @@ where sd.ID = '{0}'", masterID);
             return base.ClickDeleteBefore();
         }
 
-        protected override bool ClickDeletePre()
+        protected override DualResult ClickDeletePre()
         {
             string sqlCmd = string.Format("delete from ShareExpense where ShippingAPID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Delete ShareExpense false.\n\r"+result.ToString());
-                return false;
+                DualResult failResult = new DualResult(false, "Delete ShareExpense false.\r\n" + result.ToString());
+                return failResult;
             }
-            return base.ClickDeletePre();
+            return Result.True;
         }
 
         protected override bool ClickPrint()

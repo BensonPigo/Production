@@ -219,15 +219,15 @@ from Express_Detail where ID = '{0}' and Seq2 = ''", MyUtility.Convert.GetString
             return Result.True;
         }
 
-        protected override bool OnDeletePost()
+        protected override DualResult OnDeletePost()
         {
             DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(CurrentData["ID"])));
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
-                return false;
+                DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
+                return failResult;
             }
-            return true;
+            return Result.True;
         }
 
         //Team Leader

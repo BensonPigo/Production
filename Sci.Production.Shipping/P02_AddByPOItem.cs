@@ -271,36 +271,38 @@ from Express_Detail where ID = '{0}' and Seq2 = ''", MyUtility.Convert.GetString
             return Result.True;
         }
 
-        protected override bool OnDeletePre()
+        protected override DualResult OnDeletePre()
         {
             if (MyUtility.Convert.GetString(CurrentData["Category"]) == "1")
             {
+                DualResult failResult;
+                
                 DualResult result = DBProxy.Current.Execute(null, string.Format("update PackingList set ExpressID = '' where ID = '{0}'", MyUtility.Convert.GetString(CurrentData["DutyNo"])));
                 if (!result)
                 {
-                    MyUtility.Msg.WarningBox("Update packing list fail!! Pls try again.\r\n" + result.ToString());
-                    return false;
+                    failResult = new DualResult(false, "Update packing list fail!! Pls try again.\r\n" + result.ToString());
+                    return failResult;
                 }
 
                 result = DBProxy.Current.Execute(null, string.Format("delete Express_Detail where ID = '{0}' and DutyNo = '{1}'", MyUtility.Convert.GetString(CurrentData["ID"]), MyUtility.Convert.GetString(CurrentData["DutyNo"])));
                 if (!result)
                 {
-                    MyUtility.Msg.WarningBox("Delete fail!! Pls try again.\r\n" + result.ToString());
-                    return false;
+                    failResult = new DualResult(false, "Delete fail!! Pls try again.\r\n" + result.ToString());
+                    return failResult;
                 }
             }
-            return true;
+            return Result.True;
         }
 
-        protected override bool OnDeletePost()
+        protected override DualResult OnDeletePost()
         {
             DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(CurrentData["ID"])));
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
-                return false;
+                DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
+                return failResult;
             }
-            return true;
+            return Result.True;
         }
     }
 }

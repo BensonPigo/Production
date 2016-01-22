@@ -319,19 +319,11 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))
             return base.ClickDeleteBefore();
         }
 
-        protected override bool OnDeleteDetails()
+        protected override DualResult OnDeleteDetails()
         {
             string updateCmd = string.Format("update PackingList set GMTBookingLock = '', INVNo = '', ShipPlanID = '' where INVNo = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
-            if (result)
-            {
-                return true;
-            }
-            else
-            {
-                MyUtility.Msg.ErrorBox(result.ToString());
-                return false;
-            }
+            return result;
         }
 
         protected override bool ClickSaveBefore()
