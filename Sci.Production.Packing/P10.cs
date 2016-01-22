@@ -137,7 +137,7 @@ where td.Id = '{0}' order by td.PackingListID,td.OrderID,td.CTNStartNo", masterI
         }
 
         //刪除更新PalcingList_Detail資料，資料刪除後也要更新PackingList_Detail的值
-        protected override bool ClickDeletePost()
+        protected override DualResult ClickDeletePost()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             string sqlUpdatePackingList = string.Format(@"update PackingList_Detail 
@@ -161,17 +161,17 @@ where td.Id = '{0}' order by td.PackingListID,td.OrderID,td.CTNStartNo", masterI
             DualResult result;
             if (!(result = DBProxy.Current.Execute(null, sqlUpdatePackingList)))
             {
-                return false;
+                return result;
             }
 
             //Update Orders的資料
             DualResult prgResult = Prgs.UpdateOrdersCTN(detailOrderID);
             if (!prgResult)
             {
-                MyUtility.Msg.WarningBox("Update orders data fail!\r\n" + prgResult.ToString());
-                return false;
+                DualResult failResult = new DualResult(false, "Update orders data fail!\r\n" + prgResult.ToString());
+                return failResult;
             }
-            return true;
+            return Result.True;
         }
 
         //存檔後要更新PalcingList_Detail資料，表身資料刪除後也要更新PackingList_Detail的值
