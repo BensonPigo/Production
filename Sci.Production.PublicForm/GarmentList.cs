@@ -13,20 +13,20 @@ namespace Sci.Production.PublicForm
 {
     public partial class GarmentList : Sci.Win.Subs.Base
     {
-        private string cutid;
+        private string Styleyukey;
         private DataTable headertb;
         private string patternukey;
         public GarmentList(string cID)
         {
             InitializeComponent();
-            cutid = cID;
+            Styleyukey = cID;
             requery();
             gridSetup();
 
         }
         private void requery()
         {
-            string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", cutid, "Orders", "ID");
+            
             #region 撈取Pattern Ukey  找最晚Edit且Status 為Completed
             string patidsql = String.Format(
                             @"SELECT ukey
