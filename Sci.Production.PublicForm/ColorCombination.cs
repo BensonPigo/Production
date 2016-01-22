@@ -101,15 +101,17 @@ namespace Sci.Production.PublicForm
             gridtb.Rows.Add(ndr);
             foreach (DataRow dr in qttb.Rows)
             {
-                if (dr["seqno"] != "01")
+                if (dr["seqno"].ToString() != "01")
                 {
                     string seqno = MyUtility.Convert.NTOC((MyUtility.Convert.GetInt(dr["SEQNo"])-1),2);
                     DataRow[] drqt = qttb2.Select(string.Format("LectraCode ='{0}' and SEQNO = '{1}'", seqno));
                     string patternfab = drqt[0]["PatternPanel"].ToString().Trim() + drqt[0]["FabricCode"].ToString().Trim().Substring(1,2);
                     string qtpatternfab = drqt[0]["QtPatternPanel"].ToString().Trim() + drqt[0]["QtFabricCode"].ToString().Trim().Substring(1,2);
+                    string qtpatternwidrh = drqt[0]["QtPatternPanel"].ToString().Trim() + drqt[0]["QtWidth"].ToString().Trim().Substring(1, 2);
                     DataRow[] tbdr = gridtb.Select("Article = 'QT With'");
                     tbdr[0][patternfab] = drqt[0][qtpatternfab];
                     tbdr = gridtb.Select("Article = 'QT Width'");
+                    tbdr[0][patternfab] = drqt[0][qtpatternwidrh];
                 }
             }
             #endregion
@@ -222,24 +224,6 @@ namespace Sci.Production.PublicForm
             grid2.DataSource = colortb;
         }
 
-        private void grid1_CurrentCellChanged(object sender, EventArgs e)
-        {
-            
-            //string art = grid1.CurrentCell.Value.ToString();
-            //colortb.DefaultView.RowFilter = string.Format("mid = '{0}'",art);
-        }
-
-        private void grid1_SelectionChanged(object sender, EventArgs e)
-        {
-            //DataRow dr = grid1.GetDataRow(grid1.GetSelectedRowIndex());
-            
-            //grid1.EditingControlShowing += (s,e) =>
-            //    {
-            //        e.
-            //        e.Control.Text 
-            //    }
-            //colortb.DefaultView
-        }
         
     }
 }

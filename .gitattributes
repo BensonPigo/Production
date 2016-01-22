@@ -1043,6 +1043,12 @@ Sci.Production.PublicForm/ColorCombination.resx -text
 Sci.Production.PublicForm/EditRemark.Designer.cs -text
 Sci.Production.PublicForm/EditRemark.cs -text
 Sci.Production.PublicForm/EditRemark.resx -text
+Sci.Production.PublicForm/GarmentList.Designer.cs -text
+Sci.Production.PublicForm/GarmentList.cs -text
+Sci.Production.PublicForm/GarmentList.resx -text
+Sci.Production.PublicForm/GarmentList_ColorArticle.Designer.cs -text
+Sci.Production.PublicForm/GarmentList_ColorArticle.cs -text
+Sci.Production.PublicForm/GarmentList_ColorArticle.resx -text
 Sci.Production.PublicForm/Properties/AssemblyInfo.cs -text
 Sci.Production.PublicForm/Sci.Production.PublicForm.csproj -text
 Sci.Production.PublicForm/StdGSDList.Designer.cs -text
