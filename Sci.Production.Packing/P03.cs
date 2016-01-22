@@ -848,7 +848,7 @@ where ID = @INVNo";
             return base.ClickDeleteBefore();
         }
 
-        protected override bool ClickDeletePost()
+        protected override DualResult ClickDeletePost()
         {
             DataTable OrderData;
             string sqlCmd = string.Format("select distinct OrderID from PackingList_Detail where ID = '{0}'", CurrentMaintain["ID"].ToString());
@@ -864,7 +864,7 @@ where ID = @INVNo";
                 DualResult failResult = new DualResult(false, "Update Orders CTN fail!\r\n" + result.ToString());
                 return failResult;
             }
-            return base.ClickDeletePost();
+            return Result.True;
         }
 
         //表身Grid的Delete
