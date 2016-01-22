@@ -118,7 +118,7 @@ namespace Sci.Production.PublicForm
         private void button2_Click(object sender, EventArgs e)
         {
             Sci.Production.PublicForm.GarmentList_ColorArticle callNextForm =
-new Sci.Production.PublicForm.GarmentList_ColorArticle(patternukey);
+new Sci.Production.PublicForm.GarmentList_ColorArticle(patternukey,Styleyukey);
             callNextForm.ShowDialog(this);
         }
     }

@@ -11,13 +11,16 @@ using Sci.Data;
 
 namespace Sci.Production.PublicForm
 {
+    
     public partial class GarmentList_ColorArticle : Sci.Win.Subs.Base
     {
+        private string styleukey;
         private string cutid;
-        public GarmentList_ColorArticle(string cID)
+        public GarmentList_ColorArticle(string cID,string styukey)
         {
             InitializeComponent();
             cutid = cID;
+            styleukey = styukey;
             requery();
             gridSetup();
 
@@ -29,7 +32,11 @@ namespace Sci.Production.PublicForm
             from Pattern_GL_Article a
             Where a.PatternUkey = '{0}'",cutid);
             DataTable gridtb;
-            DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
+            DualResult sqldr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
+            if(!sqldr)
+            {
+                ShowErr(sqlcmd,sqldr);
+            }
             grid1.DataSource = gridtb;
         }
         private void gridSetup()
@@ -38,7 +45,6 @@ namespace Sci.Production.PublicForm
                 .Text("ArticleGroup", header: "Article Group", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("SizeRange", header: "Size Range", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("PatternPanelComb", header: "Pattern Panel Comb", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Remark", header: "Comb", width: Widths.AnsiChars(20), iseditingreadonly: true);
 
         }
