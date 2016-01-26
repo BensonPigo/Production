@@ -973,6 +973,9 @@ Sci.Production.Packing/P05_BatchImport.resx -text
 Sci.Production.Packing/P06.Designer.cs -text
 Sci.Production.Packing/P06.cs -text
 Sci.Production.Packing/P06.resx -text
+Sci.Production.Packing/P06_Print.Designer.cs -text
+Sci.Production.Packing/P06_Print.cs -text
+Sci.Production.Packing/P06_Print.resx -text
 Sci.Production.Packing/P08.Designer.cs -text
 Sci.Production.Packing/P08.cs -text
 Sci.Production.Packing/P08.resx -text

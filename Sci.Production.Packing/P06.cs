@@ -525,6 +525,17 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), C
             return base.ClickDeleteBefore();
         }
 
+        protected override bool ClickPrint()
+        {
+            int orderQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format(@"select isnull(oq.Qty ,0) as Qty
+from (select distinct OrderID,OrderShipmodeSeq from PackingList_Detail where ID = '{0}') a
+left join Order_QtyShip oq on oq.Id = a.OrderID and oq.Seq = a.OrderShipmodeSeq", MyUtility.Convert.GetString(CurrentMaintain["ID"]))));
+            Sci.Production.Packing.P06_Print callNextForm = new Sci.Production.Packing.P06_Print(CurrentMaintain, orderQty);
+            callNextForm.ShowDialog(this);
+
+            return base.ClickPrint();
+        }
+
         //檢查輸入的SP#是否正確
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
