@@ -539,7 +539,39 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             #endregion
 
             worksheet.Cells[row, 1] = "Remark: " + MyUtility.Convert.GetString(CurrentMaintain["Remark"]);
-            worksheet.Cells[row + 1, 2] = MyUtility.Convert.GetString(CurrentMaintain["SpecialInstruction"]);
+            //填Special Instruction
+            //先取得Special Instruction總共有幾行
+            int startIndex = 0;
+            int endIndex = 0;
+            int dataRow = 0;
+            for (int i = 1; ; i++)
+            {
+                if (i > 1)
+                {
+                    startIndex = endIndex + 2;
+                }
+                if (MyUtility.Convert.GetString(CurrentMaintain["SpecialInstruction"]).IndexOf("\r\n", startIndex) > 0)
+                {
+                    endIndex = MyUtility.Convert.GetString(CurrentMaintain["SpecialInstruction"]).IndexOf("\r\n", startIndex);
+                }
+                else
+                {
+                    dataRow = i + 1;
+                    break;
+                }
+            }
+            row++;
+            if (dataRow > 2)
+            {
+                for (int i = 3; i < dataRow; i++)
+                {
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(row + 1)), Type.Missing).EntireRow;
+                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                }
+            }
+            worksheet.Cells[row, 2] = MyUtility.Convert.GetString(CurrentMaintain["SpecialInstruction"]);
+
+            //Carton Dimension:
             StringBuilder ctnDimension = new StringBuilder();
             foreach (DataRow dr in CtnDim.Rows)
             {
@@ -553,8 +585,8 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                     ctnDimension.Append(string.Format("{0} -> {1} / {2}, ", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"])));
                 }
             }
-
-            worksheet.Cells[row + 12, 2] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0,ctnDimension.ToString().Length-2) : "";
+            row = row + (dataRow > 2 ? dataRow - 1 : 2);
+            worksheet.Cells[row, 2] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0,ctnDimension.ToString().Length-2) : "";
 
             MyUtility.Msg.WaitClear();
             
