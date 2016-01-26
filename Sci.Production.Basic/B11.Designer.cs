@@ -243,7 +243,7 @@
             this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox1.Location = new System.Drawing.Point(147, 15);
             this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(66, 23);
+            this.displayBox1.Size = new System.Drawing.Size(85, 23);
             this.displayBox1.TabIndex = 13;
             // 
             // displayBox2
@@ -438,7 +438,7 @@
             this.IsSupportPrint = false;
             this.Name = "B11";
             this.Text = "B11. CustCD";
-            this.UniqueExpress = "BrandID+ID";
+            this.UniqueExpress = "BrandID,ID";
             this.WorkAlias = "CustCD";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
