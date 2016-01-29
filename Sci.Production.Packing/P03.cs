@@ -869,6 +869,12 @@ where ID = @INVNo";
 
         protected override bool ClickPrint()
         {
+            //如果是多訂單一起裝箱就不列印
+            if (MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("select COUNT(distinct OrderID+OrderShipmodeSeq) from PackingList_Detail where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])))) > 1)
+            {
+                MyUtility.Msg.WarningBox("This packing list more than 1 SP#, so can't print!!");
+                return false;
+            }
             int orderQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format(@"select isnull(oq.Qty ,0) as Qty
 from (select distinct OrderID,OrderShipmodeSeq from PackingList_Detail where ID = '{0}') a
 left join Order_QtyShip oq on oq.Id = a.OrderID and oq.Seq = a.OrderShipmodeSeq", MyUtility.Convert.GetString(CurrentMaintain["ID"]))));
