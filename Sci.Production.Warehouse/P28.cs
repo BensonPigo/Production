@@ -15,12 +15,12 @@ using System.Transactions;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P29 : Sci.Win.Tems.QueryForm
+    public partial class P28 : Sci.Win.Tems.QueryForm
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2;
         DataTable master, detail;
-        public P29(ToolStripMenuItem menuitem)
+        public P28(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
@@ -37,12 +37,9 @@ namespace Sci.Production.Warehouse
                  .Text("poid", header: "Issue SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("seq1", header: "Issue" + Environment.NewLine + "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                  .Text("seq2", header: "Issue" + Environment.NewLine + "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                 .Text("stockPOID", header: "Stock SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                 .Text("stockseq1", header: "Stock" + Environment.NewLine + "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                 .Text("stockseq2", header: "Stock" + Environment.NewLine + "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
 
-                 .Numeric("poqty", header: "Order Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                 .Numeric("InQty", header: "Accu Trans.", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                 .Numeric("inputqty", header: "TPE Input", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                 .Numeric("accu_qty", header: "Accu Trans.", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("total_qty", header: "Trans. Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("requestqty", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   ;
@@ -88,8 +85,8 @@ namespace Sci.Production.Warehouse
                  .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(2), iseditingreadonly: true)
                  .Numeric("balanceQty", header: "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("qty", header: "Trans. Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, settings: ns).Get(out col_Qty)
-                  .Text("fromlocation", header: "From Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                  .Text("tolocation", header: "To Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: ts2).Get(out col_tolocation)
+                  .Text("fromlocation", header: "From Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                  .Text("tolocation", header: "To Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: ts2).Get(out col_tolocation)
                   ;
             col_Qty.DefaultCellStyle.BackColor = Color.Pink;
             col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
@@ -100,26 +97,24 @@ namespace Sci.Production.Warehouse
         {
             int selectindex = cbxCategory.SelectedIndex;
             int selectindex2 = cbxFabricType.SelectedIndex;
-            string CuttingInline_b, CuttingInline_e, OrderCfmDate_b, OrderCfmDate_e, SP, ProjectID, factory;
-            CuttingInline_b = null;
-            CuttingInline_e = null;
-            OrderCfmDate_b = null;
-            OrderCfmDate_e = null;
+            string ATA_b, ATA_e, InputDate_b, InputDate_e, SP;
+            ATA_b = null;
+            ATA_e = null;
+            InputDate_b = null;
+            InputDate_e = null;
             SP = txtSP.Text;
-            ProjectID = txtProjectID.Text;
-            factory = txtmfactory1.Text;
 
-            if (dateRangeCuttingInline.Value1 != null) CuttingInline_b = this.dateRangeCuttingInline.Text1;
-            if (dateRangeCuttingInline.Value2 != null) { CuttingInline_e = this.dateRangeCuttingInline.Text2; }
+            if (dateRangeATA.Value1 != null) ATA_b = this.dateRangeATA.Text1;
+            if (dateRangeATA.Value2 != null) { ATA_e = this.dateRangeATA.Text2; }
 
-            if (dateRangeOrderCfmDate.Value1 != null) { OrderCfmDate_b = this.dateRangeOrderCfmDate.Text1; }
-            if (dateRangeOrderCfmDate.Value2 != null) { OrderCfmDate_e = this.dateRangeOrderCfmDate.Text2; }
+            if (dateRangeInputDate.Value1 != null) { InputDate_b = this.dateRangeInputDate.Text1; }
+            if (dateRangeInputDate.Value2 != null) { InputDate_e = this.dateRangeInputDate.Text2; }
 
-            if ((CuttingInline_b == null && CuttingInline_e == null) &&
-                MyUtility.Check.Empty(SP) && MyUtility.Check.Empty(ProjectID) &&
-                (OrderCfmDate_b == null && OrderCfmDate_e == null))
+            if ((ATA_b == null && ATA_e == null) &&
+                MyUtility.Check.Empty(SP) && 
+                (InputDate_b == null && InputDate_e == null))
             {
-                MyUtility.Msg.WarningBox("< Project ID > or < Cutting Inline > or < Order Confirm Date > or < Issue SP# > can't be empty!!");
+                MyUtility.Msg.WarningBox(" < Cutting Inline > or < Order Confirm Date > or < Issue SP# > can't be empty!!");
                 txtSP.Focus();
                 return;
             }
@@ -129,22 +124,36 @@ namespace Sci.Production.Warehouse
             sqlcmd.Append(string.Format(@";with cte
 as
 (
-select 0 as selected,iif(y.cnt > 0 ,0,1) complete,o.MDivisionID,o.id poid,o.Category,o.FtyGroup,o.CFMDate,o.CutInLine,o.ProjectID
-,pd.seq1,pd.seq2,pd.StockPOID,pd.StockSeq1,pd.StockSeq2
-,pd.Qty*v.Rate PoQty,pd.POUnit,pd.StockUnit
+select 0 as selected,iif(y.cnt > 0 ,0,1) complete,o.MDivisionID,o.id poid,o.Category,o.FtyGroup
+,pd.seq1,pd.seq2,pd.id stockpoid,pd.seq1 stockseq1,pd.seq2 stockseq2
+,pd.inputqty*v.Rate inputqty,pd.POUnit,pd.StockUnit
 ,mpd.InQty
+,isnull(x.accu_qty,0.00) accu_qty
 from dbo.orders o 
 inner join dbo.PO_Supp_Detail pd on pd.id = o.ID
 inner join View_Unitrate v on v.FROM_U = pd.POUnit and v.TO_U = pd.StockUnit
 left join dbo.MDivisionPoDetail mpd on mpd.MDivisionID = o.MDivisionID 
-    and mpd.POID = pd.ID and mpd.Seq1 = pd.SEQ1 and mpd.Seq2 = pd.SEQ2
-outer apply
+    and mpd.POID = pd.ID and mpd.Seq1 = pd.SEQ1 and mpd.Seq2 = pd.SEQ2"));
+            if (!(string.IsNullOrWhiteSpace(InputDate_b)))
+            {
+                sqlcmd.Append(string.Format(@" cross apply
+(
+	select distinct 1 abc from dbo.Invtrans where type=1 and ConfirmDate >='{0}' and ConfirmDate<='{1}' and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2
+) z ", InputDate_b, InputDate_e));
+            }
+ sqlcmd.Append(string.Format(@" outer apply
 (select count(1) cnt from FtyInventory fi left join FtyInventory_Detail fid on fid.Ukey = fi.Ukey 
-	where  fi.POID = pd.stockpoID and fi.Seq1 = pd.stockSeq1 and fi.Seq2 = pd.stockSeq2 and fi.StockType = 'I' and fi.MDivisionID = o.MDivisionID
+	where  fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2 and fi.StockType = 'B' and fi.MDivisionID = o.MDivisionID
 	and fid.MtlLocationID is null and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0
 ) y
-where o.MDivisionID = '{0}'
-and pd.seq1 like '7%'", Env.User.Keyword));
+outer apply
+(
+select sum(sd.Qty) accu_qty from dbo.SubTransfer s inner join dbo.SubTransfer_Detail sd on sd.ID = s.Id where
+ s.type='A' and s.Status= 'Confirmed' and sd.FromMDivisionID ='{0}' and sd.FromPOID = pd.ID 
+and sd.FromSeq1 = pd.SEQ1
+ and sd.FromSeq2 = pd.SEQ2 and FromStockType = 'B' and toStockType='I'
+) x
+where pd.inputqty > 0 and o.MDivisionID = '{0}'", Env.User.Keyword));
 
             #region -- 條件 --
             switch (selectindex)
@@ -162,24 +171,17 @@ and pd.seq1 like '7%'", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(SP)) sqlcmd.Append(string.Format(@" and pd.id = '{0}'", SP));
 
-            if (!MyUtility.Check.Empty(factory)) { sqlcmd.Append(string.Format(@" and o.FtyGroup = '{0}'", factory)); }
 
-            if (!(string.IsNullOrWhiteSpace(ProjectID))) { sqlcmd.Append(string.Format(@" and o.ProjectID = '{0}'", ProjectID)); }
+            if (!(string.IsNullOrWhiteSpace(ATA_b)))
+            {
+                sqlcmd.Append(string.Format(@" and pd.ata between '{0}' and '{1}'", ATA_b, ATA_e));
+            }
 
-            if (!(string.IsNullOrWhiteSpace(CuttingInline_b)))
-            {
-                sqlcmd.Append(string.Format(@" and not(o.CutInLine > '{1}' or  o.CutInLine < '{0}')", CuttingInline_b, CuttingInline_e));
-            }
-            if (!(string.IsNullOrWhiteSpace(OrderCfmDate_b)))
-            {
-                sqlcmd.Append(string.Format(@" and o.CFMDate between '{0}' and '{1}'", OrderCfmDate_b, OrderCfmDate_e));
-            }
             #endregion
             sqlcmd.Append(@")
 select *,0.00 qty into #tmp from cte
-where PoQty > InQty
 
-select * from #tmp;
+select * from #tmp where inputqty > accu_qty;
 
 select 
 0 as selected,
@@ -193,12 +195,12 @@ fi.Dyelot FromDyelot,
 fi.StockType FromStockType,
 fi.InQty - fi.OutQty + fi.AdjustQty BalanceQty,
 0.00 as Qty,
-fi.MDivisionID toMdivisionID,t.poID topoid,t.seq1 toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'B' tostocktype 
+fi.MDivisionID toMdivisionID,t.poID topoid,t.seq1 toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'I' tostocktype 
 ,(select mtllocationid+',' from (select MtlLocationid from dbo.FtyInventory_Detail where ukey = fi.Ukey)t for xml path('')) fromlocation
 ,'' tolocation
-from #tmp t inner join FtyInventory fi on fi.MDivisionID = t.MDivisionID and fi.POID = t.StockPOID 
-and fi.seq1 = t.StockSeq1 and fi.Seq2 = t.StockSeq2
-where fi.StockType ='I' and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
+from #tmp t inner join FtyInventory fi on fi.MDivisionID = t.MDivisionID and fi.POID = t.POID 
+and fi.seq1 = t.Seq1 and fi.Seq2 = t.Seq2
+where inputqty > accu_qty and fi.StockType ='B' and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
 drop table #tmp");
             #endregion
             DataSet dataSet;
@@ -223,7 +225,7 @@ drop table #tmp");
             dataSet.Relations.Add(relation);
 
             master.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
-            master.Columns.Add("requestqty", typeof(decimal), "poqty - inqty - sum(child.qty)");
+            master.Columns.Add("requestqty", typeof(decimal), "InputQty - accu_qty - sum(child.qty)");
 
             listControlBindingSource1.DataSource = dataSet;
             listControlBindingSource1.DataMember = "Master";
@@ -238,7 +240,7 @@ drop table #tmp");
             {
                 if (dr["selected"].ToString() == "1" && !MyUtility.Check.Empty(dr["requestqty"]))
                 {
-                    var issued = PublicPrg.Prgs.autopick(dr, false);
+                    var issued = PublicPrg.Prgs.autopick(dr, false,"B");
                     if (issued == null) return;
 
 
@@ -268,7 +270,7 @@ drop table #tmp");
                 return;
             }
 
-            string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PI", "SubTransfer", System.DateTime.Now);
+            string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "ST", "SubTransfer", System.DateTime.Now);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -279,7 +281,7 @@ drop table #tmp");
             StringBuilder insertDetail = new StringBuilder();
 
             insertMaster.Append(string.Format(@"insert into dbo.subtransfer (id,type,issuedate,mdivisionid,status,addname,adddate,remark)
-            values ('{0}','B',getdate(),'{1}','New','{2}',getdate(),'Batch create by P29')",tmpId,Env.User.Keyword,Env.User.UserID));
+            values ('{0}','A',getdate(),'{1}','New','{2}',getdate(),'Batch create by P28')",tmpId,Env.User.Keyword,Env.User.UserID));
 
             foreach (DataRow item in findrow)
             {

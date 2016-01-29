@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    partial class P29
+    partial class P28
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -31,21 +31,17 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
             this.cbxCategory = new Sci.Win.UI.ComboBox();
             this.label8 = new Sci.Win.UI.Label();
             this.cbxFabricType = new Sci.Win.UI.ComboBox();
             this.label9 = new Sci.Win.UI.Label();
-            this.dateRangeOrderCfmDate = new Sci.Win.UI.DateRange();
-            this.dateRangeCuttingInline = new Sci.Win.UI.DateRange();
-            this.txtProjectID = new Sci.Win.UI.TextBox();
+            this.dateRangeInputDate = new Sci.Win.UI.DateRange();
+            this.dateRangeATA = new Sci.Win.UI.DateRange();
             this.txtSP = new Sci.Win.UI.TextBox();
             this.btnAutoPick = new Sci.Win.UI.Button();
             this.btnQuery = new Sci.Win.UI.Button();
-            this.label7 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.panel2 = new Sci.Win.UI.Panel();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
@@ -69,36 +65,23 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.txtmfactory1);
             this.panel1.Controls.Add(this.cbxCategory);
             this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.cbxFabricType);
             this.panel1.Controls.Add(this.label9);
-            this.panel1.Controls.Add(this.dateRangeOrderCfmDate);
-            this.panel1.Controls.Add(this.dateRangeCuttingInline);
-            this.panel1.Controls.Add(this.txtProjectID);
+            this.panel1.Controls.Add(this.dateRangeInputDate);
+            this.panel1.Controls.Add(this.dateRangeATA);
             this.panel1.Controls.Add(this.txtSP);
             this.panel1.Controls.Add(this.btnAutoPick);
             this.panel1.Controls.Add(this.btnQuery);
-            this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 107);
             this.panel1.TabIndex = 1;
-            // 
-            // txtmfactory1
-            // 
-            this.txtmfactory1.BackColor = System.Drawing.Color.White;
-            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtmfactory1.Location = new System.Drawing.Point(87, 75);
-            this.txtmfactory1.Name = "txtmfactory1";
-            this.txtmfactory1.Size = new System.Drawing.Size(117, 23);
-            this.txtmfactory1.TabIndex = 116;
             // 
             // cbxCategory
             // 
@@ -148,28 +131,19 @@
             this.label9.TabIndex = 113;
             this.label9.Text = "Fabric Type";
             // 
-            // dateRangeOrderCfmDate
+            // dateRangeInputDate
             // 
-            this.dateRangeOrderCfmDate.Location = new System.Drawing.Point(334, 42);
-            this.dateRangeOrderCfmDate.Name = "dateRangeOrderCfmDate";
-            this.dateRangeOrderCfmDate.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeOrderCfmDate.TabIndex = 11;
+            this.dateRangeInputDate.Location = new System.Drawing.Point(334, 42);
+            this.dateRangeInputDate.Name = "dateRangeInputDate";
+            this.dateRangeInputDate.Size = new System.Drawing.Size(280, 23);
+            this.dateRangeInputDate.TabIndex = 11;
             // 
-            // dateRangeCuttingInline
+            // dateRangeATA
             // 
-            this.dateRangeCuttingInline.Location = new System.Drawing.Point(334, 9);
-            this.dateRangeCuttingInline.Name = "dateRangeCuttingInline";
-            this.dateRangeCuttingInline.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeCuttingInline.TabIndex = 10;
-            // 
-            // txtProjectID
-            // 
-            this.txtProjectID.BackColor = System.Drawing.Color.White;
-            this.txtProjectID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtProjectID.Location = new System.Drawing.Point(87, 42);
-            this.txtProjectID.Name = "txtProjectID";
-            this.txtProjectID.Size = new System.Drawing.Size(117, 23);
-            this.txtProjectID.TabIndex = 9;
+            this.dateRangeATA.Location = new System.Drawing.Point(334, 9);
+            this.dateRangeATA.Name = "dateRangeATA";
+            this.dateRangeATA.Size = new System.Drawing.Size(280, 23);
+            this.dateRangeATA.TabIndex = 10;
             // 
             // txtSP
             // 
@@ -202,15 +176,6 @@
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
-            // label7
-            // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(9, 75);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(75, 23);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "Factory";
-            // 
             // label4
             // 
             this.label4.Lines = 0;
@@ -218,7 +183,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(113, 23);
             this.label4.TabIndex = 3;
-            this.label4.Text = "Order Cfm Date";
+            this.label4.Text = "Input Date";
             // 
             // label3
             // 
@@ -227,16 +192,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(113, 23);
             this.label3.TabIndex = 2;
-            this.label3.Text = "Cutting Inline";
-            // 
-            // label2
-            // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(9, 42);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Project ID";
+            this.label3.Text = "Material ATA";
             // 
             // label1
             // 
@@ -367,15 +323,15 @@
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
             // 
-            // P29
+            // P28
             // 
             this.ClientSize = new System.Drawing.Size(1008, 601);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.EditMode = true;
-            this.Name = "P29";
-            this.Text = "P29. Batch Create Inventory to Bulk";
+            this.Name = "P28";
+            this.Text = "P28. Batch Create Bulk to Inventory";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
             this.Controls.SetChildIndex(this.splitContainer1, 0);
@@ -402,21 +358,17 @@
         private Win.UI.Panel panel1;
         private Win.UI.Button btnAutoPick;
         private Win.UI.Button btnQuery;
-        private Win.UI.Label label7;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
-        private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.Panel panel2;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnCreate;
         private Win.UI.Button btnExcel;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private Win.UI.DateRange dateRangeOrderCfmDate;
-        private Win.UI.DateRange dateRangeCuttingInline;
-        private Win.UI.TextBox txtProjectID;
+        private Win.UI.DateRange dateRangeInputDate;
+        private Win.UI.DateRange dateRangeATA;
         private Win.UI.TextBox txtSP;
-        private Class.txtmfactory txtmfactory1;
         private Win.UI.ComboBox cbxCategory;
         private Win.UI.Label label8;
         private Win.UI.ComboBox cbxFabricType;
