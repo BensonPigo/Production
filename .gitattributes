@@ -952,6 +952,9 @@ Sci.Production.Packing/P03.resx -text
 Sci.Production.Packing/P03_CartonSummary.Designer.cs -text
 Sci.Production.Packing/P03_CartonSummary.cs -text
 Sci.Production.Packing/P03_CartonSummary.resx -text
+Sci.Production.Packing/P03_Print.Designer.cs -text
+Sci.Production.Packing/P03_Print.cs -text
+Sci.Production.Packing/P03_Print.resx -text
 Sci.Production.Packing/P04.Designer.cs -text
 Sci.Production.Packing/P04.cs -text
 Sci.Production.Packing/P04.resx -text

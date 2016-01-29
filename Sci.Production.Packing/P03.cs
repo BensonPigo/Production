@@ -867,6 +867,16 @@ where ID = @INVNo";
             return Result.True;
         }
 
+        protected override bool ClickPrint()
+        {
+            int orderQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format(@"select isnull(oq.Qty ,0) as Qty
+from (select distinct OrderID,OrderShipmodeSeq from PackingList_Detail where ID = '{0}') a
+left join Order_QtyShip oq on oq.Id = a.OrderID and oq.Seq = a.OrderShipmodeSeq", MyUtility.Convert.GetString(CurrentMaintain["ID"]))));
+            Sci.Production.Packing.P03_Print callNextForm = new Sci.Production.Packing.P03_Print(CurrentMaintain, orderQty);
+            callNextForm.ShowDialog(this);
+            return base.ClickPrint();
+        }
+
         //表身Grid的Delete
         protected override void OnDetailGridDelete()
         {
