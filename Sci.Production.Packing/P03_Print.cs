@@ -155,6 +155,7 @@ BEGIN
 	FETCH NEXT FROM cursor_PackingListDetail INTO @refno, @ctnstartno
 END
 --最後一筆資料
+if(@orirefnno <> '')
 INSERT INTO @tempPackingListDetail (RefNo,CTNNo) VALUES (@orirefnno,@insertrefno)
 --關閉cursor與參數的關聯
 CLOSE cursor_PackingListDetail
