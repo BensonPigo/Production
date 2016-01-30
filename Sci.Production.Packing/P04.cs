@@ -671,6 +671,13 @@ where ID = @INVNo";
             return base.ClickDeleteBefore();
         }
 
+        protected override bool ClickPrint()
+        {
+            Sci.Production.Packing.P04_Print callNextForm = new Sci.Production.Packing.P04_Print(CurrentMaintain);
+            callNextForm.ShowDialog(this);
+            return base.ClickPrint();
+        }
+
         //控制表身Grid欄位是否可被編輯
         private void DetailGridEditing(bool isEditing)
         {

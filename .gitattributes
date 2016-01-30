@@ -967,6 +967,9 @@ Sci.Production.Packing/P04_CartonSummary.resx -text
 Sci.Production.Packing/P04_ExcelImport.Designer.cs -text
 Sci.Production.Packing/P04_ExcelImport.cs -text
 Sci.Production.Packing/P04_ExcelImport.resx -text
+Sci.Production.Packing/P04_Print.Designer.cs -text
+Sci.Production.Packing/P04_Print.cs -text
+Sci.Production.Packing/P04_Print.resx -text
 Sci.Production.Packing/P05.Designer.cs -text
 Sci.Production.Packing/P05.cs -text
 Sci.Production.Packing/P05.resx -text
