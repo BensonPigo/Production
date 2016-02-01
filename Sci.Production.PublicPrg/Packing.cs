@@ -277,7 +277,7 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
                     localItemWeight = MyUtility.GetValue.Lookup("Weight", MyUtility.Convert.GetString(dr["RefNo"]), "LocalItem", "RefNo");
                     ctnWeight = MyUtility.Math.Round(MyUtility.Convert.GetDouble(localItemWeight), 6);
                 }
-                
+
                 string filter = string.Format("BrandID = '{0}' and StyleID = '{1}' and SeasonID = '{2}' and Article = '{3}' and SizeCode = '{4}'", PackingListData["BrandID"].ToString(), dr["StyleID"].ToString(), dr["SeasonID"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
                 weight = weightData.Select(filter);
                 if (weight.Length > 0)
@@ -537,14 +537,17 @@ order by a.Seq", packingListID);
             printGroupData = null;
             clipData = null;
             specialInstruction = MyUtility.GetValue.Lookup(string.Format("select top 1 isnull(o.Packing,'') as Packing from PackingList_Detail pd, Orders o where pd.ID = '{0}' and pd.OrderID = o.ID", PackingListID));
-            
+
             string sqlCmd = string.Format(@"select pd.OrderID,isnull(o.StyleID,'') as StyleID,isnull(o.Customize1,'') as Customize1,
 isnull(o.CustPONo,'') as CustPONo,p.CTNQty,isnull(c.Alias,'') as DestAlias,pd.Article,pd.Color,
-pd.SizeCode,pd.CTNStartNo,pd.QtyPerCTN,pd.ShipQty,pd.CTNQty,isnull(o.Packing,'') as PackInstruction,pd.Seq
+pd.SizeCode,pd.CTNStartNo,pd.QtyPerCTN,pd.ShipQty,pd.CTNQty,isnull(o.Packing,'') as PackInstruction,pd.Seq,
+isnull(os.SizeSpec,'') as SizeSpec,(select sum(ShipQty) from PackingList_Detail where Id = p.ID and Article = pd.Article and SizeCode = pd.SizeCode) as TtlShipQty,
+(select Qty from Order_QtyShip_Detail where Id = pd.OrderID and Seq = pd.OrderShipmodeSeq and Article = pd.Article and SizeCode = pd.SizeCode) as OQty
 from PackingList p
 inner join PackingList_Detail pd on p.ID = pd.ID
 left join Orders o on pd.OrderID = o.ID
 left join Country c on o.Dest = c.ID
+left join Order_SizeSpec os on os.Id = o.POID and SizeItem = 'S01' and os.SizeCode = pd.SizeCode
 where p.ID = '{0}'
 order by pd.Seq", PackingListID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
@@ -575,7 +578,7 @@ where pd.ID = '{0}'", PackingListID);
             if (!result)
             {
                 return result;
-            }            
+            }
 
             sqlCmd = string.Format(@"select Article,SizeCode,sum(ShipQty) as TtlShipQty from PackingList_Detail where ID = '{0}' group by Article,SizeCode", PackingListID);
             result = DBProxy.Current.Select(null, sqlCmd, out articleSizeTtlShipQty);
@@ -584,11 +587,16 @@ where pd.ID = '{0}'", PackingListID);
                 return result;
             }
 
-            sqlCmd = string.Format(@"select Article,Color,SizeCode,QtyPerCTN,CTNQty,min(Seq) as MinSeq,max(Seq) as MaxSeq
-from PackingList_Detail
-where ID = '{0}'
-group by Article,Color,SizeCode,QtyPerCTN,CTNQty
-order by MinSeq", PackingListID);
+            sqlCmd = string.Format(@"select a.*,(select sum(ShipQty) from PackingList_Detail where Id = a.ID and Article = a.Article and SizeCode = a.SizeCode) as TtlShipQty,
+(select Qty from Order_QtyShip_Detail where Id = a.OrderID and Seq = a.OrderShipmodeSeq and Article = a.Article and SizeCode = a.SizeCode) as OQty
+from (
+select pd.ID,pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.Color,pd.SizeCode,isnull(os.SizeSpec,'') as SizeSpec,pd.QtyPerCTN,pd.CTNQty,min(pd.Seq) as MinSeq,max(pd.Seq) as MaxSeq
+from PackingList_Detail pd
+left join Orders o on pd.OrderID = o.ID
+left join Order_SizeSpec os on os.Id = o.POID and SizeItem = 'S01' and os.SizeCode = pd.SizeCode
+where pd.ID = '{0}'
+group by pd.ID,pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.Color,pd.SizeCode,isnull(os.SizeSpec,''),pd.QtyPerCTN,pd.CTNQty) a
+order by a.MinSeq", PackingListID);
             result = DBProxy.Current.Select(null, sqlCmd, out printGroupData);
             if (!result)
             {
@@ -630,18 +638,19 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[3, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
-            worksheet.Cells[3, 2] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
-            worksheet.Cells[3, 5] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
-            worksheet.Cells[3, 8] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
-            worksheet.Cells[3, 11] = MyUtility.Convert.GetInt(PrintData.Rows[0]["CTNQty"]);
-            worksheet.Cells[3, 13] = MyUtility.Convert.GetString(PrintData.Rows[0]["DestAlias"]);
-            worksheet.Cells[3, 17] = OrderQty;
-            worksheet.Cells[3, 19] = MyUtility.Convert.GetInt(PacklistData["ShipQty"]);
-            worksheet.Cells[3, 20] = "=Q3-S3";
+            worksheet.Cells[3, 3] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
+            worksheet.Cells[3, 6] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
+            worksheet.Cells[3, 9] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
+            worksheet.Cells[3, 12] = MyUtility.Convert.GetInt(PrintData.Rows[0]["CTNQty"]);
+            worksheet.Cells[3, 14] = MyUtility.Convert.GetString(PrintData.Rows[0]["DestAlias"]);
+            worksheet.Cells[3, 18] = OrderQty;
+            worksheet.Cells[3, 20] = MyUtility.Convert.GetInt(PacklistData["ShipQty"]);
+            worksheet.Cells[3, 21] = "=R3-T3";
 
             int groupRec = PrintGroupData.Rows.Count, excelRow = 4, printRec = 1, printCtnCount = 0;
-            
+
             string seq = "000000", article = "XXXX0000", size = "XXXX0000";
+            StringBuilder articleSize = new StringBuilder();
 
             for (int i = 0; ; i++)
             {
@@ -651,7 +660,7 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
                 }
                 if (excelRow >= 262) //若資料會超過262筆，就先插入一筆Record，最後再把多的資料刪除
                 {
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}",MyUtility.Convert.GetString(excelRow)), Type.Missing).EntireRow;
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                 }
                 if (MyUtility.Check.Empty(PrintGroupData.Rows[i]["CTNQty"]))
@@ -663,7 +672,14 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
                         worksheet.Cells[excelRow, 1] = MyUtility.Convert.GetString(PrintGroupData.Rows[i]["Article"]) + ' ' + MyUtility.Convert.GetString(PrintGroupData.Rows[i]["Color"]);
                     }
                     worksheet.Cells[excelRow, 2] = MyUtility.Convert.GetString(PrintGroupData.Rows[i]["SizeCode"]);
-                    worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(PrintGroupData.Rows[i]["QtyPerCTN"]);
+                    worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(PrintGroupData.Rows[i]["SizeSpec"]);
+                    worksheet.Cells[excelRow, 4] = MyUtility.Convert.GetString(PrintGroupData.Rows[i]["QtyPerCTN"]);
+                    if (articleSize.ToString().IndexOf(string.Format("{0}{1}", MyUtility.Convert.GetString(PrintGroupData.Rows[i]["Article"]), MyUtility.Convert.GetString(PrintGroupData.Rows[i]["SizeCode"]))) < 0)
+                    {
+                        worksheet.Cells[excelRow, 20] = MyUtility.Convert.GetString(PrintGroupData.Rows[i]["OQty"]);
+                        worksheet.Cells[excelRow, 21] = MyUtility.Convert.GetString(PrintGroupData.Rows[i]["TtlShipQty"]);
+                        articleSize.Append(string.Format("{0}{1},", MyUtility.Convert.GetString(PrintGroupData.Rows[i]["Article"]), MyUtility.Convert.GetString(PrintGroupData.Rows[i]["SizeCode"])));
+                    }
                 }
                 else
                 {
@@ -683,12 +699,19 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
                             if (size != MyUtility.Convert.GetString(dr["SizeCode"]))
                             {
                                 worksheet.Cells[excelRow, 2] = MyUtility.Convert.GetString(dr["SizeCode"]);
+                                worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(dr["SizeSpec"]);
                                 size = MyUtility.Convert.GetString(dr["SizeCode"]);
-                                worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(dr["QtyPerCTN"]);
+                                worksheet.Cells[excelRow, 4] = MyUtility.Convert.GetString(dr["QtyPerCTN"]);
                             }
                         }
-                        
-                        worksheet.Cells[excelRow, printRec + 3] = MyUtility.Convert.GetString(dr["CTNStartNo"]);
+
+                        worksheet.Cells[excelRow, printRec + 4] = MyUtility.Convert.GetString(dr["CTNStartNo"]);
+                        if (articleSize.ToString().IndexOf(string.Format("{0}{1}", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]))) < 0)
+                        {
+                            worksheet.Cells[excelRow, 20] = MyUtility.Convert.GetString(dr["OQty"]);
+                            worksheet.Cells[excelRow, 21] = MyUtility.Convert.GetString(dr["TtlShipQty"]);
+                            articleSize.Append(string.Format("{0}{1},", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"])));
+                        }
                         seq = MyUtility.Convert.GetString(dr["Seq"]);
                         printRec++;
                         printCtnCount++;
@@ -738,7 +761,7 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
                 }
                 else
                 {
-                    dataRow = i+1;
+                    dataRow = i + 1;
                     break;
                 }
             }
@@ -747,14 +770,14 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
             {
                 for (int i = 3; i < dataRow; i++)
                 {
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow+1)), Type.Missing).EntireRow;
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow + 1)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                 }
             }
             worksheet.Cells[excelRow, 3] = SpecialInstruction;
 
             //Carton Dimension:
-            excelRow = excelRow + (dataRow > 2 ? dataRow-1: 2);
+            excelRow = excelRow + (dataRow > 2 ? dataRow - 1 : 2);
             StringBuilder ctnDimension = new StringBuilder();
             foreach (DataRow dr in CtnDim.Rows)
             {
