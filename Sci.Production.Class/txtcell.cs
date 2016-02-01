@@ -33,7 +33,7 @@ namespace Sci.Production.Class
             string sql;
             if (!string.IsNullOrWhiteSpace(fty))
             {
-                where = where + string.Format("Factoryid = '{0}'", fty);
+                where = where + string.Format(" Factoryid = '{0}'", fty);
             }
             sql = "select id from CutCell"+where ;
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2", this.Text, false, ",");
