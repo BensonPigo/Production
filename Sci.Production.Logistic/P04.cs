@@ -63,7 +63,7 @@ namespace Sci.Production.Logistic
 
             this.grid1.CellValueChanged += (s, e) =>
             {
-                if (grid1.Columns[e.ColumnIndex].Name == col_location.Name)
+                if (grid1.Columns[e.ColumnIndex].DataPropertyName == col_location.DataPropertyName)
                 {
                     DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                     dr["Selected"] = 1;
