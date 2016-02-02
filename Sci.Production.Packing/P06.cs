@@ -434,11 +434,12 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), C
                 }
                 #endregion
 
-                #region 填入OrderID, OrderShipmodeSeq,Seq與CTNQty欄位值
+                #region 填入OrderID, OrderShipmodeSeq,Seq,QtyPerCTN與CTNQty欄位值
                 i = i + 1;
                 dr["OrderID"] = CurrentMaintain["OrderID"].ToString();
                 dr["OrderShipmodeSeq"] = CurrentMaintain["OrderShipmodeSeq"].ToString();
                 dr["Seq"] = Convert.ToString(i).PadLeft(6, '0');
+                dr["QtyPerCTN"] = dr["ShipQty"];
                 if (MyUtility.Check.Empty(dr["CTNQty"]))
                 {
                     dr["CTNQty"] = 0;
