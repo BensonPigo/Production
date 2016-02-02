@@ -321,8 +321,12 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))
 
         protected override DualResult OnDeleteDetails()
         {
-            string updateCmd = string.Format("update PackingList set GMTBookingLock = '', INVNo = '', ShipPlanID = '' where INVNo = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
-            DualResult result = DBProxy.Current.Execute(null, updateCmd);
+            IList<string> updateCmd = new List<string>();
+            updateCmd.Add(string.Format("update PackingList set GMTBookingLock = '', INVNo = '', ShipPlanID = '' where INVNo = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+            updateCmd.Add(string.Format("Delete GMTBooking_CTNR where ID = '{0}'",MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+            updateCmd.Add(string.Format("Delete GMTBooking_History where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+            
+            DualResult result = DBProxy.Current.Executes(null, updateCmd);
             return result;
         }
 
