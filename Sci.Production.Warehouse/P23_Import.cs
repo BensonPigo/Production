@@ -46,7 +46,7 @@ namespace Sci.Production.Warehouse
                 #region -- Sql Command --
                 strSQLCmd.Append(string.Format(@"
 ;with cte as (
-select o.MDivisionID,pd.ID poid ,pd.seq1,pd.seq2,pd.POUnit,pd.StockUnit,pd.Qty*isnull(u.Rate,1) poqty
+select o.MDivisionID,rtrim(pd.ID) poid ,rtrim(pd.seq1) seq1,pd.seq2,pd.POUnit,pd.StockUnit,pd.Qty*isnull(u.Rate,1) poqty
 	,dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
 	,x.InventoryPOID,x.InventorySeq1,x.InventorySeq2
 	,x.earliest,x.lastest,x.taipei_qty*isnull(u.Rate,1) taipei_qty
@@ -93,8 +93,8 @@ select 0 AS selected,'' as id
 ,(select t1.MtlLocationID+',' from (select MtlLocationid from dbo.FtyInventory_Detail where FtyInventory_Detail.Ukey = fi.Ukey)t1 
 	for xml path('')) as [FromLocation]
 ,fi.MDivisionID ToMDivisionID
-,#tmp.poid ToPOID
-,#tmp.seq1 ToSeq1
+,rtrim(#tmp.poid) ToPOID
+,rtrim(#tmp.seq1) ToSeq1
 ,#tmp.seq2 ToSeq2
 ,left(#tmp.seq1+'   ',3)+#tmp.seq2 as toseq
 ,fi.roll ToRoll,fi.dyelot ToDyelot
@@ -132,7 +132,7 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 TaipeiInput.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
                 TaipeiInput.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - sum(child.qty)");
 
-                //myFilter();
+                myFilter();
 
                 MyUtility.Msg.WaitClear();
             }

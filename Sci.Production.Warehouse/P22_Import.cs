@@ -46,7 +46,7 @@ namespace Sci.Production.Warehouse
                 #region -- Sql Command --
                 strSQLCmd.Append(string.Format(@"
 with cte as 
-(select o.MDivisionID,pd.id as poid, pd.seq1,pd.seq2,pd.Qty,pd.ShipQty,pd.StockQty,pd.InputQty,pd.OutputQty
+(select o.MDivisionID,rtrim(pd.id) as poid, rtrim(pd.seq1) seq1,pd.seq2,pd.Qty,pd.ShipQty,pd.StockQty,pd.InputQty,pd.OutputQty
 	,x.taipei_issue_date,x.taipei_qty,pd.POUnit,pd.StockUnit 
 	from dbo.PO_Supp_Detail pd
 	inner join dbo.orders o on o.id = pd.id
@@ -57,7 +57,7 @@ with cte as
 	) x
 	where o.MDivisionID ='{0}' and pd.id = @poid AND X.taipei_qty > 0
 )
-select m.poid,m.seq1,m.seq2,m.StockUnit,m.Qty*isnull(u.Rate,1) as poqty,m.InputQty*isnull(u.Rate,1) as inputQty
+select m.MDivisionID,m.poid,m.seq1,m.seq2,m.StockUnit,m.Qty*isnull(u.Rate,1) as poqty,m.InputQty*isnull(u.Rate,1) as inputQty
 ,dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
 ,m.taipei_issue_date,m.taipei_qty*isnull(u.Rate,1) as taipei_qty ,m.POUnit,accu_qty into #tmp
 from cte m left join Unit_Rate u on u.UnitFrom = POUnit and u.UnitTo = StockUnit
@@ -73,7 +73,7 @@ cross apply
 				and s2.ToPOID = m.poid and s2.ToSeq1 = m.seq1 and s2.ToSeq2 = m.seq2 and s1.Id !='{1}'
 		) xx
   ) xxx
---where m.taipei_qty > accu_qty;
+where m.taipei_qty > accu_qty;
 select * from #tmp;
 select 0 AS selected,'' as id,fi.MDivisionID FromMDivisionID,fi.POID FromPOID,fi.seq1 Fromseq1,fi.seq2 Fromseq2,left(fi.seq1+'   ',3)+fi.seq2 as fromseq
 ,fi.roll FromRoll,fi.dyelot FromDyelot,fi.stocktype FromStockType,fi.Ukey as fromftyinventoryukey 
@@ -85,7 +85,7 @@ select 0 AS selected,'' as id,fi.MDivisionID FromMDivisionID,fi.POID FromPOID,fi
 	where t.MDivisionID = fi.MDivisionID and t.POID = fi.POID and t.seq1 = fi.seq1 and t.seq2 = fi.seq2 and t.StockType = 'I' 
 	and t.Roll = fi.Roll and t.Dyelot = fi.Dyelot),0) as accu_qty
 ,(select t1.MtlLocationID+',' from (select MtlLocationid from dbo.FtyInventory_Detail where FtyInventory_Detail.Ukey = fi.Ukey)t1 for xml path('')) as [FromLocation]
-,fi.MDivisionID ToMDivisionID,fi.poid ToPOID,fi.seq1 ToSeq1, fi.seq2 ToSeq2
+,fi.MDivisionID ToMDivisionID,rtrim(fi.poid) ToPOID,rtrim(fi.seq1) ToSeq1, fi.seq2 ToSeq2
 ,fi.roll ToRoll,fi.dyelot ToDyelot,'I' as [ToStockType]
 ,'' as [ToLocation]
 from #tmp cte 
@@ -108,8 +108,8 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 DataTable FtyDetail = dsTmp.Tables[1];
 
                 relation = new DataRelation("rel1"
-                    , new DataColumn[] { TaipeiInput.Columns["Poid"], TaipeiInput.Columns["seq1"], TaipeiInput.Columns["seq2"] }
-                    , new DataColumn[] { FtyDetail.Columns["FromPoid"], FtyDetail.Columns["Fromseq1"], FtyDetail.Columns["Fromseq2"] }
+                    , new DataColumn[] { TaipeiInput.Columns["poid"], TaipeiInput.Columns["seq1"], TaipeiInput.Columns["seq2"] }
+                    , new DataColumn[] { FtyDetail.Columns["toPoid"], FtyDetail.Columns["toseq1"], FtyDetail.Columns["toseq2"] }
                     );
                 dsTmp.Relations.Add(relation);
                 TaipeiInputBS.DataSource = dsTmp;
@@ -152,6 +152,7 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
 
             Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
             Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
+
             #region -- transfer qty valid --
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.IsSupportNegative = true;
@@ -258,12 +259,12 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
             if (cb_return.CheckState == CheckState.Checked)
             {
                 TaipeiInputBS.Filter = "taipei_qty <= accu_qty";
-                FtyDetailBS.Filter = "";
+                //FtyDetailBS.Filter = "balanceQty > 0";
             }
             else
             {
                 TaipeiInputBS.Filter = "taipei_qty > accu_qty";
-                FtyDetailBS.Filter = "outqty >0";
+                //FtyDetailBS.Filter = "outqty >0";
             }
         }
 

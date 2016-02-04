@@ -42,7 +42,7 @@ namespace Sci.Production.Warehouse
 
             #region -- 抓lack的資料 --
             //grid1
-            strSQLCmd.Append(string.Format(@"select a.POID,b.seq1,b.seq2,left(b.seq1+' ',3)+b.Seq2 as seq
+            strSQLCmd.Append(string.Format(@"select rtrim(a.POID) poid,b.seq1,b.seq2,left(b.seq1+' ',3)+b.Seq2 as seq
 ,dbo.getMtlDesc(a.poid,b.seq1,b.seq2,2,0) as [description]
 ,b.RequestQty
 from dbo.lack a inner join dbo.Lack_Detail b on a.ID = b.ID
@@ -50,7 +50,7 @@ where a.id = '{0}';", dr_master["requestid"]));
             strSQLCmd.Append(Environment.NewLine); // 換行
             //grid2
             strSQLCmd.Append(string.Format(@"select 0 as selected ,'' id
-,c.PoId,c.Seq1,c.Seq2,left(c.seq1+' ',3)+c.Seq2 as seq
+,rtrim(c.PoId) poid,c.Seq1,c.Seq2,left(c.seq1+' ',3)+c.Seq2 as seq
 ,c.Roll
 ,c.Dyelot
 ,0.00 as Qty

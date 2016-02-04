@@ -124,8 +124,8 @@ namespace Sci.Production.Warehouse
             sqlcmd.Append(string.Format(@";with cte
 as
 (
-select 0 as selected,iif(y.cnt > 0 ,0,1) complete,o.MDivisionID,o.id poid,o.Category,o.FtyGroup
-,pd.seq1,pd.seq2,pd.id stockpoid,pd.seq1 stockseq1,pd.seq2 stockseq2
+select 0 as selected,iif(y.cnt > 0 ,0,1) complete,o.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup
+,rtrim(pd.seq1) seq1,pd.seq2,pd.id stockpoid,pd.seq1 stockseq1,pd.seq2 stockseq2
 ,pd.inputqty*v.Rate inputqty,pd.POUnit,pd.StockUnit
 ,mpd.InQty
 ,isnull(x.accu_qty,0.00) accu_qty
@@ -195,7 +195,7 @@ fi.Dyelot FromDyelot,
 fi.StockType FromStockType,
 fi.InQty - fi.OutQty + fi.AdjustQty BalanceQty,
 0.00 as Qty,
-fi.MDivisionID toMdivisionID,t.poID topoid,t.seq1 toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'I' tostocktype 
+fi.MDivisionID toMdivisionID,rtrim(t.poID) topoid,rtrim(t.seq1) toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'I' tostocktype 
 ,(select mtllocationid+',' from (select MtlLocationid from dbo.FtyInventory_Detail where ukey = fi.Ukey)t for xml path('')) fromlocation
 ,'' tolocation
 from #tmp t inner join FtyInventory fi on fi.MDivisionID = t.MDivisionID and fi.POID = t.POID 
