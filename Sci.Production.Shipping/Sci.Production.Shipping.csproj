@@ -385,6 +385,12 @@
     <Compile Include="R02.Designer.cs">
       <DependentUpon>R02.cs</DependentUpon>
     </Compile>
+    <Compile Include="R03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R03.Designer.cs">
+      <DependentUpon>R03.cs</DependentUpon>
+    </Compile>
     <Compile Include="Shipping.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -536,6 +542,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R03.resx">
+      <DependentUpon>R03.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
