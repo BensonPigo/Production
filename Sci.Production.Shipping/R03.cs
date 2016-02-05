@@ -23,7 +23,7 @@ namespace Sci.Production.Shipping
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory", out factory);
             MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
             MyUtility.Tool.SetupCombox(comboBox3, 1, 1, "Bulk+Sample,Bulk,Sample");
             comboBox1.Text = Sci.Env.User.Keyword;
@@ -88,6 +88,10 @@ and p.PulloutDate between '{0}' and '{1}'", Convert.ToDateTime(pulloutDate1).ToS
             else if (category == "Sample")
             {
                 sqlCmd.Append(" and o.Category = 'S'");
+            }
+            else
+            {
+                sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S')");
             }
 
 
