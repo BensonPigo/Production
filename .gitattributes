@@ -13,6 +13,7 @@ Database/dbo/Functions/dbo.getTPEPass1.sql -text
 Database/dbo/Functions/getBOFMtlDesc.sql -text
 Database/dbo/Functions/getCuttingComboList.sql -text
 Database/dbo/Functions/getGarmentLT.sql -text
+Database/dbo/Functions/getInvAdjQty.sql -text
 Database/dbo/Functions/getMTLExport.sql -text
 Database/dbo/Functions/getMtlDesc.sql -text
 Database/dbo/Functions/getPOComboList.sql -text
