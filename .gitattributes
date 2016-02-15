@@ -1742,7 +1742,7 @@ XLT/Shipping_R01_MainList.xltx -text
 XLT/Shipping_R02_PulloutReportList.xltx -text
 XLT/Shipping_R03_ActualShipmentRecord.xltx -text
 XLT/Shipping_R04_EstimateOutstandingShipmentReport.xltx -text
-XLT/Shipping_R05_OutstandingPayment[!!-~]List.xltx -text
+XLT/Shipping_R05_OutstandingPaymentList.xltx -text
 XLT/Warehouse_R02.xltx -text
 XLT/Warehouse_R17_Location_List.xltx -text
 XLT/Warehouse_R18_Material_Tracking.xltx -text
