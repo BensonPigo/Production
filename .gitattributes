@@ -1754,6 +1754,7 @@ XLT/Shipping_R04_EstimateOutstandingShipmentReport.xltx -text
 XLT/Shipping_R05_OutstandingPaymentList.xltx -text
 XLT/Shipping_R06_PaymentList.xltx -text
 XLT/Shipping_R07_PaymentSummary.xltx -text
+XLT/Shipping_R08_PackingCheckList.xltx -text
 XLT/Warehouse_R02.xltx -text
 XLT/Warehouse_R17_Location_List.xltx -text
 XLT/Warehouse_R18_Material_Tracking.xltx -text
