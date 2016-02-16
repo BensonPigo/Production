@@ -15,6 +15,7 @@ Database/dbo/Functions/getCuttingComboList.sql -text
 Database/dbo/Functions/getGarmentLT.sql -text
 Database/dbo/Functions/getInvAdjQty.sql -text
 Database/dbo/Functions/getMTLExport.sql -text
+Database/dbo/Functions/getMinCompleteSewQty.sql -text
 Database/dbo/Functions/getMtlDesc.sql -text
 Database/dbo/Functions/getPOComboList.sql -text
 Database/dbo/Functions/getPulloutComplete.sql -text
