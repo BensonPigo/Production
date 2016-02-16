@@ -46,5 +46,12 @@ namespace Sci.Production.Logistic
             }
             return base.ClickSaveBefore();
         }
+
+        protected override bool ClickPrint()
+        {
+            Sci.Production.Logistic.B01_Print callNextForm = new Sci.Production.Logistic.B01_Print(CurrentMaintain);
+            callNextForm.ShowDialog(this);
+            return base.ClickPrint();
+        }
     }
 }

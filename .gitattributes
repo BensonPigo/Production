@@ -686,6 +686,10 @@ Sci.Production.IE/Sci.Production.IE.csproj -text
 Sci.Production.Logistic/B01.Designer.cs -text
 Sci.Production.Logistic/B01.cs -text
 Sci.Production.Logistic/B01.resx -text
+Sci.Production.Logistic/B01_Print.Designer.cs -text
+Sci.Production.Logistic/B01_Print.cs -text
+Sci.Production.Logistic/B01_Print.rdlc -text
+Sci.Production.Logistic/B01_Print.resx -text
 Sci.Production.Logistic/Logistic.Designer.cs -text
 Sci.Production.Logistic/Logistic.cs -text
 Sci.Production.Logistic/Logistic.xsc -text

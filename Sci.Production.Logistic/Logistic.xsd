@@ -14,7 +14,7 @@
   <xs:element name="Logistic" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="True" msprop:Generator_DataSetName="Logistic" msprop:Generator_UserDSName="Logistic">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="Report_UpdateLocation" msprop:Generator_TableClassName="Report_UpdateLocationDataTable" msprop:Generator_TableVarName="tableReport_UpdateLocation" msprop:Generator_TablePropName="Report_UpdateLocation" msprop:Generator_RowDeletingName="Report_UpdateLocationRowDeleting" msprop:Generator_RowChangingName="Report_UpdateLocationRowChanging" msprop:Generator_RowEvHandlerName="Report_UpdateLocationRowChangeEventHandler" msprop:Generator_RowDeletedName="Report_UpdateLocationRowDeleted" msprop:Generator_UserTableName="Report_UpdateLocation" msprop:Generator_RowChangedName="Report_UpdateLocationRowChanged" msprop:Generator_RowEvArgName="Report_UpdateLocationRowChangeEvent" msprop:Generator_RowClassName="Report_UpdateLocationRow">
+        <xs:element name="Report_UpdateLocation" msprop:Generator_TableClassName="Report_UpdateLocationDataTable" msprop:Generator_TableVarName="tableReport_UpdateLocation" msprop:Generator_RowChangedName="Report_UpdateLocationRowChanged" msprop:Generator_TablePropName="Report_UpdateLocation" msprop:Generator_RowDeletingName="Report_UpdateLocationRowDeleting" msprop:Generator_RowChangingName="Report_UpdateLocationRowChanging" msprop:Generator_RowEvHandlerName="Report_UpdateLocationRowChangeEventHandler" msprop:Generator_RowDeletedName="Report_UpdateLocationRowDeleted" msprop:Generator_RowClassName="Report_UpdateLocationRow" msprop:Generator_UserTableName="Report_UpdateLocation" msprop:Generator_RowEvArgName="Report_UpdateLocationRowChangeEvent">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="OrderID" msprop:Generator_ColumnVarNameInTable="columnOrderID" msprop:Generator_ColumnPropNameInRow="OrderID" msprop:Generator_ColumnPropNameInTable="OrderIDColumn" msprop:Generator_UserColumnName="OrderID" type="xs:string" minOccurs="0" />
@@ -34,6 +34,13 @@
               <xs:element name="ShipQty" msprop:Generator_ColumnVarNameInTable="columnShipQty" msprop:Generator_ColumnPropNameInRow="ShipQty" msprop:Generator_ColumnPropNameInTable="ShipQtyColumn" msprop:Generator_UserColumnName="ShipQty" type="xs:int" minOccurs="0" />
               <xs:element name="ClogLocationId" msprop:Generator_ColumnVarNameInTable="columnClogLocationId" msprop:Generator_ColumnPropNameInRow="ClogLocationId" msprop:Generator_ColumnPropNameInTable="ClogLocationIdColumn" msprop:Generator_UserColumnName="ClogLocationId" type="xs:string" minOccurs="0" />
               <xs:element name="Remark" msprop:Generator_ColumnVarNameInTable="columnRemark" msprop:Generator_ColumnPropNameInRow="Remark" msprop:Generator_ColumnPropNameInTable="RemarkColumn" msprop:Generator_UserColumnName="Remark" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Report_LocationPrint" msprop:Generator_TableClassName="Report_LocationPrintDataTable" msprop:Generator_TableVarName="tableReport_LocationPrint" msprop:Generator_TablePropName="Report_LocationPrint" msprop:Generator_RowDeletingName="Report_LocationPrintRowDeleting" msprop:Generator_RowChangingName="Report_LocationPrintRowChanging" msprop:Generator_RowEvHandlerName="Report_LocationPrintRowChangeEventHandler" msprop:Generator_RowDeletedName="Report_LocationPrintRowDeleted" msprop:Generator_UserTableName="Report_LocationPrint" msprop:Generator_RowChangedName="Report_LocationPrintRowChanged" msprop:Generator_RowEvArgName="Report_LocationPrintRowChangeEvent" msprop:Generator_RowClassName="Report_LocationPrintRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ID" msprop:Generator_ColumnVarNameInTable="columnID" msprop:Generator_ColumnPropNameInRow="ID" msprop:Generator_ColumnPropNameInTable="IDColumn" msprop:Generator_UserColumnName="ID" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
