@@ -51,6 +51,7 @@ namespace Sci.Production.Packing
             reportType = radioButton1.Checked ? "1" : radioButton2.Checked ? "2" : radioButton3.Checked ? "3" : "4";
             ctn1 = textBox1.Text;
             ctn2 = textBox2.Text;
+            ReportResourceName = "BarcodePrint.rdlc";
 
             return base.ValidateInput();
         }
@@ -69,6 +70,14 @@ namespace Sci.Production.Packing
             }
             else
             {
+                DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(masterData["ID"]), ctn1, ctn2, out printData);
+                if (!result)
+                {
+                    return result;
+                }
+                
+                e.Report.ReportDataSource = printData;
+
             }
             return Result.True;
         }

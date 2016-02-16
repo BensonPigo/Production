@@ -935,6 +935,7 @@ Sci.Production.PPIC/Sci.Production.PPIC.csproj -text
 Sci.Production.Packing/B01.Designer.cs -text
 Sci.Production.Packing/B01.cs -text
 Sci.Production.Packing/B01.resx -text
+Sci.Production.Packing/BarcodePrint.rdlc -text
 Sci.Production.Packing/P01.Designer.cs -text
 Sci.Production.Packing/P01.cs -text
 Sci.Production.Packing/P01.resx -text
@@ -1013,8 +1014,15 @@ Sci.Production.Packing/P12_Print.resx -text
 Sci.Production.Packing/P13.Designer.cs -text
 Sci.Production.Packing/P13.cs -text
 Sci.Production.Packing/P13.resx -text
+Sci.Production.Packing/Packing.Designer.cs -text
+Sci.Production.Packing/Packing.xsc -text
+Sci.Production.Packing/Packing.xsd -text
+Sci.Production.Packing/Packing.xss -text
 Sci.Production.Packing/Properties/AssemblyInfo.cs -text
+Sci.Production.Packing/Properties/Settings.Designer.cs -text
+Sci.Production.Packing/Properties/Settings.settings -text
 Sci.Production.Packing/Sci.Production.Packing.csproj -text
+Sci.Production.Packing/app.config -text
 Sci.Production.Planning/B01.Designer.cs -text
 Sci.Production.Planning/B01.cs -text
 Sci.Production.Planning/B01.resx -text

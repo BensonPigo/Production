@@ -254,6 +254,11 @@
     <Compile Include="P13.Designer.cs">
       <DependentUpon>P13.cs</DependentUpon>
     </Compile>
+    <Compile Include="Packing.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Packing.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="P03_CartonSummary.cs">
       <SubType>Form</SubType>
@@ -261,11 +266,17 @@
     <Compile Include="P03_CartonSummary.Designer.cs">
       <DependentUpon>P03_CartonSummary.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
       <DependentUpon>B01.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="BarcodePrint.rdlc" />
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>
@@ -358,6 +369,24 @@
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
       <Name>Sci.Production.PublicPrg</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Packing.xsc">
+      <DependentUpon>Packing.xsd</DependentUpon>
+    </None>
+    <None Include="Packing.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>Packing.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Packing.xss">
+      <DependentUpon>Packing.xsd</DependentUpon>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

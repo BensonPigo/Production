@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Packing" targetNamespace="http://tempuri.org/Packing.xsd" xmlns:mstns="http://tempuri.org/Packing.xsd" xmlns="http://tempuri.org/Packing.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="Packing" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="Packing (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.Sci.Production.Packing.Properties.Settings.GlobalReference.Default.Packing" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="Packing" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="True" msprop:Generator_DataSetName="Packing" msprop:Generator_UserDSName="Packing">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Report_BarcodePrint" msprop:Generator_TableClassName="Report_BarcodePrintDataTable" msprop:Generator_TableVarName="tableReport_BarcodePrint" msprop:Generator_RowChangedName="Report_BarcodePrintRowChanged" msprop:Generator_TablePropName="Report_BarcodePrint" msprop:Generator_RowDeletingName="Report_BarcodePrintRowDeleting" msprop:Generator_RowChangingName="Report_BarcodePrintRowChanging" msprop:Generator_RowEvHandlerName="Report_BarcodePrintRowChangeEventHandler" msprop:Generator_RowDeletedName="Report_BarcodePrintRowDeleted" msprop:Generator_RowClassName="Report_BarcodePrintRow" msprop:Generator_UserTableName="Report_BarcodePrint" msprop:Generator_RowEvArgName="Report_BarcodePrintRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ID" msprop:Generator_ColumnVarNameInTable="columnID" msprop:Generator_ColumnPropNameInRow="ID" msprop:Generator_ColumnPropNameInTable="IDColumn" msprop:Generator_UserColumnName="ID" type="xs:string" minOccurs="0" />
+              <xs:element name="OrderID" msprop:Generator_ColumnVarNameInTable="columnOrderID" msprop:Generator_ColumnPropNameInRow="OrderID" msprop:Generator_ColumnPropNameInTable="OrderIDColumn" msprop:Generator_UserColumnName="OrderID" type="xs:string" minOccurs="0" />
+              <xs:element name="CTNStartNo" msprop:Generator_ColumnVarNameInTable="columnCTNStartNo" msprop:Generator_ColumnPropNameInRow="CTNStartNo" msprop:Generator_ColumnPropNameInTable="CTNStartNoColumn" msprop:Generator_UserColumnName="CTNStartNo" type="xs:string" minOccurs="0" />
+              <xs:element name="CtnQty" msprop:Generator_ColumnVarNameInTable="columnCtnQty" msprop:Generator_ColumnPropNameInRow="CtnQty" msprop:Generator_ColumnPropNameInTable="CtnQtyColumn" msprop:Generator_UserColumnName="CtnQty" type="xs:int" minOccurs="0" />
+              <xs:element name="PONo" msprop:Generator_ColumnVarNameInTable="columnPONo" msprop:Generator_ColumnPropNameInRow="PONo" msprop:Generator_ColumnPropNameInTable="PONoColumn" msprop:Generator_UserColumnName="PONo" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
