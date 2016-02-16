@@ -819,5 +819,43 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
             excel.Visible = true;
         }
         #endregion
+
+        #region Packing Barcode Print
+        /// <summary>
+        /// PackingBarcodePrint(string,string,string,DataTable)
+        /// </summary>
+        /// <param name="Packing List ID"></param>
+        /// <param name="CartonNo"></param>
+        /// <param name="CartonNo"></param>
+        /// <param name="Empty DataTable"></param>
+        /// <returns>DualResult</returns>
+        public static DualResult PackingBarcodePrint(string packingListID, string ctnStartNo, string ctnEndNo, out DataTable printBarcodeData)
+        {
+            printBarcodeData = null;
+            StringBuilder sqlCmd = new StringBuilder();
+            sqlCmd.Append(@"select pd.ID,pd.OrderID,pd.CTNStartNo,(select CTNQty from PackingList where ID = pd.ID) as CTNQty,
+isnull((select CustPONo from Orders where ID = pd.OrderID),'') as PONo
+from PackingList_Detail pd
+where pd.CTNQty > 0");
+            if (!MyUtility.Check.Empty(packingListID))
+            {
+                sqlCmd.Append(string.Format(" and pd.ID = '{0}'", packingListID));
+            }
+
+            if (!MyUtility.Check.Empty(ctnStartNo))
+            {
+                sqlCmd.Append(string.Format(" and pd.CTNStartNo >= '{0}'", ctnStartNo));
+            }
+
+            if (!MyUtility.Check.Empty(ctnEndNo))
+            {
+                sqlCmd.Append(string.Format(" and pd.CTNStartNo <= '{0}'", ctnEndNo));
+            }
+            sqlCmd.Append(" order by pd.Seq");
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printBarcodeData);
+            return result;
+        }
+        #endregion
+
     }
 }
