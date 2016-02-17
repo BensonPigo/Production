@@ -265,6 +265,12 @@
     <Compile Include="txtthreadcolor.designer.cs">
       <DependentUpon>txtthreadcolor.cs</DependentUpon>
     </Compile>
+    <Compile Include="txttpeuser_canedit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txttpeuser_canedit.Designer.cs">
+      <DependentUpon>txttpeuser_canedit.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ict, Version=1.0.1502.1000, Culture=neutral, processorArchitecture=MSIL">
@@ -354,6 +360,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="txtwhseRefundAction.resx">
       <DependentUpon>txtwhseRefundAction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txttpeuser_canedit.resx">
+      <DependentUpon>txttpeuser_canedit.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
