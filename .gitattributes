@@ -68,9 +68,7 @@ Database/dbo/Tables/Clip.sql -text
 Database/dbo/Tables/ClipPath.sql -text
 Database/dbo/Tables/ClogLocation.sql -text
 Database/dbo/Tables/ClogReceive.sql -text
-Database/dbo/Tables/ClogReceive_Detail.sql -text
 Database/dbo/Tables/ClogReturn.sql -text
-Database/dbo/Tables/ClogReturn_Detail.sql -text
 Database/dbo/Tables/Color.sql -text
 Database/dbo/Tables/ColorFastness.sql -text
 Database/dbo/Tables/ColorFastness_Detail.sql -text
@@ -403,7 +401,6 @@ Database/dbo/Tables/TransferIn_Detail.sql -text
 Database/dbo/Tables/TransferOut.sql -text
 Database/dbo/Tables/TransferOut_Detail.sql -text
 Database/dbo/Tables/TransferToClog.sql -text
-Database/dbo/Tables/TransferToClog_Detail.sql -text
 Database/dbo/Tables/Unit.sql -text
 Database/dbo/Tables/Unit_Rate.sql -text
 Database/dbo/Tables/UserLog.sql -text
