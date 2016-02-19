@@ -118,7 +118,7 @@ where 1 = 1");
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-
+            MyUtility.Msg.WaitWindows("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "IE_R01_LineMappingList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
@@ -157,7 +157,7 @@ where 1 = 1");
 
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
-
+            MyUtility.Msg.WaitClear();
             excel.Visible = true;
             return true;
         }
