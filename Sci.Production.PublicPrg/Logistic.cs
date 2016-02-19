@@ -26,8 +26,8 @@ namespace Sci.Production.PublicPrg
 
             sqlCmd = string.Format(@"update Orders 
                                                        set TotalCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}'), 
-                                                             FtyCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and TransferToClogID != ''), 
-                                                             ClogCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and ClogReceiveID != ''), 
+                                                             FtyCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and TransferDate is not null), 
+                                                             ClogCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and ReceiveDate is not null), 
                                                             ClogLastReceiveDate = (select max(ReceiveDate) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}') 
                                                        where ID = '{0}'", orderID);
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
@@ -51,8 +51,8 @@ namespace Sci.Production.PublicPrg
             {
                 updateCmds.Add(string.Format(@"update Orders 
                                                        set TotalCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}'), 
-                                                             FtyCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and TransferToClogID != ''), 
-                                                             ClogCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and ClogReceiveID != ''), 
+                                                             FtyCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and TransferDate is not null), 
+                                                             ClogCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and ReceiveDate is not null), 
                                                             ClogLastReceiveDate = (select max(ReceiveDate) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}') 
                                                        where ID = '{0}'", dr["OrderID"].ToString()));
             }
