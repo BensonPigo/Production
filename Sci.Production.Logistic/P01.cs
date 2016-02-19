@@ -50,7 +50,7 @@ namespace Sci.Production.Logistic
             button3.ForeColor = haveOrder_Qty ? Color.Blue : Color.Black;
             button4.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail where OrderID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             button5.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_CTNData where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
-            button6.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail where OrderID = '{0}' and ClogReceiveID <> ''", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
+            button6.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail where OrderID = '{0}' and ReceiveDate is not null", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             button7.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
             button8.Enabled = !MyUtility.Check.Empty(CurrentMaintain["CMPQDate"]);
             if (button8.Enabled)
