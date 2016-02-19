@@ -922,7 +922,7 @@ order by oa.Seq,os.Seq", orderID, seq);
             }
 
             //檢查PackingList是否已經有箱子送到Clog，若有，就出訊息告知使用者且不做任事
-            seekCmd = "select ID from PackingList_Detail where ID = '" + CurrentMaintain["ID"].ToString() + "' and TransferToClogID != ''";
+            seekCmd = "select ID from PackingList_Detail where ID = '" + CurrentMaintain["ID"].ToString() + "' and TransferDate is not null";
             if (MyUtility.Check.Seek(seekCmd))
             {
                 MyUtility.Msg.WarningBox("SP# has been transfer!! You can't switch to packing list.");
