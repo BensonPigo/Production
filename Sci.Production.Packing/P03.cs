@@ -123,7 +123,7 @@ namespace Sci.Production.Packing
                     //檢查箱子如果有送到Clog則不可以被修改
                     if (e.FormattedValue.ToString() != dr["OrderID"].ToString())
                     {
-                        if (!CheckCanCahngeCol(dr["TransferToClogID"].ToString()))
+                        if (!CheckCanCahngeCol(MyUtility.Convert.GetDate(dr["TransferDate"])))
                         {
                             dr["OrderID"] = dr["OrderID"].ToString();
                             e.Cancel = true;
@@ -203,7 +203,7 @@ namespace Sci.Production.Packing
                             e.EditingControl.Text = item.GetSelectedString();
                             if (e.EditingControl.Text != dr["OrderShipmodeSeq"].ToString())
                             {
-                                if (!CheckCanCahngeCol(dr["TransferToClogID"].ToString()))
+                                if (!CheckCanCahngeCol(MyUtility.Convert.GetDate(dr["TransferDate"])))
                                 {
                                     dr["OrderShipmodeSeq"] = dr["OrderShipmodeSeq"].ToString();
                                     return;
@@ -248,7 +248,7 @@ namespace Sci.Production.Packing
                     //檢查箱子如果有送到Clog則不可以被修改
                     if (e.FormattedValue.ToString() != dr["Article"].ToString())
                     {
-                        if (!CheckCanCahngeCol(dr["TransferToClogID"].ToString()))
+                        if (!CheckCanCahngeCol(MyUtility.Convert.GetDate(dr["TransferDate"])))
                         {
                             dr["Article"] = dr["Article"].ToString();
                             e.Cancel = true;
@@ -318,7 +318,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                     //檢查箱子如果有送到Clog則不可以被修改
                     if (e.FormattedValue.ToString() != dr["SizeCode"].ToString())
                     {
-                        if (!CheckCanCahngeCol(dr["TransferToClogID"].ToString()))
+                        if (!CheckCanCahngeCol(MyUtility.Convert.GetDate(dr["TransferDate"])))
                         {
                             dr["SizeCode"] = dr["SizeCode"].ToString();
                             e.Cancel = true;
@@ -377,7 +377,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                         {
                             if (e.FormattedValue.ToString() != dr["CTNStartNo"].ToString())
                             {
-                                if (!CheckCanCahngeCol(dr["TransferToClogID"].ToString()))
+                                if (!CheckCanCahngeCol(MyUtility.Convert.GetDate(dr["TransferDate"])))
                                 {
                                     dr["CTNStartNo"] = dr["CTNStartNo"].ToString();
                                     e.Cancel = true;
@@ -390,7 +390,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                     {
                         if (e.FormattedValue.ToString() != dr["CTNQty"].ToString())
                         {
-                            if (!CheckCanCahngeCol(dr["TransferToClogID"].ToString()))
+                            if (!CheckCanCahngeCol(MyUtility.Convert.GetDate(dr["TransferDate"])))
                             {
                                 dr["CTNQty"] = dr["CTNQty"].ToString();
                                 e.Cancel = true;
@@ -405,7 +405,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                         {
                             if (e.FormattedValue.ToString() != dr["QtyPerCTN"].ToString())
                             {
-                                if (!CheckCanCahngeCol(dr["TransferToClogID"].ToString()))
+                                if (!CheckCanCahngeCol(MyUtility.Convert.GetDate(dr["TransferDate"])))
                                 {
                                     dr["QtyPerCTN"] = dr["QtyPerCTN"].ToString();
                                     e.Cancel = true;
@@ -421,7 +421,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                         {
                             if (e.FormattedValue.ToString() != dr["ShipQty"].ToString())
                             {
-                                if (!CheckCanCahngeCol(dr["TransferToClogID"].ToString()))
+                                if (!CheckCanCahngeCol(MyUtility.Convert.GetDate(dr["TransferDate"])))
                                 {
                                     dr["ShipQty"] = dr["ShipQty"].ToString();
                                     e.Cancel = true;
@@ -889,7 +889,7 @@ left join Order_QtyShip oq on oq.Id = a.OrderID and oq.Seq = a.OrderShipmodeSeq"
             //檢查此筆記錄是否已Transfer to Clog，若是則出訊息告知且無法刪除
             if (this.DetailDatas.Count > 0)
             {
-                if (!MyUtility.Check.Empty(CurrentDetailData["TransferToClogID"]))
+                if (!MyUtility.Check.Empty(CurrentDetailData["TransferDate"]))
                 {
                     MyUtility.Msg.WarningBox("This record had been send to CLOG, can't delete!!");
                     return;
@@ -997,9 +997,9 @@ left join Order_QtyShip oq on oq.Id = a.OrderID and oq.Seq = a.OrderShipmodeSeq"
         }
 
         //檢查箱子是否有送至Clog來決定欄位是否可被修改
-        private bool CheckCanCahngeCol(string transferToClogID)
+        private bool CheckCanCahngeCol(DateTime? transferDate)
         {
-            if (MyUtility.Check.Empty(transferToClogID))
+            if (MyUtility.Check.Empty(transferDate))
             {
                 return true;
             }
