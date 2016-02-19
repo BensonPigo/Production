@@ -185,7 +185,7 @@ and pd.OrderShipmodeSeq = oq.Seq", allID.ToString().Substring(0, allID.Length - 
                 string sqlCmd = string.Format(@"select p.ID,
 iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd where pd.ID = p.id) a for xml path('')),p.OrderID) as OrderID,
 iif(p.type = 'B',(select BuyerDelivery from Order_QtyShip where ID = p.OrderID and Seq = p.OrderShipmodeSeq),(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq)) as BuyerDelivery,
-p.Status,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ClogReceiveID != '') as ClogCTNQty,
+p.Status,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogCTNQty,
 p.InspDate,p.InspStatus,p.PulloutDate,p.InvNo
 from PackingList p
 where p.InvNo in ({0})", allID.ToString().Substring(0, allID.Length - 1));

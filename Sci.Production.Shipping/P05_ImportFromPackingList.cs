@@ -52,7 +52,7 @@ namespace Sci.Production.Shipping
             sqlCmd.Append(string.Format(@"with IniBulkPack
 as
 (select 1 as Selected,p.id,pd.OrderID,p.CustCDID,oq.SDPDate,oq.BuyerDelivery,p.ShipQty,p.CTNQty,p.NW,p.NNW,
-'Y' as GMTBookingLock,p.MDivisionID,p.CargoReadyDate,p.PulloutDate,p.GW,p.CBM,p.Status,p.InspDate,(select sum(CTNQty) from PackingList_Detail pd1 where pd1.ID = p.ID and pd1.ClogReceiveID != '') as ClogCTNQty
+'Y' as GMTBookingLock,p.MDivisionID,p.CargoReadyDate,p.PulloutDate,p.GW,p.CBM,p.Status,p.InspDate,(select sum(CTNQty) from PackingList_Detail pd1 where pd1.ID = p.ID and pd1.ReceiveDate is not null) as ClogCTNQty
  from PackingList p 
  left Join PackingList_Detail pd on p.ID = pd.ID
  Left Join Order_QtyShip oq on pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq

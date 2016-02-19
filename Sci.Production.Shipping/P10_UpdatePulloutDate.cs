@@ -27,7 +27,7 @@ namespace Sci.Production.Shipping
             base.OnFormLoaded();
             string sqlCmd = string.Format(@"select 0 as Selected,p.INVNo as GMTBookingID,p.ID as PackingListID,iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd where pd.ID = p.id) a for xml path('')),p.OrderID) as OrderID,
 iif(p.type = 'B',(select BuyerDelivery from Order_QtyShip where ID = p.OrderID and Seq = p.OrderShipmodeSeq),(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq)) as BuyerDelivery,
-p.PulloutDate,p.Status,p.CTNQty,p.InspDate,p.InspStatus,(select isnull(sum(CTNQty),0) from PackingList_Detail pd where pd.ID = p.ID and pd.ClogReceiveID != '') as ClogQty,p.MDivisionID
+p.PulloutDate,p.Status,p.CTNQty,p.InspDate,p.InspStatus,(select isnull(sum(CTNQty),0) from PackingList_Detail pd where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogQty,p.MDivisionID
 from PackingList p
 where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(masterDate["ID"]));
             DataTable gridData;

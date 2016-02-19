@@ -53,7 +53,7 @@ p.CargoReadyDate,(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipm
 p.PulloutDate,p.ShipQty,p.CTNQty,p.GW,p.CBM,p.InvNo,
 (select o.CustCDID from Orders o, (select top 1 OrderID from PackingList_Detail pd where pd.ID = p.ID) a where o.ID = a.OrderID) as CustCDID,
 (select o.Dest from Orders o, (select top 1 OrderID from PackingList_Detail pd where pd.ID = p.ID) a where o.ID = a.OrderID) as Dest,
-p.NW,p.NNW,p.Status,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ClogReceiveID != '') as ClogCTNQty,p.InspDate,p.ShipModeID
+p.NW,p.NNW,p.Status,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogCTNQty,p.InspDate,p.ShipModeID
 from PackingList p
 where {0}", masterID);
             return base.OnDetailSelectCommandPrepare(e);

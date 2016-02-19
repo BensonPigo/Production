@@ -35,7 +35,7 @@ namespace Sci.Production.Shipping
             string sqlCmd = string.Format(@"select p.ID,
 (select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd where pd.ID = p.id) a for xml path('')) as OrderID,
 (select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
-p.Status,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ClogReceiveID != '') as ClogCTNQty,
+p.Status,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogCTNQty,
 p.InspDate,p.InspStatus,p.PulloutDate,p.InvNo,p.MDivisionID
 from PackingList p
 where {0} order by p.ID", masterID);
@@ -297,7 +297,7 @@ g.TotalCTNQty,g.TotalCBM,
 (select isnull(sum(pd1.CTNQty),0) from PackingList p1,PackingList_Detail pd1 where p1.INVNo = g.ID and p1.ID = pd1.ID and pd1.ReceiveDate is not null) as ClogCTNQty,
 p.ID,(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd where pd.ID = p.id) a for xml path('')) as OrderID,
 (select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
-p.Status as PLStatus,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ClogReceiveID != '') as PLClogCTNQty,
+p.Status as PLStatus,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ReceiveDate is not null) as PLClogCTNQty,
 p.InspDate,p.InspStatus,p.PulloutDate
 from PackingList p
 left join GMTBooking g on p.INVNo = g.ID
