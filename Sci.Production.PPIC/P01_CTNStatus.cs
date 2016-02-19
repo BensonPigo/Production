@@ -59,29 +59,26 @@ order by Seq", orderID);
             #region 組撈Transaction Detail的Sql
             string sqlCmd = string.Format(@"with Transferclog
 as(
-select td.PackingListID,td.CTNStartNo,'Send to clog' as Type,td.Id as TypeID,t.TransferDate as TypeDate,'' as Location,td.AddName as UpdateName,td.AddDate as UpdateDate, isnull(pd.Seq,0) as Seq
-from TransferToClog_Detail td 
-left join TransferToClog t on t.Id = td.Id
-left join PackingList_Detail pd on pd.ID = td.PackingListID and pd.OrderID = td.OrderID and pd.CTNStartNo = td.CTNStartNo
-where td.OrderID = '{0}'
+select t.PackingListID,t.CTNStartNo,'Send to clog' as Type,t.TransferDate as TypeDate,'' as Location,t.AddDate as UpdateDate, isnull(pd.Seq,0) as Seq
+from TransferToClog t 
+left join PackingList_Detail pd on pd.ID = t.PackingListID and pd.OrderID = t.OrderID and pd.CTNStartNo = t.CTNStartNo
+where t.OrderID = '{0}' and pd.CTNQty > 0
 ),
 CReceive
 as(
-select cd.PackingListId,CD.CTNStartNo,'Receive' as Type,cd.Id as TypeID,c.ReceiveDate as TypeDate,cd.ClogLocationId as Location,
-iif(cd.EditDate is null,cd.AddName,cd.EditName) as UpdateName,iif(cd.EditDate is null,cd.AddDate,cd.EditDate) as UpdateDate, isnull(pd.Seq,0) as Seq
-from ClogReceive_Detail cd
-left join ClogReceive c on cd.ID = c.ID
-left join PackingList_Detail pd on pd.ID = cd.PackingListID and pd.OrderID = cd.OrderID and pd.CTNStartNo = cd.CTNStartNo
-where cd.OrderId = '{0}'
+select c.PackingListId,c.CTNStartNo,'Receive' as Type,c.ReceiveDate as TypeDate,c.ClogLocationId as Location,
+c.AddDate UpdateDate, isnull(pd.Seq,0) as Seq
+from ClogReceive c
+left join PackingList_Detail pd on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
+where c.OrderId = '{0}' and pd.CTNQty > 0
 ),
 CReturn 
 as (
-select cd.PackingListId,CD.CTNStartNo,'Return' as Type,cd.Id as TypeID,c.ReturnDate as TypeDate,'' as Location,
-cd.AddName as UpdateName,cd.AddDate as UpdateDate, isnull(pd.Seq,0) as Seq
-from ClogReturn_Detail cd
-left join ClogReturn c on cd.ID = c.ID
-left join PackingList_Detail pd on pd.ID = cd.PackingListID and pd.OrderID = cd.OrderID and pd.CTNStartNo = cd.CTNStartNo
-where cd.OrderId = '{0}'
+select c.PackingListId,c.CTNStartNo,'Return' as Type,c.ReturnDate as TypeDate,'' as Location,
+c.AddDate as UpdateDate, isnull(pd.Seq,0) as Seq
+from ClogReturn c
+left join PackingList_Detail pd on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
+where c.OrderId = '{0}' and pd.CTNQty > 0
 )
 select * from Transferclog
 union all
@@ -110,10 +107,8 @@ order by p.ID,pd.Seq", orderID);
                 .Text("PackingListID", header: "Packing List ID", width: Widths.AnsiChars(15))
                 .Text("CTNStartNo", header: "Ctn#", width: Widths.AnsiChars(6))
                 .Text("Type", header: "Trans. Type", width: Widths.AnsiChars(12))
-                .Text("TypeID", header: "Trans. No.", width: Widths.AnsiChars(15))
                 .Date("TypeDate", header: "Trans. Date", width: Widths.AnsiChars(10))
                 .Text("Location", header: "Location", width: Widths.AnsiChars(8))
-                .Text("UpdateName", header: "Last update id", width: Widths.AnsiChars(10))
                 .DateTime("UpdateDate", header: "Last update datetime", width: Widths.AnsiChars(20));
 
             //設定Grid2的顯示欄位
