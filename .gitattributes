@@ -730,6 +730,12 @@ Sci.Production.Logistic/P04.Designer.cs -text
 Sci.Production.Logistic/P04.cs -text
 Sci.Production.Logistic/P04.resx -text
 Sci.Production.Logistic/P04_PrintMoveTicket.rdlc -text
+Sci.Production.Logistic/P05.Designer.cs -text
+Sci.Production.Logistic/P05.cs -text
+Sci.Production.Logistic/P05.resx -text
+Sci.Production.Logistic/P06.Designer.cs -text
+Sci.Production.Logistic/P06.cs -text
+Sci.Production.Logistic/P06.resx -text
 Sci.Production.Logistic/Properties/AssemblyInfo.cs -text
 Sci.Production.Logistic/Properties/Resources.Designer.cs -text
 Sci.Production.Logistic/Properties/Resources.resx -text

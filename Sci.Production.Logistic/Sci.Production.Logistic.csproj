@@ -143,12 +143,6 @@
     <Compile Include="P01_CFAAndRFTList.Designer.cs">
       <DependentUpon>P01_CFAAndRFTList.cs</DependentUpon>
     </Compile>
-    <Compile Include="P02.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P02.Designer.cs">
-      <DependentUpon>P02.cs</DependentUpon>
-    </Compile>
     <Compile Include="P02_BatchReceiving.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -168,12 +162,6 @@
     <Compile Include="P02_InputDate.Designer.cs">
       <DependentUpon>P02_InputDate.cs</DependentUpon>
     </Compile>
-    <Compile Include="P03.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P03.Designer.cs">
-      <DependentUpon>P03.cs</DependentUpon>
-    </Compile>
     <Compile Include="P03_BatchReturn.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -192,11 +180,35 @@
     <Compile Include="P04.Designer.cs">
       <DependentUpon>P04.cs</DependentUpon>
     </Compile>
+    <Compile Include="P05.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05.Designer.cs">
+      <DependentUpon>P05.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02.Designer.cs">
+      <DependentUpon>P02.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="P06.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P06.Designer.cs">
+      <DependentUpon>P06.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03.Designer.cs">
+      <DependentUpon>P03.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -213,9 +225,6 @@
     <EmbeddedResource Include="P01_CFAAndRFTList.resx">
       <DependentUpon>P01_CFAAndRFTList.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P02.resx">
-      <DependentUpon>P02.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="P02_BatchReceiving.resx">
       <DependentUpon>P02_BatchReceiving.cs</DependentUpon>
     </EmbeddedResource>
@@ -224,9 +233,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02_InputDate.resx">
       <DependentUpon>P02_InputDate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P03.resx">
-      <DependentUpon>P03.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P03_BatchReturn.resx">
       <DependentUpon>P03_BatchReturn.cs</DependentUpon>
@@ -238,9 +244,21 @@
       <DependentUpon>P04.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P04_PrintMoveTicket.rdlc" />
+    <EmbeddedResource Include="P05.resx">
+      <DependentUpon>P05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02.resx">
+      <DependentUpon>P02.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P06.resx">
+      <DependentUpon>P06.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P03.resx">
+      <DependentUpon>P03.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
