@@ -736,6 +736,9 @@ Sci.Production.Logistic/P06.resx -text
 Sci.Production.Logistic/Properties/AssemblyInfo.cs -text
 Sci.Production.Logistic/Properties/Resources.Designer.cs -text
 Sci.Production.Logistic/Properties/Resources.resx -text
+Sci.Production.Logistic/R02.Designer.cs -text
+Sci.Production.Logistic/R02.cs -text
+Sci.Production.Logistic/R02.resx -text
 Sci.Production.Logistic/Resources/trffc15.bmp -text
 Sci.Production.Logistic/Sci.Production.Logistic.csproj -text
 Sci.Production.Miscellaneous/B01.Designer.cs -text
