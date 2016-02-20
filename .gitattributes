@@ -1747,6 +1747,9 @@ XLT/Logistic_P02.xltx -text
 XLT/Logistic_P02_ImportFromBarCode.xltx -text
 XLT/Logistic_P03.xltx -text
 XLT/Logistic_P03_ImportFromBarCode.xltx -text
+XLT/Logistic_P05.xltx -text
+XLT/Logistic_P06.xltx -text
+XLT/Logistic_R02_ClogAuditList.xltx -text
 XLT/PPIC_P01_BatchShipmentFinished.xltx -text
 XLT/PPIC_P01_StdGSDList.xltx -text
 XLT/PPIC_P02.xltx -text
@@ -1758,6 +1761,7 @@ XLT/PPIC_P09.xltx -text
 XLT/PPIC_P10.xltx -text
 XLT/PPIC_P11.xltx -text
 XLT/PPIC_P13.xltx -text
+XLT/PPIC_R02_ProductionKits.xltx -text
 XLT/Packing_P02.xltx -text
 XLT/Packing_P03_PackingGuideReport.xltx -text
 XLT/Packing_P03_PackingListReport.xltx -text
@@ -1766,6 +1770,7 @@ XLT/Packing_P04_PackingListReport.xltx -text
 XLT/Packing_P08.xltx -text
 XLT/Packing_P12_Print.xltx -text
 XLT/Packing_P13.xltx -text
+XLT/Packing_P14.xltx -text
 XLT/Shipping_B03_PrintReviseList.xltx -text
 XLT/Shipping_P01.xltx -text
 XLT/Shipping_P02_Print_DetailList.xltx -text
