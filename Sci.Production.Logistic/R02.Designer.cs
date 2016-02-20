@@ -243,6 +243,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.EditMode = true;
+            this.IsSupportToPrint = false;
             this.Name = "R02";
             this.Text = "R02. Clog Audit List";
             this.Controls.SetChildIndex(this.print, 0);
