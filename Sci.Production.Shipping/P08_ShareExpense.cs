@@ -80,7 +80,11 @@ namespace Sci.Production.Shipping
             numericBox3.Value = MyUtility.Convert.GetDecimal(queryData["CBM"]);
             numericBox4.Value = MyUtility.Convert.GetInt(queryData["RecCount"]);
 
-            sqlCmd = string.Format("select *,case when ShareBase = 'G' then 'G.W.' when ShareBase = 'C' then 'CBM' else ' Number od Deliver Sheets' end as ShareRule from ShareExpense where ShippingAPID = '{0}' order by AccountNo", MyUtility.Convert.GetString(apData["ID"]));
+            sqlCmd = string.Format(@"select sh.*,an.Name as AccountName,
+case when sh.ShareBase = 'G' then 'G.W.' when sh.ShareBase = 'C' then 'CBM' else ' Number od Deliver Sheets' end as ShareRule 
+from ShareExpense sh
+left join [Finance].dbo.AccountNo an on an.ID = sh.AccountNo
+where sh.ShippingAPID = '{0}' order by sh.AccountNo", MyUtility.Convert.GetString(apData["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out SEData);
             if (!result)
             {
