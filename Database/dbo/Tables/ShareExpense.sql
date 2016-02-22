@@ -12,11 +12,12 @@
     [ShareBase]    VARCHAR (1)     CONSTRAINT [DF_ShareExpense_ShareBase] DEFAULT ('') NULL,
     [FtyWK]        BIT             CONSTRAINT [DF_ShareExpense_FtyWK] DEFAULT ((0)) NULL,
     [AccountNo]    VARCHAR (8)     CONSTRAINT [DF_ShareExpense_AccountNo] DEFAULT ('') NOT NULL,
-    [AccountName]  VARCHAR (40)    CONSTRAINT [DF_ShareExpense_AccountName] DEFAULT ('') NULL,
     [EditName]     VARCHAR (10)    CONSTRAINT [DF_ShareExpense_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME        NULL,
     CONSTRAINT [PK_ShareExpense] PRIMARY KEY CLUSTERED ([ShippingAPID] ASC, [BLNo] ASC, [WKNo] ASC, [InvNo] ASC, [AccountNo] ASC)
 );
+
+
 
 
 
@@ -78,7 +79,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科目名稱', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShareExpense', @level2type = N'COLUMN', @level2name = N'AccountName';
+
 
 
 GO
