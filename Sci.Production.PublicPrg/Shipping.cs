@@ -46,7 +46,7 @@ SELECT @exact = isnull(c.Exact,0) FROM ShippingAP s, Currency c WHERE s.ID = @id
 DECLARE cursor_ttlAmount CURSOR FOR
 	select a.*,isnull(isnull(sr.ShareBase,sr1.ShareBase),'') as ShareBase
 	from (select *
-		  from (select isnull(se.AccountNo,'') as AccountNo, isnull(a.Name,'') as Name, sum(sd.Amount) as Amount, s.CurrencyID
+		  from (select isnull(se.AccountNo,'') as AccountNo, sum(sd.Amount) as Amount, s.CurrencyID
 				from ShippingAP_Detail sd
 				left join ShipExpense se on se.ID = sd.ShipExpenseID
 				left join [Finance].dbo.AccountNo a on a.ID = se.AccountNo
@@ -81,8 +81,7 @@ BEGIN
 END
 CLOSE cursor_diffAccNo
 
-DECLARE @accname VARCHAR(40),
-		@amount NUMERIC(15,4),
+DECLARE @amount NUMERIC(15,4),
 		@blno VARCHAR(20),
 		@wkno VARCHAR(13),
 		@invno VARCHAR(25),
@@ -107,7 +106,7 @@ DECLARE @accname VARCHAR(40),
 SET @count = 1
 SET @maxdata = 0
 OPEN cursor_ttlAmount
-FETCH NEXT FROM cursor_ttlAmount INTO @accno,@accname,@amount,@currency,@blno,@wkno,@invno,@type,@gw,@cbm,@shipmodeid,@ftywk,@sharebase
+FETCH NEXT FROM cursor_ttlAmount INTO @accno,@amount,@currency,@blno,@wkno,@invno,@type,@gw,@cbm,@shipmodeid,@ftywk,@sharebase
 WHILE @@FETCH_STATUS = 0
 BEGIN
 	IF @count = 1
@@ -166,13 +165,13 @@ BEGIN
 	select @recno = isnull(count(ShippingAPID),0) from ShareExpense where ShippingAPID = @id and WKNo = @wkno and BLNo = @blno and InvNo = @invno and AccountNo = @accno
 	IF @recno = 0
 		BEGIN
-			INSERT INTO ShareExpense(ShippingAPID,BLNo,WKNo,InvNo,Type,GW,CBM,CurrencyID,Amount,ShipModeID,ShareBase,FtyWK,AccountNo,AccountName,EditName,EditDate)
-				VALUES (@id, @blno, @wkno, @invno, @type, @gw, @cbm, @currency, @inputamount, @shipmodeid, @1stsharebase, @ftywk, @accno, @accname, @login, @adddate)
+			INSERT INTO ShareExpense(ShippingAPID,BLNo,WKNo,InvNo,Type,GW,CBM,CurrencyID,Amount,ShipModeID,ShareBase,FtyWK,AccountNo,EditName,EditDate)
+				VALUES (@id, @blno, @wkno, @invno, @type, @gw, @cbm, @currency, @inputamount, @shipmodeid, @1stsharebase, @ftywk, @accno, @login, @adddate)
 		END
 	ELSE
 		BEGIN
 			UPDATE ShareExpense 
-			SET CurrencyID = @currency, Amount = @inputamount, ShareBase = @1stsharebase, AccountName = @accname, EditName = @login, EditDate = @adddate 
+			SET CurrencyID = @currency, Amount = @inputamount, ShareBase = @1stsharebase, EditName = @login, EditDate = @adddate 
 			where ShippingAPID = @id and WKNo = @wkno and BLNo = @blno and InvNo = @invno and AccountNo = @accno
 		END
 
@@ -192,7 +191,7 @@ BEGIN
 		BEGIN
 			SET @count = @count + 1
 		END
-	FETCH NEXT FROM cursor_ttlAmount INTO @accno,@accname,@amount,@currency,@blno,@wkno,@invno,@type,@gw,@cbm,@shipmodeid,@ftywk,@sharebase
+	FETCH NEXT FROM cursor_ttlAmount INTO @accno,@amount,@currency,@blno,@wkno,@invno,@type,@gw,@cbm,@shipmodeid,@ftywk,@sharebase
 END
 CLOSE cursor_ttlAmount", shippingAPID, Sci.Env.User.UserID);
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
@@ -202,7 +201,14 @@ CLOSE cursor_ttlAmount", shippingAPID, Sci.Env.User.UserID);
             }
             return true;
         }
+        #endregion
 
+        #region ReCalculateExpress
+        /// <summary>
+        /// ReCalculateExpress(string)
+        /// </summary>
+        /// <param name="expressID"></param>
+        /// <returns>string</returns>
         public static string ReCalculateExpress(string expressID)
         {
             return string.Format(@"update Express set NW = (select SUM(NW) from Express_Detail where ID = '{0}'),
