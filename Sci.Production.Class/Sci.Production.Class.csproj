@@ -265,6 +265,12 @@
     <Compile Include="txtthreadcolor.designer.cs">
       <DependentUpon>txtthreadcolor.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtMdivision.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtMdivision.Designer.cs">
+      <DependentUpon>txtMdivision.cs</DependentUpon>
+    </Compile>
     <Compile Include="txttpeuser_canedit.cs">
       <SubType>UserControl</SubType>
     </Compile>

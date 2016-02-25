@@ -41,7 +41,6 @@
             // 
             // textBox1
             // 
-            this.textBox1.IsSupportEditMode = false;
             this.textBox1.Location = new System.Drawing.Point(2, 2);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(73, 22);
