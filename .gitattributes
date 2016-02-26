@@ -1832,6 +1832,9 @@ XLT/Shipping_R07_PaymentSummary.xltx -text
 XLT/Shipping_R08_PackingCheckList.xltx -text
 XLT/Shipping_R09_ShareExpenseImportByWK.xltx -text
 XLT/Shipping_R09_ShareExpenseImportByWKByFee.xltx -text
+XLT/Subcon_R01.xltx -text
+XLT/Subcon_R02.xltx -text
+XLT/Subcon_R03.xltx -text
 XLT/Warehouse_R02.xltx -text
 XLT/Warehouse_R17_Location_List.xltx -text
 XLT/Warehouse_R18_Material_Tracking.xltx -text
