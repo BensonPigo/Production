@@ -56,13 +56,13 @@ namespace Sci.Production.Shipping
 as (
 select e.InvNo,'Material' as Type,e.ID as WKNo,'' as FtyWKNo,e.ShipModeID,
 e.CYCFS,e.Packages,e.Blno,e.WeightKg,e.Cbm,e.Forwarder+'-'+isnull(supp.AbbEN,'') as Forwarder,
-e.PortArrival,e.DocArrival,se.Amount,se.AccountNo
+e.PortArrival,e.DocArrival,se.CurrencyID,se.Amount,se.AccountNo
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 inner join Export e on se.WKNo = e.ID
 left join Supp on supp.ID = e.Forwarder
 left join [Finance].dbo.AccountNo a on a.ID = se.AccountNo
-where 1=1");
+where s.Type = 'IMPORT'");
                 if (!MyUtility.Check.Empty(arrivePortDate1))
                 {
                     sqlCmd.Append(string.Format(" and e.PortArrival >= '{0}'", Convert.ToDateTime(arrivePortDate1).ToString("d")));
@@ -101,7 +101,7 @@ FtyExportData
 as (
 select fe.InvNo,IIF(fe.Type = 1,'3rd Country',IIF(fe.Type = 2,'Transfer In','Local Purchase')) as Type,'' as WKNo,fe.ID as FtyWKNo,fe.ShipModeID,
 fe.CYCFS,fe.Packages,fe.Blno,fe.WeightKg,fe.Cbm,fe.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,
-fe.PortArrival,fe.DocArrival,se.Amount,se.AccountNo
+fe.PortArrival,fe.DocArrival,se.CurrencyID,se.Amount,se.AccountNo
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 left join FtyExport fe on se.InvNo = fe.ID
@@ -162,10 +162,10 @@ select AccountNo from FtyExportData where AccountNo not in ('61012001','61012002
 tmpAllData
 as (
 select InvNo,Type,WKNo,FtyWKNo,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
-PortArrival,DocArrival,AccountNo,Amount from ExportData
+PortArrival,DocArrival,CurrencyID,AccountNo,Amount from ExportData
 union all
 select InvNo,Type,WKNo,FtyWKNo,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
-PortArrival,DocArrival,AccountNo,Amount from FtyExportData)
+PortArrival,DocArrival,CurrencyID,AccountNo,Amount from FtyExportData)
 
 select * from tmpAllData
 PIVOT (SUM(Amount)
@@ -184,14 +184,14 @@ FOR AccountNo IN ({0})) a", allAccno.ToString()));
 as (
 select e.InvNo,'Material' as Type,s.MDivisionID,e.Consignee,e.ID as WKNo,'' as FtyWKNo,e.ShipModeID,
 e.CYCFS,e.Packages,e.Blno,e.WeightKg,e.Cbm,e.Forwarder+'-'+isnull(supp.AbbEN,'') as Forwarder,
-e.PortArrival,e.DocArrival,se.AccountNo+'-'+isnull(a.Name,'') as AccountNo,se.Amount,se.ShippingAPID,
+e.PortArrival,e.DocArrival,se.AccountNo+'-'+isnull(a.Name,'') as AccountNo,se.Amount,se.CurrencyID,se.ShippingAPID,
 s.CDate,s.ApvDate,s.VoucherNo,s.SubType
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 inner join Export e on se.WKNo = e.ID
 left join Supp on supp.ID = e.Forwarder
 left join [Finance].dbo.AccountNo a on a.ID = se.AccountNo
-where 1=1");
+where s.Type = 'IMPORT'");
                 if (!MyUtility.Check.Empty(arrivePortDate1))
                 {
                     sqlCmd.Append(string.Format(" and e.PortArrival >= '{0}'", Convert.ToDateTime(arrivePortDate1).ToString("d")));
@@ -230,7 +230,7 @@ FtyExportData
 as (
 select fe.InvNo,IIF(fe.Type = 1,'3rd Country',IIF(fe.Type = 2,'Transfer In','Local Purchase')) as Type,s.MDivisionID,fe.Consignee,'' as WKNo,fe.ID as FtyWKNo,fe.ShipModeID,
 fe.CYCFS,fe.Packages,fe.Blno,fe.WeightKg,fe.Cbm,fe.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,
-fe.PortArrival,fe.DocArrival,se.AccountNo+'-'+isnull(a.Name,'') as AccountNo,se.Amount,se.ShippingAPID,
+fe.PortArrival,fe.DocArrival,se.AccountNo+'-'+isnull(a.Name,'') as AccountNo,se.Amount,se.CurrencyID,se.ShippingAPID,
 s.CDate,s.ApvDate,s.VoucherNo,s.SubType
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
@@ -310,14 +310,14 @@ select * from FtyExportData");
                 foreach (DataRow dr in accnoData.Rows)
                 {
                     i++;
-                    worksheet.Cells[1, 18 + i] = MyUtility.GetValue.Lookup(string.Format("select Name from [Finance].dbo.AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
+                    worksheet.Cells[1, 19 + i] = MyUtility.GetValue.Lookup(string.Format("select Name from [Finance].dbo.AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
                 }
-                worksheet.Cells[1, 18 + i + 1] = "Total Import Fee";
+                worksheet.Cells[1, 19 + i + 1] = "Total Import Fee";
                 string excelSumCol = PublicPrg.Prgs.GetExcelEnglishColumnName(18 + i);
                 string excelColumn = PublicPrg.Prgs.GetExcelEnglishColumnName(18 + i + 1);
                 //填內容值
                 int intRowsStart = 2;
-                object[,] objArray = new object[1, 18 + i + 1];
+                object[,] objArray = new object[1, 19 + i + 1];
                 foreach (DataRow dr in printData.Rows)
                 {
                     objArray[0, 0] = dr["InvNo"];
@@ -333,18 +333,19 @@ select * from FtyExportData");
                     objArray[0, 10] = dr["Forwarder"];
                     objArray[0, 11] = dr["PortArrival"];
                     objArray[0, 12] = dr["DocArrival"];
-                    objArray[0, 13] = MyUtility.Check.Empty(dr["61012001"]) ? 0 : dr["61012001"];
-                    objArray[0, 14] = MyUtility.Check.Empty(dr["61012002"]) ? 0 : dr["61012002"];
-                    objArray[0, 15] = MyUtility.Check.Empty(dr["61012003"]) ? 0 : dr["61012003"];
-                    objArray[0, 16] = MyUtility.Check.Empty(dr["61012004"]) ? 0 : dr["61012004"];
-                    objArray[0, 17] = MyUtility.Check.Empty(dr["61012005"]) ? 0 : dr["61012005"];
+                    objArray[0, 13] = dr["CurrencyID"];
+                    objArray[0, 14] = MyUtility.Check.Empty(dr["61012001"]) ? 0 : dr["61012001"];
+                    objArray[0, 15] = MyUtility.Check.Empty(dr["61012002"]) ? 0 : dr["61012002"];
+                    objArray[0, 16] = MyUtility.Check.Empty(dr["61012003"]) ? 0 : dr["61012003"];
+                    objArray[0, 17] = MyUtility.Check.Empty(dr["61012004"]) ? 0 : dr["61012004"];
+                    objArray[0, 18] = MyUtility.Check.Empty(dr["61012005"]) ? 0 : dr["61012005"];
                     i = 0;
                     foreach (DataRow ddr in accnoData.Rows)
                     {
                         i++;
-                        objArray[0, 17 + i] = MyUtility.Check.Empty(dr[17 + i]) ? 0 : dr[17 + i];
+                        objArray[0, 18 + i] = MyUtility.Check.Empty(dr[18 + i]) ? 0 : dr[18 + i];
                     }
-                    objArray[0, 17 + i + 1] = string.Format("=SUM(N{0}:{1}{0})", intRowsStart, excelSumCol);
+                    objArray[0, 18 + i + 1] = string.Format("=SUM(N{0}:{1}{0})", intRowsStart, excelSumCol);
                     worksheet.Range[String.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;
                     intRowsStart++;
                 }
@@ -353,7 +354,7 @@ select * from FtyExportData");
             {
                 //填內容值
                 int intRowsStart = 2;
-                object[,] objArray = new object[1, 22];
+                object[,] objArray = new object[1, 23];
                 foreach (DataRow dr in printData.Rows)
                 {
                     objArray[0, 0] = dr["InvNo"];
@@ -373,13 +374,14 @@ select * from FtyExportData");
                     objArray[0, 14] = dr["DocArrival"];
                     objArray[0, 15] = dr["AccountNo"];
                     objArray[0, 16] = dr["Amount"];
-                    objArray[0, 17] = dr["ShippingAPID"];
-                    objArray[0, 18] = dr["CDate"];
-                    objArray[0, 19] = dr["ApvDate"];
-                    objArray[0, 20] = dr["VoucherNo"];
-                    objArray[0, 21] = dr["SubType"];
+                    objArray[0, 17] = dr["CurrencyID"];
+                    objArray[0, 18] = dr["ShippingAPID"];
+                    objArray[0, 19] = dr["CDate"];
+                    objArray[0, 20] = dr["ApvDate"];
+                    objArray[0, 21] = dr["VoucherNo"];
+                    objArray[0, 22] = dr["SubType"];
 
-                    worksheet.Range[String.Format("A{0}:V{0}", intRowsStart)].Value2 = objArray;
+                    worksheet.Range[String.Format("A{0}:W{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
             }
