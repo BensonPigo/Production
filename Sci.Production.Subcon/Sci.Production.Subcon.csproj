@@ -202,6 +202,24 @@
     <Compile Include="P30_Import.Designer.cs">
       <DependentUpon>P30_Import.cs</DependentUpon>
     </Compile>
+    <Compile Include="R01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R01.Designer.cs">
+      <DependentUpon>R01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R02.Designer.cs">
+      <DependentUpon>R02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R03.Designer.cs">
+      <DependentUpon>R03.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
@@ -297,6 +315,15 @@
     <EmbeddedResource Include="P30_Import.resx">
       <DependentUpon>P30_Import.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R01.resx">
+      <DependentUpon>R01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R02.resx">
+      <DependentUpon>R02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R03.resx">
+      <DependentUpon>R03.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -1361,6 +1361,15 @@ Sci.Production.Subcon/P35_Import.Designer.cs -text
 Sci.Production.Subcon/P35_Import.cs -text
 Sci.Production.Subcon/P35_Import.resx -text
 Sci.Production.Subcon/Properties/AssemblyInfo.cs -text
+Sci.Production.Subcon/R01.Designer.cs -text
+Sci.Production.Subcon/R01.cs -text
+Sci.Production.Subcon/R01.resx -text
+Sci.Production.Subcon/R02.Designer.cs -text
+Sci.Production.Subcon/R02.cs -text
+Sci.Production.Subcon/R02.resx -text
+Sci.Production.Subcon/R03.Designer.cs -text
+Sci.Production.Subcon/R03.cs -text
+Sci.Production.Subcon/R03.resx -text
 Sci.Production.Subcon/Sci.Production.Subcon.csproj -text
 Sci.Production.Thread/B01.Designer.cs -text
 Sci.Production.Thread/B01.cs -text
