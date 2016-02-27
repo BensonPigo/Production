@@ -1852,6 +1852,8 @@ XLT/Subcon_R02.xltx -text
 XLT/Subcon_R03.xltx -text
 XLT/Subcon_R06.xltx -text
 XLT/Subcon_R12.xltx -text
+XLT/Subcon_R13_SubconPaymentList.xltx -text
+XLT/Subcon_R13_SubconPaymentSummary.xltx -text
 XLT/Warehouse_R02.xltx -text
 XLT/Warehouse_R17_Location_List.xltx -text
 XLT/Warehouse_R18_Material_Tracking.xltx -text
