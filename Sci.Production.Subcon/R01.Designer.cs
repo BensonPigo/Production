@@ -30,7 +30,6 @@
         {
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
@@ -45,6 +44,7 @@
             this.txtstyle1 = new Sci.Production.Class.txtstyle();
             this.label4 = new Sci.Win.UI.Label();
             this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
+            this.label9 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -78,15 +78,6 @@
             this.label2.Size = new System.Drawing.Size(98, 23);
             this.label2.TabIndex = 95;
             this.label2.Text = "Artwork Type";
-            // 
-            // label3
-            // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 12);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(98, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "Issue Date";
             // 
             // label5
             // 
@@ -226,9 +217,25 @@
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
             this.txtMdivision1.TabIndex = 2;
             // 
+            // label9
+            // 
+            this.label9.Lines = 0;
+            this.label9.Location = new System.Drawing.Point(13, 12);
+            this.label9.Name = "label9";
+            this.label9.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label9.RectStyle.BorderWidth = 1F;
+            this.label9.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.label9.RectStyle.ExtBorderWidth = 1F;
+            this.label9.Size = new System.Drawing.Size(98, 23);
+            this.label9.TabIndex = 106;
+            this.label9.Text = "Issue Date";
+            this.label9.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label9.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R01
             // 
             this.ClientSize = new System.Drawing.Size(522, 360);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtMdivision1);
             this.Controls.Add(this.txtstyle1);
@@ -243,7 +250,6 @@
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.IsSupportToPrint = false;
@@ -254,7 +260,6 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.label7, 0);
@@ -269,6 +274,7 @@
             this.Controls.SetChildIndex(this.txtstyle1, 0);
             this.Controls.SetChildIndex(this.txtMdivision1, 0);
             this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.label9, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -278,7 +284,6 @@
 
         private Win.UI.Label label1;
         private Win.UI.Label label2;
-        private Win.UI.Label label3;
         private Win.UI.Label label5;
         private Win.UI.Label label6;
         private Win.UI.Label label7;
@@ -293,5 +298,6 @@
         private Class.txtstyle txtstyle1;
         private Win.UI.Label label4;
         private Class.txtMdivision txtMdivision1;
+        private Win.UI.Label label9;
     }
 }

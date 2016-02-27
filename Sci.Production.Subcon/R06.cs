@@ -11,13 +11,13 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R03 : Sci.Win.Tems.PrintForm
+    public partial class R06 : Sci.Win.Tems.PrintForm
     {
-        string artworktype, factory, subcon, spno, style, orderby, mdivision;
-        DateTime? issuedate1, issuedate2;
+        string artworktype, factory, subcon, poid, style, mdivision, bundleno1,bundleno2;
+        DateTime? farmoutdate1, farmoutdate2, scidelivery1,scidelivery2;
         DataTable printData;
 
-        public R03(ToolStripMenuItem menuitem)
+        public R06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
@@ -25,8 +25,6 @@ namespace Sci.Production.Subcon
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory", out factory);
             MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
             cbbFactory.Text = Sci.Env.User.Factory;
-            MyUtility.Tool.SetupCombox(cbbOrderBy, 1, 1, "Issue date,Supplier");
-            cbbOrderBy.SelectedIndex = 0;
             txtMdivision1.Text = Sci.Env.User.Keyword;
         }
 
@@ -35,19 +33,22 @@ namespace Sci.Production.Subcon
         {
             if (MyUtility.Check.Empty(dateRange1.Value1))
             {
-                MyUtility.Msg.WarningBox("Issue Date can't empty!!");
+                MyUtility.Msg.WarningBox("Farm Out Date can't empty!!");
                 return false;
             }
-            issuedate1 = dateRange1.Value1;
-            issuedate2 = dateRange1.Value2;
+            farmoutdate1 = dateRange1.Value1;
+            farmoutdate2 = dateRange1.Value2;
+            bundleno1 = txtBundleno1.Text;
+            bundleno2 = txtBundleno2.Text;
+            scidelivery1 = dateRange2.Value1;
+            scidelivery2 = dateRange2.Value2;
 
             artworktype = txtartworktype_fty1.Text;
             mdivision = txtMdivision1.Text;
             factory = cbbFactory.Text;
             subcon = txtsubcon1.TextBox1.Text;
-            spno = txtSPNO.Text;
+            poid = txtSPNO.Text;
             style = txtstyle1.Text;
-            orderby = cbbOrderBy.Text;
             
             return base.ValidateInput();
         }
@@ -58,26 +59,30 @@ namespace Sci.Production.Subcon
             #region -- Sql Command --
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"Select 
-a.mdivisionid
-,a.FactoryId
+a.MDivisionID
 ,a.id
-,a.IssueDate
-,a.ArtworkTypeId
-,b.ArtworkPoid
-,d.LocalSuppID+'-'+(select s.Abb from LocalSupp s where s.id = d.LocalSuppID) localsupp
+,c.POID
 ,b.Orderid
 ,c.StyleID
+,d.Article
+,a.artworktypeid
+,f.LocalSuppID+'-'+(select abb from LocalSupp where id = f.LocalSuppID) supplier
+,a.FactoryId
+,b.ArtworkPoid
+,e.BundleGroup
 ,b.BundleNo
-,b.ArtworkID
-,b.PatternCode+'-'+b.PatternDesc pattern
+,d.Colorid
+,d.Sizecode
 ,b.Qty
-,d.delivery
-from farmin a
-inner join farmin_detail b on b.ID = a.Id
-inner join Orders c on c.ID = b.Orderid
-inner join ArtworkPO d on d.ID = b.ArtworkPoid
-where a.issuedate between '{0}' and '{1}'
-", Convert.ToDateTime(issuedate1).ToString("d"), Convert.ToDateTime(issuedate2).ToString("d")));
+,a.IssueDate farmoutDate
+,(select max(farmin.IssueDate) from FarmIn inner join FarmIn_Detail on farmin.ID = FarmIn_Detail.ID where farmin.Status = 'Confirmed' and FarmIn_Detail.ArtworkPo_DetailUkey = b.ArtworkPo_DetailUkey) farminDate
+from farmout a 
+inner join farmout_detail b on a.id = b.id
+inner join orders c on b.orderid = c.id
+inner join ArtworkPO f on f.ID = b.ArtworkPoid
+left join ( bundle d inner join Bundle_Detail e on e.id = d.ID) on e.BundleNo = b.BundleNo
+where a.Status = 'Confirmed' and a.issuedate between '{0}' and '{1}'
+", Convert.ToDateTime(farmoutdate1).ToString("d"), Convert.ToDateTime(farmoutdate2).ToString("d")));
             #endregion
 
             System.Data.SqlClient.SqlParameter sp_artworktype = new System.Data.SqlClient.SqlParameter();
@@ -92,14 +97,48 @@ where a.issuedate between '{0}' and '{1}'
             System.Data.SqlClient.SqlParameter sp_subcon = new System.Data.SqlClient.SqlParameter();
             sp_subcon.ParameterName = "@subcon";
 
-            System.Data.SqlClient.SqlParameter sp_spno = new System.Data.SqlClient.SqlParameter();
-            sp_spno.ParameterName = "@spno";
+            System.Data.SqlClient.SqlParameter sp_poid = new System.Data.SqlClient.SqlParameter();
+            sp_poid.ParameterName = "@poid";
 
             System.Data.SqlClient.SqlParameter sp_style = new System.Data.SqlClient.SqlParameter();
             sp_style.ParameterName = "@style";
 
+            System.Data.SqlClient.SqlParameter sp_bundleno1 = new System.Data.SqlClient.SqlParameter();
+            sp_bundleno1.ParameterName = "@bundleno1";
+
+            System.Data.SqlClient.SqlParameter sp_bundleno2 = new System.Data.SqlClient.SqlParameter();
+            sp_bundleno2.ParameterName = "@bundleno2";
+
+            System.Data.SqlClient.SqlParameter sp_scidelivery1 = new System.Data.SqlClient.SqlParameter();
+            sp_scidelivery1.ParameterName = "@scidelivery1";
+
+            System.Data.SqlClient.SqlParameter sp_scidelivery2 = new System.Data.SqlClient.SqlParameter();
+            sp_scidelivery2.ParameterName = "@scidelivery2";
+
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
 
+            if (!MyUtility.Check.Empty(bundleno1))
+            {
+                sqlCmd.Append(" and b.bundleno >= @bundleno1");
+                sp_bundleno1.Value = bundleno1;
+                cmds.Add(sp_bundleno1);
+            }
+
+            if (!MyUtility.Check.Empty(bundleno2))
+            {
+                sqlCmd.Append(" and b.bundleno <= @bundleno2");
+                sp_bundleno2.Value = bundleno2;
+                cmds.Add(sp_bundleno2);
+            }
+
+            if (!MyUtility.Check.Empty(scidelivery1))
+            {
+                sqlCmd.Append(" and c.scidelivery between @scidelivery1 and @scidelivery2");
+                sp_scidelivery1.Value = scidelivery1;
+                cmds.Add(sp_scidelivery1);
+                sp_scidelivery2.Value = scidelivery2;
+                cmds.Add(sp_scidelivery2);
+            }
 
             if (!MyUtility.Check.Empty(artworktype))
             {
@@ -107,6 +146,7 @@ where a.issuedate between '{0}' and '{1}'
                 sp_artworktype.Value = artworktype;
                 cmds.Add(sp_artworktype);
             }
+
             if (!MyUtility.Check.Empty(mdivision))
             {
                 sqlCmd.Append(" and a.mdivisionid = @MDivision");
@@ -121,15 +161,15 @@ where a.issuedate between '{0}' and '{1}'
             }
             if (!MyUtility.Check.Empty(subcon))
             {
-                sqlCmd.Append(" and d.localsuppid = @subcon");
+                sqlCmd.Append(" and f.localsuppid = @subcon");
                 sp_subcon.Value = subcon;
                 cmds.Add(sp_subcon);
             }
-            if (!MyUtility.Check.Empty(spno))
+            if (!MyUtility.Check.Empty(poid))
             {
-                sqlCmd.Append(" and c.id = @spno ");
-                sp_spno.Value = spno;
-                cmds.Add(sp_spno);
+                sqlCmd.Append(" and c.poid = @poid ");
+                sp_poid.Value = poid;
+                cmds.Add(sp_poid);
             }
             if (!MyUtility.Check.Empty(style))
             {
@@ -137,11 +177,6 @@ where a.issuedate between '{0}' and '{1}'
                 sp_style.Value = style;
                 cmds.Add(sp_style);
             }
-
-            if (orderby.ToUpper() == "ISSUE DATE")
-                sqlCmd.Append(" order by a.issuedate ");
-            else
-                sqlCmd.Append(" order by d.localsuppid ");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
             if (!result)
@@ -164,7 +199,7 @@ where a.issuedate between '{0}' and '{1}'
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R03.xltx");
+            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R06.xltx",2);
             return true;
         }
     }

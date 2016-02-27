@@ -118,7 +118,7 @@ where a.issuedate between '{0}' and '{1}'
             }
             if (!MyUtility.Check.Empty(subcon))
             {
-                sqlCmd.Append(" and a.localsuppid = @subcon");
+                sqlCmd.Append(" and d.localsuppid = @subcon");
                 sp_subcon.Value = subcon;
                 cmds.Add(sp_subcon);
             }
