@@ -11,13 +11,13 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R12 : Sci.Win.Tems.PrintForm
+    public partial class R13 : Sci.Win.Tems.PrintForm
     {
         string artworktype, factory, subcon, mdivision, orderby;
-        DateTime? APdate1, APdate2;
+        DateTime? issueDate1, issueDate2, approveDate1, approveDate2;
         DataTable printData;
 
-        public R12(ToolStripMenuItem menuitem)
+        public R13(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
@@ -25,45 +25,64 @@ namespace Sci.Production.Subcon
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory", out factory);
             MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
             cbbFactory.Text = Sci.Env.User.Factory;
-            MyUtility.Tool.SetupCombox(cbbOrderBy, 1, 1, "Supplier,Handle");
-            cbbOrderBy.SelectedIndex = 0;
             txtMdivision1.Text = Sci.Env.User.Keyword;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
+            if (MyUtility.Check.Empty(dateRange1.Value1) || MyUtility.Check.Empty(dateRange2.Value1))
             {
-                MyUtility.Msg.WarningBox("AP Date can't empty!!");
+                MyUtility.Msg.WarningBox("< Issue Date > & < Approve Date > can't empty!!");
                 return false;
             }
-            APdate1 = dateRange1.Value1;
-            APdate2 = dateRange1.Value2;
-           
+            issueDate1 = dateRange1.Value1;
+            issueDate2 = dateRange1.Value2;
+            approveDate1 = dateRange2.Value1;
+            approveDate2 = dateRange2.Value2;
             artworktype = txtartworktype_fty1.Text;
             mdivision = txtMdivision1.Text;
             factory = cbbFactory.Text;
             subcon = txtsubcon1.TextBox1.Text;
-            orderby = cbbOrderBy.Text;
-            
+
             return base.ValidateInput();
         }
 
         // 非同步取資料
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            #region -- Sql Command --
+            
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"Select a.MDivisionID
+            if (this.checkBox1.Checked)
+            {
+                #region -- Summary Sql Command --
+                sqlCmd.Append(string.Format(@"Select a.MDivisionID
+,a.FactoryID
+, a.LocalSuppID
+, (select abb from localsupp where id = a.localsuppid) suppabb
+, a.ArtworkTypeID, a.CurrencyID, sum(a.Amount+a.Vat) as Amt 
+, PayTermID+'-' +(select Name from PayTerm where id = a.paytermid) payterm
+from artworkap a inner join artworkap_detail b on a.id = b.id 
+left join ArtworkPO c on c.ID = b.ArtworkPoID
+where  a.issuedate between '{0}' and '{1}'
+ and a.apvdate between '{2}' and '{3}'"
+                    , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
+                    , Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")
+                ));
+                #endregion
+            }
+            else
+            {
+                #region -- List Sql Command --
+                sqlCmd.Append(string.Format(@"Select a.MDivisionID
 ,a.FactoryID
 ,a.LocalSuppID
 ,(select abb from LocalSupp where id = a.LocalSuppID) supplier
 ,a.Id
 ,a.IssueDate
-,dbo.getpass1(a.Handle) handle
+,a.ApvDate
 ,a.CurrencyID
-,a.Amount+a.vat apAmount
+,a.Amount+a.Vat apAmount
 ,a.ArtworkTypeID
 ,b.ArtworkPoID
 ,b.OrderID
@@ -74,10 +93,13 @@ namespace Sci.Production.Subcon
 ,a.InvNo
 from artworkap a inner join artworkap_detail b on a.id = b.id 
 left join ArtworkPO c on c.ID = b.ArtworkPoID
-where  a.ApvDate is null and a.issuedate between '{0}' and '{1}'
-", Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
-            #endregion
-
+where  a.issuedate between '{0}' and '{1}'
+ and a.apvdate between '{2}' and '{3}'"
+                    , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
+                    , Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")
+                ));
+                #endregion
+            }
             System.Data.SqlClient.SqlParameter sp_artworktype = new System.Data.SqlClient.SqlParameter();
             sp_artworktype.ParameterName = "@artworktype";
 
@@ -90,7 +112,7 @@ where  a.ApvDate is null and a.issuedate between '{0}' and '{1}'
             System.Data.SqlClient.SqlParameter sp_subcon = new System.Data.SqlClient.SqlParameter();
             sp_subcon.ParameterName = "@subcon";
 
-             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
 
             if (!MyUtility.Check.Empty(artworktype))
             {
@@ -118,12 +140,19 @@ where  a.ApvDate is null and a.issuedate between '{0}' and '{1}'
                 cmds.Add(sp_subcon);
             }
 
-            if (orderby.ToUpper() == "SUPPLIER")
-                sqlCmd.Append(" order by a.localsuppid ");
-            else
-                sqlCmd.Append(" order by a.handle ");
+            if (this.checkBox1.Checked)
+            {
+                sqlCmd.Append(@" group by a.mdivisionid,a.factoryid, a.localsuppid,a.ArtworkTypeID, a.id, a.CurrencyID, paytermid
+		order by a.ArtworkTypeID, currencyid, factoryid, a.LocalSuppID");
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
+            }
+            else
+            {
+                sqlCmd.Append(@" order by a.Currencyid, a.LocalSuppId, a.Id");
+
+            }
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -144,7 +173,10 @@ where  a.ApvDate is null and a.issuedate between '{0}' and '{1}'
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R12.xltx",2);
+            if (checkBox1.Checked)
+                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R13_SubconPaymentSummary.xltx", 2);
+            else
+                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R13_SubconPaymentList.xltx", 2);
             return true;
         }
     }
