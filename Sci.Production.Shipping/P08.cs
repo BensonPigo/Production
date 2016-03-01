@@ -145,7 +145,7 @@ where sd.ID = '{0}'", masterID);
                             {
                                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                                 string localSuppID = MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID"]);
-                                string sqlCmd = string.Format("select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense where Junk = 0 and LocalSuppID = '{0}'", localSuppID);
+                                string sqlCmd = string.Format("select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense where Junk = 0 and LocalSuppID = '{0}' and AccountNo != ''", localSuppID);
                                 Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,50,6,3,11,8", MyUtility.Convert.GetString(dr["ShipExpenseID"]));
                                 DialogResult returnResult = item.ShowDialog();
                                 if (returnResult == DialogResult.Cancel) { return; }
@@ -172,7 +172,7 @@ where sd.ID = '{0}'", masterID);
                         cmds.Add(sp2);
 
                         DataTable ExpenseData;
-                        string sqlCmd = "select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense where Junk = 0 and LocalSuppID = @localsuppid and ID = @shipexpenseid";
+                        string sqlCmd = "select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense where Junk = 0 and LocalSuppID = @localsuppid and ID = @shipexpenseid  and AccountNo != ''";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ExpenseData);
                         if (!result || ExpenseData.Rows.Count <= 0)
                         {
