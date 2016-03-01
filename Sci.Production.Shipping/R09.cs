@@ -61,7 +61,6 @@ from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 inner join Export e on se.WKNo = e.ID
 left join Supp on supp.ID = e.Forwarder
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountNo
 where s.Type = 'IMPORT'");
                 if (!MyUtility.Check.Empty(arrivePortDate1))
                 {
@@ -106,7 +105,6 @@ from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 left join FtyExport fe on se.InvNo = fe.ID
 left join LocalSupp ls on ls.ID = fe.Forwarder
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountNo
 where fe.Type <> 3");
                 if (!MyUtility.Check.Empty(arrivePortDate1))
                 {
