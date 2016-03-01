@@ -311,8 +311,8 @@ select * from FtyExportData");
                     worksheet.Cells[1, 19 + i] = MyUtility.GetValue.Lookup(string.Format("select Name from [Finance].dbo.AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
                 }
                 worksheet.Cells[1, 19 + i + 1] = "Total Import Fee";
-                string excelSumCol = PublicPrg.Prgs.GetExcelEnglishColumnName(18 + i);
-                string excelColumn = PublicPrg.Prgs.GetExcelEnglishColumnName(18 + i + 1);
+                string excelSumCol = PublicPrg.Prgs.GetExcelEnglishColumnName(19 + i);
+                string excelColumn = PublicPrg.Prgs.GetExcelEnglishColumnName(19 + i + 1);
                 //填內容值
                 int intRowsStart = 2;
                 object[,] objArray = new object[1, 19 + i + 1];
@@ -343,7 +343,7 @@ select * from FtyExportData");
                         i++;
                         objArray[0, 18 + i] = MyUtility.Check.Empty(dr[18 + i]) ? 0 : dr[18 + i];
                     }
-                    objArray[0, 18 + i + 1] = string.Format("=SUM(N{0}:{1}{0})", intRowsStart, excelSumCol);
+                    objArray[0, 18 + i + 1] = string.Format("=SUM(O{0}:{1}{0})", intRowsStart, excelSumCol);
                     worksheet.Range[String.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;
                     intRowsStart++;
                 }
