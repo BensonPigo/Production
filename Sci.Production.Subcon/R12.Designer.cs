@@ -195,7 +195,7 @@
             this.Controls.Add(this.label1);
             this.IsSupportToPrint = false;
             this.Name = "R12";
-            this.Text = "R12. Sub-Con Outstanding Payment List";
+            this.Text = "R12. Outstanding List of Subcon Payment";
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label3, 0);
