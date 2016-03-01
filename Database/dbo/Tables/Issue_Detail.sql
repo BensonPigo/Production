@@ -20,6 +20,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發料明細', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail';
 
@@ -63,4 +65,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ukey', @lev
 GO
 CREATE NONCLUSTERED INDEX [IX_Issue_Detail]
     ON [dbo].[Issue_Detail]([Id] ASC, [POID] ASC, [Seq1] ASC, [Seq2] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name2 of Missing Index, sysname,>]
+    ON [dbo].[Issue_Detail]([POID] ASC, [Seq1] ASC, [Seq2] ASC)
+    INCLUDE([Id], [Qty], [Roll], [Dyelot], [StockType]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index2, sysname,>]
+    ON [dbo].[Issue_Detail]([MDivisionID] ASC, [POID] ASC, [Seq1] ASC, [Seq2] ASC)
+    INCLUDE([Id], [Qty]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[Issue_Detail]([FtyInventoryUkey] ASC)
+    INCLUDE([Id], [Qty]);
 

@@ -29,8 +29,13 @@
     [AddDate]             DATETIME       NULL,
     [EditName]            VARCHAR (10)   CONSTRAINT [DF_Order_BOA_EditName] DEFAULT ('') NULL,
     [EditDate]            DATETIME       NULL,
+    [SizeItem_Elastic]    VARCHAR (3)    NULL,
+    [BomTypeFactory]      BIT            NULL,
+    [BomTypePo]           BIT            NULL,
     CONSTRAINT [PK_Order_BOA] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO

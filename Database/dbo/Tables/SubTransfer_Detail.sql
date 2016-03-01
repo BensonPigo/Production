@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[SubTransfer_Detail] (
+CREATE TABLE [dbo].[SubTransfer_Detail] (
     [ID]                   VARCHAR (13)    CONSTRAINT [DF_SubTransfer_Detail_ID] DEFAULT ('') NOT NULL,
     [FromFtyInventoryUkey] BIGINT          NULL,
     [FromMDivisionID]      VARCHAR (8)     CONSTRAINT [DF_SubTransfer_Detail_FromMDivisionID] DEFAULT ('') NULL,
@@ -21,6 +21,8 @@
     [Ukey]                 BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_SubTransfer_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -90,5 +92,25 @@ GO
 
 
 GO
+CREATE NONCLUSTERED INDEX [<Name2 of Missing Index, sysname,>]
+    ON [dbo].[SubTransfer_Detail]([FromPOID] ASC, [FromSeq1] ASC, [FromSeq2] ASC)
+    INCLUDE([ID], [FromRoll], [FromStockType], [FromDyelot], [Qty]);
 
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index3, sysname,>]
+    ON [dbo].[SubTransfer_Detail]([ToPOID] ASC, [ToSeq1] ASC, [ToSeq2] ASC, [ToLocation] ASC)
+    INCLUDE([ID]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index2, sysname,>]
+    ON [dbo].[SubTransfer_Detail]([ToMDivisionID] ASC, [ToPOID] ASC, [ToSeq1] ASC, [ToSeq2] ASC)
+    INCLUDE([ID], [Qty]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[SubTransfer_Detail]([FromMDivisionID] ASC, [FromPOID] ASC, [FromSeq1] ASC, [FromSeq2] ASC)
+    INCLUDE([ID], [Qty]);
 

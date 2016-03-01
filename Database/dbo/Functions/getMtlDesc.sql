@@ -65,5 +65,5 @@ BEGIN
 		SET @string = '**PLS USE STOCK FROM SP#:' + ISNULL(@StockSP,'') + '**' + CHAR(13)+CHAR(10) + @string;
 	END 
 
-    RETURN @string
+    RETURN rtrim(@string)
 END

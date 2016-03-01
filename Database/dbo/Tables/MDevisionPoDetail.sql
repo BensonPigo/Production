@@ -26,6 +26,8 @@
 
 
 
+
+
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',
     @value = N'MDivision',
@@ -91,5 +93,12 @@ CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
 GO
 CREATE NONCLUSTERED INDEX [<Name2 of Missing Index, sysname,>]
     ON [dbo].[MDivisionPoDetail]([POID] ASC)
+    ON [SLAVE];
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name3 of Missing Index, sysname,>]
+    ON [dbo].[MDivisionPoDetail]([MDivisionID] ASC)
+    INCLUDE([POID], [Seq1], [Seq2])
     ON [SLAVE];
 
