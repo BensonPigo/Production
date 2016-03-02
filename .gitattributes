@@ -1873,6 +1873,8 @@ XLT/Shipping_R09_ShareExpenseImportByWKByFee.xltx -text
 XLT/Shipping_R10_ShareExpenseExportBySP.xltx -text
 XLT/Shipping_R10_ShareExpenseExportBySPByFee.xltx -text
 XLT/Shipping_R10_ShareExpenseExportFeeReport.xltx -text
+XLT/Shipping_R11_NonSharedListGarment.xltx -text
+XLT/Shipping_R11_NonSharedListMaterial.xltx -text
 XLT/Subcon_R01.xltx -text
 XLT/Subcon_R02.xltx -text
 XLT/Subcon_R03.xltx -text
