@@ -1,13 +1,16 @@
 ﻿CREATE TABLE [dbo].[Unit_Rate] (
-    [UnitFrom] VARCHAR (8)  CONSTRAINT [DF_Unit_Rate_UnitFrom] DEFAULT ('') NOT NULL,
-    [UnitTo]   VARCHAR (8)  CONSTRAINT [DF_Unit_Rate_UnitTo] DEFAULT ('') NOT NULL,
-    [Rate]     VARCHAR (22) CONSTRAINT [DF_Unit_Rate_Rate] DEFAULT ('') NULL,
-    [AddName]  VARCHAR (10) CONSTRAINT [DF_Unit_Rate_AddName] DEFAULT ('') NULL,
-    [AddDate]  DATETIME     NULL,
-    [EditName] VARCHAR (10) CONSTRAINT [DF_Unit_Rate_EditName] DEFAULT ('') NULL,
-    [EditDate] DATETIME     NULL,
+    [UnitFrom]  VARCHAR (8)      CONSTRAINT [DF_Unit_Rate_UnitFrom] DEFAULT ('') NOT NULL,
+    [UnitTo]    VARCHAR (8)      CONSTRAINT [DF_Unit_Rate_UnitTo] DEFAULT ('') NOT NULL,
+    [Rate]      VARCHAR (22)     CONSTRAINT [DF_Unit_Rate_Rate] DEFAULT ('') NULL,
+    [RateValue] NUMERIC (28, 18) CONSTRAINT [DF_Unit_Rate_RateValue] DEFAULT ((0)) NULL,
+    [AddName]   VARCHAR (10)     CONSTRAINT [DF_Unit_Rate_AddName] DEFAULT ('') NULL,
+    [AddDate]   DATETIME         NULL,
+    [EditName]  VARCHAR (10)     CONSTRAINT [DF_Unit_Rate_EditName] DEFAULT ('') NULL,
+    [EditDate]  DATETIME         NULL,
     CONSTRAINT [PK_Unit_Rate] PRIMARY KEY CLUSTERED ([UnitFrom] ASC, [UnitTo] ASC)
 );
+
+
 
 
 GO
