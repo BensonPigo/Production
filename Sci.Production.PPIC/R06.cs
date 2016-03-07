@@ -148,7 +148,6 @@ where o.SciDelivery between '{1}' and '{2}'", excludeReplacement == 1?"and psd.S
                 return false;
             }
 
-            //因為速度較慢，故不使用
             MyUtility.Msg.WaitWindows("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "PPIC_R06_MonthlyMaterialCompletion.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
