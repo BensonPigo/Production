@@ -28,6 +28,7 @@ Database/dbo/Functions/getPulloutComplete.sql -text
 Database/dbo/Functions/getSewingOutputCumulateOfDays.sql -text
 Database/dbo/Functions/getStockUnit.sql -text
 Database/dbo/Functions/getTPEPass1.sql -text
+Database/dbo/Functions/getUnitRate.sql -text
 Database/dbo/Stored[!!-~]Procedures/dbo.insertMygridstd2.sql -text
 Database/dbo/Stored[!!-~]Procedures/insertMygridstd2.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_ThreadTransactionList.sql -text
