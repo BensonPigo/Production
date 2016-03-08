@@ -250,6 +250,12 @@
     <Compile Include="R22.Designer.cs">
       <DependentUpon>R22.cs</DependentUpon>
     </Compile>
+    <Compile Include="R24.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R24.Designer.cs">
+      <DependentUpon>R24.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
@@ -369,6 +375,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R22.resx">
       <DependentUpon>R22.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R24.resx">
+      <DependentUpon>R24.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
