@@ -48,6 +48,9 @@
     <Reference Include="log4net">
       <HintPath>..\_Dll\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.Common.dll</HintPath>
@@ -146,6 +149,12 @@
     <Compile Include="B03_Copy.Designer.cs">
       <DependentUpon>B03_Copy.cs</DependentUpon>
     </Compile>
+    <Compile Include="R03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R03.Designer.cs">
+      <DependentUpon>R03.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
@@ -195,6 +204,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B03_Copy.resx">
       <DependentUpon>B03_Copy.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R03.resx">
+      <DependentUpon>R03.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

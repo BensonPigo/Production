@@ -1103,6 +1103,9 @@ Sci.Production.Planning/P05.resx -text
 Sci.Production.Planning/Properties/AssemblyInfo.cs -text
 Sci.Production.Planning/Properties/Resources.Designer.cs -text
 Sci.Production.Planning/Properties/Resources.resx -text
+Sci.Production.Planning/R03.Designer.cs -text
+Sci.Production.Planning/R03.cs -text
+Sci.Production.Planning/R03.resx -text
 Sci.Production.Planning/Resources/trffc15.bmp -text
 Sci.Production.Planning/Sci.Production.Planning.csproj -text
 Sci.Production.PublicForm/ColorCombination.Designer.cs -text
