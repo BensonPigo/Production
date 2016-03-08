@@ -1859,6 +1859,7 @@ XLT/PPIC_P10.xltx -text
 XLT/PPIC_P11.xltx -text
 XLT/PPIC_P13.xltx -text
 XLT/PPIC_R02_ProductionKits.xltx -text
+XLT/PPIC_R05_AllowanceConsumptionReport.xltx -text
 XLT/PPIC_R06_MonthlyMaterialCompletion.xltx -text
 XLT/PPIC_R08_ReplacementReportList.xltx -text
 XLT/Packing_P02.xltx -text
@@ -1870,6 +1871,7 @@ XLT/Packing_P08.xltx -text
 XLT/Packing_P12_Print.xltx -text
 XLT/Packing_P13.xltx -text
 XLT/Packing_P14.xltx -text
+XLT/Planning_R03_LocalQuotationList.xltx -text
 XLT/Sewing_R04_SewingDailyOutputList.xltx -text
 XLT/Shipping_B03_PrintReviseList.xltx -text
 XLT/Shipping_P01.xltx -text
