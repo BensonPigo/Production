@@ -416,6 +416,7 @@ Database/dbo/Tables/Unit_Rate.sql -text
 Database/dbo/Tables/UserLog.sql -text
 Database/dbo/Tables/VNContract.sql -text
 Database/dbo/Tables/VNContract_Detail.sql -text
+Database/dbo/Tables/VNExportPort.sql -text
 Database/dbo/Tables/VNFixedDeclareItem.sql -text
 Database/dbo/Tables/VNNLCodeDesc.sql -text
 Database/dbo/Tables/WhseReason.sql -text
