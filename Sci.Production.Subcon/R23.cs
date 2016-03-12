@@ -11,14 +11,14 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R24 : Sci.Win.Tems.PrintForm
+    public partial class R23 : Sci.Win.Tems.PrintForm
     {
-        string artworktype, factory, brandid, style, mdivision, spno1, spno2, ordertype, ratetype, status;
-        int ordertypeindex, ratetypeindex, statusindex;
-        DateTime? APdate1, APdate2, GLdate1, GLdate2;
+        string artworktype, factory, brandid, style, mdivision, spno1, spno2, ordertype,ratetype,status;
+        int ordertypeindex,ratetypeindex,statusindex;
+        DateTime? IssueDate1, IssueDate2;
         DataTable printData;
 
-        public R24(ToolStripMenuItem menuitem)
+        public R23(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
@@ -38,19 +38,16 @@ namespace Sci.Production.Subcon
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-
-            if (cbbStatus.SelectedIndex != 1 && MyUtility.Check.Empty(dateRangeAPDate.Value1))
+            
+            if (cbbStatus.SelectedIndex!=1 && MyUtility.Check.Empty(dateRangePoDate.Value1))
             {
-                MyUtility.Msg.WarningBox("A/P Date can't empty!!");
+                MyUtility.Msg.WarningBox("Issue Date can't empty!!");
                 return false;
             }
-            APdate1 = dateRangeAPDate.Value1;
-            APdate2 = dateRangeAPDate.Value2;
+            IssueDate1 = dateRangePoDate.Value1;
+            IssueDate2 = dateRangePoDate.Value2;
             spno1 = txtSpno1.Text;
             spno2 = txtSpno2.Text;
-            GLdate1 = dateRangeGLDate.Value1;
-            GLdate2 = dateRangeGLDate.Value2;
-
             artworktype = txtartworktype_fty1.Text;
             mdivision = txtMdivision1.Text;
             factory = cbbFactory.Text;
@@ -78,9 +75,8 @@ namespace Sci.Production.Subcon
                     ordertype = "('B','S','M')";
                     break;
             }
-            brandid = txtbrand1.Text;
-            style = txtstyle1.Text;
 
+            style = txtstyle1.Text;
             return base.ValidateInput();
         }
 
@@ -88,17 +84,11 @@ namespace Sci.Production.Subcon
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sqlparameter delcare --
-            System.Data.SqlClient.SqlParameter sp_apdate1 = new System.Data.SqlClient.SqlParameter();
-            sp_apdate1.ParameterName = "@apdate1";
+            System.Data.SqlClient.SqlParameter sp_Podate1 = new System.Data.SqlClient.SqlParameter();
+            sp_Podate1.ParameterName = "@Podate1";
 
-            System.Data.SqlClient.SqlParameter sp_apdate2 = new System.Data.SqlClient.SqlParameter();
-            sp_apdate2.ParameterName = "@apdate2";
-
-            System.Data.SqlClient.SqlParameter sp_GLdate1 = new System.Data.SqlClient.SqlParameter();
-            sp_GLdate1.ParameterName = "@GLdate1";
-
-            System.Data.SqlClient.SqlParameter sp_GLdate2 = new System.Data.SqlClient.SqlParameter();
-            sp_GLdate2.ParameterName = "@GLdate2";
+            System.Data.SqlClient.SqlParameter sp_Podate2 = new System.Data.SqlClient.SqlParameter();
+            sp_Podate2.ParameterName = "@Podate2";
 
             System.Data.SqlClient.SqlParameter sp_spno1 = new System.Data.SqlClient.SqlParameter();
             sp_spno1.ParameterName = "@spno1";
@@ -121,8 +111,8 @@ namespace Sci.Production.Subcon
             System.Data.SqlClient.SqlParameter sp_style = new System.Data.SqlClient.SqlParameter();
             sp_style.ParameterName = "@style";
             #endregion
-
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();      
 
             #region -- Sql Command --
             StringBuilder sqlCmd = new StringBuilder();
@@ -130,15 +120,15 @@ namespace Sci.Production.Subcon
 as
 (
 	select t.*,ArtworkType.ID artworktypeid
-	from dbo.ArtworkType,(select distinct b.OrderId from dbo.localap a	
-	inner join dbo.LocalAP_Detail b on b.id = a.id ");
+	from dbo.ArtworkType,(select distinct b.OrderId from dbo.localpo a	
+	inner join dbo.Localpo_Detail b on b.id = a.id ");
 
             #region -- 條件組合 --
             switch (statusindex)
             {
                 case 0:
                     sqlCmd.Append(string.Format(@" where a.apvdate is not null and a.issuedate between '{0}' and '{1}'"
-                        , Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
+                        , Convert.ToDateTime(IssueDate1).ToString("d"), Convert.ToDateTime(IssueDate2).ToString("d")));
                     break;
 
                 case 1:
@@ -147,10 +137,11 @@ as
 
                 case 2:
                     sqlCmd.Append(string.Format(@" where (a.apvdate is null or a.issuedate between '{0}' and '{1}')"
-                        , Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
+                        , Convert.ToDateTime(IssueDate1).ToString("d"), Convert.ToDateTime(IssueDate2).ToString("d")));
                     break;
             }
 
+            
             if (!MyUtility.Check.Empty(spno1))
             {
                 sqlCmd.Append(" and b.orderid >= @spno1");
@@ -163,15 +154,6 @@ as
                 sqlCmd.Append(" and b.orderid <= @spno2");
                 sp_spno2.Value = spno2;
                 cmds.Add(sp_spno2);
-            }
-
-            if (!MyUtility.Check.Empty(GLdate1))
-            {
-                sqlCmd.Append(" and a.transdate between @GLdate1 and @GLdate1");
-                sp_GLdate1.Value = GLdate1;
-                cmds.Add(sp_GLdate1);
-                sp_GLdate2.Value = GLdate2;
-                cmds.Add(sp_GLdate2);
             }
 
             if (!MyUtility.Check.Empty(artworktype))
@@ -213,25 +195,25 @@ select aa.FactoryID
 ,aa.BrandID
 ,dbo.getTPEPass1(aa.SMR) smr
 ,y.order_qty
-,x.ap_qty
-,x.ap_amt
-,round(x.ap_amt / iif(x.ap_qty=0,1,x.ap_qty),3) ap_price
+,x.Po_qty
+,round(x.Po_amt,3)
+,round(x.Po_amt / iif(y.order_qty=0,1,y.order_qty),3) Po_price
 --,y.order_amt
 --,y.order_qty
 ,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
-,round(x.ap_amt / iif(x.ap_qty=0,1,x.ap_qty)/ iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2) * 100 percentage
+,round(x.Po_amt / iif(y.order_qty=0,1,y.order_qty) / iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2) * 100 percentage
 from cte
 left join orders aa on aa.id = cte.orderid
 left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
 outer apply (
-	select isnull(sum(t.ap_amt),0.00) ap_amt, isnull(sum(t.ap_qty),0) ap_qty from (
+	select isnull(sum(t.Po_amt),0.00) Po_amt, isnull(sum(t.Po_qty),0) Po_qty from (
 	select currencyid,
-			apd.Price,
-			apd.Qty ap_qty
-			,apd.Qty*apd.Price*dbo.getRate('{0}',AP.CurrencyID,'USD') ap_amt
-			,dbo.getRate('{0}',AP.CurrencyID,'USD') rate
-	from localap ap inner join LocalAP_Detail apd on apd.id = ap.Id 
-		where ap.Category = cte.artworktypeid and apd.OrderId = aa.POID AND AP.Status = 'Approved') t
+			pod.Price,
+			pod.Qty Po_qty
+			,pod.Qty*pod.Price*dbo.getRate('{0}',Po.CurrencyID,'USD') Po_amt
+			,dbo.getRate('{0}',Po.CurrencyID,'USD') rate
+	from localpo po inner join Localpo_Detail pod on Pod.id = Po.Id 
+		where po.Category = cte.artworktypeid and pod.OrderId = aa.POID AND po.Status = 'Approved') t
 		) x		
 outer apply(
 	select orders.POID
@@ -241,9 +223,9 @@ outer apply(
 	inner join Order_TmsCost on Order_TmsCost.id = orders.ID 
 	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid
 	group by orders.poid,ArtworkTypeID) y
-where ap_qty is not null 
+where Po_qty is not null 
 ", ratetype));
-            #endregion
+            #endregion           
 
             if (ordertypeindex >= 4) //include Forecast 
             {
@@ -261,7 +243,7 @@ where ap_qty is not null
                 cmds.Add(sp_style);
             }
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -282,14 +264,13 @@ where ap_qty is not null
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R24.xltx", 5);
+            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R23.xltx",5);
             return true;
         }
 
         private void cbbStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
-            dateRangeAPDate.Enabled = !(cbbStatus.SelectedIndex == 1);
-            dateRangeGLDate.Enabled = !(cbbStatus.SelectedIndex == 1);
+            dateRangePoDate.Enabled = !(cbbStatus.SelectedIndex == 1);
         }
     }
 }

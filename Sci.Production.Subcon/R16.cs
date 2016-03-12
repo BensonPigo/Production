@@ -11,14 +11,14 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R24 : Sci.Win.Tems.PrintForm
+    public partial class R16 : Sci.Win.Tems.PrintForm
     {
         string artworktype, factory, brandid, style, mdivision, spno1, spno2, ordertype, ratetype, status;
         int ordertypeindex, ratetypeindex, statusindex;
-        DateTime? APdate1, APdate2, GLdate1, GLdate2;
+        DateTime? Issuedate1, Issuedate2, GLdate1, GLdate2;
         DataTable printData;
 
-        public R24(ToolStripMenuItem menuitem)
+        public R16(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
@@ -27,10 +27,10 @@ namespace Sci.Production.Subcon
             MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
             cbbFactory.Text = Sci.Env.User.Factory;
             txtMdivision1.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(cbbOrderType, 1, 1, "Bulk,Sample,Material,Bulk+Sample,Bulk+Sample+Forecast,Bulk+Sample+Material+Forecast");
-            cbbOrderType.SelectedIndex = 0;
-            MyUtility.Tool.SetupCombox(cbbRateType, 2, 1, "FX,Fixed Exchange Rate,KP,KPI Exchange Rate,DL,Daily Exchange Rate,3S,Custom Exchange Rate,RV,Currency Revaluation Rate,OT,One-time Exchange Rate");
-            cbbRateType.SelectedIndex = 0;
+
+            txtdropdownlist1.SelectedIndex = 0;
+
+            txtFinanceEnReason1.SelectedIndex = 0;
             MyUtility.Tool.SetupCombox(cbbStatus, 1, 1, "Only Approved,Only Unapproved,All");
             cbbStatus.SelectedIndex = 0;
         }
@@ -39,23 +39,21 @@ namespace Sci.Production.Subcon
         protected override bool ValidateInput()
         {
 
-            if (cbbStatus.SelectedIndex != 1 && MyUtility.Check.Empty(dateRangeAPDate.Value1))
+            if (cbbStatus.SelectedIndex != 1 && MyUtility.Check.Empty(dateRangePoIssueDate.Value1))
             {
-                MyUtility.Msg.WarningBox("A/P Date can't empty!!");
+                MyUtility.Msg.WarningBox("Issue Date can't empty!!");
                 return false;
             }
-            APdate1 = dateRangeAPDate.Value1;
-            APdate2 = dateRangeAPDate.Value2;
+            Issuedate1 = dateRangePoIssueDate.Value1;
+            Issuedate2 = dateRangePoIssueDate.Value2;
             spno1 = txtSpno1.Text;
             spno2 = txtSpno2.Text;
-            GLdate1 = dateRangeGLDate.Value1;
-            GLdate2 = dateRangeGLDate.Value2;
 
             artworktype = txtartworktype_fty1.Text;
             mdivision = txtMdivision1.Text;
             factory = cbbFactory.Text;
-            ordertypeindex = cbbOrderType.SelectedIndex;
-            ratetype = cbbRateType.SelectedValue.ToString();
+            ordertypeindex = txtdropdownlist1.SelectedIndex;
+            ratetype = txtFinanceEnReason1.SelectedValue.ToString();
             statusindex = cbbStatus.SelectedIndex;
             switch (ordertypeindex)
             {
@@ -78,7 +76,7 @@ namespace Sci.Production.Subcon
                     ordertype = "('B','S','M')";
                     break;
             }
-            brandid = txtbrand1.Text;
+
             style = txtstyle1.Text;
 
             return base.ValidateInput();
@@ -88,17 +86,11 @@ namespace Sci.Production.Subcon
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sqlparameter delcare --
-            System.Data.SqlClient.SqlParameter sp_apdate1 = new System.Data.SqlClient.SqlParameter();
-            sp_apdate1.ParameterName = "@apdate1";
+            System.Data.SqlClient.SqlParameter sp_podate1 = new System.Data.SqlClient.SqlParameter();
+            sp_podate1.ParameterName = "@podate1";
 
-            System.Data.SqlClient.SqlParameter sp_apdate2 = new System.Data.SqlClient.SqlParameter();
-            sp_apdate2.ParameterName = "@apdate2";
-
-            System.Data.SqlClient.SqlParameter sp_GLdate1 = new System.Data.SqlClient.SqlParameter();
-            sp_GLdate1.ParameterName = "@GLdate1";
-
-            System.Data.SqlClient.SqlParameter sp_GLdate2 = new System.Data.SqlClient.SqlParameter();
-            sp_GLdate2.ParameterName = "@GLdate2";
+            System.Data.SqlClient.SqlParameter sp_podate2 = new System.Data.SqlClient.SqlParameter();
+            sp_podate2.ParameterName = "@podate2";
 
             System.Data.SqlClient.SqlParameter sp_spno1 = new System.Data.SqlClient.SqlParameter();
             sp_spno1.ParameterName = "@spno1";
@@ -115,9 +107,6 @@ namespace Sci.Production.Subcon
             System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
             sp_factory.ParameterName = "@factory";
 
-            System.Data.SqlClient.SqlParameter sp_brandid = new System.Data.SqlClient.SqlParameter();
-            sp_brandid.ParameterName = "@brandid";
-
             System.Data.SqlClient.SqlParameter sp_style = new System.Data.SqlClient.SqlParameter();
             sp_style.ParameterName = "@style";
             #endregion
@@ -130,15 +119,16 @@ namespace Sci.Production.Subcon
 as
 (
 	select t.*,ArtworkType.ID artworktypeid
-	from dbo.ArtworkType,(select distinct b.OrderId from dbo.localap a	
-	inner join dbo.LocalAP_Detail b on b.id = a.id ");
+	from dbo.ArtworkType,(select distinct (select orders.poid from orders where id=b.OrderId) orderid from dbo.artworkpo a	
+	inner join dbo.ArtworkPo_Detail b on b.id = a.id ");
 
             #region -- 條件組合 --
             switch (statusindex)
             {
                 case 0:
+
                     sqlCmd.Append(string.Format(@" where a.apvdate is not null and a.issuedate between '{0}' and '{1}'"
-                        , Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
+                                       , Convert.ToDateTime(Issuedate1).ToString("d"), Convert.ToDateTime(Issuedate2).ToString("d")));
                     break;
 
                 case 1:
@@ -147,10 +137,11 @@ as
 
                 case 2:
                     sqlCmd.Append(string.Format(@" where (a.apvdate is null or a.issuedate between '{0}' and '{1}')"
-                        , Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
+                        , Convert.ToDateTime(Issuedate1).ToString("d"), Convert.ToDateTime(Issuedate2).ToString("d")));
                     break;
             }
 
+            
             if (!MyUtility.Check.Empty(spno1))
             {
                 sqlCmd.Append(" and b.orderid >= @spno1");
@@ -165,18 +156,9 @@ as
                 cmds.Add(sp_spno2);
             }
 
-            if (!MyUtility.Check.Empty(GLdate1))
-            {
-                sqlCmd.Append(" and a.transdate between @GLdate1 and @GLdate1");
-                sp_GLdate1.Value = GLdate1;
-                cmds.Add(sp_GLdate1);
-                sp_GLdate2.Value = GLdate2;
-                cmds.Add(sp_GLdate2);
-            }
-
             if (!MyUtility.Check.Empty(artworktype))
             {
-                sqlCmd.Append(" and a.category = @artworktype");
+                sqlCmd.Append(" and a.artworktypeid = @artworktype");
                 sp_artworktype.Value = artworktype;
                 cmds.Add(sp_artworktype);
             }
@@ -198,14 +180,18 @@ as
             #endregion
 
             sqlCmd.Append(@")t
-	where Artworktype.Classify='P' ");
+	where Artworktype.IsSubprocess=1 ");
 
-            if (!MyUtility.Check.Empty(artworktype))
+            // 指定繡花條件時，有多撈取繡花線的成本
+            if (artworktype.ToLower().TrimEnd() == "embroidery")
             {
-                sqlCmd.Append(" and artworktype.id = @artworktype");
-            }
+                
+                if (!MyUtility.Check.Empty(artworktype))
+                {
+                    sqlCmd.Append(" and artworktype.id = @artworktype");
+                }
 
-            sqlCmd.Append(string.Format(@")
+                sqlCmd.Append(string.Format(@")
 select aa.FactoryID
 ,cte.artworktypeid
 ,aa.POID
@@ -213,25 +199,95 @@ select aa.FactoryID
 ,aa.BrandID
 ,dbo.getTPEPass1(aa.SMR) smr
 ,y.order_qty
-,x.ap_qty
-,x.ap_amt
-,round(x.ap_amt / iif(x.ap_qty=0,1,x.ap_qty),3) ap_price
---,y.order_amt
---,y.order_qty
+,x.po_qty
+,round(isnull(x.po_amt,0.0)+isnull(z.localpo_amt,0.0),2) amount
+,round((isnull(x.po_amt,0.0)+isnull(z.localpo_amt,0.0)) / iif(y.order_qty=0,1,y.order_qty),3) ttl_price
 ,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
-,round(x.ap_amt / iif(x.ap_qty=0,1,x.ap_qty)/ iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2) * 100 percentage
+,round(isnull(x.po_amt,0.0)+isnull(z.localpo_amt,0.0) / iif(y.order_amt=0,1,y.order_amt),2) percentage
+,x.po_amt
+,round(isnull(x.po_amt,0.0) / iif(x.po_qty=0,1,x.po_qty),3) po_price
+,round(isnull(x.po_amt,0.0) / iif(y.order_amt=0,1,y.order_amt),2) po_percentage
+
+,round(z.localpo_amt,2) localpo_amt
+,round(z.localpo_amt / iif(y.order_qty=0,1,y.order_qty),3) localpo_price
+,round(z.localpo_amt / iif(y.order_amt=0,1,y.order_amt),2) local_percentage
 from cte
 left join orders aa on aa.id = cte.orderid
 left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
 outer apply (
-	select isnull(sum(t.ap_amt),0.00) ap_amt, isnull(sum(t.ap_qty),0) ap_qty from (
-	select currencyid,
-			apd.Price,
-			apd.Qty ap_qty
-			,apd.Qty*apd.Price*dbo.getRate('{0}',AP.CurrencyID,'USD') ap_amt
-			,dbo.getRate('{0}',AP.CurrencyID,'USD') rate
-	from localap ap inner join LocalAP_Detail apd on apd.id = ap.Id 
-		where ap.Category = cte.artworktypeid and apd.OrderId = aa.POID AND AP.Status = 'Approved') t
+	select isnull(sum(t.po_amt),0.00) po_amt,isnull(sum(t.po_qty),0) po_qty 
+	from (
+	select po.currencyid,
+			pod.Price,
+			pod.poQty po_qty
+			,pod.poQty*pod.Price*dbo.getRate('{0}',po.CurrencyID,'USD') po_amt
+			,dbo.getRate('{0}',po.CurrencyID,'USD') rate
+	from ArtworkPo po 
+    inner join ArtworkPo_Detail pod on pod.id = po.Id 
+    inner join orders ON orders.id = pod.orderid
+		where po.ArtworkTypeID = cte.artworktypeid and orders.POId = aa.POID AND po.Status = 'Approved') t
+		) x
+outer apply(
+	select orders.POID
+	,sum(orders.qty) order_qty
+	,sum(orders.qty*Price) order_amt 
+	from orders 
+	inner join Order_TmsCost on Order_TmsCost.id = orders.ID 
+	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid
+	group by orders.poid,ArtworkTypeID) y
+outer apply (
+	select isnull(sum(t.localpo_amt),0.00) localpo_amt,isnull(sum(t.localpo_qty),0) localpo_qty 
+	from (
+	select po.currencyid,
+			pod.Price,
+			pod.Qty localpo_qty
+			,pod.Qty*pod.Price*dbo.getRate('{0}',po.CurrencyID,'USD') localpo_amt
+			,dbo.getRate('{0}',po.CurrencyID,'USD') rate
+	from localPo po 
+    inner join LocalPO_Detail pod on pod.id = po.Id 
+    inner join orders ON orders.id = pod.orderid
+		where po.Category = 'EMB_THREAD' and orders.POId = aa.POID AND po.Status = 'Approved') t
+		) z
+where po_qty is not null 
+", ratetype));
+            }
+            else
+            {
+
+                if (!MyUtility.Check.Empty(artworktype))
+                {
+                    sqlCmd.Append(" and artworktype.id = @artworktype");
+                }
+
+                sqlCmd.Append(string.Format(@")
+select aa.FactoryID
+,cte.artworktypeid
+,aa.POID
+,aa.StyleID
+,aa.BrandID
+,dbo.getTPEPass1(aa.SMR) smr
+,y.order_qty
+,x.po_qty
+,x.po_amt
+,round(x.po_amt / iif(y.order_qty=0,1,y.order_qty),3) po_price
+--,y.order_amt
+--,y.order_qty
+,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
+,round(x.po_amt / iif(y.order_qty=0,1,y.order_qty) / iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2) percentage
+from cte
+left join orders aa on aa.id = cte.orderid
+left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
+outer apply (
+	select isnull(sum(t.po_amt),0.00) po_amt, isnull(sum(t.po_qty),0) po_qty from (
+	select po.currencyid,
+			pod.Price,
+			pod.poQty po_qty
+			,pod.poQty*pod.Price*dbo.getRate('{0}',po.CurrencyID,'USD') po_amt
+			,dbo.getRate('{0}',po.CurrencyID,'USD') rate
+	from ArtworkPo po 
+    inner join ArtworkPo_Detail pod on pod.id = po.Id 
+    inner join orders on orders.id = pod.orderid
+		where po.ArtworkTypeID = cte.artworktypeid and orders.POId = aa.POID AND po.Status = 'Approved') t
 		) x		
 outer apply(
 	select orders.POID
@@ -241,8 +297,9 @@ outer apply(
 	inner join Order_TmsCost on Order_TmsCost.id = orders.ID 
 	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid
 	group by orders.poid,ArtworkTypeID) y
-where ap_qty is not null 
+where po_qty is not null 
 ", ratetype));
+            }
             #endregion
 
             if (ordertypeindex >= 4) //include Forecast 
@@ -282,14 +339,21 @@ where ap_qty is not null
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R24.xltx", 5);
+            if (artworktype.ToLower() == "embroidery")
+            {
+                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R16_Embroidery.xltx", 3);
+            }
+            else
+            {
+                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R16.xltx", 3);
+            }
             return true;
+
         }
 
         private void cbbStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
-            dateRangeAPDate.Enabled = !(cbbStatus.SelectedIndex == 1);
-            dateRangeGLDate.Enabled = !(cbbStatus.SelectedIndex == 1);
+            dateRangePoIssueDate.Enabled = !(cbbStatus.SelectedIndex == 1);
         }
     }
 }
