@@ -152,6 +152,12 @@
     <Compile Include="B44.Designer.cs">
       <DependentUpon>B44.cs</DependentUpon>
     </Compile>
+    <Compile Include="B45.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B45.Designer.cs">
+      <DependentUpon>B45.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -490,6 +496,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B44.resx">
       <DependentUpon>B44.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B45.resx">
+      <DependentUpon>B45.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
