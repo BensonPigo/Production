@@ -1,17 +1,19 @@
 ﻿CREATE TABLE [dbo].[VNContract_Detail] (
-    [ID]            CHAR (15)       CONSTRAINT [DF_VNContract_Detail_ID] DEFAULT ('') NOT NULL,
+    [ID]            VARCHAR (15)    CONSTRAINT [DF_VNContract_Detail_ID] DEFAULT ('') NOT NULL,
     [HSCode]        VARCHAR (11)    CONSTRAINT [DF_VNContract_Detail_HSCode] DEFAULT ('') NOT NULL,
-    [NLCode]        CHAR (5)        CONSTRAINT [DF_VNContract_Detail_NLCode] DEFAULT ('') NOT NULL,
+    [NLCode]        VARCHAR (5)     CONSTRAINT [DF_VNContract_Detail_NLCode] DEFAULT ('') NOT NULL,
     [Qty]           NUMERIC (14, 3) CONSTRAINT [DF_VNContract_Detail_Qty] DEFAULT ((0)) NULL,
     [UnitID]        VARCHAR (8)     CONSTRAINT [DF_VNContract_Detail_UnitID] DEFAULT ('') NOT NULL,
     [Waste]         NUMERIC (5, 3)  CONSTRAINT [DF_VNContract_Detail_Waste] DEFAULT ((0)) NOT NULL,
     [Price]         NUMERIC (6, 3)  CONSTRAINT [DF_VNContract_Detail_Price] DEFAULT ((0)) NOT NULL,
     [LocalPurchase] BIT             CONSTRAINT [DF_VNContract_Detail_LocalPurchase] DEFAULT ((0)) NULL,
     [NecessaryItem] BIT             CONSTRAINT [DF_VNContract_Detail_NecessaryItem] DEFAULT ((0)) NULL,
-    [AddName]       CHAR (10)       CONSTRAINT [DF_VNContract_Detail_AddName] DEFAULT ('') NULL,
+    [AddName]       VARCHAR (10)    CONSTRAINT [DF_VNContract_Detail_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME        NULL,
     CONSTRAINT [PK_VNContract_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [NLCode] ASC)
 );
+
+
 
 
 GO

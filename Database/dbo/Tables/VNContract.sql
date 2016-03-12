@@ -1,17 +1,19 @@
 ﻿CREATE TABLE [dbo].[VNContract] (
-    [ID]            CHAR (15)     CONSTRAINT [DF_VNContract_ID] DEFAULT ('') NOT NULL,
+    [ID]            VARCHAR (15)  CONSTRAINT [DF_VNContract_ID] DEFAULT ('') NOT NULL,
     [StartDate]     DATE          NOT NULL,
     [EndDate]       DATE          NOT NULL,
     [TotalQty]      NUMERIC (10)  CONSTRAINT [DF_VNContract_TotalQty] DEFAULT ((0)) NOT NULL,
     [SubConName]    VARCHAR (40)  CONSTRAINT [DF_VNContract_SubConName] DEFAULT ('') NULL,
     [SubConAddress] VARCHAR (500) CONSTRAINT [DF_VNContract_SubConAddress] DEFAULT ('') NULL,
     [Encode]        BIT           CONSTRAINT [DF_VNContract_Encode] DEFAULT ((0)) NULL,
-    [AddName]       CHAR (10)     CONSTRAINT [DF_VNContract_AddName] DEFAULT ('') NULL,
+    [AddName]       VARCHAR (10)  CONSTRAINT [DF_VNContract_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME      NULL,
-    [EditName]      CHAR (10)     CONSTRAINT [DF_VNContract_EditName] DEFAULT ('') NULL,
+    [EditName]      VARCHAR (10)  CONSTRAINT [DF_VNContract_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME      NULL,
     CONSTRAINT [PK_VNContract] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

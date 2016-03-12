@@ -1,14 +1,16 @@
 ﻿CREATE TABLE [dbo].[VNNLCodeDesc] (
-    [NLCode]   CHAR (5)       CONSTRAINT [DF_VNNLCodeDesc_NLCode] DEFAULT ('') NOT NULL,
+    [NLCode]   VARCHAR (50)   CONSTRAINT [DF_VNNLCodeDesc_NLCode] DEFAULT ('') NOT NULL,
     [DescEN]   VARCHAR (100)  CONSTRAINT [DF_VNNLCodeDesc_DescEN] DEFAULT ('') NULL,
     [DescVI]   NVARCHAR (100) CONSTRAINT [DF_VNNLCodeDesc_DescVI] DEFAULT ('') NULL,
     [UnitVI]   NVARCHAR (50)  CONSTRAINT [DF_VNNLCodeDesc_UnitVI] DEFAULT ('') NULL,
-    [AddName]  CHAR (10)      CONSTRAINT [DF_VNNLCodeDesc_AddName] DEFAULT ('') NULL,
+    [AddName]  VARCHAR (10)   CONSTRAINT [DF_VNNLCodeDesc_AddName] DEFAULT ('') NULL,
     [AddDate]  DATETIME       NULL,
-    [EditName] CHAR (10)      CONSTRAINT [DF_VNNLCodeDesc_EditName] DEFAULT ('') NULL,
+    [EditName] VARCHAR (10)   CONSTRAINT [DF_VNNLCodeDesc_EditName] DEFAULT ('') NULL,
     [EditDate] DATETIME       NULL,
     CONSTRAINT [PK_VNNLCodeDesc] PRIMARY KEY CLUSTERED ([NLCode] ASC)
 );
+
+
 
 
 GO
