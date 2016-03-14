@@ -64,7 +64,7 @@
             this.tbxSP.MaxLength = 13;
             this.tbxSP.Name = "tbxSP";
             this.tbxSP.Size = new System.Drawing.Size(118, 23);
-            this.tbxSP.TabIndex = 0;
+            this.tbxSP.TabIndex = 1;
             // 
             // cbxCategory
             // 
@@ -79,7 +79,7 @@
             this.cbxCategory.Location = new System.Drawing.Point(127, 121);
             this.cbxCategory.Name = "cbxCategory";
             this.cbxCategory.Size = new System.Drawing.Size(121, 24);
-            this.cbxCategory.TabIndex = 106;
+            this.cbxCategory.TabIndex = 3;
             // 
             // label7
             // 
@@ -104,7 +104,7 @@
             this.dateRange_ReturnDate.Location = new System.Drawing.Point(127, 12);
             this.dateRange_ReturnDate.Name = "dateRange_ReturnDate";
             this.dateRange_ReturnDate.Size = new System.Drawing.Size(280, 23);
-            this.dateRange_ReturnDate.TabIndex = 115;
+            this.dateRange_ReturnDate.TabIndex = 0;
             // 
             // label2
             // 
@@ -132,7 +132,7 @@
             this.tbxSeq.MaxLength = 5;
             this.tbxSeq.Name = "tbxSeq";
             this.tbxSeq.Size = new System.Drawing.Size(72, 23);
-            this.tbxSeq.TabIndex = 118;
+            this.tbxSeq.TabIndex = 2;
             // 
             // R19
             // 
