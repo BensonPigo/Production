@@ -1949,6 +1949,8 @@ XLT/Subcon_R22_LocalPaymentSummary.xltx -text
 XLT/Subcon_R23.xltx -text
 XLT/Subcon_R24.xltx -text
 XLT/Warehouse_R02.xltx -text
+XLT/Warehouse_R11_List.xltx -text
+XLT/Warehouse_R11_Summary.xltx -text
 XLT/Warehouse_R17_Location_List.xltx -text
 XLT/Warehouse_R18_Material_Tracking.xltx -text
 XLT/Warehouse_R19_Material_Borrowing.xltx -text
