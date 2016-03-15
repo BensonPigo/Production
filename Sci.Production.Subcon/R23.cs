@@ -201,12 +201,14 @@ select aa.FactoryID
 --,y.order_amt
 --,y.order_qty
 ,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
-,round(x.Po_amt / iif(y.order_qty=0,1,y.order_qty) / iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2) * 100 percentage
+,round(x.Po_amt / iif(y.order_qty=0,1,y.order_qty) / iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2)  percentage
 from cte
 left join orders aa on aa.id = cte.orderid
 left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
 outer apply (
-	select isnull(sum(t.Po_amt),0.00) Po_amt, isnull(sum(t.Po_qty),0) Po_qty from (
+	select isnull(sum(t.Po_amt),0.00) Po_amt
+             , isnull(sum(t.Po_qty),0) Po_qty 
+from (
 	select currencyid,
 			pod.Price,
 			pod.Qty Po_qty
@@ -223,7 +225,7 @@ outer apply(
 	inner join Order_TmsCost on Order_TmsCost.id = orders.ID 
 	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid
 	group by orders.poid,ArtworkTypeID) y
-where Po_qty is not null 
+where Po_qty > 0 
 ", ratetype));
             #endregion           
 
@@ -264,7 +266,7 @@ where Po_qty is not null
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R23.xltx",5);
+            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R23.xltx",3);
             return true;
         }
 

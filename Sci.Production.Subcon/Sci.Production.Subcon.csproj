@@ -253,6 +253,12 @@
     <Compile Include="R22.Designer.cs">
       <DependentUpon>R22.cs</DependentUpon>
     </Compile>
+    <Compile Include="R15.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R15.Designer.cs">
+      <DependentUpon>R15.cs</DependentUpon>
+    </Compile>
     <Compile Include="R24.cs">
       <SubType>Form</SubType>
     </Compile>

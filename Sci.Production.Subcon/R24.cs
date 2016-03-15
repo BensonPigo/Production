@@ -219,12 +219,14 @@ select aa.FactoryID
 --,y.order_amt
 --,y.order_qty
 ,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
-,round(x.ap_amt / iif(x.ap_qty=0,1,x.ap_qty)/ iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2) * 100 percentage
+,round(x.ap_amt / iif(x.ap_qty=0,1,x.ap_qty)/ iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2)  percentage
 from cte
 left join orders aa on aa.id = cte.orderid
 left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
 outer apply (
-	select isnull(sum(t.ap_amt),0.00) ap_amt, isnull(sum(t.ap_qty),0) ap_qty from (
+	select isnull(sum(t.ap_amt),0.00) ap_amt
+            , isnull(sum(t.ap_qty),0) ap_qty 
+from (
 	select currencyid,
 			apd.Price,
 			apd.Qty ap_qty
@@ -235,13 +237,13 @@ outer apply (
 		) x		
 outer apply(
 	select orders.POID
-	,sum(orders.qty) order_qty
+	,isnull(sum(orders.qty),0) order_qty
 	,sum(orders.qty*Price) order_amt 
 	from orders 
 	inner join Order_TmsCost on Order_TmsCost.id = orders.ID 
 	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid
 	group by orders.poid,ArtworkTypeID) y
-where ap_qty is not null 
+where ap_qty > 0 
 ", ratetype));
             #endregion
 
@@ -282,7 +284,7 @@ where ap_qty is not null
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R24.xltx", 5);
+            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R24.xltx", 4);
             return true;
         }
 

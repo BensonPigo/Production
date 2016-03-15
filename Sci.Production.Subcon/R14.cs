@@ -223,7 +223,6 @@ select aa.FactoryID
 ,round(x.ap_amt,2)
 ,round(isnull(x.ap_amt,0.0) / iif(x.ap_qty=0,1,x.ap_qty),3) ap_price
 ,round(isnull(x.ap_amt,0.0) / iif(y.order_amt=0,1,y.order_amt),2) ap_percentage
-
 ,round(z.localap_amt,2) localap_amt
 ,round(z.localap_amt / iif(y.order_qty=0,1,y.order_qty),3) localap_price
 ,round(z.localap_amt / iif(y.order_amt=0,1,y.order_amt),2) local_percentage
@@ -231,7 +230,8 @@ from cte
 left join orders aa on aa.id = cte.orderid
 left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
 outer apply (
-	select isnull(sum(t.ap_amt),0.00) ap_amt, isnull(sum(t.ap_qty),0) ap_qty 
+	select isnull(sum(t.ap_amt),0.00) ap_amt
+, isnull(sum(t.ap_qty),0) ap_qty 
 	from (
 	select ap.currencyid,
 			apd.Price,
@@ -252,19 +252,20 @@ outer apply(
 	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid
 	group by orders.poid,ArtworkTypeID) y
 outer apply (
-	select isnull(sum(t.localap_amt),0.00), localap_amt,isnull(sum(t.localap_qty),0) localap_qty 
+	select isnull(sum(tt.localap_amt),0.00) localap_amt,isnull(sum(tt.localap_qty),0) localap_qty 
 	from (
-	select ap.currencyid,
-			apd.Price,
-			apd.Qty localap_qty
-			,apd.Qty*apd.Price*dbo.getRate('{0}',ap.CurrencyID,'USD') localap_amt
-			,dbo.getRate('{0}',ap.CurrencyID,'USD') rate
-	from localap ap 
-    inner join Localap_Detail apd on apd.id = ap.Id 
-    inner join orders ON orders.id = apd.orderid
-		where ap.Category = 'EMB_THREAD' and orders.POId = aa.POID AND ap.Status = 'Approved') t
+	            select ap.currencyid,
+			            apd.Price,
+			            apd.Qty localap_qty
+			            ,apd.Qty*apd.Price*dbo.getRate('{0}',ap.CurrencyID,'USD') localap_amt
+			            ,dbo.getRate('{0}',ap.CurrencyID,'USD') rate
+	            from localap ap 
+                inner join Localap_Detail apd on apd.id = ap.Id 
+                inner join orders ON orders.id = apd.orderid
+		            where ap.Category = 'EMB_THREAD' and orders.POId = aa.POID AND ap.Status = 'Approved'
+            ) tt
 		) z
-where ap_qty is not null 
+where ap_qty > 0
 ", ratetype,ordertype));
             }
             else
@@ -293,7 +294,8 @@ from cte
 left join orders aa on aa.id = cte.orderid
 left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
 outer apply (
-	select isnull(sum(t.ap_amt),0.00) ap_amt, isnull(sum(t.ap_qty),0) ap_qty from (
+	select isnull(sum(t.ap_amt),0.00) ap_amt
+, isnull(sum(t.ap_qty),0) ap_qty from (
 	select ap.currencyid,
 			apd.Price,
 			apd.apQty ap_qty
@@ -312,7 +314,7 @@ outer apply(
 	inner join Order_TmsCost on Order_TmsCost.id = orders.ID 
 	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid
 	group by orders.poid,ArtworkTypeID) y
-where ap_qty is not null
+where ap_qty > 0
 ", ratetype,ordertype));
             }
             #endregion           
@@ -354,9 +356,9 @@ where ap_qty is not null
                 return false;
             }
 
-            if (artworktype.ToLower() == "embroidery")
+            if (artworktype.ToLower().TrimEnd() == "embroidery")
             {
-                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R14_Embroidery.xltx", 3);
+                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R14_Embroidery.xltx", 5);
             }
             else
             {

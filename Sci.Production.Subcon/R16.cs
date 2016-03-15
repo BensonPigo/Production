@@ -215,7 +215,8 @@ from cte
 left join orders aa on aa.id = cte.orderid
 left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
 outer apply (
-	select isnull(sum(t.po_amt),0.00) po_amt,isnull(sum(t.po_qty),0) po_qty 
+	select isnull(sum(t.po_amt),0.00) po_amt
+,isnull(sum(t.po_qty),0) po_qty 
 	from (
 	select po.currencyid,
 			pod.Price,
@@ -248,7 +249,7 @@ outer apply (
     inner join orders ON orders.id = pod.orderid
 		where po.Category = 'EMB_THREAD' and orders.POId = aa.POID AND po.Status = 'Approved') t
 		) z
-where po_qty is not null 
+where po_qty > 0 
 ", ratetype));
             }
             else
@@ -297,7 +298,7 @@ outer apply(
 	inner join Order_TmsCost on Order_TmsCost.id = orders.ID 
 	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid
 	group by orders.poid,ArtworkTypeID) y
-where po_qty is not null 
+where po_qty > 0
 ", ratetype));
             }
             #endregion
@@ -339,13 +340,13 @@ where po_qty is not null
                 return false;
             }
 
-            if (artworktype.ToLower() == "embroidery")
+            if (artworktype.ToLower().TrimEnd() == "embroidery")
             {
-                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R16_Embroidery.xltx", 3);
+                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R16_Embroidery.xltx", 5);
             }
             else
             {
-                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R16.xltx", 3);
+                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R16.xltx", 5);
             }
             return true;
 
