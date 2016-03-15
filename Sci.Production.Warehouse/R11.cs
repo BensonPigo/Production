@@ -113,6 +113,7 @@ p.Qty,
 p.NETQty,
 p.LossQty,
 sum(sd.Qty) * (select vu.RateValue from dbo.View_Unitrate vu where vu.FROM_U = p.StockUnit and vu.TO_U = p.POUnit) scrapqty,
+(select mtllocationid+',' from (select distinct mtllocationid from dbo.FtyInventory_Detail where ukey = sd.FromFtyInventoryUkey) mtl for xml path('')) location,
 s.IssueDate
 from dbo.orders o 
 inner join dbo.SubTransfer_Detail sd on o.id = sd.FromPOID
@@ -176,15 +177,14 @@ where s.Status = 'Confirmed' and s.type = '{0}'
             #endregion
 
             sqlCmd.Append(@" group by sd.FromPOID, sd.FromSeq1, sd.fromseq2,sd.FromRoll,sd.FromDyelot, p.Refno, p.SCIRefno, p.FabricType,s.MDivisionID, o.FactoryID
-  , o.BrandID, o.SeasonID, p.POUnit, p.StockUnit,
-p.Price ,p.Qty, p.NETQty, p.LossQty, s.IssueDate)");
+  , o.BrandID, o.SeasonID, p.POUnit, p.StockUnit,p.Price ,p.Qty, p.NETQty, p.LossQty, s.IssueDate,FromFtyInventoryUkey)");
 
             // List & Summary 各撈自己需要的欄位
             if (this.checkBox1.Checked)
             {
                 #region -- Summary Sql Command --
                 sqlCmd.Append(string.Format(@"
-select t.orderid,t.seq1,t.seq2,t.description,t.Refno,t.fabrictype,t.weaventype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,
+select t.orderid,t.seq1,t.seq2,t.Refno,t.description,t.fabrictype,t.weaventype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,
 t.POUnit,unitprice,t.Qty,t.unitprice*t.Qty,t.NETQty,t.LossQty,sum(t.scrapqty),t.unitprice*sum(t.scrapqty),t.IssueDate
 from cte t
 group by t.orderid,t.seq1,t.seq2,t.description,t.Refno,t.fabrictype,t.weaventype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,
@@ -196,7 +196,7 @@ t.POUnit,unitprice,t.Qty,t.unitprice*t.Qty,t.NETQty,t.LossQty,t.IssueDate"));
                 #region -- List Sql Command --
                 sqlCmd.Append(string.Format(@"
 select t.orderid,t.seq1,t.seq2,t.roll,t.dyelot,t.description,t.Refno,t.fabrictype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,
-t.StockUnit,unitprice,t.scrapqty,t.unitprice*t.scrapqty,t.IssueDate
+t.pounit,unitprice,t.scrapqty,t.unitprice*t.scrapqty,t.location,t.IssueDate
 from cte t"));
                 #endregion  
             }
@@ -223,9 +223,9 @@ from cte t"));
             }
 
             if (checkBox1.Checked)
-                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R11_Summary.xltx", 2);
+                MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R11_Summary.xltx", 3);
             else
-                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R11_List.xltx", 2);
+                MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R11_List.xltx", 3);
             return true;
         }
     }
