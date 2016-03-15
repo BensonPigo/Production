@@ -277,6 +277,12 @@
     <Compile Include="txttpeuser_canedit.Designer.cs">
       <DependentUpon>txttpeuser_canedit.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtFinanceEnReason.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtFinanceEnReason.Designer.cs">
+      <DependentUpon>txtFinanceEnReason.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ict, Version=1.0.1502.1000, Culture=neutral, processorArchitecture=MSIL">

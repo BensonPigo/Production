@@ -506,6 +506,8 @@ Sci.Production.Class/ProductionEnv.cs -text
 Sci.Production.Class/ProductionGridExts.cs -text
 Sci.Production.Class/Properties/AssemblyInfo.cs -text
 Sci.Production.Class/Sci.Production.Class.csproj -text
+Sci.Production.Class/txtFinanceEnReason.Designer.cs -text
+Sci.Production.Class/txtFinanceEnReason.cs -text
 Sci.Production.Class/txtMdivision.Designer.cs -text
 Sci.Production.Class/txtMdivision.cs -text
 Sci.Production.Class/txtToMdivision.Designer.cs -text
