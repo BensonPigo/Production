@@ -177,6 +177,8 @@ namespace Sci.Production.Warehouse
             .Text("seq", header: "Bulk" + Environment.NewLine + " Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))
+            .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(8))
+            .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(4))
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true, settings: ns).Get(out col_Qty)
             .Text("Location", header: "Location", settings: ts2, iseditingreadonly: true, width: Widths.AnsiChars(30)).Get(out col_Location)
             ;     //
