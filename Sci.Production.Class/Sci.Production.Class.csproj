@@ -283,6 +283,12 @@
     <Compile Include="txtFinanceEnReason.Designer.cs">
       <DependentUpon>txtFinanceEnReason.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtReason.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtReason.Designer.cs">
+      <DependentUpon>txtReason.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ict, Version=1.0.1502.1000, Culture=neutral, processorArchitecture=MSIL">
