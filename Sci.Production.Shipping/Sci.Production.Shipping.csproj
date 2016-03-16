@@ -146,6 +146,18 @@
     <Compile Include="B40.Designer.cs">
       <DependentUpon>B40.cs</DependentUpon>
     </Compile>
+    <Compile Include="B43.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B43.Designer.cs">
+      <DependentUpon>B43.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B43_AddNLCode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B43_AddNLCode.Designer.cs">
+      <DependentUpon>B43_AddNLCode.cs</DependentUpon>
+    </Compile>
     <Compile Include="B44.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -499,6 +511,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B40.resx">
       <DependentUpon>B40.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B43.resx">
+      <DependentUpon>B43.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B43_AddNLCode.resx">
+      <DependentUpon>B43_AddNLCode.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B44.resx">
       <DependentUpon>B44.cs</DependentUpon>
