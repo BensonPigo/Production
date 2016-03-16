@@ -168,7 +168,7 @@ namespace Sci.Production.Shipping
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
+                MyUtility.Msg.WarningBox("Confirm fail!!\r\n" + result.ToString());
                 return;
             }
             RenewData();
@@ -187,7 +187,7 @@ namespace Sci.Production.Shipping
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Amend fail!!\r\n" + result.ToString());
+                MyUtility.Msg.WarningBox("Unconfirm fail!!\r\n" + result.ToString());
                 return;
             }
 
