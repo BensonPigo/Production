@@ -533,6 +533,9 @@ Sci.Production.Class/txtcurrency.Designer.cs -text
 Sci.Production.Class/txtcurrency.cs -text
 Sci.Production.Class/txtcustcd.Designer.cs -text
 Sci.Production.Class/txtcustcd.cs -text
+Sci.Production.Class/txtcutReason.Designer.cs -text
+Sci.Production.Class/txtcutReason.cs -text
+Sci.Production.Class/txtcutReason.resx -text
 Sci.Production.Class/txtdepartment.Designer.cs -text
 Sci.Production.Class/txtdepartment.cs -text
 Sci.Production.Class/txtdropdownlist.Designer.cs -text
