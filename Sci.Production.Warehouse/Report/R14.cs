@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
@@ -17,6 +18,7 @@ namespace Sci.Production.Warehouse
         int ordertypeindex;
         DateTime? eta1, eta2;
         DataTable printData;
+        StringBuilder condition = new StringBuilder();
 
         public R14(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -31,7 +33,7 @@ namespace Sci.Production.Warehouse
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) ) 
+            if (MyUtility.Check.Empty(dateRange1.Value1))
             {
                 MyUtility.Msg.WarningBox("< WK# ETA > can't be empty!!");
                 return false;
@@ -63,7 +65,16 @@ namespace Sci.Production.Warehouse
                     ordertype = "('B','S','M')";
                     break;
             }
-
+            condition.Clear();
+            condition.Append(string.Format(@"ETA : {0} ~ {1}" + Environment.NewLine
+                , Convert.ToDateTime(eta1).ToString("d")
+                , Convert.ToDateTime(eta2).ToString("d")));
+            condition.Append(string.Format(@"Fabric Type : {0}" + Environment.NewLine
+                , cbbFabricType.Text));
+            condition.Append(string.Format(@"Factory : {0}" + Environment.NewLine
+                ,txtfactory1.Text));
+            condition.Append(string.Format(@"Order Type : {0}" + Environment.NewLine
+                , txtdropdownlist1.Text));
             return base.ValidateInput();
         }
 
@@ -137,8 +148,12 @@ WHERE  A.Eta BETWEEN '{0}' and '{1}' and  D.Category in {2}
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-
-            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R14.xltx", 2);
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R14.xltx"); //預先開啟excel app
+            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R14.xltx", 2, true, null, objApp);      // 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            objSheets.Cells[1, 1] = condition.ToString();   // 條件字串寫入excel
+            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;
         }
     }
