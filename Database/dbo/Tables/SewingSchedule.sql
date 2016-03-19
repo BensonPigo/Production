@@ -26,6 +26,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Sewing Schedule', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingSchedule';
 
@@ -112,4 +114,16 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingSchedule', @level2type = N'COLUMN', @level2name = N'MDivisionID';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<offline, sysname,>]
+    ON [dbo].[SewingSchedule]([OrderID] ASC, [MDivisionID] ASC, [Inline] ASC)
+    INCLUDE([Offline]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[SewingSchedule]([MDivisionID] ASC, [Inline] ASC, [Offline] ASC)
+    INCLUDE([OrderID]);
 

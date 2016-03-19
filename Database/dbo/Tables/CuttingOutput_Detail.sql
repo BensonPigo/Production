@@ -17,6 +17,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Cutting Daily output(Detail)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CuttingOutput_Detail';
 
@@ -67,4 +69,15 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'顏色', @l
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Detail Ukey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CuttingOutput_Detail', @level2type = N'COLUMN', @level2name = N'Ukey';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname1,>]
+    ON [dbo].[CuttingOutput_Detail]([WorkOrderUkey] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[CuttingOutput_Detail]([ID] ASC)
+    INCLUDE([WorkOrderUkey]);
 

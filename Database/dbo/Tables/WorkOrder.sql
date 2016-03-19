@@ -1,34 +1,42 @@
 ﻿CREATE TABLE [dbo].[WorkOrder] (
-    [ID]            VARCHAR (13)   CONSTRAINT [DF_WorkOrder_ID] DEFAULT ('') NOT NULL,
-    [FactoryID]     VARCHAR (8)    CONSTRAINT [DF_WorkOrder_FactoryID] DEFAULT ('') NOT NULL,
-    [MDivisionId]   VARCHAR (8)    CONSTRAINT [DF_WorkOrder_MDivisionId] DEFAULT ('') NOT NULL,
-    [SEQ1]          VARCHAR (3)    CONSTRAINT [DF_WorkOrder_SEQ] DEFAULT ('') NOT NULL,
-    [SEQ2]          VARCHAR (2)    NOT NULL,
-    [CutRef]        VARCHAR (6)    CONSTRAINT [DF_WorkOrder_CutRef] DEFAULT ('') NULL,
-    [OrderID]       VARCHAR (13)   CONSTRAINT [DF_WorkOrder_OrderID] DEFAULT ('') NULL,
-    [CutplanID]     VARCHAR (13)   CONSTRAINT [DF_WorkOrder_CutplanID] DEFAULT ('') NULL,
-    [Cutno]         NUMERIC (3)    CONSTRAINT [DF_WorkOrder_Cutno] DEFAULT ((0)) NULL,
-    [Layer]         NUMERIC (5)    CONSTRAINT [DF_WorkOrder_Layer] DEFAULT ((0)) NULL,
-    [Colorid]       VARCHAR (6)    CONSTRAINT [DF_WorkOrder_Colorid] DEFAULT ('') NULL,
-    [Markername]    VARCHAR (5)    CONSTRAINT [DF_WorkOrder_Markername] DEFAULT ('') NULL,
-    [EstCutDate]    DATE           NULL,
-    [Cell]          VARCHAR (2)    CONSTRAINT [DF_WorkOrder_Cell] DEFAULT ('') NULL,
-    [MarkerLength]  VARCHAR (13)   CONSTRAINT [DF_WorkOrder_MarkerLength] DEFAULT ('') NULL,
-    [ConsPC]        NUMERIC (6, 4) CONSTRAINT [DF_WorkOrder_ConsPC] DEFAULT ((0)) NULL,
-    [Cons]          NUMERIC (9, 4) CONSTRAINT [DF_WorkOrder_Cons] DEFAULT ((0)) NULL,
-    [Refno]         VARCHAR (20)   CONSTRAINT [DF_WorkOrder_Refno] DEFAULT ('') NULL,
-    [SCIRefno]      VARCHAR (26)   CONSTRAINT [DF_WorkOrder_SCIRefno] DEFAULT ('') NULL,
-    [MarkerNo]      VARCHAR (10)   CONSTRAINT [DF_WorkOrder_MarkerNo] DEFAULT ('') NULL,
-    [MarkerVersion] VARCHAR (3)    CONSTRAINT [DF_WorkOrder_MarkerVersion] DEFAULT ('') NULL,
-    [Ukey]          BIGINT         IDENTITY (1, 1) NOT NULL,
-    [Type]          VARCHAR (1)    CONSTRAINT [DF_WorkOrder_Type] DEFAULT ('') NULL,
-    [AddName]       VARCHAR (10)   CONSTRAINT [DF_WorkOrder_AddName] DEFAULT ('') NULL,
-    [AddDate]       DATETIME       NULL,
-    [EditName]      VARCHAR (10)   CONSTRAINT [DF_WorkOrder_EditName] DEFAULT ('') NULL,
-    [EditDate]      DATETIME       NULL,
-    [FabricCombo]   VARCHAR (2)    CONSTRAINT [DF_WorkOrder_FabricCombo] DEFAULT ('') NULL,
+    [ID]                 VARCHAR (13)   CONSTRAINT [DF_WorkOrder_ID] DEFAULT ('') NOT NULL,
+    [FactoryID]          VARCHAR (8)    CONSTRAINT [DF_WorkOrder_FactoryID] DEFAULT ('') NOT NULL,
+    [MDivisionId]        VARCHAR (8)    CONSTRAINT [DF_WorkOrder_MDivisionId] DEFAULT ('') NOT NULL,
+    [SEQ1]               VARCHAR (3)    CONSTRAINT [DF_WorkOrder_SEQ] DEFAULT ('') NOT NULL,
+    [SEQ2]               VARCHAR (2)    NOT NULL,
+    [CutRef]             VARCHAR (6)    CONSTRAINT [DF_WorkOrder_CutRef] DEFAULT ('') NULL,
+    [OrderID]            VARCHAR (13)   CONSTRAINT [DF_WorkOrder_OrderID] DEFAULT ('') NULL,
+    [CutplanID]          VARCHAR (13)   CONSTRAINT [DF_WorkOrder_CutplanID] DEFAULT ('') NULL,
+    [Cutno]              NUMERIC (3)    CONSTRAINT [DF_WorkOrder_Cutno] DEFAULT ((0)) NULL,
+    [Layer]              NUMERIC (5)    CONSTRAINT [DF_WorkOrder_Layer] DEFAULT ((0)) NULL,
+    [Colorid]            VARCHAR (6)    CONSTRAINT [DF_WorkOrder_Colorid] DEFAULT ('') NULL,
+    [Markername]         VARCHAR (5)    CONSTRAINT [DF_WorkOrder_Markername] DEFAULT ('') NULL,
+    [EstCutDate]         DATE           NULL,
+    [CutCellid]          VARCHAR (2)    CONSTRAINT [DF_WorkOrder_Cell] DEFAULT ('') NULL,
+    [MarkerLength]       VARCHAR (13)   CONSTRAINT [DF_WorkOrder_MarkerLength] DEFAULT ('') NULL,
+    [ConsPC]             NUMERIC (6, 4) CONSTRAINT [DF_WorkOrder_ConsPC] DEFAULT ((0)) NULL,
+    [Cons]               NUMERIC (9, 4) CONSTRAINT [DF_WorkOrder_Cons] DEFAULT ((0)) NULL,
+    [Refno]              VARCHAR (20)   CONSTRAINT [DF_WorkOrder_Refno] DEFAULT ('') NULL,
+    [SCIRefno]           VARCHAR (26)   CONSTRAINT [DF_WorkOrder_SCIRefno] DEFAULT ('') NULL,
+    [MarkerNo]           VARCHAR (10)   CONSTRAINT [DF_WorkOrder_MarkerNo] DEFAULT ('') NULL,
+    [MarkerVersion]      VARCHAR (3)    CONSTRAINT [DF_WorkOrder_MarkerVersion] DEFAULT ('') NULL,
+    [Ukey]               BIGINT         IDENTITY (1, 1) NOT NULL,
+    [Type]               VARCHAR (1)    CONSTRAINT [DF_WorkOrder_Type] DEFAULT ('') NULL,
+    [AddName]            VARCHAR (10)   CONSTRAINT [DF_WorkOrder_AddName] DEFAULT ('') NULL,
+    [AddDate]            DATETIME       NULL,
+    [EditName]           VARCHAR (10)   CONSTRAINT [DF_WorkOrder_EditName] DEFAULT ('') NULL,
+    [EditDate]           DATETIME       NULL,
+    [FabricCombo]        VARCHAR (2)    CONSTRAINT [DF_WorkOrder_FabricCombo] DEFAULT ('') NULL,
+    [MarkerDownLoadId]   VARCHAR (25)   CONSTRAINT [DF_WorkOrder_MarkerDownLoadId] DEFAULT ('') NULL,
+    [FabricCode]         VARCHAR (3)    CONSTRAINT [DF_WorkOrder_FabricCode] DEFAULT ('') NULL,
+    [LectraCode]         VARCHAR (2)    CONSTRAINT [DF_WorkOrder_LectraCode] DEFAULT ('') NULL,
+    [Order_EachconsUkey] BIGINT         CONSTRAINT [DF_WorkOrder_Order_EachconsUkey] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_WorkOrder] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
+
+
 
 
 
@@ -86,7 +94,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'預計裁�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Cell', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrder', @level2type = N'COLUMN', @level2name = N'Cell';
+
 
 
 GO
@@ -147,4 +155,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'部位別',
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrder', @level2type = N'COLUMN', @level2name = N'SEQ1';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[WorkOrder]([ID] ASC)
+    INCLUDE([FactoryID], [MDivisionId], [SEQ1], [SEQ2], [CutRef], [OrderID], [CutplanID], [Cutno], [Layer], [Colorid], [Markername], [EstCutDate], [CutCellid], [MarkerLength], [ConsPC], [Cons], [Refno], [SCIRefno], [MarkerNo], [MarkerVersion], [Ukey], [Type], [AddName], [AddDate], [EditName], [EditDate], [FabricCombo]);
+
+
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index1, sysname,>]
+    ON [dbo].[WorkOrder]([MDivisionId] ASC)
+    INCLUDE([CutRef]);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Cell', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrder', @level2type = N'COLUMN', @level2name = N'CutCellid';
 

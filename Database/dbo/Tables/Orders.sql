@@ -139,8 +139,11 @@
     [SizeUnit]            VARCHAR (8)    CONSTRAINT [DF_Orders_SizeUnit] DEFAULT ('') NULL,
     [CuttingSP]           VARCHAR (13)   CONSTRAINT [DF_Orders_CuttingSP] DEFAULT ('') NULL,
     [IsMixMarker]         BIT            CONSTRAINT [DF_Orders_IsMixMarker] DEFAULT ((0)) NULL,
+    [EachConsSource]      VARCHAR (1)    NULL,
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -705,4 +708,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturi
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否為MixMarker ', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'IsMixMarker';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name2 of Missing Index, sysname,>]
+    ON [dbo].[Orders]([CuttingSP] ASC);
 

@@ -32,8 +32,11 @@
     [EditName]            VARCHAR (10)   CONSTRAINT [DF_Order_EachCons_EditName] DEFAULT ('') NULL,
     [EditDate]            DATETIME       NULL,
     [isQT]                BIT            CONSTRAINT [DF_Order_EachCons_isQT] DEFAULT ((0)) NULL,
+    [MarkerDownloadID]    VARCHAR (25)   NULL,
     CONSTRAINT [PK_Order_EachCons] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO
@@ -170,4 +173,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是QT複製', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_EachCons', @level2type = N'COLUMN', @level2name = N'isQT';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[Order_EachCons]([Id] ASC);
 

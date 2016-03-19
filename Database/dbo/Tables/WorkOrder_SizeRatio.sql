@@ -7,6 +7,8 @@
 );
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'WorkOrder SizeRatio', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrder_SizeRatio';
 
@@ -25,4 +27,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'尺寸', @l
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrder_SizeRatio', @level2type = N'COLUMN', @level2name = N'Qty';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[WorkOrder_SizeRatio]([ID] ASC)
+    INCLUDE([WorkOrderUkey], [SizeCode], [Qty]);
 

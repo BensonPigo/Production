@@ -10,8 +10,10 @@
     [AddDate]      DATETIME       NULL,
     [EditName]     VARCHAR (10)   CONSTRAINT [DF_Pattern_GL_Article_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME       NULL,
-    CONSTRAINT [PK_Pattern_GL_Article] PRIMARY KEY CLUSTERED ([ID] ASC, [Version] ASC, [ArticleGroup] ASC, [Article] ASC)
+    CONSTRAINT [PK_Pattern_GL_Article] PRIMARY KEY CLUSTERED ([PatternUKEY] ASC, [ArticleGroup] ASC, [Article] ASC)
 );
+
+
 
 
 GO

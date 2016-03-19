@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Pattern_GL] (
     [ID]          VARCHAR (10)   CONSTRAINT [DF_Pattern_GL_ID] DEFAULT ('') NOT NULL,
     [Version]     VARCHAR (3)    CONSTRAINT [DF_Pattern_GL_Version] DEFAULT ('') NOT NULL,
-    [PatternUKEY] BIGINT         CONSTRAINT [DF_Pattern_GL_PatternUKEY] DEFAULT ((0)) NULL,
+    [PatternUKEY] BIGINT         CONSTRAINT [DF_Pattern_GL_PatternUKEY] DEFAULT ((0)) NOT NULL,
     [SEQ]         VARCHAR (4)    CONSTRAINT [DF_Pattern_GL_SEQ] DEFAULT ('') NOT NULL,
     [PatternCode] VARCHAR (20)   CONSTRAINT [DF_Pattern_GL_PatternCode] DEFAULT ('') NOT NULL,
     [PatternDesc] NVARCHAR (100) CONSTRAINT [DF_Pattern_GL_PatternDesc] DEFAULT ('') NULL,
@@ -11,8 +11,10 @@
     [PAIR]        VARCHAR (2)    CONSTRAINT [DF_Pattern_GL_PAIR] DEFAULT ('') NULL,
     [DV]          VARCHAR (2)    CONSTRAINT [DF_Pattern_GL_DV] DEFAULT ('') NULL,
     [Remarks]     NVARCHAR (30)  CONSTRAINT [DF_Pattern_GL_Remarks] DEFAULT ('') NULL,
-    CONSTRAINT [PK_Pattern_GL] PRIMARY KEY CLUSTERED ([ID] ASC, [Version] ASC, [SEQ] ASC)
+    CONSTRAINT [PK_Pattern_GL] PRIMARY KEY CLUSTERED ([PatternUKEY] ASC, [SEQ] ASC)
 );
+
+
 
 
 GO
@@ -65,4 +67,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'一對(反�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Pattern_GL', @level2type = N'COLUMN', @level2name = N'Remarks';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[Pattern_GL]([PatternUKEY] ASC);
 

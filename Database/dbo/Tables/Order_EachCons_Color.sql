@@ -13,6 +13,8 @@
 );
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Order : Each Cons by Color 展開.', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_EachCons_Color';
 
@@ -55,4 +57,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'差異', @l
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'用量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_EachCons_Color', @level2type = N'COLUMN', @level2name = N'YDS';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[Order_EachCons_Color]([Order_EachConsUkey] ASC)
+    INCLUDE([ColorID], [Layer]);
 

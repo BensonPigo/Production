@@ -384,10 +384,6 @@
       <Project>{b35ffbd5-b004-4929-bf1d-75e2ee403793}</Project>
       <Name>Sci.Production.PPIC</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
-      <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
-      <Name>Sci.Production.PublicPrg</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

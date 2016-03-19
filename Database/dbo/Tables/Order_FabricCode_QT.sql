@@ -1,16 +1,21 @@
 ﻿CREATE TABLE [dbo].[Order_FabricCode_QT] (
-    [Id]           VARCHAR (13) CONSTRAINT [DF_Order_FabricCode_QT_Id] DEFAULT ('') NOT NULL,
-    [FabricCode]   VARCHAR (3)  CONSTRAINT [DF_Order_FabricCode_QT_FabricCode] DEFAULT ('') NOT NULL,
-    [LectraCode]   VARCHAR (2)  CONSTRAINT [DF_Order_FabricCode_QT_LectraCode] DEFAULT ('') NOT NULL,
-    [SeqNO]        VARCHAR (2)  CONSTRAINT [DF_Order_FabricCode_QT_SeqNO] DEFAULT ('') NOT NULL,
-    [QTFabricCode] VARCHAR (3)  CONSTRAINT [DF_Order_FabricCode_QT_QTFabricCode] DEFAULT ('') NOT NULL,
-    [QTLectraCode] VARCHAR (2)  CONSTRAINT [DF_Order_FabricCode_QT_QTLectraCode] DEFAULT ('') NULL,
-    [AddName]      VARCHAR (10) CONSTRAINT [DF_Order_FabricCode_QT_AddName] DEFAULT ('') NULL,
-    [AddDate]      DATETIME     NULL,
-    [EditName]     VARCHAR (10) CONSTRAINT [DF_Order_FabricCode_QT_EditName] DEFAULT ('') NULL,
-    [EditDate]     DATETIME     NULL,
+    [Id]             VARCHAR (13)   CONSTRAINT [DF_Order_FabricCode_QT_Id] DEFAULT ('') NOT NULL,
+    [FabricCode]     VARCHAR (3)    CONSTRAINT [DF_Order_FabricCode_QT_FabricCode] DEFAULT ('') NOT NULL,
+    [LectraCode]     VARCHAR (2)    CONSTRAINT [DF_Order_FabricCode_QT_LectraCode] DEFAULT ('') NOT NULL,
+    [SeqNO]          VARCHAR (2)    CONSTRAINT [DF_Order_FabricCode_QT_SeqNO] DEFAULT ('') NOT NULL,
+    [QTFabricCode]   VARCHAR (3)    CONSTRAINT [DF_Order_FabricCode_QT_QTFabricCode] DEFAULT ('') NOT NULL,
+    [QTLectraCode]   VARCHAR (2)    CONSTRAINT [DF_Order_FabricCode_QT_QTLectraCode] DEFAULT ('') NULL,
+    [AddName]        VARCHAR (10)   CONSTRAINT [DF_Order_FabricCode_QT_AddName] DEFAULT ('') NULL,
+    [AddDate]        DATETIME       NULL,
+    [EditName]       VARCHAR (10)   CONSTRAINT [DF_Order_FabricCode_QT_EditName] DEFAULT ('') NULL,
+    [EditDate]       DATETIME       NULL,
+    [PatternPanel]   VARCHAR (2)    NULL,
+    [QTPatternPanel] VARCHAR (2)    NULL,
+    [QtWidth]        NUMERIC (3, 1) NULL,
     CONSTRAINT [PK_Order_FabricCode_QT] PRIMARY KEY CLUSTERED ([Id] ASC, [LectraCode] ASC, [SeqNO] ASC)
 );
+
+
 
 
 GO

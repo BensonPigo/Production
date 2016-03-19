@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Cutplan_Detail] (
     [ID]            VARCHAR (13)   CONSTRAINT [DF_Cutplan_Detail_ID] DEFAULT ('') NOT NULL,
-    [SewingInline]  VARCHAR (2)    CONSTRAINT [DF_Cutplan_Detail_SewingInline] DEFAULT ('') NOT NULL,
+    [Sewinglineid]  VARCHAR (2)    CONSTRAINT [DF_Cutplan_Detail_SewingInline] DEFAULT ('') NOT NULL,
     [CutRef]        VARCHAR (6)    CONSTRAINT [DF_Cutplan_Detail_CutRef] DEFAULT ('') NOT NULL,
     [CutNo]         NUMERIC (3)    CONSTRAINT [DF_Cutplan_Detail_CutNo] DEFAULT ((0)) NOT NULL,
     [Article]       VARCHAR (8)    CONSTRAINT [DF_Cutplan_Detail_Article] DEFAULT ('') NOT NULL,
@@ -15,6 +15,8 @@
 );
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Cutting Daily Plan detail', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutplan_Detail';
 
@@ -24,7 +26,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單號', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'車縫產線號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutplan_Detail', @level2type = N'COLUMN', @level2name = N'SewingInline';
+
 
 
 GO
@@ -65,4 +67,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'備註', @l
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutplan_Detail', @level2type = N'COLUMN', @level2name = N'POID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'車縫產線號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutplan_Detail', @level2type = N'COLUMN', @level2name = N'Sewinglineid';
 
