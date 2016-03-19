@@ -761,6 +761,12 @@
     <Compile Include="Report\R09.Designer.cs">
       <DependentUpon>R09.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R06.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R06.Designer.cs">
+      <DependentUpon>R06.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -1176,6 +1182,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R09.resx">
       <DependentUpon>R09.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R06.resx">
+      <DependentUpon>R06.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
