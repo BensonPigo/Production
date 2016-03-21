@@ -42,7 +42,7 @@ namespace Sci.Production.Shipping
             this.DetailSelectCommand = string.Format(@"select vd.*,c.HSCode,c.UnitID
 from VNContractQtyAdjust v
 inner join VNContractQtyAdjust_Detail vd on v.ID = vd.ID
-left join VNContract_Detail c on c.ID = v.ContractID and c.NLCode = vd.NLCode
+left join VNContract_Detail c on c.ID = v.VNContractID and c.NLCode = vd.NLCode
 where {0}
 order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -62,7 +62,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                             {
                                 DataRow seekData;
                                 if (!MyUtility.Check.Seek(string.Format("select HSCode,UnitID from VNContract_Detail where ID = '{0}' and NLCode = '{1}'",
-                                    MyUtility.Convert.GetString(CurrentMaintain["ContractID"]), MyUtility.Convert.GetString(e.FormattedValue)), out seekData))
+                                    MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(e.FormattedValue)), out seekData))
                                 {
                                     MyUtility.Msg.WarningBox("NL Code not found!!");
                                     dr["HSCode"] = "";
@@ -104,7 +104,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             base.ClickNewAfter();
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["CDate"] = DateTime.Today;
-            CurrentMaintain["ContractID"] = MyUtility.GetValue.Lookup("select top 1 ID from VNContract where StartDate <= GETDATE() and EndDate >= GETDATE() and Status = 'Confirmed'");
+            CurrentMaintain["VNContractID"] = MyUtility.GetValue.Lookup("select top 1 ID from VNContract where StartDate <= GETDATE() and EndDate >= GETDATE() and Status = 'Confirmed'");
         }
 
         protected override void ClickEditAfter()
@@ -142,7 +142,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                 dateBox1.Focus();
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["ContractID"]))
+            if (MyUtility.Check.Empty(CurrentMaintain["VNContractID"]))
             {
                 MyUtility.Msg.WarningBox("Contract no. can't empty!!");
                 textBox1.Focus();
@@ -247,7 +247,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                 newRow["Qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "N");
                 
                 if (!MyUtility.Check.Seek(string.Format("select HSCode,UnitID from VNContract_Detail where ID = '{0}' and NLCode = '{1}'",
-                    MyUtility.Convert.GetString(CurrentMaintain["ContractID"]), MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"))), out seekData))
+                    MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"))), out seekData))
                 {
                     errNLCode.Append(string.Format("NL Code: {0}\r\n",MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"))));
                     continue;
@@ -266,7 +266,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             MyUtility.Msg.WaitClear();
             if (!MyUtility.Check.Empty(errNLCode.ToString()))
             {
-                MyUtility.Msg.WarningBox(string.Format("Below NL Code is not in B43. Customs Contract - Contract No.: {0}\r\n{1}", MyUtility.Convert.GetString(CurrentMaintain["ContractID"]), errNLCode.ToString()));
+                MyUtility.Msg.WarningBox(string.Format("Below NL Code is not in B43. Customs Contract - Contract No.: {0}\r\n{1}", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), errNLCode.ToString()));
             }
             MyUtility.Msg.InfoBox("Import Complete!!");
         }
