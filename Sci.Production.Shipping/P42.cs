@@ -33,6 +33,7 @@ namespace Sci.Production.Shipping
                 {
                     detailgrid.IsEditingReadOnly = false;
                 }
+                detailgrid.EnsureStyle();
             }
         }
 
