@@ -13,14 +13,67 @@ namespace Sci.Production.Cutting
     public partial class P01 : Sci.Win.Tems.Input1
     {
         private string keyWord = Sci.Env.User.Keyword;
-
+        private string histype;
         public P01(ToolStripMenuItem menuitem,string Type)
             : base(menuitem)
         {
-            this.Text = Type == "1" ? "P01. Cutting Master List" : "P011. Cutting Master List (History)";
-            this.DefaultFilter = Type == "1" ? string.Format("MDivisionID = '{0}' AND Finished = 0", keyWord) : string.Format("MDivisionID = '{0}' AND Finished = 1", keyWord);
-            if (Type != "1") this.button4.Enabled = false;
+            histype = Type;
+            if (Type == "1")
+            {
+                this.Text = "P01. Cutting Master List";
+                this.DefaultFilter = string.Format("MDivisionID = '{0}' AND Finished = 0", keyWord);
+                
+                //if (!setcuttingdate())
+                //{
+                //    InitializeComponent();
+                //    this.Dispose();
+                //}
+                //else
+                //{
+                //    InitializeComponent();
+                //    this.button4.Enabled = false;
+                //}
+                
+            }
+            else
+            {
+                this.Text = "P01. Cutting Master List(History)";
+                this.DefaultFilter = string.Format("MDivisionID = '{0}' AND Finished = 1", keyWord);
+
+            }
             InitializeComponent();
+           
+        }
+        protected override void OnFormLoaded()
+        {
+            if (histype == "1")
+            {
+                if (!setcuttingdate())
+                {
+                    this.Close();
+                    return;
+                }
+                this.button4.Enabled = false;
+            }
+            base.OnFormLoaded();
+        }
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            base.OnFormClosed(e);
+        }
+        private bool setcuttingdate()
+        {
+            Sci.Production.Cutting.P01_Date DateForm =
+new Sci.Production.Cutting.P01_Date();
+            DateForm.ShowDialog(this);
+            if (DateForm.cancel == true)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
         protected override void OnDetailEntered()
         {
@@ -116,18 +169,45 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
             }
             #endregion
             #region color change
-            button1.ForeColor = MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_MarkerList", "ID") == true ? Color.Blue : Color.Black;
-            button2.ForeColor = MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_EachCons", "ID") == true ? Color.Blue : Color.Black;
-            button3.ForeColor = MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Bundle", "CuttingId") == true ? Color.Blue : Color.Black;
-            button4.ForeColor = MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "WorkOrder", "ID") == true ? Color.Blue : Color.Black;
-            button5.ForeColor = MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_Qty", "ID") == true ? Color.Blue : Color.Black;
+            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_MarkerList", "ID")) button1.ForeColor = Color.Blue;
+            else button1.ForeColor = Color.Black;
 
-            button7.ForeColor = MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "WorkOrder", "ID") == true ? Color.Blue : Color.Black;
-            button8.ForeColor = MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "WorkOrder", "ID") == true ? Color.Blue : Color.Black;
-            button9.ForeColor = MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Bundle", "CuttingId") == true ? Color.Blue : Color.Black;
-            button10.ForeColor = MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "FIR", "OrderID") == true ? Color.Blue : Color.Black;
-            button11.ForeColor = MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Bundle", "CuttingId") == true ? Color.Blue : Color.Black;
-            button12.ForeColor = MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_ColorCombo", "ID") == true ? Color.Blue : Color.Black;
+            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_EachCons", "ID")) button2.ForeColor = Color.Blue;
+            else button2.ForeColor = Color.Black;
+
+            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_Qty", "ID")) button5.ForeColor = Color.Blue;
+            else button5.ForeColor = Color.Black;
+
+            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "FIR", "POID")) button10.ForeColor = Color.Blue;
+            else button10.ForeColor = Color.Black;
+
+            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_ColorCombo", "ID")) button12.ForeColor = Color.Blue;
+            else button12.ForeColor = Color.Black;
+
+            if( MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Bundle", "CuttingId"))
+            {
+                button3.ForeColor = Color.Blue;
+                button9.ForeColor = Color.Blue;
+                button11.ForeColor = Color.Blue;
+            }
+            else
+            {
+                button3.ForeColor = Color.Black;
+                button7.ForeColor = Color.Black;
+                button11.ForeColor = Color.Black;
+            }
+            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "WorkOrder", "ID"))
+            {
+                button4.ForeColor = Color.Blue;
+                button7.ForeColor = Color.Blue;
+                button8.ForeColor = Color.Blue;
+            }
+            else 
+            {
+                button4.ForeColor = Color.Black;
+                button7.ForeColor = Color.Black;
+                button8.ForeColor = Color.Black;
+            }
 
             #endregion
         }
@@ -139,13 +219,60 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
             callNextForm.ShowDialog(this);
             OnDetailEntered();
         }
-
+        #region Button Bundle Card
         private void button3_Click(object sender, EventArgs e)
         {
             Sci.Production.Cutting.P01_BundleCard callNextForm =
     new Sci.Production.Cutting.P01_BundleCard(CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
             OnDetailEntered();
+        }
+        #endregion 
+        #region Cutpart Check
+        private void button8_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Cutting.P01_Cutpartcheck callNextForm =
+    new Sci.Production.Cutting.P01_Cutpartcheck(CurrentMaintain["ID"].ToString());
+            callNextForm.ShowDialog(this);
+            OnDetailEntered();
+        }
+        #endregion 
+        #region Cutpart Check Summary
+        private void button7_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Cutting.P01_Cutpartchecksummary callNextForm =
+    new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToString());
+            callNextForm.ShowDialog(this);
+            OnDetailEntered();
+        }
+        #endregion
+        #region ColorComb
+        private void button12_Click(object sender, EventArgs e)
+        {
+            Sci.Production.PublicForm.ColorCombination callNextForm =
+    new Sci.Production.PublicForm.ColorCombination(CurrentMaintain["ID"].ToString());
+            callNextForm.ShowDialog(this);
+            OnDetailEntered();
+        }
+        #endregion 
+        #region Garment List
+        private void button9_Click(object sender, EventArgs e)
+        {
+            string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["ID"].ToString(), "Orders", "ID");
+            Sci.Production.PublicForm.GarmentList callNextForm =
+    new Sci.Production.PublicForm.GarmentList(ukey);
+            callNextForm.ShowDialog(this);
+            OnDetailEntered();
+        }
+        #endregion
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var dr = this.CurrentMaintain; if (null == dr) return;
+            var frm = new Sci.Production.Cutting.P01_EachConsumption(false, CurrentMaintain["id"].ToString(), null, null, false);
+            frm.ShowDialog(this);
+            this.RenewData();
+            this.OnDetailEntered();
         }
     }
 }

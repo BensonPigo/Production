@@ -105,8 +105,8 @@
             this.detailcont.Controls.Add(this.displayBox5);
             this.detailcont.Controls.Add(this.editBox2);
             this.detailcont.Controls.Add(this.editBox1);
-            this.detailcont.Controls.Add(this.dateBox11);
             this.detailcont.Controls.Add(this.dateBox9);
+            this.detailcont.Controls.Add(this.dateBox11);
             this.detailcont.Controls.Add(this.button9);
             this.detailcont.Controls.Add(this.dateBox10);
             this.detailcont.Controls.Add(this.button10);
@@ -137,10 +137,10 @@
             this.detailcont.Controls.Add(this.label15);
             this.detailcont.Controls.Add(this.label14);
             this.detailcont.Controls.Add(this.label13);
-            this.detailcont.Controls.Add(this.dateBox4);
-            this.detailcont.Controls.Add(this.dateBox3);
-            this.detailcont.Controls.Add(this.dateBox2);
             this.detailcont.Controls.Add(this.dateBox1);
+            this.detailcont.Controls.Add(this.dateBox2);
+            this.detailcont.Controls.Add(this.dateBox3);
+            this.detailcont.Controls.Add(this.dateBox4);
             this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Controls.Add(this.displayBox4);
             this.detailcont.Controls.Add(this.displayBox3);
@@ -164,6 +164,10 @@
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 404);
             this.detailbtm.Size = new System.Drawing.Size(896, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(896, 442);
             // 
             // tabs
             // 
@@ -548,6 +552,7 @@
             this.button2.TabIndex = 41;
             this.button2.Text = "Each Cons.";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button3
             // 
@@ -585,6 +590,7 @@
             this.button7.TabIndex = 45;
             this.button7.Text = "Cut Parts Check Summary";
             this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // button8
             // 
@@ -594,6 +600,7 @@
             this.button8.TabIndex = 44;
             this.button8.Text = "Cut Parts Check";
             this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // button9
             // 
@@ -603,6 +610,7 @@
             this.button9.TabIndex = 53;
             this.button9.Text = "Garment List";
             this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // button11
             // 
@@ -621,6 +629,7 @@
             this.button12.TabIndex = 50;
             this.button12.Text = "Color Combo";
             this.button12.UseVisualStyleBackColor = true;
+            this.button12.Click += new System.EventHandler(this.button12_Click);
             // 
             // dateBox9
             // 
@@ -691,9 +700,19 @@
             this.numericBox1.IsSupportEditMode = false;
             this.numericBox1.Location = new System.Drawing.Point(429, 71);
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.ReadOnly = true;
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
             this.numericBox1.TabIndex = 59;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox2
             // 
@@ -702,9 +721,19 @@
             this.numericBox2.IsSupportEditMode = false;
             this.numericBox2.Location = new System.Drawing.Point(429, 96);
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
             this.numericBox2.TabIndex = 60;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // button10
             // 

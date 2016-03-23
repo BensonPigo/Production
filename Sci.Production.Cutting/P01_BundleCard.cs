@@ -18,11 +18,14 @@ namespace Sci.Production.Cutting
         {
             InitializeComponent();
             cutid = cID;
+            requery();
+            gridSetup();
+
         }
-        private void requert()
+        private void requery()
         {
             string sqlcmd = String.Format(
-            @"Select a.id,b.bundleno,a.orderid,a.cdate,a.cutrefno,a.fabriccombo,a.cutno,b.sizecode,b.bundlegroup,b.Qty 
+            @"Select a.id,b.bundleno,a.orderid,a.cdate,a.cutref,a.fabriccombo,a.cutno,b.sizecode,b.bundlegroup,b.Qty 
             from Bundle a, Bundle_Detail b 
             Where a.id = b.id and a.Cuttingid = '{0}'",cutid);
             DataTable gridtb;
@@ -32,14 +35,13 @@ namespace Sci.Production.Cutting
         private void gridSetup()
         {
             Helper.Controls.Grid.Generator(this.grid1)
-                .Text("id", header: "ID", width: Widths.AnsiChars(46), iseditingreadonly: true)
                 .Text("bundleno", header: "Bundle No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("orderid", header: "SP No", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Date("cdate", header: "Date", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                .Text("cutrefno", header: "Cut Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Date("cdate", header: "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("cutref", header: "Cut Ref", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("fabriccombo", header: "Comb", width: Widths.AnsiChars(1), iseditingreadonly: true)
                 .Numeric("cutno", header: "Cut No.", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Text("sizecode", header: "Suze", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("sizecode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("bundlegroup", header: "Bundle Group", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(7), iseditingreadonly: true);
 

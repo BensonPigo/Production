@@ -1,0 +1,54 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Ict;
+using Ict.Win;
+using Sci.Data;
+
+namespace Sci.Production.Cutting
+{
+    public partial class P01_EachConsumption_DownloadIdList : Sci.Win.Subs.Input4
+    {
+        public P01_EachConsumption_DownloadIdList()
+        {
+            InitializeComponent();
+        }
+
+        public P01_EachConsumption_DownloadIdList(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
+            : base(canedit, keyvalue1, keyvalue2, keyvalue3)
+        {
+            InitializeComponent();
+        }
+
+        protected override Ict.DualResult OnRequery(out DataTable datas)
+        {
+            //return base.OnRequery();
+            datas = null;
+            string sqlCmd = "Select ID, MarkerDownloadID" +
+                            "     , FabricCombo = (Select FabricCombo+',' " +
+                            "                        From Order_EachCons as tmp" +
+                            "                       Where tmp.ID = Order_EachCons.ID" +
+                            "                         And IsNull(tmp.MarkerDownloadID, '') = IsNull(Order_EachCons.MarkerDownloadID, '')" +
+                            "                       Group by FabricCombo Order by FabricCombo for XML path(''))" +
+                            "  From Order_EachCons" +
+                            " Where Order_EachCons.ID = '"+ this.KeyValue1 + "'" +
+                            " Group by ID, MarkerDownloadID";
+            DualResult result;
+            if (!(result = DBProxy.Current.Select(null, sqlCmd, out datas))) return result;
+            return Result.True;
+        }
+
+        protected override bool OnGridSetup()
+        {
+            Helper.Controls.Grid.Generator(this.grid)
+                .Text("MarkerDownloadID", header: "Marker Download ID", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("FabricCombo", header: "Fabric Combo", width: Widths.AnsiChars(30), iseditingreadonly: true);
+
+            return true;
+        }
+    }
+}
