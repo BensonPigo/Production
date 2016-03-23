@@ -109,10 +109,7 @@ namespace Sci.Production.Warehouse
 FROM Lack a
 inner join Lack_detail b on a.id = b.id
 inner join po_supp_detail c on c.ID = a.poid and c.seq1 = B.Seq1 AND C.SEQ2 = B.Seq2
-where (a.Status ='Received' or a.Status = 'Confirmed') 
-", Convert.ToDateTime(issuedate1).ToString("d")
- , Convert.ToDateTime(issuedate2).ToString("d")
- ));
+where (a.Status ='Received' or a.Status = 'Confirmed') "));
 
             #region --- 條件組合  ---
 
