@@ -524,8 +524,18 @@
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox1.Location = new System.Drawing.Point(445, 90);
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Size = new System.Drawing.Size(67, 23);
             this.numericBox1.TabIndex = 23;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox2
             // 
@@ -535,8 +545,18 @@
             this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox2.Location = new System.Drawing.Point(445, 118);
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.Size = new System.Drawing.Size(67, 23);
             this.numericBox2.TabIndex = 24;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox3
             // 
@@ -546,9 +566,19 @@
             this.numericBox3.IsSupportEditMode = false;
             this.numericBox3.Location = new System.Drawing.Point(444, 146);
             this.numericBox3.Name = "numericBox3";
+            this.numericBox3.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox3.ReadOnly = true;
             this.numericBox3.Size = new System.Drawing.Size(65, 23);
             this.numericBox3.TabIndex = 25;
+            this.numericBox3.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label15
             // 
@@ -572,9 +602,19 @@
             this.numericBox4.IsSupportEditMode = false;
             this.numericBox4.Location = new System.Drawing.Point(521, 146);
             this.numericBox4.Name = "numericBox4";
+            this.numericBox4.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox4.ReadOnly = true;
             this.numericBox4.Size = new System.Drawing.Size(65, 23);
             this.numericBox4.TabIndex = 30;
+            this.numericBox4.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label12
             // 
@@ -721,9 +761,9 @@
             this.ClientSize = new System.Drawing.Size(998, 556);
             this.DefaultDetailOrder = "POID,Seq1,Seq2";
             this.DefaultOrder = "ID";
-            this.Grid2UniqueKey = "ID,POID,Seq1,Seq2,SCIRefNo,RefNo";
             this.GridAlias = "FtyExport_Detail";
             this.GridNew = 0;
+            this.GridUniqueKey = "ID,POID,Seq1,Seq2,SCIRefNo,RefNo,LocalPOID";
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";

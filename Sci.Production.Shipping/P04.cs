@@ -26,11 +26,10 @@ namespace Sci.Production.Shipping
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
              string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-             this.DetailSelectCommand = string.Format(@"select ed.ID,isnull(o.FactoryID,'') as FactoryID,ed.PoID,isnull(o.BrandID,'') as BrandID,o.BuyerDelivery,o.SciDelivery,
+             this.DetailSelectCommand = string.Format(@"select ed.*,isnull(o.FactoryID,'') as FactoryID,isnull(o.BrandID,'') as BrandID,o.BuyerDelivery,o.SciDelivery,
 (left(ed.Seq1+' ',3)+'-'+ed.Seq2) as Seq,(ed.SuppID+'-'+iif(fe.Type = 4,(select Abb from LocalSupp where ID = ed.SuppID),(select AbbEN from Supp where ID = ed.SuppID))) as Supp,
 ed.RefNo,isnull(iif(fe.Type = 4,(select Description from LocalItem where RefNo = ed.RefNo),(select DescDetail from Fabric where SCIRefno = ed.SCIRefNo)),'') as Description,
-(case when ed.FabricType = 'F' then 'Fabric' when ed.FabricType = 'A' then 'Accessory' else '' end) as Type,ed.FabricType,
-ed.MtlTypeID,ed.UnitId,ed.Qty,ed.NetKg,ed.WeightKg,ed.Seq1,ed.Seq2
+(case when ed.FabricType = 'F' then 'Fabric' when ed.FabricType = 'A' then 'Accessory' else '' end) as Type
 from FtyExport_Detail ed
 left join FtyExport fe on fe.ID = ed.ID
 left join Orders o on o.ID = ed.PoID
