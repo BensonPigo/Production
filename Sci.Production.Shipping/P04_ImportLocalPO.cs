@@ -68,7 +68,7 @@ namespace Sci.Production.Shipping
             sqlCmd.Append(@"select lo.*, 1 as Selected, (lo.SuppID+' - '+ls.Abb) as Supp,isnull(li.Description,'') as Description,li.Category as MtlTypeID,
 o.BuyerDelivery,isnull(o.BrandID,'') as BrandID,isnull(o.FactoryID,'') as FactoryID,o.SciDelivery,0.0 as NetKg,0.0 as WeightKg,
 '' as Seq1,'' as Seq2,'' as Seq,'' as FabricType
-from (select l.Id as LocalPOID,ld.OrderId as POID,l.LocalSuppID as SuppID,SUBSTRING(ld.Id+ld.ThreadColorID,1,26) as SCIRefno,ld.Refno,ld.ThreadColorID,ld.UnitId,ld.Qty
+from (select l.Id as LocalPOID,ld.OrderId as POID,l.LocalSuppID as SuppID,SUBSTRING(ld.Id+ld.ThreadColorID,1,26) as SCIRefno,ld.Refno,ld.ThreadColorID,ld.UnitId,ld.Qty,ld.Price
       from LocalPO l, LocalPO_Detail ld
 	  where l.Id = ld.Id");
             if (!MyUtility.Check.Empty(textBox2.Text))
