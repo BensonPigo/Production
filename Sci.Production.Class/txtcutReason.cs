@@ -7,6 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Sci.Win.UI;
+using Sci.Data;
+using Sci.Win.Tools;
+using Ict.Win;
+using Ict;
+using Sci.Win;
+using Ict.Data;
+using Sci;
 
 namespace Sci.Production.Class
 {
@@ -64,11 +72,7 @@ namespace Sci.Production.Class
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-            if (myForm.EditMode == false)
-            {
-                this.displayBox1.Text = MyUtility.GetValue.Lookup("Description", Type + this.textBox1.Text.ToString(), "CutReason", "Type+ID");
-            }
+            this.displayBox1.Text = MyUtility.GetValue.Lookup("Description", Type + this.textBox1.Text.ToString(), "CutReason", "Type+ID");
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -79,6 +83,53 @@ namespace Sci.Production.Class
             if (result == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
             this.Validate();
+        }
+    }
+    public class cellcutreason : DataGridViewGeneratorTextColumnSettings
+    {
+        public static DataGridViewGeneratorTextColumnSettings GetGridCell(string ctype)
+        {
+            cellcutreason ts = new cellcutreason();
+            // Factory右鍵彈出功能
+            ts.EditingMouseDown += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                    // Parent form 若是非編輯狀態就 return 
+                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+                    DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                    SelectItem sele = new SelectItem(string.Format("Select ID,description From CutReason Where Junk=0 and type = '{0}'", ctype), "10,50", row["cutreasonid"].ToString(), false, ",");
+                    DialogResult result = sele.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    e.EditingControl.Text = sele.GetSelectedString();
+                }
+
+            };
+            // 正確性檢查
+            ts.CellValidating += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                // Parent form 若是非編輯狀態就 return 
+                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+                DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                String oldValue = row["cutreasonid"].ToString();
+                String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
+
+                if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
+                {
+                    if (!MyUtility.Check.Seek(ctype+newValue, "cutreason", "Type+ID"))
+                    {
+                        MyUtility.Msg.WarningBox(string.Format("< Cut Reason > : {0} not found!!!", newValue));
+                        row["cutreasonid"] = "";
+                        row.EndEdit();
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+
+            };
+            return ts;
         }
     }
 }
