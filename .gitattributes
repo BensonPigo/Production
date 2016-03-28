@@ -512,6 +512,9 @@ Sci.Production.Class/txtFinanceEnReason.Designer.cs -text
 Sci.Production.Class/txtFinanceEnReason.cs -text
 Sci.Production.Class/txtMdivision.Designer.cs -text
 Sci.Production.Class/txtMdivision.cs -text
+Sci.Production.Class/txtMultiSubcon.Designer.cs -text
+Sci.Production.Class/txtMultiSubcon.cs -text
+Sci.Production.Class/txtMultiSubcon.resx -text
 Sci.Production.Class/txtReason.Designer.cs -text
 Sci.Production.Class/txtReason.cs -text
 Sci.Production.Class/txtToMdivision.Designer.cs -text

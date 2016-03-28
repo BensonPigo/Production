@@ -91,7 +91,9 @@
     <Compile Include="txtcustcd.Designer.cs">
       <DependentUpon>txtcustcd.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtcutReason.cs" />
+    <Compile Include="txtcutReason.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="txtcutReason.Designer.cs">
       <DependentUpon>txtcutReason.cs</DependentUpon>
     </Compile>
@@ -124,6 +126,12 @@
     </Compile>
     <Compile Include="txtmultifactory.Designer.cs">
       <DependentUpon>txtmultifactory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtMultiSubcon.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtMultiSubcon.Designer.cs">
+      <DependentUpon>txtMultiSubcon.cs</DependentUpon>
     </Compile>
     <Compile Include="txtpaytermar.cs">
       <SubType>UserControl</SubType>
@@ -353,6 +361,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="txtcutReason.resx">
       <DependentUpon>txtcutReason.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtMultiSubcon.resx">
+      <DependentUpon>txtMultiSubcon.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="txtpaytermar.resx">
       <DependentUpon>txtpaytermar.cs</DependentUpon>
