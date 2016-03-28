@@ -37,7 +37,10 @@ namespace Sci.Production.Class
                 DialogResult result = selectSubcons.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
                 this.Text = selectSubcons.GetSelectedString();
-                Subcons = "'" + string.Join("','", selectSubcons.GetSelectedList().ToArray()) + "'";
+                if (!MyUtility.Check.Empty(this.Text))
+                    Subcons = "'" + string.Join("','", selectSubcons.GetSelectedList().ToArray()) + "'";
+                else
+                    Subcons = "";
             }
         }
 
