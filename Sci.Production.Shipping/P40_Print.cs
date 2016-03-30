@@ -96,7 +96,7 @@ where ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"])));
             }
 
             MyUtility.Msg.WaitWindows("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + (type == "1" ? "Shipping_P40_Commercial Invoice.xltx" : "Shipping_P40_FormForCustomSystem.xltx");
+            string strXltName = Sci.Env.Cfg.XltPathDir + (type == "1" ? "Shipping_P40_CommercialInvoice.xltx" : "Shipping_P40_FormForCustomSystem.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
