@@ -5,13 +5,15 @@
     [TotalQty]      NUMERIC (10)  CONSTRAINT [DF_VNContract_TotalQty] DEFAULT ((0)) NOT NULL,
     [SubConName]    VARCHAR (40)  CONSTRAINT [DF_VNContract_SubConName] DEFAULT ('') NULL,
     [SubConAddress] VARCHAR (500) CONSTRAINT [DF_VNContract_SubConAddress] DEFAULT ('') NULL,
-    [Encode]        BIT           CONSTRAINT [DF_VNContract_Encode] DEFAULT ((0)) NULL,
+    [Status]        VARCHAR (15)  CONSTRAINT [DF_VNContract_Encode] DEFAULT ('') NULL,
     [AddName]       VARCHAR (10)  CONSTRAINT [DF_VNContract_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME      NULL,
     [EditName]      VARCHAR (10)  CONSTRAINT [DF_VNContract_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME      NULL,
     CONSTRAINT [PK_VNContract] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -33,7 +35,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增者',
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Encode', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'VNContract', @level2type = N'COLUMN', @level2name = N'Encode';
+
 
 
 GO
@@ -62,4 +64,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ID', @level
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'海關簽約紀錄', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'VNContract';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Encode', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'VNContract', @level2type = N'COLUMN', @level2name = N'Status';
 
