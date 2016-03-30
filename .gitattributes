@@ -30,6 +30,7 @@ Database/dbo/Functions/getSewingOutputCumulateOfDays.sql -text
 Database/dbo/Functions/getStockUnit.sql -text
 Database/dbo/Functions/getTPEPass1.sql -text
 Database/dbo/Functions/getUnitRate.sql -text
+Database/dbo/Functions/getVNUnitTransfer.sql -text
 Database/dbo/Stored[!!-~]Procedures/dbo.insertMygridstd2.sql -text
 Database/dbo/Stored[!!-~]Procedures/insertMygridstd2.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_ThreadTransactionList.sql -text
@@ -417,9 +418,13 @@ Database/dbo/Tables/Unit.sql -text
 Database/dbo/Tables/Unit_Rate.sql -text
 Database/dbo/Tables/UserLog.sql -text
 Database/dbo/Tables/VNContract.sql -text
+Database/dbo/Tables/VNContractQtyAdjust.sql -text
+Database/dbo/Tables/VNContractQtyAdjust_Detail.sql -text
 Database/dbo/Tables/VNContract_Detail.sql -text
 Database/dbo/Tables/VNExportPort.sql -text
 Database/dbo/Tables/VNFixedDeclareItem.sql -text
+Database/dbo/Tables/VNImportDeclaration.sql -text
+Database/dbo/Tables/VNImportDeclaration_Detail.sql -text
 Database/dbo/Tables/VNNLCodeDesc.sql -text
 Database/dbo/Tables/WhseReason.sql -text
 Database/dbo/Tables/WorkHour.sql -text
