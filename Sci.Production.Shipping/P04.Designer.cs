@@ -334,6 +334,7 @@
             this.textBox3.IsSupportEditMode = false;
             this.textBox3.Location = new System.Drawing.Point(109, 118);
             this.textBox3.Name = "textBox3";
+            this.textBox3.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.textBox3.ReadOnly = true;
             this.textBox3.Size = new System.Drawing.Size(185, 23);
             this.textBox3.TabIndex = 11;
@@ -347,6 +348,7 @@
             this.textBox4.IsSupportEditMode = false;
             this.textBox4.Location = new System.Drawing.Point(109, 146);
             this.textBox4.Name = "textBox4";
+            this.textBox4.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.textBox4.ReadOnly = true;
             this.textBox4.Size = new System.Drawing.Size(185, 23);
             this.textBox4.TabIndex = 12;
