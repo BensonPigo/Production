@@ -1,12 +1,16 @@
 ﻿CREATE TABLE [dbo].[Style_BOF] (
-    [StyleUkey]  BIGINT       CONSTRAINT [DF_Style_BOF_StyleUkey] DEFAULT ((0)) NOT NULL,
-    [FabricCode] VARCHAR (3)  CONSTRAINT [DF_Style_BOF_FabricCode] DEFAULT ('') NOT NULL,
-    [Refno]      VARCHAR (20) CONSTRAINT [DF_Style_BOF_Refno] DEFAULT ('') NULL,
-    [SCIRefno]   VARCHAR (26) CONSTRAINT [DF_Style_BOF_SCIRefno] DEFAULT ('') NULL,
-    [Kind]       VARCHAR (1)  CONSTRAINT [DF_Style_BOF_Kind] DEFAULT ('') NULL,
-    [Ukey]       BIGINT       CONSTRAINT [DF_Style_BOF_Ukey] DEFAULT ((0)) NOT NULL,
+    [StyleUkey]    BIGINT       CONSTRAINT [DF_Style_BOF_StyleUkey] DEFAULT ((0)) NOT NULL,
+    [FabricCode]   VARCHAR (3)  CONSTRAINT [DF_Style_BOF_FabricCode] DEFAULT ('') NOT NULL,
+    [Refno]        VARCHAR (20) CONSTRAINT [DF_Style_BOF_Refno] DEFAULT ('') NULL,
+    [SCIRefno]     VARCHAR (26) CONSTRAINT [DF_Style_BOF_SCIRefno] DEFAULT ('') NULL,
+    [Kind]         VARCHAR (1)  CONSTRAINT [DF_Style_BOF_Kind] DEFAULT ('') NULL,
+    [Ukey]         BIGINT       CONSTRAINT [DF_Style_BOF_Ukey] DEFAULT ((0)) NOT NULL,
+    [SuppIDBulk]   VARCHAR (6)  CONSTRAINT [DF_Style_BOF_SuppIDBulk] DEFAULT ('') NULL,
+    [SuppIDSample] VARCHAR (6)  CONSTRAINT [DF_Style_BOF_SuppIDSample] DEFAULT ('') NULL,
     CONSTRAINT [PK_Style_BOF_1] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO
