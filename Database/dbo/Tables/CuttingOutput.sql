@@ -12,8 +12,11 @@
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_CuttingOutput_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME       NULL,
+    [PPH]         NUMERIC (8, 2) CONSTRAINT [DF_CuttingOutput_PPH] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_CuttingOutput] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

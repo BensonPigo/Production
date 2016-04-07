@@ -1,16 +1,19 @@
 ﻿CREATE TABLE [dbo].[MarkerReq] (
-    [ID]         VARCHAR (13) CONSTRAINT [DF_MarkerReq_ID] DEFAULT ('') NOT NULL,
-    [EstCutdate] DATE         NULL,
-    [MDivisionid]  VARCHAR (8)  CONSTRAINT [DF_MarkerReq_FactoryID] DEFAULT ('') NOT NULL,
-    [CutCellID]  VARCHAR (2)  CONSTRAINT [DF_MarkerReq_CutCellID] DEFAULT ('') NOT NULL,
-    [Status]     VARCHAR (15) CONSTRAINT [DF_MarkerReq_Status] DEFAULT ('') NULL,
-    [Cutplanid]  VARCHAR (13) CONSTRAINT [DF_MarkerReq_Cutplanid] DEFAULT ('') NOT NULL,
-    [AddName]    VARCHAR (10) CONSTRAINT [DF_MarkerReq_AddName] DEFAULT ('') NULL,
-    [AddDate]    DATETIME     NULL,
-    [EditName]   VARCHAR (10) CONSTRAINT [DF_MarkerReq_EditName] DEFAULT ('') NULL,
-    [EditDate]   DATETIME     NULL,
+    [ID]          VARCHAR (13) CONSTRAINT [DF_MarkerReq_ID] DEFAULT ('') NOT NULL,
+    [EstCutdate]  DATE         NULL,
+    [MDivisionid] VARCHAR (8)  CONSTRAINT [DF_MarkerReq_FactoryID] DEFAULT ('') NOT NULL,
+    [CutCellID]   VARCHAR (2)  CONSTRAINT [DF_MarkerReq_CutCellID] DEFAULT ('') NOT NULL,
+    [Status]      VARCHAR (15) CONSTRAINT [DF_MarkerReq_Status] DEFAULT ('') NULL,
+    [Cutplanid]   VARCHAR (13) CONSTRAINT [DF_MarkerReq_Cutplanid] DEFAULT ('') NOT NULL,
+    [AddName]     VARCHAR (10) CONSTRAINT [DF_MarkerReq_AddName] DEFAULT ('') NULL,
+    [AddDate]     DATETIME     NULL,
+    [EditName]    VARCHAR (10) CONSTRAINT [DF_MarkerReq_EditName] DEFAULT ('') NULL,
+    [EditDate]    DATETIME     NULL,
+    [SendDate]    DATETIME     NULL,
     CONSTRAINT [PK_MarkerReq] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

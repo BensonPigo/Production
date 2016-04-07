@@ -26,15 +26,18 @@
     [Direction]           NCHAR (40)     CONSTRAINT [DF_Order_EachCons_Direction] DEFAULT ('') NULL,
     [CuttingWidth]        VARCHAR (8)    CONSTRAINT [DF_Order_EachCons_CuttingWidth] DEFAULT ('') NULL,
     [Width]               VARCHAR (5)    CONSTRAINT [DF_Order_EachCons_Width] DEFAULT ('') NULL,
-    [TYPE]                NUMERIC (1)    CONSTRAINT [DF_Order_EachCons_TYPE] DEFAULT ((0)) NULL,
+    [TYPE]                VARCHAR (1)    CONSTRAINT [DF_Order_EachCons_TYPE] DEFAULT ((0)) NULL,
     [AddName]             VARCHAR (10)   CONSTRAINT [DF_Order_EachCons_AddName] DEFAULT ('') NULL,
     [AddDate]             DATETIME       NULL,
     [EditName]            VARCHAR (10)   CONSTRAINT [DF_Order_EachCons_EditName] DEFAULT ('') NULL,
     [EditDate]            DATETIME       NULL,
     [isQT]                BIT            CONSTRAINT [DF_Order_EachCons_isQT] DEFAULT ((0)) NULL,
     [MarkerDownloadID]    VARCHAR (25)   NULL,
+    [OrderCUkey_Old]      VARCHAR (10)   NULL,
     CONSTRAINT [PK_Order_EachCons] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

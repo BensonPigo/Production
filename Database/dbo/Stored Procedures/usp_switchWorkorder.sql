@@ -84,7 +84,6 @@ BEGIN
 	where a.id = @POID and a.FabricCode is not null and a.FabricCode !='' 
 	and b.id = @POID and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel and e.cuttingsp = a.id and e.Article = a.Article
 	Order by inline,id
-
 	Select id,article,sizecode,colorid,PatternPanel,orderqty, disqty,Min(INLINE) as inline,IDENTITY(int,1,1) as identRowid
 	into #disQty
 	From #_tmpdisQty group by id,article,sizecode,PatternPanel,orderqty, disqty,colorid order by inline
@@ -370,7 +369,7 @@ BEGIN
 						drop table #PatternPanel_cutlayer
 						-------------------------------------
 						SET @Layer = @maxLayer
-						SET @Cons = @Layer * @SizeRatioQty
+						SET @Cons = @Layer * @SizeRatioQty * @ConsPC
 						Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,LectraCode,newKey,Order_EachConsUkey)
 						Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@OrderID,@Layer,@Colorid,@Markername,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@MarkerVerion,@Type,@username,GETDATE(),@MarkerDownLoadid,@FabricCombo,@FabricCode,@LectraCode,@NewKey,@Order_EachConsUkey)
 						SET @NewKey += 1
@@ -496,7 +495,7 @@ BEGIN
 					drop table #PatternPanel_modlayer 
 					-------------------------------------
 					SET @Layer = @modLayer
-					SET @Cons = @Layer * @SizeRatioQty
+					SET @Cons = @Layer * @SizeRatioQty*@ConsPC
 					Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,LectraCode,newKey,Order_eachconsUkey)
 					Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Orderid,@Layer,@Colorid,@Markername,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@MarkerVerion,@Type,@username,GETDATE(),@MarkerDownLoadid,@FabricCombo,@FabricCode,@LectraCode,@NewKey,@Order_EachConsUkey)
 					SET @NewKey += 1
@@ -506,6 +505,7 @@ BEGIN
 			Begin
 				---------排序混碼Size Ratio Qty由大到小，才可以由大的數量先排-------
 				--------------------------------------------------------------------
+				
 				Select *,IDENTITY(int,1,1) as Rowid 
 				into #SizeQty
 				From Order_EachCons_SizeQty Where Order_EachConsUkey = @ukey 
@@ -615,6 +615,7 @@ BEGIN
 									if(@WorkOrder_DisQty>0)
 									begin
 										Set @CutQty = @CutQty - @WorkOrder_DisQty
+										
 										insert into #NewWorkOrder_Distribute(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
 										Values(@Cuttingid, @WorkOrder_DisOrderID,@Article,@SizeCode,@WorkOrder_DisQty,@NewKey,0)
 										update #disQty set disqty = disqty + IsNull(@WorkOrder_DisQty,0) 
@@ -682,6 +683,7 @@ BEGIN
 								-------------------------------------
 								if(@WorkOrder_DisQty>0)
 								begin
+									SET @Cons = @Layer * @SizeRatioQty * @ConsPC
 									--update #Order_EachCons_Color_Article set Layer = Layer - ISNULL(@maxLayer ,0)
 									--Where Article = @Article and Order_EachConsUkey = @Order_EachConsUkey and SizeCode = @SizeCode 
 									Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,LectraCode,newKey,Order_eachconsUkey)
@@ -815,6 +817,8 @@ BEGIN
 								End;
 								drop table #PatternPanel_byspmod
 								-------------------------------------
+								
+								SET @Cons = @modLayer * @SizeRatioQty * @ConsPC
 								Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,LectraCode,newKey,Order_eachconsUkey)
 								Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Orderid,@modLayer,@Colorid,@Markername,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@MarkerVerion,@Type,@username,GETDATE(),@MarkerDownLoadid,@FabricCombo,@FabricCode,@LectraCode,@NewKey,@Order_EachConsUkey)
 								SET @NewKey += 1
@@ -826,16 +830,16 @@ BEGIN
 					End
 					drop table #distOrder
 					Set @sizeQtyRowid += 1
-				End
+				EnD
 				Drop table #SizeQty
 			End --End WorkType by SP#
 		Set @WorkOrderMixRowID += 1
 		ENd --End WorkOrder Loop
 		drop table #WorkOrderMix
 	End;
-	/*
-	Select * from #disQty  order by PatternPanel,Colorid,SizeCode,id 
-	Select * from #NewWorkOrder ORDER BY Markername
+	
+	--Select * from #disQty  order by PatternPanel,Colorid,SizeCode,id 
+	/*Select * from #NewWorkOrder ORDER BY Markername
 	Select * from #NewWorkOrder_Distribute order by newkey
 	Select * from #NewWorkOrder_PatternPanel
 	Select * from #NewWorkOrder_SizeRatio
@@ -856,22 +860,22 @@ BEGIN
 						(Select id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
 						EstCutDate,CutCellid,MarkerLength,ConsPC,Cons,Refno,SCIRefno,MarkerNo,MarkerVersion,Type,Order_EachconsUkey,
 						AddName,FabricCombo,MarkerDownLoadId,FabricCode,LectraCode 
-						From #NewWorkOrder Where newkey = @insertcount)
+						From #NewWorkOrder Where newkey = @insertRow)
 		select @iden = @@IDENTITY 
 		--------將撈出的Ident 寫入----------
-		update #NewWorkOrder_Distribute set WorkOrderUkey = @iden Where newkey = @insertcount
-		update #NewWorkOrder_PatternPanel set WorkOrderUkey = @iden Where newkey = @insertcount
-		update #NewWorkOrder_SizeRatio set WorkOrderUkey = @iden Where newkey = @insertcount
+		update #NewWorkOrder_Distribute set WorkOrderUkey = @iden Where newkey = @insertRow
+		update #NewWorkOrder_PatternPanel set WorkOrderUkey = @iden Where newkey = @insertRow
+		update #NewWorkOrder_SizeRatio set WorkOrderUkey = @iden Where newkey = @insertRow
 		------Insert into 子Table-------------
 		insert into WorkOrder_Distribute(WorkOrderUkey,id,Orderid,Article,SizeCode,Qty)
 			(Select WorkOrderUkey,id,Orderid,Article,SizeCode,Qty
-			From #NewWorkOrder_Distribute Where newkey=@insertcount)
+			From #NewWorkOrder_Distribute Where newkey=@insertRow)
 		insert into WorkOrder_PatternPanel(WorkOrderUkey,ID,LectraCode,PatternPanel)
 			(Select WorkOrderUkey,ID,LectraCode,PatternPanel
-			From #NewWorkOrder_PatternPanel Where newkey=@insertcount)
+			From #NewWorkOrder_PatternPanel Where newkey=@insertRow)
 		insert into WorkOrder_SizeRatio(WorkOrderUkey,ID,SizeCode,Qty)
 			(Select WorkOrderUkey,ID,SizeCode,Qty
-			From #NewWorkOrder_SizeRatio Where newkey=@insertcount)
+			From #NewWorkOrder_SizeRatio Where newkey=@insertRow)
 			Set @insertRow+=1
 	End
 End

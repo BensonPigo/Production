@@ -7,8 +7,10 @@
     [AddDate]            DATETIME     NULL,
     [EditName]           VARCHAR (10) CONSTRAINT [DF_Order_EachCons_PatternPanel_EditName] DEFAULT ('') NULL,
     [EditDate]           DATETIME     NULL,
-    CONSTRAINT [PK_Order_EachCons_PatternPanel] PRIMARY KEY CLUSTERED ([PatternPanel] ASC, [Order_EachConsUkey] ASC)
+    CONSTRAINT [PK_Order_EachCons_PatternPanel] PRIMARY KEY CLUSTERED ([PatternPanel] ASC, [Order_EachConsUkey] ASC, [LectraCode] ASC)
 );
+
+
 
 
 GO

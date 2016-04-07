@@ -1,16 +1,20 @@
 ﻿CREATE TABLE [dbo].[MarkerReq_Detail] (
-    [iden]        BIGINT       IDENTITY (1, 1) NOT NULL,
-    [ID]          VARCHAR (13) CONSTRAINT [DF_MarkerReq_Detail_ID] DEFAULT ('') NOT NULL,
-    [OrderID]     VARCHAR (13) CONSTRAINT [DF_MarkerReq_Detail_OrderID] DEFAULT ('') NOT NULL,
-    [SizeRatio]   VARCHAR (20) CONSTRAINT [DF_MarkerReq_Detail_SizeRatio] DEFAULT ('') NOT NULL,
-    [MarkerName]  VARCHAR (5)  CONSTRAINT [DF_MarkerReq_Detail_MarkerName] DEFAULT ('') NOT NULL,
-    [Layer]       NUMERIC (5)  CONSTRAINT [DF_MarkerReq_Detail_Layer] DEFAULT ((0)) NOT NULL,
-    [FabricCombo] VARCHAR (2)  CONSTRAINT [DF_MarkerReq_Detail_FabricCombo] DEFAULT ('') NOT NULL,
-    [ReqQty]      NUMERIC (2)  CONSTRAINT [DF_MarkerReq_Detail_ReqQty] DEFAULT ((0)) NOT NULL,
-    [ReleaseQty]  NUMERIC (2)  CONSTRAINT [DF_MarkerReq_Detail_ReleaseQty] DEFAULT ((0)) NULL,
-    [ReleaseDate] DATE         NULL,
-    [MarkerNo]    VARCHAR (10) CONSTRAINT [DF_MarkerReq_Detail_MarkerNo] DEFAULT ('') NULL
+    [ukey]          BIGINT       IDENTITY (1, 1) NOT NULL,
+    [ID]            VARCHAR (13) CONSTRAINT [DF_MarkerReq_Detail_ID] DEFAULT ('') NOT NULL,
+    [OrderID]       VARCHAR (13) CONSTRAINT [DF_MarkerReq_Detail_OrderID] DEFAULT ('') NOT NULL,
+    [SizeRatio]     VARCHAR (20) CONSTRAINT [DF_MarkerReq_Detail_SizeRatio] DEFAULT ('') NOT NULL,
+    [MarkerName]    VARCHAR (5)  CONSTRAINT [DF_MarkerReq_Detail_MarkerName] DEFAULT ('') NOT NULL,
+    [Layer]         NUMERIC (5)  CONSTRAINT [DF_MarkerReq_Detail_Layer] DEFAULT ((0)) NOT NULL,
+    [FabricCombo]   VARCHAR (2)  CONSTRAINT [DF_MarkerReq_Detail_FabricCombo] DEFAULT ('') NOT NULL,
+    [ReqQty]        NUMERIC (2)  CONSTRAINT [DF_MarkerReq_Detail_ReqQty] DEFAULT ((0)) NOT NULL,
+    [ReleaseQty]    NUMERIC (2)  CONSTRAINT [DF_MarkerReq_Detail_ReleaseQty] DEFAULT ((0)) NULL,
+    [ReleaseDate]   DATE         NULL,
+    [MarkerNo]      VARCHAR (10) CONSTRAINT [DF_MarkerReq_Detail_MarkerNo] DEFAULT ('') NULL,
+    [WorkOrderUkey] BIGINT       CONSTRAINT [DF_MarkerReq_Detail_FabricCode] DEFAULT ((0)) NULL,
+    CONSTRAINT [PK_MarkerReq_Detail] PRIMARY KEY CLUSTERED ([ukey] ASC)
 );
+
+
 
 
 GO
@@ -18,7 +22,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Bulk Marker
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'主Key', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MarkerReq_Detail', @level2type = N'COLUMN', @level2name = N'iden';
+
 
 
 GO
@@ -59,4 +63,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發放日�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'馬克序號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MarkerReq_Detail', @level2type = N'COLUMN', @level2name = N'MarkerNo';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'主Key', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MarkerReq_Detail', @level2type = N'COLUMN', @level2name = N'ukey';
 

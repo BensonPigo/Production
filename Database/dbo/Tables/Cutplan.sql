@@ -1,7 +1,5 @@
 ﻿CREATE TABLE [dbo].[Cutplan] (
     [ID]          VARCHAR (13) CONSTRAINT [DF_Cutplan_ID] DEFAULT ('') NOT NULL,
-    [IssueDate]   DATE         NULL,
-    [IssueID]     VARCHAR (13) CONSTRAINT [DF_Cutplan_IssueID] DEFAULT ('') NULL,
     [CuttingID]   VARCHAR (13) CONSTRAINT [DF_Cutplan_CuttingID] DEFAULT ('') NULL,
     [MDivisionid] VARCHAR (8)  CONSTRAINT [DF_Cutplan_Factoryid] DEFAULT ('') NOT NULL,
     [CutCellID]   VARCHAR (2)  CONSTRAINT [DF_Cutplan_CutCellID] DEFAULT ('') NOT NULL,
@@ -21,6 +19,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Cutting Daily Plan', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutplan';
 
@@ -30,11 +30,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單號', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發料日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutplan', @level2type = N'COLUMN', @level2name = N'IssueDate';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發料單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutplan', @level2type = N'COLUMN', @level2name = N'IssueID';
+
 
 
 GO

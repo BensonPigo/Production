@@ -3,7 +3,6 @@
     [Sewinglineid]  VARCHAR (2)    CONSTRAINT [DF_Cutplan_Detail_SewingInline] DEFAULT ('') NOT NULL,
     [CutRef]        VARCHAR (6)    CONSTRAINT [DF_Cutplan_Detail_CutRef] DEFAULT ('') NOT NULL,
     [CutNo]         NUMERIC (3)    CONSTRAINT [DF_Cutplan_Detail_CutNo] DEFAULT ((0)) NOT NULL,
-    [Article]       VARCHAR (8)    CONSTRAINT [DF_Cutplan_Detail_Article] DEFAULT ('') NOT NULL,
     [OrderID]       VARCHAR (13)   CONSTRAINT [DF_Cutplan_Detail_OrderID] DEFAULT ('') NOT NULL,
     [StyleID]       VARCHAR (15)   CONSTRAINT [DF_Cutplan_Detail_StyleID] DEFAULT ('') NOT NULL,
     [Colorid]       VARCHAR (6)    CONSTRAINT [DF_Cutplan_Detail_Colorid] DEFAULT ('') NOT NULL,
@@ -13,6 +12,8 @@
     [POID]          VARCHAR (13)   CONSTRAINT [DF_Cutplan_Detail_POID] DEFAULT ('') NULL,
     CONSTRAINT [PK_Cutplan_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [WorkorderUkey] ASC)
 );
+
+
 
 
 
@@ -38,7 +39,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁次', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'色組', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutplan_Detail', @level2type = N'COLUMN', @level2name = N'Article';
+
 
 
 GO
