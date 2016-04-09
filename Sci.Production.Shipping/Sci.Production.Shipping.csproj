@@ -82,7 +82,8 @@
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
     </Reference>
-    <Reference Include="Sci.Proj">
+    <Reference Include="Sci.Proj, Version=1.0.1505.1800, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -145,6 +146,30 @@
     </Compile>
     <Compile Include="B40.Designer.cs">
       <DependentUpon>B40.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B42.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B42.Designer.cs">
+      <DependentUpon>B42.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B42_BatchCreate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B42_BatchCreate.Designer.cs">
+      <DependentUpon>B42_BatchCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B42_Detail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B42_Detail.Designer.cs">
+      <DependentUpon>B42_Detail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B42_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B42_Print.Designer.cs">
+      <DependentUpon>B42_Print.cs</DependentUpon>
     </Compile>
     <Compile Include="B43.cs">
       <SubType>Form</SubType>
@@ -542,6 +567,18 @@
     <EmbeddedResource Include="B40.resx">
       <DependentUpon>B40.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B42.resx">
+      <DependentUpon>B42.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B42_BatchCreate.resx">
+      <DependentUpon>B42_BatchCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B42_Detail.resx">
+      <DependentUpon>B42_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B42_Print.resx">
+      <DependentUpon>B42_Print.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B43.resx">
       <DependentUpon>B43.cs</DependentUpon>
     </EmbeddedResource>
@@ -732,6 +769,10 @@
       <Project>{0E35FD31-4A86-4D4E-A393-B6C5E3D7C956}</Project>
       <Name>Sci.Production.Class</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.IE\Sci.Production.IE.csproj">
+      <Project>{a650dc92-30e3-4f83-a0ac-eb214d7740f4}</Project>
+      <Name>Sci.Production.IE</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
       <Name>Sci.Production.PublicPrg</Name>
@@ -759,6 +800,17 @@
     <None Include="Shipping.xss">
       <DependentUpon>Shipping.xsd</DependentUpon>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>5</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
