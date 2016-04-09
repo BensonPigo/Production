@@ -51,7 +51,7 @@ order by NLCode", "5,11,8", this.Text, false, ",", headercaptions: "NL Code, HSC
             {
                     if (!MyUtility.Check.Seek(string.Format(@"select NLCode,HSCode,UnitID
 from VNContract_Detail
-where ID in (select ID from (select ID,MAX(StartDate) as MaxDate from VNContract where Encode = 1 group by ID) a)
+where ID in (select ID from (select ID,MAX(StartDate) as MaxDate from VNContract where Status = 'Confirmed' group by ID) a)
 and NLCode = '{0}'", textBox1.Text)))
                     {
                         MyUtility.Msg.WarningBox("The NL Code is not in the Contract!!");
