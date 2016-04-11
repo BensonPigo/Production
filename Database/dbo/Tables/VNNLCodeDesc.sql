@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[VNNLCodeDesc] (
-    [NLCode]   VARCHAR (50)   CONSTRAINT [DF_VNNLCodeDesc_NLCode] DEFAULT ('') NOT NULL,
+    [NLCode]   VARCHAR (7)    CONSTRAINT [DF_VNNLCodeDesc_NLCode] DEFAULT ('') NOT NULL,
     [DescEN]   VARCHAR (100)  CONSTRAINT [DF_VNNLCodeDesc_DescEN] DEFAULT ('') NULL,
     [DescVI]   NVARCHAR (100) CONSTRAINT [DF_VNNLCodeDesc_DescVI] DEFAULT ('') NULL,
     [UnitVI]   NVARCHAR (50)  CONSTRAINT [DF_VNNLCodeDesc_UnitVI] DEFAULT ('') NULL,
@@ -9,6 +9,8 @@
     [EditDate] DATETIME       NULL,
     CONSTRAINT [PK_VNNLCodeDesc] PRIMARY KEY CLUSTERED ([NLCode] ASC)
 );
+
+
 
 
 

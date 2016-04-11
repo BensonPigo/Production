@@ -23,6 +23,7 @@ Database/dbo/Functions/getItemDesc.sql -text
 Database/dbo/Functions/getMTLExport.sql -text
 Database/dbo/Functions/getMinCompleteSewQty.sql -text
 Database/dbo/Functions/getMtlDesc.sql -text
+Database/dbo/Functions/getOrderUnitPriceByOrderSize.sql -text
 Database/dbo/Functions/getPOComboList.sql -text
 Database/dbo/Functions/getPass1.sql -text
 Database/dbo/Functions/getPulloutComplete.sql -text
@@ -417,6 +418,11 @@ Database/dbo/Tables/TransferToClog.sql -text
 Database/dbo/Tables/Unit.sql -text
 Database/dbo/Tables/Unit_Rate.sql -text
 Database/dbo/Tables/UserLog.sql -text
+Database/dbo/Tables/VNConsumption.sql -text
+Database/dbo/Tables/VNConsumption_Article.sql -text
+Database/dbo/Tables/VNConsumption_Detail.sql -text
+Database/dbo/Tables/VNConsumption_Detail_Detail.sql -text
+Database/dbo/Tables/VNConsumption_SizeCode.sql -text
 Database/dbo/Tables/VNContract.sql -text
 Database/dbo/Tables/VNContractQtyAdjust.sql -text
 Database/dbo/Tables/VNContractQtyAdjust_Detail.sql -text

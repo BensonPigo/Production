@@ -16,12 +16,9 @@
     [GW]               NUMERIC (6, 3) CONSTRAINT [DF_PackingList_Detail_GW] DEFAULT ((0)) NULL,
     [NNW]              NUMERIC (6, 3) CONSTRAINT [DF_PackingList_Detail_NNW] DEFAULT ((0)) NULL,
     [NWPerPcs]         NUMERIC (5, 3) CONSTRAINT [DF_PackingList_Detail_NWPerPcs] DEFAULT ((0)) NULL,
-    [TransferToClogID] VARCHAR (13)   CONSTRAINT [DF_PackingList_Detail_TransferToClogID] DEFAULT ('') NULL,
     [TransferDate]     DATE           NULL,
-    [ClogReceiveID]    VARCHAR (13)   CONSTRAINT [DF_PackingList_Detail_ClogReceiveID] DEFAULT ('') NULL,
     [ReceiveDate]      DATE           NULL,
     [ClogLocationId]   VARCHAR (10)   CONSTRAINT [DF_PackingList_Detail_ClogLocationId] DEFAULT ('') NULL,
-    [ClogReturnID]     VARCHAR (13)   CONSTRAINT [DF_PackingList_Detail_ClogReturnID] DEFAULT ('') NULL,
     [ReturnDate]       DATE           NULL,
     [Barcode]          VARCHAR (30)   CONSTRAINT [DF_PackingList_Detail_Barcode] DEFAULT ('') NULL,
     [ScanQty]          SMALLINT       CONSTRAINT [DF_PackingList_Detail_ScanQty] DEFAULT ((0)) NULL,
@@ -29,6 +26,8 @@
     [Remark]           NVARCHAR (40)  CONSTRAINT [DF_PackingList_Detail_Remark] DEFAULT ('') NULL,
     CONSTRAINT [PK_PackingList_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC)
 );
+
+
 
 
 
@@ -106,7 +105,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'每件淨�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Transfer To Clog Id', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'TransferToClogID';
+
 
 
 GO
@@ -114,7 +113,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Transfer To
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Clog Receive Id', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'ClogReceiveID';
+
 
 
 GO
@@ -126,7 +125,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Carton in C
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Clog Return Id', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'ClogReturnID';
+
 
 
 GO
@@ -147,4 +146,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'掃描最�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'移箱檢驗備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'Remark';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[PackingList_Detail]([OrderID] ASC, [OrderShipmodeSeq] ASC)
+    INCLUDE([RefNo]);
 
