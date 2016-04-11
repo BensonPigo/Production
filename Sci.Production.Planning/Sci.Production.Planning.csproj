@@ -149,11 +149,27 @@
     <Compile Include="B03_Copy.Designer.cs">
       <DependentUpon>B03_Copy.cs</DependentUpon>
     </Compile>
-    <Compile Include="R03.cs">
+    <Compile Include="R02.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="R02.Designer.cs">
+      <DependentUpon>R02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R01.Designer.cs">
+      <DependentUpon>R01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R03.cs" />
     <Compile Include="R03.Designer.cs">
       <DependentUpon>R03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R11.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R11.Designer.cs">
+      <DependentUpon>R11.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -205,8 +221,17 @@
     <EmbeddedResource Include="B03_Copy.resx">
       <DependentUpon>B03_Copy.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="R02.resx">
+      <DependentUpon>R02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R01.resx">
+      <DependentUpon>R01.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R03.resx">
       <DependentUpon>R03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R11.resx">
+      <DependentUpon>R11.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
