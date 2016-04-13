@@ -125,8 +125,8 @@ and vc.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), 
 v.BrandID, v.Category,isnull(s.Type,'') as StyleType, isnull(r1.Name,'') as FabricType,
 isnull(r2.Name,'') as ApparelType, isnull(s.Lining,'') as Lining,v.SizeCode, v.CustomSP,
 v.Qty,isnull(s.StyleUnit,'') as StyleUnit, (v.CPU*v.VNMultiple) as CMP,(v.CPU*v.VNMultiple*v.Qty) as TtlCMP,
-[dbo].getOrderUnitPriceByOrderSize(v.StyleUKey,v.SizeCode) as FOB,
-[dbo].getOrderUnitPriceByOrderSize(v.StyleUKey,v.SizeCode)*v.Qty as TtlFOB
+[dbo].getOrderUnitPrice(1,v.StyleUKey,'','',v.SizeCode) as FOB,
+[dbo].getOrderUnitPrice(1,v.StyleUKey,'','',v.SizeCode)*v.Qty as TtlFOB
 from VNConsumption v
 left join Style s on s.Ukey = v.StyleUKey
 left join Reason r1 on r1.ReasonTypeID = 'Fabric_Kind' and r1.ID = s.FabricType
