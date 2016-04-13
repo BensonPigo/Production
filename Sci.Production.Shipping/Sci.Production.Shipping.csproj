@@ -417,6 +417,18 @@
     <Compile Include="P40_Print.Designer.cs">
       <DependentUpon>P40_Print.cs</DependentUpon>
     </Compile>
+    <Compile Include="P41.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P41.Designer.cs">
+      <DependentUpon>P41.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P41_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P41_Print.Designer.cs">
+      <DependentUpon>P41_Print.cs</DependentUpon>
+    </Compile>
     <Compile Include="P42.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -719,6 +731,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P40_Print.resx">
       <DependentUpon>P40_Print.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P41.resx">
+      <DependentUpon>P41.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P41_Print.resx">
+      <DependentUpon>P41_Print.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P42.resx">
       <DependentUpon>P42.cs</DependentUpon>
