@@ -279,7 +279,7 @@ namespace Sci.Production.Shipping
         {
             base.ClickUnconfirm();
 
-            string updateCmds = string.Format("update VNContractQtyAdjust set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}'",
+            string updateCmds = string.Format("update VNImportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}'",
                             Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
@@ -304,7 +304,8 @@ namespace Sci.Production.Shipping
         //Contract No.
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from VNContract where StartDate <= GETDATE() and EndDate >= GETDATE() and Status = 'Confirmed'", "8", this.Text, false, ",");
+            string sqlCmd = string.Format("select ID from VNContract where StartDate <= {0} and EndDate >= {0} and Status = 'Confirmed'", MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             textBox1.Text = item.GetSelectedString();
@@ -317,7 +318,7 @@ namespace Sci.Production.Shipping
             {
                 if (MyUtility.Check.Seek(string.Format("select ID from VNContract where ID = '{0}'", textBox1.Text)))
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from VNContract where  ID = '{0}' and StartDate <= GETDATE() and EndDate >= GETDATE() and Status = 'Confirmed'", textBox1.Text)))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from VNContract where  ID = '{0}' and StartDate <= {1} and EndDate >= {1} and Status = 'Confirmed'", textBox1.Text, MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'")))
                     {
                         MyUtility.Msg.WarningBox("This Contract can't use.");
                         textBox1.Text = "";
