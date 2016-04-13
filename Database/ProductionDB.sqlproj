@@ -1799,11 +1799,19 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Functions\getOrderUnitPriceByOrderSize.sql">
+    <Build Include="dbo\Tables\ForwarderWhse_Detail.sql" />
+    <Build Include="dbo\Tables\VNExportDeclaration_Detail.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\ForwarderWhse_Detail.sql" />
+    <Build Include="dbo\Tables\VNExportDeclaration.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Functions\getOrderUnitPrice.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

@@ -23,7 +23,7 @@ Database/dbo/Functions/getItemDesc.sql -text
 Database/dbo/Functions/getMTLExport.sql -text
 Database/dbo/Functions/getMinCompleteSewQty.sql -text
 Database/dbo/Functions/getMtlDesc.sql -text
-Database/dbo/Functions/getOrderUnitPriceByOrderSize.sql -text
+Database/dbo/Functions/getOrderUnitPrice.sql -text
 Database/dbo/Functions/getPOComboList.sql -text
 Database/dbo/Functions/getPass1.sql -text
 Database/dbo/Functions/getPulloutComplete.sql -text
@@ -427,6 +427,8 @@ Database/dbo/Tables/VNContract.sql -text
 Database/dbo/Tables/VNContractQtyAdjust.sql -text
 Database/dbo/Tables/VNContractQtyAdjust_Detail.sql -text
 Database/dbo/Tables/VNContract_Detail.sql -text
+Database/dbo/Tables/VNExportDeclaration.sql -text
+Database/dbo/Tables/VNExportDeclaration_Detail.sql -text
 Database/dbo/Tables/VNExportPort.sql -text
 Database/dbo/Tables/VNFixedDeclareItem.sql -text
 Database/dbo/Tables/VNImportDeclaration.sql -text
