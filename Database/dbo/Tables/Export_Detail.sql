@@ -47,8 +47,11 @@
     [EditName]       VARCHAR (10)    CONSTRAINT [DF_Export_Detail_EditName] DEFAULT ('') NULL,
     [BalanceQty]     NUMERIC (8, 3)  CONSTRAINT [DF_Export_Detail_BalanceQty] DEFAULT ((0)) NULL,
     [BalanceFOC]     NUMERIC (8, 3)  CONSTRAINT [DF_Export_Detail_BalanceFOC] DEFAULT ((0)) NULL,
+    [CurrencyId]     VARCHAR (3)     CONSTRAINT [DF_Export_Detail_CurrencyId] DEFAULT ('') NULL,
     CONSTRAINT [PK_Export_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC, [ShipPlanHandle] ASC)
 );
+
+
 
 
 GO

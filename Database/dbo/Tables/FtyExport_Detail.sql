@@ -14,8 +14,11 @@
     [WeightKg]   NUMERIC (7, 2)  CONSTRAINT [DF_FtyExport_Detail_WeightKg] DEFAULT ((0)) NULL,
     [LocalPOID]  VARCHAR (13)    CONSTRAINT [DF_FtyExport_Detail_LocalPOID] DEFAULT ('') NOT NULL,
     [Price]      NUMERIC (12, 4) CONSTRAINT [DF_FtyExport_Detail_LocalPO_DetailUKey] DEFAULT ((0)) NULL,
+    [CurrencyId] VARCHAR (3)     CONSTRAINT [DF_FtyExport_Detail_CurrencyId] DEFAULT ('') NULL,
     CONSTRAINT [PK_FtyExport_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [POID] ASC, [Seq1] ASC, [Seq2] ASC, [SCIRefno] ASC, [RefNo] ASC, [LocalPOID] ASC)
 );
+
+
 
 
 
