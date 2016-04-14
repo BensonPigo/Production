@@ -8,6 +8,7 @@ Database/ProductionDB.sqlproj -text
 Database/ProductionDB.sqlproj.user -text
 Database/Storage/SLAVE.sql -text
 Database/dbo/Functions/GetCPURate.sql -text
+Database/dbo/Functions/GetCurrencyRate.sql -text
 Database/dbo/Functions/GetDigitalValue.sql -text
 Database/dbo/Functions/GetPriceFromMtl.sql -text
 Database/dbo/Functions/GetSuppColor.sql -text
