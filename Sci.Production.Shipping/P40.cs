@@ -748,7 +748,7 @@ as (
                 if (localPurchase)
                 {
                     sqlCmd.Append(string.Format(@"select e.ID,ed.POID,'' as Seq1, '' as Seq2,IIF(ed.UnitID = 'CONE',li.MeterToCone,1)*ed.Qty as OriImportQty,IIF(ed.UnitID = 'CONE','M',ed.UnitID) as OriUnit,
-ed.MtlTypeID as Type,IIF(ed.UnitID = 'CONE',ed.Price/li.MeterToCone,ed.Price) as Price,
+ed.MtlTypeID as Type,IIF(ed.UnitID = 'CONE',(ed.Price*(select Rate from dbo.GetCurrencyRate('20',ed.CurrencyID,'USD',e.AddDate)))/li.MeterToCone,ed.Price*(select Rate from dbo.GetCurrencyRate('20',ed.CurrencyID,'USD',e.AddDate))) as Price,
 isnull(li.NLCode,'') as NLCode,isnull(li.HSCode,'') as HSCode,isnull(li.CustomsUnit,'') as CustomsUnit,
 isnull(li.PcsLength,0.0) as PcsLength,isnull(li.PcsWidth,0.0) as PcsWidth,isnull(li.PcsKg,0.0) as PcsKg,
 isnull(li.NoDeclare,0) as NoDeclare,0.0 as Width,
@@ -764,7 +764,7 @@ where {0}", sqlWhere));
                 else
                 {
                     sqlCmd.Append(string.Format(@"select e.ID,ed.PoID,ed.Seq1,ed.Seq2,ed.qty as OriImportQty,ed.UnitId as OriUnit,
-isnull(f.Type,'') as Type,ed.Price,
+isnull(f.Type,'') as Type,ed.Price*(select Rate from dbo.GetCurrencyRate('20',ed.CurrencyID,'USD',e.AddDate)) as Price,
 isnull(f.NLCode,'') as NLCode,isnull(f.HSCode,'') as HSCode,isnull(f.CustomsUnit,'') as CustomsUnit,
 isnull(f.PcsLength,0.0) as PcsLength,isnull(f.PcsWidth,0.0) as PcsWidth,isnull(f.PcsKg,0.0) as PcsKg, 
 isnull(f.NoDeclare,0) as NoDeclare,isnull(f.Width,0) as Width,
@@ -782,7 +782,7 @@ where {0}", sqlWhere));
             else
             {
                 sqlCmd.Append(string.Format(@"select e.ID,ed.PoID,ed.Seq1,ed.Seq2,ed.qty+ed.Foc as OriImportQty,ed.UnitId as OriUnit,
-isnull(f.Type,'') as Type,ed.Price,
+isnull(f.Type,'') as Type,ed.Price*(select Rate from dbo.GetCurrencyRate('20',ed.CurrencyID,'USD',e.CloseDate)) as Price,
 isnull(f.NLCode,'') as NLCode,isnull(f.HSCode,'') as HSCode,isnull(f.CustomsUnit,'') as CustomsUnit,
 isnull(f.PcsLength,0.0) as PcsLength,isnull(f.PcsWidth,0.0) as PcsWidth,isnull(f.PcsKg,0.0) as PcsKg, 
 isnull(f.NoDeclare,0) as NoDeclare,isnull(f.Width,0) as Width,
