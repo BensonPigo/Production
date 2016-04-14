@@ -83,7 +83,7 @@ BEGIN
 		where c.id = a.orderid and a.id = b.id and mDivisionid = @mDivisionid) f on f.OrderID = e.id and f.Article = e.Article and f.SizeCode = e.SizeCode 
 	where a.id = @POID and a.FabricCode is not null and a.FabricCode !='' 
 	and b.id = @POID and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel and e.cuttingsp = a.id and e.Article = a.Article
-	Order by inline,id
+	Order by inline,e.ID
 	Select id,article,sizecode,colorid,PatternPanel,orderqty, disqty,Min(INLINE) as inline,IDENTITY(int,1,1) as identRowid
 	into #disQty
 	From #_tmpdisQty group by id,article,sizecode,PatternPanel,orderqty, disqty,colorid order by inline
