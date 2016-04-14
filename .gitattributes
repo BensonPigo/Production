@@ -2111,6 +2111,9 @@ XLT/Shipping_R10_ShareExpenseExportBySPByFee.xltx -text
 XLT/Shipping_R10_ShareExpenseExportFeeReport.xltx -text
 XLT/Shipping_R11_NonSharedListGarment.xltx -text
 XLT/Shipping_R11_NonSharedListMaterial.xltx -text
+XLT/Shipping_R41_Adjust.xltx -text
+XLT/Shipping_R41_Export.xltx -text
+XLT/Shipping_R41_Import.xltx -text
 XLT/Subcon_R01.xltx -text
 XLT/Subcon_R02.xltx -text
 XLT/Subcon_R03.xltx -text
