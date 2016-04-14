@@ -143,7 +143,7 @@ namespace Sci.Production.Warehouse
             //取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "AI", "Adjust", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "AB", "Adjust", (DateTime)CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -429,6 +429,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
+            if (!MyUtility.Check.Empty(CurrentMaintain["stocktakingid"]))
+            {
+                MyUtility.Msg.WarningBox("This adjust is created by stocktaking, can't unconfirm!!","Warning");
+                return;
+            }
             DataTable datacheck;
             DataTable dt = (DataTable)detailgridbs.DataSource;
 

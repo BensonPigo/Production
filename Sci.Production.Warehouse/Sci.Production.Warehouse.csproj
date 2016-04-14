@@ -281,6 +281,12 @@
     <Compile Include="P26_Import.Designer.cs">
       <DependentUpon>P26_Import.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R04.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R04.Designer.cs">
+      <DependentUpon>R04.cs</DependentUpon>
+    </Compile>
     <Compile Include="Report\R17.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -767,6 +773,36 @@
     <Compile Include="Report\R06.Designer.cs">
       <DependentUpon>R06.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R03.Designer.cs">
+      <DependentUpon>R03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Report\R01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R01.Designer.cs">
+      <DependentUpon>R01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P50.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P50.Designer.cs">
+      <DependentUpon>P50.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P50_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P50_Import.Designer.cs">
+      <DependentUpon>P50_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P51.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P51.Designer.cs">
+      <DependentUpon>P51.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -887,6 +923,12 @@
     <EmbeddedResource Include="P26_Import.resx">
       <DependentUpon>P26_Import.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R03.resx">
+      <DependentUpon>R03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R04.resx">
+      <DependentUpon>R04.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R10.resx">
       <DependentUpon>R10.cs</DependentUpon>
@@ -1185,6 +1227,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R06.resx">
       <DependentUpon>R06.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R01.resx">
+      <DependentUpon>R01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P50.resx">
+      <DependentUpon>P50.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P50_Import.resx">
+      <DependentUpon>P50_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P51.resx">
+      <DependentUpon>P51.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -427,6 +427,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
+            if (!MyUtility.Check.Empty(CurrentMaintain["stocktakingid"]))
+            {
+                MyUtility.Msg.WarningBox("This adjust is created by stocktaking, can't unconfirm!!", "Warning");
+                return;
+            }
             DataTable datacheck;
             DataTable dt = (DataTable)detailgridbs.DataSource;
 
