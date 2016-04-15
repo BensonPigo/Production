@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Production.Class;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +13,7 @@ using Sci.Win;
 using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Cutting
 {
@@ -23,6 +25,7 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             InitializeComponent();
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", keyWord);
         }
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
@@ -142,9 +145,9 @@ namespace Sci.Production.Cutting
             #region 表身
             string marker2sql = string.Format(
             @"Select b.Orderid,b.MarkerName,sum(b.Layer) as layer,
-            b.MarkerNo,b.fabricCombo,
+            b.MarkerNo,a.WorkOrderUkey,b.fabricCombo,
             (
-                Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
+                Select c.sizecode+'*'+convert(varchar(8),c.qty)+'/' 
                 From WorkOrder_SizeRatio c
                 Where a.WorkOrderUkey =c.WorkOrderUkey            
                 For XML path('')
@@ -163,10 +166,10 @@ namespace Sci.Production.Cutting
                 {
                     insert_mark2 = insert_mark2 + string.Format(
                     @"Insert into MarkerReq_Detail      
-                    (ID,OrderID,SizeRatio,MarkerName,Layer,FabricCombo,MarkerNo) 
-                    Values('{0}','{1}','{2}','{3}',{4},'{5}','{6}');",
+                    (ID,OrderID,SizeRatio,MarkerName,Layer,FabricCombo,MarkerNo,WorkOrderUkey) 
+                    Values('{0}','{1}','{2}','{3}',{4},'{5}','{6}','{7}');",
                         reqid,dr["OrderID"],dr["SizeRatio"],dr["MarkerName"],
-                        dr["Layer"],dr["FabricCombo"],dr["MarkerNo"]);
+                        dr["Layer"],dr["FabricCombo"],dr["MarkerNo"],dr["WorkOrderUkey"]);
                 }
             }
             else
@@ -235,11 +238,16 @@ namespace Sci.Production.Cutting
             #endregion
             
         }
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+            this.button2.Enabled = (CurrentMaintain["Status"].ToString() != "New");
+        }
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
             #region 有Marker Req 不可Unconfirm
-            if (MyUtility.Check.Empty(CurrentMaintain["markerreqid"]))
+            if (!MyUtility.Check.Empty(CurrentMaintain["markerreqid"]))
             {
                 MyUtility.Msg.WarningBox("The record already create Marker request, you can not Unconfirm.");
                 return;
@@ -316,6 +324,99 @@ namespace Sci.Production.Cutting
             detailgrid.ValidateControl();
             var frm = new Sci.Production.Cutting.P04_Import();
             frm.ShowDialog(this);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            DataTable ExcelTb;
+            string cmdsql = string.Format(
+            @"
+            Select a.id,a.sewinglineid,a.orderid,e.seq1,e.seq2,a.cutref,a.cutno,
+            e.FabricCombo,e.FabricCode,
+            (
+                Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
+                From WorkOrder_SizeRatio c
+                Where  c.WorkOrderUkey =a.WorkOrderUkey 
+                
+                For XML path('')
+            ) as SizeCode,
+            (
+                Select distinct Article+'/ ' 
+			    From dbo.WorkOrder_Distribute b
+			    Where b.workorderukey = a.WorkOrderUkey and b.article!=''
+                For XML path('')
+            ) as article,a.colorid,
+            (
+                Select c.sizecode+'/ '+convert(varchar(8),c.qty*e.layer)+', ' 
+                From WorkOrder_SizeRatio c 
+                Where  c.WorkOrderUkey =a.WorkOrderUkey and c.WorkOrderUkey = e.Ukey
+               
+                For XML path('')
+            ) as CutQty,a.cons,e.description,a.remark
+            From Cutplan_Detail a, WorkOrder e,fabric f
+            where a.id = '{0}' and a.WorkOrderUkey = e.Ukey and e.scirefno = f.scirefno
+            ", CurrentDetailData["ID"]);
+            DualResult dResult = DBProxy.Current.Select(null, cmdsql, out ExcelTb);
+            if (dResult)
+            {
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P04.xlt"); //預先開啟excel app
+                string pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_Daily_Plan" + DateTime.Now.ToFileTime() + ".xls";
+                string tmpName = Sci.Env.Cfg.ReportTempDir + "tmp.xls";
+                //Microsoft.Office.Interop.Excel._Workbook objBook = null;
+
+
+                if (MyUtility.Excel.CopyToXls(ExcelTb, pathName, "Cutting_P04.xlt", 5, false, null, objApp))
+                {// 將datatable copy to excel
+                    //Microsoft.Office.Interop.Excel.Application oleApp = MyUtility.Excel.ConnectExcel(tmpName);
+                    Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                    Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
+                    //oleApp.Visible = false;
+                    //oleApp.DisplayAlerts = false;
+                    //objBook = oleApp.ActiveWorkbook;
+                    //objSheet = objBook.Worksheets["Sheet1"];
+
+                    objSheet.Cells[1, 1] = keyWord;   // 條件字串寫入excel
+                    objSheet.Cells[3, 2] = CurrentMaintain["EstCutDate"].ToString();
+                    objSheet.Cells[3, 5] = CurrentMaintain["POID"].ToString();
+                    objSheet.Cells[3, 9] = CurrentMaintain["CutCellid"].ToString();
+                    objSheet.Cells[3, 12] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(loginID);
+                    objBook.Save();
+                    //oleApp.Workbooks[1].SaveAs(pathName);
+                    objBook.Close();
+                    objApp.Workbooks.Close();
+                    objApp.Quit();
+
+                    Marshal.ReleaseComObject(objApp);
+                    Marshal.ReleaseComObject(objSheet);
+                    Marshal.ReleaseComObject(objBook);
+
+                    if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);
+                    if (objBook != null) Marshal.FinalReleaseComObject(objBook);
+                    if (objApp != null) Marshal.FinalReleaseComObject(objApp);
+                    objApp = null;
+                    //System.IO.File.Delete(tmpName);
+                    string fileNameExt = pathName.Substring(pathName.LastIndexOf("\\") + 1);
+
+                    DataRow seekdr;
+                    if (MyUtility.Check.Seek("select * from mailto where Id='002'", out seekdr))
+                    {
+                        string mailto = seekdr["ToAddress"].ToString();
+                        string cc = seekdr["ccAddress"].ToString();
+                        string content = seekdr["content"].ToString();
+                        string subject = "<" + CurrentMaintain["mDivisionid"].ToString() + ">Cutplan#:" + CurrentMaintain["ID"].ToString();
+
+                        var email = new MailTo(Env.Cfg.MailFrom, mailto, cc, subject + "-" + fileNameExt, pathName,
+content, false, false);
+                        email.ShowDialog(this);
+
+                    }
+                }
+            }
+            else
+            {
+                ShowErr(cmdsql, dResult);
+                return;
+            }
         }
     }
 }

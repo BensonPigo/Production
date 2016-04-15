@@ -65,7 +65,7 @@ namespace Sci.Production.Cutting
             DualResult dResult = DBProxy.Current.Select(null, sqlcmd, out detailTable);
             if (dResult)
             {
-                if (detailTable != null)
+                if (detailTable.Rows.Count != 0)
                 {
                     foreach (DataRow dr in detailTable.Rows)
                     {
@@ -120,11 +120,15 @@ namespace Sci.Production.Cutting
             {
                 try
                 {
+                    string remark;
+                    DataTable cutplan_DetailTb;
                     foreach (DataRow dr in gridTable.Rows)
                     {
+                        remark = "";
                         insertheader = "";
                         if (dr["sel"].ToString() == "1")
                         {
+                            
                             string id = MyUtility.GetValue.GetID(keyWord + "CP", "Cutplan");
 
                             if (!string.IsNullOrWhiteSpace(id))
@@ -135,7 +139,16 @@ namespace Sci.Production.Cutting
                                 {
                                     foreach (DataRow ddr in importay)
                                     {
-                                        insertheader = insertheader + string.Format("insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,cons,WorkOrder_Ukey,POID) values('{0}','{1}','{2}',{3},'{4}','{5}','{6}',{7},'{8}','{9}');", id, ddr["Sewinglineid"], ddr["Cutref"], ddr["Cutno"], ddr["OrderID"], ddr["styleid"], ddr["Colorid"], ddr["Cons"], ddr["Ukey"], ddr["POID"]);
+                                        DBProxy.Current.Select(null,string.Format("Select * from Cutplan_Detail Where workorderukey = '{0}'", ddr["Ukey"]),out cutplan_DetailTb);
+                                        if (cutplan_DetailTb != null)
+                                        {
+                                            foreach (DataRow cdr in cutplan_DetailTb.Rows)
+                                            {
+                                                remark = remark + cdr["Orderid"].ToString().Trim() + "\\" + cdr["Article"].ToString().Trim() + "\\" + cdr["SizeCode"].ToString().Trim() + "\\" + cdr["Qty"].ToString() + ",";
+                                            }
+                                        }
+
+                                        insertheader = insertheader + string.Format("insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,cons,WorkOrder_Ukey,POID,Remark) values('{0}','{1}','{2}',{3},'{4}','{5}','{6}',{7},'{8}','{9}','{10}');", id, ddr["Sewinglineid"], ddr["Cutref"], ddr["Cutno"], ddr["OrderID"], ddr["styleid"], ddr["Colorid"], ddr["Cons"], ddr["Ukey"], ddr["POID"],remark);
                                     }
                                     if (!(upResult = DBProxy.Current.Execute(null, insertheader)))
                                     {
