@@ -14,6 +14,7 @@ Database/dbo/Functions/GetPriceFromMtl.sql -text
 Database/dbo/Functions/GetSuppColor.sql -text
 Database/dbo/Functions/GetSuppColorList.sql -text
 Database/dbo/Functions/GetSuppColor_1.sql -text
+Database/dbo/Functions/GetSuppColor_Solution.sql -text
 Database/dbo/Functions/MarkerLengthToYDS.sql -text
 Database/dbo/Functions/dbo.getStockType.sql -text
 Database/dbo/Functions/dbo.getStockUnit.sql -text
@@ -98,6 +99,7 @@ Database/dbo/Tables/Color.sql -text
 Database/dbo/Tables/ColorFastness.sql -text
 Database/dbo/Tables/ColorFastness_Detail.sql -text
 Database/dbo/Tables/Color_Multiple.sql -text
+Database/dbo/Tables/Color_SuppColor.sql -text
 Database/dbo/Tables/Company.sql -text
 Database/dbo/Tables/Construction.sql -text
 Database/dbo/Tables/Country.sql -text
