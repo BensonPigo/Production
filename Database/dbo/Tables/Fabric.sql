@@ -14,6 +14,7 @@
     [LossStep]         INT            CONSTRAINT [DF_Fabric_LossStep] DEFAULT ((0)) NULL,
     [UsageUnit]        VARCHAR (8)    CONSTRAINT [DF_Fabric_UsageUnit] DEFAULT ('') NULL,
     [Width]            NUMERIC (3, 1) CONSTRAINT [DF_Fabric_Width] DEFAULT ((0)) NULL,
+    [NoSizeUnit]       BIT            CONSTRAINT [DF_Fabric_NoSizeUnit] DEFAULT ((0)) NULL,
     [BomTypeSize]      BIT            CONSTRAINT [DF_Fabric_BomTypeSize] DEFAULT ((0)) NULL,
     [BomTypeColor]     BIT            CONSTRAINT [DF_Fabric_BomTypeColor] DEFAULT ((0)) NULL,
     [ConstructionID]   VARCHAR (10)   CONSTRAINT [DF_Fabric_ConstructionID] DEFAULT ('') NULL,
@@ -34,6 +35,8 @@
     [NLCodeEditDate]   DATETIME       NULL,
     CONSTRAINT [PK_Fabric] PRIMARY KEY CLUSTERED ([SCIRefno] ASC)
 );
+
+
 
 
 GO
