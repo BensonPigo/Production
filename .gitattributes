@@ -333,6 +333,9 @@ Database/dbo/Tables/Receiving.sql -text
 Database/dbo/Tables/Receiving_Detail.sql -text
 Database/dbo/Tables/ReplacementReport.sql -text
 Database/dbo/Tables/ReplacementReport_Detail.sql -text
+Database/dbo/Tables/RequestCrossM.sql -text
+Database/dbo/Tables/RequestCrossM_Detail.sql -text
+Database/dbo/Tables/RequestCrossM_Receive.sql -text
 Database/dbo/Tables/ReturnReceipt.sql -text
 Database/dbo/Tables/ReturnReceipt_Detail.sql -text
 Database/dbo/Tables/Rft.sql -text
