@@ -77,7 +77,7 @@ namespace Sci.Production.Warehouse
 ,a.Dyelot
 ,a.StockType
 ,a.MDivisionID
-,a.Ukey
+,a.Ukey ftyinventoryukey
 ,b.Refno
 ,b.ColorID
 ,b.FabricType
@@ -210,7 +210,7 @@ and a.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
 
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.Select(string.Format("ukey = '{0}'", tmp["ukey"]));
+                DataRow[] findrow = dt_detail.Select(string.Format("ftyinventoryukey = '{0}'", tmp["ftyinventoryukey"]));
 
                 if (findrow.Length > 0)
                 {

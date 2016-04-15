@@ -803,6 +803,12 @@
     <Compile Include="P51.Designer.cs">
       <DependentUpon>P51.cs</DependentUpon>
     </Compile>
+    <Compile Include="test_input8.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="test_input8.Designer.cs">
+      <DependentUpon>test_input8.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -1242,6 +1248,9 @@
     <EmbeddedResource Include="P51.resx">
       <DependentUpon>P51.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="test_input8.resx">
+      <DependentUpon>test_input8.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
