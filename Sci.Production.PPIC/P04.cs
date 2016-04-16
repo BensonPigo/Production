@@ -334,11 +334,8 @@ where a.Article is null", Sci.Env.User.UserID, MyUtility.Convert.GetString(Curre
         //Garment List
         private void button8_Click(object sender, EventArgs e)
         {
-            string patternUkey = MyUtility.GetValue.Lookup(string.Format(@"select UKey from Pattern
-where EditDate = (select max(EditDate) from Pattern where StyleUkey = {0} and Status = 'C')
-and StyleUkey = {0} and Status = 'C'",MyUtility.Convert.GetString(CurrentMaintain["Ukey"])));
-
-            MyUtility.Msg.InfoBox("Wait for Cutting P01_Garment"+patternUkey);
+            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(MyUtility.Convert.GetString(CurrentMaintain["Ukey"]));
+            callNextForm.ShowDialog(this);
         }
 
         //Similar Style
