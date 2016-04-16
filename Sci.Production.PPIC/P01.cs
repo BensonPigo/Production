@@ -19,8 +19,11 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             InitializeComponent();
+            this.IsSupportNew = Type == "1" ? true : false;
+            this.IsSupportEdit = Type == "1" ? true : false;
+
             this.Text = Type == "1" ? "P01. PPIC Master List" : "P011. PPIC Master List (History)";
-            this.DefaultFilter = Type == "1" ? string.Format("MDivisionID = '{0}' AND Finished = 0", Sci.Env.User.Keyword) : string.Format("MDivision = '{0}' AND Finished = 1", Sci.Env.User.Keyword);
+            this.DefaultFilter = Type == "1" ? string.Format("MDivisionID = '{0}' AND Finished = 0", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND Finished = 1", Sci.Env.User.Keyword);
             dataType = Type;
             button31.Visible = dataType == "1"; //Shipment Finished
             button33.Visible = dataType != "1"; //Back to P01. PPIC Master List
@@ -200,6 +203,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
 
             //按鈕變色
             bool haveTmsCost = MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+            button3.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             button4.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
             button5.ForeColor = haveTmsCost ? Color.Blue : Color.Black;
             button6.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Label"]) ? Color.Blue : Color.Black;
@@ -214,7 +218,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             button24.ForeColor = MyUtility.Check.Seek(string.Format("select ID from ArtworkPO_Detail where OrderID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             button25.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"]))) ? Color.Blue : Color.Black;
             button27.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["SewLine"]) ? Color.Blue : Color.Black;
-            button28.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail where OrderID = '{0}' and ClogReceiveID <> ''", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+            button28.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail where OrderID = '{0}' and ReceiveDate is not null", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             button29.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing"]) ? Color.Blue : Color.Black;
             button30.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_PFHis where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             button32.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing2"]) ? Color.Blue : Color.Black;
@@ -602,7 +606,8 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
         //Production output
         private void button3_Click(object sender, EventArgs e)
         {
-            
+            Sci.Production.PPIC.P01_ProductionOutput callNextForm = new Sci.Production.PPIC.P01_ProductionOutput(CurrentMaintain);
+            callNextForm.ShowDialog(this);
         }
 
         //Order remark

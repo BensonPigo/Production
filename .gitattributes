@@ -979,6 +979,15 @@ Sci.Production.PPIC/P01_MTLImport.resx -text
 Sci.Production.PPIC/P01_ProductionKit.Designer.cs -text
 Sci.Production.PPIC/P01_ProductionKit.cs -text
 Sci.Production.PPIC/P01_ProductionKit.resx -text
+Sci.Production.PPIC/P01_ProductionOutput.Designer.cs -text
+Sci.Production.PPIC/P01_ProductionOutput.cs -text
+Sci.Production.PPIC/P01_ProductionOutput.resx -text
+Sci.Production.PPIC/P01_ProductionOutput_CuttingDetail.Designer.cs -text
+Sci.Production.PPIC/P01_ProductionOutput_CuttingDetail.cs -text
+Sci.Production.PPIC/P01_ProductionOutput_CuttingDetail.resx -text
+Sci.Production.PPIC/P01_ProductionOutput_SewingDetail.Designer.cs -text
+Sci.Production.PPIC/P01_ProductionOutput_SewingDetail.cs -text
+Sci.Production.PPIC/P01_ProductionOutput_SewingDetail.resx -text
 Sci.Production.PPIC/P01_QtySewingSchedule.Designer.cs -text
 Sci.Production.PPIC/P01_QtySewingSchedule.cs -text
 Sci.Production.PPIC/P01_QtySewingSchedule.resx -text
