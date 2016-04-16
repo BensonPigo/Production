@@ -29,6 +29,50 @@ namespace Sci.Production.PPIC
             button33.Visible = dataType != "1"; //Back to P01. PPIC Master List
         }
 
+        protected override void OnDetailDetached()
+        {
+            base.OnDetailDetached();
+            ControlButton();
+        }
+
+        //按鈕控制
+        private void ControlButton()
+        {
+            button1.Enabled = CurrentMaintain != null;
+            button2.Enabled = CurrentMaintain != null;
+            button3.Enabled = CurrentMaintain != null;
+            button4.Enabled = CurrentMaintain != null;
+            button5.Enabled = CurrentMaintain != null;
+            button6.Enabled = CurrentMaintain != null;
+            button7.Enabled = CurrentMaintain != null;
+            button8.Enabled = CurrentMaintain != null;
+            button9.Enabled = CurrentMaintain != null;
+            button10.Enabled = CurrentMaintain != null;
+            button11.Enabled = CurrentMaintain != null;
+            button12.Enabled = CurrentMaintain != null;
+            button13.Enabled = CurrentMaintain != null;
+            button14.Enabled = CurrentMaintain != null;
+            button15.Enabled = CurrentMaintain != null;
+            button16.Enabled = CurrentMaintain != null;
+            button17.Enabled = CurrentMaintain != null;
+            button18.Enabled = CurrentMaintain != null;
+            button19.Enabled = CurrentMaintain != null;
+            button20.Enabled = CurrentMaintain != null;
+            button21.Enabled = CurrentMaintain != null;
+            button22.Enabled = CurrentMaintain != null;
+            button23.Enabled = CurrentMaintain != null;
+            button24.Enabled = CurrentMaintain != null;
+            button25.Enabled = CurrentMaintain != null;
+            button26.Enabled = CurrentMaintain != null;
+            button27.Enabled = CurrentMaintain != null;
+            button28.Enabled = CurrentMaintain != null;
+            button29.Enabled = CurrentMaintain != null;
+            button30.Enabled = CurrentMaintain != null;
+            button31.Enabled = CurrentMaintain != null;
+            button32.Enabled = CurrentMaintain != null;
+            button33.Enabled = CurrentMaintain != null;
+        }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -39,50 +83,15 @@ namespace Sci.Production.PPIC
             browsetop.Controls.Add(btn);
             btn.Size = new Size(180, 30);//預設是(80,30)
             btn.Visible = dataType == "1";
-
-            #region 當Currentmaintain為Null時，按鈕都不可以按
-            if (CurrentMaintain == null)
-            {
-                button1.Enabled = false;
-                button2.Enabled = false;
-                button3.Enabled = false;
-                button4.Enabled = false;
-                button5.Enabled = false;
-                button6.Enabled = false;
-                button7.Enabled = false;
-                button8.Enabled = false;
-                button9.Enabled = false;
-                button10.Enabled = false;
-                button11.Enabled = false;
-                button12.Enabled = false;
-                button13.Enabled = false;
-                button14.Enabled = false;
-                button15.Enabled = false;
-                button16.Enabled = false;
-                button17.Enabled = false;
-                button18.Enabled = false;
-                button19.Enabled = false;
-                button20.Enabled = false;
-                button21.Enabled = false;
-                button22.Enabled = false;
-                button23.Enabled = false;
-                button24.Enabled = false;
-                button25.Enabled = false;
-                button26.Enabled = false;
-                button27.Enabled = false;
-                button28.Enabled = false;
-                button29.Enabled = false;
-                button30.Enabled = false;
-                button31.Enabled = false;
-                button32.Enabled = false;
-                button33.Enabled = false;
-            }
-            #endregion
         }
 
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            if (!EditMode)
+            {
+                ControlButton();
+            }
 
             displayBox6.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason where ReasonTypeID = 'Order_BuyerDelivery' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["KPIChangeReason"])));
             displayBox14.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason where ReasonTypeID = 'Style_SpecialMark' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["SpecialMark"])));

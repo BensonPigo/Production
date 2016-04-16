@@ -381,10 +381,10 @@
             this.detailcont.Controls.Add(this.numericBox1);
             this.detailcont.Controls.Add(this.label19);
             this.detailcont.Controls.Add(this.label18);
-            this.detailcont.Controls.Add(this.txtuser2);
             this.detailcont.Controls.Add(this.txtuser1);
-            this.detailcont.Controls.Add(this.txttpeuser2);
+            this.detailcont.Controls.Add(this.txtuser2);
             this.detailcont.Controls.Add(this.txttpeuser1);
+            this.detailcont.Controls.Add(this.txttpeuser2);
             this.detailcont.Controls.Add(this.label17);
             this.detailcont.Controls.Add(this.label16);
             this.detailcont.Controls.Add(this.label15);
@@ -573,10 +573,10 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.txttpeuser4);
             this.tabPage1.Controls.Add(this.txttpeuser3);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
@@ -1662,7 +1662,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(891, 389);
+            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
