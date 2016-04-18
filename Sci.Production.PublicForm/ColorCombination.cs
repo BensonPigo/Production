@@ -38,7 +38,7 @@ namespace Sci.Production.PublicForm
             string createheader = "Select Article";
             string headername;
             //Order_Fabric
-            string headersql = string.Format("Select distinct FabricCode,PatternPanel from Order_FabricCode where id = '{0}' order by PatternPanel,FabricCode", cutid);
+            string headersql = string.Format("Select distinct FabricCode,PatternPanel,LectraCode from Order_FabricCode where id = '{0}' order by PatternPanel,FabricCode", cutid);
             DataTable headertb;
             DualResult sqlresult = DBProxy.Current.Select(null, headersql, out headertb);
             if(!sqlresult)
@@ -48,8 +48,8 @@ namespace Sci.Production.PublicForm
             }
             foreach (DataRow dr in headertb.Rows)
             {
-                headername = dr["PatternPanel"].ToString().Trim() + dr["FabricCode"].ToString().Substring(1,2);
-                createheader = createheader + string.Format(",case when a.PatternPAnel+right(a.FabricCode,2)='{0}' then Colorid end '{0}'",headername);
+                headername = dr["LectraCode"].ToString().Trim();
+                createheader = createheader + string.Format(",case when a.Lectracode='{0}' then Colorid end '{0}' ", dr["LectraCode"].ToString().Trim());
                
             Helper.Controls.Grid.Generator(this.grid1)
             .Text(headername, header: headername, width: Widths.AnsiChars(8), iseditingreadonly: true);
@@ -104,14 +104,14 @@ namespace Sci.Production.PublicForm
                 if (dr["seqno"].ToString() != "01")
                 {
                     string seqno = MyUtility.Convert.NTOC((MyUtility.Convert.GetInt(dr["SEQNo"])-1),2);
-                    DataRow[] drqt = qttb2.Select(string.Format("LectraCode ='{0}' and SEQNO = '{1}'", seqno));
-                    string patternfab = drqt[0]["PatternPanel"].ToString().Trim() + drqt[0]["FabricCode"].ToString().Trim().Substring(1,2);
-                    string qtpatternfab = drqt[0]["QtPatternPanel"].ToString().Trim() + drqt[0]["QtFabricCode"].ToString().Trim().Substring(1,2);
-                    string qtpatternwidrh = drqt[0]["QtPatternPanel"].ToString().Trim() + drqt[0]["QtWidth"].ToString().Trim().Substring(1, 2);
+                    DataRow[] drqt = qttb2.Select(string.Format("LectraCode ='{0}' and SEQNO = '{1}'", dr["LecreaCode"],seqno));
+                    string patternfab = drqt[0]["LectraCode"].ToString().Trim();
+                    string qtpatternfab = drqt[0]["QtLectraCode"].ToString().Trim() ;
+                    decimal qtpatternwidrh = MyUtility.Convert.GetDecimal(drqt[0]["QtWidth"]);
                     DataRow[] tbdr = gridtb.Select("Article = 'QT With'");
-                    tbdr[0][patternfab] = drqt[0][qtpatternfab];
+                    tbdr[0][patternfab] = qtpatternfab;
                     tbdr = gridtb.Select("Article = 'QT Width'");
-                    tbdr[0][patternfab] = drqt[0][qtpatternwidrh];
+                    tbdr[0][patternfab] = qtpatternwidrh;
                 }
             }
             #endregion
