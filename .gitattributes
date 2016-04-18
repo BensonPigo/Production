@@ -1887,6 +1887,9 @@ Sci.Production.Warehouse/P18.resx -text
 Sci.Production.Warehouse/P18_AccumulatedQty.Designer.cs -text
 Sci.Production.Warehouse/P18_AccumulatedQty.cs -text
 Sci.Production.Warehouse/P18_AccumulatedQty.resx -text
+Sci.Production.Warehouse/P18_Import.Designer.cs -text
+Sci.Production.Warehouse/P18_Import.cs -text
+Sci.Production.Warehouse/P18_Import.resx -text
 Sci.Production.Warehouse/P19.Designer.cs -text
 Sci.Production.Warehouse/P19.cs -text
 Sci.Production.Warehouse/P19.resx -text

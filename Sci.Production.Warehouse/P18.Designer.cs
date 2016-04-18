@@ -44,6 +44,7 @@
             this.button1 = new Sci.Win.UI.Button();
             this.label4 = new Sci.Win.UI.Label();
             this.textBox2 = new Sci.Win.UI.TextBox();
+            this.btnImport = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -60,6 +61,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.textBox2);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.button1);
@@ -92,6 +94,7 @@
             this.masterpanel.Controls.SetChildIndex(this.button1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             // 
             // detailpanel
             // 
@@ -269,6 +272,7 @@
             this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.editBox1.Location = new System.Drawing.Point(129, 78);
+            this.editBox1.MaxLength = 100;
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(658, 51);
@@ -301,9 +305,22 @@
             this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FromFtyId", true));
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox2.Location = new System.Drawing.Point(129, 45);
+            this.textBox2.MaxLength = 8;
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(67, 23);
             this.textBox2.TabIndex = 3;
+            // 
+            // btnImport
+            // 
+            this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImport.Location = new System.Drawing.Point(939, 41);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(89, 31);
+            this.btnImport.TabIndex = 70;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // P18
             // 
@@ -321,7 +338,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P18";
-            this.Text = "P18. Transfer In From Other Region";
+            this.Text = "P18. Transfer In";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";
             this.WorkAlias = "TransferIn";
@@ -363,5 +380,6 @@
         private Win.UI.Button button1;
         private Win.UI.Label label4;
         private Win.UI.TextBox textBox2;
+        private Win.UI.Button btnImport;
     }
 }

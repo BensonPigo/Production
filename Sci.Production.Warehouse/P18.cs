@@ -795,5 +795,12 @@ Where a.id = '{0}'", masterID);
 
         }
 
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            var frm = new Sci.Production.Warehouse.P18_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
+            frm.ShowDialog(this);
+            this.RenewData();
+        }
+
     }
 }

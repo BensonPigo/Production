@@ -528,7 +528,7 @@ Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        //delete all
+        //delete qty is empty
         private void button9_Click(object sender, EventArgs e)
         {
             detailgrid.ValidateControl();
@@ -537,47 +537,14 @@ Where a.id = '{0}'", masterID);
 
         }
 
-        //Import
-        private void button5_Click(object sender, EventArgs e)
-        {
-            var frm = new Sci.Production.Warehouse.P13_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
-            frm.ShowDialog(this);
-            this.RenewData();
-        }
-
+        //Accumulated
         private void button1_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P19_AccumulatedQty(CurrentMaintain);
             frm.ShowDialog(this);
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
-            {
-                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
-                return;
-            }
-            try
-            {
-
-                DataTable dtmaster = new DataTable();
-
-                dtmaster.ImportRow(CurrentMaintain);
-
-                viewer.LocalReport.ReportEmbeddedResource = "Sci.Production.Warehouse.P13Detail.rdlc";
-                viewer.LocalReport.DataSources.Add(new ReportDataSource("DataSet1", dtmaster));
-                viewer.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(MySubreportEventHandler);
-                //
-                viewer.RefreshReport();
-            }
-            catch (Exception ex)
-            {
-                ShowErr("data loading error.");
-            }
-        }
-
+        //Import
         private void button5_Click_1(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P19_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
@@ -585,6 +552,7 @@ Where a.id = '{0}'", masterID);
             this.RenewData();
         }
 
+        //Find
         private void button8_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;

@@ -58,7 +58,7 @@ select A.PoId,A.Seq1,A.Seq2,isnull(sum(a1.qty),0) requestqty
 	GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.UnitID
 )
 select cte.Poid,seq1,seq2
-,sum(cte.requestqty) * (select v.Rate from v_unitrate v where v.FROM_U = cte.UnitID and v.TO_U = cte.stockunit) requestqty
+,sum(cte.requestqty) * (select v.Rate from dbo.View_Unitrate v where v.FROM_U = cte.UnitID and v.TO_U = cte.stockunit) requestqty
 ,cte.qty
 ,dbo.getmtldesc(cte.poid,cte.seq1,cte.seq2,2,0) as [Description]
 ,cte.UnitID
@@ -68,7 +68,7 @@ group by cte.Poid,seq1,seq2
 ,dbo.getmtldesc(cte.poid,cte.seq1,cte.seq2,2,0)
 ,cte.UnitID
 ,cte.stockunit ;
-", dr["id"].ToString(), dr["factoryid"].ToString(), dr["fromftyid"].ToString()));
+", dr["id"].ToString(), dr["mdivisionid"].ToString(), dr["fromftyid"].ToString()));
 
             DataTable selectDataTable1;
             MyUtility.Msg.WaitWindows("Data Loading...");

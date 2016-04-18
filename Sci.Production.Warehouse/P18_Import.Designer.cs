@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    partial class P19_Import
+    partial class P18_Import
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -28,19 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button3 = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
             this.checkBox2 = new Sci.Win.UI.CheckBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
-            this.txtSP = new Sci.Win.UI.TextBox();
+            this.btnImport = new Sci.Win.UI.Button();
+            this.btnQuery = new Sci.Win.UI.Button();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.label1 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtSeq = new Sci.Win.UI.TextBox();
-            this.cbbStockType = new Sci.Win.UI.ComboBox();
+            this.txtTransferOutID = new Sci.Win.UI.TextBox();
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
@@ -51,17 +47,17 @@
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
-            // button3
+            // btnClose
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button3.Location = new System.Drawing.Point(912, 15);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(90, 30);
-            this.button3.TabIndex = 3;
-            this.button3.Text = "Cancel";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnClose.Location = new System.Drawing.Point(912, 15);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(90, 30);
+            this.btnClose.TabIndex = 3;
+            this.btnClose.Text = "Cancel";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // checkBox2
             // 
@@ -69,7 +65,7 @@
             this.checkBox2.AutoSize = true;
             this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkBox2.IsSupportEditMode = false;
-            this.checkBox2.Location = new System.Drawing.Point(25, 20);
+            this.checkBox2.Location = new System.Drawing.Point(25, 24);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.ReadOnly = true;
             this.checkBox2.Size = new System.Drawing.Size(15, 14);
@@ -84,53 +80,43 @@
             this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkBox1.IsSupportEditMode = false;
-            this.checkBox1.Location = new System.Drawing.Point(6, 20);
+            this.checkBox1.Location = new System.Drawing.Point(6, 24);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.ReadOnly = true;
             this.checkBox1.Size = new System.Drawing.Size(15, 14);
             this.checkBox1.TabIndex = 0;
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // btnImport
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(816, 16);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(90, 30);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "Import";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImport.Location = new System.Drawing.Point(816, 16);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(90, 30);
+            this.btnImport.TabIndex = 2;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
-            // button1
+            // btnQuery
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(912, 14);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(90, 30);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Find Now";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // txtSP
-            // 
-            this.txtSP.BackColor = System.Drawing.Color.White;
-            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP.Location = new System.Drawing.Point(327, 19);
-            this.txtSP.MaxLength = 13;
-            this.txtSP.Name = "txtSP";
-            this.txtSP.Size = new System.Drawing.Size(122, 23);
-            this.txtSP.TabIndex = 1;
+            this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnQuery.Location = new System.Drawing.Point(912, 18);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(90, 30);
+            this.btnQuery.TabIndex = 1;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.button3);
+            this.groupBox2.Controls.Add(this.btnClose);
             this.groupBox2.Controls.Add(this.checkBox2);
             this.groupBox2.Controls.Add(this.checkBox1);
-            this.groupBox2.Controls.Add(this.button2);
+            this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 477);
             this.groupBox2.Name = "groupBox2";
@@ -141,86 +127,43 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.txtSeq);
-            this.groupBox1.Controls.Add(this.cbbStockType);
-            this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Controls.Add(this.txtSP);
+            this.groupBox1.Controls.Add(this.btnQuery);
+            this.groupBox1.Controls.Add(this.txtTransferOutID);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1008, 55);
+            this.groupBox1.Size = new System.Drawing.Size(1008, 57);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
             // label1
             // 
             this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(471, 19);
+            this.label1.Location = new System.Drawing.Point(5, 22);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(69, 23);
-            this.label1.TabIndex = 125;
-            this.label1.Text = "Seq#";
+            this.label1.Size = new System.Drawing.Size(123, 23);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Transfer Out ID";
             // 
-            // label3
+            // txtTransferOutID
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(239, 19);
-            this.label3.Name = "label3";
-            this.label3.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label3.RectStyle.BorderWidth = 1F;
-            this.label3.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.label3.RectStyle.ExtBorderWidth = 1F;
-            this.label3.Size = new System.Drawing.Size(85, 23);
-            this.label3.TabIndex = 124;
-            this.label3.Text = "SP#";
-            this.label3.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label3.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // label2
-            // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(9, 19);
-            this.label2.Name = "label2";
-            this.label2.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label2.RectStyle.BorderWidth = 1F;
-            this.label2.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.label2.RectStyle.ExtBorderWidth = 1F;
-            this.label2.Size = new System.Drawing.Size(85, 23);
-            this.label2.TabIndex = 123;
-            this.label2.Text = "Stock Type";
-            this.label2.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label2.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // txtSeq
-            // 
-            this.txtSeq.BackColor = System.Drawing.Color.White;
-            this.txtSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeq.Location = new System.Drawing.Point(543, 19);
-            this.txtSeq.MaxLength = 5;
-            this.txtSeq.Name = "txtSeq";
-            this.txtSeq.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq.TabIndex = 2;
-            // 
-            // cbbStockType
-            // 
-            this.cbbStockType.BackColor = System.Drawing.Color.White;
-            this.cbbStockType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cbbStockType.FormattingEnabled = true;
-            this.cbbStockType.IsSupportUnselect = true;
-            this.cbbStockType.Location = new System.Drawing.Point(97, 18);
-            this.cbbStockType.Name = "cbbStockType";
-            this.cbbStockType.Size = new System.Drawing.Size(121, 24);
-            this.cbbStockType.TabIndex = 0;
+            this.txtTransferOutID.BackColor = System.Drawing.Color.White;
+            this.txtTransferOutID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTransferOutID.IsSupportEditMode = false;
+            this.txtTransferOutID.Location = new System.Drawing.Point(131, 22);
+            this.txtTransferOutID.MaxLength = 13;
+            this.txtTransferOutID.Name = "txtTransferOutID";
+            this.txtTransferOutID.Size = new System.Drawing.Size(150, 23);
+            this.txtTransferOutID.TabIndex = 0;
+            this.txtTransferOutID.Validating += new System.ComponentModel.CancelEventHandler(this.txtTransferOutID_Validating);
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.grid1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 55);
+            this.panel1.Location = new System.Drawing.Point(0, 57);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 422);
+            this.panel1.Size = new System.Drawing.Size(1008, 420);
             this.panel1.TabIndex = 20;
             // 
             // grid1
@@ -244,18 +187,19 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1008, 422);
+            this.grid1.Size = new System.Drawing.Size(1008, 420);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
-            // P19_Import
+            // P18_Import
             // 
             this.ClientSize = new System.Drawing.Size(1008, 530);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
-            this.Name = "P19_Import";
-            this.Text = "P19. Import Detail";
+            this.DefaultControl = "textBox1";
+            this.Name = "P18_Import";
+            this.Text = "P18. Import Detail";
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -269,21 +213,17 @@
 
         #endregion
 
-        private Win.UI.Button button3;
+        private Win.UI.Button btnClose;
         private Win.UI.CheckBox checkBox2;
         private Win.UI.CheckBox checkBox1;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.TextBox txtSP;
+        private Win.UI.Button btnImport;
+        private Win.UI.Button btnQuery;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.GroupBox groupBox1;
         private Win.UI.Panel panel1;
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.ComboBox cbbStockType;
-        private Win.UI.TextBox txtSeq;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
+        private Win.UI.TextBox txtTransferOutID;
         private Win.UI.Label label1;
     }
 }

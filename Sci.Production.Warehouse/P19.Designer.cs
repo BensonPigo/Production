@@ -43,8 +43,6 @@
             this.editBox1 = new Sci.Win.UI.EditBox();
             this.button1 = new Sci.Win.UI.Button();
             this.button5 = new Sci.Win.UI.Button();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtToMdivision1 = new Sci.Production.Class.txtToMdivision();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -61,8 +59,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.txtToMdivision1);
             this.masterpanel.Controls.Add(this.button5);
             this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.editBox1);
@@ -77,7 +73,7 @@
             this.masterpanel.Controls.Add(this.label11);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 184);
+            this.masterpanel.Size = new System.Drawing.Size(1058, 184);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label11, 0);
@@ -93,13 +89,11 @@
             this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.button1, 0);
             this.masterpanel.Controls.SetChildIndex(this.button5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtToMdivision1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 184);
-            this.detailpanel.Size = new System.Drawing.Size(892, 165);
+            this.detailpanel.Size = new System.Drawing.Size(1058, 293);
             // 
             // gridicon
             // 
@@ -113,7 +107,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 165);
+            this.detailgridcont.Size = new System.Drawing.Size(1058, 293);
             // 
             // detail2
             // 
@@ -126,6 +120,19 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1058, 515);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(1058, 477);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 477);
+            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
             // 
             // browse
             // 
@@ -190,7 +197,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(892, 184);
+            this.shapeContainer1.Size = new System.Drawing.Size(1058, 184);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -258,6 +265,7 @@
             this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.editBox1.Location = new System.Drawing.Point(97, 43);
+            this.editBox1.MaxLength = 100;
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(658, 86);
@@ -287,25 +295,6 @@
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click_1);
             // 
-            // label2
-            // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(508, 13);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(71, 23);
-            this.label2.TabIndex = 71;
-            this.label2.Text = "To M";
-            // 
-            // txtToMdivision1
-            // 
-            this.txtToMdivision1.BackColor = System.Drawing.Color.White;
-            this.txtToMdivision1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "tomdivisionid", true));
-            this.txtToMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtToMdivision1.Location = new System.Drawing.Point(582, 13);
-            this.txtToMdivision1.Name = "txtToMdivision1";
-            this.txtToMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtToMdivision1.TabIndex = 2;
-            // 
             // P19
             // 
             this.ApvChkValue = "New";
@@ -322,7 +311,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P19";
-            this.Text = "P19. Transfer Out to Other Region";
+            this.Text = "P19. Transfer Out";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";
             this.WorkAlias = "TransferOut";
@@ -363,7 +352,5 @@
         private Win.UI.Label label1;
         private Win.UI.Button button1;
         private Win.UI.Button button5;
-        private Win.UI.Label label2;
-        private Class.txtToMdivision txtToMdivision1;
     }
 }
