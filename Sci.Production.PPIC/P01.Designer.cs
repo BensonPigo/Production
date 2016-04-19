@@ -463,6 +463,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.BackColor = System.Drawing.Color.Transparent;
             this.tabPage1.Controls.Add(this.button33);
             this.tabPage1.Controls.Add(this.button31);
             this.tabPage1.Controls.Add(this.button32);
