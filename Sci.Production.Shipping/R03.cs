@@ -60,7 +60,8 @@ case pd.Status when 'P' then 'Partial' when 'C' then 'Complete' when 'E' then 'E
 isnull(IIF(o.LocalOrder = 1, o.PoPrice,o.CMPPrice),0) as CMP,
 isnull(IIF(o.LocalOrder = 1, Round(o.PoPrice*pd.ShipQty,3),Round(o.CPU*o.CPUFactor*pd.ShipQty,3)),0) as CMPAmt,
 isnull(o.PoPrice,0) as PoPrice,isnull(o.PoPrice,0)*pd.ShipQty as FOBAmt, isnull(o.BrandID,'') as BrandID,isnull(o.MDivisionID,'') as MDivisionID,
-isnull(o.FactoryID,'') as FactoryID,isnull(oq.ShipmodeID,'') as ShipmodeID,isnull(c.Alias,'') as Alias
+isnull(o.FactoryID,'') as FactoryID,isnull(oq.ShipmodeID,'') as ShipmodeID,isnull(c.Alias,'') as Alias,
+isnull(IIF(ct.WorkType = '1',(select sum(cw.Qty) from CuttingOutput_WIP cw, Orders os where cw.OrderID = os.ID and os.CuttingSP = o.CuttingSP),(select sum(Qty) from CuttingOutput_WIP where OrderID = pd.OrderID)),0) as CutQty
 from Pullout p
 inner join Pullout_Detail pd on p.ID = pd.ID
 left join Orders o on pd.OrderID = o.ID
@@ -135,7 +136,7 @@ and p.PulloutDate between '{0}' and '{1}'", Convert.ToDateTime(pulloutDate1).ToS
                 objArray[0, 3] = dr["CustPONo"];
                 objArray[0, 4] = dr["StyleID"];
                 objArray[0, 5] = dr["Qty"];
-                objArray[0, 6] = 0; //此欄位等Cutting Output結構決定後再補
+                objArray[0, 6] = dr["CutQty"];
                 objArray[0, 7] = dr["byCombo"];
                 objArray[0, 8] = dr["ShipQty"];
                 objArray[0, 9] = dr["StatusExp"];
