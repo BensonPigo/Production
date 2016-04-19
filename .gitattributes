@@ -487,6 +487,12 @@ Sci.Production.Basic/B04_BankData.resx -text
 Sci.Production.Basic/B04_BankData_Input.Designer.cs -text
 Sci.Production.Basic/B04_BankData_Input.cs -text
 Sci.Production.Basic/B04_BankData_Input.resx -text
+Sci.Production.Basic/B05.Designer.cs -text
+Sci.Production.Basic/B05.cs -text
+Sci.Production.Basic/B05.resx -text
+Sci.Production.Basic/B05_SetHoliday.Designer.cs -text
+Sci.Production.Basic/B05_SetHoliday.cs -text
+Sci.Production.Basic/B05_SetHoliday.resx -text
 Sci.Production.Basic/B06.Designer.cs -text
 Sci.Production.Basic/B06.cs -text
 Sci.Production.Basic/B06.resx -text

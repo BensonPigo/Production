@@ -137,6 +137,18 @@
     <Compile Include="B04_BankData_Input.Designer.cs">
       <DependentUpon>B04_BankData_Input.cs</DependentUpon>
     </Compile>
+    <Compile Include="B05.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B05.Designer.cs">
+      <DependentUpon>B05.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B05_SetHoliday.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B05_SetHoliday.Designer.cs">
+      <DependentUpon>B05_SetHoliday.cs</DependentUpon>
+    </Compile>
     <Compile Include="B07.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -253,6 +265,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B04_BankData_Input.resx">
       <DependentUpon>B04_BankData_Input.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B05.resx">
+      <DependentUpon>B05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B05_SetHoliday.resx">
+      <DependentUpon>B05_SetHoliday.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B07.resx">
       <DependentUpon>B07.cs</DependentUpon>
