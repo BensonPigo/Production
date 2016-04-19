@@ -1109,7 +1109,8 @@ Remind:Please return the air pp request – approved  within 24hrs to avoid any 
         //GMT Export
         private void button4_Click(object sender, EventArgs e)
         {
-            MyUtility.Msg.InfoBox("Wait for PPIC");
+            Sci.Production.PPIC.P01_GMTExport callNextForm = new Sci.Production.PPIC.P01_GMTExport(MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
+            callNextForm.ShowDialog(this);
         }
     }
 }
