@@ -272,6 +272,7 @@
             this.ClientSize = new System.Drawing.Size(1066, 577);
             this.DefaultControl = "textBox3";
             this.DefaultControlForEdit = "textBox3";
+            this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;
             this.GridAlias = "issue_detail";

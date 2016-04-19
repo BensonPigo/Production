@@ -28,8 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.button1 = new Sci.Win.UI.Button();
-            this.bindingSource1 = new Sci.Win.UI.BindingSource();
+            this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
             this.grid1 = new Sci.Win.UI.Grid();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
@@ -99,7 +100,7 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "P10_CutRef";
-            this.Text = "P10. Cut Ref#";
+            this.Text = "P10. Cutplan ID";
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             this.panel1.ResumeLayout(false);

@@ -69,7 +69,7 @@
             this.masterpanel.Controls.Add(this.label11);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 184);
+            this.masterpanel.Size = new System.Drawing.Size(892, 184);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label11, 0);
@@ -87,7 +87,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 184);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 317);
+            this.detailpanel.Size = new System.Drawing.Size(892, 165);
             // 
             // gridicon
             // 
@@ -102,7 +102,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 317);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 165);
             // 
             // detail2
             // 
@@ -118,16 +118,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 539);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 501);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 501);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -161,7 +161,7 @@
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.label25.Lines = 0;
-            this.label25.Location = new System.Drawing.Point(875, 13);
+            this.label25.Location = new System.Drawing.Point(767, 13);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(115, 23);
             this.label25.TabIndex = 3;
@@ -193,7 +193,7 @@
             this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button5.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button5.Location = new System.Drawing.Point(890, 43);
+            this.button5.Location = new System.Drawing.Point(782, 43);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(89, 31);
             this.button5.TabIndex = 4;
@@ -208,7 +208,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1000, 184);
+            this.shapeContainer1.Size = new System.Drawing.Size(892, 184);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -224,7 +224,7 @@
             // 
             this.button9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button9.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button9.Location = new System.Drawing.Point(736, 144);
+            this.button9.Location = new System.Drawing.Point(628, 144);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(148, 30);
             this.button9.TabIndex = 5;
@@ -278,6 +278,7 @@
             this.ClientSize = new System.Drawing.Size(1008, 601);
             this.DefaultControl = "textBox3";
             this.DefaultControlForEdit = "textBox3";
+            this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;
             this.GridAlias = "RequestCrossM_receive";

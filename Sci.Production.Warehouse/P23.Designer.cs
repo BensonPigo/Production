@@ -301,6 +301,7 @@
             this.ClientSize = new System.Drawing.Size(1066, 601);
             this.DefaultControl = "textBox3";
             this.DefaultControlForEdit = "textBox3";
+            this.DefaultDetailOrder = "FromPoid,FromSeq1,FromSeq2,FromDyelot,FromRoll";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;
             this.GridAlias = "SubTransfer_detail";

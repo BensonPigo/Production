@@ -69,7 +69,7 @@
             this.masterpanel.Controls.Add(this.label11);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(1058, 184);
+            this.masterpanel.Size = new System.Drawing.Size(892, 184);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label11, 0);
@@ -87,7 +87,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 184);
-            this.detailpanel.Size = new System.Drawing.Size(1058, 317);
+            this.detailpanel.Size = new System.Drawing.Size(892, 165);
             // 
             // gridicon
             // 
@@ -102,7 +102,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1058, 317);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 165);
             // 
             // detail2
             // 
@@ -118,16 +118,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1058, 539);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1058, 501);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 501);
-            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -204,7 +204,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1058, 184);
+            this.shapeContainer1.Size = new System.Drawing.Size(892, 184);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -271,6 +271,7 @@
             this.ClientSize = new System.Drawing.Size(1066, 601);
             this.DefaultControl = "textBox3";
             this.DefaultControlForEdit = "textBox3";
+            this.DefaultDetailOrder = "FromMdivisionid,Frompoid,Fromseq1,Fromseq2,Fromroll,FromDyelot";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;
             this.GridAlias = "RequestCrossM_detail";

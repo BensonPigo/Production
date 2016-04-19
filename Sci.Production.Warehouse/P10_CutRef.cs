@@ -32,13 +32,13 @@ namespace Sci.Production.Warehouse
 ,b.CutRef
 ,c.FabricCombo
 ,b.CutNo
-,b.Article
+,(select x.article+',' from  (select distinct t.Article from dbo.WorkOrder_Distribute t where t.WorkOrderUkey = c.Ukey) x for xml path('')) article
 ,C.Markername
 from dbo.Cutplan a
 inner join dbo.Cutplan_Detail b on b.id= a.ID
 inner join dbo.WorkOrder c on c.Ukey = b.WorkorderUkey
 where a.ID = '{0}'
-order by b.POID,c.seq,c.Cutno
+order by b.POID,c.seq1,c.seq2,c.Cutno
 
 ", dr["cutplanid"].ToString()));
 
@@ -62,7 +62,7 @@ order by b.POID,c.seq,c.Cutno
                  .Text("cutref", header: "Cut Ref#", width: Widths.AnsiChars(10))
                  .Text("CutNo", header: "Cut#", width: Widths.AnsiChars(4))
                  .Text("FabricCombo", header: "Comb", width: Widths.AnsiChars(4))
-                 .Text("Article", header: "Article", width: Widths.AnsiChars(10))
+                 .Text("Article", header: "Article", width: Widths.AnsiChars(50))
                  .Text("Markername", header: "Marker name", width: Widths.AnsiChars(13))
 
                  ;

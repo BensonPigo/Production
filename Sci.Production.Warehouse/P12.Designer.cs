@@ -118,6 +118,19 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            // 
             // browse
             // 
             this.browse.Size = new System.Drawing.Size(1058, 515);
@@ -271,6 +284,7 @@
             this.ClientSize = new System.Drawing.Size(1066, 577);
             this.DefaultControl = "textBox3";
             this.DefaultControlForEdit = "textBox3";
+            this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;
             this.GridAlias = "issue_detail";
