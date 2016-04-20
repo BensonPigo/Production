@@ -996,6 +996,9 @@ Sci.Production.PPIC/P01_ProductionOutput_CuttingDetail.resx -text
 Sci.Production.PPIC/P01_ProductionOutput_SewingDetail.Designer.cs -text
 Sci.Production.PPIC/P01_ProductionOutput_SewingDetail.cs -text
 Sci.Production.PPIC/P01_ProductionOutput_SewingDetail.resx -text
+Sci.Production.PPIC/P01_QtyCTN.Designer.cs -text
+Sci.Production.PPIC/P01_QtyCTN.cs -text
+Sci.Production.PPIC/P01_QtyCTN.resx -text
 Sci.Production.PPIC/P01_QtySewingSchedule.Designer.cs -text
 Sci.Production.PPIC/P01_QtySewingSchedule.cs -text
 Sci.Production.PPIC/P01_QtySewingSchedule.resx -text

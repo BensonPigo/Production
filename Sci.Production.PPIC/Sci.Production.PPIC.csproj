@@ -224,6 +224,12 @@
     <Compile Include="P01_ProductionOutput_SewingDetail.Designer.cs">
       <DependentUpon>P01_ProductionOutput_SewingDetail.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_QtyCTN.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_QtyCTN.Designer.cs">
+      <DependentUpon>P01_QtyCTN.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01_QtySewingSchedule.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -504,6 +510,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_ProductionOutput_SewingDetail.resx">
       <DependentUpon>P01_ProductionOutput_SewingDetail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_QtyCTN.resx">
+      <DependentUpon>P01_QtyCTN.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01_QtySewingSchedule.resx">
       <DependentUpon>P01_QtySewingSchedule.cs</DependentUpon>
