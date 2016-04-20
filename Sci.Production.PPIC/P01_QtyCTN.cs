@@ -18,6 +18,7 @@ namespace Sci.Production.PPIC
         {
             InitializeComponent();
             masterData = MasterData;
+            this.Text = Text + " (" + MyUtility.Convert.GetString(masterData["ID"]) + ")";
         }
 
         protected override void OnFormLoaded()
