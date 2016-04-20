@@ -96,7 +96,7 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList where MDivisio
                 }
             };
 
-            QueryDate((string)comboBox1.SelectedValue,(DateTime)dateBox2.Value);
+            QueryDate((string)comboBox1.SelectedValue,dateBox2.Value);
         }
 
         //Query Data
