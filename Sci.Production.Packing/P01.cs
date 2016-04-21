@@ -27,8 +27,12 @@ namespace Sci.Production.Packing
             base.OnDetailEntered();
             displayBox6.Value = MyUtility.GetValue.Lookup(string.Format("select Description from style where Ukey = {0}", CurrentMaintain["StyleUkey"].ToString()));
             displayBox7.Value = MyUtility.GetValue.Lookup(string.Format("select [dbo].getPOComboList('{0}','{1}') as PoList from Orders where ID = '{0}'", CurrentMaintain["ID"].ToString(), CurrentMaintain["POID"].ToString()));
+            button1.Enabled = CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["CtnType"]) == "2" && !EditMode;
             //按鈕變色
-            button1.ForeColor = CurrentMaintain["CtnType"].ToString() == "2" ? Color.Blue : Color.Black;
+            if (MyUtility.Convert.GetString(CurrentMaintain["CtnType"]) == "2")
+            {
+                button1.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_QtyCTN where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+            }
             button2.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             button3.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing"]) ? Color.Blue : Color.Black;
             button4.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail where OrderID = '{0}' and ReceiveDate is not null", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
@@ -45,13 +49,15 @@ namespace Sci.Production.Packing
         //b'down
         private void button1_Click(object sender, EventArgs e)
         {
-
+            Sci.Production.PPIC.P01_QtyCTN callNextForm = new Sci.Production.PPIC.P01_QtyCTN(CurrentMaintain);
+            callNextForm.ShowDialog(this);
         }
 
         //Quantity breakdown
         private void button2_Click(object sender, EventArgs e)
         {
-
+            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(CurrentMaintain, MyUtility.Convert.GetString(displayBox7.Value));
+            callNextForm.ShowDialog(this);
         }
 
         //Packing method
