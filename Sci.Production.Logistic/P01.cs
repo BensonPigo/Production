@@ -69,19 +69,22 @@ namespace Sci.Production.Logistic
         //Quantity breakdown
         private void button1_Click(object sender, EventArgs e)
         {
-
+            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(CurrentMaintain, MyUtility.Convert.GetString(displayBox10.Value));
+            callNextForm.ShowDialog(this);
         }
 
         //Q'ty b'down by shipmode
         private void button2_Click(object sender, EventArgs e)
         {
-
+            Sci.Production.PPIC.P01_QtyShip callNextForm = new Sci.Production.PPIC.P01_QtyShip(CurrentMaintain);
+            callNextForm.ShowDialog(this);
         }
 
         //Production output
         private void button3_Click(object sender, EventArgs e)
         {
-
+            Sci.Production.PPIC.P01_ProductionOutput callNextForm = new Sci.Production.PPIC.P01_ProductionOutput(CurrentMaintain);
+            callNextForm.ShowDialog(this);
         }
 
         //Garment Export
