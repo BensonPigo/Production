@@ -49,7 +49,7 @@ namespace Sci.Production.PPIC
 as (
 select oq.Article,oq.SizeCode,oq.Qty,oa.Seq
 from Order_QtyCTN oq
-left join Order_Article oa on oa.ID = '{0}' and oa.Article = oq.Article
+left join Order_Article oa on oa.ID = oq.ID and oa.Article = oq.Article
 where oq.ID = '{0}'
 )
 
