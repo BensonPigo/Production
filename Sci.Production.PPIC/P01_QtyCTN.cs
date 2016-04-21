@@ -55,7 +55,7 @@ select *,ROW_NUMBER() OVER (ORDER BY Seq) as rno
 from tmpData
 pivot( sum(Qty)
 for SizeCode in ({1})
-) a;", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Check.Empty(pivot.ToString()) ? "" : pivot.ToString().Substring(0, pivot.ToString().Length-1));
+) a;", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length-1));
             DataTable gridData;
             result = DBProxy.Current.Select(null, sqlCmd, out gridData);
             listControlBindingSource1.DataSource = gridData;
