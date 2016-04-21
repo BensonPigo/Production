@@ -23,6 +23,7 @@ namespace Sci.Production.PPIC
             Text = Text + " (" + MyUtility.Convert.GetString(masterData["ID"]) + ")";
             displayBox1.Value = poCombo;
             displayBox2.Value = poCombo;
+            displayBox3.Value = poCombo;
         }
 
         protected override void OnFormLoaded()
@@ -75,11 +76,26 @@ namespace Sci.Production.PPIC
                     CreateGrid(gen, "int", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["SizeCode"]), Widths.AnsiChars(8));
                 }
             }
+            //設定Grid4的顯示欄位
+            this.grid4.IsEditingReadOnly = true;
+            this.grid4.DataSource = listControlBindingSource4;
+            gen = Helper.Controls.Grid.Generator(this.grid4);
+            CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
+            CreateGrid(gen, "date", "BuyerDelivery", "Buyer Delivery", Widths.AnsiChars(10));
+            CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
+            if (headerData != null && headerData.Rows.Count > 0)
+            {
+                foreach (DataRow dr in headerData.Rows)
+                {
+                    CreateGrid(gen, "int", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["SizeCode"]), Widths.AnsiChars(8));
+                }
+            }
 
             //凍結欄位
             grid1.Columns[1].Frozen = true;
             grid2.Columns[2].Frozen = true;
             grid3.Columns[1].Frozen = true;
+            grid4.Columns[2].Frozen = true;
 
             #region 撈Grid1資料
             sqlCmd = string.Format(@"with tmpData
@@ -188,9 +204,47 @@ order by Seq", MyUtility.Convert.GetString(masterData["POID"]), MyUtility.Check.
             result = DBProxy.Current.Select(null, sqlCmd, out grid3Data);
             #endregion
 
+            #region 撈Grid4資料
+            sqlCmd = string.Format(@"with tmpData
+as (
+select oq.BuyerDelivery,oqd.Article,oqd.SizeCode,oqd.Qty,oa.Seq,DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
+from Orders o
+inner join Order_QtyShip oq on o.ID = oq.ID
+inner join Order_QtyShip_Detail oqd on oq.ID = oqd.ID and oq.Seq = oqd.Seq
+left join Order_Article oa on oa.ID = oqd.ID and oa.Article = oqd.Article
+where o.POID = '{0}'
+),
+SubTotal
+as (
+select null as BuyerDelivery,'TTL' as Article,SizeCode,SUM(Qty) as Qty, '9999' as Seq,99999 as rnk
+from tmpData
+group by SizeCode
+),
+UnionData
+as (
+select * from tmpData
+union all
+select * from SubTotal
+),
+pivotData
+as (
+select *
+from UnionData
+pivot( sum(Qty)
+for SizeCode in ({1})
+) a
+)
+select *,(select sum(isnull(Qty,0)) from UnionData where rnk = p.rnk and Article = p.Article) as TotalQty
+from pivotData p
+order by rnk,Seq", MyUtility.Convert.GetString(masterData["POID"]), MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+            DataTable grid4Data;
+            result = DBProxy.Current.Select(null, sqlCmd, out grid4Data);
+            #endregion
+
             listControlBindingSource1.DataSource = grid1Data;
             listControlBindingSource2.DataSource = grid2Data;
             listControlBindingSource3.DataSource = grid3Data;
+            listControlBindingSource4.DataSource = grid4Data;
         }
 
         public void CreateGrid(IDataGridViewGenerator gen, string datatype, string propname, string header, IWidth width)
@@ -210,6 +264,9 @@ order by Seq", MyUtility.Convert.GetString(masterData["POID"]), MyUtility.Check.
             {
                 case "int":
                     gen.Numeric(propname, header: header, width: width, iseditingreadonly: iseditingreadonly);
+                    break;
+                case "date":
+                    gen.Date(propname, header: header, width: width, iseditingreadonly: iseditingreadonly);
                     break;
                 case "string":
                 default:
