@@ -73,14 +73,14 @@ order by Seq",MyUtility.Convert.GetString(masterData["ID"]));
 as (
 select oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty,oa.Seq as ASeq
 from Order_QtyShip_Detail oqd
-left join Order_Article oa on oa.ID = '{0}' and oa.Article = oqd.Article
+left join Order_Article oa on oa.ID = oqd.ID and oa.Article = oqd.Article
 where oqd.ID = '{0}'
 ),
 SubTotal
 as (
 select Seq,'TTL' as Article,SizeCode,SUM(Qty) as Qty, '9999' as ASeq
 from tmpData
-group by Seq,Article,SizeCode
+group by Seq,SizeCode
 ),
 UnionData
 as (
