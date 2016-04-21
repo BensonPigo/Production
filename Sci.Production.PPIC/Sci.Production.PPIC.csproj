@@ -236,6 +236,12 @@
     <Compile Include="P01_QtySewingSchedule.Designer.cs">
       <DependentUpon>P01_QtySewingSchedule.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_QtyShip.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_QtyShip.Designer.cs">
+      <DependentUpon>P01_QtyShip.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01_ShippingMark.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -516,6 +522,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_QtySewingSchedule.resx">
       <DependentUpon>P01_QtySewingSchedule.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_QtyShip.resx">
+      <DependentUpon>P01_QtyShip.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01_ShippingMark.resx">
       <DependentUpon>P01_ShippingMark.cs</DependentUpon>

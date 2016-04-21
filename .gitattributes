@@ -1002,6 +1002,9 @@ Sci.Production.PPIC/P01_QtyCTN.resx -text
 Sci.Production.PPIC/P01_QtySewingSchedule.Designer.cs -text
 Sci.Production.PPIC/P01_QtySewingSchedule.cs -text
 Sci.Production.PPIC/P01_QtySewingSchedule.resx -text
+Sci.Production.PPIC/P01_QtyShip.Designer.cs -text
+Sci.Production.PPIC/P01_QtyShip.cs -text
+Sci.Production.PPIC/P01_QtyShip.resx -text
 Sci.Production.PPIC/P01_ShippingMark.Designer.cs -text
 Sci.Production.PPIC/P01_ShippingMark.cs -text
 Sci.Production.PPIC/P01_ShippingMark.resx -text

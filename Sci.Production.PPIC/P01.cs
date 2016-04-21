@@ -217,6 +217,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             button4.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
             button5.ForeColor = haveTmsCost ? Color.Blue : Color.Black;
             button6.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Label"]) ? Color.Blue : Color.Black;
+            button7.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_QtyShip where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             button9.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["MarkFront"]) || !MyUtility.Check.Empty(CurrentMaintain["MarkBack"]) || !MyUtility.Check.Empty(CurrentMaintain["MarkLeft"]) || !MyUtility.Check.Empty(CurrentMaintain["MarkRight"]) ? Color.Blue : Color.Black;
             button10.ForeColor = haveTmsCost ? Color.Blue : Color.Black;
             button11.ForeColor = MyUtility.Check.Seek(string.Format("select i.ID from Style s, IETMS i where s.Ukey = {0} and s.IETMSID = i.ID and s.IETMSVersion = i.Version", MyUtility.Convert.GetString(CurrentMaintain["StyleUkey"]))) && MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
@@ -648,7 +649,8 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
         //Q'ty b'down by shipmode
         private void button7_Click(object sender, EventArgs e)
         {
-
+            Sci.Production.PPIC.P01_QtyShip callNextForm = new Sci.Production.PPIC.P01_QtyShip(CurrentMaintain);
+            callNextForm.ShowDialog(this);
         }
 
         //Quantity breakdown
