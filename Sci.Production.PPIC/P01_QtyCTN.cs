@@ -41,6 +41,8 @@ namespace Sci.Production.PPIC
                     pivot.Append(string.Format("[{0}],", MyUtility.Convert.GetString(dr["SizeCode"])));
                 }
             }
+            //凍結欄位
+            grid1.Columns[0].Frozen = true;
 
             //撈Grid資料
             sqlCmd = string.Format(@"with tmpData
