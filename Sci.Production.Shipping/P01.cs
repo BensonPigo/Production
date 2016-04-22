@@ -1097,13 +1097,21 @@ Remind:Please return the air pp request – approved  within 24hrs to avoid any 
         //Q'ty B'down by Shipmode
         private void button1_Click(object sender, EventArgs e)
         {
-            MyUtility.Msg.InfoBox("Wait for PPIC");
+            Sci.Production.PPIC.P01_QtyShip callNextForm = new Sci.Production.PPIC.P01_QtyShip(MyUtility.Convert.GetString(CurrentMaintain["OrderID"]),MyUtility.GetValue.Lookup(string.Format("select POID from Orders where ID = '{0}'",MyUtility.Convert.GetString(CurrentMaintain["OrderID"]))));
+            callNextForm.ShowDialog(this);
         }
 
         //Q'ty B'down by Order
         private void button3_Click(object sender, EventArgs e)
         {
-            MyUtility.Msg.InfoBox("Wait for PPIC");
+            string sqlCmd = string.Format(@"select o.POID,isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList
+from Orders o
+where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
+            DataTable OrderData;
+            DBProxy.Current.Select(null, sqlCmd, out OrderData);
+
+            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), MyUtility.Convert.GetString(OrderData.Rows[0]["POID"]), MyUtility.Convert.GetString(OrderData.Rows[0]["PoList"]));
+            callNextForm.ShowDialog(this);
         }
 
         //GMT Export
