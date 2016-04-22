@@ -13,14 +13,15 @@ namespace Sci.Production.PPIC
 {
     public partial class P01_QtyShip : Sci.Win.Subs.Base
     {
-        DataRow masterData;
         DataTable grid1Data, grid2Data;
+        string orderID, poID;
 
-        public P01_QtyShip(DataRow MasterData)
+        public P01_QtyShip(string OrderID, string POID)
         {
             InitializeComponent();
-            masterData = MasterData;
-            Text = Text + " (" + MyUtility.Convert.GetString(masterData["ID"]) + ")";
+            orderID = OrderID;
+            poID = POID;
+            Text = Text + " (" + orderID + ")";
         }
 
         protected override void OnFormLoaded()
@@ -42,11 +43,11 @@ namespace Sci.Production.PPIC
 
             string sqlCmd = string.Format(@"select Seq,ShipmodeID,BuyerDelivery,Qty,AddName,AddDate,EditName,EditDate from Order_QtyShip 
 where ID = '{0}'
-order by Seq",MyUtility.Convert.GetString(masterData["ID"]));
+order by Seq", orderID);
             DualResult result = DBProxy.Current.Select(null,sqlCmd,out grid1Data);
 
 
-            sqlCmd = string.Format("select * from Order_SizeCode where ID = '{0}' order by Seq", MyUtility.Convert.GetString(masterData["POID"]));
+            sqlCmd = string.Format("select * from Order_SizeCode where ID = '{0}' order by Seq", poID);
             DataTable headerData;
             result = DBProxy.Current.Select(null, sqlCmd, out headerData);
             StringBuilder pivot = new StringBuilder();
@@ -98,7 +99,7 @@ for SizeCode in ({1})
 )
 select *,(select sum(Qty) from UnionData where Seq = p.Seq and Article = p.Article) as TotalQty
 from pivotData p
-order by ASeq", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+order by ASeq", orderID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
             result = DBProxy.Current.Select(null, sqlCmd, out grid2Data);
             
 

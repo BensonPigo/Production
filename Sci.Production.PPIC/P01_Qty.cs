@@ -13,14 +13,14 @@ namespace Sci.Production.PPIC
 {
     public partial class P01_Qty : Sci.Win.Subs.Base
     {
-        DataRow masterData;
-        string poCombo;
-        public P01_Qty(DataRow MasterData, string POCombo)
+        string orderID, poID,poCombo;
+        public P01_Qty(string OrderID, string POID, string POCombo)
         {
             InitializeComponent();
-            masterData = MasterData;
+            orderID = OrderID;
+            poID = POID;
             poCombo = POCombo;
-            Text = Text + " (" + MyUtility.Convert.GetString(masterData["ID"]) + ")";
+            Text = Text + " (" + orderID + ")";
             displayBox1.Value = poCombo;
             displayBox2.Value = poCombo;
             displayBox3.Value = poCombo;
@@ -30,7 +30,7 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
             //撈出所有的Size
-            string sqlCmd = string.Format("select * from Order_SizeCode where ID = '{0}' order by Seq", MyUtility.Convert.GetString(masterData["POID"]));
+            string sqlCmd = string.Format("select * from Order_SizeCode where ID = '{0}' order by Seq", poID);
             DataTable headerData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out headerData);
             StringBuilder pivot = new StringBuilder();
@@ -127,7 +127,7 @@ for SizeCode in ({1})
 )
 select *,(select sum(Qty) from UnionData where Article = p.Article) as TotalQty
 from pivotData p
-order by Seq", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+order by Seq", orderID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
             DataTable grid1Data;
             result = DBProxy.Current.Select(null, sqlCmd, out grid1Data);
             #endregion  
@@ -163,7 +163,7 @@ for SizeCode in ({1})
 )
 select *,(select sum(Qty) from UnionData where ID = p.ID and Article = p.Article) as TotalQty
 from pivotData p
-order by rnk,Seq", MyUtility.Convert.GetString(masterData["POID"]), MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+order by rnk,Seq", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
             DataTable grid2Data;
             result = DBProxy.Current.Select(null, sqlCmd, out grid2Data);
             #endregion
@@ -199,7 +199,7 @@ for SizeCode in ({1})
 )
 select *,(select sum(Qty) from UnionData where Article = p.Article) as TotalQty
 from pivotData p
-order by Seq", MyUtility.Convert.GetString(masterData["POID"]), MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+order by Seq", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
             DataTable grid3Data;
             result = DBProxy.Current.Select(null, sqlCmd, out grid3Data);
             #endregion
@@ -236,7 +236,7 @@ for SizeCode in ({1})
 )
 select *,(select sum(isnull(Qty,0)) from UnionData where rnk = p.rnk and Article = p.Article) as TotalQty
 from pivotData p
-order by rnk,Seq", MyUtility.Convert.GetString(masterData["POID"]), MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+order by rnk,Seq", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
             DataTable grid4Data;
             result = DBProxy.Current.Select(null, sqlCmd, out grid4Data);
             #endregion
