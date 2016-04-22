@@ -113,7 +113,6 @@ where 1=1");
                 return false;
             }
             
-            //因為速度較慢，故不使用
             MyUtility.Msg.WaitWindows("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "PPIC_R08_ReplacementReportList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
