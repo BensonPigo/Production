@@ -1257,6 +1257,9 @@ Sci.Production.Planning/R03.resx -text
 Sci.Production.Planning/R11.Designer.cs -text
 Sci.Production.Planning/R11.cs -text
 Sci.Production.Planning/R11.resx -text
+Sci.Production.Planning/R18.Designer.cs -text
+Sci.Production.Planning/R18.cs -text
+Sci.Production.Planning/R18.resx -text
 Sci.Production.Planning/Resources/trffc15.bmp -text
 Sci.Production.Planning/Sci.Production.Planning.csproj -text
 Sci.Production.PublicForm/ColorCombination.Designer.cs -text
