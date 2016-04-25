@@ -140,6 +140,9 @@
     [CuttingSP]           VARCHAR (13)   CONSTRAINT [DF_Orders_CuttingSP] DEFAULT ('') NULL,
     [IsMixMarker]         BIT            CONSTRAINT [DF_Orders_IsMixMarker] DEFAULT ((0)) NULL,
     [EachConsSource]      VARCHAR (1)    NULL,
+    [KPIEachConsApprove] DATE NULL, 
+    [KPICmpq] DATE NULL, 
+    [KPIMNotice] DATE NULL, 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -714,3 +717,31 @@ GO
 CREATE NONCLUSTERED INDEX [<Name2 of Missing Index, sysname,>]
     ON [dbo].[Orders]([CuttingSP] ASC);
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Each Cons. KPI Date (PMS only)',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Orders',
+    @level2type = N'COLUMN',
+    @level2name = N'KPIEachConsApprove'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Cmpq KPI Date (PMS only)',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Orders',
+    @level2type = N'COLUMN',
+    @level2name = N'KPICmpq'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'M Notice KPI Date (PMS only)',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Orders',
+    @level2type = N'COLUMN',
+    @level2name = N'KPIMNotice'
