@@ -1292,6 +1292,9 @@ Sci.Production.PublicPrg/Shipping.cs -text
 Sci.Production.PublicPrg/Subcon.cs -text
 Sci.Production.PublicPrg/System.cs -text
 Sci.Production.PublicPrg/Warehouse.cs -text
+Sci.Production.Quality/P01_PhysicalInspection.Designer.cs -text
+Sci.Production.Quality/P01_PhysicalInspection.cs -text
+Sci.Production.Quality/P01_PhysicalInspection.resx -text
 Sci.Production.Quality/Properties/AssemblyInfo.cs -text
 Sci.Production.Quality/Sci.Production.Quality.csproj -text
 Sci.Production.Sewing/P01.Designer.cs -text
