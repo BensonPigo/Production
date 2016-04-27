@@ -166,27 +166,28 @@ namespace Sci.Production.Warehouse
             .Text("SizeSpec", header: "Size", iseditingreadonly: true)  //10
             .Text("CurrencyID", header: "Currency", iseditingreadonly: true)  //11
             .Numeric("unitqty", header: "@Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //12
-            .Numeric("Qty", header: "Order Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //13
-            .Numeric("NETQty", header: "Net Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //14
-            .Numeric("useqty", header: "Use Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //15
-            .Numeric("ShipQty", header: "Ship Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts3)    //16
-            .Numeric("ShipFOC", header: "F.O.C", width: Widths.AnsiChars(6), iseditingreadonly: true)    //17
-            .Numeric("ApQty", header: "AP Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //18
-            .Numeric("InputQty", header: "Taipei Stock Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)    //19
+            .Numeric("Qty", header: "Order Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //13
+            .Numeric("NETQty", header: "Net Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //14
+            .Numeric("useqty", header: "Use Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //15
+            .Numeric("ShipQty", header: "Ship Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts3)    //16
+            .Numeric("ShipFOC", header: "F.O.C", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //17
+            .Numeric("ApQty", header: "AP Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //18
+            .Numeric("InputQty", header: "Taipei Stock Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)    //19
             .Text("POUnit", header: "PO Unit", iseditingreadonly: true)  //20
             .Text("Complete", header: "Cmplt", iseditingreadonly: true)  //21
             .Date("ATA", header: "Act. ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //22
             .Text("OrderIdList", header: "Order List", iseditingreadonly: true)  //23
-            .Numeric("InQty", header: "Arrived Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //24
+            .Numeric("InQty", header: "Arrived Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //24
             .Text("StockUnit", header: "Stock Unit", iseditingreadonly: true)  //25
-            .Numeric("OutQty", header: "Released Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts5)    //26
-            .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //27
-            .Numeric("balanceqty", header: "Balance", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts6)    //28
-            .Numeric("LInvQty", header: "Stock Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts7)    //29
-            .Numeric("LObQty", header: "Scrap Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts8)    //30
+            .Numeric("OutQty", header: "Released Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts5)    //26
+            .Numeric("AdjustQty", header: "Adjust Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //27
+            .Numeric("balanceqty", header: "Balance", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts6)    //28
+            .Numeric("LInvQty", header: "Stock Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts7)    //29
+            .Numeric("LObQty", header: "Scrap Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts8)    //30
             .Text("ALocation", header: "Bulk Location", iseditingreadonly: true, settings: ts9)  //31
             .Text("BLocation", header: "Stock Location", iseditingreadonly: true, settings: ts11)  //32
-            .Text("Remark", header: "Remark", iseditingreadonly: true)  //33
+            .Text("FIR", header: "FIR", iseditingreadonly: true, settings:ts10)  //33
+            .Text("Remark", header: "Remark", iseditingreadonly: true)  //34
             ;
             #endregion
 
@@ -233,7 +234,28 @@ namespace Sci.Production.Warehouse
             string spno = tb_Spno.Text.TrimEnd() + "%";
             #region -- SQL Command --
             string sqlcmd
-                = string.Format(@"select m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
+                = string.Format(@";WITH QA AS (
+Select POID,SEQ1,SEQ2,CASE 
+	            when a.result = 'P' then 'Pass'
+	            when a.result = 'L' then 'L/G'
+	            when a.result = 'R' then 'Reject'
+	            when a.result = 'F' then 'Fail' 
+	            when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 then 'N/A'
+	            else ''
+            END as [Result] from dbo.FIR a where a.POID LIKE @sp1 
+			and (a.ContinuityEncode = 1 or a.PhysicalEncode = 1 or a.ShadebondEncode =1 or a.WeightEncode = 1 
+                    or (a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1))
+			UNION ALL
+			Select POID,SEQ1,SEQ2,CASE 
+	            when a.result = 'P' then 'Pass'
+	            when a.result = 'L' then 'L/G'
+	            when a.result = 'R' then 'Reject'
+	            when a.result = 'F' then 'Fail' 
+	            else ''
+            END as [Result] 
+			from dbo.AIR a where a.POID LIKE @sp1 and a.Result !=''
+			 )");
+                sqlcmd+= string.Format(@" select m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
             ,substring(convert(varchar,a.RevisedETD, 101),1,5) as RevisedETD,a.Refno,a.SCIRefno
             ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',a.FabricType)) as fabrictype2
             , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
@@ -245,6 +267,7 @@ namespace Sci.Production.Warehouse
 			,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
             ,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
             ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.refno,a.seq1,a.seq2),1,0)) AS description,s.currencyid
+            ,(select t.Result+' / ' from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')) FIR
             ,(Select cast(tmp.Remark as nvarchar)+',' 
                         from (select b1.remark 
                                     from receiving a1 
@@ -273,6 +296,7 @@ namespace Sci.Production.Warehouse
 			,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
             ,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
             ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.refno,a.seq1,a.seq2),1,0)) AS description,s.currencyid
+            ,(select t.Result+' / ' from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')) FIR
             ,(Select cast(tmp.Remark as nvarchar)+',' 
                         from (select b1.remark 
                                     from receiving a1 

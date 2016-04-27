@@ -601,7 +601,7 @@ Where a.id = '{0}'", masterID);
         private void button9_Click(object sender, EventArgs e)
         {
             detailgrid.ValidateControl();
-            ((DataTable)detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => ((DataTable)detailgridbs.DataSource).Rows.Remove(r));
+            ((DataTable)detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => r.Delete());
         }
 
         //Import

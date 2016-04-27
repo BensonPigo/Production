@@ -1797,6 +1797,12 @@ Sci.Production.Warehouse/CrossM/P78.resx -text
 Sci.Production.Warehouse/CrossM/P78_Import.Designer.cs -text
 Sci.Production.Warehouse/CrossM/P78_Import.cs -text
 Sci.Production.Warehouse/CrossM/P78_Import.resx -text
+Sci.Production.Warehouse/P01.Designer.cs -text
+Sci.Production.Warehouse/P01.cs -text
+Sci.Production.Warehouse/P01.resx -text
+Sci.Production.Warehouse/P01_BatchCloseRowMaterial.Designer.cs -text
+Sci.Production.Warehouse/P01_BatchCloseRowMaterial.cs -text
+Sci.Production.Warehouse/P01_BatchCloseRowMaterial.resx -text
 Sci.Production.Warehouse/P02.Designer.cs -text
 Sci.Production.Warehouse/P02.cs -text
 Sci.Production.Warehouse/P02.resx -text
