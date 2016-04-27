@@ -117,7 +117,7 @@ AND Order_TmsCost.TMS > 0
             condition.Clear();
             if (!MyUtility.Check.Empty(sewingDate1))
             {
-                sqlCmd.Append(string.Format(@" AND SewingSchedule.offline !< '{0:d}' AND SewingSchedule.Inline !> '{1}'",
+                sqlCmd.Append(string.Format(@" AND (SewingSchedule.offline !< '{0:d}' OR SewingSchedule.Inline !> '{1}')",
                 sewingDate1, Convert.ToDateTime(sewingDate2).ToString("d")));
                 condition.Append(string.Format(@"SCI Delivery : {0} ~ {1}"
                 , Convert.ToDateTime(sewingDate1).ToString("d")

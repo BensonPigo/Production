@@ -179,6 +179,12 @@
     <Compile Include="R18.Designer.cs">
       <DependentUpon>R18.cs</DependentUpon>
     </Compile>
+    <Compile Include="R16.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R16.Designer.cs">
+      <DependentUpon>R16.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
@@ -243,6 +249,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R18.resx">
       <DependentUpon>R18.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R16.resx">
+      <DependentUpon>R16.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
