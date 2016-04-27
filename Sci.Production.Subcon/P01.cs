@@ -167,7 +167,7 @@ namespace Sci.Production.Subcon
 
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("poqty = 0"))
             {
-                ((DataTable)detailgridbs.DataSource).Rows.Remove(row);
+                row.Delete();
             }
 
             if (DetailDatas.Count == 0)

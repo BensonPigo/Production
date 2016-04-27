@@ -157,7 +157,7 @@ namespace Sci.Production.Subcon
 
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty = 0 or qty = null"))
             {
-                ((DataTable)detailgridbs.DataSource).Rows.Remove(row);
+                row.Delete();
             }
             
 

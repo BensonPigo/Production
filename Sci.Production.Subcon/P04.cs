@@ -122,7 +122,7 @@ namespace Sci.Production.Subcon
 
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty = 0"))
             {
-                ((DataTable)detailgridbs.DataSource).Rows.Remove(row);
+                row.Delete();
             }
 
 
