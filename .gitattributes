@@ -1242,6 +1242,7 @@ Sci.Production.Planning/P04.resx -text
 Sci.Production.Planning/P05.Designer.cs -text
 Sci.Production.Planning/P05.cs -text
 Sci.Production.Planning/P05.resx -text
+Sci.Production.Planning/PrivUtils.cs -text
 Sci.Production.Planning/Properties/AssemblyInfo.cs -text
 Sci.Production.Planning/Properties/Resources.Designer.cs -text
 Sci.Production.Planning/Properties/Resources.resx -text
@@ -1260,6 +1261,9 @@ Sci.Production.Planning/R11.resx -text
 Sci.Production.Planning/R16.Designer.cs -text
 Sci.Production.Planning/R16.cs -text
 Sci.Production.Planning/R16.resx -text
+Sci.Production.Planning/R17.cs -text
+Sci.Production.Planning/R17.designer.cs -text
+Sci.Production.Planning/R17.resx -text
 Sci.Production.Planning/R18.Designer.cs -text
 Sci.Production.Planning/R18.cs -text
 Sci.Production.Planning/R18.resx -text
