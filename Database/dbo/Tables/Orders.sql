@@ -143,6 +143,7 @@
     [KPIEachConsApprove] DATE NULL, 
     [KPICmpq] DATE NULL, 
     [KPIMNotice] DATE NULL, 
+    [GMTComplete ] VARCHAR NULL, 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -745,3 +746,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Orders',
     @level2type = N'COLUMN',
     @level2name = N'KPIMNotice'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Garment Complete ( From Trade)',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Orders',
+    @level2type = N'COLUMN',
+    @level2name = N'GMTComplete '
