@@ -451,12 +451,12 @@ group by ArtworkTypeID",
                             if (!MyUtility.Check.Empty(subTtlRowInOut[j]))
                             {
                                 ttlManhour = ttlManhour + string.Format("G{0}+", subTtlRowInOut[j]);
-                                targetCPU = targetCPU + string.Format("G{0}+", subTtlRowInOut[j]);
-                                targetQty = targetQty + string.Format("G{0}+", subTtlRowInOut[j]);
-                                qaQty = qaQty + string.Format("G{0}+", subTtlRowInOut[j]);
-                                ttlCPU = ttlCPU + string.Format("G{0}+", subTtlRowInOut[j]);
-                                prodOutput = prodOutput + string.Format("G{0}+", subTtlRowInOut[j]);
-                                diff = diff + string.Format("G{0}+", subTtlRowInOut[j]);
+                                targetCPU = targetCPU + string.Format("H{0}+", subTtlRowInOut[j]);
+                                targetQty = targetQty + string.Format("K{0}+", subTtlRowInOut[j]);
+                                qaQty = qaQty + string.Format("L{0}+", subTtlRowInOut[j]);
+                                ttlCPU = ttlCPU + string.Format("M{0}+", subTtlRowInOut[j]);
+                                prodOutput = prodOutput + string.Format("R{0}+", subTtlRowInOut[j]);
+                                diff = diff + string.Format("S{0}+", subTtlRowInOut[j]);
                             }
                         }
                     }
@@ -467,12 +467,12 @@ group by ArtworkTypeID",
                             if (!MyUtility.Check.Empty(subTtlRowExOut[j]))
                             {
                                 ttlManhour = ttlManhour + string.Format("G{0}+", subTtlRowExOut[j]);
-                                targetCPU = targetCPU + string.Format("G{0}+", subTtlRowExOut[j]);
-                                targetQty = targetQty + string.Format("G{0}+", subTtlRowExOut[j]);
-                                qaQty = qaQty + string.Format("G{0}+", subTtlRowExOut[j]);
-                                ttlCPU = ttlCPU + string.Format("G{0}+", subTtlRowExOut[j]);
-                                prodOutput = prodOutput + string.Format("G{0}+", subTtlRowExOut[j]);
-                                diff = diff + string.Format("G{0}+", subTtlRowExOut[j]);
+                                targetCPU = targetCPU + string.Format("H{0}+", subTtlRowExOut[j]);
+                                targetQty = targetQty + string.Format("K{0}+", subTtlRowExOut[j]);
+                                qaQty = qaQty + string.Format("L{0}+", subTtlRowExOut[j]);
+                                ttlCPU = ttlCPU + string.Format("M{0}+", subTtlRowExOut[j]);
+                                prodOutput = prodOutput + string.Format("R{0}+", subTtlRowExOut[j]);
+                                diff = diff + string.Format("S{0}+", subTtlRowExOut[j]);
                             }
                         }
                     }
@@ -483,12 +483,12 @@ group by ArtworkTypeID",
                             if (!MyUtility.Check.Empty(subTtlRowExInOut[j]))
                             {
                                 ttlManhour = ttlManhour + string.Format("G{0}+", subTtlRowExInOut[j]);
-                                targetCPU = targetCPU + string.Format("G{0}+", subTtlRowExInOut[j]);
-                                targetQty = targetQty + string.Format("G{0}+", subTtlRowExInOut[j]);
-                                qaQty = qaQty + string.Format("G{0}+", subTtlRowExInOut[j]);
-                                ttlCPU = ttlCPU + string.Format("G{0}+", subTtlRowExInOut[j]);
-                                prodOutput = prodOutput + string.Format("G{0}+", subTtlRowExInOut[j]);
-                                diff = diff + string.Format("G{0}+", subTtlRowExInOut[j]);
+                                targetCPU = targetCPU + string.Format("H{0}+", subTtlRowExInOut[j]);
+                                targetQty = targetQty + string.Format("K{0}+", subTtlRowExInOut[j]);
+                                qaQty = qaQty + string.Format("L{0}+", subTtlRowExInOut[j]);
+                                ttlCPU = ttlCPU + string.Format("M{0}+", subTtlRowExInOut[j]);
+                                prodOutput = prodOutput + string.Format("R{0}+", subTtlRowExInOut[j]);
+                                diff = diff + string.Format("S{0}+", subTtlRowExInOut[j]);
                             }
                         }
                     }
