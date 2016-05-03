@@ -2185,6 +2185,8 @@ XLT/Planning_R16.xltx -text
 XLT/Planning_R17.xltx -text
 XLT/Planning_R18.xltx -text
 XLT/Sewing_R01_DailyCMPReport.xltx -text
+XLT/Sewing_R02_MonthlyReportByDate.xltx -text
+XLT/Sewing_R02_MonthlyReportBySewingLine.xltx -text
 XLT/Sewing_R03_ProdEfficiencyAnalysisReport.xltx -text
 XLT/Sewing_R04_SewingDailyOutputList.xltx -text
 XLT/Shipping_B03_PrintReviseList.xltx -text
