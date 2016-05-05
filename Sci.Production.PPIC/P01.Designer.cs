@@ -2379,9 +2379,11 @@
             this.editBox1.Location = new System.Drawing.Point(462, 251);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
+            this.editBox1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.editBox1.ReadOnly = true;
             this.editBox1.Size = new System.Drawing.Size(232, 50);
             this.editBox1.TabIndex = 69;
+            this.editBox1.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.editBox1_PopUp);
             // 
             // label32
             // 

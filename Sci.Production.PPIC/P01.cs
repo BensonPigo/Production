@@ -369,6 +369,13 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
                     numericBox3.Focus();
                     return false;
                 }
+
+                if (MyUtility.Convert.GetString(CurrentMaintain["LocalOrder"]).ToUpper() == "TRUE" && MyUtility.Check.Empty(CurrentMaintain["ShipModeList"]))
+                {
+                    MyUtility.Msg.WarningBox("Ship Mode can't empty!!");
+                    editBox1.Focus();
+                    return false;
+                }
                 #endregion
 
                 //檢查是否幫姊妹廠代工
@@ -448,6 +455,17 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
                         return failResult;
                     }
                 }
+                if (MyUtility.Convert.GetString(CurrentMaintain["LocalOrder"]).ToUpper() == "TRUE" && MyUtility.Check.Seek(string.Format("select ID from Order_QtyShip where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
+                {
+                    string updateCmd = string.Format("update Order_QtyShip set ShipModeID = '{0}' where ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["ShipModeList"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+                    result = DBProxy.Current.Execute(null, updateCmd);
+                    if (!result)
+                    {
+                        DualResult failResult = new DualResult(false, "Save Order_QtyShip fail!!\r\n" + result.ToString());
+                        return failResult;
+                    }
+                }
+
             }
             return Result.True;
         }
@@ -893,6 +911,20 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
             }
             ReloadDatas();
             RenewData();
+        }
+
+        //ShipMode
+        private void editBox1_PopUp(object sender, Win.UI.EditBoxPopUpEventArgs e)
+        {
+            if (EditMode && MyUtility.Convert.GetString(CurrentMaintain["LocalOrder"]).ToUpper() == "TRUE")
+            {
+                string sqlCmd = "select ID from ShipMode where UseFunction like '%ORDER%' and Junk = 0";
+                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10",editBox1.Text,"Ship Mode");
+                DialogResult returnResult = item.ShowDialog();
+                if (returnResult == DialogResult.Cancel) return;
+
+                CurrentMaintain["ShipModeList"] = item.GetSelectedString();
+            }
         }
     }
 }
