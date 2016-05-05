@@ -657,8 +657,20 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
         //Quantity breakdown
         private void button8_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["POID"]), editBox2.Text);
-            callNextForm.ShowDialog(this);
+            if (MyUtility.Convert.GetString(CurrentMaintain["LocalOrder"]).ToUpper() == "TRUE")
+            {
+                Sci.Production.PPIC.P01_QtyLocalOrder callNextForm = new Sci.Production.PPIC.P01_QtyLocalOrder(MyUtility.Convert.GetString(CurrentMaintain["ID"]), dataType == "1" ? true : false, MyUtility.Convert.GetInt(CurrentMaintain["Qty"]));
+                callNextForm.ShowDialog(this);
+                if (dataType == "1")
+                {
+                    RenewData();
+                }
+            }
+            else
+            {
+                Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["POID"]), editBox2.Text);
+                callNextForm.ShowDialog(this);
+            }
         }
 
         //Shipping mark
