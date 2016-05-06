@@ -725,6 +725,15 @@ Sci.Production.Cutting/P06.resx -text
 Sci.Production.Cutting/P10.Designer.cs -text
 Sci.Production.Cutting/P10.cs -text
 Sci.Production.Cutting/P10.resx -text
+Sci.Production.Cutting/P10_Generate.Designer.cs -text
+Sci.Production.Cutting/P10_Generate.cs -text
+Sci.Production.Cutting/P10_Generate.resx -text
+Sci.Production.Cutting/P11.Designer.cs -text
+Sci.Production.Cutting/P11.cs -text
+Sci.Production.Cutting/P11.resx -text
+Sci.Production.Cutting/P11_copytocutref.Designer.cs -text
+Sci.Production.Cutting/P11_copytocutref.cs -text
+Sci.Production.Cutting/P11_copytocutref.resx -text
 Sci.Production.Cutting/P20.Designer.cs -text
 Sci.Production.Cutting/P20.cs -text
 Sci.Production.Cutting/P20.resx -text

@@ -158,6 +158,7 @@ namespace Sci.Production.Cutting
         private void button_update_Click(object sender, EventArgs e)
         {
             detailgrid.ValidateControl();
+            if (detailTb == null) return;
             string estcutdate = dateBox_newestcutdate.Text;
             string reason = txtcutReason1.TextBox1.Text;
             foreach (DataRow dr in detailTb.Rows)

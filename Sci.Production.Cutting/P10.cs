@@ -31,6 +31,7 @@ namespace Sci.Production.Cutting
         {
             base.OnDetailEntered();
             if (CurrentMaintain == null) return;
+            queryTable();
             string orderid = CurrentMaintain["OrderID"].ToString();
             string cutref = (CurrentMaintain["Cutref"] == null) ? "" : CurrentMaintain["Cutref"].ToString();
             string cuttingid = "";
@@ -56,7 +57,57 @@ namespace Sci.Production.Cutting
             }
             string estcutdate = MyUtility.GetValue.Lookup(string.Format("Select estcutdate from workorder where id='{0}' and cutref = '{1}'", cuttingid, cutref), null);
             displayBox_EstCutdate.Text = estcutdate;
-            
+            int qty = 0;
+            if(bundle_Detail_Qty_Tb.Rows.Count==0)  qty =0;
+            else  qty = Convert.ToInt16(bundle_Detail_Qty_Tb.Compute("Sum(Qty)",""));
+           
+            numericBox_GroupQty.Value = qty;
+
+        }
+        public void queryTable()
+        {
+            string masterID = (CurrentMaintain == null) ? "" : CurrentMaintain["id"].ToString();
+            string allPart_cmd = string.Format(@"Select 0 as sel,b.*, 0 as ukey1,'' as annotation from Bundle_Detail a,Bundle_Detail_Allpart b Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
+            string art_cmd = string.Format(@"Select b.*, 0 as ukey1 from Bundle_Detail a,Bundle_Detail_art b Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
+            string qty_cmd = string.Format(@"Select 0 as No,a.* from Bundle_Detail_qty a Where a.id ='{0}'", masterID);
+            DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out bundle_Detail_allpart_Tb);
+            if (!dRes)
+            {
+                ShowErr(allPart_cmd, dRes);
+            }
+            dRes = DBProxy.Current.Select(null, art_cmd, out bundle_Detail_Art_Tb);
+            if (!dRes)
+            {
+                ShowErr(art_cmd, dRes);
+
+            }
+            dRes = DBProxy.Current.Select(null, qty_cmd, out bundle_Detail_Qty_Tb);
+            if (!dRes)
+            {
+                ShowErr(qty_cmd, dRes);
+
+            }
+            int ukey = 1;
+            foreach (DataRow dr in DetailDatas)
+            {
+                dr["ukey1"] = ukey;
+                DataRow[] allar = bundle_Detail_allpart_Tb.Select(string.Format("Bundleno='{0}'", dr["Bundleno"]));
+                if (allar.Length > 0)
+                {
+                    foreach (DataRow dr2 in allar)
+                    {
+                        dr2["ukey1"] = ukey;
+                    }
+                }
+                DataRow[] Artar = bundle_Detail_Art_Tb.Select(string.Format("Bundleno='{0}'", dr["Bundleno"]));
+                if (allar.Length > 0)
+                {
+                    foreach (DataRow dr2 in Artar)
+                    {
+                        dr2["ukey1"] = ukey;
+                    }
+                }
+            }
         }
         protected override Ict.DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
@@ -70,31 +121,35 @@ namespace Sci.Production.Cutting
                 Where c.bundleno =a.bundleno and c.id = a.id 
                 For XML path('')
             ) as subProcessid, 0 as ukey1
-            From Bundle_Detail a,Orders b 
-            where a.id = '{0}'
+            From Bundle_Detail a
+            where a.id = '{0}' order by bundlegroup
             ", masterID);
             this.DetailSelectCommand = cmdsql;
             #region 先撈出底層其他Table
-            string allPart_cmd = string.Format(@"Select b.*, 0 as ukey1 from Bundle_Detail a,Bundle_Detail_Allpart b Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
-            string art_cmd = string.Format(@"Select b.*, 0 as ukey1 from Bundle_Detail a,Bundle_Detail_art b Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
-            string qty_cmd = string.Format(@"Select a.* from Bundle_Detail_qty a Where a.id ='{0}'", masterID);
-            DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out bundle_Detail_allpart_Tb);
-            if(!dRes)
+            if (!IsDetailInsertByCopy)
             {
-                ShowErr(allPart_cmd,dRes);
-                return dRes;
-            }
-            dRes = DBProxy.Current.Select(null, art_cmd, out bundle_Detail_Art_Tb);
-            if(!dRes)
-            {
-                ShowErr(allPart_cmd,dRes);
-                return dRes;
-            }
-            dRes = DBProxy.Current.Select(null, qty_cmd, out bundle_Detail_Qty_Tb);
-            if(!dRes)
-            {
-                ShowErr(allPart_cmd,dRes);
-                return dRes;
+                string allPart_cmd = string.Format(@"Select 0 as sel,b.*, 0 as ukey1,'' as annotation from Bundle_Detail a,Bundle_Detail_Allpart b Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
+                string art_cmd = string.Format(@"Select b.*, 0 as ukey1 from Bundle_Detail a,Bundle_Detail_art b Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
+                string qty_cmd = string.Format(@"Select 0 as No,a.* from Bundle_Detail_qty a Where a.id ='{0}'", masterID);
+                DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out bundle_Detail_allpart_Tb);
+                if (!dRes)
+                {
+                    ShowErr(allPart_cmd, dRes);
+                    return dRes;
+                }
+                dRes = DBProxy.Current.Select(null, art_cmd, out bundle_Detail_Art_Tb);
+                if (!dRes)
+                {
+                    ShowErr(allPart_cmd, dRes);
+                    return dRes;
+                }
+                dRes = DBProxy.Current.Select(null, qty_cmd, out bundle_Detail_Qty_Tb);
+                if (!dRes)
+                {
+                    ShowErr(allPart_cmd, dRes);
+                    return dRes;
+                }
+
             }
             #endregion
 
@@ -118,7 +173,7 @@ namespace Sci.Production.Cutting
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["Cdate"] = DateTime.Now;
+            CurrentMaintain["Cdate"] = DateTime.Today;
             CurrentMaintain["mDivisionid"] = keyword;
             bundle_Detail_allpart_Tb.Clear();
             bundle_Detail_Art_Tb.Clear();
@@ -168,31 +223,31 @@ namespace Sci.Production.Cutting
 
             return base.ClickSaveBefore();
         }
-        protected override DualResult ClickSavePost()
+        protected override DualResult ClickSavePre()
         {
             #region 填入Bundleno
             int drcount = DetailDatas.Count;
-            IList<string > cListBundleno;
-            
-            cListBundleno = MyUtility.GetValue.GetBatchID("", "Bundle_Detail", Convert.ToDateTime(CurrentMaintain["cDate"]), 3, batchNumber: drcount);
+            IList<string> cListBundleno;
+
+            cListBundleno = MyUtility.GetValue.GetBatchID("", "Bundle_Detail", Convert.ToDateTime(CurrentMaintain["cDate"]), 3,"Bundleno", batchNumber: drcount,sequenceMode:2);
             if (cListBundleno.Count == 0)
             {
                 return new DualResult(false, "Create Bundleno error.");
             }
             int nCount = 0;
-            
+
             DataRow[] roway;
             foreach (DataRow dr in DetailDatas)
             {
-                if (MyUtility.Check.Empty(dr["Bundleno"]) && dr.RowState!=DataRowState.Deleted)
+                if (MyUtility.Check.Empty(dr["Bundleno"]) && dr.RowState != DataRowState.Deleted)
                 {
-                    CurrentDetailData["Bundleno"] = cListBundleno[nCount];
-                    roway = bundle_Detail_allpart_Tb.Select(string.Format("ukey1 = {0}", dr["ukey"]));
+                    dr["Bundleno"] = cListBundleno[nCount];
+                    roway = bundle_Detail_allpart_Tb.Select(string.Format("ukey1 = {0}", dr["ukey1"]));
                     foreach (DataRow dr2 in roway)
                     {
                         dr2["Bundleno"] = cListBundleno[nCount];
                     }
-                    roway = bundle_Detail_Art_Tb.Select(string.Format("ukey1 = {0}", dr["ukey"]));
+                    roway = bundle_Detail_Art_Tb.Select(string.Format("ukey1 = {0}", dr["ukey1"]));
                     foreach (DataRow dr2 in roway)
                     {
                         dr2["Bundleno"] = cListBundleno[nCount];
@@ -201,85 +256,169 @@ namespace Sci.Production.Cutting
 
                 }
             }
-            #endregion 
+            #endregion  
+            //DataTable dt = (DataTable)detailgridbs.DataSource;
+            return base.ClickSavePre();
+        }
+        protected override DualResult ClickSavePost()
+        {
+
             string allpart_cmd = "", Art_cmd = "",Qty_cmd = "";
-
-            foreach (DataRow dr in bundle_Detail_allpart_Tb.Rows)
+            #region 先撈出實體Table 為了平行判斷筆數 DataTable allparttmp, arttmp, qtytmp
+            DataTable allparttmp, arttmp, qtytmp;
+            string masterID = (CurrentMaintain == null) ? "" : CurrentMaintain["id"].ToString();
+            string allPart_cmd = string.Format(@"Select b.* from Bundle_Detail_Allpart b left join Bundle_Detail a on a.Bundleno = b.bundleno and a.id = b.id where b.id='{0}' ", masterID);
+            string art_cmd = string.Format(@"Select b.* from Bundle_Detail_art b left join Bundle_Detail a on a.Bundleno = b.bundleno and a.id = b.id where b.id='{0}'", masterID);
+            string qty_cmd = string.Format(@"Select a.* from Bundle_Detail_qty a Where a.id ='{0}'", masterID);
+            DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out allparttmp);
+            if (!dRes)
             {
-                if (dr.RowState == DataRowState.Deleted)
-                {
-                    allpart_cmd = allpart_cmd + string.Format(
-                    @"Delete table bundle_Detail_allpart where ukey = '{0}';",dr["ukey"]);
-                }
-                if (dr.RowState == DataRowState.Added)
-                {
-                    allpart_cmd = allpart_cmd + string.Format(
-                    @"insert into bundle_Detail_allpart(ID,Bundleno,PatternCode,PatternDesc,Parts,Ukey) 
-                    values('{0}','{1}','{2}','{3}',{4});"
-                    ,dr["ID"],dr["Bundleno"],dr["PatternCode"],dr["PatternDesc"],dr["Parts"]);
-                }
+                ShowErr(allPart_cmd, dRes);
+            }
+            dRes = DBProxy.Current.Select(null, art_cmd, out arttmp);
+            if (!dRes)
+            {
+                ShowErr(art_cmd, dRes);
 
-                if(dr.RowState == DataRowState.Modified)
+            }
+            dRes = DBProxy.Current.Select(null, qty_cmd, out qtytmp);
+            if (!dRes)
+            {
+                ShowErr(qty_cmd, dRes);
+
+            }
+            #endregion
+            int row = 0;
+            #region 處理Bundle_Detail_AllPart
+            int allpart_old_rowCount = allparttmp.Rows.Count;
+            
+            foreach (DataRow dr in bundle_Detail_allpart_Tb.Rows) //處理Bundle_Detail_AllPart
+            {
+
+                if (row >= allpart_old_rowCount) //新增
                 {
                     allpart_cmd = allpart_cmd + string.Format(
-                    @"update bundle_Detail_allpart set PatterCode ='{0}',PatternDesc = '{1}',
-                    Parts ={2} Where ukey ={3};",dr["PatternCode"], dr["PatternDesc"], dr["Parts"], dr["ukey"]);
+                    @"insert into bundle_Detail_allpart(ID,Bundleno,PatternCode,PatternDesc,Parts) 
+                values('{0}','{1}','{2}','{3}',{4});"
+                    , CurrentMaintain["ID"], dr["Bundleno"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"]);
+                }
+                else //覆蓋
+                {
+                    allpart_cmd = allpart_cmd + string.Format(
+                @"update bundle_Detail_allpart set PatternCode ='{0}',PatternDesc = '{1}',
+                Parts ={2},bundleno = '{3}' Where ukey ={4};", dr["PatternCode"], dr["PatternDesc"], dr["Parts"],dr["Bundleno"], allparttmp.Rows[row]["ukey"]);
+                }
+                row++;
+                
+            }
+            bundle_Detail_allpart_Tb.AcceptChanges();//變更Row Status 狀態
+            int allpart_new_rowCount = bundle_Detail_allpart_Tb.Rows.Count;
+            if (allpart_old_rowCount > allpart_new_rowCount) //舊的筆數小於新的筆數 表示要先覆蓋再刪除多餘的
+            {
+                for (int i = allpart_new_rowCount; i < allpart_old_rowCount; i++)
+                {
+                    allpart_cmd = allpart_cmd + string.Format(@"Delete from bundle_Detail_allpart where ukey ='{0}';", allparttmp.Rows[i]["ukey"]);
                 }
             }
-            foreach (DataRow dr in bundle_Detail_Art_Tb.Rows)
+            #endregion
+            #region 處理Bundle_Detail_Art
+            row = 0;
+            int art_old_rowCount = arttmp.Rows.Count;
+            
+            foreach (DataRow dr in bundle_Detail_Art_Tb.Rows) //處理Bundle_Detail_Art
             {
-                if (dr.RowState == DataRowState.Deleted)
+
+                if (row >= art_old_rowCount) //新增
                 {
                     Art_cmd = Art_cmd + string.Format(
-                    @"Delete table bundle_Detail_Art where ukey = '{0}';", dr["ukey"]);
-                }
-                if (dr.RowState == DataRowState.Added)
-                {
-                    Art_cmd = Art_cmd + string.Format(
-                    @"insert into bundle_Detail_Art(ID,Bundleno,PatternCode,SubProcessid) 
+                   @"insert into bundle_Detail_Art(ID,Bundleno,PatternCode,SubProcessid) 
                     values('{0}','{1}','{2}','{3}');"
-                    , dr["ID"], dr["Bundleno"], dr["PatternCode"], dr["SubProcessid"]);
+                    , CurrentMaintain["ID"], dr["Bundleno"], dr["PatternCode"], dr["SubProcessid"]);
                 }
-
-                if (dr.RowState == DataRowState.Modified)
+                else //覆蓋
                 {
                     Art_cmd = Art_cmd + string.Format(
-                    @"update bundle_Detail_Art set PatterCode ='{0}',SubProcessid = '{1}' where
-                     Where ukey = {2};", dr["PatternCode"], dr["SubProcessid"], dr["ukey"]);
+                    @"update bundle_Detail_Art set PatternCode ='{0}',SubProcessid = '{1}',bundleno ='{2}' 
+                    Where ukey ={3};", dr["PatternCode"], dr["SubProcessid"], dr["Bundleno"], arttmp.Rows[row]["ukey"]);
                 }
-
+                row++;
             }
-            foreach (DataRow dr in bundle_Detail_Qty_Tb.Rows)
+            bundle_Detail_Art_Tb.AcceptChanges();//變更Row Status 狀態
+            int art_new_rowCount = bundle_Detail_Art_Tb.Rows.Count;
+            if (art_old_rowCount > art_new_rowCount) //舊的筆數小於新的筆數 表示要先覆蓋再刪除多餘的
             {
-                if (dr.RowState == DataRowState.Deleted)
+                for (int i = art_new_rowCount; i < art_old_rowCount; i++)
                 {
-                    Qty_cmd = Qty_cmd + string.Format(
-                    @"Delete table bundle_Detail_Qty where ukey = '{0}';", dr["ukey"]);
+                    Art_cmd = Art_cmd + string.Format(@"Delete from bundle_Detail_Art where ukey ='{0}';", arttmp.Rows[i]["ukey"]);
                 }
-                if (dr.RowState == DataRowState.Added)
+            }
+            #endregion
+
+            #region 處理Bundle_Detail_Qty
+            row = 0;
+            int Qty_old_rowCount = qtytmp.Rows.Count;
+            
+            foreach (DataRow dr in bundle_Detail_Qty_Tb.Rows) //處理Bundle_Detail_Art
+            {
+                if (dr.RowState != DataRowState.Deleted)
                 {
-                    Qty_cmd = Qty_cmd + string.Format(
-                    @"insert into bundle_Detail_Qty(ID,SizeCode,Qty) 
+                    if (row >= Qty_old_rowCount) //新增
+                    {
+                        Qty_cmd = Qty_cmd + string.Format(
+                        @"insert into bundle_Detail_Qty(ID,SizeCode,Qty) 
                     values('{0}','{1}',{2});"
-                    , dr["ID"], dr["sizecode"], dr["Qty"]);
+                        , CurrentMaintain["ID"], dr["sizecode"], dr["Qty"]);
+                    }
+                    else //覆蓋
+                    {
+                        Qty_cmd = Qty_cmd + string.Format(
+                        @"update bundle_Detail_Qty set SizeCode ='{0}',Qty = {1} 
+                    Where ukey = {2};", dr["SizeCode"], dr["Qty"], qtytmp.Rows[row]["ukey"]);
+                    }
                 }
-
-                if (dr.RowState == DataRowState.Modified)
+                row++;
+            }
+            bundle_Detail_Qty_Tb.AcceptChanges();//變更Row Status 狀態
+            int Qty_new_rowCount = bundle_Detail_Qty_Tb.Rows.Count;
+            if (Qty_old_rowCount > Qty_new_rowCount) //舊的筆數小於新的筆數 表示要先覆蓋再刪除多餘的
+            {
+                for (int i = Qty_new_rowCount; i < Qty_old_rowCount; i++)
                 {
-                    Qty_cmd = Qty_cmd + string.Format(
-                    @"update bundle_Detail_Qty set SizeCode ='{0}',Qty = {1} where
-                     Where ukey = {2};", dr["SizeCode"], dr["Qty"], dr["ukey"]);
+                    Qty_cmd = Qty_cmd + string.Format(@"Delete from bundle_Detail_Qty where ukey ={0};", qtytmp.Rows[i]["ukey"]);
                 }
-
+            }
+            #endregion
+            DualResult upResult;
+            if (!MyUtility.Check.Empty(allpart_cmd))
+            {
+                if (!(upResult = DBProxy.Current.Execute(null, allpart_cmd)))
+                {
+                    return upResult;
+                }
+            }
+            if (!MyUtility.Check.Empty(Art_cmd))
+            {
+                if (!(upResult = DBProxy.Current.Execute(null, Art_cmd)))
+                {
+                    return upResult;
+                }
+            }
+            if (!MyUtility.Check.Empty(Qty_cmd))
+            {
+                if (!(upResult = DBProxy.Current.Execute(null, Qty_cmd)))
+                {
+                    return upResult;
+                }
             }
             return base.ClickSavePost();
         }
         private void textBox_Cutref_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode) return;
-            if (textBox_Cutref.OldValue.ToString() == textBox_Cutref.Text) return;
+            string newvalue = textBox_Cutref.Text;
+            if (textBox_Cutref.OldValue.ToString() == newvalue) return;
             string cmd = string.Format(
-            @"Select a.*,substring(b.Sewline,1,2) as Sewline ,b.poid,b.seasonid,b.styleid,
+            @"Select a.*,substring(b.Sewline,1,charindex(',',b.Sewline,1)) as Sewline ,b.poid,b.seasonid,b.styleid,b.styleukey,b.factoryid,
              (
                 Select d.SizeCode+'/' 
                 From Workorder_SizeRatio d
@@ -341,8 +480,8 @@ namespace Sci.Production.Cutting
                 CurrentMaintain["OrderID"] = cutdr["OrderID"].ToString();
                 CurrentMaintain["POID"] = cutdr["POID"].ToString();
                 CurrentMaintain["PatternPanel"] = cutdr["Fabriccombo"].ToString();
-                CurrentMaintain["Sizecode"] = cutdr["Sizecode"].ToString();
-                CurrentMaintain["Ratio"] = cutdr["Ratio"].ToString();
+                CurrentMaintain["Sizecode"] = cutdr["Sizecode"].ToString().Substring(0,cutdr["Sizecode"].ToString().Length-1);
+                CurrentMaintain["Ratio"] = cutdr["Ratio"].ToString().Substring(0, cutdr["Ratio"].ToString().Length - 1);
                 CurrentMaintain["Article"] = cutdr["Article"].ToString();
                 CurrentMaintain["Colorid"] = cutdr["Colorid"].ToString();
                 CurrentMaintain["Qty"] = cutdr["Qty"];
@@ -350,23 +489,18 @@ namespace Sci.Production.Cutting
                 displayBox_Style.Text = cutdr["Styleid"].ToString();
                 displayBox_PrintDate.Text = cutdr["Estcutdate"].ToString();
 
-                string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString(), "SewingLine", "ID");
+                string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString()+cutdr["factoryid"].ToString(), "SewingLine", "ID+factoryid");
 
                 CurrentMaintain["SewingCell"] = cellid;
-                string max_cmd = string.Format("Select isnull(Max(startno+Qty),0) as Start from Bundle Where OrderID = '{0}'", cutdr["OrderID"].ToString());
-                DataTable max_st;
-                if (DBProxy.Current.Select(null, max_cmd, out max_st))
-                {
-                    if (max_st.Rows.Count != 0) CurrentMaintain["startno"] = max_st.Rows[0]["Start"].ToString();
-                    else CurrentMaintain["startno"] = 1;
-                }
-                else
-                {
-                    CurrentMaintain["startno"] = 1;
-                }
+                #region Startno
+                int startno = startNo_Function(CurrentMaintain["OrderID"].ToString());
+                CurrentMaintain["startno"] = startno;
+                #endregion
                 string item_cmd = string.Format("Select a.Name from Reason a, Style b where a.Reasontypeid ='Style_Apparel_Type' and b.ukey = '{0}' and b.ApparelType = a.id", cutdr["styleukey"]);
                 string item = MyUtility.GetValue.Lookup(item_cmd, null);
                 CurrentMaintain["ITEM"] = item;
+                CurrentMaintain["Cutref"] = newvalue;
+                CurrentMaintain.EndEdit();
             }
             
         }
@@ -444,23 +578,14 @@ namespace Sci.Production.Cutting
                         #region Cell
                         if (!MyUtility.Check.Empty(cutdr["sewline"].ToString()))
                         {
-                            string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString().Substring(0, 2), "SewingLine", "ID");
+                            string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString().Substring(0, 2)+cutdr["Factoryid"].ToString(), "SewingLine", "ID+factoryid");
 
                             CurrentMaintain["SewingCell"] = cellid;
                         }
                         #endregion
                         #region startno
-                        string max_cmd = string.Format("Select isnull(Max(startno+Qty),0) as Start from Bundle Where OrderID = '{0}'", cutdr["id"].ToString());
-                        DataTable max_st;
-                        if (DBProxy.Current.Select(null, max_cmd, out max_st))
-                        {
-                            if (max_st.Rows.Count != 0) CurrentMaintain["startno"] = max_st.Rows[0]["Start"].ToString();
-                            else CurrentMaintain["startno"] = 1;
-                        }
-                        else
-                        {
-                            CurrentMaintain["startno"] = 1;
-                        }
+                        int startno = startNo_Function(CurrentMaintain["OrderID"].ToString());
+                        CurrentMaintain["startno"] = startno;
                         #endregion
                         #region Article colorid
                         if (MyUtility.Check.Empty(CurrentMaintain["PatternPanel"]))
@@ -479,5 +604,82 @@ namespace Sci.Production.Cutting
                 }
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["poid"].ToString(), "Orders", "ID");
+            Sci.Production.PublicForm.GarmentList callNextForm =
+    new Sci.Production.PublicForm.GarmentList(ukey);
+            callNextForm.ShowDialog(this);
+            OnDetailEntered();
+        }
+
+        public int startNo_Function(string orderid) //Start No 計算
+        {
+            #region startno
+            string max_cmd = string.Format("Select isnull(Max(startno+Qty),0) as Start from Bundle Where OrderID = '{0}'", orderid);
+            DataTable max_st;
+            if (DBProxy.Current.Select(null, max_cmd, out max_st))
+            {
+                if (max_st.Rows.Count != 0) return Convert.ToInt16(max_st.Rows[0]["Start"]);
+                else return 1;
+            }
+            else
+            {
+                return 1;
+            }
+            #endregion
+
+        }
+        protected override void ClickCopyAfter()
+        {
+            base.ClickCopyAfter();
+            CurrentMaintain["ID"] = "";
+            CurrentMaintain["Cdate"] = DateTime.Now;
+            int startno = startNo_Function(CurrentMaintain["OrderID"].ToString());
+            CurrentMaintain["startno"] = startno;
+            #region 清除Detail Bundleno,ID 
+            foreach (DataRow dr in DetailDatas)
+            {
+                dr["Bundleno"] = "";
+                dr["ID"] = "";
+                dr["BundleGroup"] = 0;
+            }
+            foreach (DataRow dr in bundle_Detail_allpart_Tb.Rows)
+            {
+                dr["Bundleno"] = "";
+                dr["ID"] = "";
+            }
+            foreach (DataRow dr in bundle_Detail_Art_Tb.Rows)
+            {
+                dr["Bundleno"] = "";
+                dr["ID"] = "";
+            }
+            foreach (DataRow dr in bundle_Detail_Qty_Tb.Rows)
+            {
+                dr["ID"] = "";
+            }
+            #endregion 
+        }
+
+        private void numericBox_Group_Validated(object sender, EventArgs e)
+        {
+            decimal no = (decimal)numericBox_Group.Value;
+            decimal oldvalue = (decimal)numericBox_Group.OldValue;
+            decimal nGroup = no - oldvalue;
+            foreach (DataRow dr in DetailDatas)
+            {
+                dr["BundleGroup"] = Convert.ToDecimal(dr["BundleGroup"]) + nGroup;
+            }
+        }
+
+        private void Generate_Button_Click(object sender, EventArgs e)
+        {
+            DataTable dt = (DataTable)detailgridbs.DataSource;
+            detailgrid.ValidateControl();
+            var frm = new Sci.Production.Cutting.P10_Generate(CurrentMaintain,dt,bundle_Detail_allpart_Tb,bundle_Detail_Art_Tb,bundle_Detail_Qty_Tb);
+            frm.ShowDialog(this);
+        }
+
     }
 }

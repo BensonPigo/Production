@@ -479,6 +479,7 @@
             // displayBox_M
             // 
             this.displayBox_M.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox_M.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "mDivisionid", true));
             this.displayBox_M.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox_M.Location = new System.Drawing.Point(314, 183);
             this.displayBox_M.Name = "displayBox_M";
@@ -536,6 +537,7 @@
             0,
             0,
             0});
+            this.numericBox_Group.Validated += new System.EventHandler(this.numericBox_Group_Validated);
             // 
             // displayBox_PrintDate
             // 
@@ -715,27 +717,33 @@
             // 
             // Generate_Button
             // 
+            this.Generate_Button.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.Generate_Button.Location = new System.Drawing.Point(780, 191);
             this.Generate_Button.Name = "Generate_Button";
             this.Generate_Button.Size = new System.Drawing.Size(80, 30);
             this.Generate_Button.TabIndex = 46;
             this.Generate_Button.Text = "Generate";
             this.Generate_Button.UseVisualStyleBackColor = true;
+            this.Generate_Button.Click += new System.EventHandler(this.Generate_Button_Click);
             // 
             // button1
             // 
+            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button1.Location = new System.Drawing.Point(670, 5);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(111, 30);
             this.button1.TabIndex = 47;
             this.button1.Text = "Garment List";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // P10
             // 
             this.ClientSize = new System.Drawing.Size(878, 564);
+            this.DefaultDetailOrder = "BundleGroup";
+            this.DefaultOrder = "ID";
             this.GridAlias = "Bundle_Detail";
-            this.GridUniqueKey = "Bundleno";
+            this.GridNew = 0;
             this.IsGridIconVisible = false;
             this.KeyField1 = "id";
             this.Name = "P10";
