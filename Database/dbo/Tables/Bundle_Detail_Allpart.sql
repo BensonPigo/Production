@@ -1,12 +1,14 @@
 ﻿CREATE TABLE [dbo].[Bundle_Detail_Allpart] (
-    [ID]          BIGINT        CONSTRAINT [DF_Bundle_Detail_Allpart_ID] DEFAULT ((0)) NOT NULL,
+    [ID]          VARCHAR (13)  CONSTRAINT [DF_Bundle_Detail_Allpart_ID] DEFAULT ((0)) NOT NULL,
     [BundleNo]    VARCHAR (10)  CONSTRAINT [DF_Bundle_Detail_Allpart_BundleNo] DEFAULT ('') NOT NULL,
     [Patterncode] VARCHAR (20)  CONSTRAINT [DF_Bundle_Detail_Allpart_Patterncode] DEFAULT ('') NOT NULL,
     [PatternDesc] NVARCHAR (40) CONSTRAINT [DF_Bundle_Detail_Allpart_PatternDesc] DEFAULT ('') NOT NULL,
-    [parts]       NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_Allpart_parts] DEFAULT ((0)) NULL,
-    [Iden]        BIGINT        IDENTITY (1, 1) NOT NULL,
-    CONSTRAINT [PK_Bundle_Detail_Allpart] PRIMARY KEY CLUSTERED ([Iden] ASC)
+    [parts]       NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_Allpart_parts] DEFAULT ((0)) NOT NULL,
+    [Ukey]        BIGINT        IDENTITY (1, 1) NOT NULL,
+    CONSTRAINT [PK_Bundle_Detail_Allpart_1] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO
@@ -34,5 +36,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'數量', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Identity                                                     Identity', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail_Allpart', @level2type = N'COLUMN', @level2name = N'Iden';
+
 

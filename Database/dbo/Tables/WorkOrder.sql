@@ -45,6 +45,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'WorkOrder', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrder';
 
@@ -173,4 +175,10 @@ CREATE NONCLUSTERED INDEX [<Name of Missing Index1, sysname,>]
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Cell', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrder', @level2type = N'COLUMN', @level2name = N'CutCellid';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname1,>]
+    ON [dbo].[WorkOrder]([OrderID] ASC)
+    INCLUDE([CutRef], [Cutno], [EstCutDate], [Ukey]);
 

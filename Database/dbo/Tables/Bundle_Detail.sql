@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Bundle_Detail] (
     [BundleNo]    VARCHAR (10)  CONSTRAINT [DF_Bundle_Detail_BundleNo] DEFAULT ('') NOT NULL,
-    [Id]          BIGINT        CONSTRAINT [DF_Bundle_Detail_Id] DEFAULT ((0)) NOT NULL,
+    [Id]          VARCHAR (13)  CONSTRAINT [DF_Bundle_Detail_Id] DEFAULT ((0)) NOT NULL,
     [BundleGroup] NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_BundleGroup] DEFAULT ((0)) NULL,
     [Patterncode] VARCHAR (20)  CONSTRAINT [DF_Bundle_Detail_Patterncode] DEFAULT ('') NOT NULL,
     [PatternDesc] NVARCHAR (40) CONSTRAINT [DF_Bundle_Detail_PatternDesc] DEFAULT ('') NOT NULL,
@@ -11,6 +11,10 @@
     [FarmOut]     NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_FarmOut] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Bundle_Detail] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [Id] ASC)
 );
+
+
+
+
 
 
 GO
@@ -55,4 +59,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'外發收�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'外發發出數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail', @level2type = N'COLUMN', @level2name = N'FarmOut';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[Bundle_Detail]([Id] ASC);
 

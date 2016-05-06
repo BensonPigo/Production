@@ -1,10 +1,12 @@
-﻿CREATE TABLE [dbo].[Bundle_Detail_qty] (
-    [ID]       BIGINT      CONSTRAINT [DF_Bundle_Detail_qty_ID] DEFAULT ((0)) NOT NULL,
-    [SizeCode] VARCHAR (8) CONSTRAINT [DF_Bundle_Detail_qty_SizeCode] DEFAULT ('') NOT NULL,
-    [Qty]      NUMERIC (5) CONSTRAINT [DF_Bundle_Detail_qty_Qty] DEFAULT ((0)) NOT NULL,
-    [Iden]     BIGINT      IDENTITY (1, 1) NOT NULL,
-    CONSTRAINT [PK_Bundle_Detail_qty] PRIMARY KEY CLUSTERED ([Iden] ASC)
+CREATE TABLE [dbo].[Bundle_Detail_qty] (
+    [SizeCode] VARCHAR (8)  CONSTRAINT [DF_Bundle_Detail_qty_SizeCode] DEFAULT ('') NOT NULL,
+    [Qty]      NUMERIC (5)  CONSTRAINT [DF_Bundle_Detail_qty_Qty] DEFAULT ((0)) NOT NULL,
+    [Ukey]     BIGINT       IDENTITY (1, 1) NOT NULL,
+    [id]       VARCHAR (13) NOT NULL,
+    CONSTRAINT [PK_Bundle_Detail_qty] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO
@@ -24,5 +26,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'數量', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Identity', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail_qty', @level2type = N'COLUMN', @level2name = N'Iden';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Identity', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail_qty', @level2type = N'COLUMN', @level2name = N'Ukey';
 

@@ -2,10 +2,12 @@
     [Bundleno]     VARCHAR (10) CONSTRAINT [DF_Bundle_Detail_Art_Bundleno] DEFAULT ('') NOT NULL,
     [SubprocessId] VARCHAR (10) CONSTRAINT [DF_Bundle_Detail_Art_SubprocessId] DEFAULT ('') NOT NULL,
     [PatternCode]  VARCHAR (20) CONSTRAINT [DF_Bundle_Detail_Art_PatternCode] DEFAULT ('') NOT NULL,
-    [ID]           BIGINT       CONSTRAINT [DF_Bundle_Detail_Art_ID] DEFAULT ((0)) NOT NULL,
-    [Iden]         BIGINT       IDENTITY (1, 1) NOT NULL,
-    CONSTRAINT [PK_Bundle_Detail_Art] PRIMARY KEY CLUSTERED ([Iden] ASC)
+    [ID]           VARCHAR (13) CONSTRAINT [DF_Bundle_Detail_Art_ID] DEFAULT ((0)) NOT NULL,
+    [Ukey]         BIGINT       IDENTITY (1, 1) NOT NULL,
+    CONSTRAINT [PK_Bundle_Detail_Art] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO
@@ -29,5 +31,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ID', @level
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Identity', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail_Art', @level2type = N'COLUMN', @level2name = N'Iden';
+
 

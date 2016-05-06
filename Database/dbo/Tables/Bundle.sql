@@ -1,11 +1,11 @@
 ﻿CREATE TABLE [dbo].[Bundle] (
     [ID]           BIGINT       IDENTITY (1, 1) NOT NULL,
-    [CuttingID]    VARCHAR (13) CONSTRAINT [DF_Bundle_CuttingID] DEFAULT ('') NOT NULL,
+    [POID]         VARCHAR (13) CONSTRAINT [DF_Bundle_CuttingID] DEFAULT ('') NOT NULL,
     [MDivisionid]  VARCHAR (8)  CONSTRAINT [DF_Bundle_Factoryid] DEFAULT ('') NOT NULL,
     [Sizecode]     VARCHAR (17) CONSTRAINT [DF_Bundle_Sizecode] DEFAULT ('') NOT NULL,
     [Colorid]      VARCHAR (6)  CONSTRAINT [DF_Bundle_Colorid] DEFAULT ('') NOT NULL,
     [Article]      VARCHAR (8)  CONSTRAINT [DF_Bundle_Article] DEFAULT ('') NOT NULL,
-    [FabricCombo]  VARCHAR (1)  CONSTRAINT [DF_Bundle_FabricCombo] DEFAULT ('') NOT NULL,
+    [PatternPanel] VARCHAR (2)  CONSTRAINT [DF_Bundle_FabricCombo] DEFAULT ('') NOT NULL,
     [Cutno]        NUMERIC (3)  CONSTRAINT [DF_Bundle_Cutno] DEFAULT ((0)) NOT NULL,
     [Cdate]        DATE         NULL,
     [Orderid]      VARCHAR (13) CONSTRAINT [DF_Bundle_Orderid] DEFAULT ('') NOT NULL,
@@ -13,7 +13,6 @@
     [Item]         VARCHAR (10) CONSTRAINT [DF_Bundle_Item] DEFAULT ('') NULL,
     [SewingCell]   VARCHAR (2)  CONSTRAINT [DF_Bundle_SewingCell] DEFAULT ('') NOT NULL,
     [Ratio]        VARCHAR (10) CONSTRAINT [DF_Bundle_Ratio] DEFAULT ('') NULL,
-    [CuttingCell]  VARCHAR (2)  CONSTRAINT [DF_Bundle_CuttingCell] DEFAULT ('') NULL,
     [Startno]      NUMERIC (5)  CONSTRAINT [DF_Bundle_Startno] DEFAULT ((0)) NULL,
     [Qty]          NUMERIC (2)  CONSTRAINT [DF_Bundle_Qty] DEFAULT ((0)) NULL,
     [PrintDate]    DATE         NULL,
@@ -23,8 +22,13 @@
     [AddDate]      DATETIME     NULL,
     [EditName]     VARCHAR (10) CONSTRAINT [DF_Bundle_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME     NULL,
+    [oldid]        VARCHAR (13) NULL,
     CONSTRAINT [PK_Bundle] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
+
+
 
 
 
@@ -38,7 +42,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Bundle ID',
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁剪母單', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle', @level2type = N'COLUMN', @level2name = N'CuttingID';
+
 
 
 GO
@@ -58,7 +62,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'色組', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'部位別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle', @level2type = N'COLUMN', @level2name = N'FabricCombo';
+
 
 
 GO
@@ -90,7 +94,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'尺寸配�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Cutting 組別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle', @level2type = N'COLUMN', @level2name = N'CuttingCell';
+
 
 
 GO
@@ -131,4 +135,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle', @level2type = N'COLUMN', @level2name = N'MDivisionid';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁剪母單', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle', @level2type = N'COLUMN', @level2name = N'POID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'部位別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle', @level2type = N'COLUMN', @level2name = N'PatternPanel';
 
