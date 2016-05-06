@@ -167,6 +167,77 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
 
             return strReturn;
         }
+
+        /// <summary>
+        /// GetGarmentList()
+        /// </summary>
+        /// <param name="string styleukey"></param>
+        /// <param name="Out DataTable(GarmentList Table)"></param>
+        public static void GetGarmentListTable(string OrderID,out DataTable OutTb)
+        {
+            DataTable garmentListTb;
+            string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", OrderID, "Orders", "ID");
+
+            #region 撈取Pattern Ukey  找最晚Edit且Status 為Completed
+            OutTb = null;
+            string patidsql = String.Format(
+                            @"SELECT ukey
+                              FROM [Production].[dbo].[Pattern]
+                              WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
+                              AND EDITdATE = 
+                              (
+                                SELECT MAX(EditDate) 
+                                from pattern 
+                                where styleukey = '{0}' and Status = 'Completed'
+                              )
+             ", Styleyukey);
+            string patternukey = MyUtility.GetValue.Lookup(patidsql);
+            #endregion
+            DataTable headertb;
+            #region 找ArticleGroup 當Table Header
+            string headercodesql = string.Format("Select distinct ArticleGroup from Pattern_GL_LectraCode where PatternUkey = '{0}' and ArticleGroup !='F_CODE' order by ArticleGroup", patternukey);
+
+            DualResult headerResult = DBProxy.Current.Select(null, headercodesql, out headertb);
+            if (!headerResult)
+            {
+                return;
+            }
+            #endregion
+            #region 建立Table
+            string tablecreatesql = string.Format("Select '{0}' as orderid,a.*,'' as F_CODE",OrderID);
+            foreach (DataRow dr in headertb.Rows)
+            {
+                tablecreatesql = tablecreatesql + string.Format(" ,'' as {0}", dr["ArticleGroup"]);
+            }
+            tablecreatesql = tablecreatesql + string.Format(" from Pattern_GL a Where PatternUkey = '{0}'", patternukey);
+            DualResult tablecreateResult = DBProxy.Current.Select(null, tablecreatesql, out garmentListTb);
+            if (!tablecreateResult)
+            {
+                return;
+            }
+            #endregion
+            #region 寫入FCode~CodeA~CodeZ
+            string lecsql = "";
+            lecsql = string.Format("Select * from Pattern_GL_LectraCode a where a.PatternUkey = '{0}'", patternukey);
+            DataTable drtb;
+            DualResult drre = DBProxy.Current.Select(null, lecsql, out drtb);
+            if (!drre)
+            {
+                return;
+            }
+            foreach (DataRow dr in garmentListTb.Rows)
+            {
+                DataRow[] lecdrar = drtb.Select(string.Format("SEQ = '{0}'", dr["SEQ"]));
+                foreach (DataRow lecdr in lecdrar)
+                {
+                    string artgroup = lecdr["ArticleGroup"].ToString().Trim();
+                    dr[artgroup] = lecdr["PatternPanel"].ToString().Trim();
+                }
+                if (dr["SEQ"].ToString() == "0001") dr["PatternCode"] = dr["PatternCode"].ToString().Substring(10);
+            }
+            #endregion
+            OutTb = garmentListTb;
+        }
     }
     
 }
