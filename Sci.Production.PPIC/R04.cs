@@ -307,7 +307,6 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
                 worksheet.Cells[4, 5] = string.Format("=COUNTIF(O7:O{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
                 worksheet.Cells[3, 15] = string.Format("=SUM(J7:J{0})", MyUtility.Convert.GetString(ttlCount + 6));
             }
-            excel.Visible = true;
             for (int i = xlsSheet+1; i <= 10; i++)
             {
                 worksheet = excel.ActiveWorkbook.Worksheets[xlsSheet + 1];
