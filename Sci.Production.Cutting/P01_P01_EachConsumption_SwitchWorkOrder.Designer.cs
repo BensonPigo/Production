@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Cutting
 {
-    partial class P01_EachCons_SwitchWorkOrder
+    partial class P01_P01_EachConsumption_SwitchWorkOrder
     {
         /// <summary>
         /// 設計工具所需的變數。

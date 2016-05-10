@@ -171,7 +171,7 @@ namespace Sci.Production.Cutting
         private void button1_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentData; if (null == dr) return;
-            var frm = new Sci.Production.Cutting.P01_EachCons_SwitchWorkOrder(dr["ID"].ToString());
+            var frm = new Sci.Production.Cutting.P01_P01_EachConsumption_SwitchWorkOrder(dr["ID"].ToString());
             frm.ShowDialog(this);
         }
     }

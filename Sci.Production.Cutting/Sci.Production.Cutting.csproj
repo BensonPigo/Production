@@ -120,11 +120,11 @@
     <Compile Include="P01_EachConsumption_DownloadIdList.designer.cs">
       <DependentUpon>P01_EachConsumption_DownloadIdList.cs</DependentUpon>
     </Compile>
-    <Compile Include="P01_EachCons_SwitchWorkOrder.cs">
+    <Compile Include="P01_P01_EachConsumption_SwitchWorkOrder.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P01_EachCons_SwitchWorkOrder.Designer.cs">
-      <DependentUpon>P01_EachCons_SwitchWorkOrder.cs</DependentUpon>
+    <Compile Include="P01_P01_EachConsumption_SwitchWorkOrder.Designer.cs">
+      <DependentUpon>P01_P01_EachConsumption_SwitchWorkOrder.cs</DependentUpon>
     </Compile>
     <Compile Include="P01_MarkerList.cs">
       <SubType>Form</SubType>
@@ -294,8 +294,8 @@
     <EmbeddedResource Include="P01_EachConsumption_DownloadIdList.resx">
       <DependentUpon>P01_EachConsumption_DownloadIdList.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P01_EachCons_SwitchWorkOrder.resx">
-      <DependentUpon>P01_EachCons_SwitchWorkOrder.cs</DependentUpon>
+    <EmbeddedResource Include="P01_P01_EachConsumption_SwitchWorkOrder.resx">
+      <DependentUpon>P01_P01_EachConsumption_SwitchWorkOrder.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01_MarkerList.resx">
       <DependentUpon>P01_MarkerList.cs</DependentUpon>
