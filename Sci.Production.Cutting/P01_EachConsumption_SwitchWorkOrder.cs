@@ -10,12 +10,12 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P01_P01_EachConsumption_SwitchWorkOrder : Sci.Win.Subs.Base
+    public partial class P01_EachConsumption_SwitchWorkOrder : Sci.Win.Subs.Base
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword; 
         private string cuttingid;
-        public P01_P01_EachConsumption_SwitchWorkOrder(string cutid)
+        public P01_EachConsumption_SwitchWorkOrder(string cutid)
         {
             InitializeComponent();
             cuttingid = cutid;
