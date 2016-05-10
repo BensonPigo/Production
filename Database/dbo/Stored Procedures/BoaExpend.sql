@@ -95,9 +95,9 @@ Begin
 		 , Article VarChar(8), SizeSeq VarChar(2), SizeCode VarChar(8), Qty Numeric(6,0)
 		);
 	Insert Into #tmpOrder_Qty
-		Select Orders.ID, Orders.FactoryID, Orders.CustCDID, CustCD.ZipperInsert
-			 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
-			 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
+		Select Orders.ID AS ID, Orders.FactoryID, Orders.CustCDID, CustCD.ZipperInsert
+			 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID AS CountryID, Orders.StyleID
+			 , Order_Article.Article Article, Order_SizeCode.Seq Seq, Order_SizeCode.SizeCode SizeCode
 			 , IsNull(Order_Qty.Qty, 0) Qty
 		  From dbo.Orders
 		  Left Join dbo.Order_SizeCode

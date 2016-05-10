@@ -1,6 +1,6 @@
 ﻿
 
-CREATE PROCEDURE dbo.usp_StocktakingEncode 
+CREATE PROCEDURE [dbo].[usp_StocktakingEncode] 
 	-- Add the parameters for the stored procedure here
 	@StocktakingID varchar(13), -- 盤點單號
 	@MDivisionid varchar(8),
@@ -19,14 +19,14 @@ BEGIN
 		BEGIN TRANSACTION;
 
 		DECLARE @Stocktype as varchar(1);
-		DECLARE @count_bulk as INT;
-		DECLARE @count_inventory as INT;
-		DECLARE	@newid varchar(13) -- bulk adjust id
-		DECLARE	@newid2 varchar(13)-- Inventory adjust id
+		DECLARE	@newid varchar(13) -- adjust id
+		DECLARE @poid varchar(13), @seq1 varchar(3), @seq2 varchar(2), @roll varchar(8), @dyelot varchar(4);
+		DECLARE @err_msg nvarchar(2000);
+
 
 		IF @StocktakingID=''
 		BEGIN
-			RAISERROR ('Stocktaking ID can not be empty!', -- Message text.
+			RAISERROR (N'Stocktaking ID can not be empty!', -- Message text.
                16, -- Severity.
                1 -- State.
                );
@@ -34,7 +34,7 @@ BEGIN
 
 		IF EXISTS(SELECT * FROM DBO.Adjust A WHERE A.StocktakingID = @StocktakingID)
 		BEGIN
-			RAISERROR ('There is a adjust transaction belong to this stocktaking ID', -- Message text.
+			RAISERROR (N'There is a adjust transaction belong to this stocktaking ID', -- Message text.
                16, -- Severity.
                1 -- State.
                );
@@ -43,20 +43,64 @@ BEGIN
 		SELECT @Stocktype=S.Stocktype FROM DBO.Stocktaking S WHERE ID=@StocktakingID;
 		IF @Stocktype='' OR @Stocktype IS NULL
 		BEGIN
-			RAISERROR ('Stocktype of stocktaking can not be empty!', -- Message text.
+			RAISERROR (N'Stocktype of stocktaking can not be empty!', -- Message text.
                16, -- Severity.
                1 -- State.
                );
 		END
 
-		select @count_bulk = count(1) from dbo.Stocktaking_Detail sd 
-		where sd.id = @StocktakingID and sd.QtyBefore != sd.QtyAfter 
-
-		-- 檢查欲產生的調整單明細是否有LOCK或數量不足無法調整的項目
-		select sd.UKey,sd.QtyBefore - QtyAfter as qty into #tmpData
+		-- 檢查欲產生的調整單明細是否有LOCK;無法調整的項目
+		DECLARE CheckLock_cursor CURSOR FOR
+		select f.POID,f.seq1,f.seq2,f.Roll,f.Dyelot --into #tmpCheckLock
 		from dbo.Stocktaking_Detail sd 
-		where sd.id = @StocktakingID and sd.QtyBefore != sd.QtyAfter;
+		inner join dbo.FtyInventory f on f.Ukey = sd.FtyInventoryUkey
+		where sd.id = @StocktakingID and sd.QtyBefore != sd.QtyAfter and f.Lock = 1;
+		OPEN CheckLock_cursor;
+			FETCH NEXT FROM CheckLock_cursor INTO @poid,@seq1,@seq2,@roll,@dyelot;
+		IF @poid is not null
+		BEGIN
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				SET @err_msg = isnull(@err_msg,Char(13)+Char(10)) + @poid+'-'+@seq1+'-'+@seq2+'-'+@roll+'-'+@dyelot + ' is locked.'+char(13)+char(10);
+				FETCH NEXT FROM CheckLock_cursor INTO @poid,@seq1,@seq2,@roll,@dyelot;
+			END
 
+			IF @err_msg is not null
+			BEGIN
+				RAISERROR (@err_msg, -- Message text.
+               16, -- Severity.
+               1 -- State.
+               );
+			END
+		END
+		CLOSE CheckLock_cursor;
+
+		-- 檢查欲產生的調整單明細是否數量不足;無法調整的項目
+		DECLARE CheckBalanceQty_cursor CURSOR FOR
+		select f.POID,f.seq1,f.seq2,f.Roll,f.Dyelot --into #tmpCheckLock
+		from dbo.Stocktaking_Detail sd 
+		inner join dbo.FtyInventory f on f.Ukey = sd.FtyInventoryUkey
+		where sd.id = @StocktakingID and sd.QtyBefore != sd.QtyAfter 
+		and f.InQty-f.OutQty+f.AdjustQty + (sd.QtyAfter - sd.QtyBefore) < 0;
+		OPEN CheckBalanceQty_cursor;
+			FETCH NEXT FROM CheckBalanceQty_cursor INTO @poid,@seq1,@seq2,@roll,@dyelot;
+		IF @poid is not null
+		BEGIN
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				SET @err_msg = isnull(@err_msg,Char(13)+Char(10)) + @poid+'-'+@seq1+'-'+@seq2+'-'+@roll+'-'+@dyelot + ' ,Balance is not enough for adjust.'+char(13)+char(10);
+				FETCH NEXT FROM CheckBalanceQty_cursor INTO @poid,@seq1,@seq2,@roll,@dyelot;
+			END
+
+			IF @err_msg is not null
+			BEGIN
+				RAISERROR (@err_msg, -- Message text.
+               16, -- Severity.
+               1 -- State.
+               );
+			END
+		END
+		CLOSE CheckBalanceQty_cursor;
 		
 
 		-- 取Bulk Adjust ID

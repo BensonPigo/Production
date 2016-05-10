@@ -1887,4 +1887,17 @@
   <ItemGroup>
     <RefactorLog Include="ProductionDB.refactorlog" />
   </ItemGroup>
+  <ItemGroup>
+    <ArtifactReference Include="..\..\資料庫\FinanceEN.dacpac">
+      <HintPath>..\..\資料庫\FinanceEN.dacpac</HintPath>
+      <SuppressMissingDependenciesErrors>True</SuppressMissingDependenciesErrors>
+      <DatabaseSqlCmdVariable>FinanceEN</DatabaseSqlCmdVariable>
+    </ArtifactReference>
+  </ItemGroup>
+  <ItemGroup>
+    <SqlCmdVariable Include="FinanceEN">
+      <DefaultValue>FinanceEN</DefaultValue>
+      <Value>$(SqlCmdVar__1)</Value>
+    </SqlCmdVariable>
+  </ItemGroup>
 </Project>

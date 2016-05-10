@@ -47,8 +47,8 @@ BEGIN
 		 Where Orders.POID = @POID
 		   And Orders.Junk = 0
 		   AND Issue_Breakdown.ID = @IssueID
-		 Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
-				, CountryID, StyleID, Article, Seq, SizeCode;
+		 --Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
+			--	, CountryID, StyleID, Article, Seq, SizeCode;
 
 	select @count = count(1) from #tmpOrder_Qty;
 	if @count = 0
@@ -75,8 +75,8 @@ BEGIN
 		 Where Orders.POID = @POID
 		   And Orders.Junk = 0
 		   AND Order_Qty.ID = @OrderID
-		 Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
-				, CountryID, StyleID, Article, Seq, SizeCode;
+		 --Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
+			--	, CountryID, StyleID, Article, Seq, SizeCode;
 		select @count = count(1) from #tmpOrder_Qty;
 		if @count = 0
 		begin
@@ -101,8 +101,8 @@ BEGIN
 				On Factory.ID = Orders.FactoryID
 			 Where Orders.POID = @POID
 			   And Orders.Junk = 0
-			 Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
-					, CountryID, StyleID, Article, Seq, SizeCode;
+			 --Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
+				--	, CountryID, StyleID, Article, Seq, SizeCode;
 		end
 	end
 

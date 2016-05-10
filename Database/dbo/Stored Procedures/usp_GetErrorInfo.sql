@@ -1,5 +1,4 @@
-﻿
--- =============================================
+﻿-- =============================================
 -- Author:		MIKE
 -- Create date: 2016/04/13
 -- Description:	抓取錯誤資訊
@@ -14,7 +13,7 @@ BEGIN
 	DECLARE @ErrorMessage NVARCHAR(4000);
     DECLARE @ErrorSeverity INT;
     DECLARE @ErrorState INT;
-	Declare @ErrorProcedure varchar(254);
+	Declare @ErrorProcedure NVARCHAR(254);
 	DECLARE @ErrorLine INT;
 	DECLARE @ErrorNumber INT;
 
@@ -27,10 +26,11 @@ BEGIN
         @ErrorLine=ERROR_LINE(),
         @ErrorNumber=ERROR_NUMBER();
 
-	set @ErrorMessage = 'Error Procedure:' + @ErrorProcedure + char(13)+char(10) +
-						'Eroor Line:'+ CONVERT(VARCHAR,@ErrorLine) + char(13)+char(10) +
-						'Error Number:'+CONVERT(VARCHAR,@ErrorNumber)+ char(13)+char(10) +
-						'Error Message:'+@ErrorMessage;
+	set @ErrorMessage = 'Error Procedure: ' + @ErrorProcedure + char(13)+char(10) +
+						'Error Line: '+ CONVERT(NVARCHAR,@ErrorLine) + char(13)+char(10) +
+						'Error Number: '+CONVERT(NVARCHAR,@ErrorNumber)+ char(13)+char(10) +
+						'----------------------------------------------'+ char(13)+char(10) +
+						'Error Message: '+@ErrorMessage;
 
     -- Use RAISERROR inside the CATCH block to return error
     -- information about the original error that caused
