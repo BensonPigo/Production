@@ -34,14 +34,14 @@ namespace Sci.Production.Shipping
             btn.Text = "Batch Create";
             //btn.Click += new EventHandler(btn_Click);
             browsetop.Controls.Add(btn);
-            btn.Size = new Size(120,30);//預設是(80,30)
+            btn.Size = new Size(120, 30);//預設是(80,30)
             btn.Enabled = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "B42. Custom SP# and Consumption", "CanNew");
         }
 
         //Batch Create按鈕的Click事件
         private void btn_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -61,7 +61,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", contraceNo, masterID);
             base.OnDetailEntered();
             numericBox3.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["Qty"]) - MyUtility.Convert.GetDecimal(CurrentMaintain["PulloutQty"]);
             string colorWay = MyUtility.GetValue.Lookup(string.Format("select CONCAT(Article, ',') from VNConsumption_Article where ID = '{0}' order by Article for xml path('')", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
-            editBox1.Text = MyUtility.Check.Empty(colorWay) ? "" : colorWay.Substring(0, colorWay.Length-1);
+            editBox1.Text = MyUtility.Check.Empty(colorWay) ? "" : colorWay.Substring(0, colorWay.Length - 1);
             string sizeGroup = MyUtility.GetValue.Lookup(string.Format("select CONCAT(SizeCode, ',') from VNConsumption_SizeCode where ID = '{0}' order by SizeCode for xml path('')", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
             editBox2.Text = MyUtility.Check.Empty(sizeGroup) ? "" : sizeGroup.Substring(0, sizeGroup.Length - 1);
             DBProxy.Current.Select(null, string.Format("select * from VNConsumption_Detail_Detail where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])), out VNConsumption_Detail_Detail);
@@ -160,7 +160,7 @@ select MAX(StartDate) from VNContract where GETDATE() between StartDate and EndD
         protected override DualResult ClickDeletePost()
         {
             IList<string> deleteCmds = new List<string>();
-            deleteCmds.Add(string.Format("delete VNConsumption_Article where ID = '{0}';",MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])));
+            deleteCmds.Add(string.Format("delete VNConsumption_Article where ID = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])));
             deleteCmds.Add(string.Format("delete VNConsumption_SizeCode where ID = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])));
             deleteCmds.Add(string.Format("delete VNConsumption_Detail_Detail where ID = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])));
 
@@ -306,8 +306,7 @@ select MAX(StartDate) from VNContract where GETDATE() between StartDate and EndD
         protected override DualResult ClickSavePost()
         {
             //存VNConsumption_Detail_Detail, VNConsumption_Article, VNConsumption_SizeCode資料
-            //if (!MyUtility.Tool.CursorUpdateTable(VNConsumption_Detail_Detail, "VNConsumption_Detail_Detail", "Production"))
-            if (!CursorUpdateTable(VNConsumption_Detail_Detail, "VNConsumption_Detail_Detail", "Production"))
+            if (!MyUtility.Tool.CursorUpdateTable(VNConsumption_Detail_Detail, "VNConsumption_Detail_Detail", "Production"))
             {
                 DualResult failResult = new DualResult(false, "Save VNConsumption_Detail_Detail fail!!");
                 return failResult;
@@ -349,7 +348,7 @@ select MAX(StartDate) from VNContract where GETDATE() between StartDate and EndD
             base.OnDetailGridDelete();
             if (userCreate == "FALSE")
             {
-                foreach (DataRow dr in VNConsumption_Detail_Detail.Rows)
+                foreach (DataRow dr in VNConsumption_Detail_Detail.ToList())
                 {
                     if (MyUtility.Convert.GetString(dr["NLCode"]) == nlCode)
                     {
@@ -609,7 +608,7 @@ group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,LocalItem", MyUtility.
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out queryDetail2Data);
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Query detail2 data fail!!\r\n"+result.ToString());
+                MyUtility.Msg.WarningBox("Query detail2 data fail!!\r\n" + result.ToString());
                 return;
             }
 
@@ -676,7 +675,7 @@ where TissuePaper = 0 or (TissuePaper = 1 and ArticleTissuePaper = 1)", MyUtilit
                 DataRow[] findrow = queryDetailData.Select(string.Format("NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"])));
                 if (findrow.Length == 0)
                 {
-                    needItem.Append(string.Format("{0},",MyUtility.Convert.GetString(dr["NLCode"])));
+                    needItem.Append(string.Format("{0},", MyUtility.Convert.GetString(dr["NLCode"])));
                 }
             }
             #endregion
@@ -813,37 +812,66 @@ order by DataType,SCIRefno,UsageUnit", MyUtility.Convert.GetString(CurrentMainta
             #endregion
 
             #region 刪除VNConsumption_Detail與VNConsumption_Detail_Detail資料
-            foreach(DataRow dr in DetailDatas)
+            foreach (DataRow dr in DetailDatas)
             {
-                dr.Delete();
+                DataRow[] queryData = queryDetailData.Select(string.Format("NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"])));
+                if (queryData.Length <= 0)
+                {
+                    dr.Delete();
+                }
             }
-            foreach (DataRow dr in VNConsumption_Detail_Detail.Rows)
+            foreach (DataRow dr in VNConsumption_Detail_Detail.ToList())
             {
-                dr.Delete();
+                 DataRow[] queryData =  queryDetail2Data.Select(string.Format("NLCode = '{0}' and SCIRefNo = '{1}'", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["SCIRefNo"])));
+                 if (queryData.Length <= 0)
+                 {
+                     dr.Delete();
+                 }
             }
             #endregion
 
             #region 塞資料進VNConsumption_Detail與VNConsumption_Detail_Detail
             foreach (DataRow dr in queryDetailData.Rows)
             {
-                DataRow newRow = ((DataTable)detailgridbs.DataSource).NewRow();
-                newRow["NLCode"] = dr["NLCode"];
-                newRow["HSCode"] = dr["HSCode"];
-                newRow["UnitID"] = dr["CustomsUnit"];
-                newRow["Qty"] = dr["Qty"];
-                newRow["UserCreate"] = 0;
-                ((DataTable)detailgridbs.DataSource).Rows.Add(newRow);
+                DataRow[] queryData = ((DataTable)detailgridbs.DataSource).Select(string.Format("NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"])));
+                if (queryData.Length <= 0)
+                {
+                    DataRow newRow = ((DataTable)detailgridbs.DataSource).NewRow();
+                    newRow["NLCode"] = dr["NLCode"];
+                    newRow["HSCode"] = dr["HSCode"];
+                    newRow["UnitID"] = dr["CustomsUnit"];
+                    newRow["Qty"] = dr["Qty"];
+                    newRow["UserCreate"] = 0;
+                    ((DataTable)detailgridbs.DataSource).Rows.Add(newRow);
+                }
+                else
+                {
+                    queryData[0]["HSCode"] = dr["HSCode"];
+                    queryData[0]["UnitID"] = dr["CustomsUnit"];
+                    queryData[0]["Qty"] = dr["Qty"];
+                    queryData[0]["UserCreate"] = 0;
+                }
             }
 
             foreach (DataRow dr in queryDetail2Data.Rows)
             {
-                DataRow newRow = VNConsumption_Detail_Detail.NewRow();
-                newRow["NLCode"] = dr["NLCode"];
-                newRow["SCIRefno"] = dr["SCIRefno"];
-                newRow["RefNo"] = dr["RefNo"];
-                newRow["Qty"] = dr["Qty"];
-                newRow["LocalItem"] = dr["LocalItem"];
-                VNConsumption_Detail_Detail.Rows.Add(newRow);
+                DataRow[] queryData = VNConsumption_Detail_Detail.Select(string.Format("NLCode = '{0}' and SCIRefNo = '{1}'", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["SCIRefNo"])));
+                if (queryData.Length <= 0)
+                {
+                    DataRow newRow = VNConsumption_Detail_Detail.NewRow();
+                    newRow["NLCode"] = dr["NLCode"];
+                    newRow["SCIRefno"] = dr["SCIRefno"];
+                    newRow["RefNo"] = dr["RefNo"];
+                    newRow["Qty"] = MyUtility.Check.Empty(dr["Qty"]) ? 0 : MyUtility.Convert.GetDecimal(dr["Qty"]);
+                    newRow["LocalItem"] = dr["LocalItem"];
+                    VNConsumption_Detail_Detail.Rows.Add(newRow);
+                }
+                else
+                {
+                    queryData[0]["RefNo"] = dr["RefNo"];
+                    queryData[0]["Qty"] = MyUtility.Check.Empty(dr["Qty"])?0:MyUtility.Convert.GetDecimal(dr["Qty"]);
+                    queryData[0]["LocalItem"] = dr["LocalItem"];
+                }
             }
             #endregion
 
@@ -887,9 +915,9 @@ select NLCode from VNConsumption_Detail where ID = '{1}'", MyUtility.Convert.Get
                 StringBuilder lackNLCode = new StringBuilder();
                 foreach (DataRow dr in LackData.Rows)
                 {
-                    lackNLCode.Append(MyUtility.Convert.GetString(dr["NLCode"])+",");
+                    lackNLCode.Append(MyUtility.Convert.GetString(dr["NLCode"]) + ",");
                 }
-                MyUtility.Msg.WarningBox(string.Format("Lacking regular NL code: {0}. Please double check.", lackNLCode.ToString(0, lackNLCode.ToString().Length-1)));
+                MyUtility.Msg.WarningBox(string.Format("Lacking regular NL code: {0}. Please double check.", lackNLCode.ToString(0, lackNLCode.ToString().Length - 1)));
             }
 
             string updateCmds = string.Format("update VNConsumption set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}'",
@@ -924,131 +952,6 @@ select NLCode from VNConsumption_Detail where ID = '{1}'", MyUtility.Convert.Get
             RenewData();
             OnDetailEntered();
             EnsureToolbarExt();
-        }
-
-        public static bool CursorUpdateTable(DataTable dtCursor, string strTableName, string strConnection)
-        {
-            SqlConnection sqlConnection;               // SQL Connection
-            string strUpdateFields = "";                   // 取出交易檔與主檔相同的欄位明細
-            DataRow[] drKeyFieldsArray;                // 取出主檔的 Key 欄位明細
-            bool IsUpdateOK;                               // 記錄是否成功
-
-            DBProxy.Current.OpenConnection(strConnection, out sqlConnection);
-
-            //使用 DataReader 取得 Table Schema
-            if (sqlConnection == null)
-            {
-                DBProxy.Current.OpenConnection(null, out sqlConnection);
-            }
-            SqlCommand cmd = new SqlCommand(string.Format("SELECT TOP 1 * FROM {0}", strTableName), sqlConnection);
-            SqlDataReader myReader = cmd.ExecuteReader(CommandBehavior.KeyInfo);
-            DataTable schemaTable = myReader.GetSchemaTable();
-            myReader.Close();
-
-            // 依據 Table Schema 產生 Select 運算式 及 Where運算式
-            string strWhereExpression = "";
-            foreach (DataRow item in schemaTable.Rows)
-            {
-                string strColumnName = item["ColumnName"].ToString();
-                if (dtCursor.Columns.Contains(strColumnName))
-                {
-                    strUpdateFields = strUpdateFields + (strUpdateFields == "" ? strColumnName : "," + strColumnName);
-                    if ((bool)item["IsKey"])
-                    {
-                        if (strWhereExpression == "")
-                            strWhereExpression = string.Format("{0}=@{0}", strColumnName);
-                        else
-                            strWhereExpression = string.Format("{1} and {0}=@{0}", strColumnName, strWhereExpression);
-                    }
-                }
-            }
-
-            // 產生更新主檔用的 DataAdapter
-            drKeyFieldsArray = schemaTable.Select("IsKey=1");
-            string mySTR = string.Format("select {0} from {1} where {2}", strUpdateFields, strTableName, strWhereExpression);
-            SqlDataAdapter adapter = new SqlDataAdapter(mySTR, sqlConnection);
-            adapter.UpdateBatchSize = 100;
-            adapter.MissingSchemaAction = MissingSchemaAction.Add;                // 只加欄位跟型別不加 Contraint
-            foreach (DataRow item in drKeyFieldsArray)
-            {
-                string str1 = "@" + item["ColumnName"].ToString();
-                adapter.SelectCommand.Parameters.AddWithValue(str1, "");
-            }
-
-            // 根據 Cursor 產生 DataAdapter 的資料
-            DataTable dtInterop = new DataTable();
-            string[] updateFieldsArray = strUpdateFields.Split(new char[] { ',' });
-
-            // 先刪除
-            DataView myDeletedDV = new DataView(dtCursor, "", "", DataViewRowState.Deleted);
-            DataTable myDeletedDT = myDeletedDV.ToTable(false, strUpdateFields.Split(new char[] { ',' }));
-            foreach (DataRow drCursor in myDeletedDT.Rows)
-            {
-                foreach (DataRow drKey in drKeyFieldsArray)
-                {
-                    string str1 = "@" + drKey["ColumnName"].ToString();
-                    if (drKey["DataTypeName"].ToString() == "date")
-                        adapter.SelectCommand.Parameters[str1].Value = DateTime.Parse(drCursor[drKey["ColumnName"].ToString()].ToString()).ToShortDateString();
-                    else
-                        adapter.SelectCommand.Parameters[str1].Value = drCursor[drKey["ColumnName"].ToString()].ToString();
-                };
-
-                if (adapter.Fill(dtInterop) == 1)
-                {
-                    dtInterop.Rows[dtInterop.Rows.Count - 1].Delete();
-                }
-            }
-
-            // 再新增及修改
-            DataView myDV = new DataView(dtCursor);
-            DataTable myDT = myDV.ToTable(false, updateFieldsArray);
-            foreach (DataRow drCursor in myDT.Rows)
-            {
-                object[] obValueArray = drCursor.ItemArray;
-                foreach (DataRow drKey in drKeyFieldsArray)
-                {
-                    string str1 = "@" + drKey["ColumnName"].ToString();
-                    if (drKey["DataTypeName"].ToString() == "date")
-                        adapter.SelectCommand.Parameters[str1].Value = DateTime.Parse(drCursor[drKey["ColumnName"].ToString()].ToString()).ToShortDateString();
-                    else
-                        adapter.SelectCommand.Parameters[str1].Value = drCursor[drKey["ColumnName"].ToString()].ToString();
-                };
-
-                if (adapter.Fill(dtInterop) == 0)
-                {
-                    DataRow newdr = dtInterop.NewRow();
-                    newdr.ItemArray = obValueArray;
-                    dtInterop.Rows.Add(newdr);
-                }
-                else
-                {
-                    dtInterop.Rows[dtInterop.Rows.Count - 1].ItemArray = obValueArray;
-                }
-            };
-
-            // 更新 SQL Table
-            SqlCommandBuilder builder = new SqlCommandBuilder(adapter);
-            builder.GetInsertCommand();
-            builder.GetUpdateCommand();
-            builder.GetDeleteCommand();
-            try
-            {
-                adapter.Update(dtInterop.Select(null, null, DataViewRowState.Deleted));
-                adapter.Update(dtInterop.Select(null, null, DataViewRowState.ModifiedCurrent));
-                adapter.Update(dtInterop.Select(null, null, DataViewRowState.Added));
-
-                //adapter.Update(dtInterop);
-                //MyUtility.Msg.InfoBox(((Sci.Env.Cfg.CodePage == 0) ? "更新成功!!" : "Update Sucessful!!") + " Total rows: " + dtInterop.Rows.Count);
-                IsUpdateOK = true;
-            }
-            catch (Exception ex)
-            {
-                //MyUtility.Msg.WarningBox(((Sci.Env.Cfg.CodePage == 0) ? "更新失敗!!" : "Update failed!! \n ") + ex.Message.ToString());
-                IsUpdateOK = false;
-            }
-
-            sqlConnection.Close();
-            return IsUpdateOK;
         }
     }
 }
