@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new Sci.Win.UI.Label();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.label2 = new Sci.Win.UI.Label();
@@ -45,14 +46,17 @@
             this.btnAutoPick = new Sci.Win.UI.Button();
             this.label25 = new Sci.Win.UI.Label();
             this.btnBreakDown = new Sci.Win.UI.Button();
-            this.grid1 = new Sci.Win.UI.Grid();
             this.ebArticle = new Sci.Win.UI.EditBox();
             this.label8 = new Sci.Win.UI.Label();
             this.disPOID = new Sci.Win.UI.DisplayBox();
             this.label9 = new Sci.Win.UI.Label();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btnBOA = new Sci.Win.UI.Button();
             this.btnClear = new Sci.Win.UI.Button();
+            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.label10 = new Sci.Win.UI.Label();
+            this.gridIssueBreakDown = new Sci.Win.UI.Grid();
+            this.gridIssueBreakDownBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -65,12 +69,15 @@
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridIssueBreakDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridIssueBreakDownBS)).BeginInit();
             this.SuspendLayout();
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.textBox1);
+            this.masterpanel.Controls.Add(this.label10);
             this.masterpanel.Controls.Add(this.btnClear);
             this.masterpanel.Controls.Add(this.btnBOA);
             this.masterpanel.Controls.Add(this.disPOID);
@@ -119,6 +126,8 @@
             this.masterpanel.Controls.SetChildIndex(this.disPOID, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnBOA, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnClear, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label10, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
             // 
             // detailpanel
             // 
@@ -162,7 +171,7 @@
             // 
             // detailbtm
             // 
-            this.detailbtm.Controls.Add(this.grid1);
+            this.detailbtm.Controls.Add(this.gridIssueBreakDown);
             this.detailbtm.Location = new System.Drawing.Point(0, 356);
             this.detailbtm.Size = new System.Drawing.Size(999, 174);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
@@ -170,7 +179,7 @@
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
-            this.detailbtm.Controls.SetChildIndex(this.grid1, 0);
+            this.detailbtm.Controls.SetChildIndex(this.gridIssueBreakDown, 0);
             // 
             // browse
             // 
@@ -367,31 +376,6 @@
             this.btnBreakDown.UseVisualStyleBackColor = true;
             this.btnBreakDown.Click += new System.EventHandler(this.btnBreakDown_Click);
             // 
-            // grid1
-            // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 6);
-            this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(996, 131);
-            this.grid1.TabIndex = 3;
-            this.grid1.TabStop = false;
-            // 
             // ebArticle
             // 
             this.ebArticle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -457,6 +441,49 @@
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.button9_Click);
             // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderId", true));
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.Location = new System.Drawing.Point(301, 133);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(107, 23);
+            this.textBox1.TabIndex = 53;
+            // 
+            // label10
+            // 
+            this.label10.Lines = 0;
+            this.label10.Location = new System.Drawing.Point(223, 133);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(75, 23);
+            this.label10.TabIndex = 52;
+            this.label10.Text = "Order ID";
+            // 
+            // gridIssueBreakDown
+            // 
+            this.gridIssueBreakDown.AllowUserToAddRows = false;
+            this.gridIssueBreakDown.AllowUserToDeleteRows = false;
+            this.gridIssueBreakDown.AllowUserToResizeRows = false;
+            this.gridIssueBreakDown.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridIssueBreakDown.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridIssueBreakDown.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridIssueBreakDown.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridIssueBreakDown.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridIssueBreakDown.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridIssueBreakDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridIssueBreakDown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridIssueBreakDown.Location = new System.Drawing.Point(0, 3);
+            this.gridIssueBreakDown.Name = "gridIssueBreakDown";
+            this.gridIssueBreakDown.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridIssueBreakDown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridIssueBreakDown.RowTemplate.Height = 24;
+            this.gridIssueBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridIssueBreakDown.Size = new System.Drawing.Size(996, 129);
+            this.gridIssueBreakDown.TabIndex = 3;
+            this.gridIssueBreakDown.TabStop = false;
+            // 
             // P11
             // 
             this.ApvChkValue = "New";
@@ -492,8 +519,9 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridIssueBreakDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridIssueBreakDownBS)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -522,9 +550,12 @@
         private Win.UI.Label label9;
         private Win.UI.EditBox ebArticle;
         private Win.UI.Label label8;
-        private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Button btnBOA;
         private Win.UI.Button btnClear;
+        private Win.UI.TextBox textBox1;
+        private Win.UI.Label label10;
+        private Win.UI.Grid gridIssueBreakDown;
+        private Win.UI.ListControlBindingSource gridIssueBreakDownBS;
     }
 }

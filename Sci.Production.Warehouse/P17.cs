@@ -718,7 +718,11 @@ Where a.id = '{0}'", masterID);
 
             if (!MyUtility.Check.Empty(textBox2.Text) && textBox2.Text != textBox2.OldValue)
             {
-                ((DataTable)detailgridbs.DataSource).Rows.Clear();
+                foreach (DataRow dr2 in ((DataTable)detailgridbs.DataSource).Rows)
+                {
+                    dr2.Delete();
+                }
+
                 DataRow dr;
                 DataTable dt;
                 if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.issue where id='{0}' and status !='New')"

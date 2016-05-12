@@ -40,7 +40,10 @@ namespace Sci.Production.Subcon
 
             if ((o.Text != o.OldValue) && this.EditMode)
             {
-                ((DataTable)detailgridbs.DataSource).Rows.Clear();
+                foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
+                {
+                    dr.Delete();
+                }
             }
         }
 

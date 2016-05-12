@@ -20,6 +20,8 @@ namespace Sci.Production.Warehouse
     {
         DataRow dr;
         string poid = "";
+
+        P11_Detail subform = new P11_Detail();
         public P11(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -42,13 +44,11 @@ namespace Sci.Production.Warehouse
             //SubDetailKeyField1 = "Ukey";    // second PK
             //SubDetailKeyField2 = "Issue_SummaryUkey"; // third FK
 
-            DoSubForm = new P11_Detail();
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.AutoGenerateColumns = true;
+            DoSubForm = subform;
         }
 
         public P11(ToolStripMenuItem menuitem, string transID)
-            : base(menuitem)
+            : this(menuitem)
         {
 
             this.DefaultFilter = string.Format("Type='B' and id='{0}'", transID);
@@ -57,23 +57,7 @@ namespace Sci.Production.Warehouse
             this.IsSupportDelete = false;
             this.IsSupportConfirm = false;
             this.IsSupportUnconfirm = false;
-            WorkAlias = "Issue";                        // PK: ID
-            GridAlias = "Issue_detail";               // PK: ID+UKey
-            SubGridAlias = "Issue_size";           // PK: ID+Issue_DetailUkey+SizeCode
 
-            KeyField1 = "ID"; //master PK
-            KeyField2 = "ID"; // second FK
-
-            SubDetailKeyField1 = "Ukey";    // second PK
-            SubDetailKeyField2 = "Issue_DetailUkey"; // third FK
-
-            //SubDetailKeyField1 = "Ukey";    // second PK
-            //SubDetailKeyField2 = "Issue_SummaryUkey"; // third FK
-
-            SubKeyField1 = "Ukey";    // 將第2層的PK欄位傳給第3層的FK。
-            //SubKeyField2 = "Ukey";  // 將第2層的PK欄位傳給第3層的FK。
-
-            DoSubForm = new P11_Detail();
         }
 
         // Detail Grid 設定
@@ -202,6 +186,12 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivision
             #endregion 可編輯欄位變色
         }
 
+        protected override void OpenSubDetailPage()
+        {
+            subform.master = CurrentMaintain;
+            base.OpenSubDetailPage();
+        }
+
         //寫明細撈出的sql command
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
@@ -290,11 +280,7 @@ Where a.id = '{0}'", masterID);
 
             #endregion 必輸檢查
 
-            if (DetailDatas.Count == 0)
-            {
-                MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
-                return false;
-            }
+            
 
             //取單號
             if (this.IsDetailInserting)
@@ -380,6 +366,7 @@ Where a.id = '{0}'", masterID);
                 CurrentMaintain["cutplanid"] = txtRequest.Text;
                 getpoid();
                 this.disPOID.Text = this.poid;
+                CurrentMaintain["orderid"] = this.poid;
             }
         }
 
@@ -387,7 +374,7 @@ Where a.id = '{0}'", masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            DataTable dt, dtIssue_Breakdown;
+            DataTable dt;
             if (!(CurrentMaintain == null))
             {
                 disCutCell.Text = MyUtility.GetValue.Lookup(string.Format("select CutCellID from dbo.cutplan  where id='{0}'", CurrentMaintain["cutplanid"]));
@@ -401,18 +388,10 @@ select distinct FabricCombo ,(select convert(varchar,CutNo)+','
 from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by CutNo for xml path('')) cutnos from cte a
 ", CurrentMaintain["cutplanid"]), out dt);
                 ebCut.Text = String.Join(" / ", dt.AsEnumerable().Select(row => row["FabricCombo"].ToString() + "-" + row["cutnos"].ToString()));
-                ebArticle.Text = MyUtility.GetValue.Lookup(string.Format(@"select t.article+','  from (select distinct article 
-from dbo.cutplan_detail  where id='{0}') t for xml path('')", CurrentMaintain["cutplanid"]));
+                //ebArticle.Text = MyUtility.GetValue.Lookup(string.Format(@"select t.article+','  from (select distinct article 
+//from dbo.cutplan_detail  where id='{0}') t for xml path('')", CurrentMaintain["cutplanid"]));
 
-                #region -- Break down Grid --
-                DBProxy.Current.Select(null, string.Format(@";with cte as
-(Select WorkOrder.FabricCombo,Cutplan_Detail.CutNo from Cutplan_Detail inner join dbo.workorder on WorkOrder.Ukey = Cutplan_Detail.WorkorderUkey 
-where Cutplan_Detail.ID='{0}' )
-select distinct FabricCombo ,(select convert(varchar,CutNo)+',' 
-from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by CutNo for xml path('')) cutnos from cte a
-", CurrentMaintain["cutplanid"]), out dtIssue_Breakdown);
-                this.grid1.DataSource = dtIssue_Breakdown;
-                #endregion
+
                 #region -- Status Label --
 
                 label25.Text = CurrentMaintain["status"].ToString();
@@ -422,9 +401,72 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
                 this.getpoid();
                 this.disPOID.Text = this.poid;
                 #endregion
+
+                #region -- matrix breakdown
+                DualResult result;
+                if (!(result = matrix_Reload()))
+                {
+                    ShowErr(result);
+                }
+                #endregion
             }
         }
 
+        private DualResult matrix_Reload()
+        {
+            DualResult result;
+            DataTable dtSizeCode, dtIssueBreakDown=null;
+
+            gridIssueBreakDown.AutoGenerateColumns = true;
+            gridIssueBreakDownBS.DataSource = dtIssueBreakDown;
+            gridIssueBreakDown.DataSource = gridIssueBreakDownBS;
+            gridIssueBreakDown.IsEditingReadOnly = true;
+            gridIssueBreakDown.ReadOnly = true;
+
+            string sqlcmd = string.Format(@"select sizecode from dbo.order_sizecode 
+where id = (select poid from dbo.orders where id='{0}') order by seq", CurrentMaintain["orderid"]);
+
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out dtSizeCode)))
+            {
+                ShowErr(sqlcmd, result);
+                return result;
+            }
+            if (dtSizeCode.Rows.Count == 0)
+            {
+                return Result.True;
+            }
+
+            StringBuilder sbSizecode = new StringBuilder();
+            sbSizecode.Clear();
+
+            for (int i = 0; i < dtSizeCode.Rows.Count; i++)
+            {
+                sbSizecode.Append(string.Format(@"[{0}],", dtSizeCode.Rows[i]["sizecode"].ToString().TrimEnd()));
+            }
+
+            StringBuilder sbIssueBreakDown = new StringBuilder();
+            sbIssueBreakDown.Append(string.Format(@"select * from Issue_Breakdown
+pivot
+(
+	sum(qty)
+	for sizecode in ({2})
+)as pvt
+where id='{1}'
+order by [OrderID],[Article]", CurrentMaintain["orderid"], CurrentMaintain["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));
+            if (!(result = DBProxy.Current.Select(null, sbIssueBreakDown.ToString(), out dtIssueBreakDown)))
+            {
+                ShowErr(sqlcmd, result);
+                return result;
+            }
+
+            gridIssueBreakDown.AutoGenerateColumns = true;
+            gridIssueBreakDownBS.DataSource = dtIssueBreakDown;
+            gridIssueBreakDown.DataSource = gridIssueBreakDownBS;
+            gridIssueBreakDown.IsEditingReadOnly = true;
+            gridIssueBreakDown.ReadOnly = true;
+
+            return Result.True;
+        }
         private void getpoid()
         {
             //CurrentMaintain["cutplanid"] = txtRequest.Text;
@@ -472,6 +514,11 @@ where a.id='{0}' order by Seq", this.poid, masterID, ukey);
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
+            if (DetailDatas.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
+                return ;
+            }
             var dr = this.CurrentMaintain;
             if (null == dr) return;
 
@@ -777,12 +824,17 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
         private void button9_Click(object sender, EventArgs e)
         {
-            ((DataTable)detailgridbs.DataSource).Rows.Clear();
+            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
+            {
+                dr.Delete();
+            }
         }
 
         private void btnBreakDown_Click(object sender, EventArgs e)
         {
-
+            var frm = new Sci.Production.Warehouse.P11_IssueBreakDown(CurrentMaintain);
+            frm.ShowDialog(this);
+            this.OnDetailEntered();
         }
     }
 }

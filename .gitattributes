@@ -1915,6 +1915,9 @@ Sci.Production.Warehouse/P11_BOA.resx -text
 Sci.Production.Warehouse/P11_Detail.Designer.cs -text
 Sci.Production.Warehouse/P11_Detail.cs -text
 Sci.Production.Warehouse/P11_Detail.resx -text
+Sci.Production.Warehouse/P11_IssueBreakDown.Designer.cs -text
+Sci.Production.Warehouse/P11_IssueBreakDown.cs -text
+Sci.Production.Warehouse/P11_IssueBreakDown.resx -text
 Sci.Production.Warehouse/P12.Designer.cs -text
 Sci.Production.Warehouse/P12.cs -text
 Sci.Production.Warehouse/P12.resx -text

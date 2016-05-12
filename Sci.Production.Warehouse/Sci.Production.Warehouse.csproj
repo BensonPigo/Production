@@ -119,6 +119,12 @@
     <Compile Include="P07_ExcelImport.Designer.cs">
       <DependentUpon>P07_ExcelImport.cs</DependentUpon>
     </Compile>
+    <Compile Include="P11_IssueBreakDown.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P11_IssueBreakDown.Designer.cs">
+      <DependentUpon>P11_IssueBreakDown.cs</DependentUpon>
+    </Compile>
     <Compile Include="P12_Import.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -853,6 +859,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P10_Detail.resx">
       <DependentUpon>P10_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P11_IssueBreakDown.resx">
+      <DependentUpon>P11_IssueBreakDown.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P12_Import.resx">
       <DependentUpon>P12_Import.cs</DependentUpon>

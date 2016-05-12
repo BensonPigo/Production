@@ -45,12 +45,12 @@
             this.dis_usedqty = new Sci.Win.UI.DisplayBox();
             this.dis_sizespec = new Sci.Win.UI.DisplayBox();
             this.label11 = new Sci.Win.UI.Label();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridBreakDown = new Sci.Win.UI.Grid();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBreakDown)).BeginInit();
             this.SuspendLayout();
             // 
             // gridcont
@@ -254,38 +254,40 @@
             this.label11.TabIndex = 109;
             this.label11.Text = "Order List";
             // 
-            // grid1
+            // gridBreakDown
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(10, 12);
-            this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(986, 205);
-            this.grid1.TabIndex = 111;
-            this.grid1.TabStop = false;
+            this.gridBreakDown.AllowUserToAddRows = false;
+            this.gridBreakDown.AllowUserToDeleteRows = false;
+            this.gridBreakDown.AllowUserToResizeRows = false;
+            this.gridBreakDown.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridBreakDown.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridBreakDown.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridBreakDown.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridBreakDown.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridBreakDown.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridBreakDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridBreakDown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridBreakDown.Location = new System.Drawing.Point(10, 12);
+            this.gridBreakDown.Name = "gridBreakDown";
+            this.gridBreakDown.RowHeadersVisible = false;
+            this.gridBreakDown.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridBreakDown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridBreakDown.RowTemplate.Height = 24;
+            this.gridBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBreakDown.Size = new System.Drawing.Size(986, 205);
+            this.gridBreakDown.TabIndex = 111;
+            this.gridBreakDown.TabStop = false;
             // 
             // P11_Detail
             // 
             this.ClientSize = new System.Drawing.Size(1008, 557);
-            this.Controls.Add(this.grid1);
+            this.Controls.Add(this.gridBreakDown);
             this.Controls.Add(this.groupBox1);
             this.Name = "P11_Detail";
             this.Text = "P11. Output Detail";
             this.Controls.SetChildIndex(this.groupBox1, 0);
-            this.Controls.SetChildIndex(this.grid1, 0);
+            this.Controls.SetChildIndex(this.gridBreakDown, 0);
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -293,7 +295,7 @@
             this.btmcont.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBreakDown)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -317,6 +319,6 @@
         private Win.UI.Label label7;
         private Win.UI.DisplayBox dis_usedqty;
         private Win.UI.DisplayBox dis_sizespec;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridBreakDown;
     }
 }

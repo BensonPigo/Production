@@ -657,7 +657,10 @@ Where a.id = '{0}' ", masterID);
         //delete all
         private void button9_Click(object sender, EventArgs e)
         {
-            ((DataTable)detailgridbs.DataSource).Rows.Clear();
+            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
+            {
+                dr.Delete();
+            }
         }
 
         //Accumulated Qty

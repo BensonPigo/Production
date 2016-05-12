@@ -287,7 +287,10 @@ Where a.id = '{0}'", masterID, cutplanID);
             string sqlcmd;
             if (!MyUtility.Check.Empty(txtRequest.Text) && txtRequest.Text != txtRequest.OldValue)
             {
-                ((DataTable)detailgridbs.DataSource).Rows.Clear();
+                foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
+                {
+                    dr.Delete();
+                }
                 CurrentMaintain["cutplanid"] = txtRequest.Text;
                 if (!MyUtility.Check.Seek(string.Format("select id from dbo.cutplan where id='{0}' and mdivisionid = '{1}'", txtRequest.Text, Sci.Env.User.Keyword), null))
                 {

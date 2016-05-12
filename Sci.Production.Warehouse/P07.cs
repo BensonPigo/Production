@@ -858,7 +858,10 @@ Where a.id = '{0}' ", masterID);
             DataTable dt;
             if (!MyUtility.Check.Empty(textBox3.Text) && textBox3.Text != textBox3.OldValue)
             {
-                ((DataTable)detailgridbs.DataSource).Rows.Clear();
+                foreach (DataRow dr2 in ((DataTable)detailgridbs.DataSource).Rows)
+                {
+                    dr2.Delete();
+                }
                 CurrentMaintain["invno"] = textBox3.Text;
                 if (MyUtility.Check.Seek(string.Format("select packingarrival,whsearrival,eta from dbo.export where id='{0}'"
                     , textBox3.Text), out dr, null))
@@ -908,7 +911,10 @@ where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword), out dt);
         //delete all
         private void btDeleteAllDetail_Click(object sender, EventArgs e)
         {
-            ((DataTable)detailgridbs.DataSource).Rows.Clear();
+            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
+            {
+                dr.Delete();
+            }
         }
 
         //Accumulated Qty

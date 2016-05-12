@@ -1,0 +1,261 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Ict.Win;
+using Sci;
+using Sci.Data;
+using Ict;
+using Sci.Trade.Class.Commons;
+using System.Data.SqlClient;
+using System.Linq;
+
+namespace Sci.Production.Warehouse
+{
+    public partial class P11_IssueBreakDown : Sci.Win.Subs.Base
+    {
+        DataRow Master;
+        DataTable dtQtyBreakDown, dtIssueBreakDown, dtSizeCode;
+        StringBuilder sbSizecode, sbSizecode2;
+        public P11_IssueBreakDown()
+        {
+            InitializeComponent();
+            this.EditMode = true;
+        }
+
+        public P11_IssueBreakDown(DataRow master)
+            : this()
+        {
+            Master = master;
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+
+            string sqlcmd;
+            StringBuilder sbQtyBreakDown, sbIssueBreakDown;
+            DualResult result;
+
+            sqlcmd = string.Format(@"select sizecode from dbo.order_sizecode 
+where id = (select poid from dbo.orders where id='{0}') order by seq", Master["orderid"]);
+
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out dtSizeCode)))
+            {
+                ShowErr(sqlcmd, result);
+                return;
+            }
+            if (dtSizeCode.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox(string.Format("Becuase there no sizecode data belong this OrderID {0} , can't show data!!", Master["orderid"]));
+                return;
+            }
+
+            sbSizecode = new StringBuilder();
+            sbSizecode2 = new StringBuilder();
+            sbSizecode.Clear();
+            sbSizecode2.Clear();
+            for (int i = 0; i < dtSizeCode.Rows.Count; i++)
+            {
+                sbSizecode.Append(string.Format(@"[{0}],", dtSizeCode.Rows[i]["sizecode"].ToString().TrimEnd()));
+                sbSizecode2.Append(string.Format(@"{0},", dtSizeCode.Rows[i]["sizecode"].ToString().TrimEnd()));
+            }
+
+            sbQtyBreakDown = new StringBuilder();
+            sbQtyBreakDown.Append(string.Format(@";with Bdown as 
+(select a.ID [OrderID],a.Article,a.SizeCode,a.Qty from dbo.order_qty a
+inner join dbo.orders b on b.id = a.id
+where b.POID=(select poid from dbo.orders where id = '{0}')
+)
+select * from Bdown
+pivot
+(
+	sum(qty)
+	for sizecode in ({1})
+)as pvt
+order by [OrderID],[Article]", Master["orderid"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));
+            if (!(result = DBProxy.Current.Select(null, sbQtyBreakDown.ToString(), out dtQtyBreakDown)))
+            {
+                ShowErr(sqlcmd, result);
+                return;
+            }
+            gridQtyBreakDown.AutoGenerateColumns = true;
+            gridQtyBreakDownBS.DataSource = dtQtyBreakDown;
+            gridQtyBreakDown.DataSource = gridQtyBreakDownBS;
+            gridQtyBreakDown.IsEditingReadOnly = true;
+            gridQtyBreakDown.ReadOnly = true;
+
+            sbIssueBreakDown = new StringBuilder();
+            sbIssueBreakDown.Append(string.Format(@";with Bdown as 
+(select a.ID [orderid],a.Article,a.SizeCode,a.Qty from dbo.order_qty a
+inner join dbo.orders b on b.id = a.id
+where b.POID=(select poid from dbo.orders where id = '{0}')
+)
+,Issue_Bdown as
+(
+	select isnull(Bdown.orderid,ib.OrderID) [OrderID],isnull(Bdown.Article,ib.Article) Article,isnull(Bdown.SizeCode,ib.sizecode) sizecode,isnull(ib.Qty,0) qty
+	from Bdown full outer join (select * from dbo.Issue_Breakdown where id='{1}') ib
+	on Bdown.orderid = ib.OrderID and Bdown.Article = ib.Article and Bdown.SizeCode = ib.SizeCode
+)
+select * from Issue_Bdown
+pivot
+(
+	sum(qty)
+	for sizecode in ({2})
+)as pvt
+order by [OrderID],[Article]", Master["orderid"], Master["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));
+            if (!(result = DBProxy.Current.Select(null, sbIssueBreakDown.ToString(), out dtIssueBreakDown)))
+            {
+                ShowErr(sqlcmd, result);
+                return;
+            }
+            gridIssueBreakDown.AutoGenerateColumns = true;
+            gridIssueBreakDownBS.DataSource = dtIssueBreakDown;
+            gridIssueBreakDown.DataSource = gridIssueBreakDownBS;
+            gridIssueBreakDown.IsEditingReadOnly = false;
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Dispose();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            DataTable result = null;
+            string sqlcmd;
+            sqlcmd = string.Format(@";WITH UNPIVOT_1
+AS
+(
+SELECT * FROM #tmp
+UNPIVOT
+(
+QTY
+FOR SIZECODE IN ({1})
+)
+AS PVT
+)
+MERGE INTO DBO.ISSUE_BREAKDOWN T
+USING UNPIVOT_1 S
+ON T.ID = '{0}' AND T.ORDERID= S.OrderID AND T.ARTICLE = S.ARTICLE AND T.SIZECODE = S.SIZECODE
+WHEN MATCHED THEN
+UPDATE
+SET QTY = S.QTY
+WHEN NOT MATCHED THEN
+INSERT (ID,ORDERID,ARTICLE,SIZECODE,QTY)
+VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
+;delete from dbo.issue_breakdown where id='{0}' and qty = 0; ", Master["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1));
+
+//            sqlcmd = string.Format(string.Format(@";WITH UNPIVOT_1
+//AS
+//(
+//SELECT * FROM #tmp
+//UNPIVOT
+//(
+//QTY
+//FOR SIZECODE IN ({1})
+//)
+//AS PVT
+//)SELECT * FROM UNPIVOT_1;", Master["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));
+
+            ProcessWithDatatable2(dtIssueBreakDown, "OrderID,Article," + sbSizecode2.ToString().Substring(0, sbSizecode2.ToString().Length - 1)
+                , sqlcmd, out result, "#tmp");
+            MyUtility.Msg.InfoBox("Save completed!!");
+            this.Dispose();
+        }
+
+        public static void ProcessWithDatatable2(DataTable source, string tmp_columns, string sqlcmd, out DataTable result, string temptablename = "#tmp")
+        {
+            result = null;
+            StringBuilder sb = new StringBuilder();
+            if (temptablename.TrimStart().StartsWith("#"))
+            {
+                sb.Append(string.Format("create table {0} (", temptablename));
+            }
+            else
+            {
+                sb.Append(string.Format("create table #{0} (", temptablename));
+            }
+            string[] cols = tmp_columns.Split(',');
+            for (int i = 0; i < cols.Length; i++)
+            {
+                if (MyUtility.Check.Empty(cols[i])) continue;
+                switch (Type.GetTypeCode(source.Columns[cols[i]].DataType))
+                {
+                    case TypeCode.Boolean:
+                        sb.Append(string.Format("{0} bit", cols[i]));
+                        break;
+
+                    case TypeCode.Char:
+                        sb.Append(string.Format("{0} varchar(1)", cols[i]));
+                        break;
+
+                    case TypeCode.DateTime:
+                        sb.Append(string.Format("{0} datetime", cols[i]));
+                        break;
+
+                    case TypeCode.Decimal:
+                        sb.Append(string.Format("{0} numeric(24,8)", cols[i]));
+                        break;
+
+                    case TypeCode.Int32:
+                        sb.Append(string.Format("{0} int", cols[i]));
+                        break;
+
+                    case TypeCode.String:
+                        sb.Append(string.Format("{0} varchar(max)", cols[i]));
+                        break;
+
+                    case TypeCode.Int64:
+                        sb.Append(string.Format("{0} bigint", cols[i]));
+                        break;
+                    default:
+                        break;
+                }
+                if (i < cols.Length - 1) { sb.Append(","); }
+            }
+            sb.Append(")");
+
+            System.Data.SqlClient.SqlConnection conn;
+            DBProxy.Current.OpenConnection(null, out conn);
+
+            try
+            {
+                DBProxy.Current.ExecuteByConn(conn, sb.ToString());
+
+                using (System.Data.SqlClient.SqlBulkCopy bulkcopy = new System.Data.SqlClient.SqlBulkCopy(conn))
+                {
+                    bulkcopy.BulkCopyTimeout = 60;
+                    if (temptablename.TrimStart().StartsWith("#"))
+                    {
+                        bulkcopy.DestinationTableName = temptablename.Trim();
+                    }
+                    else
+                    {
+                        bulkcopy.DestinationTableName = string.Format("#{0}", temptablename.Trim());
+                    }
+
+                    for (int i = 0; i < cols.Length; i++)
+                    {
+                        bulkcopy.ColumnMappings.Add(cols[i], cols[i]);
+                    }
+                    bulkcopy.WriteToServer(source);
+                    bulkcopy.Close();
+                }
+                DBProxy.Current.SelectByConn(conn, sqlcmd, out result);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+
+    }
+}
