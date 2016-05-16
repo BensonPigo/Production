@@ -46,20 +46,11 @@ namespace Sci.Production.PPIC
 		from SewingOutput_Detail sd
 		inner join SewingOutput s on sd.ID = s.ID
 		where sd.OrderId = '{0}') as LastSewingDate,
-isnull((select SUM(QAQty) as QAQty
-		from (select Article,SizeCode,MIN(QAQty) as QAQty
-			  from (select sl.Location,sdd.Article,sdd.SizeCode,isnull(SUM(sdd.QAQty),0) as QAQty
-			  		from Style_Location sl
-					left join SewingOutput_Detail_Detail sdd on sdd.ComboType = sl.Location
-					where sl.StyleUkey = {1}
-					and sdd.OrderId = '{0}'
-					group by sl.Location,sdd.Article,sdd.SizeCode) a
-		group by Article,SizeCode) a),0) as SewingQty,
+isnull((dbo.getMinCompleteSewQty('{0}',null,null)),0) as SewingQty,
 isnull((select SUM(c.Qty)
 	   from Orders o
 	   inner join CuttingOutput_WIP c on o.ID = c.OrderID
-	   where {2}),0) as CutQty", MyUtility.Convert.GetString(masterData["ID"]),
-                                        MyUtility.Convert.GetString(masterData["StyleUkey"]),
+	   where {1}),0) as CutQty", MyUtility.Convert.GetString(masterData["ID"]),
                                         cuttingWorkType == "1" ? string.Format("o.CuttingSP = '{0}'", MyUtility.Convert.GetString(masterData["CuttingSP"])) : string.Format("o.ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"])));
             DataTable summaryQty;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out summaryQty);
