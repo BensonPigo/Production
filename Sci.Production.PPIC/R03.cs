@@ -105,7 +105,7 @@ o.ActPulloutDate,o.SMR,o.MRHandle,o.MCHandle,o.OrigBuyerDelivery,o.DoxType,o.Tot
 o.VasShas,o.TissuePaper,o.MTLExport,o.SewLine,o.ShipModeList,o.PlanDate,o.FirstProduction,o.OrderTypeID,
 o.SpecialMark,o.SampleReason,o.InspDate,o.InspResult,o.InspHandle,o.MnorderApv,o.PulloutComplete,
 o.FtyKPI,o.KPIChangeReason,o.EachConsApv,o.Junk,o.StyleUkey,o.CuttingSP,o.RainwearTestPassed,o.BrandFTYCode,
-o.CPUFactor,o.ClogLastReceiveDate,o.IsMixMarker
+o.CPUFactor,o.ClogLastReceiveDate,o.IsMixMarker,o.GFR
 from Orders o
 inner join Order_QtyShip oq on o.ID = oq.Id
 where 1=1");
@@ -248,7 +248,7 @@ o.ActPulloutDate,o.SMR,o.MRHandle,o.MCHandle,o.OrigBuyerDelivery,o.DoxType,o.Tot
 o.VasShas,o.TissuePaper,o.MTLExport,o.SewLine,o.ShipModeList,o.PlanDate,o.FirstProduction,o.OrderTypeID,
 o.SpecialMark,o.SampleReason,o.InspDate,o.InspResult,o.InspHandle,o.MnorderApv,o.PulloutComplete,o.FtyKPI,
 o.KPIChangeReason,o.EachConsApv,o.Junk,o.StyleUkey,o.CuttingSP,o.RainwearTestPassed,o.BrandFTYCode,o.CPUFactor,
-o.ClogLastReceiveDate,o.IsMixMarker
+o.ClogLastReceiveDate,o.IsMixMarker,o.GFR
 from Orders o 
 where POID in (select distinct POID from tmpFilterSubProcess)
 )");
@@ -278,7 +278,7 @@ isnull((select SUM(pd.CTNQty) from PackingList_Detail pd where pd.OrderID = t.ID
 isnull((select SUM(pd.CTNQty) from PackingList_Detail pd where pd.OrderID = t.ID and pd.OrderShipmodeSeq = oq.Seq and pd.ReceiveDate is not null),0) as ClogCTN,
 t.VasShas,t.TissuePaper,t.MTLExport,t.SewLine,oq.ShipmodeID as ShipModeList,t.PlanDate,t.FirstProduction,t.OrderTypeID,
 t.SpecialMark,t.SampleReason,t.InspDate,t.InspResult,t.InspHandle,t.MnorderApv,t.PulloutComplete,t.FtyKPI,t.KPIChangeReason,t.EachConsApv,
-t.Junk,t.StyleUkey,t.CuttingSP,t.RainwearTestPassed,t.BrandFTYCode,t.CPUFactor,oq.Seq,t.ClogLastReceiveDate,t.IsMixMarker
+t.Junk,t.StyleUkey,t.CuttingSP,t.RainwearTestPassed,t.BrandFTYCode,t.CPUFactor,oq.Seq,t.ClogLastReceiveDate,t.IsMixMarker,t.GFR
 from tmpListPoCombo t
 inner join Order_QtyShip oq on t.ID = oq.Id
 )
@@ -384,24 +384,26 @@ order by t.ID");
                 return failResult;
             }
 
-            if (artwork || pap)
+            if (printData.Rows.Count > 0)
             {
-                #region 組Subprocess欄位名稱
-                string classify;
-                if (artwork && pap)
+                if (artwork || pap)
                 {
-                    classify = "'I','S','A','O','P'";
-                }
-                else if (artwork)
-                {
-                    classify = "'I','S','A','O'";
-                }
-                else
-                {
-                    classify = "'P'";
-                }
-                sqlCmd.Clear();
-                sqlCmd.Append(string.Format(@"With SubProcess
+                    #region 組Subprocess欄位名稱
+                    string classify;
+                    if (artwork && pap)
+                    {
+                        classify = "'I','S','A','O','P'";
+                    }
+                    else if (artwork)
+                    {
+                        classify = "'I','S','A','O'";
+                    }
+                    else
+                    {
+                        classify = "'P'";
+                    }
+                    sqlCmd.Clear();
+                    sqlCmd.Append(string.Format(@"With SubProcess
 as (
 select *,(ROW_NUMBER() OVER (ORDER BY a.ID, a.ColumnSeq)) as rno from (
 SELECT ID,Seq,ArtworkUnit,ProductionUnit,SystemType,Seq+'U1' as FakeID,RTRIM(ID)+' ('+ArtworkUnit+')' as ColumnN, '1' as ColumnSeq FROM ArtworkType
@@ -426,21 +428,21 @@ SELECT 'TTLTMS' as ID,'' as Seq,'' as ArtworkUnit,'' as ProductionUnit, '' as Sy
 union
 select * from TTL_Subprocess) a", classify, (!artwork ? "" : @"union all
 SELECT 'PrintSubCon' as ID,'' as Seq,'' as ArtworkUnit,'' as ProductionUnit, '' as SystemType,'9999ZZ' as FakeID,'SubCon' as ColumnN,'999' as ColumnSeq"),
-                                                                                                                                                        "112"));
-                #endregion
-                result = DBProxy.Current.Select(null, sqlCmd.ToString(), out subprocessColumnName);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query artworktype fail\r\n" + result.ToString());
-                    return failResult;
-                }
-                
-                #region 撈Order Subprocess資料
-                try
-                {
-                    MyUtility.Tool.ProcessWithDatatable(subprocessColumnName,
-                        "ID,Seq,ArtworkUnit,ProductionUnit,SystemType,FakeID,ColumnN,ColumnSeq,rno",
-                        @"with ArtworkData 
+                                                                                                                                                            "112"));
+                    #endregion
+                    result = DBProxy.Current.Select(null, sqlCmd.ToString(), out subprocessColumnName);
+                    if (!result)
+                    {
+                        DualResult failResult = new DualResult(false, "Query artworktype fail\r\n" + result.ToString());
+                        return failResult;
+                    }
+
+                    #region 撈Order Subprocess資料
+                    try
+                    {
+                        MyUtility.Tool.ProcessWithDatatable(subprocessColumnName,
+                            "ID,Seq,ArtworkUnit,ProductionUnit,SystemType,FakeID,ColumnN,ColumnSeq,rno",
+                            @"with ArtworkData 
 as (
 select * from #tmp
 )
@@ -456,12 +458,13 @@ left join ArtworkData a2 on a2.FakeID = ot.Seq
 left join ArtworkData a3 on a3.FakeID = 'T'+ot.Seq+'U1' 
 left join ArtworkData a4 on a4.FakeID = 'T'+ot.Seq+'U2'
 left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
+                    }
+                    catch (Exception ex)
+                    {
+                        DualResult failResult = new DualResult(false, "Query order tms & cost fail\r\n" + ex.ToString());
+                    }
+                    #endregion
                 }
-                catch (Exception ex)
-                {
-                    DualResult failResult = new DualResult(false, "Query order tms & cost fail\r\n" + ex.ToString());
-                }
-                #endregion   
             }
             DBProxy.Current.DefaultTimeout = 0;
             stdTMS = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup("select StdTMS from System"));
@@ -549,7 +552,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 objArray[0, 28] = MyUtility.Convert.GetString(dr["TissuePaper"]).ToUpper() == "TRUE" ? "Y" : "";
                 objArray[0, 29] = dr["ExpectionForm"];
                 objArray[0, 30] = dr["ExpectionFormRemark"];
-                //objArray[0, 31] = dr[""];
+                objArray[0, 31] = MyUtility.Convert.GetString(dr["GFR"]).ToUpper() == "TRUE" ? "Y" : "";
                 objArray[0, 32] = dr["BrandID"];
                 objArray[0, 33] = dr["CustCDID"];
                 objArray[0, 34] = dr["BrandFTYCode"];
@@ -687,13 +690,16 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                                 objArray[0, MyUtility.Convert.GetInt(sdr["TNRno"]) - 1] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(sdr["Qty"]);
                             }
 
-                            if (!MyUtility.Check.Empty(sdr["Supp"]))
+                            if (subConCol != 9999)
                             {
-                                objArray[0, subConCol - 1] = sdr["Supp"];
-                            }
-                            else
-                            {
-                                objArray[0, subConCol - 1] = "";
+                                if (!MyUtility.Check.Empty(sdr["Supp"]))
+                                {
+                                    objArray[0, subConCol - 1] = sdr["Supp"];
+                                }
+                                else
+                                {
+                                    objArray[0, subConCol - 1] = "";
+                                }
                             }
                         }
                     }
