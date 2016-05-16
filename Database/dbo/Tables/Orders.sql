@@ -143,7 +143,7 @@
     [KPIEachConsApprove] DATE NULL, 
     [KPICmpq] DATE NULL, 
     [KPIMNotice] DATE NULL, 
-    [GMTComplete ] VARCHAR NULL, 
+    [GMTComplete ] VARCHAR NULL DEFAULT (''), 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
