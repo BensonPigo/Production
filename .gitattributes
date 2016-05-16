@@ -10,7 +10,10 @@ Database/Storage/SLAVE.sql -text
 Database/dbo/Functions/GetCPURate.sql -text
 Database/dbo/Functions/GetCurrencyRate.sql -text
 Database/dbo/Functions/GetDigitalValue.sql -text
+Database/dbo/Functions/GetHaveDelaySupp.sql -text
 Database/dbo/Functions/GetPriceFromMtl.sql -text
+Database/dbo/Functions/GetSimilarStyleList.sql -text
+Database/dbo/Functions/GetStyleGMTLT.sql -text
 Database/dbo/Functions/GetSuppColor.sql -text
 Database/dbo/Functions/GetSuppColorList.sql -text
 Database/dbo/Functions/GetSuppColor_1.sql -text
@@ -27,6 +30,7 @@ Database/dbo/Functions/getInvAdjQty.sql -text
 Database/dbo/Functions/getItemDesc.sql -text
 Database/dbo/Functions/getMTLExport.sql -text
 Database/dbo/Functions/getMinCompleteSewQty.sql -text
+Database/dbo/Functions/getMinSCIDelivery.sql -text
 Database/dbo/Functions/getMtlDesc.sql -text
 Database/dbo/Functions/getOrderUnitPrice.sql -text
 Database/dbo/Functions/getPOComboList.sql -text

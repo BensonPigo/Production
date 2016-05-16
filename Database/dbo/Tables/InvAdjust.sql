@@ -1,15 +1,15 @@
 ﻿CREATE TABLE [dbo].[InvAdjust] (
     [ID]               VARCHAR (13)   CONSTRAINT [DF_InvAdjust_ID] DEFAULT ('') NOT NULL,
     [IssueDate]        DATE           NULL,
-    [REASON]           TINYINT        CONSTRAINT [DF_InvAdjust_REASON] DEFAULT ((0)) NULL,
+    [REASON]           VARCHAR (1)    CONSTRAINT [DF_InvAdjust_REASON] DEFAULT ('') NULL,
     [NegoinvID]        VARCHAR (25)   CONSTRAINT [DF_InvAdjust_NegoinvID] DEFAULT ('') NULL,
     [OrderID]          VARCHAR (13)   CONSTRAINT [DF_InvAdjust_OrderID] DEFAULT ('') NULL,
     [PullDate]         DATE           NULL,
     [Pullout3ukey]     BIGINT         CONSTRAINT [DF_InvAdjust_Pullout3ukey] DEFAULT ((0)) NULL,
     [BrandID]          VARCHAR (8)    CONSTRAINT [DF_InvAdjust_BrandID] DEFAULT ('') NULL,
     [FactoryID]        VARCHAR (8)    CONSTRAINT [DF_InvAdjust_FactoryID] DEFAULT ('') NULL,
-    [ARVoucherNo]      VARCHAR (16)   CONSTRAINT [DF_InvAdjust_ARVoucherNo] DEFAULT ('') NULL,
-    [VoucherNo]        VARCHAR (16)   CONSTRAINT [DF_InvAdjust_VoucherNo] DEFAULT ('') NULL,
+    [ARVoucherID]      VARCHAR (16)   CONSTRAINT [DF_InvAdjust_ARVoucherNo] DEFAULT ('') NULL,
+    [VoucherID]        VARCHAR (16)   CONSTRAINT [DF_InvAdjust_VoucherNo] DEFAULT ('') NULL,
     [Status]           VARCHAR (1)    CONSTRAINT [DF_InvAdjust_Status] DEFAULT ('') NULL,
     [OrigPulloutQty]   INT            CONSTRAINT [DF_InvAdjust_OrigPulloutQty] DEFAULT ((0)) NULL,
     [OrigPrice]        NUMERIC (7, 2) CONSTRAINT [DF_InvAdjust_OrigPrice] DEFAULT ((0)) NULL,
@@ -33,6 +33,8 @@
     [MDivisionID]      VARCHAR (8)    CONSTRAINT [DF_InvAdjust_MDivisionID] DEFAULT ('') NULL,
     CONSTRAINT [PK_InvAdjust] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -78,11 +80,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠代�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'應收帳款的立帳傳票編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust', @level2type = N'COLUMN', @level2name = N'ARVoucherNo';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust', @level2type = N'COLUMN', @level2name = N'VoucherNo';
+
 
 
 GO
@@ -167,4 +169,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Qty Breakdo
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust', @level2type = N'COLUMN', @level2name = N'MDivisionID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust', @level2type = N'COLUMN', @level2name = N'VoucherID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'應收帳款的立帳傳票編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust', @level2type = N'COLUMN', @level2name = N'ARVoucherID';
 
