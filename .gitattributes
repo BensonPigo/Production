@@ -15,6 +15,7 @@ Database/dbo/Functions/GetPriceFromMtl.sql -text
 Database/dbo/Functions/GetRequestETA.sql -text
 Database/dbo/Functions/GetSCI.sql -text
 Database/dbo/Functions/GetSimilarStyleList.sql -text
+Database/dbo/Functions/GetStdQty.sql -text
 Database/dbo/Functions/GetStyleGMTLT.sql -text
 Database/dbo/Functions/GetSuppColor.sql -text
 Database/dbo/Functions/GetSuppColorList.sql -text
