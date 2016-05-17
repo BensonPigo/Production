@@ -4,7 +4,7 @@
     [Dyelot]             VARCHAR (4)    CONSTRAINT [DF_FIR_Laboratory_Wash_Dyelot] DEFAULT ('') NOT NULL,
     [Inspdate]           DATE           NULL,
     [Inspector]          VARCHAR (10)   CONSTRAINT [DF_FIR_Laboratory_Wash_Inspector] DEFAULT ('') NULL,
-    [Result]             VARCHAR (1)    CONSTRAINT [DF_FIR_Laboratory_Wash_Result] DEFAULT ('') NULL,
+    [Result]             VARCHAR (5)    CONSTRAINT [DF_FIR_Laboratory_Wash_Result] DEFAULT ('') NULL,
     [Remark]             NVARCHAR (100) CONSTRAINT [DF_FIR_Laboratory_Wash_Remark] DEFAULT ('') NULL,
     [AddName]            VARCHAR (10)   CONSTRAINT [DF_FIR_Laboratory_Wash_AddName] DEFAULT ('') NULL,
     [AddDate]            DATETIME       NULL,
@@ -22,6 +22,8 @@
     [VerticalTest3]      NUMERIC (4, 2) CONSTRAINT [DF_FIR_Laboratory_Wash_VerticalTest3] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_FIR_Laboratory_Wash] PRIMARY KEY CLUSTERED ([ID] ASC, [Roll] ASC, [Dyelot] ASC)
 );
+
+
 
 
 GO

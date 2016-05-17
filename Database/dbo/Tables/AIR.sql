@@ -13,7 +13,7 @@
     [InspDate]            DATE            NULL,
     [Inspector]           VARCHAR (10)    CONSTRAINT [DF_AIR_Inspector] DEFAULT ('') NULL,
     [Defect]              VARCHAR (60)    CONSTRAINT [DF_AIR_Defect] DEFAULT ('') NULL,
-    [Result]              VARCHAR (1)     CONSTRAINT [DF_AIR_Result] DEFAULT ('') NULL,
+    [Result]              VARCHAR (5)     CONSTRAINT [DF_AIR_Result] DEFAULT ('') NULL,
     [Remark]              NVARCHAR (100)  CONSTRAINT [DF_AIR_Remark] DEFAULT ('') NULL,
     [ReplacementReportID] VARCHAR (13)    CONSTRAINT [DF_AIR_ReplacementReportID] DEFAULT ('') NULL,
     [ReceivingID]         VARCHAR (13)    CONSTRAINT [DF_AIR_ReceivingID] DEFAULT ('') NOT NULL,
@@ -24,6 +24,8 @@
     [EditDate]            DATETIME        NULL,
     CONSTRAINT [PK_AIR] PRIMARY KEY CLUSTERED ([ID] ASC, [ReceivingID] ASC)
 );
+
+
 
 
 

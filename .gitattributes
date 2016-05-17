@@ -12,6 +12,8 @@ Database/dbo/Functions/GetCurrencyRate.sql -text
 Database/dbo/Functions/GetDigitalValue.sql -text
 Database/dbo/Functions/GetHaveDelaySupp.sql -text
 Database/dbo/Functions/GetPriceFromMtl.sql -text
+Database/dbo/Functions/GetRequestETA.sql -text
+Database/dbo/Functions/GetSCI.sql -text
 Database/dbo/Functions/GetSimilarStyleList.sql -text
 Database/dbo/Functions/GetStyleGMTLT.sql -text
 Database/dbo/Functions/GetSuppColor.sql -text

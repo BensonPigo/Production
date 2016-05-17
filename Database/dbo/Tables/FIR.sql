@@ -11,22 +11,22 @@
     [ArriveQty]           NUMERIC (10, 2) CONSTRAINT [DF_FIR_ArriveQty] DEFAULT ((0)) NULL,
     [TotalInspYds]        NUMERIC (10, 2) CONSTRAINT [DF_FIR_TotalInspYds] DEFAULT ((0)) NULL,
     [TotalDefectPoint]    NUMERIC (5)     CONSTRAINT [DF_FIR_TotalDefectPoint] DEFAULT ((0)) NULL,
-    [Result]              VARCHAR (1)     CONSTRAINT [DF_FIR_Result] DEFAULT ('') NULL,
+    [Result]              VARCHAR (5)     CONSTRAINT [DF_FIR_Result] DEFAULT ('') NULL,
     [Remark]              NVARCHAR (100)  CONSTRAINT [DF_FIR_Remark] DEFAULT ('') NULL,
     [Nonphysical]         BIT             CONSTRAINT [DF_FIR_Nonphysical] DEFAULT ((0)) NULL,
-    [Physical]            VARCHAR (1)     CONSTRAINT [DF_FIR_Physical] DEFAULT ('') NULL,
+    [Physical]            VARCHAR (5)     CONSTRAINT [DF_FIR_Physical] DEFAULT ('') NULL,
     [PhysicalEncode]      BIT             CONSTRAINT [DF_FIR_PhysicalEncode] DEFAULT ((0)) NULL,
     [PhysicalDate]        DATETIME        NULL,
     [nonWeight]           BIT             CONSTRAINT [DF_FIR_nonWeight] DEFAULT ((0)) NULL,
-    [Weight]              VARCHAR (1)     CONSTRAINT [DF_FIR_Weight] DEFAULT ('') NULL,
+    [Weight]              VARCHAR (5)     CONSTRAINT [DF_FIR_Weight] DEFAULT ('') NULL,
     [WeightEncode]        BIT             CONSTRAINT [DF_FIR_WeightEncode] DEFAULT ((0)) NULL,
     [WeightDate]          DATETIME        NULL,
     [nonShadebond]        BIT             CONSTRAINT [DF_FIR_nonShadebond] DEFAULT ((0)) NULL,
-    [ShadeBond]           VARCHAR (1)     CONSTRAINT [DF_FIR_ShadeBond] DEFAULT ('') NULL,
+    [ShadeBond]           VARCHAR (5)     CONSTRAINT [DF_FIR_ShadeBond] DEFAULT ('') NULL,
     [ShadebondEncode]     BIT             CONSTRAINT [DF_FIR_ShadebondEncode] DEFAULT ((0)) NULL,
     [ShadeBondDate]       DATETIME        NULL,
     [nonContinuity]       BIT             CONSTRAINT [DF_FIR_nonContinuity] DEFAULT ((0)) NULL,
-    [Continuity]          VARCHAR (1)     CONSTRAINT [DF_FIR_Continuity] DEFAULT ('') NULL,
+    [Continuity]          VARCHAR (5)     CONSTRAINT [DF_FIR_Continuity] DEFAULT ('') NULL,
     [ContinuityEncode]    BIT             CONSTRAINT [DF_FIR_ContinuityEncode] DEFAULT ((0)) NULL,
     [ContinuityDate]      DATETIME        NULL,
     [InspDeadline]        DATE            NULL,
@@ -39,6 +39,8 @@
     [Status]              VARCHAR (15)    CONSTRAINT [DF_FIR_Status] DEFAULT ('') NULL,
     CONSTRAINT [PK_FIR] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

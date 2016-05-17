@@ -7,7 +7,7 @@
     [Difference]      NUMERIC (5, 2) CONSTRAINT [DF_FIR_Weight_Difference] DEFAULT ((0)) NOT NULL,
     [Inspdate]        DATE           NULL,
     [Inspector]       VARCHAR (10)   CONSTRAINT [DF_FIR_Weight_Inspector] DEFAULT ('') NULL,
-    [Result]          VARCHAR (1)    CONSTRAINT [DF_FIR_Weight_Result] DEFAULT ('') NULL,
+    [Result]          VARCHAR (5)    CONSTRAINT [DF_FIR_Weight_Result] DEFAULT ('') NULL,
     [Remark]          NVARCHAR (100) CONSTRAINT [DF_FIR_Weight_Remark] DEFAULT ('') NULL,
     [AddName]         VARCHAR (10)   CONSTRAINT [DF_FIR_Weight_AddName] DEFAULT ('') NULL,
     [AddDate]         DATETIME       NULL,
@@ -15,6 +15,8 @@
     [EditDate]        DATETIME       NULL,
     CONSTRAINT [PK_FIR_Weight] PRIMARY KEY CLUSTERED ([ID] ASC, [Roll] ASC, [Dyelot] ASC)
 );
+
+
 
 
 GO

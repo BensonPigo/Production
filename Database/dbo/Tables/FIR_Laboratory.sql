@@ -4,9 +4,9 @@
     [SEQ1]              VARCHAR (3)   CONSTRAINT [DF_FIR_Laboratory_SEQ] DEFAULT ('') NOT NULL,
     [SEQ2]              VARCHAR (2)   CONSTRAINT [DF_FIR_Laboratory_SEQ2] DEFAULT ('') NOT NULL,
     [InspDeadline]      DATE          NULL,
-    [Crocking]          VARCHAR (1)   CONSTRAINT [DF_FIR_Laboratory_Crocking] DEFAULT ('') NULL,
-    [Heat]              VARCHAR (1)   CONSTRAINT [DF_FIR_Laboratory_Heat] DEFAULT ('') NULL,
-    [Wash]              VARCHAR (1)   CONSTRAINT [DF_FIR_Laboratory_Wash] DEFAULT ('') NULL,
+    [Crocking]          VARCHAR (5)   CONSTRAINT [DF_FIR_Laboratory_Crocking] DEFAULT ('') NULL,
+    [Heat]              VARCHAR (5)   CONSTRAINT [DF_FIR_Laboratory_Heat] DEFAULT ('') NULL,
+    [Wash]              VARCHAR (5)   CONSTRAINT [DF_FIR_Laboratory_Wash] DEFAULT ('') NULL,
     [CrockingDate]      DATE          NULL,
     [HeatDate]          DATE          NULL,
     [WashDate]          DATE          NULL,
@@ -14,7 +14,7 @@
     [HeatRemark]        VARCHAR (100) CONSTRAINT [DF_FIR_Laboratory_HeatRemark] DEFAULT ('') NULL,
     [WashRemark]        VARCHAR (100) CONSTRAINT [DF_FIR_Laboratory_WashRemark] DEFAULT ('') NULL,
     [ReceiveSampleDate] DATE          NULL,
-    [Result]            VARCHAR (1)   CONSTRAINT [DF_FIR_Laboratory_Result] DEFAULT ('') NULL,
+    [Result]            VARCHAR (5)   CONSTRAINT [DF_FIR_Laboratory_Result] DEFAULT ('') NULL,
     [nonCrocking]       BIT           CONSTRAINT [DF_FIR_Laboratory_nonCrocking] DEFAULT ((0)) NULL,
     [nonHeat]           BIT           CONSTRAINT [DF_FIR_Laboratory_nonHeat] DEFAULT ((0)) NULL,
     [nonWash]           BIT           CONSTRAINT [DF_FIR_Laboratory_nonWash] DEFAULT ((0)) NULL,
@@ -23,6 +23,8 @@
     [WashEncode]        BIT           CONSTRAINT [DF_FIR_Laboratory_WashEncode] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_FIR_Laboratory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

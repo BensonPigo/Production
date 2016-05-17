@@ -4,17 +4,17 @@
     [SEQ1]          VARCHAR (3)     CONSTRAINT [DF_AIR_Laboratory_SEQ] DEFAULT ('') NOT NULL,
     [SEQ2]          VARCHAR (2)     CONSTRAINT [DF_AIR_Laboratory_SEQ2] DEFAULT ('') NOT NULL,
     [Qty]           NUMERIC (10, 2) CONSTRAINT [DF_AIR_Laboratory_Qty] DEFAULT ((0)) NULL,
-    [Result]        VARCHAR (1)     CONSTRAINT [DF_AIR_Laboratory_Result] DEFAULT ('') NULL,
+    [Result]        VARCHAR (5)     CONSTRAINT [DF_AIR_Laboratory_Result] DEFAULT ('') NULL,
     [InspDeadLine]  DATE            NULL,
     [NonOven]       BIT             CONSTRAINT [DF_AIR_Laboratory_NonOven] DEFAULT ((0)) NULL,
-    [Oven]          VARCHAR (1)     CONSTRAINT [DF_AIR_Laboratory_Oven] DEFAULT ('') NULL,
+    [Oven]          VARCHAR (5)     CONSTRAINT [DF_AIR_Laboratory_Oven] DEFAULT ('') NULL,
     [OvenEncode]    BIT             CONSTRAINT [DF_AIR_Laboratory_OvenEncode] DEFAULT ((0)) NULL,
     [OvenDate]      DATE            NULL,
     [OvenScale]     VARCHAR (5)     CONSTRAINT [DF_AIR_Laboratory_OvenScale] DEFAULT ('') NULL,
     [OvenInspector] VARCHAR (10)    CONSTRAINT [DF_AIR_Laboratory_OvenInspector] DEFAULT ('') NULL,
     [OvenRemark]    VARCHAR (60)    CONSTRAINT [DF_AIR_Laboratory_OvenRemark] DEFAULT ('') NULL,
     [NonWash]       BIT             CONSTRAINT [DF_AIR_Laboratory_NonWash] DEFAULT ((0)) NULL,
-    [Wash]          VARCHAR (1)     CONSTRAINT [DF_AIR_Laboratory_Wash] DEFAULT ('') NULL,
+    [Wash]          VARCHAR (5)     CONSTRAINT [DF_AIR_Laboratory_Wash] DEFAULT ('') NULL,
     [WashEncode]    BIT             CONSTRAINT [DF_AIR_Laboratory_WashEncode] DEFAULT ((0)) NULL,
     [WashDate]      DATE            NULL,
     [WashScale]     VARCHAR (5)     CONSTRAINT [DF_AIR_Laboratory_WashScale] DEFAULT ('') NULL,
@@ -26,6 +26,8 @@
     [EditDate]      DATETIME        NULL,
     CONSTRAINT [PK_AIR_Laboratory] PRIMARY KEY CLUSTERED ([ID] ASC, [POID] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
+
+
 
 
 

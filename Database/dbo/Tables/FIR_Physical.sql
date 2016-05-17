@@ -9,7 +9,7 @@
     [TotalPoint]  NUMERIC (6)    CONSTRAINT [DF_FIR_Physical_TotalPoint] DEFAULT ((0)) NULL,
     [PointRate]   NUMERIC (6, 2) CONSTRAINT [DF_FIR_Physical_PointRate] DEFAULT ((0)) NULL,
     [Grade]       VARCHAR (1)    CONSTRAINT [DF_FIR_Physical_Grade] DEFAULT ('') NULL,
-    [Result]      VARCHAR (1)    CONSTRAINT [DF_FIR_Physical_Result] DEFAULT ('') NULL,
+    [Result]      VARCHAR (5)    CONSTRAINT [DF_FIR_Physical_Result] DEFAULT ('') NULL,
     [Remark]      NVARCHAR (60)  CONSTRAINT [DF_FIR_Physical_Remark] DEFAULT ('') NULL,
     [InspDate]    DATE           NULL,
     [Inspector]   VARCHAR (10)   CONSTRAINT [DF_FIR_Physical_Inspector] DEFAULT ('') NULL,
@@ -21,6 +21,8 @@
     [EditDate]    DATETIME       NULL,
     CONSTRAINT [PK_FIR_Physical] PRIMARY KEY CLUSTERED ([DetailUkey] ASC)
 );
+
+
 
 
 GO

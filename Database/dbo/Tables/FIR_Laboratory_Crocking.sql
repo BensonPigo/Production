@@ -6,7 +6,7 @@
     [WetScale]  VARCHAR (5)    CONSTRAINT [DF_FIR_Laboratory_Crocking_WetScale] DEFAULT ('') NULL,
     [Inspdate]  DATE           NULL,
     [Inspector] VARCHAR (10)   CONSTRAINT [DF_FIR_Laboratory_Crocking_Inspector] DEFAULT ('') NULL,
-    [Result]    VARCHAR (1)    CONSTRAINT [DF_FIR_Laboratory_Crocking_Result] DEFAULT ('') NULL,
+    [Result]    VARCHAR (5)    CONSTRAINT [DF_FIR_Laboratory_Crocking_Result] DEFAULT ('') NULL,
     [Remark]    NVARCHAR (100) CONSTRAINT [DF_FIR_Laboratory_Crocking_Remark] DEFAULT ('') NULL,
     [AddName]   VARCHAR (10)   CONSTRAINT [DF_FIR_Laboratory_Crocking_AddName] DEFAULT ('') NULL,
     [AddDate]   DATETIME       NULL,
@@ -14,6 +14,8 @@
     [EditDate]  DATETIME       NULL,
     CONSTRAINT [PK_FIR_Laboratory_Crocking] PRIMARY KEY CLUSTERED ([ID] ASC, [Roll] ASC, [Dyelot] ASC)
 );
+
+
 
 
 GO
