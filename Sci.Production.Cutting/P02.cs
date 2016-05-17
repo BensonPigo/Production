@@ -846,7 +846,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
                     if (!this.EditMode) { return; }
                     DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
-                    if (dr["OrderID"].ToString() == "EXCESS" || CurrentDetailData["Cutplanid"]!="") return;
+                    if (dr["OrderID"].ToString() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString()!="") return;
                     sele = new SelectItem(spTb, "ID", "23", dr["OrderID"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -907,7 +907,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
                     if (!this.EditMode) { return; }       
                     DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
-                    if (dr["OrderID"].ToString() == "EXCESS" || CurrentDetailData["Cutplanid"] != "") return;
+                    if (dr["OrderID"].ToString() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;
                     sele = new SelectItem(sizeGroup, "SizeCode", "23", dr["SizeCode"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -1478,11 +1478,16 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             else sizeRatioQty = Convert.ToInt32(comput);
 
             decimal MarkerLengthNum, Conspc;
-            string MarkerLengthstr;
-            MarkerLengthstr = CurrentDetailData["MarkerLengthY"].ToString() + "Ｙ" + CurrentDetailData["MarkerLengthE"].ToString();
+            string MarkerLengthstr,lenY,lenE;
+            if (MyUtility.Check.Empty(CurrentDetailData["MarkerLengthE"])) lenY = "0";
+            else lenY = CurrentDetailData["MarkerLengthY"].ToString();
+            if (MyUtility.Check.Empty(CurrentDetailData["MarkerLengthE"])) lenE = "0-0/0+0\"";
+            else lenE = CurrentDetailData["MarkerLengthE"].ToString();
+            MarkerLengthstr = lenY + "Ｙ" + lenE;
             MarkerLengthNum = Convert.ToDecimal(MyUtility.GetValue.Lookup(string.Format("Select dbo.MarkerLengthToYDS('{0}')", MarkerLengthstr)));
             //Conspc = MarkerLength / SizeRatio Qty
-            Conspc = MarkerLengthNum / sizeRatioQty;
+            if (sizeRatioQty == 0) Conspc = 0;
+            else Conspc = MarkerLengthNum / sizeRatioQty;
             if(updateConsPC==true) 
                 CurrentDetailData["Conspc"] = Conspc;
             if (updateCons==true)
@@ -1661,7 +1666,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
                
                 foreach (DataRow dr in dt.Rows)
                 {
-                    msg1 = msg1 + dr["WorkOrderUkey"].ToString()+"/n";                  
+                    msg1 = msg1 + dr["WorkOrderUkey"].ToString()+"\n";                  
                 }
             }
 
@@ -1671,7 +1676,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
 
                 foreach (DataRow dr in dt.Rows)
                 {
-                    msg2 = msg2 + dr["WorkOrderUkey"].ToString() + "/n";
+                    msg2 = msg2 + dr["WorkOrderUkey"].ToString() + "\n";
                 }
             }
             if (!MyUtility.Check.Empty(msg1))
@@ -1746,7 +1751,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
                 #region 刪除
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    delsql = delsql + string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and id='{4}';", dr["Ukey"], dr["SizeCode"],dr["Article"],dr["Orderid"],cId);
+                    delsql = delsql + string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and id='{4}';", dr["WorkOrderUkey"], dr["SizeCode"], dr["Article"], dr["Orderid"], cId);
                 }
                 #endregion
                 #region 修改

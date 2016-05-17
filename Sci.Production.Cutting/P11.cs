@@ -317,7 +317,7 @@ namespace Sci.Production.Cutting
             #region 右上一Grid
             this.ArticleSize_grid.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(ArticleSize_grid)
-                .CheckBox("Sel", header: "", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings:charticle)
+           .CheckBox("Sel", header: "", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings:charticle)
            .Text("OrderID", header: "Sub-SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
            .Text("Article", header: "Article", width: Widths.AnsiChars(6), iseditingreadonly: true)
            .Text("Colorid", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)

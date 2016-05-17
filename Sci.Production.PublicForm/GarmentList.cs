@@ -82,8 +82,9 @@ namespace Sci.Production.PublicForm
                 foreach (DataRow lecdr in lecdrar)
                 {
                     string artgroup = lecdr["ArticleGroup"].ToString().Trim();
-                    dr[artgroup] = lecdr["Lectracode"].ToString().Trim();
+                    dr[artgroup] = lecdr["PatternPanel"].ToString().Trim();
                 }
+                if (dr["SEQ"].ToString() == "0001") dr["PatternCode"] = dr["PatternCode"].ToString().Substring(10);
             }
             #endregion
 

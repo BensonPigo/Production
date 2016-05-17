@@ -104,6 +104,7 @@
     <Compile Include="Subcon.cs" />
     <Compile Include="Warehouse.cs" />
     <Compile Include="Cutting.cs" />
+    <Compile Include="Quality.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">
