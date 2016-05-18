@@ -4,7 +4,7 @@
     [SMR]              VARCHAR (10)    CONSTRAINT [DF_LocalDebit_SMR] DEFAULT ('') NOT NULL,
     [MDivisionID]      VARCHAR (8)     CONSTRAINT [DF_LocalDebit_MDivisionID] DEFAULT ('') NOT NULL,
     [FactoryID]        VARCHAR (8)     CONSTRAINT [DF_LocalDebit_FactoryID] DEFAULT ('') NOT NULL,
-    [LocalSuppID]      VARCHAR (6)     CONSTRAINT [DF_LocalDebit_LocalSuppID] DEFAULT ('') NOT NULL,
+    [LocalSuppID]      VARCHAR (8)     CONSTRAINT [DF_LocalDebit_LocalSuppID] DEFAULT ('') NOT NULL,
     [Description]      NVARCHAR (MAX)  CONSTRAINT [DF_LocalDebit_Description] DEFAULT ('') NULL,
     [Exchange]         NUMERIC (8, 3)  CONSTRAINT [DF_LocalDebit_Exchange] DEFAULT ((0)) NULL,
     [Currencyid]       VARCHAR (3)     CONSTRAINT [DF_LocalDebit_Currencyid] DEFAULT ('') NULL,
@@ -31,6 +31,8 @@
     [EditDate]         DATETIME        NULL,
     CONSTRAINT [PK_LocalDebit] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -158,3 +160,21 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalDebit', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 
+
+GO
+
+CREATE TRIGGER UT_LocalDebit_Update ON DBO.LocalDebit 
+	FOR update 
+AS 
+BEGIN
+	DECLARE @ID AS VARCHAR(13);
+	DECLARE @EDITNAME AS VARCHAR(10);
+	DECLARE @UPDATE_AMOUNT AS NUMERIC(12,2);
+	DECLARE @ORI_AMOUNT AS NUMERIC(12,2);
+	select @UPDATE_AMOUNT=AMOUNT,@ID=ID,@EDITNAME = EditName from inserted
+	select @ORI_AMOUNT= AMOUNT from deleted 
+	IF @ORI_AMOUNT != @UPDATE_AMOUNT
+	BEGIN
+	   UPDATE DBO.LocalDebit SET AmtReviseDate=GETDATE(), AmtReviseName = @EDITNAME WHERE ID = @ID;
+	END
+END

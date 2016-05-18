@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Invtrans] (
     [ID]               VARCHAR (13)    CONSTRAINT [DF_Invtrans_ID] DEFAULT ('') NOT NULL,
-    [ConfirmDate]      DATE            NULL,
+    [ConfirmDate]      DATETIME        NULL,
     [ConfirmHandle]    VARCHAR (10)    CONSTRAINT [DF_Invtrans_ConfirmHandle] DEFAULT ('') NULL,
     [Confirmed]        BIT             CONSTRAINT [DF_Invtrans_Confirmed] DEFAULT ((0)) NOT NULL,
     [Qty]              NUMERIC (10, 2) CONSTRAINT [DF_Invtrans_Qty] DEFAULT ((0)) NOT NULL,
@@ -62,6 +62,8 @@
     [seq70seq2]        VARCHAR (2)     NULL,
     CONSTRAINT [PK_Invtrans] PRIMARY KEY CLUSTERED ([ID] ASC, [Ukey] ASC)
 );
+
+
 
 
 
@@ -314,4 +316,10 @@ GO
 CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
     ON [dbo].[Invtrans]([InventoryPOID] ASC, [InventorySeq1] ASC, [InventorySeq2] ASC)
     INCLUDE([Qty], [Type], [TransferFactory], [FactoryID], [UnitID]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [Type_ConfirmDate]
+    ON [dbo].[Invtrans]([Type] ASC, [ConfirmDate] ASC)
+    INCLUDE([ID], [Qty], [TransferFactory], [InventoryUkey], [InventoryRefnoId], [InventoryPOID], [InventorySeq1], [InventorySeq2], [ReasonID], [Refno], [FactoryID], [UnitID], [seq70poid], [seq70seq1], [seq70seq2]);
 
