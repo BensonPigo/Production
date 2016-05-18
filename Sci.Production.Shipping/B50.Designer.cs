@@ -67,6 +67,10 @@
             this.detailbtm.Location = new System.Drawing.Point(0, 261);
             this.detailbtm.Size = new System.Drawing.Size(676, 38);
             // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(676, 299);
+            // 
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(684, 328);
@@ -166,6 +170,7 @@
             this.ClientSize = new System.Drawing.Size(684, 361);
             this.DefaultOrder = "NLCode";
             this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B50";
             this.Text = "B50. CDC Goods\'s Description Basic Data";
