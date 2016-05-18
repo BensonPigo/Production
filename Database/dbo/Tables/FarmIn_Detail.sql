@@ -14,6 +14,8 @@
 );
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工返回明細', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FarmIn_Detail';
 
@@ -60,4 +62,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'捆包編�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ukey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FarmIn_Detail', @level2type = N'COLUMN', @level2name = N'ArtworkPo_DetailUkey';
+
+
+GO
+CREATE NONCLUSTERED INDEX [ArtworkPo_DetailUkey]
+    ON [dbo].[FarmIn_Detail]([ArtworkPo_DetailUkey] ASC)
+    INCLUDE([ID], [Qty]);
 
