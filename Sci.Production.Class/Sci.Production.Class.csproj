@@ -307,6 +307,12 @@
     <Compile Include="txtReason.Designer.cs">
       <DependentUpon>txtReason.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtAccountNo.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtAccountNo.Designer.cs">
+      <DependentUpon>txtAccountNo.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ict, Version=1.0.1502.1000, Culture=neutral, processorArchitecture=MSIL">
@@ -408,6 +414,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="txttpeuser_canedit.resx">
       <DependentUpon>txttpeuser_canedit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtAccountNo.resx">
+      <DependentUpon>txtAccountNo.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
