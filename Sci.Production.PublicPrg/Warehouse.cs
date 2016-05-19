@@ -479,7 +479,7 @@ for xml path('') ", ukey), out dt);
         }
         #endregion
 
-        public static IList<DataRow> autopick(DataRow materials)
+        public static IList<DataRow> autopick(DataRow materials,bool isIssue=true,string stocktype = "B")
         {
             List<DataRow> items = new List<DataRow>();
             String sqlcmd;
@@ -487,7 +487,10 @@ for xml path('') ", ukey), out dt);
 
             decimal request = decimal.Parse(materials["requestqty"].ToString());
             decimal accu_issue = 0m;
-            sqlcmd = string.Format(@"select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail where ukey = a.Ukey)t for xml path('')) location
+            if (isIssue)
+            {
+                sqlcmd = string.Format(@"
+select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail where ukey = a.Ukey)t for xml path('')) location
 ,a.Ukey as FtyInventoryUkey,MDivisionID,POID,a.seq1,a.Seq2,roll,stocktype,Dyelot,inqty-OutQty+AdjustQty qty
 ,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
 ,sum(inqty-OutQty+AdjustQty) 
@@ -495,9 +498,25 @@ over (order by a.Dyelot,(select t.mtllocationid+',' from (select MtlLocationID f
 ,a.Seq1,a.seq2,inqty-OutQty+AdjustQty desc
 rows between unbounded preceding and current row) as running_total
 from dbo.FtyInventory a inner join dbo.PO_Supp_Detail p on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
-where poid='{1}' and Stocktype='B' and inqty-OutQty+AdjustQty > 0
+where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
 and MDivisionID = '{0}' and p.SCIRefno = '{2}' and p.ColorID = '{3}'
-order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["poid"], materials["scirefno"], materials["colorid"]);
+order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["poid"], materials["scirefno"], materials["colorid"], stocktype);
+            }
+            else
+            {
+                sqlcmd = string.Format(@"
+select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail where ukey = a.Ukey)t for xml path('')) location
+,a.Ukey as FtyInventoryUkey,MDivisionID,POID,a.seq1,a.Seq2,roll,stocktype,Dyelot,inqty-OutQty+AdjustQty qty
+,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
+,sum(inqty-OutQty+AdjustQty) 
+over (order by a.Dyelot,(select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail where ukey = a.Ukey)t for xml path(''))
+,a.Seq1,a.seq2,inqty-OutQty+AdjustQty desc
+rows between unbounded preceding and current row) as running_total
+from dbo.FtyInventory a inner join dbo.PO_Supp_Detail p on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
+where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
+and MDivisionID = '{0}' and p.seq1 = '{2}' and p.seq2 = '{3}'
+order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["poid"], materials["seq1"], materials["seq2"], stocktype);
+            }
             DualResult result = DBProxy.Current.Select("", sqlcmd, out dt);
             if (!result)
             {
