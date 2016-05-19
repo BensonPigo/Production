@@ -102,6 +102,12 @@
     <Compile Include="B01_Quotation.Designer.cs">
       <DependentUpon>B01_Quotation.cs</DependentUpon>
     </Compile>
+    <Compile Include="P36_ModifyAfterSent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P36_ModifyAfterSent.Designer.cs">
+      <DependentUpon>P36_ModifyAfterSent.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -155,6 +161,24 @@
     </Compile>
     <Compile Include="P03.Designer.cs">
       <DependentUpon>P03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P36.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P36.Designer.cs">
+      <DependentUpon>P36.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P36_ModifyDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P36_ModifyDetail.Designer.cs">
+      <DependentUpon>P36_ModifyDetail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P37_DebitSchedule.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P37_DebitSchedule.Designer.cs">
+      <DependentUpon>P37_DebitSchedule.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="P02.cs">
@@ -283,6 +307,18 @@
     <Compile Include="R14.Designer.cs">
       <DependentUpon>R14.cs</DependentUpon>
     </Compile>
+    <Compile Include="P36_ModifyAfterReceived.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P36_ModifyAfterReceived.Designer.cs">
+      <DependentUpon>P36_ModifyAfterReceived.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P37.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P37.Designer.cs">
+      <DependentUpon>P37.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
@@ -297,6 +333,10 @@
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
       <Name>Sci.Production.PublicPrg</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sci.Trade.Class\Sci.Trade.Class.csproj">
+      <Project>{23A1D79E-68AB-4D45-8C1D-11A34EDD3369}</Project>
+      <Name>Sci.Trade.Class</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -310,6 +350,9 @@
     <EmbeddedResource Include="B01_Quotation.resx">
       <DependentUpon>B01_Quotation.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P36_ModifyAfterSent.resx">
+      <DependentUpon>P36_ModifyAfterSent.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
@@ -379,6 +422,15 @@
       <DependentUpon>P30_Import.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="P36.resx">
+      <DependentUpon>P36.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P36_ModifyDetail.resx">
+      <DependentUpon>P36_ModifyDetail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P37_DebitSchedule.resx">
+      <DependentUpon>P37_DebitSchedule.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
     </EmbeddedResource>
@@ -417,6 +469,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R14.resx">
       <DependentUpon>R14.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P36_ModifyAfterReceived.resx">
+      <DependentUpon>P36_ModifyAfterReceived.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P37.resx">
+      <DependentUpon>P37.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
