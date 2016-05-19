@@ -2,14 +2,16 @@
     [ID]        VARCHAR (13)    CONSTRAINT [DF_Debit_Schedule_ID] DEFAULT ('') NOT NULL,
     [IssueDate] DATE            NOT NULL,
     [Amount]    NUMERIC (12, 2) CONSTRAINT [DF_Debit_Schedule_Amount] DEFAULT ((0)) NULL,
-    [TransID]   VARCHAR (16)    CONSTRAINT [DF_Debit_Schedule_TransID] DEFAULT ('') NOT NULL,
+    [VoucherID] VARCHAR (16)    CONSTRAINT [DF_Debit_Schedule_TransID] DEFAULT ('') NOT NULL,
     [AddName]   VARCHAR (10)    CONSTRAINT [DF_Debit_Schedule_AddName] DEFAULT ('') NULL,
     [AddDate]   DATETIME        NULL,
     [EditName]  VARCHAR (10)    CONSTRAINT [DF_Debit_Schedule_EditName] DEFAULT ('') NULL,
     [EditDate]  DATETIME        NULL,
     [SysDate]   DATETIME        NULL,
-    CONSTRAINT [PK_Debit_Schedule] PRIMARY KEY CLUSTERED ([ID] ASC, [IssueDate] ASC, [TransID] ASC)
+    CONSTRAINT [PK_Debit_Schedule] PRIMARY KEY CLUSTERED ([ID] ASC, [IssueDate] ASC, [VoucherID] ASC)
 );
+
+
 
 
 GO
@@ -29,7 +31,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'扣款金�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠沖帳傳票號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit_Schedule', @level2type = N'COLUMN', @level2name = N'TransID';
+
 
 
 GO
@@ -50,4 +52,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'系統日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit_Schedule', @level2type = N'COLUMN', @level2name = N'SysDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠沖帳傳票號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit_Schedule', @level2type = N'COLUMN', @level2name = N'VoucherID';
 
