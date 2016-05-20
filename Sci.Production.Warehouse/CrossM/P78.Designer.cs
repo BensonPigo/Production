@@ -274,7 +274,7 @@
             // 
             // P78
             // 
-            this.ApvChkValue = "Sent";
+            this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1008, 601);
             this.DefaultControl = "textBox3";
             this.DefaultControlForEdit = "textBox3";
