@@ -1,6 +1,7 @@
 ﻿
 
-create view [dbo].[View_Order_Artworks]
+
+CREATE view [dbo].[View_Order_Artworks]
 as 
 SELECT   a.[ID]
       ,a.[ArtworkTypeID]
@@ -16,7 +17,7 @@ SELECT   a.[ID]
       ,a.[Cost]
       ,a.[Remark]
       ,a.[Ukey]
-      
+      ,a.TMS
   FROM [dbo].[Order_Artwork] a ,[dbo].[Order_Qty] b
   where a.Article = '----' and a.id = b.id
 union ALL
@@ -34,7 +35,7 @@ SELECT   a.[ID]
       ,a.[Cost]
       ,a.[Remark]
       ,a.[Ukey]
-      
+      ,a.TMS
   FROM [dbo].[Order_Artwork] a ,[dbo].[Order_Qty] b
   where a.Article = b.Article and a.id = b.id
 
