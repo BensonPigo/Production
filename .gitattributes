@@ -19,7 +19,6 @@ Database/dbo/Functions/GetStdQty.sql -text
 Database/dbo/Functions/GetStyleGMTLT.sql -text
 Database/dbo/Functions/GetSuppColor.sql -text
 Database/dbo/Functions/GetSuppColorList.sql -text
-Database/dbo/Functions/GetSuppColor_1.sql -text
 Database/dbo/Functions/GetSuppColor_Solution.sql -text
 Database/dbo/Functions/MarkerLengthToYDS.sql -text
 Database/dbo/Functions/checkHoliday.sql -text
