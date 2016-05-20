@@ -93,6 +93,8 @@ namespace Sci.Production.Planning
 	,o2.ArtworkTypeID,o2.Qty stitch,o2.Price,o2.Cost,o2.TMS
 	,(select Article +',' from (select rtrim(article) article from dbo.Order_Article where id = o1.ID) tmp for xml path('')) articles
 	,o2.ArtworkID,o2.PatternCode,o2.PatternDesc,sum(o2.PoQty) OrderQty 
+,DBO.GETSTDQTY('A',o1.id,null,null) as stdqty
+,DBO.getMinCompleteSewQty(o1.id,null,null) as garments
 	from dbo.orders o1 
 	inner join dbo.View_Order_Artworks o2 on o2.id = o1.ID
 	where 1=1 "));
@@ -219,8 +221,8 @@ left join (select NULL FarmInDate,0 FarmInQty,FarmOut.IssueDate FarmOutDate,Farm
             {
                 sqlCmd.Append(@"select k.FactoryID,k.ID,k.SewLine,k.StyleID,k.stitch,k.ArtworkTypeID,k.PatternCode+'-'+k.PatternDesc pattern
 ,k.supplier,k.articles,k.poqty,k.stitch*k.poqty total_stitch,k.MTLETA,k.SciDelivery,k.Oven,k.Wash,k.Wash,k.Mockup
-,9999999999 as stdqty,k.CutInLine,k.SewInLine,k.SewOffLine
-,k.Farmout,k.Farmout,9999999999 garments 
+,k.stdqty,k.CutInLine,k.SewInLine,k.SewOffLine
+,k.Farmout,k.Farmout,k.garments 
 ,y.FarmOutDate,y.FarmOutQty,y.FarmInDate,y.FarmInQty
 from artwork_quot k
 left join farm_in_out y on y.ArtworkPo_DetailUkey = k.po_detailukey
@@ -230,8 +232,8 @@ order by k.FactoryID,k.ID,isnull(FarmOutDate,'99991231')");
             {
                 sqlCmd.Append(@"select k.FactoryID,k.ID,k.SewLine,k.StyleID,k.stitch,k.ArtworkTypeID,k.PatternCode+'-'+k.PatternDesc pattern
 ,k.supplier,k.articles,k.poqty,k.stitch*k.poqty total_stitch,k.MTLETA,k.SciDelivery,k.Oven,k.Wash,k.Wash,k.Mockup
-,9999999999 as stdqty,k.CutInLine,k.SewInLine,k.SewOffLine
-,k.Farmout,k.Farmout,9999999999 garments
+,k.stdqty,k.CutInLine,k.SewInLine,k.SewOffLine
+,k.Farmout,k.Farmout,k.garments
 from artwork_quot k
 order by k.FactoryID,k.ID");
             }
