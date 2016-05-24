@@ -51,6 +51,8 @@ Database/dbo/Stored[!!-~]Procedures/dbo.insertMygridstd2.sql -text
 Database/dbo/Stored[!!-~]Procedures/insertMygridstd2.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_BoaByIssueBreakDown.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_GetErrorInfo.sql -text
+Database/dbo/Stored[!!-~]Procedures/usp_SingleItemRecaculate.sql -text
+Database/dbo/Stored[!!-~]Procedures/usp_StockRecaculate.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_StocktakingEncode.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_ThreadTransactionList.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_WarehouseClose.sql -text
@@ -470,6 +472,7 @@ Database/dbo/Tables/dbo.InventoryRefno.sql -text
 Database/dbo/Views/View_OrderFAColor.sql -text
 Database/dbo/Views/View_Order_Artworks.sql -text
 Database/dbo/Views/View_Orders_subprocess.sql -text
+Database/dbo/Views/View_TransactionList.sql -text
 Database/dbo/Views/View_Unitrate.sql -text
 Database/dbo/Views/dbo.View_Unitrate.sql -text
 Database/匯入結構描述記錄/ProductionDB_20151006014853.log -text

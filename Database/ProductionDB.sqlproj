@@ -1902,6 +1902,18 @@
     </Build>
     <Build Include="dbo\Functions\GetStdQty.sql" />
     <Build Include="dbo\Functions\GetSuppColor.sql" />
+    <Build Include="dbo\Views\View_TransactionList.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_StockRecaculate.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_SingleItemRecaculate.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
