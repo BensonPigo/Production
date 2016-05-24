@@ -1,7 +1,7 @@
 ﻿
-Create Function [dbo].[MarkerLengthToYDS]
+CREATE Function [dbo].[MarkerLengthToYDS]
 (
-	  @MarkerLength		VarChar(13)
+	  @MarkerLength		VarChar(15)
 )
 Returns Numeric(7,4)
 As
@@ -20,6 +20,10 @@ Begin
 	Set @LocateS1 = CharIndex('/', @MarkerLength);
 	Set @LocateS2 = CharIndex('+', @MarkerLength);
 	Set @LocateS3 = CharIndex('"', @MarkerLength);
+	If @LocateS3 = 0
+	Begin
+		Set @LocateS3 = Len(@MarkerLength) + 1;
+	End;
 
 	Declare @Yds Numeric(7,4);
 	Declare @Inch Numeric(7,4);
@@ -27,12 +31,20 @@ Begin
 	Declare @M2 Numeric(7,4);
 	Declare @M3 Numeric(7,4);
 
-	Set @Yds = Cast(SubString(@MarkerLength, 1, @LocateYd - 1) as Numeric(7,4))
-	Set @Inch = Cast(SubString(@MarkerLength, @LocateYd + 1, @LocateInch - @LocateYd - 1) as Numeric(7,4))
-	Set @M1 = Cast(SubString(@MarkerLength, @LocateInch + 1, @LocateS1 - @LocateInch - 1) as Numeric(7,4))
-	Set @M2 = Cast(SubString(@MarkerLength, @LocateS1 + 1, @LocateS2 - @LocateS1 - 1) as Numeric(7,4))
-	Set @M3 = Cast(SubString(@MarkerLength, @LocateS2 + 1, @LocateS3 - @LocateS2 - 1) as Numeric(7,4))
-
+	Set @Yds = Cast(SubString(@MarkerLength, 1, @LocateYd - 1) as Numeric(7,4));
+	Set @Inch = Cast(SubString(@MarkerLength, @LocateYd + 1, @LocateInch - @LocateYd - 1) as Numeric(7,4));
+	Set @M1 = Cast(SubString(@MarkerLength, @LocateInch + 1, @LocateS1 - @LocateInch - 1) as Numeric(7,4));
+	If @LocateS2 = 0
+	Begin
+		Set @M2 = Cast(SubString(@MarkerLength, @LocateS1 + 1, @LocateS3 - @LocateS1 - 1) as Numeric(7,4));
+		Set @M3 = 0;
+	End;
+	Else
+	Begin
+		Set @M2 = Cast(SubString(@MarkerLength, @LocateS1 + 1, @LocateS2 - @LocateS1 - 1) as Numeric(7,4));
+		Set @M3 = Cast(SubString(@MarkerLength, @LocateS2 + 1, @LocateS3 - @LocateS2 - 1) as Numeric(7,4));
+	End;
+	
 	If @M2 = 0
 	Begin
 		Set @MarkerYds = ((@Yds * 36) + @Inch + @M3) / 36
