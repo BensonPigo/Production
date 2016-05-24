@@ -32,7 +32,7 @@ namespace Sci.Production.Shipping
             //新增Import From Barcode按鈕
             Sci.Win.UI.Button btn = new Sci.Win.UI.Button();
             btn.Text = "Batch Create";
-            //btn.Click += new EventHandler(btn_Click);
+            btn.Click += new EventHandler(btn_Click);
             browsetop.Controls.Add(btn);
             btn.Size = new Size(120, 30);//預設是(80,30)
             btn.Enabled = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "B42. Custom SP# and Consumption", "CanNew");
@@ -41,7 +41,10 @@ namespace Sci.Production.Shipping
         //Batch Create按鈕的Click事件
         private void btn_Click(object sender, EventArgs e)
         {
+            Sci.Production.Shipping.B42_BatchCreate callNextForm = new Sci.Production.Shipping.B42_BatchCreate();
+            DialogResult result = callNextForm.ShowDialog(this);
 
+            ReloadDatas();
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -526,7 +529,7 @@ select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,
 from tmpBOFRateData),
 tmpBOFData
 as (
-select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(NewQty) as Qty, 0 as LocalItem
+select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(isnull(NewQty,0)) as Qty, 0 as LocalItem
 from tmpBOFNewQty
 group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit),
 tmpBOA
@@ -542,7 +545,7 @@ and (sb.SuppIDBulk <> 'FTY' and sb.SuppIDBulk <> 'FTY-C')
 ),
 tmpBOAPrepareData
 as (
-select t.*,IIF(BomTypeCalculate = 1,(select CONVERT(float,SizeSpec) from Style_SizeSpec where StyleUkey = t.StyleUkey and SizeItem = t.SizeItem and SizeCode = @sizecode),ConsPC) as SizeSpec,
+select t.*,IIF(BomTypeCalculate = 1,(select dbo.GetDigitalValue(SizeSpec) from Style_SizeSpec where StyleUkey = t.StyleUkey and SizeItem = t.SizeItem and SizeCode = @sizecode),ConsPC) as SizeSpec,
 isnull((select RateValue from dbo.View_Unitrate where FROM_U = t.UsageUnit and TO_U = t.CustomsUnit),1) as RateValue,
 (select RateValue from dbo.View_Unitrate where FROM_U = t.UsageUnit and TO_U = 'M') as M2RateValue,
 isnull((select Rate from Unit_Rate where UnitFrom = t.UsageUnit and UnitTo = t.CustomsUnit),'') as UnitRate,
@@ -558,7 +561,7 @@ from tmpBOAPrepareData
 ),
 tmpBOAData
 as (
-select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(NewQty) as Qty, 0 as LocalItem
+select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(isnull(NewQty,0)) as Qty, 0 as LocalItem
 from tmpBOANewQty
 group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit),
 tmpLocalPO
@@ -592,7 +595,7 @@ from tmpPrepareRate
 ),
 tmpLocalData
 as (
-select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(NewQty-(NewQty*Waste)) as NewQty, 1 as LocalItem
+select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(isnull(NewQty,0)-(isnull(NewQty,0)*isnull(Waste,0))) as Qty, 1 as LocalItem
 from tmpLocalNewQty
 group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit)
 
