@@ -4,7 +4,7 @@
     [Seq]                 NUMERIC (4)    CONSTRAINT [DF_Order_EachCons_Seq] DEFAULT ((0)) NOT NULL,
     [MarkerName]          NVARCHAR (20)  CONSTRAINT [DF_Order_EachCons_MarkerName] DEFAULT ('') NOT NULL,
     [FabricCombo]         VARCHAR (2)    CONSTRAINT [DF_Order_EachCons_FabricCombo] DEFAULT ('') NOT NULL,
-    [MarkerLength]        VARCHAR (13)   CONSTRAINT [DF_Order_EachCons_MarkerLength] DEFAULT ('') NULL,
+    [MarkerLength]        VARCHAR (15)   CONSTRAINT [DF_Order_EachCons_MarkerLength] DEFAULT ('') NULL,
     [LectraCode]          VARCHAR (2)    CONSTRAINT [DF_Order_EachCons_LectraCode] DEFAULT ('') NULL,
     [ConsPC]              NUMERIC (7, 4) CONSTRAINT [DF_Order_EachCons_ConsPC] DEFAULT ((0)) NOT NULL,
     [CuttingPiece]        BIT            CONSTRAINT [DF_Order_EachCons_CuttingPiece] DEFAULT ((0)) NULL,

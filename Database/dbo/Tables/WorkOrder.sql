@@ -13,7 +13,7 @@
     [Markername]         VARCHAR (5)    CONSTRAINT [DF_WorkOrder_Markername] DEFAULT ('') NULL,
     [EstCutDate]         DATE           NULL,
     [CutCellid]          VARCHAR (2)    CONSTRAINT [DF_WorkOrder_Cell] DEFAULT ('') NULL,
-    [MarkerLength]       VARCHAR (13)   CONSTRAINT [DF_WorkOrder_MarkerLength] DEFAULT ('') NULL,
+    [MarkerLength]       VARCHAR (15)   CONSTRAINT [DF_WorkOrder_MarkerLength] DEFAULT ('') NULL,
     [ConsPC]             NUMERIC (6, 4) CONSTRAINT [DF_WorkOrder_ConsPC] DEFAULT ((0)) NULL,
     [Cons]               NUMERIC (9, 4) CONSTRAINT [DF_WorkOrder_Cons] DEFAULT ((0)) NULL,
     [Refno]              VARCHAR (20)   CONSTRAINT [DF_WorkOrder_Refno] DEFAULT ('') NULL,

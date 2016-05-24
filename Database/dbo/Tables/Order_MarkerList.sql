@@ -7,7 +7,7 @@
     [FabricCombo]         VARCHAR (2)    CONSTRAINT [DF_Order_MarkerList_FabricCombo] DEFAULT ('') NULL,
     [LectraCode]          VARCHAR (2)    CONSTRAINT [DF_Order_MarkerList_LectraCode] DEFAULT ('') NOT NULL,
     [isQT]                BIT            CONSTRAINT [DF_Order_MarkerList_isQT] DEFAULT ((0)) NULL,
-    [MarkerLength]        VARCHAR (13)   CONSTRAINT [DF_Order_MarkerList_MarkerLength] DEFAULT ('') NULL,
+    [MarkerLength]        VARCHAR (15)   CONSTRAINT [DF_Order_MarkerList_MarkerLength] DEFAULT ('') NULL,
     [ConsPC]              NUMERIC (7, 4) CONSTRAINT [DF_Order_MarkerList_ConsPC] DEFAULT ((0)) NOT NULL,
     [Cuttingpiece]        BIT            CONSTRAINT [DF_Order_MarkerList_Cuttingpiece] DEFAULT ((0)) NULL,
     [ActCuttingPerimeter] VARCHAR (15)   CONSTRAINT [DF_Order_MarkerList_ActCuttingPerimeter] DEFAULT ('') NULL,
