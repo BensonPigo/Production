@@ -203,6 +203,9 @@ Database/dbo/Tables/Issue_Breakdown.sql -text
 Database/dbo/Tables/Issue_Detail.sql -text
 Database/dbo/Tables/Issue_Size.sql -text
 Database/dbo/Tables/Issue_Summary.sql -text
+Database/dbo/Tables/KHContract.sql -text
+Database/dbo/Tables/KHContract_Detail.sql -text
+Database/dbo/Tables/KHGoodsHSCode.sql -text
 Database/dbo/Tables/Lack.sql -text
 Database/dbo/Tables/Lack_Detail.sql -text
 Database/dbo/Tables/LearnCurve.sql -text
