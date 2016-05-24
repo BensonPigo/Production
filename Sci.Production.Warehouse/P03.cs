@@ -255,7 +255,7 @@ Select POID,SEQ1,SEQ2,CASE
             END as [Result] 
 			from dbo.AIR a where a.POID LIKE @sp1 and a.Result !=''
 			 )");
-                sqlcmd+= string.Format(@" select m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
+            sqlcmd += string.Format(@" select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
             ,substring(convert(varchar,a.RevisedETD, 101),1,5) as RevisedETD,a.Refno,a.SCIRefno
             ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',a.FabricType)) as fabrictype2
             , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
@@ -284,7 +284,7 @@ Select POID,SEQ1,SEQ2,CASE
                 left join supp s on s.id = b.suppid
             where orders.poid like @sp1 and orders.mdivisionid= '{0}' AND m.MDivisionID='{0}'
             union
-            select m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
+            select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
             ,substring(convert(varchar,a.RevisedETD, 101),1,5) as RevisedETD,a.Refno,a.SCIRefno
             ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',a.FabricType)) as fabrictype2
              , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby

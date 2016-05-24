@@ -497,5 +497,49 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name");
         {
             this.Dispose();
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            
+            if (null == dr) return;
+            DualResult result;
+            #region store procedure parameters
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+
+            System.Data.SqlClient.SqlParameter sp_StocktakingID = new System.Data.SqlClient.SqlParameter();
+            sp_StocktakingID.ParameterName = "@Ukey";
+            sp_StocktakingID.Value = dr["ukey"].ToString();
+            cmds.Add(sp_StocktakingID);
+
+            System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
+            sp_mdivision.ParameterName = "@MDivisionid";
+            sp_mdivision.Value = Sci.Env.User.Keyword;
+            cmds.Add(sp_mdivision);
+
+            System.Data.SqlClient.SqlParameter sp_poid = new System.Data.SqlClient.SqlParameter();
+            sp_poid.ParameterName = "@poid";
+            sp_poid.Value = dr["id"].ToString();
+            cmds.Add(sp_poid);
+
+            System.Data.SqlClient.SqlParameter sp_seq1 = new System.Data.SqlClient.SqlParameter();
+            sp_seq1.ParameterName = "@seq1";
+            sp_seq1.Value = dr["seq1"].ToString();
+            cmds.Add(sp_seq1);
+
+            System.Data.SqlClient.SqlParameter sp_seq2 = new System.Data.SqlClient.SqlParameter();
+            sp_seq2.ParameterName = "@seq2";
+            sp_seq2.Value = dr["seq2"].ToString();
+            cmds.Add(sp_seq2);
+
+            #endregion
+            if (!(result = DBProxy.Current.ExecuteSP("", "dbo.usp_SingleItemRecaculate", cmds)))
+            {
+                //MyUtility.Msg.WarningBox(result.Messages[1].ToString()); 
+                Exception ex = result.GetException();
+                MyUtility.Msg.WarningBox(ex.Message);
+                return;
+            }
+            MyUtility.Msg.InfoBox("Finished!!");
+        }
     }
 }
