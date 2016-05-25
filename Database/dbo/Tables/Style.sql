@@ -24,7 +24,6 @@
     [RainwearTestPassed]  BIT            CONSTRAINT [DF_Style_PassedRainwearTest] DEFAULT ((0)) NULL,
     [SizePage]            VARCHAR (2)    CONSTRAINT [DF_Style_SizePage] DEFAULT ('') NULL,
     [SizeRange]           NVARCHAR (MAX) CONSTRAINT [DF_Style_SizeRange] DEFAULT ('') NULL,
-    [Type]                VARCHAR (10)   CONSTRAINT [DF_Style_Type] DEFAULT ('') NULL,
     [CTNQty]              SMALLINT       CONSTRAINT [DF_Style_CTNQty] DEFAULT ((0)) NULL,
     [StdCost]             NUMERIC (7, 2) CONSTRAINT [DF_Style_StdCost] DEFAULT ((0)) NULL,
     [Processes]           NVARCHAR (60)  CONSTRAINT [DF_Style_Processes] DEFAULT ('') NULL,
@@ -178,7 +177,7 @@ GO
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'類別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'Type';
+
 
 
 GO
