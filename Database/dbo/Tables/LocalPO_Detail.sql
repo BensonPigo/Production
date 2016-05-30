@@ -13,8 +13,11 @@
     [Delivery]      DATE            NULL,
     [OldSeq1]       VARCHAR (3)     CONSTRAINT [DF_LocalPO_Detail_OldSeq1] DEFAULT ('') NULL,
     [OldSeq2]       VARCHAR (2)     CONSTRAINT [DF_LocalPO_Detail_OldSeq2] DEFAULT ('') NULL,
+    [Remark]        VARCHAR (100)   NULL,
     CONSTRAINT [PK_LocalPO_Detail] PRIMARY KEY CLUSTERED ([Id] ASC, [Ukey] ASC)
 );
+
+
 
 
 GO

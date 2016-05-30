@@ -217,6 +217,7 @@ Database/dbo/Tables/LocalAP_Detail.sql -text
 Database/dbo/Tables/LocalDebit.sql -text
 Database/dbo/Tables/LocalDebit_Detail.sql -text
 Database/dbo/Tables/LocalDebit_History.sql -text
+Database/dbo/Tables/LocalInventory.sql -text
 Database/dbo/Tables/LocalItem.sql -text
 Database/dbo/Tables/LocalItem_Quot.sql -text
 Database/dbo/Tables/LocalPO.sql -text

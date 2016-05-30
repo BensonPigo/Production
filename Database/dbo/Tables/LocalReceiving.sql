@@ -3,7 +3,6 @@
     [MDivisionID] VARCHAR (8)   CONSTRAINT [DF_LocalReceiving_MDivisionID] DEFAULT ('') NOT NULL,
     [FactoryId]   VARCHAR (8)   CONSTRAINT [DF_LocalReceiving_FactoryId] DEFAULT ('') NOT NULL,
     [LocalSuppID] VARCHAR (8)   CONSTRAINT [DF_LocalReceiving_LocalSuppID] DEFAULT ('') NOT NULL,
-    [Category]    VARCHAR (20)  CONSTRAINT [DF_LocalReceiving_Category] DEFAULT ('') NOT NULL,
     [IssueDate]   DATE          NOT NULL,
     [Remark]      NVARCHAR (60) CONSTRAINT [DF_LocalReceiving_Remark] DEFAULT ('') NULL,
     [AddName]     VARCHAR (10)  CONSTRAINT [DF_LocalReceiving_AddName] DEFAULT ('') NULL,
@@ -14,6 +13,8 @@
     [Status]      VARCHAR (15)  CONSTRAINT [DF_LocalReceiving_Status] DEFAULT ('') NULL,
     CONSTRAINT [PK_LocalReceiving] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
@@ -35,7 +36,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠商代�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購類別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalReceiving', @level2type = N'COLUMN', @level2name = N'Category';
+
 
 
 GO
