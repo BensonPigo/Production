@@ -2144,6 +2144,12 @@ Sci.Production.Warehouse/P50_Import.resx -text
 Sci.Production.Warehouse/P51.Designer.cs -text
 Sci.Production.Warehouse/P51.cs -text
 Sci.Production.Warehouse/P51.resx -text
+Sci.Production.Warehouse/P60.Designer.cs -text
+Sci.Production.Warehouse/P60.cs -text
+Sci.Production.Warehouse/P60.resx -text
+Sci.Production.Warehouse/P60_Import.Designer.cs -text
+Sci.Production.Warehouse/P60_Import.cs -text
+Sci.Production.Warehouse/P60_Import.resx -text
 Sci.Production.Warehouse/Properties/AssemblyInfo.cs -text
 Sci.Production.Warehouse/Properties/Resources.Designer.cs -text
 Sci.Production.Warehouse/Properties/Resources.resx -text

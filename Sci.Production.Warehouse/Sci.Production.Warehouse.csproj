@@ -833,6 +833,18 @@
     <Compile Include="P01_BatchCloseRowMaterial.Designer.cs">
       <DependentUpon>P01_BatchCloseRowMaterial.cs</DependentUpon>
     </Compile>
+    <Compile Include="P60.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P60.Designer.cs">
+      <DependentUpon>P60.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P60_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P60_Import.Designer.cs">
+      <DependentUpon>P60_Import.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -1288,6 +1300,14 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_BatchCloseRowMaterial.resx">
       <DependentUpon>P01_BatchCloseRowMaterial.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P60.resx">
+      <DependentUpon>P60.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P60_Import.resx">
+      <DependentUpon>P60_Import.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
