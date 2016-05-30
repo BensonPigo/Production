@@ -109,44 +109,53 @@ order by CONVERT(int,SUBSTRING(a.NLCode,3,3))");
             }
             else
             {
-                sqlCmd.Append(@"
+                sqlCmd.Append(string.Format(@"
 --撈W/House資料
 select distinct o.POID, o.MDivisionID into #tmpPOID
 from Orders o
 where (o.Category = 'B' or o.Category = 'S' or o.Category = 'M')
 and o.LocalOrder = 0 and o.MDivisionID = @mdivision
 
-select isnull(f.HSCode,'') as HSCode,isnull(f.NLCode,'') as NLCode,t.POID,(fi.Seq1+'-'+fi.Seq2) as Seq, 
-fi.Roll,fi.Dyelot,fi.StockType,
-isnull((select CONCAT(fid.MtlLocationID,',') from FtyInventory_Detail fid where fid.Ukey = fi.UKey for xml path('')),'') as Location,
-IIF(fi.InQty-fi.OutQty+fi.AdjustQty <> 0,dbo.getVNUnitTransfer(f.Type,psd.StockUnit,f.CustomsUnit,(fi.InQty-fi.OutQty+fi.AdjustQty),f.Width,f.PcsWidth,f.PcsLength,f.PcsKg,isnull(IIF(f.CustomsUnit = 'M2',(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M'),(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = f.CustomsUnit)),1),isnull(IIF(f.CustomsUnit = 'M2',(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M'),(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = f.CustomsUnit)),'')),0) as Qty
-into #tmpWHQty
-from #tmpPOID t
-inner join FtyInventory fi on fi.POID = t.POID and fi.MDivisionID = t.MDivisionID
-inner join PO_Supp_Detail psd on t.POID = psd.ID and psd.SEQ1 = fi.Seq1 and psd.SEQ2 = fi.Seq2
-left join Fabric f on psd.SCIRefno = f.SCIRefno
-where (fi.StockType = 'B' or fi.StockType = 'I');
---等Local物料的Inventory結構開好再補
-
+select * into #tmpWHQty
+from (select isnull(f.HSCode,'') as HSCode,isnull(f.NLCode,'') as NLCode,t.POID,(fi.Seq1+'-'+fi.Seq2) as Seq, 
+	  fi.Roll,fi.Dyelot,fi.StockType,
+	  isnull((select CONCAT(fid.MtlLocationID,',') from FtyInventory_Detail fid where fid.Ukey = fi.UKey for xml path('')),'') as Location,
+	  IIF(fi.InQty-fi.OutQty+fi.AdjustQty <> 0,dbo.getVNUnitTransfer(isnull(f.Type,''),psd.StockUnit,isnull(f.CustomsUnit,''),(fi.InQty-fi.OutQty+fi.AdjustQty),isnull(f.Width,0),isnull(f.PcsWidth,0),isnull(f.PcsLength,0),isnull(f.PcsKg,0),isnull(IIF(isnull(f.CustomsUnit,'') = 'M2',(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M'),(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1),isnull(IIF(isnull(f.CustomsUnit,'') = 'M2',(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M'),(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')),0) as Qty
+	  from #tmpPOID t
+	  inner join FtyInventory fi on fi.POID = t.POID and fi.MDivisionID = t.MDivisionID
+	  inner join PO_Supp_Detail psd on t.POID = psd.ID and psd.SEQ1 = fi.Seq1 and psd.SEQ2 = fi.Seq2
+	  left join Fabric f on psd.SCIRefno = f.SCIRefno
+	  where (fi.StockType = 'B' or fi.StockType = 'I')
+	  union all
+	  select isnull(li.HSCode,'') as HSCode,isnull(li.NLCode,'') as NLCode,l.OrderID as POID,'' as Seq,
+	  ''as Roll,'' as Dyelot,'B' as StockType,'' as Location,
+	  IIF(l.InQty-l.OutQty+l.AdjustQty <> 0,dbo.getVNUnitTransfer(isnull(li.Category,''),l.UnitId,li.CustomsUnit,(l.InQty-l.OutQty+l.AdjustQty)*IIF(l.UnitId = 'CONE',isnull(li.MeterToCone,0),1),0,li.PcsWidth,li.PcsLength,li.PcsKg,isnull(IIF(li.CustomsUnit = 'M2',(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M'),(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),1),isnull(IIF(li.CustomsUnit = 'M2',(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M'),(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')),0) as Qty
+	  from LocalInventory l
+	  inner join Orders o on o.ID = l.OrderID
+	  left join LocalItem li on l.Refno = li.RefNo
+	  where l.MDivisionID = @mdivision
+	  and o.WhseClose is null) a
 
 --撈Scrap資料
-select isnull(f.HSCode,'') as HSCode,isnull(f.NLCode,'') as NLCode,t.POID,(mdp.Seq1+'-'+mdp.Seq2) as Seq,psd.Refno,
-isnull(f.Type,'') as Type,isnull(f.Description,'') as Description,psd.StockUnit,mdp.LObQty,isnull(f.CustomsUnit,'') as CustomsUnit, 
-IIF(mdp.LObQty <> 0,dbo.getVNUnitTransfer(f.Type,psd.StockUnit,f.CustomsUnit,mdp.LObQty,f.Width,f.PcsWidth,f.PcsLength,f.PcsKg,isnull(IIF(f.CustomsUnit = 'M2',(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M'),(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = f.CustomsUnit)),1),isnull(IIF(f.CustomsUnit = 'M2',(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M'),(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = f.CustomsUnit)),'')),0) as Qty
-into #tmpScrapQty
-from #tmpPOID t
-inner join MDivisionPoDetail mdp on mdp.POID = t.POID and mdp.MDivisionID = t.MDivisionID
-inner join PO_Supp_Detail psd on t.POID = psd.ID and psd.SEQ1 = mdp.Seq1 and psd.SEQ2 = mdp.Seq2
-left join Fabric f on psd.SCIRefno = f.SCIRefno");
-                if (!MyUtility.Check.Empty(sp))
-                {
-                    sqlCmd.Append(string.Format(@"
-                where t.POID >= '{0}'", sp));
-                }
-
-                sqlCmd.Append(@"
---等Local物料的Inventory結構開好再補
-
+select * into #tmpScrapQty
+from (select isnull(f.HSCode,'') as HSCode,isnull(f.NLCode,'') as NLCode,t.POID,(mdp.Seq1+'-'+mdp.Seq2) as Seq,psd.Refno,
+	  isnull(f.Type,'') as Type,isnull(f.Description,'') as Description,psd.StockUnit,mdp.LObQty,isnull(f.CustomsUnit,'') as CustomsUnit, 
+	  IIF(mdp.LObQty <> 0,dbo.getVNUnitTransfer(isnull(f.Type,''),psd.StockUnit,isnull(f.CustomsUnit,''),mdp.LObQty,isnull(f.Width,0),isnull(f.PcsWidth,0),isnull(f.PcsLength,0),isnull(f.PcsKg,0),isnull(IIF(isnull(f.CustomsUnit,'') = 'M2',(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M'),(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1),isnull(IIF(isnull(f.CustomsUnit,'') = 'M2',(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M'),(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')),0) as Qty
+	  from #tmpPOID t
+	  inner join MDivisionPoDetail mdp on mdp.POID = t.POID and mdp.MDivisionID = t.MDivisionID
+	  inner join PO_Supp_Detail psd on t.POID = psd.ID and psd.SEQ1 = mdp.Seq1 and psd.SEQ2 = mdp.Seq2
+	  left join Fabric f on psd.SCIRefno = f.SCIRefno
+	  where t.POID >= '{0}'
+	  union all
+	  select isnull(li.HSCode,'') as HSCode,isnull(li.NLCode,'') as NLCode,l.OrderID as POID,'' as Seq,l.Refno,
+	  isnull(li.Category,'') as Type,isnull(li.Description,'') as Description,l.UnitId,l.InQty-l.OutQty+l.AdjustQty as LObQty,isnull(li.CustomsUnit,'') as CustomsUnit, 
+	  IIF(l.InQty-l.OutQty+l.AdjustQty <> 0,dbo.getVNUnitTransfer(isnull(li.Category,''),l.UnitId,li.CustomsUnit,(l.InQty-l.OutQty+l.AdjustQty)*IIF(l.UnitId = 'CONE',isnull(li.MeterToCone,0),1),0,li.PcsWidth,li.PcsLength,li.PcsKg,isnull(IIF(li.CustomsUnit = 'M2',(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M'),(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),1),isnull(IIF(li.CustomsUnit = 'M2',(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M'),(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')),0) as Qty
+	  from LocalInventory l
+	  inner join Orders o on o.ID = l.OrderID
+	  left join LocalItem li on l.Refno = li.RefNo
+	  where l.MDivisionID = @mdivision
+	  and o.ID >= '{0}'
+	  and o.WhseClose is not null) a
 
 --撈已發料數量
 select o.ID,o.MDivisionID,o.StyleID,o.BrandID,o.StyleUKey,o.Category,o.POID into #tmpWHNotClose 
@@ -154,16 +163,21 @@ from Orders o
 where o.WhseClose is null and (o.Category = 'B' or o.Category = 'S') and o.MDivisionID = @mdivision and o.LocalOrder = 0
 
 --台北買的物料
-select isnull(f.HSCode,'') as HSCode,isnull(f.NLCode,'') as NLCode,t.ID,(mdp.Seq1+'-'+mdp.Seq2) as Seq,
-psd.Refno,f.Type,f.Description,psd.StockUnit,mdp.OutQty-mdp.LObQty as IssueQty,f.CustomsUnit, 
-IIF((mdp.OutQty-mdp.LObQty) <> 0,dbo.getVNUnitTransfer(f.Type,psd.StockUnit,f.CustomsUnit,(mdp.OutQty-mdp.LObQty),f.Width,f.PcsWidth,f.PcsLength,f.PcsKg,isnull(IIF(f.CustomsUnit = 'M2',(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M'),(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = f.CustomsUnit)),1),isnull(IIF(f.CustomsUnit = 'M2',(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M'),(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = f.CustomsUnit)),'')),0) as Qty
-into #tmpIssueQty
-from #tmpWHNotClose t
-inner join MDivisionPoDetail mdp on mdp.POID = t.ID and mdp.MDivisionID = t.MDivisionID
-inner join PO_Supp_Detail psd on mdp.POID = psd.ID and psd.SEQ1 = mdp.Seq1 and psd.SEQ2 = mdp.Seq2
-left join Fabric f on psd.SCIRefno = f.SCIRefno
-
---Local Purchase的物料
+select * into #tmpIssueQty
+from (select isnull(f.HSCode,'') as HSCode,isnull(f.NLCode,'') as NLCode,t.ID,(mdp.Seq1+'-'+mdp.Seq2) as Seq,
+	  psd.Refno,isnull(f.Type,'') as Type,isnull(f.Description,'') as Description,psd.StockUnit,mdp.OutQty-mdp.LObQty as IssueQty,isnull(f.CustomsUnit,'') as CustomsUnit, 
+	  IIF((mdp.OutQty-mdp.LObQty) <> 0,dbo.getVNUnitTransfer(isnull(f.Type,''),psd.StockUnit,isnull(f.CustomsUnit,''),(mdp.OutQty-mdp.LObQty),isnull(f.Width,0),isnull(f.PcsWidth,0),isnull(f.PcsLength,0),isnull(f.PcsKg,0),isnull(IIF(isnull(f.CustomsUnit,'') = 'M2',(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M'),(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1),isnull(IIF(isnull(f.CustomsUnit,'') = 'M2',(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M'),(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')),0) as Qty
+	  from #tmpWHNotClose t
+	  inner join MDivisionPoDetail mdp on mdp.POID = t.ID and mdp.MDivisionID = t.MDivisionID
+	  inner join PO_Supp_Detail psd on mdp.POID = psd.ID and psd.SEQ1 = mdp.Seq1 and psd.SEQ2 = mdp.Seq2
+	  left join Fabric f on psd.SCIRefno = f.SCIRefno
+	  union all
+	  select isnull(li.HSCode,'') as HSCode,isnull(li.NLCode,'') as NLCode,t.ID,'' as Seq,
+	  l.Refno,isnull(li.Category,'') as Type,isnull(li.Description,'') as Description,l.UnitId,l.OutQty as IssueQty,isnull(li.CustomsUnit,'') as CustomsUnit, 
+	  IIF(l.OutQty <> 0,dbo.getVNUnitTransfer(isnull(li.Category,''),l.UnitId,isnull(li.CustomsUnit,''),l.OutQty*IIF(l.UnitId = 'CONE',isnull(li.MeterToCone,0),1),0,isnull(li.PcsWidth,0),isnull(li.PcsLength,0),isnull(li.PcsKg,0),isnull(IIF(isnull(li.CustomsUnit,'') = 'M2',(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M'),(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = isnull(li.CustomsUnit,''))),1),isnull(IIF(isnull(li.CustomsUnit,'') = 'M2',(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M'),(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = isnull(li.CustomsUnit,''))),'')),0) as Qty
+	  from #tmpWHNotClose t
+	  inner join LocalInventory l on t.ID = l.OrderID and t.MDivisionID = l.MDivisionID
+	  left join LocalItem li on l.Refno = li.RefNo) a
 
 --撈各Style目前最後的CustomSP
 select v.ID,v.CustomSP,v.StyleID,v.BrandID,v.Category into #tmpCustomSP
@@ -172,7 +186,6 @@ inner join (select vc.StyleID,vc.BrandID,vc.Category,MAX(vc.CustomSP) as CustomS
 			from VNConsumption vc where vc.VNContractID = @contract
 			group by vc.StyleID,vc.BrandID,vc.Category) vc on vc.CustomSP = v.CustomSP
 where v.VNContractID = @contract
-
 
 --撈已Sewing數量
 select t.ID, sdd.ComboType,sdd.Article,sdd.SizeCode,sum(sdd.QAQty) as QAQty,
@@ -225,7 +238,7 @@ left join (select t.ID,t.Article,t.SizeCode,t.SewQty,t.PullQty,vd.HSCode,vd.NLCo
 		   inner join VNConsumption_Article va on va.ID = tc.ID and va.Article = t.Article
 		   inner join VNConsumption_SizeCode vs on vs.ID = tc.ID and vs.SizeCode = t.SizeCode
 		   inner join VNConsumption_Detail vd on vd.ID = tc.ID) a on t.ID = a.ID and t.Article = a.Article and t.SizeCode = a.SizeCode
-order by t.ID,t.Article,t.SizeCode,t.SewQty,t.PullQty");
+order by t.ID,t.Article,t.SizeCode,t.SewQty,t.PullQty", sp));
 
                 sqlCmd.Append(@"
 --整理出Summary
