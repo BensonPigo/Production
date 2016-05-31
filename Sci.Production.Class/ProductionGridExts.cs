@@ -266,7 +266,66 @@ namespace Sci
                 }
             };
             return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
+        }
+        //User LogID Name
+        public static IDataGridViewGenerator CellUser(this IDataGridViewGenerator gen, string propertyname, string header, IWidth width = null, DataGridViewGeneratorTextColumnSettings settings = null, bool? iseditable = null, bool? iseditingreadonly = null, DataGridViewContentAlignment? alignment = null,string userNamePropertyName =null)
+        {
+            if (settings == null) settings = new DataGridViewGeneratorTextColumnSettings();
+            string keyword = Sci.Env.User.Keyword;
+            settings.CharacterCasing = CharacterCasing.Upper;
+            settings.EditingMouseDown += (s, e) =>
+            {
+                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                if (frm.EditMode)
+                {
+                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    {
+                        if (e.RowIndex != -1)
+                        {
+                            DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,Name from Pass1 where id = '{0}' order by ID", keyword), "10,40", dr[propertyname].ToString().Trim());
+                            DialogResult returnResult = item.ShowDialog();
+                            if (returnResult == DialogResult.Cancel) { return; }
+                            e.EditingControl.Text = item.GetSelectedString();
+                        }
+                    }
+                }
+            };
+
+            settings.CellValidating += (s, e) =>
+            {
+                Sci.Win.UI.Grid g = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                Sci.Win.Forms.Base frm = (Sci.Win.Forms.Base)g.FindForm();
+                if (frm.EditMode)
+                {
+                    DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow pass_dr;
+                    if (!MyUtility.Check.Empty(e.FormattedValue.ToString()))
+                    {
+                        string seekSql = string.Format("select id,Name from Pass1 where id = '{0}'", e.FormattedValue.ToString());
+                        if (!MyUtility.Check.Seek(seekSql, out pass_dr))
+                        {
+                            MyUtility.Msg.WarningBox(string.Format("< User ID : {0} > not found!!!", e.FormattedValue.ToString()));
+                            dr[propertyname] = "";
+                            e.Cancel = true;
+                            return;
+                        }
+                        else
+                        {
+                            if (userNamePropertyName != null)
+                            {
+                                dr[userNamePropertyName] = pass_dr["Name"];
+                                dr[propertyname] = e.FormattedValue.ToString();
+                                dr.EndEdit();
+                            }
+                        }
+                    }
+                }
+            };
+            return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
         }   
+
     }
 
     public class CartonRefnoCommon
