@@ -16,7 +16,7 @@ Begin
 	Declare @CpuRate Numeric(3,1) = 0;
 	Declare @SampleRate Numeric(2,0) = 0;
 
-	Select Top 1 @SampleRate = System.SPLRate
+	Select Top 1 @SampleRate = System.SampleRate
 	  From dbo.System;
 	
 	If (@TableType = 'M')	--固定三倍. 
