@@ -17,14 +17,12 @@ using Sci.Production.Quality;
 
 namespace Sci.Production.Quality
 {
-    public partial class P01_PhysicalInspection : Sci.Win.Subs.Input4
+    public partial class P01_Weight : Sci.Win.Subs.Input4
     {
         private DataRow maindr;
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
-        private bool firstQuery = true;
-        DataTable Fir_physical_Defect;
-        public P01_PhysicalInspection(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3,DataRow mainDr)
+        public P01_Weight(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
 
         {
@@ -115,44 +113,22 @@ namespace Sci.Production.Quality
             datas.Columns.Add("POID", typeof(string));
             datas.Columns.Add("SEQ1", typeof(string));
             datas.Columns.Add("SEQ2", typeof(string));
-            datas.Columns.Add("NewKey", typeof(int));
-            int i = 0;
             foreach (DataRow dr in datas.Rows)
             {
                 dr["Name"] = MyUtility.GetValue.Lookup("Name", dr["Inspector"].ToString(), "Pass1", "ID");
-                dr["NewKey"] = i;
                 dr["poid"] = maindr["poid"];
                 dr["SEQ1"] = maindr["SEQ1"];
                 dr["SEQ2"] = maindr["SEQ2"];
 
-                i++;
             }
-            #region 撈取下一層資料Defect
-            string str_defect = string.Format("Select a.* ,b.NewKey from Fir_physical_Defect a,#tmp b Where a.id = b.id and a.FIR_PhysicalDetailUKey = b.DetailUkey");
-
-            MyUtility.Tool.ProcessWithDatatable(datas, "ID,NewKey,DetailUkey", str_defect, out Fir_physical_Defect);
-            #endregion
-            //if (firstQuery) //第一次執行才做
-            //{
-                
-            //    firstQuery = false;
-            //}
         }
+
         protected override bool OnGridSetup()
         {
 
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings Ydscell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings TotalPointcell = new DataGridViewGeneratorNumericColumnSettings();
-            #region TotalPoint Double Click
-            TotalPointcell.EditingMouseDoubleClick += (s, e) =>
-            {
-                grid.ValidateControl();
-                P01_PhysicalInspection_Defect frm = new P01_PhysicalInspection_Defect(Fir_physical_Defect);
-                frm.Set(EditMode, Datas, grid.GetDataRow(e.RowIndex));
-                frm.ShowDialog(this);     
-            };
-            #endregion
             #region Roll
             Rollcell.EditingMouseDown += (s, e) =>
             {
@@ -215,8 +191,8 @@ namespace Sci.Production.Quality
             Helper.Controls.Grid.Generator(this.grid)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), settings: Rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
-            .Numeric("Ticketyds", header: "Ticket Yds", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-            .Numeric("Actualyds", header: "Act.Yds\nInspected", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2)
+            .Numeric("DeclaredMass", header: "DeclaredMass", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+            .Numeric("averageWeightM2", header: "Act.Yds\nInspected", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2)
             .Numeric("fullwidth", header: "Full width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
             .Numeric("actualwidth", header: "Actual Width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
             .Numeric("totalpoint", header: "Total Points", width: Widths.AnsiChars(7), integer_places: 6, iseditingreadonly: true, settings: TotalPointcell)
@@ -243,6 +219,7 @@ namespace Sci.Production.Quality
             return true;
 
         }
+
         protected override void OnInsert()
         {
             DataTable Dt = (DataTable)gridbs.DataSource;
@@ -260,6 +237,7 @@ namespace Sci.Production.Quality
             selectDr["SEQ1"] = maindr["SEQ1"];
             selectDr["SEQ2"] = maindr["SEQ2"];
         }
+
         protected override bool OnSaveBefore()
         {
             DataTable gridTb = (DataTable)gridbs.DataSource;
@@ -306,110 +284,7 @@ namespace Sci.Production.Quality
 
             return base.OnSaveBefore();
         }
-        protected override DualResult OnSave()
-        {
-            DualResult upResult = new DualResult(true) ;
-            #region Fir_Physical //因為要抓取DetailUkey 所以要自己Overridr
-            string update_cmd = "";
-            List<string> append_cmd = new List<string>();
-            DataTable idenDt;
-            string iden;
 
-            foreach (DataRow dr in Datas)
-            {
-                if (dr.RowState == DataRowState.Deleted)
-                {
-                    update_cmd = update_cmd + string.Format(
-                    @"Delete From Fir_physical Where DetailUkey = {0} ;",
-                    dr["DetailUKey", DataRowVersion.Original]);
-                }
-                int bolMoisture = 0;
-                string inspdate;
-                if (MyUtility.Check.Empty(dr["InspDate"])) inspdate = ""; //判斷Inspect Date
-                else inspdate = Convert.ToDateTime(dr["InspDate"]).ToShortDateString();
-                
-                if (MyUtility.Convert.GetBool(dr["Moisture"])) bolMoisture = 1; 
-                if (dr.RowState == DataRowState.Added)
-                {
-                    string add_cmd = "";
-                    
-                    add_cmd =string.Format(
-                    @"Insert into Fir_Physical
-(ID,Roll,Dyelot,TicketYds,ActualYds,FullWidth,ActualWidth,TotalPoint,PointRate,Grade,Result,Remark,InspDate,Inspector,Moisture,AddName,AddDate) 
-Values({0},'{1}','{2}',{3},{4},{5},{6},{7},{8},'{9}','{10}','{11}','{12}','{13}',{14},'{15}',GetDate()) ;",
-                            dr["ID"], dr["roll"], dr["Dyelot"], dr["TicketYds"], dr["ActualYds"], dr["FullWidth"], dr["ActualWidth"], dr["TotalPoint"], dr["PointRate"], dr["Grade"], dr["Result"], dr["Remark"], inspdate, dr["Inspector"], bolMoisture, loginID);
-                    add_cmd = add_cmd + "select @@IDENTITY as ii";
-                    #region 先存入Table 撈取Idenitiy
-                    upResult = DBProxy.Current.Select(null, add_cmd, out idenDt);
-                    if (upResult)
-                    {
-                        iden = idenDt.Rows[0]["ii"].ToString(); //取出Identity
-
-                        DataRow[] Ary = Fir_physical_Defect.Select(string.Format("NewKey={0}", dr["NewKey"]));
-                        if (Ary.Length > 0)
-                        {
-                            foreach (DataRow Ary_dr in Ary)
-                            {
-                                Ary_dr["FIR_PhysicalDetailUKey"] = iden;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        return upResult;
-                    }
-                    #endregion
-                }
-
-                if (dr.RowState == DataRowState.Modified)
-                {
-                    update_cmd = update_cmd + string.Format(
-                        @"Update Fir_Physical set Roll = '{0}' ,Dyelot='{1}',TicketYds = {2},ActualYds = {3},FullWidth ={4},TotalPoint ={6},PointRate={7},Grade='{8}',Result='{9}',Remark='{10}',InspDate='{11}',Inspector='{12}',Moisture={13},EditName = '{14}',EditDate = GetDate() 
-Where DetailUkey = {15};",
-                           dr["roll"], dr["Dyelot"], dr["TicketYds"], dr["ActualYds"], dr["FullWidth"], dr["ActualWidth"], dr["TotalPoint"], dr["PointRate"], dr["Grade"], dr["Result"], dr["Remark"], inspdate, dr["Inspector"], bolMoisture, loginID,dr["DetailUkey"]);
-                }
-            }
-            if (update_cmd != "")
-            {
-                upResult = DBProxy.Current.Execute(null, update_cmd);
-                if (!upResult) return upResult;
-            }
-            #endregion 
-
-            #region Fir_Physical_Defect
-            string update_cmd1 = "";
-            foreach (DataRow dr in Fir_physical_Defect.Rows)
-            {
-
-                if (dr.RowState == DataRowState.Deleted)
-                {
-                    update_cmd1 = update_cmd1 + string.Format(
-                    @"Delete From Fir_physical_Defect Where ID = {0} and FIR_PhysicalDetailUKey = {1} and DefectLocation ='{2}';",
-                    dr["ID", DataRowVersion.Original], dr["FIR_PhysicalDetailUKey", DataRowVersion.Original], dr["DefectLocation", DataRowVersion.Original]);
-                }
-                if (dr.RowState == DataRowState.Added)
-                {
-                    update_cmd1 = update_cmd1 + string.Format(
-                        @"Insert into Fir_Physical_Defect(ID,FIR_PhysicalDetailUKey,DefectLocation,DefectRecord,Point) 
-                            Values({0},{1},'{2}','{3}',{4});",
-                            dr["ID"], dr["FIR_PhysicalDetailUKey"], dr["DefectLocation"], dr["DefectRecord"], dr["Point"]);
-                }
-                if (dr.RowState == DataRowState.Modified)
-                {
-                    update_cmd1 = update_cmd1 + string.Format(
-                        @"Update Fir_Physical_Defect set DefectLocation = '{2}',DefectRecord = '{3}',Point = {4}
-                            Where ID = {0} and FIR_PhysicalDetailUKey = {1};",
-                            dr["ID"], dr["FIR_PhysicalDetailUKey"], dr["DefectLocation"], dr["DefectRecord"], dr["Point"]);
-                }
-            }
-            if (update_cmd1 != "")
-            {
-                upResult = DBProxy.Current.Execute(null, update_cmd1);
-            }
-            #endregion
-            return upResult;
-        }
-        
         private void encode_button_Click(object sender, EventArgs e)
         {
             string updatesql ="";
@@ -569,6 +444,7 @@ Where DetailUkey = {15};",
             //*********************************************************************************
             OnRequery();
         }
+
         private void button_enable()
         {
             if (maindr == null) return;

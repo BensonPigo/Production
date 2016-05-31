@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Quality
 {
-    partial class P01_PhysicalInspection
+    partial class P01_Weight
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -435,7 +435,7 @@
             this.txtsupplier1.TabIndex = 109;
             this.txtsupplier1.TextBox1Binding = "";
             // 
-            // P01_PhysicalInspection
+            // P01_Weight
             // 
             this.ClientSize = new System.Drawing.Size(896, 733);
             this.Controls.Add(this.txtuser1);
@@ -475,9 +475,9 @@
             this.GridPopUp = false;
             this.GridUniqueKey = "Roll,Dyelot";
             this.KeyField1 = "ID";
-            this.Name = "P01_PhysicalInspection";
-            this.Text = "Physical Inspection";
-            this.WorkAlias = "Fir_Physical";
+            this.Name = "P01_Weight";
+            this.Text = "Weight Test";
+            this.WorkAlias = "Fir_weight";
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label4, 0);

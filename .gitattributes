@@ -1340,6 +1340,15 @@ Sci.Production.Quality/P01.resx -text
 Sci.Production.Quality/P01_PhysicalInspection.Designer.cs -text
 Sci.Production.Quality/P01_PhysicalInspection.cs -text
 Sci.Production.Quality/P01_PhysicalInspection.resx -text
+Sci.Production.Quality/P01_PhysicalInspection_Defect.Designer.cs -text
+Sci.Production.Quality/P01_PhysicalInspection_Defect.cs -text
+Sci.Production.Quality/P01_PhysicalInspection_Defect.resx -text
+Sci.Production.Quality/P01_PhysicalInspection_PointRecord.Designer.cs -text
+Sci.Production.Quality/P01_PhysicalInspection_PointRecord.cs -text
+Sci.Production.Quality/P01_PhysicalInspection_PointRecord.resx -text
+Sci.Production.Quality/P01_Weight.Designer.cs -text
+Sci.Production.Quality/P01_Weight.cs -text
+Sci.Production.Quality/P01_Weight.resx -text
 Sci.Production.Quality/Properties/AssemblyInfo.cs -text
 Sci.Production.Quality/Sci.Production.Quality.csproj -text
 Sci.Production.Sewing/P01.Designer.cs -text

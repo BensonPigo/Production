@@ -67,6 +67,15 @@
             this.label23 = new Sci.Win.UI.Label();
             this.seq1_box = new Sci.Win.UI.TextBox();
             this.label14 = new Sci.Win.UI.Label();
+            this.modifyWeightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modifyWeightToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.modifyShadeBondTestRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modifyContinuityRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gridmenu = new Sci.Win.UI.ContextMenuStrip();
+            this.modifyPhysicalInspectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modifyWeightTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modifyShadeBondToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modifyContinuityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -79,6 +88,7 @@
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            this.gridmenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -645,13 +655,74 @@
             this.label14.TabIndex = 28;
             this.label14.Text = "SEQ1";
             // 
+            // modifyWeightToolStripMenuItem
+            // 
+            this.modifyWeightToolStripMenuItem.Name = "modifyWeightToolStripMenuItem";
+            this.modifyWeightToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
+            this.modifyWeightToolStripMenuItem.Text = "Modify Physical Inspection Record";
+            // 
+            // modifyWeightToolStripMenuItem1
+            // 
+            this.modifyWeightToolStripMenuItem1.Name = "modifyWeightToolStripMenuItem1";
+            this.modifyWeightToolStripMenuItem1.Size = new System.Drawing.Size(269, 22);
+            this.modifyWeightToolStripMenuItem1.Text = "Modify Weight Test Record";
+            // 
+            // modifyShadeBondTestRecordToolStripMenuItem
+            // 
+            this.modifyShadeBondTestRecordToolStripMenuItem.Name = "modifyShadeBondTestRecordToolStripMenuItem";
+            this.modifyShadeBondTestRecordToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
+            this.modifyShadeBondTestRecordToolStripMenuItem.Text = "Modify Shade Bond Record";
+            // 
+            // modifyContinuityRecordToolStripMenuItem
+            // 
+            this.modifyContinuityRecordToolStripMenuItem.Name = "modifyContinuityRecordToolStripMenuItem";
+            this.modifyContinuityRecordToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
+            this.modifyContinuityRecordToolStripMenuItem.Text = "Modify Continuity Record";
+            // 
+            // gridmenu
+            // 
+            this.gridmenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.modifyPhysicalInspectionToolStripMenuItem,
+            this.modifyWeightTestToolStripMenuItem,
+            this.modifyShadeBondToolStripMenuItem,
+            this.modifyContinuityToolStripMenuItem});
+            this.gridmenu.Name = "gridmenu";
+            this.gridmenu.Size = new System.Drawing.Size(226, 92);
+            // 
+            // modifyPhysicalInspectionToolStripMenuItem
+            // 
+            this.modifyPhysicalInspectionToolStripMenuItem.Name = "modifyPhysicalInspectionToolStripMenuItem";
+            this.modifyPhysicalInspectionToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.modifyPhysicalInspectionToolStripMenuItem.Text = "Modify Physical Inspection";
+            this.modifyPhysicalInspectionToolStripMenuItem.Click += new System.EventHandler(this.modifyPhysicalInspectionToolStripMenuItem_Click);
+            // 
+            // modifyWeightTestToolStripMenuItem
+            // 
+            this.modifyWeightTestToolStripMenuItem.Name = "modifyWeightTestToolStripMenuItem";
+            this.modifyWeightTestToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.modifyWeightTestToolStripMenuItem.Text = "Modify Weight Test";
+            // 
+            // modifyShadeBondToolStripMenuItem
+            // 
+            this.modifyShadeBondToolStripMenuItem.Name = "modifyShadeBondToolStripMenuItem";
+            this.modifyShadeBondToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.modifyShadeBondToolStripMenuItem.Text = "Modify Shade Bond";
+            // 
+            // modifyContinuityToolStripMenuItem
+            // 
+            this.modifyContinuityToolStripMenuItem.Name = "modifyContinuityToolStripMenuItem";
+            this.modifyContinuityToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.modifyContinuityToolStripMenuItem.Text = "Modify Continuity";
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 730);
+            this.ContextMenuStrip = this.gridmenu;
             this.DefaultDetailOrder = "seq1,seq2,Receivingid";
             this.DefaultOrder = "id";
             this.GridAlias = "FIR";
             this.GridNew = 0;
+            this.GridPopUp = true;
             this.GridUniqueKey = "seq1,seq2,receivingid";
             this.IsGridIconVisible = false;
             this.IsSupportCopy = false;
@@ -678,6 +749,7 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            this.gridmenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -724,5 +796,14 @@
         private Win.UI.Label label23;
         private Win.UI.TextBox seq1_box;
         private Win.UI.Label label14;
+        private System.Windows.Forms.ToolStripMenuItem modifyWeightToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem modifyWeightToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem modifyShadeBondTestRecordToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem modifyContinuityRecordToolStripMenuItem;
+        private Win.UI.ContextMenuStrip gridmenu;
+        private System.Windows.Forms.ToolStripMenuItem modifyPhysicalInspectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem modifyWeightTestToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem modifyShadeBondToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem modifyContinuityToolStripMenuItem;
     }
 }
