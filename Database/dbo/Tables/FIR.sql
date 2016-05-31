@@ -45,6 +45,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Fabric Inspection Report', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR';
 
@@ -203,4 +205,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項',
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠商Refno', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'Refno';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[FIR]([POID] ASC);
 

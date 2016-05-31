@@ -14,13 +14,15 @@
     [InspDate]    DATE           NULL,
     [Inspector]   VARCHAR (10)   CONSTRAINT [DF_FIR_Physical_Inspector] DEFAULT ('') NULL,
     [DetailUkey]  BIGINT         IDENTITY (1, 1) NOT NULL,
-    [Moisture]    NUMERIC (4, 2) CONSTRAINT [DF_FIR_Physical_Moisture] DEFAULT ((0)) NULL,
     [AddName]     VARCHAR (10)   CONSTRAINT [DF_FIR_Physical_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_FIR_Physical_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME       NULL,
+    [Moisture]    BIT            CONSTRAINT [DF_FIR_Physical_Moisture] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_FIR_Physical] PRIMARY KEY CLUSTERED ([DetailUkey] ASC)
 );
+
+
 
 
 
@@ -90,7 +92,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Detail Ukey
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'濕度', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Physical', @level2type = N'COLUMN', @level2name = N'Moisture';
+
 
 
 GO
@@ -107,4 +109,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Physical', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[FIR_Physical]([ID] ASC);
 
