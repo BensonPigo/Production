@@ -357,7 +357,7 @@ namespace Sci.Production.Quality
             var dr =this.CurrentDetailData; if (null == dr) return;
             //DataTable dt = (DataTable)detailgridbs.DataSource
             //var drd = dr["whseArrival"];
-            var frm = new Sci.Production.Quality.P01_PhysicalInspection(true, CurrentDetailData["ID"].ToString(), null, null, dr);
+            var frm = new Sci.Production.Quality.P01_PhysicalInspection(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
