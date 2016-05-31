@@ -107,6 +107,24 @@
     <Compile Include="B01_CapacityWorkDay.Designer.cs">
       <DependentUpon>B01_CapacityWorkDay.cs</DependentUpon>
     </Compile>
+    <Compile Include="B02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B02.Designer.cs">
+      <DependentUpon>B02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B02_MailTo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B02_MailTo.Designer.cs">
+      <DependentUpon>B02_MailTo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B02_MailTo_Detail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B02_MailTo_Detail.Designer.cs">
+      <DependentUpon>B02_MailTo_Detail.cs</DependentUpon>
+    </Compile>
     <Compile Include="B03.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -250,6 +268,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B01_CapacityWorkDay.resx">
       <DependentUpon>B01_CapacityWorkDay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B02.resx">
+      <DependentUpon>B02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B02_MailTo.resx">
+      <DependentUpon>B02_MailTo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B02_MailTo_Detail.resx">
+      <DependentUpon>B02_MailTo_Detail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B03.resx">
       <DependentUpon>B03.cs</DependentUpon>

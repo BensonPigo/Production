@@ -487,6 +487,15 @@ Sci.Production.Basic/B01.resx -text
 Sci.Production.Basic/B01_CapacityWorkDay.Designer.cs -text
 Sci.Production.Basic/B01_CapacityWorkDay.cs -text
 Sci.Production.Basic/B01_CapacityWorkDay.resx -text
+Sci.Production.Basic/B02.Designer.cs -text
+Sci.Production.Basic/B02.cs -text
+Sci.Production.Basic/B02.resx -text
+Sci.Production.Basic/B02_MailTo.Designer.cs -text
+Sci.Production.Basic/B02_MailTo.cs -text
+Sci.Production.Basic/B02_MailTo.resx -text
+Sci.Production.Basic/B02_MailTo_Detail.Designer.cs -text
+Sci.Production.Basic/B02_MailTo_Detail.cs -text
+Sci.Production.Basic/B02_MailTo_Detail.resx -text
 Sci.Production.Basic/B03.Designer.cs -text
 Sci.Production.Basic/B03.cs -text
 Sci.Production.Basic/B03.resx -text
