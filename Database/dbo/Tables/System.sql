@@ -1,41 +1,28 @@
 ﻿CREATE TABLE [dbo].[System] (
-    [Terminal]            VARCHAR (MAX)  CONSTRAINT [DF_System_Terminal] DEFAULT ('') NULL,
-    [ITerminal]           VARCHAR (MAX)  CONSTRAINT [DF_System_ITerminal] DEFAULT ('') NULL,
     [Mailserver]          VARCHAR (60)   CONSTRAINT [DF_System_Mailserver] DEFAULT ('') NULL,
     [Sendfrom]            VARCHAR (40)   CONSTRAINT [DF_System_Sendfrom] DEFAULT ('') NULL,
-    [Emailid]             VARCHAR (40)   CONSTRAINT [DF_System_Emailid] DEFAULT ('') NULL,
+    [EmailID]             VARCHAR (40)   CONSTRAINT [DF_System_Emailid] DEFAULT ('') NULL,
     [EmailPwd]            VARCHAR (20)   CONSTRAINT [DF_System_EmailPwd] DEFAULT ('') NULL,
     [PicPath]             VARCHAR (80)   CONSTRAINT [DF_System_PicPath] DEFAULT ('') NULL,
-    [AccPath]             VARCHAR (80)   CONSTRAINT [DF_System_AccPath] DEFAULT ('') NULL,
-    [MMSPath]             VARCHAR (80)   CONSTRAINT [DF_System_MMSPath] DEFAULT ('') NULL,
-    [SFCPath]             VARCHAR (80)   CONSTRAINT [DF_System_SFCPath] DEFAULT ('') NULL,
     [StdTMS]              INT            CONSTRAINT [DF_System_StdTMS] DEFAULT ((0)) NOT NULL,
     [ClipPath]            VARCHAR (80)   CONSTRAINT [DF_System_ClipPath] DEFAULT ('') NULL,
     [FtpIP]               VARCHAR (36)   CONSTRAINT [DF_System_FtpIP] DEFAULT ('') NULL,
     [FtpID]               VARCHAR (10)   CONSTRAINT [DF_System_FtpID] DEFAULT ('') NULL,
     [FtpPwd]              VARCHAR (36)   CONSTRAINT [DF_System_FtpPwd] DEFAULT ('') NULL,
     [SewLock]             DATE           NULL,
-    [SPLRate]             TINYINT        CONSTRAINT [DF_System_SPLRate] DEFAULT ((0)) NOT NULL,
+    [SampleRate]             TINYINT        CONSTRAINT [DF_System_SPLRate] DEFAULT ((0)) NULL,
     [PullLock]            DATE           NULL,
     [RgCode]              VARCHAR (3)    CONSTRAINT [DF_System_RgCode] DEFAULT ('') NULL,
-    [UdsPath]             VARCHAR (60)   CONSTRAINT [DF_System_UdsPath] DEFAULT ('') NULL,
-    [UdFileName]          VARCHAR (60)   CONSTRAINT [DF_System_UdFileName] DEFAULT ('') NULL,
-    [DnsPath]             VARCHAR (60)   CONSTRAINT [DF_System_DnsPath] DEFAULT ('') NULL,
-    [SendBack]            BIT            CONSTRAINT [DF_System_SendBack] DEFAULT ((0)) NULL,
+    [ImportDataPath]             VARCHAR (60)   CONSTRAINT [DF_System_UdsPath] DEFAULT ('') NULL,
+    [ImportDataFileName]          VARCHAR (60)   CONSTRAINT [DF_System_UdFileName] DEFAULT ('') NULL,
+    [ExportDataPath]             VARCHAR (60)   CONSTRAINT [DF_System_DnsPath] DEFAULT ('') NULL,
     [CurrencyID]          VARCHAR (4)    CONSTRAINT [DF_System_CurrencyID] DEFAULT ('') NULL,
     [USDRate]             NUMERIC (9, 4) CONSTRAINT [DF_System_USDRate] DEFAULT ((0)) NULL,
-    [VATRate]             NUMERIC (3, 1) CONSTRAINT [DF_System_VATRate] DEFAULT ((0)) NULL,
-    [Bond]                VARCHAR (1)    CONSTRAINT [DF_System_Bond] DEFAULT ('') NULL,
     [POApproveName]       VARCHAR (10)   CONSTRAINT [DF_System_POApproveName] DEFAULT ('') NULL,
     [POApproveDay]        TINYINT        CONSTRAINT [DF_System_POApproveDay] DEFAULT ((0)) NULL,
     [CutDay]              TINYINT        CONSTRAINT [DF_System_CutDay] DEFAULT ((0)) NULL,
-    [DailyUpdateSendMail] BIT            CONSTRAINT [DF_System_DailyUpdateSendMail] DEFAULT ((0)) NULL,
-    [ExchangeId]          VARCHAR (2)    CONSTRAINT [DF_System_ExchangeId] DEFAULT ('') NULL,
     [AccountKeyword]      VARCHAR (1)    CONSTRAINT [DF_System_AccountKeyword] DEFAULT ('') NULL,
     [ReadyDay]            TINYINT        CONSTRAINT [DF_System_ReadyDay] DEFAULT ((0)) NULL,
-    [PopOut]              SMALLINT       CONSTRAINT [DF_System_PopOut] DEFAULT ((0)) NULL,
-    [SubConBCS]           VARCHAR (4)    CONSTRAINT [DF_System_SubConBCS] DEFAULT ('') NULL,
-    [StdFarmInDay]        TINYINT        CONSTRAINT [DF_System_StdFarmInDay] DEFAULT ((0)) NULL,
     [VNMultiple]          NUMERIC (4, 2) CONSTRAINT [DF_System_VNMultiple] DEFAULT ((0)) NULL,
     [MtlLeadTime]         TINYINT        CONSTRAINT [DF_System_MtlLeadTime] DEFAULT ((0)) NULL
 );
@@ -50,7 +37,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'寄件者�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Email ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'Emailid';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Email ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = 'EmailID';
 
 
 GO
@@ -62,15 +49,15 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Picture Pat
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Account data Path', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'AccPath';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MMS Data Path', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'MMSPath';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SFC Data Path', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'SFCPath';
+
+
+
+GO
+
 
 
 GO
@@ -98,7 +85,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'車縫日�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'銷樣單的倍數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'SPLRate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'銷樣單的倍數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = 'SampleRate';
 
 
 GO
@@ -110,19 +97,19 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'區域代�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'資料上傳位置', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'UdsPath';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'資料上傳位置', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = 'ImportDataPath';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'資料上傳檔名', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'UdFileName';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'資料上傳檔名', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = 'ImportDataFileName';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'資料下載位置', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'DnsPath';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'資料下載位置', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = 'ExportDataPath';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否回傳PMS資料', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'SendBack';
+
 
 
 GO
@@ -134,11 +121,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'美金匯�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'VATRate';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'保證金', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'Bond';
+
 
 
 GO
@@ -154,11 +141,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁剪上�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Send an e-mail from update', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'DailyUpdateSendMail';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'匯率使用Id', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'ExchangeId';
+
 
 
 GO
@@ -170,15 +157,15 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Production 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'設定Pop Out的Timer分鐘數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'PopOut';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Sub Process BCS Report時間切點', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'SubConBCS';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Sub Process BCS Report Farm In標準天數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'StdFarmInDay';
+
+
+
+GO
+
 
 
 GO
@@ -214,11 +201,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'系統參�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'遠端主機列表', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'Terminal';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'內部遠端主機列表', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'ITerminal';
+
 
 
 GO
