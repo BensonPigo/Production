@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Quality
 {
-    partial class P01_PhysicalInspection
+    partial class P01_ShadeBond
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -62,6 +62,7 @@
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
             this.result_box = new Sci.Win.UI.DisplayBox();
+            this.button1 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -69,6 +70,7 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.button1);
             this.btmcont.Controls.Add(this.button3);
             this.btmcont.Location = new System.Drawing.Point(0, 693);
             this.btmcont.Size = new System.Drawing.Size(896, 40);
@@ -78,6 +80,7 @@
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.button3, 0);
+            this.btmcont.Controls.SetChildIndex(this.button1, 0);
             // 
             // gridcont
             // 
@@ -350,9 +353,9 @@
             this.checkBox1.Location = new System.Drawing.Point(762, 69);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.ReadOnly = true;
-            this.checkBox1.Size = new System.Drawing.Size(121, 21);
+            this.checkBox1.Size = new System.Drawing.Size(135, 21);
             this.checkBox1.TabIndex = 126;
-            this.checkBox1.Text = "Non Inspection";
+            this.checkBox1.Text = "Non Shade Bond";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // approve_button
@@ -430,9 +433,18 @@
             this.result_box.Location = new System.Drawing.Point(551, 72);
             this.result_box.Name = "result_box";
             this.result_box.Size = new System.Drawing.Size(78, 21);
-            this.result_box.TabIndex = 132;
+            this.result_box.TabIndex = 133;
             // 
-            // P01_PhysicalInspection
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(473, 5);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(148, 30);
+            this.button1.TabIndex = 133;
+            this.button1.Text = "Print Format Report";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // P01_ShadeBond
             // 
             this.ClientSize = new System.Drawing.Size(896, 733);
             this.Controls.Add(this.result_box);
@@ -472,9 +484,9 @@
             this.GridPopUp = false;
             this.GridUniqueKey = "Roll,Dyelot";
             this.KeyField1 = "ID";
-            this.Name = "P01_PhysicalInspection";
-            this.Text = "Physical Inspection";
-            this.WorkAlias = "Fir_Physical";
+            this.Name = "P01_ShadeBond";
+            this.Text = "Shade Bond ";
+            this.WorkAlias = "Fir_shadebond";
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label4, 0);
@@ -554,5 +566,6 @@
         private Win.UI.DisplayBox approve_box;
         private Class.txtuser txtuser1;
         private Win.UI.DisplayBox result_box;
+        private Win.UI.Button button1;
     }
 }

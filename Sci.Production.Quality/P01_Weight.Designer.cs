@@ -53,7 +53,6 @@
             this.arrwhdate_box = new Sci.Win.UI.DisplayBox();
             this.lastinspdate_box = new Sci.Win.UI.DisplayBox();
             this.label13 = new Sci.Win.UI.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.approve_button = new Sci.Win.UI.Button();
             this.encode_button = new Sci.Win.UI.Button();
@@ -62,6 +61,7 @@
             this.button3 = new Sci.Win.UI.Button();
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
+            this.result_box = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -342,19 +342,6 @@
             this.label13.TabIndex = 124;
             this.label13.Text = "Result";
             // 
-            // comboBox1
-            // 
-            this.comboBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(551, 70);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.ReadOnly = true;
-            this.comboBox1.Size = new System.Drawing.Size(86, 24);
-            this.comboBox1.TabIndex = 125;
-            // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
@@ -363,9 +350,9 @@
             this.checkBox1.Location = new System.Drawing.Point(762, 69);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.ReadOnly = true;
-            this.checkBox1.Size = new System.Drawing.Size(121, 21);
+            this.checkBox1.Size = new System.Drawing.Size(133, 21);
             this.checkBox1.TabIndex = 126;
-            this.checkBox1.Text = "Non Inspection";
+            this.checkBox1.Text = "Non Weight Test";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // approve_button
@@ -435,16 +422,26 @@
             this.txtsupplier1.TabIndex = 109;
             this.txtsupplier1.TextBox1Binding = "";
             // 
+            // result_box
+            // 
+            this.result_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.result_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.result_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.result_box.Location = new System.Drawing.Point(551, 72);
+            this.result_box.Name = "result_box";
+            this.result_box.Size = new System.Drawing.Size(78, 21);
+            this.result_box.TabIndex = 133;
+            // 
             // P01_Weight
             // 
             this.ClientSize = new System.Drawing.Size(896, 733);
+            this.Controls.Add(this.result_box);
             this.Controls.Add(this.txtuser1);
             this.Controls.Add(this.approve_box);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.encode_button);
             this.Controls.Add(this.approve_button);
             this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.lastinspdate_box);
             this.Controls.Add(this.arrwhdate_box);
@@ -506,13 +503,13 @@
             this.Controls.SetChildIndex(this.arrwhdate_box, 0);
             this.Controls.SetChildIndex(this.lastinspdate_box, 0);
             this.Controls.SetChildIndex(this.label13, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
             this.Controls.SetChildIndex(this.checkBox1, 0);
             this.Controls.SetChildIndex(this.approve_button, 0);
             this.Controls.SetChildIndex(this.encode_button, 0);
             this.Controls.SetChildIndex(this.label14, 0);
             this.Controls.SetChildIndex(this.approve_box, 0);
             this.Controls.SetChildIndex(this.txtuser1, 0);
+            this.Controls.SetChildIndex(this.result_box, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -550,12 +547,12 @@
         private Win.UI.DisplayBox arrwhdate_box;
         private Win.UI.DisplayBox lastinspdate_box;
         private Win.UI.Label label13;
-        private Win.UI.ComboBox comboBox1;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.Button approve_button;
         private Win.UI.Button encode_button;
         private Win.UI.Label label14;
         private Win.UI.DisplayBox approve_box;
         private Class.txtuser txtuser1;
+        private Win.UI.DisplayBox result_box;
     }
 }

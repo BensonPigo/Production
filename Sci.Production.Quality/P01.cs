@@ -28,14 +28,19 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
+
+            detailgrid.ContextMenuStrip = gridmenu;
         }
+
         public P01(string Poid) //for Form直接call form
         {
             InitializeComponent();
             DefaultFilter = string.Format("POID = '{0}'", Poid);
             InsertDetailGridOnDoubleClick = false;
             IsSupportEdit = false;
+            detailgrid.ContextMenuStrip = gridmenu;
         }
+
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
@@ -49,7 +54,7 @@ namespace Sci.Production.Quality
                 NonContinuity,Continuity,ContinuityDate,Continuity,
                 a.Status,ReplacementReportID,(seq1+seq2) as seq,
                 (Select weavetypeid from Fabric b where b.SCIRefno =a.SCIrefno) as weavetypeid,
-                c.Exportid,c.whseArrival,dbo.getPass1(a.Approve) as approve,
+                c.Exportid,c.whseArrival,dbo.getPass1(a.Approve) as approve1,approveDate,approve,
                 (Select d.colorid from PO_Supp_Detail d Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2) as Colorid,
                 (Select AbbEn From Supp Where a.suppid = supp.id) as SuppEn
                 From FIR a Left join Receiving c on c.id = a.receivingid
@@ -66,6 +71,88 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorCheckBoxColumnSettings nonWei = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings nonSha = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings nonCon = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorTextColumnSettings phy = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorDateColumnSettings phyD = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings phyYds = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorTextColumnSettings Wei = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorDateColumnSettings WeiD = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorTextColumnSettings sha = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorDateColumnSettings shaD = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorTextColumnSettings Con = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorDateColumnSettings ConD = new DataGridViewGeneratorDateColumnSettings();
+            phy.CellMouseDoubleClick += (s, e) =>
+            {
+                    var dr = this.CurrentDetailData; if (null == dr) return;
+                    var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, CurrentDetailData["ID"].ToString(), null, null, dr);
+                    frm.ShowDialog(this);
+                    frm.Dispose();
+                    this.RenewData();
+            };
+            phyD.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData; if (null == dr) return;
+                var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, CurrentDetailData["ID"].ToString(), null, null, dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+
+            phyYds.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData; if (null == dr) return;
+                var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, CurrentDetailData["ID"].ToString(), null, null, dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            Wei.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData; if (null == dr) return;
+                var frm = new Sci.Production.Quality.P01_Weight(false, CurrentDetailData["ID"].ToString(), null, null, dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            WeiD.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData; if (null == dr) return;
+                var frm = new Sci.Production.Quality.P01_Weight(false, CurrentDetailData["ID"].ToString(), null, null, dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            sha.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData; if (null == dr) return;
+                var frm = new Sci.Production.Quality.P01_Weight(false, CurrentDetailData["ID"].ToString(), null, null, dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            shaD.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData; if (null == dr) return;
+                var frm = new Sci.Production.Quality.P01_Weight(false, CurrentDetailData["ID"].ToString(), null, null, dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            Con.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData; if (null == dr) return;
+                var frm = new Sci.Production.Quality.P01_Weight(false, CurrentDetailData["ID"].ToString(), null, null, dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            ConD.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData; if (null == dr) return;
+                var frm = new Sci.Production.Quality.P01_Weight(false, CurrentDetailData["ID"].ToString(), null, null, dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
             nonPhy.CellEditable += (s, e) =>
             {
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
@@ -76,7 +163,8 @@ namespace Sci.Production.Quality
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 dr["NonPhysical"] = e.FormattedValue;
                 dr.EndEdit();
-                if(dr["Status"].ToString()=="Confirmed") FinalResult(dr);
+                DataTable dt = (DataTable)detailgridbs.DataSource;
+                FinalResult(dr);
             };
             nonWei.CellEditable += (s, e) =>
             {
@@ -88,7 +176,7 @@ namespace Sci.Production.Quality
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 dr["NonWeight"] = e.FormattedValue;
                 dr.EndEdit();
-                if (dr["Status"].ToString() == "Confirmed") FinalResult(dr);
+                FinalResult(dr);
             };
             nonSha.CellEditable += (s, e) =>
             {
@@ -100,7 +188,7 @@ namespace Sci.Production.Quality
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 dr["NonShadeBond"] = e.FormattedValue;
                 dr.EndEdit();
-                if (dr["Status"].ToString() == "Confirmed") FinalResult(dr);
+                FinalResult(dr);
             };
             nonCon.CellEditable += (s, e) =>
             {
@@ -112,7 +200,7 @@ namespace Sci.Production.Quality
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 dr["NonContinuity"] = e.FormattedValue;
                 dr.EndEdit();
-                if (dr["Status"].ToString() == "Confirmed") FinalResult(dr);
+                FinalResult(dr);
             };
             #region set grid
             this.detailgrid.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
@@ -129,19 +217,19 @@ namespace Sci.Production.Quality
                 .Date("InspDeadline", header: "Insp. Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Result", header: "Over all\n Result", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .CheckBox("NonPhysical", header: "Physical N/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonPhy)
-                .Text("Physical", header: "Physical\n Inspection", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                .Numeric("TotalInspYds", header: "Act. Ttl Ysd\nInspection", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
-                .Date("PhysicalDate", header: "Last Phy.\nInsp. Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .CheckBox("NonWeight", header: "Weight N/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0)
-                .Text("Weight", header: "Weight\n Test", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                .Date("WeightDate", header: "Last Wei.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .CheckBox("NonShadeBond", header: "Shade\nBondN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0)
+                .Text("Physical", header: "Physical\n Inspection", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: phy)
+                .Numeric("TotalInspYds", header: "Act. Ttl Ysd\nInspection", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true, settings: phyYds)
+                .Date("PhysicalDate", header: "Last Phy.\nInsp. Date", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:phyD)
+                .CheckBox("NonWeight", header: "Weight N/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0,settings: nonWei)
+                .Text("Weight", header: "Weight\n Test", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: Wei)
+                .Date("WeightDate", header: "Last Wei.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: WeiD)
+                .CheckBox("NonShadeBond", header: "Shade\nBondN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0,settings:nonSha)
                 .Text("Shadebond", header: "Shade\nBond", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Date("ShadeBondDate", header: "Last Shade.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .CheckBox("NonContinuity", header: "Continuity \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0)
+                .CheckBox("NonContinuity", header: "Continuity \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0,settings:nonCon)
                 .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Date("ContinuityDate", header: "Last Cont.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Approve", header: "Approve", width: Widths.AnsiChars(10), iseditingreadonly: true) 
+                .Text("Approve1", header: "Approve", width: Widths.AnsiChars(10), iseditingreadonly: true) 
                 .Text("ReplacementReportID", header: "1st Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Receivingid", header: "Receiving ID", width: Widths.AnsiChars(13), iseditingreadonly: true);
             detailgrid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
@@ -173,7 +261,6 @@ namespace Sci.Production.Quality
                 return;
             }
             DataTable sciTb;
-            DateTime minSciDel;
             string query_cmd = string.Format(" select * from [dbo].[Getsci]('{0}','{1}')", CurrentMaintain["ID"],queryDr["Category"]);
             DBProxy.Current.Select(null,query_cmd,out sciTb);
             if (!dResult)
@@ -232,7 +319,14 @@ namespace Sci.Production.Quality
                 Complete_box.Text = completedate.ToShortDateString(); ;
             }
             else Complete_box.Text = "";
-            
+
+            #region Box 顏色
+            ava_box.BackColor = Color.MistyRose;
+            ph_box.BackColor = Color.LemonChiffon;
+            we_box.BackColor = Color.LightCyan;
+            sh_box.BackColor = Color.LightGreen;
+            co_box.BackColor = Color.AntiqueWhite;
+            #endregion
         }
 
         protected override DualResult ClickSave()
@@ -244,11 +338,15 @@ namespace Sci.Production.Quality
             {
                 if (dr.RowState == DataRowState.Modified)
                 {
+                    int nonph = dr["NonPhysical"].ToString() == "True" ? 1 : 0;
+                    int nonwei = dr["NonWeight"].ToString() == "True" ? 1 : 0;
+                    int nonsha = dr["NonShadeBond"].ToString() == "True" ? 1 : 0;
+                    int noncon = dr["NonContinuity"].ToString() == "True" ? 1 : 0;
                     save_po_cmd = save_po_cmd + string.Format(
                     @"Update FIR Set Result = '{0}',NonPhysical = {1},NonWeight = {2},
-                    NonShadeBond = {3},NonContinuity = {4}
+                    NonShadeBond = {3},NonContinuity = {4},Status = '{6}'
                     Where ID = '{5}';"
-                    , dr["Result"], dr["NonPhysical"], dr["NonWeight"], dr["NonShadeBond"], dr["NonContinuity"],dr["ID"]);
+                    , dr["Result"], nonph, nonwei, nonsha, noncon, dr["ID"], dr["Status"]);
                 }
             }
             DualResult upResult;
@@ -286,14 +384,13 @@ namespace Sci.Production.Quality
 
         public void FinalResult(DataRow dr)
         {
-            if (this.EditMode)
+            if (this.EditMode) //Status = Confirm 才會判斷
             {
-                string fin_result = "P";
-                if (dr["NonPhysical"].ToString() == "0" && MyUtility.Check.Empty(dr["Physical1"])) fin_result = "";
-                if (dr["NonWeight"].ToString() == "0" && MyUtility.Check.Empty(dr["Weight1"])) fin_result = "";
-                if (dr["NonShadeBond"].ToString() == "0" && MyUtility.Check.Empty(dr["ShadeBond1"])) fin_result = "";
-                if (dr["NonContinuity"].ToString() == "0" && MyUtility.Check.Empty(dr["Continuity1"])) fin_result = "";
-                dr["Result1"] = fin_result;
+
+                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(dr);
+
+                dr["Result"] = returnstr[0];
+                dr["Status"] = returnstr[1];
             }
         }
 
@@ -352,12 +449,36 @@ namespace Sci.Production.Quality
         }
 
         private void modifyPhysicalInspectionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            
+        {           
             var dr =this.CurrentDetailData; if (null == dr) return;
-            //DataTable dt = (DataTable)detailgridbs.DataSource
-            //var drd = dr["whseArrival"];
             var frm = new Sci.Production.Quality.P01_PhysicalInspection(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
+            frm.ShowDialog(this);
+            frm.Dispose();
+            this.RenewData();
+        }
+
+        private void modifyWeightTestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dr = this.CurrentDetailData; if (null == dr) return;
+            var frm = new Sci.Production.Quality.P01_Weight(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
+            frm.ShowDialog(this);
+            frm.Dispose();
+            this.RenewData();
+        }
+
+        private void modifyShadeBondToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dr = this.CurrentDetailData; if (null == dr) return;
+            var frm = new Sci.Production.Quality.P01_ShadeBond(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
+            frm.ShowDialog(this);
+            frm.Dispose();
+            this.RenewData();
+        }
+
+        private void modifyContinuityToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dr = this.CurrentDetailData; if (null == dr) return;
+            var frm = new Sci.Production.Quality.P01_Continuity(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();

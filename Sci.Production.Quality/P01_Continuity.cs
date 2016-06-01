@@ -17,12 +17,12 @@ using Sci.Production.Quality;
 
 namespace Sci.Production.Quality
 {
-    public partial class P01_Weight : Sci.Win.Subs.Input4
+    public partial class P01_Continuity : Sci.Win.Subs.Input4
     {
         private DataRow maindr;
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
-        public P01_Weight(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
+        public P01_Continuity(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
 
         {
@@ -39,11 +39,11 @@ namespace Sci.Production.Quality
         {
             #region Encode/Approve Enable
             button_enable();
-            encode_button.Text = MyUtility.Convert.GetBool(maindr["WeightEncode"]) ? "Amend" : "Encode";
+            encode_button.Text = MyUtility.Convert.GetBool(maindr["ContinuityEncode"]) ? "Amend" : "Encode";
             approve_button.Text = maindr["Status"].ToString() == "Approved" ? "Unapprove" : "Approve";
             #endregion
 
-            this.save.Enabled = !MyUtility.Convert.GetBool(maindr["WeightEncode"]);
+            this.save.Enabled = !MyUtility.Convert.GetBool(maindr["ContinuityEncode"]);
 
             txtsupplier1.TextBox1.IsSupportEditMode = false;
             txtsupplier1.TextBox1.ReadOnly = true;
@@ -85,8 +85,8 @@ namespace Sci.Production.Quality
             seq_box.Text = maindr["Seq1"].ToString() + "-" + maindr["Seq2"].ToString();
             sp_box.Text = maindr["POID"].ToString();
             wk_box.Text = maindr["Exportid"].ToString();
-            checkBox1.Value = maindr["nonWeight"].ToString();
-            result_box.Text = maindr["Weight"].ToString();
+            checkBox1.Value = maindr["nonContinuity"].ToString();
+            result_box.Text = maindr["Continuity"].ToString();
             txtuser1.TextBox1.Text = maindr["Approve"].ToString();
             return base.OnRequery();
         }
@@ -113,8 +113,8 @@ namespace Sci.Production.Quality
         {
 
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings averageWeightM2cell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorTextColumnSettings Resultcell = new DataGridViewGeneratorTextColumnSettings();
+            
             #region Roll
             Rollcell.EditingMouseDown += (s, e) =>
             {
@@ -158,22 +158,7 @@ namespace Sci.Production.Quality
                 }  
             };
             #endregion
-            #region Difference
-            averageWeightM2cell.CellValidating += (s, e) =>
-            {
-                DataRow dr = grid.GetDataRow(e.RowIndex);
-                string oldvalue = dr["averageWeightM2"].ToString();
-                string newvalue = e.FormattedValue.ToString();
-                if (this.EditMode == false) return;
-                if (oldvalue == newvalue) return;
-                decimal M2 = MyUtility.Convert.GetDecimal(dr["WeightM2"]);
-                decimal AvgM2 = MyUtility.Convert.GetDecimal(e.FormattedValue);
-                decimal diff = M2==0 ? 0 : Math.Round(((M2 - AvgM2) / M2) * 100, 2);
-                dr["averageWeightM2"] = AvgM2;
-                dr["Difference"] = diff;
-                dr.EndEdit();
-            };
-            #endregion
+
             #region Resultcell
             Resultcell.CellMouseDoubleClick += (s, e) =>
             {
@@ -183,12 +168,11 @@ namespace Sci.Production.Quality
                 else dr["Result"] = "Pass";
             };
             #endregion
+
             Helper.Controls.Grid.Generator(this.grid)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), settings: Rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
-            .Numeric("WeightM2", header: "DeclaredMass", width: Widths.AnsiChars(7), integer_places: 4, decimal_places: 1, iseditingreadonly: true)
-            .Numeric("averageWeightM2", header: "Average Mass", width: Widths.AnsiChars(7), integer_places: 4, decimal_places: 1,settings: averageWeightM2cell)
-            .Numeric("Difference", header: "Diff%", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2, iseditingreadonly: true)
+            .CellScale("Scale", header: "Scale", width: Widths.AnsiChars(5))
             .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true,settings: Resultcell)
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))
             .CellUser("Inspector", header: "Inspector", width: Widths.AnsiChars(10), userNamePropertyName: "Name")
@@ -196,13 +180,13 @@ namespace Sci.Production.Quality
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20));
 
             grid.Columns[0].DefaultCellStyle.BackColor = Color.MistyRose;
+            grid.Columns[2].DefaultCellStyle.BackColor = Color.MistyRose;
             grid.Columns[3].DefaultCellStyle.BackColor = Color.MistyRose;
-            grid.Columns[5].DefaultCellStyle.BackColor = Color.MistyRose;
-            grid.Columns[5].DefaultCellStyle.ForeColor = Color.Red;
+            grid.Columns[3].DefaultCellStyle.ForeColor = Color.Red;
 
+            grid.Columns[4].DefaultCellStyle.BackColor = Color.MistyRose;
+            grid.Columns[5].DefaultCellStyle.BackColor = Color.MistyRose;
             grid.Columns[6].DefaultCellStyle.BackColor = Color.MistyRose;
-            grid.Columns[7].DefaultCellStyle.BackColor = Color.MistyRose;
-            grid.Columns[9].DefaultCellStyle.BackColor = Color.MistyRose;
             return true;
 
         }
@@ -221,8 +205,7 @@ namespace Sci.Production.Quality
             selectDr["poid"] = maindr["poid"];
             selectDr["SEQ1"] = maindr["SEQ1"];
             selectDr["SEQ2"] = maindr["SEQ2"];
-            selectDr["WeightM2"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup("WeightM2", maindr["SciRefno"].ToString(), "Fabric", "SciRefno"));
-            selectDr["difference"] = 0;
+            selectDr["scale"] = "";
         }
 
         protected override bool OnSaveBefore()
@@ -236,10 +219,10 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.WarningBox("<Roll> can not be empty.");
                 return false;
             }
-            drArray = gridTb.Select("averageWeightM2=0");
+            drArray = gridTb.Select("Scale=''");
             if (drArray.Length != 0)
             {
-                MyUtility.Msg.WarningBox("<Average Mass> can not be empty.");
+                MyUtility.Msg.WarningBox("<Scale> can not be empty.");
                 return false;
             }
 
@@ -270,9 +253,9 @@ namespace Sci.Production.Quality
         private void encode_button_Click(object sender, EventArgs e)
         {
             string updatesql ="";
-            if (!MyUtility.Convert.GetBool(maindr["WeightEncode"])) //Encode
+            if (!MyUtility.Convert.GetBool(maindr["ContinuityEncode"])) //Encode
             {
-                if (!MyUtility.Convert.GetBool(maindr["nonWeight"])) //只要沒勾選就要判斷，有勾選就可直接Encode
+                if (!MyUtility.Convert.GetBool(maindr["nonContinuity"])) //只要沒勾選就要判斷，有勾選就可直接Encode
                 {
                     if (MyUtility.GetValue.Lookup("WeaveTypeID", maindr["SCIRefno"].ToString(), "Fabric", "SciRefno") == "KNIT")
                     {
@@ -282,8 +265,9 @@ namespace Sci.Production.Quality
                         @"Select distinct dyelot from Receiving_Detail a where 
                         a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
                         and not exists 
-                        (Select distinct dyelot from FIR_Weight b where b.id={1} and a.dyelot = b.dyelot)"
+                        (Select distinct dyelot from FIR_Continuity b where b.id={1} and a.dyelot = b.dyelot)"
                            , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
+
                         DualResult dResult = DBProxy.Current.Select(null, cmd, out dyeDt);
                         if (dResult)
                         {
@@ -305,9 +289,9 @@ namespace Sci.Production.Quality
                 string result = "Pass";
                 if (ResultAry.Length > 0) result = "Fail";
                 #region  寫入虛擬欄位
-                maindr["Weight"] = result;
-                maindr["WeightDate"] = DateTime.Now.ToShortDateString();
-                maindr["WeightEncode"] = true;
+                maindr["Continuity"] = result;
+                maindr["ContinuityDate"] = DateTime.Now.ToShortDateString();
+                maindr["ContinuityEncode"] = true;
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
                 #endregion 
@@ -316,7 +300,7 @@ namespace Sci.Production.Quality
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set WeightDate = GetDate(),WeightEncode=1,EditName='{0}',EditDate = GetDate(),Weight = '{1}',Result ='{2}',Status='{4}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
+                @"Update Fir set ContinuityDate = GetDate(),ContinuityEncode=1,EditName='{0}',EditDate = GetDate(),Continuity = '{1}',Result ='{2}',Status='{4}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
                 #endregion
                  //*****Send Excel Email 尚未完成 需寄給Encoder的Teamleader 與 Supervisor*****
 
@@ -329,18 +313,21 @@ namespace Sci.Production.Quality
                 #region 判斷Result 是否要寫入
                 string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
                 #endregion 
+
                 #region  寫入虛擬欄位
-                maindr["Weight"] = "";
-                maindr["WeightDate"] = DBNull.Value;
-                maindr["WeightEncode"] = false;
+                maindr["Continuity"] = "";
+                maindr["ContinuityDate"] = DBNull.Value;
+                maindr["ContinuityEncode"] = false;
                 maindr["Status"] = returnstr[1];
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
                 maindr["Result"] = returnstr[0];
                 #endregion 
+
+
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set WeightDate = null,WeightEncode=0,EditName='{0}',EditDate = GetDate(),Weight = '',Result ='{2}',Status='{3}' where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
+                @"Update Fir set ContinuityDate = null,ContinuityEncode=0,EditName='{0}',EditDate = GetDate(),Continuity = '',Result ='{2}',Status='{3}' where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
                 #endregion
             }
             DualResult upResult;
@@ -434,7 +421,7 @@ namespace Sci.Production.Quality
             int lCheck = 0;
             if (MyUtility.Check.Seek(pass2_cmd, out pass2_dr))
             {
-                lApprove = pass2_dr["CanConfirm"].ToString() == "True" ? 1 : 0;
+                lApprove =pass2_dr["CanConfirm"].ToString()=="True"? 1 : 0;
                 lCheck = pass2_dr["CanCheck"].ToString() == "True" ? 1 : 0;
             }
             if (maindr["Result"].ToString() == "Pass")

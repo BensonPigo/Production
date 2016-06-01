@@ -182,12 +182,13 @@ namespace Sci.Production.Quality
             CurrentData["TotalPoint"] = SumPoint;
             CurrentData["PointRate"] = Math.Round((SumPoint / MyUtility.Convert.GetDouble(CurrentData["ActualYds"])) * 100, 2);
             #region Grade,Result
-            string grade_cmd = String.Format("Select * from Supplevel Where Type = 'F' and range1 <= {0} and range2>={0} and junk=0", CurrentData["PointRate"]);
+            string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", CurrentData["SCiRefno"].ToString(), "Fabric", "SciRefno");
+            string grade_cmd = String.Format("SELECT MIN(GRADE) grade FROM FIR_Grade WHERE WEAVETYPEID = '{0}' AND PERCENTAGE >= IIF({1} > 100,100,{1})", WeaveTypeid, CurrentData["PointRate"]);
             DataRow grade_dr;
             if (MyUtility.Check.Seek(grade_cmd, out grade_dr))
             {
                 CurrentData["Grade"] = grade_dr["ID"];
-                CurrentData["Result"] = grade_dr["Result"];
+                CurrentData["Result"] = MyUtility.GetValue.Lookup(string.Format("Select Result from Fir_Grade wher WEAVETYPEID = '{0}' and Grand = '{1}'",WeaveTypeid,grade_dr["ID"]),null);
             }
             #endregion
             return base.DoSave();

@@ -36,58 +36,6 @@ namespace Sci.Production.Quality
             txtuser1.TextBox1.IsSupportEditMode = false;
             txtuser1.TextBox1.ReadOnly = true;
             maindr = mainDr;
-            string order_cmd = string.Format("Select * from orders where id='{0}'",maindr["POID"]);
-            DataRow order_dr;
-            if (MyUtility.Check.Seek(order_cmd, out order_dr))
-            {
-                brand_box.Text = order_dr["Brandid"].ToString();
-                style_box.Text = order_dr["Styleid"].ToString();
-            }
-            else
-            {
-                brand_box.Text = "";
-                style_box.Text = "";
-            }
-            string po_cmd = string.Format("Select * from po_supp where id='{0}' and seq1 = '{1}'", maindr["POID"], maindr["seq1"]);
-            DataRow po_dr;
-            if (MyUtility.Check.Seek(po_cmd, out po_dr))
-            {
-                txtsupplier1.TextBox1.Text = po_dr["suppid"].ToString();
-                
-            }
-            else
-            {
-                txtsupplier1.TextBox1.Text = "";
-            }
-
-            approve_box.Text = maindr["ApproveDate"].ToString();
-            arriveqty_box.Text = maindr["arriveQty"].ToString();
-            arrwhdate_box.Text = MyUtility.Convert.GetDate(maindr["whseArrival"]).ToString();
-            brandrefno_box.Text = maindr["SCIRefno"].ToString();
-            color_box.Text = maindr["Colorid"].ToString();
-            lastinspdate_box.Text = MyUtility.Convert.GetDate(maindr["physicalDate"]).ToString();
-            refdesc_box.Text = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
-            scirefno_box.Text = maindr["SciRefno"].ToString();           
-            seq_box.Text = maindr["Seq1"].ToString() + "-" + maindr["Seq2"].ToString();
-            sp_box.Text = maindr["POID"].ToString();    
-            wk_box.Text = maindr["Exportid"].ToString();
-            checkBox1.Value = maindr["nonphysical"].ToString();
-            comboBox1.Text = maindr["physical"].ToString();
-
-            
-
-            
-        }
-        protected override void OnFormLoaded()
-        {
-            base.OnFormLoaded();
-            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("Pass", "Pass");
-            comboBox1_RowSource.Add("Fail", "Fail");
-            comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
-
         }
         protected override void OnEditModeChanged()
         {
@@ -104,7 +52,45 @@ namespace Sci.Production.Quality
 
             this.save.Enabled = !MyUtility.Convert.GetBool(maindr["PhysicalEncode"]);
 
+            string order_cmd = string.Format("Select * from orders where id='{0}'", maindr["POID"]);
+            DataRow order_dr;
+            if (MyUtility.Check.Seek(order_cmd, out order_dr))
+            {
+                brand_box.Text = order_dr["Brandid"].ToString();
+                style_box.Text = order_dr["Styleid"].ToString();
+            }
+            else
+            {
+                brand_box.Text = "";
+                style_box.Text = "";
+            }
+            string po_cmd = string.Format("Select * from po_supp where id='{0}' and seq1 = '{1}'", maindr["POID"], maindr["seq1"]);
+            DataRow po_dr;
+            if (MyUtility.Check.Seek(po_cmd, out po_dr))
+            {
+                txtsupplier1.TextBox1.Text = po_dr["suppid"].ToString();
 
+            }
+            else
+            {
+                txtsupplier1.TextBox1.Text = "";
+            }
+
+            approve_box.Text = maindr["ApproveDate"].ToString();
+            arriveqty_box.Text = maindr["arriveQty"].ToString();
+            arrwhdate_box.Text = MyUtility.Convert.GetDate(maindr["whseArrival"]).ToString();
+            brandrefno_box.Text = maindr["SCIRefno"].ToString();
+            color_box.Text = maindr["Colorid"].ToString();
+            lastinspdate_box.Text = MyUtility.Convert.GetDate(maindr["physicalDate"]).ToString();
+            refdesc_box.Text = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
+            scirefno_box.Text = maindr["SciRefno"].ToString();
+            seq_box.Text = maindr["Seq1"].ToString() + "-" + maindr["Seq2"].ToString();
+            sp_box.Text = maindr["POID"].ToString();
+            wk_box.Text = maindr["Exportid"].ToString();
+            checkBox1.Value = maindr["nonphysical"].ToString();
+            result_box.Text = maindr["physical"].ToString();
+            txtuser1.TextBox1.Text = maindr["Approve"].ToString();
+            
             return base.OnRequery();
         }
         protected override void OnRequeryPost(DataTable datas)
@@ -132,11 +118,6 @@ namespace Sci.Production.Quality
 
             MyUtility.Tool.ProcessWithDatatable(datas, "ID,NewKey,DetailUkey", str_defect, out Fir_physical_Defect);
             #endregion
-            //if (firstQuery) //第一次執行才做
-            //{
-                
-            //    firstQuery = false;
-            //}
         }
         protected override bool OnGridSetup()
         {
@@ -420,9 +401,11 @@ Where DetailUkey = {15};",
                     //至少收料的每ㄧ缸都要有檢驗紀錄 ,找尋有收料的缸沒在檢驗出現
                     DataTable dyeDt;
                     string cmd = string.Format(
-                        @"Select distinct dyelot from Receiving_Detail where id='{0}' and poid='{2}' and seq1 ='{3}' and seq2='{4}'  
-                        and  dyelot not in 
-                        (Select distinct dyelot from FIR_Physical where id='{1}')", maindr["receivingid"], maindr["id"],maindr["POID"],maindr["seq1"],maindr["seq2"]);
+                        @"Select distinct dyelot from Receiving_Detail a where 
+                        a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
+                        and not exists 
+                        (Select distinct dyelot from FIR_Physical b where b.id={1} and a.dyelot = b.dyelot)"
+                        , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
                     DualResult dResult = DBProxy.Current.Select(null, cmd, out dyeDt);
                     if (dResult)
                     {
@@ -454,41 +437,35 @@ Where DetailUkey = {15};",
                 maindr["TotalInspYds"] = sumTotalYds;
                 #endregion 
                 #region 判斷Result 是否要寫入
-                string allResult = "";
-                if ((!MyUtility.Check.Empty(maindr["Physical"]) || MyUtility.Convert.GetBool(maindr["Nonphysical"])) && (!MyUtility.Check.Empty(maindr["Weight"]) || MyUtility.Convert.GetBool(maindr["NonWeight"])) && (!MyUtility.Check.Empty(maindr["ShadeBond"]) || MyUtility.Convert.GetBool(maindr["NonShadeBond"])) && (!MyUtility.Check.Empty(maindr["Continuity"]) || MyUtility.Convert.GetBool(maindr["NonContinuity"])))
-                {
-                    if (maindr["Physical"].ToString() == "Fail" || maindr["Weight"].ToString() == "Fail" || maindr["ShadeBond"].ToString() == "Fail" || maindr["Continuity"].ToString() == "Fail") allResult = "Fail";
-                    else allResult = "Pass";
-
-                    maindr["Status"] = "Confirmed";
-
-                }
+                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set PhysicalDate = GetDate(),PhysicalEncode=1,EditName='{0}',EditDate = GetDate(),Physical = '{1}',Result ='{2}',TotalDefectPoint = {4},TotalInspYds = {5},Status='Confirmed' where id ={3}", loginID, result, allResult, maindr["ID"], sumPoint, sumTotalYds);
+                @"Update Fir set PhysicalDate = GetDate(),PhysicalEncode=1,EditName='{0}',EditDate = GetDate(),Physical = '{1}',Result ='{2}',TotalDefectPoint = {4},TotalInspYds = {5},Status='{6}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], sumPoint, sumTotalYds, returnstr[1]);
                 #endregion
                  //*****Send Excel Email 尚未完成 需寄給Encoder的Teamleader 與 Supervisor*****
 
                 //*********************************************************************************
-                maindr["Result"] = allResult;
+                maindr["Result"] = returnstr[0];
+                maindr["Status"] = returnstr[1];
             }
             else //Amend
             {
+                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
                 #region  寫入虛擬欄位
                 maindr["Physical"] = "";
                 maindr["PhysicalDate"] = DBNull.Value;
                 maindr["PhysicalEncode"] = false;
-                maindr["Status"] = "New";
+                maindr["Status"] = returnstr[1];
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
                 maindr["TotalDefectPoint"] = 0;
                 maindr["TotalInspYds"] = 0;
-                maindr["Result"] = "";
+                maindr["Result"] = returnstr[0];
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set PhysicalDate = null,PhysicalEncode=0,EditName='{0}',EditDate = GetDate(),Physical = '',Result ='',TotalDefectPoint = 0,TotalInspYds = 0,Status='New' where id ={1}", loginID, maindr["ID"]);
+                @"Update Fir set PhysicalDate = null,PhysicalEncode=0,EditName='{0}',EditDate = GetDate(),Physical = '',Result ='{2}',TotalDefectPoint = 0,TotalInspYds = 0,Status='{3}' where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
                 #endregion
             }
             DualResult upResult;
@@ -573,7 +550,7 @@ Where DetailUkey = {15};",
         {
             if (maindr == null) return;
             encode_button.Enabled = this.CanEdit && !this.EditMode && maindr["Status"].ToString() != "Approved";
-            string menupk = MyUtility.GetValue.Lookup("Ukey", "Sci.Production.Quality.P01", "MenuDetail", "FormName");
+            string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P01", "MenuDetail", "FormName");
             string pass0pk = MyUtility.GetValue.Lookup("FKPass0", loginID, "Pass1", "ID");
             DataRow pass2_dr;
             string pass2_cmd = string.Format("Select * from Pass2 Where FKPass0 ={0} and FKMenu={1}", pass0pk, menupk);
@@ -581,16 +558,16 @@ Where DetailUkey = {15};",
             int lCheck = 0;
             if (MyUtility.Check.Seek(pass2_cmd, out pass2_dr))
             {
-                lApprove = MyUtility.Convert.GetInt(pass2_dr["CanConfirm"]);
-                lCheck = MyUtility.Convert.GetInt(pass2_dr["CanCheck"]);
+                lApprove = pass2_dr["CanConfirm"].ToString() == "True" ? 1 : 0;
+                lCheck = pass2_dr["CanCheck"].ToString() == "True" ? 1 : 0;
             }
             if (maindr["Result"].ToString() == "Pass")
             {
-                approve_button.Enabled = !this.CanEdit && !this.EditMode && lApprove == 1 && !MyUtility.Check.Empty(maindr["Result"]);
+                approve_button.Enabled = this.CanEdit && !this.EditMode && lApprove == 1 && !MyUtility.Check.Empty(maindr["Result"]);
             }
             else
             {
-                approve_button.Enabled = !this.CanEdit && !this.EditMode && lCheck == 1 && !MyUtility.Check.Empty(maindr["Result"]);
+                approve_button.Enabled = this.CanEdit && !this.EditMode && lCheck == 1 && !MyUtility.Check.Empty(maindr["Result"]);
             }
         }
     }

@@ -55,15 +55,15 @@
             this.insp_box = new Sci.Win.UI.DisplayBox();
             this.mtl_box = new Sci.Win.UI.DisplayBox();
             this.button1 = new Sci.Win.UI.Button();
-            this.displayBox16 = new Sci.Win.UI.DisplayBox();
+            this.co_box = new Sci.Win.UI.DisplayBox();
             this.label19 = new Sci.Win.UI.Label();
-            this.displayBox17 = new Sci.Win.UI.DisplayBox();
+            this.sh_box = new Sci.Win.UI.DisplayBox();
             this.label20 = new Sci.Win.UI.Label();
-            this.displayBox18 = new Sci.Win.UI.DisplayBox();
+            this.we_box = new Sci.Win.UI.DisplayBox();
             this.label21 = new Sci.Win.UI.Label();
-            this.displayBox19 = new Sci.Win.UI.DisplayBox();
+            this.ph_box = new Sci.Win.UI.DisplayBox();
             this.label22 = new Sci.Win.UI.Label();
-            this.displayBox20 = new Sci.Win.UI.DisplayBox();
+            this.ava_box = new Sci.Win.UI.DisplayBox();
             this.label23 = new Sci.Win.UI.Label();
             this.seq1_box = new Sci.Win.UI.TextBox();
             this.label14 = new Sci.Win.UI.Label();
@@ -193,15 +193,15 @@
             // 
             // detailbtm
             // 
-            this.detailbtm.Controls.Add(this.displayBox16);
+            this.detailbtm.Controls.Add(this.co_box);
             this.detailbtm.Controls.Add(this.label19);
-            this.detailbtm.Controls.Add(this.displayBox17);
+            this.detailbtm.Controls.Add(this.sh_box);
             this.detailbtm.Controls.Add(this.label20);
-            this.detailbtm.Controls.Add(this.displayBox18);
+            this.detailbtm.Controls.Add(this.we_box);
             this.detailbtm.Controls.Add(this.label21);
-            this.detailbtm.Controls.Add(this.displayBox19);
+            this.detailbtm.Controls.Add(this.ph_box);
             this.detailbtm.Controls.Add(this.label22);
-            this.detailbtm.Controls.Add(this.displayBox20);
+            this.detailbtm.Controls.Add(this.ava_box);
             this.detailbtm.Controls.Add(this.label23);
             this.detailbtm.Location = new System.Drawing.Point(0, 630);
             this.detailbtm.Size = new System.Drawing.Size(1000, 38);
@@ -211,15 +211,15 @@
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
             this.detailbtm.Controls.SetChildIndex(this.label23, 0);
-            this.detailbtm.Controls.SetChildIndex(this.displayBox20, 0);
+            this.detailbtm.Controls.SetChildIndex(this.ava_box, 0);
             this.detailbtm.Controls.SetChildIndex(this.label22, 0);
-            this.detailbtm.Controls.SetChildIndex(this.displayBox19, 0);
+            this.detailbtm.Controls.SetChildIndex(this.ph_box, 0);
             this.detailbtm.Controls.SetChildIndex(this.label21, 0);
-            this.detailbtm.Controls.SetChildIndex(this.displayBox18, 0);
+            this.detailbtm.Controls.SetChildIndex(this.we_box, 0);
             this.detailbtm.Controls.SetChildIndex(this.label20, 0);
-            this.detailbtm.Controls.SetChildIndex(this.displayBox17, 0);
+            this.detailbtm.Controls.SetChildIndex(this.sh_box, 0);
             this.detailbtm.Controls.SetChildIndex(this.label19, 0);
-            this.detailbtm.Controls.SetChildIndex(this.displayBox16, 0);
+            this.detailbtm.Controls.SetChildIndex(this.co_box, 0);
             // 
             // browse
             // 
@@ -388,7 +388,7 @@
             this.wk_box.Location = new System.Drawing.Point(114, 89);
             this.wk_box.Name = "wk_box";
             this.wk_box.Size = new System.Drawing.Size(130, 21);
-            this.wk_box.TabIndex = 14;
+            this.wk_box.TabIndex = 0;
             // 
             // displayBox1
             // 
@@ -480,7 +480,7 @@
             this.seq2_box.Location = new System.Drawing.Point(219, 117);
             this.seq2_box.Name = "seq2_box";
             this.seq2_box.Size = new System.Drawing.Size(33, 21);
-            this.seq2_box.TabIndex = 23;
+            this.seq2_box.TabIndex = 2;
             // 
             // remark_box
             // 
@@ -491,7 +491,7 @@
             this.remark_box.Multiline = true;
             this.remark_box.Name = "remark_box";
             this.remark_box.Size = new System.Drawing.Size(209, 51);
-            this.remark_box.TabIndex = 24;
+            this.remark_box.TabIndex = 4;
             // 
             // insp_box
             // 
@@ -519,20 +519,20 @@
             this.button1.Location = new System.Drawing.Point(270, 113);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(64, 27);
-            this.button1.TabIndex = 27;
+            this.button1.TabIndex = 3;
             this.button1.Text = "Find";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // displayBox16
+            // co_box
             // 
-            this.displayBox16.BackColor = System.Drawing.Color.AntiqueWhite;
-            this.displayBox16.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.displayBox16.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox16.Location = new System.Drawing.Point(888, 10);
-            this.displayBox16.Name = "displayBox16";
-            this.displayBox16.Size = new System.Drawing.Size(20, 21);
-            this.displayBox16.TabIndex = 47;
+            this.co_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.co_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.co_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.co_box.Location = new System.Drawing.Point(888, 10);
+            this.co_box.Name = "co_box";
+            this.co_box.Size = new System.Drawing.Size(20, 21);
+            this.co_box.TabIndex = 47;
             // 
             // label19
             // 
@@ -546,15 +546,15 @@
             this.label19.Text = "Continuity";
             this.label19.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             // 
-            // displayBox17
+            // sh_box
             // 
-            this.displayBox17.BackColor = System.Drawing.Color.LightGreen;
-            this.displayBox17.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.displayBox17.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox17.Location = new System.Drawing.Point(809, 10);
-            this.displayBox17.Name = "displayBox17";
-            this.displayBox17.Size = new System.Drawing.Size(20, 21);
-            this.displayBox17.TabIndex = 45;
+            this.sh_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.sh_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.sh_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.sh_box.Location = new System.Drawing.Point(809, 10);
+            this.sh_box.Name = "sh_box";
+            this.sh_box.Size = new System.Drawing.Size(20, 21);
+            this.sh_box.TabIndex = 45;
             // 
             // label20
             // 
@@ -568,15 +568,15 @@
             this.label20.Text = "Shade Bond";
             this.label20.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             // 
-            // displayBox18
+            // we_box
             // 
-            this.displayBox18.BackColor = System.Drawing.Color.LightCyan;
-            this.displayBox18.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.displayBox18.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox18.Location = new System.Drawing.Point(718, 10);
-            this.displayBox18.Name = "displayBox18";
-            this.displayBox18.Size = new System.Drawing.Size(20, 21);
-            this.displayBox18.TabIndex = 43;
+            this.we_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.we_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.we_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.we_box.Location = new System.Drawing.Point(718, 10);
+            this.we_box.Name = "we_box";
+            this.we_box.Size = new System.Drawing.Size(20, 21);
+            this.we_box.TabIndex = 43;
             // 
             // label21
             // 
@@ -590,15 +590,15 @@
             this.label21.Text = "Weight Test";
             this.label21.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             // 
-            // displayBox19
+            // ph_box
             // 
-            this.displayBox19.BackColor = System.Drawing.Color.LemonChiffon;
-            this.displayBox19.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.displayBox19.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox19.Location = new System.Drawing.Point(627, 10);
-            this.displayBox19.Name = "displayBox19";
-            this.displayBox19.Size = new System.Drawing.Size(20, 21);
-            this.displayBox19.TabIndex = 41;
+            this.ph_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.ph_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.ph_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.ph_box.Location = new System.Drawing.Point(627, 10);
+            this.ph_box.Name = "ph_box";
+            this.ph_box.Size = new System.Drawing.Size(20, 21);
+            this.ph_box.TabIndex = 41;
             // 
             // label22
             // 
@@ -612,15 +612,15 @@
             this.label22.Text = "Physical Insp.";
             this.label22.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             // 
-            // displayBox20
+            // ava_box
             // 
-            this.displayBox20.BackColor = System.Drawing.Color.MistyRose;
-            this.displayBox20.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.displayBox20.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox20.Location = new System.Drawing.Point(529, 10);
-            this.displayBox20.Name = "displayBox20";
-            this.displayBox20.Size = new System.Drawing.Size(20, 21);
-            this.displayBox20.TabIndex = 39;
+            this.ava_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.ava_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.ava_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.ava_box.Location = new System.Drawing.Point(529, 10);
+            this.ava_box.Name = "ava_box";
+            this.ava_box.Size = new System.Drawing.Size(20, 21);
+            this.ava_box.TabIndex = 39;
             // 
             // label23
             // 
@@ -643,7 +643,7 @@
             this.seq1_box.Location = new System.Drawing.Point(83, 117);
             this.seq1_box.Name = "seq1_box";
             this.seq1_box.Size = new System.Drawing.Size(49, 21);
-            this.seq1_box.TabIndex = 29;
+            this.seq1_box.TabIndex = 1;
             // 
             // label14
             // 
@@ -701,28 +701,29 @@
             this.modifyWeightTestToolStripMenuItem.Name = "modifyWeightTestToolStripMenuItem";
             this.modifyWeightTestToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.modifyWeightTestToolStripMenuItem.Text = "Modify Weight Test";
+            this.modifyWeightTestToolStripMenuItem.Click += new System.EventHandler(this.modifyWeightTestToolStripMenuItem_Click);
             // 
             // modifyShadeBondToolStripMenuItem
             // 
             this.modifyShadeBondToolStripMenuItem.Name = "modifyShadeBondToolStripMenuItem";
             this.modifyShadeBondToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.modifyShadeBondToolStripMenuItem.Text = "Modify Shade Bond";
+            this.modifyShadeBondToolStripMenuItem.Click += new System.EventHandler(this.modifyShadeBondToolStripMenuItem_Click);
             // 
             // modifyContinuityToolStripMenuItem
             // 
             this.modifyContinuityToolStripMenuItem.Name = "modifyContinuityToolStripMenuItem";
             this.modifyContinuityToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.modifyContinuityToolStripMenuItem.Text = "Modify Continuity";
+            this.modifyContinuityToolStripMenuItem.Click += new System.EventHandler(this.modifyContinuityToolStripMenuItem_Click);
             // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 730);
-            this.ContextMenuStrip = this.gridmenu;
             this.DefaultDetailOrder = "seq1,seq2,Receivingid";
             this.DefaultOrder = "id";
             this.GridAlias = "FIR";
             this.GridNew = 0;
-            this.GridPopUp = true;
             this.GridUniqueKey = "seq1,seq2,receivingid";
             this.IsGridIconVisible = false;
             this.IsSupportCopy = false;
@@ -784,15 +785,15 @@
         private Win.UI.DisplayBox mtl_box;
         private Win.UI.DisplayBox insp_box;
         private Win.UI.EditBox remark_box;
-        private Win.UI.DisplayBox displayBox16;
+        private Win.UI.DisplayBox co_box;
         private Win.UI.Label label19;
-        private Win.UI.DisplayBox displayBox17;
+        private Win.UI.DisplayBox sh_box;
         private Win.UI.Label label20;
-        private Win.UI.DisplayBox displayBox18;
+        private Win.UI.DisplayBox we_box;
         private Win.UI.Label label21;
-        private Win.UI.DisplayBox displayBox19;
+        private Win.UI.DisplayBox ph_box;
         private Win.UI.Label label22;
-        private Win.UI.DisplayBox displayBox20;
+        private Win.UI.DisplayBox ava_box;
         private Win.UI.Label label23;
         private Win.UI.TextBox seq1_box;
         private Win.UI.Label label14;
