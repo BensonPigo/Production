@@ -437,7 +437,7 @@ Where DetailUkey = {15};",
                 maindr["TotalInspYds"] = sumTotalYds;
                 #endregion 
                 #region 判斷Result 是否要寫入
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
+                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr["ID"]);
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
@@ -451,7 +451,7 @@ Where DetailUkey = {15};",
             }
             else //Amend
             {
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
+                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr["ID"]);
                 #region  寫入虛擬欄位
                 maindr["Physical"] = "";
                 maindr["PhysicalDate"] = DBNull.Value;

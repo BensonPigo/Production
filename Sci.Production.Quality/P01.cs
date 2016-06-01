@@ -387,7 +387,7 @@ namespace Sci.Production.Quality
             if (this.EditMode) //Status = Confirm 才會判斷
             {
 
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(dr);
+                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(dr["ID"]);
 
                 dr["Result"] = returnstr[0];
                 dr["Status"] = returnstr[1];

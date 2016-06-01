@@ -312,7 +312,7 @@ namespace Sci.Production.Quality
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
                 #endregion 
                 #region 判斷Result 是否要寫入
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
+                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr["ID"]);
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
@@ -327,7 +327,7 @@ namespace Sci.Production.Quality
             else //Amend
             {
                 #region 判斷Result 是否要寫入
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
+                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr["ID"]);
                 #endregion 
                 #region  寫入虛擬欄位
                 maindr["Weight"] = "";
