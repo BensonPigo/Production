@@ -342,7 +342,7 @@ namespace Sci
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID from Scale where id = '{0}' and junk = 0 order by ID", keyword), "10,40", dr["Scale"].ToString().Trim());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from Scale where junk = 0 order by ID", "10,40", dr["Scale"].ToString().Trim());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             e.EditingControl.Text = item.GetSelectedString();
