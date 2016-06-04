@@ -7,4 +7,39 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="SystemLock" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="2fbcbda1-0e78-42c7-a84f-6e224bc602ae" ChangeDateTime="05/30/2016 10:03:17">
+    <Property Name="ElementName" Value="[dbo].[System].[SPLRate]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[System]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="SampleRate" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2cdad69e-4c90-4e05-8fde-c777895c2cd6" ChangeDateTime="05/31/2016 01:04:51">
+    <Property Name="ElementName" Value="[dbo].[System].[Emailid]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[System]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EmailID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="41085039-5bdf-4fc2-bae0-f741446ad1ce" ChangeDateTime="05/31/2016 01:27:43">
+    <Property Name="ElementName" Value="[dbo].[System].[UdsPath]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[System]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ImportDataPath" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d2b26066-df5b-498c-9e7e-082c57579ca5" ChangeDateTime="05/31/2016 01:28:03">
+    <Property Name="ElementName" Value="[dbo].[System].[UdFileName]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[System]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ImportDataFileName" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="05cc836e-c1fe-47b9-8dad-5fc7e40fa968" ChangeDateTime="05/31/2016 01:28:12">
+    <Property Name="ElementName" Value="[dbo].[System].[DnsPath]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[System]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ExportDataPath" />
+  </Operation>
 </Operations>
