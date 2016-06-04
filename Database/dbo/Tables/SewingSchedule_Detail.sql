@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[SewingSchedule_Detail] (
-    [ID]           INT          CONSTRAINT [DF_SewingSchedule_Detail_ID] DEFAULT ((0)) NOT NULL,
+    [ID]           BIGINT          CONSTRAINT [DF_SewingSchedule_Detail_ID] DEFAULT ((0)) NOT NULL,
     [OrderID]      VARCHAR (13) CONSTRAINT [DF_SewingSchedule_Detail_OrderID] DEFAULT ('') NOT NULL,
     [ComboType]    VARCHAR (1)  CONSTRAINT [DF_SewingSchedule_Detail_ComboType] DEFAULT ('') NOT NULL,
     [SewingLineID] VARCHAR (2)  CONSTRAINT [DF_SewingSchedule_Detail_SewingLineID] DEFAULT ('') NOT NULL,
