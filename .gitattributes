@@ -2242,6 +2242,9 @@ Sci.Production/Win/SUBBASE.Designer.cs -text
 Sci.Production/Win/SUBBASE.cs -text
 Sci.Production/Win/SUBBASE.resx -text
 Sci.Production/app.config -text
+XLT/Cutting_P02_SpreadingReportbyCutref.xltx -text
+XLT/Cutting_P04.XLT -text
+XLT/Cutting_P05.XLT -text
 XLT/IE_P01_History_Print.xltx -text
 XLT/IE_P01_Print.xltx -text
 XLT/IE_P02_ChkListNew.xltx -text
