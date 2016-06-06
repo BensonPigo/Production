@@ -34,12 +34,12 @@ BEGIN
 			BEGIN
 				--當資料已存在PMS且值有改變就更新
 				IF @tmpcell <> @sewingcell or @tmpdesc <> @description or @tmpsewer <> @sewer
-					update SewingLine set @tmpcell = @sewingcell, @tmpdesc = @description, @tmpsewer = @sewer, EditName = @login, EditDate = GETDATE() where ID = @sewinglineid and FactoryID = @factoryid;
+					update SewingLine set @tmpcell = isnull(@sewingcell,''), @tmpdesc = isnull(@description,''), @tmpsewer = isnull(@sewer,0), EditName = @login, EditDate = GETDATE() where ID = @sewinglineid and FactoryID = @factoryid;
 			END
 		ELSE
 			BEGIN
 				--當資料不存在PMS就新增資料
-				insert into SewingLine(ID,Description,FactoryID,SewingCell,Sewer,AddName,AddDate) values (@sewinglineid,@description,@factoryid,@sewingcell,@sewer,@login, GETDATE());
+				insert into SewingLine(ID,Description,FactoryID,SewingCell,Sewer,AddName,AddDate) values (@sewinglineid,isnull(@description,''),@factoryid,isnull(@sewingcell,''),isnull(@sewer,0),@login, GETDATE());
 			END
 		FETCH NEXT FROM cursor_sewingline INTO @sewingcell,@sewinglineid,@description,@sewer
 	END
@@ -55,7 +55,6 @@ BEGIN
 	select ID from SewingLine where FactoryID = @factoryid
 	except
 	select ID from #tmpSewingLine;
-	drop table #tmpSewingLine;
 
 	OPEN cursor_sewingline
 	FETCH NEXT FROM cursor_sewingline INTO @sewinglineid
@@ -67,6 +66,8 @@ BEGIN
 	END
 	CLOSE cursor_sewingline
 	DEALLOCATE cursor_sewingline
+
+	drop table #tmpSewingLine;
 	END
 
 	--Holiday
@@ -94,7 +95,7 @@ BEGIN
 						BEGIN
 							Begin Try
 								Begin Transaction
-									update Holiday set @tmpname = @holidayname, EditName = @login, EditDate = GETDATE() where FactoryID = @factoryid and HolidayDate = DATEADD(DAY,@_i,@startdate);
+									update Holiday set @tmpname = isnull(@holidayname,''), EditName = @login, EditDate = GETDATE() where FactoryID = @factoryid and HolidayDate = DATEADD(DAY,@_i,@startdate);
 									--更新WorkHour
 									update WorkHour set Holiday = 1 where FactoryID = @factoryid and Date = DATEADD(DAY,@_i,@startdate);
 								Commit Transaction;
@@ -136,11 +137,10 @@ BEGIN
 
 	DECLARE cursor_holiday CURSOR FOR 
 	select a.HolidayDate 
-	from (select HolidayDate,isnull(t.FromDate,0) as Found from Holiday h
-		  left join  #tmpHoliday t on h.HolidayDate between t.FromDate and t.ToDate
-		  where h.FactoryID = @factoryid and h.HolidayDate >= DATEADD(DAY,-10,GETDATE())) a
-	where a.Found = 0
-	drop table #tmpHoliday;
+	from (select h.HolidayDate,IIF(t.FromDate is null,0,1) as Found from Holiday h
+		  left join  #tmpHoliday t on h.HolidayDate between CONVERT(DATE,t.FromDate) and CONVERT(DATE,t.ToDate)
+		  where h.FactoryID = @factoryid and h.HolidayDate >= CONVERT(DATE,DATEADD(DAY,-10,GETDATE()))) a
+	where a.Found = 0;
 
 	OPEN cursor_holiday
 	FETCH NEXT FROM cursor_holiday INTO @startdate
@@ -163,6 +163,8 @@ BEGIN
 	END
 	CLOSE cursor_holiday
 	DEALLOCATE cursor_holiday
+
+	drop table #tmpHoliday;
 	END
 
 	--WorkHour
@@ -202,25 +204,25 @@ BEGIN
 		SET @workdate = GETDATE()
 		WHILE (@_i < 160)
 		BEGIN
-			SET @workdate = DATEADD(DAY,@_i,@workdate)
+			SET @workdate = DATEADD(DAY,1,@workdate)
 			SET @apsworkhour = null
 			SET @templateid = null
 			--找工廠日曆的工時
 			SET @templateid = (select TOP (1) TEMPLATEID from #tmpFtyTemplate where Name = @sewinglineid and EnableDate <= @workdate order by EnableDate desc)
 			IF @templateid is not null
 				BEGIN
-					select @apsworkhour = WorkHour from #tmpFtyCalendar where TemplateID = @templateid and DayOfWeekindex = DATEPART(WEEKDAY, @workdate-1)
+					select @apsworkhour = WorkHour from #tmpFtyCalendar where TemplateID = @templateid and DayOfWeekindex = (DATEPART(WEEKDAY, @workdate)-1)
 					IF @apsworkhour is not null
 						BEGIN
 							SET @foundworkhour = null
 							select @foundworkhour = Hours from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
-							IF @foundworkhour = null
+							IF @foundworkhour is null
 								insert into WorkHour(SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)
 								values (@sewinglineid,@factoryid,@workdate,@apsworkhour,(select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate),@login,GETDATE());
 							ELSE
 								BEGIN
 									IF @foundworkhour <> @apsworkhour
-										update WorkHour set Hours = @apsworkhour, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+										update WorkHour set Hours = isnull(@apsworkhour,0), EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
 								END
 						END
 					ELSE --檢查PMS是否有這筆資料，若有就把workhour改成0
@@ -269,25 +271,25 @@ BEGIN
 		SET @workdate = GETDATE()
 		WHILE (@_i < 160)
 		BEGIN
-			SET @workdate = DATEADD(DAY,@_i,@workdate)
+			SET @workdate = DATEADD(DAY,1,@workdate)
 			SET @apsworkhour = null
 			SET @templateid = null
 			--找工廠日曆的工時
 			SET @templateid = (select TOP(1) TEMPLATEID from #tmpProdTemplate where Name = @sewinglineid and EnableDate <= @workdate order by EnableDate desc)
 			IF @templateid is not null
 				BEGIN
-					select @apsworkhour = WorkHour from #tmpFtyCalendar where TemplateID = @templateid and DayOfWeekindex = DATEPART(WEEKDAY, @workdate-1)
+					select @apsworkhour = WorkHour from #tmpFtyCalendar where TemplateID = @templateid and DayOfWeekindex = (DATEPART(WEEKDAY, @workdate)-1)
 					IF @apsworkhour is not null
 						BEGIN
 							SET @foundworkhour = null
 							select @foundworkhour = Hours from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
-							IF @foundworkhour = null
+							IF @foundworkhour is null
 								insert into WorkHour(SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)
 								values (@sewinglineid,@factoryid,@workdate,@apsworkhour,(select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate),@login,GETDATE());
 							ELSE
 								BEGIN
 									IF @foundworkhour <> @apsworkhour
-										update WorkHour set Hours = @apsworkhour, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+										update WorkHour set Hours = isnull(@apsworkhour,0), EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
 								END
 						END
 					ELSE --檢查PMS是否有這筆資料，若有就把workhour改成0
@@ -329,13 +331,13 @@ BEGIN
 		SET @foundworkhour = null
 		select @foundworkhour = Hours from WorkHour where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate
 
-		IF @foundworkhour = null
+		IF @foundworkhour is null
 			IF @specialtype = 1
 				insert into WorkHour(SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)
 				values (@sewinglineid,@factoryid,@workdate,@apsworkhour,(select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate),@login,GETDATE());
 		ELSE
 			IF @specialtype = 1
-				update WorkHour set Hours = @apsworkhour, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+				update WorkHour set Hours = isnull(@apsworkhour,0), EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
 			ELSE
 				BEGIN
 					IF @foundworkhour > 0
@@ -352,12 +354,12 @@ BEGIN
 	--撈APS的Sewing Schedule Detail
 	CREATE TABLE #tmpAPSSchedule (ID int,POID int,SALESORDERNO varchar(20),REFNO varchar(100),NAME varchar(50),STARTTIME datetime,ENDTIME datetime,UPDATEDATE datetime,POCOLOR char(60),POSIZE varchar(30),PLANAMOUNT float,DURATION float,CAPACITY float,EFFICIENCY float);
 	SET @cmd = 'insert into #tmpAPSSchedule SELECT p.ID, pd.POID, po.SALESORDERNO, po.REFNO, fa.NAME, p.STARTTIME, p.ENDTIME, p.UPDATEDATE, pd.POCOLOR, pd.POSIZE, pd.PLANAMOUNT, p.DURATION, po.CAPACITY, pd.EFFICIENCY
-	from ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENT p, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory f, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility fa, ['+ @apsservername + '].'+@apsdatabasename+'dbo.PO po, ['+ @apsservername + '].'+@apsdatabasename+'dbo.PRODUCTIONEVENTDETAIL pd
+	from ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENT p, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory f, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility fa, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PO po, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENTDETAIL pd
 	where fa.FACTORYID = f.ID 
 	and p.FACILITYID = fa.ID 
 	and po.ID = pd.POID 
 	and pd.PRODUCTIONEVENTID = p.ID 
-	and EXISTS (SELECT 1 from PRODUCTIONEVENT aa, PRODUCTIONEVENTDETAIL bb where aa.ID=bb.PRODUCTIONEVENTID and (CONVERT(DATE,aa.ENDTIME) >= CONVERT(DATE,DATEADD(DAY,-20,GETDATE())) OR CONVERT(DATE,aa.UPDATEDATE) >= CONVERT(DATE,DATEADD(DAY,-20,GETDATE()))) and bb.POID=po.ID)
+	and EXISTS (SELECT 1 from ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENT aa, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENTDETAIL bb where aa.ID=bb.PRODUCTIONEVENTID and (CONVERT(DATE,aa.ENDTIME) >= CONVERT(DATE,DATEADD(DAY,-20,GETDATE())) OR CONVERT(DATE,aa.UPDATEDATE) >= CONVERT(DATE,DATEADD(DAY,-20,GETDATE()))) and bb.POID=po.ID)
 	and f.Code = '''+ @factoryid + ''''
 	execute (@cmd)
 
@@ -374,7 +376,7 @@ BEGIN
 			@combotype varchar(1)
 
 	OPEN cursor_needtodeletesewingschedule
-	FETCH NEXT FROM cursor_sewingline INTO @apsno,@orderid,@combotype
+	FETCH NEXT FROM cursor_needtodeletesewingschedule INTO @apsno,@orderid,@combotype
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		Begin Try
@@ -416,62 +418,66 @@ BEGIN
 			@sizecode varchar(8),
 			@detailalloqty int
 
+	CREATE TABLE #ProdEff (Efficiency float)
+	CREATE TABLE #LnEff (lnEff float)
+	CREATE TABLE #DynamicEff (BeginDate datetime,Eff float)
 
 	OPEN cursor_sewingschedule
-	FETCH NEXT FROM cursor_sewingline INTO @orderid,@combotype,@sewinglineid,@apsno,@inline,@offline,@gsd,@duration,@editdate,@alloqty,@apspoid
+	FETCH NEXT FROM cursor_sewingschedule INTO @orderid,@combotype,@sewinglineid,@apsno,@inline,@offline,@gsd,@duration,@editdate,@alloqty,@apspoid
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		IF @combotype is null or @combotype = ''
 			SET @combotype = isnull((select TOP (1) sl.Location from Orders o, Style_Location sl where o.ID = @orderid and o.StyleUkey = sl.StyleUkey),'')
-
 
 		SET @sewingscheduleid = null
 		select @sewingscheduleid = ID, @pmsassdate = AddDate, @pmseditdate = EditDate from SewingSchedule where FactoryID = @factoryid and OrderID = @orderid and ComboType = @combotype and APSNo = @apsno
 		IF @sewingscheduleid is null
 			BEGIN
 				--找生產單效率
-				CREATE TABLE #ProdEff (Efficiency float)
-				SET @cmd = 'insert into #ProdEff Select Efficiency From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.ProductionEventCapacity where ProdEventID = '+@apsno + ' And POID = '+@apspoid
+				SET @cmd = 'insert into #ProdEff Select Efficiency From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.ProductionEventCapacity where ProdEventID = '+CONVERT(varchar(max),@apsno) + ' And POID = '+CONVERT(varchar(max),@apspoid)
 				execute (@cmd)
 
 				select @apseff = Efficiency from #ProdEff
-				drop table #ProdEff;
+				
 				IF @apseff is null
-					select @maxeff = (SUM(EFFICIENCY)/COUNT(ID)) from #tmpAPSSchedule where ID = @apsno
+					select @maxeff = IIF(COUNT(ID) = 0,0,(SUM(EFFICIENCY)/COUNT(ID))) from #tmpAPSSchedule where ID = @apsno
 				ELSE
 					SET @maxeff = @apseff
 
+				drop table #ProdEff;
 
 				SET @apseff = null
 				--否有設定LearningCurve
-				CREATE TABLE #LnEff (lnEff float)
-				SET @cmd = 'insert into #LnEff Select CONVERT(FLOAT,Max(ld.Snvalue)) as lnEff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApply l,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveDetail ld where la.ProductionEventID = '+@apsno + ' and l.ID = la.ApplyID and l.LnCurveTemplateID = ld.TemplateID'
+				SET @cmd = 'insert into #LnEff Select Max(ld.Snvalue) as lnEff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApply l,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveDetail ld where la.ProductionEventID = '+CONVERT(varchar(max),@apsno) + ' and l.ID = la.ApplyID and l.LnCurveTemplateID = ld.TemplateID'
 				execute (@cmd)
-				select @apseff = lnEff from #LnEff
-				drop table #LnEff;
+				select @apseff = (lnEff/100) from #LnEff
+
 				IF @apseff is not null
 					SET @maxeff = @maxeff*@apseff
 
+				drop table #LnEff;
+
 				SET @apseff = null
 				--是否有設定動態效率
-				CREATE TABLE #DynamicEff (BeginDate datetime,Eff float)
-				SET @cmd = 'insert into #DynamicEff Select TOP(1) fe.BeginDate, (fe.Efficiency/100) as Eff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.FacilityEfficiency fe,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid + ''' and f.Name = ''' + @sewinglineid + ''' and fe.BeginDate <= ''' + @inline + ''' Order by fe.BeginDate Desc'
+				SET @cmd = 'insert into #DynamicEff Select TOP(1) fe.BeginDate, (fe.Efficiency/100) as Eff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.FacilityEfficiency fe,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid + ''' and f.Name = ''' + @sewinglineid + ''' and fe.BeginDate <= ''' + CONVERT(char(19),@inline,120) + ''' Order by fe.BeginDate Desc'
 				execute (@cmd)
 				select @apseff = Eff from #DynamicEff
-				drop table #DynamicEff;
+				
 				IF @apseff is not null
 					SET @maxeff = @maxeff*@apseff
+
+				drop table #DynamicEff;
 
 				SET @sewer = isnull((select Sewer from SewingLine where FactoryID = @factoryid and ID = @sewinglineid),0)
 
 				Begin Try
 					Begin Transaction
-						insert into SewingSchedule(OrderID,ComboType,SewingLineID,AlloQty,Inline,Offline,MDivisionID,FactoryID,Sewer,TotalSewingTime,MaxEff,StandardOutput,WorkDay,APSNo,OrderFinished,AddName,AddDate)
+						insert into SewingSchedule(OrderID,ComboType,SewingLineID,AlloQty,Inline,Offline,MDivisionID,FactoryID,Sewer,TotalSewingTime,MaxEff,StandardOutput,WorkDay,WorkHour,APSNo,OrderFinished,AddName,AddDate)
 						values (@orderid,@combotype,@sewinglineid,@alloqty,@inline,@offline,
 						(select MDivisionID from Factory where ID = @factoryid),
-						@factoryid,@sewer,@gsd,isnull(@maxeff*100,0),isnull((3600/@gsd*@sewer*@maxeff),0),
+						@factoryid,@sewer,@gsd,CONVERT(numeric(5,2),isnull(@maxeff*100,0)),CONVERT(int,ROUND(isnull((3600/@gsd*@sewer*@maxeff),0),0)),
 						isnull((select COUNT(*) from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0),
-						@apsno,(select Finished from Orders where ID = @orderid),@login,@editdate);
+						CONVERT(numeric(8,3),@duration),@apsno,(select Finished from Orders where ID = @orderid),@login,@editdate);
 
 						--取最新的ID
 						select @sewingscheduleid = ID from SewingSchedule where FactoryID = @factoryid and OrderID = @orderid and ComboType = @combotype and APSNo = @apsno
@@ -504,45 +510,47 @@ BEGIN
 					BEGIN
 						SET @apseff = null
 						--找生產單效率
-						CREATE TABLE #ProdEff1 (Efficiency float)
-						SET @cmd = 'insert into #ProdEff1 Select Efficiency From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.ProductionEventCapacity where ProdEventID = '+@apsno + ' And POID = '+@apspoid
+						SET @cmd = 'insert into #ProdEff Select Efficiency From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.ProductionEventCapacity where ProdEventID = '+CONVERT(varchar(max),@apsno) + ' And POID = '+CONVERT(varchar(max),@apspoid)
 						execute (@cmd)
 
-						select @apseff = Efficiency from #ProdEff1
-						drop table #ProdEff1;
+						select @apseff = Efficiency from #ProdEff
+						
 						IF @apseff is null
-							select @maxeff = (SUM(EFFICIENCY)/COUNT(ID)) from #tmpAPSSchedule where ID = @apsno
+							select @maxeff = IIF(COUNT(ID) = 0,0,(SUM(EFFICIENCY)/COUNT(ID))) from #tmpAPSSchedule where ID = @apsno
 						ELSE
 							SET @maxeff = @apseff
 
+						drop table #ProdEff;
 
 						SET @apseff = null
 						--否有設定LearningCurve
-						CREATE TABLE #LnEff1 (lnEff float)
-						SET @cmd = 'insert into #LnEff1 Select CONVERT(FLOAT,Max(ld.Snvalue)) as lnEff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApply l,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveDetail ld where la.ProductionEventID = '+@apsno + ' and l.ID = la.ApplyID and l.LnCurveTemplateID = ld.TemplateID'
+						SET @cmd = 'insert into #LnEff Select CONVERT(FLOAT,Max(ld.Snvalue)) as lnEff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApply l,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveDetail ld where la.ProductionEventID = '+CONVERT(varchar(max),@apsno) + ' and l.ID = la.ApplyID and l.LnCurveTemplateID = ld.TemplateID'
 						execute (@cmd)
-						select @apseff = lnEff from #LnEff1
-						drop table #LnEff1;
+						select @apseff = (lnEff/100) from #LnEff
+						
 						IF @apseff is not null
 							SET @maxeff = @maxeff*@apseff
 
+						drop table #LnEff;
+
 						SET @apseff = null
 						--是否有設定動態效率
-						CREATE TABLE #DynamicEff1 (BeginDate datetime,Eff float)
-						SET @cmd = 'insert into #DynamicEff1 Select TOP(1) fe.BeginDate, (fe.Efficiency/100) as Eff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.FacilityEfficiency fe,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid + ''' and f.Name = ''' + @sewinglineid + ''' and fe.BeginDate <= ''' + @inline + ''' Order by fe.BeginDate Desc'
+						SET @cmd = 'insert into #DynamicEff Select TOP(1) fe.BeginDate, (fe.Efficiency/100) as Eff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.FacilityEfficiency fe,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid + ''' and f.Name = ''' + @sewinglineid + ''' and fe.BeginDate <= ''' + CONVERT(char(19),@inline,120) + ''' Order by fe.BeginDate Desc'
 						execute (@cmd)
-						select @apseff = Eff from #DynamicEff1
-						drop table #DynamicEff1;
+						select @apseff = Eff from #DynamicEff
+						
 						IF @apseff is not null
 							SET @maxeff = @maxeff*@apseff
+
+						drop table #DynamicEff;
 
 						Begin Try
 							Begin Transaction
 								SET @sewer = isnull((select Sewer from SewingLine where FactoryID = @factoryid and ID = @sewinglineid),0)
 								update SewingSchedule 
-								set SewingLineID = @sewinglineid, AlloQty = @alloqty, Inline = @inline, Offline = @offline, Sewer = @sewer, 
-									TotalSewingTime = @gsd, MaxEff = @maxeff*100, StandardOutput = (3600/@gsd*@sewer*@maxeff), WorkDay = (select COUNT(*) from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0), 
-									WorkHour = @duration, EditName = @login, EditDate = @editdate
+								set SewingLineID = @sewinglineid, AlloQty = isnull(@alloqty,0), Inline = @inline, Offline = @offline, Sewer = isnull(@sewer,0), 
+									TotalSewingTime = isnull(@gsd,0), MaxEff = CONVERT(numeric(5,2),isnull(@maxeff*100,0)), StandardOutput = IIF(@gsd is null or @gsd = 0 ,0,CONVERT(int,ROUND(isnull((3600/@gsd*@sewer*@maxeff),0),0))), WorkDay = isnull((select COUNT(*) from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0), 
+									WorkHour = CONVERT(numeric(8,3),isnull(@duration,0)), EditName = @login, EditDate = @editdate
 								where ID = @sewingscheduleid;
 
 								--更新SewingSchedule_Detail
@@ -571,7 +579,7 @@ BEGIN
 								WHILE @@FETCH_STATUS = 0
 								BEGIN
 									IF EXISTS(select 1 from SewingSchedule_Detail where ID = @sewingscheduleid and OrderID = @orderid and ComboType = @combotype and Article = @article and SizeCode = @sizecode)
-										update SewingSchedule_Detail set SewingLineID = @sewinglineid, AlloQty = @detailalloqty where ID = @sewingscheduleid and OrderID = @orderid and ComboType = @combotype and Article = @article and SizeCode = @sizecode;
+										update SewingSchedule_Detail set SewingLineID = @sewinglineid, AlloQty = isnull(@detailalloqty,0) where ID = @sewingscheduleid and OrderID = @orderid and ComboType = @combotype and Article = @article and SizeCode = @sizecode;
 									ELSE
 										insert into SewingSchedule_Detail (ID, OrderID, ComboType,SewingLineID, Article,SizeCode, AlloQty)
 										values (@sewingscheduleid,@orderid,@combotype,@sewinglineid,@article,@sizecode,@detailalloqty);
@@ -594,8 +602,10 @@ BEGIN
 	END
 	CLOSE cursor_sewingschedule
 	DEALLOCATE cursor_sewingschedule
-	END
+
 	drop table #tmpAPSSchedule;
+	END
+	
 
 	--更新Orders的SewInline, SewOffline, SewLine
 	BEGIN
