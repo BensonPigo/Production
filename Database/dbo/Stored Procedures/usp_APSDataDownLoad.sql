@@ -381,8 +381,8 @@ BEGIN
 	BEGIN
 		Begin Try
 			Begin Transaction
-				delete from SewingSchedule_Detail where ID in (select ID from SewingSchedule where APSNo = @apsno and OrderID = @orderid and ComboType = @combotype);
-				delete from SewingSchedule where APSNo = @apsno and OrderID = @orderid and ComboType = @combotype;
+				delete from SewingSchedule_Detail where ID in (select ID from SewingSchedule where FactoryID = @factoryid and APSNo = @apsno and OrderID = @orderid and ComboType = @combotype);
+				delete from SewingSchedule where FactoryID = @factoryid and APSNo = @apsno and OrderID = @orderid and ComboType = @combotype;
 			Commit Transaction;
 		End Try
 		Begin Catch
