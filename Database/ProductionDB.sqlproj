@@ -1932,6 +1932,11 @@
     </Build>
     <Build Include="dbo\Stored Procedures\usp_APSDataDownLoad.sql">
       <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>Off</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\KHEachYearFinalInventory.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
   </ItemGroup>
   <ItemGroup>
