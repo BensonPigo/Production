@@ -1051,12 +1051,14 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             if (sizeratioMenuStrip!=null) sizeratioMenuStrip.Enabled = this.EditMode;
             if (distributeMenuStrip!=null) distributeMenuStrip.Enabled = this.EditMode;
         }
+
         private void gridValid()
         {
             sizeratio_grid.ValidateControl();
             distribute_grid.ValidateControl();
             grid.ValidateControl();
         }
+
         protected override void OnDetailGridRowChanged()
         {
             gridValid();
@@ -1162,12 +1164,14 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             
 
         }
+
         //程式產生的BindingSource 必須自行Dispose, 以節省資源
         protected override void OnFormDispose()
         {
             base.OnFormDispose();
             bindingSource2.Dispose();
         }
+
         private void getqtybreakdown(string masterID)
         {
            
@@ -1234,6 +1238,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             }
             #endregion
         }
+
         private void sorting(string sort)
         {
             grid.ValidateControl();
@@ -1413,6 +1418,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             CurrentDetailData["Newkey"] = maxkey;
 
         }
+
         protected override void OnDetailGridDelete()
         {
             
@@ -1493,6 +1499,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             if (updateCons==true)
                 CurrentDetailData["Cons"] = MarkerLengthNum * Convert.ToInt32(CurrentDetailData["Layer"]);
         }
+
         private void cal_TotalCutQty(int workorderukey,int newkey)
         {
             gridValid();
@@ -1549,6 +1556,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             }
 
         }
+
         private void updateExcess(int workorderukey, int newkey,string sizecode)
         {
             gridValid();
@@ -1691,6 +1699,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             }
             return base.ClickSaveBefore();
         }
+
         protected override DualResult ClickSavePost()
         {
             int ukey,newkey;
@@ -1728,7 +1737,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
                 #region 刪除
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    delsql = delsql + string.Format("Delete From WorkOrder_SizeRatio Where WorkOrderUkey={0} and SizeCode ='{1}' and ID ='{2}';", dr["Ukey"], dr["SizeCode"], cId);
+                    delsql = delsql + string.Format("Delete From WorkOrder_SizeRatio Where WorkOrderUkey={0} and SizeCode ='{1}' and ID ='{2}';", dr["Ukey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], cId);
                 }
                 #endregion
                 #region 修改
@@ -1746,14 +1755,19 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             }
             #endregion
             #region Distribute 修改
-            foreach (DataRow dr in distqtyTb.Rows)
+            DataTable DeleteTb = distqtyTb.Copy();
+            foreach (DataRow dr in DeleteTb.Rows)
             {
                 #region 刪除
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    delsql = delsql + string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and id='{4}';", dr["WorkOrderUkey"], dr["SizeCode"], dr["Article"], dr["Orderid"], cId);
+                    delsql = delsql + string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and id='{4}';", dr["WorkOrderUkey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], dr["Article", DataRowVersion.Original], dr["Orderid", DataRowVersion.Original], cId);
                 }
                 #endregion
+            }
+            foreach (DataRow dr in distqtyTb.Rows)
+            {
+               // dr["ID", DataRowVersion.Original]
                 #region 修改
                 if (dr.RowState == DataRowState.Modified)
                 {
@@ -1774,7 +1788,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
                 #region 刪除
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    delsql = delsql + string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and ID = '{4}';", dr["Ukey"], dr["SizeCode"], dr["Article"], dr["Orderid"],cId);
+                    delsql = delsql + string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and ID = '{4}';", dr["Ukey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], dr["Article", DataRowVersion.Original], dr["Orderid", DataRowVersion.Original], cId);
                 }
                 #endregion
                 #region 修改
@@ -1816,6 +1830,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             }
             return base.ClickSavePost();
         }
+
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
@@ -1836,6 +1851,13 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             frm.ShowDialog(this);
             this.RenewData();
 
+        }
+
+        protected override bool ClickPrint()
+        {
+            Sci.Production.Cutting.P02_Print callNextForm = new P02_Print(CurrentDetailData, CurrentMaintain["ID"].ToString());
+            callNextForm.ShowDialog(this);
+            return base.ClickPrint();
         }
     }
 }

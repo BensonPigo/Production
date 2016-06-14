@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
-            this.Cutref_ra = new Sci.Win.UI.RadioButton();
-            this.Requ_ra = new Sci.Win.UI.RadioButton();
-            this.label1 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
+            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.Requ_ra = new Sci.Win.UI.RadioButton();
+            this.Cutref_ra = new Sci.Win.UI.RadioButton();
             this.radioGroup1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -64,6 +64,57 @@
             this.radioGroup1.TabIndex = 94;
             this.radioGroup1.TabStop = false;
             // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Lines = 0;
+            this.label2.Location = new System.Drawing.Point(233, 93);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(19, 23);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "~";
+            this.label2.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            // 
+            // textBox2
+            // 
+            this.textBox2.BackColor = System.Drawing.Color.White;
+            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox2.Location = new System.Drawing.Point(255, 93);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(108, 23);
+            this.textBox2.TabIndex = 4;
+            // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.Location = new System.Drawing.Point(122, 93);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(108, 23);
+            this.textBox1.TabIndex = 3;
+            // 
+            // label1
+            // 
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(44, 93);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Cut RefNo";
+            // 
+            // Requ_ra
+            // 
+            this.Requ_ra.AutoSize = true;
+            this.Requ_ra.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.Requ_ra.Location = new System.Drawing.Point(44, 49);
+            this.Requ_ra.Name = "Requ_ra";
+            this.Requ_ra.Size = new System.Drawing.Size(109, 21);
+            this.Requ_ra.TabIndex = 1;
+            this.Requ_ra.TabStop = true;
+            this.Requ_ra.Text = "By Cutplan Id";
+            this.Requ_ra.UseVisualStyleBackColor = true;
+            this.Requ_ra.CheckedChanged += new System.EventHandler(this.Requ_ra_CheckedChanged);
+            // 
             // Cutref_ra
             // 
             this.Cutref_ra.AutoSize = true;
@@ -75,57 +126,6 @@
             this.Cutref_ra.TabStop = true;
             this.Cutref_ra.Text = "By Cut RefNo";
             this.Cutref_ra.UseVisualStyleBackColor = true;
-            // 
-            // Requ_ra
-            // 
-            this.Requ_ra.AutoSize = true;
-            this.Requ_ra.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Requ_ra.Location = new System.Drawing.Point(44, 49);
-            this.Requ_ra.Name = "Requ_ra";
-            this.Requ_ra.Size = new System.Drawing.Size(117, 21);
-            this.Requ_ra.TabIndex = 1;
-            this.Requ_ra.TabStop = true;
-            this.Requ_ra.Text = "By RequestNo";
-            this.Requ_ra.UseVisualStyleBackColor = true;
-            this.Requ_ra.CheckedChanged += new System.EventHandler(this.Requ_ra_CheckedChanged);
-            // 
-            // label1
-            // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(44, 93);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Cut RefNo";
-            // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(122, 93);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(108, 23);
-            this.textBox1.TabIndex = 3;
-            // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(255, 93);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(108, 23);
-            this.textBox2.TabIndex = 4;
-            // 
-            // label2
-            // 
-            this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(233, 93);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(19, 23);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "~";
-            this.label2.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             // 
             // P02_Print
             // 

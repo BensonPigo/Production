@@ -45,28 +45,33 @@
             // 
             // append
             // 
+            this.append.Size = new System.Drawing.Size(80, 34);
             this.append.TabIndex = 0;
             this.append.Visible = false;
             // 
             // revise
             // 
+            this.revise.Size = new System.Drawing.Size(80, 34);
             this.revise.TabIndex = 1;
             this.revise.Visible = false;
             // 
             // delete
             // 
+            this.delete.Size = new System.Drawing.Size(80, 34);
             this.delete.TabIndex = 2;
             this.delete.Visible = false;
             // 
             // undo
             // 
             this.undo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.undo.Dock = System.Windows.Forms.DockStyle.None;
             this.undo.Location = new System.Drawing.Point(362, 8);
             this.undo.TabIndex = 4;
             // 
             // save
             // 
             this.save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.save.Dock = System.Windows.Forms.DockStyle.None;
             this.save.Location = new System.Drawing.Point(276, 8);
             this.save.TabIndex = 3;
             // 
