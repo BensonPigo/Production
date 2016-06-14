@@ -733,6 +733,9 @@ Sci.Production.Cutting/P02_PackingMethod.resx -text
 Sci.Production.Cutting/P02_PatternPanel.Designer.cs -text
 Sci.Production.Cutting/P02_PatternPanel.cs -text
 Sci.Production.Cutting/P02_PatternPanel.resx -text
+Sci.Production.Cutting/P02_Print.Designer.cs -text
+Sci.Production.Cutting/P02_Print.cs -text
+Sci.Production.Cutting/P02_Print.resx -text
 Sci.Production.Cutting/P03.Designer.cs -text
 Sci.Production.Cutting/P03.cs -text
 Sci.Production.Cutting/P03.resx -text
