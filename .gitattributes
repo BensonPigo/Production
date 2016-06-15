@@ -1277,6 +1277,13 @@ Sci.Production.Planning/B03.resx -text
 Sci.Production.Planning/B03_Copy.Designer.cs -text
 Sci.Production.Planning/B03_Copy.cs -text
 Sci.Production.Planning/B03_Copy.resx -text
+Sci.Production.Planning/GSchemas/GLO.Designer.cs -text
+Sci.Production.Planning/GSchemas/GLO.xsc -text
+Sci.Production.Planning/GSchemas/GLO.xsd -text
+Sci.Production.Planning/GSchemas/GLO.xss -text
+Sci.Production.Planning/GSchemas/GLO1.Designer.cs -text
+Sci.Production.Planning/GSchemas/Helper.cs -text
+Sci.Production.Planning/GSchemas/Utils.cs -text
 Sci.Production.Planning/P01.Designer.cs -text
 Sci.Production.Planning/P01.cs -text
 Sci.Production.Planning/P01.resx -text
@@ -1311,6 +1318,9 @@ Sci.Production.Planning/R03.resx -text
 Sci.Production.Planning/R11.Designer.cs -text
 Sci.Production.Planning/R11.cs -text
 Sci.Production.Planning/R11.resx -text
+Sci.Production.Planning/R12.Designer.cs -text
+Sci.Production.Planning/R12.cs -text
+Sci.Production.Planning/R12.resx -text
 Sci.Production.Planning/R16.Designer.cs -text
 Sci.Production.Planning/R16.cs -text
 Sci.Production.Planning/R16.resx -text

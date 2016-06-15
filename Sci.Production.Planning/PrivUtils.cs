@@ -125,18 +125,41 @@ namespace Sci.Trade.Report
                 string file_name = "";
                 try
                 {
+                    //存檔至Server特定路徑(抓設定檔)
+                    //excel.ActiveWorkbook.SaveAs(templatefile + ".xls");
+
+                    //excel.ActiveWorkbook.SaveAs(templatefile+".xls", Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                    //EXCEL.XlSaveAsAccessMode.xlShared, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+
                     //若取消會回傳false(bool)--則跳掉 exception 不處理
-                    file_name = excel.GetSaveAsFilename(templatefile, "Excel workbook (*.xls;*.xlsx),*.xls;*.xlsx"); //Style:S1606LHSW510
-                    excel.ActiveWorkbook.SaveAs(file_name);
+                    var rtn = excel.GetSaveAsFilename(templatefile, "Excel workbook (*.xls;*.xlsx),*.xls;*.xlsx"); //Style:S1606LHSW510
+                    try
+                    {
+                        file_name = rtn;
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                    if (file_name != "")
+                    {
+
+                        excel.ActiveWorkbook.SaveAs(file_name);
+                        excel.Visible = true;
+                    }
+                    //excel.ActiveWorkbook.OpenLinks(file_name);
                 }
                 catch (Exception ex)
                 {
                     //已存在檔案開啟中無法存檔
-                    if (System.IO.File.Exists(file_name))
+                    string[] arr = file_name.Split('\\');
+                    if (ex.ToString().Contains(arr[arr.Length - 1]))
                     {
                         return new DualResult(false, "save fail : file opened, please close first.", ex);
                     }
-                    //return new DualResult(false, "Svae excel workbook error.", ex);
+                    else
+                    {
+                        //return new DualResult(false, "Svae excel workbook error.", ex);
+                    }
                 }
 
                 return Result.True;
@@ -157,8 +180,8 @@ namespace Sci.Trade.Report
                     }
                     catch (Exception ex)
                     {
-                        
-                       string ss =  string.Format("Export excel error.{0}", it[0].ToString());
+
+                        string ss = string.Format("Export excel error.{0}", it[0].ToString());
 
                     }
 
@@ -291,14 +314,47 @@ namespace Sci.Trade.Report
             if (0 > num) return null;
             var ix = num - 1;
             var cd = "";
-            while (true) 
+            while (true)
             {
                 int m = ix / 26;
                 ix = ix % 26;
-                if (m > 0) cd = cd + CELLs[m-1];
-                else cd = cd + CELLs[ix] ;
+                if (m > 0) cd = cd + CELLs[m - 1];
+                else cd = cd + CELLs[ix];
 
                 if (0 == m) break;
+            }
+            return cd;
+        }
+        public static string getDayOfWeek(string value)
+        {
+            var cd = "";
+            switch (value)
+            {
+                case "Monday":
+                    cd = "星期一";
+                    break;
+                case "Tuesday":
+                    cd = "星期二";
+                    break;
+                case "Wednesday":
+                    cd = "星期三";
+                    break;
+                case "Thursday":
+                    cd = "星期四";
+                    break;
+                case "Friday":
+                    cd = "星期五";
+                    break;
+                case "Saturday":
+                    cd = "星期六";
+                    break;
+                case "Sunday":
+                    cd = "星期日";
+                    break;
+                default:
+                    cd = value;
+                    break;
+
             }
             return cd;
         }

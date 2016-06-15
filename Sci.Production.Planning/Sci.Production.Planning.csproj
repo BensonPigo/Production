@@ -104,6 +104,14 @@
     <Compile Include="B03.Designer.cs">
       <DependentUpon>B03.cs</DependentUpon>
     </Compile>
+    <Compile Include="GSchemas\GLO.Designer.cs" />
+    <Compile Include="GSchemas\GLO1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GLO.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="GSchemas\Helper.cs" />
+    <Compile Include="GSchemas\Utils.cs" />
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -176,6 +184,12 @@
     </Compile>
     <Compile Include="R11.Designer.cs">
       <DependentUpon>R11.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R12.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R12.Designer.cs">
+      <DependentUpon>R12.cs</DependentUpon>
     </Compile>
     <Compile Include="R18.cs">
       <SubType>Form</SubType>
@@ -257,6 +271,9 @@
     <EmbeddedResource Include="R11.resx">
       <DependentUpon>R11.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="R12.resx">
+      <DependentUpon>R12.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R18.resx">
       <DependentUpon>R18.cs</DependentUpon>
     </EmbeddedResource>
@@ -268,8 +285,20 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="GSchemas\GLO.xsc">
+      <DependentUpon>GLO.xsd</DependentUpon>
+    </None>
+    <None Include="GSchemas\GLO.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>GLO1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="GSchemas\GLO.xss">
+      <DependentUpon>GLO.xsd</DependentUpon>
+    </None>
     <None Include="Resources\trffc15.bmp" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
