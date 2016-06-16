@@ -261,7 +261,7 @@ namespace Sci.Production.Tools
             return base.ClickDeleteBefore();
         }
 
-        protected override bool ClickDeletePost()
+        protected override DualResult ClickDeletePost()
         {
             foreach (DataRow dr in dtPassEdit.Rows)
             {

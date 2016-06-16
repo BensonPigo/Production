@@ -68,7 +68,7 @@
       <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
     </Reference>
     <Reference Include="Sci.Trade.Class">
-      <HintPath>..\_Dll\Sci.Trade.Class.dll</HintPath>
+      <HintPath>..\Sci.Trade.Class\bin\Debug\Sci.Trade.Class.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
