@@ -2203,6 +2203,9 @@ Sci.Production.Warehouse/Properties/AssemblyInfo.cs -text
 Sci.Production.Warehouse/Properties/Resources.Designer.cs -text
 Sci.Production.Warehouse/Properties/Resources.resx -text
 Sci.Production.Warehouse/R11.resx -text
+Sci.Production.Warehouse/Report/R01.Designer.cs -text
+Sci.Production.Warehouse/Report/R01.cs -text
+Sci.Production.Warehouse/Report/R01.resx -text
 Sci.Production.Warehouse/Report/R02.Designer.cs -text
 Sci.Production.Warehouse/Report/R02.cs -text
 Sci.Production.Warehouse/Report/R02.resx -text

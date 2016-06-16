@@ -68,32 +68,32 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
                 bsAIR_FIR.DataSource = dtFIR_AIR;
 
                 #region  開窗
-                Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
-                ts1.CellMouseDoubleClick += (s, e) =>
-                {
-                    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
-                    if (null == data) return;
-                    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
-                    frm.ShowDialog(this);
-                };
+                //Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
+                //ts1.CellMouseDoubleClick += (s, e) =>
+                //{
+                //    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
+                //    if (null == data) return;
+                //    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
+                //    frm.ShowDialog(this);
+                //};
 
-                Ict.Win.DataGridViewGeneratorNumericColumnSettings ns1 = new DataGridViewGeneratorNumericColumnSettings();
-                ns1.CellMouseDoubleClick += (s, e) =>
-                {
-                    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
-                    if (null == data) return;
-                    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
-                    frm.ShowDialog(this);
-                };
+                //Ict.Win.DataGridViewGeneratorNumericColumnSettings ns1 = new DataGridViewGeneratorNumericColumnSettings();
+                //ns1.CellMouseDoubleClick += (s, e) =>
+                //{
+                //    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
+                //    if (null == data) return;
+                //    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
+                //    frm.ShowDialog(this);
+                //};
 
-                Ict.Win.DataGridViewGeneratorDateColumnSettings ds1 = new DataGridViewGeneratorDateColumnSettings();
-                ds1.CellMouseDoubleClick += (s, e) =>
-                {
-                    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
-                    if (null == data) return;
-                    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
-                    frm.ShowDialog(this);
-                };
+                //Ict.Win.DataGridViewGeneratorDateColumnSettings ds1 = new DataGridViewGeneratorDateColumnSettings();
+                //ds1.CellMouseDoubleClick += (s, e) =>
+                //{
+                //    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
+                //    if (null == data) return;
+                //    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
+                //    frm.ShowDialog(this);
+                //};
                 #endregion
 
                 //設定gridFirAir的顯示欄位
@@ -106,17 +106,25 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
                      .Date("ETA", header: "ETA", width: Widths.AnsiChars(11))
                      .Numeric("ArriveQty", header: "Total" + Environment.NewLine + "Ship Qty", width: Widths.AnsiChars(6), integer_places: 9, decimal_places: 2)
                      .Text("Result", header: "Overall" + Environment.NewLine + "Result", width: Widths.AnsiChars(8))
-                     .Numeric("InspRate", header: "% of" + Environment.NewLine + "Inspection", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2, settings:ns1)
-                     .Numeric("TotalInspYds", header: "Total" + Environment.NewLine + "Inspected YDS", width: Widths.AnsiChars(6), integer_places: 9, decimal_places: 2, settings: ns1)
-                     .Numeric("TotalDefectPoint", header: "Total Point" + Environment.NewLine + "Defects", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 0, settings: ns1)
-                     .Text("Physical", header: "Physical", width: Widths.AnsiChars(8), settings: ts1)
-                     .Date("PhysicalDate", header: "PhysicalDate", width: Widths.AnsiChars(13), settings: ds1)
-                     .Text("Weight", header: "Weight", width: Widths.AnsiChars(8), settings: ts1)
-                     .Date("WeightDate", header: "WeightDate", width: Widths.AnsiChars(13), settings: ds1)
-                     .Text("ShadeBond", header: "ShadeBond", width: Widths.AnsiChars(8), settings: ts1)
-                     .Date("ShadeBondDate", header: "ShadeBondDate", width: Widths.AnsiChars(13), settings: ds1)
-                     .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(8), settings: ts1)
-                     .Date("ContinuityDate", header: "ContinuityDate", width: Widths.AnsiChars(13), settings: ds1)
+                     .Numeric("InspRate", header: "% of" + Environment.NewLine + "Inspection", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
+                     .Numeric("TotalInspYds", header: "Total" + Environment.NewLine + "Inspected YDS", width: Widths.AnsiChars(6), integer_places: 9, decimal_places: 2)
+                     .Numeric("TotalDefectPoint", header: "Total Point" + Environment.NewLine + "Defects", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 0)
+                     .Text("Physical", header: "Physical", width: Widths.AnsiChars(8))
+                     .Date("PhysicalDate", header: "PhysicalDate", width: Widths.AnsiChars(13))
+                     .Text("Weight", header: "Weight", width: Widths.AnsiChars(8))
+                     .Date("WeightDate", header: "WeightDate", width: Widths.AnsiChars(13))
+                     .Text("ShadeBond", header: "ShadeBond", width: Widths.AnsiChars(8))
+                     .Date("ShadeBondDate", header: "ShadeBondDate", width: Widths.AnsiChars(13))
+                     .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(8))
+                     .Date("ContinuityDate", header: "ContinuityDate", width: Widths.AnsiChars(13))
+                     //.Text("Physical", header: "Physical", width: Widths.AnsiChars(8), settings: ts1)
+                     //.Date("PhysicalDate", header: "PhysicalDate", width: Widths.AnsiChars(13), settings: ds1)
+                     //.Text("Weight", header: "Weight", width: Widths.AnsiChars(8), settings: ts1)
+                     //.Date("WeightDate", header: "WeightDate", width: Widths.AnsiChars(13), settings: ds1)
+                     //.Text("ShadeBond", header: "ShadeBond", width: Widths.AnsiChars(8), settings: ts1)
+                     //.Date("ShadeBondDate", header: "ShadeBondDate", width: Widths.AnsiChars(13), settings: ds1)
+                     //.Text("Continuity", header: "Continuity", width: Widths.AnsiChars(8), settings: ts1)
+                     //.Date("ContinuityDate", header: "ContinuityDate", width: Widths.AnsiChars(13), settings: ds1)
                      ;
 
                 sqlcmd.Clear();
@@ -153,32 +161,32 @@ where a.POID='{0}' and a.seq1='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr[
 
                 bsFIR_Laboratory.DataSource = dtFIR_Laboratory;
                 #region  開窗
-                Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
-                ts2.CellMouseDoubleClick += (s, e) =>
-                {
-                    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
-                    if (null == data) return;
-                    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
-                    frm.ShowDialog(this);
-                };
+                //Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+                //ts2.CellMouseDoubleClick += (s, e) =>
+                //{
+                //    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
+                //    if (null == data) return;
+                //    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
+                //    frm.ShowDialog(this);
+                //};
 
-                Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
-                ns2.CellMouseDoubleClick += (s, e) =>
-                {
-                    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
-                    if (null == data) return;
-                    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
-                    frm.ShowDialog(this);
-                };
+                //Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+                //ns2.CellMouseDoubleClick += (s, e) =>
+                //{
+                //    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
+                //    if (null == data) return;
+                //    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
+                //    frm.ShowDialog(this);
+                //};
 
-                Ict.Win.DataGridViewGeneratorDateColumnSettings ds2 = new DataGridViewGeneratorDateColumnSettings();
-                ds2.CellMouseDoubleClick += (s, e) =>
-                {
-                    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
-                    if (null == data) return;
-                    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
-                    frm.ShowDialog(this);
-                };
+                //Ict.Win.DataGridViewGeneratorDateColumnSettings ds2 = new DataGridViewGeneratorDateColumnSettings();
+                //ds2.CellMouseDoubleClick += (s, e) =>
+                //{
+                //    var data = this.gridFirAir.GetDataRow<DataRow>(e.RowIndex);
+                //    if (null == data) return;
+                //    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
+                //    frm.ShowDialog(this);
+                //};
                 #endregion
                 //設定gridFir_Laboratory的顯示欄位
                 this.gridFir_Laboratory.IsEditingReadOnly = true;
@@ -189,14 +197,22 @@ where a.POID='{0}' and a.seq1='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr[
                      .Text("ExportId", header: "Wk#", width: Widths.AnsiChars(15))
                      .Date("ETA", header: "ETA", width: Widths.AnsiChars(11))
                      .Numeric("ArriveQty", header: "Total" + Environment.NewLine + "Ship Qty", width: Widths.AnsiChars(6), integer_places: 9, decimal_places: 2)
-
-                     .Date("ReceiveSampleDate", header: "Date", width: Widths.AnsiChars(13),settings:ds2)
-                     .Text("Crocking", header: "Crocking" + Environment.NewLine + "Test", width: Widths.AnsiChars(8), settings: ts2)
-                     .Date("CrockingDate", header: "Crocking Date", width: Widths.AnsiChars(13), settings: ds2)
-                     .Text("Heat", header: "Heat" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8), settings: ts2)
-                     .Date("HeatDate", header: "Heat Date", width: Widths.AnsiChars(13), settings: ds2)
-                     .Text("Wash", header: "Wash" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8), settings: ts2)
-                     .Date("WashDate", header: "Wash Date", width: Widths.AnsiChars(13), settings: ds2);
+                     .Date("ReceiveSampleDate", header: "Date", width: Widths.AnsiChars(13))
+                     .Text("Crocking", header: "Crocking" + Environment.NewLine + "Test", width: Widths.AnsiChars(8))
+                     .Date("CrockingDate", header: "Crocking Date", width: Widths.AnsiChars(13))
+                     .Text("Heat", header: "Heat" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8))
+                     .Date("HeatDate", header: "Heat Date", width: Widths.AnsiChars(13))
+                     .Text("Wash", header: "Wash" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8))
+                     .Date("WashDate", header: "Wash Date", width: Widths.AnsiChars(13))
+                     ;
+                     //.Date("ReceiveSampleDate", header: "Date", width: Widths.AnsiChars(13),settings:ds2)
+                     //.Text("Crocking", header: "Crocking" + Environment.NewLine + "Test", width: Widths.AnsiChars(8), settings: ts2)
+                     //.Date("CrockingDate", header: "Crocking Date", width: Widths.AnsiChars(13), settings: ds2)
+                     //.Text("Heat", header: "Heat" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8), settings: ts2)
+                     //.Date("HeatDate", header: "Heat Date", width: Widths.AnsiChars(13), settings: ds2)
+                     //.Text("Wash", header: "Wash" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8), settings: ts2)
+                     //.Date("WashDate", header: "Wash Date", width: Widths.AnsiChars(13), settings: ds2)
+                     
             }
             else
             {
