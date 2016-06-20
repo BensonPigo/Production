@@ -70,9 +70,6 @@
     <Reference Include="Sci.Proj">
       <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
     </Reference>
-    <Reference Include="Sci.Trade.Class">
-      <HintPath>..\Sci.Trade.Class\bin\Debug\Sci.Trade.Class.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -209,6 +206,12 @@
     <Compile Include="R17.designer.cs">
       <DependentUpon>R17.cs</DependentUpon>
     </Compile>
+    <Compile Include="R15.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R15.Designer.cs">
+      <DependentUpon>R15.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
@@ -222,6 +225,10 @@
     <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
       <Name>Sci.Production.PublicPrg</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Trade.Class\Sci.Trade.Class.csproj">
+      <Project>{23a1d79e-68ab-4d45-8c1d-11a34edd3369}</Project>
+      <Name>Sci.Trade.Class</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -282,6 +289,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R17.resx">
       <DependentUpon>R17.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R15.resx">
+      <DependentUpon>R15.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
