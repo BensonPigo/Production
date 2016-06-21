@@ -4,6 +4,7 @@
     [DefectRecord]           VARCHAR (16) CONSTRAINT [DF_FIR_Physical_Defect_DefectRecord] DEFAULT ('') NULL,
     [Point]                  NUMERIC (3)  CONSTRAINT [DF_FIR_Physical_Defect_Point] DEFAULT ((0)) NULL,
     [ID]                     BIGINT       NOT NULL,
+    [RealTimeInsert] BIT NULL, 
     CONSTRAINT [PK_FIR_Physical_Defect] PRIMARY KEY CLUSTERED ([FIR_PhysicalDetailUKey] ASC, [DefectLocation] ASC, [ID] ASC)
 );
 

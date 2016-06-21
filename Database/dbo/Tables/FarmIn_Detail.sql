@@ -16,6 +16,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工返回明細', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FarmIn_Detail';
 
@@ -68,4 +70,10 @@ GO
 CREATE NONCLUSTERED INDEX [ArtworkPo_DetailUkey]
     ON [dbo].[FarmIn_Detail]([ArtworkPo_DetailUkey] ASC)
     INCLUDE([ID], [Qty]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_FarmIn_Detail_ID_ArtworkID_PatternCode_Qty]
+    ON [dbo].[FarmIn_Detail]([Orderid] ASC)
+    INCLUDE([ID], [ArtworkID], [PatternCode], [Qty]);
 
