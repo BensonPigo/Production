@@ -1,9 +1,9 @@
 ﻿CREATE TABLE [dbo].[FIR_Grade] (
-    [WeaveType]  VARCHAR (20) CONSTRAINT [DF_FIR_Grade_WeaveType] DEFAULT ('') NOT NULL,
+    [WeaveTypeID]  VARCHAR (20) CONSTRAINT [DF_FIR_Grade_WeaveType] DEFAULT ('') NOT NULL,
     [Percentage] NUMERIC (3)  CONSTRAINT [DF_FIR_Grade_Percentage] DEFAULT ((0)) NOT NULL,
     [Grade]      VARCHAR (1)  CONSTRAINT [DF_FIR_Grade_Grade] DEFAULT ('') NULL,
     [Result]     VARCHAR (1)  CONSTRAINT [DF_FIR_Grade_Result] DEFAULT ('') NULL,
-    CONSTRAINT [PK_FIR_Grade] PRIMARY KEY CLUSTERED ([WeaveType] ASC, [Percentage] ASC)
+    CONSTRAINT [PK_FIR_Grade] PRIMARY KEY CLUSTERED ([WeaveTypeID] ASC, [Percentage] ASC)
 );
 
 
@@ -12,7 +12,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'FIR 評比�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'織法', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Grade', @level2type = N'COLUMN', @level2name = N'WeaveType';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'織法', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Grade', @level2type = N'COLUMN', @level2name = 'WeaveTypeID';
 
 
 GO

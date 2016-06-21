@@ -42,4 +42,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="ExportDataPath" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="98bf8e45-d153-44dd-81e4-e0f9546fa567" ChangeDateTime="06/21/2016 02:03:44">
+    <Property Name="ElementName" Value="[dbo].[FIR_Grade].[WeaveType]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[FIR_Grade]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="WeaveTypeId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="6943da01-efa4-49bd-a882-be8ebfd7b3a8" ChangeDateTime="06/21/2016 02:04:19">
+    <Property Name="ElementName" Value="[dbo].[FIR_Grade].[WeaveTypeId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[FIR_Grade]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="WeaveTypeID" />
+  </Operation>
 </Operations>

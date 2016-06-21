@@ -10,6 +10,7 @@ Database/Storage/SLAVE.sql -text
 Database/dbo/Functions/GetCPURate.sql -text
 Database/dbo/Functions/GetCurrencyRate.sql -text
 Database/dbo/Functions/GetDigitalValue.sql -text
+Database/dbo/Functions/GetFirResult.sql -text
 Database/dbo/Functions/GetHaveDelaySupp.sql -text
 Database/dbo/Functions/GetPriceFromMtl.sql -text
 Database/dbo/Functions/GetRequestETA.sql -text
@@ -51,6 +52,7 @@ Database/dbo/Stored[!!-~]Procedures/dbo.insertMygridstd2.sql -text
 Database/dbo/Stored[!!-~]Procedures/insertMygridstd2.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_APSDataDownLoad.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_BoaByIssueBreakDown.sql -text
+Database/dbo/Stored[!!-~]Procedures/usp_FirEncode.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_GetErrorInfo.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_SingleItemRecaculate.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_StockRecaculate.sql -text
