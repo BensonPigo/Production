@@ -5,6 +5,8 @@
     [Colorid]  VARCHAR (70) CONSTRAINT [DF_MD_Colorid] DEFAULT ('') NOT NULL,
     [InspDate] DATE         NULL,
     [Result]   VARCHAR (60) CONSTRAINT [DF_MD_Result] DEFAULT ('') NULL,
+    [EditName] VARCHAR(10) NULL DEFAULT (''), 
+    [EditDate] DATETIME NULL, 
     CONSTRAINT [PK_MD] PRIMARY KEY CLUSTERED ([ID] ASC, [Type] ASC, [Item] ASC, [Colorid] ASC)
 );
 
@@ -36,3 +38,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'檢驗日�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'結果', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MD', @level2type = N'COLUMN', @level2name = N'Result';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'編輯人員',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'MD',
+    @level2type = N'COLUMN',
+    @level2name = N'EditName'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'編輯時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'MD',
+    @level2type = N'COLUMN',
+    @level2name = N'EditDate'
