@@ -363,8 +363,6 @@ Database/dbo/Tables/Rft_Detail.sql -text
 Database/dbo/Tables/SCIFty.sql -text
 Database/dbo/Tables/SMNotice.sql -text
 Database/dbo/Tables/Scale.sql -text
-Database/dbo/Tables/Scrap.sql -text
-Database/dbo/Tables/Scrap_Detail.sql -text
 Database/dbo/Tables/Season.sql -text
 Database/dbo/Tables/SewingLine.sql -text
 Database/dbo/Tables/SewingOutput.sql -text
