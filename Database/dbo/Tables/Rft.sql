@@ -8,7 +8,7 @@
     [DefectQty]    NUMERIC (7)   CONSTRAINT [DF_Rft_DefectQty] DEFAULT ((0)) NULL,
     [Shift]        VARCHAR (1)   CONSTRAINT [DF_Rft_Shift] DEFAULT ('') NULL,
     [Team]         VARCHAR (1)   CONSTRAINT [DF_Rft_Team] DEFAULT ('') NULL,
-    [Status]       VARCHAR(5)           CONSTRAINT [DF_Rft_Encode] DEFAULT ('') NULL,
+    [Status]       VARCHAR(15)           CONSTRAINT [DF_Rft_Encode] DEFAULT ('') NULL,
     [Remark]       NVARCHAR (60) CONSTRAINT [DF_Rft_Remark] DEFAULT ('') NULL,
     [ID]           BIGINT        IDENTITY (1, 1) NOT NULL,
     [AddName]      VARCHAR (10)  CONSTRAINT [DF_Rft_AddName] DEFAULT ('') NULL,
