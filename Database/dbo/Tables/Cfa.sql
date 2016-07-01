@@ -8,7 +8,7 @@
     [DefectQty]     NUMERIC (7)   CONSTRAINT [DF_Cfa_DefectQty] DEFAULT ((0)) NULL,
     [Team]          VARCHAR (1)   CONSTRAINT [DF_Cfa_Team] DEFAULT ('') NULL,
     [Shift]         VARCHAR (1)   CONSTRAINT [DF_Cfa_Shift] DEFAULT ('') NULL,
-    [Result]        VARCHAR (1)   CONSTRAINT [DF_Cfa_Result] DEFAULT ('') NULL,
+    [Result]        VARCHAR (5)   CONSTRAINT [DF_Cfa_Result] DEFAULT ('') NULL,
     [GarmentOutput] NUMERIC (7)   CONSTRAINT [DF_Cfa_GarmentOutput] DEFAULT ((0)) NULL,
     [Stage]         VARCHAR (1)   CONSTRAINT [DF_Cfa_Stage] DEFAULT ('') NULL,
     [CFA]           VARCHAR (10)  CONSTRAINT [DF_Cfa_CFA] DEFAULT ('') NULL,
