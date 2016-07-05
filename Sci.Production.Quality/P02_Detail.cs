@@ -17,89 +17,391 @@ namespace Sci.Production.Quality
 {
     public partial class P02_Detail : Sci.Win.Subs.Input6A
     {
-        
-        public P02_Detail(string airID)
+        private string loginID = Sci.Env.User.UserID;
+        private DataRow maindr;
+
+        public P02_Detail(bool CanEdit, string airID, DataRow mainDr)
         {
             InitializeComponent();
             string id = airID;
+            this.textID.Text = id.ToString();
+            this.comboBox1.ReadOnly = false;
+            maindr = mainDr;
+            bool canedit = CanEdit;
+            button_enable(canedit);
+            btn_status(id);
 
             string air_cmd = string.Format("select * from air where id='{0}'", id);
             DataRow dr;
 
-            //combox
-            DataTable dtCombo;
-            Ict.DualResult cbResult;
-            if(cbResult= DBProxy.Current.Select(null, string.Format("select ID,Result from air WHERE ID='{0}'", id),out dtCombo))
-            {
-                this.comboBox1.DataSource=dtCombo;
-                this.comboBox1.DisplayMember="Result";
-                this.comboBox1.ValueMember="ID";
-            }
+            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
+            comboBox1_RowSource.Add("Pass", "Pass");
+            comboBox1_RowSource.Add("Fail", "Fail");
+            comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
+            comboBox1.ValueMember = "Key";
+            comboBox1.DisplayMember = "Value";
+
 
             // 串接table Po_Supp_Detail
             DataTable dtPoSuppDetail;
             Ict.DualResult pstResult;
-            if (pstResult=DBProxy.Current.Select(null,string.Format("select * from PO_Supp_Detail a left join AIR b on a.ID=b.POID and a.SEQ1=b.SEQ1 and a.SEQ2=b.SEQ2 where b.ID='{0}'",id),out dtPoSuppDetail ))
+            if (pstResult = DBProxy.Current.Select(null, string.Format("select a.SCIRefno,a.Refno,a.ColorID,a.ColorID,a.StockUnit,a.SizeSpec from PO_Supp_Detail a left join AIR b on a.ID=b.POID and a.SEQ1=b.SEQ1 and a.SEQ2=b.SEQ2 where b.ID='{0}'", id), out dtPoSuppDetail))
             {
-                ref_text.Text = dtPoSuppDetail.Rows[0]["SCIRefno"].ToString();
-                brand_text.Text = dtPoSuppDetail.Rows[0]["BrandID"].ToString();
-                lable_color.Text = dtPoSuppDetail.Rows[0]["colorid"].ToString();
-                //沒有欄位
-                //unit_text.Text = dtPoSuppDetail.Rows[0]["wearunit"].ToString();
-                size_text.Text = dtPoSuppDetail.Rows[0]["sizespec"].ToString();
+                if (dtPoSuppDetail.Rows.Count > 0)
+                {
+                    ref_text.Text = dtPoSuppDetail.Rows[0]["SCIRefno"].ToString();
+                    brand_text.Text = dtPoSuppDetail.Rows[0]["Refno"].ToString();
+                    lable_color.Text = dtPoSuppDetail.Rows[0]["colorid"].ToString();
+                    unit_text.Text = dtPoSuppDetail.Rows[0]["StockUnit"].ToString();
+                    size_text.Text = dtPoSuppDetail.Rows[0]["sizespec"].ToString();
+                }
+
             }
-          
+
             //串接table Receiving
             DataTable dtRec;
             Ict.DualResult wknoResult;
-            if (wknoResult = DBProxy.Current.Select(null, string.Format("select * from Receiving a left join AIR b on a.Id=b.ReceivingID where b.ID='{0}' ", id), out dtRec)) 
+            if (wknoResult = DBProxy.Current.Select(null, string.Format("select * from Receiving a left join AIR b on a.Id=b.ReceivingID where b.ID='{0}' ", id), out dtRec))
             {
                 wkno_text.Text = dtRec.Rows[0]["exportid"].ToString();
             }
-            
-            if (MyUtility.Check.Seek(air_cmd,out dr))
+
+            if (MyUtility.Check.Seek(air_cmd, out dr))
             {
-                seq_text.Text = dr["SEQ1"].ToString()+" - "+dr["SEQ2"].ToString();
+                seq_text.Text = dr["SEQ1"].ToString() + " - " + dr["SEQ2"].ToString();
                 inspQty_text.Text = dr["inspQty"].ToString();
-                RejQty_text.Text=dr["REjectQty"].ToString();
-                InsDate_text.Text = Convert.ToDateTime(dr["inspdate"]).ToShortDateString();
+                RejQty_text.Text = dr["REjectQty"].ToString();
+                InsDate_text.Text = Convert.ToDateTime(dr["inspdate"]).ToShortDateString().Replace("/", "-");
                 Instor_text.Text = dr["inspector"].ToString();
                 Remark_text.Text = dr["remark"].ToString();
                 this.comboBox1.DisplayMember = dr["Result"].ToString();
-               
-
+                this.editBox1.Text = dr["Defect"].ToString();
             }
-            //右鍵帶出選擇視窗
-            //DefectSelect = new DataGridViewGeneratorTextColumnSettings();
-            //DefectSelect = new 
-
-            //DefectSelect.CellMouseClick += (s1, e1) =>
-            //{
-            //    if (e1.Button == System.Windows.Forms.MouseButtons.Right)
-            //    {
-            //        DataRow dr1 = this.detailgrid.GetDataRow<DataRow>(e1.RowIndex);
-            //        if (null == dr1) { return; }
-            //        string sqlcmd1 = "    select scirefno from PO_Supp_Detail  where ID in (select id from orders)  and fabrictype='A'  and Scirefno is not null  group by scirefno";
-            //        SelectItem item1 = new SelectItem(sqlcmd1, "30", dr1["Item"].ToString());
-            //        DialogResult result1 = item1.ShowDialog();
-            //        if (result1 == DialogResult.Cancel) { return; }
-            //        dr1["Item"] = item1.GetSelectedString();
-            //    }
-            //};
-
 
         }
+
 
         protected override void OnFormDispose()
         {
 
             base.OnFormDispose();
 
-            
         }
 
 
+        private void save_Click(object sender, EventArgs e)
+        {
+            string strSqlcmd = "";
 
-       
+
+            DualResult result;
+            DataTable dt;
+            strSqlcmd = string.Format("Select * from AIR where ID='{0}' ", textID.Text);          
+            if (result = DBProxy.Current.Select(null, strSqlcmd, null, out dt))
+            {
+                if (dt.Rows.Count > 0)
+                {
+                    if (this.save.Text == "Save")
+                    {
+                        if (MyUtility.Check.Empty(inspQty_text.Text))
+                        {
+                            MyUtility.Msg.InfoBox("<Inspected> can not be null");
+                            this.inspQty_text.Focus();
+                            return;
+                        }
+                        if (MyUtility.Check.Empty(comboBox1.SelectedValue))
+                        {
+                            MyUtility.Msg.InfoBox("<Result> can not be null");
+                            this.comboBox1.Focus();
+                            return;
+                        }
+                        if (MyUtility.Check.Empty(InsDate_text))
+                        {
+                            MyUtility.Msg.InfoBox("<Inspdate> can not be null");
+                            this.InsDate_text.Focus();
+                            return;
+                        }
+                        if (MyUtility.Check.Empty(Instor_text))
+                        {
+                            MyUtility.Msg.InfoBox("<Inspector> can not be null");
+                            this.Instor_text.Focus();
+                            return;
+
+                        }
+                        if ((RejQty_text.Text != "0.00" || RejQty_text.Text != "") && (MyUtility.Check.Empty(editBox1)))
+                        {
+                            MyUtility.Msg.InfoBox("When <Rejected Qty> has any value then <Defect> can not be empty !");
+                            this.editBox1.Focus();
+                            return;
+                        }
+                        if ((editBox1.Text != null || editBox1.Text != "") && (this.RejQty_text.Text == "0.00"))
+                        {
+                            MyUtility.Msg.InfoBox("When <Defect> has any value then <Rejected Qty> can not be empty !");
+                            this.RejQty_text.Focus();
+                            return;
+                        }
+                        if ((this.comboBox1.Text.ToString() == "Fail") && (this.RejQty_text.Text == "0.00" || MyUtility.Check.Empty(editBox1)))
+                        {
+                            MyUtility.Msg.InfoBox("When <Result> is Fail then <Rejected Qty> can not be empty !");
+                            this.RejQty_text.Focus();
+                            return;
+                        }
+                        string updatesql = "";
+                        #region  寫入實體Table Encode
+                        updatesql = string.Format(
+                        "Update Air set InspQty= '{0}',RejectQty='{1}',Inspdate = '{2}',Inspector = '{3}',Result= '{4}',Defect='{5}',Remark='{6}' where id ='{7}'",
+                        this.inspQty_text.Text, this.RejQty_text.Text, InsDate_text.Text, Instor_text.Text, comboBox1.Text, editBox1.Text, Remark_text.Text,  textID.Text);
+                        DualResult upResult;
+                        TransactionScope _transactionscope = new TransactionScope();
+                        using (_transactionscope)
+                        {
+                            try
+                            {
+                                if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
+                                {
+                                    _transactionscope.Dispose();
+
+                                    return;
+                                }
+                                _transactionscope.Complete();
+                                MyUtility.Msg.WarningBox("Successfully");
+                                this.Encode.Text = "Encode";
+                                this.save.Text = "Edit";
+                            }
+                            catch (Exception ex)
+                            {
+                                _transactionscope.Dispose();
+                                ShowErr("Commit transaction error.", ex);
+                                return;
+                            }
+                        }
+                        #endregion
+                        this.inspQty_text.ReadOnly = true;
+                        this.RejQty_text.ReadOnly = true;
+                        this.InsDate_text.ReadOnly = true;
+                        this.Instor_text.ReadOnly = true;
+                        this.comboBox1.ReadOnly = true;
+                        this.Remark_text.ReadOnly = true;
+                        this.editBox1.ReadOnly = true;
+                        return;
+                    }
+                    else
+                    {
+                        if (dt.Rows[0]["Status"].ToString().Trim() == "Confirmed")
+                        {
+                            MyUtility.Msg.InfoBox("已經Confirmed");
+                            return;
+                        }
+                        if (dt.Rows[0]["Status"].ToString().Trim() != "Confirmed")
+                        {
+                            this.inspQty_text.ReadOnly = false;
+                            this.RejQty_text.ReadOnly = false;
+                            this.InsDate_text.ReadOnly = false;
+                            this.Instor_text.ReadOnly = false;
+                            this.comboBox1.ReadOnly = false;
+                            this.Remark_text.ReadOnly = false;
+                            this.editBox1.ReadOnly = false;
+                            this.save.Text = "Save";
+                            
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        
+
+        private void Encode_Click(object sender, EventArgs e)
+        {
+            string updatesql = "";
+            string updatesql1 = "";
+
+            if (this.Encode.Text == "Amend")
+            {
+                DialogResult btnAmend = MyUtility.Msg.QuestionBox("Are you sure want to <Amend> this data?", "Question", MessageBoxButtons.YesNo);
+                if (btnAmend == DialogResult.No)
+                {
+                    return;
+                }
+                else
+                {
+                    #region  寫入實體Table Amend
+                    updatesql1 = string.Format(
+                    "Update Air set Status = 'New',EditDate=CONVERT(VARCHAR(20), GETDATE(), 120),EditName='{0}' where id ='{1}'",
+                     loginID, textID.Text);
+
+                    //updatesql = string.Format("Update air set inspqty='{0}' where id='{1}'", this.inspQty_text.Text,this.textID.Text);
+
+                    DualResult upResult1;
+                    TransactionScope _transactionscope1 = new TransactionScope();
+                    using (_transactionscope1)
+                    {
+                        try
+                        {
+                            if (!(upResult1 = DBProxy.Current.Execute(null, updatesql1)))
+                            {
+                                _transactionscope1.Dispose();
+
+                                return;
+                            }
+                            _transactionscope1.Complete();
+                            btn_status(this.textID.Text);
+                            this.inspQty_text.ReadOnly = false;
+                            this.RejQty_text.ReadOnly = false;
+                            this.InsDate_text.ReadOnly = false;
+                            this.Instor_text.ReadOnly = false;
+                            this.comboBox1.ReadOnly = false;
+                            this.Remark_text.ReadOnly = false;
+                            this.editBox1.ReadOnly = false;
+                            this.save.Text = "Save";
+                        }
+                        catch (Exception ex)
+                        {
+                            _transactionscope1.Dispose();
+                            ShowErr("Commit transaction error.", ex);
+                            return;
+                        }
+                    }
+
+                    #endregion
+                }
+               
+            }
+
+            else
+            {
+                if (MyUtility.Check.Empty(inspQty_text) || MyUtility.Check.Empty(comboBox1.Text) || MyUtility.Check.Empty(Instor_text) || MyUtility.Check.Empty(InsDate_text))
+                {
+                    if (MyUtility.Check.Empty(inspQty_text.Text))
+                    {
+                        MyUtility.Msg.InfoBox("<Inspected> can not be null");
+                        this.inspQty_text.Focus();
+                        return;
+                    }
+                    else if (MyUtility.Check.Empty(comboBox1.SelectedValue))
+                    {
+                        MyUtility.Msg.InfoBox("<Result> can not be null");
+                        this.comboBox1.Focus();
+                        return;
+                    }
+                    else if (MyUtility.Check.Empty(InsDate_text))
+                    {
+                        MyUtility.Msg.InfoBox("<Inspdate> can not be null");
+                        this.InsDate_text.Focus();
+                        return;
+                    }
+                    else if (MyUtility.Check.Empty(Instor_text))
+                    {
+                        MyUtility.Msg.InfoBox("<Inspector> can not be null");
+                        this.Instor_text.Focus();
+                        return;
+
+                    }
+                }
+
+                #region  寫入實體Table Encode
+                updatesql = string.Format(
+                "Update Air set Status = 'Confirmed',EditDate=CONVERT(VARCHAR(20), GETDATE(), 120),EditName='{0}' where id ='{1}'",
+                loginID, textID.Text);
+                DualResult upResult;
+                TransactionScope _transactionscope = new TransactionScope();
+                using (_transactionscope)
+                {
+                    try
+                    {
+                        if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
+                        {
+                            _transactionscope.Dispose();
+
+                            return;
+                        }
+                        _transactionscope.Complete();
+                        MyUtility.Msg.WarningBox("Successfully");
+                        this.Encode.Text = "Amend";
+                        this.save.Text = "Edit";
+                        btn_status(this.textID.Text);
+                    }
+                    catch (Exception ex)
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr("Commit transaction error.", ex);
+                        return;
+                    }
+                }
+                #endregion
+            }
+
+
+        }
+
+        
+        private void editBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (this.editBox1.ReadOnly == true)
+            {
+                return;
+            }
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                string sqlcmd = "select id,description from AccessoryDefect";
+                SelectItem2 item = new SelectItem2(sqlcmd, "15,12", null);
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                this.editBox1.Text = item.GetSelectedString().Replace(",", "+");
+
+
+            }
+        }
+        private void button_enable(bool canedit)
+        {
+            save.Enabled = (bool)canedit;
+            //sender.ToString();
+            string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P02", "MenuDetail", "FormName");
+            string pass0pk = MyUtility.GetValue.Lookup("FKPass0", loginID, "Pass1", "ID");
+            DataRow pass2_dr;
+            string pass2_cmd = string.Format("Select * from Pass2 Where FKPass0 ={0} and FKMenu={1}", pass0pk, menupk);
+            int lApprove = 0; //有Confirm權限皆可按Pass的Approve, 有Check權限才可按Fail的Approve(TeamLeader 有Approve權限,Supervisor有Check)
+            int lCheck = 0;
+            if (MyUtility.Check.Seek(pass2_cmd, out pass2_dr))
+            {
+                lApprove = pass2_dr["CanConfirm"].ToString() == "True" ? 1 : 0;
+                lCheck = pass2_dr["CanCheck"].ToString() == "True" ? 1 : 0;
+            }
+            if (maindr["Result"].ToString() == "Pass")
+            {
+                Encode.Enabled = (bool)canedit;
+               
+            }
+            else
+            {
+                Encode.Enabled = (bool)canedit;
+                
+            }
+        }
+
+        private void undo_Click(object sender, EventArgs e)
+        {
+            return;
+        }
+
+        private void btn_status(object id)
+        {
+            string air_cmd = string.Format("select * from air where id='{0}'", id);
+            DataTable dt;
+            DualResult result;
+            if (result=DBProxy.Current.Select(null,air_cmd, out dt))
+            {
+                if (dt.Rows[0]["Status"].ToString().Trim() == "Confirmed")
+                {
+                    this.Encode.Text = "Amend";
+                }
+                else
+                {
+                    this.Encode.Text = "Encode";
+                }
+            }
+        }
+
     }
 }

@@ -28,8 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.listBox1 = new Sci.Win.UI.ListBox();
-            this.button3 = new Sci.Win.UI.Button();
+            this.Encode = new Sci.Win.UI.Button();
             this.inspQty_text = new Sci.Win.UI.TextBox();
             this.unit_text = new Sci.Win.UI.TextBox();
             this.color_text = new Sci.Win.UI.TextBox();
@@ -62,8 +61,12 @@
             this.label14 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
+            this.textID = new Sci.Win.UI.TextBox();
+            this.editBox1 = new Sci.Win.UI.EditBox();
+            this.panel1 = new Sci.Win.UI.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btmcont
@@ -74,28 +77,32 @@
             // undo
             // 
             this.undo.Location = new System.Drawing.Point(579, 5);
+            this.undo.Click += new System.EventHandler(this.undo_Click);
             // 
             // save
             // 
+            this.save.Enabled = true;
             this.save.Location = new System.Drawing.Point(499, 5);
+            this.save.Text = "Edit";
+            this.save.Click += new System.EventHandler(this.save_Click);
             // 
-            // listBox1
+            // left
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 16;
-            this.listBox1.Location = new System.Drawing.Point(318, 306);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(273, 84);
-            this.listBox1.TabIndex = 118;
+            this.left.Enabled = true;
             // 
-            // button3
+            // right
             // 
-            this.button3.Location = new System.Drawing.Point(553, 38);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 117;
-            this.button3.Text = "Encode";
-            this.button3.UseVisualStyleBackColor = true;
+            this.right.Enabled = true;
+            // 
+            // Encode
+            // 
+            this.Encode.Location = new System.Drawing.Point(553, 38);
+            this.Encode.Name = "Encode";
+            this.Encode.Size = new System.Drawing.Size(80, 30);
+            this.Encode.TabIndex = 117;
+            this.Encode.Text = "Amend";
+            this.Encode.UseVisualStyleBackColor = true;
+            this.Encode.Click += new System.EventHandler(this.Encode_Click);
             // 
             // inspQty_text
             // 
@@ -217,7 +224,7 @@
             // label3
             // 
             this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(226, 30);
+            this.label3.Location = new System.Drawing.Point(248, 30);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
             this.label3.TabIndex = 97;
@@ -226,7 +233,7 @@
             // label4
             // 
             this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(225, 82);
+            this.label4.Location = new System.Drawing.Point(247, 82);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 23);
             this.label4.TabIndex = 98;
@@ -235,7 +242,7 @@
             // label5
             // 
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(226, 144);
+            this.label5.Location = new System.Drawing.Point(248, 144);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(75, 23);
             this.label5.TabIndex = 99;
@@ -262,7 +269,7 @@
             // lable_color
             // 
             this.lable_color.Lines = 0;
-            this.lable_color.Location = new System.Drawing.Point(226, 208);
+            this.lable_color.Location = new System.Drawing.Point(248, 208);
             this.lable_color.Name = "lable_color";
             this.lable_color.Size = new System.Drawing.Size(75, 23);
             this.lable_color.TabIndex = 102;
@@ -280,7 +287,7 @@
             // label10
             // 
             this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(226, 306);
+            this.label10.Location = new System.Drawing.Point(278, 32);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(75, 23);
             this.label10.TabIndex = 104;
@@ -335,7 +342,7 @@
             // 
             this.Remark_text.BackColor = System.Drawing.Color.White;
             this.Remark_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Remark_text.Location = new System.Drawing.Point(320, 446);
+            this.Remark_text.Location = new System.Drawing.Point(382, 172);
             this.Remark_text.Name = "Remark_text";
             this.Remark_text.Size = new System.Drawing.Size(100, 23);
             this.Remark_text.TabIndex = 124;
@@ -343,7 +350,7 @@
             // label13
             // 
             this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(226, 446);
+            this.label13.Location = new System.Drawing.Point(278, 172);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(91, 23);
             this.label13.TabIndex = 123;
@@ -380,7 +387,6 @@
             // 
             this.comboBox1.BackColor = System.Drawing.Color.White;
             this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "result", true));
-            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "result", true));
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
@@ -389,21 +395,52 @@
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
             this.comboBox1.TabIndex = 129;
             // 
+            // textID
+            // 
+            this.textID.BackColor = System.Drawing.Color.White;
+            this.textID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textID.Location = new System.Drawing.Point(579, 102);
+            this.textID.Name = "textID";
+            this.textID.Size = new System.Drawing.Size(80, 23);
+            this.textID.TabIndex = 130;
+            this.textID.Visible = false;
+            // 
+            // editBox1
+            // 
+            this.editBox1.BackColor = System.Drawing.Color.White;
+            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBox1.Location = new System.Drawing.Point(382, 32);
+            this.editBox1.Multiline = true;
+            this.editBox1.Name = "editBox1";
+            this.editBox1.Size = new System.Drawing.Size(224, 105);
+            this.editBox1.TabIndex = 132;
+            this.editBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.editBox1_MouseDown);
+            // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.Border3DStyle.Raised;
+            this.panel1.Controls.Add(this.editBox1);
+            this.panel1.Controls.Add(this.label10);
+            this.panel1.Controls.Add(this.label13);
+            this.panel1.Controls.Add(this.Remark_text);
+            this.panel1.Location = new System.Drawing.Point(9, 274);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(634, 268);
+            this.panel1.TabIndex = 133;
+            // 
             // P02_Detail
             // 
             this.ClientSize = new System.Drawing.Size(669, 588);
+            this.Controls.Add(this.textID);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.label15);
             this.Controls.Add(this.Instor_text);
             this.Controls.Add(this.label14);
-            this.Controls.Add(this.Remark_text);
-            this.Controls.Add(this.label13);
             this.Controls.Add(this.InsDate_text);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.RejQty_text);
             this.Controls.Add(this.label8);
-            this.Controls.Add(this.listBox1);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.Encode);
             this.Controls.Add(this.inspQty_text);
             this.Controls.Add(this.unit_text);
             this.Controls.Add(this.color_text);
@@ -424,14 +461,15 @@
             this.Controls.Add(this.label7);
             this.Controls.Add(this.lable_color);
             this.Controls.Add(this.label9);
-            this.Controls.Add(this.label10);
             this.Controls.Add(this.label11);
+            this.Controls.Add(this.panel1);
+            this.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "defect", true));
             this.Name = "P02_Detail";
             this.Text = "Accessory Inspection- SP+SEQ+Detail";
             this.WorkAlias = "AIR";
+            this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.label11, 0);
-            this.Controls.SetChildIndex(this.label10, 0);
             this.Controls.SetChildIndex(this.label9, 0);
             this.Controls.SetChildIndex(this.lable_color, 0);
             this.Controls.SetChildIndex(this.label7, 0);
@@ -452,20 +490,20 @@
             this.Controls.SetChildIndex(this.color_text, 0);
             this.Controls.SetChildIndex(this.unit_text, 0);
             this.Controls.SetChildIndex(this.inspQty_text, 0);
-            this.Controls.SetChildIndex(this.button3, 0);
-            this.Controls.SetChildIndex(this.listBox1, 0);
+            this.Controls.SetChildIndex(this.Encode, 0);
             this.Controls.SetChildIndex(this.label8, 0);
             this.Controls.SetChildIndex(this.RejQty_text, 0);
             this.Controls.SetChildIndex(this.label12, 0);
             this.Controls.SetChildIndex(this.InsDate_text, 0);
-            this.Controls.SetChildIndex(this.label13, 0);
-            this.Controls.SetChildIndex(this.Remark_text, 0);
             this.Controls.SetChildIndex(this.label14, 0);
             this.Controls.SetChildIndex(this.Instor_text, 0);
             this.Controls.SetChildIndex(this.label15, 0);
             this.Controls.SetChildIndex(this.comboBox1, 0);
+            this.Controls.SetChildIndex(this.textID, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -473,8 +511,7 @@
 
         #endregion
 
-        private Win.UI.ListBox listBox1;
-        private Win.UI.Button button3;
+        private Win.UI.Button Encode;
         private Win.UI.TextBox inspQty_text;
         private Win.UI.TextBox unit_text;
         private Win.UI.TextBox color_text;
@@ -507,6 +544,9 @@
         private Win.UI.Label label14;
         private Win.UI.Label label15;
         private Win.UI.ComboBox comboBox1;
+        private Win.UI.TextBox textID;
+        private Win.UI.EditBox editBox1;
+        private Win.UI.Panel panel1;
 
     }
 }
