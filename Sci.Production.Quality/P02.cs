@@ -19,6 +19,7 @@ namespace Sci.Production.Quality
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
+        string find = "";
         int index;
         string ing = "";
         DataRow[] find_dr;
@@ -26,6 +27,8 @@ namespace Sci.Production.Quality
         public P02(ToolStripMenuItem menuitem) : base(menuitem)
         {
             InitializeComponent();
+            detailgrid.ContextMenuStrip = contextMenuStrip1;
+
         }
         public P02(string POID)
         {
@@ -37,7 +40,7 @@ namespace Sci.Production.Quality
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmd = string.Format(
                 @"Select a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,
-                ArriveQty,InspDeadline,Result,
+                ArriveQty,InspDeadline,Result,a.InspQty,a.RejectQty,a.Defect,a.Result,a.InspDate,a.Inspector,a.Remark,a.ReplacementReportID,
                 a.Status,ReplacementReportID,(seq1+seq2) as seq,
                 (
                 Select weavetypeid from Fabric b where b.SCIRefno =a.SCIrefno
@@ -46,6 +49,12 @@ namespace Sci.Production.Quality
                 (
                 Select d.colorid from PO_Supp_Detail d Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
                 ) as Colorid,
+                (
+                Select d.SizeSpec from PO_Supp_Detail d Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+                ) as Size,
+                (
+                Select d.StockUnit from PO_Supp_Detail d Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+                ) as unit,
                 (
                 Select AbbEn From Supp Where a.suppid = supp.id
                 ) as SuppEn
@@ -60,22 +69,38 @@ namespace Sci.Production.Quality
 
             //Grid 事件屬性: 右鍵跳出新視窗
             DataGridViewGeneratorTextColumnSettings detail = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings detail_Int = new DataGridViewGeneratorNumericColumnSettings();
+
 
             detail.CellMouseDoubleClick += (s, e) =>
             {
+               
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
                 // 有疑問!!!!
-                var frm = new Sci.Production.Quality.P02_Detail(this.CurrentDetailData["ID"].ToString());
+                var frm = new Sci.Production.Quality.P02_Detail(false,this.CurrentDetailData["ID"].ToString(),dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
             };
 
+            detail_Int.CellMouseDoubleClick += (s, e) =>
+            {
+               
+                var dr = this.CurrentDetailData;
+                if (dr == null) return;
+                // 有疑問!!!!
+                var frm = new Sci.Production.Quality.P02_Detail(false,this.CurrentDetailData["ID"].ToString(),dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
 
+            
             #region set Grid
 
             this.detailgrid.IsEditingReadOnly = false;
+
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("SEQ", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("ExportID", header: "WKNO", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -84,21 +109,28 @@ namespace Sci.Production.Quality
                 .Text("Refno", header: "Brand Ref#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SuppEn", header: "Supplier", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("Sizespec", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Size", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("ArriveQty", header: "Arrive Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
-                .Text("Sizespec", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("InspDeadline", header: "Insp. Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)                                              
-                .Numeric("InspQty", header: "Inspected Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true)               
+                .Text("unit", header: "Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("InspDeadline", header: "Insp. Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("InspQty", header: "Inspected Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true, settings: detail_Int)
                 .Text("RejectQty", header: "Rehect Qty", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("defect", header: "Defect Type", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
-                .Text("Resxxx", header: "Result", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
+                .Text("Result", header: "Result", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("Inspdate", header: "Insp. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
-                .Text("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail   )            
                 .Text("ReplacementID", header: "1st ReplacementID", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ExportID", header: "Receiving ID", width: Widths.AnsiChars(10), iseditingreadonly: true);
+            detailgrid.Columns[11].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            detailgrid.Columns[12].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            detailgrid.Columns[13].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            detailgrid.Columns[14].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            detailgrid.Columns[15].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            detailgrid.Columns[16].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            detailgrid.Columns[17].DefaultCellStyle.BackColor = Color.LemonChiffon;
             #endregion
-
+         
 
         }
 
@@ -266,13 +298,69 @@ namespace Sci.Production.Quality
             }
             detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);
         }
-        private void aaa(object sender, EventArgs e)
+
+
+        private void modifyDetailToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var dr = this.CurrentDetailData; if (dr == null) return;
-            var frm = new Sci.Production.Quality.P02_Detail(this.CurrentDetailData["ID"].ToString());
+            var dr = this.CurrentDetailData; if (null == dr) return;
+            var frm = new Sci.Production.Quality.P02_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            DataTable detDtb = (DataTable)detailgridbs.DataSource;
+            //移到指定那筆
+            string wk = wk_box.Text;
+            string seq1 = seq1_box.Text;
+            string seq2 = seq2_box.Text;
+            string find_new = "";
+
+            if (!MyUtility.Check.Empty(wk))
+            {
+                find_new = string.Format("Exportid='{0}'", wk);
+            }
+            if (!MyUtility.Check.Empty(seq1))
+            {
+                if (!MyUtility.Check.Empty(find_new))
+                {
+                    find_new = find_new + string.Format(" and SEQ1 = '{0}'", seq1);
+                }
+                else
+                {
+                    find_new = string.Format("SEQ1 = '{0}'", seq1);
+                }
+            }
+            if (!MyUtility.Check.Empty(seq2))
+            {
+                if (!MyUtility.Check.Empty(find_new))
+                {
+                    find_new = find_new + string.Format(" and SEQ2 = '{0}'", seq2);
+                }
+                else
+                {
+                    find_new = string.Format("SEQ2 = '{0}'", seq2);
+                }
+            }
+            if (find != find_new)
+            {
+                find = find_new;
+                find_dr = detDtb.Select(find_new);
+                if (find_dr.Length == 0)
+                {
+                    MyUtility.Msg.WarningBox("Not Found");
+                    return;
+                }
+                else { index = 0; }
+            }
+            else
+            {
+                index++;
+                if (index >= find_dr.Length) index = 0;
+            }
+            detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);
         }
 
     }

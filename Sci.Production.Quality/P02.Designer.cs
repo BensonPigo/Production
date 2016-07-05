@@ -57,6 +57,8 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
+            this.contextMenuStrip1 = new Sci.Win.UI.ContextMenuStrip();
+            this.modifyDetailToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -69,6 +71,7 @@
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -102,7 +105,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 172);
+            this.masterpanel.Size = new System.Drawing.Size(1044, 172);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -137,7 +140,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 172);
-            this.detailpanel.Size = new System.Drawing.Size(892, 177);
+            this.detailpanel.Size = new System.Drawing.Size(1044, 442);
             // 
             // gridicon
             // 
@@ -145,7 +148,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 177);
+            this.detailgridcont.Size = new System.Drawing.Size(1044, 442);
             // 
             // detail2
             // 
@@ -161,24 +164,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(1044, 652);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(1044, 614);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 614);
+            this.detailbtm.Size = new System.Drawing.Size(1044, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(983, 443);
+            this.browse.Size = new System.Drawing.Size(1044, 652);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(991, 472);
+            this.tabs.Size = new System.Drawing.Size(1052, 681);
             // 
             // seq1_box
             // 
@@ -210,6 +213,7 @@
             this.button1.TabIndex = 34;
             this.button1.Text = "Find";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // mtl_box
             // 
@@ -475,12 +479,25 @@
             this.label1.TabIndex = 31;
             this.label1.Text = "SP#";
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.modifyDetailToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(155, 26);
+            // 
+            // modifyDetailToolStripMenuItem
+            // 
+            this.modifyDetailToolStripMenuItem.Name = "modifyDetailToolStripMenuItem";
+            this.modifyDetailToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.modifyDetailToolStripMenuItem.Text = "modify_Detail";
+            this.modifyDetailToolStripMenuItem.Click += new System.EventHandler(this.modifyDetailToolStripMenuItem_Click);
+            // 
             // P02
             // 
-            this.ClientSize = new System.Drawing.Size(991, 505);
-            this.DefaultDetail2Order = "SEQ,Wkno";
+            this.ClientSize = new System.Drawing.Size(1052, 714);
+            this.DefaultDetailOrder = "SEQ1,exportid";
             this.DefaultOrder = "id";
-            this.DefaultWhere = "id=\'15070229RR\'";
             this.GridAlias = "AIR";
             this.GridNew = 0;
             this.GridUniqueKey = "seq1,seq2,receivingid";
@@ -493,7 +510,7 @@
             this.KeyField2 = "poid";
             this.Name = "P02";
             this.Text = "P02.Accessory Inspection";
-            this.UniqueExpress = "id";
+            this.UniqueExpress = "POID";
             this.WorkAlias = "PO";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
@@ -510,6 +527,7 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -546,5 +564,7 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private Win.UI.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem modifyDetailToolStripMenuItem;
     }
 }
