@@ -87,8 +87,8 @@
             <param name="b"></param>
             <returns></returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Check.StrStartsWith(System.Object,System.Object)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Check.StrEndsWith(System.Object,System.Object)" -->
+        <!-- 忽略成員 "M:Sci.MyUtility.Check.StrStartsWith(System.Object,System.Object)" 中格式錯誤的 XML 註解 -->
+        <!-- 忽略成員 "M:Sci.MyUtility.Check.StrEndsWith(System.Object,System.Object)" 中格式錯誤的 XML 註解 -->
         <member name="M:Sci.MyUtility.Check.EqualString(System.Object,System.Object)">
             <summary>
             物件轉String後, 使用 String 的 TrimEnd + IgnoreCase方式作字串比對
@@ -357,7 +357,7 @@
             <param name="String value"></param>
             <returns>string</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Excel.ConnectExcel(System.String)" -->
+        <!-- 忽略成員 "M:Sci.MyUtility.Excel.ConnectExcel(System.String)" 中格式錯誤的 XML 註解 -->
         <member name="M:Sci.MyUtility.Excel.SheetToArray(Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Int32,System.Int32)">
             <summary>
             抓取 Excel sheet 的內容轉成2維object陣列
@@ -397,7 +397,7 @@
             <param name="excelAppObj">不指定的話會在內部產生Excel application物件 ; 連續產生excel的話可不用反覆new Excel物件</param>
             <returns></returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Excel.XlsAutoFit(System.String,System.String,System.Int32,System.Boolean)" -->
+        <!-- 忽略成員 "M:Sci.MyUtility.Excel.XlsAutoFit(System.String,System.String,System.Int32,System.Boolean)" 中格式錯誤的 XML 註解 -->
         <member name="M:Sci.MyUtility.Excel.SaveXlsFile(System.String,System.Windows.Forms.SaveFileDialog@)">
              <summary>
             SaveXlsFile()
@@ -437,7 +437,7 @@
             <param name="grid">grid control.</param>
             <returns>Result of process.</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.File.GetFile(System.String)" -->
+        <!-- 忽略成員 "M:Sci.MyUtility.File.GetFile(System.String)" 中格式錯誤的 XML 註解 -->
         <member name="M:Sci.MyUtility.File.GetFileSize(System.String,System.Int64@)">
             <summary>
             Get the physical file size.
@@ -453,7 +453,7 @@
             <param name="file">Full path filename.</param>
             <returns>result of the method process.</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.File.UnRARFile(System.String,System.String,System.String)" -->
+        <!-- 忽略成員 "M:Sci.MyUtility.File.UnRARFile(System.String,System.String,System.String)" 中格式錯誤的 XML 註解 -->
         <member name="M:Sci.MyUtility.File.ReadPoperty(System.String,System.String)">
             <summary>
             讀取內容為 {key} = {value} 這種多行格式的文字檔
@@ -506,7 +506,7 @@
             <param name="string text"></param>
             <returns>string</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.GetValue.GetBatchID(System.String,System.String,System.DateTime,System.Int32,System.String,System.String,System.Int32,System.Int32,System.Int32)" -->
+        <!-- 忽略成員 "M:Sci.MyUtility.GetValue.GetBatchID(System.String,System.String,System.DateTime,System.Int32,System.String,System.String,System.Int32,System.Int32,System.Int32)" 中格式錯誤的 XML 註解 -->
         <member name="M:Sci.MyUtility.GetValue.GetDate(System.DateTime,System.Int32)">
             <summary>
             GetDate()
@@ -515,8 +515,8 @@
             <param name="[int mode = 1]"></param>
             <returns>DateTime</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.GetValue.GetID(System.String,System.String,System.DateTime,System.Int32,System.String,System.String,System.Int32,System.Int32)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.GetValue.GetUKey(System.String,System.String,System.String)" -->
+        <!-- 忽略成員 "M:Sci.MyUtility.GetValue.GetID(System.String,System.String,System.DateTime,System.Int32,System.String,System.String,System.Int32,System.Int32)" 中格式錯誤的 XML 註解 -->
+        <!-- 忽略成員 "M:Sci.MyUtility.GetValue.GetUKey(System.String,System.String,System.String)" 中格式錯誤的 XML 註解 -->
         <member name="M:Sci.MyUtility.GetValue.GetStr(System.String,System.Int32)">
             <summary>
             GetStr()
@@ -525,7 +525,7 @@
             <param name="[int row = 1]"></param>
             <returns>string</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.GetValue.GetRandomCode(System.Random,System.Int32,System.String)" -->
+        <!-- 忽略成員 "M:Sci.MyUtility.GetValue.GetRandomCode(System.Random,System.Int32,System.String)" 中格式錯誤的 XML 註解 -->
         <member name="M:Sci.MyUtility.GetValue.GetSeq(System.String)">
             <summary>
             GetSeq()
@@ -666,10 +666,10 @@
             <param name="B"></param>
             <returns></returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Msg.ErrorBox(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxDefaultButton)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Msg.InfoBox(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxDefaultButton)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Msg.QuestionBox(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxDefaultButton)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Msg.WarningBox(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxDefaultButton)" -->
+        <!-- 忽略成員 "M:Sci.MyUtility.Msg.ErrorBox(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxDefaultButton)" 中格式錯誤的 XML 註解 -->
+        <!-- 忽略成員 "M:Sci.MyUtility.Msg.InfoBox(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxDefaultButton)" 中格式錯誤的 XML 註解 -->
+        <!-- 忽略成員 "M:Sci.MyUtility.Msg.QuestionBox(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxDefaultButton)" 中格式錯誤的 XML 註解 -->
+        <!-- 忽略成員 "M:Sci.MyUtility.Msg.WarningBox(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxDefaultButton)" 中格式錯誤的 XML 註解 -->
         <member name="M:Sci.MyUtility.Msg.WaitWindows(System.Object)">
             <summary>
             WaitWindows()
@@ -1070,7 +1070,7 @@
             <param name="setBulkMapping"></param>
             <returns></returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.SQL.FinalizeForMerge(Sci.SQL.MergeOption)" -->
+        <!-- 忽略成員 "M:Sci.SQL.FinalizeForMerge(Sci.SQL.MergeOption)" 中格式錯誤的 XML 註解 -->
         <member name="M:Sci.SQL.BulkMergeInsert(Sci.SQL)">
             <summary>
             Merge 有問題, 當條件mapping之後, 已存在的話不會被insert
@@ -1117,8 +1117,8 @@
             <param name="copyTable">copyTable 的欄位順序要和DB Table一樣</param>
             <returns></returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.SQL.example_BulkMergeInsertUpdate1" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.SQL.example_BulkMergeInsertUpdate2" -->
+        <!-- 忽略成員 "M:Sci.SQL.example_BulkMergeInsertUpdate1" 中格式錯誤的 XML 註解 -->
+        <!-- 忽略成員 "M:Sci.SQL.example_BulkMergeInsertUpdate2" 中格式錯誤的 XML 註解 -->
         <member name="M:Sci.SQL.example_BulkInsertForColumns_1">
             <summary>
             ForColumns 適用狀況1: 
@@ -1147,12 +1147,124 @@
         <member name="F:Sci.SQL.MergeOption.InsertUpdate_SafeDelete">
             <summary> 先 Delete (not merge) , 再使用Merge 作Insert / update </summary>
         </member>
+        <member name="M:Sci.Utility.Excel.MyExcelPrg.SaveXlsAs(System.String)">
+            <summary>
+            Edward : 開啟Excel檔案另存
+                create : 2016-04-20 15:27:00
+            </summary>
+            <param name="sourcePath"></param>
+        </member>
+        <member name="M:Sci.Utility.Excel.MyExcelPrg.OpenFile(System.String)">
+            <summary>
+            Edward : 執行檔案
+                 create : 2016-04-20 15:27:00
+            </summary>
+            <param name="Path"></param>
+        </member>
+        <member name="M:Sci.Utility.Excel.MyExcelPrg.FastDtToExcel(System.Data.DataTable,Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Edward : DataTable快速寫入WorkSheet
+                 create : 2016-04-21 12:20:00
+            </summary>
+            <param name="dt">DataTable</param>
+            <param name="sheet">WorkSheet</param>
+            <param name="firstRow">開始列、開始列為1</param>
+            <param name="firstCol">開始欄、開始欄為1</param>
+            <param name="AddHead">是否加入Table Header</param>
+        </member>
+        <member name="M:Sci.Utility.Excel.MyExcelPrg.GetExcelColumnName(System.Int32)">
+            <summary>
+            Edward : 欄位索引轉換成Excel欄位名稱如AA、AB...
+                create : 2016-04-21 21:00:00
+            </summary>
+            <param name="columnNumber"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Sci.Utility.Excel.SaveDataToExcel">
+            <summary>
+            Edward : Data轉存成Excel，可自設是否加Pivot Table及其他屬性
+            可參考 Planning P01_Print OnToExcel() 中的用法
+                 create : 2016-04-30
+            </summary>
+        </member>
+        <member name="M:Sci.Utility.Excel.SaveDataToExcel.addPivotSheet(Microsoft.Office.Interop.Excel.Application,Microsoft.Office.Interop.Excel.Worksheet,Microsoft.Office.Interop.Excel.Workbook,System.Data.DataTable,System.String,System.Collections.Generic.List{Sci.Utility.Excel.SaveDataToExcel.MyPivotField})">
+            <summary>
+            Edward : 新增Excel Pivot表
+                create : 2016-04-21 21:00:00
+            </summary>
+            <param name="oApp"></param>
+            <param name="oSheet"></param>
+            <param name="oBook"></param>
+            <param name="sourcedt"></param>
+            <param name="NewSheetName"></param>
+            <param name="pivFieldLis"></param>
+        </member>
+        <member name="M:Sci.Utility.Excel.SaveDataToExcel.SelectPivotItem(Microsoft.Office.Interop.Excel.PivotField,System.String)">
+            <summary>
+            Edward : Excel Pivot欄位篩選用
+                create : 2016-04-21 21:00:00
+            </summary>
+            <param name="pivfield"></param>
+            <param name="ItemName"></param>
+        </member>
+        <member name="T:Sci.Utility.Excel.SaveDataToExcel.MyPivotField">
+            <summary>
+            Edward : Pivot欄位用的Class
+                create : 2016-04-21 21:00:00
+            </summary>
+        </member>
+        <member name="M:Sci.Utility.Excel.SaveDataToExcel.MyPivotField.#ctor(System.String,System.Int32,System.Int32,System.String)">
+            <summary>
+            MyPivotField 建構式
+            </summary>
+            <param name="FieldName"></param>
+            <param name="xlFieldType">Hidden = 0 ,RowField = 1 ,ColumnField = 2 ,PageField = 3 ,DataField = 4</param>
+            <param name="xlFieldFn">Unknown = 0 ,Sum = 1 ,Min = 2 ,Max = 3 ,Average = 4</param>
+            <param name="SelectItems"></param>
+        </member>
+        <member name="T:Sci.Utility.Excel.SaveXltReportCls">
+            <summary>
+            Edward : 由範本儲存成報表
+                 create : 2016-05-09 16:20:00
+                 Step1.新增範本檔案，可多個Sheet、或指定某幾個Sheet需要Copy
+                 Step2.新增傳入之變數
+                 Step3.Save()
+            </summary>
+            <param name="Path"></param>
+        </member>
+        <member name="M:Sci.Utility.Excel.SaveXltReportCls.splitDataTable(System.Data.DataTable,System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean,System.Int32,System.Int32)">
+            <summary>
+            Edward : 分割Datatable
+                 create : 2016-05-10 16:00:00
+            </summary>
+            <param name="dt"></param>
+            <param name="colIdx"></param>
+            <param name="LeftHeader"></param>
+            <returns></returns>
+        </member>
         <member name="M:Sci.Utility.Word.SaveDotReportCls.OpenFile(System.String)">
             <summary>
             Edward : 執行檔案
                  create : 2016-04-20 15:27:00
             </summary>
             <param name="Path"></param>
+        </member>
+        <member name="F:Sci.Win.UI.ConnectSelection.components">
+            <summary>
+            設計工具所需的變數。
+            </summary>
+        </member>
+        <member name="M:Sci.Win.UI.ConnectSelection.Dispose(System.Boolean)">
+            <summary>
+            清除任何使用中的資源。
+            </summary>
+            <param name="disposing">如果應該處置 Managed 資源則為 true，否則為 false。</param>
+        </member>
+        <member name="M:Sci.Win.UI.ConnectSelection.InitializeComponent">
+            <summary>
+            此為設計工具支援所需的方法 - 請勿使用程式碼編輯器
+            修改這個方法的內容。
+            </summary>
         </member>
         <member name="F:Sci.Win.UI.EditBox_4Grid.components">
             <summary> 
@@ -1289,7 +1401,7 @@
             the contents of this method with the code editor.
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.UI.SelectReason.#ctor(System.String,System.Boolean)" -->
+        <!-- 忽略成員 "M:Sci.Win.UI.SelectReason.#ctor(System.String,System.Boolean)" 中格式錯誤的 XML 註解 -->
         <member name="F:Sci.Win.UI.SelectReason.components">
             <summary>
             設計工具所需的變數。
