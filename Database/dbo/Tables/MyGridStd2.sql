@@ -14,6 +14,7 @@
     [LocateFor]         BIT           CONSTRAINT [DF_MyGridStd2_LocateFor] DEFAULT ((0)) NULL,
     [HelpColumnWidths]  VARCHAR (20)  CONSTRAINT [DF_MyGridStd2_HelpColumnWidths] DEFAULT ('') NULL,
     [HelpRecordSource]  VARCHAR (100) CONSTRAINT [DF_MyGridStd2_HelpRecordSource] DEFAULT ('') NULL,
+    [GridColumnName] NVARCHAR(80) NULL, 
     CONSTRAINT [PK_MyGridStd2] PRIMARY KEY CLUSTERED ([PKey] ASC)
 );
 
