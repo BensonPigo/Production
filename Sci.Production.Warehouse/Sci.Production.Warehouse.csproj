@@ -119,6 +119,13 @@
     <Compile Include="P07_ExcelImport.Designer.cs">
       <DependentUpon>P07_ExcelImport.cs</DependentUpon>
     </Compile>
+    <Compile Include="P10_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_Print.Designer.cs">
+      <DependentUpon>P10_Print.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P10_PrintData.cs" />
     <Compile Include="P11_IssueBreakDown.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -863,9 +870,11 @@
     <EmbeddedResource Include="P07_ExcelImport.resx">
       <DependentUpon>P07_ExcelImport.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P10.rdlc" />
     <EmbeddedResource Include="P10_Detail.resx">
       <DependentUpon>P10_Detail.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P10_Print.rdlc" />
     <EmbeddedResource Include="P11_IssueBreakDown.resx">
       <DependentUpon>P11_IssueBreakDown.cs</DependentUpon>
     </EmbeddedResource>
@@ -914,6 +923,7 @@
     <EmbeddedResource Include="P29.resx">
       <DependentUpon>P29.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Report1.rdlc" />
     <EmbeddedResource Include="Report\R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
     </EmbeddedResource>
@@ -1359,6 +1369,12 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\DataSources\B01.datasource" />
+    <None Include="Properties\DataSources\P10.datasource" />
+    <None Include="Properties\DataSources\P10_PrintData.datasource" />
+    <None Include="Properties\DataSources\P10_PrintData1.datasource" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

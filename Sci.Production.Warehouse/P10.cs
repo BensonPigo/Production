@@ -12,6 +12,9 @@ using Sci.Data;
 using System.Linq;
 using System.Transactions;
 using Sci.Production.PublicPrg;
+using System.Data.SqlClient;
+using Sci.Win;
+using System.Reflection;
 
 namespace Sci.Production.Warehouse
 {
@@ -82,14 +85,14 @@ namespace Sci.Production.Warehouse
 
                 int i = e.RowIndex;
                 decimal qty, accu_issue, netqty;
-                decimal.TryParse(dr["qty"].ToString(),out qty);
+                decimal.TryParse(dr["qty"].ToString(), out qty);
                 decimal.TryParse(dr["accu_issue"].ToString(), out accu_issue);
                 decimal.TryParse(dr["netqty"].ToString(), out netqty);
                 if (qty + accu_issue > netqty)
                 {
                     detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 128, 192);
                 }
-                
+
             };
         }
 
@@ -669,5 +672,160 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             var frm = new Sci.Production.Warehouse.P10_CutRef(CurrentMaintain);
             frm.ShowDialog(this);
         }
+        protected override bool ClickPrint()
+        {
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString();
+            string Remark = row["Remark"].ToString();
+            string cutplanID = row["cutplanID"].ToString();
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string cutno = this.ebCut.Text;
+
+
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select("",
+            @"select    
+            b.name 
+            from dbo.Issue  a 
+            inner join dbo.mdivision  b 
+            on b.id = a.mdivisionid
+            where b.id = a.mdivisionid
+            and a.id = @ID", pars, out dt);
+            if (!result) { this.ShowErr(result); }
+            string RptTitle = dt.Rows[0]["name"].ToString();
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutplanID", cutplanID));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dtt;
+            string cCellNo;
+            result = DBProxy.Current.Select("",
+            @"select    
+	        b.CutCellID 
+            from dbo.Issue as a 
+	        inner join dbo.cutplan as b
+            on b.id = a.cutplanid
+            where b.id = a.cutplanid
+            and a.id = @ID", pars, out dtt);
+            if (!result) { this.ShowErr(result); }
+            if (dtt.Rows.Count == 0)
+                cCellNo = "";
+            else
+                cCellNo = dtt.Rows[0]["CutCellID"].ToString();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cCellNo", cCellNo));
+
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dttt;
+            string sqlcmd = @"select 
+            t.poid,t.seq1+ '-' +t.seq2 as SEQ,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0) [desc],t.Roll,t.Dyelot,t.Qty,p.StockUnit
+            ,dbo.Getlocation(b.ukey) [location]            
+            from dbo.Issue_Detail t 
+            left join dbo.PO_Supp_Detail p 
+            on 
+            p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
+            left join FtyInventory b
+            on b.poid = t.poid and b.seq1 =t.seq1 and b.seq2=t.seq2 and b.Roll =t.Roll and b.Dyelot =t.Dyelot and b.StockType = t.StockType
+            where t.id= @ID";
+            result = DBProxy.Current.Select("", sqlcmd, pars, out dttt);
+            if (!result) { this.ShowErr(sqlcmd, result); }
+            string poid = dttt.Rows[0]["poid"].ToString();
+            string SEQ = dttt.Rows[0]["SEQ"].ToString();
+            string DESC = dttt.Rows[0]["DESC"].ToString();
+            string Location = dttt.Rows[0]["Location"].ToString();
+            string Roll = dttt.Rows[0]["Roll"].ToString();
+            string Dyelot = dttt.Rows[0]["Dyelot"].ToString();
+            string Qty = dttt.Rows[0]["Qty"].ToString();
+            string StockUnit = dttt.Rows[0]["StockUnit"].ToString();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("poid", poid));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SEQ", SEQ));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("DESC", DESC));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Location", Location));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Roll", Roll));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Dyelot", Dyelot));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Qty", Qty));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("StockUnit", StockUnit));
+
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dtttt;
+            string cLineNo;
+            result = DBProxy.Current.Select("",
+            @"select o.sewline 
+            from dbo.Orders o 
+            where id in (select distinct poid from issue_detail where id = @ID)", pars, out dtttt);
+            if (!result) { this.ShowErr(result); }
+            if (dtt.Rows.Count == 0)
+                cLineNo = "";
+            else
+                cLineNo = dtttt.Rows[0]["sewline"].ToString();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cCellNo", cLineNo));
+
+
+
+//            pars = new List<SqlParameter>();
+//            pars.Add(new SqlParameter("@ID", id));
+//            DataTable dtttttt;
+//            result = DBProxy.Current.Select("",
+//            @"select b.Ukey
+//            from Issue_Detail a
+//            inner join FtyInventory b
+//            on b.POID = a.POID and b.seq1 =a.seq1 and b.seq2=a.seq2 and b.Roll =a.Roll and b.Dyelot =a.Dyelot and b.StockType = a.StockType
+//            where a.id= @ID", pars, out dtttttt);
+//            if (!result) { this.ShowErr(result); }
+//            string Location = dtttttt.Rows[0]["Location"].ToString();
+            
+            
+
+            // 傳 list 資料            
+            List<P10_PrintData> data = dttt.AsEnumerable()
+                .Select(row1 => new P10_PrintData()
+                {
+                    Poid = row1["poid"].ToString(),
+                    Seq =row1["SEQ"].ToString(),
+                    Desc =row1["desc"].ToString(),
+                    Location =row1["Location"].ToString(),
+                    Unit =row1["StockUnit"].ToString(),
+                    Roll =row1["Roll"].ToString(),
+                    Dyelot=row1["Dyelot"].ToString(),
+                    Qty  =row1["Qty"].ToString()
+                }).ToList();
+
+            report.ReportDataSource = data;            
+
+            // 指定是哪個 RDLC
+            //DualResult result;
+            Type ReportResourceNamespace = typeof(P10_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P10_Print.rdlc";
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                //this.ShowException(result);
+                return false;
+            }
+            
+            report.ReportResource = reportresource;
+
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
+  
+            
+            
+            return true;
+
+
+
+        }
+
     }
 }
