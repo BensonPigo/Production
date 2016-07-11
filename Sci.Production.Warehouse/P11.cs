@@ -13,6 +13,9 @@ using System.Linq;
 using System.Transactions;
 using Sci.Production.PublicPrg;
 using Sci.Trade.Class.Commons;
+using Sci.Win;
+using Sci.Utility.Excel;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
@@ -280,7 +283,7 @@ Where a.id = '{0}'", masterID);
 
             #endregion 必輸檢查
 
-            
+
 
             //取單號
             if (this.IsDetailInserting)
@@ -325,7 +328,7 @@ Where a.id = '{0}'", masterID);
                 DataRow tmp;
                 DataTable _detail, _subDetail;
                 _detail = (DataTable)detailgridbs.DataSource;
-                
+
                 //刪除表身重新匯入
                 foreach (DataRow del in DetailDatas)
                 {
@@ -345,7 +348,7 @@ Where a.id = '{0}'", masterID);
                         _detail.ImportRow(tmp);
 
                         // 匯入Issue_Size layer
-                        if (GetSubDetailDatas(_detail.Rows[_detail.Rows.Count-1], out _subDetail))
+                        if (GetSubDetailDatas(_detail.Rows[_detail.Rows.Count - 1], out _subDetail))
                         {
                             foreach (DataRow dr2 in item.Value.Rows)
                             {
@@ -389,7 +392,7 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
 ", CurrentMaintain["cutplanid"]), out dt);
                 ebCut.Text = String.Join(" / ", dt.AsEnumerable().Select(row => row["FabricCombo"].ToString() + "-" + row["cutnos"].ToString()));
                 //ebArticle.Text = MyUtility.GetValue.Lookup(string.Format(@"select t.article+','  from (select distinct article 
-//from dbo.cutplan_detail  where id='{0}') t for xml path('')", CurrentMaintain["cutplanid"]));
+                //from dbo.cutplan_detail  where id='{0}') t for xml path('')", CurrentMaintain["cutplanid"]));
 
 
                 #region -- Status Label --
@@ -415,7 +418,7 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
         private DualResult matrix_Reload()
         {
             DualResult result;
-            DataTable dtSizeCode, dtIssueBreakDown=null;
+            DataTable dtSizeCode, dtIssueBreakDown = null;
 
             gridIssueBreakDown.AutoGenerateColumns = true;
             gridIssueBreakDownBS.DataSource = dtIssueBreakDown;
@@ -517,7 +520,7 @@ where a.id='{0}' order by Seq", this.poid, masterID, ukey);
             if (DetailDatas.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
-                return ;
+                return;
             }
             var dr = this.CurrentMaintain;
             if (null == dr) return;
@@ -836,5 +839,169 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             frm.ShowDialog(this);
             this.OnDetailEntered();
         }
+
+        protected override bool ClickPrint()
+        {
+
+            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+            saveDialog.ShowDialog();
+            string outpath = saveDialog.FileName;
+            if (outpath.Empty())
+            {
+                return false;
+            }
+
+
+            DataRow issue = this.CurrentDataRow;
+            string id = issue["ID"].ToString();
+            string request = issue["cutplanid"].ToString();
+            string issuedate = issue["issuedate"].ToString();
+            string remark = issue["remark"].ToString();
+            string cutno = this.ebCut.Text;
+            string article = this.ebArticle.Text;
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+
+
+            DataTable dt;
+            DBProxy.Current.Select("",
+                @"select    
+             b.name 
+            from dbo.Issue as a 
+             inner join dbo.mdivision as b on b.id = a.mdivisionid
+            where b.id = a.mdivisionid
+            and a.id = @ID
+            ", pars, out dt);
+            string RptTitle = dt.Rows[0]["name"].ToString();
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("name", RptTitle));
+
+            DataTable dtsp;
+            string poID;
+            DBProxy.Current.Select("",
+                @"select (select poid+',' from 
+             (select distinct cd.POID from Cutplan_Detail cd where id =(select CutplanID from dbo.Issue where id='@id')  ) t
+			  for xml path('')) as [poid]", pars, out dtsp);
+            if (dtsp.Rows.Count == 0)
+                poID = "";
+            else
+                poID = dtsp.Rows[0]["POID"].ToString();
+
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("POID", poID));
+            DualResult result;
+            DataTable dtSizecode;
+            string sqlcmd1 = string.Format(@"select distinct sizecode
+	                    from dbo.Issue_Size
+	                    where id = @ID order by sizecode");
+            string sizecodes = "";
+            result = DBProxy.Current.Select("", sqlcmd1, pars, out dtSizecode);
+            foreach (DataRow dr in dtSizecode.Rows)
+            {
+                sizecodes += "[" + dr["sizecode"].ToString() + "]" + ",";
+            }
+            sizecodes = sizecodes.Substring(0, sizecodes.Length - 1);
+
+            DataTable dtseq;
+
+            string sqlcmd = string.Format(@"select Issue_detail.Seq1 + '-' + Issue_detail.Seq2 as SEQ
+                    ,dbo.getMtlDesc(poid,Issue_detail.Seq1,Issue_detail.Seq2,2,0) as Description
+                   ,Po_supp_detail.sizeunit as Unit,Po_supp_detail.colorid as Color,
+                   Issue_detail.Qty as TransferQTY,dbo.Getlocation(ftyinventoryUkey) as Location,
+                   s.*
+                    from(
+                    select * 
+                    from (
+	                    select sizecode,Issue_DetailUkey, qty
+	                    from dbo.Issue_Size
+	                    where id = @ID
+	                    ) as s
+	                    PIVOT
+	                    (
+	                     Sum(qty)
+	                     FOR sizecode  IN ({0})
+                    ) AS PivotTable) as s
+                   left join dbo.Issue_Detail on ukey = s.Issue_DetailUkey
+                    left join dbo.po_supp_detail on po_supp_detail.id = Issue_detail.POID and po_supp_detail.seq1 = Issue_detail.seq1 and po_supp_detail.seq2=Issue_detail.seq2
+", sizecodes);
+            result = DBProxy.Current.Select("", sqlcmd, pars, out dtseq);
+
+            if (!result)
+            {
+                ShowErr(result);
+                return true;
+            }
+            dtseq.Columns.Remove(dtseq.Columns["Issue_DetailUkey"]);
+            string SEQ = dtseq.Rows[0]["SEQ"].ToString();
+            //string tQty = dtseq.Rows[0]["tQTY"].ToString();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SEQ", SEQ));
+            //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("tQTY", tQty));
+
+
+            DataTable dtlineno;
+            string cLineNo;
+            result = DBProxy.Current.Select("",
+                @"select o.sewline from dbo.Orders o 
+                    where id in (select distinct poid from issue_detail where id=@ID ) ", pars, out dtlineno);
+            if (!result)
+            {
+                ShowErr(result);
+                return true;
+            }
+            if (dtlineno.Rows.Count == 0)
+                cLineNo = "";
+            else
+                cLineNo = dtlineno.Rows[0]["sewline"].ToString();
+
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("sewline", cLineNo));
+
+            DataTable dtcutcell;
+            string cCellNo;
+            result = DBProxy.Current.Select("",
+                @"select    
+             b.CutCellID 
+            from dbo.Issue as a 
+             inner join dbo.cutplan as b on b.id = a.cutplanid
+            where b.id = a.CutplanID
+            ", pars, out dtcutcell);
+            if (!result)
+            {
+                ShowErr(result);
+                return true;
+            }
+
+            if (dtlineno.Rows.Count == 0)
+                cCellNo = "";
+            else
+                cCellNo = dtcutcell.Rows[0]["CutCellID"].ToString();
+
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CutCellID", cCellNo));
+
+            string xlt = @"Warehouse_P11.xltx";
+            SaveXltReportCls xl = new SaveXltReportCls(xlt);
+
+            xl.dicDatas.Add("##name", RptTitle);
+            xl.dicDatas.Add("##ID", id);
+            xl.dicDatas.Add("##cutplanid", request);
+            xl.dicDatas.Add("##issuedate", issuedate);
+            xl.dicDatas.Add("##remark", remark);
+            xl.dicDatas.Add("##cCutNo", cutno);
+            SaveXltReportCls.xltRptTable xlTable = new SaveXltReportCls.xltRptTable(dtseq);
+            int allColumns = dtseq.Columns.Count;
+            int sizeColumns = dtSizecode.Rows.Count;
+            xlTable.lisTitleMerge.Add(new Dictionary<string, string> { 
+            { "SIZE", string.Format("{0},{1}", allColumns-sizeColumns+1, allColumns) }}
+           );
+            //xlTable.Borders.AllCellsBorders = true;
+            //xlTable.HeaderColor = Color.AliceBlue;
+            //xlTable.ContentColor = Color.LightGreen;
+            xlTable.Borders.OnlyHeaderBorders = true;
+            xl.dicDatas.Add("##SEQ", xlTable);
+
+
+            xl.Save(outpath, true);
+
+            return true;
+        }
+
     }
 }
