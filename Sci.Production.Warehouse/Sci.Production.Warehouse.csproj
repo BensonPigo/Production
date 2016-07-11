@@ -150,6 +150,7 @@
     <Compile Include="P07.Designer.cs">
       <DependentUpon>P07.cs</DependentUpon>
     </Compile>
+    <Compile Include="P13_PrintData.cs" />
     <Compile Include="P29.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -914,6 +915,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P12_Print.rdlc" />
+    <EmbeddedResource Include="P13_Print.rdlc" />
     <EmbeddedResource Include="P29.resx">
       <DependentUpon>P29.cs</DependentUpon>
     </EmbeddedResource>
