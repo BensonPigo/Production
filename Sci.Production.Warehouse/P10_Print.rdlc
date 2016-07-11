@@ -399,7 +399,7 @@
                 <TextRun>
                   <Value>=Parameters!RptTitle.Value</Value>
                   <Style>
-                    <TextDecoration>Underline</TextDecoration>
+                    <TextDecoration>None</TextDecoration>
                   </Style>
                 </TextRun>
               </TextRuns>

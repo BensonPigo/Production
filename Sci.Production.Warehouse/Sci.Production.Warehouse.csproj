@@ -150,6 +150,7 @@
     <Compile Include="P07.Designer.cs">
       <DependentUpon>P07.cs</DependentUpon>
     </Compile>
+    <Compile Include="P12_PrintData.cs" />
     <Compile Include="P13_PrintData.cs" />
     <Compile Include="P29.cs">
       <SubType>Form</SubType>
