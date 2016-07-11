@@ -2065,6 +2065,8 @@ Sci.Production.Warehouse/P12.resx -text
 Sci.Production.Warehouse/P12_Import.Designer.cs -text
 Sci.Production.Warehouse/P12_Import.cs -text
 Sci.Production.Warehouse/P12_Import.resx -text
+Sci.Production.Warehouse/P12_Print.rdlc -text
+Sci.Production.Warehouse/P12_PrintData.cs -text
 Sci.Production.Warehouse/P13.Designer.cs -text
 Sci.Production.Warehouse/P13.cs -text
 Sci.Production.Warehouse/P13.resx -text
