@@ -1161,7 +1161,7 @@
             </summary>
             <param name="Path"></param>
         </member>
-        <member name="M:Sci.Utility.Excel.MyExcelPrg.FastDtToExcel(System.Data.DataTable,Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Boolean)">
+        <member name="M:Sci.Utility.Excel.MyExcelPrg.FastDtToExcel(System.Data.DataTable,Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Boolean,System.Collections.Generic.List{System.String})">
             <summary>
             Edward : DataTable快速寫入WorkSheet
                  create : 2016-04-21 12:20:00
