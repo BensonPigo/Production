@@ -2076,6 +2076,8 @@ Sci.Production.Warehouse/P13_AccumulatedQty.resx -text
 Sci.Production.Warehouse/P13_Import.Designer.cs -text
 Sci.Production.Warehouse/P13_Import.cs -text
 Sci.Production.Warehouse/P13_Import.resx -text
+Sci.Production.Warehouse/P13_Print.rdlc -text
+Sci.Production.Warehouse/P13_PrintData.cs -text
 Sci.Production.Warehouse/P15.Designer.cs -text
 Sci.Production.Warehouse/P15.cs -text
 Sci.Production.Warehouse/P15.resx -text
