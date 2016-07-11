@@ -703,7 +703,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            DataTable dtt;
+            DataTable aa;
             string cCellNo;
             result = DBProxy.Current.Select("",
             @"select    
@@ -712,17 +712,17 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 	        inner join dbo.cutplan as b
             on b.id = a.cutplanid
             where b.id = a.cutplanid
-            and a.id = @ID", pars, out dtt);
+            and a.id = @ID", pars, out aa);
             if (!result) { this.ShowErr(result); }
-            if (dtt.Rows.Count == 0)
+            if (aa.Rows.Count == 0)
                 cCellNo = "";
             else
-                cCellNo = dtt.Rows[0]["CutCellID"].ToString();
+                cCellNo = aa.Rows[0]["CutCellID"].ToString();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cCellNo", cCellNo));
 
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            DataTable dttt;
+            DataTable bb;
             string sqlcmd = @"select 
             t.poid,t.seq1+ '-' +t.seq2 as SEQ,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0) [desc],t.Roll,t.Dyelot,t.Qty,p.StockUnit
             ,dbo.Getlocation(b.ukey) [location]            
@@ -733,16 +733,16 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             left join FtyInventory b
             on b.poid = t.poid and b.seq1 =t.seq1 and b.seq2=t.seq2 and b.Roll =t.Roll and b.Dyelot =t.Dyelot and b.StockType = t.StockType
             where t.id= @ID";
-            result = DBProxy.Current.Select("", sqlcmd, pars, out dttt);
+            result = DBProxy.Current.Select("", sqlcmd, pars, out bb);
             if (!result) { this.ShowErr(sqlcmd, result); }
-            string poid = dttt.Rows[0]["poid"].ToString();
-            string SEQ = dttt.Rows[0]["SEQ"].ToString();
-            string DESC = dttt.Rows[0]["DESC"].ToString();
-            string Location = dttt.Rows[0]["Location"].ToString();
-            string Roll = dttt.Rows[0]["Roll"].ToString();
-            string Dyelot = dttt.Rows[0]["Dyelot"].ToString();
-            string Qty = dttt.Rows[0]["Qty"].ToString();
-            string StockUnit = dttt.Rows[0]["StockUnit"].ToString();
+            string poid = bb.Rows[0]["poid"].ToString();
+            string SEQ = bb.Rows[0]["SEQ"].ToString();
+            string DESC = bb.Rows[0]["DESC"].ToString();
+            string Location = bb.Rows[0]["Location"].ToString();
+            string Roll = bb.Rows[0]["Roll"].ToString();
+            string Dyelot = bb.Rows[0]["Dyelot"].ToString();
+            string Qty = bb.Rows[0]["Qty"].ToString();
+            string StockUnit = bb.Rows[0]["StockUnit"].ToString();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("poid", poid));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SEQ", SEQ));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("DESC", DESC));
@@ -754,37 +754,21 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            DataTable dtttt;
+            DataTable cc;
             string cLineNo;
             result = DBProxy.Current.Select("",
             @"select o.sewline 
             from dbo.Orders o 
-            where id in (select distinct poid from issue_detail where id = @ID)", pars, out dtttt);
+            where id in (select distinct poid from issue_detail where id = @ID)", pars, out cc);
             if (!result) { this.ShowErr(result); }
-            if (dtt.Rows.Count == 0)
+            if (cc.Rows.Count == 0)
                 cLineNo = "";
             else
-                cLineNo = dtttt.Rows[0]["sewline"].ToString();
+                cLineNo = cc.Rows[0]["sewline"].ToString();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cCellNo", cLineNo));
 
-
-
-//            pars = new List<SqlParameter>();
-//            pars.Add(new SqlParameter("@ID", id));
-//            DataTable dtttttt;
-//            result = DBProxy.Current.Select("",
-//            @"select b.Ukey
-//            from Issue_Detail a
-//            inner join FtyInventory b
-//            on b.POID = a.POID and b.seq1 =a.seq1 and b.seq2=a.seq2 and b.Roll =a.Roll and b.Dyelot =a.Dyelot and b.StockType = a.StockType
-//            where a.id= @ID", pars, out dtttttt);
-//            if (!result) { this.ShowErr(result); }
-//            string Location = dtttttt.Rows[0]["Location"].ToString();
-            
-            
-
             // 傳 list 資料            
-            List<P10_PrintData> data = dttt.AsEnumerable()
+            List<P10_PrintData> data = bb.AsEnumerable()
                 .Select(row1 => new P10_PrintData()
                 {
                     Poid = row1["poid"].ToString(),
