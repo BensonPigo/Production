@@ -1421,6 +1421,9 @@ Sci.Production.Quality/P03.resx -text
 Sci.Production.Quality/P03_Crocking.Designer.cs -text
 Sci.Production.Quality/P03_Crocking.cs -text
 Sci.Production.Quality/P03_Crocking.resx -text
+Sci.Production.Quality/P03_Heat.Designer.cs -text
+Sci.Production.Quality/P03_Heat.cs -text
+Sci.Production.Quality/P03_Heat.resx -text
 Sci.Production.Quality/P30.Designer.cs -text
 Sci.Production.Quality/P30.cs -text
 Sci.Production.Quality/P30.resx -text
