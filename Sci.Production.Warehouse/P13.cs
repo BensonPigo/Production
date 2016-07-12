@@ -13,6 +13,8 @@ using System.Transactions;
 using System.Windows.Forms;
 using System.Reflection;
 using Microsoft.Reporting.WinForms;
+using System.Data.SqlClient;
+using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
@@ -98,48 +100,87 @@ namespace Sci.Production.Warehouse
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                 return false;
             }
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString();
+            string Remark = row["Remark"].ToString();
+            string CDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
-            Sci.Win.ReportDefinition rd = new Sci.Win.ReportDefinition();
-            DualResult result;
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select("",
+            @"select    
+            b.name 
+            from dbo.Issue  a 
+            inner join dbo.mdivision  b 
+            on b.id = a.mdivisionid
+            where b.id = a.mdivisionid
+            and a.id = @ID", pars, out dt);
+            if (!result) { this.ShowErr(result); }
+            string RptTitle = dt.Rows[0]["name"].ToString();
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", CDate));
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dtDetail;
+            string sqlcmd = @"select t.POID,t.seq1+ '-' +t.seq2 as SEQ,
+       p.Scirefno,p.seq1,p.seq2
+,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) [desc]
+,t.Roll,t.Dyelot,t.Qty,p.StockUnit
+            ,dbo.Getlocation(b.ukey) [location]            
+            from dbo.Issue_Detail t 
+            left join dbo.PO_Supp_Detail p 
+            on 
+            p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
+            inner join FtyInventory b
+            on b.poid = t.poid and b.seq1 =t.seq1 and b.seq2=t.seq2 and b.Roll =t.Roll and b.Dyelot =t.Dyelot and b.StockType = t.StockType where t.id= @ID";
+            result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
+            if (!result) { this.ShowErr(sqlcmd, result); }
+            
+
+
+            // 傳 list 資料            
+            List<P13_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P13_PrintData()
+                {
+                    POID = row1["POID"].ToString(),
+                    SEQ = row1["SEQ"].ToString(),
+                    DESC = row1["desc"].ToString(),
+                    Location = row1["Location"].ToString(),
+                    StockUnit = row1["StockUnit"].ToString(),
+                    Roll = row1["Roll"].ToString(),
+                    DYELOT = row1["Dyelot"].ToString(),
+                    QTY = row1["Qty"].ToString()
+                }).ToList();
+
+            report.ReportDataSource = data;
+
+            // 指定是哪個 RDLC
+            //DualResult result;
+            Type ReportResourceNamespace = typeof(P10_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P13_Print.rdlc";
 
             IReportResource reportresource;
-
-            DataTable dt = (DataTable)gridbs.DataSource;
-            DataTable dtmaster = new DataTable();
-
-            if (!(result = ReportResources.ByEmbeddedResource(Assembly.GetAssembly(GetType()), GetType(), "P13Detail.rdlc", out reportresource)))
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
             {
-                ShowErr(result);
+                //this.ShowException(result);
+                return false;
             }
-            else
-            {
-                rd.ReportResource = reportresource;
-                rd.ReportDataSources.Add(new System.Collections.Generic.KeyValuePair<string, object>("DataSet1", dtmaster));
-                // Assign subreport datasource, 如果不是 master-detail report 則以下的指令不必指定.
-                rd.SubreportDataSource("RepDetail", "DetailData", (DataTable)this.detailgridbs.DataSource);
-                using (var frm = new Sci.Win.Subs.ReportView(rd))
-                {
-                    frm.ShowDialog(this);
-                }
-            }                                      
 
-            //try
-            //{
+            report.ReportResource = reportresource;
 
-            //    DataTable dtmaster = new DataTable();
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
 
-            //    dtmaster.ImportRow(CurrentMaintain);
 
-            //    viewer.LocalReport.ReportEmbeddedResource = "Sci.Production.Warehouse.P13Detail.rdlc";
-            //    viewer.LocalReport.DataSources.Add(new ReportDataSource("DataSet1", dtmaster));
-            //    viewer.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(MySubreportEventHandler);
-            //    //
-            //    viewer.RefreshReport();
-            //}
-            //catch (Exception ex)
-            //{
-            //    ShowErr("data loading error.");
-            //}
+
+          
             
             return base.ClickPrint();
         }
@@ -368,7 +409,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             foreach (var item in bs1)
             {
-                sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype,item.mdivisionid));
+                sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid));
             }
 
             #endregion 更新庫存數量  ftyinventory
@@ -601,7 +642,7 @@ Where a.id = '{0}'", masterID);
 
         private void button2_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void button8_Click(object sender, EventArgs e)
@@ -613,5 +654,12 @@ Where a.id = '{0}'", masterID);
             else
             { detailgridbs.Position = index; }
         }
+
+        private void btCutRef_Click(object sender, EventArgs e)
+        {
+            var frm = new Sci.Production.Warehouse.P10_CutRef(CurrentMaintain);
+            frm.ShowDialog(this);
+        }
+       
     }
 }
