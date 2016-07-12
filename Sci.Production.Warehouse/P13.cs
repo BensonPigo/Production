@@ -160,7 +160,7 @@ namespace Sci.Production.Warehouse
 
             // 指定是哪個 RDLC
             //DualResult result;
-            Type ReportResourceNamespace = typeof(P10_PrintData);
+            Type ReportResourceNamespace = typeof(P13_PrintData);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
             string ReportResourceName = "P13_Print.rdlc";
 
