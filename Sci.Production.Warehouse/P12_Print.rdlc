@@ -727,9 +727,8 @@
         </Textbox>
         <Line Name="Line1">
           <Top>6.41924cm</Top>
-          <Left>0.18203cm</Left>
           <Height>0cm</Height>
-          <Width>16.51cm</Width>
+          <Width>16.69203cm</Width>
           <ZIndex>16</ZIndex>
           <Style>
             <Border>
