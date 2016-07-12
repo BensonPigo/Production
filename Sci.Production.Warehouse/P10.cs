@@ -701,6 +701,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutplanID", cutplanID));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutno", cutno));
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable aa;
@@ -751,6 +752,22 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             else
                 cLineNo = cc.Rows[0]["sewline"].ToString();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cCellNo", cLineNo));
+
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dd;
+            string Qty;
+            result = DBProxy.Current.Select("",
+            @"select Qty 
+            from dbo.Issue_Detail 
+            where id = @ID", pars, out dd);
+            if (!result) { this.ShowErr(result); }
+            if (dd.Rows.Count == 0)
+                Qty = "";
+            else
+                Qty = dd.Rows[0]["Qty"].ToString();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Qty", Qty));
+            
 
             // 傳 list 資料            
             List<P10_PrintData> data = bb.AsEnumerable()
