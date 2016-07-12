@@ -6,7 +6,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>15.90146cm</Width>
+              <Width>18.36209cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -17,35 +17,6 @@
                   <CellContents>
                     <Rectangle Name="Rectangle1">
                       <ReportItems>
-                        <Textbox Name="Textbox19">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style />
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox19</rd:DefaultName>
-                          <Top>0.13229cm</Top>
-                          <Left>0.15875cm</Left>
-                          <Height>0.6cm</Height>
-                          <Width>0.94368cm</Width>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
                         <Textbox Name="Textbox20">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -53,7 +24,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!SEQ.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -62,10 +33,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox19</rd:DefaultName>
                           <Top>0.13229cm</Top>
-                          <Left>1.18181cm</Left>
+                          <Left>2.61938cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>1.13771cm</Width>
-                          <ZIndex>1</ZIndex>
+                          <Width>1.11125cm</Width>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -83,7 +53,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!DESC.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -92,10 +62,10 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox19</rd:DefaultName>
                           <Top>0.13229cm</Top>
-                          <Left>2.46063cm</Left>
+                          <Left>3.83646cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>4.92125cm</Width>
-                          <ZIndex>2</ZIndex>
+                          <Width>5.13292cm</Width>
+                          <ZIndex>1</ZIndex>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -113,7 +83,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!Location.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -122,10 +92,10 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox19</rd:DefaultName>
                           <Top>0.13229cm</Top>
-                          <Left>7.55826cm</Left>
+                          <Left>9.11049cm</Left>
                           <Height>0.6cm</Height>
                           <Width>2.32833cm</Width>
-                          <ZIndex>3</ZIndex>
+                          <ZIndex>2</ZIndex>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -143,7 +113,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!StockUnit.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -152,10 +122,10 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox19</rd:DefaultName>
                           <Top>0.13229cm</Top>
-                          <Left>10.06299cm</Left>
+                          <Left>11.54466cm</Left>
                           <Height>0.6cm</Height>
                           <Width>1.11535cm</Width>
-                          <ZIndex>4</ZIndex>
+                          <ZIndex>3</ZIndex>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -173,7 +143,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!Roll.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -182,10 +152,10 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox19</rd:DefaultName>
                           <Top>0.13229cm</Top>
-                          <Left>11.28417cm</Left>
+                          <Left>12.76584cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>1.12417cm</Width>
-                          <ZIndex>5</ZIndex>
+                          <Width>1.85619cm</Width>
+                          <ZIndex>4</ZIndex>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -203,7 +173,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!DYELOT.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -212,10 +182,10 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox19</rd:DefaultName>
                           <Top>0.13229cm</Top>
-                          <Left>12.51417cm</Left>
+                          <Left>14.72786cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>1.12417cm</Width>
-                          <ZIndex>6</ZIndex>
+                          <Width>1.78562cm</Width>
+                          <ZIndex>5</ZIndex>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -233,19 +203,21 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!QTY.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox19</rd:DefaultName>
                           <Top>0.13229cm</Top>
-                          <Left>13.75833cm</Left>
+                          <Left>16.2489cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>1.98438cm</Width>
-                          <ZIndex>7</ZIndex>
+                          <Width>1.92798cm</Width>
+                          <ZIndex>6</ZIndex>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -263,19 +235,21 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!QTY.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox19</rd:DefaultName>
                           <Top>0.8734cm</Top>
-                          <Left>13.75833cm</Left>
+                          <Left>16.2489cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>1.98438cm</Width>
-                          <ZIndex>8</ZIndex>
+                          <Width>1.92798cm</Width>
+                          <ZIndex>7</ZIndex>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -302,10 +276,10 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox19</rd:DefaultName>
                           <Top>0.8734cm</Top>
-                          <Left>12.51417cm</Left>
+                          <Left>14.72786cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>1.12417cm</Width>
-                          <ZIndex>9</ZIndex>
+                          <Width>1.41521cm</Width>
+                          <ZIndex>8</ZIndex>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -318,16 +292,46 @@
                         </Textbox>
                         <Line Name="Line2">
                           <Top>1.11125cm</Top>
-                          <Left>0.15875cm</Left>
+                          <Left>0.23811cm</Left>
                           <Height>0cm</Height>
-                          <Width>12.24959cm</Width>
-                          <ZIndex>10</ZIndex>
+                          <Width>14.38391cm</Width>
+                          <ZIndex>9</ZIndex>
                           <Style>
                             <Border>
                               <Style>Dashed</Style>
                             </Border>
                           </Style>
                         </Line>
+                        <Textbox Name="POID">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!POID.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>POID</rd:DefaultName>
+                          <Top>0.13229cm</Top>
+                          <Left>0.21166cm</Left>
+                          <Height>0.6cm</Height>
+                          <Width>2.30188cm</Width>
+                          <ZIndex>10</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
                       </ReportItems>
                       <KeepTogether>true</KeepTogether>
                       <Style>
@@ -356,9 +360,9 @@
         </TablixRowHierarchy>
         <DataSetName>DataSet1</DataSetName>
         <Top>0.10266cm</Top>
-        <Left>0.28787cm</Left>
+        <Left>1.05516cm</Left>
         <Height>1.68479cm</Height>
-        <Width>15.90146cm</Width>
+        <Width>18.36209cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -369,7 +373,7 @@
     <Height>0.8183in</Height>
     <Style />
   </Body>
-  <Width>6.5in</Width>
+  <Width>8.2in</Width>
   <Page>
     <PageHeader>
       <Height>5.34458cm</Height>
@@ -388,13 +392,13 @@
                 </TextRun>
               </TextRuns>
               <Style>
-                <TextAlign>Left</TextAlign>
+                <TextAlign>Center</TextAlign>
               </Style>
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
           <Top>0.79057cm</Top>
-          <Left>4.46828cm</Left>
+          <Left>7.00828cm</Left>
           <Height>0.6cm</Height>
           <Width>7.07729cm</Width>
           <Style>
@@ -425,7 +429,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox2</rd:DefaultName>
           <Top>1.76361cm</Top>
-          <Left>6.00287cm</Left>
+          <Left>8.86037cm</Left>
           <Height>0.6cm</Height>
           <Width>4.06104cm</Width>
           <ZIndex>1</ZIndex>
@@ -454,10 +458,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox3</rd:DefaultName>
-          <Top>2.82787cm</Top>
-          <Left>0.44662cm</Left>
+          <Top>2.82759cm</Top>
+          <Left>1.29327cm</Left>
           <Height>0.56444cm</Height>
-          <Width>0.74083cm</Width>
+          <Width>1.21708cm</Width>
           <ZIndex>2</ZIndex>
           <Style>
             <Border>
@@ -484,10 +488,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox4</rd:DefaultName>
-          <Top>2.82787cm</Top>
-          <Left>1.29328cm</Left>
+          <Top>2.82759cm</Top>
+          <Left>2.65146cm</Left>
           <Height>0.56444cm</Height>
-          <Width>2.9016cm</Width>
+          <Width>3.61598cm</Width>
           <ZIndex>3</ZIndex>
           <Style>
             <Border>
@@ -514,10 +518,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox5</rd:DefaultName>
-          <Top>3.5687cm</Top>
-          <Left>0.44662cm</Left>
+          <Top>3.56842cm</Top>
+          <Left>1.29327cm</Left>
           <Height>0.6cm</Height>
-          <Width>1.48167cm</Width>
+          <Width>1.6316cm</Width>
           <ZIndex>4</ZIndex>
           <Style>
             <Border>
@@ -545,9 +549,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox6</rd:DefaultName>
           <Top>3.5687cm</Top>
-          <Left>2.03412cm</Left>
+          <Left>3.06598cm</Left>
           <Height>0.6cm</Height>
-          <Width>8.22854cm</Width>
+          <Width>8.25908cm</Width>
           <ZIndex>5</ZIndex>
           <Style>
             <Border>
@@ -574,8 +578,8 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox7</rd:DefaultName>
-          <Top>2.82787cm</Top>
-          <Left>11.40037cm</Left>
+          <Top>2.82759cm</Top>
+          <Left>14.54891cm</Left>
           <Height>0.56444cm</Height>
           <Width>1.95792cm</Width>
           <ZIndex>6</ZIndex>
@@ -604,8 +608,8 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox8</rd:DefaultName>
-          <Top>2.82787cm</Top>
-          <Left>13.46412cm</Left>
+          <Top>2.82759cm</Top>
+          <Left>16.61266cm</Left>
           <Height>0.56444cm</Height>
           <Width>2.61938cm</Width>
           <ZIndex>7</ZIndex>
@@ -634,10 +638,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox9</rd:DefaultName>
-          <Top>3.5687cm</Top>
-          <Left>12.29995cm</Left>
+          <Top>3.56842cm</Top>
+          <Left>15.2721cm</Left>
           <Height>0.6cm</Height>
-          <Width>1.05833cm</Width>
+          <Width>1.32291cm</Width>
           <ZIndex>8</ZIndex>
           <Style>
             <Border>
@@ -664,8 +668,8 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox10</rd:DefaultName>
-          <Top>3.5687cm</Top>
-          <Left>13.51703cm</Left>
+          <Top>3.56842cm</Top>
+          <Left>16.66557cm</Left>
           <Height>0.6cm</Height>
           <Width>2.56646cm</Width>
           <ZIndex>9</ZIndex>
@@ -694,10 +698,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox11</rd:DefaultName>
-          <Top>4.30981cm</Top>
-          <Left>0.47307cm</Left>
+          <Top>4.30953cm</Top>
+          <Left>1.31972cm</Left>
           <Height>0.6cm</Height>
-          <Width>0.94368cm</Width>
+          <Width>2.27543cm</Width>
           <ZIndex>10</ZIndex>
           <Style>
             <Border>
@@ -725,9 +729,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox11</rd:DefaultName>
           <Top>4.30981cm</Top>
-          <Left>1.52259cm</Left>
+          <Left>3.70099cm</Left>
           <Height>0.6cm</Height>
-          <Width>1.13771cm</Width>
+          <Width>1.11125cm</Width>
           <ZIndex>11</ZIndex>
           <Style>
             <Border>
@@ -754,10 +758,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox13</rd:DefaultName>
-          <Top>4.30953cm</Top>
-          <Left>2.80141cm</Left>
+          <Top>4.30981cm</Top>
+          <Left>4.89162cm</Left>
           <Height>0.60028cm</Height>
-          <Width>4.92125cm</Width>
+          <Width>5.15937cm</Width>
           <ZIndex>12</ZIndex>
           <Style>
             <Border>
@@ -785,7 +789,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox14</rd:DefaultName>
           <Top>4.30953cm</Top>
-          <Left>7.89905cm</Left>
+          <Left>10.20092cm</Left>
           <Height>0.60028cm</Height>
           <Width>2.36361cm</Width>
           <ZIndex>13</ZIndex>
@@ -815,7 +819,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox15</rd:DefaultName>
           <Top>4.30981cm</Top>
-          <Left>10.39495cm</Left>
+          <Left>12.67036cm</Left>
           <Height>0.6cm</Height>
           <Width>1.12417cm</Width>
           <ZIndex>14</ZIndex>
@@ -844,10 +848,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox15</rd:DefaultName>
-          <Top>4.30981cm</Top>
-          <Left>11.62495cm</Left>
+          <Top>4.30953cm</Top>
+          <Left>13.93564cm</Left>
           <Height>0.6cm</Height>
-          <Width>1.12417cm</Width>
+          <Width>1.74155cm</Width>
           <ZIndex>15</ZIndex>
           <Style>
             <Border>
@@ -874,10 +878,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox15</rd:DefaultName>
-          <Top>4.30981cm</Top>
-          <Left>12.85495cm</Left>
+          <Top>4.30953cm</Top>
+          <Left>15.78302cm</Left>
           <Height>0.6cm</Height>
-          <Width>1.12417cm</Width>
+          <Width>1.78562cm</Width>
           <ZIndex>16</ZIndex>
           <Style>
             <Border>
@@ -906,10 +910,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox18</rd:DefaultName>
-          <Top>4.33599cm</Top>
-          <Left>14.09912cm</Left>
-          <Height>0.57382cm</Height>
-          <Width>1.98438cm</Width>
+          <Top>4.30953cm</Top>
+          <Left>17.30405cm</Left>
+          <Height>0.6cm</Height>
+          <Width>1.92799cm</Width>
           <ZIndex>17</ZIndex>
           <Style>
             <Border>
@@ -923,9 +927,9 @@
         </Textbox>
         <Line Name="Line1">
           <Top>5.1562cm</Top>
-          <Left>0.47307cm</Left>
+          <Left>1.31972cm</Left>
           <Height>0cm</Height>
-          <Width>15.61042cm</Width>
+          <Width>17.75356cm</Width>
           <ZIndex>18</ZIndex>
           <Style>
             <Border>
@@ -961,9 +965,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox19</rd:DefaultName>
           <Top>0.17639cm</Top>
-          <Left>0.44662cm</Left>
+          <Left>1.08162cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.21368cm</Width>
+          <Width>2.50472cm</Width>
           <Style>
             <Border>
               <Style>None</Style>
@@ -990,9 +994,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox19</rd:DefaultName>
           <Top>0.17639cm</Top>
-          <Left>4.37885cm</Left>
+          <Left>6.01927cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.09021cm</Width>
+          <Width>2.32833cm</Width>
           <ZIndex>1</ZIndex>
           <Style>
             <Border>
@@ -1020,9 +1024,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox19</rd:DefaultName>
           <Top>0.17639cm</Top>
-          <Left>7.95073cm</Left>
+          <Left>10.46551cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.43068cm</Width>
+          <Width>2.6688cm</Width>
           <ZIndex>2</ZIndex>
           <Style>
             <Border>
@@ -1050,40 +1054,10 @@
           </Paragraphs>
           <rd:DefaultName>Textbox19</rd:DefaultName>
           <Top>0.17639cm</Top>
-          <Left>12.29995cm</Left>
+          <Left>15.47495cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.14313cm</Width>
+          <Width>2.46063cm</Width>
           <ZIndex>3</ZIndex>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox33">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value />
-                  <Style />
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox33</rd:DefaultName>
-          <Top>1.25208cm</Top>
-          <Left>4.37885cm</Left>
-          <Height>0.6cm</Height>
-          <Width>2.5cm</Width>
-          <ZIndex>4</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
@@ -1119,27 +1093,106 @@
       </ConnectionProperties>
       <rd:DataSourceID>da3cde15-36ea-44bc-b0cd-2e02c6ce156d</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="SciProductionWarehouse1">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>dbac442f-a622-47e1-bc03-8325efcc44de</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="SciProductionWarehouse2">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>bbd982d2-b1e7-40b6-b89c-926b4189dc84</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="SciProductionWarehouse3">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>05ef2d82-70c6-4652-925a-a5c9f8dcbe59</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="SciProductionWarehouse4">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>aac4d54d-458c-4815-a7a6-8400e61ef838</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="SciProductionWarehouse5">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>d70fd5f3-8b5a-4c73-98e4-516d25f596f4</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="SciProductionWarehouse6">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>8ccdfb00-80a6-4bcb-ace4-e296c66063df</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="SciProductionWarehouse7">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>0daa50d5-6972-453e-87a5-33e5d26e7926</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="SciProductionWarehouse8">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>13b3dd18-ce45-4154-956c-52f4701ff103</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="DataSet1">
       <Query>
-        <DataSourceName>SciProductionWarehouse</DataSourceName>
+        <DataSourceName>SciProductionWarehouse8</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
-        <Field Name="Key">
-          <DataField>Key</DataField>
+        <Field Name="DESC">
+          <DataField>DESC</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Value">
-          <DataField>Value</DataField>
-          <rd:TypeName>System.Web.Http.ModelBinding.ModelState</rd:TypeName>
+        <Field Name="DYELOT">
+          <DataField>DYELOT</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Location">
+          <DataField>Location</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="POID">
+          <DataField>POID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="QTY">
+          <DataField>QTY</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Roll">
+          <DataField>Roll</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SEQ">
+          <DataField>SEQ</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="StockUnit">
+          <DataField>StockUnit</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Sci.Production.Warehouse</rd:DataSetName>
         <rd:TableName>P13_PrintData</rd:TableName>
-        <rd:ObjectDataSourceSelectMethod>ModelState</rd:ObjectDataSourceSelectMethod>
         <rd:ObjectDataSourceType>Sci.Production.Warehouse.P13_PrintData, Sci.Production.Warehouse, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
