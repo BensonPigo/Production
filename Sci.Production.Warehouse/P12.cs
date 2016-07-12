@@ -690,45 +690,20 @@ Where a.id = '{0}'", masterID);
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtt;
-            string POID, SEQ, DESC, UNIT, QTY, BULKLocation;
+            //string POID, SEQ, DESC, UNIT, QTY, BULKLocation;
             result = DBProxy.Current.Select("",
-            @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ#,dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0) [desc1],a.Qty,dbo.Getlocation(c.ukey)[BULK Location]
+            @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ,
+	        dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0) [DESC]
+	        ,a.Qty
+            ,dbo.Getlocation(A.FtyInventoryUkey)[BULKLocation]
+	        ,unit = b.StockUnit
             from dbo.Issue_Detail a
-            inner join dbo.PO_Supp_Detail b
-            on 
-            b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
-            inner join dbo.FtyInventory c
-            on
-            c.poid=a.id
-            where a.id= @ID", pars, out dtt);
+            INNER join dbo.PO_Supp_Detail b
+             on 
+             b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
+                where a.id= @ID", pars, out dtt);
             if (!result) { this.ShowErr(result); }
-            if (dtt.Rows.Count == 0)
-            {
-                POID = " ";
-                SEQ = " ";
-                DESC = " ";
-                UNIT = " ";
-                QTY = " ";
-                BULKLocation = " ";
-            }
-            else
-            {
-                POID = dtt.Rows[0]["POID"].ToString();
-                SEQ = dtt.Rows[0]["SEQ"].ToString();
-                DESC = dtt.Rows[0]["DESC"].ToString();
-                UNIT = dtt.Rows[0]["UNIT"].ToString();
-                QTY = dtt.Rows[0]["QTY"].ToString();
-                BULKLocation = dtt.Rows[0]["BULKLocation"].ToString();
-            }
-            //ReportDefinition reportt = new ReportDefinition();
-            //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("POID", POID));
-            //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SEQ", SEQ));
-            //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("DESC", DESC));
-            //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("UNIT", UNIT));
-            //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("QTY", QTY));
-            //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("BULKLocation", BULKLocation));
-
-
+           
             // 傳 list 資料            
             List<P12_PrintData> data = dtt.AsEnumerable()
                 .Select(row1 => new P12_PrintData()
@@ -736,7 +711,7 @@ Where a.id = '{0}'", masterID);
                     POID = row1["POID"].ToString(),
                     SEQ = row1["SEQ"].ToString(),
                     DESC = row1["DESC"].ToString(),
-                    UNIT = row1["UNIT"].ToString(),
+                    unit = row1["unit"].ToString(),
                     QTY = row1["QTY"].ToString(),
                     BULKLocation = row1["BULKLocation"].ToString()
                 }).ToList();
