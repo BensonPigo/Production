@@ -63,6 +63,7 @@
             this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
             this.result_box = new Sci.Win.UI.DisplayBox();
             this.button1 = new Sci.Win.UI.Button();
+            this.textID = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -73,7 +74,7 @@
             this.btmcont.Controls.Add(this.button1);
             this.btmcont.Controls.Add(this.button3);
             this.btmcont.Location = new System.Drawing.Point(0, 693);
-            this.btmcont.Size = new System.Drawing.Size(896, 40);
+            this.btmcont.Size = new System.Drawing.Size(941, 40);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
@@ -85,15 +86,15 @@
             // gridcont
             // 
             this.gridcont.Location = new System.Drawing.Point(12, 163);
-            this.gridcont.Size = new System.Drawing.Size(872, 520);
+            this.gridcont.Size = new System.Drawing.Size(917, 520);
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(806, 5);
+            this.undo.Location = new System.Drawing.Point(851, 5);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(726, 5);
+            this.save.Location = new System.Drawing.Point(771, 5);
             // 
             // brand_box
             // 
@@ -406,6 +407,7 @@
             this.button3.TabIndex = 132;
             this.button3.Text = "To Excel";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // txtuser1
             // 
@@ -444,9 +446,21 @@
             this.button1.Text = "Print Format Report";
             this.button1.UseVisualStyleBackColor = true;
             // 
+            // textID
+            // 
+            this.textID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.textID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.textID.Location = new System.Drawing.Point(1043, 128);
+            this.textID.Name = "textID";
+            this.textID.ReadOnly = true;
+            this.textID.Size = new System.Drawing.Size(100, 23);
+            this.textID.TabIndex = 134;
+            this.textID.Visible = false;
+            // 
             // P01_ShadeBond
             // 
-            this.ClientSize = new System.Drawing.Size(896, 733);
+            this.ClientSize = new System.Drawing.Size(941, 733);
+            this.Controls.Add(this.textID);
             this.Controls.Add(this.result_box);
             this.Controls.Add(this.txtuser1);
             this.Controls.Add(this.approve_box);
@@ -522,6 +536,7 @@
             this.Controls.SetChildIndex(this.approve_box, 0);
             this.Controls.SetChildIndex(this.txtuser1, 0);
             this.Controls.SetChildIndex(this.result_box, 0);
+            this.Controls.SetChildIndex(this.textID, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -567,5 +582,6 @@
         private Class.txtuser txtuser1;
         private Win.UI.DisplayBox result_box;
         private Win.UI.Button button1;
+        private Win.UI.TextBox textID;
     }
 }

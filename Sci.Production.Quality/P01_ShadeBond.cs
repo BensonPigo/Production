@@ -13,6 +13,8 @@ using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
 using Sci.Production.Quality;
+using Sci.Trade.Class.Commons;
+using System.Runtime.InteropServices;
 
 
 namespace Sci.Production.Quality
@@ -28,6 +30,7 @@ namespace Sci.Production.Quality
         {
             InitializeComponent();
             maindr = mainDr;
+            this.textID.Text = keyvalue1;
         }
         protected override void OnEditModeChanged()
         {
@@ -429,6 +432,59 @@ namespace Sci.Production.Quality
             {
                 approve_button.Enabled = this.CanEdit && !this.EditMode && lCheck == 1 && !MyUtility.Check.Empty(maindr["Result"]);
             }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            #region Excel Grid Value
+            DataTable dt;
+            DualResult xresult;
+            // if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,Scale,Result,Inspdate,Inspector,Remark from FIR_Shadebond where id='{0}'", textID.Text), out dt))
+            if (xresult = DBProxy.Current.Select("Production", "select Roll,Dyelot,Scale,Result,Inspdate,Inspector,Remark from FIR_Shadebond  where id in ('487992')", out dt)) //測試用
+            {
+                if (dt.Rows.Count <= 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                    return;
+                }
+            }
+            #endregion
+            #region Excel 表頭值
+            DataTable dt1;
+            DualResult xresult1;
+            if (xresult1 = DBProxy.Current.Select("Production",
+                "select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID from FIR_Shadebond a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID in ('487992')", out dt1))//測試用
+            //if (xresult1 = DBProxy.Current.Select("Production", string.Format(
+            //"select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID from FIR_Shadebond a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", textID.Text), out dt1))
+            {
+                if (dt1.Rows.Count <= 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                    return;
+                }
+            }
+            #endregion
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\P01_ShadeBone_Report.xltx"); //預先開啟excel app
+            MyUtility.Excel.CopyToXls(dt, "", "P01_ShadeBone_Report.xltx", 5, true, null, objApp);      // 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            objSheets.Cells[2, 2] = sp_box.Text.ToString();
+            objSheets.Cells[2, 4] = seq_box.Text.ToString();
+            objSheets.Cells[2, 6] = color_box.Text.ToString();
+            objSheets.Cells[2, 8] = style_box.Text.ToString();
+            objSheets.Cells[2, 10] = dt1.Rows[0]["SeasonID"];
+            objSheets.Cells[3, 2] = scirefno_box.Text.ToString();
+            objSheets.Cells[3, 4] = dt1.Rows[0]["ContinuityEncode"]; 
+            objSheets.Cells[3, 6] = result_box.Text.ToString();
+            objSheets.Cells[3, 8] = lastinspdate_box.Text.ToString();
+            objSheets.Cells[3, 10] = brand_box.Text.ToString();
+            objSheets.Cells[4, 2] = brandrefno_box.Text.ToString();
+            objSheets.Cells[4, 4] = arriveqty_box.Text.ToString();
+            objSheets.Cells[4, 6] = arrwhdate_box.Text.ToString();
+            objSheets.Cells[4, 8] = txtsupplier1.Text.ToString();
+            objSheets.Cells[4, 10] = wk_box.Text.ToString();
+
+            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
         }
     }
 }
