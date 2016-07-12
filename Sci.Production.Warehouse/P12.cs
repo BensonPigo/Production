@@ -694,7 +694,7 @@ Where a.id = '{0}'", masterID);
             @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ,
 	        dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0) [DESC]
 	        ,a.Qty
-            ,dbo.Getlocation(A.FtyInventoryUkey)[BULKLocation]
+            ,dbo.Getlocation(a.FtyInventoryUkey)[BULKLocation]
 	        ,unit = b.StockUnit
             from dbo.Issue_Detail a
             INNER join dbo.PO_Supp_Detail b
