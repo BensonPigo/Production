@@ -147,7 +147,9 @@
                                   <Style />
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>QTY</rd:DefaultName>
@@ -680,8 +682,8 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox15</rd:DefaultName>
-          <Top>5.83398cm</Top>
-          <Left>11.66495cm</Left>
+          <Top>5.84411cm</Top>
+          <Left>12.60299cm</Left>
           <Height>0.58526cm</Height>
           <Width>0.89958cm</Width>
           <ZIndex>14</ZIndex>
