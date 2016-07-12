@@ -735,22 +735,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             where t.id= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out bb);
             if (!result) { this.ShowErr(sqlcmd, result); }
-            string poid = bb.Rows[0]["poid"].ToString();
-            string SEQ = bb.Rows[0]["SEQ"].ToString();
-            string DESC = bb.Rows[0]["DESC"].ToString();
-            string Location = bb.Rows[0]["Location"].ToString();
-            string Roll = bb.Rows[0]["Roll"].ToString();
-            string Dyelot = bb.Rows[0]["Dyelot"].ToString();
-            string Qty = bb.Rows[0]["Qty"].ToString();
-            string StockUnit = bb.Rows[0]["StockUnit"].ToString();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("poid", poid));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SEQ", SEQ));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("DESC", DESC));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Location", Location));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Roll", Roll));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Dyelot", Dyelot));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Qty", Qty));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("StockUnit", StockUnit));
+           
 
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
