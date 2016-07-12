@@ -13,6 +13,7 @@ using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
 using Sci.Production.Quality;
+using System.Runtime.InteropServices;
 
 
 namespace Sci.Production.Quality
@@ -36,6 +37,7 @@ namespace Sci.Production.Quality
             txtuser1.TextBox1.IsSupportEditMode = false;
             txtuser1.TextBox1.ReadOnly = true;
             maindr = mainDr;
+            this.textID.Text = keyvalue1;
         }
         protected override void OnEditModeChanged()
         {
@@ -92,6 +94,7 @@ namespace Sci.Production.Quality
             txtuser1.TextBox1.Text = maindr["Approve"].ToString();
             
             return base.OnRequery();
+            
         }
         protected override void OnRequeryPost(DataTable datas)
         {
@@ -119,9 +122,11 @@ namespace Sci.Production.Quality
             MyUtility.Tool.ProcessWithDatatable(datas, "ID,NewKey,DetailUkey", str_defect, out Fir_physical_Defect);
             #endregion
         }
+        
         protected override bool OnGridSetup()
         {
 
+            
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings Ydscell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings TotalPointcell = new DataGridViewGeneratorNumericColumnSettings();
@@ -198,6 +203,7 @@ namespace Sci.Production.Quality
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Numeric("Ticketyds", header: "Ticket Yds", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
             .Numeric("Actualyds", header: "Act.Yds\nInspected", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2)
+            .Numeric("fullwidth", header: "Cut. Width", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2)//misstake
             .Numeric("fullwidth", header: "Full width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
             .Numeric("actualwidth", header: "Actual Width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
             .Numeric("totalpoint", header: "Total Points", width: Widths.AnsiChars(7), integer_places: 6, iseditingreadonly: true, settings: TotalPointcell)
@@ -209,6 +215,8 @@ namespace Sci.Production.Quality
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))
             .CellUser("Inspector",header:"Inspector", width: Widths.AnsiChars(10),userNamePropertyName:"Name")
             .Text("Name", header: "Name", width: Widths.AnsiChars(20), iseditingreadonly: true);
+
+            
 
             grid.Columns[0].DefaultCellStyle.BackColor = Color.MistyRose;
             grid.Columns[3].DefaultCellStyle.BackColor = Color.MistyRose;
@@ -569,6 +577,187 @@ Where DetailUkey = {15};",
             {
                 approve_button.Enabled = this.CanEdit && !this.EditMode && lCheck == 1 && !MyUtility.Check.Empty(maindr["Result"]);
             }
+        }
+        
+        private void button3_Click(object sender, EventArgs e)
+        {
+            #region DataTables && 共用變數
+            //FabricDefect 基本資料 DB
+            DataTable dtBasic;
+            DualResult bResult;
+            if (bResult = DBProxy.Current.Select("Production", "SELECT id,type,DescriptionEN FROM FabricDefect order by ID", out dtBasic))
+            {
+                if (dtBasic.Rows.Count < 1)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                    return;
+                }
+            }
+            //FIR_Physical_Defect DB
+            DataTable dt;
+            DualResult dResult;
+            if (dResult = DBProxy.Current.Select("Production", string.Format("select * from FIR_Physical A LEFT JOIN FIR_Physical_Defect B ON A.DetailUkey = B.FIR_PhysicalDetailUKey WHERE A.ID='{0}'", textID.Text), out dt))
+            {
+                if (dt.Rows.Count < 1 )
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                }
+            }
+
+            #endregion
+           
+
+
+            string strXltName = Sci.Env.Cfg.XltPathDir + "P01_Physical_Inspection_Report.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);                  
+            excel.Visible = true;
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+
+            #region FabricDefect 基本資料
+            int counts = dtBasic.Rows.Count;
+            int int_X = 6;
+            int int_Y = 1;
+            int int_z = 0;//判斷是否為第一次
+
+            string typeColumn = "typeColumn";
+            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+
+            for (int i=0 ; i < counts; i++)
+            {
+                if (dtBasic.Rows[i]["type"].ToString() != typeColumn && dtBasic.Rows[i]["type"].ToString() != null)
+                {
+                    int_X = 6;
+                    if (int_Y == 1 && int_z==0) //first time
+                    {
+                        worksheet.Cells[6, int_Y] = "Code".ToString();
+                        typeColumn = dtBasic.Rows[i]["type"].ToString();
+                        worksheet.Cells[6, int_Y + 1] = typeColumn.ToString();
+                        int_X++;
+                         int_z = 1;
+                    }
+                    else
+                    {
+                        int_X++;
+                        int_Y = int_Y + 2;
+                        worksheet.Cells[6, int_Y] = "Code".ToString();
+                        typeColumn = dtBasic.Rows[i]["type"].ToString();
+                        worksheet.Cells[6, int_Y + 1] = typeColumn.ToString();                    
+                    }                    
+                }
+                worksheet.Cells[int_X, int_Y] = dtBasic.Rows[i]["id"].ToString();
+                worksheet.Cells[int_X, int_Y+1] = dtBasic.Rows[i]["DescriptionEN"].ToString();
+                    int_X++;
+            }
+            #endregion
+            #region FIR_Physical
+            
+         
+
+            int gridCounts = grid.RowCount;
+            int rowcount = 0;
+
+            for (int i = 0; i < gridCounts; i++)
+            {
+                
+                excel.Cells[14+(i*8), 1] = this.grid.Rows[rowcount].Cells["Roll"].Value.ToString();
+                excel.Cells[14+(i*8), 2] = this.grid.Rows[rowcount].Cells["Ticketyds"].Value.ToString();
+                excel.Cells[14+(i*8), 3] = this.grid.Rows[rowcount].Cells["Actualyds"].Value.ToString();
+                excel.Cells[14+(i*8), 4] = this.grid.Rows[rowcount].Cells["fullwidth"].Value.ToString();
+                excel.Cells[14+(i*8), 5] = this.grid.Rows[rowcount].Cells["fullwidth"].Value.ToString();
+                excel.Cells[14+(i*8), 6] = this.grid.Rows[rowcount].Cells["actualwidth"].Value.ToString();
+                excel.Cells[14+(i*8), 7] = this.grid.Rows[rowcount].Cells["totalpoint"].Value.ToString();
+                excel.Cells[14+(i*8), 8] = this.grid.Rows[rowcount].Cells["pointRate"].Value.ToString();
+                excel.Cells[14+(i*8), 9] = this.grid.Rows[rowcount].Cells["Grade"].Value.ToString();
+                excel.Cells[14+(i*8), 10] = this.grid.Rows[rowcount].Cells["Result"].Value.ToString();
+                rowcount++;
+                
+
+                #region FIR_Physical_Defect
+                int dtRowCount = (int)dt.Rows.Count;
+                for (int ii = 1; ii < 11; ii++)
+                {
+                    if (ii % 2 == 1)
+                    {
+                        excel.Cells[15+(i*8), ii] = "Yards";
+                        
+                        if (dtRowCount >= ii)
+                        {
+                            excel.Cells[16+(i*8), ii] = dt.Rows[ii - 1]["DefectLocation"];
+                        }
+                       
+                    }
+                    else
+                    {
+                        excel.Cells[15+(i*8), ii] = "Defect";
+                        if (dtRowCount >= ii)
+                        {
+                            excel.Cells[16+(i*8), ii] = dt.Rows[i]["DefectRecord"];
+                        }                       
+                    }
+                }
+                //變色 titile
+                worksheet.Range[excel.Cells[15 + (i * 8), 1], excel.Cells[15 + (i * 8), 10]].Interior.color = Color.Pink;
+                worksheet.Range[excel.Cells[15 + (i * 8), 1], excel.Cells[15 + (i * 8), 10]].Borders.LineStyle = 1;
+                
+                #endregion
+                DataTable dtcombo;
+                DualResult dcResult;
+
+                if (dcResult = DBProxy.Current.Select("Production", string.Format(
+		@"select a.ID,a.Roll,'Continuity' type_c,a.Result,a.Remark,a.Inspector,'Shadebond' type_s,b.Result,b.Remark,b.Inspector,'Weight' type_w,c.Result,c.Remark,c.Inspector from FIR_Continuity a
+		left join FIR_Shadebond b on a.ID=b.ID and a.Roll=b.Roll
+		left join FIR_Weight c on a.ID=c.ID and a.Roll=c.Roll
+		where a.ID='{0}' and a.Roll='{1}'", textID.Text,dt.Rows[i]["roll"].ToString()), out dtcombo))
+                {
+                    if (dtcombo.Rows.Count < 1 )
+                    {
+                        excel.Cells[17 + (i * 8), 2] = "Result";
+                        excel.Cells[17 + (i * 8), 3] = "Comment";
+                        excel.Cells[17 + (i * 8), 4] = "Inspector";
+                        excel.Cells[18 + (i * 8), 1] = "Contiunity ";
+                        excel.Cells[19 + (i * 8), 1] = "Shad bond";
+                        excel.Cells[20 + (i * 8), 1] = "Weight";
+                        excel.Cells[21 + (i * 8), 1] = "Moisture";
+                        worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 4]].Interior.Color = Color.Pink;
+                        worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 4]].Borders.LineStyle = 1;
+                    }
+                    else
+                    {
+                        excel.Cells[17 + (i * 8), 2] = "Result";
+                        excel.Cells[17 + (i * 8), 3] = "Comment";
+                        excel.Cells[17 + (i * 8), 4] = "Inspector";
+                        excel.Cells[18 + (i * 8), 1] = "Contiunity ";
+                        excel.Cells[19 + (i * 8), 1] = "Shad bond";
+                        excel.Cells[20 + (i * 8), 1] = "Weight";
+                        excel.Cells[21 + (i * 8), 1] = "Moisture";
+
+                        excel.Cells[19 + (i * 8), 2] = dtcombo.Rows[i]["Result"].ToString();
+                        excel.Cells[19 + (i * 8), 3] = dtcombo.Rows[i]["Comment"].ToString();
+                        excel.Cells[19 + (i * 8), 4] = dtcombo.Rows[i]["Inspector"].ToString();
+
+                        excel.Cells[20 + (i * 8), 2] = dtcombo.Rows[i]["Result"].ToString();
+                        excel.Cells[20 + (i * 8), 3] = dtcombo.Rows[i]["Comment"].ToString();
+                        excel.Cells[20 + (i * 8), 4] = dtcombo.Rows[i]["Inspector"].ToString();
+
+                        excel.Cells[21 + (i * 8), 2] = dtcombo.Rows[i]["Result"].ToString();
+                        excel.Cells[21 + (i * 8), 3] = dtcombo.Rows[i]["Comment"].ToString();
+                        excel.Cells[21 + (i * 8), 4] = dtcombo.Rows[i]["Inspector"].ToString();
+                        worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 4]].Interior.Color = Color.Pink;
+                        worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 4]].Borders.LineStyle = 1;
+                    }
+                }        
+            }
+
+            #endregion
+
+            Random random = new Random();
+            string excelFile = "Excelaaa" + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
+            worksheet.SaveAs("D:\\Excel\\QA_P01" + excelFile);
+
+            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放sheet
+            if (excel != null) Marshal.FinalReleaseComObject(excel);          //釋放objApp
+
+
         }
     }
 }
