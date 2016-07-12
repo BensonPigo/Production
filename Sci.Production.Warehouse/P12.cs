@@ -690,9 +690,17 @@ Where a.id = '{0}'", masterID);
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtt;
-            //string POID, SEQ, DESC, UNIT, QTY, BULKLocation;
             result = DBProxy.Current.Select("",
-            @"-", pars, out dtt);
+            @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ,
+	        dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0) [DESC]
+	        ,a.Qty
+            ,dbo.Getlocation(A.FtyInventoryUkey)[BULKLocation]
+	        ,unit = b.StockUnit
+            from dbo.Issue_Detail a
+            INNER join dbo.PO_Supp_Detail b
+             on 
+             b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
+                where a.id= @ID", pars, out dtt);
             if (!result) { this.ShowErr(result); }
            
             // 傳 list 資料            
@@ -729,7 +737,7 @@ Where a.id = '{0}'", masterID);
             frm.MdiParent = MdiParent;
             frm.Show();
   
-            return true;
+           return true;
 
         }
     }
