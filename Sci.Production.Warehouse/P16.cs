@@ -13,6 +13,8 @@ using System.Transactions;
 using System.Windows.Forms;
 using System.Reflection;
 using Microsoft.Reporting.WinForms;
+using System.Data.SqlClient;
+using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
@@ -98,36 +100,6 @@ namespace Sci.Production.Warehouse
                 return false;
             }
             return base.ClickEditBefore();
-        }
-
-        //print
-        protected override bool ClickPrint()
-        {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
-            {
-                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
-                return false;
-            }
-            try
-            {
-
-                DataTable dtmaster = new DataTable();
-
-                dtmaster.ImportRow(CurrentMaintain);
-
-                viewer.LocalReport.ReportEmbeddedResource = "Sci.Production.Warehouse.P13Detail.rdlc";
-                viewer.LocalReport.DataSources.Add(new ReportDataSource("DataSet1", dtmaster));
-                viewer.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(MySubreportEventHandler);
-                //
-                viewer.RefreshReport();
-            }
-            catch (Exception ex)
-            {
-                ShowErr("data loading error.");
-            }
-
-            return base.ClickPrint();
         }
 
         // Print - subreport
@@ -671,6 +643,87 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
             }
             CurrentMaintain["requestid"] = textBox2.Text;
             CurrentMaintain["type"] = dr["type"].ToString();
+        }
+
+        //Print
+        protected override bool ClickPrint()
+        {
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString();
+            string Requestno = row["Request"].ToString();
+            string Remark = row["Remark"].ToString();
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select("",
+            @"select    
+            b.name 
+            from dbo.Issuelack  a 
+            inner join dbo.mdivision  b 
+            on b.id = a.mdivisionid
+            where b.id = a.mdivisionid
+            and a.id = @ID", pars, out dt);
+            if (!result) { this.ShowErr(result); }
+            string RptTitle = dt.Rows[0]["name"].ToString();
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Request", Requestno));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dtDetail;
+            result = DBProxy.Current.Select("",
+            @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ,
+	        dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0) [DESC]
+	        ,a.Qty
+            ,dbo.Getlocation(a.FtyInventoryUkey)[BULKLocation]
+	        ,unit = b.StockUnit
+            from dbo.Issue_Detail a
+            INNER join dbo.PO_Supp_Detail b
+             on 
+             b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
+                where a.id= @ID", pars, out dtDetail);
+            if (!result) { this.ShowErr(result); }
+
+            // 傳 list 資料            
+            List<P16_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P16_PrintData()
+                {
+                    POID = row1["POID"].ToString(),
+                    SEQ = row1["SEQ"].ToString(),
+                    DESC = row1["DESC"].ToString(),
+                    unit = row1["unit"].ToString(),
+                    QTY = row1["QTY"].ToString(),
+                    BULKLocation = row1["BULKLocation"].ToString()
+                }).ToList();
+
+            report.ReportDataSource = data;
+            // 指定是哪個 RDLC
+            //DualResult result;
+            Type ReportResourceNamespace = typeof(P16_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P16_Print.rdlc";
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                //this.ShowException(result);
+                return false;
+            }
+
+            report.ReportResource = reportresource;
+
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
+
+            return true;
         }
     }
 }
