@@ -12,7 +12,7 @@ namespace Sci.Production.Warehouse
         public string SEQ { get; set; }
         public string DESC { get; set; }
         public string unit { get; set; }
-        public string Req.Qty { get; set; }
+        public string ReqQty { get; set; }
         public string QTY { get; set; }
         public string Location { get; set; }
     }
