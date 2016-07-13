@@ -652,7 +652,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
             string Requestid = row["Requestid"].ToString();
-            string issueLackdate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string issueLackdate = ((DateTime)MyUtility.Convert.GetDate(row["issueLackdate"])).ToShortDateString();
 
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
