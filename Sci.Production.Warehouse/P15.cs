@@ -13,6 +13,8 @@ using System.Transactions;
 using System.Windows.Forms;
 using System.Reflection;
 using Microsoft.Reporting.WinForms;
+using Sci.Win;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
@@ -100,35 +102,7 @@ namespace Sci.Production.Warehouse
             return base.ClickEditBefore();
         }
 
-        //print
-        protected override bool ClickPrint()
-        {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
-            {
-                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
-                return false;
-            }
-            try
-            {
-
-                DataTable dtmaster = new DataTable();
-
-                dtmaster.ImportRow(CurrentMaintain);
-
-                viewer.LocalReport.ReportEmbeddedResource = "Sci.Production.Warehouse.P13Detail.rdlc";
-                viewer.LocalReport.DataSources.Add(new ReportDataSource("DataSet1", dtmaster));
-                viewer.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(MySubreportEventHandler);
-                //
-                viewer.RefreshReport();
-            }
-            catch (Exception ex)
-            {
-                ShowErr("data loading error.");
-            }
-
-            return base.ClickPrint();
-        }
+        
 
         // Print - subreport
         private void MySubreportEventHandler(object sender, SubreportProcessingEventArgs e)
@@ -643,7 +617,7 @@ Where a.id = '{0}'", masterID);
         {
             DataRow dr;
             if (!MyUtility.Check.Seek(string.Format(@"select [type],[apvdate],[issuelackid] from dbo.lack 
-where id='{0}' and fabrictype='A' and mdivisionid='{1}'" 
+where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
                 , textBox2.Text, Sci.Env.User.Keyword), out dr, null))
             {
                 e.Cancel = true;
@@ -669,6 +643,90 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             }
             CurrentMaintain["requestid"] = textBox2.Text;
             CurrentMaintain["type"] = dr["type"].ToString();
+        }
+
+
+            protected override bool ClickPrint()
+            {
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString();
+            string Remark = row["Remark"].ToString();
+            string Requestid = row["Requestid"].ToString();
+            string issueLackdate = ((DateTime)MyUtility.Convert.GetDate(row["issueLackdate"])).ToShortDateString();
+
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select("",
+            @"select    
+            b.name 
+            from dbo.IssueLack  a 
+            inner join dbo.mdivision  b 
+            on b.id = a.mdivisionid
+            where b.id = a.mdivisionid
+            and a.id = @ID", pars, out dt);
+            if (!result) { this.ShowErr(result); }
+            string RptTitle = dt.Rows[0]["name"].ToString();
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Requestid", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issueLackdate", issueLackdate));
+
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dd;
+            result = DBProxy.Current.Select("",
+            @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ,
+	        dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0) [DESC]
+			,unit = b.StockUnit
+	        ,a.Qty
+//////            ,dbo.Getlocation(a.FtyInventoryUkey)[Location]
+	        
+            from dbo.IssueLack_Detail a
+            INNER join dbo.PO_Supp_Detail b
+             on 
+             b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
+             where a.id= @ID", pars, out dd);
+            if (!result) { this.ShowErr(result); }
+           
+            // 傳 list 資料            
+            List<P15_PrintData> data = dd.AsEnumerable()
+                .Select(row1 => new P15_PrintData()
+                {
+                    POID = row1["POID"].ToString(),
+                    SEQ = row1["SEQ"].ToString(),
+                    DESC = row1["DESC"].ToString(),
+                    unit = row1["unit"].ToString(),
+                    
+                    QTY = row1["QTY"].ToString()
+                }).ToList();
+
+            report.ReportDataSource = data;
+
+            // 指定是哪個 RDLC
+            //DualResult result;
+            Type ReportResourceNamespace = typeof(P15_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P15_Print.rdlc";
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                //this.ShowException(result);
+                return false;
+            }
+
+            report.ReportResource = reportresource;
+
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
+  
+           return true;
+
         }
     }
 }
