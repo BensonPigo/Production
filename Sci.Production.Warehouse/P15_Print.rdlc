@@ -414,11 +414,13 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>'Issue Accessory Lacking&amp;Replacement'+IIF(Wear1_edit Type='L'.'(-Lacking)'.'(-Replacement)')</Value>
+                  <Value>'Issue Accessory Lacking&amp;Replacement'</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
-              <Style />
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox3</rd:DefaultName>

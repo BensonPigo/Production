@@ -676,6 +676,21 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
 
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
+            DataTable cc;
+            string QTY;
+            result = DBProxy.Current.Select("",
+            @"select QTY 
+            from dbo.Issuelack_detail 
+            where id = @ID", pars, out cc);
+            if (!result) { this.ShowErr(result); }
+            if (cc.Rows.Count == 0)
+                QTY = "";
+            else
+                QTY = cc.Rows[0]["QTY"].ToString();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("QTY", QTY));
+
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result = DBProxy.Current.Select("",
             @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ,
@@ -683,7 +698,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
 		    ,unit = b.StockUnit
 		    ,ReqQty=c.Requestqty 
 	        ,a.Qty
-            ,dbo.Getlocation(e.Ukey)[Location]	        
+            ,dbo.Getlocation(a.FtyInventoryUkey)[Location]	        
              from dbo.IssueLack_Detail a 
 		    INNER join dbo.IssueLack d
              on 
@@ -694,8 +709,6 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
 		    inner join dbo.Lack_Detail c
 		    on
 	        c.id=d.RequestID and c.Seq1=a.Seq1 and c.Seq2=a.Seq2
-	        inner join dbo.FtyInventory e
-            on e.poid = a.poid and e.seq1 =a.seq1 and e.seq2=a.seq2 and e.Roll =a.Roll and e.Dyelot =a.Dyelot and e.StockType = a.StockType
              where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
            
