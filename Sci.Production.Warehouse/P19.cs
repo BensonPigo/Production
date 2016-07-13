@@ -570,7 +570,7 @@ Where a.id = '{0}'", masterID);
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
-            string TOfactory = row["TOfactory"].ToString();
+            string ToMDivisionId = row["ToMDivisionId"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
             List<SqlParameter> pars = new List<SqlParameter>();
@@ -590,7 +590,7 @@ Where a.id = '{0}'", masterID);
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TOfactory", TOfactory));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ToMDivisionId", ToMDivisionId));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
 
             pars = new List<SqlParameter>();
