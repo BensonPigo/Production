@@ -253,13 +253,13 @@ namespace Sci.Production.Cutting
             if (dResult)
             {
                 string str = Sci.Env.Cfg.XltPathDir;
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P05.xlt"); //預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P05.xltx"); //預先開啟excel app
                 string pathName = Sci.Env.Cfg.ReportTempDir + "Bulk_Marker_Request" + DateTime.Now.ToFileTime() + ".xls";
                 string tmpName = Sci.Env.Cfg.ReportTempDir + "tmp.xls";
                 //Microsoft.Office.Interop.Excel._Workbook objBook = null;
 
 
-                if (MyUtility.Excel.CopyToXls(ExcelTb, pathName, "Cutting_P05.xlt", 5, false, null, objApp))
+                if (MyUtility.Excel.CopyToXls(ExcelTb, pathName, "Cutting_P05.xltx", 5, false, null, objApp,false))
                 {// 將datatable copy to excel
 
                     Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
@@ -299,7 +299,18 @@ namespace Sci.Production.Cutting
                         var email = new MailTo(Env.Cfg.MailFrom, mailto, cc, subject + "-" + fileNameExt, pathName,
 content, false, false);
                         email.ShowDialog(this);
-
+                    }
+                    //刪除Excel File
+                    if (System.IO.File.Exists(pathName))
+                    {
+                        try
+                        {
+                            System.IO.File.Delete(pathName);
+                        }
+                        catch (System.IO.IOException ex)
+                        {
+                            MyUtility.Msg.WarningBox("Delete excel file fail!!");
+                        }
                     }
                 }
             }
