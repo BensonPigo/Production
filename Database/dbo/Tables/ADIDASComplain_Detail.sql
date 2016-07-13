@@ -14,8 +14,13 @@
     [OrderID]        VARCHAR (13)   CONSTRAINT [DF_ADIDASComplain_Detail_OrderID] DEFAULT ('') NULL,
     [RuleNo]         NUMERIC (1)    CONSTRAINT [DF_ADIDASComplain_Detail_RuleNo] DEFAULT ((0)) NULL,
     [UKEY]           BIGINT         CONSTRAINT [DF_ADIDASComplain_Detail_UKEY] DEFAULT ((0)) NOT NULL,
+    [BrandID]        VARCHAR (8)    NULL,
+    [FactoryID]      VARCHAR (8)    NULL,
+    [StyleID]        VARCHAR (20)   NULL,
     CONSTRAINT [PK_ADIDASComplain_Detail] PRIMARY KEY CLUSTERED ([UKEY] ASC)
 );
+
+
 
 
 GO

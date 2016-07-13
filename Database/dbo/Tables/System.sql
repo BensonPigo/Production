@@ -24,7 +24,8 @@
     [AccountKeyword]      VARCHAR (1)    CONSTRAINT [DF_System_AccountKeyword] DEFAULT ('') NULL,
     [ReadyDay]            TINYINT        CONSTRAINT [DF_System_ReadyDay] DEFAULT ((0)) NULL,
     [VNMultiple]          NUMERIC (4, 2) CONSTRAINT [DF_System_VNMultiple] DEFAULT ((0)) NULL,
-    [MtlLeadTime]         TINYINT        CONSTRAINT [DF_System_MtlLeadTime] DEFAULT ((0)) NULL
+    [MtlLeadTime]         TINYINT        CONSTRAINT [DF_System_MtlLeadTime] DEFAULT ((0)) NULL, 
+    [ExchangeID] VARCHAR(2) NULL DEFAULT ('')
 );
 
 
@@ -211,3 +212,13 @@ GO
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Mail Server IP', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'Mailserver';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Rate Type',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'ExchangeID'
