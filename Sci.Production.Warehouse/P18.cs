@@ -13,6 +13,8 @@ using System.Transactions;
 using System.Windows.Forms;
 using System.Reflection;
 using Microsoft.Reporting.WinForms;
+using System.Data.SqlClient;
+using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
@@ -102,30 +104,87 @@ namespace Sci.Production.Warehouse
         //print
         protected override bool ClickPrint()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString();
+            string fromFactory = row["FromFtyID"].ToString();
+            string Remark = row["Remark"].ToString();
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select("",
+            @"select    
+            b.name 
+            from dbo.Transferin  a 
+            inner join dbo.mdivision  b 
+            on b.id = a.mdivisionid
+            where b.id = a.mdivisionid
+            and a.id = @ID", pars, out dt);
+            if (!result) { this.ShowErr(result); }
+            string RptTitle = dt.Rows[0]["name"].ToString();
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FromFtyID", fromFactory));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dtDetail;
+            result = DBProxy.Current.Select("",
+            @"select  a.POID,a.Seq1+'-'+a.seq2 as SEQ,a.Roll,a.Dyelot 
+	        ,dbo.Getmtldesc(a.poid, a.seq1, a.seq2,2,0) [Description]
+            ,b.StockUnit
+	        ,a.Qty
+            ,dbo.Getlocation(f.ukey)[Location] 
+            from dbo.TransferIn_detail a
+            left join dbo.PO_Supp_Detail b
+             on 
+             b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
+			 inner join FtyInventory f
+			 on 
+             f.MDivisionID= a.MDivisionID
+             where a.id= @ID", pars, out dtDetail);
+            if (!result) { this.ShowErr(result); }
+
+            // 傳 list 資料            
+            List<P18_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P18_PrintData()
+                {
+                    POID = row1["POID"].ToString(),
+                    SEQ = row1["SEQ"].ToString(),
+                    Roll = row1["Roll"].ToString(),
+                    DYELOT = row1["DYELOT"].ToString(),
+                    DESC = row1["Description"].ToString(),
+                    Unit = row1["StockUnit"].ToString(),
+                    QTY = row1["QTY"].ToString(),
+                    Location = row1["Location"].ToString()
+                }).ToList();
+
+            report.ReportDataSource = data;
+            // 指定是哪個 RDLC
+            //DualResult result;
+            Type ReportResourceNamespace = typeof(P16_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P18_Print.rdlc";
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
             {
-                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
+                //this.ShowException(result);
                 return false;
             }
-            try
-            {
 
-                DataTable dtmaster = new DataTable();
+            report.ReportResource = reportresource;
 
-                dtmaster.ImportRow(CurrentMaintain);
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
 
-                viewer.LocalReport.ReportEmbeddedResource = "Sci.Production.Warehouse.P13Detail.rdlc";
-                viewer.LocalReport.DataSources.Add(new ReportDataSource("DataSet1", dtmaster));
-                viewer.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(MySubreportEventHandler);
-                //
-                viewer.RefreshReport();
-            }
-            catch (Exception ex)
-            {
-                ShowErr("data loading error.");
-            }
-            return base.ClickPrint();
+            return true;
         }
 
         // print for SubReport
