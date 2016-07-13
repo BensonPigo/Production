@@ -11,7 +11,7 @@
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.86113cm</Height>
+              <Height>0.69674cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -32,7 +32,6 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>POID</rd:DefaultName>
-                          <Top>0.14675cm</Top>
                           <Left>0.26458cm</Left>
                           <Height>0.56445cm</Height>
                           <Width>2.54565cm</Width>
@@ -61,7 +60,6 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>SEQ</rd:DefaultName>
-                          <Top>0.14675cm</Top>
                           <Left>2.98663cm</Left>
                           <Height>0.56445cm</Height>
                           <Width>1.4552cm</Width>
@@ -91,7 +89,6 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>DESC</rd:DefaultName>
-                          <Top>0.14675cm</Top>
                           <Left>4.74487cm</Left>
                           <Height>0.56445cm</Height>
                           <Width>4.9918cm</Width>
@@ -121,7 +118,6 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>UNIT</rd:DefaultName>
-                          <Top>0.14675cm</Top>
                           <Left>10.18329cm</Left>
                           <Height>0.56445cm</Height>
                           <Width>1.20262cm</Width>
@@ -153,7 +149,6 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>QTY</rd:DefaultName>
-                          <Top>0.14675cm</Top>
                           <Left>11.58875cm</Left>
                           <Height>0.56445cm</Height>
                           <Width>2.0373cm</Width>
@@ -183,7 +178,6 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>BULKLocation</rd:DefaultName>
-                          <Top>0.14675cm</Top>
                           <Left>13.76716cm</Left>
                           <Height>0.56445cm</Height>
                           <Width>3.11326cm</Width>
@@ -225,9 +219,9 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>DataSet1</DataSetName>
-        <Top>0.17639cm</Top>
+        <Top>0.09702cm</Top>
         <Left>1.61078cm</Left>
-        <Height>0.86113cm</Height>
+        <Height>0.69674cm</Height>
         <Width>17.64771cm</Width>
         <Style>
           <Border>
@@ -236,13 +230,13 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>0.57514in</Height>
+    <Height>0.35417in</Height>
     <Style />
   </Body>
   <Width>8.2in</Width>
   <Page>
     <PageHeader>
-      <Height>7.05556cm</Height>
+      <Height>6.79098cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
@@ -730,8 +724,8 @@
           </Style>
         </Textbox>
         <Line Name="Line1">
-          <Top>6.60445cm</Top>
-          <Left>1.87536cm</Left>
+          <Top>6.68382cm</Top>
+          <Left>1.92828cm</Left>
           <Height>0cm</Height>
           <Width>17.03917cm</Width>
           <ZIndex>16</ZIndex>
