@@ -108,7 +108,7 @@ namespace Sci.Production.Warehouse
             string id = row["ID"].ToString();
             string fromFactory = row["FromFtyID"].ToString();
             string Remark = row["Remark"].ToString();
-            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["IssueDate"])).ToShortDateString();
 
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
@@ -128,7 +128,7 @@ namespace Sci.Production.Warehouse
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FromFtyID", fromFactory));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("IssueDate", issuedate));
 
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
@@ -166,7 +166,7 @@ namespace Sci.Production.Warehouse
             report.ReportDataSource = data;
             // 指定是哪個 RDLC
             //DualResult result;
-            Type ReportResourceNamespace = typeof(P16_PrintData);
+            Type ReportResourceNamespace = typeof(P18_PrintData);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
             string ReportResourceName = "P18_Print.rdlc";
 
