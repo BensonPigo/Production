@@ -697,9 +697,9 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
                     POID = row1["POID"].ToString(),
                     SEQ = row1["SEQ"].ToString(),
                     DESC = row1["DESC"].ToString(),
-                    unit = row1["unit"].ToString(),
+                 //   unit = row1["unit"].ToString(),
                     QTY = row1["QTY"].ToString(),
-                    BULKLocation = row1["BULKLocation"].ToString()
+                  //  BULKLocation = row1["BULKLocation"].ToString()
                 }).ToList();
 
             report.ReportDataSource = data;
