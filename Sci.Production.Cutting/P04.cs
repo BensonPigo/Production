@@ -330,58 +330,51 @@ namespace Sci.Production.Cutting
         {
             DataTable ExcelTb;
             string cmdsql = string.Format(
-            @"
-            Select a.id,a.sewinglineid,a.orderid,e.seq1,e.seq2,a.cutref,a.cutno,
-            e.FabricCombo,e.FabricCode,
-            (
-                Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
-                From WorkOrder_SizeRatio c
-                Where  c.WorkOrderUkey =a.WorkOrderUkey 
+            @"select cd.id,cd.sewinglineid,cd.orderid,w.seq1,w.seq2,cd.cutref,cd.cutno,w.FabricCombo,w.FabricCode,
+(
+    Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
+    From WorkOrder_SizeRatio c
+    Where  c.WorkOrderUkey =cd.WorkOrderUkey 
                 
-                For XML path('')
-            ) as SizeCode,
-            (
-                Select distinct Article+'/ ' 
-			    From dbo.WorkOrder_Distribute b
-			    Where b.workorderukey = a.WorkOrderUkey and b.article!=''
-                For XML path('')
-            ) as article,a.colorid,
-            (
-                Select c.sizecode+'/ '+convert(varchar(8),c.qty*e.layer)+', ' 
-                From WorkOrder_SizeRatio c 
-                Where  c.WorkOrderUkey =a.WorkOrderUkey and c.WorkOrderUkey = e.Ukey
+    For XML path('')
+) as SizeCode,
+(
+    Select distinct Article+'/ ' 
+	From dbo.WorkOrder_Distribute b
+	Where b.workorderukey = cd.WorkOrderUkey and b.article!=''
+    For XML path('')
+) as article,cd.colorid,
+(
+    Select c.sizecode+'/ '+convert(varchar(8),c.qty*w.layer)+', ' 
+    From WorkOrder_SizeRatio c 
+    Where  c.WorkOrderUkey =cd.WorkOrderUkey and c.WorkOrderUkey = w.Ukey
                
-                For XML path('')
-            ) as CutQty,a.cons,e.description,a.remark
-            From Cutplan_Detail a, WorkOrder e,fabric f
-            where a.id = '{0}' and a.WorkOrderUkey = e.Ukey and e.scirefno = f.scirefno
-            ", CurrentDetailData["ID"]);
+    For XML path('')
+) as CutQty,
+cd.cons,isnull(f.DescDetail,'') as DescDetail,cd.remark 
+from Cutplan_Detail cd
+inner join WorkOrder w on cd.WorkorderUkey = w.Ukey
+left join Fabric f on f.SCIRefno = w.SCIRefno
+where cd.id = '{0}'", CurrentDetailData["ID"]);
             DualResult dResult = DBProxy.Current.Select(null, cmdsql, out ExcelTb);
             if (dResult)
             {
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P04.xlt"); //預先開啟excel app
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P04.xltx"); //預先開啟excel app
                 string pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_Daily_Plan" + DateTime.Now.ToFileTime() + ".xls";
                 string tmpName = Sci.Env.Cfg.ReportTempDir + "tmp.xls";
-                //Microsoft.Office.Interop.Excel._Workbook objBook = null;
 
 
-                if (MyUtility.Excel.CopyToXls(ExcelTb, pathName, "Cutting_P04.xlt", 5, false, null, objApp))
+                if (MyUtility.Excel.CopyToXls(ExcelTb, pathName, "Cutting_P04.xltx", 5, false, null, objApp,false))
                 {// 將datatable copy to excel
-                    //Microsoft.Office.Interop.Excel.Application oleApp = MyUtility.Excel.ConnectExcel(tmpName);
                     Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                     Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
-                    //oleApp.Visible = false;
-                    //oleApp.DisplayAlerts = false;
-                    //objBook = oleApp.ActiveWorkbook;
-                    //objSheet = objBook.Worksheets["Sheet1"];
-
+                    
                     objSheet.Cells[1, 1] = keyWord;   // 條件字串寫入excel
                     objSheet.Cells[3, 2] = CurrentMaintain["EstCutDate"].ToString();
                     objSheet.Cells[3, 5] = CurrentMaintain["POID"].ToString();
                     objSheet.Cells[3, 9] = CurrentMaintain["CutCellid"].ToString();
                     objSheet.Cells[3, 12] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(loginID);
                     objBook.Save();
-                    //oleApp.Workbooks[1].SaveAs(pathName);
                     objBook.Close();
                     objApp.Workbooks.Close();
                     objApp.Quit();
@@ -394,7 +387,6 @@ namespace Sci.Production.Cutting
                     if (objBook != null) Marshal.FinalReleaseComObject(objBook);
                     if (objApp != null) Marshal.FinalReleaseComObject(objApp);
                     objApp = null;
-                    //System.IO.File.Delete(tmpName);
                     string fileNameExt = pathName.Substring(pathName.LastIndexOf("\\") + 1);
 
                     DataRow seekdr;
@@ -409,6 +401,18 @@ namespace Sci.Production.Cutting
 content, false, false);
                         email.ShowDialog(this);
 
+                    }
+                    //刪除Excel File
+                    if (System.IO.File.Exists(pathName))
+                    {
+                        try
+                        {
+                            System.IO.File.Delete(pathName);
+                        }
+                        catch (System.IO.IOException ex)
+                        {
+                            MyUtility.Msg.WarningBox("Delete excel file fail!!");
+                        }
                     }
                 }
             }
