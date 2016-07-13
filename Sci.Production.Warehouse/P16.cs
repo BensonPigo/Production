@@ -650,7 +650,7 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
         {
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
-            string Requestno = row["Request"].ToString();
+            string Requestno = row["requestid"].ToString();
             string Remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
@@ -673,18 +673,31 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Request", Requestno));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+          
+            DataTable dtApv;
+            DualResult ApvResult = DBProxy.Current.Select("",
+          @"select    
+            b.ApvDate 
+            from dbo.Issuelack  a 
+            left join dbo.lack  b 
+            on b.id = a.requestid
+            where b.id = a.requestid
+            and a.id = @ID", pars, out dtApv);
+            if (!ApvResult) { this.ShowErr(ApvResult); }
+            string ApvDate = dtApv.Rows[0]["ApvDate"].ToString();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ApvDate", ApvDate));
 
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
             result = DBProxy.Current.Select("",
-            @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ,
-	        dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0) [DESC]
+            @"select  a.POID,a.Seq1+'-'+a.seq2 as SEQ,a.Roll,a.Dyelot ,
+	        dbo.Getmtldesc(a.poid, a.seq1, a.seq2,2,0) [Description]
+            ,b.StockUnit
 	        ,a.Qty
-            ,dbo.Getlocation(a.FtyInventoryUkey)[BULKLocation]
-	        ,unit = b.StockUnit
-            from dbo.Issue_Detail a
-            INNER join dbo.PO_Supp_Detail b
+            ,dbo.Getlocation(a.FtyInventoryUkey)[Location] 
+            from dbo.IssueLack_detail a
+            left join dbo.PO_Supp_Detail b
              on 
              b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
                 where a.id= @ID", pars, out dtDetail);
@@ -696,10 +709,12 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
                 {
                     POID = row1["POID"].ToString(),
                     SEQ = row1["SEQ"].ToString(),
-                    DESC = row1["DESC"].ToString(),
-                 //   unit = row1["unit"].ToString(),
+                    Roll = row1["Roll"].ToString(),
+                    DYELOT = row1["DYELOT"].ToString(),
+                    DESC = row1["Description"].ToString(),
+                    StockUnit = row1["StockUnit"].ToString(),
                     QTY = row1["QTY"].ToString(),
-                  //  BULKLocation = row1["BULKLocation"].ToString()
+                    Location = row1["Location"].ToString()
                 }).ToList();
 
             report.ReportDataSource = data;
