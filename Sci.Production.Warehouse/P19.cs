@@ -615,6 +615,13 @@ Where a.id = '{0}'", masterID);
             @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ
 	         ,a.Roll,a.Dyelot
 	         ,dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0) [DESC]
+			 ,CASE stocktype
+			  WHEN 'B' THEN 'Bulk'
+			  WHEN 'I' THEN 'Inventory'
+			  WHEN 'O' THEN 'Scrap'
+			  ELSE stocktype
+			  END
+			  stocktype
 		     ,unit = b.StockUnit
 		     ,a.Qty
 		     ,dbo.Getlocation(a.FtyInventoryUkey)[Location]	        
@@ -634,6 +641,7 @@ Where a.id = '{0}'", masterID);
                     Roll = row1["Roll"].ToString(),
                     Dyelot = row1["Dyelot"].ToString(),
                     DESC = row1["DESC"].ToString(),
+                    stocktype = row1["stocktype"].ToString(),
                     unit = row1["unit"].ToString(),
                     QTY = row1["QTY"].ToString(),
                     Location = row1["Location"].ToString()
