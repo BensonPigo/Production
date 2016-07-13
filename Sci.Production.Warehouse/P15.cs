@@ -652,7 +652,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
             string Requestid = row["Requestid"].ToString();
-            string issueLackdate = ((DateTime)MyUtility.Convert.GetDate(row["issueLackdate"])).ToShortDateString();
+            string issueLackdate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
@@ -671,7 +671,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Requestid", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Requestid", Requestid));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issueLackdate", issueLackdate));
 
             pars = new List<SqlParameter>();
@@ -680,14 +680,22 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             result = DBProxy.Current.Select("",
             @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ,
 	        dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0) [DESC]
-			,unit = b.StockUnit
+		    ,unit = b.StockUnit
+		    ,ReqQty=c.Requestqty 
 	        ,a.Qty
-//////            ,dbo.Getlocation(a.FtyInventoryUkey)[Location]
-	        
-            from dbo.IssueLack_Detail a
-            INNER join dbo.PO_Supp_Detail b
+            ,dbo.Getlocation(e.Ukey)[Location]	        
+             from dbo.IssueLack_Detail a 
+		    INNER join dbo.IssueLack d
              on 
+            d.id=a.ID
+            INNER join dbo.PO_Supp_Detail b
+            on 
              b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
+		    inner join dbo.Lack_Detail c
+		    on
+	        c.id=d.RequestID and c.Seq1=a.Seq1 and c.Seq2=a.Seq2
+	        inner join dbo.FtyInventory e
+            on e.poid = a.poid and e.seq1 =a.seq1 and e.seq2=a.seq2 and e.Roll =a.Roll and e.Dyelot =a.Dyelot and e.StockType = a.StockType
              where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
            
@@ -699,8 +707,9 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
                     SEQ = row1["SEQ"].ToString(),
                     DESC = row1["DESC"].ToString(),
                     unit = row1["unit"].ToString(),
-                    
-                    QTY = row1["QTY"].ToString()
+                    ReqQty = row1["ReqQty"].ToString(),
+                    QTY = row1["QTY"].ToString(),
+                    Location = row1["Location"].ToString()
                 }).ToList();
 
             report.ReportDataSource = data;
