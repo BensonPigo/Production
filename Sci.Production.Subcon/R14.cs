@@ -236,8 +236,8 @@ outer apply (
 	select ap.currencyid,
 			apd.Price,
 			apd.apQty ap_qty
-			,apd.apQty*apd.Price*dbo.getRate('{0}',ap.CurrencyID,'USD') ap_amt
-			,dbo.getRate('{0}',ap.CurrencyID,'USD') rate
+			,apd.apQty*apd.Price*dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) ap_amt
+			,dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) rate
 	from ArtworkAP ap 
     inner join ArtworkAP_Detail apd on apd.id = ap.Id 
     inner join orders ON orders.id = apd.orderid
@@ -257,8 +257,8 @@ outer apply (
 	            select ap.currencyid,
 			            apd.Price,
 			            apd.Qty localap_qty
-			            ,apd.Qty*apd.Price*dbo.getRate('{0}',ap.CurrencyID,'USD') localap_amt
-			            ,dbo.getRate('{0}',ap.CurrencyID,'USD') rate
+			            ,apd.Qty*apd.Price*dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) localap_amt
+			            ,dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) rate
 	            from localap ap 
                 inner join Localap_Detail apd on apd.id = ap.Id 
                 inner join orders ON orders.id = apd.orderid
@@ -299,8 +299,8 @@ outer apply (
 	select ap.currencyid,
 			apd.Price,
 			apd.apQty ap_qty
-			,apd.apQty * apd.Price * dbo.getRate('{0}',ap.CurrencyID,'USD') ap_amt
-			,dbo.getRate('{0}',ap.CurrencyID,'USD') rate
+			,apd.apQty * apd.Price * dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) ap_amt
+			,dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) rate
 	from ArtworkAP ap 
     inner join ArtworkAP_Detail apd on apd.id = ap.Id 
     inner join orders on orders.id = apd.orderid

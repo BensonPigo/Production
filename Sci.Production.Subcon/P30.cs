@@ -313,7 +313,7 @@ namespace Sci.Production.Subcon
             };
             ts.CellValidating += (s, e) =>
                 {
-                    if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                    if (MyUtility.Check.Empty(e.FormattedValue) || !this.EditMode) return;
                     if (!MyUtility.Check.Seek(string.Format(@"select refno,unitid,price from localitem 
                                                                       where refno = '{0}' and category ='{1}'and localsuppid = '{2}'"
                                                                     ,e.FormattedValue.ToString(),CurrentMaintain["category"],CurrentMaintain["localsuppid"])
@@ -397,7 +397,8 @@ namespace Sci.Production.Subcon
             .Text("Requestid", header: "Request ID", width: Widths.AnsiChars(13), iseditingreadonly: true) //11
             .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true) //12
             .Numeric("apqty", header: "AP Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true) //13
-            ;     //18
+            .Text("remark", header: "Remark", width: Widths.AnsiChars(25)) 
+            ;     
             #endregion
             #region 可編輯欄位變色
             detailgrid.Columns[1].DefaultCellStyle.BackColor = Color.Pink;  

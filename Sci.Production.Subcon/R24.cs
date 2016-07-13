@@ -230,8 +230,8 @@ from (
 	select currencyid,
 			apd.Price,
 			apd.Qty ap_qty
-			,apd.Qty*apd.Price*dbo.getRate('{0}',AP.CurrencyID,'USD') ap_amt
-			,dbo.getRate('{0}',AP.CurrencyID,'USD') rate
+			,apd.Qty*apd.Price*dbo.getRate('{0}',AP.CurrencyID,'USD',AP.ISSUEDATE) ap_amt
+			,dbo.getRate('{0}',AP.CurrencyID,'USD',AP.ISSUEDATE) rate
 	from localap ap inner join LocalAP_Detail apd on apd.id = ap.Id 
 		where ap.Category = cte.artworktypeid and apd.OrderId = aa.POID AND AP.Status = 'Approved') t
 		) x		

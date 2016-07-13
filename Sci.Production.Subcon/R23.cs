@@ -212,8 +212,8 @@ from (
 	select currencyid,
 			pod.Price,
 			pod.Qty Po_qty
-			,pod.Qty*pod.Price*dbo.getRate('{0}',Po.CurrencyID,'USD') Po_amt
-			,dbo.getRate('{0}',Po.CurrencyID,'USD') rate
+			,pod.Qty*pod.Price*dbo.getRate('{0}',Po.CurrencyID,'USD',PO.ISSUEDATE) Po_amt
+			,dbo.getRate('{0}',Po.CurrencyID,'USD',PO.ISSUEDATE) rate
 	from localpo po inner join Localpo_Detail pod on Pod.id = Po.Id 
 		where po.Category = cte.artworktypeid and pod.OrderId = aa.POID AND po.Status = 'Approved') t
 		) x		

@@ -221,8 +221,8 @@ outer apply (
 	select po.currencyid,
 			pod.Price,
 			pod.poQty po_qty
-			,pod.poQty*pod.Price*dbo.getRate('{0}',po.CurrencyID,'USD') po_amt
-			,dbo.getRate('{0}',po.CurrencyID,'USD') rate
+			,pod.poQty*pod.Price*dbo.getRate('{0}',po.CurrencyID,'USD',po.issuedate) po_amt
+			,dbo.getRate('{0}',po.CurrencyID,'USD',po.issuedate) rate
 	from ArtworkPo po 
     inner join ArtworkPo_Detail pod on pod.id = po.Id 
     inner join orders ON orders.id = pod.orderid
@@ -242,8 +242,8 @@ outer apply (
 	select po.currencyid,
 			pod.Price,
 			pod.Qty localpo_qty
-			,pod.Qty*pod.Price*dbo.getRate('{0}',po.CurrencyID,'USD') localpo_amt
-			,dbo.getRate('{0}',po.CurrencyID,'USD') rate
+			,pod.Qty*pod.Price*dbo.getRate('{0}',po.CurrencyID,'USD',po.issuedate) localpo_amt
+			,dbo.getRate('{0}',po.CurrencyID,'USD',po.issuedate) rate
 	from localPo po 
     inner join LocalPO_Detail pod on pod.id = po.Id 
     inner join orders ON orders.id = pod.orderid
@@ -283,8 +283,8 @@ outer apply (
 	select po.currencyid,
 			pod.Price,
 			pod.poQty po_qty
-			,pod.poQty*pod.Price*dbo.getRate('{0}',po.CurrencyID,'USD') po_amt
-			,dbo.getRate('{0}',po.CurrencyID,'USD') rate
+			,pod.poQty*pod.Price*dbo.getRate('{0}',po.CurrencyID,'USD',po.issuedate) po_amt
+			,dbo.getRate('{0}',po.CurrencyID,'USD',po.issuedate) rate
 	from ArtworkPo po 
     inner join ArtworkPo_Detail pod on pod.id = po.Id 
     inner join orders on orders.id = pod.orderid

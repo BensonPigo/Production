@@ -83,7 +83,7 @@ namespace Sci.Production.Subcon
                 if (dr_localPO["category"].ToString().TrimEnd().ToUpper() == "CARTON")
                 {
                     strSQLCmd = string.Format(@"select 1 as Selected,c.POID ,b.OrderID ,c.StyleID,c.SeasonID ,b.RefNo 
-                                                                ,'' as description 
+                                                                ,dbo.getitemdesc('{2}',b.refno) as description 
                                                                 ,'' as threadcolorid
                                                                 ,sum(b.CTNQty) qty, d.UnitID,d.Price, sum(b.CTNQty) * d.Price as amount 
                                                                 ,'' as remark ,a.EstCTNArrive etd ,a.ID as requestid, '' as id
@@ -98,7 +98,7 @@ namespace Sci.Production.Subcon
                                                                     and a.LocalPOID =''
                                                                     and a.factoryid = '{0}'
 and a.mdivisionid='{1}'"
-                                                                ,Env.User.Factory,Env.User.Keyword);
+                                                                , Env.User.Factory, Env.User.Keyword, dr_localPO["category"]);
 
                     if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
                     if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
@@ -132,7 +132,7 @@ and a.mdivisionid='{1}'"
                 else
                 {
                     strSQLCmd = string.Format(@"select 1 as Selected,c.POID ,a.OrderID ,a.StyleID,a.SeasonID ,b.RefNo 
-                                                                ,'' as description 
+                                                                ,dbo.getitemdesc('{2}',b.refno) as description 
                                                                 ,b.threadcolorid
                                                                 ,b.PurchaseQty as qty
                                                                 ,d.UnitID,d.Price
@@ -151,7 +151,7 @@ and a.mdivisionid='{1}'"
                                                                     and a.factoryid = '{0}'
 and a.Mdivisionid = '{1}'
                                                                 "
-                        , Env.User.Factory,Env.User.Keyword);
+                        , Env.User.Factory, Env.User.Keyword, dr_localPO["category"]);
 
                     if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
                     if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }

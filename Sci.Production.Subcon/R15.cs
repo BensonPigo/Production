@@ -85,10 +85,10 @@ namespace Sci.Production.Subcon
 , b.poqty
 , a.Currencyid
 , b.UnitPrice
-, round(b.UnitPrice*dbo.getRate(s.ExchangeId,a.CurrencyId,'USD'),4) UnitPriceUSD
+, round(b.UnitPrice*dbo.getRate(s.ExchangeId,a.CurrencyId,'USD',A.ISSUEDATE),4) UnitPriceUSD
 , b.Cost 
-, b.cost - round(b.UnitPrice*dbo.getRate(s.ExchangeId,a.CurrencyId,'USD'),4) variance
-from Artworkpo a
+, b.cost - round(b.UnitPrice*dbo.getRate(s.ExchangeId,a.CurrencyId,'USD',A.ISSUEDATE),4) variance
+from dbo.system s,dbo.Artworkpo a
 inner join artworkpo_detail b on b.id = a.id
 inner join orders c on c.id = b.orderid
 where a.issuedate between '{0}' and '{1}'
