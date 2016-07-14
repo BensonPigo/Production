@@ -2175,6 +2175,8 @@ Sci.Production.Warehouse/P24_AccumulatedQty.resx -text
 Sci.Production.Warehouse/P24_Import.Designer.cs -text
 Sci.Production.Warehouse/P24_Import.cs -text
 Sci.Production.Warehouse/P24_Import.resx -text
+Sci.Production.Warehouse/P24_Print.rdlc -text
+Sci.Production.Warehouse/P24_PrintData.cs -text
 Sci.Production.Warehouse/P25.Designer.cs -text
 Sci.Production.Warehouse/P25.cs -text
 Sci.Production.Warehouse/P25.rdlc -text
