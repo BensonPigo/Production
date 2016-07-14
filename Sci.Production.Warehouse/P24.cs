@@ -621,5 +621,113 @@ Where a.id = '{0}'", masterID);
             else
             { detailgridbs.Position = index; }
         }
+
+         protected override bool ClickPrint()
+        {
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString();
+            string Remark = row["Remark"].ToString();
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select("",
+            @"select    
+            b.name 
+            from dbo.TransferOut a 
+            inner join dbo.mdivision  b 
+            on b.id = a.mdivisionid
+            where b.id = a.mdivisionid
+            and a.id = @ID", pars, out dt);
+            if (!result) { this.ShowErr(result); }
+            string RptTitle = dt.Rows[0]["name"].ToString();
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable cc;
+            string QTY;
+            result = DBProxy.Current.Select("",
+            @"select QTY 
+            from dbo.TransferOut_Detail 
+            where id = @ID", pars, out cc);
+            if (!result) { this.ShowErr(result); }
+            if (cc.Rows.Count == 0)
+                QTY = "";
+            else
+                QTY = cc.Rows[0]["QTY"].ToString();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("QTY", QTY));
+
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dd;
+            result = DBProxy.Current.Select("",
+            @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ
+	         ,a.Roll,a.Dyelot
+	         ,dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0) [DESC]
+			 ,CASE stocktype
+			  WHEN 'B' THEN 'Bulk'
+			  WHEN 'I' THEN 'Inventory'
+			  WHEN 'O' THEN 'Scrap'
+			  ELSE stocktype
+			  END
+			  stocktype
+		     ,unit = b.StockUnit
+		     ,a.Qty
+		     ,dbo.Getlocation(a.FtyInventoryUkey)[Location]	        
+             from dbo.TransferOut_Detail a 
+             INNER join dbo.PO_Supp_Detail b
+             on 
+             b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
+             where a.id= @ID", pars, out dd);
+            if (!result) { this.ShowErr(result); }
+
+            // 傳 list 資料            
+            List<P24_PrintData> data = dd.AsEnumerable()
+                .Select(row1 => new P24_PrintData()
+                {
+                    POID = row1["POID"].ToString(),
+                    SEQ = row1["SEQ"].ToString(),
+                    DESC = row1["DESC"].ToString(),
+                    TYPE = row1["TYPE"].ToString(),
+                    unit = row1["unit"].ToString(),
+                    Roll = row1["Roll"].ToString(),
+                    Dyelot = row1["Dyelot"].ToString(),
+                    FromLocation = row1["FromLocation"].ToString(),
+                    QTY = row1["QTY"].ToString(),
+                    Total = row1["Total"].ToString()
+                }).ToList();
+
+            report.ReportDataSource = data;
+
+            // 指定是哪個 RDLC
+            //DualResult result;
+            Type ReportResourceNamespace = typeof(P24_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P24_Print.rdlc";
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                //this.ShowException(result);
+                return false;
+            }
+
+            report.ReportResource = reportresource;
+
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
+
+            return true;
+
+        }
     }
 }
+    
