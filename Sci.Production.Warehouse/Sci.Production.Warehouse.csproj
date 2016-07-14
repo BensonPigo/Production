@@ -158,6 +158,7 @@
     <Compile Include="P19_PrintData.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="P22_PrintData.cs" />
     <Compile Include="P29.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -927,6 +928,7 @@
     <EmbeddedResource Include="P16_Print.rdlc" />
     <EmbeddedResource Include="P18_Print.rdlc" />
     <EmbeddedResource Include="P19_Print.rdlc" />
+    <EmbeddedResource Include="P22_Print.rdlc" />
     <EmbeddedResource Include="P29.resx">
       <DependentUpon>P29.cs</DependentUpon>
     </EmbeddedResource>
