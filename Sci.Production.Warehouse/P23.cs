@@ -13,6 +13,8 @@ using System.Transactions;
 using System.Windows.Forms;
 using System.Reflection;
 using Microsoft.Reporting.WinForms;
+using System.Data.SqlClient;
+using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
@@ -672,6 +674,99 @@ Where a.id = '{0}'", masterID);
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
             { detailgridbs.Position = index; }
+        }
+
+        protected override bool ClickPrint()
+        {
+            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
+                return false;
+            }
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString();
+            string Remark = row["Remark"].ToString();
+            string M = row["MdivisionID"].ToString();
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select("",
+            @"select    
+            b.name 
+            from dbo.Subtransfer  a 
+            inner join dbo.mdivision  b 
+            on b.id = a.mdivisionid
+            where b.id = a.mdivisionid
+            and a.id = @ID", pars, out dt);
+            if (!result) { this.ShowErr(result); }
+            string RptTitle = dt.Rows[0]["name"].ToString();
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Factory", M));
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dtDetail;
+            string sqlcmd = @"select  t.frompoid,t.fromseq1 + '-' +t.fromseq2 as SEQ,t.topoid,t.toseq1  + '-' +t.toseq2 as TOSEQ
+           ,dbo.getMtlDesc(t.FromPOID,t.FromSeq1,t.FromSeq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) [desc]
+            ,t.fromroll,t.fromdyelot,p.StockUnit
+            ,dbo.Getlocation(b.ukey) [BULKLOCATION] ,t.Tolocation,t.Qty           
+            from dbo.Subtransfer_detail t 
+            left join dbo.PO_Supp_Detail p 
+            on 
+            p.id= t.FromPOID and p.SEQ1 = t.FromSeq1 and p.seq2 = t.FromSeq2
+            inner join FtyInventory b
+         
+		    on b.poid = t.FromPOID and b.seq1 =t.FromSeq1 and b.seq2=t.FromSeq2 and b.Roll =t.FromRoll and b.Dyelot =t.FromDyelot where t.id= @ID";
+            result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
+            if (!result) { this.ShowErr(sqlcmd, result); }
+
+
+
+            // 傳 list 資料            
+            List<P23_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P23_PrintData()
+                {
+                    StockSP = row1["frompoid"].ToString(),
+                    StockSEQ = row1["SEQ"].ToString(),
+                    IssueSP = row1["topoid"].ToString(),
+                    SEQ = row1["TOSEQ"].ToString(),
+                    DESC = row1["desc"].ToString(),
+                    Roll = row1["fromroll"].ToString(),
+                    DYELOT = row1["fromdyelot"].ToString(),
+                    Unit = row1["StockUnit"].ToString(),
+                    BULKLOCATION = row1["BULKLOCATION"].ToString(),
+                    INVENTORYLOCATION = row1["Tolocation"].ToString(),
+                    QTY = row1["Qty"].ToString()
+                }).ToList();
+
+            report.ReportDataSource = data;
+
+            // 指定是哪個 RDLC
+            //DualResult result;
+            Type ReportResourceNamespace = typeof(P23_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P23_Print.rdlc";
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                //this.ShowException(result);
+                return false;
+            }
+
+            report.ReportResource = reportresource;
+
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
+            return true;
         }
     }
 }
