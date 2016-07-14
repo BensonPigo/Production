@@ -163,6 +163,7 @@
     </Compile>
     <Compile Include="P23_PrintData.cs" />
     <Compile Include="P24_PrintData.cs" />
+    <Compile Include="P25_PrintData.cs" />
     <Compile Include="P29.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -934,6 +935,7 @@
     <EmbeddedResource Include="P19_Print.rdlc" />
     <EmbeddedResource Include="P22_Print.rdlc" />
     <EmbeddedResource Include="P24_Print.rdlc" />
+    <EmbeddedResource Include="P25.rdlc" />
     <EmbeddedResource Include="P29.resx">
       <DependentUpon>P29.cs</DependentUpon>
     </EmbeddedResource>
@@ -1393,6 +1395,7 @@
     <None Include="Properties\DataSources\P18_PrintData.datasource" />
     <None Include="Properties\DataSources\P19_PrintData.datasource" />
     <None Include="Properties\DataSources\P22_PrintData.datasource" />
+    <None Include="Properties\DataSources\P25_PrintData.datasource" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
