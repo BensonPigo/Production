@@ -637,7 +637,7 @@ Where a.id = '{0}'", masterID);
             DualResult result = DBProxy.Current.Select("",
             @"select    
             b.name 
-            from dbo.TransferOut a 
+            from dbo.Subtransfer a 
             inner join dbo.mdivision  b 
             on b.id = a.mdivisionid
             where b.id = a.mdivisionid
@@ -656,7 +656,7 @@ Where a.id = '{0}'", masterID);
             string QTY;
             result = DBProxy.Current.Select("",
             @"select QTY 
-            from dbo.TransferOut_Detail 
+            from dbo.SubTransfer_Detail 
             where id = @ID", pars, out cc);
             if (!result) { this.ShowErr(result); }
             if (cc.Rows.Count == 0)
