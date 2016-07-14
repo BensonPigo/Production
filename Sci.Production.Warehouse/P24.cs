@@ -669,23 +669,25 @@ Where a.id = '{0}'", masterID);
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result = DBProxy.Current.Select("",
-            @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ
-	         ,a.Roll,a.Dyelot
-	         ,dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0) [DESC]
-			 ,CASE stocktype
-			  WHEN 'B' THEN 'Bulk'
-			  WHEN 'I' THEN 'Inventory'
-			  WHEN 'O' THEN 'Scrap'
-			  ELSE stocktype
+            @"select a.FromPOID,a.FromSeq1+'-'+a.FromSeq2 as SEQ
+	         ,dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.FromSeq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.refno, b.seq1, b.seq2),1,0)) [DESC]
+			 ,CASE b.fabrictype
+			  WHEN 'F' THEN 'Fabric'
+			  WHEN 'A' THEN 'Accessory'
+			  WHEN 'O' THEN 'Other'
+			  ELSE fabrictype
 			  END
-			  stocktype
+			  MTLTYPE
 		     ,unit = b.StockUnit
+			 ,a.FromRoll,a.FromDyelot
+			 ,dbo.Getlocation(a.FromFtyInventoryUkey)[FromLocation]	 
 		     ,a.Qty
-		     ,dbo.Getlocation(a.FtyInventoryUkey)[Location]	        
-             from dbo.TransferOut_Detail a 
+			--,a.FromPOID,a.FromSeq1+'-'+a.FromSeq2,sum(a.Qty) [Total]
+             from dbo.SubTransfer_Detail a 
              INNER join dbo.PO_Supp_Detail b
              on 
-             b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
+             b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
+			--group by a.FromPOID,a.FromSeq1+'-'+a.FromSeq2
              where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
@@ -696,7 +698,7 @@ Where a.id = '{0}'", masterID);
                     POID = row1["POID"].ToString(),
                     SEQ = row1["SEQ"].ToString(),
                     DESC = row1["DESC"].ToString(),
-                    TYPE = row1["TYPE"].ToString(),
+                    MTLTYPE = row1["MTLTYPE"].ToString(),
                     unit = row1["unit"].ToString(),
                     Roll = row1["Roll"].ToString(),
                     Dyelot = row1["Dyelot"].ToString(),
