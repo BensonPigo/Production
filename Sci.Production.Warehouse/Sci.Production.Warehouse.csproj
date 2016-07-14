@@ -161,7 +161,6 @@
     <Compile Include="P22_PrintData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="P22_PrintData1.cs" />
     <Compile Include="P29.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1390,6 +1389,7 @@
     <None Include="Properties\DataSources\P15_PrintData.datasource" />
     <None Include="Properties\DataSources\P18_PrintData.datasource" />
     <None Include="Properties\DataSources\P19_PrintData.datasource" />
+    <None Include="Properties\DataSources\P22_PrintData.datasource" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
