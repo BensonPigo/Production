@@ -141,11 +141,15 @@ namespace Sci.Production.Warehouse
             ,dbo.Getlocation(f.ukey)[Location] 
             from dbo.TransferIn_detail a
             left join dbo.PO_Supp_Detail b
-             on 
-             b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
-			 inner join FtyInventory f
-			 on 
-             f.MDivisionID= a.MDivisionID
+            on 
+            b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
+			inner join FtyInventory f
+			on f.MDivisionID= a.MDivisionID and f.POID = a.poid
+			And f.Seq1 = a.seq1
+			And f.Seq2 = a.seq2
+			And f.Roll =  a.roll
+			And f.Dyelot = a.dyelot
+			And f.StockType = a.stocktype
              where a.id= @ID", pars, out dtDetail);
             if (!result) { this.ShowErr(result); }
 
