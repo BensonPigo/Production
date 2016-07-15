@@ -137,12 +137,12 @@ namespace Sci.Production.Warehouse
             DataTable dtDetail;
             string sqlcmd = @"select  t.frompoid+(t.fromseq1 + '-' +t.fromseq2) as StockSEQ,t.topoid+(t.toseq1  + '-' +t.toseq2) as ToSP
 			,dbo.getMtlDesc(t.FromPOID,t.FromSeq1,t.FromSeq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) [desc]
-            ,case b.FromStockType
+            ,case t.FromStockType
 			WHEN 'B'THEN 'Bulk'
 			WHEN 'I'THEN 'Inventory'
 			ELSE t.FromStockType
 			end FromStock
-			,case b.TostockType
+			,case t.TostockType
 			WHEN 'B'THEN 'Bulk'
 			WHEN 'I'THEN 'Inventory'
 			ELSE t.FromStockType
@@ -154,9 +154,6 @@ namespace Sci.Production.Warehouse
             left join dbo.PO_Supp_Detail p 
             on 
            t.ID = p.ID and   p.id= t.FromPOID and p.SEQ1 = t.FromSeq1 and p.seq2 = t.FromSeq2 
-		   LEFT JOIN DBO.SubTransfer_Detail b
-		   ON 
-		   b.ID = t.ID
             where t.id= @ID";
             result1 = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result1) { this.ShowErr(sqlcmd, result1); }
@@ -188,39 +185,21 @@ namespace Sci.Production.Warehouse
             Type ReportResourceNamespace = typeof(P32_PrintData);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
             string ReportResourceName = "P32_Print.rdlc";
+         
 
-            IReportResource reportresource1;
-            if (!(result1 = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource1)))
+            IReportResource reportresource;
+            if (!(result1 = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
             {
                 //this.ShowException(result);
                 return false;
             }
+            report.ReportResource = reportresource;
 
-            Sci.Win.ReportDefinition rd = new Sci.Win.ReportDefinition();
-            DualResult result;
-
-            IReportResource reportresource;
-
-            DataTable dt = (DataTable)gridbs.DataSource;
-            DataTable dtmaster = new DataTable();
-
-            if (!(result = ReportResources.ByEmbeddedResource(Assembly.GetAssembly(GetType()), GetType(), "P13Detail.rdlc", out reportresource)))
-            {
-                ShowErr(result);
-            }
-            else
-            {
-                rd.ReportResource = reportresource;
-                rd.ReportDataSources.Add(new System.Collections.Generic.KeyValuePair<string, object>("DataSet1", dtmaster));
-                // Assign subreport datasource, 如果不是 master-detail report 則以下的指令不必指定.
-                rd.SubreportDataSource("RepDetail", "DetailData", (DataTable)this.detailgridbs.DataSource);
-                using (var frm = new Sci.Win.Subs.ReportView(rd))
-                {
-                    frm.ShowDialog(this);
-                }
-            }
-
-            return base.ClickPrint();
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
+            return true;
         }
 
         private void MySubreportEventHandler(object sender, SubreportProcessingEventArgs e)

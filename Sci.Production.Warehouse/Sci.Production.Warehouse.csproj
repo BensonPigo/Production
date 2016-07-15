@@ -943,6 +943,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P31_Print.rdlc" />
     <EmbeddedResource Include="P32_Print.rdlc" />
+    <EmbeddedResource Include="P37_Print.rdlc" />
     <EmbeddedResource Include="Report\R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
     </EmbeddedResource>
