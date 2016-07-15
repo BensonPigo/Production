@@ -9,7 +9,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>=Parameters!QTY.Value</Value>
+                <Value>=Parameters!Total.Value</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -20,9 +20,9 @@
         </Paragraphs>
         <rd:DefaultName>Textbox33</rd:DefaultName>
         <Top>3.32052cm</Top>
-        <Left>14.88547cm</Left>
+        <Left>18.1663cm</Left>
         <Height>0.60854cm</Height>
-        <Width>1.61395cm</Width>
+        <Width>1.85207cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -50,8 +50,8 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox34</rd:DefaultName>
-        <Top>3.32053cm</Top>
-        <Left>13.84477cm</Left>
+        <Top>3.32052cm</Top>
+        <Left>17.01977cm</Left>
         <Height>0.60729cm</Height>
         <Width>1.0407cm</Width>
         <ZIndex>1</ZIndex>
@@ -67,9 +67,9 @@
       </Textbox>
       <Line Name="Line4">
         <Top>3.63239cm</Top>
-        <Left>2.60879cm</Left>
+        <Left>0.80962cm</Left>
         <Height>0cm</Height>
-        <Width>11.20951cm</Width>
+        <Width>16.10432cm</Width>
         <ZIndex>2</ZIndex>
         <Style>
           <Border>
@@ -879,6 +879,12 @@
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="QTY">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Total">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>

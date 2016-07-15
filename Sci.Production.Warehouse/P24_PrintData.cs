@@ -17,6 +17,5 @@ namespace Sci.Production.Warehouse
         public string Dyelot { get; set; }
         public string FromLocation { get; set; }
         public string QTY { get; set; }
-        public string Total { get; set; } 
     }
 }

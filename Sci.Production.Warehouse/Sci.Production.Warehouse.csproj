@@ -1395,6 +1395,7 @@
     <None Include="Properties\DataSources\P18_PrintData.datasource" />
     <None Include="Properties\DataSources\P19_PrintData.datasource" />
     <None Include="Properties\DataSources\P22_PrintData.datasource" />
+    <None Include="Properties\DataSources\P24_PrintData.datasource" />
     <None Include="Properties\DataSources\P25_PrintData.datasource" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

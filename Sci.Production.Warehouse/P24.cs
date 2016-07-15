@@ -653,17 +653,19 @@ Where a.id = '{0}'", masterID);
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable cc;
-            string QTY;
+            string Total;
             result = DBProxy.Current.Select("",
-            @"select QTY 
-            from dbo.SubTransfer_Detail 
-            where id = @ID", pars, out cc);
+            @"select FromPOID,FromSeq1+'-'+FromSeq2 as SEQ,sum(Qty) [Total] 
+			from dbo.SubTransfer_Detail 
+            where id = @ID
+			group by FromPOID ,FromSeq1+'-'+FromSeq2
+            ", pars, out cc);
             if (!result) { this.ShowErr(result); }
             if (cc.Rows.Count == 0)
-                QTY = "";
+                Total = "";
             else
-                QTY = cc.Rows[0]["QTY"].ToString();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("QTY", QTY));
+                Total = cc.Rows[0]["Total"].ToString();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total", Total));
 
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
@@ -681,13 +683,11 @@ Where a.id = '{0}'", masterID);
 		     ,unit = b.StockUnit
 			 ,a.FromRoll,a.FromDyelot
 			 ,dbo.Getlocation(a.FromFtyInventoryUkey)[FromLocation]	 
-		     ,a.Qty
-			--,a.FromPOID,a.FromSeq1+'-'+a.FromSeq2,sum(a.Qty) [Total]
+		     ,a.Qty			
              from dbo.SubTransfer_Detail a 
              INNER join dbo.PO_Supp_Detail b
              on 
-             b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
-			--group by a.FromPOID,a.FromSeq1+'-'+a.FromSeq2
+             b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2			
              where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
@@ -703,8 +703,7 @@ Where a.id = '{0}'", masterID);
                     Roll = row1["Roll"].ToString(),
                     Dyelot = row1["Dyelot"].ToString(),
                     FromLocation = row1["FromLocation"].ToString(),
-                    QTY = row1["QTY"].ToString(),
-                    Total = row1["Total"].ToString()
+                    QTY = row1["QTY"].ToString()
                 }).ToList();
 
             report.ReportDataSource = data;
