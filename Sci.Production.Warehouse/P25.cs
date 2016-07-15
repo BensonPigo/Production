@@ -677,7 +677,7 @@ Where a.id = '{0}'", masterID);
             //DualResult result;
             Type ReportResourceNamespace = typeof(P25_PrintData);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P25_Print.rdlc";
+            string ReportResourceName = "P25.rdlc";
 
             IReportResource reportresource;
             if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))

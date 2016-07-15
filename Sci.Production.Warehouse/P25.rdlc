@@ -178,7 +178,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Left</TextAlign>
+                                <TextAlign>Right</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -511,7 +511,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox3</rd:DefaultName>
           <Top>2.91455cm</Top>
-          <Left>13.79491cm</Left>
+          <Left>14.11241cm</Left>
           <Height>0.6cm</Height>
           <Width>2.36771cm</Width>
           <ZIndex>6</ZIndex>
@@ -541,7 +541,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox3</rd:DefaultName>
           <Top>2.91455cm</Top>
-          <Left>16.26845cm</Left>
+          <Left>16.58595cm</Left>
           <Height>0.6cm</Height>
           <Width>2.39417cm</Width>
           <ZIndex>7</ZIndex>
@@ -571,7 +571,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox3</rd:DefaultName>
           <Top>3.65566cm</Top>
-          <Left>14.93262cm</Left>
+          <Left>15.25012cm</Left>
           <Height>0.6cm</Height>
           <Width>1.23cm</Width>
           <ZIndex>8</ZIndex>
@@ -603,7 +603,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox3</rd:DefaultName>
           <Top>3.65566cm</Top>
-          <Left>16.30373cm</Left>
+          <Left>16.62123cm</Left>
           <Height>0.6cm</Height>
           <Width>2.39417cm</Width>
           <ZIndex>9</ZIndex>
