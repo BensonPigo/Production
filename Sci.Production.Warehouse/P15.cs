@@ -654,6 +654,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             string Requestid = row["Requestid"].ToString();
             string issueLackdate = ((DateTime)MyUtility.Convert.GetDate(row["issueLackdate"])).ToShortDateString();
 
+            #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
@@ -673,7 +674,9 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Requestid", Requestid));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issueLackdate", issueLackdate));
+            #endregion
 
+            #region  抓表身資料
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable cc;
@@ -726,8 +729,10 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
                 }).ToList();
 
             report.ReportDataSource = data;
+            #endregion
 
             // 指定是哪個 RDLC
+            #region  指定是哪個 RDLC
             //DualResult result;
             Type ReportResourceNamespace = typeof(P15_PrintData);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
@@ -741,7 +746,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             }
 
             report.ReportResource = reportresource;
-
+            #endregion
             // 開啟 report view
             var frm = new Sci.Win.Subs.ReportView(report);
             frm.MdiParent = MdiParent;

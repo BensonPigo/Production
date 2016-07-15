@@ -674,6 +674,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         }
         protected override bool ClickPrint()
         {
+            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
+                return false;
+            }
+
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
@@ -681,7 +688,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             string cutno = this.ebCut.Text;
 
-
+            #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
@@ -723,23 +730,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            DataTable bb;
-            string sqlcmd = @"select 
-            t.poid,t.seq1+ '-' +t.seq2 as SEQ,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0) [desc],t.Roll,t.Dyelot,t.Qty,p.StockUnit
-            ,dbo.Getlocation(b.ukey) [location]            
-            from dbo.Issue_Detail t 
-            left join dbo.PO_Supp_Detail p 
-            on 
-            p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
-            left join FtyInventory b
-            on b.poid = t.poid and b.seq1 =t.seq1 and b.seq2=t.seq2 and b.Roll =t.Roll and b.Dyelot =t.Dyelot and b.StockType = t.StockType
-            where t.id= @ID";
-            result = DBProxy.Current.Select("", sqlcmd, pars, out bb);
-            if (!result) { this.ShowErr(sqlcmd, result); }
-           
-
-            pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
             DataTable cc;
             string cLineNo;
             result = DBProxy.Current.Select("",
@@ -752,7 +742,9 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             else
                 cLineNo = cc.Rows[0]["sewline"].ToString();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cCellNo", cLineNo));
+            #endregion
 
+            #region  抓表身資料
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
@@ -767,7 +759,22 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             else
                 Qty = dd.Rows[0]["Qty"].ToString();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Qty", Qty));
-            
+
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable bb;
+            string sqlcmd = @"select 
+            t.poid,t.seq1+ '-' +t.seq2 as SEQ,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0) [desc],t.Roll,t.Dyelot,t.Qty,p.StockUnit
+            ,dbo.Getlocation(b.ukey) [location]            
+            from dbo.Issue_Detail t 
+            left join dbo.PO_Supp_Detail p 
+            on 
+            p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
+            left join FtyInventory b
+            on b.poid = t.poid and b.seq1 =t.seq1 and b.seq2=t.seq2 and b.Roll =t.Roll and b.Dyelot =t.Dyelot and b.StockType = t.StockType
+            where t.id= @ID";
+            result = DBProxy.Current.Select("", sqlcmd, pars, out bb);
+            if (!result) { this.ShowErr(sqlcmd, result); }
 
             // 傳 list 資料            
             List<P10_PrintData> data = bb.AsEnumerable()
@@ -783,9 +790,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     Qty  =row1["Qty"].ToString()
                 }).ToList();
 
-            report.ReportDataSource = data;            
+            report.ReportDataSource = data;
+            #endregion
 
             // 指定是哪個 RDLC
+            #region  指定是哪個 RDLC
             //DualResult result;
             Type ReportResourceNamespace = typeof(P10_PrintData);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
@@ -799,6 +808,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             }
             
             report.ReportResource = reportresource;
+            #endregion
 
             // 開啟 report view
             var frm = new Sci.Win.Subs.ReportView(report);
