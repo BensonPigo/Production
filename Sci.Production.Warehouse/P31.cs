@@ -107,6 +107,7 @@ namespace Sci.Production.Warehouse
 
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
+            string Estbackdate = row["Estbackdate"].ToString();
             string Remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
@@ -117,7 +118,7 @@ namespace Sci.Production.Warehouse
             DualResult result1 = DBProxy.Current.Select("",
             @"select    
             b.name 
-            from dbo.Subtransfer a 
+            from dbo.Borrowback a 
             inner join dbo.mdivision  b 
             on b.id = a.mdivisionid
             where b.id = a.mdivisionid
@@ -127,27 +128,13 @@ namespace Sci.Production.Warehouse
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Estbackdate", Estbackdate));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
             #endregion
 
 
             #region  抓表身資料
-            pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
-            DataTable aa;
-            string QTY;
-            result1 = DBProxy.Current.Select("",
-            @"select QTY 
-            from dbo.Subtransfer_detail 
-            where id = @ID", pars, out aa);
-            if (!result1) { this.ShowErr(result1); }
-            if (aa.Rows.Count == 0)
-                QTY = "";
-            else
-                QTY = aa.Rows[0]["QTY"].ToString();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("QTY", QTY));
-
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
@@ -167,18 +154,19 @@ namespace Sci.Production.Warehouse
             if (!result1) { this.ShowErr(result1); }
 
             // 傳 list 資料            
-            List<P22_PrintData> data = dd.AsEnumerable()
-                .Select(row1 => new P22_PrintData()
+            List<P31_PrintData> data = dd.AsEnumerable()
+                .Select(row1 => new P31_PrintData()
                 {
-                    FromPOID = row1["FromPOID"].ToString(),
-                    SEQ = row1["SEQ"].ToString(),
+                    FromSP = row1["FromSP"].ToString(),
+                    TOSP= row1["TOSP"].ToString(),
                     DESC = row1["DESC"].ToString(),
+                    StockType = row1["StockType"].ToString(),
+                    Location = row1["Location"].ToString(),
                     unit = row1["unit"].ToString(),
-                    FromRoll = row1["FromRoll"].ToString(),
-                    FromDyelot = row1["FromDyelot"].ToString(),
+                    Roll = row1["Roll"].ToString(),
+                    Dyelot = row1["Dyelot"].ToString(),
                     QTY = row1["QTY"].ToString(),
-                    From_Location = row1["From_Location"].ToString(),
-                    ToLocation = row1["ToLocation"].ToString()
+                    Total = row1["Total"].ToString()
                 }).ToList();
 
             report.ReportDataSource = data;
@@ -187,9 +175,9 @@ namespace Sci.Production.Warehouse
             // 指定是哪個 RDLC
             #region  指定是哪個 RDLC
             //DualResult result;
-            Type ReportResourceNamespace = typeof(P22_PrintData);
+            Type ReportResourceNamespace = typeof(P31_PrintData);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P22_Print.rdlc";
+            string ReportResourceName = "P31_Print.rdlc";
 
             IReportResource reportresource1;
             if (!(result1 = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource1)))
