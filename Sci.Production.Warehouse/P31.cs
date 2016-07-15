@@ -177,7 +177,7 @@ namespace Sci.Production.Warehouse
                     unit = row1["unit"].ToString(),
                     FromRoll = row1["FromRoll"].ToString(),
                     FromDyelot = row1["FromDyelot"].ToString(),
-                    QTY = row1["QTY"].ToString(),
+                    QTY = MyUtility.Convert.GetDecimal(row1["QTY"]),
                     Total = MyUtility.Convert.GetDecimal(row1["Total"])
                 }).ToList();
 
