@@ -13,6 +13,8 @@ using System.Transactions;
 using System.Windows.Forms;
 using System.Reflection;
 using Microsoft.Reporting.WinForms;
+using Sci.Win;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
@@ -100,6 +102,97 @@ namespace Sci.Production.Warehouse
             if (dr["status"].ToString().ToUpper() != "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
+                return false;
+            }
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString();
+            string Remark = row["Remark"].ToString();
+            string M = row["MdivisionID"].ToString();
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            #region -- 撈表頭資料 --
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dt1;
+            DualResult result1 = DBProxy.Current.Select("",
+            @"select    
+            b.name 
+            from dbo.Borrowback  a 
+            inner join dbo.mdivision  b 
+            on b.id = a.mdivisionid
+            where b.id = a.mdivisionid
+            and a.id = @ID", pars, out dt1);
+            if (!result1) { this.ShowErr(result1); }
+            string RptTitle = dt1.Rows[0]["name"].ToString();
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Factory", M));
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            #endregion
+
+            #region -- 撈表身資料 --
+            DataTable dtDetail;
+            string sqlcmd = @"select  t.frompoid+(t.fromseq1 + '-' +t.fromseq2) as StockSEQ,t.topoid+(t.toseq1  + '-' +t.toseq2) as ToSP
+			,dbo.getMtlDesc(t.FromPOID,t.FromSeq1,t.FromSeq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) [desc]
+            ,case b.FromStockType
+			WHEN 'B'THEN 'Bulk'
+			WHEN 'I'THEN 'Inventory'
+			ELSE t.FromStockType
+			end FromStock
+			,case b.TostockType
+			WHEN 'B'THEN 'Bulk'
+			WHEN 'I'THEN 'Inventory'
+			ELSE t.FromStockType
+			end ToStock
+			,dbo.Getlocation(t.FromFtyInventoryUkey) [Location]
+			,p.StockUnit,t.fromroll,t.fromdyelot
+            ,t.Qty,[Total]=sum(t.Qty) OVER (PARTITION BY t.frompoid ,t.FromSeq1,t.FromSeq2 )           
+            from dbo.Borrowback_detail t 
+            left join dbo.PO_Supp_Detail p 
+            on 
+           t.ID = p.ID and   p.id= t.FromPOID and p.SEQ1 = t.FromSeq1 and p.seq2 = t.FromSeq2 
+		   LEFT JOIN DBO.SubTransfer_Detail b
+		   ON 
+		   b.ID = t.ID
+            where t.id= @ID";
+            result1 = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
+            if (!result1) { this.ShowErr(sqlcmd, result1); }
+
+
+
+            // 傳 list 資料            
+            List<P32_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P32_PrintData()
+                {
+
+                    StockSEQ = row1["StockSEQ"].ToString(),
+                    ToSP = row1["ToSP"].ToString(),
+                    DESC = row1["desc"].ToString(),
+                    FromStock = row1["FromStock"].ToString(),
+                    ToStock = row1["ToStock"].ToString(),
+                    Location = row1["Location"].ToString(),
+                    Unit = row1["StockUnit"].ToString(),
+                    Roll = row1["fromroll"].ToString(),
+                    DYELOT = row1["fromdyelot"].ToString(),
+                    QTY = row1["Qty"].ToString(),
+                    TotalQTY = row1["Total"].ToString()
+                }).ToList();
+
+            report.ReportDataSource = data;
+            #endregion
+            // 指定是哪個 RDLC
+            //DualResult result;
+            Type ReportResourceNamespace = typeof(P32_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P32_Print.rdlc";
+
+            IReportResource reportresource1;
+            if (!(result1 = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource1)))
+            {
+                //this.ShowException(result);
                 return false;
             }
 
