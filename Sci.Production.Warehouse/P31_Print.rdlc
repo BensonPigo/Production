@@ -727,7 +727,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=Parameters!M.Value</Value>
+                  <Value>=Parameters!mdivisionid.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1002,7 +1002,7 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
-    <ReportParameter Name="M">
+    <ReportParameter Name="mdivisionid">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>

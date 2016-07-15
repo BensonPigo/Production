@@ -665,8 +665,7 @@ Where a.id = '{0}'", masterID);
 			WHEN 'A' THEN 'Accessory'
 			WHEN 'O' THEN 'Other'
 			ELSE fabrictype
-			END
-			MTLTYPE
+			END MTLTYPE
 		    ,unit = b.StockUnit
 		    ,a.FromRoll,a.FromDyelot
 			,dbo.Getlocation(a.FromFtyInventoryUkey)[FromLocation]	 
