@@ -695,13 +695,13 @@ Where a.id = '{0}'", masterID);
             List<P24_PrintData> data = dd.AsEnumerable()
                 .Select(row1 => new P24_PrintData()
                 {
-                    POID = row1["POID"].ToString(),
+                    FromPOID = row1["FromPOID"].ToString(),
                     SEQ = row1["SEQ"].ToString(),
                     DESC = row1["DESC"].ToString(),
                     MTLTYPE = row1["MTLTYPE"].ToString(),
                     unit = row1["unit"].ToString(),
-                    Roll = row1["Roll"].ToString(),
-                    Dyelot = row1["Dyelot"].ToString(),
+                    FromRoll = row1["FromRoll"].ToString(),
+                    FromDyelot = row1["FromDyelot"].ToString(),
                     FromLocation = row1["FromLocation"].ToString(),
                     QTY = row1["QTY"].ToString()
                 }).ToList();
