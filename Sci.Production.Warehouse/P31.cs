@@ -107,7 +107,7 @@ namespace Sci.Production.Warehouse
 
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
-            string Estbackdate = row["Estbackdate"].ToString();
+            string Estbackdate = ((DateTime)MyUtility.Convert.GetDate(row["Estbackdate"])).ToShortDateString();
             string Remark = row["Remark"].ToString();
             string mdivisionid = row["mdivisionid"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
