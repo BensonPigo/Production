@@ -109,7 +109,7 @@ namespace Sci.Production.Warehouse
             string fromFactory = row["FromFtyID"].ToString();
             string Remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["IssueDate"])).ToShortDateString();
-
+            #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
@@ -132,6 +132,8 @@ namespace Sci.Production.Warehouse
 
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
+            #endregion
+            #region -- 撈表身資料 --
             DataTable dtDetail;
             result = DBProxy.Current.Select("",
             @"select  a.POID,a.Seq1+'-'+a.seq2 as SEQ,a.Roll,a.Dyelot 
@@ -152,7 +154,7 @@ namespace Sci.Production.Warehouse
 			And f.StockType = a.stocktype
              where a.id= @ID", pars, out dtDetail);
             if (!result) { this.ShowErr(result); }
-
+       
             // 傳 list 資料            
             List<P18_PrintData> data = dtDetail.AsEnumerable()
                 .Select(row1 => new P18_PrintData()
@@ -168,6 +170,7 @@ namespace Sci.Production.Warehouse
                 }).ToList();
 
             report.ReportDataSource = data;
+             #endregion
             // 指定是哪個 RDLC
             //DualResult result;
             Type ReportResourceNamespace = typeof(P18_PrintData);

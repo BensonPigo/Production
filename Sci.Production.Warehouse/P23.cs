@@ -689,7 +689,7 @@ Where a.id = '{0}'", masterID);
             string Remark = row["Remark"].ToString();
             string M = row["MdivisionID"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
-
+            #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
@@ -711,6 +711,8 @@ Where a.id = '{0}'", masterID);
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Factory", M));
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
+            #endregion
+            #region -- 撈表身資料 --
             DataTable dtDetail;
             string sqlcmd = @"select  t.frompoid,t.fromseq1 + '-' +t.fromseq2 as SEQ,t.topoid,t.toseq1  + '-' +t.toseq2 as TOSEQ
            ,dbo.getMtlDesc(t.FromPOID,t.FromSeq1,t.FromSeq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) [desc]
@@ -722,7 +724,7 @@ Where a.id = '{0}'", masterID);
            t.ID = p.ID and   p.id= t.FromPOID and p.SEQ1 = t.FromSeq1 and p.seq2 = t.FromSeq2 where t.id= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }
-
+            
 
 
             // 傳 list 資料            
@@ -743,7 +745,7 @@ Where a.id = '{0}'", masterID);
                 }).ToList();
 
             report.ReportDataSource = data;
-
+            #endregion
             // 指定是哪個 RDLC
             //DualResult result;
             Type ReportResourceNamespace = typeof(P23_PrintData);

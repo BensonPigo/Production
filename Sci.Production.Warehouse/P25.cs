@@ -15,6 +15,8 @@ using System.Reflection;
 using Microsoft.Reporting.WinForms;
 using System.Data.SqlClient;
 using Sci.Win;
+using Sci.Utility.Excel;
+using Sci.Trade.Class.Commons;
 
 namespace Sci.Production.Warehouse
 {
@@ -615,7 +617,7 @@ Where a.id = '{0}'", masterID);
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
             string CDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
-
+            #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
@@ -634,9 +636,11 @@ Where a.id = '{0}'", masterID);
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", CDate));
-
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
+            #endregion
+
+            #region -- 撈表身資料 --
             DataTable dtDetail;
             result = DBProxy.Current.Select("",
             @"select  a.fromseq1+'-'+a.fromseq2 as SEQ,a.FromRoll,a.FromDyelot ,
@@ -656,7 +660,7 @@ Where a.id = '{0}'", masterID);
              b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
                 where a.id= @ID", pars, out dtDetail);
             if (!result) { this.ShowErr(result); }
-
+            
             // 傳 list 資料            
             List<P25_PrintData> data = dtDetail.AsEnumerable()
                 .Select(row1 => new P25_PrintData()
@@ -673,6 +677,7 @@ Where a.id = '{0}'", masterID);
                 }).ToList();
 
             report.ReportDataSource = data;
+            #endregion
             // 指定是哪個 RDLC
             //DualResult result;
             Type ReportResourceNamespace = typeof(P25_PrintData);
@@ -692,6 +697,7 @@ Where a.id = '{0}'", masterID);
             var frm = new Sci.Win.Subs.ReportView(report);
             frm.MdiParent = MdiParent;
             frm.Show();
+         
 
             return true;
         }

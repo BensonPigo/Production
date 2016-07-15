@@ -104,7 +104,7 @@ namespace Sci.Production.Warehouse
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
             string CDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
-
+            #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
@@ -123,6 +123,9 @@ namespace Sci.Production.Warehouse
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", CDate));
+
+            #endregion
+            #region -- 撈表身資料 --
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
@@ -157,7 +160,7 @@ namespace Sci.Production.Warehouse
                 }).ToList();
 
             report.ReportDataSource = data;
-
+            #endregion
             // 指定是哪個 RDLC
             //DualResult result;
             Type ReportResourceNamespace = typeof(P13_PrintData);

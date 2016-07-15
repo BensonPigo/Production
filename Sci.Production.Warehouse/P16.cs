@@ -653,7 +653,7 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
             string Requestno = row["requestid"].ToString();
             string Remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
-
+            #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
@@ -687,6 +687,9 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
             string ApvDate = dtApv.Rows[0]["ApvDate"].ToString();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ApvDate", ApvDate));
 
+            #endregion
+
+            #region -- 撈表身資料 --
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
@@ -716,7 +719,7 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
                     QTY = row1["QTY"].ToString(),
                     Location = row1["Location"].ToString()
                 }).ToList();
-
+            #endregion
             report.ReportDataSource = data;
             // 指定是哪個 RDLC
             //DualResult result;
