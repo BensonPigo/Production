@@ -631,6 +631,7 @@ Where a.id = '{0}'", masterID);
             string Remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
+            #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
@@ -649,46 +650,33 @@ Where a.id = '{0}'", masterID);
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+          #endregion
 
-            pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
-            DataTable cc;
-            string Total;
-            result = DBProxy.Current.Select("",
-            @"select FromPOID,FromSeq1+'-'+FromSeq2 as SEQ,sum(Qty) [Total] 
-			from dbo.SubTransfer_Detail 
-            where id = @ID
-			group by FromPOID ,FromSeq1+'-'+FromSeq2
-            ", pars, out cc);
-            if (!result) { this.ShowErr(result); }
-            if (cc.Rows.Count == 0)
-                Total = "";
-            else
-                Total = cc.Rows[0]["Total"].ToString();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total", Total));
 
+            #region  抓表身資料
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result = DBProxy.Current.Select("",
             @"select a.FromPOID,a.FromSeq1+'-'+a.FromSeq2 as SEQ
-	         ,dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.FromSeq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.refno, b.seq1, b.seq2),1,0)) [DESC]
-			 ,CASE b.fabrictype
-			  WHEN 'F' THEN 'Fabric'
-			  WHEN 'A' THEN 'Accessory'
-			  WHEN 'O' THEN 'Other'
-			  ELSE fabrictype
-			  END
-			  MTLTYPE
-		     ,unit = b.StockUnit
-			 ,a.FromRoll,a.FromDyelot
-			 ,dbo.Getlocation(a.FromFtyInventoryUkey)[FromLocation]	 
-		     ,a.Qty			
-             from dbo.SubTransfer_Detail a 
-             INNER join dbo.PO_Supp_Detail b
-             on 
-             b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2			
-             where a.id= @ID", pars, out dd);
+	        ,dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.FromSeq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.scirefno , b.seq1, b.seq2),1,0)) [DESC]
+		    ,CASE b.fabrictype
+		    WHEN 'F' THEN 'Fabric'
+			WHEN 'A' THEN 'Accessory'
+			WHEN 'O' THEN 'Other'
+			ELSE fabrictype
+			END
+			MTLTYPE
+		    ,unit = b.StockUnit
+		    ,a.FromRoll,a.FromDyelot
+			,dbo.Getlocation(a.FromFtyInventoryUkey)[FromLocation]	 
+		    ,a.Qty			
+			,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.FromSeq2 )
+            from dbo.SubTransfer_Detail a 
+            INNER join dbo.PO_Supp_Detail b
+            on 
+            b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2			
+            where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
             // 傳 list 資料            
@@ -703,12 +691,16 @@ Where a.id = '{0}'", masterID);
                     FromRoll = row1["FromRoll"].ToString(),
                     FromDyelot = row1["FromDyelot"].ToString(),
                     FromLocation = row1["FromLocation"].ToString(),
-                    QTY = row1["QTY"].ToString()
+                    QTY = row1["QTY"].ToString(),
+                    Total = row1["Total"].ToString()
                 }).ToList();
 
             report.ReportDataSource = data;
+            #endregion
+
 
             // 指定是哪個 RDLC
+            #region  指定是哪個 RDLC
             //DualResult result;
             Type ReportResourceNamespace = typeof(P24_PrintData);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
@@ -722,6 +714,8 @@ Where a.id = '{0}'", masterID);
             }
 
             report.ReportResource = reportresource;
+            #endregion
+
 
             // 開啟 report view
             var frm = new Sci.Win.Subs.ReportView(report);

@@ -621,11 +621,18 @@ Where a.id = '{0}'", masterID);
 
         protected override bool ClickPrint()
         {
+            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
+                return false;
+            }
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
+            #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
@@ -644,7 +651,10 @@ Where a.id = '{0}'", masterID);
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+            #endregion
 
+
+            #region  抓表身資料
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable aa;
@@ -694,8 +704,10 @@ Where a.id = '{0}'", masterID);
                 }).ToList();
 
             report.ReportDataSource = data;
+            #endregion
 
             // 指定是哪個 RDLC
+            #region  指定是哪個 RDLC
             //DualResult result;
             Type ReportResourceNamespace = typeof(P22_PrintData);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
@@ -709,6 +721,7 @@ Where a.id = '{0}'", masterID);
             }
 
             report.ReportResource = reportresource;
+            #endregion
 
             // 開啟 report view
             var frm = new Sci.Win.Subs.ReportView(report);
