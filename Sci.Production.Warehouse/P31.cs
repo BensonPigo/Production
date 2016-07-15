@@ -141,17 +141,27 @@ namespace Sci.Production.Warehouse
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result1 = DBProxy.Current.Select("",
-            @"select a.FromPOID,a.FromSeq1+'-'+a.Fromseq2 as SEQ
-	         ,dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.refno, b.seq1,b.seq2),1,0))[DESC] 
-			 ,unit = b.StockUnit
-			 ,a.FromRoll,a.FromDyelot
-		     ,a.Qty
-		     ,dbo.Getlocation(a.FromFtyInventoryUkey)[From_Location]
-			 ,a.ToLocation       
-             from dbo.Subtransfer_detail a 
-             INNER join dbo.PO_Supp_Detail b
+            @"select a.FromSeq1+'-'+a.Fromseq2 as FromSP
+	       ,a.ToSeq1+'-'+a.ToSeq2 as TOSP
+	       ,dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.refno, b.seq1,b.seq2),1,0))[DESC] 
+	       ,case a.FromStockType
+	       when 'B' then 'Bulk'
+	       when 'I' then 'Inventory'
+	       else a.FromStockType
+	       end StockType
+	       ,dbo.Getlocation(a.FromFtyInventoryUkey)[Location]
+	       ,unit = b.StockUnit
+		    ,a.FromRoll
+		    ,a.FromDyelot
+		    ,a.Qty
+		    ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.FromSeq2 )
+		     from dbo.Borrowback_detail a 
+             left join dbo.PO_Supp_Detail b
              on 
              b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
+		     left join dbo.SubTransfer_Detail c
+		     on
+	         c.id=a.id    
              where a.id= @ID", pars, out dd);
             if (!result1) { this.ShowErr(result1); }
 
@@ -165,8 +175,8 @@ namespace Sci.Production.Warehouse
                     StockType = row1["StockType"].ToString(),
                     Location = row1["Location"].ToString(),
                     unit = row1["unit"].ToString(),
-                    Roll = row1["Roll"].ToString(),
-                    Dyelot = row1["Dyelot"].ToString(),
+                    FromRoll = row1["FromRoll"].ToString(),
+                    FromDyelot = row1["FromDyelot"].ToString(),
                     QTY = row1["QTY"].ToString(),
                     Total = row1["Total"].ToString()
                 }).ToList();
