@@ -17,7 +17,7 @@ namespace Sci.Production.Warehouse
         public string FromRoll { get; set; }
         public string FromDyelot { get; set; }
         public string QTY{ get; set; }
-        public string Total { get; set; }
+        public decimal Total { get; set; }
     }
 }
 
