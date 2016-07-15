@@ -109,6 +109,7 @@ namespace Sci.Production.Warehouse
             string id = row["ID"].ToString();
             string Estbackdate = row["Estbackdate"].ToString();
             string Remark = row["Remark"].ToString();
+            string mdivisionid = row["M"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
             #region  抓表頭資料
@@ -130,6 +131,7 @@ namespace Sci.Production.Warehouse
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Estbackdate", Estbackdate));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("M", mdivisionid));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
             #endregion
 
