@@ -373,7 +373,7 @@
             <param name="offsetCols">指定最多抓幾行 ; sheet.Columns.Counts 會是該版本Excel的最大行數 </param>
             <returns></returns>
         </member>
-        <member name="M:Sci.MyUtility.Excel.CopyToXls(System.Data.DataTable,System.String,System.String,System.Int32,System.Boolean,System.String,System.Object)">
+        <member name="M:Sci.MyUtility.Excel.CopyToXls(System.Data.DataTable,System.String,System.String,System.Int32,System.Boolean,System.String,System.Object,System.Boolean)">
             <summary>
             CopyToXls()
             </summary>
@@ -383,6 +383,8 @@
             <param name="[int headerRow = 1]"></param>
             <param name="[bool showExcel = true]"></param>
             <param name="[String fieldList = null]"></param>
+            <param name="[Object excelApp = null]"></param>
+            <param name="[bool showSaveMsg = true]"></param>
             <returns>bool</returns>
         </member>
         <member name="M:Sci.MyUtility.Excel.CopyToXls(System.Object[0:,0:],System.String,System.String,System.Int32,System.Boolean,System.Object)">
