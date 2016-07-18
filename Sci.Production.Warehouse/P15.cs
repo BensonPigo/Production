@@ -652,7 +652,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
             string Requestid = row["Requestid"].ToString();
-            string issueLackdate = ((DateTime)MyUtility.Convert.GetDate(row["issueLackdate"])).ToShortDateString();
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
             #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
@@ -673,7 +673,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Requestid", Requestid));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issueLackdate", issueLackdate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
             #endregion
 
             #region  抓表身資料

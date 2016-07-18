@@ -772,7 +772,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=Parameters!issueLackdate.Value</Value>
+                  <Value>=Parameters!issuedate.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1080,7 +1080,7 @@
           <Top>0.10266cm</Top>
           <Left>1.70779cm</Left>
           <Height>0cm</Height>
-          <Width>17.88583cm</Width>
+          <Width>17.94757cm</Width>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -1327,6 +1327,12 @@
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="QTY">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="issuedate">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
