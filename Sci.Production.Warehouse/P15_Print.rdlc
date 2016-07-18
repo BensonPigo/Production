@@ -39,7 +39,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!POID.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -68,7 +68,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!SEQ.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -77,9 +77,9 @@
                                             </Paragraphs>
                                             <rd:DefaultName>SEQ</rd:DefaultName>
                                             <Top>0.08365cm</Top>
-                                            <Left>2.69874cm</Left>
+                                            <Left>2.72521cm</Left>
                                             <Height>0.6cm</Height>
-                                            <Width>1.5875cm</Width>
+                                            <Width>1.56103cm</Width>
                                             <ZIndex>1</ZIndex>
                                             <Style>
                                               <Border>
@@ -98,7 +98,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!DESC.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -107,9 +107,9 @@
                                             </Paragraphs>
                                             <rd:DefaultName>DESC</rd:DefaultName>
                                             <Top>0.08365cm</Top>
-                                            <Left>4.41853cm</Left>
+                                            <Left>4.445cm</Left>
                                             <Height>0.6cm</Height>
-                                            <Width>5.00063cm</Width>
+                                            <Width>4.97416cm</Width>
                                             <ZIndex>2</ZIndex>
                                             <Style>
                                               <Border>
@@ -128,7 +128,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!unit.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -137,9 +137,9 @@
                                             </Paragraphs>
                                             <rd:DefaultName>unit</rd:DefaultName>
                                             <Top>0.08365cm</Top>
-                                            <Left>9.52499cm</Left>
+                                            <Left>9.55146cm</Left>
                                             <Height>0.6cm</Height>
-                                            <Width>1.53458cm</Width>
+                                            <Width>1.50811cm</Width>
                                             <ZIndex>3</ZIndex>
                                             <Style>
                                               <Border>
@@ -158,7 +158,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!ReqQty.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -188,7 +188,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!QTY.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -220,7 +220,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!Location.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -269,6 +269,7 @@
                               </TablixMember>
                             </TablixMembers>
                           </TablixRowHierarchy>
+                          <DataSetName>DataSet1</DataSetName>
                           <Top>0.18521cm</Top>
                           <Left>0.18521cm</Left>
                           <Height>0.84667cm</Height>
@@ -279,14 +280,14 @@
                             </Border>
                           </Style>
                         </Tablix>
-                        <Textbox Name="Textbox33">
+                        <Textbox Name="Total">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=First(Fields!Total.Value)</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -295,11 +296,11 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox33</rd:DefaultName>
+                          <rd:DefaultName>Total</rd:DefaultName>
                           <Top>1.13771cm</Top>
                           <Left>14.1552cm</Left>
                           <Height>0.60854cm</Height>
-                          <Width>1.74766cm</Width>
+                          <Width>1.78294cm</Width>
                           <ZIndex>1</ZIndex>
                           <Style>
                             <Border>
@@ -345,9 +346,9 @@
                         </Textbox>
                         <Line Name="Line2">
                           <Top>1.45521cm</Top>
-                          <Left>0.25576cm</Left>
+                          <Left>0.3175cm</Left>
                           <Height>0cm</Height>
-                          <Width>12.70882cm</Width>
+                          <Width>12.64708cm</Width>
                           <ZIndex>3</ZIndex>
                           <Style>
                             <Border>
@@ -419,7 +420,7 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>0.88541in</Height>
+    <Height>0.82291in</Height>
     <Style />
   </Body>
   <Width>8.2in</Width>
@@ -1276,6 +1277,10 @@
         </Field>
         <Field Name="SEQ">
           <DataField>SEQ</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="unit">
