@@ -703,7 +703,8 @@ Where a.id = '{0}'", masterID);
 			 ,a.FromRoll,a.FromDyelot
 		     ,a.Qty
 		     ,dbo.Getlocation(a.FromFtyInventoryUkey)[ToLocation]
-			 ,a.ToLocation       
+			 ,a.ToLocation
+             ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.Fromseq2 )    
              from dbo.Subtransfer_detail a 
              left join dbo.PO_Supp_Detail b
              on 
@@ -722,7 +723,8 @@ Where a.id = '{0}'", masterID);
                     FromRoll = row1["FromRoll"].ToString(),
                     FromDyelot = row1["FromDyelot"].ToString(),
                     QTY = row1["QTY"].ToString(),
-                    ToLocation = row1["ToLocation"].ToString()
+                    ToLocation = row1["ToLocation"].ToString(),
+                    Total = row1["Total"].ToString()
                 }).ToList();
 
             report.ReportDataSource = data;
