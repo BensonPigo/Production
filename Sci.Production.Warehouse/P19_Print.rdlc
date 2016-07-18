@@ -11,7 +11,7 @@
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>1.77271cm</Height>
+              <Height>1.64042cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -48,8 +48,9 @@
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox11</rd:DefaultName>
                                             <Top>0.11747cm</Top>
+                                            <Left>0.02646cm</Left>
                                             <Height>0.5588cm</Height>
-                                            <Width>2.3562cm</Width>
+                                            <Width>2.32974cm</Width>
                                             <Style>
                                               <Border>
                                                 <Style>None</Style>
@@ -260,7 +261,7 @@
                                             <Top>0.11747cm</Top>
                                             <Left>13.52022cm</Left>
                                             <Height>0.5588cm</Height>
-                                            <Width>1.61395cm</Width>
+                                            <Width>1.57867cm</Width>
                                             <ZIndex>7</ZIndex>
                                             <Style>
                                               <Border>
@@ -328,7 +329,7 @@
                               </TablixMember>
                             </TablixMembers>
                           </TablixRowHierarchy>
-                          <Top>0.15744cm</Top>
+                          <Top>0.03996cm</Top>
                           <Left>0.6805cm</Left>
                           <Height>0.79375cm</Height>
                           <Width>17.06563cm</Width>
@@ -345,7 +346,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=First(Fields!Total.Value)</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -355,10 +356,10 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox33</rd:DefaultName>
-                          <Top>1.05833cm</Top>
-                          <Left>14.20073cm</Left>
+                          <Top>0.89958cm</Top>
+                          <Left>14.20072cm</Left>
                           <Height>0.60854cm</Height>
-                          <Width>1.57866cm</Width>
+                          <Width>1.57867cm</Width>
                           <ZIndex>1</ZIndex>
                           <Style>
                             <Border>
@@ -387,8 +388,8 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox34</rd:DefaultName>
-                          <Top>1.05834cm</Top>
-                          <Left>13.16003cm</Left>
+                          <Top>0.89959cm</Top>
+                          <Left>13.18649cm</Left>
                           <Height>0.60729cm</Height>
                           <Width>1.0407cm</Width>
                           <ZIndex>2</ZIndex>
@@ -403,8 +404,8 @@
                           </Style>
                         </Textbox>
                         <Line Name="Line5">
-                          <Top>1.3702cm</Top>
-                          <Left>0.70696cm</Left>
+                          <Top>1.21145cm</Top>
+                          <Left>0.73342cm</Left>
                           <Height>0cm</Height>
                           <Width>12.4266cm</Width>
                           <ZIndex>3</ZIndex>
@@ -422,6 +423,7 @@
                         </Border>
                       </Style>
                     </Rectangle>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -467,9 +469,9 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>DataSet1</DataSetName>
-        <Top>0.31881cm</Top>
+        <Top>0.08069cm</Top>
         <Left>1.18746cm</Left>
-        <Height>1.77271cm</Height>
+        <Height>1.64042cm</Height>
         <Width>18.18711cm</Width>
         <Style>
           <Border>
@@ -478,13 +480,13 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>0.87847in</Height>
+    <Height>0.72222in</Height>
     <Style />
   </Body>
   <Width>8.2in</Width>
   <Page>
     <PageHeader>
-      <Height>6.47533cm</Height>
+      <Height>6.50179cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
@@ -1297,6 +1299,10 @@
         </Field>
         <Field Name="stocktype">
           <DataField>stocktype</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="unit">

@@ -657,21 +657,6 @@ Where a.id = '{0}'", masterID);
             #region  抓表身資料
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            DataTable aa;
-            string QTY;
-            result = DBProxy.Current.Select("",
-            @"select QTY 
-            from dbo.Subtransfer_detail 
-            where id = @ID", pars, out aa);
-            if (!result) { this.ShowErr(result); }
-            if (aa.Rows.Count == 0)
-                QTY = "";
-            else
-                QTY = aa.Rows[0]["QTY"].ToString();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("QTY", QTY));
-
-            pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result = DBProxy.Current.Select("",
             @"select a.FromPOID,a.FromSeq1+'-'+a.Fromseq2 as SEQ
@@ -680,9 +665,10 @@ Where a.id = '{0}'", masterID);
 			 ,a.FromRoll,a.FromDyelot
 		     ,a.Qty
 		     ,dbo.Getlocation(a.FromFtyInventoryUkey)[From_Location]
-			 ,a.ToLocation       
+			 ,a.ToLocation 
+             ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.Fromseq2 )      
              from dbo.Subtransfer_detail a 
-             INNER join dbo.PO_Supp_Detail b
+             left join dbo.PO_Supp_Detail b
              on 
              b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
              where a.id= @ID", pars, out dd);
@@ -700,7 +686,8 @@ Where a.id = '{0}'", masterID);
                     FromDyelot = row1["FromDyelot"].ToString(),
                     QTY = row1["QTY"].ToString(),
                     From_Location = row1["From_Location"].ToString(),
-                    ToLocation = row1["ToLocation"].ToString()
+                    ToLocation = row1["ToLocation"].ToString(),
+                    Total = row1["Total"].ToString()
                 }).ToList();
 
             report.ReportDataSource = data;
