@@ -747,21 +747,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             #region  抓表身資料
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            DataTable dd;
-            string Qty;
-            result = DBProxy.Current.Select("",
-            @"select Qty 
-            from dbo.Issue_Detail 
-            where id = @ID", pars, out dd);
-            if (!result) { this.ShowErr(result); }
-            if (dd.Rows.Count == 0)
-                Qty = "";
-            else
-                Qty = dd.Rows[0]["Qty"].ToString();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Qty", Qty));
-
-            pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
             DataTable bb;
             string sqlcmd = @"select 
             t.poid,t.seq1+ '-' +t.seq2 as SEQ,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0) [desc],t.Roll,t.Dyelot,t.Qty,p.StockUnit

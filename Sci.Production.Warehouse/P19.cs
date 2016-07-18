@@ -602,21 +602,6 @@ Where a.id = '{0}'", masterID);
             #region  抓表身資料
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            DataTable cc;
-            string QTY;
-            result = DBProxy.Current.Select("",
-            @"select QTY 
-            from dbo.TransferOut_Detail 
-            where id = @ID", pars, out cc);
-            if (!result) { this.ShowErr(result); }
-            if (cc.Rows.Count == 0)
-                QTY = "";
-            else
-                QTY = cc.Rows[0]["QTY"].ToString();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("QTY", QTY));
-
-            pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result = DBProxy.Current.Select("",
             @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ
@@ -631,9 +616,10 @@ Where a.id = '{0}'", masterID);
 			  stocktype
 		     ,unit = b.StockUnit
 		     ,a.Qty
-		     ,dbo.Getlocation(a.FtyInventoryUkey)[Location]	        
+		     ,dbo.Getlocation(a.FtyInventoryUkey)[Location]
+             ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 ) 	        
              from dbo.TransferOut_Detail a 
-             INNER join dbo.PO_Supp_Detail b
+             LEFT join dbo.PO_Supp_Detail b
              on 
              b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
              where a.id= @ID", pars, out dd);
@@ -651,7 +637,8 @@ Where a.id = '{0}'", masterID);
                     stocktype = row1["stocktype"].ToString(),
                     unit = row1["unit"].ToString(),
                     QTY = row1["QTY"].ToString(),
-                    Location = row1["Location"].ToString()
+                    Location = row1["Location"].ToString(),
+                    Total = row1["Total"].ToString()
                 }).ToList();
 
             report.ReportDataSource = data;

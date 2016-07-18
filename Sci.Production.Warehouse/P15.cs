@@ -679,21 +679,6 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             #region  抓表身資料
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            DataTable cc;
-            string QTY;
-            result = DBProxy.Current.Select("",
-            @"select QTY 
-            from dbo.Issuelack_detail 
-            where id = @ID", pars, out cc);
-            if (!result) { this.ShowErr(result); }
-            if (cc.Rows.Count == 0)
-                QTY = "";
-            else
-                QTY = cc.Rows[0]["QTY"].ToString();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("QTY", QTY));
-
-            pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result = DBProxy.Current.Select("",
             @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ,
@@ -704,13 +689,13 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             ,dbo.Getlocation(a.FtyInventoryUkey)[Location]
             ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )	        
              from dbo.IssueLack_Detail a 
-		    INNER join dbo.IssueLack d
+		    left join dbo.IssueLack d
              on 
             d.id=a.ID
-            INNER join dbo.PO_Supp_Detail b
+            left join dbo.PO_Supp_Detail b
             on 
              b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
-		    inner join dbo.Lack_Detail c
+		    left join dbo.Lack_Detail c
 		    on
 	        c.id=d.RequestID and c.Seq1=a.Seq1 and c.Seq2=a.Seq2
              where a.id= @ID", pars, out dd);

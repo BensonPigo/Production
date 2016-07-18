@@ -700,7 +700,7 @@ Where a.id = '{0}'", masterID);
             ,dbo.Getlocation(a.FtyInventoryUkey)[BULKLocation]
 	        ,unit = b.StockUnit
             from dbo.Issue_Detail a
-            INNER join dbo.PO_Supp_Detail b
+            left join dbo.PO_Supp_Detail b
              on 
              b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
                 where a.id= @ID", pars, out dtt);
