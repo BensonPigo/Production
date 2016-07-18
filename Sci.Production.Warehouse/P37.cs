@@ -108,8 +108,7 @@ namespace Sci.Production.Warehouse
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
-            string M = row["MdivisionID"].ToString();
-            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string CDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
@@ -117,7 +116,7 @@ namespace Sci.Production.Warehouse
             DualResult result1 = DBProxy.Current.Select("",
             @"select    
             b.name 
-            from dbo.Borrowback  a 
+            from dbo.ReturnReceipt  a 
             inner join dbo.mdivision  b 
             on b.id = a.mdivisionid
             where b.id = a.mdivisionid
@@ -128,64 +127,89 @@ namespace Sci.Production.Warehouse
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Factory", M));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", CDate));
+           
+            DataTable dtRefund;
+            string RefundResult;
+            DBProxy.Current.Select("",
+          @"Select R.whsereasonid,W.Description
+            from dbo.returnReceipt R
+		    LEFT join dbo.WhseReason W 
+		    ON W.type='RR'AND W.ID = R.WhseReasonId
+		    WHERE R.id = @ID", pars, out dtRefund);
+            if (dtRefund.Rows.Count == 0)
+                RefundResult = "";
+            else
+                RefundResult = dtRefund.Rows[0]["Description"].ToString();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RefundResult", RefundResult));
+
+            DataTable dtAction;
+            string ActionResult ;
+            DBProxy.Current.Select("",
+          @"Select  R.whsereasonid,[desc] = W.Description   
+                from dbo.returnReceipt R
+		        LEFT join dbo.WhseReason W 	ON W.type='RA'AND W.ID = R.ActionID
+		        WHERE R.id = @ID", pars, out dtAction);
+             if (dtAction.Rows.Count == 0)
+                   ActionResult = "";
+            else
+                 ActionResult = dtAction.Rows[0]["desc"].ToString();
+             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ActionResult", ActionResult));
+
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             #endregion
 
             #region -- 撈表身資料 --
             DataTable dtDetail;
-            string sqlcmd = @"select  t.frompoid+(t.fromseq1 + '-' +t.fromseq2) as StockSEQ,t.topoid+(t.toseq1  + '-' +t.toseq2) as ToSP
-			,dbo.getMtlDesc(t.FromPOID,t.FromSeq1,t.FromSeq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) [desc]
-            ,case t.FromStockType
-			WHEN 'B'THEN 'Bulk'
+            string sqlcmd = @"select  
+			ROW_NUMBER() OVER(ORDER BY R.POID,R.SEQ1,R.SEQ2) AS NoID
+			,R.poid AS SP,R.seq1  + '-' +R.seq2 as SEQ
+			,dbo.getMtlDesc(R.POID,R.Seq1,R.Seq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) [desc]
+            ,p.StockUnit,R.Roll,R.dyelot,R.qty
+		    ,case R.StockType
 			WHEN 'I'THEN 'Inventory'
-			ELSE t.FromStockType
-			end FromStock
-			,case t.TostockType
 			WHEN 'B'THEN 'Bulk'
-			WHEN 'I'THEN 'Inventory'
-			ELSE t.FromStockType
-			end ToStock
-			,dbo.Getlocation(t.FromFtyInventoryUkey) [Location]
-			,p.StockUnit,t.fromroll,t.fromdyelot
-            ,t.Qty,[Total]=sum(t.Qty) OVER (PARTITION BY t.frompoid ,t.FromSeq1,t.FromSeq2 )           
-            from dbo.Borrowback_detail t 
-            left join dbo.PO_Supp_Detail p 
+			ELSE R.StockType
+			end StockType
+			,dbo.Getlocation(R.FtyInventoryUkey) [Location]
+			,[Total]=sum(R.Qty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
+            from dbo.ReturnReceipt_Detail R
+            LEFT join dbo.PO_Supp_Detail p 
             on 
-           t.ID = p.ID and   p.id= t.FromPOID and p.SEQ1 = t.FromSeq1 and p.seq2 = t.FromSeq2 
-            where t.id= @ID";
+           p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
+            where R.id= @ID";
             result1 = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
+        
+
             if (!result1) { this.ShowErr(sqlcmd, result1); }
 
 
 
             // 傳 list 資料            
-            List<P32_PrintData> data = dtDetail.AsEnumerable()
-                .Select(row1 => new P32_PrintData()
+            List<P37_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P37_PrintData()
                 {
-
-                    StockSEQ = row1["StockSEQ"].ToString(),
-                    ToSP = row1["ToSP"].ToString(),
-                    DESC = row1["desc"].ToString(),
-                    FromStock = row1["FromStock"].ToString(),
-                    ToStock = row1["ToStock"].ToString(),
-                    Location = row1["Location"].ToString(),
+                    NoID = row1["NoID"].ToString(),
+                    OrderID = row1["SP"].ToString(),
+                    SEQ = row1["SEQ"].ToString(),
+                    Desc = row1["desc"].ToString(),
                     Unit = row1["StockUnit"].ToString(),
-                    Roll = row1["fromroll"].ToString(),
-                    DYELOT = row1["fromdyelot"].ToString(),
-                    QTY = row1["Qty"].ToString(),
-                    TotalQTY = row1["Total"].ToString()
+                    Roll = row1["Roll"].ToString(),
+                    Dyelot = row1["dyelot"].ToString(),
+                    Qty = row1["qty"].ToString(),
+                    StockType = row1["StockType"].ToString(),
+                    Location = row1["Location"].ToString(),
+                    TotalQty = row1["Total"].ToString()
                 }).ToList();
 
             report.ReportDataSource = data;
             #endregion
             // 指定是哪個 RDLC
             //DualResult result;
-            Type ReportResourceNamespace = typeof(P32_PrintData);
+            Type ReportResourceNamespace = typeof(P37_PrintData);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P32_Print.rdlc";
+            string ReportResourceName = "P37_Print.rdlc";
 
 
             IReportResource reportresource;

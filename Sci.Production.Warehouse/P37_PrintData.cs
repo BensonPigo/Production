@@ -18,5 +18,6 @@ namespace Sci.Production.Warehouse
         public string Qty { get; set; }
         public string StockType { get; set; }
         public string Location { get; set; }
+        public string TotalQty { get; set; }
     }
 }

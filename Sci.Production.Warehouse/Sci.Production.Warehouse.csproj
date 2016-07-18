@@ -173,6 +173,7 @@
     <Compile Include="P31_PrintData.cs" />
     <Compile Include="P32_PrintData.cs" />
     <Compile Include="P36_PrintData.cs" />
+    <Compile Include="P37_PrintData.cs" />
     <Compile Include="P50BookQty_PrintData.cs" />
     <Compile Include="P50List_PrintData.cs" />
     <Compile Include="Report\R02.cs">
@@ -1413,6 +1414,7 @@
     <None Include="Properties\DataSources\P32_PrintData1.datasource" />
     <None Include="Properties\DataSources\P32_PrintData2.datasource" />
     <None Include="Properties\DataSources\P36_PrintData.datasource" />
+    <None Include="Properties\DataSources\P37_PrintData1.datasource" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
