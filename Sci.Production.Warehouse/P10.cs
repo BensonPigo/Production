@@ -763,7 +763,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable bb;
-            string sqlcmd = @"sselect 
+            string sqlcmd = @"select 
             t.poid,t.seq1+ '-' +t.seq2 as SEQ,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0) [desc],t.Roll,t.Dyelot,t.Qty,p.StockUnit
             ,dbo.Getlocation(b.ukey) [location]     
             ,[Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.Seq1,t.Seq2 )       
