@@ -13,6 +13,8 @@ using System.Transactions;
 using System.Windows.Forms;
 using System.Reflection;
 using Microsoft.Reporting.WinForms;
+using System.Data.SqlClient;
+using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
@@ -302,5 +304,86 @@ Where a.id = '{0}'", masterID);
             }
         }
 
+
+        protected override bool ClickPrint()
+        {
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString();
+            string Stocktype = row["Stocktype"].ToString();
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+
+            #region  抓表頭資料
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dt;
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Stocktype", Stocktype));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+            #endregion
+
+
+            #region  抓表身資料
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dd;
+            DualResult result = DBProxy.Current.Select("",
+            @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ
+			 ,a.Roll,a.Dyelot	        
+			 ,Ref = b.Refno 
+			 ,Material_Type =b.fabrictype 
+			 ,Color =b.colorid 
+			 ,Unit=b.stockunit 		     
+		     ,dbo.Getlocation(a.FtyInventoryUkey)[Book_Location] 
+             from dbo.Stocktaking_detail a 
+             left join dbo.PO_Supp_Detail b
+             on 
+             b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
+             where a.id= @ID", pars, out dd);
+            if (!result) { this.ShowErr(result); }
+
+            // 傳 list 資料            
+            List<P50BookQty_PrintData> data = dd.AsEnumerable()
+                .Select(row1 => new P50BookQty_PrintData()
+                {
+                    POID = row1["POID"].ToString(),
+                    SEQ = row1["SEQ"].ToString(),
+                    Roll = row1["Roll"].ToString(),
+                    Dyelot = row1["Dyelot"].ToString(),
+                    Ref = row1["Ref"].ToString(),
+                    Material_Type = row1["Material_Type"].ToString(),
+                    Color = row1["Color"].ToString(),
+                    Unit = row1["Unit"].ToString(),
+                    Book_Location = row1["Book_Location"].ToString()
+                }).ToList();
+
+            report.ReportDataSource = data;
+            #endregion
+
+            // 指定是哪個 RDLC
+            #region  指定是哪個 RDLC
+            //DualResult result;
+            Type ReportResourceNamespace = typeof(P50BookQty_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P50BookQty_Print.rdlc";
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                //this.ShowException(result);
+                return false;
+            }
+
+            report.ReportResource = reportresource;
+            #endregion
+
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
+
+            return true;
+
+        }
     }
 }

@@ -8,5 +8,14 @@ namespace Sci.Production.Warehouse
 {
     class P50BookQty_PrintData
     {
+        public string POID { get; set; }
+        public string SEQ { get; set; }
+        public string Roll { get; set; }
+        public string Dyelot { get; set; }
+        public string Ref { get; set; }
+        public string Material_Type { get; set; }
+        public string Color { get; set; }
+        public string Unit { get; set; }
+        public string Book_Location { get; set; }
     }
 }

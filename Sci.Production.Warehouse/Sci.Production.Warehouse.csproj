@@ -174,6 +174,7 @@
     <Compile Include="P32_PrintData.cs" />
     <Compile Include="P36_PrintData.cs" />
     <Compile Include="P50BookQty_PrintData.cs" />
+    <Compile Include="P50List_PrintData.cs" />
     <Compile Include="Report\R02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -948,6 +949,7 @@
     <EmbeddedResource Include="P36_Print.rdlc" />
     <EmbeddedResource Include="P37_Print.rdlc" />
     <EmbeddedResource Include="P50BookQty_Print.rdlc" />
+    <EmbeddedResource Include="P50List_Print.rdlc" />
     <EmbeddedResource Include="Report\R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
     </EmbeddedResource>
