@@ -672,7 +672,7 @@ Where a.id = '{0}'", masterID);
 		    ,a.Qty			
 			,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.FromSeq2 )
             from dbo.SubTransfer_Detail a 
-            LEFT join dbo.PO_Supp_Detail b
+            left join dbo.PO_Supp_Detail b
             on 
             b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2			
             where a.id= @ID", pars, out dd);

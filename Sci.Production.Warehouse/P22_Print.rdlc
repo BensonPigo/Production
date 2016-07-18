@@ -338,14 +338,14 @@
                             </Border>
                           </Style>
                         </Tablix>
-                        <Textbox Name="Textbox33">
+                        <Textbox Name="Total">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=First(Fields!Total.Value)</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -354,7 +354,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox33</rd:DefaultName>
+                          <rd:DefaultName>Total</rd:DefaultName>
                           <Top>0.91279cm</Top>
                           <Left>12.48092cm</Left>
                           <Height>0.60854cm</Height>
@@ -484,7 +484,7 @@
   <Width>8.2in</Width>
   <Page>
     <PageHeader>
-      <Height>6.80139cm</Height>
+      <Height>7.11889cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
@@ -1345,6 +1345,10 @@
         </Field>
         <Field Name="ToLocation">
           <DataField>ToLocation</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="unit">
