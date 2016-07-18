@@ -2268,6 +2268,8 @@ Sci.Production.Warehouse/P42.resx -text
 Sci.Production.Warehouse/P50.Designer.cs -text
 Sci.Production.Warehouse/P50.cs -text
 Sci.Production.Warehouse/P50.resx -text
+Sci.Production.Warehouse/P50BookQty_Print.rdlc -text
+Sci.Production.Warehouse/P50BookQty_PrintData.cs -text
 Sci.Production.Warehouse/P50_Import.Designer.cs -text
 Sci.Production.Warehouse/P50_Import.cs -text
 Sci.Production.Warehouse/P50_Import.resx -text
