@@ -39,7 +39,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!FromPOID.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -49,7 +49,7 @@
                                             <rd:DefaultName>Textbox11</rd:DefaultName>
                                             <Top>0.1704cm</Top>
                                             <Height>0.61171cm</Height>
-                                            <Width>2.53772cm</Width>
+                                            <Width>2.67372cm</Width>
                                             <Style>
                                               <Border>
                                                 <Style>None</Style>
@@ -67,7 +67,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!SEQ.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -76,9 +76,9 @@
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox12</rd:DefaultName>
                                             <Top>0.1704cm</Top>
-                                            <Left>2.74939cm</Left>
+                                            <Left>2.77955cm</Left>
                                             <Height>0.61171cm</Height>
-                                            <Width>1.46633cm</Width>
+                                            <Width>1.43617cm</Width>
                                             <ZIndex>1</ZIndex>
                                             <Style>
                                               <Border>
@@ -97,7 +97,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!DESC.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -127,7 +127,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!unit.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -136,9 +136,9 @@
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox14</rd:DefaultName>
                                             <Top>0.1704cm</Top>
-                                            <Left>8.826cm</Left>
+                                            <Left>8.85615cm</Left>
                                             <Height>0.61171cm</Height>
-                                            <Width>1.27085cm</Width>
+                                            <Width>1.2407cm</Width>
                                             <ZIndex>3</ZIndex>
                                             <Style>
                                               <Border>
@@ -157,7 +157,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!FromRoll.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -166,9 +166,9 @@
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox24</rd:DefaultName>
                                             <Top>0.1704cm</Top>
-                                            <Left>10.20779cm</Left>
+                                            <Left>10.16741cm</Left>
                                             <Height>0.61171cm</Height>
-                                            <Width>1.59264cm</Width>
+                                            <Width>1.63302cm</Width>
                                             <ZIndex>4</ZIndex>
                                             <Style>
                                               <Border>
@@ -187,7 +187,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!FromDyelot.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -196,9 +196,9 @@
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox25</rd:DefaultName>
                                             <Top>0.1704cm</Top>
-                                            <Left>11.97682cm</Left>
+                                            <Left>11.83571cm</Left>
                                             <Height>0.61171cm</Height>
-                                            <Width>1.87995cm</Width>
+                                            <Width>2.02106cm</Width>
                                             <ZIndex>5</ZIndex>
                                             <Style>
                                               <Border>
@@ -217,7 +217,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!QTY.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -228,9 +228,9 @@
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox15</rd:DefaultName>
                                             <Top>0.1704cm</Top>
-                                            <Left>13.99279cm</Left>
+                                            <Left>14.02295cm</Left>
                                             <Height>0.61171cm</Height>
-                                            <Width>2.04607cm</Width>
+                                            <Width>2.01591cm</Width>
                                             <ZIndex>6</ZIndex>
                                             <Style>
                                               <Border>
@@ -249,7 +249,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!ToLocation.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -298,6 +298,7 @@
                               </TablixMember>
                             </TablixMembers>
                           </TablixRowHierarchy>
+                          <DataSetName>DataSet1</DataSetName>
                           <Top>0.13229cm</Top>
                           <Left>0.39317cm</Left>
                           <Height>0.9525cm</Height>
@@ -315,7 +316,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=First(Fields!Total.Value)</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -392,6 +393,7 @@
                         </Border>
                       </Style>
                     </Rectangle>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -956,9 +958,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox24</rd:DefaultName>
           <Top>4.8066cm</Top>
-          <Left>11.04758cm</Left>
+          <Left>10.97704cm</Left>
           <Height>0.50588cm</Height>
-          <Width>1.56248cm</Width>
+          <Width>1.63302cm</Width>
           <ZIndex>17</ZIndex>
           <Style>
             <Border>
@@ -986,9 +988,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox25</rd:DefaultName>
           <Top>4.8066cm</Top>
-          <Left>12.81661cm</Left>
+          <Left>12.64534cm</Left>
           <Height>0.50588cm</Height>
-          <Width>1.84979cm</Width>
+          <Width>2.02106cm</Width>
           <ZIndex>18</ZIndex>
           <Style>
             <Border>
@@ -1267,6 +1269,10 @@
         </Field>
         <Field Name="ToLocation">
           <DataField>ToLocation</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="unit">
