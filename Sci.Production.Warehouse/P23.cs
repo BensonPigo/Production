@@ -717,7 +717,7 @@ Where a.id = '{0}'", masterID);
             string sqlcmd = @"select  t.frompoid,t.fromseq1 + '-' +t.fromseq2 as SEQ,t.topoid,t.toseq1  + '-' +t.toseq2 as TOSEQ
            ,dbo.getMtlDesc(t.FromPOID,t.FromSeq1,t.FromSeq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) [desc]
             ,t.fromroll,t.fromdyelot,p.StockUnit
-            ,dbo.Getlocation(t.FromFtyInventoryUkey) [BULKLOCATION] ,t.Tolocation,t.Qty           
+            ,dbo.Getlocation(t.FromFtyInventoryUkey) [BULKLOCATION] ,t.Tolocation,t.Qty,[Total]=sum(t.Qty) OVER (PARTITION BY t.frompoid ,t.FromSeq1,t.FromSeq2 )         
             from dbo.Subtransfer_detail t 
             left join dbo.PO_Supp_Detail p 
             on 
@@ -741,7 +741,8 @@ Where a.id = '{0}'", masterID);
                     Unit = row1["StockUnit"].ToString(),
                     BULKLOCATION = row1["BULKLOCATION"].ToString(),
                     INVENTORYLOCATION = row1["Tolocation"].ToString(),
-                    QTY = row1["Qty"].ToString()
+                    QTY = row1["Qty"].ToString(),
+                    TotalQTY = row1["Total"].ToString()
                 }).ToList();
 
             report.ReportDataSource = data;

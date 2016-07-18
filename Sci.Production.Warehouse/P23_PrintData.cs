@@ -19,6 +19,7 @@ namespace Sci.Production.Warehouse
         public string BULKLOCATION { get; set; }
         public string INVENTORYLOCATION {get; set; }
         public string QTY { get; set; }
+        public string TotalQTY { get; set; }
         
     }
 }

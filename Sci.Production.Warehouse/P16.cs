@@ -699,6 +699,8 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
             ,b.StockUnit
 	        ,a.Qty
             ,dbo.Getlocation(a.FtyInventoryUkey)[Location] 
+            ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.seq1,a.seq2 )
+
             from dbo.IssueLack_detail a
             left join dbo.PO_Supp_Detail b
              on 
@@ -717,7 +719,8 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
                     DESC = row1["Description"].ToString(),
                     StockUnit = row1["StockUnit"].ToString(),
                     QTY = row1["QTY"].ToString(),
-                    Location = row1["Location"].ToString()
+                    Location = row1["Location"].ToString(),
+                    TotalQTY = row1["Total"].ToString()
                 }).ToList();
             #endregion
             report.ReportDataSource = data;

@@ -133,7 +133,7 @@ namespace Sci.Production.Warehouse
        p.Scirefno,p.seq1,p.seq2
 ,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) [desc]
 ,t.Roll,t.Dyelot,t.Qty,p.StockUnit
-            ,dbo.Getlocation(b.ukey) [location]            
+            ,dbo.Getlocation(b.ukey) [location],[Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.seq1,t.seq2 )            
             from dbo.Issue_Detail t 
             left join dbo.PO_Supp_Detail p 
             on 
@@ -156,7 +156,8 @@ namespace Sci.Production.Warehouse
                     StockUnit = row1["StockUnit"].ToString(),
                     Roll = row1["Roll"].ToString(),
                     DYELOT = row1["Dyelot"].ToString(),
-                    QTY = row1["Qty"].ToString()
+                    QTY = row1["Qty"].ToString(),
+                    TotalQTY = row1["Total"].ToString()
                 }).ToList();
 
             report.ReportDataSource = data;
