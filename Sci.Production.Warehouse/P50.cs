@@ -316,7 +316,18 @@ Where a.id = '{0}'", masterID);
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
+            DualResult result = DBProxy.Current.Select("",
+            @"select case stocktype
+		   when 'B' then 'Bulk'
+	       when 'I' then 'Inventory'
+		   ELSE stocktype
+	       end ST
+		   from dbo.Stocktaking	
+            where a.id = @ID", pars, out dt);
+            if (!result) { this.ShowErr(result); }
+            string ST = dt.Rows[0]["stocktype"].ToString();
             ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ST", ST));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Stocktype", Stocktype));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
@@ -327,7 +338,7 @@ Where a.id = '{0}'", masterID);
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
-            DualResult result = DBProxy.Current.Select("",
+           result = DBProxy.Current.Select("",
             @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ
 			 ,a.Roll,a.Dyelot	        
 			 ,Ref = b.Refno 
@@ -340,6 +351,30 @@ Where a.id = '{0}'", masterID);
              on 
              b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
              where a.id= @ID", pars, out dd);
+            if (!result) { this.ShowErr(result); }
+
+
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable da;
+            result = DBProxy.Current.Select("",
+             @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ
+			 ,a.Roll,a.Dyelot	        
+			 ,Ref = b.Refno 
+			 ,Material_Type =b.fabrictype 
+			 ,Color =b.colorid 
+			 ,Unit=b.stockunit 
+			 ,Book_Qty=a.qtybefore	
+		     ,dbo.Getlocation(a.FtyInventoryUkey)[Book_Location] 
+			 , Actual_Qty=a.Qtyafter
+			 ,Variance=a.Qtyafter-a.qtybefore
+			 ,[Total1]=sum(a.qtybefore) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )
+			 ,[Total2]=sum(a.Qtyafter) OVER (PARTITION BY a.POID ,a.seq1,a.Seq2 )
+             from dbo.Stocktaking_detail a 
+             left join dbo.PO_Supp_Detail b
+             on 
+             b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
+             where a.id= @ID", pars, out da);
             if (!result) { this.ShowErr(result); }
 
             // 傳 list 資料            
@@ -358,6 +393,27 @@ Where a.id = '{0}'", masterID);
                 }).ToList();
 
             report.ReportDataSource = data;
+
+            List<P50List_PrintData> data1 = da.AsEnumerable()
+                .Select(row1 => new P50List_PrintData()
+                {
+                    POID = row1["POID"].ToString(),
+                    SEQ = row1["SEQ"].ToString(),
+                    Roll = row1["Roll"].ToString(),
+                    Dyelot = row1["Dyelot"].ToString(),
+                    Ref = row1["Ref"].ToString(),
+                    Material_Type = row1["Material_Type"].ToString(),
+                    Color = row1["Color"].ToString(),
+                    Unit = row1["Unit"].ToString(),
+                    Book_Qty = row1["Book_Qty"].ToString(),
+                    Book_Location = row1["Book_Location"].ToString(),
+                    Actual_Qty = row1["Actual_Qty"].ToString(),
+                    Variance = row1["Variance"].ToString(),
+                    Total1 = row1["Total1"].ToString(),
+                    Total2 = row1["Total2"].ToString()
+                }).ToList();
+
+            report.ReportDataSource = data1;
             #endregion
 
             // 指定是哪個 RDLC
