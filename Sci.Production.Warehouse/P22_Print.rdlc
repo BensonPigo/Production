@@ -329,9 +329,9 @@
                             </TablixMembers>
                           </TablixRowHierarchy>
                           <Top>0.07056cm</Top>
-                          <Left>0.44238cm</Left>
+                          <Left>0.44237cm</Left>
                           <Height>0.76729cm</Height>
-                          <Width>19.01614cm</Width>
+                          <Width>19.01615cm</Width>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -404,9 +404,9 @@
                         </Textbox>
                         <Line Name="Line4">
                           <Top>1.18181cm</Top>
-                          <Left>0.62758cm</Left>
+                          <Left>0.44237cm</Left>
                           <Height>0cm</Height>
-                          <Width>10.56429cm</Width>
+                          <Width>10.7495cm</Width>
                           <ZIndex>3</ZIndex>
                           <Style>
                             <Border>
