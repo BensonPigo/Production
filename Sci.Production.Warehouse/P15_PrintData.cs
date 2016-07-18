@@ -15,5 +15,6 @@ namespace Sci.Production.Warehouse
         public string ReqQty { get; set; }
         public string QTY { get; set; }
         public string Location { get; set; }
+        public string Total { get; set; }
     }
 }
