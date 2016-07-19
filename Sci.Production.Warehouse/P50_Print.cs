@@ -34,7 +34,6 @@ namespace Sci.Production.Warehouse
         {
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
-            string Stocktype = row["Stocktype"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
@@ -51,7 +50,6 @@ namespace Sci.Production.Warehouse
             string ST = dt.Rows[0]["stocktype"].ToString();
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ST", ST));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Stocktype", Stocktype));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
 
             pars = new List<SqlParameter>();

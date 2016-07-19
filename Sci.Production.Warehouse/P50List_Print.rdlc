@@ -48,7 +48,6 @@
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox11</rd:DefaultName>
                                             <Top>0.12347cm</Top>
-                                            <Left>0cm</Left>
                                             <Height>0.57644cm</Height>
                                             <Width>1.63545cm</Width>
                                             <Style>
@@ -825,7 +824,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!ST.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1555,6 +1554,12 @@
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="issuedate">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ST">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>

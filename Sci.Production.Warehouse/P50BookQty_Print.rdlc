@@ -675,7 +675,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=Parameters!Stocktype.Value</Value>
+                  <Value>=Parameters!ST.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1328,13 +1328,13 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
-    <ReportParameter Name="Stocktype">
+    <ReportParameter Name="issuedate">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
-    <ReportParameter Name="issuedate">
+    <ReportParameter Name="ST">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
