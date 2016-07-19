@@ -2279,6 +2279,12 @@ Sci.Production.Warehouse/P50_PrintData.cs -text
 Sci.Production.Warehouse/P51.Designer.cs -text
 Sci.Production.Warehouse/P51.cs -text
 Sci.Production.Warehouse/P51.resx -text
+Sci.Production.Warehouse/P51_Print.Designer.cs -text
+Sci.Production.Warehouse/P51_Print.cs -text
+Sci.Production.Warehouse/P51_Print.resx -text
+Sci.Production.Warehouse/P51_PrintData.cs -text
+Sci.Production.Warehouse/P51_Report1.rdlc -text
+Sci.Production.Warehouse/P51_Report2.rdlc -text
 Sci.Production.Warehouse/P60.Designer.cs -text
 Sci.Production.Warehouse/P60.cs -text
 Sci.Production.Warehouse/P60.resx -text
