@@ -27,13 +27,7 @@ namespace Sci.Production.Warehouse
         string selectOption;
         protected override bool ValidateInput()
         {
-            selectOption = this.radioGroup1.Value;
-
-           
-            this.ReportResourceNamespace = typeof(P50BookQty_PrintData);
-            this.ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            this.ReportResourceName = selectOption == this.radioButton1.Value ? "P50BookQty_Print.rdlc" : "P50List_Print.rdlc";
-            return base.ValidateInput();
+           return base.ValidateInput();
         }
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
@@ -106,5 +100,16 @@ namespace Sci.Production.Warehouse
         }
 
         public DataRow CurrentDataRow { get; set; }
+
+        private void radioGroup1_ValueChanged(object sender, EventArgs e)
+        {
+            selectOption = this.radioGroup1.Value;
+
+
+            this.ReportResourceNamespace = typeof(P50_PrintData);
+            this.ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            this.ReportResourceName = selectOption == this.radioButton1.Value ? "P50BookQty_Print.rdlc" : "P50List_Print.rdlc";
+            
+        }
     }
 }

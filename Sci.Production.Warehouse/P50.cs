@@ -378,8 +378,8 @@ Where a.id = '{0}'", masterID);
             if (!result) { this.ShowErr(result); }
 
             // 傳 list 資料            
-            List<P50BookQty_PrintData> data = dd.AsEnumerable()
-                .Select(row1 => new P50BookQty_PrintData()
+            List<P50_PrintData> data = dd.AsEnumerable()
+                .Select(row1 => new P50_PrintData()
                 {
                     POID = row1["POID"].ToString(),
                     SEQ = row1["SEQ"].ToString(),
@@ -394,8 +394,8 @@ Where a.id = '{0}'", masterID);
 
             report.ReportDataSource = data;
 
-            List<P50List_PrintData> data1 = da.AsEnumerable()
-                .Select(row1 => new P50List_PrintData()
+            List<P50_PrintData> data1 = da.AsEnumerable()
+                .Select(row1 => new P50_PrintData()
                 {
                     POID = row1["POID"].ToString(),
                     SEQ = row1["SEQ"].ToString(),
