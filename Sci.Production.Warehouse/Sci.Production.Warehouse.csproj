@@ -176,6 +176,12 @@
     <Compile Include="P37_PrintData.cs" />
     <Compile Include="P50BookQty_PrintData.cs" />
     <Compile Include="P50List_PrintData.cs" />
+    <Compile Include="P50_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P50_Print.Designer.cs">
+      <DependentUpon>P50_Print.cs</DependentUpon>
+    </Compile>
     <Compile Include="Report\R02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -951,6 +957,9 @@
     <EmbeddedResource Include="P37_Print.rdlc" />
     <EmbeddedResource Include="P50BookQty_Print.rdlc" />
     <EmbeddedResource Include="P50List_Print.rdlc" />
+    <EmbeddedResource Include="P50_Print.resx">
+      <DependentUpon>P50_Print.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Report\R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
     </EmbeddedResource>
@@ -1415,6 +1424,8 @@
     <None Include="Properties\DataSources\P32_PrintData2.datasource" />
     <None Include="Properties\DataSources\P36_PrintData.datasource" />
     <None Include="Properties\DataSources\P37_PrintData1.datasource" />
+    <None Include="Properties\DataSources\P50BookQty_PrintData.datasource" />
+    <None Include="Properties\DataSources\P50List_PrintData.datasource" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

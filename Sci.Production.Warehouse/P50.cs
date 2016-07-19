@@ -318,11 +318,11 @@ Where a.id = '{0}'", masterID);
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
             @"select case stocktype
-		   when 'B' then 'Bulk'
-	       when 'I' then 'Inventory'
-		   ELSE stocktype
-	       end ST
-		   from dbo.Stocktaking	
+		    when 'B' then 'Bulk'
+	        when 'I' then 'Inventory'
+		    ELSE stocktype
+	        end ST
+		    from dbo.Stocktaking	
             where a.id = @ID", pars, out dt);
             if (!result) { this.ShowErr(result); }
             string ST = dt.Rows[0]["stocktype"].ToString();
