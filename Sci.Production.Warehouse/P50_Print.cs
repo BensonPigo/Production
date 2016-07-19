@@ -39,13 +39,9 @@ namespace Sci.Production.Warehouse
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
             DualResult result= DBProxy.Current.Select("",
-            @"select case stocktype
-		    when 'B' then 'Bulk'
-	        when 'I' then 'Inventory'
-		    ELSE stocktype
-	        end ST
-		    from dbo.Stocktaking	
-            where a.id = @ID", pars, out dt); ;
+            @"select Iif(Stocktaking.stocktype='B','Bulk','Inventory') as ST
+		    from dbo.Stocktaking		
+            where id = @ID", pars, out dt); ;
             if (!result) { return result; }
             string ST = dt.Rows[0]["stocktype"].ToString();
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ST", ST));
@@ -95,6 +91,8 @@ namespace Sci.Production.Warehouse
             if (!result) { this.ShowErr(result); }
 
             return Result.True;
+
+           
         }
 
         public DataRow CurrentDataRow { get; set; }
