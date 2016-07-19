@@ -416,27 +416,27 @@ Where a.id = '{0}'", masterID);
             report.ReportDataSource = data1;
             #endregion
 
-            // 指定是哪個 RDLC
-            #region  指定是哪個 RDLC
-            //DualResult result;
-            Type ReportResourceNamespace = typeof(P50BookQty_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P50BookQty_Print.rdlc";
+            //// 指定是哪個 RDLC
+            //#region  指定是哪個 RDLC
+            ////DualResult result;
+            //Type ReportResourceNamespace = typeof(P50BookQty_PrintData);
+            //Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            //string ReportResourceName = "P50BookQty_Print.rdlc";
 
-            IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
-            {
-                //this.ShowException(result);
-                return false;
-            }
+            //IReportResource reportresource;
+            //if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            //{
+            //    //this.ShowException(result);
+            //    return false;
+            //}
 
-            report.ReportResource = reportresource;
-            #endregion
+            //report.ReportResource = reportresource;
+            //#endregion
 
-            // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
-            frm.MdiParent = MdiParent;
-            frm.Show();
+            //// 開啟 report view
+            //var frm = new Sci.Win.Subs.ReportView(report);
+            //frm.MdiParent = MdiParent;
+            //frm.Show();
 
             return true;
 

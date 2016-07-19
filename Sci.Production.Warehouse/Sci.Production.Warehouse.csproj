@@ -174,8 +174,7 @@
     <Compile Include="P32_PrintData.cs" />
     <Compile Include="P36_PrintData.cs" />
     <Compile Include="P37_PrintData.cs" />
-    <Compile Include="P50BookQty_PrintData.cs" />
-    <Compile Include="P50List_PrintData.cs" />
+    <Compile Include="P50_PrintData.cs" />
     <Compile Include="P50_Print.cs">
       <SubType>Form</SubType>
     </Compile>

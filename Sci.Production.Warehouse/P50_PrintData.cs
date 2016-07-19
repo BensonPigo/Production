@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
-    class P50List_PrintData
+    class P50_PrintData
     {
         public string POID { get; set; }
         public string SEQ { get; set; }
@@ -24,5 +24,3 @@ namespace Sci.Production.Warehouse
         public string Total2 { get; set; }
     }
 }
-
-            
