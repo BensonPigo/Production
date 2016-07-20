@@ -57,6 +57,10 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
+            this.contextMenuStrip1 = new Sci.Win.UI.ContextMenuStrip();
+            this.modifyCroclingtestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modifyHeatTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modifyWashTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -69,6 +73,7 @@
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -142,6 +147,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(909, 126);
+            this.gridicon.Visible = false;
             // 
             // detailgridcont
             // 
@@ -210,15 +216,17 @@
             this.button1.TabIndex = 63;
             this.button1.Text = "Find";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // mtl_box
             // 
             this.mtl_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.mtl_box.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "complete", true));
             this.mtl_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.mtl_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.mtl_box.Location = new System.Drawing.Point(936, 87);
             this.mtl_box.Name = "mtl_box";
-            this.mtl_box.Size = new System.Drawing.Size(43, 21);
+            this.mtl_box.Size = new System.Drawing.Size(58, 21);
             this.mtl_box.TabIndex = 85;
             // 
             // insp_box
@@ -475,21 +483,57 @@
             this.label1.TabIndex = 60;
             this.label1.Text = "SP#";
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.modifyCroclingtestToolStripMenuItem,
+            this.modifyHeatTestToolStripMenuItem,
+            this.modifyWashTestToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(197, 70);
+            // 
+            // modifyCroclingtestToolStripMenuItem
+            // 
+            this.modifyCroclingtestToolStripMenuItem.Name = "modifyCroclingtestToolStripMenuItem";
+            this.modifyCroclingtestToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.modifyCroclingtestToolStripMenuItem.Text = "Modify Crocking Test";
+            this.modifyCroclingtestToolStripMenuItem.Click += new System.EventHandler(this.modifyToolStripMenuItem_Click);
+            // 
+            // modifyHeatTestToolStripMenuItem
+            // 
+            this.modifyHeatTestToolStripMenuItem.Name = "modifyHeatTestToolStripMenuItem";
+            this.modifyHeatTestToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.modifyHeatTestToolStripMenuItem.Text = "Modify Heat Test";
+            this.modifyHeatTestToolStripMenuItem.Click += new System.EventHandler(this.modifyHeatTestToolStripMenuItem_Click);
+            // 
+            // modifyWashTestToolStripMenuItem
+            // 
+            this.modifyWashTestToolStripMenuItem.Name = "modifyWashTestToolStripMenuItem";
+            this.modifyWashTestToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.modifyWashTestToolStripMenuItem.Text = "Modify WashTest";
+            this.modifyWashTestToolStripMenuItem.Click += new System.EventHandler(this.modifyWashTestToolStripMenuItem_Click);
+            // 
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(1025, 449);
             this.DefaultDetailOrder = "Seq,Wkno";
             this.DefaultOrder = "ID";
+            this.DefaultWhere = "id=\'15010211II\'";
+            this.GridAlias = "FIR";
+            this.IsGridIcon2Visible = false;
+            this.IsGridIconVisible = false;
+            this.IsSupportClose = true;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportLocate = false;
-            this.IsSupportMove = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
+            this.KeyField2 = "POID";
             this.Name = "P03";
+            this.ShowIcon = false;
+            this.Text = "P03 .Laboratory-Fabric Crocking & Shrinkage Test";
             this.UniqueExpress = "ID";
             this.WorkAlias = "PO";
             this.Controls.SetChildIndex(this.tabs, 0);
@@ -507,6 +551,7 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -543,5 +588,9 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private Win.UI.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem modifyCroclingtestToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem modifyHeatTestToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem modifyWashTestToolStripMenuItem;
     }
 }
