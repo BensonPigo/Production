@@ -87,5 +87,32 @@ namespace Sci.Production.PublicPrg
             return re_str;
         }
         #endregion
+        #region 判斷FIR_Laboratory OverallResult
+        /// <summary>
+        /// 判斷並回寫FIR_Laboratory OverallResult, string[0]=Result
+        /// </summary>
+        /// <param name ="ID"></param>
+        /// <returns></returns>
+        public static string[] GetOverallResult_Lab(object fir_id)
+        {
+            DataRow maindr;
+            MyUtility.Check.Seek(string.Format("Select * from FIR_Laboratory Where id={0}", fir_id), out maindr);
+            string allResult = "";
+
+            //當(FIR_Laboratory.Crocking 有值或FIR_Laboratory.nonCrocking=T) 且(FIR_Laboratory.Wash有值或FIR_Laboratory.nonWash=T)且(FIR_Laboratory.Heat或FIR_Laboratory.nonHeat=T) 才回寫FIR_Laboratory.Result，只要其中一個FIR_Laboratory.Crocking, FIR_Laboratory.Wash, FIR_Laboratory.Heat 的值為’F’，Fir.Result 就回寫’F’ 
+            if ((!MyUtility.Check.Empty(maindr["Crocking"]) || MyUtility.Convert.GetBool(maindr["nonCrocking"]))
+                && (!MyUtility.Check.Empty(maindr["Wash"]) || MyUtility.Convert.GetBool(maindr["nonWash"]))
+                && (!MyUtility.Check.Empty(maindr["Heat"]) || MyUtility.Convert.GetBool(maindr["nonHeat"])))
+            {
+                if (maindr["Crocking"].ToString() == "Fail" ||
+                    maindr["Wash"].ToString() == "Fail" ||
+                    maindr["Heat"].ToString() == "Fail")
+                    allResult = "Fail";
+                else allResult = "Pass";              
+            }
+            string[] re_str = { allResult };
+            return re_str;
+        }
+        #endregion
     }
 }
