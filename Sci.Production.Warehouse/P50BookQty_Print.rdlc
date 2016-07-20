@@ -1269,16 +1269,38 @@
       </ConnectionProperties>
       <rd:DataSourceID>513b6499-d4b0-4467-a32b-338e8cd227d3</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="SciProductionWarehouse1">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>2bbfb4ac-78f8-4718-8e3c-8b78906793cf</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="SciProductionWarehouse2">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>b19e5253-1cbe-4d49-809a-89dd97df21f2</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="DataSet1">
       <Query>
-        <DataSourceName>SciProductionWarehouse</DataSourceName>
+        <DataSourceName>SciProductionWarehouse2</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
+        <Field Name="Actual_Qty">
+          <DataField>Actual_Qty</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="Book_Location">
           <DataField>Book_Location</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Book_Qty">
+          <DataField>Book_Qty</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Color">
@@ -1309,15 +1331,27 @@
           <DataField>SEQ</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="Total1">
+          <DataField>Total1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Total2">
+          <DataField>Total2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="Unit">
           <DataField>Unit</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Variance">
+          <DataField>Variance</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Sci.Production.Warehouse</rd:DataSetName>
-        <rd:TableName>P50BookQty_PrintData</rd:TableName>
-        <rd:ObjectDataSourceType>Sci.Production.Warehouse.P50BookQty_PrintData, Sci.Production.Warehouse, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+        <rd:TableName>P50_PrintData</rd:TableName>
+        <rd:ObjectDataSourceType>Sci.Production.Warehouse.P50_PrintData, Sci.Production.Warehouse, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>

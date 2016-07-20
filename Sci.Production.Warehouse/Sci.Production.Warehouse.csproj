@@ -1437,6 +1437,7 @@
     <None Include="Properties\DataSources\P37_PrintData1.datasource" />
     <None Include="Properties\DataSources\P50BookQty_PrintData.datasource" />
     <None Include="Properties\DataSources\P50List_PrintData.datasource" />
+    <None Include="Properties\DataSources\P50_PrintData.datasource" />
     <None Include="Properties\DataSources\P51_PrintData.datasource" />
     <None Include="Properties\DataSources\P51_PrintData1.datasource" />
     <None Include="Properties\DataSources\P51_PrintData2.datasource" />

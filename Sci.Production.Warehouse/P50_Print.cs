@@ -44,7 +44,7 @@ namespace Sci.Production.Warehouse
 		    from dbo.Stocktaking		
             where id = @ID", pars, out dt); ;
             if (!result) { return result; }
-            string ST = dt.Rows[0]["ST"].ToString();
+            string ST = dt.Rows[0]["stocktype"].ToString();
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ST", ST));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));

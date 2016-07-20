@@ -404,7 +404,6 @@
                                             </Style>
                                           </Textbox>
                                           <Line Name="Line11">
-                                            <Top>0cm</Top>
                                             <Left>14.59155cm</Left>
                                             <Height>0.86748cm</Height>
                                             <Width>0cm</Width>
@@ -416,7 +415,6 @@
                                             </Style>
                                           </Line>
                                           <Line Name="Line12">
-                                            <Top>0cm</Top>
                                             <Left>14.7503cm</Left>
                                             <Height>0.86748cm</Height>
                                             <Width>0cm</Width>
@@ -1603,11 +1601,18 @@
       </ConnectionProperties>
       <rd:DataSourceID>f3e4773f-5c47-4366-85fe-affbbd6bd1a5</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="SciProductionWarehouse1">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>3a9930bd-988a-405b-a1c0-ba8eed248412</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="DataSet1">
       <Query>
-        <DataSourceName>SciProductionWarehouse</DataSourceName>
+        <DataSourceName>SciProductionWarehouse1</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
@@ -1670,8 +1675,8 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Sci.Production.Warehouse</rd:DataSetName>
-        <rd:TableName>P50List_PrintData</rd:TableName>
-        <rd:ObjectDataSourceType>Sci.Production.Warehouse.P50List_PrintData, Sci.Production.Warehouse, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+        <rd:TableName>P50_PrintData</rd:TableName>
+        <rd:ObjectDataSourceType>Sci.Production.Warehouse.P50_PrintData, Sci.Production.Warehouse, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>
