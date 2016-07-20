@@ -455,13 +455,17 @@ Where a.id = '{0}'", masterID);
                     foreach (DataRow dr in DetailDatas)
                     {
                         dr.Delete();
-                    }
-                   
-                  
-                    
+                    }                 
                 }
             }
         }
+        protected override bool ClickPrint()
+        {
+            P51_Print p = new P51_Print();
+            p.CurrentDataRow = this.CurrentDataRow;
+            p.ShowDialog();
 
+            return true;
+        }
     }
 }

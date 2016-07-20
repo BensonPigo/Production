@@ -53,23 +53,25 @@
             this.radioPanel1.Size = new System.Drawing.Size(425, 128);
             this.radioPanel1.TabIndex = 94;
             this.radioPanel1.Value = "Backward Socktaking Form";
+            this.radioPanel1.ValueChanged += new System.EventHandler(this.radioGroup1_ValueChanged);
             // 
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.Black;
+            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioButton2.Location = new System.Drawing.Point(19, 74);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(175, 21);
             this.radioButton2.TabIndex = 2;
             this.radioButton2.Text = "Backward Socktaking Li";
             this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioButton2.Value = "Backward Socktaking Li";
             // 
             // radioButton1
             // 
             this.radioButton1.AutoSize = true;
             this.radioButton1.Checked = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.Black;
+            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioButton1.Location = new System.Drawing.Point(19, 47);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(196, 21);
