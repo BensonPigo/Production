@@ -92,7 +92,42 @@ namespace Sci.Production.Warehouse
 
             return Result.True;
 
-           
+            List<P50_PrintData> data = dd.AsEnumerable()
+                 .Select(row1 => new P50_PrintData()
+                 {
+                     POID = row1["POID"].ToString(),
+                     SEQ = row1["SEQ"].ToString(),
+                     Roll = row1["Roll"].ToString(),
+                     Dyelot = row1["Dyelot"].ToString(),
+                     Ref = row1["Ref"].ToString(),
+                     Material_Type = row1["Material_Type"].ToString(),
+                     Color = row1["Color"].ToString(),
+                     Unit = row1["Unit"].ToString(),
+                     Book_Location = row1["Book_Location"].ToString()
+                 }).ToList();
+
+            e.Report.ReportDataSource = data;
+
+            List<P50_PrintData> data1 = da.AsEnumerable()
+                .Select(row1 => new P50_PrintData()
+                {
+                    POID = row1["POID"].ToString(),
+                    SEQ = row1["SEQ"].ToString(),
+                    Roll = row1["Roll"].ToString(),
+                    Dyelot = row1["Dyelot"].ToString(),
+                    Ref = row1["Ref"].ToString(),
+                    Material_Type = row1["Material_Type"].ToString(),
+                    Color = row1["Color"].ToString(),
+                    Unit = row1["Unit"].ToString(),
+                    Book_Qty = row1["Book_Qty"].ToString(),
+                    Book_Location = row1["Book_Location"].ToString(),
+                    Actual_Qty = row1["Actual_Qty"].ToString(),
+                    Variance = row1["Variance"].ToString(),
+                    Total1 = row1["Total1"].ToString(),
+                    Total2 = row1["Total2"].ToString()
+                }).ToList();
+            e.Report.ReportDataSource = data1;
+
         }
 
         public DataRow CurrentDataRow { get; set; }
