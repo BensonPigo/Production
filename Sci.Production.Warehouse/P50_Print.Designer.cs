@@ -50,7 +50,7 @@
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.Black;
+            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioButton2.Location = new System.Drawing.Point(7, 97);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(180, 21);
@@ -58,12 +58,13 @@
             this.radioButton2.TabStop = true;
             this.radioButton2.Text = "Forward Stocktaking List";
             this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioButton2.Value = "Forward Stocktaking List";
             // 
             // radioButton1
             // 
             this.radioButton1.AutoSize = true;
             this.radioButton1.Checked = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.Black;
+            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioButton1.Location = new System.Drawing.Point(7, 56);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(264, 21);
