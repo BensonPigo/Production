@@ -91,8 +91,6 @@ namespace Sci.Production.Warehouse
              where a.id= @ID", pars, out da);
             if (!result) { this.ShowErr(result); }
 
-           
-
             
             if (isStockList)
             {
