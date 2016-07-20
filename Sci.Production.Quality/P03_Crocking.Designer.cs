@@ -54,8 +54,9 @@
             this.Arrdate = new Sci.Win.UI.TextBox();
             this.LIDate = new Sci.Win.UI.TextBox();
             this.ResultText = new Sci.Win.UI.TextBox();
-            this.EncodeBtn = new Sci.Win.UI.Button();
+            this.encode_button = new Sci.Win.UI.Button();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.ToExcelBtn = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -63,7 +64,14 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.ToExcelBtn);
             this.btmcont.Size = new System.Drawing.Size(955, 40);
+            this.btmcont.Controls.SetChildIndex(this.append, 0);
+            this.btmcont.Controls.SetChildIndex(this.revise, 0);
+            this.btmcont.Controls.SetChildIndex(this.delete, 0);
+            this.btmcont.Controls.SetChildIndex(this.undo, 0);
+            this.btmcont.Controls.SetChildIndex(this.save, 0);
+            this.btmcont.Controls.SetChildIndex(this.ToExcelBtn, 0);
             // 
             // gridcont
             // 
@@ -175,7 +183,7 @@
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(110, 23);
             this.label11.TabIndex = 108;
-            this.label11.Text = "Arrive W/Z Date:";
+            this.label11.Text = "Arrive W/H Date:";
             // 
             // label12
             // 
@@ -197,129 +205,143 @@
             // 
             // sptext
             // 
-            this.sptext.BackColor = System.Drawing.Color.White;
-            this.sptext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.sptext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.sptext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.sptext.Location = new System.Drawing.Point(108, 9);
             this.sptext.Name = "sptext";
+            this.sptext.ReadOnly = true;
             this.sptext.Size = new System.Drawing.Size(100, 23);
             this.sptext.TabIndex = 111;
             // 
             // Wknotext
             // 
-            this.Wknotext.BackColor = System.Drawing.Color.White;
-            this.Wknotext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.Wknotext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Wknotext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.Wknotext.Location = new System.Drawing.Point(108, 38);
             this.Wknotext.Name = "Wknotext";
+            this.Wknotext.ReadOnly = true;
             this.Wknotext.Size = new System.Drawing.Size(100, 23);
             this.Wknotext.TabIndex = 112;
             // 
             // Styletext
             // 
-            this.Styletext.BackColor = System.Drawing.Color.White;
-            this.Styletext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.Styletext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Styletext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.Styletext.Location = new System.Drawing.Point(108, 67);
             this.Styletext.Name = "Styletext";
+            this.Styletext.ReadOnly = true;
             this.Styletext.Size = new System.Drawing.Size(100, 23);
             this.Styletext.TabIndex = 113;
             // 
             // Brandtext
             // 
-            this.Brandtext.BackColor = System.Drawing.Color.White;
-            this.Brandtext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.Brandtext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Brandtext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.Brandtext.Location = new System.Drawing.Point(108, 96);
             this.Brandtext.Name = "Brandtext";
+            this.Brandtext.ReadOnly = true;
             this.Brandtext.Size = new System.Drawing.Size(100, 23);
             this.Brandtext.TabIndex = 114;
             // 
             // SEQtext
             // 
-            this.SEQtext.BackColor = System.Drawing.Color.White;
-            this.SEQtext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.SEQtext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.SEQtext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.SEQtext.Location = new System.Drawing.Point(322, 9);
             this.SEQtext.Name = "SEQtext";
+            this.SEQtext.ReadOnly = true;
             this.SEQtext.Size = new System.Drawing.Size(100, 23);
             this.SEQtext.TabIndex = 115;
             // 
             // Supptext
             // 
-            this.Supptext.BackColor = System.Drawing.Color.White;
-            this.Supptext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.Supptext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Supptext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.Supptext.Location = new System.Drawing.Point(322, 38);
             this.Supptext.Name = "Supptext";
+            this.Supptext.ReadOnly = true;
             this.Supptext.Size = new System.Drawing.Size(100, 23);
             this.Supptext.TabIndex = 116;
             // 
             // SRnotext
             // 
-            this.SRnotext.BackColor = System.Drawing.Color.White;
-            this.SRnotext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.SRnotext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.SRnotext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.SRnotext.Location = new System.Drawing.Point(322, 67);
             this.SRnotext.Name = "SRnotext";
+            this.SRnotext.ReadOnly = true;
             this.SRnotext.Size = new System.Drawing.Size(100, 23);
             this.SRnotext.TabIndex = 117;
             // 
             // BRnotext
             // 
-            this.BRnotext.BackColor = System.Drawing.Color.White;
-            this.BRnotext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.BRnotext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.BRnotext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.BRnotext.Location = new System.Drawing.Point(336, 96);
             this.BRnotext.Name = "BRnotext";
+            this.BRnotext.ReadOnly = true;
             this.BRnotext.Size = new System.Drawing.Size(100, 23);
             this.BRnotext.TabIndex = 118;
             // 
             // Colortext
             // 
-            this.Colortext.BackColor = System.Drawing.Color.White;
-            this.Colortext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.Colortext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Colortext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.Colortext.Location = new System.Drawing.Point(547, 9);
             this.Colortext.Name = "Colortext";
+            this.Colortext.ReadOnly = true;
             this.Colortext.Size = new System.Drawing.Size(100, 23);
             this.Colortext.TabIndex = 119;
             // 
             // AQtytext
             // 
-            this.AQtytext.BackColor = System.Drawing.Color.White;
-            this.AQtytext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.AQtytext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.AQtytext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.AQtytext.Location = new System.Drawing.Point(547, 38);
             this.AQtytext.Name = "AQtytext";
+            this.AQtytext.ReadOnly = true;
             this.AQtytext.Size = new System.Drawing.Size(100, 23);
             this.AQtytext.TabIndex = 120;
             // 
             // Arrdate
             // 
-            this.Arrdate.BackColor = System.Drawing.Color.White;
-            this.Arrdate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.Arrdate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Arrdate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.Arrdate.Location = new System.Drawing.Point(831, 9);
             this.Arrdate.Name = "Arrdate";
+            this.Arrdate.ReadOnly = true;
             this.Arrdate.Size = new System.Drawing.Size(100, 23);
             this.Arrdate.TabIndex = 121;
             // 
             // LIDate
             // 
-            this.LIDate.BackColor = System.Drawing.Color.White;
-            this.LIDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.LIDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.LIDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.LIDate.Location = new System.Drawing.Point(831, 39);
             this.LIDate.Name = "LIDate";
+            this.LIDate.ReadOnly = true;
             this.LIDate.Size = new System.Drawing.Size(100, 23);
             this.LIDate.TabIndex = 122;
             // 
             // ResultText
             // 
-            this.ResultText.BackColor = System.Drawing.Color.White;
-            this.ResultText.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.ResultText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.ResultText.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.ResultText.Location = new System.Drawing.Point(765, 68);
             this.ResultText.Name = "ResultText";
+            this.ResultText.ReadOnly = true;
             this.ResultText.Size = new System.Drawing.Size(100, 23);
             this.ResultText.TabIndex = 123;
             // 
-            // EncodeBtn
+            // encode_button
             // 
-            this.EncodeBtn.Location = new System.Drawing.Point(785, 107);
-            this.EncodeBtn.Name = "EncodeBtn";
-            this.EncodeBtn.Size = new System.Drawing.Size(80, 30);
-            this.EncodeBtn.TabIndex = 124;
-            this.EncodeBtn.Text = "Encode";
-            this.EncodeBtn.UseVisualStyleBackColor = true;
+            this.encode_button.Location = new System.Drawing.Point(785, 107);
+            this.encode_button.Name = "encode_button";
+            this.encode_button.Size = new System.Drawing.Size(80, 30);
+            this.encode_button.TabIndex = 124;
+            this.encode_button.Text = "Encode";
+            this.encode_button.UseVisualStyleBackColor = true;
+            this.encode_button.Click += new System.EventHandler(this.encode_button_Click);
             // 
             // checkBox1
             // 
@@ -332,11 +354,22 @@
             this.checkBox1.Text = "N/A";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
+            // ToExcelBtn
+            // 
+            this.ToExcelBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.ToExcelBtn.Location = new System.Drawing.Point(670, 5);
+            this.ToExcelBtn.Name = "ToExcelBtn";
+            this.ToExcelBtn.Size = new System.Drawing.Size(80, 30);
+            this.ToExcelBtn.TabIndex = 95;
+            this.ToExcelBtn.Text = "To Excel";
+            this.ToExcelBtn.UseVisualStyleBackColor = true;
+            this.ToExcelBtn.Click += new System.EventHandler(this.ToExcelBtn_Click);
+            // 
             // P03_Crocking
             // 
             this.ClientSize = new System.Drawing.Size(955, 497);
             this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.EncodeBtn);
+            this.Controls.Add(this.encode_button);
             this.Controls.Add(this.ResultText);
             this.Controls.Add(this.LIDate);
             this.Controls.Add(this.Arrdate);
@@ -363,6 +396,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.GridPopUp = false;
+            this.KeyField1 = "id";
             this.Name = "P03_Crocking";
             this.Text = "P03_Crocking";
             this.WorkAlias = "FIR_Laboratory_Crocking";
@@ -394,7 +429,7 @@
             this.Controls.SetChildIndex(this.Arrdate, 0);
             this.Controls.SetChildIndex(this.LIDate, 0);
             this.Controls.SetChildIndex(this.ResultText, 0);
-            this.Controls.SetChildIndex(this.EncodeBtn, 0);
+            this.Controls.SetChildIndex(this.encode_button, 0);
             this.Controls.SetChildIndex(this.checkBox1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
@@ -432,7 +467,8 @@
         private Win.UI.TextBox Arrdate;
         private Win.UI.TextBox LIDate;
         private Win.UI.TextBox ResultText;
-        private Win.UI.Button EncodeBtn;
+        private Win.UI.Button encode_button;
         private Win.UI.CheckBox checkBox1;
+        private Win.UI.Button ToExcelBtn;
     }
 }
