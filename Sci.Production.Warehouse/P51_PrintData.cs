@@ -8,7 +8,7 @@ namespace Sci.Production.Warehouse
 {
     class P51_PrintData
     {
-      
+        public string StockType { get; set; }
         public string OrderID { get; set; }
         public string SEQ { get; set; }
         public string Roll { get; set; }

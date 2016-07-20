@@ -29,15 +29,11 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.label1 = new Sci.Win.UI.Label();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
             this.radioButton2 = new Sci.Win.UI.RadioButton();
+            this.radioButton1 = new Sci.Win.UI.RadioButton();
+            this.label1 = new Sci.Win.UI.Label();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // print
-            // 
-            this.print.Click += new System.EventHandler(this.print_Click);
             // 
             // toexcel
             // 
@@ -58,16 +54,16 @@
             this.radioPanel1.TabIndex = 94;
             this.radioPanel1.Value = "Backward Socktaking Form";
             // 
-            // label1
+            // radioButton2
             // 
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(19, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(201, 33);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Report Type";
-            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.ForeColor = System.Drawing.Color.Black;
+            this.radioButton2.Location = new System.Drawing.Point(19, 74);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(175, 21);
+            this.radioButton2.TabIndex = 2;
+            this.radioButton2.Text = "Backward Socktaking Li";
+            this.radioButton2.UseVisualStyleBackColor = true;
             // 
             // radioButton1
             // 
@@ -83,16 +79,16 @@
             this.radioButton1.UseVisualStyleBackColor = true;
             this.radioButton1.Value = "Backward Socktaking Form";
             // 
-            // radioButton2
+            // label1
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.Black;
-            this.radioButton2.Location = new System.Drawing.Point(19, 74);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(175, 21);
-            this.radioButton2.TabIndex = 2;
-            this.radioButton2.Text = "Backward Socktaking Li";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(19, 11);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(201, 33);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Report Type";
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // P51_Print
             // 

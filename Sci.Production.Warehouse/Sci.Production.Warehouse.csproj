@@ -181,6 +181,13 @@
     <Compile Include="P50_Print.Designer.cs">
       <DependentUpon>P50_Print.cs</DependentUpon>
     </Compile>
+    <Compile Include="P51_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P51_Print.Designer.cs">
+      <DependentUpon>P51_Print.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P51_PrintData.cs" />
     <Compile Include="Report\R02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -959,6 +966,11 @@
     <EmbeddedResource Include="P50_Print.resx">
       <DependentUpon>P50_Print.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P51_Print.resx">
+      <DependentUpon>P51_Print.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P51_Report1.rdlc" />
+    <EmbeddedResource Include="P51_Report2.rdlc" />
     <EmbeddedResource Include="Report\R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
     </EmbeddedResource>
@@ -1425,6 +1437,10 @@
     <None Include="Properties\DataSources\P37_PrintData1.datasource" />
     <None Include="Properties\DataSources\P50BookQty_PrintData.datasource" />
     <None Include="Properties\DataSources\P50List_PrintData.datasource" />
+    <None Include="Properties\DataSources\P51_PrintData.datasource" />
+    <None Include="Properties\DataSources\P51_PrintData1.datasource" />
+    <None Include="Properties\DataSources\P51_PrintData2.datasource" />
+    <None Include="Properties\DataSources\P51_PrintData3.datasource" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
