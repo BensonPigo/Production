@@ -3096,7 +3096,7 @@
         <Line Name="Line1">
           <Top>3.19828cm</Top>
           <Left>2.51037cm</Left>
-          <Height>0.02646cm</Height>
+          <Height>0cm</Height>
           <Width>15.88824cm</Width>
           <ZIndex>12</ZIndex>
           <Style>
