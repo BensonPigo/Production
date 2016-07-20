@@ -304,7 +304,15 @@ Where a.id = '{0}'", masterID);
             }
         }
 
+        protected override bool ClickPrint()
+        {
+            P50_Print p = new P50_Print(this.CurrentDataRow);
+            p.ShowDialog();
+            
+            
+            return true;
 
+        }
        
     }
 }

@@ -20,9 +20,10 @@ namespace Sci.Production.Warehouse
 {
     public partial class P50_Print : Sci.Win.Tems.PrintForm
     {
-        public P50_Print()
+        public P50_Print(DataRow row)
         {
             InitializeComponent();
+            this.CurrentDataRow = row;
         }
         string selectOption;
         protected override bool ValidateInput()
@@ -43,7 +44,7 @@ namespace Sci.Production.Warehouse
 		    from dbo.Stocktaking		
             where id = @ID", pars, out dt); ;
             if (!result) { return result; }
-            string ST = dt.Rows[0]["stocktype"].ToString();
+            string ST = dt.Rows[0]["ST"].ToString();
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ST", ST));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
