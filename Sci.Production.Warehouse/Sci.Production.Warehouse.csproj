@@ -125,6 +125,7 @@
     <Compile Include="P07_Print.Designer.cs">
       <DependentUpon>P07_Print.cs</DependentUpon>
     </Compile>
+    <Compile Include="P07_PrintData.cs" />
     <Compile Include="P10_PrintData.cs" />
     <Compile Include="P11_IssueBreakDown.cs">
       <SubType>Form</SubType>
@@ -905,6 +906,8 @@
     <EmbeddedResource Include="P07_Print.resx">
       <DependentUpon>P07_Print.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P07_Report1.rdlc" />
+    <EmbeddedResource Include="P07_Report2.rdlc" />
     <EmbeddedResource Include="P10_Detail.resx">
       <DependentUpon>P10_Detail.cs</DependentUpon>
     </EmbeddedResource>
@@ -961,6 +964,7 @@
     <EmbeddedResource Include="P18_Print.rdlc" />
     <EmbeddedResource Include="P19_Print.rdlc" />
     <EmbeddedResource Include="P22_Print.rdlc" />
+    <EmbeddedResource Include="P23_Print.rdlc" />
     <EmbeddedResource Include="P24_Print.rdlc" />
     <EmbeddedResource Include="P25.rdlc" />
     <EmbeddedResource Include="P29.resx">
@@ -1428,6 +1432,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\DataSources\B01.datasource" />
+    <None Include="Properties\DataSources\P07_PrintData.datasource" />
     <None Include="Properties\DataSources\P10.datasource" />
     <None Include="Properties\DataSources\P10_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_PrintData1.datasource" />
