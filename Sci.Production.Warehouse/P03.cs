@@ -392,102 +392,102 @@ Select POID,SEQ1,SEQ2,CASE
         }
 
 
-        protected override bool ClickPrint()
-        {
+//        protected override bool ClickPrint()
+//        {
 
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpath = saveDialog.FileName;
-            if (outpath.Empty())
-            {
-                return false;
-            }
-
-
-            DataRow Orders = this.CurrentDataRow;
-            string poid = Orders["poid"].ToString();
-            string styleid = Orders["styleid"].ToString();
-            List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", poid));
+//            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+//            saveDialog.ShowDialog();
+//            string outpath = saveDialog.FileName;
+//            if (outpath.Empty())
+//            {
+//                return false;
+//            }
 
 
-
-            //            DualResult result;
-            //            DataTable dtSizecode;
-            //            string sqlcmd1 = string.Format(@"select distinct sizecode
-            //	                    from dbo.Issue_Size
-            //	                    where id = @ID order by sizecode");
-            //            string sizecodes = "";
-            //            result = DBProxy.Current.Select("", sqlcmd1, pars, out dtSizecode);
-            //            foreach (DataRow dr in dtSizecode.Rows)
-            //            {
-            //                sizecodes += "[" + dr["sizecode"].ToString() + "]" + ",";
-            //            }
-            //            sizecodes = sizecodes.Substring(0, sizecodes.Length - 1);
-
-            DataTable dt;
-
-            string sqlcmd = string.Format(@"select Issue_detail.Seq1 + '-' + Issue_detail.Seq2 as SEQ
-                    ,dbo.getMtlDesc(poid,Issue_detail.Seq1,Issue_detail.Seq2,2,0) as Description
-                   ,Po_supp_detail.sizeunit as Unit,Po_supp_detail.colorid as Color,
-                   Issue_detail.Qty as TransferQTY,dbo.Getlocation(ftyinventoryUkey) as Location,
-                   s.*
-                    from(
-                    select * 
-                    from (
-	                    select sizecode,Issue_DetailUkey, qty
-	                    from dbo.Issue_Size
-	                    where id = @ID
-	                    ) as s
-	                    PIVOT
-	                    (
-	                     Sum(qty)
-	                     FOR sizecode  IN ({0})
-                    ) AS PivotTable) as s
-                   left join dbo.Issue_Detail on ukey = s.Issue_DetailUkey
-                    left join dbo.po_supp_detail on po_supp_detail.id = Issue_detail.POID and po_supp_detail.seq1 = Issue_detail.seq1 and po_supp_detail.seq2=Issue_detail.seq2
-", sizecodes);
-            result = DBProxy.Current.Select("", sqlcmd, pars, out dtseq);
-
-            if (!result)
-            {
-                ShowErr(result);
-                return true;
-            }
-            dtseq.Columns.Remove(dtseq.Columns["Issue_DetailUkey"]);
-            string SEQ = dtseq.Rows[0]["SEQ"].ToString();
-            //string tQty = dtseq.Rows[0]["tQTY"].ToString();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SEQ", SEQ));
-            //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("tQTY", tQty));
+//            DataRow Orders = this.CurrentDataRow;
+//            string poid = Orders["poid"].ToString();
+//            string styleid = Orders["styleid"].ToString();
+//            List<SqlParameter> pars = new List<SqlParameter>();
+//            pars.Add(new SqlParameter("@ID", poid));
 
 
 
-            string xlt = @"Warehouse_P03_Print.xltx";
-            SaveXltReportCls xl = new SaveXltReportCls(xlt);
+//            //            DualResult result;
+//            //            DataTable dtSizecode;
+//            //            string sqlcmd1 = string.Format(@"select distinct sizecode
+//            //	                    from dbo.Issue_Size
+//            //	                    where id = @ID order by sizecode");
+//            //            string sizecodes = "";
+//            //            result = DBProxy.Current.Select("", sqlcmd1, pars, out dtSizecode);
+//            //            foreach (DataRow dr in dtSizecode.Rows)
+//            //            {
+//            //                sizecodes += "[" + dr["sizecode"].ToString() + "]" + ",";
+//            //            }
+//            //            sizecodes = sizecodes.Substring(0, sizecodes.Length - 1);
 
-            xl.dicDatas.Add("##name", RptTitle);
-            xl.dicDatas.Add("##ID", id);
-            xl.dicDatas.Add("##cutplanid", request);
-            xl.dicDatas.Add("##issuedate", issuedate);
-            xl.dicDatas.Add("##remark", remark);
-            xl.dicDatas.Add("##cCutNo", cutno);
-            SaveXltReportCls.xltRptTable xlTable = new SaveXltReportCls.xltRptTable(dtseq);
-            int allColumns = dtseq.Columns.Count;
-            int sizeColumns = dtSizecode.Rows.Count;
-            xlTable.lisTitleMerge.Add(new Dictionary<string, string> { 
-            { "SIZE", string.Format("{0},{1}", allColumns-sizeColumns+1, allColumns) }}
-           );
-            //xlTable.Borders.AllCellsBorders = true;
-            //xlTable.HeaderColor = Color.AliceBlue;
-            //xlTable.ContentColor = Color.LightGreen;
-            xlTable.Borders.OnlyHeaderBorders = true;
-            xl.dicDatas.Add("##SEQ", xlTable);
+//            DataTable dt;
+
+//            string sqlcmd = string.Format(@"select Issue_detail.Seq1 + '-' + Issue_detail.Seq2 as SEQ
+//                    ,dbo.getMtlDesc(poid,Issue_detail.Seq1,Issue_detail.Seq2,2,0) as Description
+//                   ,Po_supp_detail.sizeunit as Unit,Po_supp_detail.colorid as Color,
+//                   Issue_detail.Qty as TransferQTY,dbo.Getlocation(ftyinventoryUkey) as Location,
+//                   s.*
+//                    from(
+//                    select * 
+//                    from (
+//	                    select sizecode,Issue_DetailUkey, qty
+//	                    from dbo.Issue_Size
+//	                    where id = @ID
+//	                    ) as s
+//	                    PIVOT
+//	                    (
+//	                     Sum(qty)
+//	                     FOR sizecode  IN ({0})
+//                    ) AS PivotTable) as s
+//                   left join dbo.Issue_Detail on ukey = s.Issue_DetailUkey
+//                    left join dbo.po_supp_detail on po_supp_detail.id = Issue_detail.POID and po_supp_detail.seq1 = Issue_detail.seq1 and po_supp_detail.seq2=Issue_detail.seq2
+//", sizecodes);
+//            result = DBProxy.Current.Select("", sqlcmd, pars, out dtseq);
+
+//            if (!result)
+//            {
+//                ShowErr(result);
+//                return true;
+//            }
+//            dtseq.Columns.Remove(dtseq.Columns["Issue_DetailUkey"]);
+//            string SEQ = dtseq.Rows[0]["SEQ"].ToString();
+//            //string tQty = dtseq.Rows[0]["tQTY"].ToString();
+//            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SEQ", SEQ));
+//            //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("tQTY", tQty));
 
 
-            xl.Save(outpath, true);
 
-            return true;
-        }
+//            string xlt = @"Warehouse_P03_Print.xltx";
+//            SaveXltReportCls xl = new SaveXltReportCls(xlt);
+
+//            xl.dicDatas.Add("##name", RptTitle);
+//            xl.dicDatas.Add("##ID", id);
+//            xl.dicDatas.Add("##cutplanid", request);
+//            xl.dicDatas.Add("##issuedate", issuedate);
+//            xl.dicDatas.Add("##remark", remark);
+//            xl.dicDatas.Add("##cCutNo", cutno);
+//            SaveXltReportCls.xltRptTable xlTable = new SaveXltReportCls.xltRptTable(dtseq);
+//            int allColumns = dtseq.Columns.Count;
+//            int sizeColumns = dtSizecode.Rows.Count;
+//            xlTable.lisTitleMerge.Add(new Dictionary<string, string> { 
+//            { "SIZE", string.Format("{0},{1}", allColumns-sizeColumns+1, allColumns) }}
+//           );
+//            //xlTable.Borders.AllCellsBorders = true;
+//            //xlTable.HeaderColor = Color.AliceBlue;
+//            //xlTable.ContentColor = Color.LightGreen;
+//            xlTable.Borders.OnlyHeaderBorders = true;
+//            xl.dicDatas.Add("##SEQ", xlTable);
+
+
+//            xl.Save(outpath, true);
+
+//            return true;
+//        }
 
     }
 }
