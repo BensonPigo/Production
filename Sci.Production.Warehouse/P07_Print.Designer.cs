@@ -47,10 +47,12 @@
             this.radioPanel1.Size = new System.Drawing.Size(454, 143);
             this.radioPanel1.TabIndex = 94;
             this.radioPanel1.Value = "P/L Rcv Report";
+            this.radioPanel1.ValueChanged += new System.EventHandler(this.radioGroup1_ValueChanged);
             // 
             // radioButton1
             // 
             this.radioButton1.AutoSize = true;
+            this.radioButton1.Checked = true;
             this.radioButton1.ForeColor = System.Drawing.Color.Black;
             this.radioButton1.Location = new System.Drawing.Point(32, 24);
             this.radioButton1.Name = "radioButton1";
@@ -60,6 +62,7 @@
             this.radioButton1.Text = "P/L Rcv Report";
             this.radioButton1.UseVisualStyleBackColor = true;
             this.radioButton1.Value = "P/L Rcv Report";
+            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
             // radioButton2
             // 

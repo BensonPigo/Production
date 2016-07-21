@@ -988,6 +988,13 @@ where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword), out dt);
             if (excel == null) return;
             excel.Visible = true;
         }
+        protected override bool ClickPrint()
+        {
+            P07_Print p = new P07_Print();
+            p.CurrentDataRow = this.CurrentDataRow;
+            p.ShowDialog();
 
+            return true;
+        }
     }
 }
