@@ -2030,6 +2030,12 @@ Sci.Production.Warehouse/P07_ExcelImport.resx -text
 Sci.Production.Warehouse/P07_ModifyRollDyelot.Designer.cs -text
 Sci.Production.Warehouse/P07_ModifyRollDyelot.cs -text
 Sci.Production.Warehouse/P07_ModifyRollDyelot.resx -text
+Sci.Production.Warehouse/P07_Print.Designer.cs -text
+Sci.Production.Warehouse/P07_Print.cs -text
+Sci.Production.Warehouse/P07_Print.resx -text
+Sci.Production.Warehouse/P07_PrintData.cs -text
+Sci.Production.Warehouse/P07_Report1.rdlc -text
+Sci.Production.Warehouse/P07_Report2.rdlc -text
 Sci.Production.Warehouse/P07_UpdateActualWeight.Designer.cs -text
 Sci.Production.Warehouse/P07_UpdateActualWeight.cs -text
 Sci.Production.Warehouse/P07_UpdateActualWeight.resx -text
