@@ -37,11 +37,11 @@
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(535, 102);
+            this.toexcel.Location = new System.Drawing.Point(535, 51);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(535, 138);
+            this.close.Location = new System.Drawing.Point(535, 87);
             // 
             // radioPanel1
             // 
