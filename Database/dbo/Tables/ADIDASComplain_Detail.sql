@@ -17,8 +17,16 @@
     [BrandID]        VARCHAR (8)    NULL,
     [FactoryID]      VARCHAR (8)    NULL,
     [StyleID]        VARCHAR (20)   NULL,
+    [Supplier]       VARCHAR (6)    NULL,
+    [Refno]          VARCHAR (20)   NULL,
+    [CustPONo]       VARCHAR (30)   NULL,
+    [SeasonId]       VARCHAR (10)   NULL,
+    [BulkMR]         VARCHAR (10)   NULL,
+    [SampleMR]       VARCHAR (10)   NULL,
     CONSTRAINT [PK_ADIDASComplain_Detail] PRIMARY KEY CLUSTERED ([UKEY] ASC)
 );
+
+
 
 
 
