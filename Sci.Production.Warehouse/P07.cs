@@ -990,7 +990,13 @@ where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword), out dt);
         }
         protected override bool ClickPrint()
         {
-            P07_Print p = new P07_Print();
+            DataTable details = (DataTable)this.detailgridbs.DataSource;
+            List<String> poidList = details.AsEnumerable()
+                .Select(row => row["poid"].ToString().TrimEnd())
+                .Distinct()
+                .ToList();
+
+            P07_Print p = new P07_Print(poidList);
             p.CurrentDataRow = this.CurrentDataRow;
             p.ShowDialog();
 

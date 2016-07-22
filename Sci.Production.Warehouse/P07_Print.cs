@@ -8,27 +8,48 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
     public partial class P07_Print : Sci.Win.Tems.PrintForm
     {
-        public P07_Print()
+        public P07_Print(List<String> polist)
         {
             InitializeComponent();
             CheckControlEnable();
+            this.poidList = polist;
         }
+        List<String> poidList;
+
+        protected override bool ValidateInput()
+        {
+
+            if (ReportResourceName == "P07_Report2.rdlc")
+            {
+                if (!poidList.Contains(this.textBox1.Text.TrimEnd(), StringComparer.OrdinalIgnoreCase))
+                {
+                    MyUtility.Msg.ErrorBox("SP# is not found.");
+                    return false;
+                }
+            }
+            return base.ValidateInput();
+        }
+
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DataRow row = this.CurrentDataRow;
-            string Date1 = row["PackingReceive"].ToString();
-            string ETA = row["ETA"].ToString();
+            string id = row["ID"].ToString();
+            string Date1 = ((DateTime)MyUtility.Convert.GetDate(row["PackingReceive"])).ToShortDateString();
+            string Date2 = ((DateTime)MyUtility.Convert.GetDate(row["WhseArrival"])).ToShortDateString();
+            string ETA = ((DateTime)MyUtility.Convert.GetDate(row["ETA"])).ToShortDateString();
             string Invoice = row["invno"].ToString();
             string Wk = row["exportid"].ToString();
             string FTYID = row["Mdivisionid"].ToString();
-           
-
+         
             List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+           
             DataTable dtTitle;
             DualResult titleResult = DBProxy.Current.Select("",
            @"select m.name
@@ -40,19 +61,12 @@ namespace Sci.Production.Warehouse
             if (!titleResult) { this.ShowErr(titleResult); }
             string RptTitle = dtTitle.Rows[0]["name"].ToString();
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
-            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Date1", Date1));
+          
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ETA", ETA));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invoice", Invoice));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Wk", Wk));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FTYID", FTYID));
-            string Date2;
-            Date2 = dtTitle.Rows.Count == 0 ? "" : dtTitle.Rows[0]["WhseArrival"].ToString();
-  
-
-
-            if (ReportResourceName == "P07_Report2.rdlc")
-            {
-                e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Date2", Date2));
+   
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
             @"select  
@@ -63,40 +77,56 @@ namespace Sci.Production.Warehouse
 			,[SubQty]=sum(R.ShipQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
 			,[SubGW]=sum(R.Weight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 ) 
 			,[SubAW]=sum(R.ActualWeight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
-			,[SubStockQty]=sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )      			
-            from dbo.Receiving_Detail R", pars, out dt); ;
-            //if (!result) { return result; }
-            //if (!result) { this.ShowErr(result); }
-            //     string StockType = dt.Rows[0]["stocktype"].ToString();
-          
+			,[SubStockQty]=sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
+            ,[SubVaniance]=sum(R.ActualWeight - R.Weight)OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )  			
+            from dbo.Receiving_Detail R
+            where R.id = @ID", pars, out dt);
+            if (!result) { return result; }
+            if (ReportResourceName == "P07_Report2.rdlc")
+            {
+                e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Date2", Date2));
+                List<P07_PrintData> data = dt.AsEnumerable()
+                                .Select(row1 => new P07_PrintData()
+                                {
+                                    Roll = row1["Roll"].ToString(),
+                                    Dyelot = row1["dyelot"].ToString(),
+                                    POID = row1["PoId"].ToString(),
+                                    SEQ = row1["SEQ"].ToString(), 
+                                    Desc = row1["Desc"].ToString(),
+                                    ShipQty = row1["ShipQty"].ToString(),
+                                    pounit = row1["pounit"].ToString(),
+                                    StockQty = row1["StockQty"].ToString(),
+                                    StockUnit = row1["StockUnit"].ToString(),
+                                    SubStockQty = row1["SubStockQty"].ToString(),
+                                    SubQty = row1["SubQty"].ToString()
 
+                                }).ToList();
 
-              /*  List<P07_PrintData> data = dt.AsEnumerable()
-                               .Select(row1 => new P07_PrintData()
-                               {
+                e.Report.ReportDataSource = data;
 
-                                   POID = row1["OrderID"].ToString(),
-                                   SEQ = row1["SEQ"].ToString(),
-                                   Roll = row1["Roll"].ToString(),
-                                   Dyelot = row1["dyelot"].ToString(),
-                                   Desc = row1["Refno"].ToString(),
-                                   ShipQty = row1["fabrictype"].ToString(),
-                                   pounit = row1["ColorID"].ToString(),
-                                   GW = row1["StockUnit"].ToString(),
-                                   AW = row1["Bookqty"].ToString(),
-                                   Vaniance = row1["Location"].ToString(),
-                                   StockQty = row1["Actualqty"].ToString(),
-                                   SubAW = row1["Variance"].ToString(),
-                                   SubGW = row1["Total1"].ToString(),
-                                   SubVaniance = row1["Total2"].ToString(),
-                                   StockUnit = row1["Variance"].ToString(),
-                                   SubStockQty = row1["Total1"].ToString(),
-                                   SubQty = row1["Total2"].ToString()
+            }
+            else
+            {
 
-                               }).ToList();
-                
+                e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Date1", Date1));                   
+                 List<P07_PrintData> data = dt.AsEnumerable()
+                                .Select(row1 => new P07_PrintData()
+                                {
+                                    Roll = row1["Roll"].ToString(),
+                                    Desc = row1["Desc"].ToString(),
+                                    ShipQty = row1["ShipQty"].ToString(),
+                                    pounit = row1["pounit"].ToString(),
+                                    GW = row1["Weight"].ToString(),
+                                    AW = row1["ActualWeight"].ToString(),
+                                    Vaniance = row1["Vaniance"].ToString(),
+                                    SubQty = row1["SubQty"].ToString(),
+                                    SubGW = row1["SubGW"].ToString(),
+                                    SubAW = row1["SubAW"].ToString(),
+                                    SubVaniance = row1["SubVaniance"].ToString()
+                                 
+                                }).ToList();
+                 e.Report.ReportDataSource = data;
 
-                e.Report.ReportDataSource = data;*/
             }
            
 
@@ -136,6 +166,10 @@ namespace Sci.Production.Warehouse
             {
                
                 textBox1.Enabled = true;
+               
+                   
+                
+
             }
         }
 
