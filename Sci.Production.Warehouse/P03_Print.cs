@@ -23,15 +23,16 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03_Print : Sci.Win.Tems.PrintForm
     {
-        public P03_Print(ToolStripMenuItem menuitem)
-            : base(menuitem)
+        public P03_Print()
         {
             InitializeComponent();
+            // TODO: Complete member initialization
         }
         DataTable dt;
         string sqlcmd;
         protected override bool ValidateInput()
         {
+           
             sqlcmd = @"select  a.id[poid]
             ,b.StyleID[style]
             ,a.SEQ1+a.SEQ2[SEQ]
@@ -76,7 +77,8 @@ namespace Sci.Production.Warehouse
             e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID and e.year=year(a.ETA)
             left join dbo.Supp f
             on 
-            f.id=c.SuppID";
+            f.id=c.SuppID
+            where a.id='13111582CCS'";
             return base.ValidateInput();
         }
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
@@ -93,28 +95,29 @@ namespace Sci.Production.Warehouse
 
                 var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
                 saveDialog.ShowDialog();
-                string outpath = saveDialog.FileName;
-                if (outpath.Empty())
+                string outpa = saveDialog.FileName;
+                if (outpa.Empty())
                 {
                     return true;
                 }
-                if (this.radioPanel1.Value == this.radioButton1.Value) {
-                    Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Warehouse_P03_Print.xltx");
-                    xl.dicDatas.Add("##poid", dt);
-                    xl.Save(outpath, false);
+                 if (this.radioPanel1.Value == this.radioButton1.Value) {
+                    Sci.Utility.Excel.SaveXltReportCls x2 = new Utility.Excel.SaveXltReportCls("Warehouse_P03_Print-1.xltx");
+                    x2.dicDatas.Add("##poid", dt);                    
+                    x2.Save(outpa, false);
+
+                if (this.radioPanel1.Value == this.radioButton2.Value) {
+                    Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Warehouse_P03_Print-2.xltx");
+                    xl.dicDatas.Add("##poid", dt);                    
+                    xl.Save(outpa, false);
 
                 }
-                //string xlt = @"Warehouse_P03_Print.xltx";
-                //SaveXltReportCls xl = new SaveXltReportCls(xlt);
-                //SaveXltReportCls.xltRptTable xlTable = new SaveXltReportCls.xltRptTable(dt);
-                //xl.dicDatas.Add("##poid", xlTable);
-                //xl.Save(outpath, true);
                 return true;
             }
-
+       
+            }
            
         }
     
-    }
+    
 
 

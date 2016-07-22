@@ -382,26 +382,19 @@ Select POID,SEQ1,SEQ2,CASE
         //Excel
         private void button3_Click(object sender, EventArgs e)
         {
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return;
-            MyUtility.Excel.CopyToXls(dt, "");
+            //DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            //if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return;
+            //MyUtility.Excel.CopyToXls(dt, "");
+            P03_Print p = new P03_Print();
+            p.ShowDialog();
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.grid1_sorting();
         }
 
-
-        //protected override bool ClickPrint()
-        //{
-        //    P03_Print p = new P03_Print();
-        //    p.ShowDialog();
-        
-            
-        //    return true;
-
-        //}
-
+      
+      
     }
 }
 
