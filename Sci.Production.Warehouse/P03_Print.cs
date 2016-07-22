@@ -26,10 +26,13 @@ namespace Sci.Production.Warehouse
         public P03_Print()
         {
             InitializeComponent();
+
             // TODO: Complete member initialization
         }
         DataTable dt;
         string sqlcmd;
+        DataTable dtt;
+        string sqlmdd;
         protected override bool ValidateInput()
         {
            
@@ -77,44 +80,121 @@ namespace Sci.Production.Warehouse
             e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID and e.year=year(a.ETA)
             left join dbo.Supp f
             on 
-            f.id=c.SuppID
-            where a.id='13111582CCS'";
+            f.id=c.SuppID where a.id='12042541IIS  '";
+
+            sqlmdd = @"select a.id[sp#]
+                    ,b.StyleID[style#]
+                    ,a.SEQ1+a.SEQ2[SEQ]
+                    ,c.SuppID[Supp]
+                    ,d.NameEN[Supp Name]
+                    ,substring(convert(varchar,a.cfmetd, 101),1,5)[Sup. 1st Cfm ETA]
+                    ,substring(convert(varchar,a.RevisedETD, 101),1,5)[RevisedETD]
+                    ,a.Refno[Ref#]
+                    --,dbo.getMtlDesc(a.poid,a.SEQ1,a.SEQ2,2,0)
+                    ,e.AbbCH[Chinese Abb]
+                    ,f.HsCode[HS Code]
+                    ,case a.FabricType 
+                    when 'F' then 'Fabric'
+                    when 'A'then 'Accessory'
+                    else a.FabricType
+                    end Material_Type
+                    ,a.ColorID[Color]
+                    ,a.SizeSpec[Size]
+                    ,a.Qty[Order Qty]
+                    ,a.NETQty[Net Qty]
+                    ,a.UsedQty[Use Qty]
+                    ,a.ShipQty[Ship Qty]
+                    ,a.ShipFOC[F.O.C]
+                    ,a.ApQty[AP Qty]
+                    ,IIF(EXISTS(SELECT * FROM DBO.Export_Detail g
+                    WHERE g.PoID = a.id
+                    AND g.SEQ1 = a.seq1
+                    AND g.SEQ2 =a.seq2
+                    AND IsFormA = 1),'Y','')[FormA]
+                    ,a.InputQty[Taipei Stock Qty]
+                    ,a.POUnit[Unit]
+                    ,a.Complete[Cmplt]
+                    ,substring(convert(varchar, a.ata, 101),1,5)[Act. Eta]
+                    ,(select t.id+',' from 
+                    (select distinct id from export_detail  where poid =a.id and seq1=a.seq1 and seq2=a.seq2) t for xml path('')) [WK#]
+                    ,i.InQty[Arrived Qty]
+                    ,a.StockUnit[Unit]
+                    ,i.OutQty[Released Qty]
+                    ,i.AdjustQty[Adjust Qty]
+                    ,i.InQty-i.OutQty+i.AdjustQty[Balance]
+                    ,i.LInvQty[Stock Qty]
+                    ,i.LObQty[Scrap Qty]
+                    ,i.ALocation[Bulk Location]
+                    ,i.BLocation[Stock Location]
+
+                    from dbo.PO_Supp_Detail a
+                    left join dbo.Orders b
+                    on 
+                    a.id=b.id
+                    left join dbo.PO_Supp c
+                    on
+                    c.id=a.id and c.SEQ1=a.SEQ1
+                    left join dbo.supp d
+                    on 
+                    d.id=c.SuppID
+                    left join dbo.Fabric_Supp e
+                    on
+                    e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID
+                    left join dbo.Fabric_HsCode f
+                    on
+                    f.SCIRefno=a.SCIRefno and f.SuppID=c.SuppID and f.Year=Year(a.ETA)
+                    --inner join dbo.Export_Detail h
+                    --on 
+                    --h.poid=a.id and h.seq1=a.SEQ1 and h.seq2=a.SEQ2 and 
+                    left join dbo.MDivisionPoDetail i
+                    on
+                    i.POID=a.ID";
             return base.ValidateInput();
         }
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            return  DBProxy.Current.Select("", sqlcmd, out dt); 
+            return  DBProxy.Current.Select("", sqlcmd, out dt);
+            return DBProxy.Current.Select("", sqlcmdd, out dtt); 
         }
-            protected override bool OnToExcel(Win.ReportDefinition report)
+        protected override bool OnToExcel(Win.ReportDefinition report)
+        {
+            if (dt == null || dt.Rows.Count == 0)
+            if (dtt == null || dtt.Rows.Count == 0)
             {
-                if (dt == null || dt.Rows.Count == 0)
-                {
-                    MyUtility.Msg.ErrorBox("Data not found");
-                    return false;
-                }
+                MyUtility.Msg.ErrorBox("Data not found");
+                return false;
+            }
 
-                var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-                saveDialog.ShowDialog();
-                string outpa = saveDialog.FileName;
-                if (outpa.Empty())
-                {
-                    return true;
-                }
-                 if (this.radioPanel1.Value == this.radioButton1.Value) {
-                    Sci.Utility.Excel.SaveXltReportCls x2 = new Utility.Excel.SaveXltReportCls("Warehouse_P03_Print-1.xltx");
-                    x2.dicDatas.Add("##poid", dt);                    
-                    x2.Save(outpa, false);
+           
+          
 
-                if (this.radioPanel1.Value == this.radioButton2.Value) {
+            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+            saveDialog.ShowDialog();
+            string outpa = saveDialog.FileName;
+            if (outpa.Empty())
+            {
+                return true;
+            }
+
+            if (this.radioPanel1.Value == this.radioButton1.Value)
+            {
+                Sci.Utility.Excel.SaveXltReportCls x2 = new Utility.Excel.SaveXltReportCls("Warehouse_P03_Print-1.xltx");
+                x2.dicDatas.Add("##poid", dtt);
+                x2.Save(outpa, false);
+                if (this.radioPanel1.Value == this.radioButton2.Value)
+               {
                     Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Warehouse_P03_Print-2.xltx");
-                    xl.dicDatas.Add("##poid", dt);                    
+                    xl.dicDatas.Add("##poid", dt);
                     xl.Save(outpa, false);
 
                 }
                 return true;
             }
-       
-            }
+        }
+
+
+            public string sqlcmdd { get; set; }
+    }
            
         }
     
