@@ -92,20 +92,20 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ts6 = new DataGridViewGeneratorNumericColumnSettings();
             ts6.CellMouseDoubleClick += (s, e) =>
             {
-                    var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                    if (null == dr) return;
-                    var frm = new Sci.Production.Warehouse.P03_Transaction(dr);
-                    frm.ShowDialog(this);
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                var frm = new Sci.Production.Warehouse.P03_Transaction(dr);
+                frm.ShowDialog(this);
             };
             #endregion
             #region Inventory Qty 開窗
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ts7 = new DataGridViewGeneratorNumericColumnSettings();
             ts7.CellMouseDoubleClick += (s, e) =>
             {
-                    var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                    if (null == dr) return;
-                    var frm = new Sci.Production.Warehouse.P03_InventoryStatus(dr);
-                    frm.ShowDialog(this);
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                var frm = new Sci.Production.Warehouse.P03_InventoryStatus(dr);
+                frm.ShowDialog(this);
 
             };
             #endregion
@@ -113,10 +113,10 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ts8 = new DataGridViewGeneratorNumericColumnSettings();
             ts8.CellMouseDoubleClick += (s, e) =>
             {
-                    var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                    if (null == dr) return;
-                    var frm = new Sci.Production.Warehouse.P03_Scrap(dr);
-                    frm.ShowDialog(this);
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                var frm = new Sci.Production.Warehouse.P03_Scrap(dr);
+                frm.ShowDialog(this);
 
             };
             #endregion
@@ -124,10 +124,10 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts9 = new DataGridViewGeneratorTextColumnSettings();
             ts9.CellMouseDoubleClick += (s, e) =>
             {
-                    var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                    if (null == dr) return;
-                    var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "B");
-                    frm.ShowDialog(this);
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "B");
+                frm.ShowDialog(this);
 
             };
             #endregion
@@ -135,10 +135,10 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts11 = new DataGridViewGeneratorTextColumnSettings();
             ts11.CellMouseDoubleClick += (s, e) =>
             {
-                    var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                    if (null == dr) return;
-                    var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "I");
-                    frm.ShowDialog(this);
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "I");
+                frm.ShowDialog(this);
 
             };
             #endregion
@@ -146,10 +146,10 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts10 = new DataGridViewGeneratorTextColumnSettings();
             ts10.CellMouseDoubleClick += (s, e) =>
             {
-                    var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                    if (null == dr) return;
-                    var frm = new Sci.Production.Warehouse.P03_InspectionList(dr);
-                    frm.ShowDialog(this);
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                var frm = new Sci.Production.Warehouse.P03_InspectionList(dr);
+                frm.ShowDialog(this);
 
             };
             #endregion
@@ -189,7 +189,7 @@ namespace Sci.Production.Warehouse
             .Numeric("LObQty", header: "Scrap Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts8)    //30
             .Text("ALocation", header: "Bulk Location", iseditingreadonly: true, settings: ts9)  //31
             .Text("BLocation", header: "Stock Location", iseditingreadonly: true, settings: ts11)  //32
-            .Text("FIR", header: "FIR", iseditingreadonly: true, settings:ts10)  //33
+            .Text("FIR", header: "FIR", iseditingreadonly: true, settings: ts10)  //33
             .Text("Remark", header: "Remark", iseditingreadonly: true)  //34
             ;
             #endregion
@@ -386,95 +386,23 @@ Select POID,SEQ1,SEQ2,CASE
             if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return;
             MyUtility.Excel.CopyToXls(dt, "");
         }
-
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.grid1_sorting();
         }
 
 
-        protected override bool ClickPrint()
-        {
-
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpath = saveDialog.FileName;
-            if (outpath.Empty())
-            {
-                return false;
-            }
-
-
-            DataRow Orders = this.CurrentDataRow;
-            string poid = Orders["poid"].ToString();
-            string styleid = Orders["styleid"].ToString();
-            List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", poid));
-
-
-            DualResult result;
-            DataTable dt;
-            string sqlcmd = @"select  a.id[poid]
-            ,b.StyleID[style]
-            ,a.SEQ1+a.SEQ2[SEQ]
-            ,dbo.getMtlDesc(a.id,a.SEQ1,a.seq2,2,0)[Desc]
-            ,chinese_abb=d.AbbCH
-            ,case a.fabrictype
-            when 'F' then 'Fabric'
-            when 'A' THEN 'Accessory'
-            Else a.FabricType
-            end Material_Type
-            ,Hs_code=e.HsCode
-            ,supp=c.SuppID
-            ,Supp_Name=f.AbbEN
-            ,Currency=f.Currencyid
-            ,Del=substring(convert(varchar, a.cfmetd, 101),1,5)
-            ,Used_Qty=a.UsedQty
-            ,Order_Qty=a.qty
-            ,Taipei_Stock=a.InputQty
-            ,Unit=a.POUnit
-            ,TTL_Qty=a.ShipQty
-            ,FOC=a.FOC
-            ,ty=convert(numeric(5,2), iif( isnull(a.Qty,0)=0,100,a.shipqty/a.qty*100))
-            ,OK=a.Complete
-            ,Exp_Date=substring(convert(varchar,a.eta, 101),1,5)
-            ,FormA=IIF(EXISTS(SELECT * FROM DBO.Export_Detail g
-            WHERE g.PoID =a.id
-            AND g.SEQ1 = a.seq1
-            AND g.SEQ2 = a.seq2
-            AND IsFormA = 1),'Y','')
-            from dbo.PO_Supp_Detail a
-            left join dbo.orders b
-            on
-            a.id=b.id
-            left join dbo.PO_Supp c
-            on
-            a.id=c.id and a.SEQ1=c.SEQ1
-            left join dbo.Fabric_Supp d
-            on
-            d.SCIRefno=a.SCIRefno and d.SuppID=c.SuppID
-            left join dbo.Fabric_HsCode e
-            on 
-            e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID and e.year=year(a.ETA)
-            left join dbo.Supp f
-            on 
-            f.id=c.SuppID
-                ";
-            result = DBProxy.Current.Select("", sqlcmd, pars, out dt);
-
-            if (!result)
-            {
-                ShowErr(result);
-                return true;
-            }
+        //protected override bool ClickPrint()
+        //{
+        //    P03_Print p = new P03_Print();
+        //    p.ShowDialog();
+        
             
+        //    return true;
 
-            string xlt = @"Warehouse_P03_Print.xltx";
-            return true;
-        }
+        //}
 
-    
-public  DataRow CurrentDataRow { get; set; }}
+    }
 }
 
 
