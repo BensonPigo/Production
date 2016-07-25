@@ -2044,6 +2044,7 @@ Sci.Production.Warehouse/P07_Sticker.cs -text
 Sci.Production.Warehouse/P07_Sticker.rdlc -text
 Sci.Production.Warehouse/P07_Sticker.resx -text
 Sci.Production.Warehouse/P07_Sticker_Data.cs -text
+Sci.Production.Warehouse/P07_Sticker_PrintData.cs -text
 Sci.Production.Warehouse/P07_UpdateActualWeight.Designer.cs -text
 Sci.Production.Warehouse/P07_UpdateActualWeight.cs -text
 Sci.Production.Warehouse/P07_UpdateActualWeight.resx -text
