@@ -29,14 +29,90 @@ namespace Sci.Production.Warehouse
 
             // TODO: Complete member initialization
         }
+       
         DataTable dt;
         string sqlcmd;
-        DataTable dtt;
-        string sqlmdd;
         protected override bool ValidateInput()
         {
-           
-            sqlcmd = @"select  a.id[poid]
+            if (this.radioPanel1.Value == this.radioButton1.Value)
+            {
+                sqlcmd = @"select a.id[sp]
+			,b.StyleID[style#]
+			,a.SEQ1+a.SEQ2[SEQ]
+			,c.SuppID[Supp]
+			,d.NameEN[Supp Name]
+			,substring(convert(varchar,a.cfmetd, 101),1,5)[Sup. 1st Cfm ETA]
+			,substring(convert(varchar,a.RevisedETD, 101),1,5)[RevisedETD]
+		    ,a.Refno[Ref#]
+            ,dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0)[Description]
+			,e.AbbCH[Chinese Abb]
+			,f.HsCode[HS Code]
+			,case a.FabricType 
+			when 'F' then 'Fabric'
+			when 'A'then 'Accessory'
+			else a.FabricType
+			end Material_Type
+			,a.ColorID[Color]
+			,a.SizeSpec[Size]
+			,h.Currencyid[Currency]
+			,a.UsedQty[Qty]
+			,a.Qty[Order Qty]
+		    ,a.NETQty[Net Qty]
+			,a.NETQty+a.LossQty[Use Qty]
+			,a.ShipQty[Ship Qty]
+			,a.ShipFOC[F.O.C]
+			,a.ApQty[AP Qty]
+			,IIF(EXISTS(SELECT * FROM DBO.Export_Detail g
+			WHERE g.PoID = a.id
+			AND g.SEQ1 = a.seq1
+			AND g.SEQ2 =a.seq2
+			AND IsFormA = 1),'Y','')[FormA]
+			,a.InputQty[Taipei Stock Qty]
+			,a.POUnit[Unit]
+			,a.Complete[Cmplt]
+			,substring(convert(varchar, a.ata, 101),1,5)[Act. Eta]
+			,(select id+',' from 
+			(select distinct id from export_detail  where poid =a.id and seq1=a.seq1 and seq2=a.seq2) t for xml path('')) [WK#]
+			,(select orderid+',' from 
+			(select ol.orderid  from PO_Supp_Detail_OrderList ol  where id =a.id and seq1=a.seq1 and seq2=a.seq2) ol for xml path('')) [Order List]
+			,i.InQty[Arrived Qty]
+			,a.StockUnit[Unit]
+			,i.OutQty[Released Qty]
+			,i.AdjustQty[Adjust Qty]
+			,i.InQty-i.OutQty+i.AdjustQty[Balance]
+			,i.LInvQty[Stock Qty]
+			,i.LObQty[Scrap Qty]
+			,i.ALocation[Bulk Location]
+			,i.BLocation[Stock Location]
+			,(select Remark+',' from 
+			(select r.Remark  from dbo.Receiving_Detail r where POID =a.id and seq1=a.seq1 and seq2=a.seq2 and remark !='') r for xml path('')) [Remark]
+			from dbo.PO_Supp_Detail a
+			left join dbo.Orders b
+			on 
+			a.id=b.id
+			left join dbo.PO_Supp c
+			on
+		    c.id=a.id and c.SEQ1=a.SEQ1
+			left join dbo.supp d
+			on 
+			d.id=c.SuppID
+			left join dbo.Fabric_Supp e
+			on
+			e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID
+			left join dbo.Fabric_HsCode f
+			on
+			f.SCIRefno=a.SCIRefno and f.SuppID=c.SuppID and f.Year=Year(a.eta)
+			left join dbo.supp h
+			on
+		    h.id=c.SuppID
+			left join dbo.MDivisionPoDetail i
+			on
+			i.POID=a.ID
+            where a.id='13040356TT'";
+            }
+            else if (this.radioPanel1.Value == this.radioButton2.Value)
+            {
+             sqlcmd = @"select  a.id[poid]
             ,b.StyleID[style]
             ,a.SEQ1+a.SEQ2[SEQ]
             ,dbo.getMtlDesc(a.id,a.SEQ1,a.seq2,2,0)[Desc]
@@ -80,98 +156,22 @@ namespace Sci.Production.Warehouse
             e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID and e.year=year(a.ETA)
             left join dbo.Supp f
             on 
-            f.id=c.SuppID where a.id='12042541IIS  '";
-            return base.ValidateInput();
-                    sqlmdd = @"select a.id[sp]
-						     ,b.StyleID[style#]
-						     ,a.SEQ1+a.SEQ2[SEQ]
-						     ,c.SuppID[Supp]
-						     ,d.NameEN[Supp Name]
-						     ,substring(convert(varchar,a.cfmetd, 101),1,5)[Sup. 1st Cfm ETA]
-						     ,substring(convert(varchar,a.RevisedETD, 101),1,5)[RevisedETD]
-						     ,a.Refno[Ref#]
-                   　	     ,dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0)[Description]
-						     ,e.AbbCH[Chinese Abb]
-						     ,f.HsCode[HS Code]
-						     ,case a.FabricType 
-						      when 'F' then 'Fabric'
-						      when 'A'then 'Accessory'
-						      else a.FabricType
-						      end Material_Type
-						      ,a.ColorID[Color]
-						      ,a.SizeSpec[Size]
-						      ,h.Currencyid[Currency]
-						      ,a.UsedQty[Qty]
-						      ,a.Qty[Order Qty]
-						      ,a.NETQty[Net Qty]
-						      ,a.NETQty+a.LossQty[Use Qty]
-						      ,a.ShipQty[Ship Qty]
-						      ,a.ShipFOC[F.O.C]
-						      ,a.ApQty[AP Qty]
-						      ,IIF(EXISTS(SELECT * FROM DBO.Export_Detail g
-						      WHERE g.PoID = a.id
-						      AND g.SEQ1 = a.seq1
-						      AND g.SEQ2 =a.seq2
-						      AND IsFormA = 1),'Y','')[FormA]
-						      ,a.InputQty[Taipei Stock Qty]
-						      ,a.POUnit[Unit]
-						      ,a.Complete[Cmplt]
-						      ,substring(convert(varchar, a.ata, 101),1,5)[Act. Eta]
-						      ,(select id+',' from 
-						      (select distinct id from export_detail  where poid =a.id and seq1=a.seq1 and seq2=a.seq2) t for xml path('')) [WK#]
-						      ,(select orderid+',' from 
-						      (select ol.orderid  from PO_Supp_Detail_OrderList ol  where id =a.id and seq1=a.seq1 and seq2=a.seq2) ol for xml path('')) [Order List]
-						      ,i.InQty[Arrived Qty]
-						      ,a.StockUnit[Unit]
-						      ,i.OutQty[Released Qty]
-						      ,i.AdjustQty[Adjust Qty]
-						      ,i.InQty-i.OutQty+i.AdjustQty[Balance]
-						      ,i.LInvQty[Stock Qty]
-						      ,i.LObQty[Scrap Qty]
-						      ,i.ALocation[Bulk Location]
-						      ,i.BLocation[Stock Location]
-						      ,(select Remark+',' from 
-						      (select r.Remark  from dbo.Receiving_Detail r where POID =a.id and seq1=a.seq1 and seq2=a.seq2 and remark !='') r for xml path('')) [Remark]
-						      from dbo.PO_Supp_Detail a
-						      left join dbo.Orders b
-						      on 
-						      a.id=b.id
-						      left join dbo.PO_Supp c
-						      on
-						      c.id=a.id and c.SEQ1=a.SEQ1
-						      left join dbo.supp d
-						      on 
-						      d.id=c.SuppID
-						      left join dbo.Fabric_Supp e
-						      on
-						      e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID
-						      left join dbo.Fabric_HsCode f
-						      on
-						      f.SCIRefno=a.SCIRefno and f.SuppID=c.SuppID and f.Year=Year(a.eta)
-						      left join dbo.supp h
-						      on
-						      h.id=c.SuppID
-						      left join dbo.MDivisionPoDetail i
-						      on
-						      i.POID=a.ID";
+            f.id=c.SuppID where a.id='12042541IIS '";
+            }
             return base.ValidateInput();
         }
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            return  DBProxy.Current.Select("", sqlcmd, out dt);
-            return DBProxy.Current.Select("", sqlcmdd, out dtt); 
+            return DBProxy.Current.Select("", sqlcmd, out dt);
         }
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             if (dt == null || dt.Rows.Count == 0)
-            if (dtt == null || dtt.Rows.Count == 0)
             {
+
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
-
-           
-          
 
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
             saveDialog.ShowDialog();
@@ -183,26 +183,25 @@ namespace Sci.Production.Warehouse
 
             if (this.radioPanel1.Value == this.radioButton1.Value)
             {
-                Sci.Utility.Excel.SaveXltReportCls x2 = new Utility.Excel.SaveXltReportCls("Warehouse_P03_Print-1.xltx");
-                x2.dicDatas.Add("##sp", dtt);
-                x2.Save(outpa, false);
-                if (this.radioPanel1.Value == this.radioButton2.Value)
-               {
-                    Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Warehouse_P03_Print-2.xltx");
-                    xl.dicDatas.Add("##poid", dt);
-                    xl.Save(outpa, false);
-
-                }
-                return true;
+                Sci.Utility.Excel.SaveXltReportCls x1 = new Utility.Excel.SaveXltReportCls("Warehouse_P03_Print-1.xltx");
+                x1.dicDatas.Add("##sp", dt);
+                x1.Save(outpa, false);
+                
             }
-            return true;
-        }
+                else if (this.radioPanel1.Value == this.radioButton2.Value)
+                {
 
+                    Sci.Utility.Excel.SaveXltReportCls x2 = new Utility.Excel.SaveXltReportCls("Warehouse_P03_Print-2.xltx");
+                    x2.dicDatas.Add("##poid", dt);
+                    x2.Save(outpa, false);
 
-            public string sqlcmdd { get; set; }
-    }
+                }return true;
+            } 
            
         }
+    }
+
+
     
     
 
