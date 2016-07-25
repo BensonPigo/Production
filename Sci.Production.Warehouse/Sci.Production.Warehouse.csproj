@@ -177,6 +177,7 @@
     <Compile Include="P13_PrintData.cs" />
     <Compile Include="P15_PrintData.cs" />
     <Compile Include="P16_PrintData.cs" />
+    <Compile Include="P17_PrintData.cs" />
     <Compile Include="P18_PrintData.cs" />
     <Compile Include="P19_PrintData.cs">
       <SubType>Code</SubType>
@@ -984,6 +985,7 @@
     <EmbeddedResource Include="P13_Print.rdlc" />
     <EmbeddedResource Include="P15_Print.rdlc" />
     <EmbeddedResource Include="P16_Print.rdlc" />
+    <EmbeddedResource Include="P17_Print.rdlc" />
     <EmbeddedResource Include="P18_Print.rdlc" />
     <EmbeddedResource Include="P19_Print.rdlc" />
     <EmbeddedResource Include="P22_Print.rdlc" />

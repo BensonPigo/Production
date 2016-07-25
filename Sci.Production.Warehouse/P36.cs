@@ -680,28 +680,13 @@ Where a.id = '{0}'", masterID);
             #region  抓表身資料
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            DataTable aa;
-            string QTY;
-            result = DBProxy.Current.Select("",
-            @"select QTY 
-            from dbo.Subtransfer_detail 
-            where id = @ID", pars, out aa);
-            if (!result) { this.ShowErr(result); }
-            if (aa.Rows.Count == 0)
-                QTY = "";
-            else
-                QTY = aa.Rows[0]["QTY"].ToString();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("QTY", QTY));
-
-            pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result = DBProxy.Current.Select("",
             @"select a.FromPOID,a.FromSeq1+'-'+a.Fromseq2 as SEQ
 	         ,dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.refno, b.seq1,b.seq2),1,0))[DESC] 
 			 ,unit = b.StockUnit
 			 ,a.FromRoll,a.FromDyelot
-		     ,a.Qty
+		     ,a.Qty[QTY]
 		     ,dbo.Getlocation(a.FromFtyInventoryUkey)[ToLocation]
 			 ,a.ToLocation
              ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.Fromseq2 )    

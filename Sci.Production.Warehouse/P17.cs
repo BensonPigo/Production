@@ -13,6 +13,8 @@ using System.Transactions;
 using System.Windows.Forms;
 using System.Reflection;
 using Microsoft.Reporting.WinForms;
+using System.Data.SqlClient;
+using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
@@ -92,9 +94,104 @@ namespace Sci.Production.Warehouse
         //print
         protected override bool ClickPrint()
         {
+            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
+                return false;
+            }
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString();
+            string Remark = row["Remark"].ToString();
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+
+            #region  抓表頭資料
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select("",
+            @"select    
+            b.name 
+            from dbo.IssueReturn a 
+            inner join dbo.mdivision b 
+            on b.id = a.mdivisionid
+            where b.id = a.mdivisionid
+            and a.id = @ID", pars, out dt);
+            if (!result) { this.ShowErr(result); }
+            string RptTitle = dt.Rows[0]["name"].ToString();
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+            #endregion
 
 
-            return base.ClickPrint();
+            #region  抓表身資料
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dd;
+            result = DBProxy.Current.Select("",
+            @"select a.poid [SP]
+            ,a.Seq1+'-'+a.Seq2[SEQ]
+            ,a.Roll[ROLL]
+            ,a.Dyelot[DYELOT]
+            ,dbo.getMtlDesc(a.poid,a.Seq1,a.Seq2,2,0)[DESCRIPTION]
+            ,b.StockUnit[UNIT]
+            ,a.Qty[RETURN_QTY]
+            ,dbo.Getlocation(a.ftyinventoryukey)[LOCATION]
+            ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.seq2)
+            from dbo.IssueReturn_Detail a
+            left join PO_Supp_Detail b
+            on
+            a.id=b.id
+            where a.id= @ID", pars, out dd);
+            if (!result) { this.ShowErr(result); }
+
+            // 傳 list 資料            
+            List<P17_PrintData> data = dd.AsEnumerable()
+                .Select(row1 => new P17_PrintData()
+                {
+                    SP = row1["SP"].ToString(),
+                    SEQ = row1["SEQ"].ToString(),
+                    ROLL = row1["ROLL"].ToString(),
+                    DYELOT = row1["DYELOT"].ToString(),
+                    DESCRIPTION = row1["DESCRIPTION"].ToString(),
+                    UNIT = row1["UNIT"].ToString(),
+                    RETURN_QTY = row1["RETURN_QTY"].ToString(),
+                    LOCATION = row1["LOCATION"].ToString(),
+                    Total = row1["Total"].ToString()
+                }).ToList();
+
+            report.ReportDataSource = data;
+            #endregion
+
+            // 指定是哪個 RDLC
+            #region  指定是哪個 RDLC
+            //DualResult result;
+            Type ReportResourceNamespace = typeof(P17_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P17_Print.rdlc";
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                //this.ShowException(result);
+                return false;
+            }
+
+            report.ReportResource = reportresource;
+            #endregion
+
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
+
+            return true;
+
+
+            //return base.ClickPrint();
         }
 
         private void MySubreportEventHandler(object sender, SubreportProcessingEventArgs e)
