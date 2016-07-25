@@ -1,5 +1,4 @@
-﻿
--- =============================================
+﻿-- =============================================
 -- Author:		Mike
 -- Create date: 2015/12/31
 -- Description:	BOA AutoPick Prepare
@@ -114,8 +113,8 @@ BEGIN
 		 , BomFactory VarChar(8), BomCountry VarChar(2), BomStyle VarChar(15), BomCustCD VarChar(20)
 		 , BomArticle VarChar(8), BomZipperInsert VarChar(5), BomBuymonth VarChar(10), BomCustPONo VarChar(30)
 		 , Primary Key (ExpendUkey)
-		 , Index Idx_ID NonClustered (ID, Order_BOAUkey, ColorID) -- table index
 		);
+	Create NonClustered Index Idx_ID on #Tmp_BoaExpend (ID, Order_BOAUkey, ColorID) -- table index
 
 	Exec BoaExpend @POID, @Order_BOAUkey, @TestType, @UserID;
 	Drop Table #tmpOrder_Qty;

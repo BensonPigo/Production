@@ -1,5 +1,4 @@
-﻿
-CREATE Procedure [dbo].[BoaExpend]
+﻿CREATE Procedure [dbo].[BoaExpend]
 (
 	  @ID				VarChar(13)				--採購母單
 	 ,@Order_BOAUkey	BigInt		= 0			--BOA Ukey
@@ -26,14 +25,14 @@ Begin
 			 , BomFactory VarChar(8), BomCountry VarChar(2), BomStyle VarChar(15), BomCustCD VarChar(20)
 			 , BomArticle VarChar(8), BomZipperInsert VarChar(5), BomBuymonth VarChar(10), BomCustPONo VarChar(30)
 			 , Primary Key (ExpendUkey)
-			 , Index Idx_ID NonClustered (ID, Order_BOAUkey, ColorID) -- table index
 			);
+		Create NonClustered Index Idx_ID on #Tmp_BoaExpend (ID, Order_BOAUkey, ColorID) -- table index
 
     end
 	Create Table #Tmp_BoaExpend_OrderList
 		(ExpendUkey BigInt, ID Varchar(13), OrderID Varchar(13)
-		 Index Idx_ID NonClustered (ExpendUkey, ID, OrderID) -- table index
 		);
+	Create NonClustered Index Idx_ID on #Tmp_BoaExpend_OrderList (ExpendUkey, ID, OrderID) -- table index
 
 	Declare @ExpendUkey BigInt;
 
