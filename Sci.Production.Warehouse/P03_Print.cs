@@ -36,7 +36,7 @@ namespace Sci.Production.Warehouse
         {
             if (this.radioPanel1.Value == this.radioButton1.Value)
             {
-                sqlcmd = @"select a.id[sp]
+               sqlcmd = @"select a.id[sp]
 			,b.StyleID[style#]
 			,a.SEQ1+a.SEQ2[SEQ]
 			,c.SuppID[Supp]
