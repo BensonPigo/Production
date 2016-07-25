@@ -81,8 +81,8 @@ namespace Sci.Production.Warehouse
             left join dbo.Supp f
             on 
             f.id=c.SuppID where a.id='12042541IIS  '";
-
-                    sqlmdd = @"select a.id[sp#]
+            return base.ValidateInput();
+                    sqlmdd = @"select a.id[sp]
 						     ,b.StyleID[style#]
 						     ,a.SEQ1+a.SEQ2[SEQ]
 						     ,c.SuppID[Supp]
@@ -184,7 +184,7 @@ namespace Sci.Production.Warehouse
             if (this.radioPanel1.Value == this.radioButton1.Value)
             {
                 Sci.Utility.Excel.SaveXltReportCls x2 = new Utility.Excel.SaveXltReportCls("Warehouse_P03_Print-1.xltx");
-                x2.dicDatas.Add("##poid", dtt);
+                x2.dicDatas.Add("##sp", dtt);
                 x2.Save(outpa, false);
                 if (this.radioPanel1.Value == this.radioButton2.Value)
                {
