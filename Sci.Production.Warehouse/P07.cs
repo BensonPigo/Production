@@ -999,8 +999,15 @@ where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword), out dt);
             P07_Print p = new P07_Print(poidList);
             p.CurrentDataRow = this.CurrentDataRow;
             p.ShowDialog();
-
             return true;
+        }
+
+        private void btPrintSticker_Click(object sender, EventArgs e)
+        {
+
+
+            P07_Sticker s = new P07_Sticker(this.CurrentDataRow);
+            s.ShowDialog();
         }
     }
 }

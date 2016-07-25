@@ -1458,6 +1458,7 @@
   <ItemGroup>
     <None Include="Properties\DataSources\B01.datasource" />
     <None Include="Properties\DataSources\P07_PrintData.datasource" />
+    <None Include="Properties\DataSources\P07_Sticker_Data.datasource" />
     <None Include="Properties\DataSources\P10.datasource" />
     <None Include="Properties\DataSources\P10_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_PrintData1.datasource" />
