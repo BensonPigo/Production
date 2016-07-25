@@ -2133,6 +2133,8 @@ Sci.Production.Warehouse/P17.resx -text
 Sci.Production.Warehouse/P17_AccumulatedQty.Designer.cs -text
 Sci.Production.Warehouse/P17_AccumulatedQty.cs -text
 Sci.Production.Warehouse/P17_AccumulatedQty.resx -text
+Sci.Production.Warehouse/P17_Print.rdlc -text
+Sci.Production.Warehouse/P17_PrintData.cs -text
 Sci.Production.Warehouse/P18.Designer.cs -text
 Sci.Production.Warehouse/P18.cs -text
 Sci.Production.Warehouse/P18.resx -text
