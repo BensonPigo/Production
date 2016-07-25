@@ -1,19 +1,21 @@
 ﻿CREATE TABLE [dbo].[Oven] (
-    [ID]        BIGINT        CONSTRAINT [DF_Oven_ID] DEFAULT ((0)) NOT NULL,
-    [POID]      VARCHAR (13)  CONSTRAINT [DF_Oven_POID] DEFAULT ('') NOT NULL,
-    [TestNo]    NUMERIC (2)   CONSTRAINT [DF_Oven_TestNo] DEFAULT ((0)) NOT NULL,
-    [InspDate]  DATE          NOT NULL,
-    [Article]   VARCHAR (8)   CONSTRAINT [DF_Oven_Article] DEFAULT ('') NOT NULL,
-    [Result]    VARCHAR (1)   CONSTRAINT [DF_Oven_Result] DEFAULT ('') NOT NULL,
-    [Status]    VARCHAR (15)  CONSTRAINT [DF_Oven_Status] DEFAULT ('') NULL,
-    [Inspector] VARCHAR (10)  CONSTRAINT [DF_Oven_Inspector] DEFAULT ('') NOT NULL,
-    [Remark]    NVARCHAR (60) CONSTRAINT [DF_Oven_Remark] DEFAULT ('') NULL,
-    [addName]   VARCHAR (10)  CONSTRAINT [DF_Oven_addName] DEFAULT ('') NULL,
-    [addDate]   DATETIME      NULL,
-    [EditName]  VARCHAR (10)  CONSTRAINT [DF_Oven_EditName] DEFAULT ('') NULL,
-    [EditDate]  DATETIME      NULL,
+    [ID]        BIGINT         IDENTITY (1, 1) NOT NULL,
+    [POID]      VARCHAR (13)   CONSTRAINT [DF_Oven_POID] DEFAULT ('') NOT NULL,
+    [TestNo]    NUMERIC (2)    CONSTRAINT [DF_Oven_TestNo] DEFAULT ((0)) NOT NULL,
+    [InspDate]  DATE           NOT NULL,
+    [Article]   VARCHAR (8)    CONSTRAINT [DF_Oven_Article] DEFAULT ('') NOT NULL,
+    [Result]    VARCHAR (15)   CONSTRAINT [DF_Oven_Result] DEFAULT ('') NOT NULL,
+    [Status]    VARCHAR (15)   CONSTRAINT [DF_Oven_Status] DEFAULT ('') NULL,
+    [Inspector] VARCHAR (10)   CONSTRAINT [DF_Oven_Inspector] DEFAULT ('') NOT NULL,
+    [Remark]    NVARCHAR (120) CONSTRAINT [DF_Oven_Remark] DEFAULT ('') NULL,
+    [addName]   VARCHAR (10)   CONSTRAINT [DF_Oven_addName] DEFAULT ('') NULL,
+    [addDate]   DATETIME       NULL,
+    [EditName]  VARCHAR (10)   CONSTRAINT [DF_Oven_EditName] DEFAULT ('') NULL,
+    [EditDate]  DATETIME       NULL,
     CONSTRAINT [PK_Oven] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

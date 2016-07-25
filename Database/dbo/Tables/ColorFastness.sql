@@ -1,19 +1,21 @@
 ﻿CREATE TABLE [dbo].[ColorFastness] (
-    [ID]        VARCHAR (13) CONSTRAINT [DF_ColorFastness_ID] DEFAULT ('') NOT NULL,
-    [POID]      VARCHAR (13) CONSTRAINT [DF_ColorFastness_POID] DEFAULT ('') NOT NULL,
-    [TestNo]    NUMERIC (2)  CONSTRAINT [DF_ColorFastness_TestNo] DEFAULT ((0)) NOT NULL,
-    [InspDate]  DATE         NOT NULL,
-    [Article]   VARCHAR (8)  CONSTRAINT [DF_ColorFastness_Article] DEFAULT ('') NOT NULL,
-    [Result]    VARCHAR (1)  CONSTRAINT [DF_ColorFastness_Result] DEFAULT ('') NOT NULL,
-    [Status]    VARCHAR (15) CONSTRAINT [DF_ColorFastness_Status] DEFAULT ('') NULL,
-    [Inspector] VARCHAR (10) CONSTRAINT [DF_ColorFastness_Inspector] DEFAULT ('') NOT NULL,
-    [Remark]    NCHAR (60)   CONSTRAINT [DF_ColorFastness_Remark] DEFAULT ('') NULL,
-    [addName]   VARCHAR (10) CONSTRAINT [DF_ColorFastness_addName] DEFAULT ('') NULL,
-    [addDate]   DATETIME     NULL,
-    [EditName]  VARCHAR (10) CONSTRAINT [DF_ColorFastness_EditName] DEFAULT ('') NULL,
-    [EditDate]  DATETIME     NULL,
+    [ID]        VARCHAR (13)   CONSTRAINT [DF_ColorFastness_ID] DEFAULT ('') NOT NULL,
+    [POID]      VARCHAR (13)   CONSTRAINT [DF_ColorFastness_POID] DEFAULT ('') NOT NULL,
+    [TestNo]    NUMERIC (2)    CONSTRAINT [DF_ColorFastness_TestNo] DEFAULT ((0)) NOT NULL,
+    [InspDate]  DATE           NOT NULL,
+    [Article]   VARCHAR (8)    CONSTRAINT [DF_ColorFastness_Article] DEFAULT ('') NOT NULL,
+    [Result]    VARCHAR (15)   CONSTRAINT [DF_ColorFastness_Result] DEFAULT ('') NOT NULL,
+    [Status]    VARCHAR (15)   CONSTRAINT [DF_ColorFastness_Status] DEFAULT ('') NULL,
+    [Inspector] VARCHAR (10)   CONSTRAINT [DF_ColorFastness_Inspector] DEFAULT ('') NOT NULL,
+    [Remark]    NVARCHAR (120) CONSTRAINT [DF_ColorFastness_Remark] DEFAULT ('') NULL,
+    [addName]   VARCHAR (10)   CONSTRAINT [DF_ColorFastness_addName] DEFAULT ('') NULL,
+    [addDate]   DATETIME       NULL,
+    [EditName]  VARCHAR (10)   CONSTRAINT [DF_ColorFastness_EditName] DEFAULT ('') NULL,
+    [EditDate]  DATETIME       NULL,
     CONSTRAINT [PK_ColorFastness] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
