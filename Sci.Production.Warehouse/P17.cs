@@ -142,9 +142,9 @@ namespace Sci.Production.Warehouse
             ,dbo.Getlocation(a.ftyinventoryukey)[LOCATION]
             ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.seq2)
             from dbo.IssueReturn_Detail a
-            left join PO_Supp_Detail b
+            inner join PO_Supp_Detail b
             on
-            a.id=b.id
+            a.poid=b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
             where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
