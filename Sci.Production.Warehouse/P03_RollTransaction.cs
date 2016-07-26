@@ -10,6 +10,8 @@ using Sci;
 using Sci.Data;
 using Ict;
 using System.Linq;
+using System.Data.SqlClient;
+using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
@@ -316,5 +318,79 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             tmp.ToList().ForEach(q2 => dtSummary.Rows.Add(q2.roll, q2.dyelot, null, q2.inqty, q2.outQty, q2.Adjust, q2.balance, null, q2.rollcount));
             
         }
-    }
+
+
+
+         public partial class P03_RollTransaction1: Sci.Win.Tems.PrintForm
+    {
+        public P03_RollTransaction1()
+        {
+            //InitializeComponent();
+
+            // TODO: Complete member initialization
+        }
+       
+        DataTable dt;
+        string sqlcmd;
+        protected override bool ValidateInput()
+        {
+
+            sqlcmd = @"select a.id[SP]
+                    ,a.SEQ1+'-'+a.SEQ2[SEQ]
+                    ,a.Refno[Ref]
+                    ,a.ColorID[Color]
+                    ,b.InQty[Arrived_Qty_by_Seq]
+                    ,b.OutQty[Released_Qty_by_Seq]
+                    ,b.InQty-b.OutQty+b.AdjustQty[Bal_Qty]
+                    ,dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0)[Description]
+                    ,c.Roll[Roll]
+                    ,c.Dyelot[Dyelot]
+                    ,c.StockType[Stock_Type]
+                    ,c.InQty[Arrived_Qty]
+                    ,c.OutQty[Released_Qty]
+                    ,c.AdjustQty[Adjust_Qty]
+                    ,c.InQty-c.OutQty+c.AdjustQty[Balance]
+                    ,dbo.Getlocation(c.Ukey)[Location]
+                    from dbo.PO_Supp_Detail a
+                    inner join dbo.MDivisionPoDetail b
+                    on 
+                    a.id=b.POID and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
+                    inner join dbo.FtyInventory c
+                    on
+                    a.id=c.POID and a.SEQ1=c.Seq1 and a.SEQ2=c.Seq2";
+            return base.ValidateInput();
+        }
+        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        {
+            return DBProxy.Current.Select("", sqlcmd, out dt);
+        }
+        protected override bool OnToExcel(Win.ReportDefinition report)
+        {
+            if (dt == null || dt.Rows.Count == 0)
+            {
+
+                MyUtility.Msg.ErrorBox("Data not found");
+                return false;
+            }
+
+            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+            saveDialog.ShowDialog();
+            string outpa = saveDialog.FileName;
+            if (outpa.Empty())
+            {
+                return true;
+            }
+
+            //if (this.radioPanel1.Value == this.radioButton1.Value)
+            {
+                Sci.Utility.Excel.SaveXltReportCls x1 = new Utility.Excel.SaveXltReportCls("Warehouse_P03_RollTransaction.xltx");
+                x1.dicDatas.Add("##Roll", dt);
+                x1.Save(outpa, false);
+                
+            }
+                
+        return true; 
+        }
+     }
+  }
 }
