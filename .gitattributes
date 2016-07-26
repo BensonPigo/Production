@@ -1986,6 +1986,7 @@ Sci.Production.Warehouse/P01_BatchCloseRowMaterial.Designer.cs -text
 Sci.Production.Warehouse/P01_BatchCloseRowMaterial.cs -text
 Sci.Production.Warehouse/P01_BatchCloseRowMaterial.resx -text
 Sci.Production.Warehouse/P01_Print.rdlc -text
+Sci.Production.Warehouse/P01_PrintData.cs -text
 Sci.Production.Warehouse/P02.Designer.cs -text
 Sci.Production.Warehouse/P02.cs -text
 Sci.Production.Warehouse/P02.resx -text
