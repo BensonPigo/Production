@@ -23,6 +23,7 @@ namespace Sci.Production.Warehouse
         public P03_RollTransaction(DataRow data)
         {
             InitializeComponent();
+            
             dr = data;
         }
 
@@ -320,77 +321,166 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
         }
 
 
-
-         public partial class P03_RollTransaction1: Sci.Win.Tems.PrintForm
-    {
-        public P03_RollTransaction1()
+        protected override bool ClickPrint()
         {
-            //InitializeComponent();
-
-            // TODO: Complete member initialization
-        }
-       
-        DataTable dt;
-        string sqlcmd;
-        protected override bool ValidateInput()
-        {
-
-            sqlcmd = @"select a.id[SP]
-                    ,a.SEQ1+'-'+a.SEQ2[SEQ]
-                    ,a.Refno[Ref]
-                    ,a.ColorID[Color]
-                    ,b.InQty[Arrived_Qty_by_Seq]
-                    ,b.OutQty[Released_Qty_by_Seq]
-                    ,b.InQty-b.OutQty+b.AdjustQty[Bal_Qty]
-                    ,dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0)[Description]
-                    ,c.Roll[Roll]
-                    ,c.Dyelot[Dyelot]
-                    ,c.StockType[Stock_Type]
-                    ,c.InQty[Arrived_Qty]
-                    ,c.OutQty[Released_Qty]
-                    ,c.AdjustQty[Adjust_Qty]
-                    ,c.InQty-c.OutQty+c.AdjustQty[Balance]
-                    ,dbo.Getlocation(c.Ukey)[Location]
-                    from dbo.PO_Supp_Detail a
-                    inner join dbo.MDivisionPoDetail b
-                    on 
-                    a.id=b.POID and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
-                    inner join dbo.FtyInventory c
-                    on
-                    a.id=c.POID and a.SEQ1=c.Seq1 and a.SEQ2=c.Seq2";
-            return base.ValidateInput();
-        }
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
-        {
-            return DBProxy.Current.Select("", sqlcmd, out dt);
-        }
-        protected override bool OnToExcel(Win.ReportDefinition report)
-        {
-            if (dt == null || dt.Rows.Count == 0)
-            {
-
-                MyUtility.Msg.ErrorBox("Data not found");
-                return false;
-            }
 
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
             saveDialog.ShowDialog();
-            string outpa = saveDialog.FileName;
-            if (outpa.Empty())
+            string outpath = saveDialog.FileName;
+            if (outpath.Empty())
             {
+                return false;
+            }
+
+
+            DataRow issue = this.CurrentDataRow;
+            string id = issue["ID"].ToString();
+            string request = issue["cutplanid"].ToString();
+            string issuedate = issue["issuedate"].ToString();
+            string remark = issue["remark"].ToString();
+            string cutno = this.ebCut.Text;
+            string article = this.ebArticle.Text;
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+
+            //a.id[SP]
+            //        ,a.SEQ1+'-'+a.SEQ2[SEQ]
+            //        ,a.Refno[Ref]
+            //        ,a.ColorID[Color]
+            //        ,b.InQty[Arrived_Qty_by_Seq]
+            //        ,b.OutQty[Released_Qty_by_Seq]
+            //        ,b.InQty-b.OutQty+b.AdjustQty[Bal_Qty]
+            //        ,dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0)[Description]
+            DataTable dt;
+            DBProxy.Current.Select("",
+                @"select    
+             b.name 
+            from dbo.Issue as a 
+             inner join dbo.mdivision as b on b.id = a.mdivisionid
+            where b.id = a.mdivisionid
+            and a.id = @ID
+            ", pars, out dt);
+            string RptTitle = dt.Rows[0]["name"].ToString();
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("name", RptTitle));
+
+            DataTable dtsp;
+            string poID;
+            DBProxy.Current.Select("",
+                @"select (select poid+',' from 
+             (select distinct cd.POID from Cutplan_Detail cd where id =(select CutplanID from dbo.Issue where id='@id')  ) t
+			  for xml path('')) as [poid]", pars, out dtsp);
+            if (dtsp.Rows.Count == 0)
+                poID = "";
+            else
+                poID = dtsp.Rows[0]["POID"].ToString();
+
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("POID", poID));
+            DualResult result;
+            DataTable dtSizecode;
+            string sqlcmd1 = string.Format(@"select distinct sizecode
+	                    from dbo.Issue_Size
+	                    where id = @ID order by sizecode");
+            string sizecodes = "";
+            result = DBProxy.Current.Select("", sqlcmd1, pars, out dtSizecode);
+            foreach (DataRow dr in dtSizecode.Rows)
+            {
+                sizecodes += "[" + dr["sizecode"].ToString() + "]" + ",";
+            }
+            sizecodes = sizecodes.Substring(0, sizecodes.Length - 1);
+
+            DataTable dtseq;
+
+            string sqlcmd = string.Format(@"select 
+            c.Roll[Roll]
+            ,c.Dyelot[Dyelot]
+            ,c.StockType[Stock_Type]
+            ,c.InQty[Arrived_Qty]
+            ,c.OutQty[Released_Qty]
+            ,c.AdjustQty[Adjust_Qty]
+            ,c.InQty-c.OutQty+c.AdjustQty[Balance]
+            ,dbo.Getlocation(c.Ukey)[Location]
+            from dbo.FtyInventory c");
+            result = DBProxy.Current.Select("", sqlcmd, pars, out dtseq);
+
+            if (!result)
+            {
+                ShowErr(result);
+                return true;
+            }
+            dtseq.Columns.Remove(dtseq.Columns["Issue_DetailUkey"]);
+            string SEQ = dtseq.Rows[0]["SEQ"].ToString();
+            //string tQty = dtseq.Rows[0]["tQTY"].ToString();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SEQ", SEQ));
+            //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("tQTY", tQty));
+
+
+            DataTable dtlineno;
+            string cLineNo;
+            result = DBProxy.Current.Select("",
+                @"select o.sewline from dbo.Orders o 
+                    where id in (select distinct poid from issue_detail where id=@ID ) ", pars, out dtlineno);
+            if (!result)
+            {
+                ShowErr(result);
+                return true;
+            }
+            if (dtlineno.Rows.Count == 0)
+                cLineNo = "";
+            else
+                cLineNo = dtlineno.Rows[0]["sewline"].ToString();
+
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("sewline", cLineNo));
+
+            DataTable dtcutcell;
+            string cCellNo;
+            result = DBProxy.Current.Select("",
+                @"select    
+             b.CutCellID 
+            from dbo.Issue as a 
+             inner join dbo.cutplan as b on b.id = a.cutplanid
+            where b.id = a.CutplanID
+            ", pars, out dtcutcell);
+            if (!result)
+            {
+                ShowErr(result);
                 return true;
             }
 
-            //if (this.radioPanel1.Value == this.radioButton1.Value)
-            {
-                Sci.Utility.Excel.SaveXltReportCls x1 = new Utility.Excel.SaveXltReportCls("Warehouse_P03_RollTransaction.xltx");
-                x1.dicDatas.Add("##Roll", dt);
-                x1.Save(outpa, false);
-                
-            }
-                
-        return true; 
+            if (dtlineno.Rows.Count == 0)
+                cCellNo = "";
+            else
+                cCellNo = dtcutcell.Rows[0]["CutCellID"].ToString();
+
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CutCellID", cCellNo));
+
+            string xlt = @"Warehouse_P11.xltx";
+            SaveXltReportCls xl = new SaveXltReportCls(xlt);
+
+            xl.dicDatas.Add("##name", RptTitle);
+            xl.dicDatas.Add("##ID", id);
+            xl.dicDatas.Add("##cutplanid", request);
+            xl.dicDatas.Add("##issuedate", issuedate);
+            xl.dicDatas.Add("##remark", remark);
+            xl.dicDatas.Add("##cCutNo", cutno);
+            SaveXltReportCls.xltRptTable xlTable = new SaveXltReportCls.xltRptTable(dtseq);
+            int allColumns = dtseq.Columns.Count;
+            int sizeColumns = dtSizecode.Rows.Count;
+            xlTable.lisTitleMerge.Add(new Dictionary<string, string> { 
+            { "SIZE", string.Format("{0},{1}", allColumns-sizeColumns+1, allColumns) }}
+           );
+            //xlTable.Borders.AllCellsBorders = true;
+            //xlTable.HeaderColor = Color.AliceBlue;
+            //xlTable.ContentColor = Color.LightGreen;
+            xlTable.Borders.OnlyHeaderBorders = true;
+            xl.dicDatas.Add("##SEQ", xlTable);
+
+
+            xl.Save(outpath, true);
+
+            return true;
         }
-     }
-  }
+
+    }
 }
+
