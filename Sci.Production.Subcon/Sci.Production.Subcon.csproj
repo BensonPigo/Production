@@ -104,6 +104,7 @@
     </Compile>
     <Compile Include="P01_PrintData.cs" />
     <Compile Include="P10_PrintData.cs" />
+    <Compile Include="P30_PrintData.cs" />
     <Compile Include="P36_ModifyAfterSent.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -355,6 +356,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_Print.rdlc" />
     <EmbeddedResource Include="P10_Print.rdlc" />
+    <EmbeddedResource Include="P30_Print.rdlc" />
     <EmbeddedResource Include="P36_ModifyAfterSent.resx">
       <DependentUpon>P36_ModifyAfterSent.cs</DependentUpon>
     </EmbeddedResource>
