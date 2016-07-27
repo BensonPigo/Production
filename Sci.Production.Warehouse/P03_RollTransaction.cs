@@ -334,7 +334,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             string outpath = saveDialog.FileName;
             if (outpath.Empty())
             {
-                return true;
+                return;
             }
 
             DataRow row = this.dr;
@@ -418,9 +418,9 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             int allColumns = dtt.Columns.Count;
             xlTable.Borders.OnlyHeaderBorders = true;
             SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(xlTable);
-            xl.ShowHeader = true;
-            xl.dicDatas.Add("##Roll", xlTable);
-            xl.Save(outpath,false);
+            xdt_All.ShowHeader = false;
+            xl.dicDatas.Add("##Roll", xdt_All);
+            xl.Save(outpath);
             
             return; 
         }
