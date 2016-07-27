@@ -1459,50 +1459,28 @@
       </ConnectionProperties>
       <rd:DataSourceID>dfc5a089-f9e3-47cf-8812-7d9f02307ded</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="SciProductionSubcon1">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>d4a08491-4af7-4b9b-951c-e88d59e41bed</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="SciProductionSubcon2">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>84deefd9-8a9e-4ace-882d-2c94e40b83e8</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="SciProductionSubcon3">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>11a5f969-d841-4d27-9231-9322935a8bc5</rd:DataSourceID>
+    </DataSource>
   </DataSources>
-  <DataSets>
-    <DataSet Name="DataSet1">
-      <Query>
-        <DataSourceName>SciProductionSubcon</DataSourceName>
-        <CommandText>/* Local Query */</CommandText>
-      </Query>
-      <Fields>
-        <Field Name="Amt">
-          <DataField>Amt</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Cutart">
-          <DataField>Cutart</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="OrderID">
-          <DataField>OrderID</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Pattem">
-          <DataField>Pattem</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="POID">
-          <DataField>POID</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Price">
-          <DataField>Price</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Qty">
-          <DataField>Qty</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-      <rd:DataSetInfo>
-        <rd:DataSetName>Sci.Production.Subcon</rd:DataSetName>
-        <rd:TableName>P10_PrintData</rd:TableName>
-        <rd:ObjectDataSourceType>Sci.Production.Subcon.P10_PrintData, Sci.Production.Subcon, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
-      </rd:DataSetInfo>
-    </DataSet>
-  </DataSets>
   <ReportParameters>
     <ReportParameter Name="Barcode">
       <DataType>String</DataType>
