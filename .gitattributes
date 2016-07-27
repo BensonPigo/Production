@@ -1774,6 +1774,8 @@ Sci.Production.Subcon/P10.resx -text
 Sci.Production.Subcon/P10_ImportFromPO.Designer.cs -text
 Sci.Production.Subcon/P10_ImportFromPO.cs -text
 Sci.Production.Subcon/P10_ImportFromPO.resx -text
+Sci.Production.Subcon/P10_Print.rdlc -text
+Sci.Production.Subcon/P10_PrintData.cs -text
 Sci.Production.Subcon/P30.Designer.cs -text
 Sci.Production.Subcon/P30.cs -text
 Sci.Production.Subcon/P30.resx -text
