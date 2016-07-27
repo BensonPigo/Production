@@ -113,7 +113,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!CutPart.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -124,7 +124,7 @@
                           <Top>0.07056cm</Top>
                           <Left>9.49986cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>1.53363cm</Width>
+                          <Width>2.10181cm</Width>
                           <ZIndex>3</ZIndex>
                           <Style>
                             <Border>
@@ -143,18 +143,20 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Price</Value>
+                                  <Value>=Fields!Price.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
-                          <Top>0.03528cm</Top>
-                          <Left>12.64493cm</Left>
+                          <Top>0.07056cm</Top>
+                          <Left>11.80025cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>1.21613cm</Width>
+                          <Width>2.06081cm</Width>
                           <ZIndex>4</ZIndex>
                           <Style>
                             <Border>
@@ -173,17 +175,20 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Q'ty</Value>
+                                  <Value>=Fields!Qty.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
-                          <Left>14.87935cm</Left>
+                          <Top>0.07056cm</Top>
+                          <Left>14.11898cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>1.03092cm</Width>
+                          <Width>1.87282cm</Width>
                           <ZIndex>5</ZIndex>
                           <Style>
                             <Border>
@@ -202,18 +207,20 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Amount</Value>
+                                  <Value>=Fields!Amt.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Top>0.07056cm</Top>
-                          <Left>17.96659cm</Left>
+                          <Left>16.32618cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>1.699cm</Width>
+                          <Width>3.33942cm</Width>
                           <ZIndex>6</ZIndex>
                           <Style>
                             <Border>
@@ -263,7 +270,7 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>0.4375in</Height>
+    <Height>0.45833in</Height>
     <Style />
   </Body>
   <Width>8.2in</Width>
@@ -345,7 +352,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!BarcodeView.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -375,11 +382,17 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!AddressEN.Value</Value>
+                  <Style />
+                </TextRun>
+                <TextRun>
+                  <Value>=Parameters!TEL.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
-              <Style />
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox3</rd:DefaultName>
@@ -405,11 +418,13 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!RptTitle.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
-              <Style />
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox3</rd:DefaultName>
@@ -465,7 +480,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!Address.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -495,7 +510,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Tel#:</Value>
+                  <Value>TEL:</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -525,7 +540,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!TEL.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -585,7 +600,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!Issuedate.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -645,7 +660,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!Supplier.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -705,7 +720,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!ID.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -825,7 +840,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Globals!PageNumber + "/" + Globals!TotalPages</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1103,7 +1118,7 @@
       </Style>
     </PageHeader>
     <PageFooter>
-      <Height>6.32354cm</Height>
+      <Height>9.60437cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
@@ -1114,11 +1129,102 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Remark: </Value>
+                  <Value>Term: </Value>
                   <Style />
                 </TextRun>
                 <TextRun>
-                  <Value>=Parameters!Remark.Value</Value>
+                  <Value>=Parameters!Terms.Value</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Invoice#: </Value>
+                  <Style />
+                </TextRun>
+                <TextRun>
+                  <Value>=Parameters!Invoice.Value</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Remarks: </Value>
+                  <Style />
+                </TextRun>
+                <TextRun>
+                  <Value>=Parameters!Remarks.Value</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>A/C NO: </Value>
+                  <Style />
+                </TextRun>
+                <TextRun>
+                  <Value>=Parameters!ACNO.Value</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>A/C Name: </Value>
+                  <Style />
+                </TextRun>
+                <TextRun>
+                  <Value>=Parameters!ACNAME.Value</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>BankName: </Value>
+                  <Style />
+                </TextRun>
+                <TextRun>
+                  <Value>=Parameters!BankName.Value</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Country / City: </Value>
+                  <Style />
+                </TextRun>
+                <TextRun>
+                  <Value>=Parameters!Country.Value</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>SwiftCode: </Value>
+                  <Style />
+                </TextRun>
+                <TextRun>
+                  <Value>=Parameters!SWIFCode.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1128,7 +1234,7 @@
           <rd:DefaultName>Textbox35</rd:DefaultName>
           <Top>0.17638cm</Top>
           <Left>0.61669cm</Left>
-          <Height>2.14313cm</Height>
+          <Height>3.73064cm</Height>
           <Width>11.76248cm</Width>
           <Style>
             <Border>
@@ -1167,7 +1273,11 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Total:</Value>
+                  <Value>Total: </Value>
+                  <Style />
+                </TextRun>
+                <TextRun>
+                  <Value>=Parameters!Total.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1178,7 +1288,11 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Vat:</Value>
+                  <Value>Vat: </Value>
+                  <Style />
+                </TextRun>
+                <TextRun>
+                  <Value>=Parameters!VAT.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1189,7 +1303,11 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Grand Total:</Value>
+                  <Value>Grand Total: </Value>
+                  <Style />
+                </TextRun>
+                <TextRun>
+                  <Value>=Parameters!GrandTotal.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1201,7 +1319,7 @@
           <rd:DefaultName>Textbox36</rd:DefaultName>
           <Top>0.17638cm</Top>
           <Left>12.37916cm</Left>
-          <Height>2.14313cm</Height>
+          <Height>3.73064cm</Height>
           <Width>7.57905cm</Width>
           <ZIndex>1</ZIndex>
           <Style>
@@ -1249,10 +1367,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox42</rd:DefaultName>
-          <Top>2.31952cm</Top>
+          <Top>3.90702cm</Top>
           <Left>0.61669cm</Left>
           <Height>2.09021cm</Height>
-          <Width>3.79969cm</Width>
+          <Width>4.18932cm</Width>
           <ZIndex>2</ZIndex>
           <Style>
             <Border>
@@ -1299,8 +1417,8 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox42</rd:DefaultName>
-          <Top>2.31951cm</Top>
-          <Left>8.25182cm</Left>
+          <Top>3.90701cm</Top>
+          <Left>9.03013cm</Left>
           <Height>2.09021cm</Height>
           <Width>5.14297cm</Width>
           <ZIndex>3</ZIndex>
@@ -1341,7 +1459,16 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Prepared by:</Value>
+                  <Value>Prepared by: </Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>=Parameters!PreparedBy.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1349,10 +1476,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox42</rd:DefaultName>
-          <Top>2.31951cm</Top>
-          <Left>13.3948cm</Left>
+          <Top>3.90701cm</Top>
+          <Left>14.1731cm</Left>
           <Height>2.09021cm</Height>
-          <Width>6.56341cm</Width>
+          <Width>5.7851cm</Width>
           <ZIndex>4</ZIndex>
           <Style>
             <Border>
@@ -1399,10 +1526,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox42</rd:DefaultName>
-          <Top>2.31951cm</Top>
-          <Left>4.41638cm</Left>
+          <Top>3.90701cm</Top>
+          <Left>4.80601cm</Left>
           <Height>2.09021cm</Height>
-          <Width>3.83545cm</Width>
+          <Width>4.22412cm</Width>
           <ZIndex>5</ZIndex>
           <Style>
             <Border>
@@ -1480,9 +1607,192 @@
       </ConnectionProperties>
       <rd:DataSourceID>11a5f969-d841-4d27-9231-9322935a8bc5</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="SciProductionSubcon4">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>eee1003e-3e44-4671-96ca-106b0461b27d</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="SciProductionSubcon5">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>fdf60a2c-88e5-4f3b-bd9d-7c64b0528f8e</rd:DataSourceID>
+    </DataSource>
   </DataSources>
+  <DataSets>
+    <DataSet Name="DataSet1">
+      <Query>
+        <DataSourceName>SciProductionSubcon5</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Amt">
+          <DataField>Amt</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CutPart">
+          <DataField>CutPart</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="OrderID">
+          <DataField>OrderID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Pattem">
+          <DataField>Pattem</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="POID">
+          <DataField>POID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Price">
+          <DataField>Price</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Qty">
+          <DataField>Qty</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>Sci.Production.Subcon</rd:DataSetName>
+        <rd:TableName>P10_PrintData</rd:TableName>
+        <rd:ObjectDataSourceType>Sci.Production.Subcon.P10_PrintData, Sci.Production.Subcon, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
   <ReportParameters>
     <ReportParameter Name="Barcode">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="RptTitle">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="AddressEN">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TEL">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ID">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Issuedate">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Supplier">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Address">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="PrintDate">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="BarcodeView">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Terms">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Invoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Remarks">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ACNO">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ACNAME">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="BankName">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Country">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="SWIFCode">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Total">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="VAT">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="GrandTotal">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="PreparedBy">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
