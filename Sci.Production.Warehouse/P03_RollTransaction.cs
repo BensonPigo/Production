@@ -334,7 +334,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             string outpath = saveDialog.FileName;
             if (outpath.Empty())
             {
-                return; 
+                return;
             }
 
             DataRow row = this.dr;
