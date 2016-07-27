@@ -594,16 +594,16 @@ namespace Sci.Production.Subcon
 			LEFT JOIN dbo.Artworkpo_Detail A
 			ON  A.ID = ART.ID
 			LEFT JOIN dbo.Orders O
-			ON  O.CurrencyID = F.CurrencyID where ART.id= @ID";
+			ON  O.id = A.OrderID where ART.id= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }
             string Title1 = dtDetail.Rows[0]["nameEn"].ToString();
-            string Title2 = dtDetail.Rows[1]["AddressEN"].ToString();
-            string Title3 = dtDetail.Rows[2]["Tel"].ToString();
-            string TO = dtDetail.Rows[3]["TITLETO"].ToString();
-            string TEL = dtDetail.Rows[4]["Tel"].ToString();
-            string ADDRESS = dtDetail.Rows[5]["Address"].ToString();
-            string FAX = dtDetail.Rows[6]["fax"].ToString();
+            string Title2 = dtDetail.Rows[0]["AddressEN"].ToString();
+            string Title3 = dtDetail.Rows[0]["Tel"].ToString();
+            string TO = dtDetail.Rows[0]["TITLETO"].ToString();
+            string TEL = dtDetail.Rows[0]["Tel"].ToString();
+            string ADDRESS = dtDetail.Rows[0]["Address"].ToString();
+            string FAX = dtDetail.Rows[0]["fax"].ToString();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", Title3));
@@ -616,14 +616,14 @@ namespace Sci.Production.Subcon
             List<P01_PrintData> data = dtDetail.AsEnumerable()
                 .Select(row1 => new P01_PrintData()
                 {
-                    OrderID = row1["POID"].ToString(),
-                    StyleID = row1["SEQ"].ToString(),
-                    poQTY = row1["desc"].ToString(),
-                    ArtworkID = row1["Location"].ToString(),
-                    PCS = row1["StockUnit"].ToString(),
-                    Unitprice = row1["Roll"].ToString(),
-                    QtyGMT = row1["Dyelot"].ToString(),
-                    Amount = row1["Qty"].ToString()
+                    OrderID = row1["Orderid"].ToString(),
+                    StyleID = row1["styleID"].ToString(),
+                    poQTY = row1["poQty"].ToString(),
+                    ArtworkID = row1["artworkid"].ToString(),
+                    PCS = row1["Stitch"].ToString(),
+                    Unitprice = row1["Unitprice"].ToString(),
+                    QtyGMT = row1["Qtygarment"].ToString(),
+                    Amount = row1["Amount"].ToString()
                 }).ToList();
 
             report.ReportDataSource = data;
