@@ -14,6 +14,8 @@ using System.Data.SqlClient;
 using Sci.Win;
 using Sci.Utility.Excel;
 
+
+
 namespace Sci.Production.Warehouse
 {
     public partial class P03_RollTransaction : Sci.Win.Subs.Base
@@ -409,8 +411,6 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             int allColumns = dtt.Columns.Count;
             xlTable.Borders.OnlyHeaderBorders = true;
             xl.dicDatas.Add("##Roll", xlTable);
-
-
             xl.Save(outpath, true);
 
             return true;
