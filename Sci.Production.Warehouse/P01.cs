@@ -8,6 +8,10 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Reflection;
+using System.Data.SqlClient;
+using Sci.Win;
+using System.Linq;
 
 
 namespace Sci.Production.Warehouse
@@ -450,6 +454,6 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
                 frm.ShowDialog(this);
             }
         }
-
+ 
     }
 }
