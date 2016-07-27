@@ -20,6 +20,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P50_Print : Sci.Win.Tems.PrintForm
     {
+        public DataRow CurrentDataRow { get; set; }
         public P50_Print(DataRow row)
         {
             InitializeComponent();
@@ -137,7 +138,6 @@ namespace Sci.Production.Warehouse
             return Result.True;
         }
 
-        public DataRow CurrentDataRow { get; set; }
         bool isStockList = false;
         private void radioGroup1_ValueChanged(object sender, EventArgs e)
         {

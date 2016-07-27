@@ -337,11 +337,11 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                 return; //false;
             }
 
-            DataRow row = this.CurrentDataRow;
-            string id = row["ID"].ToString(); 
+            DataRow row = this.dr;
+            string id = row["ID"].ToString();
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-
+            DualResult result;
             DataTable dt;
             DBProxy.Current.Select("",
              @" select a.id[SP]
@@ -355,8 +355,8 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
 		    from dbo.PO_Supp_Detail a
 		    inner join dbo.MDivisionPoDetail b
 		    on 
-		    a.id=b.POID
-		    where a.id=@ID ", pars, out dt);
+		    a.id=b.POID where a.id=@ID", pars, out dt);
+       
             string SP = dt.Rows[0]["SP"].ToString();
             string SEQ = dt.Rows[0]["SEQ"].ToString();
             string Ref = dt.Rows[0]["Ref"].ToString();
@@ -375,7 +375,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Bal_Qty", Bal_Qty));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Description", Description));
 
-            DualResult result;
+            
             DataTable dtt;
             string sqlcmd = string.Format(@"select 
             c.Roll[Roll]
@@ -386,7 +386,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             ,c.AdjustQty[Adjust_Qty]
             ,c.InQty-c.OutQty+c.AdjustQty[Balance]
             ,dbo.Getlocation(c.Ukey)[Location]
-            from dbo.FtyInventory c");
+            from dbo.FtyInventory c where c.poid=@ID ");
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtt);
             if (!result)
             {
@@ -399,9 +399,9 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
 
             string xlt = @"Warehouse_P03_RollTransaction.xltx";
             SaveXltReportCls xl = new SaveXltReportCls(xlt);
-
-            xl.dicDatas.Add("##SP", SP);
-            xl.dicDatas.Add("##SEQ", SEQ);
+            
+            xl.dicDatas.Add("##SP",SP );
+            xl.dicDatas.Add("##SEQ",SEQ);
             xl.dicDatas.Add("##Ref", Ref);
             xl.dicDatas.Add("##Color", Color);
             xl.dicDatas.Add("##Arrived_Qty_by_Seq", Arrived_Qty_by_Seq);
@@ -410,15 +410,13 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             xl.dicDatas.Add("##Description", Description);
             SaveXltReportCls.xltRptTable xlTable = new SaveXltReportCls.xltRptTable(dtt);
             int allColumns = dtt.Columns.Count;
-            xlTable.Borders.OnlyHeaderBorders = true;
+            xlTable.Borders.OnlyHeaderBorders = false;
             xl.dicDatas.Add("##Roll", xlTable);
             xl.Save(outpath, true);
 
             return; //true;
 
         }
-
-        public DataRow CurrentDataRow { get; set; }
     }
 }
 

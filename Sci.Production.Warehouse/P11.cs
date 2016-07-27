@@ -868,7 +868,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 @"select    
              b.name 
             from dbo.Issue as a 
-             inner join dbo.mdivision as b on b.id = a.mdivisionid
+            inner join dbo.mdivision as b on b.id = a.mdivisionid
             where b.id = a.mdivisionid
             and a.id = @ID
             ", pars, out dt);
