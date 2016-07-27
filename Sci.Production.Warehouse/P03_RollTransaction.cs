@@ -323,21 +323,22 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             
         }
 
+        
 
-        protected override bool ClickPrint()
+       
+
+        private void button2_Click(object sender, EventArgs e)
         {
-
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
             saveDialog.ShowDialog();
             string outpath = saveDialog.FileName;
             if (outpath.Empty())
             {
-                return false;
+                return; //false;
             }
 
-
-            DataRow issue = this.CurrentDataRow;
-            string id = issue["ID"].ToString(); 
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString(); 
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
 
@@ -374,9 +375,8 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Bal_Qty", Bal_Qty));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Description", Description));
 
-        
+            DualResult result;
             DataTable dtt;
-
             string sqlcmd = string.Format(@"select 
             c.Roll[Roll]
             ,c.Dyelot[Dyelot]
@@ -387,10 +387,11 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             ,c.InQty-c.OutQty+c.AdjustQty[Balance]
             ,dbo.Getlocation(c.Ukey)[Location]
             from dbo.FtyInventory c");
+            result = DBProxy.Current.Select("", sqlcmd, pars, out dtt);
             if (!result)
             {
                 ShowErr(result);
-                return true;
+                return; //true;
             }
             string Roll = dtt.Rows[0]["Roll"].ToString();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Roll", Roll));
@@ -413,18 +414,11 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             xl.dicDatas.Add("##Roll", xlTable);
             xl.Save(outpath, true);
 
-            return true;
-        }
+            return; //true;
 
-        private void ShowErr(bool result)
-        {
-            throw new NotImplementedException();
         }
-
 
         public DataRow CurrentDataRow { get; set; }
-
-        public bool result { get; set; }
     }
 }
 

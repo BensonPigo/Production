@@ -28,11 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel2 = new Sci.Win.UI.Panel();
             this.label6 = new Sci.Win.UI.Label();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.button1 = new Sci.Win.UI.Button();
-            this.bindingSource1 = new Sci.Win.UI.BindingSource();
+            this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
             this.panel3 = new Sci.Win.UI.Panel();
             this.numericBox3 = new Sci.Win.UI.NumericBox();
             this.numericBox2 = new Sci.Win.UI.NumericBox();
@@ -44,12 +45,13 @@
             this.label2 = new Sci.Win.UI.Label();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.label1 = new Sci.Win.UI.Label();
-            this.bindingSource2 = new Sci.Win.UI.BindingSource();
-            this.bindingSource3 = new Sci.Win.UI.BindingSource();
+            this.bindingSource2 = new Sci.Win.UI.BindingSource(this.components);
+            this.bindingSource3 = new Sci.Win.UI.BindingSource(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.grid1 = new Sci.Win.UI.Grid();
             this.grid2 = new Sci.Win.UI.Grid();
             this.grid3 = new Sci.Win.UI.Grid();
+            this.button2 = new Sci.Win.UI.Button();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
@@ -66,6 +68,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.button2);
             this.panel2.Controls.Add(this.label6);
             this.panel2.Controls.Add(this.comboBox1);
             this.panel2.Controls.Add(this.button1);
@@ -142,9 +145,19 @@
             this.numericBox3.IsSupportEditMode = false;
             this.numericBox3.Location = new System.Drawing.Point(672, 39);
             this.numericBox3.Name = "numericBox3";
+            this.numericBox3.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox3.ReadOnly = true;
             this.numericBox3.Size = new System.Drawing.Size(101, 23);
             this.numericBox3.TabIndex = 11;
+            this.numericBox3.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox2
             // 
@@ -154,9 +167,19 @@
             this.numericBox2.IsSupportEditMode = false;
             this.numericBox2.Location = new System.Drawing.Point(419, 39);
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(101, 23);
             this.numericBox2.TabIndex = 10;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox1
             // 
@@ -166,9 +189,19 @@
             this.numericBox1.IsSupportEditMode = false;
             this.numericBox1.Location = new System.Drawing.Point(141, 39);
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.ReadOnly = true;
             this.numericBox1.Size = new System.Drawing.Size(101, 23);
             this.numericBox1.TabIndex = 9;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label5
             // 
@@ -258,11 +291,12 @@
             this.grid1.AllowUserToResizeRows = false;
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
@@ -284,10 +318,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid2.Location = new System.Drawing.Point(3, 3);
             this.grid2.Name = "grid2";
@@ -310,10 +345,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grid3.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.grid3.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid3.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid3.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid3.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid3.Location = new System.Drawing.Point(3, 254);
             this.grid3.Name = "grid3";
@@ -325,6 +361,16 @@
             this.grid3.Size = new System.Drawing.Size(568, 183);
             this.grid3.TabIndex = 5;
             this.grid3.TabStop = false;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(816, 11);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(80, 30);
+            this.button2.TabIndex = 5;
+            this.button2.Text = "Print";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // P03_RollTransaction
             // 
@@ -375,5 +421,6 @@
         private Win.UI.Grid grid1;
         private Win.UI.Grid grid2;
         private Win.UI.Grid grid3;
+        private Win.UI.Button button2;
     }
 }
