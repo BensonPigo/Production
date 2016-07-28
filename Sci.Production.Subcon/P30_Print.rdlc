@@ -366,7 +366,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=First(Fields!Amount.Value)</Value>
+                                                    <Value>=Fields!Total4.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -613,7 +613,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!Amount.Value)</Value>
+                                  <Value>=Fields!Total3.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -694,7 +694,7 @@
   <Width>8.2in</Width>
   <Page>
     <PageHeader>
-      <Height>6.28985cm</Height>
+      <Height>6.39568cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
@@ -1674,6 +1674,14 @@
         </Field>
         <Field Name="Total2">
           <DataField>Total2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Total3">
+          <DataField>Total3</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Total4">
+          <DataField>Total4</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Unit">
