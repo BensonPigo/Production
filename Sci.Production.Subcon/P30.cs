@@ -680,6 +680,8 @@ namespace Sci.Production.Subcon
             ,a.Qty[Order_Qty]
             ,a.UnitId[Unit]
             ,a.Price*a.Qty[Amount]
+            ,[Total1]=sum(a.Qty) OVER (PARTITION BY a.Delivery )
+			,[Total2]=sum(a.Qty) OVER (PARTITION BY a.Refno)
             from dbo.LocalPO_Detail a
             left join dbo.LocalPO b
             on 
@@ -699,7 +701,9 @@ namespace Sci.Production.Subcon
                     UPrice = row1["UPrice"].ToString(),
                     Order_Qty = row1["Order_Qty"].ToString(),
                     Unit = row1["Unit"].ToString(),
-                    Amount = row1["Amount"].ToString()
+                    Amount = row1["Amount"].ToString(),
+                    Total1 = row1["Total1"].ToString(),
+                    Total2 = row1["Total2"].ToString()
                 }).ToList();
 
             report.ReportDataSource = data;

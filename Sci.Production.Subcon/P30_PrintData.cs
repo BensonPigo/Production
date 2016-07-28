@@ -17,6 +17,7 @@ namespace Sci.Production.Subcon
         public string Order_Qty { get; set; }
         public string Unit { get; set; }
         public string Amount { get; set; }
-        public string Total { get; set; }
+        public string Total1 { get; set; }
+        public string Total2 { get; set; }
     }
 }
