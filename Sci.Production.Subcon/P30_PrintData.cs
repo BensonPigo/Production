@@ -19,5 +19,8 @@ namespace Sci.Production.Subcon
         public string Amount { get; set; }
         public string Total1 { get; set; }
         public string Total2 { get; set; }
+        public string Total3 { get; set; }
+        public string Total4 { get; set; }
+
     }
 }
