@@ -1805,6 +1805,8 @@ Sci.Production.Subcon/P36_ModifyAfterSent.resx -text
 Sci.Production.Subcon/P36_ModifyDetail.Designer.cs -text
 Sci.Production.Subcon/P36_ModifyDetail.cs -text
 Sci.Production.Subcon/P36_ModifyDetail.resx -text
+Sci.Production.Subcon/P36_Print.rdlc -text
+Sci.Production.Subcon/P36_PrintData.cs -text
 Sci.Production.Subcon/P37.Designer.cs -text
 Sci.Production.Subcon/P37.cs -text
 Sci.Production.Subcon/P37.resx -text
