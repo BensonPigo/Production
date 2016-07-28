@@ -23,19 +23,25 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03_Print : Sci.Win.Tems.PrintForm
     {
+        
         public P03_Print()
         {
             InitializeComponent();
-
+      
+            
             // TODO: Complete member initialization
         }
-       
+      
+      
         DataTable dt;
         string sqlcmd;
         protected override bool ValidateInput()
-        {
+        { 
+             
+            
             if (this.radioPanel1.Value == this.radioButton1.Value)
             {
+      
                sqlcmd = @"select a.id[sp]
 			,b.StyleID[style#]
 			,a.SEQ1+a.SEQ2[SEQ]
@@ -84,6 +90,7 @@ namespace Sci.Production.Warehouse
 			,i.LObQty[Scrap Qty]
 			,i.ALocation[Bulk Location]
 			,i.BLocation[Stock Location]
+            ,dbo.getinspectionresult(a.id,a.seq1,a.seq2)[FIR]
 			,(select Remark+',' from 
 			(select r.Remark  from dbo.Receiving_Detail r where POID =a.id and seq1=a.seq1 and seq2=a.seq2 and remark !='') r for xml path('')) [Remark]
 			from dbo.PO_Supp_Detail a
@@ -107,8 +114,8 @@ namespace Sci.Production.Warehouse
 		    h.id=c.SuppID
 			left join dbo.MDivisionPoDetail i
 			on
-			i.POID=a.ID
-            where a.id='13040356TT'";
+			i.POID=a.ID 
+            where a.id='15030002UU'";
             }
             else if (this.radioPanel1.Value == this.radioButton2.Value)
             {
@@ -156,7 +163,8 @@ namespace Sci.Production.Warehouse
             e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID and e.year=year(a.ETA)
             left join dbo.Supp f
             on 
-            f.id=c.SuppID where a.id='12042541IIS '";
+            f.id=c.SuppID 
+            where a.id='01060001GAS'";
             }
             return base.ValidateInput();
         }

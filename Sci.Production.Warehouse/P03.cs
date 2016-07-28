@@ -386,15 +386,14 @@ Select POID,SEQ1,SEQ2,CASE
             //if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return;
             //MyUtility.Excel.CopyToXls(dt, "");
             P03_Print p = new P03_Print();
+            
             p.ShowDialog();
+           
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.grid1_sorting();
         }
-
-      
-      
     }
 }
 
