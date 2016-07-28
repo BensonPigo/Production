@@ -772,7 +772,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=DateString(</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
