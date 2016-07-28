@@ -678,10 +678,6 @@ namespace Sci.Production.Subcon
             frm.MdiParent = MdiParent;
             frm.Show();
 
-
-
-
-
             return true;
         }
 

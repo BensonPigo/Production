@@ -542,7 +542,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
+                <Value>=Fields!Supplier.Value</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -592,7 +592,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
+                <Value>=Fields!SP.Value</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -642,7 +642,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
+                <Value>=Fields!Subject.Value</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -692,7 +692,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
+                <Value>=Fields!DESC.Value</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -742,7 +742,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
+                <Value>=Fields!Amount.Value</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -792,7 +792,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
+                <Value>=Fields!taxrate.Value</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -842,7 +842,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
+                <Value>=Fields!Total.Value</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -892,7 +892,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
+                <Value>=Fields!Remark.Value</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -1046,7 +1046,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
+                <Value>=Fields!No.Value</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -1096,9 +1096,12 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
+                <Value>Exchange Rate</Value>
                 <Style>
+                  <FontStyle>Normal</FontStyle>
                   <FontWeight>Bold</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -1150,7 +1153,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
+                <Value>=Fields!Exchange.Value</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -1253,6 +1256,17 @@
             <TextRuns>
               <TextRun>
                 <Value>Purchaser / S-mrs:</Value>
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>=Fields!Purchaser.Value</Value>
                 <Style>
                   <FontWeight>Bold</FontWeight>
                 </Style>
@@ -1732,6 +1746,74 @@
     <Style />
   </Page>
   <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="SciProductionSubcon">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>219c2c4e-f2c4-4c96-b1ce-cbd5725d3f66</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DataSet1">
+      <Query>
+        <DataSourceName>SciProductionSubcon</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Amount">
+          <DataField>Amount</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DESC">
+          <DataField>DESC</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Exchange">
+          <DataField>Exchange</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="No">
+          <DataField>No</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Purchaser">
+          <DataField>Purchaser</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Remark">
+          <DataField>Remark</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SP">
+          <DataField>SP</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Subject">
+          <DataField>Subject</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Supplier">
+          <DataField>Supplier</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="taxrate">
+          <DataField>taxrate</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>Sci.Production.Subcon</rd:DataSetName>
+        <rd:TableName>P36_PrintData</rd:TableName>
+        <rd:ObjectDataSourceType>Sci.Production.Subcon.P36_PrintData, Sci.Production.Subcon, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
   <ReportParameters>
     <ReportParameter Name="Barcode">
       <DataType>String</DataType>

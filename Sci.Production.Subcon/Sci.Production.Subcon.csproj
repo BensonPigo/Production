@@ -178,6 +178,7 @@
     <Compile Include="P36_ModifyDetail.Designer.cs">
       <DependentUpon>P36_ModifyDetail.cs</DependentUpon>
     </Compile>
+    <Compile Include="P36_PrintData.cs" />
     <Compile Include="P37_DebitSchedule.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -436,6 +437,7 @@
     <EmbeddedResource Include="P36_ModifyDetail.resx">
       <DependentUpon>P36_ModifyDetail.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P36_Print.rdlc" />
     <EmbeddedResource Include="P37_DebitSchedule.resx">
       <DependentUpon>P37_DebitSchedule.cs</DependentUpon>
     </EmbeddedResource>
@@ -501,6 +503,7 @@
     <None Include="Properties\DataSources\P10_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_PrintData1.datasource" />
     <None Include="Properties\DataSources\P30_PrintData.datasource" />
+    <None Include="Properties\DataSources\P36_PrintData.datasource" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

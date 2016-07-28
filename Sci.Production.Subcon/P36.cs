@@ -15,6 +15,9 @@ using Sci.Production;
 using Sci.Production.PublicPrg;
 using System.Linq;
 using System.Transactions;
+using System.Reflection;
+using System.Data.SqlClient;
+using Sci.Win;
 
 namespace Sci.Production.Subcon
 {
@@ -429,6 +432,126 @@ where id = '{4}'"
             frm.ShowDialog(this);
             this.RenewData();
 
+        }
+
+        //print
+        protected override bool ClickPrint()
+        {
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString();
+            string No = row["ID"].ToString();
+            string Issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+    
+            #region -- 撈表頭資料 --
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DualResult result;
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("No", No));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issuedate", Issuedate));
+           
+            #endregion
+            #region -- 撈表身資料 --
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dtDetail;
+            string sqlcmd = @"select 
+                   F.nameEn,F.AddressEN,F.Tel,ap.LocalSuppID+'-'+L.name AS Supplier,L.Address,L.tel,ap.ID,
+	               A.ArtworkPoID,A.OrderID,A.ArtworkId,A.PatternDesc,A.Price,A.ApQty,A.Amount,ap.PayTermID+'-'+P.name as Terms,
+	               LOB.AccountNo,LOB.AccountName,LOB.BankName,LOB.CountryID+'/'+LOB.City as Country,LOB.SWIFTCode,
+	               ap.Handle+''+pas.name as PreparedBy
+                   from DBO.artworkap ap
+	               LEFT JOIN dbo.factory F
+	               ON  F.ID = ap.factoryid
+	               LEFT JOIN dbo.LocalSupp L
+	               ON  L.ID = ap.LocalSuppID
+	               LEFT JOIN dbo.Artworkap_Detail A
+	               ON  A.ID = ap.ID
+	               LEFT JOIN dbo.LocalSupp_Bank LOB
+	               ON  IsDefault = 1 and LOB.ID = ap.LocalSuppID
+	               LEFT JOIN DBO.PayTerm P
+	               ON P.ID = ap.PayTermID
+	               LEFT JOIN DBO.Pass1 pas
+	               ON pas.ID = ap.Handle where ap.ID= @ID";
+            result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
+            if (!result) { this.ShowErr(sqlcmd, result); }
+            string RptTitle = dtDetail.Rows[0]["nameEn"].ToString();
+            string AddressEN = dtDetail.Rows[0]["AddressEN"].ToString();
+            string TEL = dtDetail.Rows[0]["Tel"].ToString();
+            string Supplier = dtDetail.Rows[0]["Supplier"].ToString();
+            string Address = dtDetail.Rows[0]["Address"].ToString();
+            string LTEL = dtDetail.Rows[0]["tel"].ToString();
+            string Barcode = dtDetail.Rows[0]["ID"].ToString();
+            string BarcodeView = dtDetail.Rows[0]["ID"].ToString();
+            string Terms = dtDetail.Rows[0]["Terms"].ToString();
+            string ACNO = dtDetail.Rows[0]["AccountNo"].ToString();
+            string ACNAME = dtDetail.Rows[0]["AccountName"].ToString();
+            string BankName = dtDetail.Rows[0]["BankName"].ToString();
+            string Country = dtDetail.Rows[0]["Country"].ToString();
+            string SWIFCode = dtDetail.Rows[0]["SWIFTCode"].ToString();
+            string PreparedBy = dtDetail.Rows[0]["PreparedBy"].ToString();
+
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL", TEL));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", Supplier));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Address", Address));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("LTEL", LTEL));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Barcode", Barcode));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("BarcodeView", BarcodeView));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Terms", Terms));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ACNO", ACNO));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ACNAME", ACNAME));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("BankName", BankName));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Country", Country));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SWIFCode", SWIFCode));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("PreparedBy", PreparedBy));
+
+            if (!AddressEN.EndsWith(Environment.NewLine))
+            {
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddressEN", AddressEN + Environment.NewLine));
+            }
+            else
+            {
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddressEN", AddressEN));
+            }
+
+            // 傳 list 資料            
+            List<P10_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P10_PrintData()
+                {
+                    POID = row1["ArtworkPoID"].ToString(),
+                    OrderID = row1["OrderID"].ToString(),
+                    Pattem = row1["ArtworkId"].ToString(),
+                    CutPart = row1["PatternDesc"].ToString(),
+                    Price = row1["Price"].ToString(),
+                    Qty = row1["ApQty"].ToString(),
+                    Amt = row1["Amount"].ToString()
+
+                }).ToList();
+
+            report.ReportDataSource = data;
+            #endregion
+            // 指定是哪個 RDLC
+            //DualResult result;
+            Type ReportResourceNamespace = typeof(P10_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P10_Print.rdlc";
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                //this.ShowException(result);
+                return false;
+            }
+
+            report.ReportResource = reportresource;
+
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
+
+            return true;
         }
     }
 }
