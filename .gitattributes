@@ -1793,6 +1793,8 @@ Sci.Production.Subcon/P35.resx -text
 Sci.Production.Subcon/P35_Import.Designer.cs -text
 Sci.Production.Subcon/P35_Import.cs -text
 Sci.Production.Subcon/P35_Import.resx -text
+Sci.Production.Subcon/P35_Print.rdlc -text
+Sci.Production.Subcon/P35_PrintData.cs -text
 Sci.Production.Subcon/P36.Designer.cs -text
 Sci.Production.Subcon/P36.cs -text
 Sci.Production.Subcon/P36.resx -text
