@@ -1,21 +1,21 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci;
+using Sci.Data;
+using Sci.Production;
+using Sci.Production.PublicPrg;
+using Sci.Utility.Excel;
+using Sci.Win;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci;
-using Sci.Data;
-using System.Linq;
-using Sci.Production;
-using Sci.Production.PublicPrg;
-using System.Data.SqlClient;
-using Sci.Win;
-using Sci.Utility.Excel;
-
+using System.Transactions;
 
 namespace Sci.Production.Warehouse
 {
@@ -385,10 +385,9 @@ Select POID,SEQ1,SEQ2,CASE
             //DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             //if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return;
             //MyUtility.Excel.CopyToXls(dt, "");
-           
+
 
             P03_Print p = new P03_Print(this.CurrentDataRow);
-           
             p.ShowDialog();
 
             return;
@@ -399,7 +398,7 @@ Select POID,SEQ1,SEQ2,CASE
             this.grid1_sorting();
         }
 
-        public DataRow CurrentDataRow { get; set; }
+        
 
       
     }

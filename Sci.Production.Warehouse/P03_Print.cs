@@ -23,28 +23,28 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03_Print : Sci.Win.Tems.PrintForm
     {
-        DataRow _row;
+        
+        DataRow CurrentDataRow;
         public P03_Print(DataRow row)
         {
             InitializeComponent();
 
-            this._row = row;
+            this.CurrentDataRow = row;
             
             // TODO: Complete member initialization
         }
-     
-      
-        DataTable dt;
+     public DataRow CurrentDataRow { get; set; }
+         DataTable dt;
         string sqlcmd;
         protected override bool ValidateInput()
         {
-          //  DataRow this._row;
-            string id = _row["ID"].ToString();  
-            List<SqlParameter> pars = new List<SqlParameter>();
-             pars.Add(new SqlParameter("@ID", id));
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString();
+            //List<SqlParameter> pars = new List<SqlParameter>();
+            // pars.Add(new SqlParameter("@ID", id));
             if (this.radioPanel1.Value == this.radioButton1.Value)
             {
-               DualResult result = DBProxy.Current.Select("", @"select a.id[sp]
+               sqlcmd=@"select a.id[sp]
 			,b.StyleID[style#]
 			,a.SEQ1+a.SEQ2[SEQ]
 			,c.SuppID[Supp]
@@ -117,12 +117,11 @@ namespace Sci.Production.Warehouse
 			left join dbo.MDivisionPoDetail i
 			on
 			i.POID=a.ID
-            where a.id=@ID", pars, out dt);
+            where a.id=@ID";
             }
             else if (this.radioPanel1.Value == this.radioButton2.Value)
             {
-              
-
+            
              sqlcmd = @"select  a.id[poid]
             ,b.StyleID[style]
             ,a.SEQ1+a.SEQ2[SEQ]
