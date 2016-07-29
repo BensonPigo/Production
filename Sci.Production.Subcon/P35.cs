@@ -15,6 +15,9 @@ using Sci.Production;
 using Sci.Production.PublicPrg;
 using System.Linq;
 using System.Transactions;
+using System.Data.SqlClient;
+using Sci.Win;
+using System.Reflection;
 
 
 namespace Sci.Production.Subcon
@@ -563,5 +566,114 @@ namespace Sci.Production.Subcon
             return base.ClickNewBefore();
         }
 
+        protected override bool ClickPrint()
+        {
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString();
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+
+            #region  抓表頭資料
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select("",
+            @"select
+            b.nameEn 
+			,b.AddressEN
+			,b.Tel
+			,a.Id
+            ,c.name
+			,c.Address
+			,c.Tel
+            from dbo.LocalAP a 
+            left join dbo.factory  b 
+            on b.id = a.factoryid
+			inner join dbo.LocalSupp c
+			on c.id=a.LocalSuppID
+            and a.id = @ID", pars, out dt);
+            if (!result) { this.ShowErr(result); }
+            string RptTitle = dt.Rows[0]["nameEn"].ToString();
+            string address = dt.Rows[0]["AddressEN"].ToString();
+            string Tel = dt.Rows[0]["Tel"].ToString();
+            string Barcode = dt.Rows[0]["Id"].ToString();
+            string Supplier = dt.Rows[0]["name"].ToString();
+            string Address1 = dt.Rows[0]["Address"].ToString();
+            string TEL1 = dt.Rows[0]["Tel"].ToString();
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("address", address));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Barcode", Barcode));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", Supplier));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Address1", Address1));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL1", TEL1));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("id", id));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+            #endregion
+
+
+//            #region  抓表身資料
+//            pars = new List<SqlParameter>();
+//            pars.Add(new SqlParameter("@ID", id));
+//            DataTable dd;
+//            result = DBProxy.Current.Select("",
+//            @"select a.FromPOID,a.FromSeq1+'-'+a.Fromseq2 as SEQ
+//	         ,dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.refno, b.seq1,b.seq2),1,0))[DESC] 
+//			 ,unit = b.StockUnit
+//			 ,a.FromRoll,a.FromDyelot
+//		     ,a.Qty[QTY]
+//		     ,dbo.Getlocation(a.FromFtyInventoryUkey)[ToLocation]
+//			 ,a.ToLocation
+//             ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.Fromseq2 )    
+//             from dbo.Subtransfer_detail a 
+//             left join dbo.PO_Supp_Detail b
+//             on 
+//             b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2 and b.id=a.id
+//             where a.id= @ID", pars, out dd);
+//            if (!result) { this.ShowErr(result); }
+
+//            // 傳 list 資料            
+//            List<P35_PrintData> data = dd.AsEnumerable()
+//                .Select(row1 => new P35_PrintData()
+//                {
+//                    FromPOID = row1["FromPOID"].ToString(),
+//                    SEQ = row1["SEQ"].ToString(),
+//                    DESC = row1["DESC"].ToString(),
+//                    unit = row1["unit"].ToString(),
+//                    FromRoll = row1["FromRoll"].ToString(),
+//                    FromDyelot = row1["FromDyelot"].ToString(),
+//                    QTY = row1["QTY"].ToString(),
+//                    ToLocation = row1["ToLocation"].ToString(),
+//                    Total = row1["Total"].ToString()
+//                }).ToList();
+
+//            report.ReportDataSource = data;
+//            #endregion
+
+            // 指定是哪個 RDLC
+            #region  指定是哪個 RDLC
+            //DualResult result;
+            Type ReportResourceNamespace = typeof(P35_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P35_Print.rdlc";
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                //this.ShowException(result);
+                return false;
+            }
+
+            report.ReportResource = reportresource;
+            #endregion
+
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
+
+            return true;
+
+        }
     }
 }
