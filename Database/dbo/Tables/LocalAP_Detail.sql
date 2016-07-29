@@ -8,8 +8,13 @@
     [UnitID]             VARCHAR (8)     CONSTRAINT [DF_LocalAP_Detail_UnitID] DEFAULT ('') NOT NULL,
     [LocalPoId]          VARCHAR (13)    CONSTRAINT [DF_LocalAP_Detail_LocalPoId] DEFAULT ('') NOT NULL,
     [LocalPo_DetailUkey] BIGINT          CONSTRAINT [DF_LocalAP_Detail_LocalPo_DetailUkey] DEFAULT ((0)) NOT NULL,
-    CONSTRAINT [PK_LocalAP_Detail] PRIMARY KEY CLUSTERED ([Id] ASC, [LocalPo_DetailUkey] ASC)
+    [Ukey]               BIGINT          IDENTITY (1, 1) NOT NULL,
+    [OldSeq1]            VARCHAR (3)     NULL,
+    [OldSeq2]            VARCHAR (2)     NULL,
+    CONSTRAINT [PK_LocalAP_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

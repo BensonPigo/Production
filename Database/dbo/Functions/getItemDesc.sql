@@ -9,7 +9,7 @@ BEGIN
 	
     SET @desc = ''
 
-	select @desc=description from localitem p WHERE Category=@category and RefNo = @refno;
+	select @desc=description from localitem p WHERE  RefNo = @refno;
 
     RETURN rtrim(@desc)
 END

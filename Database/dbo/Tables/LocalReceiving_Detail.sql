@@ -1,17 +1,22 @@
 ﻿CREATE TABLE [dbo].[LocalReceiving_Detail] (
-    [Id]                 VARCHAR (13)   CONSTRAINT [DF_LocalReceiving_Detail_Id] DEFAULT ('') NOT NULL,
-    [MDivisionID]        VARCHAR (8)    NULL,
-    [OrderId]            VARCHAR (13)   CONSTRAINT [DF_LocalReceiving_Detail_OrderId] DEFAULT ('') NOT NULL,
+    [Id]                 VARCHAR (13)   NOT NULL,
+    [OrderId]            VARCHAR (13)   NOT NULL,
+    [Refno]              VARCHAR (20)   NOT NULL,
+    [ThreadColorID]      VARCHAR (15)   NULL,
+    [Qty]                NUMERIC (8, 2) NOT NULL,
+    [LocalPoId]          VARCHAR (13)   NOT NULL,
+    [Remark]             NVARCHAR (100) NULL,
+    [LocalPo_detailukey] BIGINT         NOT NULL,
+    [Location]           VARCHAR (60)   NULL,
     [Category]           VARCHAR (20)   NULL,
-    [Refno]              VARCHAR (21)   CONSTRAINT [DF_LocalReceiving_Detail_Refno] DEFAULT ('') NOT NULL,
-    [ThreadColorID]      VARCHAR (15)   CONSTRAINT [DF_LocalReceiving_Detail_ThreadColorID] DEFAULT ('') NULL,
-    [Qty]                NUMERIC (8, 2) CONSTRAINT [DF_LocalReceiving_Detail_Qty] DEFAULT ((0)) NOT NULL,
-    [LocalPoId]          VARCHAR (13)   CONSTRAINT [DF_LocalReceiving_Detail_LocalPoId] DEFAULT ('') NOT NULL,
-    [Remark]             NVARCHAR (100) CONSTRAINT [DF_LocalReceiving_Detail_Remark] DEFAULT ('') NULL,
-    [LocalPo_detailukey] BIGINT         CONSTRAINT [DF_LocalReceiving_Detail_LocalPo_detailukry] DEFAULT ((0)) NOT NULL,
-    [Location]           VARCHAR (60)   CONSTRAINT [DF_LocalReceiving_Detail_Location] DEFAULT ('') NULL,
-    CONSTRAINT [PK_LocalReceiving_Detail] PRIMARY KEY CLUSTERED ([Id] ASC, [LocalPo_detailukey] ASC)
+    [Mdivisionid]        VARCHAR (8)    NULL,
+    [OldSeq1]            VARCHAR (3)    NULL,
+    [OldSeq2]            VARCHAR (2)    NULL,
+    [Ukey]               BIGINT         IDENTITY (1, 1) NOT NULL,
+    CONSTRAINT [PK_LocalReceiving_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

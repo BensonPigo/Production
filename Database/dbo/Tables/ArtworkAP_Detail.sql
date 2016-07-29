@@ -3,7 +3,7 @@
     [ArtworkPoID]          VARCHAR (13)    CONSTRAINT [DF_ArtworkAP_Detail_ArtworkPoID] DEFAULT ('') NOT NULL,
     [OrderID]              VARCHAR (13)    CONSTRAINT [DF_ArtworkAP_Detail_OrderID] DEFAULT ('') NOT NULL,
     [ArtworkID]            VARCHAR (20)    CONSTRAINT [DF_ArtworkAP_Detail_ArtworkID] DEFAULT ('') NOT NULL,
-    [PatternCode]          VARCHAR (20)    CONSTRAINT [DF_ArtworkAP_Detail_PatternCode] DEFAULT ('') NOT NULL,
+    [PatternCode]          VARCHAR (20)    CONSTRAINT [DF_ArtworkAP_Detail_PatternCode] DEFAULT ('') NULL,
     [PatternDesc]          NVARCHAR (40)   CONSTRAINT [DF_ArtworkAP_Detail_PatternDesc] DEFAULT ('') NULL,
     [Stitch]               NUMERIC (6)     CONSTRAINT [DF_ArtworkAP_Detail_Stitch] DEFAULT ((0)) NULL,
     [Price]                NUMERIC (12, 4) CONSTRAINT [DF_ArtworkAP_Detail_Price] DEFAULT ((0)) NULL,
@@ -11,9 +11,12 @@
     [Farmin]               NUMERIC (6)     CONSTRAINT [DF_ArtworkAP_Detail_Farmin] DEFAULT ((0)) NULL,
     [ApQty]                NUMERIC (6)     CONSTRAINT [DF_ArtworkAP_Detail_ApQty] DEFAULT ((0)) NULL,
     [AccumulatedQty]       NUMERIC (6)     CONSTRAINT [DF_ArtworkAP_Detail_AccumulatedQty] DEFAULT ((0)) NULL,
-    [ArtworkPo_DetailUkey] BIGINT          CONSTRAINT [DF_ArtworkAP_Detail_ArtworkPo_DetailUkey] DEFAULT ((0)) NOT NULL,
-    CONSTRAINT [PK_ArtworkAP_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [ArtworkPoID] ASC, [OrderID] ASC, [ArtworkID] ASC, [PatternCode] ASC)
+    [ArtworkPo_DetailUkey] BIGINT          CONSTRAINT [DF_ArtworkAP_Detail_ArtworkPo_DetailUkey] DEFAULT ((0)) NULL,
+    [Ukey]                 BIGINT          IDENTITY (1, 1) NOT NULL,
+    CONSTRAINT [PK_ArtworkAP_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO

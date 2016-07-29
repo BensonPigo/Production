@@ -10,8 +10,11 @@
     [Qty]                  NUMERIC (6)   CONSTRAINT [DF_FarmIn_Detail_Qty] DEFAULT ((0)) NULL,
     [Bundleno]             VARCHAR (10)  CONSTRAINT [DF_FarmIn_Detail_Bundleno] DEFAULT ('') NOT NULL,
     [ArtworkPo_DetailUkey] BIGINT        CONSTRAINT [DF_FarmIn_Detail_ArtworkPo_DetailUkey] DEFAULT ((0)) NOT NULL,
-    CONSTRAINT [PK_FarmIn_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [ArtworkPoID] ASC, [Orderid] ASC, [ArtworkID] ASC, [PatternCode] ASC, [Bundleno] ASC)
+    [Ukey]                 BIGINT        IDENTITY (1, 1) NOT NULL,
+    CONSTRAINT [PK_FarmIn_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

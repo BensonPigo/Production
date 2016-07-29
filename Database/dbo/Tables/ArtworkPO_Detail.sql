@@ -18,8 +18,10 @@
     [Ukey]          BIGINT          IDENTITY (1, 1) NOT NULL,
     [ArtworkTypeID] VARCHAR (20)    CONSTRAINT [DF_ArtworkPO_Detail_ArtworkTypeID] DEFAULT ('') NOT NULL,
     [ExceedQty]     NUMERIC (6)     CONSTRAINT [DF_ArtworkPO_Detail_ExceedQty] DEFAULT ((0)) NULL,
-    CONSTRAINT [PK_ArtworkPO_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [OrderID] ASC, [ArtworkId] ASC, [PatternCode] ASC, [ArtworkTypeID] ASC)
+    CONSTRAINT [PK_ArtworkPO_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

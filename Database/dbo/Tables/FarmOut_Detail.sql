@@ -10,8 +10,11 @@
     [Qty]                  NUMERIC (6)   CONSTRAINT [DF_FarmOut_Detail_Qty] DEFAULT ((0)) NULL,
     [BundleNo]             VARCHAR (10)  CONSTRAINT [DF_FarmOut_Detail_BundleNo] DEFAULT ('') NOT NULL,
     [ArtworkPo_DetailUkey] BIGINT        CONSTRAINT [DF_FarmOut_Detail_ArtworkPo_DetailUkey] DEFAULT ((0)) NOT NULL,
-    CONSTRAINT [PK_FarmOut_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [ArtworkPoid] ASC, [Orderid] ASC, [ArtworkID] ASC, [PatternCode] ASC, [BundleNo] ASC)
+    [Ukey]                 BIGINT        IDENTITY (1, 1) NOT NULL,
+    CONSTRAINT [PK_FarmOut_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
