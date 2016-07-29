@@ -33,18 +33,36 @@ namespace Sci.Production.Warehouse
             
             // TODO: Complete member initialization
         }
-     public DataRow CurrentDataRow { get; set; }
-         DataTable dt;
-        string sqlcmd;
+        string outpa;
+        
+       // string sqlcmd;
+      
         protected override bool ValidateInput()
         {
+            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+            saveDialog.ShowDialog();
+           outpa = saveDialog.FileName;
+            if (outpa.Empty())
+            {
+                
+                return false;
+            }
+            return base.ValidateInput();
+        }
+        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        {
+           
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
-            //List<SqlParameter> pars = new List<SqlParameter>();
-            // pars.Add(new SqlParameter("@ID", id));
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dt;
+            string xlt;
+
             if (this.radioPanel1.Value == this.radioButton1.Value)
             {
-               sqlcmd=@"select a.id[sp]
+                xlt = @"Warehouse_P03_Print-1.xltx";
+                DBProxy.Current.Select("", @"select a.id[sp]
 			,b.StyleID[style#]
 			,a.SEQ1+a.SEQ2[SEQ]
 			,c.SuppID[Supp]
@@ -117,12 +135,13 @@ namespace Sci.Production.Warehouse
 			left join dbo.MDivisionPoDetail i
 			on
 			i.POID=a.ID
-            where a.id=@ID";
+            where a.id=@ID", pars, out dt);      
             }
-            else if (this.radioPanel1.Value == this.radioButton2.Value)
+            else  
             {
-            
-             sqlcmd = @"select  a.id[poid]
+                xlt = @"Warehouse_P03_Print-2.xltx";
+
+                DBProxy.Current.Select("", @"select  a.id[sp]
             ,b.StyleID[style]
             ,a.SEQ1+a.SEQ2[SEQ]
             ,dbo.getMtlDesc(a.id,a.SEQ1,a.seq2,2,0)[Desc]
@@ -167,48 +186,19 @@ namespace Sci.Production.Warehouse
             left join dbo.Supp f
             on 
             f.id=c.SuppID
-            where a.id=@ID";
+            where a.id=@ID", pars, out dt);                          
             }
-            return base.ValidateInput();
+            SaveXltReportCls xl = new SaveXltReportCls(xlt);
+            xl.dicDatas.Add("##sp", dt);
+            xl.Save(outpa, false);
+            return Result.True;
         }
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+
+        protected override bool OnToExcel(ReportDefinition report)
         {
-            return DBProxy.Current.Select("", sqlcmd, out dt);
+            return true;
         }
-        protected override bool OnToExcel(Win.ReportDefinition report)
-        {
-            if (dt == null || dt.Rows.Count == 0)
-            {
 
-                MyUtility.Msg.ErrorBox("Data not found");
-                return false;
-            }
-
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpa = saveDialog.FileName;
-            if (outpa.Empty())
-            {
-                return true;
-            }
-
-            if (this.radioPanel1.Value == this.radioButton1.Value)
-            {
-                Sci.Utility.Excel.SaveXltReportCls x1 = new Utility.Excel.SaveXltReportCls("Warehouse_P03_Print-1.xltx");
-                x1.dicDatas.Add("##sp", dt);
-                x1.Save(outpa, false);
-                
-            }
-                else if (this.radioPanel1.Value == this.radioButton2.Value)
-                {
-
-                    Sci.Utility.Excel.SaveXltReportCls x2 = new Utility.Excel.SaveXltReportCls("Warehouse_P03_Print-2.xltx");
-                    x2.dicDatas.Add("##poid", dt);
-                    x2.Save(outpa, false);
-
-                }return true;
-            } 
-           
         }
     }
 

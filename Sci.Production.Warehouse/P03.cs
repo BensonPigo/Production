@@ -385,9 +385,12 @@ Select POID,SEQ1,SEQ2,CASE
             //DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             //if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return;
             //MyUtility.Excel.CopyToXls(dt, "");
+            
+            if (null == this.grid1.CurrentRow) return;
+            var dr = this.grid1.GetDataRow<DataRow>(this.grid1.CurrentRow.Index);
+            if (null == dr) return;
 
-
-            P03_Print p = new P03_Print(this.CurrentDataRow);
+            P03_Print p = new P03_Print(dr);
             p.ShowDialog();
 
             return;
@@ -398,9 +401,7 @@ Select POID,SEQ1,SEQ2,CASE
             this.grid1_sorting();
         }
 
-        
-
-      
+       
     }
 }
 
