@@ -23,26 +23,28 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03_Print : Sci.Win.Tems.PrintForm
     {
-        
-        public P03_Print()
+        DataRow _row;
+        public P03_Print(DataRow row)
         {
             InitializeComponent();
-      
+
+            this._row = row;
             
             // TODO: Complete member initialization
         }
-      
+     
       
         DataTable dt;
         string sqlcmd;
         protected override bool ValidateInput()
-        { 
-             
-            
+        {
+          //  DataRow this._row;
+            string id = _row["ID"].ToString();  
+            List<SqlParameter> pars = new List<SqlParameter>();
+             pars.Add(new SqlParameter("@ID", id));
             if (this.radioPanel1.Value == this.radioButton1.Value)
             {
-      
-               sqlcmd = @"select a.id[sp]
+               DualResult result = DBProxy.Current.Select("", @"select a.id[sp]
 			,b.StyleID[style#]
 			,a.SEQ1+a.SEQ2[SEQ]
 			,c.SuppID[Supp]
@@ -114,11 +116,13 @@ namespace Sci.Production.Warehouse
 		    h.id=c.SuppID
 			left join dbo.MDivisionPoDetail i
 			on
-			i.POID=a.ID 
-            where a.id='15030002UU'";
+			i.POID=a.ID
+            where a.id=@ID", pars, out dt);
             }
             else if (this.radioPanel1.Value == this.radioButton2.Value)
             {
+              
+
              sqlcmd = @"select  a.id[poid]
             ,b.StyleID[style]
             ,a.SEQ1+a.SEQ2[SEQ]
@@ -163,8 +167,8 @@ namespace Sci.Production.Warehouse
             e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID and e.year=year(a.ETA)
             left join dbo.Supp f
             on 
-            f.id=c.SuppID 
-            where a.id='01060001GAS'";
+            f.id=c.SuppID
+            where a.id=@ID";
             }
             return base.ValidateInput();
         }

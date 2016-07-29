@@ -385,15 +385,23 @@ Select POID,SEQ1,SEQ2,CASE
             //DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             //if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return;
             //MyUtility.Excel.CopyToXls(dt, "");
-            P03_Print p = new P03_Print();
-            
+           
+
+            P03_Print p = new P03_Print(this.CurrentDataRow);
+           
             p.ShowDialog();
+
+            return;
            
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.grid1_sorting();
         }
+
+        public DataRow CurrentDataRow { get; set; }
+
+      
     }
 }
 

@@ -43,7 +43,7 @@ namespace Sci.Production.Warehouse
             DualResult result= DBProxy.Current.Select("",
             @"select Iif(Stocktaking.stocktype='B','Bulk','Inventory') as ST
 		    from dbo.Stocktaking		
-            where id = @ID", pars, out dt); ;
+            where id = @ID", pars, out dt); 
             if (!result) { return result; }
             string ST = dt.Rows[0]["ST"].ToString();
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ST", ST));
