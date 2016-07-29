@@ -86,6 +86,7 @@ namespace Sci.Production.Quality
 
             return base.OnRequery();
         }
+
         //Grid View DataTable 新增欄位資料供撈取顯示
         protected override void OnRequeryPost(DataTable datas)
         {

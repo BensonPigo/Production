@@ -42,6 +42,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(703, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.editBox1);
@@ -50,6 +54,11 @@
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Size = new System.Drawing.Size(703, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(703, 38);
             // 
             // browse
             // 

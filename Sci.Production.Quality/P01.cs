@@ -31,7 +31,6 @@ namespace Sci.Production.Quality
 
             detailgrid.ContextMenuStrip = gridmenu;
         }
-
         public P01(string Poid) //for Form直接call form
         {
             InitializeComponent();
@@ -39,10 +38,12 @@ namespace Sci.Production.Quality
             InsertDetailGridOnDoubleClick = false;
             IsSupportEdit = false;
             detailgrid.ContextMenuStrip = gridmenu;
+            
         }
 
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
+            
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmd = string.Format(
                 @"Select a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,
@@ -457,6 +458,7 @@ namespace Sci.Production.Quality
             this.RenewData();
         }
 
+        
         private void modifyWeightTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentDetailData; if (null == dr) return;

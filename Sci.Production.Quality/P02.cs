@@ -21,7 +21,6 @@ namespace Sci.Production.Quality
         private string keyWord = Sci.Env.User.Keyword;
         string find = "";
         int index;
-        string ing = "";
         DataRow[] find_dr;
 
         public P02(ToolStripMenuItem menuitem) : base(menuitem)
@@ -83,14 +82,12 @@ namespace Sci.Production.Quality
                 frm.Dispose();
                 this.RenewData();
             };
-
             detail_Int.CellMouseDoubleClick += (s, e) =>
             {
-               
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
                 // 有疑問!!!!
-                var frm = new Sci.Production.Quality.P02_Detail(false,this.CurrentDetailData["ID"].ToString(),dr);
+                var frm = new Sci.Production.Quality.P02_Detail(false, this.CurrentDetailData["ID"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -208,29 +205,11 @@ namespace Sci.Production.Quality
             }
 
             insp_box.Text = inspnum;
-            DateTime completedate, Physicalcompletedate, Weightcompletedate, ShadeBondcompletedate, Continuitycompletedate;
+            DateTime completedate;
             if (inspnum == "100")
             {
-                Physicalcompletedate = ((DateTime)detailTb.Compute("Max(PhysicalDate)", ""));
-                Weightcompletedate = ((DateTime)detailTb.Compute("Max(WeightDate)", ""));
-                ShadeBondcompletedate = ((DateTime)detailTb.Compute("Max(ShadeBondDate)", ""));
-                Continuitycompletedate = ((DateTime)detailTb.Compute("Max(ContinuityDate)", ""));
-                if (DateTime.Compare(Physicalcompletedate, Weightcompletedate) < 0)
-                {
-                    completedate = Weightcompletedate;
-                }
-                else
-                {
-                    completedate = Physicalcompletedate;
-                }
-                if (DateTime.Compare(completedate, ShadeBondcompletedate) < 0)
-                {
-                    completedate = ShadeBondcompletedate;
-                }
-                if (DateTime.Compare(completedate, Continuitycompletedate) < 0)
-                {
-                    completedate = Continuitycompletedate;
-                }
+                completedate = ((DateTime)detailTb.Compute("Max(InspDate)", ""));
+               
 
                 Complete_box.Text = completedate.ToShortDateString();
             }
@@ -303,7 +282,7 @@ namespace Sci.Production.Quality
         private void modifyDetailToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentDetailData; if (null == dr) return;
-            var frm = new Sci.Production.Quality.P02_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), dr);
+            var frm = new Sci.Production.Quality.P02_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), dr);            
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();

@@ -48,6 +48,9 @@
     <Reference Include="log4net">
       <HintPath>..\_Dll\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.Common.dll</HintPath>
@@ -159,6 +162,54 @@
     <Compile Include="P02_Detail.Designer.cs">
       <DependentUpon>P02_Detail.cs</DependentUpon>
     </Compile>
+    <Compile Include="P03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03.Designer.cs">
+      <DependentUpon>P03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P03_Crocking.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03_Crocking.Designer.cs">
+      <DependentUpon>P03_Crocking.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P03_Heat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03_Heat.Designer.cs">
+      <DependentUpon>P03_Heat.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P03_Wash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03_Wash.Designer.cs">
+      <DependentUpon>P03_Wash.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P04.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04.Designer.cs">
+      <DependentUpon>P04.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05.Designer.cs">
+      <DependentUpon>P05.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_Detail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_Detail.Designer.cs">
+      <DependentUpon>P05_Detail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P21.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P21.Designer.cs">
+      <DependentUpon>P21.cs</DependentUpon>
+    </Compile>
     <Compile Include="P30.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -189,11 +240,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="test.cs">
+    <Compile Include="R21.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="test.Designer.cs">
-      <DependentUpon>test.cs</DependentUpon>
+    <Compile Include="R21.Designer.cs">
+      <DependentUpon>R21.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -245,6 +296,30 @@
     <EmbeddedResource Include="P02_Detail.resx">
       <DependentUpon>P02_Detail.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P03.resx">
+      <DependentUpon>P03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P03_Crocking.resx">
+      <DependentUpon>P03_Crocking.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P03_Heat.resx">
+      <DependentUpon>P03_Heat.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P03_Wash.resx">
+      <DependentUpon>P03_Wash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04.resx">
+      <DependentUpon>P04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05.resx">
+      <DependentUpon>P05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_Detail.resx">
+      <DependentUpon>P05_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P21.resx">
+      <DependentUpon>P21.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P30.resx">
       <DependentUpon>P30.cs</DependentUpon>
     </EmbeddedResource>
@@ -252,8 +327,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="test.resx">
-      <DependentUpon>test.cs</DependentUpon>
+    <EmbeddedResource Include="R21.resx">
+      <DependentUpon>R21.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -268,6 +343,10 @@
     <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
       <Project>{4A2F17B7-EFFE-454C-8F1E-9EEBEF170BC0}</Project>
       <Name>Sci.Production.PublicPrg</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Sewing\Sci.Production.Sewing.csproj">
+      <Project>{AD7856BA-AC68-402C-9DE9-E900B8462F8F}</Project>
+      <Name>Sci.Production.Sewing</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Tools\Sci.Production.Tools.csproj">
       <Project>{F1A7F278-EFA9-4DDA-B68A-202093B2444C}</Project>

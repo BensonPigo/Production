@@ -83,7 +83,6 @@
             // 
             this.masterpanel.Controls.Add(this.Line_text);
             this.masterpanel.Controls.Add(this.CFA1_text);
-            this.masterpanel.Controls.Add(this.Audit_Date);
             this.masterpanel.Controls.Add(this.Encode_btn);
             this.masterpanel.Controls.Add(this.Result_combo);
             this.masterpanel.Controls.Add(this.Shift_combo);
@@ -118,8 +117,10 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.Audit_Date);
             this.masterpanel.Size = new System.Drawing.Size(1034, 277);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.Audit_Date, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -154,7 +155,6 @@
             this.masterpanel.Controls.SetChildIndex(this.Shift_combo, 0);
             this.masterpanel.Controls.SetChildIndex(this.Result_combo, 0);
             this.masterpanel.Controls.SetChildIndex(this.Encode_btn, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Audit_Date, 0);
             this.masterpanel.Controls.SetChildIndex(this.CFA1_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Line_text, 0);
             // 
@@ -198,7 +198,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 387);
+            this.browse.Size = new System.Drawing.Size(1034, 588);
             // 
             // tabs
             // 

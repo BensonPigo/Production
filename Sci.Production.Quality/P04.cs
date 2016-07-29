@@ -394,8 +394,7 @@ left join Order_Qty c on a.ID=c.ID and c.Article=b.Article where a.id=@orderID";
             Send_Mail();
         }
         private void Send_Mail()
-        {
-            DataTable dt;
+        {           
               
             string mailto = "";
             string subject = "Garment Test - Style #:" + style_text.Text + ", Season :" + Season_Text.Text;

@@ -16,8 +16,7 @@ namespace Sci.Production.Quality
 {
     public partial class P30 : Sci.Win.Tems.Input6
     {
-        DataGridViewGeneratorTextColumnSettings colorSelect;
-        DataGridViewGeneratorTextColumnSettings itemSelect;
+
         private Dictionary<string, string> MD_type = new Dictionary<string, string>();
         protected DataRow motherData;
 
@@ -55,8 +54,9 @@ namespace Sci.Production.Quality
         protected override void OnDetailGridSetup()
         {
             #region OnClick Right Click Even
-            colorSelect = new DataGridViewGeneratorTextColumnSettings();
-            itemSelect = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings colorSelect = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings itemSelect= new DataGridViewGeneratorTextColumnSettings();
+
             colorSelect.CellMouseClick += (s, e) =>
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -70,8 +70,6 @@ namespace Sci.Production.Quality
                     if (result == DialogResult.Cancel) { return; }
                     dr["Colorid"] = item.GetSelectedString();
                 }
-
-
             };
 
             //右鍵帶出選擇視窗
@@ -209,16 +207,7 @@ namespace Sci.Production.Quality
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            /*  combox 固定值
-            DataTable dtCategory= new DataTable();
-            dtCategory.ColumnsStringAdd("Category");
-            dtCategory.ColumnsStringAdd("Name");
-            dtCategory.Rows.Add(new string[] { "B","Bulk" });
-            dtCategory.Rows.Add(new string[] { "S", "Sample" });
-            this.comboBox1.DataSource = dtCategory;
-            this.comboBox1.DisplayMember = "Name";
-            this.comboBox1.ValueMember = "Category";
-            */
+
 
             DataTable dtCategory;
             Ict.DualResult cbResult;

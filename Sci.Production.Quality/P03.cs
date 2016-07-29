@@ -41,6 +41,7 @@ namespace Sci.Production.Quality
          protected override void OnDetailEntered()
          {
              base.OnDetailEntered();
+                       
 
              DataRow queryDr;
              DualResult dResult = PublicPrg.Prgs.QueryQaInspectionHeader(CurrentMaintain["ID"].ToString(), out queryDr);

@@ -45,7 +45,7 @@ namespace Sci.Production.Quality
             encode_button.Text = MyUtility.Convert.GetBool(maindr["ContinuityEncode"]) ? "Amend" : "Encode";
             approve_button.Text = maindr["Status"].ToString() == "Approved" ? "Unapprove" : "Approve";
             #endregion
-
+            
             this.save.Enabled = !MyUtility.Convert.GetBool(maindr["ContinuityEncode"]);
 
             txtsupplier1.TextBox1.IsSupportEditMode = false;

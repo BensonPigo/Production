@@ -1,0 +1,240 @@
+﻿using Ict;
+using Ict.Win;
+using Sci.Production.Class;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Sci.Win;
+using Sci.Data;
+using System.Transactions;
+using Sci.Win.Tools;
+using System.Data.SqlClient;
+
+namespace Sci.Production.Quality
+{
+    public partial class P05 : Sci.Win.Tems.Input6
+    {
+        // 宣告Context Menu Item
+        ToolStripMenuItem add, edit, delete;
+
+        private string loginID = Sci.Env.User.UserID;
+        private string Factory = Sci.Env.User.Keyword;
+        bool IsSupportEdit = false;
+
+        public P05(ToolStripMenuItem menuitem)
+            : base(menuitem)
+        {
+            InitializeComponent();
+        }
+        protected override void OnFormLoaded()
+        {
+            //DataTable dt = (DataTable)detailgridbs.DataSource;
+            //if (MyUtility.Check.Empty(dt))
+            //{
+            //    return;
+            //}
+            //if (dt.Rows.Count <= 0)
+            //{               
+            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Create New Test", onclick: (s, e) => CreateNewTest()).Get(out add);
+            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Record's detail", onclick: (s, e) => EditThisDetail()).Get(out edit);
+            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record's detail", onclick: (s, e) => DeleteThisDetail()).Get(out delete);
+                add.Enabled = false;
+           // }
+            base.OnFormLoaded();
+        }
+      
+        //refresh
+        protected override void OnDetailEntered()
+        {
+            List<SqlParameter> spam = new List<SqlParameter>();
+            DataRow dr,drEarly,drSci;
+
+            string sql_cmd =
+@"select a.ID,b.StyleID,b.SeasonID,b.BrandID,b.CutInLine,c.Article,c.Result,a.OvenLaboratoryRemark,b.factoryid 
+from [Production].[dbo].po a 
+left join Orders b on a.ID = b.POID
+left join Oven c on a.ID=c.POID
+where a.id=@id";
+            spam.Add(new SqlParameter("@id", CurrentMaintain["ID"].ToString()));
+
+            if (MyUtility.Check.Seek(sql_cmd, spam, out dr))
+            {
+                this.sp_text.Text = dr["id"].ToString();
+                this.style_text.Text = dr["StyleID"].ToString();                
+                this.season_text.Text = dr["SeasonID"].ToString();
+                this.brand_text.Text = dr["BrandID"].ToString();
+                this.remark_text.Text = dr["OvenLaboratoryRemark"].ToString();
+            }
+            
+            if (MyUtility.Check.Seek("select min(a.CutInLine) as CutInLine from Orders a left join PO b on a.POID=b.ID",out drEarly))
+            {
+                this.Cutting_text.Text = drEarly["CutInLine"].ToString();
+            }
+            if (MyUtility.Check.Seek(string.Format("select * from dbo.GetSCI('{0}','')",CurrentMaintain["id"].ToString()),out drSci))
+            {
+                this.Earliest_text.Text = drSci["MinSciDelivery"].ToString();
+            }
+            DateTime? targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(drEarly["CUTINLINE"], drSci["MinSciDelivery"]);
+            if (targT != null)
+            {
+                Target_text.Text = ((DateTime)targT).ToShortDateString();
+            }
+            else
+            {
+                Target_text.Text = "";
+            }
+            decimal dRowCount = DetailDatas.Count;
+            string inspnum = "0";
+            DataTable articleDT = (DataTable)detailgridbs.DataSource;
+            if (articleDT.Rows.Count!=0)
+            {
+                DataRow[] articleAry = articleDT.Select("status='Confirmed'");
+                if (articleAry.Length > 0)
+                {
+                    inspnum = Math.Round(((decimal)articleAry.Length/ dRowCount) * 100,2).ToString();
+                    Article_text.Text = inspnum + "%";
+                }
+            }
+            DateTime CompDate;
+            if (inspnum=="100")
+            {               
+                CompDate= ((DateTime)articleDT.Compute("Max(Inspdate)",""));
+                compl_text.Text = CompDate.ToString();
+            }
+
+            base.OnDetailEntered();
+        }
+        protected override void OnDetailGridSetup()
+        {
+            DataGridViewGeneratorNumericColumnSettings testNoCell = new DataGridViewGeneratorNumericColumnSettings();            
+            DataGridViewGeneratorDateColumnSettings inspDate = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorTextColumnSettings articleCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings resultCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings inspectorCell = new DataGridViewGeneratorTextColumnSettings();
+
+            #region MouseClick
+            testNoCell.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr==null)
+                {
+                    return;
+                }
+               // var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+              //  frm.ShowDialog(this);
+               // frm.Dispose();
+                this.RenewData();
+            };
+            inspDate.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr == null)
+                {
+                    return;
+                }
+               // var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+               // frm.ShowDialog(this);
+              //  frm.Dispose();
+                this.RenewData();
+            };
+            articleCell.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr == null)
+                {
+                    return;
+                }
+               // var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+               // frm.ShowDialog(this);
+               // frm.Dispose();
+                this.RenewData();
+            };
+            resultCell.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr == null)
+                {
+                    return;
+                }
+              //  var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+               // frm.ShowDialog(this);
+               // frm.Dispose();
+                this.RenewData();
+            };
+            inspectorCell.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr == null)
+                {
+                    return;
+                }
+              //  var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+              //  frm.ShowDialog(this);
+              //  frm.Dispose();
+                this.RenewData();
+            };
+
+            
+            #endregion
+
+            Helper.Controls.Grid.Generator(this.detailgrid)
+                .Numeric("Testno", header: "No of Test", width: Widths.AnsiChars(5), iseditingreadonly: true,settings:testNoCell)
+                .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:inspDate)
+                .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:articleCell)
+                .Text("Result", header: "Result", width: Widths.AnsiChars(10),iseditingreadonly:true,settings:resultCell)
+                .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(5),iseditingreadonly:true,settings:inspectorCell)
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(5),iseditingreadonly:true)
+                .Text("", header: "Last Update", width: Widths.AnsiChars(5),iseditingreadonly:true);
+            
+        }
+
+        //private void createNewTestToolStripMenuItem_Click(object sender, EventArgs e)
+        //{
+        //    var dr = this.CurrentDetailData; if (null == dr) return;
+        //    var frm = new Sci.Production.Quality.P05_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
+        //    frm.ShowDialog(this);
+        //    frm.Dispose();
+        //    this.RenewData();
+        //}
+         //Context Menu選擇Create New Test
+        private void CreateNewTest()
+        {
+            var dr = this.CurrentDetailData; if (null == dr) return;
+           // Sci.Production.Quality.P05_Detail callNewDetailForm = new P05_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
+            //DataRow drr = ((DataTable)detailgridbs.DataSource).NewRow();
+           // drr["ID"] = CurrentMaintain["ID"];
+            
+          //  callNewDetailForm.ShowDialog(this);
+            RenewData();
+
+            //var frm = new Sci.Production.Quality.P05_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
+            //frm.ShowDialog(this);
+            //frm.Dispose();
+            //this.RenewData();
+        }
+        // Context Menu選擇Edit This Record's Detail
+        private void EditThisDetail()
+        {
+            var dr = this.CurrentDetailData; if (null == dr) return;
+           // var frm = new Sci.Production.Quality.P05_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
+           // frm.ShowDialog(this);
+           // frm.Dispose();
+            this.RenewData();
+        }
+        // Context Menu選擇Delete This Record's Detail
+        private void DeleteThisDetail()
+        {
+            var dr = this.CurrentDetailData; if (null == dr) return;
+            //var frm = new Sci.Production.Quality.P05_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
+           // frm.ShowDialog(this);
+           // frm.Dispose();
+            this.RenewData();
+        }
+
+
+    }
+}

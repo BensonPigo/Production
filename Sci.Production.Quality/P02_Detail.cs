@@ -63,7 +63,15 @@ namespace Sci.Production.Quality
             Ict.DualResult wknoResult;
             if (wknoResult = DBProxy.Current.Select(null, string.Format("select * from Receiving a left join AIR b on a.Id=b.ReceivingID where b.ID='{0}' ", id), out dtRec))
             {
-                wkno_text.Text = dtRec.Rows[0]["exportid"].ToString();
+                if (dtRec.Rows.Count>0)
+                {
+                    wkno_text.Text = dtRec.Rows[0]["exportid"].ToString();
+                }
+                else
+                {
+                    return;
+                }
+                
             }
 
             if (MyUtility.Check.Seek(air_cmd, out dr))
