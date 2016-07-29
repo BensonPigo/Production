@@ -184,7 +184,7 @@
         <rd:DefaultName>Textbox14</rd:DefaultName>
         <Top>2.08787cm</Top>
         <Left>0.94884cm</Left>
-        <Height>4.0925cm</Height>
+        <Height>6.95cm</Height>
         <Width>2.5cm</Width>
         <ZIndex>3</ZIndex>
         <Style>
@@ -236,7 +236,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>6.18037cm</Top>
+        <Top>9.03787cm</Top>
         <Left>0.94884cm</Left>
         <Height>0.6cm</Height>
         <Width>2.5cm</Width>
@@ -278,7 +278,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>0 %TAX</Value>
+                <Value>=Parameters!titletaxrate.Value</Value>
                 <Style>
                   <FontWeight>Bold</FontWeight>
                 </Style>
@@ -290,7 +290,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>6.78037cm</Top>
+        <Top>9.63787cm</Top>
         <Left>0.94884cm</Left>
         <Height>0.6cm</Height>
         <Width>2.5cm</Width>
@@ -344,7 +344,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>7.38037cm</Top>
+        <Top>10.23787cm</Top>
         <Left>0.94884cm</Left>
         <Height>0.6cm</Height>
         <Width>2.5cm</Width>
@@ -398,7 +398,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>7.98037cm</Top>
+        <Top>10.83787cm</Top>
         <Left>0.94884cm</Left>
         <Height>0.6cm</Height>
         <Width>2.5cm</Width>
@@ -448,9 +448,9 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>8.58037cm</Top>
+        <Top>11.43787cm</Top>
         <Left>0.94884cm</Left>
-        <Height>0.07083cm</Height>
+        <Height>0.39135cm</Height>
         <Width>18.86401cm</Width>
         <ZIndex>8</ZIndex>
         <Style>
@@ -500,7 +500,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>8.6512cm</Top>
+        <Top>11.8262cm</Top>
         <Left>0.94884cm</Left>
         <Height>1.52604cm</Height>
         <Width>4.69604cm</Width>
@@ -702,7 +702,7 @@
         <rd:DefaultName>Textbox14</rd:DefaultName>
         <Top>2.08938cm</Top>
         <Left>3.44884cm</Left>
-        <Height>4.0925cm</Height>
+        <Height>6.94849cm</Height>
         <Width>16.36401cm</Width>
         <ZIndex>13</ZIndex>
         <Style>
@@ -745,39 +745,34 @@
                 <Value>=Fields!Amount.Value</Value>
                 <Style />
               </TextRun>
+              <TextRun>
+                <Value xml:space="preserve"> </Value>
+                <Style />
+              </TextRun>
             </TextRuns>
-            <Style />
+            <Style>
+              <TextAlign>Right</TextAlign>
+            </Style>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>6.18188cm</Top>
-        <Left>3.44884cm</Left>
+        <Top>9.03938cm</Top>
+        <Left>6.79551cm</Left>
         <Height>0.6cm</Height>
-        <Width>8.3213cm</Width>
+        <Width>4.97463cm</Width>
         <ZIndex>14</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
           <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
+            <Style>None</Style>
           </BottomBorder>
           <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
+            <Style>None</Style>
           </LeftBorder>
           <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
+            <Style>None</Style>
           </RightBorder>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
@@ -795,39 +790,31 @@
                 <Value>=Fields!taxrate.Value</Value>
                 <Style />
               </TextRun>
+              <TextRun>
+                <Value xml:space="preserve"> </Value>
+                <Style />
+              </TextRun>
             </TextRuns>
-            <Style />
+            <Style>
+              <TextAlign>Right</TextAlign>
+            </Style>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>6.78188cm</Top>
-        <Left>3.44884cm</Left>
+        <Top>9.63787cm</Top>
+        <Left>6.79551cm</Left>
         <Height>0.6cm</Height>
-        <Width>16.36401cm</Width>
+        <Width>4.97463cm</Width>
         <ZIndex>15</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
           <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
+            <Style>None</Style>
           </LeftBorder>
           <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
+            <Style>None</Style>
           </RightBorder>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
@@ -845,39 +832,31 @@
                 <Value>=Fields!Total.Value</Value>
                 <Style />
               </TextRun>
+              <TextRun>
+                <Value xml:space="preserve"> </Value>
+                <Style />
+              </TextRun>
             </TextRuns>
-            <Style />
+            <Style>
+              <TextAlign>Right</TextAlign>
+            </Style>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>7.38188cm</Top>
-        <Left>3.44884cm</Left>
+        <Top>10.23787cm</Top>
+        <Left>6.79551cm</Left>
         <Height>0.6cm</Height>
-        <Width>16.36401cm</Width>
+        <Width>4.97463cm</Width>
         <ZIndex>16</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
           <LeftBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
+            <Style>None</Style>
           </LeftBorder>
           <RightBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
+            <Style>None</Style>
           </RightBorder>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
@@ -892,7 +871,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>=Fields!Remark.Value</Value>
+                <Value />
                 <Style />
               </TextRun>
             </TextRuns>
@@ -900,9 +879,9 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>7.98188cm</Top>
+        <Top>10.83938cm</Top>
         <Left>3.44884cm</Left>
-        <Height>0.6cm</Height>
+        <Height>0.59849cm</Height>
         <Width>16.36401cm</Width>
         <ZIndex>17</ZIndex>
         <Style>
@@ -952,7 +931,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>8.65271cm</Top>
+        <Top>11.82771cm</Top>
         <Left>5.64488cm</Left>
         <Height>1.52604cm</Height>
         <Width>4.21979cm</Width>
@@ -1111,7 +1090,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>6.17886cm</Top>
+        <Top>9.03787cm</Top>
         <Left>11.77014cm</Left>
         <Height>0.6cm</Height>
         <Width>3.34667cm</Width>
@@ -1122,22 +1101,17 @@
           </Border>
           <TopBorder>
             <Color>Black</Color>
-            <Style>Solid</Style>
             <Width>1pt</Width>
           </TopBorder>
           <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
+            <Style>None</Style>
           </BottomBorder>
           <LeftBorder>
             <Color>Black</Color>
-            <Style>Solid</Style>
             <Width>1pt</Width>
           </LeftBorder>
           <RightBorder>
             <Color>Black</Color>
-            <Style>Solid</Style>
             <Width>1pt</Width>
           </RightBorder>
           <PaddingLeft>2pt</PaddingLeft>
@@ -1161,9 +1135,9 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>6.18037cm</Top>
+        <Top>9.03787cm</Top>
         <Left>15.11681cm</Left>
-        <Height>0.6cm</Height>
+        <Height>0.60151cm</Height>
         <Width>4.69604cm</Width>
         <ZIndex>22</ZIndex>
         <Style>
@@ -1172,22 +1146,17 @@
           </Border>
           <TopBorder>
             <Color>Black</Color>
-            <Style>Solid</Style>
             <Width>1pt</Width>
           </TopBorder>
           <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
+            <Style>None</Style>
           </BottomBorder>
           <LeftBorder>
             <Color>Black</Color>
-            <Style>Solid</Style>
             <Width>1pt</Width>
           </LeftBorder>
           <RightBorder>
             <Color>Black</Color>
-            <Style>Solid</Style>
             <Width>1pt</Width>
           </RightBorder>
           <PaddingLeft>2pt</PaddingLeft>
@@ -1213,7 +1182,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>8.65271cm</Top>
+        <Top>11.82771cm</Top>
         <Left>9.86467cm</Left>
         <Height>1.52604cm</Height>
         <Width>4.0875cm</Width>
@@ -1276,7 +1245,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>8.65422cm</Top>
+        <Top>11.8262cm</Top>
         <Left>13.95217cm</Left>
         <Height>1.52604cm</Height>
         <Width>5.86068cm</Width>
@@ -1311,8 +1280,288 @@
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
+      <Textbox Name="Textbox48">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value />
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Bold</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox14</rd:DefaultName>
+        <Top>9.63787cm</Top>
+        <Left>11.77014cm</Left>
+        <Height>0.6cm</Height>
+        <Width>8.04271cm</Width>
+        <ZIndex>25</ZIndex>
+        <Style>
+          <Border>
+            <Style>Solid</Style>
+          </Border>
+          <LeftBorder>
+            <Style>None</Style>
+          </LeftBorder>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox49">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value />
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Bold</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox14</rd:DefaultName>
+        <Top>10.23787cm</Top>
+        <Left>11.77014cm</Left>
+        <Height>0.6cm</Height>
+        <Width>8.04271cm</Width>
+        <ZIndex>26</ZIndex>
+        <Style>
+          <Border>
+            <Style>Solid</Style>
+          </Border>
+          <TopBorder>
+            <Color>Black</Color>
+            <Width>1pt</Width>
+          </TopBorder>
+          <BottomBorder>
+            <Color>Black</Color>
+            <Width>1pt</Width>
+          </BottomBorder>
+          <LeftBorder>
+            <Style>None</Style>
+          </LeftBorder>
+          <RightBorder>
+            <Color>Black</Color>
+            <Width>1pt</Width>
+          </RightBorder>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox40">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Please sign and return concerned Purchaser / M.R within 2 days.</Value>
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>If you have any questions, please let us know. Without doing so, this Debit Note is deemed as accepted</Value>
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox14</rd:DefaultName>
+        <Top>13.49637cm</Top>
+        <Left>0.94884cm</Left>
+        <Height>1.18208cm</Height>
+        <Width>18.86401cm</Width>
+        <ZIndex>27</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox50">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>=Fields!currencyid.Value</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox14</rd:DefaultName>
+        <Top>9.03938cm</Top>
+        <Left>3.44884cm</Left>
+        <Height>0.6cm</Height>
+        <Width>3.34667cm</Width>
+        <ZIndex>28</ZIndex>
+        <Style>
+          <Border>
+            <Style>Solid</Style>
+          </Border>
+          <BottomBorder>
+            <Style>None</Style>
+          </BottomBorder>
+          <RightBorder>
+            <Style>None</Style>
+          </RightBorder>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox51">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>=Fields!currencyid.Value</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox14</rd:DefaultName>
+        <Top>9.63787cm</Top>
+        <Left>3.44884cm</Left>
+        <Height>0.6cm</Height>
+        <Width>3.34667cm</Width>
+        <ZIndex>29</ZIndex>
+        <Style>
+          <Border>
+            <Style>Solid</Style>
+          </Border>
+          <TopBorder>
+            <Color>Black</Color>
+            <Width>1pt</Width>
+          </TopBorder>
+          <BottomBorder>
+            <Color>Black</Color>
+            <Width>1pt</Width>
+          </BottomBorder>
+          <LeftBorder>
+            <Color>Black</Color>
+            <Width>1pt</Width>
+          </LeftBorder>
+          <RightBorder>
+            <Style>None</Style>
+          </RightBorder>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox52">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>=Fields!currencyid.Value</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox14</rd:DefaultName>
+        <Top>10.23787cm</Top>
+        <Left>3.44884cm</Left>
+        <Height>0.6cm</Height>
+        <Width>3.34667cm</Width>
+        <ZIndex>30</ZIndex>
+        <Style>
+          <Border>
+            <Style>Solid</Style>
+          </Border>
+          <TopBorder>
+            <Color>Black</Color>
+            <Width>1pt</Width>
+          </TopBorder>
+          <BottomBorder>
+            <Color>Black</Color>
+            <Width>1pt</Width>
+          </BottomBorder>
+          <LeftBorder>
+            <Color>Black</Color>
+            <Width>1pt</Width>
+          </LeftBorder>
+          <RightBorder>
+            <Style>None</Style>
+          </RightBorder>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
     </ReportItems>
-    <Height>4.16667in</Height>
+    <Height>6.11459in</Height>
     <Style />
   </Body>
   <Width>8.2in</Width>
@@ -1340,7 +1589,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
-          <Top>0.3361cm</Top>
+          <Top>0.6536cm</Top>
           <Left>0.63134cm</Left>
           <Height>1.00542cm</Height>
           <Width>5.95312cm</Width>
@@ -1361,7 +1610,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>="*"+Parameters!Barcode.Value+"*"</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1369,7 +1618,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox3</rd:DefaultName>
-          <Top>1.48263cm</Top>
+          <Top>1.65902cm</Top>
           <Left>0.63134cm</Left>
           <Height>0.6cm</Height>
           <Width>5.95312cm</Width>
@@ -1489,6 +1738,7 @@
                 <TextRun>
                   <Value>=Parameters!title.Value</Value>
                   <Style>
+                    <FontSize>16pt</FontSize>
                     <FontWeight>Bold</FontWeight>
                   </Style>
                 </TextRun>
@@ -1499,9 +1749,9 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox3</rd:DefaultName>
-          <Top>4.55869cm</Top>
+          <Top>4.34702cm</Top>
           <Left>3.41577cm</Left>
-          <Height>0.6cm</Height>
+          <Height>0.81167cm</Height>
           <Width>14.55445cm</Width>
           <ZIndex>5</ZIndex>
           <Style>
@@ -1523,7 +1773,7 @@
                 <TextRun>
                   <Value>Debit Note（Local Supplier）</Value>
                   <Style>
-                    <FontSize>12pt</FontSize>
+                    <FontSize>16pt</FontSize>
                     <FontWeight>Bold</FontWeight>
                   </Style>
                 </TextRun>
@@ -1682,60 +1932,6 @@
         </Border>
       </Style>
     </PageHeader>
-    <PageFooter>
-      <Height>2.54cm</Height>
-      <PrintOnFirstPage>true</PrintOnFirstPage>
-      <PrintOnLastPage>true</PrintOnLastPage>
-      <ReportItems>
-        <Textbox Name="Textbox40">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>Please sign and return concerned Purchaser / M.R within 2 days.</Value>
-                  <Style>
-                    <FontWeight>Bold</FontWeight>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>If you have any questions, please let us know. Without doing so, this Debit Note is deemed as accepted</Value>
-                  <Style>
-                    <FontWeight>Bold</FontWeight>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style />
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox14</rd:DefaultName>
-          <Top>0.17639cm</Top>
-          <Left>0.94884cm</Left>
-          <Height>1.18208cm</Height>
-          <Width>18.86401cm</Width>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-      </ReportItems>
-      <Style>
-        <Border>
-          <Style>None</Style>
-        </Border>
-      </Style>
-    </PageFooter>
     <PageHeight>29.7cm</PageHeight>
     <PageWidth>21cm</PageWidth>
     <LeftMargin>0cm</LeftMargin>
@@ -1764,6 +1960,10 @@
       <Fields>
         <Field Name="Amount">
           <DataField>Amount</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="currencyid">
+          <DataField>currencyid</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="DESC">
@@ -1834,6 +2034,12 @@
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="issuedate">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="titletaxrate">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>

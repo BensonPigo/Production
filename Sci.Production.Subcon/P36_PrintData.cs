@@ -19,5 +19,6 @@ namespace Sci.Production.Subcon
         public string Total { get; set; }
         public string Remark { get; set; }
         public string Purchaser { get; set; }
+        public string currencyid { get; set; }
     }
 }

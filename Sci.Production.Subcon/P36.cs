@@ -439,16 +439,16 @@ where id = '{4}'"
         {
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
-            string No = row["ID"].ToString();
-            string Issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+          
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
     
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DualResult result;
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("No", No));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issuedate", Issuedate));
+            
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
            
             #endregion
             #region -- 撈表身資料 --
@@ -456,86 +456,60 @@ where id = '{4}'"
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
             string sqlcmd = @"select 
-                   F.nameEn,F.AddressEN,F.Tel,ap.LocalSuppID+'-'+L.name AS Supplier,L.Address,L.tel,ap.ID,
-	               A.ArtworkPoID,A.OrderID,A.ArtworkId,A.PatternDesc,A.Price,A.ApQty,A.Amount,ap.PayTermID+'-'+P.name as Terms,
-	               LOB.AccountNo,LOB.AccountName,LOB.BankName,LOB.CountryID+'/'+LOB.City as Country,LOB.SWIFTCode,
-	               ap.Handle+''+pas.name as PreparedBy
-                   from DBO.artworkap ap
+				 Ldeb.ID,dbo.getPass1(Ldeb.handle)[FROM],F.nameEn,Ldeb.LocalSuppID+L.name AS Supplier,
+				 (Select Ldetail.orderid+',' from localdebit_detail where id = Ldeb.id for xml path('')) [poid],
+				 (Select t.name +',' from (SELECT name FROM DBO.Reason 
+					inner join dbo.localdebit_detail on dbo.localdebit_detail.reasonid = DBO.Reason.id
+					WHERE reason.ReasonTypeID = 'DebitNote_Factory' 
+					and localdebit_detail.id =Ldeb.id) t for xml path(''))[Subject],
+					Ldeb.Description,Ldeb.Currencyid,Ldeb.Amount ,
+					Iif(Ldeb.Exchange=0,'',FORMAT(Ldeb.Exchange,'###.00'))as ExchangeRate,
+					CONCAT( Ldeb.taxrate , ' %TAX')as titletaxrate,FORMAT(Ldeb.tax,'#,##0.00')as taxrate
+					,FORMAT(Ldeb.Tax,'#,##0.00')as total,dbo.getpass1(Ldeb.Handle)+ '/' +  dbo.getpass1 (Ldeb.SMR) as Purchaser
+					
+                   from DBO.LocalDebit Ldeb
 	               LEFT JOIN dbo.factory F
-	               ON  F.ID = ap.factoryid
+	               ON  F.ID = Ldeb.factoryid
 	               LEFT JOIN dbo.LocalSupp L
-	               ON  L.ID = ap.LocalSuppID
-	               LEFT JOIN dbo.Artworkap_Detail A
-	               ON  A.ID = ap.ID
-	               LEFT JOIN dbo.LocalSupp_Bank LOB
-	               ON  IsDefault = 1 and LOB.ID = ap.LocalSuppID
-	               LEFT JOIN DBO.PayTerm P
-	               ON P.ID = ap.PayTermID
-	               LEFT JOIN DBO.Pass1 pas
-	               ON pas.ID = ap.Handle where ap.ID= @ID";
+	               ON  L.ID = Ldeb.LocalSuppID
+	               LEFT JOIN dbo.localdebit_detail Ldetail
+	               ON  Ldetail.ID = Ldeb.ID where Ldeb.ID= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }
-            string RptTitle = dtDetail.Rows[0]["nameEn"].ToString();
-            string AddressEN = dtDetail.Rows[0]["AddressEN"].ToString();
-            string TEL = dtDetail.Rows[0]["Tel"].ToString();
-            string Supplier = dtDetail.Rows[0]["Supplier"].ToString();
-            string Address = dtDetail.Rows[0]["Address"].ToString();
-            string LTEL = dtDetail.Rows[0]["tel"].ToString();
             string Barcode = dtDetail.Rows[0]["ID"].ToString();
-            string BarcodeView = dtDetail.Rows[0]["ID"].ToString();
-            string Terms = dtDetail.Rows[0]["Terms"].ToString();
-            string ACNO = dtDetail.Rows[0]["AccountNo"].ToString();
-            string ACNAME = dtDetail.Rows[0]["AccountName"].ToString();
-            string BankName = dtDetail.Rows[0]["BankName"].ToString();
-            string Country = dtDetail.Rows[0]["Country"].ToString();
-            string SWIFCode = dtDetail.Rows[0]["SWIFTCode"].ToString();
-            string PreparedBy = dtDetail.Rows[0]["PreparedBy"].ToString();
-
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL", TEL));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", Supplier));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Address", Address));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("LTEL", LTEL));
+            string FROM = dtDetail.Rows[0]["FROM"].ToString();
+            string title = dtDetail.Rows[0]["nameEn"].ToString();
+            string titletaxrate = dtDetail.Rows[0]["titletaxrate"].ToString();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Barcode", Barcode));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("BarcodeView", BarcodeView));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Terms", Terms));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ACNO", ACNO));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ACNAME", ACNAME));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("BankName", BankName));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Country", Country));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SWIFCode", SWIFCode));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("PreparedBy", PreparedBy));
-
-            if (!AddressEN.EndsWith(Environment.NewLine))
-            {
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddressEN", AddressEN + Environment.NewLine));
-            }
-            else
-            {
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddressEN", AddressEN));
-            }
-
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FROM", FROM));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("title", title));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("titletaxrate", titletaxrate));
+               
             // 傳 list 資料            
-            List<P10_PrintData> data = dtDetail.AsEnumerable()
-                .Select(row1 => new P10_PrintData()
+            List<P36_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P36_PrintData()
                 {
-                    POID = row1["ArtworkPoID"].ToString(),
-                    OrderID = row1["OrderID"].ToString(),
-                    Pattem = row1["ArtworkId"].ToString(),
-                    CutPart = row1["PatternDesc"].ToString(),
-                    Price = row1["Price"].ToString(),
-                    Qty = row1["ApQty"].ToString(),
-                    Amt = row1["Amount"].ToString()
-
+                    Supplier = row1["Supplier"].ToString(),
+                    No = row1["ID"].ToString(),
+                    SP = row1["poid"].ToString(),
+                    currencyid = row1["Currencyid"].ToString(),
+                    Subject = row1["Subject"].ToString(),
+                    DESC = row1["Description"].ToString(),
+                    Amount = row1["Amount"].ToString(),
+                    Exchange = row1["ExchangeRate"].ToString(),
+                    taxrate = row1["taxrate"].ToString(),
+                    Total = row1["total"].ToString(),
+                    Purchaser = row1["Purchaser"].ToString()
+                
                 }).ToList();
 
             report.ReportDataSource = data;
             #endregion
             // 指定是哪個 RDLC
             //DualResult result;
-            Type ReportResourceNamespace = typeof(P10_PrintData);
+            Type ReportResourceNamespace = typeof(P36_PrintData);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P10_Print.rdlc";
+            string ReportResourceName = "P36_Print.rdlc";
 
             IReportResource reportresource;
             if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
