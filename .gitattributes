@@ -12,6 +12,7 @@ Database/dbo/Functions/GetCurrencyRate.sql -text
 Database/dbo/Functions/GetDigitalValue.sql -text
 Database/dbo/Functions/GetFirResult.sql -text
 Database/dbo/Functions/GetHaveDelaySupp.sql -text
+Database/dbo/Functions/GetInspectionResult.sql -text
 Database/dbo/Functions/GetPriceFromMtl.sql -text
 Database/dbo/Functions/GetRequestETA.sql -text
 Database/dbo/Functions/GetRequestETA_1.sql -text
