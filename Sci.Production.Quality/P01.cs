@@ -124,7 +124,7 @@ namespace Sci.Production.Quality
             sha.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData; if (null == dr) return;
-                var frm = new Sci.Production.Quality.P01_Weight(false, CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new Sci.Production.Quality.P01_ShadeBond(false, CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -132,7 +132,7 @@ namespace Sci.Production.Quality
             shaD.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData; if (null == dr) return;
-                var frm = new Sci.Production.Quality.P01_Weight(false, CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new Sci.Production.Quality.P01_ShadeBond(false, CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -140,7 +140,7 @@ namespace Sci.Production.Quality
             Con.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData; if (null == dr) return;
-                var frm = new Sci.Production.Quality.P01_Weight(false, CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new Sci.Production.Quality.P01_Continuity(false, CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -148,7 +148,7 @@ namespace Sci.Production.Quality
             ConD.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData; if (null == dr) return;
-                var frm = new Sci.Production.Quality.P01_Weight(false, CurrentDetailData["ID"].ToString(), null, null, dr);
+                var frm = new Sci.Production.Quality.P01_Continuity(false, CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -224,11 +224,11 @@ namespace Sci.Production.Quality
                 .Text("Weight", header: "Weight\n Test", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: Wei)
                 .Date("WeightDate", header: "Last Wei.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: WeiD)
                 .CheckBox("NonShadeBond", header: "Shade\nBondN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0,settings:nonSha)
-                .Text("Shadebond", header: "Shade\nBond", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                .Date("ShadeBondDate", header: "Last Shade.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Shadebond", header: "Shade\nBond", width: Widths.AnsiChars(4), iseditingreadonly: true,settings: sha)
+                .Date("ShadeBondDate", header: "Last Shade.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:shaD)
                 .CheckBox("NonContinuity", header: "Continuity \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0,settings:nonCon)
-                .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                .Date("ContinuityDate", header: "Last Cont.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(4), iseditingreadonly: true,settings:Con)
+                .Date("ContinuityDate", header: "Last Cont.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:ConD)
                 .Text("Approve1", header: "Approve", width: Widths.AnsiChars(10), iseditingreadonly: true) 
                 .Text("ReplacementReportID", header: "1st Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Receivingid", header: "Receiving ID", width: Widths.AnsiChars(13), iseditingreadonly: true);
