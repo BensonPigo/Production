@@ -316,7 +316,7 @@
             this.Grid2New = 0;
             this.GridAlias = "issuereturn_detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "mdivsionid,poid,seq1,seq2,roll,Dyelot";
+            this.GridUniqueKey = "mdivisionid,poid,seq1,seq2,roll,Dyelot";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;

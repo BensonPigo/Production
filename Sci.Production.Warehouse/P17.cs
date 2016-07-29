@@ -838,9 +838,9 @@ Where a.id = '{0}'", masterID);
 , a.Dyelot as dyelot
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 ,a.ftyinventoryukey
-,a.mdivisionid
+,'{1}' AS mdivisionid
 from dbo.Issue_Detail a inner join dbo.PO_Supp_Detail b on a.PoID= b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
-where a.id='{0}'", textBox2.Text), out dt);
+where a.id='{0}'", textBox2.Text,Sci.Env.User.Keyword), out dt);
                     foreach (var item in dt.ToList())
                     {
                         //DetailDatas.(item);
