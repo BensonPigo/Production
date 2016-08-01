@@ -110,8 +110,7 @@ namespace Sci.Production.Warehouse
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
-            @"select    
-            b.name 
+            @"select b.name 
             from dbo.IssueReturn a 
             inner join dbo.mdivision b 
             on b.id = a.mdivisionid
@@ -133,18 +132,17 @@ namespace Sci.Production.Warehouse
             DataTable dd;
             result = DBProxy.Current.Select("",
             @"select a.poid [SP]
-            ,a.Seq1+'-'+a.Seq2[SEQ]
-            ,a.Roll[ROLL]
-            ,a.Dyelot[DYELOT]
-            ,dbo.getMtlDesc(a.poid,a.Seq1,a.Seq2,2,0)[DESCRIPTION]
-            ,b.StockUnit[UNIT]
-            ,a.Qty[RETURN_QTY]
-            ,dbo.Getlocation(a.ftyinventoryukey)[LOCATION]
-            ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.seq2)
+                    ,a.Seq1+'-'+a.Seq2 [SEQ]
+                    ,a.Roll [ROLL]
+                    ,a.Dyelot [DYELOT]
+                    ,[DESCRIPTION]=dbo.getMtlDesc(a.poid,a.Seq1,a.Seq2,2,0)
+                    ,b.StockUnit [UNIT]
+                    ,a.Qty [RETURN_QTY]
+                    ,dbo.Getlocation(a.ftyinventoryukey) [LOCATION]
+                    ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.seq2)
             from dbo.IssueReturn_Detail a
             inner join PO_Supp_Detail b
-            on
-            a.poid=b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
+                on a.poid=b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
             where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 

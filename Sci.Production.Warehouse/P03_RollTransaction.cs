@@ -348,18 +348,17 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             DualResult result;
             DataTable dt;
             DBProxy.Current.Select("",
-             @" select a.id[SP]
-           ,a.SEQ1+'-'+a.SEQ2[SEQ]
-           ,a.Refno[Ref]
-           ,a.ColorID[Color]
-           ,b.InQty[Arrived_Qty_by_Seq]
-           ,b.OutQty[Released_Qty_by_Seq]
-           ,b.InQty-b.OutQty+b.AdjustQty[Bal_Qty]
-           ,dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0)[Description]
+             @" select a.id [SP]
+                      ,a.SEQ1+'-'+a.SEQ2 [SEQ]
+                      ,a.Refno [Ref]
+                      ,a.ColorID [Color]
+                      ,b.InQty [Arrived_Qty_by_Seq]
+                      ,b.OutQty [Released_Qty_by_Seq]
+                      ,b.InQty-b.OutQty+b.AdjustQty [Bal_Qty]
+                      ,[Description]=dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0)
 		    from dbo.PO_Supp_Detail a
 		    inner join dbo.MDivisionPoDetail b
-		    on 
-		    a.id=b.POID and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
+		        on a.id=b.POID and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
             where a.id=@ID and a.seq1=@seq1 and a.seq2=@seq2", pars, out dt);
        
             string SP = dt.Rows[0]["SP"].ToString();
@@ -382,17 +381,16 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
 
             
             DataTable dtt;
-            string sqlcmd = string.Format(@"select 
-            c.Roll[Roll]
-            ,c.Dyelot[Dyelot]
-            ,c.StockType[Stock_Type]
-            ,c.InQty[Arrived_Qty]
-            ,c.OutQty[Released_Qty]
-            ,c.AdjustQty[Adjust_Qty]
-            ,c.InQty-c.OutQty+c.AdjustQty[Balance]
-            ,dbo.Getlocation(c.Ukey)[Location]
-            from dbo.FtyInventory c 
-            where c.poid=@ID and c.seq1=@seq1 and c.seq2=@seq2");
+            string sqlcmd = string.Format(@"select c.Roll[Roll]
+                                                  ,c.Dyelot [Dyelot]
+                                                  ,c.StockType [Stock_Type]
+                                                  ,c.InQty [Arrived_Qty]
+                                                  ,c.OutQty [Released_Qty]
+                                                  ,c.AdjustQty [Adjust_Qty]
+                                                  ,c.InQty-c.OutQty+c.AdjustQty [Balance]
+                                                  ,[Location]=dbo.Getlocation(c.Ukey)
+                                           from dbo.FtyInventory c 
+                                           where c.poid=@ID and c.seq1=@seq1 and c.seq2=@seq2");
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtt);
             if (!result)
             {
