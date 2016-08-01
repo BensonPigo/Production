@@ -582,6 +582,9 @@ Sci.Production.Class/txtAccountNo.cs -text
 Sci.Production.Class/txtAccountNo.resx -text
 Sci.Production.Class/txtFinanceEnReason.Designer.cs -text
 Sci.Production.Class/txtFinanceEnReason.cs -text
+Sci.Production.Class/txtLocalSupp.Designer.cs -text
+Sci.Production.Class/txtLocalSupp.cs -text
+Sci.Production.Class/txtLocalSupp.resx -text
 Sci.Production.Class/txtMdivision.Designer.cs -text
 Sci.Production.Class/txtMdivision.cs -text
 Sci.Production.Class/txtMultiSubcon.Designer.cs -text
