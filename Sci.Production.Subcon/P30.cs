@@ -640,16 +640,13 @@ namespace Sci.Production.Subcon
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
-            @"select    
-             b.NameEN[RptTitle]
-	        ,a.LocalSuppID+'-'+c.Name[Supplier]
-	        ,c.Tel[Tel]
-	        ,c.Address[Address]
+            @"select b.NameEN [RptTitle]
+	                ,a.LocalSuppID+'-'+c.Name [Supplier]
+	                ,c.Tel [Tel]
+	                ,c.Address [Address]
             from dbo.localpo a 
-            inner join dbo.factory  b 
-            on b.id = a.factoryid
-	        left join dbo.LocalSupp c
-	        on c.id=a.LocalSuppID
+            inner join dbo.factory  b on b.id = a.factoryid   
+	        left join dbo.LocalSupp c on c.id=a.LocalSuppID
             where b.id = a.factoryid
             and a.id = @ID", pars, out dt);
             if (!result) { this.ShowErr(result); }
@@ -671,23 +668,21 @@ namespace Sci.Production.Subcon
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result = DBProxy.Current.Select("",
-            @"select a.OrderId[SP]
-            ,a.Delivery[Delivery]
-            ,a.Refno[Refno]
-            ,a.ThreadColorID[Color_Shade]
-            ,dbo.getItemDesc(b.Category,a.Refno)[Description]
-            ,a.Price[UPrice]
-            ,a.Qty[Order_Qty]
-            ,a.UnitId[Unit]
-            ,a.Price*a.Qty[Amount]
-            ,[Total1]=sum(a.Qty) OVER (PARTITION BY a.Delivery )
-			,[Total2]=sum(a.Qty) OVER (PARTITION BY a.Refno)
-            ,[Total3]=sum(a.Price*a.Qty) OVER (PARTITION BY a.Delivery )
-			,[Total4]=sum(a.Price*a.Qty) OVER (PARTITION BY a.Refno )
+            @"select a.OrderId [SP]
+                    ,a.Delivery [Delivery]
+                    ,a.Refno [Refno]
+                    ,a.ThreadColorID [Color_Shade]
+                    ,dbo.getItemDesc(b.Category,a.Refno) [Description]
+                    ,a.Price [UPrice]
+                    ,a.Qty [Order_Qty]
+                    ,a.UnitId [Unit]
+                    ,a.Price*a.Qty [Amount]
+                    ,[Total1]=sum(a.Qty) OVER (PARTITION BY a.Delivery )
+			        ,[Total2]=sum(a.Qty) OVER (PARTITION BY a.Refno)
+                    ,[Total3]=sum(a.Price*a.Qty) OVER (PARTITION BY a.Delivery )
+			        ,[Total4]=sum(a.Price*a.Qty) OVER (PARTITION BY a.Refno )
             from dbo.LocalPO_Detail a
-            left join dbo.LocalPO b
-            on 
-            a.id=b.id
+            left join dbo.LocalPO b on  a.id=b.id
             where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
