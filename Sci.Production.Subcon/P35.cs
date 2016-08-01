@@ -628,7 +628,7 @@ namespace Sci.Production.Subcon
                     ,d.BankName [Bank_Name]
                     ,d.CountryID+'/'+d.City [Country_City]
                     ,d.swiftcode [SwiftCode]
-                    ,b.amount [Total]
+                    ,b.amount [Total1]
                     ,b.Vat [Vat]
                     ,b.Amount+b.Vat [Grand_Total]
                     ,b.Handle+e.Name [Prepared_by]
@@ -657,7 +657,7 @@ namespace Sci.Production.Subcon
                     Bank_Name = row1["Bank_Name"].ToString().
                     Country_City = row1["Country_City"].ToString(),
                     SwiftCode = row1["SwiftCode"].ToString().
-                    Total = row1["Total"].ToString(),
+                    Total1 = row1["Total1"].ToString(),
                     Vat = row1["Vat"].ToString(),
                     Grand_Total = row1["Grand_Total"].ToString(),
                     Prepared_by = row1["Prepared_by"].ToString()

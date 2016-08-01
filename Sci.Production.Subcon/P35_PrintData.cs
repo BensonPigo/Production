@@ -21,7 +21,7 @@ namespace Sci.Production.Subcon
         public string Bank_Name { get; set; }
         public string Country_City { get; set; }
         public string SwiftCode { get; set; }
-        public string Total{ get; set; }
+        public string Total1{ get; set; }
         public string Vat { get; set; }
         public string Grand_Total { get; set; }
         public string Prepared_by { get; set; }
