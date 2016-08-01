@@ -680,20 +680,22 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result = DBProxy.Current.Select("",
-            @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ
-	        ,[DESC]=dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0)
-		    ,unit = b.StockUnit
-		    ,ReqQty=c.Requestqty 
-	        ,a.Qty
-            ,dbo.Getlocation(a.FtyInventoryUkey)[Location]
-            ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )	        
+            @"select a.POID
+                    ,a.Seq1+'-'+a.seq2 as SEQ
+	                ,[DESC]=dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0)
+		            ,unit = b.StockUnit
+		            ,ReqQty=c.Requestqty 
+	                ,a.Qty
+                    ,[Location]=dbo.Getlocation(a.FtyInventoryUkey)
+                    ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )	        
              from dbo.IssueLack_Detail a 
-		    left join dbo.IssueLack d on d.id=a.ID
-            left join dbo.PO_Supp_Detail b 
-            on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
-		    left join dbo.Lack_Detail c
-		    on c.id=d.RequestID and c.Seq1=a.Seq1 and c.Seq2=a.Seq2
-            where a.id= @ID", pars, out dd);
+		     left join dbo.IssueLack d 
+                 on d.id=a.ID
+             left join dbo.PO_Supp_Detail b 
+                 on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
+		     left join dbo.Lack_Detail c
+		         on c.id=d.RequestID and c.Seq1=a.Seq1 and c.Seq2=a.Seq2
+             where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
            
             // 傳 list 資料            

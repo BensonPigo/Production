@@ -660,8 +660,7 @@ Where a.id = '{0}'", masterID);
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
-            @"select    
-            b.name 
+            @"select b.name 
             from dbo.Subtransfer a 
             inner join dbo.mdivision  b 
             on b.id = a.mdivisionid
@@ -682,18 +681,18 @@ Where a.id = '{0}'", masterID);
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result = DBProxy.Current.Select("",
-            @"select a.FromPOID,a.FromSeq1+'-'+a.Fromseq2 as SEQ
-	         ,dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.refno, b.seq1,b.seq2),1,0))[DESC] 
-			 ,unit = b.StockUnit
-			 ,a.FromRoll,a.FromDyelot
-		     ,a.Qty[QTY]
-		     ,dbo.Getlocation(a.FromFtyInventoryUkey)[ToLocation]
-			 ,a.ToLocation
-             ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.Fromseq2 )    
+            @"select a.FromPOID
+                     ,a.FromSeq1+'-'+a.Fromseq2 as SEQ
+	                 ,[DESC]=dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.refno, b.seq1,b.seq2),1,0))
+			         ,unit = b.StockUnit
+			         ,a.FromRoll
+                     ,a.FromDyelot
+		             ,a.Qty [QTY]
+			         ,a.ToLocation
+                     ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.Fromseq2 )    
              from dbo.Subtransfer_detail a 
              left join dbo.PO_Supp_Detail b
-             on 
-             b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2 and b.id=a.id
+                on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2 and b.id=a.id
              where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 

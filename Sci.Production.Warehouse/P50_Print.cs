@@ -54,17 +54,17 @@ namespace Sci.Production.Warehouse
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result = DBProxy.Current.Select("",
-             @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ
-			 ,a.Roll,a.Dyelot	        
-			 ,Ref = b.Refno 
-			 ,Material_Type =b.fabrictype 
-			 ,Color =b.colorid 
-			 ,Unit=b.stockunit 		     
-		     ,dbo.Getlocation(a.FtyInventoryUkey)[Book_Location] 
+             @"select a.POID
+                     ,a.Seq1+'-'+a.seq2 as SEQ
+			         ,a.Roll,a.Dyelot	        
+			         ,Ref = b.Refno 
+			         ,Material_Type =b.fabrictype 
+			         ,Color =b.colorid 
+			         ,Unit=b.stockunit 		     
+		             ,[Book_Location]=dbo.Getlocation(a.FtyInventoryUkey)
              from dbo.Stocktaking_detail a 
              left join dbo.PO_Supp_Detail b
-             on 
-             b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
+                on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
              where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
@@ -73,22 +73,22 @@ namespace Sci.Production.Warehouse
             pars.Add(new SqlParameter("@ID", id));
             DataTable da;
             result = DBProxy.Current.Select("",
-             @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ
-			 ,a.Roll,a.Dyelot	        
-			 ,Ref = b.Refno 
-			 ,Material_Type =b.fabrictype 
-			 ,Color =b.colorid 
-			 ,Unit=b.stockunit 
-			 ,Book_Qty=a.qtybefore	
-		     ,dbo.Getlocation(a.FtyInventoryUkey)[Book_Location] 
-			 , Actual_Qty=a.Qtyafter
-			 ,Variance=a.Qtyafter-a.qtybefore
-			 ,[Total1]=sum(a.qtybefore) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )
-			 ,[Total2]=sum(a.Qtyafter) OVER (PARTITION BY a.POID ,a.seq1,a.Seq2 )
+             @"select a.POID
+                     ,a.Seq1+'-'+a.seq2 as SEQ
+			         ,a.Roll,a.Dyelot	        
+			         ,Ref = b.Refno 
+			         ,Material_Type =b.fabrictype 
+			         ,Color =b.colorid 
+			         ,Unit=b.stockunit 
+			         ,Book_Qty=a.qtybefore	
+		             ,[Book_Location]=dbo.Getlocation(a.FtyInventoryUkey) 
+			         ,Actual_Qty=a.Qtyafter
+			         ,Variance=a.Qtyafter-a.qtybefore
+			         ,[Total1]=sum(a.qtybefore) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )
+			         ,[Total2]=sum(a.Qtyafter) OVER (PARTITION BY a.POID ,a.seq1,a.Seq2 )
              from dbo.Stocktaking_detail a 
              left join dbo.PO_Supp_Detail b
-             on 
-             b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
+                on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
              where a.id= @ID", pars, out da);
             if (!result) { this.ShowErr(result); }
 

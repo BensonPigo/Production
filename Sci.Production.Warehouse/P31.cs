@@ -117,8 +117,7 @@ namespace Sci.Production.Warehouse
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtt;
             DualResult result1 = DBProxy.Current.Select("",
-            @"select    
-            b.name 
+            @"select b.name 
             from dbo.Borrowback a 
             inner join dbo.mdivision  b 
             on b.id = a.mdivisionid
@@ -142,26 +141,24 @@ namespace Sci.Production.Warehouse
             DataTable dd;
             result1 = DBProxy.Current.Select("",
             @"select a.FromSeq1+'-'+a.Fromseq2 as FromSP
-	       ,a.ToSeq1+'-'+a.ToSeq2 as TOSP
-	       ,dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.refno, b.seq1,b.seq2),1,0))[DESC] 
-	       ,case a.FromStockType
-	       when 'B' then 'Bulk'
-	       when 'I' then 'Inventory'
-	       else a.FromStockType
-	       end StockType
-	       ,dbo.Getlocation(a.FromFtyInventoryUkey)[Location]
-	       ,unit = b.StockUnit
-		    ,a.FromRoll
-		    ,a.FromDyelot
-		    ,a.Qty
-		    ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.FromSeq2 )
-		     from dbo.Borrowback_detail a 
-             left join dbo.PO_Supp_Detail b
-             on 
-             b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
-		     left join dbo.SubTransfer_Detail c
-		     on
-	         c.id=a.id    
+	                ,a.ToSeq1+'-'+a.ToSeq2 as TOSP
+	                ,[DESC]=dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.refno, b.seq1,b.seq2),1,0))
+	                ,case a.FromStockType
+	                     when 'B' then 'Bulk'
+	                     when 'I' then 'Inventory'
+	                     else a.FromStockType
+	                     end StockType
+	                ,[Location]=dbo.Getlocation(a.FromFtyInventoryUkey)
+	                ,unit = b.StockUnit
+		            ,a.FromRoll
+		            ,a.FromDyelot
+		            ,a.Qty
+		            ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.FromSeq2 )
+		   from dbo.Borrowback_detail a 
+           left join dbo.PO_Supp_Detail b
+             on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
+		   left join dbo.SubTransfer_Detail c
+		     on c.id=a.id
              where a.id= @ID", pars, out dd);
             if (!result1) { this.ShowErr(result1); }
 

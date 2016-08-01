@@ -746,22 +746,21 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable bb;
-            string sqlcmd = @"select 
-            t.poid
-            ,t.seq1+ '-' +t.seq2 as SEQ
-            ,[desc]=dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0) 
-            ,t.Roll
-            ,t.Dyelot
-            ,t.Qty
-            ,p.StockUnit
-            ,dbo.Getlocation(b.ukey) [location]     
-            ,[Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.Seq1,t.Seq2 )       
-            from dbo.Issue_Detail t 
-            left join dbo.PO_Supp_Detail p   
-            on p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
-            left join FtyInventory b
-            on b.poid = t.poid and b.seq1 =t.seq1 and b.seq2=t.seq2 and b.Roll =t.Roll and b.Dyelot =t.Dyelot and b.StockType = t.StockType
-            where t.id= @ID";
+            string sqlcmd = @"select t.poid
+                                    ,t.seq1+ '-' +t.seq2 as SEQ
+                                    ,[desc]=dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0) 
+                                    ,t.Roll
+                                    ,t.Dyelot
+                                    ,t.Qty
+                                    ,p.StockUnit
+                                    ,[location]=dbo.Getlocation(b.ukey)      
+                                    ,[Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.Seq1,t.Seq2 )       
+                            from dbo.Issue_Detail t 
+                            left join dbo.PO_Supp_Detail p   
+                                on p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
+                            left join FtyInventory b
+                                on b.poid = t.poid and b.seq1 =t.seq1 and b.seq2=t.seq2 and b.Roll =t.Roll and b.Dyelot =t.Dyelot and b.StockType = t.StockType
+                            where t.id= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out bb);
             if (!result) { this.ShowErr(sqlcmd, result); }
 

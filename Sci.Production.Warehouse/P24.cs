@@ -636,8 +636,7 @@ Where a.id = '{0}'", masterID);
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
-            @"select    
-            b.name 
+            @"select b.name 
             from dbo.Subtransfer a 
             inner join dbo.mdivision  b 
             on b.id = a.mdivisionid
@@ -658,23 +657,24 @@ Where a.id = '{0}'", masterID);
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result = DBProxy.Current.Select("",
-            @"select a.FromPOID,a.FromSeq1+'-'+a.FromSeq2 as SEQ
-	        ,dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.FromSeq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.scirefno , b.seq1, b.seq2),1,0)) [DESC]
-		    ,CASE b.fabrictype
-		    WHEN 'F' THEN 'Fabric'
-			WHEN 'A' THEN 'Accessory'
-			WHEN 'O' THEN 'Other'
-			ELSE fabrictype
-			END MTLTYPE
-		    ,unit = b.StockUnit
-		    ,a.FromRoll,a.FromDyelot
-			,dbo.Getlocation(a.FromFtyInventoryUkey)[FromLocation]	 
-		    ,a.Qty			
-			,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.FromSeq2 )
+            @"select a.FromPOID
+                    ,a.FromSeq1+'-'+a.FromSeq2 as SEQ
+	                ,[DESC]=dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.FromSeq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.scirefno , b.seq1, b.seq2),1,0))
+		            ,CASE b.fabrictype
+		                 WHEN 'F' THEN 'Fabric'
+			             WHEN 'A' THEN 'Accessory'
+			             WHEN 'O' THEN 'Other'
+			             ELSE fabrictype
+			             END MTLTYPE
+		            ,unit = b.StockUnit
+		            ,a.FromRoll
+                    ,a.FromDyelot
+			        ,[FromLocation]=dbo.Getlocation(a.FromFtyInventoryUkey)	 
+		            ,a.Qty			
+			        ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.FromSeq2 )
             from dbo.SubTransfer_Detail a 
-            left join dbo.PO_Supp_Detail b
-            on 
-            b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2			
+            left join dbo.PO_Supp_Detail b            
+                on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2			
             where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 

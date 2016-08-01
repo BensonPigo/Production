@@ -603,24 +603,25 @@ Where a.id = '{0}'", masterID);
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result = DBProxy.Current.Select("",
-            @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ
-	         ,a.Roll,a.Dyelot
-	         ,[DESC]=dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0)
-			 ,CASE stocktype
-			        WHEN 'B' THEN 'Bulk'
-			        WHEN 'I' THEN 'Inventory'
-			        WHEN 'O' THEN 'Scrap'
-			        ELSE stocktype
-			        END
-			        stocktype
-		     ,unit = b.StockUnit
-		     ,a.Qty
-		     ,dbo.Getlocation(a.FtyInventoryUkey)[Location]
-             ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 ) 	        
-             from dbo.TransferOut_Detail a 
-             LEFT join dbo.PO_Supp_Detail b
-             on  b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
-             where a.id= @ID", pars, out dd);
+            @"select a.POID
+                    ,a.Seq1+'-'+a.seq2 as SEQ
+	                ,a.Roll,a.Dyelot
+	                ,[DESC]=dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0)
+			        ,CASE stocktype
+			               WHEN 'B' THEN 'Bulk'
+			               WHEN 'I' THEN 'Inventory'
+			               WHEN 'O' THEN 'Scrap'
+			               ELSE stocktype
+			               END
+			               stocktype
+		            ,unit = b.StockUnit
+		            ,a.Qty
+		            ,[Location]=dbo.Getlocation(a.FtyInventoryUkey)
+                    ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 ) 	        
+              from dbo.TransferOut_Detail a 
+              LEFT join dbo.PO_Supp_Detail b
+                  on  b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
+              where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
             // 傳 list 資料            
