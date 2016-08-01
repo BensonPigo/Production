@@ -693,9 +693,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
-            @"select    
-            b.name 
-            from dbo.Issue  a 
+            @"select  b.name 
+            from dbo.Issue a 
             inner join dbo.mdivision  b 
             on b.id = a.mdivisionid
             where b.id = a.mdivisionid
@@ -714,8 +713,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             DataTable aa;
             string cCellNo;
             result = DBProxy.Current.Select("",
-            @"select    
-	        b.CutCellID 
+            @"select  b.CutCellID 
             from dbo.Issue as a 
 	        inner join dbo.cutplan as b
             on b.id = a.cutplanid
@@ -749,13 +747,18 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             pars.Add(new SqlParameter("@ID", id));
             DataTable bb;
             string sqlcmd = @"select 
-            t.poid,t.seq1+ '-' +t.seq2 as SEQ,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0) [desc],t.Roll,t.Dyelot,t.Qty,p.StockUnit
+            t.poid
+            ,t.seq1+ '-' +t.seq2 as SEQ
+            ,[desc]=dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0) 
+            ,t.Roll
+            ,t.Dyelot
+            ,t.Qty
+            ,p.StockUnit
             ,dbo.Getlocation(b.ukey) [location]     
             ,[Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.Seq1,t.Seq2 )       
             from dbo.Issue_Detail t 
-            left join dbo.PO_Supp_Detail p 
-            on 
-            p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
+            left join dbo.PO_Supp_Detail p   
+            on p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
             left join FtyInventory b
             on b.poid = t.poid and b.seq1 =t.seq1 and b.seq2=t.seq2 and b.Roll =t.Roll and b.Dyelot =t.Dyelot and b.StockType = t.StockType
             where t.id= @ID";

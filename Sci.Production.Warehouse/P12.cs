@@ -673,8 +673,7 @@ Where a.id = '{0}'", masterID);
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
-            @"select    
-            b.name 
+            @"select  b.name 
             from dbo.Issue  a 
             inner join dbo.mdivision  b 
             on b.id = a.mdivisionid
@@ -694,16 +693,15 @@ Where a.id = '{0}'", masterID);
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtt;
             result = DBProxy.Current.Select("",
-            @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ,
-	        dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0) [DESC]
+            @"select a.POID,a.Seq1+'-'+a.seq2 as SEQ
+	        ,[DESC]=dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0)
 	        ,a.Qty
             ,dbo.Getlocation(a.FtyInventoryUkey)[BULKLocation]
 	        ,unit = b.StockUnit
             from dbo.Issue_Detail a
             left join dbo.PO_Supp_Detail b
-             on 
-             b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
-                where a.id= @ID", pars, out dtt);
+            on  b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2            
+            where a.id= @ID", pars, out dtt);
             if (!result) { this.ShowErr(result); }
            
             // 傳 list 資料            
