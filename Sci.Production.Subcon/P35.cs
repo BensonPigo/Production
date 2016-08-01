@@ -552,8 +552,12 @@ namespace Sci.Production.Subcon
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
-            this.DetailSelectCommand = string.Format(@"select *,0.0 as amount,0.0 as balance,0 as inqty,0 as apqty,'' as description 
-                                                                            from localap_detail where localap_detail.id = '{0}'", masterID);
+            this.DetailSelectCommand = string.Format(
+@"select *,localap_detail.price*localap_detail.Qty as amount,0.0 as balance,0 as inqty,0 as apqty,
+    dbo.getItemDesc(localap.Category,localap_detail.Refno) as description 
+from localap_detail 
+left join localap on localap.ID = localap_detail.ID
+where localap_detail.id = '{0}'", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
 
