@@ -584,9 +584,25 @@ namespace Sci.Production.Subcon
                     ,c.name
 			        ,c.Address
 			        ,c.Tel
+					,a.PaytermID+d.Name [Terms]
+					,a.InvNo [Invoice]
+					,a.Remark [Remark]
+					,e.AccountNo [AC_No]
+                    ,e.AccountName [AC_Name]
+                    ,e.BankName [Bank_Name]
+                    ,e.CountryID [Country]
+                    ,e.city [city] 
+                    ,e.swiftcode [SwiftCode]
+					,a.amount[Total]  
+                    ,a.Vat [Vat]
+                    ,a.Amount+a.Vat [Grand_Total]
+                    ,a.Handle+f.Name [Prepared_by]
             from dbo.LocalAP a 
             left join dbo.factory  b on b.id = a.factoryid
 			inner join dbo.LocalSupp c on c.id=a.LocalSuppID
+			left join dbo.PayTerm d on d.id=a.PaytermID
+			left join dbo.LocalSupp_Bank e on e.IsDefault=1 and e.id=a.LocalSuppID
+			left join dbo.Pass1 f on f.id=a.Handle
             where a.id = @ID", pars, out dt);
             if (!result) { this.ShowErr(result); }
             string RptTitle = dt.Rows[0]["nameEn"].ToString();
@@ -596,6 +612,19 @@ namespace Sci.Production.Subcon
             string Supplier = dt.Rows[0]["name"].ToString();
             string Address1 = dt.Rows[0]["Address"].ToString();
             string TEL1 = dt.Rows[0]["Tel"].ToString();
+            string Terms = dt.Rows[0]["Terms"].ToString();
+            string Invoice = dt.Rows[0]["Invoice"].ToString();
+            string Remark = dt.Rows[0]["Remark"].ToString();
+            string AC_No = dt.Rows[0]["AC_No"].ToString();
+            string AC_Name = dt.Rows[0]["AC_Name"].ToString();
+            string Bank_Name = dt.Rows[0]["Bank_Name"].ToString();
+            string Country = dt.Rows[0]["Country"].ToString();
+            string city = dt.Rows[0]["city"].ToString();
+            string SwiftCode = dt.Rows[0]["SwiftCode"].ToString();
+            string Total = dt.Rows[0]["Total"].ToString();
+            string Vat = dt.Rows[0]["Vat"].ToString();
+            string Grand_Total = dt.Rows[0]["Grand_Total"].ToString();
+            string Prepared_by = dt.Rows[0]["Prepared_by"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("address", address));
@@ -606,6 +635,19 @@ namespace Sci.Production.Subcon
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL1", TEL1));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("id", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Terms", Terms));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invoice", Invoice));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AC_No", AC_No));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AC_Name", AC_Name));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Bank_Name", Bank_Name));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Country", Country));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("city", city));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SwiftCode", SwiftCode));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total", Total));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Vat", Vat));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Grand_Total", Grand_Total));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Prepared_by", Prepared_by));
             #endregion
 
 
@@ -620,24 +662,8 @@ namespace Sci.Production.Subcon
                     ,a.qty [Qty]
                     ,a.unitid [Unit]
                     ,a.price*a.Qty [Amount]
-                    ,b.PaytermID+c.Name [Terms]
-                    ,b.InvNo [Invoice]
-                    ,b.Remark [Remark]
-                    ,d.AccountNo [AC_No]
-                    ,d.AccountName [AC_Name]
-                    ,d.BankName [Bank_Name]
-                    ,[Country]=d.CountryID
-                    ,d.city [city] 
-                    ,d.swiftcode [SwiftCode]
-                    ,[Total]=b.amount  
-                    ,b.Vat [Vat]
-                    ,b.Amount+b.Vat [Grand_Total]
-                    ,b.Handle+e.Name [Prepared_by]
             from dbo.LocalAP_Detail a
             left join dbo.LocalAP b on a.id=b.Id
-            left join dbo.PayTerm c on c.id=b.PaytermID
-            left join dbo.LocalSupp_Bank d on d.IsDefault=1 and d.id=b.LocalSuppID
-            left join dbo.Pass1 e on e.id=b.Handle
             where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
@@ -649,20 +675,7 @@ namespace Sci.Production.Subcon
                     Description = row1["Description"].ToString(),
                     Price = row1["Price"].ToString(),
                     Qty = row1["Qty"].ToString(),
-                    Amount = row1["Amount"].ToString(),
-                    Terms = row1["Terms"].ToString(),
-                    Invoice = row1["Invoice"].ToString(),
-                    Remark = row1["Remark"].ToString(),
-                    AC_No = row1["AC_No"].ToString(),
-                    AC_Name = row1["AC_Name"].ToString(),
-                    Bank_Name = row1["Bank_Name"].ToString(),
-                    Country = row1["Country"].ToString(),
-                    city = row1["city"].ToString(),
-                    SwiftCode = row1["SwiftCode"].ToString(),
-                    Total = row1["Total"].ToString(),
-                    Vat = row1["Vat"].ToString(),
-                    Grand_Total = row1["Grand_Total"].ToString(),
-                    Prepared_by = row1["Prepared_by"].ToString()
+                    Amount = row1["Amount"].ToString()
                 }).ToList();
 
             report.ReportDataSource = data;
