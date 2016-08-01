@@ -675,6 +675,7 @@ namespace Sci.Production.Subcon
                     Description = row1["Description"].ToString(),
                     Price = row1["Price"].ToString(),
                     Qty = row1["Qty"].ToString(),
+                    Unit = row1["Unit"].ToString(),
                     Amount = row1["Amount"].ToString()
                 }).ToList();
 

@@ -503,6 +503,7 @@
     <None Include="Properties\DataSources\P10_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_PrintData1.datasource" />
     <None Include="Properties\DataSources\P30_PrintData.datasource" />
+    <None Include="Properties\DataSources\P35_PrintData.datasource" />
     <None Include="Properties\DataSources\P36_PrintData.datasource" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
