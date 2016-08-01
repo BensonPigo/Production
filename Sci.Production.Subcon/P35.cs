@@ -577,20 +577,17 @@ namespace Sci.Production.Subcon
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
-            @"select
-            b.nameEn 
-			,b.AddressEN
-			,b.Tel
-			,a.Id
-            ,c.name
-			,c.Address
-			,c.Tel
+            @"select b.nameEn 
+			        ,b.AddressEN
+			        ,b.Tel
+			        ,a.Id
+                    ,c.name
+			        ,c.Address
+			        ,c.Tel
             from dbo.LocalAP a 
-            left join dbo.factory  b 
-            on b.id = a.factoryid
-			inner join dbo.LocalSupp c
-			on c.id=a.LocalSuppID
-            and a.id = @ID", pars, out dt);
+            left join dbo.factory  b on b.id = a.factoryid
+			inner join dbo.LocalSupp c on c.id=a.LocalSuppID
+            where a.id = @ID", pars, out dt);
             if (!result) { this.ShowErr(result); }
             string RptTitle = dt.Rows[0]["nameEn"].ToString();
             string address = dt.Rows[0]["AddressEN"].ToString();
@@ -612,43 +609,62 @@ namespace Sci.Production.Subcon
             #endregion
 
 
-//            #region  抓表身資料
-//            pars = new List<SqlParameter>();
-//            pars.Add(new SqlParameter("@ID", id));
-//            DataTable dd;
-//            result = DBProxy.Current.Select("",
-//            @"select a.FromPOID,a.FromSeq1+'-'+a.Fromseq2 as SEQ
-//	         ,dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.refno, b.seq1,b.seq2),1,0))[DESC] 
-//			 ,unit = b.StockUnit
-//			 ,a.FromRoll,a.FromDyelot
-//		     ,a.Qty[QTY]
-//		     ,dbo.Getlocation(a.FromFtyInventoryUkey)[ToLocation]
-//			 ,a.ToLocation
-//             ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.Fromseq2 )    
-//             from dbo.Subtransfer_detail a 
-//             left join dbo.PO_Supp_Detail b
-//             on 
-//             b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2 and b.id=a.id
-//             where a.id= @ID", pars, out dd);
-//            if (!result) { this.ShowErr(result); }
+            #region  抓表身資料
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dd;
+            result = DBProxy.Current.Select("",
+            @"select a.OrderId [SP]
+                    ,[Description]=dbo.getItemDesc(b.Category,a.Refno)
+                    ,a.price [Price]
+                    ,a.qty [Qty]
+                    ,a.unitid [Unit]
+                    ,a.price*a.Qty [Amount]
+                    ,b.PaytermID+c.Name [Terms]
+                    ,b.InvNo [Invoice]
+                    ,b.Remark [Remark]
+                    ,d.AccountNo [AC_No]
+                    ,d.AccountName [AC_Name]
+                    ,d.BankName [Bank_Name]
+                    ,d.CountryID+'/'+d.City [Country_City]
+                    ,d.swiftcode [SwiftCode]
+                    ,b.amount [Total]
+                    ,b.Vat [Vat]
+                    ,b.Amount+b.Vat [Grand_Total]
+                    ,b.Handle+e.Name [Prepared_by]
+            from dbo.LocalAP_Detail a
+            left join dbo.LocalAP b on a.id=b.Id
+            left join dbo.PayTerm c on c.id=b.PaytermID
+            left join dbo.LocalSupp_Bank d on d.IsDefault=1 and d.id=b.LocalSuppID
+            left join dbo.Pass1 e on e.id=b.Handle
+            where a.id= @ID", pars, out dd);
+            if (!result) { this.ShowErr(result); }
 
-//            // 傳 list 資料            
-//            List<P35_PrintData> data = dd.AsEnumerable()
-//                .Select(row1 => new P35_PrintData()
-//                {
-//                    FromPOID = row1["FromPOID"].ToString(),
-//                    SEQ = row1["SEQ"].ToString(),
-//                    DESC = row1["DESC"].ToString(),
-//                    unit = row1["unit"].ToString(),
-//                    FromRoll = row1["FromRoll"].ToString(),
-//                    FromDyelot = row1["FromDyelot"].ToString(),
-//                    QTY = row1["QTY"].ToString(),
-//                    ToLocation = row1["ToLocation"].ToString(),
-//                    Total = row1["Total"].ToString()
-//                }).ToList();
+            // 傳 list 資料            
+            List<P35_PrintData> data = dd.AsEnumerable()
+                .Select(row1 => new P35_PrintData()
+                {
+                    SP = row1["SP"].ToString(),
+                    Description = row1["Description"].ToString(),
+                    Price = row1["Price"].ToString(),
+                    Qty = row1["Qty"].ToString(),
+                    Amount = row1["Amount"].ToString(),
+                    Terms = row1["Terms"].ToString(),
+                    Invoice = row1["Invoice"].ToString(),
+                    Remark = row1["Remark"].ToString(),
+                    AC_No = row1["AC_No"].ToString(),
+                    AC_Name = row1["AC_Name"].ToString(),
+                    Bank_Name = row1["Bank_Name"].ToString().
+                    Country_City = row1["Country_City"].ToString(),
+                    SwiftCode = row1["SwiftCode"].ToString().
+                    Total = row1["Total"].ToString(),
+                    Vat = row1["Vat"].ToString(),
+                    Grand_Total = row1["Grand_Total"].ToString(),
+                    Prepared_by = row1["Prepared_by"].ToString()
+                }).ToList();
 
-//            report.ReportDataSource = data;
-//            #endregion
+            report.ReportDataSource = data;
+            #endregion
 
             // 指定是哪個 RDLC
             #region  指定是哪個 RDLC
