@@ -120,7 +120,7 @@ namespace Sci.Production.Warehouse
 			                                left join dbo.Fabric_Supp e on e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID
 			                                left join dbo.Fabric_HsCode f on f.SCIRefno=a.SCIRefno and f.SuppID=c.SuppID and f.Year=Year(a.eta)
 		                                    left join dbo.supp h on h.id=c.SuppID
-			                                left join dbo.MDivisionPoDetail i on i.POID=a.ID
+			                                left join dbo.MDivisionPoDetail i on i.POID=a.ID and a.SEQ1=i.Seq1 and a.SEQ2=i.Seq2
 			                                where a.id=@ID", pars, out dt);			       
           }
           else  
