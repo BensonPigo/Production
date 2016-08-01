@@ -324,6 +324,12 @@
     <Compile Include="P37.Designer.cs">
       <DependentUpon>P37.cs</DependentUpon>
     </Compile>
+    <Compile Include="R25.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R25.Designer.cs">
+      <DependentUpon>R25.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
@@ -485,6 +491,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P37.resx">
       <DependentUpon>P37.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R25.resx">
+      <DependentUpon>R25.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

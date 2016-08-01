@@ -601,6 +601,8 @@ where localap_detail.id = '{0}'", masterID);
                     ,a.Vat [Vat]
                     ,a.Amount+a.Vat [Grand_Total]
                     ,a.Handle+f.Name [Prepared_by]
+                    ,a.CurrencyID[CurrencyID]
+					,a.VatRate[VatRate]
             from dbo.LocalAP a 
             left join dbo.factory  b on b.id = a.factoryid
 			inner join dbo.LocalSupp c on c.id=a.LocalSuppID
@@ -629,6 +631,8 @@ where localap_detail.id = '{0}'", masterID);
             string Vat = dt.Rows[0]["Vat"].ToString();
             string Grand_Total = dt.Rows[0]["Grand_Total"].ToString();
             string Prepared_by = dt.Rows[0]["Prepared_by"].ToString();
+            string CurrencyID = dt.Rows[0]["CurrencyID"].ToString();
+            string VatRate = dt.Rows[0]["VatRate"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("address", address));
@@ -652,6 +656,8 @@ where localap_detail.id = '{0}'", masterID);
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Vat", Vat));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Grand_Total", Grand_Total));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Prepared_by", Prepared_by));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyID", CurrencyID));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VatRate", VatRate));
             #endregion
 
 
