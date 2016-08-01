@@ -626,7 +626,7 @@ namespace Sci.Production.Subcon
                     ,d.AccountNo [AC_No]
                     ,d.AccountName [AC_Name]
                     ,d.BankName [Bank_Name]
-                    ,[Country]=d.Country 
+                    ,[Country]=d.CountryID
                     ,d.city [city] 
                     ,d.swiftcode [SwiftCode]
                     ,[Total]=b.amount  
@@ -655,10 +655,10 @@ namespace Sci.Production.Subcon
                     Remark = row1["Remark"].ToString(),
                     AC_No = row1["AC_No"].ToString(),
                     AC_Name = row1["AC_Name"].ToString(),
-                    Bank_Name = row1["Bank_Name"].ToString().
+                    Bank_Name = row1["Bank_Name"].ToString(),
                     Country = row1["Country"].ToString(),
                     city = row1["city"].ToString(),
-                    SwiftCode = row1["SwiftCode"].ToString().
+                    SwiftCode = row1["SwiftCode"].ToString(),
                     Total = row1["Total"].ToString(),
                     Vat = row1["Vat"].ToString(),
                     Grand_Total = row1["Grand_Total"].ToString(),
