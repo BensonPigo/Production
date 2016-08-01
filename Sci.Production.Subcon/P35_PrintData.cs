@@ -19,7 +19,7 @@ namespace Sci.Production.Subcon
         public string AC_No { get; set; }
         public string AC_Name { get; set; }
         public string Bank_Name { get; set; }
-        public string Country { get; set; }
+        public string CountryID { get; set; }
         public string city { get; set; }
         public string SwiftCode { get; set; }
         public string Total{ get; set; }

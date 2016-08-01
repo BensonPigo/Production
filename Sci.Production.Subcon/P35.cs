@@ -656,7 +656,7 @@ namespace Sci.Production.Subcon
                     AC_No = row1["AC_No"].ToString(),
                     AC_Name = row1["AC_Name"].ToString(),
                     Bank_Name = row1["Bank_Name"].ToString().
-                    Country = row1["Country"].ToString(),
+                    CountryID = row1["CountryID"].ToString(),
                     city = row1["city"].ToString(),
                     SwiftCode = row1["SwiftCode"].ToString().
                     Total = row1["Total"].ToString(),
