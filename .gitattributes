@@ -2548,6 +2548,10 @@ XLT/Subcon_R22_LocalPaymentList.xltx -text
 XLT/Subcon_R22_LocalPaymentSummary.xltx -text
 XLT/Subcon_R23.xltx -text
 XLT/Subcon_R24.xltx -text
+XLT/Subcon_R36_Debit[!!-~]Schedule[!!-~]Detail(LocalSupplier).xltx -text
+XLT/Subcon_R36_DebitNote&ScheduleSummary(LocalSupplier).xltx -text
+XLT/Subcon_R36_DebitNote(LocalSupplier).xltx -text
+XLT/Subcon_R36_DebitNoteDetial(LocalSupplier).xltx -text
 XLT/Warehouse_P03_Print-1.xltx -text
 XLT/Warehouse_P03_Print-2.xltx -text
 XLT/Warehouse_P03_RollTransaction.xltx -text
