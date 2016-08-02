@@ -13,7 +13,18 @@ namespace Sci.Production.Subcon
         public R25()
         {
             InitializeComponent();
+            this.comboBox1.SelectedIndex = 0;
         }
+        protected override bool ValidateInput()
+        {
+            
+            return base.ValidateInput();
+        }
+        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        {
 
+            
+            return base.OnAsyncDataLoad(e);
+        }
     }
 }
