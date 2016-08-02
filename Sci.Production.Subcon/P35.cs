@@ -597,9 +597,9 @@ where localap_detail.id = '{0}'", masterID);
                     ,e.CountryID [Country]
                     ,e.city [city] 
                     ,e.swiftcode [SwiftCode]
-					,a.amount[Total]  
-                    ,a.Vat [Vat]
-                    ,a.Amount+a.Vat [Grand_Total]
+					,cast(cast(isnull(round(a.amount,cr.Exact) , 0 ) as float) as varchar) [Total]	
+					,cast(cast(isnull(round(a.Vat,cr.Exact) , 0 ) as float) as varchar) [Vat]				
+                    ,cast(cast(isnull(round(a.amount,cr.Exact)+round(a.Vat,cr.Exact) , 0 ) as float) as varchar) [Grand_Total]	
                     ,a.Handle+f.Name [Prepared_by]
                     ,a.CurrencyID[CurrencyID]
 					,a.VatRate[VatRate]
@@ -609,6 +609,7 @@ where localap_detail.id = '{0}'", masterID);
 			left join dbo.PayTerm d on d.id=a.PaytermID
 			left join dbo.LocalSupp_Bank e on e.IsDefault=1 and e.id=a.LocalSuppID
 			left join dbo.Pass1 f on f.id=a.Handle
+            left join dbo.Currency cr on cr.ID = a.CurrencyID
             where a.id = @ID", pars, out dt);
             if (!result) { this.ShowErr(result); }
             string RptTitle = dt.Rows[0]["nameEn"].ToString();
