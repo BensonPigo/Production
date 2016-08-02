@@ -5,13 +5,12 @@
     [SEQ]         VARCHAR (4)    CONSTRAINT [DF_Pattern_GL_SEQ] DEFAULT ('') NOT NULL,
     [PatternCode] VARCHAR (20)   CONSTRAINT [DF_Pattern_GL_PatternCode] DEFAULT ('') NOT NULL,
     [PatternDesc] NVARCHAR (100) CONSTRAINT [DF_Pattern_GL_PatternDesc] DEFAULT ('') NULL,
-    [Artwork]     NVARCHAR (50)  CONSTRAINT [DF_Pattern_GL_Artwork] DEFAULT ('') NULL,
     [Annotation]  NVARCHAR (50)  CONSTRAINT [DF_Pattern_GL_Annotation] DEFAULT ('') NULL,
     [Alone]       VARCHAR (2)    CONSTRAINT [DF_Pattern_GL_Alone] DEFAULT ('') NULL,
     [PAIR]        VARCHAR (2)    CONSTRAINT [DF_Pattern_GL_PAIR] DEFAULT ('') NULL,
     [DV]          VARCHAR (2)    CONSTRAINT [DF_Pattern_GL_DV] DEFAULT ('') NULL,
     [Remarks]     NVARCHAR (30)  CONSTRAINT [DF_Pattern_GL_Remarks] DEFAULT ('') NULL,
-    CONSTRAINT [PK_Pattern_GL] PRIMARY KEY CLUSTERED ([PatternUKEY] ASC, [SEQ] ASC)
+    CONSTRAINT [PK_Pattern_GL] PRIMARY KEY CLUSTERED ([ID], [Version], [SEQ])
 );
 
 
@@ -46,7 +45,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'版片敘�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'特殊做工', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Pattern_GL', @level2type = N'COLUMN', @level2name = N'Artwork';
+
 
 
 GO

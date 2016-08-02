@@ -249,6 +249,7 @@ Database/dbo/Tables/MNOrder_Color.sql -text
 Database/dbo/Tables/MNOrder_ColorCombo.sql -text
 Database/dbo/Tables/MNOrder_FabricCode.sql -text
 Database/dbo/Tables/MNOrder_Qty.sql -text
+Database/dbo/Tables/MNOrder_SizeCode.sql -text
 Database/dbo/Tables/MNOrder_SizeItem.sql -text
 Database/dbo/Tables/MNOrder_SizeSpec.sql -text
 Database/dbo/Tables/MachineType.sql -text
@@ -294,6 +295,7 @@ Database/dbo/Tables/Order_EachCons_Color_Article.sql -text
 Database/dbo/Tables/Order_EachCons_PatternPanel.sql -text
 Database/dbo/Tables/Order_EachCons_SizeQty.sql -text
 Database/dbo/Tables/Order_FabricCode.sql -text
+Database/dbo/Tables/Order_FabricCode_Article.sql -text
 Database/dbo/Tables/Order_FabricCode_QT.sql -text
 Database/dbo/Tables/Order_History.sql -text
 Database/dbo/Tables/Order_MarkerList.sql -text
@@ -336,6 +338,7 @@ Database/dbo/Tables/PassEdit_History.sql -text
 Database/dbo/Tables/Pattern.sql -text
 Database/dbo/Tables/Pattern_GL.sql -text
 Database/dbo/Tables/Pattern_GL_Article.sql -text
+Database/dbo/Tables/Pattern_GL_Artwork.sql -text
 Database/dbo/Tables/Pattern_GL_LectraCode.sql -text
 Database/dbo/Tables/PayTerm.sql -text
 Database/dbo/Tables/PayTermAP.sql -text

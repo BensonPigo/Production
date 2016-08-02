@@ -2,10 +2,10 @@
     [ID]               VARCHAR (13)   CONSTRAINT [DF_InvAdjust_ID] DEFAULT ('') NOT NULL,
     [IssueDate]        DATE           NULL,
     [REASON]           VARCHAR (1)    CONSTRAINT [DF_InvAdjust_REASON] DEFAULT ('') NULL,
-    [NegoinvID]        VARCHAR (25)   CONSTRAINT [DF_InvAdjust_NegoinvID] DEFAULT ('') NULL,
+    [GarmentInvoiceID]        VARCHAR (25)   CONSTRAINT [DF_InvAdjust_NegoinvID] DEFAULT ('') NULL,
     [OrderID]          VARCHAR (13)   CONSTRAINT [DF_InvAdjust_OrderID] DEFAULT ('') NULL,
     [PullDate]         DATE           NULL,
-    [Pullout3ukey]     BIGINT         CONSTRAINT [DF_InvAdjust_Pullout3ukey] DEFAULT ((0)) NULL,
+    [Ukey_Pullout]     BIGINT         CONSTRAINT [DF_InvAdjust_Pullout3ukey] DEFAULT ('') NULL,
     [BrandID]          VARCHAR (8)    CONSTRAINT [DF_InvAdjust_BrandID] DEFAULT ('') NULL,
     [FactoryID]        VARCHAR (8)    CONSTRAINT [DF_InvAdjust_FactoryID] DEFAULT ('') NULL,
     [ARVoucherID]      VARCHAR (16)   CONSTRAINT [DF_InvAdjust_ARVoucherNo] DEFAULT ('') NULL,
@@ -56,7 +56,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'修改原�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發票號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust', @level2type = N'COLUMN', @level2name = N'NegoinvID';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發票號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust', @level2type = N'COLUMN', @level2name = 'GarmentInvoiceID';
 
 
 GO
@@ -68,7 +68,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'出貨日�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust', @level2type = N'COLUMN', @level2name = N'Pullout3ukey';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'PUllout 與Pullout_Detail_Detail的連結值', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust', @level2type = N'COLUMN', @level2name = 'Ukey_Pullout';
 
 
 GO

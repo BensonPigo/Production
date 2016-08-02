@@ -4,7 +4,7 @@
     [Refno]               VARCHAR (20)   CONSTRAINT [DF_Style_BOA_Refno] DEFAULT ('') NULL,
     [SCIRefno]            VARCHAR (26)   CONSTRAINT [DF_Style_BOA_SCIRefno] DEFAULT ('') NULL,
     [SEQ1]                VARCHAR (3)    CONSTRAINT [DF_Style_BOA_SEQ1] DEFAULT ('') NULL,
-    [ConsPC]              NUMERIC (6, 4) CONSTRAINT [DF_Style_BOA_ConsPC] DEFAULT ((0)) NULL,
+    [ConsPC]              NUMERIC (10, 4) CONSTRAINT [DF_Style_BOA_ConsPC] DEFAULT ((0)) NULL,
     [PatternPanel]        VARCHAR (2)    CONSTRAINT [DF_Style_BOA_PattenPanel] DEFAULT ('') NULL,
     [SizeItem]            VARCHAR (3)    CONSTRAINT [DF_Style_BOA_SizeItem] DEFAULT ('') NULL,
     [ProvidedPatternRoom] BIT            CONSTRAINT [DF_Style_BOA_ProvidedPatternRoom] DEFAULT ((0)) NULL,

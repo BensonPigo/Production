@@ -6,7 +6,7 @@
     [MDivisionID]      VARCHAR (8)     CONSTRAINT [DF_Inventory_MDivisionID] DEFAULT ('') NOT NULL,
     [FactoryID]        VARCHAR (8)     CONSTRAINT [DF_Inventory_FactoryID] DEFAULT ('') NOT NULL,
     [UnitID]           VARCHAR (8)     CONSTRAINT [DF_Inventory_UnitID] DEFAULT ('') NOT NULL,
-    [ProjectID]        VARCHAR (5)     CONSTRAINT [DF_Inventory_ProjectID] DEFAULT ('') NULL,
+    [ProjectID]        VARCHAR (5)     CONSTRAINT [DF_Inventory_ProjectID] DEFAULT ('') NOT NULL,
     [BrandGroup]       VARCHAR (8)     CONSTRAINT [DF_Inventory_BrandGroup] DEFAULT ('') NULL,
     [InventoryRefnoID] BIGINT          CONSTRAINT [DF_Inventory_InventoryRefnoID] DEFAULT ((0)) NOT NULL,
     [LimitHandle]      VARCHAR (10)    CONSTRAINT [DF_Inventory_LimitHandle] DEFAULT ('') NULL,
@@ -33,15 +33,15 @@
     [Remark]           NVARCHAR (60)   CONSTRAINT [DF_Inventory_Remark] DEFAULT ('') NULL,
     [IcrNo]            VARCHAR (13)    CONSTRAINT [DF_Inventory_IcrNo] DEFAULT ('') NULL,
     [DebitID]          VARCHAR (13)    CONSTRAINT [DF_Inventory_DebitID] DEFAULT ('') NULL,
-    [Lock]             VARCHAR (1)     CONSTRAINT [DF_Inventory_Lock] DEFAULT ('') NULL,
+    [Lock]             BIT     CONSTRAINT [DF_Inventory_Lock] DEFAULT ((0)) NULL,
     [ETA]              DATE            NULL,
     [AddName]          VARCHAR (10)    CONSTRAINT [DF_Inventory_AddName] DEFAULT ('') NULL,
     [AddDate]          DATETIME        NULL,
     [EditName]         VARCHAR (10)    CONSTRAINT [DF_Inventory_EditName] DEFAULT ('') NULL,
     [EditDate]         DATETIME        NULL,
-    [SCIRefno]         VARCHAR (26)    NULL,
-    [suppid]           VARCHAR (6)     NULL,
-    CONSTRAINT [PK_Inventory] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+    [SCIRefno]         VARCHAR (26)    NULL DEFAULT (''),
+    [SuppID]           VARCHAR (6)     NULL DEFAULT (''),
+    CONSTRAINT [PK_Inventory] PRIMARY KEY CLUSTERED ([POID], [ProjectID], [Seq1], [Seq2], [MDivisionID], [FactoryID], [UnitID], [InventoryRefnoID])
 );
 
 

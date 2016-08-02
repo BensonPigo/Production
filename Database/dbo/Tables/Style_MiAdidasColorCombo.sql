@@ -6,7 +6,8 @@
     [AddDate]    DATETIME     NULL,
     [EditName]   VARCHAR (10) CONSTRAINT [DF_Style_MiAdidasColorCombo_EditName] DEFAULT ('') NULL,
     [EditDate]   DATETIME     NULL,
-    CONSTRAINT [PK_Style_MiAdidasColorCombo] PRIMARY KEY CLUSTERED ([StyleUkey] ASC, [LectraCode] ASC)
+    [Ukey_old] VARCHAR(10) NOT NULL DEFAULT (''), 
+    CONSTRAINT [PK_Style_MiAdidasColorCombo] PRIMARY KEY CLUSTERED ([StyleUkey], [LectraCode], [Ukey_old])
 );
 
 

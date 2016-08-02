@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Pattern] (
     [ID]            VARCHAR (10)   CONSTRAINT [DF_Pattern_ID] DEFAULT ('') NOT NULL,
     [Version]       VARCHAR (3)    CONSTRAINT [DF_Pattern_Version] DEFAULT ('') NOT NULL,
-    [Brand]         VARCHAR (8)    CONSTRAINT [DF_Pattern_Brand] DEFAULT ('') NULL,
+    [BrandID]         VARCHAR (8)    CONSTRAINT [DF_Pattern_Brand] DEFAULT ('') NULL,
     [ActFtyPattern] VARCHAR (8)    CONSTRAINT [DF_Pattern_ActFtyPattern] DEFAULT ('') NULL,
     [PatternNO]     VARCHAR (10)   CONSTRAINT [DF_Pattern_PatternNO] DEFAULT ('') NULL,
     [RevisedReason] VARCHAR (4)    CONSTRAINT [DF_Pattern_RevisedReason] DEFAULT ('') NULL,
@@ -18,13 +18,12 @@
     [PendingRemark] NVARCHAR (MAX) CONSTRAINT [DF_Pattern_PendingRemark] DEFAULT ('') NULL,
     [SizeRound]     BIT            CONSTRAINT [DF_Pattern_SizeRound] DEFAULT ((0)) NULL,
     [SizeRange]     NVARCHAR (100) CONSTRAINT [DF_Pattern_SizeRange] DEFAULT ('') NULL,
-    [StyleUkey]     VARCHAR (10)   CONSTRAINT [DF_Pattern_StyleUkey] DEFAULT ('') NULL,
-    [Translate]     BIT            CONSTRAINT [DF_Pattern_Translate] DEFAULT ((0)) NULL,
+    [StyleUkey]     BIGINT   CONSTRAINT [DF_Pattern_StyleUkey] DEFAULT ('') NULL,
     [AddName]       VARCHAR (10)   CONSTRAINT [DF_Pattern_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME       NULL,
     [EditName]      VARCHAR (10)   CONSTRAINT [DF_Pattern_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME       NULL,
-    CONSTRAINT [PK_Pattern] PRIMARY KEY CLUSTERED ([UKey] ASC)
+    CONSTRAINT [PK_Pattern] PRIMARY KEY CLUSTERED ([ID], [Version])
 );
 
 
@@ -77,7 +76,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'StyleUkey',
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'翻譯', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Pattern', @level2type = N'COLUMN', @level2name = N'Translate';
+
 
 
 GO
@@ -109,7 +108,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'打版版�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客戶', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Pattern', @level2type = N'COLUMN', @level2name = N'Brand';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客戶', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Pattern', @level2type = N'COLUMN', @level2name = 'BrandID';
 
 
 GO

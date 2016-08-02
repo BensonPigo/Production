@@ -3,12 +3,12 @@
     [LectraCode]    VARCHAR (2)    CONSTRAINT [DF_Style_FabricCode_LectraCode] DEFAULT ('') NOT NULL,
     [FabricCode]    VARCHAR (3)    CONSTRAINT [DF_Style_FabricCode_FabricCode] DEFAULT ('') NOT NULL,
     [PatternPanel]  VARCHAR (2)    CONSTRAINT [DF_Style_FabricCode_PatternPanel] DEFAULT ('') NOT NULL,
-    [ForArticle]    NVARCHAR (MAX) CONSTRAINT [DF_Style_FabricCode_ForArticle] DEFAULT ('') NULL,
     [AddName]       VARCHAR (10)   CONSTRAINT [DF_Style_FabricCode_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME       NULL,
     [EditName]      VARCHAR (10)   CONSTRAINT [DF_Style_FabricCode_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME       NULL,
     [Style_BOFUkey] BIGINT         CONSTRAINT [DF_Style_FabricCode_Style_BOFUkey] DEFAULT ((0)) NULL,
+    [QTWidth] NUMERIC(3, 1) NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Style_FabricCode] PRIMARY KEY CLUSTERED ([StyleUkey] ASC, [LectraCode] ASC)
 );
 
@@ -34,7 +34,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'部位', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'指定特定的顏色組', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_FabricCode', @level2type = N'COLUMN', @level2name = N'ForArticle';
+
 
 
 GO

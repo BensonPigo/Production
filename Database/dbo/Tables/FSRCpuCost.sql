@@ -3,7 +3,8 @@
     [AddDate]   DATETIME     NULL,
     [AddName]   VARCHAR (10) CONSTRAINT [DF_FSRCpuCost_AddName] DEFAULT ('') NULL,
     [EditDate]  DATETIME     NULL,
-    [EditName]  VARCHAR (10) CONSTRAINT [DF_FSRCpuCost_EditName] DEFAULT ('') NULL
+    [EditName]  VARCHAR (10) CONSTRAINT [DF_FSRCpuCost_EditName] DEFAULT ('') NULL, 
+    CONSTRAINT [PK_FSRCpuCost] PRIMARY KEY ([ShipperID])
 );
 
 

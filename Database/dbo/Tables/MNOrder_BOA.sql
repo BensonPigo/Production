@@ -1,7 +1,6 @@
 ﻿CREATE TABLE [dbo].[MNOrder_BOA] (
     [Id]              VARCHAR (13)   CONSTRAINT [DF_MNOrder_BOA_Id] DEFAULT ('') NULL,
     [UKey]            BIGINT         CONSTRAINT [DF_MNOrder_BOA_UKey] DEFAULT ((0)) NOT NULL,
-    [Order_BOAUkey]   BIGINT         CONSTRAINT [DF_MNOrder_BOA_Order_BOAUkey] DEFAULT ((0)) NULL,
     [Refno]           VARCHAR (20)   CONSTRAINT [DF_MNOrder_BOA_Refno] DEFAULT ('') NULL,
     [SCIRefno]        VARCHAR (26)   CONSTRAINT [DF_MNOrder_BOA_SCIRefno] DEFAULT ('') NULL,
     [SuppID]          VARCHAR (6)    CONSTRAINT [DF_MNOrder_BOA_SuppID] DEFAULT ('') NULL,
@@ -19,9 +18,9 @@
     [SizeItem]        VARCHAR (3)    CONSTRAINT [DF_MNOrder_BOA_SizeItem] DEFAULT ('') NULL,
     [BomTypeZipper]   BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeZipper] DEFAULT ((0)) NULL,
     [Remark]          NVARCHAR (MAX) CONSTRAINT [DF_MNOrder_BOA_Remark] DEFAULT ('') NULL,
-    [Shell]           NVARCHAR (63)  CONSTRAINT [DF_MNOrder_BOA_Shell] DEFAULT ('') NULL,
-    [isCustCD]        TINYINT        CONSTRAINT [DF_MNOrder_BOA_isCustCD] DEFAULT ((0)) NULL,
     [Description]     NVARCHAR (150) CONSTRAINT [DF_MNOrder_BOA_Description] DEFAULT ('') NULL,
+    [FabricVer_Old] VARCHAR(2) NULL DEFAULT (''), 
+    [FabricUkey_Old] VARCHAR(10) NULL DEFAULT (''), 
     CONSTRAINT [PK_MNOrder_BOA] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
 
@@ -39,7 +38,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'唯一值',
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BOA唯一值', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'Order_BOAUkey';
+
 
 
 GO
@@ -111,11 +110,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'備註', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'記錄轉印的布種-Expend需寫入Remark', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'Shell';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客戶物料展開規則', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'isCustCD';
+
 
 
 GO

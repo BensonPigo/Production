@@ -2,7 +2,6 @@
     [Id]            VARCHAR (13)   CONSTRAINT [DF_Order_FabricCode_Id] DEFAULT ('') NOT NULL,
     [PatternPanel]  VARCHAR (2)    CONSTRAINT [DF_Order_FabricCode_PatternPanel] DEFAULT ('') NOT NULL,
     [FabricCode]    VARCHAR (3)    CONSTRAINT [DF_Order_FabricCode_FabricCode] DEFAULT ('') NOT NULL,
-    [ForArticle]    NVARCHAR (MAX) CONSTRAINT [DF_Order_FabricCode_ForArticle] DEFAULT ('') NULL,
     [Lectracode]    VARCHAR (2)    CONSTRAINT [DF_Order_FabricCode_Lectracode] DEFAULT ('') NOT NULL,
     [AddName]       VARCHAR (10)   CONSTRAINT [DF_Order_FabricCode_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME       NULL,
@@ -30,7 +29,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布種', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'指定顏色組', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_FabricCode', @level2type = N'COLUMN', @level2name = N'ForArticle';
+
 
 
 GO

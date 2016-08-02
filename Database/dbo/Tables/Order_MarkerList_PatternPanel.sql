@@ -7,7 +7,7 @@
     [AddDate]              DATETIME     NULL,
     [EditName]             VARCHAR (10) CONSTRAINT [DF_Order_MarkerList_PatternPanel_EditName] DEFAULT ('') NULL,
     [EditDate]             DATETIME     NULL,
-    CONSTRAINT [PK_Order_MarkerList_PatternPanel] PRIMARY KEY CLUSTERED ([PatternPanel] ASC, [Order_MarkerlistUkey] ASC)
+    CONSTRAINT [PK_Order_MarkerList_PatternPanel] PRIMARY KEY CLUSTERED ([Order_MarkerlistUkey], [LectraCode])
 );
 
 

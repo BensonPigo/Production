@@ -33,7 +33,7 @@
     [AddDate]                 DATETIME       NULL,
     [EditName]                VARCHAR (10)   CONSTRAINT [DF_Operation_EditName] DEFAULT ('') NULL,
     [EditDate]                DATETIME       NULL,
-    [Ukey]                    BIGINT         CONSTRAINT [DF_Operation_Ukey] DEFAULT ((0)) NULL,
+    [Ukey]                    BIGINT          NOT NULL IDENTITY,
     CONSTRAINT [PK_Operation] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

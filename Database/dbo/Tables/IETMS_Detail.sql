@@ -4,11 +4,12 @@
     [Location]    VARCHAR (1)    CONSTRAINT [DF_IETMS_Detail_Location] DEFAULT ('') NULL,
     [OperationID] VARCHAR (20)   CONSTRAINT [DF_IETMS_Detail_OperationID] DEFAULT ('') NULL,
     [Mold]        NVARCHAR (65)  CONSTRAINT [DF_IETMS_Detail_Mold] DEFAULT ('') NULL,
-    [Annotation]  NVARCHAR (100) CONSTRAINT [DF_IETMS_Detail_Annotation] DEFAULT ('') NULL,
+    [Annotation]  NVARCHAR (MAX) CONSTRAINT [DF_IETMS_Detail_Annotation] DEFAULT ('') NULL,
     [Frequency]   NUMERIC (4, 2) CONSTRAINT [DF_IETMS_Detail_Frequency] DEFAULT ((0)) NULL,
     [SMV]         NUMERIC (6, 4) CONSTRAINT [DF_IETMS_Detail_SMV] DEFAULT ((0)) NULL,
-    [SeamLength]  NUMERIC (8, 2) NULL,
-    CONSTRAINT [PK_IETMS_Detail] PRIMARY KEY CLUSTERED ([IETMSUkey] ASC, [SEQ] ASC)
+    [SeamLength]  NUMERIC (8, 2) NULL DEFAULT ((0)),
+    [UKey] BIGINT NOT NULL DEFAULT ((0)), 
+    CONSTRAINT [PK_IETMS_Detail] PRIMARY KEY CLUSTERED ([UKey])
 );
 
 
@@ -47,3 +48,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'次數', @l
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'IESMV', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'IETMS_Detail', @level2type = N'COLUMN', @level2name = N'SMV';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'UKey',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'IETMS_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'UKey'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'SeamLength',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'IETMS_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'SeamLength'

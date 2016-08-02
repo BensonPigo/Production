@@ -7,7 +7,7 @@
     [ArtworkTypeDetail] VARCHAR (20)   CONSTRAINT [DF_MachineType_ArtworkTypeDetail] DEFAULT ('') NULL,
     [Mold]              BIT            CONSTRAINT [DF_MachineType_Mold] DEFAULT ((0)) NULL,
     [RPM]               INT            CONSTRAINT [DF_MachineType_RPM] DEFAULT ((0)) NULL,
-    [Stitches]          NUMERIC (5, 1) CONSTRAINT [DF_MachineType_Stitches] DEFAULT ((0)) NULL,
+    [Stitches]          NUMERIC (6, 1) CONSTRAINT [DF_MachineType_Stitches] DEFAULT ((0)) NULL,
     [Picture1]          NVARCHAR (60)  CONSTRAINT [DF_MachineType_Picture1] DEFAULT ('') NULL,
     [Picture2]          NVARCHAR (60)  CONSTRAINT [DF_MachineType_Picture2] DEFAULT ('') NULL,
     [MachineAllow]      NUMERIC (4, 2) CONSTRAINT [DF_MachineType_MachineAllow] DEFAULT ((0)) NULL,

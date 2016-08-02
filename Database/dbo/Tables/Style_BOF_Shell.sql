@@ -2,6 +2,7 @@
     [StyleUkey]  BIGINT       CONSTRAINT [DF_Style_BOF_Shell_StyleUkey] DEFAULT ((0)) NOT NULL,
     [FabricCode] VARCHAR (3)  CONSTRAINT [DF_Style_BOF_Shell_FabricCode] DEFAULT ('') NOT NULL,
     [Refno]      VARCHAR (20) CONSTRAINT [DF_Style_BOF_Shell_Refno] DEFAULT ('') NOT NULL,
+	[Style_BOFUkey] BIGINT NULL DEFAULT ((0)), 
     [AddName]    VARCHAR (10) CONSTRAINT [DF_Style_BOF_Shell_AddName] DEFAULT ('') NULL,
     [AddDate]    DATETIME     NULL,
     [EditName]   VARCHAR (10) CONSTRAINT [DF_Style_BOF_Shell_EditName] DEFAULT ('') NULL,

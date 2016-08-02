@@ -7,6 +7,7 @@
     [ArtworkID]     VARCHAR (20)   CONSTRAINT [DF_Order_Artwork_ArtworkID] DEFAULT ('') NOT NULL,
     [ArtworkName]   NVARCHAR (40)  CONSTRAINT [DF_Order_Artwork_ArtworkName] DEFAULT ('') NULL,
     [Qty]           INT            CONSTRAINT [DF_Order_Artwork_Qty] DEFAULT ((0)) NULL,
+	[TMS]           INT            CONSTRAINT [DF_Order_Artwork_TMS] DEFAULT ((0)) NULL,
     [Price]         NUMERIC (8, 4) CONSTRAINT [DF_Order_Artwork_Price] DEFAULT ((0)) NULL,
     [Cost]          NUMERIC (8, 4) CONSTRAINT [DF_Order_Artwork_Cost] DEFAULT ((0)) NULL,
     [Remark]        NVARCHAR (100) CONSTRAINT [DF_Order_Artwork_Remark] DEFAULT ('') NULL,
@@ -15,7 +16,6 @@
     [AddDate]       DATETIME       NULL,
     [EditName]      VARCHAR (10)   CONSTRAINT [DF_Order_Artwork_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME       NULL,
-    [TMS]           INT            CONSTRAINT [DF_Order_Artwork_TMS] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Order_Artwork] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

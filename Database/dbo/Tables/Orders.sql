@@ -41,7 +41,7 @@
     [CutOffLine]          DATE           NULL,
     [PulloutDate]         DATE           NULL,
     [CMPUnit]             VARCHAR (8)    CONSTRAINT [DF_Orders_CMPUnit] DEFAULT ('') NULL,
-    [CMPPrice]            NUMERIC (5, 2) CONSTRAINT [DF_Orders_CMPPrice] DEFAULT ((0)) NULL,
+    [CMPPrice]            NUMERIC (6, 2) CONSTRAINT [DF_Orders_CMPPrice] DEFAULT ((0)) NULL,
     [CMPQDate]            DATE           NULL,
     [CMPQRemark]          NVARCHAR (MAX) CONSTRAINT [DF_Orders_CMPQRemark] DEFAULT ('') NULL,
     [EachConsApv]         DATETIME       NULL,
@@ -91,7 +91,7 @@
     [OutstandingReason]   VARCHAR (5)    CONSTRAINT [DF_Orders_OutstandingReason] DEFAULT ('') NULL,
     [StyleUkey]           BIGINT         CONSTRAINT [DF_Orders_StyleUkey] DEFAULT ((0)) NULL,
     [POID]                VARCHAR (13)   CONSTRAINT [DF_Orders_POID] DEFAULT ('') NULL,
-    [IsProPhet]           BIT            CONSTRAINT [DF_Orders_IsProPhet] DEFAULT ((0)) NULL,
+    [IsNotRepeatOrMapping]           BIT            CONSTRAINT [DF_Orders_IsProPhet] DEFAULT ((0)) NULL,
     [SplitOrderId]        VARCHAR (13)   CONSTRAINT [DF_Orders_SplitOrderId] DEFAULT ('') NULL,
     [FtyKPI]              DATETIME       NULL,
     [AddName]             VARCHAR (10)   CONSTRAINT [DF_Orders_AddName] DEFAULT ('') NULL,
@@ -320,7 +320,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購單�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是Prophet', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'IsProPhet';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否為非格子布或非Repeat或非Body Mapping', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = 'IsNotRepeatOrMapping';
 
 
 GO

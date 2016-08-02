@@ -4,7 +4,7 @@
     [Article]     VARCHAR (8)    CONSTRAINT [DF_Style_Article_Article] DEFAULT ('') NOT NULL,
     [TissuePaper] BIT            CONSTRAINT [DF_Style_Article_TissuePaper] DEFAULT ((0)) NULL,
     [ArticleName] NVARCHAR (100) CONSTRAINT [DF_Style_Article_ArticleName] DEFAULT ('') NULL,
-    [Content]     NVARCHAR (MAX) CONSTRAINT [DF_Style_Article_Content] DEFAULT ('') NULL,
+    [Contents]     NVARCHAR (MAX) CONSTRAINT [DF_Style_Article_Content] DEFAULT ('') NULL,
     CONSTRAINT [PK_Style_Article] PRIMARY KEY CLUSTERED ([StyleUkey] ASC, [Article] ASC)
 );
 
@@ -34,5 +34,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'顏色組�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'成衣成份', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_Article', @level2type = N'COLUMN', @level2name = N'Content';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'成衣成份', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_Article', @level2type = N'COLUMN', @level2name = 'Contents';
 

@@ -8,7 +8,7 @@
     [LectraCode]   VARCHAR (2)  CONSTRAINT [DF_Pattern_GL_LectraCode_LectraCode] DEFAULT ('') NOT NULL,
     [PatternPanel] VARCHAR (2)  CONSTRAINT [DF_Pattern_GL_LectraCode_PatternPanel] DEFAULT ('') NOT NULL,
     [FabricCode]   VARCHAR (2)  CONSTRAINT [DF_Pattern_GL_LectraCode_FabricCode] DEFAULT ('') NULL,
-    CONSTRAINT [PK_Pattern_GL_LectraCode] PRIMARY KEY CLUSTERED ([PatternUKEY] ASC, [SEQ] ASC, [ArticleGroup] ASC)
+    CONSTRAINT [PK_Pattern_GL_LectraCode] PRIMARY KEY CLUSTERED ([ID], [ArticleGroup], [Version], [SEQ])
 );
 
 

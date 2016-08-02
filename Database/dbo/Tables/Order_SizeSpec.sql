@@ -1,7 +1,6 @@
 ﻿CREATE TABLE [dbo].[Order_SizeSpec] (
     [Id]       VARCHAR (13) CONSTRAINT [DF_Order_SizeSpec_Id] DEFAULT ('') NOT NULL,
     [SizeItem] VARCHAR (3)  CONSTRAINT [DF_Order_SizeSpec_SizeItem] DEFAULT ('') NOT NULL,
-    [Seq]      VARCHAR (2)  CONSTRAINT [DF_Order_SizeSpec_Seq] DEFAULT ('') NULL,
     [SizeCode] VARCHAR (8)  CONSTRAINT [DF_Order_SizeSpec_SizeCode] DEFAULT ('') NOT NULL,
     [SizeSpec] VARCHAR (15) CONSTRAINT [DF_Order_SizeSpec_SizeSpec] DEFAULT ('') NULL,
     CONSTRAINT [PK_Order_SizeSpec] PRIMARY KEY CLUSTERED ([Id] ASC, [SizeItem] ASC, [SizeCode] ASC)
@@ -21,7 +20,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'量法順�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'尺寸順序(直欄)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_SizeSpec', @level2type = N'COLUMN', @level2name = N'Seq';
+
 
 
 GO

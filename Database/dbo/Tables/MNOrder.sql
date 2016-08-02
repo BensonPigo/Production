@@ -5,7 +5,7 @@
     [StyleID]       VARCHAR (15)   CONSTRAINT [DF_MNOrder_StyleID] DEFAULT ('') NOT NULL,
     [SeasonID]      VARCHAR (10)   CONSTRAINT [DF_MNOrder_SeasonID] DEFAULT ('') NOT NULL,
     [Qty]           INT            CONSTRAINT [DF_MNOrder_Qty] DEFAULT ((0)) NULL,
-    [OrderUNit]     VARCHAR (8)    CONSTRAINT [DF_MNOrder_OrderUNit] DEFAULT ('') NULL,
+    [OrderUnit]     VARCHAR (8)    CONSTRAINT [DF_MNOrder_OrderUNit] DEFAULT ('') NULL,
     [FactoryID]     VARCHAR (8)    CONSTRAINT [DF_MNOrder_FactoryID] DEFAULT ('') NOT NULL,
     [CTNQty]        SMALLINT       CONSTRAINT [DF_MNOrder_CTNQty] DEFAULT ((0)) NULL,
     [CustCDID]      VARCHAR (16)   CONSTRAINT [DF_MNOrder_CustCDID] DEFAULT ('') NULL,
@@ -57,7 +57,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單數�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder', @level2type = N'COLUMN', @level2name = N'OrderUNit';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder', @level2type = N'COLUMN', @level2name = 'OrderUnit';
 
 
 GO

@@ -1952,19 +1952,24 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Functions\GetInspectionResult.sql" />
+    <Build Include="dbo\Tables\Pattern_GL_Artwork.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\Order_FabricCode_Article.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\MNOrder_SizeCode.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ProductionDB.refactorlog" />
-  </ItemGroup>
-  <ItemGroup>
-    <ArtifactReference Include="..\..\資料庫\FinanceEN.dacpac">
-      <HintPath>..\..\資料庫\FinanceEN.dacpac</HintPath>
-      <SuppressMissingDependenciesErrors>True</SuppressMissingDependenciesErrors>
-      <DatabaseSqlCmdVariable>FinanceEN</DatabaseSqlCmdVariable>
-    </ArtifactReference>
   </ItemGroup>
   <ItemGroup>
     <SqlCmdVariable Include="FinanceEN">

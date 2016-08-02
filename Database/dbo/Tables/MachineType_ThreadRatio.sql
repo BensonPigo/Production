@@ -1,10 +1,10 @@
 ﻿CREATE TABLE [dbo].[MachineType_ThreadRatio] (
     [ID]              VARCHAR (10)   CONSTRAINT [DF_MachineType_ThreadRatio_ID] DEFAULT ('') NOT NULL,
     [SEQ]             VARCHAR (2)    CONSTRAINT [DF_MachineType_ThreadRatio_SEQ] DEFAULT ('') NOT NULL,
-    [ThreadLocation]  VARCHAR (5)    CONSTRAINT [DF_MachineType_ThreadRatio_ThreadLocation] DEFAULT ('') NOT NULL,
+    [ThreadLocation]  VARCHAR (4)    CONSTRAINT [DF_MachineType_ThreadRatio_ThreadLocation] DEFAULT ('') NULL,
     [UseRatio]        VARCHAR (15)   CONSTRAINT [DF_MachineType_ThreadRatio_UseRatio] DEFAULT ('') NULL,
-    [UseRatioNumeric] NUMERIC (4, 2) CONSTRAINT [DF_MachineType_ThreadRatio_UseRatioNumeric] DEFAULT ((0)) NULL,
-    CONSTRAINT [PK_MachineType_ThreadRatio] PRIMARY KEY CLUSTERED ([ID] ASC, [SEQ] ASC, [ThreadLocation] ASC)
+    [UseRatioNumeric] NUMERIC (4, 2) CONSTRAINT [DF_MachineType_ThreadRatio_UseRatioNumeric] DEFAULT ((0)) NULL, 
+    CONSTRAINT [PK_MachineType_ThreadRatio] PRIMARY KEY ([ID], [SEQ])
 );
 
 
@@ -25,7 +25,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'線在機�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'用限量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MachineType_ThreadRatio', @level2type = N'COLUMN', @level2name = N'UseRatio';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'用線量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MachineType_ThreadRatio', @level2type = N'COLUMN', @level2name = N'UseRatio';
 
 
 GO

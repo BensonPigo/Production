@@ -32,35 +32,35 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'APS SQL Ser
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'½s¿è®É¶¡', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ToMDivision', @level2type = N'COLUMN', @level2name = N'EditDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ToMDivision', @level2type = N'COLUMN', @level2name = N'EditDate';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'½s¿èªÌ', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ToMDivision', @level2type = N'COLUMN', @level2name = N'EditName';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯者', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ToMDivision', @level2type = N'COLUMN', @level2name = N'EditName';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'·s¼W®É¶¡', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ToMDivision', @level2type = N'COLUMN', @level2name = N'AddDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ToMDivision', @level2type = N'COLUMN', @level2name = N'AddDate';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'·s¼WªÌ', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ToMDivision', @level2type = N'COLUMN', @level2name = N'AddName';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增者', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ToMDivision', @level2type = N'COLUMN', @level2name = N'AddName';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ºÞ²zªÌ', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ToMDivision', @level2type = N'COLUMN', @level2name = N'Manager';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'管理者 ', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ToMDivision', @level2type = N'COLUMN', @level2name = N'Manager';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'°ê§O', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ToMDivision', @level2type = N'COLUMN', @level2name = N'CountryID';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'國別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ToMDivision', @level2type = N'COLUMN', @level2name = N'CountryID';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'¥þ¦W', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ToMDivision', @level2type = N'COLUMN', @level2name = N'Name';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'全名', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ToMDivision', @level2type = N'COLUMN', @level2name = N'Name';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'¥N¸¹', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ToMDivision', @level2type = N'COLUMN', @level2name = N'ID';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ToMDivision', @level2type = N'COLUMN', @level2name = N'ID';
 
 
 GO

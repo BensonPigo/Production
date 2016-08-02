@@ -3,7 +3,8 @@
     [Seq]       VARCHAR (2) CONSTRAINT [DF_Style_SizeCode_Seq] DEFAULT ('') NOT NULL,
     [SizeGroup] VARCHAR (1) CONSTRAINT [DF_Style_SizeCode_SizeGroup] DEFAULT ('') NULL,
     [SizeCode]  VARCHAR (8) CONSTRAINT [DF_Style_SizeCode_SizeCode] DEFAULT ('') NOT NULL,
-    CONSTRAINT [PK_Style_SizeCode] PRIMARY KEY CLUSTERED ([StyleUkey] ASC, [Seq] ASC, [SizeCode] ASC)
+    [UKey] BIGINT NOT NULL DEFAULT ((0)), 
+    CONSTRAINT [PK_Style_SizeCode] PRIMARY KEY CLUSTERED ([UKey])
 );
 
 

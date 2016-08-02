@@ -1,6 +1,5 @@
 ﻿CREATE TABLE [dbo].[InvAdjust_Qty] (
     [ID]           VARCHAR (13)   CONSTRAINT [DF_InvAdjust_Qty_ID] DEFAULT ('') NOT NULL,
-    [Pullout3Ukey] BIGINT         CONSTRAINT [DF_InvAdjust_Qty_Pullout3Ukey] DEFAULT ((0)) NULL,
     [Article]      VARCHAR (8)    CONSTRAINT [DF_InvAdjust_Qty_Article] DEFAULT ('') NOT NULL,
     [SizeCode]     VARCHAR (8)    CONSTRAINT [DF_InvAdjust_Qty_SizeCode] DEFAULT ('') NOT NULL,
     [OrderQty]     INT            CONSTRAINT [DF_InvAdjust_Qty_OrderQty] DEFAULT ((0)) NULL,
@@ -23,7 +22,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'調整單�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Pullout3 Ukey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust_Qty', @level2type = N'COLUMN', @level2name = N'Pullout3Ukey';
+
 
 
 GO

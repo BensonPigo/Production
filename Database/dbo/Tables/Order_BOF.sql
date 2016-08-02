@@ -4,7 +4,7 @@
     [Refno]              VARCHAR (20)   CONSTRAINT [DF_Order_BOF_Refno] DEFAULT ('') NOT NULL,
     [SCIRefno]           VARCHAR (26)   CONSTRAINT [DF_Order_BOF_SCIRefno] DEFAULT ('') NOT NULL,
     [SuppID]             VARCHAR (6)    CONSTRAINT [DF_Order_BOF_SuppID] DEFAULT ('') NOT NULL,
-    [ConsPC]             NUMERIC (6, 4) CONSTRAINT [DF_Order_BOF_ConsPC] DEFAULT ((0)) NULL,
+    [ConsPC]             NUMERIC (8, 4) CONSTRAINT [DF_Order_BOF_ConsPC] DEFAULT ((0)) NULL,
     [Seq1]               VARCHAR (3)    CONSTRAINT [DF_Order_BOF_Seq1] DEFAULT ('') NOT NULL,
     [Kind]               VARCHAR (1)    CONSTRAINT [DF_Order_BOF_Kind] DEFAULT ('') NULL,
     [Ukey]               BIGINT         CONSTRAINT [DF_Order_BOF_Ukey] DEFAULT ((0)) NOT NULL,

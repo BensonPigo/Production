@@ -9,11 +9,14 @@
     [Description]      NVARCHAR (150) CONSTRAINT [DF_Fabric_Description] DEFAULT ('') NULL,
     [DescDetail]       NVARCHAR (MAX) CONSTRAINT [DF_Fabric_DescDetail] DEFAULT ('') NULL,
     [LossType]         TINYINT        CONSTRAINT [DF_Fabric_LossType] DEFAULT ((0)) NULL,
-    [LossPercent]      NUMERIC (3, 1) CONSTRAINT [DF_Fabric_LossPercent] DEFAULT ((0)) NULL,
+    [LossPercent]      NUMERIC (4, 1) CONSTRAINT [DF_Fabric_LossPercent] DEFAULT ((0)) NULL,
     [LossQty]          SMALLINT       CONSTRAINT [DF_Fabric_LossQty] DEFAULT ((0)) NULL,
     [LossStep]         INT            CONSTRAINT [DF_Fabric_LossStep] DEFAULT ((0)) NULL,
     [UsageUnit]        VARCHAR (8)    CONSTRAINT [DF_Fabric_UsageUnit] DEFAULT ('') NULL,
-    [Width]            NUMERIC (3, 1) CONSTRAINT [DF_Fabric_Width] DEFAULT ((0)) NULL,
+    [Width]            NUMERIC (5, 1) CONSTRAINT [DF_Fabric_Width] DEFAULT ((0)) NULL,
+	[Weight]     NUMERIC (9, 4) CONSTRAINT [DF_Fabric_Supp_WeightYDS] DEFAULT ((0)) NULL,
+	[CBM]           NUMERIC (7, 2) CONSTRAINT [DF_Fabric_Supp_CBM] DEFAULT ((0)) NULL,
+    [CBMWeight]     NUMERIC (10, 4) CONSTRAINT [DF_Fabric_Supp_CBMWeight] DEFAULT ((0)) NULL,
     [NoSizeUnit]       BIT            CONSTRAINT [DF_Fabric_NoSizeUnit] DEFAULT ((0)) NULL,
     [BomTypeSize]      BIT            CONSTRAINT [DF_Fabric_BomTypeSize] DEFAULT ((0)) NULL,
     [BomTypeColor]     BIT            CONSTRAINT [DF_Fabric_BomTypeColor] DEFAULT ((0)) NULL,
@@ -107,6 +110,18 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'幅寬', @l
 
 
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'主料：碼重(g)、副料：重量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric', @level2type = N'COLUMN', @level2name = N'Weight';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'材積', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric', @level2type = N'COLUMN', @level2name = N'CBM';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'材積重', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric', @level2type = N'COLUMN', @level2name = N'CBMWeight';
+
+
+GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'依尺寸展開', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric', @level2type = N'COLUMN', @level2name = N'BomTypeSize';
 
 
@@ -176,4 +191,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改NL Code時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric', @level2type = N'COLUMN', @level2name = N'NLCodeEditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'平方米重', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric', @level2type = N'COLUMN', @level2name = N'WeightM2';
 
