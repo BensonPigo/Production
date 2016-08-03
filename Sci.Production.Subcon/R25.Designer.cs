@@ -50,7 +50,7 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.txtartworktype_fty1);
+//            this.panel1.Controls.Add(this.txtartworktype_fty1);
             this.panel1.Controls.Add(this.textBox2);
             this.panel1.Controls.Add(this.textBox1);
             this.panel1.Controls.Add(this.comboBox1);

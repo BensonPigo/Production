@@ -22,7 +22,7 @@ namespace Sci.Production.Subcon
         }
         protected override bool ValidateInput()
         {
-           // DateTime?=
+           
 
             
 
@@ -30,6 +30,8 @@ namespace Sci.Production.Subcon
         }
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+
+
             
             return base.OnAsyncDataLoad(e);
         }
