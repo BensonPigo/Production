@@ -22,6 +22,7 @@ namespace Sci.Production.Subcon
         }
         protected override bool ValidateInput()
         {
+           // DateTime?=
 
             
 
