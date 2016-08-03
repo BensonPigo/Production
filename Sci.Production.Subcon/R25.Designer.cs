@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
@@ -40,17 +41,12 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // toexcel
-            // 
-          
-            // 
             // panel1
             // 
-//            this.panel1.Controls.Add(this.txtartworktype_fty1);
+            this.panel1.Controls.Add(this.txtartworktype_fty1);
             this.panel1.Controls.Add(this.textBox2);
             this.panel1.Controls.Add(this.textBox1);
             this.panel1.Controls.Add(this.comboBox1);
@@ -66,6 +62,17 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(494, 263);
             this.panel1.TabIndex = 94;
+            // 
+            // txtartworktype_fty1
+            // 
+            this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
+            this.txtartworktype_fty1.cClassify = "\'p\'";
+            this.txtartworktype_fty1.cSubprocess = "";
+            this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtartworktype_fty1.Location = new System.Drawing.Point(118, 131);
+            this.txtartworktype_fty1.Name = "txtartworktype_fty1";
+            this.txtartworktype_fty1.Size = new System.Drawing.Size(100, 23);
+            this.txtartworktype_fty1.TabIndex = 12;
             // 
             // textBox2
             // 
@@ -166,17 +173,6 @@
             this.label1.Size = new System.Drawing.Size(101, 23);
             this.label1.TabIndex = 0;
             this.label1.Text = "Receive Date:";
-            // 
-            // txtartworktype_fty1
-            // 
-            this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_fty1.cClassify = "";
-            this.txtartworktype_fty1.cSubprocess = "";
-            this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_fty1.Location = new System.Drawing.Point(118, 131);
-            this.txtartworktype_fty1.Name = "txtartworktype_fty1";
-            this.txtartworktype_fty1.Size = new System.Drawing.Size(100, 23);
-            this.txtartworktype_fty1.TabIndex = 12;
             // 
             // R25
             // 

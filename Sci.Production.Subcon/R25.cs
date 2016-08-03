@@ -22,20 +22,120 @@ namespace Sci.Production.Subcon
         }
         protected override bool ValidateInput()
         {
-           
 
-            
+
 
             return base.ValidateInput();
         }
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            DateTime? ReceiveDate = dateRange1.Value1;
+            DateTime? ReceiveDate2 = dateRange1.Value2;
+            string SP = textBox1.Text.ToString();
+            string Refno = textBox2.Text.ToString();
+            string Category = txtartworktype_fty1.Text.ToString();
+            string Supplier = txtsubcon1.TextBox1.Text;
+            string Factory = comboBox1.SelectedItem.ToString();
+
+            List<SqlParameter> lis = new List<SqlParameter>();
+            string sqlWhere = "";
+            List<string> sqlWheres = new List<string>();
+            if (!this.dateRange1.Value1.Empty() && !this.dateRange1.Value2.Empty())
+            {
+                sqlWheres.Add("lr.issuedate between @ReceiveDate and @ReceiveDate2");
+                lis.Add(new SqlParameter("@ReceiveDate", ReceiveDate));
+                lis.Add(new SqlParameter("@ReceiveDate2", ReceiveDate2));
+            }
+            if (!this.textBox1.Text.Empty())
+            {
+                sqlWheres.Add("lrd.orderid=@SP");
+                lis.Add(new SqlParameter("@SP", SP));
+            }
+            if (!this.textBox2.Text.Empty())
+            {
+                sqlWheres.Add("lrd.refno=@Refno");
+                lis.Add(new SqlParameter("@Refno", Refno));
+            }
+            if (!this.txtartworktype_fty1.Text.Empty())
+            {
+                sqlWheres.Add("lrd.category=@Category");
+                lis.Add(new SqlParameter("@Category", Category));
+            }
+            if (!this.txtsubcon1.Text.Empty())
+            {
+                sqlWheres.Add("lr.localsuppid=@Supplier");
+                lis.Add(new SqlParameter("@Supplier", Supplier));
+            }
+            if (!this.comboBox1.Text.Empty())
+            {
+                sqlWheres.Add("lr.factoryid =@Factory");
+                lis.Add(new SqlParameter("@Factory", Factory));
+            }
+
+            sqlWhere = string.Join(" and ", sqlWheres);
+            if (!sqlWhere.Empty())
+            {
+                sqlWhere = " where " + sqlWhere;
+            }
 
 
-            
             return base.OnAsyncDataLoad(e);
         }
 
 
+        protected override bool OnToExcel(Win.ReportDefinition report)
+        {
+            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+            saveDialog.ShowDialog();
+            string outpath = saveDialog.FileName;
+            if (outpath.Empty())
+            {
+                return false;
+            }
+
+            DualResult result;
+            DataTable dtt;
+            string sqlcmd = string.Format(@"select lr.FactoryId [Factory] 
+                    ,lr.Id [ID]
+                    ,lr.IssueDate [Receive_Date]
+                    ,lr.LocalSuppID [Supplier]
+                    ,lr.InvNo [Invoice]
+                    ,lrd.OrderId [SP]
+                    ,lrd.Category [Category]
+                    ,lrd.Refno [Refno]
+                    ,[Description]=dbo.getItemDesc(lrd.Category,lrd.Refno)
+                    ,lrd.ThreadColorID [Color_Shade]
+                    ,c.UnitId [Unit]
+                    ,c.Qty [PO_Qty]
+                    ,lrd.Qty [Qty]
+                    ,c.Qty-lrd.Qty [On_Road]
+                    ,lrd.Location [Location]
+                    ,lr.Remark [Remark]
+           from dbo.LocalReceiving lr
+           left join dbo.LocalReceiving_Detail lrd on  lr.id=lrd.Id
+           left join dbo.LocalPO_Detail c on lrd.LocalPo_detailukey=c.Ukey order by lr.issuedate,lr.id; + sqlWhere;");
+            result = DBProxy.Current.Select("", sqlcmd, out dtt);
+            if (!result)
+            {
+                ShowErr(result);
+                return false;
+            }
+            string Factory = dtt.Rows[0]["Factory"].ToString();
+            //ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Factory", Factory));
+
+
+            string xlt = @"Subcon_R25.xltx";
+            SaveXltReportCls xl = new SaveXltReportCls(xlt);
+            SaveXltReportCls.xltRptTable xlTable = new SaveXltReportCls.xltRptTable(dtt);
+            int allColumns = dtt.Columns.Count;
+            xlTable.Borders.OnlyHeaderBorders = true;
+            SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(xlTable);
+            xdt_All.ShowHeader = false;
+            xl.dicDatas.Add("##Factory", xdt_All);
+            xl.Save(outpath);
+            return false;
+        }
     }
-}
+ }
+
