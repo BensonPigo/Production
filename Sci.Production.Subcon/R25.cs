@@ -22,8 +22,27 @@ namespace Sci.Production.Subcon
         }
         protected override bool ValidateInput()
         {
+            if (!this.dateRange1.Text1.Empty())
+            {
+            
+                MyUtility.Msg.ErrorBox("[Receive Date]  one of the inputs must be selected");
+                dateRange1.Focus();
+                return false;
+            }
+            if (!this.dateRange1.Text2.Empty())
+            {
 
+                MyUtility.Msg.ErrorBox("[Receive Date]  one of the inputs must be selected");
+                dateRange1.Focus();
+                return false;
+            }
+            if (!this.textBox1.Text.Empty())
+            {
 
+                MyUtility.Msg.ErrorBox("[sp]  one of the inputs must be selected");
+                textBox1.Focus();
+                return false;
+            }
 
             return base.ValidateInput();
         }
@@ -38,7 +57,7 @@ namespace Sci.Production.Subcon
             string Factory = comboBox1.SelectedItem.ToString();
 
             List<SqlParameter> lis = new List<SqlParameter>();
-            string sqlWhere = "";
+            string sqlWhere = ""; string order = "";
             List<string> sqlWheres = new List<string>();
             if (!this.dateRange1.Value1.Empty() && !this.dateRange1.Value2.Empty())
             {
@@ -71,28 +90,12 @@ namespace Sci.Production.Subcon
                 sqlWheres.Add("lr.factoryid =@Factory");
                 lis.Add(new SqlParameter("@Factory", Factory));
             }
-
+            order = "order by lr.issuedate,lr.id";
             sqlWhere = string.Join(" and ", sqlWheres);
             if (!sqlWhere.Empty())
             {
                 sqlWhere = " where " + sqlWhere;
             }
-
-
-            return base.OnAsyncDataLoad(e);
-        }
-
-
-        protected override bool OnToExcel(Win.ReportDefinition report)
-        {
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpath = saveDialog.FileName;
-            if (outpath.Empty())
-            {
-                return false;
-            }
-
             DualResult result;
             DataTable dtt;
             string sqlcmd = string.Format(@"select lr.FactoryId [Factory] 
@@ -113,29 +116,28 @@ namespace Sci.Production.Subcon
                     ,lr.Remark [Remark]
            from dbo.LocalReceiving lr
            left join dbo.LocalReceiving_Detail lrd on  lr.id=lrd.Id
-           left join dbo.LocalPO_Detail c on lrd.LocalPo_detailukey=c.Ukey order by lr.issuedate,lr.id; + sqlWhere;");
+           left join dbo.LocalPO_Detail c on lrd.LocalPo_detailukey=c.Ukey  " + sqlWhere +" "+order);
             result = DBProxy.Current.Select("", sqlcmd, out dtt);
-            if (!result)
+           
+
+            return base.OnAsyncDataLoad(e);
+        }
+
+
+        protected override bool OnToExcel(Win.ReportDefinition report)
+        {
+            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+            saveDialog.ShowDialog();
+            string outpath = saveDialog.FileName;
+            if (outpath.Empty())
             {
-                ShowErr(result);
                 return false;
             }
-            string Factory = dtt.Rows[0]["Factory"].ToString();
-            //ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Factory", Factory));
-
-
             string xlt = @"Subcon_R25.xltx";
             SaveXltReportCls xl = new SaveXltReportCls(xlt);
-            SaveXltReportCls.xltRptTable xlTable = new SaveXltReportCls.xltRptTable(dtt);
-            int allColumns = dtt.Columns.Count;
-            xlTable.Borders.OnlyHeaderBorders = true;
-            SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(xlTable);
-            xdt_All.ShowHeader = false;
-            xl.dicDatas.Add("##Factory", xdt_All);
+            xl.dicDatas.Add("##Factory", false);
             xl.Save(outpath);
             return false;
         }
     }
  }
-
