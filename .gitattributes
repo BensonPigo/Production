@@ -2588,6 +2588,8 @@ _Dll/Ict.dll -text
 _Dll/Microsoft.ReportViewer.Common.dll -text
 _Dll/Microsoft.ReportViewer.ProcessingObjectModel.dll -text
 _Dll/Microsoft.ReportViewer.WinForms.dll -text
+_Dll/ObjectListView.XML -text
+_Dll/ObjectListView.dll -text
 _Dll/Sci.Machine.Class.dll -text
 _Dll/Sci.Proj.XML -text
 _Dll/Sci.Proj.dll -text
