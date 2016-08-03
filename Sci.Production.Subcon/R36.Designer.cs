@@ -29,11 +29,15 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.comboBox4 = new Sci.Win.UI.ComboBox();
             this.dateRange5 = new Sci.Win.UI.DateRange();
             this.dateRange4 = new Sci.Win.UI.DateRange();
             this.comboBox3 = new Sci.Win.UI.ComboBox();
             this.comboBox2 = new Sci.Win.UI.ComboBox();
+            this.txtuser2 = new Sci.Production.Class.txtuser();
+            this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.txtLocalSupp1 = new Sci.Production.Class.txtLocalSupp();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.label15 = new Sci.Win.UI.Label();
             this.textBox1 = new Sci.Win.UI.TextBox();
@@ -49,16 +53,12 @@
             this.label5 = new Sci.Win.UI.Label();
             this.dateRange3 = new Sci.Win.UI.DateRange();
             this.label4 = new Sci.Win.UI.Label();
-            this.dateRange2 = new Sci.Win.UI.DateRange();
+            this.dateRange_Approve = new Sci.Win.UI.DateRange();
             this.label3 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
+            this.dateRange_Debit = new Sci.Win.UI.DateRange();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
-            this.txtuser2 = new Sci.Production.Class.txtuser();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.txtLocalSupp1 = new Sci.Production.Class.txtLocalSupp();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -88,14 +88,23 @@
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.dateRange3);
             this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.dateRange2);
+            this.panel1.Controls.Add(this.dateRange_Approve);
             this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.dateRange1);
+            this.panel1.Controls.Add(this.dateRange_Debit);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(448, 368);
             this.panel1.TabIndex = 94;
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.Location = new System.Drawing.Point(135, 196);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(120, 23);
+            this.txtfactory1.TabIndex = 33;
             // 
             // comboBox4
             // 
@@ -158,6 +167,33 @@
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(121, 24);
             this.comboBox2.TabIndex = 28;
+            // 
+            // txtuser2
+            // 
+            this.txtuser2.DisplayBox1Binding = "";
+            this.txtuser2.Location = new System.Drawing.Point(134, 169);
+            this.txtuser2.Name = "txtuser2";
+            this.txtuser2.Size = new System.Drawing.Size(300, 23);
+            this.txtuser2.TabIndex = 27;
+            this.txtuser2.TextBox1Binding = "";
+            // 
+            // txtuser1
+            // 
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(134, 142);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(300, 23);
+            this.txtuser1.TabIndex = 26;
+            this.txtuser1.TextBox1Binding = "";
+            // 
+            // txtLocalSupp1
+            // 
+            this.txtLocalSupp1.DisplayBox1Binding = "";
+            this.txtLocalSupp1.Location = new System.Drawing.Point(134, 115);
+            this.txtLocalSupp1.Name = "txtLocalSupp1";
+            this.txtLocalSupp1.Size = new System.Drawing.Size(232, 23);
+            this.txtLocalSupp1.TabIndex = 25;
+            this.txtLocalSupp1.TextBox1Binding = "";
             // 
             // textBox2
             // 
@@ -294,12 +330,12 @@
             this.label4.TabIndex = 6;
             this.label4.Text = "Settled Date:";
             // 
-            // dateRange2
+            // dateRange_Approve
             // 
-            this.dateRange2.Location = new System.Drawing.Point(134, 34);
-            this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 5;
+            this.dateRange_Approve.Location = new System.Drawing.Point(134, 34);
+            this.dateRange_Approve.Name = "dateRange_Approve";
+            this.dateRange_Approve.Size = new System.Drawing.Size(280, 23);
+            this.dateRange_Approve.TabIndex = 5;
             // 
             // label3
             // 
@@ -310,12 +346,12 @@
             this.label3.TabIndex = 4;
             this.label3.Text = "Approved Date:";
             // 
-            // dateRange1
+            // dateRange_Debit
             // 
-            this.dateRange1.Location = new System.Drawing.Point(134, 7);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 3;
+            this.dateRange_Debit.Location = new System.Drawing.Point(134, 7);
+            this.dateRange_Debit.Name = "dateRange_Debit";
+            this.dateRange_Debit.Size = new System.Drawing.Size(280, 23);
+            this.dateRange_Debit.TabIndex = 3;
             // 
             // label2
             // 
@@ -350,42 +386,6 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(143, 24);
             this.comboBox1.TabIndex = 96;
-            // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.Location = new System.Drawing.Point(135, 196);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(120, 23);
-            this.txtfactory1.TabIndex = 33;
-            // 
-            // txtuser2
-            // 
-            this.txtuser2.DisplayBox1Binding = "";
-            this.txtuser2.Location = new System.Drawing.Point(134, 169);
-            this.txtuser2.Name = "txtuser2";
-            this.txtuser2.Size = new System.Drawing.Size(300, 23);
-            this.txtuser2.TabIndex = 27;
-            this.txtuser2.TextBox1Binding = "";
-            // 
-            // txtuser1
-            // 
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(134, 142);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 26;
-            this.txtuser1.TextBox1Binding = "";
-            // 
-            // txtLocalSupp1
-            // 
-            this.txtLocalSupp1.DisplayBox1Binding = "";
-            this.txtLocalSupp1.Location = new System.Drawing.Point(134, 115);
-            this.txtLocalSupp1.Name = "txtLocalSupp1";
-            this.txtLocalSupp1.Size = new System.Drawing.Size(232, 23);
-            this.txtLocalSupp1.TabIndex = 25;
-            this.txtLocalSupp1.TextBox1Binding = "";
             // 
             // R36
             // 
@@ -424,9 +424,9 @@
         private Win.UI.Label label5;
         private Win.UI.DateRange dateRange3;
         private Win.UI.Label label4;
-        private Win.UI.DateRange dateRange2;
+        private Win.UI.DateRange dateRange_Approve;
         private Win.UI.Label label3;
-        private Win.UI.DateRange dateRange1;
+        private Win.UI.DateRange dateRange_Debit;
         private Win.UI.Label label14;
         private Win.UI.TextBox textBox2;
         private Win.UI.Label label15;
