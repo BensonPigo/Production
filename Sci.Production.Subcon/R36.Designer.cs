@@ -29,6 +29,11 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.comboBox4 = new Sci.Win.UI.ComboBox();
+            this.dateRange5 = new Sci.Win.UI.DateRange();
+            this.dateRange4 = new Sci.Win.UI.DateRange();
+            this.comboBox3 = new Sci.Win.UI.ComboBox();
+            this.comboBox2 = new Sci.Win.UI.ComboBox();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.label15 = new Sci.Win.UI.Label();
             this.textBox1 = new Sci.Win.UI.TextBox();
@@ -50,15 +55,10 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.txtLocalSupp1 = new Sci.Production.Class.txtLocalSupp();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.txtuser2 = new Sci.Production.Class.txtuser();
-            this.comboBox2 = new Sci.Win.UI.ComboBox();
-            this.comboBox3 = new Sci.Win.UI.ComboBox();
-            this.dateRange4 = new Sci.Win.UI.DateRange();
-            this.dateRange5 = new Sci.Win.UI.DateRange();
-            this.comboBox4 = new Sci.Win.UI.ComboBox();
             this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.txtuser2 = new Sci.Production.Class.txtuser();
+            this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.txtLocalSupp1 = new Sci.Production.Class.txtLocalSupp();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -96,6 +96,68 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(448, 368);
             this.panel1.TabIndex = 94;
+            // 
+            // comboBox4
+            // 
+            this.comboBox4.BackColor = System.Drawing.Color.White;
+            this.comboBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox4.FormattingEnabled = true;
+            this.comboBox4.IsSupportUnselect = true;
+            this.comboBox4.Items.AddRange(new object[] {
+            "By Handle",
+            "By Supp",
+            "By SD"});
+            this.comboBox4.Location = new System.Drawing.Point(134, 330);
+            this.comboBox4.Name = "comboBox4";
+            this.comboBox4.Size = new System.Drawing.Size(121, 24);
+            this.comboBox4.TabIndex = 32;
+            // 
+            // dateRange5
+            // 
+            this.dateRange5.Location = new System.Drawing.Point(134, 304);
+            this.dateRange5.Name = "dateRange5";
+            this.dateRange5.Size = new System.Drawing.Size(280, 23);
+            this.dateRange5.TabIndex = 31;
+            // 
+            // dateRange4
+            // 
+            this.dateRange4.Location = new System.Drawing.Point(134, 279);
+            this.dateRange4.Name = "dateRange4";
+            this.dateRange4.Size = new System.Drawing.Size(280, 23);
+            this.dateRange4.TabIndex = 30;
+            // 
+            // comboBox3
+            // 
+            this.comboBox3.BackColor = System.Drawing.Color.White;
+            this.comboBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox3.FormattingEnabled = true;
+            this.comboBox3.IsSupportUnselect = true;
+            this.comboBox3.Items.AddRange(new object[] {
+            "Settled",
+            "Not Settled"});
+            this.comboBox3.Location = new System.Drawing.Point(134, 249);
+            this.comboBox3.Name = "comboBox3";
+            this.comboBox3.Size = new System.Drawing.Size(121, 24);
+            this.comboBox3.TabIndex = 29;
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.BackColor = System.Drawing.Color.White;
+            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.IsSupportUnselect = true;
+            this.comboBox2.Items.AddRange(new object[] {
+            "New",
+            "Sent",
+            "Approve",
+            "Reject",
+            "Junked",
+            "Encode",
+            "Received"});
+            this.comboBox2.Location = new System.Drawing.Point(134, 222);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(121, 24);
+            this.comboBox2.TabIndex = 28;
             // 
             // textBox2
             // 
@@ -289,23 +351,14 @@
             this.comboBox1.Size = new System.Drawing.Size(143, 24);
             this.comboBox1.TabIndex = 96;
             // 
-            // txtLocalSupp1
+            // txtfactory1
             // 
-            this.txtLocalSupp1.DisplayBox1Binding = "";
-            this.txtLocalSupp1.Location = new System.Drawing.Point(134, 115);
-            this.txtLocalSupp1.Name = "txtLocalSupp1";
-            this.txtLocalSupp1.Size = new System.Drawing.Size(232, 23);
-            this.txtLocalSupp1.TabIndex = 25;
-            this.txtLocalSupp1.TextBox1Binding = "";
-            // 
-            // txtuser1
-            // 
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(134, 142);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 26;
-            this.txtuser1.TextBox1Binding = "";
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.Location = new System.Drawing.Point(135, 196);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(120, 23);
+            this.txtfactory1.TabIndex = 33;
             // 
             // txtuser2
             // 
@@ -316,80 +369,23 @@
             this.txtuser2.TabIndex = 27;
             this.txtuser2.TextBox1Binding = "";
             // 
-            // comboBox2
+            // txtuser1
             // 
-            this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Items.AddRange(new object[] {
-            "New",
-            "Sent",
-            "Approve",
-            "Reject",
-            "Junked",
-            "Encode",
-            "Received",
-            "",
-            "",
-            "",
-            ""});
-            this.comboBox2.Location = new System.Drawing.Point(134, 222);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 24);
-            this.comboBox2.TabIndex = 28;
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(134, 142);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(300, 23);
+            this.txtuser1.TabIndex = 26;
+            this.txtuser1.TextBox1Binding = "";
             // 
-            // comboBox3
+            // txtLocalSupp1
             // 
-            this.comboBox3.BackColor = System.Drawing.Color.White;
-            this.comboBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.IsSupportUnselect = true;
-            this.comboBox3.Items.AddRange(new object[] {
-            "Settled",
-            "Not Settled"});
-            this.comboBox3.Location = new System.Drawing.Point(134, 249);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(121, 24);
-            this.comboBox3.TabIndex = 29;
-            // 
-            // dateRange4
-            // 
-            this.dateRange4.Location = new System.Drawing.Point(134, 279);
-            this.dateRange4.Name = "dateRange4";
-            this.dateRange4.Size = new System.Drawing.Size(280, 23);
-            this.dateRange4.TabIndex = 30;
-            // 
-            // dateRange5
-            // 
-            this.dateRange5.Location = new System.Drawing.Point(134, 304);
-            this.dateRange5.Name = "dateRange5";
-            this.dateRange5.Size = new System.Drawing.Size(280, 23);
-            this.dateRange5.TabIndex = 31;
-            // 
-            // comboBox4
-            // 
-            this.comboBox4.BackColor = System.Drawing.Color.White;
-            this.comboBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox4.FormattingEnabled = true;
-            this.comboBox4.IsSupportUnselect = true;
-            this.comboBox4.Items.AddRange(new object[] {
-            "By Handle",
-            "By Supp",
-            "By SD"});
-            this.comboBox4.Location = new System.Drawing.Point(134, 330);
-            this.comboBox4.Name = "comboBox4";
-            this.comboBox4.Size = new System.Drawing.Size(121, 24);
-            this.comboBox4.TabIndex = 32;
-            // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.Location = new System.Drawing.Point(135, 196);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(120, 23);
-            this.txtfactory1.TabIndex = 33;
+            this.txtLocalSupp1.DisplayBox1Binding = "";
+            this.txtLocalSupp1.Location = new System.Drawing.Point(134, 115);
+            this.txtLocalSupp1.Name = "txtLocalSupp1";
+            this.txtLocalSupp1.Size = new System.Drawing.Size(232, 23);
+            this.txtLocalSupp1.TabIndex = 25;
+            this.txtLocalSupp1.TextBox1Binding = "";
             // 
             // R36
             // 
