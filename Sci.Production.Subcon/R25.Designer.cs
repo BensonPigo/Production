@@ -125,7 +125,7 @@
             this.label6.Lines = 0;
             this.label6.Location = new System.Drawing.Point(13, 209);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(101, 23);
+            this.label6.Size = new System.Drawing.Size(90, 23);
             this.label6.TabIndex = 5;
             this.label6.Text = "Factory........:";
             // 
@@ -134,7 +134,7 @@
             this.label5.Lines = 0;
             this.label5.Location = new System.Drawing.Point(13, 169);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(101, 23);
+            this.label5.Size = new System.Drawing.Size(90, 23);
             this.label5.TabIndex = 4;
             this.label5.Text = "Supplier........:";
             // 
@@ -143,7 +143,7 @@
             this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(13, 131);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(101, 23);
+            this.label4.Size = new System.Drawing.Size(81, 23);
             this.label4.TabIndex = 3;
             this.label4.Text = "Category..:";
             // 
@@ -152,7 +152,7 @@
             this.label3.Lines = 0;
             this.label3.Location = new System.Drawing.Point(13, 92);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(102, 23);
+            this.label3.Size = new System.Drawing.Size(62, 23);
             this.label3.TabIndex = 2;
             this.label3.Text = "Refno.";
             // 
@@ -161,7 +161,7 @@
             this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(13, 51);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(102, 23);
+            this.label2.Size = new System.Drawing.Size(62, 23);
             this.label2.TabIndex = 1;
             this.label2.Text = "SP#.....:";
             // 
@@ -170,7 +170,7 @@
             this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(13, 14);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(101, 23);
+            this.label1.Size = new System.Drawing.Size(102, 23);
             this.label1.TabIndex = 0;
             this.label1.Text = "Receive Date:";
             // 
