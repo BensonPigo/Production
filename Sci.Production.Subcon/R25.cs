@@ -141,15 +141,11 @@ namespace Sci.Production.Subcon
             if (outpath.Empty())
             {
                 return false;
-            }
-            //Receive Date:                                                       ,SP#:                                                ,Refno:                        ,Category:                         Supplier:                       Factory:															
+            }														
             string xlt = @"Subcon_R25.xltx";
             SaveXltReportCls xl = new SaveXltReportCls(xlt);
             xl.dicDatas.Add("##Factory", dtt);
-            xl.dicDatas.Add("##dr1", string.Format("Receive Date: {0}~{1}  ,SP#:{2}  ,Refno:{3} Category:{4}  Supplier:{5}  ,Factory:{6}  ",
-                (MyUtility.Check.Empty(ReceiveDate)) ? "" : Convert.ToDateTime(ReceiveDate).ToString("MM/dd/yyyy"),
-                (MyUtility.Check.Empty(ReceiveDate2)) ? "" : Convert.ToDateTime(ReceiveDate2).ToString("MM/dd/yyyy"), 
-                SP,Refno,Category, Supplier, Factory));
+            xl.dicDatas.Add("##dr1", string.Format("Receive Date: {0}~{1}  ,SP#:{2}  ,Refno:{3} Category:{4}  Supplier:{5}  ,Factory:{6}  ", ReceiveDate, ReceiveDate2, SP,Refno,Category, Supplier, Factory));
             xl.Save(outpath);
             return false;
         }
