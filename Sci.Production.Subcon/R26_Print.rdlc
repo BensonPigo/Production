@@ -49,9 +49,9 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>Purchase Order</Value>
                   <Style>
-                    <FontSize>14pt</FontSize>
+                    <FontSize>16pt</FontSize>
                     <FontWeight>Bold</FontWeight>
                   </Style>
                 </TextRun>
@@ -62,10 +62,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox2</rd:DefaultName>
-          <Top>3.23702cm</Top>
+          <Top>3.6339cm</Top>
           <Left>1.21708cm</Left>
-          <Height>1.18153cm</Height>
-          <Width>10.33498cm</Width>
+          <Height>0.81111cm</Height>
+          <Width>9.27665cm</Width>
           <ZIndex>1</ZIndex>
           <Style>
             <Border>
