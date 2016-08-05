@@ -23,29 +23,14 @@ namespace Sci.Production.Quality
 
         private string loginID = Sci.Env.User.UserID;
         private string Factory = Sci.Env.User.Keyword;
-        bool IsSupportEdit = false;
+        bool IsSupportEdit = true;
 
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
         }
-        protected override void OnFormLoaded()
-        {
-            //DataTable dt = (DataTable)detailgridbs.DataSource;
-            //if (MyUtility.Check.Empty(dt))
-            //{
-            //    return;
-            //}
-            //if (dt.Rows.Count <= 0)
-            //{               
-            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Create New Test", onclick: (s, e) => CreateNewTest()).Get(out add);
-            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Record's detail", onclick: (s, e) => EditThisDetail()).Get(out edit);
-            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record's detail", onclick: (s, e) => DeleteThisDetail()).Get(out delete);
-                add.Enabled = false;
-           // }
-            base.OnFormLoaded();
-        }
+       
       
         //refresh
         protected override void OnDetailEntered()
@@ -90,6 +75,8 @@ where a.id=@id";
             decimal dRowCount = DetailDatas.Count;
             string inspnum = "0";
             DataTable articleDT = (DataTable)detailgridbs.DataSource;
+           
+           
             if (articleDT.Rows.Count!=0)
             {
                 DataRow[] articleAry = articleDT.Select("status='Confirmed'");
@@ -105,7 +92,9 @@ where a.id=@id";
                 CompDate= ((DateTime)articleDT.Compute("Max(Inspdate)",""));
                 compl_text.Text = CompDate.ToString();
             }
-
+            //判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
+            contextMenuStrip();
+            
             base.OnDetailEntered();
         }
         protected override void OnDetailGridSetup()
@@ -124,9 +113,9 @@ where a.id=@id";
                 {
                     return;
                 }
-               // var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
-              //  frm.ShowDialog(this);
-               // frm.Dispose();
+                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr,this.sp_text.Text);
+                frm.ShowDialog(this);
+                frm.Dispose();
                 this.RenewData();
             };
             inspDate.CellMouseDoubleClick += (s, e) =>
@@ -136,9 +125,9 @@ where a.id=@id";
                 {
                     return;
                 }
-               // var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
-               // frm.ShowDialog(this);
-              //  frm.Dispose();
+                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.sp_text.Text);
+                frm.ShowDialog(this);
+                frm.Dispose();
                 this.RenewData();
             };
             articleCell.CellMouseDoubleClick += (s, e) =>
@@ -148,9 +137,9 @@ where a.id=@id";
                 {
                     return;
                 }
-               // var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
-               // frm.ShowDialog(this);
-               // frm.Dispose();
+                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.sp_text.Text);
+                frm.ShowDialog(this);
+                frm.Dispose();
                 this.RenewData();
             };
             resultCell.CellMouseDoubleClick += (s, e) =>
@@ -160,9 +149,9 @@ where a.id=@id";
                 {
                     return;
                 }
-              //  var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
-               // frm.ShowDialog(this);
-               // frm.Dispose();
+                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.sp_text.Text);
+                frm.ShowDialog(this);
+                frm.Dispose();
                 this.RenewData();
             };
             inspectorCell.CellMouseDoubleClick += (s, e) =>
@@ -172,9 +161,9 @@ where a.id=@id";
                 {
                     return;
                 }
-              //  var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
-              //  frm.ShowDialog(this);
-              //  frm.Dispose();
+                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.sp_text.Text);
+                frm.ShowDialog(this);
+                frm.Dispose();
                 this.RenewData();
             };
 
@@ -191,48 +180,115 @@ where a.id=@id";
                 .Text("", header: "Last Update", width: Widths.AnsiChars(5),iseditingreadonly:true);
             
         }
-
-        //private void createNewTestToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    var dr = this.CurrentDetailData; if (null == dr) return;
-        //    var frm = new Sci.Production.Quality.P05_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
-        //    frm.ShowDialog(this);
-        //    frm.Dispose();
-        //    this.RenewData();
-        //}
-         //Context Menu選擇Create New Test
-        private void CreateNewTest()
-        {
-            var dr = this.CurrentDetailData; if (null == dr) return;
-           // Sci.Production.Quality.P05_Detail callNewDetailForm = new P05_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
-            //DataRow drr = ((DataTable)detailgridbs.DataSource).NewRow();
-           // drr["ID"] = CurrentMaintain["ID"];
+       
+        protected override void OnFormLoaded()
+        {         
+            detailgridmenus.Items.Clear();//清空原有的Menu Item
+            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Create New Test", onclick: (s, e) => CreateNewTest()).Get(out add);
+            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Record's detail", onclick: (s, e) => EditThisDetail()).Get(out edit);
+            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record's detail", onclick: (s, e) => DeleteThisDetail()).Get(out delete);
             
-          //  callNewDetailForm.ShowDialog(this);
-            RenewData();
 
-            //var frm = new Sci.Production.Quality.P05_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
-            //frm.ShowDialog(this);
-            //frm.Dispose();
-            //this.RenewData();
+            base.OnFormLoaded();
+        }
+             private void CreateNewTest()
+        {
+            DataTable dt;
+            DBProxy.Current.Select(null, "select Max(id) as id from Oven", out dt);
+        
+               int ID = MyUtility.Convert.GetInt(dt.Rows[0]["id"]);
+                ID = ID + 1;
+                      
+            Sci.Production.Quality.P05_Detail callNewDetailForm = new P05_Detail(IsSupportEdit,ID.ToString(), null, null, null, this.sp_text.Text);
+            callNewDetailForm.ShowDialog(this);
+            callNewDetailForm.Dispose();         
+            this.RenewData();
+            OnDetailEntered();
         }
         // Context Menu選擇Edit This Record's Detail
         private void EditThisDetail()
         {
             var dr = this.CurrentDetailData; if (null == dr) return;
-           // var frm = new Sci.Production.Quality.P05_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
-           // frm.ShowDialog(this);
-           // frm.Dispose();
+            var frm = new Sci.Production.Quality.P05_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr,sp_text.Text);
+            frm.ShowDialog(this);
+            frm.Dispose();
+            contextMenuStrip();
             this.RenewData();
         }
         // Context Menu選擇Delete This Record's Detail
         private void DeleteThisDetail()
         {
-            var dr = this.CurrentDetailData; if (null == dr) return;
-            //var frm = new Sci.Production.Quality.P05_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
-           // frm.ShowDialog(this);
-           // frm.Dispose();
+            DataTable dt = (DataTable)gridbs.DataSource;
+            var dr = this.CurrentDetailData;
+            
+            if (dr["Status"].ToString() == "Confirmed")
+            {
+                return;
+            }
+            else
+            {
+                DualResult dResult;
+                List<SqlParameter> spam = new List<SqlParameter>();
+                spam.Add(new SqlParameter("@id", CurrentDetailData["ID"].ToString()));
+                if (dResult = DBProxy.Current.Execute(null, @"delete from Oven_Detail where id=@id  delete from Oven where id=@id", spam))
+	            {
+                    MyUtility.Msg.InfoBox("Data has been Delete! ");
+	            }
+                else
+                {
+                    MyUtility.Msg.InfoBox("fail");
+                }
+            }
+            contextMenuStrip();          
             this.RenewData();
+        }
+
+        private void contextMenuStrip()
+        {
+            var dr = this.CurrentDetailData;
+            DataTable dtCheck;
+            if (dr == null) // oven 空的
+            {
+                add.Enabled = true;
+                edit.Enabled = false;
+                delete.Enabled = false;
+                return;
+            }
+            else // oven 有東西
+            {
+                DBProxy.Current.Select(null, string.Format("select * from oven where id='{0}'", CurrentDetailData["ID"].ToString()), out dtCheck);
+                if (dtCheck.Rows.Count<=0)
+                {
+                     add.Enabled = true;
+                     edit.Enabled = false;
+                     delete.Enabled = false;
+                     return;
+                }
+                if (dtCheck.Rows[0]["Status"].ToString().Trim() == "New")
+                {
+                    add.Enabled = false;
+                    edit.Enabled = true;
+                    delete.Enabled = true;
+                }
+                else
+                {
+                    add.Enabled = false;
+                    edit.Enabled = true;
+                    delete.Enabled = false;
+                }
+            }
+            
+            DataTable dt = (DataTable)detailgridbs.DataSource;
+            
+            //判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
+            if (dtCheck.Rows.Count <= 0)
+            {
+                add.Enabled = true;
+                edit.Enabled = false;
+                delete.Enabled = false;
+            }
+           
+        
         }
 
 

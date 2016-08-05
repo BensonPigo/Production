@@ -371,7 +371,7 @@
             this.ContextMenuStrip = this.detailgridmenus;
             this.DefaultDetailOrder = "InspDate,Testno";
             this.DefaultOrder = "id";
-            this.DefaultWhere = "ID=\'14030213KK\'";
+            this.DefaultWhere = "id=\'15052083GG\'";
             this.GridAlias = "oven";
             this.IsGridIconVisible = false;
             this.IsSupportDelete = false;
