@@ -755,7 +755,7 @@
             <param name="option"></param>
             <returns></returns>
         </member>
-        <member name="M:Sci.MyUtility.Tool.ProcessWithDatatable(System.Data.DataTable,System.String,System.String,System.Data.DataTable@,System.String)">
+        <member name="M:Sci.MyUtility.Tool.ProcessWithDatatable(System.Data.DataTable,System.String,System.String,System.Data.DataTable@,System.String,System.Data.SqlClient.SqlConnection)">
             <summary>
             ProcessWithDatatable
             </summary>
