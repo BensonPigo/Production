@@ -22,6 +22,8 @@ namespace Sci.Production.Subcon
             DataTable factory = null;
             string sqlcmd = (@"select DISTINCT ftygroup FROM DBO.Factory");
             DBProxy.Current.Select("", sqlcmd, out factory);
+            factory.Rows.Add(new string[]{""});
+            factory.DefaultView.Sort = "ftygroup";
             this.comboBox1.DataSource = factory;
             this.comboBox1.ValueMember = "ftygroup";
             this.comboBox1.DisplayMember = "ftygroup";
@@ -58,11 +60,10 @@ namespace Sci.Production.Subcon
              Category = txtartworktype_fty1.Text.ToString();
              Supplier = txtsubcon1.TextBox1.Text;
              Factory = comboBox1.SelectedValue.ToString();
-                       
-
+            
             return base.ValidateInput();
         }
-        string combobox1value;
+       
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
@@ -129,6 +130,7 @@ namespace Sci.Production.Subcon
                                          left join dbo.LocalReceiving_Detail lrd on  lr.id=lrd.Id
                                          left join dbo.LocalPO_Detail c on lrd.LocalPo_detailukey=c.Ukey  " + sqlWhere +" "+order);
             result = DBProxy.Current.Select("", sqlcmd,lis, out dtt);
+        
             return result; //base.OnAsyncDataLoad(e);
             }
             DataTable dtt;
@@ -144,9 +146,13 @@ namespace Sci.Production.Subcon
             }														
             string xlt = @"Subcon_R25.xltx";
             SaveXltReportCls xl = new SaveXltReportCls(xlt);
-            xl.dicDatas.Add("##Factory", dtt);
-            xl.dicDatas.Add("##dr1", string.Format("Receive Date: {0}~{1}  ,SP#:{2}  ,Refno:{3} Category:{4}  Supplier:{5}  ,Factory:{6}  ", ReceiveDate, ReceiveDate2, SP,Refno,Category, Supplier, Factory));
-            xl.Save(outpath);
+            
+            xl.dicDatas.Add("##dr1", string.Format("Receive Date: {0}~{1}  ,SP#:{2}  ,Refno:{3} Category:{4}  Supplier:{5}  ,Factory:{6}  ",
+                (MyUtility.Check.Empty(ReceiveDate)) ? "" : Convert.ToDateTime(ReceiveDate).ToString("yyyy/MM/dd"),
+                (MyUtility.Check.Empty(ReceiveDate2)) ? "" : Convert.ToDateTime(ReceiveDate2).ToString("yyyy/MM/dd"), 
+                SP,Refno,Category, Supplier, Factory));
+            xl.dicDatas.Add("##Factory", dtt);            
+            xl.Save(outpath, false);            
             return false;
         }
     }

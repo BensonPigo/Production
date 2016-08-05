@@ -336,6 +336,7 @@
     <Compile Include="R26.Designer.cs">
       <DependentUpon>R26.cs</DependentUpon>
     </Compile>
+    <Compile Include="R26_PrintData.cs" />
     <Compile Include="R36.cs">
       <SubType>Form</SubType>
     </Compile>
