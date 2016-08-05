@@ -42,14 +42,14 @@
             this.textBox7 = new Sci.Win.UI.TextBox();
             this.S_radioButton = new Sci.Win.UI.RadioButton();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
-            this.d_radioButton = new Sci.Win.UI.RadioButton();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.dateBox3 = new Sci.Win.UI.DateBox();
             this.dateBox4 = new Sci.Win.UI.DateBox();
+            this.dateBox3 = new Sci.Win.UI.DateBox();
+            this.dateBox2 = new Sci.Win.UI.DateBox();
+            this.dateBox1 = new Sci.Win.UI.DateBox();
+            this.label11 = new Sci.Win.UI.Label();
+            this.label10 = new Sci.Win.UI.Label();
+            this.label9 = new Sci.Win.UI.Label();
+            this.d_radioButton = new Sci.Win.UI.RadioButton();
             this.radioGroup1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -148,7 +148,7 @@
             this.textBox1.Location = new System.Drawing.Point(147, 64);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 102;
+            this.textBox1.TabIndex = 0;
             // 
             // textBox2
             // 
@@ -157,7 +157,7 @@
             this.textBox2.Location = new System.Drawing.Point(279, 64);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(100, 23);
-            this.textBox2.TabIndex = 103;
+            this.textBox2.TabIndex = 1;
             // 
             // comboBox1
             // 
@@ -168,7 +168,7 @@
             this.comboBox1.Location = new System.Drawing.Point(135, 130);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(135, 24);
-            this.comboBox1.TabIndex = 108;
+            this.comboBox1.TabIndex = 5;
             // 
             // textBox7
             // 
@@ -177,7 +177,7 @@
             this.textBox7.Location = new System.Drawing.Point(147, 218);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(100, 23);
-            this.textBox7.TabIndex = 109;
+            this.textBox7.TabIndex = 4;
             // 
             // S_radioButton
             // 
@@ -186,7 +186,7 @@
             this.S_radioButton.Location = new System.Drawing.Point(147, 258);
             this.S_radioButton.Name = "S_radioButton";
             this.S_radioButton.Size = new System.Drawing.Size(85, 21);
-            this.S_radioButton.TabIndex = 110;
+            this.S_radioButton.TabIndex = 5;
             this.S_radioButton.TabStop = true;
             this.S_radioButton.Text = "Summary";
             this.S_radioButton.UseVisualStyleBackColor = true;
@@ -205,48 +205,36 @@
             this.radioGroup1.Location = new System.Drawing.Point(12, 48);
             this.radioGroup1.Name = "radioGroup1";
             this.radioGroup1.Size = new System.Drawing.Size(418, 308);
-            this.radioGroup1.TabIndex = 111;
+            this.radioGroup1.TabIndex = 3;
             this.radioGroup1.TabStop = false;
             // 
-            // d_radioButton
+            // dateBox4
             // 
-            this.d_radioButton.AutoSize = true;
-            this.d_radioButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.d_radioButton.Location = new System.Drawing.Point(135, 237);
-            this.d_radioButton.Name = "d_radioButton";
-            this.d_radioButton.Size = new System.Drawing.Size(81, 21);
-            this.d_radioButton.TabIndex = 112;
-            this.d_radioButton.TabStop = true;
-            this.d_radioButton.Text = "by Detail";
-            this.d_radioButton.UseVisualStyleBackColor = true;
+            this.dateBox4.Location = new System.Drawing.Point(267, 93);
+            this.dateBox4.Name = "dateBox4";
+            this.dateBox4.Size = new System.Drawing.Size(103, 23);
+            this.dateBox4.TabIndex = 4;
             // 
-            // label9
+            // dateBox3
             // 
-            this.label9.BackColor = System.Drawing.Color.Transparent;
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(238, 19);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(21, 23);
-            this.label9.TabIndex = 113;
-            this.label9.Text = "～";
-            this.label9.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label9.TextStyle.Color = System.Drawing.Color.Black;
-            this.label9.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label9.TextStyle.GradientColor = System.Drawing.Color.Black;
+            this.dateBox3.Location = new System.Drawing.Point(135, 93);
+            this.dateBox3.Name = "dateBox3";
+            this.dateBox3.Size = new System.Drawing.Size(103, 23);
+            this.dateBox3.TabIndex = 3;
             // 
-            // label10
+            // dateBox2
             // 
-            this.label10.BackColor = System.Drawing.Color.Transparent;
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(238, 52);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(21, 23);
-            this.label10.TabIndex = 114;
-            this.label10.Text = "～";
-            this.label10.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label10.TextStyle.Color = System.Drawing.Color.Black;
-            this.label10.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label10.TextStyle.GradientColor = System.Drawing.Color.Black;
+            this.dateBox2.Location = new System.Drawing.Point(267, 52);
+            this.dateBox2.Name = "dateBox2";
+            this.dateBox2.Size = new System.Drawing.Size(103, 23);
+            this.dateBox2.TabIndex = 2;
+            // 
+            // dateBox1
+            // 
+            this.dateBox1.Location = new System.Drawing.Point(135, 52);
+            this.dateBox1.Name = "dateBox1";
+            this.dateBox1.Size = new System.Drawing.Size(103, 23);
+            this.dateBox1.TabIndex = 1;
             // 
             // label11
             // 
@@ -262,33 +250,45 @@
             this.label11.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label11.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // dateBox1
+            // label10
             // 
-            this.dateBox1.Location = new System.Drawing.Point(135, 52);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(103, 23);
-            this.dateBox1.TabIndex = 116;
+            this.label10.BackColor = System.Drawing.Color.Transparent;
+            this.label10.Lines = 0;
+            this.label10.Location = new System.Drawing.Point(238, 52);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(21, 23);
+            this.label10.TabIndex = 7;
+            this.label10.Text = "～";
+            this.label10.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label10.TextStyle.Color = System.Drawing.Color.Black;
+            this.label10.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.label10.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // dateBox2
+            // label9
             // 
-            this.dateBox2.Location = new System.Drawing.Point(267, 52);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.Size = new System.Drawing.Size(103, 23);
-            this.dateBox2.TabIndex = 117;
+            this.label9.BackColor = System.Drawing.Color.Transparent;
+            this.label9.Lines = 0;
+            this.label9.Location = new System.Drawing.Point(238, 19);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(21, 23);
+            this.label9.TabIndex = 113;
+            this.label9.Text = "～";
+            this.label9.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label9.TextStyle.Color = System.Drawing.Color.Black;
+            this.label9.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.label9.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // dateBox3
+            // d_radioButton
             // 
-            this.dateBox3.Location = new System.Drawing.Point(135, 93);
-            this.dateBox3.Name = "dateBox3";
-            this.dateBox3.Size = new System.Drawing.Size(103, 23);
-            this.dateBox3.TabIndex = 118;
-            // 
-            // dateBox4
-            // 
-            this.dateBox4.Location = new System.Drawing.Point(267, 93);
-            this.dateBox4.Name = "dateBox4";
-            this.dateBox4.Size = new System.Drawing.Size(103, 23);
-            this.dateBox4.TabIndex = 119;
+            this.d_radioButton.AutoSize = true;
+            this.d_radioButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.d_radioButton.Location = new System.Drawing.Point(135, 236);
+            this.d_radioButton.Name = "d_radioButton";
+            this.d_radioButton.Size = new System.Drawing.Size(81, 21);
+            this.d_radioButton.TabIndex = 5;
+            this.d_radioButton.TabStop = true;
+            this.d_radioButton.Text = "by Detail";
+            this.d_radioButton.UseVisualStyleBackColor = true;
             // 
             // R21
             // 

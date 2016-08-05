@@ -15,7 +15,7 @@ namespace Sci.Production.Quality
     public partial class R21 : Sci.Win.Tems.PrintForm
     {
         DateTime? cdate1,cdate2,bdate1,bdate2;
-        string factory, id1, id2, brand, factoryName;
+        string factory, id1, id2, brand;
         DataTable SummaryData,DetailData;
 
         public R21(ToolStripMenuItem menuitem)
@@ -29,7 +29,7 @@ namespace Sci.Production.Quality
            
 
         }
-        // 驗證輸入條件
+        // 驗證輸入條件 必須要有
         protected override bool ValidateInput()
         {
             if (S_radioButton.Checked==false && d_radioButton.Checked==false)
@@ -47,11 +47,11 @@ namespace Sci.Production.Quality
             brand = textBox7.Text;
             return base.ValidateInput();
         }
-        // 非同步資料
+        // 非同步資料 必須要有
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            StringBuilder sqlCmd_Summary = new StringBuilder();          
-
+            StringBuilder sqlCmd_Summary = new StringBuilder();
+           
             #region 組撈Summary Data SQL
             sqlCmd_Summary.Append(
 @"select 
@@ -215,7 +215,7 @@ where a.Status = 'Confirmed'");
             #endregion
             return Result.True;
         }
-        // 產生Excel
+        // 產生Excel 必須要有
         protected override bool OnToExcel(Win.ReportDefinition report)
         {           
             
