@@ -18,10 +18,5 @@ namespace Sci.Production.Subcon
         public string Amount { get; set; }
         public string Total_Quantity { get; set; }
         public string Remark { get; set; }
-        public string Total1 { get; set; }
-        public string Total2 { get; set; }
-        public string currencyid { get; set; }
-        public string vat { get; set; }
-        public string Grand_Total { get; set; }
     }
 }

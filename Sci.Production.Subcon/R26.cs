@@ -42,7 +42,7 @@ namespace Sci.Production.Subcon
         {
             return base.OnToExcel(report);
         }
-
+        
         private void print_Click(object sender, EventArgs e)
         {
             DataRow row = this.CurrentDataRow;
@@ -88,6 +88,11 @@ namespace Sci.Production.Subcon
             string Tel = dt.Rows[0]["Tel"].ToString();
             string Fax = dt.Rows[0]["Fax"].ToString();
             string Issue_Date = dt.Rows[0]["Issue_Date"].ToString();
+            string Total1 = dt.Rows[0]["CurrencyId"].ToString();
+            string Total2 = dt.Rows[0]["Amount"].ToString();
+            string CurrencyId = dt.Rows[0]["currencyid"].ToString();
+            string vat = dt.Rows[0]["vat"].ToString();
+            string Grand_Total = dt.Rows[0]["Grand_Total"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
@@ -96,6 +101,11 @@ namespace Sci.Production.Subcon
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", Fax));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issue_Date", Issue_Date));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total1", Total1));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total2", Total2));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyId", CurrencyId));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", vat));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Grand_Total", Grand_Total));
             
 
             // 傳 list 資料            
@@ -111,13 +121,8 @@ namespace Sci.Production.Subcon
                     Unit_Price = row1["Unit_Price"].ToString(),
                     Amount = row1["Amount"].ToString(),
                     Total_Quantity = row1["Total_Quantity"].ToString(),
-                    Remark = row1["Remark"].ToString(),
-                    Total1 = row1["Total1"].ToString(),
-                    Total2 = row1["Total2"].ToString(),
-                    currencyid = row1["currencyid"].ToString(),
-                    vat = row1["vat"].ToString(),
-                    Grand_Total = row1["Grand_Total"].ToString(),
-                }).ToList();
+                    Remark = row1["Remark"].ToString()
+                })ToList();
 
             report.ReportDataSource = data;
             #endregion
@@ -146,5 +151,6 @@ namespace Sci.Production.Subcon
 
             //return ;
         }
+
     }
 }
