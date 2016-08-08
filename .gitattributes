@@ -2570,6 +2570,8 @@ XLT/Subcon_R36_DebitNote(LocalSupplier).xltx -text
 XLT/Subcon_R36_DebitNoteDetail(LocalSupplier).xltx -text
 XLT/Subcon_R36_DebitNoteDetial(LocalSupplier).xltx -text
 XLT/Subcon_R36_DebitScheduleDetail(LocalSupplier).xltx -text
+XLT/Subcon_R37_DetailList.xltx -text
+XLT/Subcon_R37_List.xltx -text
 XLT/Warehouse_P03_Print-1.xltx -text
 XLT/Warehouse_P03_Print-2.xltx -text
 XLT/Warehouse_P03_RollTransaction.xltx -text
