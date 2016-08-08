@@ -234,7 +234,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 					over (order by ds.IssueDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 			FROM debit_schedule ds 
 			left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
-			WHERE  @NeedSettleData=1 and ds.ID = a.ID			
+			WHERE  @NeedSettleData=1 and ds.ID = a.ID and isnull(ds.VoucherID,'')!=''		
 		) as tmpSum
 		where tmpSum.VoucherDate is not null and tmpSum.Amount >= a.Amount+a.Tax
 	)AS cur_schedule
@@ -266,7 +266,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 					over (order by ds.IssueDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 			FROM debit_schedule ds 
 			left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
-			WHERE  @NeedSettleData=1 and ds.ID = a.ID			
+			WHERE  @NeedSettleData=1 and ds.ID = a.ID and isnull(ds.VoucherID,'')!=''			
 		) as tmpSum
 		where tmpSum.VoucherDate is not null and tmpSum.Amount >= a.Amount+a.Tax
 	)AS cur_schedule
@@ -299,7 +299,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 					over (order by ds.IssueDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 			FROM debit_schedule ds 
 			left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
-			WHERE  @NeedSettleData=1 and ds.ID = a.ID			
+			WHERE  @NeedSettleData=1 and ds.ID = a.ID and isnull(ds.VoucherID,'')!=''			
 		) as tmpSum
 		where tmpSum.VoucherDate is not null and tmpSum.Amount >= a.Amount+a.Tax
 	)AS cur_schedule" + sqlWhere + ' ' + order);
