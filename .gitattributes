@@ -1835,6 +1835,7 @@ Sci.Production.Subcon/Properties/DataSources/P10_PrintData1.datasource -text
 Sci.Production.Subcon/Properties/DataSources/P30_PrintData.datasource -text
 Sci.Production.Subcon/Properties/DataSources/P35_PrintData.datasource -text
 Sci.Production.Subcon/Properties/DataSources/P36_PrintData.datasource -text
+Sci.Production.Subcon/Properties/DataSources/R26_PrintData.datasource -text
 Sci.Production.Subcon/R01.Designer.cs -text
 Sci.Production.Subcon/R01.cs -text
 Sci.Production.Subcon/R01.resx -text

@@ -534,6 +534,7 @@
     <None Include="Properties\DataSources\P30_PrintData.datasource" />
     <None Include="Properties\DataSources\P35_PrintData.datasource" />
     <None Include="Properties\DataSources\P36_PrintData.datasource" />
+    <None Include="Properties\DataSources\R26_PrintData.datasource" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -18,5 +18,10 @@ namespace Sci.Production.Subcon
         public string Amount { get; set; }
         public string Total_Quantity { get; set; }
         public string Remark { get; set; }
+        public string Factory { get; set; }
+        public string Issue_Date { get; set; }
+        public string Supp { get; set; }
+        public string Group_FIDS { get { return this.Factory + this.Issue_Date+this.Supp; } }
+        public string Group_PO { get { return this.PO; } }
     }
 }

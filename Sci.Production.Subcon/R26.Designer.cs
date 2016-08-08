@@ -56,7 +56,7 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(503, 12);
-            this.print.Click += new System.EventHandler(this.print_Click);
+          
             // 
             // toexcel
             // 

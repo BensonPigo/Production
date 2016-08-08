@@ -11,16 +11,19 @@ using System.Drawing;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-
+using System.Linq;
 namespace Sci.Production.Subcon
 {
     public partial class R26 : Sci.Win.Tems.PrintForm
-    {
-        public R26(ToolStripMenuItem menuitem)
-            : base(menuitem)
+    {  
+        DataRow CurrentDataRow;
+        public R26(DataRow row)
+           
         {
+            this.CurrentDataRow = row;
             InitializeComponent();
         }
+        
 
         protected override bool ValidateInput()
         {
@@ -29,23 +32,7 @@ namespace Sci.Production.Subcon
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-
-            return base.OnAsyncDataLoad(e);
-        }
-        //按件觸發
-        private void comboBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        protected override bool OnToExcel(ReportDefinition report)
-        {
-            return base.OnToExcel(report);
-        }
-        
-        private void print_Click(object sender, EventArgs e)
-        {
-            DataRow row = this.CurrentDataRow;
+             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
             
             #region  
@@ -122,7 +109,7 @@ namespace Sci.Production.Subcon
                     Amount = row1["Amount"].ToString(),
                     Total_Quantity = row1["Total_Quantity"].ToString(),
                     Remark = row1["Remark"].ToString()
-                })ToList();
+                }).ToList();
 
             report.ReportDataSource = data;
             #endregion
@@ -150,7 +137,19 @@ namespace Sci.Production.Subcon
             frm.Show();
 
             //return ;
+            return base.OnAsyncDataLoad(e);
         }
+        //按件觸發
+        private void comboBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        protected override bool OnToExcel(ReportDefinition report)
+        {
+            return base.OnToExcel(report);
+        }
+       
 
     }
 }
