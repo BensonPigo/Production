@@ -2571,11 +2571,9 @@ XLT/Subcon_R25.xltx -text
 XLT/Subcon_R26_Local_PO_List.xltx -text
 XLT/Subcon_R26_Local_PO_Order.xltx -text
 XLT/Subcon_R26_Shipping_Mark.xltx -text
-XLT/Subcon_R36_Debit[!!-~]Schedule[!!-~]Detail(LocalSupplier).xltx -text
 XLT/Subcon_R36_DebitNote&ScheduleSummary(LocalSupplier).xltx -text
 XLT/Subcon_R36_DebitNote(LocalSupplier).xltx -text
 XLT/Subcon_R36_DebitNoteDetail(LocalSupplier).xltx -text
-XLT/Subcon_R36_DebitNoteDetial(LocalSupplier).xltx -text
 XLT/Subcon_R36_DebitScheduleDetail(LocalSupplier).xltx -text
 XLT/Subcon_R37_DetailList.xltx -text
 XLT/Subcon_R37_List.xltx -text
