@@ -29,6 +29,15 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.comboReport = new Sci.Win.UI.ComboBox();
+            this.comboPay = new Sci.Win.UI.ComboBox();
+            this.combFac = new Sci.Win.UI.ComboBox();
+            this.txttSMR = new Sci.Production.Class.txttpeuser_canedit();
+            this.Han = new Sci.Production.Class.txttpeuser_canedit();
+            this.SettDate = new Sci.Win.UI.DateRange();
+            this.ConDate = new Sci.Win.UI.DateRange();
+            this.DebDate = new Sci.Win.UI.DateRange();
+            this.DebNo2 = new Sci.Win.UI.TextBox();
             this.label10 = new Sci.Win.UI.Label();
             this.DebNo1 = new Sci.Win.UI.TextBox();
             this.label9 = new Sci.Win.UI.Label();
@@ -40,15 +49,6 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.DebNo2 = new Sci.Win.UI.TextBox();
-            this.DebDate = new Sci.Win.UI.DateRange();
-            this.ConDate = new Sci.Win.UI.DateRange();
-            this.SettDate = new Sci.Win.UI.DateRange();
-            this.Han = new Sci.Production.Class.txttpeuser_canedit();
-            this.txttSMR = new Sci.Production.Class.txttpeuser_canedit();
-            this.combFac = new Sci.Win.UI.ComboBox();
-            this.comboPay = new Sci.Win.UI.ComboBox();
-            this.comboReport = new Sci.Win.UI.ComboBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -78,6 +78,96 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(511, 305);
             this.panel1.TabIndex = 94;
+            // 
+            // comboReport
+            // 
+            this.comboReport.BackColor = System.Drawing.Color.White;
+            this.comboReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboReport.FormattingEnabled = true;
+            this.comboReport.IsSupportUnselect = true;
+            this.comboReport.Items.AddRange(new object[] {
+            "List",
+            "Detail List"});
+            this.comboReport.Location = new System.Drawing.Point(139, 270);
+            this.comboReport.Name = "comboReport";
+            this.comboReport.Size = new System.Drawing.Size(121, 24);
+            this.comboReport.TabIndex = 19;
+            // 
+            // comboPay
+            // 
+            this.comboPay.BackColor = System.Drawing.Color.White;
+            this.comboPay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboPay.FormattingEnabled = true;
+            this.comboPay.IsSupportUnselect = true;
+            this.comboPay.Items.AddRange(new object[] {
+            " ",
+            "Settled",
+            "Not Settled"});
+            this.comboPay.Location = new System.Drawing.Point(139, 235);
+            this.comboPay.Name = "comboPay";
+            this.comboPay.Size = new System.Drawing.Size(121, 24);
+            this.comboPay.TabIndex = 18;
+            // 
+            // combFac
+            // 
+            this.combFac.BackColor = System.Drawing.Color.White;
+            this.combFac.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.combFac.FormattingEnabled = true;
+            this.combFac.IsSupportUnselect = true;
+            this.combFac.Items.AddRange(new object[] {
+            "FA2"});
+            this.combFac.Location = new System.Drawing.Point(139, 199);
+            this.combFac.Name = "combFac";
+            this.combFac.Size = new System.Drawing.Size(121, 24);
+            this.combFac.TabIndex = 17;
+            // 
+            // txttSMR
+            // 
+            this.txttSMR.DisplayBox1Binding = "";
+            this.txttSMR.Location = new System.Drawing.Point(139, 167);
+            this.txttSMR.Name = "txttSMR";
+            this.txttSMR.Size = new System.Drawing.Size(300, 23);
+            this.txttSMR.TabIndex = 16;
+            this.txttSMR.TextBox1Binding = "";
+            // 
+            // Han
+            // 
+            this.Han.DisplayBox1Binding = "";
+            this.Han.Location = new System.Drawing.Point(139, 134);
+            this.Han.Name = "Han";
+            this.Han.Size = new System.Drawing.Size(300, 23);
+            this.Han.TabIndex = 15;
+            this.Han.TextBox1Binding = "";
+            // 
+            // SettDate
+            // 
+            this.SettDate.Location = new System.Drawing.Point(139, 74);
+            this.SettDate.Name = "SettDate";
+            this.SettDate.Size = new System.Drawing.Size(280, 23);
+            this.SettDate.TabIndex = 14;
+            // 
+            // ConDate
+            // 
+            this.ConDate.Location = new System.Drawing.Point(139, 45);
+            this.ConDate.Name = "ConDate";
+            this.ConDate.Size = new System.Drawing.Size(280, 23);
+            this.ConDate.TabIndex = 13;
+            // 
+            // DebDate
+            // 
+            this.DebDate.Location = new System.Drawing.Point(139, 16);
+            this.DebDate.Name = "DebDate";
+            this.DebDate.Size = new System.Drawing.Size(280, 23);
+            this.DebDate.TabIndex = 12;
+            // 
+            // DebNo2
+            // 
+            this.DebNo2.BackColor = System.Drawing.Color.White;
+            this.DebNo2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.DebNo2.Location = new System.Drawing.Point(322, 104);
+            this.DebNo2.Name = "DebNo2";
+            this.DebNo2.Size = new System.Drawing.Size(164, 23);
+            this.DebNo2.TabIndex = 11;
             // 
             // label10
             // 
@@ -180,96 +270,6 @@
             this.label1.Size = new System.Drawing.Size(110, 23);
             this.label1.TabIndex = 0;
             this.label1.Text = "Debit Date........:";
-            // 
-            // DebNo2
-            // 
-            this.DebNo2.BackColor = System.Drawing.Color.White;
-            this.DebNo2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.DebNo2.Location = new System.Drawing.Point(322, 104);
-            this.DebNo2.Name = "DebNo2";
-            this.DebNo2.Size = new System.Drawing.Size(164, 23);
-            this.DebNo2.TabIndex = 11;
-            // 
-            // DebDate
-            // 
-            this.DebDate.Location = new System.Drawing.Point(139, 16);
-            this.DebDate.Name = "DebDate";
-            this.DebDate.Size = new System.Drawing.Size(280, 23);
-            this.DebDate.TabIndex = 12;
-            // 
-            // ConDate
-            // 
-            this.ConDate.Location = new System.Drawing.Point(139, 45);
-            this.ConDate.Name = "ConDate";
-            this.ConDate.Size = new System.Drawing.Size(280, 23);
-            this.ConDate.TabIndex = 13;
-            // 
-            // SettDate
-            // 
-            this.SettDate.Location = new System.Drawing.Point(139, 74);
-            this.SettDate.Name = "SettDate";
-            this.SettDate.Size = new System.Drawing.Size(280, 23);
-            this.SettDate.TabIndex = 14;
-            // 
-            // Han
-            // 
-            this.Han.DisplayBox1Binding = "";
-            this.Han.Location = new System.Drawing.Point(139, 134);
-            this.Han.Name = "Han";
-            this.Han.Size = new System.Drawing.Size(300, 23);
-            this.Han.TabIndex = 15;
-            this.Han.TextBox1Binding = "";
-            // 
-            // txttSMR
-            // 
-            this.txttSMR.DisplayBox1Binding = "";
-            this.txttSMR.Location = new System.Drawing.Point(139, 167);
-            this.txttSMR.Name = "txttSMR";
-            this.txttSMR.Size = new System.Drawing.Size(300, 23);
-            this.txttSMR.TabIndex = 16;
-            this.txttSMR.TextBox1Binding = "";
-            // 
-            // combFac
-            // 
-            this.combFac.BackColor = System.Drawing.Color.White;
-            this.combFac.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.combFac.FormattingEnabled = true;
-            this.combFac.IsSupportUnselect = true;
-            this.combFac.Items.AddRange(new object[] {
-            "FA2"});
-            this.combFac.Location = new System.Drawing.Point(139, 199);
-            this.combFac.Name = "combFac";
-            this.combFac.Size = new System.Drawing.Size(121, 24);
-            this.combFac.TabIndex = 17;
-            // 
-            // comboPay
-            // 
-            this.comboPay.BackColor = System.Drawing.Color.White;
-            this.comboPay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboPay.FormattingEnabled = true;
-            this.comboPay.IsSupportUnselect = true;
-            this.comboPay.Items.AddRange(new object[] {
-            " ",
-            "Settled",
-            "Not Settled"});
-            this.comboPay.Location = new System.Drawing.Point(139, 235);
-            this.comboPay.Name = "comboPay";
-            this.comboPay.Size = new System.Drawing.Size(121, 24);
-            this.comboPay.TabIndex = 18;
-            // 
-            // comboReport
-            // 
-            this.comboReport.BackColor = System.Drawing.Color.White;
-            this.comboReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboReport.FormattingEnabled = true;
-            this.comboReport.IsSupportUnselect = true;
-            this.comboReport.Items.AddRange(new object[] {
-            "List",
-            "Detail List"});
-            this.comboReport.Location = new System.Drawing.Point(139, 270);
-            this.comboReport.Name = "comboReport";
-            this.comboReport.Size = new System.Drawing.Size(121, 24);
-            this.comboReport.TabIndex = 19;
             // 
             // R37
             // 
