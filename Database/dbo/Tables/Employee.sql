@@ -1,4 +1,5 @@
 ﻿CREATE TABLE [dbo].[Employee] (
+	[MDivisionID]     VARCHAR (8)   CONSTRAINT [DF_Employee_MDivisionID] DEFAULT ('') NULL,
     [FactoryID]       VARCHAR (8)   CONSTRAINT [DF_Employee_FactoryID] DEFAULT ('') NOT NULL,
     [ID]              VARCHAR (10)  CONSTRAINT [DF_Employee_ID] DEFAULT ('') NOT NULL,
     [Name]            NVARCHAR (30) CONSTRAINT [DF_Employee_Name] DEFAULT ('') NOT NULL,
@@ -10,7 +11,6 @@
     [AddDate]         DATETIME      NULL,
     [EditName]        VARCHAR (10)  CONSTRAINT [DF_Employee_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME      NULL,
-    [MDivisionID]     VARCHAR (8)   CONSTRAINT [DF_Employee_MDivisionID] DEFAULT ('') NULL,
     CONSTRAINT [PK_Employee] PRIMARY KEY CLUSTERED ([FactoryID] ASC, [ID] ASC)
 );
 
