@@ -19,13 +19,13 @@
     [Remark]          NVARCHAR (60)  CONSTRAINT [DF_ChgOver_Remark] DEFAULT ('') NULL,
     [Type]            VARCHAR (1)    CONSTRAINT [DF_ChgOver_Type] DEFAULT ('') NULL,
     [ApvDate]         DATETIME       NULL,
-    [AddName]         VARCHAR (10)   CONSTRAINT [DF_ChgOver_AddName] DEFAULT ('') NULL,
-    [AddDate]         DATETIME       NULL,
-    [EditName]        VARCHAR (10)   CONSTRAINT [DF_ChgOver_EditName] DEFAULT ('') NULL,
-    [EditDate]        DATETIME       NULL,
     [APSNo]           INT            CONSTRAINT [DF_ChgOver_APSSewID] DEFAULT ((0)) NULL,
     [Status]          VARCHAR (15)   CONSTRAINT [DF_ChgOver_Status] DEFAULT ('') NULL,
     [MDivisionID]     VARCHAR (8)    CONSTRAINT [DF_ChgOver_MDivisionID] DEFAULT ('') NULL,
+	[AddName]         VARCHAR (10)   CONSTRAINT [DF_ChgOver_AddName] DEFAULT ('') NULL,
+    [AddDate]         DATETIME       NULL,
+    [EditName]        VARCHAR (10)   CONSTRAINT [DF_ChgOver_EditName] DEFAULT ('') NULL,
+    [EditDate]        DATETIME       NULL,
     CONSTRAINT [PK_ChgOver] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
