@@ -58,6 +58,7 @@
     [CPUAdjusted]         NUMERIC (6, 4) CONSTRAINT [DF_Style_CPUAdjusted] DEFAULT ((0)) NULL,
     [Phase]               VARCHAR (10)   CONSTRAINT [DF_Style_Phase1] DEFAULT ('') NULL,
     [Gender]              VARCHAR (10)   CONSTRAINT [DF_Style_Gender1] DEFAULT ('') NULL,
+    [Type] VARCHAR(10) NULL DEFAULT (''), 
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID], [BrandID], [SeasonID])
 );
 
@@ -295,3 +296,31 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'類別',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Style',
+    @level2type = N'COLUMN',
+    @level2name = N'Type'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'性別',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Style',
+    @level2type = N'COLUMN',
+    @level2name = N'Gender'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'目前階段',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Style',
+    @level2type = N'COLUMN',
+    @level2name = N'Phase'
