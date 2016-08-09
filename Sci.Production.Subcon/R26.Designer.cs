@@ -56,7 +56,6 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(503, 12);
-          
             // 
             // toexcel
             // 
@@ -99,7 +98,7 @@
             this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Location = new System.Drawing.Point(113, 135);
+            this.comboBox2.Location = new System.Drawing.Point(127, 135);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(121, 24);
             this.comboBox2.TabIndex = 19;
@@ -108,19 +107,21 @@
             // 
             this.textBox4.BackColor = System.Drawing.Color.White;
             this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(257, 106);
+            this.textBox4.Location = new System.Drawing.Point(300, 106);
             this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(100, 23);
+            this.textBox4.Size = new System.Drawing.Size(154, 23);
             this.textBox4.TabIndex = 18;
             // 
             // label10
             // 
+            this.label10.BackColor = System.Drawing.SystemColors.Control;
             this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(234, 106);
+            this.label10.Location = new System.Drawing.Point(277, 106);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(20, 23);
             this.label10.TabIndex = 17;
             this.label10.Text = "~";
+            this.label10.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // textBox3
             // 
@@ -128,34 +129,36 @@
             this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox3.Location = new System.Drawing.Point(127, 106);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(100, 23);
+            this.textBox3.Size = new System.Drawing.Size(147, 23);
             this.textBox3.TabIndex = 16;
             // 
             // textBox2
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(255, 76);
+            this.textBox2.Location = new System.Drawing.Point(300, 75);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 23);
+            this.textBox2.Size = new System.Drawing.Size(154, 23);
             this.textBox2.TabIndex = 15;
             // 
             // label9
             // 
+            this.label9.BackColor = System.Drawing.SystemColors.Control;
             this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(220, 75);
+            this.label9.Location = new System.Drawing.Point(277, 76);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(22, 23);
             this.label9.TabIndex = 14;
             this.label9.Text = "~";
+            this.label9.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // textBox1
             // 
             this.textBox1.BackColor = System.Drawing.Color.White;
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(113, 75);
+            this.textBox1.Location = new System.Drawing.Point(127, 76);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
+            this.textBox1.Size = new System.Drawing.Size(147, 23);
             this.textBox1.TabIndex = 13;
             // 
             // comboBox1
@@ -168,7 +171,7 @@
             "PO List",
             "PO Form",
             "PO Order"});
-            this.comboBox1.Location = new System.Drawing.Point(113, 235);
+            this.comboBox1.Location = new System.Drawing.Point(127, 235);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
             this.comboBox1.TabIndex = 12;
@@ -178,7 +181,7 @@
             // 
             this.txtsubcon1.DisplayBox1Binding = "";
             this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(112, 205);
+            this.txtsubcon1.Location = new System.Drawing.Point(126, 205);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(214, 23);
             this.txtsubcon1.TabIndex = 11;
@@ -190,21 +193,22 @@
             this.txtartworktype_fty1.cClassify = "\'P\'";
             this.txtartworktype_fty1.cSubprocess = "";
             this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_fty1.Location = new System.Drawing.Point(113, 168);
+            this.txtartworktype_fty1.Location = new System.Drawing.Point(127, 168);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(153, 23);
             this.txtartworktype_fty1.TabIndex = 10;
+            this.txtartworktype_fty1.TextChanged += new System.EventHandler(this.txtartworktype_fty1_TextChanged);
             // 
             // dateRange2
             // 
-            this.dateRange2.Location = new System.Drawing.Point(112, 41);
+            this.dateRange2.Location = new System.Drawing.Point(127, 41);
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(280, 23);
             this.dateRange2.TabIndex = 9;
             // 
             // dateRange1
             // 
-            this.dateRange1.Location = new System.Drawing.Point(112, 8);
+            this.dateRange1.Location = new System.Drawing.Point(127, 8);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
             this.dateRange1.TabIndex = 8;
@@ -250,9 +254,9 @@
             this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(15, 106);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(108, 23);
+            this.label4.Size = new System.Drawing.Size(94, 23);
             this.label4.TabIndex = 3;
-            this.label4.Text = "Local Poid.......:";
+            this.label4.Text = "Local Poid.....:";
             // 
             // label3
             // 
