@@ -41,10 +41,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QT布別', 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QT布別+布種的代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_FabricCode_QT', @level2type = N'COLUMN', @level2name = N'QTLectraCode';
-
-
-GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QT幅寬', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_FabricCode_QT', @level2type = N'COLUMN', @level2name = N'QTWidth';
 
 
