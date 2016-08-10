@@ -43,7 +43,7 @@ namespace Sci.Production.Subcon
             this.comboBox2.SelectedIndex = 0;
             this.checkBox1.Enabled = false;
         }
-        List<SqlParameter> lis = new List<SqlParameter>();
+        List<SqlParameter> lis;
         string sqlWhere = "";
         List<string> sqlWheres = new List<string>();
         DataTable dtt;
@@ -75,6 +75,7 @@ namespace Sci.Production.Subcon
 
                 return false;
             }
+            lis = new List<SqlParameter>();
             SCI_Delivery = dateRange1.Value1;
             SCI_Delivery2 = dateRange1.Value2;
             Issue_Date1 = dateRange2.Value1;
@@ -137,6 +138,14 @@ namespace Sci.Production.Subcon
                 sqlWhere = " where " + sqlWhere;
             }
             #endregion
+
+
+            return true;
+        }
+
+        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        {
+
 
             if (this.Report_Type == "PO List")
             #region Po List
@@ -238,82 +247,65 @@ namespace Sci.Production.Subcon
 	                                         left join dbo.LocalPO_Detail c on b.id=c.Id
 	                                         left join dbo.LocalSupp d on b.LocalSuppID=d.ID " + sqlWhere, lis, out dt);
                 //where b.id = @ID 
-                if (!result) { this.ShowErr(result); }
-                //if (!result)
-                //{
-                //    return result;
-                //}
+                //if (!result) { this.ShowErr(result); }
+                if (!result)
+                {
+                    return result;
+                }
 
+
+                string Title1 = dt.Rows[0]["Title1"].ToString();
+                string Title2 = dt.Rows[0]["Title2"].ToString();
+                string Title3 = dt.Rows[0]["Title3"].ToString();
+                string To = dt.Rows[0]["To"].ToString();
+                string Tel = dt.Rows[0]["Tel"].ToString();
+                string Fax = dt.Rows[0]["Fax"].ToString();
+                string Issue_Date = dt.Rows[0]["Issue_Date"].ToString();
+                string Total1 = dt.Rows[0]["Total1"].ToString();
+                string Total2 = dt.Rows[0]["Total2"].ToString();
+                string CurrencyId = dt.Rows[0]["currencyid"].ToString();
+                string vat = dt.Rows[0]["vat"].ToString();
+                string Grand_Total = dt.Rows[0]["Grand_Total"].ToString();
+                ReportDefinition report = e.Report;
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", Title3));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("To", To));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", Fax));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issue_Date", Issue_Date));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total1", Total1));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total2", Total2));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyId", CurrencyId));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", vat));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Grand_Total", Grand_Total));
+
+                // 傳 list 資料            
+                List<R26_PrintData> data = dt.AsEnumerable()
+                    .Select(row1 => new R26_PrintData()
+                    {
+                        PO = row1["PO"].ToString(),
+                        Code = row1["Code"].ToString(),
+                        Color_Shade = row1["Color_Shade"].ToString(),
+                        Description = row1["Description"].ToString(),
+                        Quantity = row1["Quantity"].ToString(),
+                        Unit = row1["Unit"].ToString(),
+                        Unit_Price = row1["Unit_Price"].ToString(),
+                        Amount = row1["Amount"].ToString(),
+                        Total_Quantity = row1["Total_Quantity"].ToString(),
+                        Remark = row1["Remark"].ToString()
+                    }).ToList();
+
+                report.ReportDataSource = data;
 
 
                 #endregion
             }
 
-            return base.ValidateInput();
-        }
-
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
-        {
-         
-
-
            
 
-            string Title1 = dt.Rows[0]["Title1"].ToString();
-            string Title2 = dt.Rows[0]["Title2"].ToString();
-            string Title3 = dt.Rows[0]["Title3"].ToString();
-            string To = dt.Rows[0]["To"].ToString();
-            string Tel = dt.Rows[0]["Tel"].ToString();
-            string Fax = dt.Rows[0]["Fax"].ToString();
-            string Issue_Date = dt.Rows[0]["Issue_Date"].ToString();
-            string Total1 = dt.Rows[0]["Total1"].ToString();
-            string Total2 = dt.Rows[0]["Total2"].ToString();
-            string CurrencyId = dt.Rows[0]["currencyid"].ToString();
-            string vat = dt.Rows[0]["vat"].ToString();
-            string Grand_Total = dt.Rows[0]["Grand_Total"].ToString();
-            ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", Title3));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("To", To));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", Fax));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issue_Date", Issue_Date));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total1", Total1));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total2", Total2));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyId", CurrencyId));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", vat));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Grand_Total", Grand_Total));
 
-            // 傳 list 資料            
-            List<R26_PrintData> data = dt.AsEnumerable()
-                .Select(row1 => new R26_PrintData()
-                {
-                    PO = row1["PO"].ToString(),
-                    Code = row1["Code"].ToString(),
-                    Color_Shade = row1["Color_Shade"].ToString(),
-                    Description = row1["Description"].ToString(),
-                    Quantity = row1["Quantity"].ToString(),
-                    Unit = row1["Unit"].ToString(),
-                    Unit_Price = row1["Unit_Price"].ToString(),
-                    Amount = row1["Amount"].ToString(),
-                    Total_Quantity = row1["Total_Quantity"].ToString(),
-                    Remark = row1["Remark"].ToString()
-                }).ToList();
-
-            report.ReportDataSource = data;
-
-
-          
-            #endregion
-
-            // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
-            frm.MdiParent = MdiParent;
-            frm.Show();
-
-
-
+        
 
             if (Category.TrimEnd().Equals("CARTON", StringComparison.OrdinalIgnoreCase) && checkBox1.Checked == true)
             #region Shipping Mark

@@ -495,7 +495,7 @@
             </TablixMember>
           </TablixMembers>
         </TablixRowHierarchy>
-        <DataSetName>DataSet1</DataSetName>
+        <DataSetName>temp</DataSetName>
         <Top>0.05291cm</Top>
         <Left>0.3175cm</Left>
         <Height>2.69828cm</Height>
@@ -1632,11 +1632,18 @@
       </ConnectionProperties>
       <rd:DataSourceID>eb78c567-0965-4f64-9dd2-9ea65856afe5</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="SciProductionSubcon1">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>d36d2a12-7b3a-49ec-840c-3c4be2438b99</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="DataSet1">
+    <DataSet Name="temp">
       <Query>
-        <DataSourceName>SciProductionSubcon</DataSourceName>
+        <DataSourceName>SciProductionSubcon1</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
