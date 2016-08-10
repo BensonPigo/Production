@@ -15,7 +15,7 @@
     [CFMETD]          DATE            NULL,
     [RevisedETD]      DATE            NULL,
     [FinalETD]        DATE            NULL,
-    [ShipETA]         DATE        CONSTRAINT [DF_PO_Supp_Detail_ShipETA] DEFAULT ((0)) NULL,
+    [ShipETA]         DATE         NULL,
     [ETA]             DATE            NULL,
     [ATA]             DATE            NULL,
     [ShipModeID]      VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_ShipModeID] DEFAULT ('') NOT NULL,
