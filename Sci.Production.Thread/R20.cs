@@ -21,26 +21,27 @@ namespace Sci.Production.Thread
         {
             InitializeComponent();
             DataTable factory = null;
-            string sqlcmd = (@"select DISTINCT FactoryID FROM DBO.ThreadRequisition");
+            string sqlcmd = (@"select DISTINCT FTYGroup FROM DBO.Factory");
             DBProxy.Current.Select("", sqlcmd, out factory);
             factory.Rows.Add(new string[] { "" });
-            factory.DefaultView.Sort = "FactoryID";
+            factory.DefaultView.Sort = "FTYGroup";
             this.comboBox1.DataSource = factory;
-            this.comboBox1.ValueMember = "FactoryID";
-            this.comboBox1.DisplayMember = "FactoryID";
+            this.comboBox1.ValueMember = "FTYGroup";
+            this.comboBox1.DisplayMember = "FTYGroup";
             this.comboBox1.SelectedIndex = 0;
             this.comboBox1.Text = Sci.Env.User.Factory;
 
             DataTable m = null;
-            string sqlm = (@"select DISTINCT MDivisionID FROM DBO.ThreadRequisition");
+            string sqlm = (@"select ID FROM DBO.MDivision");
             DBProxy.Current.Select("", sqlm, out m);
             m.Rows.Add(new string[] { "" });
-            m.DefaultView.Sort = "MDivisionID";
+            m.DefaultView.Sort = "ID";
             this.comboBox2.DataSource = m;
-            this.comboBox2.ValueMember = "MDivisionID";
-            this.comboBox2.DisplayMember = "MDivisionID";
+            this.comboBox2.ValueMember = "ID";
+            this.comboBox2.DisplayMember = "ID";
             this.comboBox2.SelectedIndex = 0;
             this.comboBox2.Text = Sci.Env.User.Keyword;
+            print.Enabled = false;
         }
 
         protected override bool ValidateInput()
