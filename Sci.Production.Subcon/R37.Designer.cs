@@ -114,8 +114,6 @@
             this.combFac.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.combFac.FormattingEnabled = true;
             this.combFac.IsSupportUnselect = true;
-            this.combFac.Items.AddRange(new object[] {
-            "FA2"});
             this.combFac.Location = new System.Drawing.Point(139, 199);
             this.combFac.Name = "combFac";
             this.combFac.Size = new System.Drawing.Size(121, 24);

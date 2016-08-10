@@ -25,9 +25,18 @@ namespace Sci.Production.Subcon
         public R37(ToolStripMenuItem menuitem)
             : base(menuitem) 
          {
-            
             InitializeComponent();
+            DataTable factory = null;
+            string sqlcmd = (@"select DISTINCT BrandID FROM DBO.Debit");
+            DBProxy.Current.Select("", sqlcmd, out factory);
+            factory.Rows.Add(new string[] { "" });
+            factory.DefaultView.Sort = "BrandID";
+            this.combFac.DataSource = factory;
+            this.combFac.ValueMember = "BrandID";
+            this.combFac.DisplayMember = "BrandID";
             this.combFac.SelectedIndex = 0;
+
+         //   this.combFac.SelectedIndex = 0;
             this.comboPay.SelectedIndex = 0;
             this.comboReport.SelectedIndex = 0;
             
@@ -46,7 +55,7 @@ namespace Sci.Production.Subcon
             DebitNo2 = DebNo2.Text.ToString();
             handle = Han.TextBox1.Text;
             smr = txttSMR.TextBox1.Text;
-            fac = combFac.SelectedItem.ToString();
+            fac = combFac.Text.ToString();
             Pay = comboPay.SelectedItem.ToString();
             list = new List<SqlParameter>();
             string sqlWhere = ""; string sqlHaving = "";
@@ -76,7 +85,7 @@ namespace Sci.Production.Subcon
             {
                 sqlWheres.Add("a.smr = @smr");
                 list.Add(new SqlParameter("@smr", smr));
-            } if (!this.combFac.SelectedItem.ToString().Empty())
+            } if (!this.combFac.Text.ToString().Empty())
             {
                 sqlWheres.Add("a.BrandID  = @factory");
                 list.Add(new SqlParameter("@factory", fac));
