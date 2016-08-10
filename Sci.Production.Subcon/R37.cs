@@ -35,8 +35,6 @@ namespace Sci.Production.Subcon
             this.combFac.ValueMember = "BrandID";
             this.combFac.DisplayMember = "BrandID";
             this.combFac.SelectedIndex = 0;
-
-         //   this.combFac.SelectedIndex = 0;
             this.comboPay.SelectedIndex = 0;
             this.comboReport.SelectedIndex = 0;
             
