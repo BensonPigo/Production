@@ -140,6 +140,7 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(154, 23);
             this.textBox2.TabIndex = 15;
+            this.textBox2.Text = "11080079GGSJ2";
             // 
             // label9
             // 
@@ -160,6 +161,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(147, 23);
             this.textBox1.TabIndex = 13;
+            this.textBox1.Text = "11070023PPSH1";
             // 
             // comboBox1
             // 
@@ -212,6 +214,8 @@
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
             this.dateRange1.TabIndex = 8;
+            this.dateRange1.Value1 = new System.DateTime(2014, 10, 18, 0, 0, 0, 0);
+            this.dateRange1.Value2 = new System.DateTime(2014, 10, 18, 0, 0, 0, 0);
             // 
             // label8
             // 
