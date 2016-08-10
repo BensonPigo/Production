@@ -517,7 +517,7 @@
     <EmbeddedResource Include="R26.resx">
       <DependentUpon>R26.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="R26_Print.rdlc" />
+    <EmbeddedResource Include="R26.rdlc" />
     <EmbeddedResource Include="R36.resx">
       <DependentUpon>R36.cs</DependentUpon>
     </EmbeddedResource>

@@ -233,7 +233,7 @@ namespace Sci.Production.Subcon
                                                        ,b.Vat [vat]
                                                        ,b.Amount+b.Vat [Grand_Total]     
 	                                         from dbo.localpo b 
-                                             inner join dbo.orders a on a.FactoryID=b.FactoryId
+                                            
                                              left join dbo.Factory  e on e.id = b.factoryid 
 	                                         left join dbo.LocalPO_Detail c on b.id=c.Id
 	                                         left join dbo.LocalSupp d on b.LocalSuppID=d.ID " + sqlWhere, lis, out dt);
@@ -304,21 +304,7 @@ namespace Sci.Production.Subcon
             report.ReportDataSource = data;
 
 
-            // 指定是哪個 RDLC
-            #region  指定是哪個 RDLC
-            //DualResult result;
-            Type ReportResourceNamespace = typeof(R26_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "R26_Print.rdlc";
-
-            IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
-            {
-                ////this.ShowException(result);
-                //return;
-            }
-
-            report.ReportResource = reportresource;
+          
             #endregion
 
             // 開啟 report view
