@@ -86,7 +86,7 @@ namespace Sci.Production.Subcon
             Location_Poid2 = textBox4.Text.ToString();
             Factory1 = comboBox2.Text.ToString();
             Category = txtartworktype_fty1.Text.ToString();
-            Supplier = txtsubcon1.TextBox1.Text;
+            Supplier = txtsubcon1.Text.ToString();
             Report_Type = comboBox1.SelectedItem.ToString();
             Shipping_Mark = checkBox1.Checked.ToString();
 
@@ -214,11 +214,6 @@ namespace Sci.Production.Subcon
             else //if (this.comboBox1.Text == "PO Form")
             {
                 #region PO Form
-                //DataRow row = this.CurrentDataRow;
-                //string id = row["ID"].ToString();
-                //    List<SqlParameter> pars = new List<SqlParameter>();
-                //pars.Add(new SqlParameter("@ID", id));
-
                 result = DBProxy.Current.Select("", @"select e.NameEN [Title1] 
                                                        ,e.AddressEN [Title2]
                                                        ,e.Tel [Title3]
@@ -242,12 +237,11 @@ namespace Sci.Production.Subcon
                                                        ,b.Vat [vat]
                                                        ,b.Amount+b.Vat [Grand_Total]     
 	                                         from dbo.localpo b 
-                                            
+                                             
                                              left join dbo.Factory  e on e.id = b.factoryid 
 	                                         left join dbo.LocalPO_Detail c on b.id=c.Id
 	                                         left join dbo.LocalSupp d on b.LocalSuppID=d.ID " + sqlWhere, lis, out dt);
-                //where b.id = @ID 
-                //if (!result) { this.ShowErr(result); }
+         
                 if (!result)
                 {
                     return result;
@@ -302,10 +296,6 @@ namespace Sci.Production.Subcon
                 #endregion
             }
 
-           
-
-
-        
 
             if (Category.TrimEnd().Equals("CARTON", StringComparison.OrdinalIgnoreCase) && checkBox1.Checked == true)
             #region Shipping Mark
@@ -452,28 +442,7 @@ namespace Sci.Production.Subcon
             }
         }
 
-        //public string test()
-        //{
-        //    string ss;
-        //    if (comboBox1.Text == "PO List")
-        //    {
-        //        print.Enabled = false;
-        //        toexcel.Enabled = true;
-        //        ss = "A";
-        //    }
-        //    else if (comboBox1.Text == "PO Form")
-        //    {
-        //        toexcel.Enabled = false;
-        //        print.Enabled = true;
-        //        ss = "B";
-        //    }
-        //    else //if (comboBox1.Text == "PO Order")
-        //    {
-        //        print.Enabled = false;
-        //        toexcel.Enabled = true;
-        //        ss = "C";
-        //    }
-        //    return ss;
+
     }
 }
 

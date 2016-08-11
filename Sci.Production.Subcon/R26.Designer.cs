@@ -111,6 +111,7 @@
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(154, 23);
             this.textBox4.TabIndex = 18;
+            this.textBox4.Text = "15030454IIH1";
             // 
             // label10
             // 
@@ -131,6 +132,7 @@
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(147, 23);
             this.textBox3.TabIndex = 16;
+            this.textBox3.Text = "15030454IIH1";
             // 
             // textBox2
             // 
@@ -140,7 +142,7 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(154, 23);
             this.textBox2.TabIndex = 15;
-            this.textBox2.Text = "11080079GGSJ2";
+            this.textBox2.Text = "15030454II";
             // 
             // label9
             // 
@@ -161,7 +163,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(147, 23);
             this.textBox1.TabIndex = 13;
-            this.textBox1.Text = "11070023PPSH1";
+            this.textBox1.Text = "15030454II";
             // 
             // comboBox1
             // 
@@ -207,6 +209,8 @@
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(280, 23);
             this.dateRange2.TabIndex = 9;
+            this.dateRange2.Value1 = new System.DateTime(2015, 1, 21, 0, 0, 0, 0);
+            this.dateRange2.Value2 = new System.DateTime(2015, 1, 21, 0, 0, 0, 0);
             // 
             // dateRange1
             // 
@@ -214,8 +218,6 @@
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
             this.dateRange1.TabIndex = 8;
-            this.dateRange1.Value1 = new System.DateTime(2014, 10, 18, 0, 0, 0, 0);
-            this.dateRange1.Value2 = new System.DateTime(2014, 10, 18, 0, 0, 0, 0);
             // 
             // label8
             // 

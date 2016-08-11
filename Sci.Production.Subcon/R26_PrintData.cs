@@ -22,6 +22,6 @@ namespace Sci.Production.Subcon
         public string Issue_Date { get; set; }
         public string Supp { get; set; }
         public string Group_FIDS { get { return this.Factory + this.Issue_Date+this.Supp; } }
-        public string Group_PO { get { return this.PO; } }
+        public string Group_PO { get { return this.PO + this.Code; } }
     }
 }
