@@ -47,7 +47,7 @@ namespace Sci.Production.Class
         {
             string selectSql = string.Format("Select Name,ExtNo from TPEPass1 Where id='{0}'", this.displayBox1.Text.ToString());
             DataRow dr;
-            if (MyUtility.Check.Seek(selectSql, out dr))
+            if (MyUtility.Check.Seek(selectSql, out dr, connectionName: "Production"))
             {
                 this.displayBox2.Text = MyUtility.Check.Empty(dr["extNo"]) ? "" : dr["Name"].ToString();
                 if (!MyUtility.Check.Empty(dr["extNo"]))
