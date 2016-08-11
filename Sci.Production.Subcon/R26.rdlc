@@ -26,11 +26,74 @@
                             </TablixColumns>
                             <TablixRows>
                               <TablixRow>
-                                <Height>1.84408cm</Height>
+                                <Height>1.10325cm</Height>
                                 <TablixCells>
                                   <TablixCell>
                                     <CellContents>
                                       <Rectangle Name="Rectangle2">
+                                        <ReportItems>
+                                          <Textbox Name="Textbox37">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>Total Quantity:</Value>
+                                                    <Style />
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Right</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox37</rd:DefaultName>
+                                            <Top>0.32672cm</Top>
+                                            <Left>7.80839cm</Left>
+                                            <Height>0.6cm</Height>
+                                            <Width>2.88396cm</Width>
+                                            <Style>
+                                              <Border>
+                                                <Style>None</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                          <Textbox Name="Total_Quantity">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>=Fields!Total_Quantity.Value</Value>
+                                                    <Style />
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style />
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Total_Quantity</rd:DefaultName>
+                                            <Top>0.32672cm</Top>
+                                            <Left>10.79818cm</Left>
+                                            <Height>0.6cm</Height>
+                                            <Width>2.67229cm</Width>
+                                            <ZIndex>1</ZIndex>
+                                            <Style>
+                                              <Border>
+                                                <Style>None</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </ReportItems>
                                         <KeepTogether>true</KeepTogether>
                                         <Style>
                                           <Border>
@@ -69,9 +132,9 @@
                             </TablixMembers>
                           </TablixRowHierarchy>
                           <DataSetName>DataSet1</DataSetName>
-                          <Top>1.70168cm</Top>
+                          <Top>1.12363cm</Top>
                           <Left>0.2614cm</Left>
-                          <Height>1.84408cm</Height>
+                          <Height>1.10325cm</Height>
                           <Width>19.54669cm</Width>
                           <Style>
                             <Border>
@@ -385,68 +448,6 @@
                             </Border>
                           </Style>
                         </Tablix>
-                        <Textbox Name="Textbox37">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>Total Quantity:</Value>
-                                  <Style />
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Right</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox37</rd:DefaultName>
-                          <Top>3.38181cm</Top>
-                          <Left>7.9375cm</Left>
-                          <Height>0.6cm</Height>
-                          <Width>2.88396cm</Width>
-                          <ZIndex>2</ZIndex>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                        <Textbox Name="Total_Quantity">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!Total_Quantity.Value</Value>
-                                  <Style />
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Total_Quantity</rd:DefaultName>
-                          <Top>3.38181cm</Top>
-                          <Left>10.92729cm</Left>
-                          <Height>0.6cm</Height>
-                          <Width>2.67229cm</Width>
-                          <ZIndex>3</ZIndex>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
                         <Tablix Name="Tablix3">
                           <TablixBody>
                             <TablixColumns>
@@ -545,11 +546,11 @@
                               </TablixMember>
                             </TablixMembers>
                           </TablixRowHierarchy>
-                          <Top>4.1582cm</Top>
+                          <Top>4.01709cm</Top>
                           <Left>0.79374cm</Left>
                           <Height>0.67438cm</Height>
                           <Width>18.90852cm</Width>
-                          <ZIndex>4</ZIndex>
+                          <ZIndex>2</ZIndex>
                           <Style>
                             <Border>
                               <Style>None</Style>

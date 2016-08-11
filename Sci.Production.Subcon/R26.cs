@@ -18,7 +18,7 @@ namespace Sci.Production.Subcon
 {
     public partial class R26 : Sci.Win.Tems.PrintForm
     {
-       
+        string id;
         string name;
         string front;
         string mb;
@@ -89,6 +89,8 @@ namespace Sci.Production.Subcon
             Supplier = txtsubcon1.Text.ToString();
             Report_Type = comboBox1.SelectedItem.ToString();
             Shipping_Mark = checkBox1.Checked.ToString();
+            
+            sqlWheres.Clear();
 
             #region where 條件
 
@@ -300,26 +302,24 @@ namespace Sci.Production.Subcon
             if (Category.TrimEnd().Equals("CARTON", StringComparison.OrdinalIgnoreCase) && checkBox1.Checked == true)
             #region Shipping Mark
             {
-                string scmd = string.Format(@"select a.id 
+                string scmd = string.Format(@"select a.id [id]
                                                     ,co.alias [name]
+                                                    ,RTRIM(a.id)+' '+RTRIM(co.Alias) [theorderid]
                                                     ,a.MarkFront [front]
                                                     ,a.MarkBack [mb]
                                                     ,a.markleft [left]
                                                     ,a.Markright [right]
                                              from orders a
-                                             left join (select distinct OrderId from +sqlwhere) m  on m.OrderId = a.poid 
+                                             inner join ( select distinct OrderId from localpo b
+                                             inner join localpo_detail c on b.id = c.id
+                                             inner join Orders a on a.poid = c.orderid  " + sqlWhere + @") m  on m.OrderId = a.poid 
                                              left join country co on co.id = a.dest");
-
                 result = DBProxy.Current.Select("", scmd, lis, out shm);
                 if (!result)
                 {
                     return result;
                 }
-                name = shm.Rows[0]["name"].ToString();
-                front = shm.Rows[0]["front"].ToString();
-                mb = shm.Rows[0]["mb"].ToString();
-                left = shm.Rows[0]["left"].ToString();
-                right = shm.Rows[0]["right"].ToString();
+              
             }
             #endregion
            
@@ -416,16 +416,58 @@ namespace Sci.Production.Subcon
 
             }
 
+          
+
             if (checkBox1.Checked == true)
             {
+                var saveDialog1 = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+                saveDialog1.ShowDialog();
+                string outpath1 = saveDialog1.FileName;
+                if (outpath1.Empty())
+                {
+                    return false;
+                }
+
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Shipping_Mark.xltx");
 
-                x1.dicDatas.Add("##name", name);
-                x1.dicDatas.Add("##A", front);
-                x1.dicDatas.Add("##B", mb);
-                x1.dicDatas.Add("##C", left);
-                x1.dicDatas.Add("##D", right);
-                x1.Save(outpath, false);
+                List<string> ls = new List<string>();
+                foreach (DataRow row in shm.Rows)
+                {
+                    id = shm.Rows[0]["id"].ToString();
+                    name = shm.Rows[0]["name"].ToString();
+                    front = shm.Rows[0]["front"].ToString();
+                    mb = shm.Rows[0]["mb"].ToString();
+                    left = shm.Rows[0]["left"].ToString();
+                    right = shm.Rows[0]["right"].ToString();
+                    string theorderid = row["theorderid"].ToString();
+                    if (!ls.Contains(theorderid)) //lis "不"包含 TheOrderID
+                        ls.Add(theorderid);
+                }
+
+                //copy sheet by TheOrderID count.
+                x1.CopySheet.Add(1, ls.Count -1);
+                x1.VarToSheetName = "##theorderid";
+                int idx = 0;
+                foreach (string theorderid in ls)
+                {
+                    string idxstr = (idx == 0) ? "" : idx.ToString(); //為了讓第一筆idx是空值
+
+                    DataTable finalda = shm.Select(string.Format("theorderid = '{0}'", theorderid)).CopyToDataTable();
+
+                    finalda.Columns.RemoveAt(2);
+                    finalda.Columns.RemoveAt(1);
+                    finalda.Columns.RemoveAt(0);
+
+                    x1.dicDatas.Add("##id" + idxstr, id);
+                    x1.dicDatas.Add("##name" + idxstr, name);
+                    x1.dicDatas.Add("##theorderid" + idxstr, theorderid);
+                    x1.dicDatas.Add("##A" + idxstr, front);
+                    x1.dicDatas.Add("##B" + idxstr, mb);
+                    x1.dicDatas.Add("##C" + idxstr, left);
+                    x1.dicDatas.Add("##D" + idxstr, right);
+                    idx += 1;
+                }
+                x1.Save(outpath1, false);
             }
            return true; //return base.OnToExcel(report);
         } 
