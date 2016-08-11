@@ -6,12 +6,12 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>19.93194cm</Width>
+              <Width>20.20434cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>2.69828cm</Height>
+              <Height>3.86245cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -34,7 +34,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox33</rd:DefaultName>
-                          <Top>0.0882cm</Top>
+                          <Top>0.14112cm</Top>
                           <Height>0.69249cm</Height>
                           <Width>2.61938cm</Width>
                           <Style>
@@ -64,7 +64,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox33</rd:DefaultName>
-                          <Top>0.0882cm</Top>
+                          <Top>0.14112cm</Top>
                           <Left>2.61938cm</Left>
                           <Height>0.69249cm</Height>
                           <Width>2.54cm</Width>
@@ -96,7 +96,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox33</rd:DefaultName>
-                          <Top>0.0882cm</Top>
+                          <Top>0.14112cm</Top>
                           <Left>18.14122cm</Left>
                           <Height>0.69249cm</Height>
                           <Width>1.79072cm</Width>
@@ -128,7 +128,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox33</rd:DefaultName>
-                          <Top>0.0882cm</Top>
+                          <Top>0.14112cm</Top>
                           <Left>16.07747cm</Left>
                           <Height>0.69249cm</Height>
                           <Width>2.06375cm</Width>
@@ -160,7 +160,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox33</rd:DefaultName>
-                          <Top>0.0882cm</Top>
+                          <Top>0.14112cm</Top>
                           <Left>13.59959cm</Left>
                           <Height>0.69249cm</Height>
                           <Width>2.47788cm</Width>
@@ -192,7 +192,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox33</rd:DefaultName>
-                          <Top>0.0882cm</Top>
+                          <Top>0.14112cm</Top>
                           <Left>10.9273cm</Left>
                           <Height>0.69249cm</Height>
                           <Width>2.67229cm</Width>
@@ -224,7 +224,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox33</rd:DefaultName>
-                          <Top>0.0882cm</Top>
+                          <Top>0.14112cm</Top>
                           <Left>8.04334cm</Left>
                           <Height>0.69249cm</Height>
                           <Width>2.88396cm</Width>
@@ -256,7 +256,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox33</rd:DefaultName>
-                          <Top>0.0882cm</Top>
+                          <Top>0.14112cm</Top>
                           <Left>5.15938cm</Left>
                           <Height>0.69249cm</Height>
                           <Width>2.88396cm</Width>
@@ -280,7 +280,7 @@
                             </TablixColumns>
                             <TablixRows>
                               <TablixRow>
-                                <Height>1.78208cm</Height>
+                                <Height>2.17896cm</Height>
                                 <TablixCells>
                                   <TablixCell>
                                     <CellContents>
@@ -324,7 +324,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=First(Fields!Total_Quantity.Value)</Value>
+                                                    <Value>=Fields!Total_Quantity.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -384,7 +384,7 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=First(Fields!Remark.Value)</Value>
+                                                    <Value>=Fields!Remark.Value</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -446,9 +446,9 @@
                             </TablixMembers>
                           </TablixRowHierarchy>
                           <DataSetName>DataSet1</DataSetName>
-                          <Top>0.85125cm</Top>
-                          <Left>0.26141cm</Left>
-                          <Height>1.78208cm</Height>
+                          <Top>1.5512cm</Top>
+                          <Left>0.38524cm</Left>
+                          <Height>2.17896cm</Height>
                           <Width>19.54669cm</Width>
                           <ZIndex>8</ZIndex>
                           <Style>
@@ -496,10 +496,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>temp</DataSetName>
-        <Top>0.05291cm</Top>
-        <Left>0.3175cm</Left>
-        <Height>2.69828cm</Height>
-        <Width>19.93194cm</Width>
+        <Top>0.17639cm</Top>
+        <Left>0.31751cm</Left>
+        <Height>3.86245cm</Height>
+        <Width>20.20434cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -507,13 +507,13 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>1.125in</Height>
+    <Height>1.625in</Height>
     <Style />
   </Body>
   <Width>8.2in</Width>
   <Page>
     <PageHeader>
-      <Height>8.27404cm</Height>
+      <Height>11.05217cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
