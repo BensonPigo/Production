@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Pattern_GL_Artwork] (
     [ID]            VARCHAR (10) CONSTRAINT [DF_Pattern_GL_Artwork_ID] DEFAULT ('') NULL,
     [Version]       VARCHAR (3)  CONSTRAINT [DF_Pattern_GL_Artwork_Version] DEFAULT ('') NULL,
-    [UKEY]          BIGINT       IDENTITY (1, 1) NOT NULL,
+    [UKEY]          BIGINT NOT NULL DEFAULT ((0)),
     [SEQ]           VARCHAR (4)  CONSTRAINT [DF_Pattern_GL_Artwork_SEQ] DEFAULT ('') NOT NULL,
     [ArtworkTypeID] VARCHAR (20) CONSTRAINT [DF_Pattern_GL_Artwork_ArtworkTypeID] DEFAULT ('') NOT NULL,
     [PatternUkey]   BIGINT       CONSTRAINT [DF_Pattern_GL_Artwork_PatternUkey] DEFAULT ((0)) NULL,
