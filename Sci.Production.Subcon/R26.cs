@@ -285,8 +285,6 @@ namespace Sci.Production.Subcon
                         Total_Quantity = row1["Total_Quantity"].ToString(),
                         Remark = row1["Remark"].ToString(),
                         Title1 = row1["Title1"].ToString(),
-                        Title2 = row1["Title2"].ToString(),
-                        Title3 = row1["Title3"].ToString(),
                         Issue_Date = row1["Issue_Date"].ToString(),
                         To = row1["To"].ToString()
 
@@ -318,7 +316,12 @@ namespace Sci.Production.Subcon
                                              left join country co on co.id = a.dest");
                 result = DBProxy.Current.Select("", scmd, lis, out shm);
 
-                
+                id = shm.Rows[0]["id"].ToString();
+                name = shm.Rows[0]["name"].ToString();
+                A = shm.Rows[0]["A"].ToString();
+                B = shm.Rows[0]["B"].ToString();
+                C = shm.Rows[0]["C"].ToString();
+                D = shm.Rows[0]["D"].ToString();
               
                 if (!result)
                 {
@@ -442,12 +445,7 @@ namespace Sci.Production.Subcon
                 List<string> ls = new List<string>();
                 foreach (DataRow row in shm.Rows)
                 {
-                    id = row["id"].ToString();
-                    name = row["name"].ToString();
-                    A = row["A"].ToString();
-                    B = row["B"].ToString();
-                    C = row["C"].ToString();
-                    D = row["D"].ToString();
+                    
                     string theorderid = row["theorderid"].ToString();
                     if (!ls.Contains(theorderid)) //lis "不"包含 TheOrderID
                         ls.Add(theorderid);
