@@ -407,7 +407,7 @@ Database/dbo/Tables/Style_HSCode.sql -text
 Database/dbo/Tables/Style_Location.sql -text
 Database/dbo/Tables/Style_MarkerList.sql -text
 Database/dbo/Tables/Style_MarkerList_Article.sql -text
-Database/dbo/Tables/Style_MarkerList_Pattenpanel.sql -text
+Database/dbo/Tables/Style_MarkerList_Patternpanel.sql -text
 Database/dbo/Tables/Style_MarkerList_SizeQty.sql -text
 Database/dbo/Tables/Style_MiAdidasColorCombo.sql -text
 Database/dbo/Tables/Style_ProductionKits.sql -text

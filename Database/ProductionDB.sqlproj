@@ -1208,7 +1208,7 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\Style_MarkerList_Pattenpanel.sql">
+    <Build Include="dbo\Tables\Style_MarkerList_PatternPanel.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
