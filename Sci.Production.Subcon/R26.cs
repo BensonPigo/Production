@@ -24,12 +24,7 @@ namespace Sci.Production.Subcon
         string mb;
         string left;
         string right;
-        //DataRow CurrentDataRow;
-        //public R26(DataRow row)
-        //{
 
-        //    this.CurrentDataRow = row;
-        //}
         public R26(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -150,8 +145,8 @@ namespace Sci.Production.Subcon
 
 
             if (this.Report_Type == "PO List")
-            #region Po List
             {
+             #region Po List
                 string sqlcd = string.Format(@"select  a.FactoryID [Factory]
                                                     ,b.FactoryId [Original Factory]
                                                     ,c.OrderId [SP]
@@ -183,10 +178,10 @@ namespace Sci.Production.Subcon
             }
             else if (this.Report_Type == "PO Order")
             {
-                #region Po Order
+            #region Po Order
                 string cmd = string.Format(@"select  b.id [LocalPOID]
                                                 ,b.FactoryId [Factory]
-		                                        ,b.FactoryId+'-'+b.Id [TheOrderID]--bb.TheOrderID
+		                                        ,b.FactoryId+'-'+b.Id [TheOrderID]
                                                 ,c.OrderId [SP]
                                                 ,b.LocalSuppID [Supp]
                                                 ,c.Delivery [Delivery]
@@ -223,15 +218,15 @@ namespace Sci.Production.Subcon
                                                        ,d.Tel [Tel]
                                                        ,d.Fax [Fax]
                                                        ,b.IssueDate [Issue_Date]
-                                                       ,c.OrderId [PO]
+                                                       ,c.Id [PO]
                                                        ,c.Refno [Code]
                                                        ,c.ThreadColorID [Color_Shade]
                                                        ,[Description]=dbo.getItemDesc(b.Category,c.Refno)
                                                        ,c.Qty [Quantity]
                                                        ,c.UnitId [Unit]
-                                                       ,c.Price[Unit_Price]
-                                                       ,c.Qty*c.Price [Amount]
-                                                       ,[Total_Quantity]=sum(c.Qty) OVER (PARTITION BY c.OrderId,c.Refno) 
+                                                       ,cast(cast(isnull(c.Price , 0 ) as float) as varchar)[Unit_Price]
+													   ,cast(cast(isnull(c.Qty*c.Price , 0 ) as float) as varchar)[Amount]
+                                                       ,[Total_Quantity]=sum(c.Qty) OVER (PARTITION BY c.Id,c.Refno) 
                                                        ,b.Remark [Remark] 
                                                        ,b.CurrencyId [Total1] 
                                                        ,b.Amount [Total2]
@@ -239,9 +234,9 @@ namespace Sci.Production.Subcon
                                                        ,b.Vat [vat]
                                                        ,b.Amount+b.Vat [Grand_Total]     
 	                                         from dbo.localpo b 
-                                             
                                              left join dbo.Factory  e on e.id = b.factoryid 
 	                                         left join dbo.LocalPO_Detail c on b.id=c.Id
+                                             left join orders a on c.orderid = a.id
 	                                         left join dbo.LocalSupp d on b.LocalSuppID=d.ID " + sqlWhere, lis, out dt);
          
                 if (!result)
@@ -289,7 +284,15 @@ namespace Sci.Production.Subcon
                         Unit_Price = row1["Unit_Price"].ToString(),
                         Amount = row1["Amount"].ToString(),
                         Total_Quantity = row1["Total_Quantity"].ToString(),
-                        Remark = row1["Remark"].ToString()
+                        Remark = row1["Remark"].ToString(),
+                        Title1 = row1["Title1"].ToString(),
+                        Title2 = row1["Title2"].ToString(),
+                        Title3 = row1["Title3"].ToString(),
+                        Issue_Date = row1["Issue_Date"].ToString(),
+                        To = row1["To"].ToString()
+
+
+
                     }).ToList();
 
                 report.ReportDataSource = data;
@@ -300,8 +303,8 @@ namespace Sci.Production.Subcon
 
 
             if (Category.TrimEnd().Equals("CARTON", StringComparison.OrdinalIgnoreCase) && checkBox1.Checked == true)
-            #region Shipping Mark
             {
+            #region Shipping Mark
                 string scmd = string.Format(@"select a.id [id]
                                                     ,co.alias [name]
                                                     ,RTRIM(a.id)+' '+RTRIM(co.Alias) [theorderid]
@@ -348,6 +351,8 @@ namespace Sci.Production.Subcon
 
             }
         }
+
+
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.Report_Type == "PO List" && (dtt == null || dtt.Rows.Count == 0))
@@ -371,13 +376,15 @@ namespace Sci.Production.Subcon
             {
                 return false;
             }
-
+            #region PO List
             if ("PO List".EqualString(this.comboBox1.Text))
             {
                 Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Local_PO_List.xltx");
                 xl.dicDatas.Add("##Factory", dtt);
                 xl.Save(outpath, false);
             }
+            #endregion
+            #region PO Order
             else if ("PO Order".EqualString(this.comboBox1.Text))
             {
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Local_PO_Order.xltx");
@@ -415,9 +422,9 @@ namespace Sci.Production.Subcon
                 x1.Save(outpath, false);
 
             }
+            #endregion
 
-          
-
+            #region Shipping Mark
             if (checkBox1.Checked == true)
             {
                 var saveDialog1 = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
@@ -433,12 +440,12 @@ namespace Sci.Production.Subcon
                 List<string> ls = new List<string>();
                 foreach (DataRow row in shm.Rows)
                 {
-                    id = shm.Rows[0]["id"].ToString();
-                    name = shm.Rows[0]["name"].ToString();
-                    front = shm.Rows[0]["front"].ToString();
-                    mb = shm.Rows[0]["mb"].ToString();
-                    left = shm.Rows[0]["left"].ToString();
-                    right = shm.Rows[0]["right"].ToString();
+                    string id = row["id"].ToString();
+                    string name = row["name"].ToString();
+                    string front = row["front"].ToString();
+                    string mb = row["mb"].ToString();
+                    string left = row["left"].ToString();
+                    string right = row["right"].ToString();
                     string theorderid = row["theorderid"].ToString();
                     if (!ls.Contains(theorderid)) //lis "不"包含 TheOrderID
                         ls.Add(theorderid);
@@ -469,6 +476,7 @@ namespace Sci.Production.Subcon
                 }
                 x1.Save(outpath1, false);
             }
+            #endregion
            return true; //return base.OnToExcel(report);
         } 
         private void txtartworktype_fty1_TextChanged(object sender, EventArgs e)
@@ -477,6 +485,7 @@ namespace Sci.Production.Subcon
             //if (txtartworktype_fty1.Text.EqualString ("CARTON"))
             {
                 checkBox1.Enabled = true;
+                toexcel.Enabled = true;
             }
             else
             {

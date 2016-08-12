@@ -56,14 +56,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(503, 12);
+            this.print.TabIndex = 1;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(503, 48);
+            this.toexcel.TabIndex = 2;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(503, 84);
+            this.close.TabIndex = 3;
             // 
             // panel1
             // 
@@ -90,7 +93,7 @@
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(481, 277);
-            this.panel1.TabIndex = 94;
+            this.panel1.TabIndex = 0;
             // 
             // comboBox2
             // 
@@ -101,7 +104,7 @@
             this.comboBox2.Location = new System.Drawing.Point(127, 135);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(121, 24);
-            this.comboBox2.TabIndex = 19;
+            this.comboBox2.TabIndex = 6;
             // 
             // textBox4
             // 
@@ -110,7 +113,7 @@
             this.textBox4.Location = new System.Drawing.Point(300, 106);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(154, 23);
-            this.textBox4.TabIndex = 18;
+            this.textBox4.TabIndex = 5;
             this.textBox4.Text = "15030454IIH1";
             // 
             // label10
@@ -131,7 +134,7 @@
             this.textBox3.Location = new System.Drawing.Point(127, 106);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(147, 23);
-            this.textBox3.TabIndex = 16;
+            this.textBox3.TabIndex = 4;
             this.textBox3.Text = "15030454IIH1";
             // 
             // textBox2
@@ -141,7 +144,7 @@
             this.textBox2.Location = new System.Drawing.Point(300, 75);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(154, 23);
-            this.textBox2.TabIndex = 15;
+            this.textBox2.TabIndex = 3;
             this.textBox2.Text = "15030454II";
             // 
             // label9
@@ -162,7 +165,7 @@
             this.textBox1.Location = new System.Drawing.Point(127, 76);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(147, 23);
-            this.textBox1.TabIndex = 13;
+            this.textBox1.TabIndex = 2;
             this.textBox1.Text = "15030454II";
             // 
             // comboBox1
@@ -178,7 +181,7 @@
             this.comboBox1.Location = new System.Drawing.Point(127, 235);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 12;
+            this.comboBox1.TabIndex = 9;
             this.comboBox1.TextChanged += new System.EventHandler(this.comboBox1_TextChanged);
             // 
             // txtsubcon1
@@ -188,7 +191,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(126, 205);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(214, 23);
-            this.txtsubcon1.TabIndex = 11;
+            this.txtsubcon1.TabIndex = 8;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // txtartworktype_fty1
@@ -200,7 +203,7 @@
             this.txtartworktype_fty1.Location = new System.Drawing.Point(127, 168);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(153, 23);
-            this.txtartworktype_fty1.TabIndex = 10;
+            this.txtartworktype_fty1.TabIndex = 7;
             this.txtartworktype_fty1.TextChanged += new System.EventHandler(this.txtartworktype_fty1_TextChanged);
             // 
             // dateRange2
@@ -208,7 +211,7 @@
             this.dateRange2.Location = new System.Drawing.Point(127, 41);
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 9;
+            this.dateRange2.TabIndex = 1;
             this.dateRange2.Value1 = new System.DateTime(2015, 1, 21, 0, 0, 0, 0);
             this.dateRange2.Value2 = new System.DateTime(2015, 1, 21, 0, 0, 0, 0);
             // 
@@ -217,7 +220,7 @@
             this.dateRange1.Location = new System.Drawing.Point(127, 8);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 8;
+            this.dateRange1.TabIndex = 0;
             // 
             // label8
             // 
@@ -298,7 +301,7 @@
             this.checkBox1.Location = new System.Drawing.Point(503, 151);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(117, 21);
-            this.checkBox1.TabIndex = 20;
+            this.checkBox1.TabIndex = 0;
             this.checkBox1.Text = "Shipping Mark";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
