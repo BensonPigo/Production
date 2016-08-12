@@ -18,13 +18,7 @@ namespace Sci.Production.Subcon
 {
     public partial class R26 : Sci.Win.Tems.PrintForm
     {
-        string id;
-        string name;
-        string front;
-        string mb;
-        string left;
-        string right;
-
+       
         public R26(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -60,6 +54,13 @@ namespace Sci.Production.Subcon
         string Report_Type;
         string Shipping_Mark;
         string date = DateTime.Now.ToShortDateString();
+        string id;
+        string name;
+        string A;
+        string B;
+        string C;
+        string D;
+    
 
         protected override bool ValidateInput()
         {
@@ -142,8 +143,6 @@ namespace Sci.Production.Subcon
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-
-
             if (this.Report_Type == "PO List")
             {
              #region Po List
@@ -308,21 +307,23 @@ namespace Sci.Production.Subcon
                 string scmd = string.Format(@"select a.id [id]
                                                     ,co.alias [name]
                                                     ,RTRIM(a.id)+' '+RTRIM(co.Alias) [theorderid]
-                                                    ,a.MarkFront [front]
-                                                    ,a.MarkBack [mb]
-                                                    ,a.markleft [left]
-                                                    ,a.Markright [right]
+                                                    ,a.MarkFront [A]
+                                                    ,a.MarkBack [B]
+                                                    ,a.markleft [C]
+                                                    ,a.Markright [D]
                                              from orders a
                                              inner join ( select distinct OrderId from localpo b
                                              inner join localpo_detail c on b.id = c.id
                                              inner join Orders a on a.poid = c.orderid  " + sqlWhere + @") m  on m.OrderId = a.poid 
                                              left join country co on co.id = a.dest");
                 result = DBProxy.Current.Select("", scmd, lis, out shm);
+
+                
+              
                 if (!result)
                 {
                     return result;
-                }
-              
+                } 
             }
             #endregion
            
@@ -384,6 +385,7 @@ namespace Sci.Production.Subcon
                 xl.Save(outpath, false);
             }
             #endregion
+
             #region PO Order
             else if ("PO Order".EqualString(this.comboBox1.Text))
             {
@@ -440,12 +442,12 @@ namespace Sci.Production.Subcon
                 List<string> ls = new List<string>();
                 foreach (DataRow row in shm.Rows)
                 {
-                    string id = row["id"].ToString();
-                    string name = row["name"].ToString();
-                    string front = row["front"].ToString();
-                    string mb = row["mb"].ToString();
-                    string left = row["left"].ToString();
-                    string right = row["right"].ToString();
+                    id = row["id"].ToString();
+                    name = row["name"].ToString();
+                    A = row["A"].ToString();
+                    B = row["B"].ToString();
+                    C = row["C"].ToString();
+                    D = row["D"].ToString();
                     string theorderid = row["theorderid"].ToString();
                     if (!ls.Contains(theorderid)) //lis "不"包含 TheOrderID
                         ls.Add(theorderid);
@@ -454,6 +456,7 @@ namespace Sci.Production.Subcon
                 //copy sheet by TheOrderID count.
                 x1.CopySheet.Add(1, ls.Count -1);
                 x1.VarToSheetName = "##theorderid";
+
                 int idx = 0;
                 foreach (string theorderid in ls)
                 {
@@ -468,10 +471,10 @@ namespace Sci.Production.Subcon
                     x1.dicDatas.Add("##id" + idxstr, id);
                     x1.dicDatas.Add("##name" + idxstr, name);
                     x1.dicDatas.Add("##theorderid" + idxstr, theorderid);
-                    x1.dicDatas.Add("##A" + idxstr, front);
-                    x1.dicDatas.Add("##B" + idxstr, mb);
-                    x1.dicDatas.Add("##C" + idxstr, left);
-                    x1.dicDatas.Add("##D" + idxstr, right);
+                    x1.dicDatas.Add("##A" + idxstr, A);
+                    x1.dicDatas.Add("##B" + idxstr, B);
+                    x1.dicDatas.Add("##C" + idxstr, C);
+                    x1.dicDatas.Add("##D" + idxstr, D);
                     idx += 1;
                 }
                 x1.Save(outpath1, false);
