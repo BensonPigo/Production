@@ -110,16 +110,16 @@
             // 
             this.textBox4.BackColor = System.Drawing.Color.White;
             this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(300, 106);
+            this.textBox4.Location = new System.Drawing.Point(285, 104);
             this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(154, 23);
+            this.textBox4.Size = new System.Drawing.Size(122, 23);
             this.textBox4.TabIndex = 5;
             // 
             // label10
             // 
             this.label10.BackColor = System.Drawing.SystemColors.Control;
             this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(277, 106);
+            this.label10.Location = new System.Drawing.Point(258, 106);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(20, 23);
             this.label10.TabIndex = 17;
@@ -132,23 +132,23 @@
             this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox3.Location = new System.Drawing.Point(127, 106);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(147, 23);
+            this.textBox3.Size = new System.Drawing.Size(121, 23);
             this.textBox3.TabIndex = 4;
             // 
             // textBox2
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(300, 75);
+            this.textBox2.Location = new System.Drawing.Point(285, 75);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(154, 23);
+            this.textBox2.Size = new System.Drawing.Size(122, 23);
             this.textBox2.TabIndex = 3;
             // 
             // label9
             // 
             this.label9.BackColor = System.Drawing.SystemColors.Control;
             this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(277, 76);
+            this.label9.Location = new System.Drawing.Point(258, 76);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(22, 23);
             this.label9.TabIndex = 14;
@@ -161,7 +161,7 @@
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox1.Location = new System.Drawing.Point(127, 76);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(147, 23);
+            this.textBox1.Size = new System.Drawing.Size(121, 23);
             this.textBox1.TabIndex = 2;
             // 
             // comboBox1

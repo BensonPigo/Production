@@ -216,7 +216,7 @@ namespace Sci.Production.Subcon
                                                        ,b.LocalSuppID [To]
                                                        ,d.Tel [Tel]
                                                        ,d.Fax [Fax]
-                                                       ,b.IssueDate [Issue_Date]
+                                                       ,format(b.IssueDate,'yyyy/MM/dd') [Issue_Date]
                                                        ,c.Id [PO]
                                                        ,c.Refno [Code]
                                                        ,c.ThreadColorID [Color_Shade]
@@ -226,7 +226,7 @@ namespace Sci.Production.Subcon
                                                        ,cast(cast(isnull(c.Price , 0 ) as float) as varchar)[Unit_Price]
 													   ,cast(cast(isnull(c.Qty*c.Price , 0 ) as float) as varchar)[Amount]
                                                        ,[Total_Quantity]=sum(c.Qty) OVER (PARTITION BY c.Id,c.Refno) 
-                                                       ,b.Remark [Remark] 
+                                                       ,c.Remark [Remark] 
                                                        ,b.CurrencyId [Total1] 
                                                        ,b.Amount [Total2]
                                                        ,b.CurrencyId [currencyid]
@@ -316,12 +316,7 @@ namespace Sci.Production.Subcon
                                              left join country co on co.id = a.dest");
                 result = DBProxy.Current.Select("", scmd, lis, out shm);
 
-                id = shm.Rows[0]["id"].ToString();
-                name = shm.Rows[0]["name"].ToString();
-                A = shm.Rows[0]["A"].ToString();
-                B = shm.Rows[0]["B"].ToString();
-                C = shm.Rows[0]["C"].ToString();
-                D = shm.Rows[0]["D"].ToString();
+                
               
                 if (!result)
                 {
@@ -474,6 +469,7 @@ namespace Sci.Production.Subcon
                     x1.dicDatas.Add("##C" + idxstr, C);
                     x1.dicDatas.Add("##D" + idxstr, D);
                     idx += 1;
+                    
                 }
                 x1.Save(outpath1, false);
             }
