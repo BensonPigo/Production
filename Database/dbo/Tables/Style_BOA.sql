@@ -8,7 +8,7 @@
     [PatternPanel]        VARCHAR (2)    CONSTRAINT [DF_Style_BOA_PattenPanel] DEFAULT ('') NULL,
     [SizeItem]            VARCHAR (3)    CONSTRAINT [DF_Style_BOA_SizeItem] DEFAULT ('') NULL,
     [ProvidedPatternRoom] BIT            CONSTRAINT [DF_Style_BOA_ProvidedPatternRoom] DEFAULT ((0)) NULL,
-    [Remark]              NVARCHAR (60)  CONSTRAINT [DF_Style_BOA_Remark] DEFAULT ('') NULL,
+    [Remark]              NVARCHAR (MAX)  CONSTRAINT [DF_Style_BOA_Remark] DEFAULT ('') NULL,
     [ColorDetail]         NVARCHAR (100) CONSTRAINT [DF_Style_BOA_ColorDetail] DEFAULT ('') NULL,
     [IsCustCD]            TINYINT        CONSTRAINT [DF_Style_BOA_IsCustCD] DEFAULT ((0)) NULL,
     [BomTypeZipper]       BIT            CONSTRAINT [DF_Style_BOA_BomTypeZipper] DEFAULT ((0)) NULL,
