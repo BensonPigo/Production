@@ -316,7 +316,7 @@ namespace Sci.Production.Subcon
                                              left join country co on co.id = a.dest");
                 result = DBProxy.Current.Select("", scmd, lis, out shm);
 
-                
+
               
                 if (!result)
                 {
@@ -330,26 +330,7 @@ namespace Sci.Production.Subcon
 
 
         
-        private void comboBox1_TextChanged(object sender, EventArgs e)
-        {
-            if (comboBox1.Text == "PO List")
-            {
-                print.Enabled = false;
-                toexcel.Enabled = true;
-
-            }
-            else if (comboBox1.Text == "PO Form")
-            {
-                toexcel.Enabled = false;
-                print.Enabled = true;
-            }
-            else if (comboBox1.Text == "PO Order")
-            {
-                print.Enabled = false;
-                toexcel.Enabled = true;
-
-            }
-        }
+    
 
 
         protected override bool OnToExcel(ReportDefinition report)
@@ -368,16 +349,18 @@ namespace Sci.Production.Subcon
                 return false;
             }
 
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpath = saveDialog.FileName;
-            if (outpath.Empty())
-            {
-                return false;
-            }
+
             #region PO List
             if ("PO List".EqualString(this.comboBox1.Text))
             {
+                var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+                saveDialog.ShowDialog();
+                string outpath = saveDialog.FileName;
+                if (outpath.Empty())
+                {
+                    return false;
+                }
+
                 Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Local_PO_List.xltx");
                 xl.dicDatas.Add("##Factory", dtt);
                 xl.Save(outpath, false);
@@ -387,6 +370,14 @@ namespace Sci.Production.Subcon
             #region PO Order
             else if ("PO Order".EqualString(this.comboBox1.Text))
             {
+                var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+                saveDialog.ShowDialog();
+                string outpath = saveDialog.FileName;
+                if (outpath.Empty())
+                {
+                    return false;
+                }
+
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Local_PO_Order.xltx");
 
                 List<string> lis = new List<string>();
@@ -437,30 +428,24 @@ namespace Sci.Production.Subcon
 
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Shipping_Mark.xltx");
 
+                //copy sheet by TheOrderID count.
+                x1.CopySheet.Add(1, shm.Rows.Count - 1);
+                x1.VarToSheetName = "##theorderid";
+
                 List<string> ls = new List<string>();
+                int idx = 0;
                 foreach (DataRow row in shm.Rows)
                 {
-                    
+                    string idxstr = (idx == 0) ? "" : idx.ToString(); //為了讓第一筆idx是空值
+                    id = row["id"].ToString();
+                    name = row["name"].ToString();
+                    A = row["A"].ToString();
+                    B = row["B"].ToString();
+                    C = row["C"].ToString();
+                    D = row["D"].ToString();
                     string theorderid = row["theorderid"].ToString();
                     if (!ls.Contains(theorderid)) //lis "不"包含 TheOrderID
                         ls.Add(theorderid);
-                }
-
-                //copy sheet by TheOrderID count.
-                x1.CopySheet.Add(1, ls.Count -1);
-                x1.VarToSheetName = "##theorderid";
-
-                int idx = 0;
-                foreach (string theorderid in ls)
-                {
-                    string idxstr = (idx == 0) ? "" : idx.ToString(); //為了讓第一筆idx是空值
-
-                    DataTable finalda = shm.Select(string.Format("theorderid = '{0}'", theorderid)).CopyToDataTable();
-
-                    finalda.Columns.RemoveAt(2);
-                    finalda.Columns.RemoveAt(1);
-                    finalda.Columns.RemoveAt(0);
-
                     x1.dicDatas.Add("##id" + idxstr, id);
                     x1.dicDatas.Add("##name" + idxstr, name);
                     x1.dicDatas.Add("##theorderid" + idxstr, theorderid);
@@ -469,15 +454,39 @@ namespace Sci.Production.Subcon
                     x1.dicDatas.Add("##C" + idxstr, C);
                     x1.dicDatas.Add("##D" + idxstr, D);
                     idx += 1;
-                    
                 }
                 x1.Save(outpath1, false);
             }
             #endregion
            return true; //return base.OnToExcel(report);
-        } 
+        }
+
+        private void comboBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (comboBox1.Text == "PO List")
+            {
+                print.Enabled = false;
+                toexcel.Enabled = true;
+
+            }
+            else if (comboBox1.Text == "PO Form")
+            {
+                toexcel.Enabled = false;
+                print.Enabled = true;
+                if (checkBox1.Checked==true)
+                    toexcel.Enabled = true;
+            }
+            else if (comboBox1.Text == "PO Order")
+            {
+                print.Enabled = false;
+                toexcel.Enabled = true;
+
+            }
+        }
         private void txtartworktype_fty1_TextChanged(object sender, EventArgs e)
         {
+            checkBox1.Checked = false;
+
             if (txtartworktype_fty1.Text.TrimEnd().Equals("CARTON", StringComparison.OrdinalIgnoreCase))
             //if (txtartworktype_fty1.Text.EqualString ("CARTON"))
             {
@@ -487,9 +496,16 @@ namespace Sci.Production.Subcon
             else
             {
                 checkBox1.Enabled = false;
+
             }
         }
 
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if(comboBox1.Text == "PO Form")
+                toexcel.Enabled = checkBox1.Checked;
+        }
 
     }
 }
