@@ -6,11 +6,11 @@
     [FTYLastRecvDate] DATE            NULL,
     [FTYInQty]        NUMERIC (10, 2) CONSTRAINT [DF_Lack_Detail_FTYInQty] DEFAULT ((0)) NULL,
     [RequestQty]      NUMERIC (10, 2) CONSTRAINT [DF_Lack_Detail_RequestQty] DEFAULT ((0)) NULL,
-    [PPICReasonID]    VARCHAR (5)     CONSTRAINT [DF_Lack_Detail_PPICReasonID] DEFAULT ('') NULL,
+    [PPICReasonID]    VARCHAR (5)     CONSTRAINT [DF_Lack_Detail_PPICReasonID] DEFAULT ('') NOT NULL,
     [RejectQty]       INT             CONSTRAINT [DF_Lack_Detail_RejectQty] DEFAULT ((0)) NULL,
     [Process]         VARCHAR (30)    CONSTRAINT [DF_Lack_Detail_Process] DEFAULT ('') NULL,
     [IssueQty]        NUMERIC (10, 2) CONSTRAINT [DF_Lack_Detail_IssueQty] DEFAULT ((0)) NULL,
-    CONSTRAINT [PK_Lack_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [Seq1] ASC, [Seq2] ASC)
+    CONSTRAINT [PK_Lack_Detail] PRIMARY KEY CLUSTERED ([PPICReasonID], [Seq2], [Seq1], [ID])
 );
 
 
