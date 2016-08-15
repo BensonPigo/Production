@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[AccessoryDefect] (
-    [ID]          VARCHAR (1)   CONSTRAINT [DF_AccessoryDefect_ID] DEFAULT ('') NOT NULL,
+    [ID]          VARCHAR (10)   CONSTRAINT [DF_AccessoryDefect_ID] DEFAULT ('') NOT NULL,
     [Description] NVARCHAR (60) CONSTRAINT [DF_AccessoryDefect_Description] DEFAULT ('') NULL,
     [Junk]        BIT           CONSTRAINT [DF_AccessoryDefect_Junk] DEFAULT ((0)) NULL,
     [AddName]     VARCHAR (10)  CONSTRAINT [DF_AccessoryDefect_AddName] DEFAULT ('') NULL,
