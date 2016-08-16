@@ -8,7 +8,7 @@
     [TMS]          INT            CONSTRAINT [DF_SewingOutput_TMS] DEFAULT ((0)) NULL,
     [Manpower]     NUMERIC (4, 1) CONSTRAINT [DF_SewingOutput_Manpower] DEFAULT ((0)) NULL,
     [ManHour]      NUMERIC (8, 2) CONSTRAINT [DF_SewingOutput_ManHour] DEFAULT ((0)) NULL,
-    [Efficiency]   NUMERIC (5, 1) CONSTRAINT [DF_SewingOutput_Efficiency] DEFAULT ((0)) NULL,
+    [Efficiency]   NUMERIC (6, 1) CONSTRAINT [DF_SewingOutput_Efficiency] DEFAULT ((0)) NULL,
     [Shift]        VARCHAR (1)    CONSTRAINT [DF_SewingOutput_Shift] DEFAULT ('') NULL,
     [Team]         VARCHAR (1)    CONSTRAINT [DF_SewingOutput_Team] DEFAULT ('') NULL,
     [Status]       VARCHAR (15)   CONSTRAINT [DF_SewingOutput_Status] DEFAULT ('') NULL,
