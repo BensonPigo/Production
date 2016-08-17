@@ -691,7 +691,7 @@ namespace Sci.Production.Subcon
                 .Select(row1 => new P30_PrintData()
                 {
                     SP = row1["SP"].ToString(),
-                    Delivery = row1["Delivery"].ToString(),
+                    Delivery = (row1["Delivery"] == DBNull.Value) ? "" : Convert.ToDateTime(row1["Delivery"]).ToShortDateString(),
                     Refno = row1["Refno"].ToString(),
                     Color_Shade = row1["Color_Shade"].ToString(),
                     Description = row1["Description"].ToString(),
