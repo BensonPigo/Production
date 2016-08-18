@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[LineMapping] (
     [SewingLineID]     VARCHAR (2)    CONSTRAINT [DF_LineMapping_SewingLineID] DEFAULT ('') NULL,
     [Team]             VARCHAR (1)    CONSTRAINT [DF_LineMapping_Team] DEFAULT ('') NULL,
     [IdealOperators]   TINYINT        CONSTRAINT [DF_LineMapping_IdealOperators] DEFAULT ((0)) NULL,
-    [CurrentOperators] TINYINT        CONSTRAINT [DF_LineMapping_CurrentOperators] DEFAULT ((0)) NULL,
+    [CurrentOperators] SMALLINT        CONSTRAINT [DF_LineMapping_CurrentOperators] DEFAULT ((0)) NULL,
     [StandardOutput]   INT            CONSTRAINT [DF_LineMapping_StandardOutput] DEFAULT ((0)) NULL,
     [DailyDemand]      INT            CONSTRAINT [DF_LineMapping_DailyDemand] DEFAULT ((0)) NULL,
     [Workhour]         NUMERIC (4, 1) CONSTRAINT [DF_LineMapping_Workhour] DEFAULT ((0)) NULL,
