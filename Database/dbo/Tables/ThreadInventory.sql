@@ -2,7 +2,7 @@
     [ID]             VARCHAR (13)  CONSTRAINT [DF_ThreadInventory_ID] DEFAULT ('') NOT NULL,
     [MDivisionid]    VARCHAR (8)   CONSTRAINT [DF_ThreadInventory_MDivisionid] DEFAULT ('') NOT NULL,
     [CDate]          DATE          NULL,
-    [ThreadAdjustid] VARCHAR (13)  NULL,
+    [ThreadAdjustid] VARCHAR (13)  NULL DEFAULT (''),
     [Remark]         NVARCHAR (60) CONSTRAINT [DF_ThreadInventory_Remark] DEFAULT ('') NULL,
     [Status]         VARCHAR (15)  CONSTRAINT [DF_ThreadInventory_Status] DEFAULT ('') NULL,
     [AddName]        VARCHAR (10)  CONSTRAINT [DF_ThreadInventory_AddName] DEFAULT ('') NULL,
