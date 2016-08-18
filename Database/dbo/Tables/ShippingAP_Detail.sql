@@ -3,9 +3,9 @@
     [ShipExpenseID] VARCHAR (20)    CONSTRAINT [DF_ShippingAP_Detail_ShipExpenseID] DEFAULT ('') NOT NULL,
     [Qty]           NUMERIC (9, 4)  CONSTRAINT [DF_ShippingAP_Detail_Qty] DEFAULT ((0)) NULL,
     [CurrencyID]    VARCHAR (3)     CONSTRAINT [DF_ShippingAP_Detail_CurrencyID] DEFAULT ('') NULL,
-    [Price]         NUMERIC (12, 4) CONSTRAINT [DF_ShippingAP_Detail_Price] DEFAULT ((0)) NOT NULL,
+    [Price]         NUMERIC (14, 4) CONSTRAINT [DF_ShippingAP_Detail_Price] DEFAULT ((0)) NOT NULL,
     [Rate]          NUMERIC (11, 6) CONSTRAINT [DF_ShippingAP_Detail_Rate] DEFAULT ((0)) NULL,
-    [Amount]        NUMERIC (14, 4) CONSTRAINT [DF_ShippingAP_Detail_Amount] DEFAULT ((0)) NULL,
+    [Amount]        NUMERIC (16, 4) CONSTRAINT [DF_ShippingAP_Detail_Amount] DEFAULT ((0)) NULL,
     [Remark]        NVARCHAR (30)   CONSTRAINT [DF_ShippingAP_Detail_Remark] DEFAULT ('') NULL,
     CONSTRAINT [PK_ShippingAP_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [ShipExpenseID] ASC, [Price] ASC)
 );
