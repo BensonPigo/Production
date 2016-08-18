@@ -7,9 +7,9 @@
     [Sewer]         NUMERIC (3, 1) CONSTRAINT [DF_TimeStudy_Detail_Sewer] DEFAULT ((0)) NULL,
     [MachineTypeID] VARCHAR (20)   CONSTRAINT [DF_TimeStudy_Detail_MachineTypeID] DEFAULT ('') NULL,
     [Frequency]     NUMERIC (4, 2) CONSTRAINT [DF_TimeStudy_Detail_Frequency] DEFAULT ((0)) NULL,
-    [IETMSSMV]      NUMERIC (7, 4) CONSTRAINT [DF_TimeStudy_Detail_IETMSSMV] DEFAULT ((0)) NULL,
+    [IETMSSMV]      NUMERIC (9, 4) CONSTRAINT [DF_TimeStudy_Detail_IETMSSMV] DEFAULT ((0)) NULL,
     [Mold]          NVARCHAR (65)  CONSTRAINT [DF_TimeStudy_Detail_MoldID] DEFAULT ('') NULL,
-    [SMV]           NUMERIC (8, 4) CONSTRAINT [DF_TimeStudy_Detail_SMV] DEFAULT ((0)) NULL,
+    [SMV]           NUMERIC (9, 4) CONSTRAINT [DF_TimeStudy_Detail_SMV] DEFAULT ((0)) NULL,
     [OldKey]        VARCHAR (13)   CONSTRAINT [DF_TimeStudy_Detail_OldKey] DEFAULT ('') NULL,
     [SeamLength]    NUMERIC (9, 2) NULL,
     CONSTRAINT [PK_TimeStudy_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [Seq] ASC)
