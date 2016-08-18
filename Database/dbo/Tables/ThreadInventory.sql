@@ -9,7 +9,7 @@
     [AddDate]        DATETIME      NULL,
     [EditName]       VARCHAR (10)  CONSTRAINT [DF_ThreadInventory_EditName] DEFAULT ('') NULL,
     [EditDate]       DATETIME      NULL,
-    [StockType]      VARCHAR (8)   NOT NULL,
+    [StockType]      VARCHAR (8)   NOT NULL DEFAULT (''),
     CONSTRAINT [PK_ThreadInventory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
