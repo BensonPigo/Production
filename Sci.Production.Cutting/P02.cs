@@ -141,7 +141,7 @@ namespace Sci.Production.Cutting
                 For XML path('')
             ) as PatternPanel,
 			(
-				Select iif(e.Complete=1,e.ATA,iif(e.Eta is not null,e.eta,iif(e.shipeta is not null,e.shipeta,e.finaletd)))
+				Select iif(e.Complete=1,e.FinalETA,iif(e.Eta is not null,e.eta,iif(e.shipeta is not null,e.shipeta,e.finaletd)))
 				From PO_Supp_Detail e 
 				Where e.id = (Select distinct poid from orders where orders.cuttingsp = '{0}') and e.seq1 = a.seq1 and e.seq2 = a.seq2
 			) as fabeta,
