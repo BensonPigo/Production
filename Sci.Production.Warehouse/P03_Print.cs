@@ -68,7 +68,7 @@ namespace Sci.Production.Warehouse
 			                                       ,c.SuppID [Supp]
 			                                       ,d.NameEN [Supp Name]
 			                                       ,substring(convert(varchar,a.cfmetd, 101),1,5) [Sup. 1st Cfm ETA]
-			                                       ,substring(convert(varchar,a.RevisedETD, 101),1,5) [RevisedETD]
+			                                       ,substring(convert(varchar,a.RevisedETA, 101),1,5) [RevisedETD]
 		                                           ,a.Refno [Ref#]
                                                    ,dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0) [Description]
 			                                       ,e.AbbCH [Chinese Abb]
@@ -96,7 +96,7 @@ namespace Sci.Production.Warehouse
 			                                       ,a.InputQty [Taipei Stock Qty]
 			                                       ,a.POUnit [Unit]
 			                                       ,a.Complete [Cmplt]
-			                                       ,substring(convert(varchar, a.ata, 101),1,5) [Act. Eta]
+			                                       ,substring(convert(varchar, a.FinalETA, 101),1,5) [Act. Eta]
 			                                       ,(select id+',' from 
 			                                           (select distinct id from export_detail  where poid =a.id and seq1=a.seq1 and seq2=a.seq2) t for xml path(''))  [WK#]
 			                                       ,(select orderid+',' from 

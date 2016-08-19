@@ -174,7 +174,7 @@ where pd.inputqty > 0 and o.MDivisionID = '{0}'", Env.User.Keyword));
 
             if (!(string.IsNullOrWhiteSpace(ATA_b)))
             {
-                sqlcmd.Append(string.Format(@" and pd.ata between '{0}' and '{1}'", ATA_b, ATA_e));
+                sqlcmd.Append(string.Format(@" and pd.FinalETA between '{0}' and '{1}'", ATA_b, ATA_e));
             }
 
             #endregion

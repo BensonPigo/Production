@@ -161,7 +161,7 @@ namespace Sci.Production.Warehouse
             .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(4))  //2
             .Text("Suppid", header: "Supp", iseditingreadonly: true, width: Widths.AnsiChars(4), settings: ts1)  //3
             .Text("eta", header: "Sup. 1st " + Environment.NewLine + "Cfm ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //4
-            .Text("RevisedETD", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //5
+            .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //5
             .Text("refno", header: "Ref#", iseditingreadonly: true, settings: ts2)  //6
             .Text("fabrictype2", header: "Fabric Type", iseditingreadonly: true)  //7
             .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(15))  //8
@@ -178,7 +178,7 @@ namespace Sci.Production.Warehouse
             .Numeric("InputQty", header: "Taipei Stock Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)    //19
             .Text("POUnit", header: "PO Unit", iseditingreadonly: true)  //20
             .Text("Complete", header: "Cmplt", iseditingreadonly: true)  //21
-            .Date("ATA", header: "Act. ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //22
+            .Date("FinalETA", header: "Act. ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //22
             .Text("OrderIdList", header: "Order List", iseditingreadonly: true)  //23
             .Numeric("InQty", header: "Arrived Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //24
             .Text("StockUnit", header: "Stock Unit", iseditingreadonly: true)  //25
@@ -259,12 +259,12 @@ Select POID,SEQ1,SEQ2,CASE
 			from dbo.AIR a where a.POID LIKE @sp1 and a.Result !=''
 			 )");
             sqlcmd += string.Format(@" select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
-            ,substring(convert(varchar,a.RevisedETD, 101),1,5) as RevisedETD,a.Refno,a.SCIRefno
+            ,substring(convert(varchar,a.RevisedETA, 101),1,5) as RevisedETD,a.Refno,a.SCIRefno
             ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',a.FabricType)) as fabrictype2
             , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
             ,a.ColorID,a.SizeSpec
             ,a.UsedQty unitqty,A.Qty,A.NETQty,A.NETQty+A.lossQty useqty ,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,a.Complete
-            ,a.ATA,m.InQty,a.StockUnit
+            ,a.FinalETA,m.InQty,a.StockUnit
             ,m.OutQty,m.AdjustQty
 			,m.InQty - m.OutQty + m.AdjustQty balanceqty
 			,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
@@ -288,12 +288,12 @@ Select POID,SEQ1,SEQ2,CASE
             where orders.poid like @sp1 and orders.mdivisionid= '{0}' AND m.MDivisionID='{0}'
             union
             select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
-            ,substring(convert(varchar,a.RevisedETD, 101),1,5) as RevisedETD,a.Refno,a.SCIRefno
+            ,substring(convert(varchar,a.RevisedETA, 101),1,5) as RevisedETD,a.Refno,a.SCIRefno
             ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',a.FabricType)) as fabrictype2
              , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
             ,a.ColorID,a.SizeSpec
             ,a.UsedQty unitqty,A.Qty,A.NETQty,A.NETQty+A.lossQty useqty ,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,a.Complete
-            ,a.ATA,m.InQty,a.StockUnit
+            ,a.FinalETA,m.InQty,a.StockUnit
             ,m.OutQty,m.AdjustQty
 			,m.InQty - m.OutQty + m.AdjustQty balanceqty
 			,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 

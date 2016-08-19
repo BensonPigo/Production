@@ -100,12 +100,12 @@ namespace Sci.Production.Warehouse
 
             string sqlcmd
                 = string.Format(@"select c.mdivisionid,c.POID,a.EachConsApv
-,(SELECT MAX(ATA) FROM 
-	(SELECT PO_SUPP_DETAIL.ATA FROM PO_Supp_Detail 
+,(SELECT MAX(FinalETA) FROM 
+	(SELECT PO_SUPP_DETAIL.FinalETA FROM PO_Supp_Detail 
 		WHERE PO_Supp_Detail.ID = B.ID 
 		AND PO_Supp_Detail.SCIRefno = B.SCIRefno AND PO_Supp_Detail.ColorID = b.ColorID 
 	UNION ALL
-	SELECT B1.ATA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
+	SELECT B1.FinalETA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
 		WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
 		AND a1.StockPOID = b1.ID and a1.StockSeq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
 	) tmp) as ETA
@@ -125,7 +125,7 @@ namespace Sci.Production.Warehouse
 from dbo.orders a inner join dbo.po_supp_detail b on a.poid = b.id
 inner join dbo.cuttingtape_detail c on c.mdivisionid = '{0}' and c.poid = b.id and c.seq1 = b.seq1 and c.seq2 = b.seq2
 WHERE A.IsForecast = 0 AND A.Junk = 0 AND A.LocalOrder = 0
-AND B.Special LIKE ('%EMB APPLIQUE%')",Sci.Env.User.Keyword);
+AND B.Special LIKE ('%EMB APPLIQUE%')", Sci.Env.User.Keyword);
             if (!(MyUtility.Check.Empty(sciDelivery_b)))
             { sqlcmd += string.Format(@" and a.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
             if (!(string.IsNullOrWhiteSpace(sewinline_b)))
@@ -135,16 +135,16 @@ AND B.Special LIKE ('%EMB APPLIQUE%')",Sci.Env.User.Keyword);
                 sqlcmd += string.Format(@" and a.BuyerDelivery between '{0}' and '{1}'", buyerdlv_b, buyerdlv_e);
             }
             sqlcmd += "GROUP BY c.mdivisionid,c.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,c.TapeInline,c.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit,b.stockunit";
-            if (eachchk && mtletachk) sqlcmd += @" having EachConsApv is not null and (SELECT MAX(ATA) FROM 
-	(SELECT B1.ATA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
+            if (eachchk && mtletachk) sqlcmd += @" having EachConsApv is not null and (SELECT MAX(FinalETA) FROM 
+	(SELECT B1.FinalETA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
 		WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
 		AND a1.StockPOID = b1.ID and a1.StockSeq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
 	) tmp) is not null";
             else
             {
                 if (eachchk) sqlcmd += " having EachConsApv is not null";
-                if (mtletachk) sqlcmd += @" having (SELECT MAX(ATA) FROM 
-	(SELECT B1.ATA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
+                if (mtletachk) sqlcmd += @" having (SELECT MAX(FinalETA) FROM 
+	(SELECT B1.FinalETA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
 		WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
 		AND a1.StockPOID = b1.ID and a1.StockSeq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
 	) tmp) is not null";

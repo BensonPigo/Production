@@ -204,7 +204,7 @@
             this.label1.RectStyle.ExtBorderWidth = 1F;
             this.label1.Size = new System.Drawing.Size(98, 23);
             this.label1.TabIndex = 128;
-            this.label1.Text = "ATA";
+            this.label1.Text = "Final ETA";
             this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label1.TextStyle.Color = System.Drawing.Color.Black;
             // 

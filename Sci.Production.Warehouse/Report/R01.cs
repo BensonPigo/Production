@@ -37,7 +37,7 @@ namespace Sci.Production.Warehouse
                 MyUtility.Check.Empty(dateRange3.Value1) &&
                 (MyUtility.Check.Empty(txtSpno1.Text) || MyUtility.Check.Empty(txtSpno2.Text)))
             {
-                MyUtility.Msg.WarningBox("< Supp Delivery > & < SCI Delivery > & < ETA > & < ATA >& < SP# > & < Refno > can't be empty!!");
+                MyUtility.Msg.WarningBox("< Supp Delivery > & < SCI Delivery > & < ETA > & < Final ETA >& < SP# > & < Refno > can't be empty!!");
                 return false;
             }
             #region -- 擇一必輸的條件 --
@@ -142,7 +142,7 @@ where 1=1"));
 ,iif(b.Complete=1,'Y','N') [complete]
 ,b.FinalETD
 ,b.ETA
-,b.ATA
+,b.FinalETA
 ,d.InQty
 ,b.StockUnit
 ,d.OutQty
@@ -171,7 +171,7 @@ where 1= 1 and c.ThirdCountry = 1"));
 ,iif(b.Complete=1,'Y','N') [complete]
 ,b.FinalETD
 ,b.ETA
-,b.ATA
+,b.FinalETA
 ,d.InQty
 ,b.StockUnit
 ,d.OutQty
@@ -199,7 +199,7 @@ where 1=1 and c.ThirdCountry = 1"));
 
             if (!MyUtility.Check.Empty(ata1))
             {
-                sqlCmd.Append(string.Format(@" and b.ATA between '{0}' and '{1}'"
+                sqlCmd.Append(string.Format(@" and b.FinalETA between '{0}' and '{1}'"
                 , Convert.ToDateTime(ata1).ToString("d"), Convert.ToDateTime(ata2).ToString("d")));
             }
 

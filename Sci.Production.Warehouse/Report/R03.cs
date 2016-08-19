@@ -37,7 +37,7 @@ namespace Sci.Production.Warehouse
                 MyUtility.Check.Empty(dateRange3.Value1) &&
                 (MyUtility.Check.Empty(txtSpno1.Text) || MyUtility.Check.Empty(txtSpno2.Text)))
             {
-                MyUtility.Msg.WarningBox("< Supp Delivery > & < SCI Delivery > & < ETA > & < ATA >& < SP# > & < Refno > can't be empty!!");
+                MyUtility.Msg.WarningBox("< Supp Delivery > & < SCI Delivery > & < ETA > & < FinalETA >& < SP# > & < Refno > can't be empty!!");
                 return false;
             }
             #region -- 擇一必輸的條件 --
@@ -149,7 +149,7 @@ c.CountryID
 ,b.POUnit
 ,iif(b.Complete=1,'Y','N')
 ,b.ETA
-,b.ATA
+,b.FinalETA
 ,(select t.orderid+',' from (select OrderID from DBO.PO_Supp_Detail_OrderList where id=b.id and seq1=b.seq1 and seq2 = b.SEQ2) t for xml path('')) orderlist
 ,b.StockUnit
 ,d.InQty
@@ -193,7 +193,7 @@ c.CountryID
 ,b.POUnit
 ,iif(b.Complete=1,'Y','N')
 ,b.ETA
-,b.ATA
+,b.FinalETA
 ,(select t.orderid+',' from (select OrderID from DBO.PO_Supp_Detail_OrderList where id=b.id and seq1=b.seq1 and seq2 = b.SEQ2) t for xml path('')) orderlist
 ,b.StockUnit
 ,d.InQty
@@ -230,7 +230,7 @@ where 1=1 "));
 
             if (!MyUtility.Check.Empty(ata1))
             {
-                sqlCmd.Append(string.Format(@" and b.ATA between '{0}' and '{1}'"
+                sqlCmd.Append(string.Format(@" and b.FinalETA between '{0}' and '{1}'"
                 , Convert.ToDateTime(ata1).ToString("d"), Convert.ToDateTime(ata2).ToString("d")));
             }
 

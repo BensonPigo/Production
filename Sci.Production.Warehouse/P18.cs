@@ -523,7 +523,7 @@ where d.Id = '{0}' and f.id is null", CurrentMaintain["id"]);
 	,scirefno
 	,StockUnit
 	,POUnit
-	,ATA
+	,FinalETA
 	,ColorID
     ,brandid
 	,sizespec
