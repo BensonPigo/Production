@@ -13,11 +13,11 @@
     [Complete]        BIT             CONSTRAINT [DF_PO_Supp_Detail_Complete] DEFAULT ((0)) NULL,
     [SystemETD]       DATE            NULL,
     [CFMETD]          DATE            NULL,
-    [RevisedETD]      DATE            NULL,
+    [RevisedETA]      DATE            NULL,
     [FinalETD]        DATE            NULL,
     [ShipETA]         DATE         NULL,
     [ETA]             DATE            NULL,
-    [ATA]             DATE            NULL,
+    [FinalETA]             DATE            NULL,
     [ShipModeID]      VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_ShipModeID] DEFAULT ('') NOT NULL,
     [SMRLock]         VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_SMRLock] DEFAULT ('') NULL,
     [SystemLock]      DATE            NULL,
@@ -292,7 +292,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠商回�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠商修正交期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail', @level2type = N'COLUMN', @level2name = N'RevisedETD';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠商修正交期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail', @level2type = N'COLUMN', @level2name = 'RevisedETA';
 
 
 GO
@@ -300,7 +300,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠商交�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'實際到達日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail', @level2type = N'COLUMN', @level2name = N'ATA';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'實際到達日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail', @level2type = N'COLUMN', @level2name = 'FinalETA';
 
 
 GO
