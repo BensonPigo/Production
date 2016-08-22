@@ -20,7 +20,8 @@ namespace Sci.Production.Cutting
     public partial class P04 : Sci.Win.Tems.Input6
     {
         private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword; 
+        private string keyWord = Sci.Env.User.Keyword;
+        string fileNameExt, pathName;
         public P04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -62,7 +63,7 @@ namespace Sci.Production.Cutting
             From Cutplan_Detail a, WorkOrder e
             where a.id = '{0}' and a.WorkOrderUkey = e.Ukey
             ", masterID);
-            this.DetailSelectCommand = cmdsql;            
+            this.DetailSelectCommand = cmdsql;
             return base.OnDetailSelectCommandPrepare(e);
         }
         protected override void OnDetailGridSetup()
@@ -82,7 +83,7 @@ namespace Sci.Production.Cutting
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("CutQty", header: "Total CutQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(10),iseditingreadonly: true)
+            .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(15));
             this.detailgrid.Columns[15].DefaultCellStyle.BackColor = Color.Pink;
@@ -125,8 +126,8 @@ namespace Sci.Production.Cutting
             #endregion
             string insertmk = "";
             string insert_mark2 = "";
-            #region 建立Bulk request 
-                
+            #region 建立Bulk request
+
             #region ID
             string keyword = keyWord + "MK";
             string reqid = MyUtility.GetValue.GetID(keyword, "MarkerReq");
@@ -134,13 +135,13 @@ namespace Sci.Production.Cutting
             {
                 return;
             }
-           #endregion
+            #endregion
             insertmk = string.Format(
             @"Insert into MarkerReq
             (id,estctdate,mDivisionid,CutCellid,Status,Cutplanid,AddName,AddDate) 
             values('{0}','{1}','{2}','{3}','New','{4}','{5}',getdate()));",
-            reqid,CurrentMaintain["estcutdate"],CurrentMaintain["mDivisionid"],
-            CurrentMaintain["cutcellid"],CurrentMaintain["ID"],loginID);
+            reqid, CurrentMaintain["estcutdate"], CurrentMaintain["mDivisionid"],
+            CurrentMaintain["cutcellid"], CurrentMaintain["ID"], loginID);
 
             #region 表身
             string marker2sql = string.Format(
@@ -158,9 +159,9 @@ namespace Sci.Production.Cutting
                 b.fabricCombo,a.WorkOrderUkey", CurrentMaintain["ID"]);
             #endregion
             DataTable markerTb;
-                   
+
             DualResult dResult = DBProxy.Current.Select(null, marker2sql, out markerTb);
-            if(dResult)
+            if (dResult)
             {
                 foreach (DataRow dr in markerTb.Rows)
                 {
@@ -168,18 +169,18 @@ namespace Sci.Production.Cutting
                     @"Insert into MarkerReq_Detail      
                     (ID,OrderID,SizeRatio,MarkerName,Layer,FabricCombo,MarkerNo,WorkOrderUkey) 
                     Values('{0}','{1}','{2}','{3}',{4},'{5}','{6}','{7}');",
-                        reqid,dr["OrderID"],dr["SizeRatio"],dr["MarkerName"],
-                        dr["Layer"],dr["FabricCombo"],dr["MarkerNo"],dr["WorkOrderUkey"]);
+                        reqid, dr["OrderID"], dr["SizeRatio"], dr["MarkerName"],
+                        dr["Layer"], dr["FabricCombo"], dr["MarkerNo"], dr["WorkOrderUkey"]);
                 }
             }
             else
             {
-                ShowErr(marker2sql,dResult);
+                ShowErr(marker2sql, dResult);
                 return;
             }
-                
-                
-            
+
+
+
 
             #endregion
 
@@ -236,7 +237,7 @@ namespace Sci.Production.Cutting
             this.OnDetailEntered();
             EnsureToolbarExt();
             #endregion
-            
+
         }
         protected override void OnDetailEntered()
         {
@@ -326,7 +327,7 @@ namespace Sci.Production.Cutting
             frm.ShowDialog(this);
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private bool ToExcel(bool autoSave)
         {
             DataTable ExcelTb;
             string cmdsql = string.Format(
@@ -360,67 +361,92 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
             if (dResult)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P04.xltx"); //預先開啟excel app
-                string pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_Daily_Plan" + DateTime.Now.ToFileTime() + ".xls";
+                pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_Daily_Plan" + DateTime.Now.ToFileTime() + ".xls";
                 string tmpName = Sci.Env.Cfg.ReportTempDir + "tmp.xls";
 
 
-                if (MyUtility.Excel.CopyToXls(ExcelTb, pathName, "Cutting_P04.xltx", 5, false, null, objApp,false))
+                if (MyUtility.Excel.CopyToXls(ExcelTb, "", "Cutting_P04.xltx", 5, !autoSave, null, objApp, false))
                 {// 將datatable copy to excel
                     Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                     Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
-                    
+
                     objSheet.Cells[1, 1] = keyWord;   // 條件字串寫入excel
                     objSheet.Cells[3, 2] = CurrentMaintain["EstCutDate"].ToString();
                     objSheet.Cells[3, 5] = CurrentMaintain["POID"].ToString();
                     objSheet.Cells[3, 9] = CurrentMaintain["CutCellid"].ToString();
                     objSheet.Cells[3, 12] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(loginID);
-                    objBook.Save();
-                    objBook.Close();
-                    objApp.Workbooks.Close();
-                    objApp.Quit();
 
-                    Marshal.ReleaseComObject(objApp);
-                    Marshal.ReleaseComObject(objSheet);
-                    Marshal.ReleaseComObject(objBook);
-
-                    if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);
-                    if (objBook != null) Marshal.FinalReleaseComObject(objBook);
-                    if (objApp != null) Marshal.FinalReleaseComObject(objApp);
-                    objApp = null;
-                    string fileNameExt = pathName.Substring(pathName.LastIndexOf("\\") + 1);
-
-                    DataRow seekdr;
-                    if (MyUtility.Check.Seek("select * from mailto where Id='002'", out seekdr))
+                    if (autoSave)
                     {
-                        string mailto = seekdr["ToAddress"].ToString();
-                        string cc = seekdr["ccAddress"].ToString();
-                        string content = seekdr["content"].ToString();
-                        string subject = "<" + CurrentMaintain["mDivisionid"].ToString() + ">Cutplan#:" + CurrentMaintain["ID"].ToString();
+                        Random random = new Random();
+                        pathName = Env.Cfg.ReportTempDir + "Cutting_Daily_Plan - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
+                        objBook.SaveAs(pathName);
+                        objBook.Close();
+                        objApp.Workbooks.Close();
+                        objApp.Quit();
 
-                        var email = new MailTo(Env.Cfg.MailFrom, mailto, cc, subject + "-" + fileNameExt, pathName,
-content, false, false);
-                        email.ShowDialog(this);
+                        Marshal.ReleaseComObject(objApp);
+                        Marshal.ReleaseComObject(objSheet);
+                        Marshal.ReleaseComObject(objBook);
 
+                        if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);
+                        if (objBook != null) Marshal.FinalReleaseComObject(objBook);
+                        if (objApp != null) Marshal.FinalReleaseComObject(objApp);
+                        objApp = null;
+                        fileNameExt = pathName.Substring(pathName.LastIndexOf("\\") + 1);
                     }
-                    //刪除Excel File
-                    if (System.IO.File.Exists(pathName))
+                    else
                     {
-                        try
-                        {
-                            System.IO.File.Delete(pathName);
-                        }
-                        catch (System.IO.IOException ex)
-                        {
-                            MyUtility.Msg.WarningBox("Delete excel file fail!!");
-                        }
+                        if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);    //釋放sheet
+                        if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
                     }
                 }
             }
             else
             {
                 ShowErr(cmdsql, dResult);
+                return false;
+            }
+            return true;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (!ToExcel(true))
+            {
                 return;
             }
+            DataRow seekdr;
+            if (MyUtility.Check.Seek("select * from mailto where Id='002'", out seekdr))
+            {
+                string mailto = seekdr["ToAddress"].ToString();
+                string cc = seekdr["ccAddress"].ToString();
+                string content = seekdr["content"].ToString();
+                string subject = "<" + CurrentMaintain["mDivisionid"].ToString() + ">Cutplan#:" + CurrentMaintain["ID"].ToString();
+
+                var email = new MailTo(Env.Cfg.MailFrom, mailto, cc, subject + "-" + fileNameExt, pathName,
+content, false, false);
+                email.ShowDialog(this);
+
+            }
+            //刪除Excel File
+            if (System.IO.File.Exists(pathName))
+            {
+                try
+                {
+                    System.IO.File.Delete(pathName);
+                }
+                catch (System.IO.IOException ex)
+                {
+                    MyUtility.Msg.WarningBox("Delete excel file fail!!");
+                }
+            }
+        }
+
+        protected override bool ClickPrint()
+        {
+            ToExcel(false);
+            return base.ClickPrint();
         }
     }
 }

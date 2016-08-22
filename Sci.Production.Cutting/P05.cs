@@ -20,7 +20,8 @@ namespace Sci.Production.Cutting
     public partial class P05 : Sci.Win.Tems.Input6
     {
         private string loginID = Sci.Env.User.UserID;
-        private string keyWord = Sci.Env.User.Keyword; 
+        private string keyWord = Sci.Env.User.Keyword;
+        //string fileNameExt, pathName;
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -47,7 +48,7 @@ namespace Sci.Production.Cutting
             From MarkerReq_Detail a left join Orders o on a.orderid=o.id
             where a.id = '{0}'
             ", masterID);
-            this.DetailSelectCommand = cmdsql;            
+            this.DetailSelectCommand = cmdsql;
             return base.OnDetailSelectCommandPrepare(e);
         }
         protected override void OnDetailGridSetup()
@@ -136,7 +137,7 @@ namespace Sci.Production.Cutting
             this.OnDetailEntered();
             EnsureToolbarExt();
             #endregion
-            
+
         }
         protected override void OnDetailEntered()
         {
@@ -226,127 +227,8 @@ namespace Sci.Production.Cutting
             {
                 return upResult;
             }
-           
+
             return base.ClickSavePost();
-        }
-        private void button2_Click(object sender, EventArgs e)
-        {
-            DataTable ExcelTb;
-            string cmdsql = string.Format(
-            @"
-            Select  o.styleid,a.orderid,o.seasonid,a.sizeRatio,a.markerno,a.markername,
-                    a.layer,a.fabriccombo,
-            (
-                Select PatternPanel+'+ ' 
-                From WorkOrder_PatternPanel c
-                Where c.WorkOrderUkey =a.WorkOrderUkey 
-                For XML path('')
-            ) as PatternPanel,
-            (
-                Select cuttingwidth from Order_EachCons b, WorkOrder e
-                where e.Order_EachconsUkey = b.Ukey and a.WorkOrderUkey = e.Ukey  
-            ) as cuttingwidth,ReqQty,ReleaseQty,ReleaseDate
-            From MarkerReq_Detail a left join Orders o on a.orderid=o.id
-            where a.id = '{0}'
-            ", CurrentDetailData["ID"]);
-            DualResult dResult = DBProxy.Current.Select(null, cmdsql, out ExcelTb);
-            if (dResult)
-            {
-                string str = Sci.Env.Cfg.XltPathDir;
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P05.xltx"); //預先開啟excel app
-                string pathName = Sci.Env.Cfg.ReportTempDir + "Bulk_Marker_Request" + DateTime.Now.ToFileTime() + ".xls";
-                string tmpName = Sci.Env.Cfg.ReportTempDir + "tmp.xls";
-                //Microsoft.Office.Interop.Excel._Workbook objBook = null;
-
-
-                if (MyUtility.Excel.CopyToXls(ExcelTb, pathName, "Cutting_P05.xltx", 5, false, null, objApp,false))
-                {// 將datatable copy to excel
-
-                    Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                    Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
-
-
-                    objSheet.Cells[1, 1] = keyWord;   // 條件字串寫入excel
-                    objSheet.Cells[3, 2] = CurrentMaintain["id"].ToString();
-                    objSheet.Cells[3, 4] = CurrentMaintain["EstCutDate"].ToString();
-                    objSheet.Cells[3, 6] = CurrentMaintain["CutCellid"].ToString();
-                    objSheet.Cells[3, 8] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(loginID);
-                    objBook.Save();
-
-                    objBook.Close();
-                    objApp.Workbooks.Close();
-                    objApp.Quit();
-
-                    Marshal.ReleaseComObject(objApp);
-                    Marshal.ReleaseComObject(objSheet);
-                    Marshal.ReleaseComObject(objBook);
-
-                    if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);
-                    if (objBook != null) Marshal.FinalReleaseComObject(objBook);
-                    if (objApp != null) Marshal.FinalReleaseComObject(objApp);
-                    objApp = null;
-                    //System.IO.File.Delete(tmpName);
-                    string fileNameExt = pathName.Substring(pathName.LastIndexOf("\\") + 1);
-
-                    DataRow seekdr;
-                    if (MyUtility.Check.Seek("select * from mailto where Id='004'", out seekdr))
-                    {
-                        string mailto = seekdr["ToAddress"].ToString();
-                        string cc = seekdr["ccAddress"].ToString();
-                        string content = seekdr["content"].ToString();
-                        string subject = "<" + CurrentMaintain["mDivisionid"].ToString() + ">BulkMarkerRequest#:" + CurrentMaintain["ID"].ToString();
-
-                        var email = new MailTo(Env.Cfg.MailFrom, mailto, cc, subject + "-" + fileNameExt, pathName,
-content, false, false);
-                        email.ShowDialog(this);
-                    }
-                    //刪除Excel File
-                    if (System.IO.File.Exists(pathName))
-                    {
-                        try
-                        {
-                            System.IO.File.Delete(pathName);
-                        }
-                        catch (System.IO.IOException ex)
-                        {
-                            MyUtility.Msg.WarningBox("Delete excel file fail!!");
-                        }
-                    }
-                }
-            }
-            else
-            {
-                ShowErr(cmdsql, dResult);
-                return;
-            }
-
-            string updSql = string.Format("update MarkerReq set SendDate = getdate() Where id='{0}'", CurrentMaintain["ID"]);
-            DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
-            {
-                try
-                {
-                    if (!(upResult = DBProxy.Current.Execute(null, updSql)))
-                    {
-                        _transactionscope.Dispose();
-                        return;
-                    }
-                    _transactionscope.Complete();
-                    MyUtility.Msg.WarningBox("Successfully");
-                }
-                catch (Exception ex)
-                {
-                    _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
-                    return;
-                }
-            }
-            _transactionscope.Dispose();
-            _transactionscope = null;
-
-            this.RenewData();
-            this.OnDetailEntered();
         }
         protected override void OnDetailUIConvertToUpdate()
         {
@@ -358,7 +240,7 @@ content, false, false);
 
             if (!this.EditMode) return;
             if (textBox1.OldValue.ToString() == textBox1.Text) return;
-            string cmd = string.Format("Select * from Cutplan Where id='{0}' and mDivisionid = '{1}'", textBox1.Text, keyWord); 
+            string cmd = string.Format("Select * from Cutplan Where id='{0}' and mDivisionid = '{1}'", textBox1.Text, keyWord);
             DataRow cutdr;
             if (!MyUtility.Check.Seek(cmd, out cutdr, null))
             {
@@ -384,13 +266,13 @@ content, false, false);
             }
 
         }
-        
+
         private void textBox1_Validated(object sender, EventArgs e)
         {
             base.OnValidated(e);
-            string cmd = string.Format("Select * from Cutplan Where id='{0}' and mDivisionid = '{1}'", textBox1.Text,keyWord);
+            string cmd = string.Format("Select * from Cutplan Where id='{0}' and mDivisionid = '{1}'", textBox1.Text, keyWord);
             DataRow cutdr;
-            if(MyUtility.Check.Seek(cmd, out cutdr, null))
+            if (MyUtility.Check.Seek(cmd, out cutdr, null))
             {
                 displayBox_Cell.Text = cutdr["Cutcellid"].ToString();
                 dateBox1.Text = cutdr["estcutdate"].ToString();
@@ -422,6 +304,123 @@ content, false, false);
                     ndr["MarkerNo"] = dr["MarkerNo"];
                     ndr["WorkOrderUkey"] = dr["WorkOrderUkey"];
                     gridTb.Rows.Add(ndr);
+                }
+            }
+        }
+
+        private bool ToExcel(bool autoSave)
+        {
+            DataTable ExcelTb;
+            string cmdsql = string.Format(
+            @"
+            Select  o.styleid,a.orderid,o.seasonid,a.sizeRatio,a.markerno,a.markername,
+                    a.layer,a.fabriccombo,
+            (
+                Select PatternPanel+'+ ' 
+                From WorkOrder_PatternPanel c
+                Where c.WorkOrderUkey =a.WorkOrderUkey 
+                For XML path('')
+            ) as PatternPanel,
+            (
+                Select cuttingwidth from Order_EachCons b, WorkOrder e
+                where e.Order_EachconsUkey = b.Ukey and a.WorkOrderUkey = e.Ukey  
+            ) as cuttingwidth,ReqQty,ReleaseQty,ReleaseDate
+            From MarkerReq_Detail a left join Orders o on a.orderid=o.id
+            where a.id = '{0}'
+            ", CurrentDetailData["ID"]);
+            DualResult dResult = DBProxy.Current.Select(null, cmdsql, out ExcelTb);
+            if (dResult)
+            {
+                string str = Sci.Env.Cfg.XltPathDir;
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P05.xltx"); //預先開啟excel app
+                string pathName = Sci.Env.Cfg.ReportTempDir + "Bulk_Marker_Request" + DateTime.Now.ToFileTime() + ".xls";
+                string tmpName = Sci.Env.Cfg.ReportTempDir + "tmp.xls";
+                //Microsoft.Office.Interop.Excel._Workbook objBook = null;
+
+
+                if (MyUtility.Excel.CopyToXls(ExcelTb, pathName, "Cutting_P05.xltx", 5, false, null, objApp, false))
+                {// 將datatable copy to excel
+
+                    Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                    Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
+
+
+                    objSheet.Cells[1, 1] = keyWord;   // 條件字串寫入excel
+                    objSheet.Cells[3, 2] = CurrentMaintain["id"].ToString();
+                    objSheet.Cells[3, 4] = CurrentMaintain["EstCutDate"].ToString();
+                    objSheet.Cells[3, 6] = CurrentMaintain["CutCellid"].ToString();
+                    objSheet.Cells[3, 8] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(loginID);
+
+                    if (autoSave)
+                    {
+                        Random random = new Random();
+                        pathName = Env.Cfg.ReportTempDir + "Bulk_Marker_Request - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
+                        objBook.SaveAs(pathName);
+                        objBook.Close();
+                        objApp.Workbooks.Close();
+                        objApp.Quit();
+
+                        Marshal.ReleaseComObject(objApp);
+                        Marshal.ReleaseComObject(objSheet);
+                        Marshal.ReleaseComObject(objBook);
+
+                        if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);
+                        if (objBook != null) Marshal.FinalReleaseComObject(objBook);
+                        if (objApp != null) Marshal.FinalReleaseComObject(objApp);
+                        objApp = null;
+                        //System.IO.File.Delete(tmpName);
+                        string fileNameExt = pathName.Substring(pathName.LastIndexOf("\\") + 1);
+                    }
+                    else
+                    {
+                        if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);    //釋放sheet
+                        if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+                    }
+                }
+            }
+            else
+            {
+                ShowErr(cmdsql, dResult);
+                return false;
+            }
+            return true;
+        }
+
+        protected override bool ClickPrint()
+        {
+            ToExcel(false);
+            return base.ClickPrint();
+        }
+
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (!ToExcel(true))
+            {
+                return;
+            }
+            DataRow seekdr;
+            if (MyUtility.Check.Seek("select * from mailto where Id='004'", out seekdr))
+            {
+                string mailto = seekdr["ToAddress"].ToString();
+                string cc = seekdr["ccAddress"].ToString();
+                string content = seekdr["content"].ToString();
+                string subject = "<" + CurrentMaintain["mDivisionid"].ToString() + ">BulkMarkerRequest#:" + CurrentMaintain["ID"].ToString();
+
+                var email = new MailTo(Env.Cfg.MailFrom, mailto, cc, subject + "-" + fileNameExt, pathName,
+content, false, false);
+                email.ShowDialog(this);
+            }
+            //刪除Excel File
+            if (System.IO.File.Exists(pathName))
+            {
+                try
+                {
+                    System.IO.File.Delete(pathName);
+                }
+                catch (System.IO.IOException ex)
+                {
+                    MyUtility.Msg.WarningBox("Delete excel file fail!!");
                 }
             }
         }

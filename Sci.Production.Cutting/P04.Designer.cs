@@ -76,7 +76,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(874, 111);
+            this.masterpanel.Size = new System.Drawing.Size(1078, 111);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -98,7 +98,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 111);
-            this.detailpanel.Size = new System.Drawing.Size(874, 307);
+            this.detailpanel.Size = new System.Drawing.Size(1078, 307);
             // 
             // gridicon
             // 
@@ -110,40 +110,40 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(874, 307);
+            this.detailgridcont.Size = new System.Drawing.Size(1078, 307);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(1078, 456);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(1072, 410);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(1072, 40);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(874, 456);
+            this.detail.Size = new System.Drawing.Size(1078, 456);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(874, 418);
+            this.detailcont.Size = new System.Drawing.Size(1078, 418);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 418);
-            this.detailbtm.Size = new System.Drawing.Size(874, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1078, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(874, 456);
+            this.browse.Size = new System.Drawing.Size(1078, 456);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(882, 485);
+            this.tabs.Size = new System.Drawing.Size(1086, 485);
             // 
             // label1
             // 
@@ -301,7 +301,7 @@
             // P04
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(882, 518);
+            this.ClientSize = new System.Drawing.Size(1086, 518);
             this.DefaultOrder = "id";
             this.GridAlias = "Cutplan_Detail";
             this.GridNew = 0;
