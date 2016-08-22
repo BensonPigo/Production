@@ -110,11 +110,10 @@
             this.masterpanel.Controls.Add(this.displayBox5);
             this.masterpanel.Controls.Add(this.displayBox4);
             this.masterpanel.Controls.Add(this.displayBox3);
-            this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.displayBox2);
             this.masterpanel.Controls.Add(this.displayBox1);
+            this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.comboBox1);
-            this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Controls.Add(this.label8);
             this.masterpanel.Controls.Add(this.label7);
             this.masterpanel.Controls.Add(this.label6);
@@ -123,12 +122,14 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Controls.Add(this.shapeContainer1);
             this.masterpanel.Controls.Add(this.label18);
             this.masterpanel.Size = new System.Drawing.Size(676, 248);
             this.masterpanel.Controls.SetChildIndex(this.label18, 0);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -137,11 +138,10 @@
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox5, 0);
@@ -209,7 +209,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(892, 387);
+            this.browse.Size = new System.Drawing.Size(676, 488);
             // 
             // tabs
             // 
@@ -314,7 +314,7 @@
             // displayBox1
             // 
             this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NegoinvID", true));
+            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "GarmentInvoiceID", true));
             this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox1.Location = new System.Drawing.Point(89, 58);
             this.displayBox1.Name = "displayBox1";
