@@ -333,12 +333,12 @@ namespace Sci.Production.Cutting
             {
                 string str = Sci.Env.Cfg.XltPathDir;
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P05.xltx"); //預先開啟excel app
-                string pathName = Sci.Env.Cfg.ReportTempDir + "Bulk_Marker_Request" + DateTime.Now.ToFileTime() + ".xls";
+                pathName = Sci.Env.Cfg.ReportTempDir + "Bulk_Marker_Request" + DateTime.Now.ToFileTime() + ".xls";
                 string tmpName = Sci.Env.Cfg.ReportTempDir + "tmp.xls";
                 //Microsoft.Office.Interop.Excel._Workbook objBook = null;
 
 
-                if (MyUtility.Excel.CopyToXls(ExcelTb, pathName, "Cutting_P05.xltx", 5, false, null, objApp, false))
+                if (MyUtility.Excel.CopyToXls(ExcelTb,"", "Cutting_P05.xltx", 5, !autoSave, null, objApp, false))
                 {// 將datatable copy to excel
 
                     Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
@@ -369,7 +369,7 @@ namespace Sci.Production.Cutting
                         if (objApp != null) Marshal.FinalReleaseComObject(objApp);
                         objApp = null;
                         //System.IO.File.Delete(tmpName);
-                        string fileNameExt = pathName.Substring(pathName.LastIndexOf("\\") + 1);
+                        fileNameExt = pathName.Substring(pathName.LastIndexOf("\\") + 1);
                     }
                     else
                     {
@@ -384,12 +384,6 @@ namespace Sci.Production.Cutting
                 return false;
             }
             return true;
-        }
-
-        protected override bool ClickPrint()
-        {
-            ToExcel(false);
-            return base.ClickPrint();
         }
 
 
@@ -423,6 +417,12 @@ content, false, false);
                     MyUtility.Msg.WarningBox("Delete excel file fail!!");
                 }
             }
+        }
+
+        protected override bool ClickPrint()
+        {
+            ToExcel(false);
+            return base.ClickPrint();
         }
     }
 }
