@@ -52,7 +52,13 @@ order by ot.Seq", orderData["ID"].ToString());
                 .Text("ttlTMS", header: "Ttl TMS", width: Widths.AnsiChars(1));
 
             numericBox1.Value = MyUtility.Convert.GetDecimal(orderData["CPU"]);
-            numericBox2.Value = 0;
+            numericBox2.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(@"select fd.CpuCost
+from FtyShipper_Detail fsd, FSRCpuCost_Detail fd
+where fsd.BrandID = '{0}'
+and fsd.FactoryID = '{1}'
+and '{2}' between fsd.BeginDate and fsd.EndDate
+and fsd.Shipper = fd.ShipperID
+and '{2}' between fd.BeginDate and fd.EndDate", orderData["BrandID"].ToString(), orderData["FactoryID"].ToString(), Convert.ToDateTime(orderData["OrigBuyerDelivery"]).ToString("d"))));
             numericBox3.Value = MyUtility.Convert.GetDecimal(GridData.Compute("sum(Price)", "Classify = 'I' and ttlTMS = 'N'")) + MyUtility.Convert.GetDecimal(GridData.Compute("sum(Price)", "Classify = 'A'"));
             if (MyUtility.GetValue.Lookup(string.Format("select LocalCMT from Factory where ID = '{0}'", orderData["FactoryID"].ToString())).ToUpper() == "TRUE")
             {
