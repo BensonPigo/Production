@@ -21,7 +21,7 @@ namespace Sci.Production.Cutting
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
-        //string fileNameExt, pathName;
+        string fileNameExt, pathName;
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
