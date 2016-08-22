@@ -71,6 +71,7 @@ Database/dbo/Tables/ADIDASComplainDefect.sql -text
 Database/dbo/Tables/ADIDASComplainDefect_Detail.sql -text
 Database/dbo/Tables/ADIDASComplainTarget.sql -text
 Database/dbo/Tables/ADIDASComplain_Detail.sql -text
+Database/dbo/Tables/ADIDASComplain_MonthlyQty.sql -text
 Database/dbo/Tables/ADIDASMiSetup_ColorComb.sql -text
 Database/dbo/Tables/AIR.sql -text
 Database/dbo/Tables/AIR_Laboratory.sql -text
