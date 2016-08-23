@@ -755,7 +755,7 @@
             <param name="option"></param>
             <returns></returns>
         </member>
-        <member name="M:Sci.MyUtility.Tool.ProcessWithDatatable(System.Data.DataTable,System.String,System.String,System.Data.DataTable@,System.String,System.Data.SqlClient.SqlConnection)">
+        <member name="M:Sci.MyUtility.Tool.ProcessWithDatatable(System.Data.DataTable,System.String,System.String,System.Data.DataTable@,System.String,System.Data.SqlClient.SqlConnection,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter})">
             <summary>
             ProcessWithDatatable
             </summary>
@@ -763,6 +763,16 @@
             <param name="string tmp_columns"></param>
             <param name="string sqlcmd"></param>
             <param name="out DataTable result"></param>
+            <param name="string temptablename"></param>
+        </member>
+        <member name="M:Sci.MyUtility.Tool.ProcessWithDatatable(System.Data.DataTable,System.String,System.String,System.Data.DataTable[]@,System.String,System.Data.SqlClient.SqlConnection,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter})">
+            <summary>
+            ProcessWithDatatable
+            </summary>
+            <param name="DataTable source"></param>
+            <param name="string tmp_columns"></param>
+            <param name="string sqlcmd"></param>
+            <param name="out DataTable[] result"></param>
             <param name="string temptablename"></param>
         </member>
         <member name="M:Sci.MyUtility.Tool.SetupCombox(System.Windows.Forms.ComboBox,System.Int32,System.Int32,System.String,System.String)">
