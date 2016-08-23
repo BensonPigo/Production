@@ -7,7 +7,7 @@
     [AddName]   VARCHAR (10)   CONSTRAINT [DF_FSRCpuCost_Detail_AddName] DEFAULT ('') NULL,
     [EditDate]  DATETIME       NULL,
     [EditName]  VARCHAR (10)   CONSTRAINT [DF_FSRCpuCost_Detail_EditName] DEFAULT ('') NULL, 
-    CONSTRAINT [PK_FSRCpuCost_Detail] PRIMARY KEY ([ShipperID], [BeginDate], [EndDate])
+    CONSTRAINT [PK_FSRCpuCost_Detail] PRIMARY KEY ([ShipperID], [BeginDate]) 
 );
 
 
