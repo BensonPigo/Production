@@ -771,6 +771,11 @@ Sci.Production.Cutting/P10.resx -text
 Sci.Production.Cutting/P10_Generate.Designer.cs -text
 Sci.Production.Cutting/P10_Generate.cs -text
 Sci.Production.Cutting/P10_Generate.resx -text
+Sci.Production.Cutting/P10_Print.Designer.cs -text
+Sci.Production.Cutting/P10_Print.cs -text
+Sci.Production.Cutting/P10_Print.rdlc -text
+Sci.Production.Cutting/P10_Print.resx -text
+Sci.Production.Cutting/P10_PrintData.cs -text
 Sci.Production.Cutting/P11.Designer.cs -text
 Sci.Production.Cutting/P11.cs -text
 Sci.Production.Cutting/P11.resx -text
