@@ -42,7 +42,7 @@
             this.radioPanel1.Controls.Add(this.radioButton1);
             this.radioPanel1.Location = new System.Drawing.Point(33, 29);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(398, 169);
+            this.radioPanel1.Size = new System.Drawing.Size(408, 176);
             this.radioPanel1.TabIndex = 94;
             // 
             // radioButton1

@@ -680,6 +680,13 @@ namespace Sci.Production.Cutting
             var frm = new Sci.Production.Cutting.P10_Generate(CurrentMaintain,dt,bundle_Detail_allpart_Tb,bundle_Detail_Art_Tb,bundle_Detail_Qty_Tb);
             frm.ShowDialog(this);
         }
+        protected override bool ClickPrint()
+        {
+            P10_Print p = new P10_Print(this.CurrentDataRow);
+            p.ShowDialog();
 
+            return true;
+
+        }
     }
 }
