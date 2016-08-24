@@ -154,8 +154,11 @@ namespace Sci.Production.Cutting
                     Style = row1["Style"].ToString(),
                     Item = row1["Item"].ToString(),
                     Body_Cut = row1["Body_Cut"].ToString(),
+                    Parts = row1["Parts"].ToString(),
                     Color = row1["Color"].ToString(),
                     Size = row1["Size"].ToString(),
+                    Desc = row1["Desc"].ToString(),
+                    Artwork = row1["Artwork"].ToString(),
                     Quantity = row1["Quantity"].ToString(),
                     Barcode = row1["Barcode"].ToString()
 
