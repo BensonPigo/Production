@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace Sci.Production.Cutting
 {
@@ -49,8 +50,49 @@ namespace Sci.Production.Cutting
         }
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            return base.OnAsyncDataLoad(e);
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString();
+            List<SqlParameter> lis = new List<SqlParameter>();
+            lis.Add(new SqlParameter("@ID", id));
+            if (checkBox1.Checked)
+                lis.Add(new SqlParameter("@extend", "1"));
+            else
+                lis.Add(new SqlParameter("@extend", "0"));
+
+            DualResult result;
+
+            string sqlcmd = string.Format(@"select a.id [Bundle_ID]
+                                                  ,a.Orderid [SP]
+                                                  ,a.POID [POID]
+                                                  ,b.StyleID [Style]
+                                                  ,a.Sewinglineid [Line]
+                                                  ,a.SewingCell [Cell]
+                                                  ,a.Cutno [Cut]
+                                                  ,a.Item [Item]
+                                                  ,a.Article+' / '+a.Colorid [Article_Color]
+                                                  ,c.BundleGroup [Group]
+                                                  ,c.BundleNo [Bundle]
+                                                  ,c.SizeCode [Size]
+                                                  ,qq.Cutpart [Cutpart]
+                                                  ,[Description]=iif(c.Patterncode = 'ALLPARTS',iif(@extend='1',d.PatternDesc,c.PatternDesc),c.PatternDesc)
+                                                  ,e.SubprocessId [SubProcess]
+                                                  ,[Parts]=iif(c.Patterncode = 'ALLPARTS',iif(@extend='1',d.Parts,c.Parts),c.Parts)
+                                                  ,c.Qty [Qty]
+                                          from dbo.Bundle a
+                                          left join dbo.Orders b on a.Orderid=b.id
+                                          left join dbo.Bundle_Detail c on a.id=c.id
+                                          left join dbo.Bundle_Detail_Allpart d on d.id=c.id and d.BundleNo=c.BundleNo
+                                          outer apply(select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode)[Cutpart]
+			                                          from dbo.Bundle_Detail a 
+			                                          left join dbo.Bundle_Detail_Allpart d on d.id=a.Id and d.BundleNo=a.BundleNo)[qq]
+                                          left join dbo.Bundle_Detail_Art e on e.id=a.id and e.Bundleno=c.BundleNo and e.PatternCode= qq.Cutpart 
+                                          where a.id=@ID");
+            result = DBProxy.Current.Select("", sqlcmd, lis, out dtt);
+
+
+            return result; //base.OnAsyncDataLoad(e);
         }
+        DataTable dtt;
        
 
 
@@ -61,6 +103,11 @@ namespace Sci.Production.Cutting
             
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
+            if (checkBox1.Checked)
+                pars.Add(new SqlParameter("@extend", "1"));
+            else
+                pars.Add(new SqlParameter("@extend", "0"));
+
             DualResult result;
             ReportDefinition report = new ReportDefinition();
 
@@ -76,14 +123,22 @@ namespace Sci.Production.Cutting
                                     ,c.StyleID [Style]
                                     ,b.Item [Item]
                                     ,isnull(b.PatternPanel,'')+''+convert(varchar,b.Cutno) [Body_Cut]
+                                    ,[Parts]=iif(a.Patterncode = 'ALLPARTS',iif(@extend='1',d.parts,a.Parts),a.Parts)
                                     ,b.Colorid [Color]
                                     ,a.SizeCode [Size]
+                                    ,[Desc]=iif(a.Patterncode='ALLPARTS',iif(@extend='1',d.PatternDesc,a.PatternDesc),a.PatternDesc)
+                                    ,e.SubprocessId [Artwork]
                                     ,a.Qty [Quantity]
                                     ,b.id [Barcode]
-                                    from dbo.Bundle_Detail a
-                                    left join dbo.Bundle b on a.id=b.id
-                                    left join dbo.orders c on c.id=b.Orderid
-                                    where a.ID= @ID";
+                            from dbo.Bundle_Detail a
+                            left join dbo.Bundle b on a.id=b.id
+                            left join dbo.orders c on c.id=b.Orderid
+                            left join dbo.Bundle_Detail_Allpart d on d.id=a.Id and d.BundleNo=a.BundleNo
+                            outer apply(select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode)[Cutpart]
+			                                        from dbo.Bundle_Detail a 
+			                                        left join dbo.Bundle_Detail_Allpart d on d.id=a.Id and d.BundleNo=a.BundleNo)[qq]
+                            left join dbo.Bundle_Detail_Art e on e.id=b.id and e.Bundleno=a.BundleNo and e.PatternCode= qq.Cutpart
+                            where a.ID= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dt);
             if (!result) { this.ShowErr(sqlcmd, result); }
      
