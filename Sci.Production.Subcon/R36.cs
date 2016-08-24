@@ -39,6 +39,7 @@ namespace Sci.Production.Subcon
             this.comboBox2.SelectedIndex = 0;
             this.comboBox3.SelectedIndex = 0;
             this.comboBox4.SelectedIndex = 0;
+            print.Enabled = false;
         }
         protected override bool ValidateInput()
         {

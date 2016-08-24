@@ -37,7 +37,7 @@ namespace Sci.Production.Subcon
             this.combFac.SelectedIndex = 0;
             this.comboPay.SelectedIndex = 0;
             this.comboReport.SelectedIndex = 0;
-            
+            print.Enabled = false;
         }
 
         protected override bool ValidateInput()
