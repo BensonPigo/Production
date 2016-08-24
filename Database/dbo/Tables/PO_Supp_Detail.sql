@@ -34,7 +34,7 @@
     [Special]         NVARCHAR (60)   CONSTRAINT [DF_PO_Supp_Detail_Special] DEFAULT ('') NULL,
     [Width]           NUMERIC (3, 1)  CONSTRAINT [DF_PO_Supp_Detail_Width] DEFAULT ((0)) NULL,
     [StockQty]        NUMERIC (9, 1)  CONSTRAINT [DF_PO_Supp_Detail_StockQty] DEFAULT ((0)) NULL,
-    [NETQty]          NUMERIC (8, 2)  CONSTRAINT [DF_PO_Supp_Detail_NETQty] DEFAULT ((0)) NULL,
+    [NETQty]          NUMERIC (10, 2)  CONSTRAINT [DF_PO_Supp_Detail_NETQty] DEFAULT ((0)) NULL,
     [LossQty]         NUMERIC (8, 2)  CONSTRAINT [DF_PO_Supp_Detail_lossQty] DEFAULT ((0)) NULL,
     [SystemNetQty]    NUMERIC (8, 2)  CONSTRAINT [DF_PO_Supp_Detail_SystemNetQty] DEFAULT ((0)) NULL,
     [StockPOID]       VARCHAR (13)    CONSTRAINT [DF_PO_Supp_Detail_StockPOID] DEFAULT ('') NULL,
