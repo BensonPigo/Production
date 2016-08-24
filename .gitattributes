@@ -2622,7 +2622,9 @@ _Dll/Sci.Machine.Class.dll -text
 _Dll/Sci.Proj.XML -text
 _Dll/Sci.Proj.dll -text
 _Dll/Sci.Proj.pdb -text
+_Dll/Sci.XML -text
 _Dll/Sci.dll -text
+_Dll/Sci.pdb -text
 _Dll/en/Ict.Win.App.resources.dll -text
 _Dll/en/Ict.Win.Report2010.resources.dll -text
 _Dll/en/Ict.Win.UI.resources.dll -text
