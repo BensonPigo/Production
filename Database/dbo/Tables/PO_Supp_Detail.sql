@@ -32,7 +32,7 @@
     [SizeUnit]        VARCHAR (8)     CONSTRAINT [DF_PO_Supp_Detail_SizeUnit] DEFAULT ('') NULL,
     [Remark]          NVARCHAR (MAX)  CONSTRAINT [DF_PO_Supp_Detail_Remark] DEFAULT ('') NULL,
     [Special]         NVARCHAR (60)   CONSTRAINT [DF_PO_Supp_Detail_Special] DEFAULT ('') NULL,
-    [Width]           NUMERIC (3, 1)  CONSTRAINT [DF_PO_Supp_Detail_Width] DEFAULT ((0)) NULL,
+    [Width]           NUMERIC (5, 1)  CONSTRAINT [DF_PO_Supp_Detail_Width] DEFAULT ((0)) NULL,
     [StockQty]        NUMERIC (9, 1)  CONSTRAINT [DF_PO_Supp_Detail_StockQty] DEFAULT ((0)) NULL,
     [NETQty]          NUMERIC (10, 2)  CONSTRAINT [DF_PO_Supp_Detail_NETQty] DEFAULT ((0)) NULL,
     [LossQty]         NUMERIC (8, 2)  CONSTRAINT [DF_PO_Supp_Detail_lossQty] DEFAULT ((0)) NULL,
