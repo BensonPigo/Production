@@ -44,6 +44,7 @@
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(408, 176);
             this.radioPanel1.TabIndex = 94;
+            this.radioPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.radioPanel1_Paint);
             // 
             // checkBox1
             // 

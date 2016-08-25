@@ -11,7 +11,7 @@
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>8.78388cm</Height>
+              <Height>8.81034cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -32,7 +32,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
-                          <Top>0.91376cm</Top>
+                          <Top>0.64918cm</Top>
                           <Left>0.16301cm</Left>
                           <Height>0.6cm</Height>
                           <Width>1.98438cm</Width>
@@ -61,7 +61,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox2</rd:DefaultName>
-                          <Top>1.51377cm</Top>
+                          <Top>1.24919cm</Top>
                           <Left>0.16301cm</Left>
                           <Height>0.49417cm</Height>
                           <Width>1.98438cm</Width>
@@ -91,7 +91,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox3</rd:DefaultName>
-                          <Top>2.00793cm</Top>
+                          <Top>1.74335cm</Top>
                           <Left>0.16301cm</Left>
                           <Height>0.52944cm</Height>
                           <Width>1.98438cm</Width>
@@ -121,7 +121,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox8</rd:DefaultName>
-                          <Top>2.57266cm</Top>
+                          <Top>2.30808cm</Top>
                           <Left>0.16301cm</Left>
                           <Height>0.6cm</Height>
                           <Width>1.46812cm</Width>
@@ -151,7 +151,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox9</rd:DefaultName>
-                          <Top>3.24321cm</Top>
+                          <Top>2.97863cm</Top>
                           <Left>0.16301cm</Left>
                           <Height>0.6cm</Height>
                           <Width>1.98438cm</Width>
@@ -181,7 +181,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox10</rd:DefaultName>
-                          <Top>3.91377cm</Top>
+                          <Top>3.64919cm</Top>
                           <Left>0.16301cm</Left>
                           <Height>0.6cm</Height>
                           <Width>1.98438cm</Width>
@@ -211,7 +211,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox12</rd:DefaultName>
-                          <Top>4.58432cm</Top>
+                          <Top>4.31974cm</Top>
                           <Left>0.16301cm</Left>
                           <Height>0.6cm</Height>
                           <Width>1.98438cm</Width>
@@ -241,7 +241,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox14</rd:DefaultName>
-                          <Top>5.18432cm</Top>
+                          <Top>4.91974cm</Top>
                           <Left>0.16301cm</Left>
                           <Height>0.50271cm</Height>
                           <Width>1.98438cm</Width>
@@ -271,7 +271,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox18</rd:DefaultName>
-                          <Top>5.68703cm</Top>
+                          <Top>5.42245cm</Top>
                           <Left>0.16301cm</Left>
                           <Height>0.6cm</Height>
                           <Width>1.62687cm</Width>
@@ -301,7 +301,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox19</rd:DefaultName>
-                          <Top>6.60454cm</Top>
+                          <Top>6.33996cm</Top>
                           <Left>0.16301cm</Left>
                           <Height>0.55563cm</Height>
                           <Width>2.05021cm</Width>
@@ -331,7 +331,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox21</rd:DefaultName>
-                          <Top>7.19544cm</Top>
+                          <Top>6.93086cm</Top>
                           <Left>0.16301cm</Left>
                           <Height>0.57465cm</Height>
                           <Width>2.05021cm</Width>
@@ -346,14 +346,14 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <Textbox Name="Textbox22">
+                        <Textbox Name="Barcode">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>="*"+Fields!Barcode.Value+"*"</Value>
                                   <Style>
                                     <FontFamily>C39HrP24DhTt</FontFamily>
                                     <FontSize>28pt</FontSize>
@@ -363,10 +363,10 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox22</rd:DefaultName>
-                          <Top>7.84064cm</Top>
+                          <rd:DefaultName>Barcode</rd:DefaultName>
+                          <Top>7.57606cm</Top>
                           <Left>0.16301cm</Left>
-                          <Height>0.83042cm</Height>
+                          <Height>1.14792cm</Height>
                           <Width>6.69396cm</Width>
                           <ZIndex>11</ZIndex>
                           <Style>
@@ -386,7 +386,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!Group_right.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -394,7 +394,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
-                          <Top>0.91377cm</Top>
+                          <Top>0.64919cm</Top>
                           <Left>2.21321cm</Left>
                           <Height>0.6cm</Height>
                           <Width>1.53459cm</Width>
@@ -416,7 +416,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!Line.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -424,7 +424,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox2</rd:DefaultName>
-                          <Top>1.51377cm</Top>
+                          <Top>1.24919cm</Top>
                           <Left>2.21321cm</Left>
                           <Height>0.49417cm</Height>
                           <Width>1.53459cm</Width>
@@ -446,7 +446,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!SP.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -454,7 +454,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox3</rd:DefaultName>
-                          <Top>2.00794cm</Top>
+                          <Top>1.74336cm</Top>
                           <Left>2.21321cm</Left>
                           <Height>0.52944cm</Height>
                           <Width>4.64375cm</Width>
@@ -476,7 +476,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!Item.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -484,7 +484,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox9</rd:DefaultName>
-                          <Top>3.24321cm</Top>
+                          <Top>2.97863cm</Top>
                           <Left>2.21321cm</Left>
                           <Height>0.6cm</Height>
                           <Width>2.61938cm</Width>
@@ -506,7 +506,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!Body_Cut.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -514,7 +514,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox10</rd:DefaultName>
-                          <Top>3.91377cm</Top>
+                          <Top>3.64919cm</Top>
                           <Left>2.21321cm</Left>
                           <Height>0.6cm</Height>
                           <Width>1.53459cm</Width>
@@ -536,7 +536,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!Color.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -544,7 +544,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox12</rd:DefaultName>
-                          <Top>4.58433cm</Top>
+                          <Top>4.31975cm</Top>
                           <Left>2.21321cm</Left>
                           <Height>0.6cm</Height>
                           <Width>4.64375cm</Width>
@@ -566,7 +566,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!Size.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -574,7 +574,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox14</rd:DefaultName>
-                          <Top>5.18432cm</Top>
+                          <Top>4.91974cm</Top>
                           <Left>2.14738cm</Left>
                           <Height>0.46743cm</Height>
                           <Width>2.05021cm</Width>
@@ -596,7 +596,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!Artwork.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -604,7 +604,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox19</rd:DefaultName>
-                          <Top>6.60454cm</Top>
+                          <Top>6.33996cm</Top>
                           <Left>2.21321cm</Left>
                           <Height>0.55563cm</Height>
                           <Width>4.64375cm</Width>
@@ -626,7 +626,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!Quantity.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -634,7 +634,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox21</rd:DefaultName>
-                          <Top>7.19544cm</Top>
+                          <Top>6.93086cm</Top>
                           <Left>2.21321cm</Left>
                           <Height>0.57466cm</Height>
                           <Width>2.34125cm</Width>
@@ -656,7 +656,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!Style.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -664,7 +664,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox8</rd:DefaultName>
-                          <Top>2.57266cm</Top>
+                          <Top>2.30808cm</Top>
                           <Left>1.63113cm</Left>
                           <Height>0.6cm</Height>
                           <Width>5.22583cm</Width>
@@ -686,7 +686,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!Desc.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -694,7 +694,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox18</rd:DefaultName>
-                          <Top>5.68703cm</Top>
+                          <Top>5.42245cm</Top>
                           <Left>1.78988cm</Left>
                           <Height>0.91751cm</Height>
                           <Width>5.06708cm</Width>
@@ -716,7 +716,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!Group_left.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -724,7 +724,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
-                          <Top>0.91377cm</Top>
+                          <Top>0.64919cm</Top>
                           <Left>5.34883cm</Left>
                           <Height>0.6cm</Height>
                           <Width>1.50813cm</Width>
@@ -746,7 +746,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!Cell.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -754,7 +754,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
-                          <Top>1.4432cm</Top>
+                          <Top>1.17862cm</Top>
                           <Left>5.34884cm</Left>
                           <Height>0.56473cm</Height>
                           <Width>1.50813cm</Width>
@@ -784,7 +784,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
-                          <Top>1.4432cm</Top>
+                          <Top>1.17862cm</Top>
                           <Left>4.50628cm</Left>
                           <Height>0.56472cm</Height>
                           <Width>0.84256cm</Width>
@@ -814,7 +814,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
-                          <Top>3.91377cm</Top>
+                          <Top>3.64919cm</Top>
                           <Left>4.19759cm</Left>
                           <Height>0.59999cm</Height>
                           <Width>1.15124cm</Width>
@@ -836,7 +836,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!Parts.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -844,7 +844,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
-                          <Top>3.91377cm</Top>
+                          <Top>3.64919cm</Top>
                           <Left>5.34884cm</Left>
                           <Height>0.59999cm</Height>
                           <Width>1.50813cm</Width>
@@ -866,10 +866,10 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>o</Value>
+                                  <Value>○</Value>
                                   <Style>
                                     <FontFamily>times New Roman</FontFamily>
-                                    <FontSize>28pt</FontSize>
+                                    <FontSize>18pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -879,7 +879,7 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox39</rd:DefaultName>
                           <Left>4.19759cm</Left>
-                          <Height>1.04633cm</Height>
+                          <Height>0.64946cm</Height>
                           <Width>0.75847cm</Width>
                           <ZIndex>28</ZIndex>
                           <Style>
@@ -900,6 +900,7 @@
                         </Border>
                       </Style>
                     </Rectangle>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -918,8 +919,9 @@
             </TablixMember>
           </TablixMembers>
         </TablixRowHierarchy>
+        <KeepTogether>true</KeepTogether>
         <DataSetName>DataSet1</DataSetName>
-        <Height>8.78388cm</Height>
+        <Height>8.81034cm</Height>
         <Width>7.02cm</Width>
         <Style>
           <Border>

@@ -18,31 +18,21 @@ namespace Sci.Production.Cutting
 {
     public partial class P10_Print : Sci.Win.Tems.PrintForm
     {
-        public P10_Print(ToolStripMenuItem menuitem)
-            : base(menuitem)
-        {
-            InitializeComponent();
-        }
         DataRow CurrentDataRow;
         public P10_Print(DataRow row)
-        {
-            this.CurrentDataRow = row;
+        { 
+           InitializeComponent();
+          this.CurrentDataRow = row;
+         toexcel.Enabled = false;
         }
+
         string Bundle_Card;
         string Bundle_Check_list;
         string Extend_All_Parts;
         protected override bool ValidateInput()
         {
-            if(radioButton1.Checked==true)
-            {
-                print.Enabled = true;
-                toexcel.Enabled = false;
-            }
-            else if(radioButton2.Checked==true)
-            {
-               toexcel.Enabled=true;
-                print.Enabled = false;
-            }
+
+           
             Bundle_Card = radioButton1.Checked.ToString();
             Bundle_Check_list = radioButton2.Checked.ToString();
             Extend_All_Parts = checkBox1.Checked.ToString();
@@ -50,6 +40,7 @@ namespace Sci.Production.Cutting
         }
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
             List<SqlParameter> lis = new List<SqlParameter>();
@@ -62,29 +53,30 @@ namespace Sci.Production.Cutting
             DualResult result;
 
             string sqlcmd = string.Format(@"select a.id [Bundle_ID]
-                                                  ,a.Orderid [SP]
-                                                  ,a.POID [POID]
-                                                  ,b.StyleID [Style]
-                                                  ,a.Sewinglineid [Line]
-                                                  ,a.SewingCell [Cell]
-                                                  ,a.Cutno [Cut]
-                                                  ,a.Item [Item]
-                                                  ,a.Article+' / '+a.Colorid [Article_Color]
-                                                  ,c.BundleGroup [Group]
-                                                  ,c.BundleNo [Bundle]
-                                                  ,c.SizeCode [Size]
-                                                  ,qq.Cutpart [Cutpart]
-                                                  ,[Description]=iif(c.Patterncode = 'ALLPARTS',iif(@extend='1',d.PatternDesc,c.PatternDesc),c.PatternDesc)
-                                                  ,e.SubprocessId [SubProcess]
-                                                  ,[Parts]=iif(c.Patterncode = 'ALLPARTS',iif(@extend='1',d.Parts,c.Parts),c.Parts)
-                                                  ,c.Qty [Qty]
+                                                    ,a.Orderid [SP]
+                                                    ,a.POID [POID]
+                                                    ,b.StyleID [Style]
+                                                    ,a.Sewinglineid [Line]
+                                                    ,a.SewingCell [Cell]
+                                                    ,a.Cutno [Cut]
+                                                    ,a.Item [Item]
+                                                    ,a.Article+' / '+a.Colorid [Article_Color]
+                                                    ,c.BundleGroup [Group]
+                                                    ,c.BundleNo [Bundle]
+                                                    ,c.SizeCode [Size]
+                                                    ,qq.Cutpart [Cutpart]
+                                                    ,[Description]=iif(c.Patterncode = 'ALLPARTS',iif(@extend='1',d.PatternDesc,c.PatternDesc),c.PatternDesc)
+                                                    ,e.SubprocessId [SubProcess]
+                                                    ,[Parts]=iif(c.Patterncode = 'ALLPARTS',iif(@extend='1',d.Parts,c.Parts),c.Parts)
+                                                    ,c.Qty [Qty]
                                           from dbo.Bundle a
                                           left join dbo.Orders b on a.Orderid=b.id
                                           left join dbo.Bundle_Detail c on a.id=c.id
                                           left join dbo.Bundle_Detail_Allpart d on d.id=c.id and d.BundleNo=c.BundleNo
-                                          outer apply(select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode)[Cutpart]
-			                                          from dbo.Bundle_Detail a 
-			                                          left join dbo.Bundle_Detail_Allpart d on d.id=a.Id and d.BundleNo=a.BundleNo)[qq]
+                                          outer apply(select iif(c1.PatternCode = 'ALLPARTS',iif(@extend='1',d1.PatternCode,c1.PatternCode),c1.PatternCode) [Cutpart]
+                                                      from dbo.Bundle_Detail c1 
+                                                      left join dbo.Bundle_Detail_Allpart d1 on d1.id=c1.Id and d1.BundleNo=c1.BundleNo 
+			                                          where c1.Id = c.ID and d1.BundleNo = d.BundleNo and d1.Patterncode = d.Patterncode)[qq]
                                           left join dbo.Bundle_Detail_Art e on e.id=a.id and e.Bundleno=c.BundleNo and e.PatternCode= qq.Cutpart 
                                           where a.id=@ID");
             result = DBProxy.Current.Select("", sqlcmd, lis, out dtt);
@@ -111,7 +103,7 @@ namespace Sci.Production.Cutting
             DualResult result;
             ReportDefinition report = new ReportDefinition();
 
-            
+
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
@@ -134,9 +126,10 @@ namespace Sci.Production.Cutting
                             left join dbo.Bundle b on a.id=b.id
                             left join dbo.orders c on c.id=b.Orderid
                             left join dbo.Bundle_Detail_Allpart d on d.id=a.Id and d.BundleNo=a.BundleNo
-                            outer apply(select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode)[Cutpart]
-			                                        from dbo.Bundle_Detail a 
-			                                        left join dbo.Bundle_Detail_Allpart d on d.id=a.Id and d.BundleNo=a.BundleNo)[qq]
+                           outer apply(select iif(c1.PatternCode = 'ALLPARTS',iif(@extend='1',d1.PatternCode,c1.PatternCode),c1.PatternCode) [Cutpart]
+                                                      from dbo.Bundle_Detail c1 
+                                                      left join dbo.Bundle_Detail_Allpart d1 on d1.id=c1.Id and d1.BundleNo=c1.BundleNo 
+			                                          where c1.Id = c.ID and d1.BundleNo = d.BundleNo and d1.Patterncode = d.Patterncode)[qq]
                             left join dbo.Bundle_Detail_Art e on e.id=b.id and e.Bundleno=a.BundleNo and e.PatternCode= qq.Cutpart
                             where a.ID= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dt);
@@ -202,6 +195,22 @@ namespace Sci.Production.Cutting
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;
+        }
+
+        private void radioPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+            if ( radioButton1.Checked==true)
+            {
+                print.Enabled = true;
+                toexcel.Enabled = false;
+            }
+            else if (radioButton2.Checked == true)
+            {
+                toexcel.Enabled = true;
+                print.Enabled = false;
+            }
+
         }
       
     }
