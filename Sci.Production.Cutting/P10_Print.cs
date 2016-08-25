@@ -47,7 +47,7 @@ namespace Sci.Production.Cutting
                 #region report
                 DataRow row = this.CurrentDataRow;
                 string id = row["ID"].ToString();
-
+                
                 List<SqlParameter> pars = new List<SqlParameter>(); 
                 pars.Add(new SqlParameter("@ID", id));
                 if (checkBox1.Checked)
