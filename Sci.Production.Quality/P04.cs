@@ -31,8 +31,8 @@ namespace Sci.Production.Quality
             ResultCombo.Add("P", "Pass");
             ResultCombo.Add("F", "Fail");            
             DefaultFilter = string.Format("MDivisionid='{0}'",Factory);                     
-          
         }
+
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -49,8 +49,41 @@ namespace Sci.Production.Quality
                     this.Early_Buyer_Text.Text = dt.Rows[0]["MinBuyerDelivery"].ToString();
                 }
             }
+
+            //[Last Result]
+            if (CurrentMaintain["result"].ToString().Trim() == "P")
+            {
+                Last_Result_Text.Text = "Pass";
+            }
+            else if (CurrentMaintain["result"].ToString().Trim() == "F")
+            {
+                Last_Result_Text.Text = "Fail";
+            }
+            
+            //[Last Test Date]
+            if (CurrentMaintain["date"] == DBNull.Value) Last_Date_Text.Text = "";
+            else Last_Date_Text.Text = Convert.ToDateTime(CurrentMaintain["date"]).ToShortDateString();
+
+            //[Earliest Inline]
+            if (CurrentMaintain["SewingInline"] == DBNull.Value) Early_inline_Text.Text = "";
+            else Early_inline_Text.Text = Convert.ToDateTime(CurrentMaintain["SewingInline"]).ToShortDateString();
+
+            //[Earliest Offline]
+            if (CurrentMaintain["SewingOffLine"] == DBNull.Value) Early_off_Text.Text = "";
+            else Early_off_Text.Text = Convert.ToDateTime(CurrentMaintain["SewingOffLine"]).ToShortDateString();
+
+            //[DeadLine]
+            if (CurrentMaintain["Deadline"] == DBNull.Value) DeadLine_Text.Text = "";
+            else DeadLine_Text.Text = Convert.ToDateTime(CurrentMaintain["Deadline"]).ToShortDateString();
+
+            //[Earliest SCI Dlv][Earliest Buyer Dlv]
+            if (!MyUtility.Check.Empty(Early_SCI_Text.Text)) Early_SCI_Text.Text = Convert.ToDateTime(Early_SCI_Text.Text).ToShortDateString();
+            if (!MyUtility.Check.Empty(Early_Buyer_Text.Text)) Early_Buyer_Text.Text = Convert.ToDateTime(Early_Buyer_Text.Text).ToShortDateString();
+
             DataTable datas = (DataTable)detailgridbs.DataSource;
+
         }
+
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {                 
 
@@ -68,11 +101,13 @@ namespace Sci.Production.Quality
                 dr["NewKey"] = i;
                 dr["Send"] = "";
                 dr["Receive"] = "";
+                dr["AddName"] = dt.Rows[i]["AddName"].ToString() + " - " + dt.Rows[i]["AddDate"].ToString();
                 dr["LastEditName"] = dt.Rows[i]["EditName"].ToString() + " - " + dt.Rows[i]["EditDate"].ToString();
                 i++;
             }
             return base.OnRenewDataDetailPost(e);
         }
+
         protected override void OnDetailGridSetup()
         {
             
@@ -85,9 +120,35 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorTextColumnSettings ReceiverCell = new DataGridViewGeneratorTextColumnSettings();                 
             DataGridViewGeneratorComboBoxColumnSettings ResultValid = new DataGridViewGeneratorComboBoxColumnSettings();
 
+            #region CellEditable 事件
+            inspDateCell.CellEditable += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
+            };
+            ResultValid.CellEditable += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
+            };
+            inspectorCell.CellEditable += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
+            };
+            SendCell.CellEditable += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (this.EditMode == true && MyUtility.Check.Empty(dr["SendDate"])) e.IsEditable = false;
+            };
+            ReceiveCell.CellEditable += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (this.EditMode == true && MyUtility.Check.Empty(dr["ReceiveDate"])) e.IsEditable = false;
+            };
+            #endregion
 
             #region MouseClick 事件
-
             inspectorCell.CellMouseClick += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
@@ -95,7 +156,7 @@ namespace Sci.Production.Quality
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
-                    string scalecmd = @"select id,name from Pass1 where Resign is not null";
+                    string scalecmd = @"select id,name from Pass1 where Resign is null";
                     SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Inspector"].ToString());
                     DialogResult result = item1.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -111,6 +172,7 @@ namespace Sci.Production.Quality
                 if (MyUtility.Check.Empty(dr["Send"]))
                 {
                     dr["Send"] = loginID;
+                    dr["SendDate"] = DateTime.Now;
                     dr["EditName"] = loginID;
                     dr["EditDate"] = DateTime.Now.ToShortDateString();
                 }
@@ -122,7 +184,7 @@ namespace Sci.Production.Quality
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    string scalecmd = @"select id,name from Pass1 where Resign is not null";
+                    string scalecmd = @"select id,name from Pass1 where Resign is null";
                     SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Sender"].ToString());
                     DialogResult result = item1.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -138,6 +200,7 @@ namespace Sci.Production.Quality
                 if (MyUtility.Check.Empty(dr["Receive"]))
                 {
                     dr["Receive"] = loginID;
+                    dr["ReceiveDate"] = DateTime.Now;
                     dr["EditName"] = loginID;
                     dr["EditDate"] = DateTime.Now.ToShortDateString();
                 }
@@ -149,7 +212,7 @@ namespace Sci.Production.Quality
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
-                    string scalecmd = @"select id,name from Pass1 where Resign is not null";
+                    string scalecmd = @"select id,name from Pass1 where Resign is null";
                     SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Receiver"].ToString());
                     DialogResult result = item1.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -195,7 +258,7 @@ namespace Sci.Production.Quality
                     if (dr.RowState == DataRowState.Modified)
                     {
                         DataTable dt;
-                        string cmd = "select * from pass1 where id=@id and Resign is not null";
+                        string cmd = "select * from pass1 where id=@id and Resign is null";
                         List<SqlParameter> spam = new List<SqlParameter>();
                         spam.Add(new SqlParameter("@id", e.FormattedValue));
                         DualResult result;
@@ -218,7 +281,7 @@ namespace Sci.Production.Quality
                     {
                         dr["EditName"] = loginID;
                         dr["EditDate"] = DateTime.Now.ToShortDateString();
-                        if (MyUtility.Check.Empty(e.FormattedValue))
+                        if (!MyUtility.Check.Empty(e.FormattedValue))
                         {
                             dr["Remark"] = e.FormattedValue;
                         }                        
@@ -231,7 +294,7 @@ namespace Sci.Production.Quality
                 if (dr.RowState == DataRowState.Modified)
                 {
                     DataTable dt;
-                    string cmd = "select * from pass1 where id=@id and Resign is not null";
+                    string cmd = "select * from pass1 where id=@id and Resign is null";
                     List<SqlParameter> spam = new List<SqlParameter>();
                     spam.Add(new SqlParameter("@id", e.FormattedValue));
                     DualResult result;
@@ -252,7 +315,7 @@ namespace Sci.Production.Quality
                 if (dr.RowState == DataRowState.Modified)
                 {
                     DataTable dt;
-                    string cmd = "select * from pass1 where id=@id and Resign is not null";
+                    string cmd = "select * from pass1 where id=@id and Resign is null";
                     List<SqlParameter> spam = new List<SqlParameter>();
                     spam.Add(new SqlParameter("@id", e.FormattedValue));                   
                     DualResult result;
@@ -270,47 +333,56 @@ namespace Sci.Production.Quality
                     
             };
             #endregion
-            Ict.Win.UI.DataGridViewComboBoxColumn ResultComboCell;// 一定要加Ict.Win.UI 不然會跟C#原生的有所衝突
 
+            Ict.Win.UI.DataGridViewComboBoxColumn ResultComboCell;// 一定要加Ict.Win.UI 不然會跟C#原生的有所衝突
             
             Helper.Controls.Grid.Generator(this.detailgrid)
             .ComboBox("Result", header: "Result", width: Widths.AnsiChars(10), settings: ResultValid).Get(out ResultComboCell)
             .Text("No", header: "No. Of Test", width: Widths.AnsiChars(5),iseditingreadonly:true)
-            .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10),settings:inspDateCell)
+            .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), settings: inspDateCell)
             .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(10),settings:inspectorCell)
             .Text("Inspector", header: "Inspector Name", width: Widths.AnsiChars(10),iseditingreadonly:true)
             .Text("Remark", header: "Comments", width: Widths.AnsiChars(10),settings:CommentsCell)
-            .Text("Send", header: "Send", width: Widths.AnsiChars(10),iseditingreadonly:true,settings:SendCell)// source empty
+            .Text("Send", header: "Send", width: Widths.AnsiChars(10),settings:SendCell)// source empty
             .Text("Sender", header: "Sender", width: Widths.AnsiChars(10),settings:SenderCell)
             .Date("SendDate", header: "Send Date", width: Widths.AnsiChars(10),iseditingreadonly:true)
-            .Text("Receive", header: "Receive", width: Widths.AnsiChars(5),iseditingreadonly:true,settings:ReceiveCell)// source empty
+            .Text("Receive", header: "Receive", width: Widths.AnsiChars(5),settings:ReceiveCell)// source empty
             .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(5),settings:ReceiverCell)
             .Date("ReceiveDate", header: "Receive Date", width: Widths.AnsiChars(10),iseditingreadonly:true)
-            .Text("AddName", header: "Add Name", width: Widths.AnsiChars(5),iseditingreadonly:true)// addName + addDate
-            .Text("LastEditName", header: "Last Edit Name", width: Widths.AnsiChars(5),iseditingreadonly:true);//editName + editDate
+            .Text("AddName", header: "Add Name", width: Widths.AnsiChars(25),iseditingreadonly:true)// addName + addDate
+            .Text("LastEditName", header: "Last Edit Name", width: Widths.AnsiChars(25),iseditingreadonly:true);//editName + editDate
 
             ResultComboCell.DataSource = new BindingSource(ResultCombo, null);
             ResultComboCell.ValueMember = "Key";
             ResultComboCell.DisplayMember = "Value";
         }
+
         protected override void ClickNewAfter()
         {
             CurrentMaintain["No"] = (int)CurrentMaintain["No"]+1;
             base.ClickNewAfter();
         }
+
         protected override void OnDetailGridInsert(int index = -1)
         {
             int MaxNo = 0;
             DataTable dt = (DataTable)detailgridbs.DataSource;
-             MaxNo = Convert.ToInt32(dt.Compute("Max(No)", string.Empty));
-            base.OnDetailGridInsert(0);
-            //dt.Rows[index]["no"].ToString() = 2;
-            CurrentDetailData["No"] = MaxNo+1;
-            
-           
-           
+
+            if (dt.Rows.Count == 0)
+            {
+                base.OnDetailGridInsert(0);
+                CurrentDetailData["No"] = MaxNo + 1;
+            }
+            else
+            {
+                MaxNo = Convert.ToInt32(dt.Compute("Max(No)", string.Empty));
+                base.OnDetailGridInsert(0);
+                //dt.Rows[index]["no"].ToString() = 2;
+                CurrentDetailData["No"] = MaxNo + 1;
+            }
             
         }
+
         // delete前檢查
         protected override bool ClickDeleteBefore()
         {
@@ -322,6 +394,7 @@ namespace Sci.Production.Quality
             }
             return base.ClickDeleteBefore();
         }
+
         //Edit 前檢查
         protected override bool ClickSaveBefore()
         {
@@ -332,15 +405,21 @@ namespace Sci.Production.Quality
             }
             return base.ClickSaveBefore();
         }
+
         protected override DualResult ClickSave()
         {
 
             DualResult upResult = new DualResult(true);
+            bool DELETE = false;
             string update_cmd = ""; 
             foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
             {               
                 if (dr.RowState == DataRowState.Deleted)
-                {                   
+                {
+                    DELETE = true;
+
+                    if (!MyUtility.Check.Empty(dr["senddate", DataRowVersion.Original])) return new DualResult(false, "SendDate is existed, can not delete.", "Warning");
+
                     List<SqlParameter> spamDet = new List<SqlParameter>();
                     update_cmd = "Delete From GarmentTest_Detail Where id =@id and no=@no";
                     spamDet.Add(new SqlParameter("@id", dr["ID", DataRowVersion.Original]));
@@ -351,21 +430,25 @@ namespace Sci.Production.Quality
             }                
 
             DataTable dt = (DataTable)detailgridbs.DataSource;
-            DataTable dtResult;
-            string maxNo = dt.Compute("MAX(NO)", "").ToString();
-            string cmd = "select * from GarmentTest_Detail where id=@id and no=@no";
-            List<SqlParameter> spm = new List<SqlParameter>();
-            spm.Add(new SqlParameter("@id", dt.Rows[0]["ID"]));
-            spm.Add(new SqlParameter("@no", maxNo));
-            if (upResult =DBProxy.Current.Select(null,cmd,spm,out dtResult))
+            if (DELETE) dt.AcceptChanges();
+            if (dt.Rows.Count > 0)
             {
-                //this.Last_Result_Text.Text = dtResult.Rows[0]["result"].ToString();
-                //this.Last_Date_Text.Text = dtResult.Rows[0]["inspdate"].ToString();
-                //this.Comment_text.Text = dtResult.Rows[0]["remark"].ToString();
-             
+                string maxNo = dt.Compute("MAX(NO)", "").ToString();
+                string where = string.Format("NO='{0}'", maxNo);
+                DataRow DetailRow = dt.Select(where)[0];
 
-            }            
-                    
+                CurrentMaintain["Result"] = DetailRow["Result"];
+                CurrentMaintain["Date"] = DetailRow["inspdate"];
+                CurrentMaintain["Remark"] = DetailRow["remark"];
+
+            }
+            else
+            {
+                CurrentMaintain["Result"] = "";
+                CurrentMaintain["Date"] = DBNull.Value;
+                CurrentMaintain["Remark"] = "";
+            }
+   
             return base.ClickSave();
         }
 
@@ -374,7 +457,7 @@ namespace Sci.Production.Quality
             DataTable dt;
             DualResult result;
             string cmd = @"select b.* from Orders a
-left join GarmentTest b on a.ID=b.OrderID and a.StyleID=b.StyleID and a.SeasonID=b.SeasonID and a.BrandID=b.BrandID
+left join GarmentTest b on a.ID=b.OrderID and a.StyleID=b.StyleID and a.SeasonID=b.SeasonID and a.BrandID=b.BrandID and a.FactoryID=b.MDivisionid
 left join Order_Qty c on a.ID=c.ID and c.Article=b.Article where a.id=@orderID";
             List<SqlParameter> spam = new List<SqlParameter>();
             spam.Add(new SqlParameter("@orderID", this.SP_Text.Text));

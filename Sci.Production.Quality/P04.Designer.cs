@@ -43,22 +43,22 @@
             this.label13 = new Sci.Win.UI.Label();
             this.label14 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
-            this.style_text = new Sci.Win.UI.TextBox();
-            this.First_sp_Text = new Sci.Win.UI.TextBox();
             this.SP_Text = new Sci.Win.UI.TextBox();
-            this.Factory_Text = new Sci.Win.UI.TextBox();
-            this.Last_Result_Text = new Sci.Win.UI.TextBox();
-            this.Last_Date_Text = new Sci.Win.UI.TextBox();
-            this.Early_Buyer_Text = new Sci.Win.UI.TextBox();
-            this.Early_SCI_Text = new Sci.Win.UI.TextBox();
-            this.DeadLine_Text = new Sci.Win.UI.TextBox();
-            this.Article_Text = new Sci.Win.UI.TextBox();
-            this.Season_Text = new Sci.Win.UI.TextBox();
-            this.Brand_Text = new Sci.Win.UI.TextBox();
-            this.Early_off_Text = new Sci.Win.UI.TextBox();
-            this.Early_inline_Text = new Sci.Win.UI.TextBox();
             this.Send_mail_btn = new Sci.Win.UI.Button();
-            this.Comment_text = new Sci.Win.UI.EditBox();
+            this.style_text = new Sci.Win.UI.DisplayBox();
+            this.First_sp_Text = new Sci.Win.UI.DisplayBox();
+            this.Factory_Text = new Sci.Win.UI.DisplayBox();
+            this.Last_Result_Text = new Sci.Win.UI.DisplayBox();
+            this.Last_Date_Text = new Sci.Win.UI.DisplayBox();
+            this.Season_Text = new Sci.Win.UI.DisplayBox();
+            this.Brand_Text = new Sci.Win.UI.DisplayBox();
+            this.Early_inline_Text = new Sci.Win.UI.DisplayBox();
+            this.Early_off_Text = new Sci.Win.UI.DisplayBox();
+            this.Comment_text = new Sci.Win.UI.DisplayBox();
+            this.Article_Text = new Sci.Win.UI.DisplayBox();
+            this.DeadLine_Text = new Sci.Win.UI.DisplayBox();
+            this.Early_SCI_Text = new Sci.Win.UI.DisplayBox();
+            this.Early_Buyer_Text = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -75,22 +75,22 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.Early_Buyer_Text);
+            this.masterpanel.Controls.Add(this.Early_SCI_Text);
+            this.masterpanel.Controls.Add(this.DeadLine_Text);
+            this.masterpanel.Controls.Add(this.Article_Text);
             this.masterpanel.Controls.Add(this.Comment_text);
-            this.masterpanel.Controls.Add(this.Send_mail_btn);
-            this.masterpanel.Controls.Add(this.Early_inline_Text);
             this.masterpanel.Controls.Add(this.Early_off_Text);
+            this.masterpanel.Controls.Add(this.Early_inline_Text);
             this.masterpanel.Controls.Add(this.Brand_Text);
             this.masterpanel.Controls.Add(this.Season_Text);
-            this.masterpanel.Controls.Add(this.Article_Text);
-            this.masterpanel.Controls.Add(this.DeadLine_Text);
-            this.masterpanel.Controls.Add(this.Early_SCI_Text);
-            this.masterpanel.Controls.Add(this.Early_Buyer_Text);
             this.masterpanel.Controls.Add(this.Last_Date_Text);
             this.masterpanel.Controls.Add(this.Last_Result_Text);
             this.masterpanel.Controls.Add(this.Factory_Text);
-            this.masterpanel.Controls.Add(this.SP_Text);
             this.masterpanel.Controls.Add(this.First_sp_Text);
             this.masterpanel.Controls.Add(this.style_text);
+            this.masterpanel.Controls.Add(this.Send_mail_btn);
+            this.masterpanel.Controls.Add(this.SP_Text);
             this.masterpanel.Controls.Add(this.label15);
             this.masterpanel.Controls.Add(this.label14);
             this.masterpanel.Controls.Add(this.label13);
@@ -107,7 +107,6 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Size = new System.Drawing.Size(1062, 270);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -123,22 +122,23 @@
             this.masterpanel.Controls.SetChildIndex(this.label13, 0);
             this.masterpanel.Controls.SetChildIndex(this.label14, 0);
             this.masterpanel.Controls.SetChildIndex(this.label15, 0);
+            this.masterpanel.Controls.SetChildIndex(this.SP_Text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.Send_mail_btn, 0);
             this.masterpanel.Controls.SetChildIndex(this.style_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.First_sp_Text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.SP_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Factory_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Last_Result_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Last_Date_Text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Early_Buyer_Text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Early_SCI_Text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.DeadLine_Text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Article_Text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.Season_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Brand_Text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Early_off_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Early_inline_Text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Send_mail_btn, 0);
+            this.masterpanel.Controls.SetChildIndex(this.Early_off_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Comment_text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.Article_Text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.DeadLine_Text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.Early_SCI_Text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.Early_Buyer_Text, 0);
             // 
             // detailpanel
             // 
@@ -325,157 +325,16 @@
             this.label15.TabIndex = 15;
             this.label15.Text = "Last Comment";
             // 
-            // style_text
-            // 
-            this.style_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.style_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "StyleID", true));
-            this.style_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.style_text.Location = new System.Drawing.Point(148, 19);
-            this.style_text.Name = "style_text";
-            this.style_text.ReadOnly = true;
-            this.style_text.Size = new System.Drawing.Size(140, 23);
-            this.style_text.TabIndex = 16;
-            // 
-            // First_sp_Text
-            // 
-            this.First_sp_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.First_sp_Text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FirstOrderID", true));
-            this.First_sp_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.First_sp_Text.Location = new System.Drawing.Point(148, 59);
-            this.First_sp_Text.Name = "First_sp_Text";
-            this.First_sp_Text.ReadOnly = true;
-            this.First_sp_Text.Size = new System.Drawing.Size(140, 23);
-            this.First_sp_Text.TabIndex = 17;
-            // 
             // SP_Text
             // 
             this.SP_Text.BackColor = System.Drawing.Color.White;
             this.SP_Text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderID", true));
             this.SP_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.SP_Text.Location = new System.Drawing.Point(148, 101);
+            this.SP_Text.Location = new System.Drawing.Point(143, 101);
             this.SP_Text.Name = "SP_Text";
             this.SP_Text.Size = new System.Drawing.Size(140, 23);
             this.SP_Text.TabIndex = 18;
             this.SP_Text.Validated += new System.EventHandler(this.SP_Text_Validated);
-            // 
-            // Factory_Text
-            // 
-            this.Factory_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Factory_Text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MDivisionid", true));
-            this.Factory_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Factory_Text.Location = new System.Drawing.Point(148, 140);
-            this.Factory_Text.Name = "Factory_Text";
-            this.Factory_Text.ReadOnly = true;
-            this.Factory_Text.Size = new System.Drawing.Size(140, 23);
-            this.Factory_Text.TabIndex = 19;
-            // 
-            // Last_Result_Text
-            // 
-            this.Last_Result_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Last_Result_Text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Result", true));
-            this.Last_Result_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Last_Result_Text.Location = new System.Drawing.Point(148, 180);
-            this.Last_Result_Text.Name = "Last_Result_Text";
-            this.Last_Result_Text.ReadOnly = true;
-            this.Last_Result_Text.Size = new System.Drawing.Size(140, 23);
-            this.Last_Result_Text.TabIndex = 20;
-            // 
-            // Last_Date_Text
-            // 
-            this.Last_Date_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Last_Date_Text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Date", true));
-            this.Last_Date_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Last_Date_Text.Location = new System.Drawing.Point(148, 221);
-            this.Last_Date_Text.Name = "Last_Date_Text";
-            this.Last_Date_Text.ReadOnly = true;
-            this.Last_Date_Text.Size = new System.Drawing.Size(140, 23);
-            this.Last_Date_Text.TabIndex = 21;
-            // 
-            // Early_Buyer_Text
-            // 
-            this.Early_Buyer_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Early_Buyer_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Early_Buyer_Text.Location = new System.Drawing.Point(764, 140);
-            this.Early_Buyer_Text.Name = "Early_Buyer_Text";
-            this.Early_Buyer_Text.ReadOnly = true;
-            this.Early_Buyer_Text.Size = new System.Drawing.Size(132, 23);
-            this.Early_Buyer_Text.TabIndex = 22;
-            // 
-            // Early_SCI_Text
-            // 
-            this.Early_SCI_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Early_SCI_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Early_SCI_Text.Location = new System.Drawing.Point(764, 101);
-            this.Early_SCI_Text.Name = "Early_SCI_Text";
-            this.Early_SCI_Text.ReadOnly = true;
-            this.Early_SCI_Text.Size = new System.Drawing.Size(132, 23);
-            this.Early_SCI_Text.TabIndex = 23;
-            // 
-            // DeadLine_Text
-            // 
-            this.DeadLine_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.DeadLine_Text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Deadline", true));
-            this.DeadLine_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.DeadLine_Text.Location = new System.Drawing.Point(764, 59);
-            this.DeadLine_Text.Name = "DeadLine_Text";
-            this.DeadLine_Text.ReadOnly = true;
-            this.DeadLine_Text.Size = new System.Drawing.Size(132, 23);
-            this.DeadLine_Text.TabIndex = 24;
-            // 
-            // Article_Text
-            // 
-            this.Article_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Article_Text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Article", true));
-            this.Article_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Article_Text.Location = new System.Drawing.Point(764, 19);
-            this.Article_Text.Name = "Article_Text";
-            this.Article_Text.ReadOnly = true;
-            this.Article_Text.Size = new System.Drawing.Size(132, 23);
-            this.Article_Text.TabIndex = 25;
-            // 
-            // Season_Text
-            // 
-            this.Season_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Season_Text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SeasonID", true));
-            this.Season_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Season_Text.Location = new System.Drawing.Point(447, 19);
-            this.Season_Text.Name = "Season_Text";
-            this.Season_Text.ReadOnly = true;
-            this.Season_Text.Size = new System.Drawing.Size(132, 23);
-            this.Season_Text.TabIndex = 26;
-            // 
-            // Brand_Text
-            // 
-            this.Brand_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Brand_Text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Brandid", true));
-            this.Brand_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Brand_Text.Location = new System.Drawing.Point(447, 59);
-            this.Brand_Text.Name = "Brand_Text";
-            this.Brand_Text.ReadOnly = true;
-            this.Brand_Text.Size = new System.Drawing.Size(132, 23);
-            this.Brand_Text.TabIndex = 27;
-            // 
-            // Early_off_Text
-            // 
-            this.Early_off_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Early_off_Text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingOffline", true));
-            this.Early_off_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Early_off_Text.Location = new System.Drawing.Point(447, 140);
-            this.Early_off_Text.Name = "Early_off_Text";
-            this.Early_off_Text.ReadOnly = true;
-            this.Early_off_Text.Size = new System.Drawing.Size(132, 23);
-            this.Early_off_Text.TabIndex = 29;
-            // 
-            // Early_inline_Text
-            // 
-            this.Early_inline_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Early_inline_Text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingInline", true));
-            this.Early_inline_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Early_inline_Text.Location = new System.Drawing.Point(447, 101);
-            this.Early_inline_Text.Name = "Early_inline_Text";
-            this.Early_inline_Text.ReadOnly = true;
-            this.Early_inline_Text.Size = new System.Drawing.Size(132, 23);
-            this.Early_inline_Text.TabIndex = 30;
             // 
             // Send_mail_btn
             // 
@@ -487,30 +346,171 @@
             this.Send_mail_btn.UseVisualStyleBackColor = true;
             this.Send_mail_btn.Click += new System.EventHandler(this.Send_mail_btn_Click);
             // 
+            // style_text
+            // 
+            this.style_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.style_text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StyleID", true));
+            this.style_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.style_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.style_text.Location = new System.Drawing.Point(143, 19);
+            this.style_text.Name = "style_text";
+            this.style_text.Size = new System.Drawing.Size(140, 21);
+            this.style_text.TabIndex = 32;
+            // 
+            // First_sp_Text
+            // 
+            this.First_sp_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.First_sp_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FirstOrderID", true));
+            this.First_sp_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.First_sp_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.First_sp_Text.Location = new System.Drawing.Point(143, 59);
+            this.First_sp_Text.Name = "First_sp_Text";
+            this.First_sp_Text.Size = new System.Drawing.Size(140, 21);
+            this.First_sp_Text.TabIndex = 33;
+            // 
+            // Factory_Text
+            // 
+            this.Factory_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Factory_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionid", true));
+            this.Factory_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.Factory_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.Factory_Text.Location = new System.Drawing.Point(143, 142);
+            this.Factory_Text.Name = "Factory_Text";
+            this.Factory_Text.Size = new System.Drawing.Size(140, 21);
+            this.Factory_Text.TabIndex = 34;
+            // 
+            // Last_Result_Text
+            // 
+            this.Last_Result_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Last_Result_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Result", true));
+            this.Last_Result_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.Last_Result_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.Last_Result_Text.Location = new System.Drawing.Point(143, 183);
+            this.Last_Result_Text.Name = "Last_Result_Text";
+            this.Last_Result_Text.Size = new System.Drawing.Size(140, 21);
+            this.Last_Result_Text.TabIndex = 35;
+            // 
+            // Last_Date_Text
+            // 
+            this.Last_Date_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Last_Date_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Date", true));
+            this.Last_Date_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.Last_Date_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.Last_Date_Text.Location = new System.Drawing.Point(143, 223);
+            this.Last_Date_Text.Name = "Last_Date_Text";
+            this.Last_Date_Text.Size = new System.Drawing.Size(140, 21);
+            this.Last_Date_Text.TabIndex = 36;
+            // 
+            // Season_Text
+            // 
+            this.Season_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Season_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SeasonID", true));
+            this.Season_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.Season_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.Season_Text.Location = new System.Drawing.Point(437, 21);
+            this.Season_Text.Name = "Season_Text";
+            this.Season_Text.Size = new System.Drawing.Size(140, 21);
+            this.Season_Text.TabIndex = 37;
+            // 
+            // Brand_Text
+            // 
+            this.Brand_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Brand_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Brandid", true));
+            this.Brand_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.Brand_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.Brand_Text.Location = new System.Drawing.Point(437, 61);
+            this.Brand_Text.Name = "Brand_Text";
+            this.Brand_Text.Size = new System.Drawing.Size(140, 21);
+            this.Brand_Text.TabIndex = 38;
+            // 
+            // Early_inline_Text
+            // 
+            this.Early_inline_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Early_inline_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewingInline", true));
+            this.Early_inline_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.Early_inline_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.Early_inline_Text.Location = new System.Drawing.Point(437, 103);
+            this.Early_inline_Text.Name = "Early_inline_Text";
+            this.Early_inline_Text.Size = new System.Drawing.Size(140, 21);
+            this.Early_inline_Text.TabIndex = 39;
+            // 
+            // Early_off_Text
+            // 
+            this.Early_off_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Early_off_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewingOffline", true));
+            this.Early_off_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.Early_off_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.Early_off_Text.Location = new System.Drawing.Point(437, 142);
+            this.Early_off_Text.Name = "Early_off_Text";
+            this.Early_off_Text.Size = new System.Drawing.Size(140, 21);
+            this.Early_off_Text.TabIndex = 40;
+            // 
             // Comment_text
             // 
-            this.Comment_text.BackColor = System.Drawing.Color.White;
-            this.Comment_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
-            this.Comment_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Comment_text.Location = new System.Drawing.Point(447, 181);
+            this.Comment_text.AcceptsReturn = true;
+            this.Comment_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Comment_text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "remark", true));
+            this.Comment_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.Comment_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.Comment_text.Location = new System.Drawing.Point(437, 182);
             this.Comment_text.Multiline = true;
             this.Comment_text.Name = "Comment_text";
-            this.Comment_text.Size = new System.Drawing.Size(449, 50);
-            this.Comment_text.TabIndex = 31;
+            this.Comment_text.Size = new System.Drawing.Size(459, 62);
+            this.Comment_text.TabIndex = 41;
+            // 
+            // Article_Text
+            // 
+            this.Article_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Article_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Article", true));
+            this.Article_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.Article_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.Article_Text.Location = new System.Drawing.Point(746, 21);
+            this.Article_Text.Name = "Article_Text";
+            this.Article_Text.Size = new System.Drawing.Size(150, 21);
+            this.Article_Text.TabIndex = 42;
+            // 
+            // DeadLine_Text
+            // 
+            this.DeadLine_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.DeadLine_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Deadline", true));
+            this.DeadLine_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.DeadLine_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.DeadLine_Text.Location = new System.Drawing.Point(746, 61);
+            this.DeadLine_Text.Name = "DeadLine_Text";
+            this.DeadLine_Text.Size = new System.Drawing.Size(150, 21);
+            this.DeadLine_Text.TabIndex = 43;
+            // 
+            // Early_SCI_Text
+            // 
+            this.Early_SCI_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Early_SCI_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.Early_SCI_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.Early_SCI_Text.Location = new System.Drawing.Point(746, 103);
+            this.Early_SCI_Text.Name = "Early_SCI_Text";
+            this.Early_SCI_Text.Size = new System.Drawing.Size(150, 21);
+            this.Early_SCI_Text.TabIndex = 44;
+            // 
+            // Early_Buyer_Text
+            // 
+            this.Early_Buyer_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Early_Buyer_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.Early_Buyer_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.Early_Buyer_Text.Location = new System.Drawing.Point(746, 142);
+            this.Early_Buyer_Text.Name = "Early_Buyer_Text";
+            this.Early_Buyer_Text.Size = new System.Drawing.Size(150, 21);
+            this.Early_Buyer_Text.TabIndex = 45;
             // 
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(1070, 556);
-            this.DefaultDetailOrder = "NO";
-            this.DefaultOrder = "Styleid";
-            this.DefaultWhere = "id=\'M93o1BBOZ0\'";
+            this.DefaultOrder = "StyleID";
             this.GridAlias = "Garmenttest_Detail";
-            this.GridUniqueKey = "NO";
+            this.GridNew = 0;
+            this.GridUniqueKey = "No";
             this.IsSupportClip = false;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportMove = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
@@ -539,20 +539,7 @@
 
         #endregion
 
-        private Win.UI.TextBox Early_inline_Text;
-        private Win.UI.TextBox Early_off_Text;
-        private Win.UI.TextBox Brand_Text;
-        private Win.UI.TextBox Season_Text;
-        private Win.UI.TextBox Article_Text;
-        private Win.UI.TextBox DeadLine_Text;
-        private Win.UI.TextBox Early_SCI_Text;
-        private Win.UI.TextBox Early_Buyer_Text;
-        private Win.UI.TextBox Last_Date_Text;
-        private Win.UI.TextBox Last_Result_Text;
-        private Win.UI.TextBox Factory_Text;
         private Win.UI.TextBox SP_Text;
-        private Win.UI.TextBox First_sp_Text;
-        private Win.UI.TextBox style_text;
         private Win.UI.Label label15;
         private Win.UI.Label label14;
         private Win.UI.Label label13;
@@ -569,6 +556,19 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.Button Send_mail_btn;
-        private Win.UI.EditBox Comment_text;
+        private Win.UI.DisplayBox style_text;
+        private Win.UI.DisplayBox First_sp_Text;
+        private Win.UI.DisplayBox Factory_Text;
+        private Win.UI.DisplayBox Last_Date_Text;
+        private Win.UI.DisplayBox Last_Result_Text;
+        private Win.UI.DisplayBox Early_off_Text;
+        private Win.UI.DisplayBox Early_inline_Text;
+        private Win.UI.DisplayBox Brand_Text;
+        private Win.UI.DisplayBox Season_Text;
+        private Win.UI.DisplayBox Comment_text;
+        private Win.UI.DisplayBox Early_Buyer_Text;
+        private Win.UI.DisplayBox Early_SCI_Text;
+        private Win.UI.DisplayBox DeadLine_Text;
+        private Win.UI.DisplayBox Article_Text;
     }
 }
