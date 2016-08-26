@@ -144,7 +144,7 @@ namespace Sci.Production.IE
             {
                 MyUtility.Msg.WarningBox("There is some error, please check result!");
 
-                string strXltName = Sci.Env.Cfg.XltPathDir + "IE_P08_ImportResult.xltx";
+                string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_P08_ImportResult.xltx";
                 Microsoft.Office.Interop.Excel.Application exportExcel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (exportExcel == null) return;
                 Microsoft.Office.Interop.Excel.Worksheet worksheet1 = exportExcel.ActiveWorkbook.Worksheets[1];
@@ -232,7 +232,7 @@ namespace Sci.Production.IE
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "IE_P08.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_P08.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];

@@ -119,7 +119,7 @@ where 1 = 1");
                 return false;
             }
             MyUtility.Msg.WaitWindows("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "IE_R01_LineMappingList.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_R01_LineMappingList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];

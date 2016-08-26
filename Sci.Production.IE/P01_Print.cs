@@ -96,7 +96,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(masterData["ID
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "IE_P01_Print.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_P01_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];

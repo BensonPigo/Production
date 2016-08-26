@@ -113,7 +113,7 @@ order by a.GroupKey", MyUtility.Convert.GetString(masterData["ID"]));
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + (display == "U" ? "IE_P03_Print_U.xltx" : "IE_P03_Print_Z.xltx");
+            string strXltName = Sci.Env.Cfg.XltPathDir + (display == "U" ? "\\IE_P03_Print_U.xltx" : "\\IE_P03_Print_Z.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
