@@ -1519,23 +1519,6 @@
             修改這個方法的內容。
             </summary>
         </member>
-        <member name="F:Sci.Win.UI.TransExport.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:Sci.Win.UI.TransExport.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:Sci.Win.UI.TransExport.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
         <member name="F:Sci.Win.UI.UserLastSetting.components">
             <summary>
             設計工具所需的變數。
