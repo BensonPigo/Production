@@ -456,7 +456,7 @@ where l.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "PPIC_P11.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P11.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];

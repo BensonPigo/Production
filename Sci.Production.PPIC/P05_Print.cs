@@ -45,7 +45,7 @@ namespace Sci.Production.PPIC
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "PPIC_P05_Print.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P05_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];

@@ -149,7 +149,7 @@ where o.SciDelivery between '{1}' and '{2}'", excludeReplacement == 1?"and psd.S
             }
 
             MyUtility.Msg.WaitWindows("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "PPIC_R06_MonthlyMaterialCompletion.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_R06_MonthlyMaterialCompletion.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];

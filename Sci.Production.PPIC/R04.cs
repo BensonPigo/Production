@@ -174,7 +174,7 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
             }
 
             MyUtility.Msg.WaitWindows("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + (reportType == 0 ? "PPIC_R04_FabricBCS.xltx" : "PPIC_R04_AccessoryBCS.xltx");
+            string strXltName = Sci.Env.Cfg.XltPathDir + (reportType == 0 ? "\\PPIC_R04_FabricBCS.xltx" : "\\PPIC_R04_AccessoryBCS.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             excel.DisplayAlerts = false;

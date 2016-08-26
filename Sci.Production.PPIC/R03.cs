@@ -483,7 +483,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "PPIC_R03_PPICMasterList.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_R03_PPICMasterList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];

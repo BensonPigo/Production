@@ -234,7 +234,7 @@ order by rd.Seq1,rd.Seq2", masterID);
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "PPIC_P09.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P09.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];

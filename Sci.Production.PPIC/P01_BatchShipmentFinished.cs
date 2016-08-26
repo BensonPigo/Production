@@ -226,7 +226,7 @@ left join Pass1 p on p.ID = o.MCHandle", Sci.Env.User.Keyword);
                 return;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "PPIC_P01_BatchShipmentFinished.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P01_BatchShipmentFinished.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];

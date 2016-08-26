@@ -352,7 +352,7 @@ select * from @tempPintData order by FactoryID,SewingLineID,InLine");
             }
 
             MyUtility.Msg.WaitWindows("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "PPIC_R07_SewingScheduleGanttChart.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_R07_SewingScheduleGanttChart.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             excel.DisplayAlerts = false;

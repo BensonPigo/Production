@@ -126,7 +126,7 @@ order by MDivisionID,FactoryID,POID,Seq1,Seq2");
             }
 
             MyUtility.Msg.WaitWindows("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "PPIC_R05_AllowanceConsumptionReport.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_R05_AllowanceConsumptionReport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
