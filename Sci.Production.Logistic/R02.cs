@@ -117,7 +117,7 @@ and (p.PulloutID = '' or po.Status = 'New')");
             }
 
             MyUtility.Msg.WaitWindows("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "Logistic_R02_ClogAuditList.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Logistic_R02_ClogAuditList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
