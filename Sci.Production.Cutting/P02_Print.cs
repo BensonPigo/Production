@@ -111,7 +111,7 @@ namespace Sci.Production.Cutting
 
         public bool ByRequestExcel()
         {
-            string strXltName = Sci.Env.Cfg.XltPathDir + "Cutting_P02_SpreadingReportbyRequest.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Cutting_P02_SpreadingReportbyRequest.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
@@ -391,7 +391,7 @@ Cutplanid, str_PIVOT);
             int nSizeColumn;
             SheetCount = CutrefTb.Rows.Count;
             #region By Cutref
-            string strXltName = Sci.Env.Cfg.XltPathDir + "Cutting_P02_SpreadingReportbyCutref.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Cutting_P02_SpreadingReportbyCutref.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
