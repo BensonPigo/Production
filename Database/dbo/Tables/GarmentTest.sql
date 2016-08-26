@@ -12,7 +12,7 @@
     [SewingOffline] DATE          NULL,
     [Date]          DATE          NULL,
     [Result]        VARCHAR (1)   CONSTRAINT [DF_GarmentTest_Result] DEFAULT ('') NULL,
-    [Remark]        NVARCHAR (60) CONSTRAINT [DF_GarmentTest_Remark] DEFAULT ('') NULL,
+    [Remark]        NVARCHAR (MAX) CONSTRAINT [DF_GarmentTest_Remark] DEFAULT ('') NULL,
     [AddName]       VARCHAR (10)  CONSTRAINT [DF_GarmentTest_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME      NULL,
     [EditName]      VARCHAR (10)  CONSTRAINT [DF_GarmentTest_EditName] DEFAULT ('') NULL,
