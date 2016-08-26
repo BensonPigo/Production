@@ -78,6 +78,60 @@
             <param name="wantColumns">用逗號區隔是否要指定只產生特定Column</param>
             <returns></returns>
         </member>
+        <member name="M:Sci.DB.Transfer.Before_Export_ByRegion(Sci.DB.TransRegion)">
+            <summary>
+            1. 確認DB在Server上, 沒有的話要掛載上去
+            <para>2. Drop DB裡面所有的Table</para>
+            </summary>
+            <param name="region"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.List_DatabaseFile(Sci.DB.TransRegion,System.Collections.Generic.List{System.String}@)">
+            <summary>
+            查詢 DB 的實體檔案路徑
+            </summary>
+            <param name="dbName"></param>
+            <param name="files"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Detach_Database(Sci.DB.TransRegion)">
+            <summary>
+            將 DB Detach,並刪除 log檔( .ldf )
+            </summary>
+            <param name="region"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Export_ByRegion">
+            <summary>
+            依照Region 拆Thread 執行轉檔
+            </summary>
+            <param name="region"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Export_ByRegion_InThread(System.Collections.Generic.List{Sci.DB.TransTask})">
+            <summary>
+            同Region的Task, 依照GroupID拆開後, 拆Thread 執行轉檔
+            </summary>
+            <param name="region_Tasks">同Region的Task</param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Transfer_Task_BySeq(System.Collections.Generic.List{Sci.DB.TransTask})">
+            <summary>
+            同Region, GroupID , 依照Seq排序作執行轉檔
+            同 GroupID ,若前一個Seq 執行失敗, 後面的Seq 的task將不會執行
+            </summary>
+            <param name="tasks">同Region, GroupID 的Task</param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Deploy_Procedure(System.String,System.String,System.String)">
+            <summary>
+            搜尋目錄下的特定名稱的.sql檔 , 逐一執行
+            </summary>
+            <param name="procedureDir"></param>
+            <param name="prefix"></param>
+            <param name="connectionName"></param>
+            <returns></returns>
+        </member>
         <member name="M:Sci.MyUtility.Check.EqualDecimal(System.Object,System.Object)">
             <summary>
             物件轉Decimal後比對是否相同
@@ -87,8 +141,8 @@
             <param name="b"></param>
             <returns></returns>
         </member>
-        <!-- 忽略成員 "M:Sci.MyUtility.Check.StrStartsWith(System.Object,System.Object)" 中格式錯誤的 XML 註解 -->
-        <!-- 忽略成員 "M:Sci.MyUtility.Check.StrEndsWith(System.Object,System.Object)" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Check.StrStartsWith(System.Object,System.Object)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Check.StrEndsWith(System.Object,System.Object)" -->
         <member name="M:Sci.MyUtility.Check.EqualString(System.Object,System.Object)">
             <summary>
             物件轉String後, 使用 String 的 TrimEnd + IgnoreCase方式作字串比對
@@ -357,7 +411,7 @@
             <param name="String value"></param>
             <returns>string</returns>
         </member>
-        <!-- 忽略成員 "M:Sci.MyUtility.Excel.ConnectExcel(System.String)" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Excel.ConnectExcel(System.String)" -->
         <member name="M:Sci.MyUtility.Excel.SheetToArray(Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Int32,System.Int32)">
             <summary>
             抓取 Excel sheet 的內容轉成2維object陣列
@@ -399,7 +453,7 @@
             <param name="excelAppObj">不指定的話會在內部產生Excel application物件 ; 連續產生excel的話可不用反覆new Excel物件</param>
             <returns></returns>
         </member>
-        <!-- 忽略成員 "M:Sci.MyUtility.Excel.XlsAutoFit(System.String,System.String,System.Int32,System.Boolean)" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Excel.XlsAutoFit(System.String,System.String,System.Int32,System.Boolean)" -->
         <member name="M:Sci.MyUtility.Excel.SaveXlsFile(System.String,System.Windows.Forms.SaveFileDialog@)">
              <summary>
             SaveXlsFile()
@@ -439,7 +493,7 @@
             <param name="grid">grid control.</param>
             <returns>Result of process.</returns>
         </member>
-        <!-- 忽略成員 "M:Sci.MyUtility.File.GetFile(System.String)" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.File.GetFile(System.String)" -->
         <member name="M:Sci.MyUtility.File.GetFileSize(System.String,System.Int64@)">
             <summary>
             Get the physical file size.
@@ -455,7 +509,7 @@
             <param name="file">Full path filename.</param>
             <returns>result of the method process.</returns>
         </member>
-        <!-- 忽略成員 "M:Sci.MyUtility.File.UnRARFile(System.String,System.String,System.String)" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.File.UnRARFile(System.String,System.String,System.String)" -->
         <member name="M:Sci.MyUtility.File.ReadPoperty(System.String,System.String)">
             <summary>
             讀取內容為 {key} = {value} 這種多行格式的文字檔
@@ -508,7 +562,7 @@
             <param name="string text"></param>
             <returns>string</returns>
         </member>
-        <!-- 忽略成員 "M:Sci.MyUtility.GetValue.GetBatchID(System.String,System.String,System.DateTime,System.Int32,System.String,System.String,System.Int32,System.Int32,System.Int32)" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.GetValue.GetBatchID(System.String,System.String,System.DateTime,System.Int32,System.String,System.String,System.Int32,System.Int32,System.Int32)" -->
         <member name="M:Sci.MyUtility.GetValue.GetDate(System.DateTime,System.Int32)">
             <summary>
             GetDate()
@@ -517,8 +571,8 @@
             <param name="[int mode = 1]"></param>
             <returns>DateTime</returns>
         </member>
-        <!-- 忽略成員 "M:Sci.MyUtility.GetValue.GetID(System.String,System.String,System.DateTime,System.Int32,System.String,System.String,System.Int32,System.Int32)" 中格式錯誤的 XML 註解 -->
-        <!-- 忽略成員 "M:Sci.MyUtility.GetValue.GetUKey(System.String,System.String,System.String)" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.GetValue.GetID(System.String,System.String,System.DateTime,System.Int32,System.String,System.String,System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.GetValue.GetUKey(System.String,System.String,System.String)" -->
         <member name="M:Sci.MyUtility.GetValue.GetStr(System.String,System.Int32)">
             <summary>
             GetStr()
@@ -527,7 +581,7 @@
             <param name="[int row = 1]"></param>
             <returns>string</returns>
         </member>
-        <!-- 忽略成員 "M:Sci.MyUtility.GetValue.GetRandomCode(System.Random,System.Int32,System.String)" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.GetValue.GetRandomCode(System.Random,System.Int32,System.String)" -->
         <member name="M:Sci.MyUtility.GetValue.GetSeq(System.String)">
             <summary>
             GetSeq()
@@ -668,10 +722,10 @@
             <param name="B"></param>
             <returns></returns>
         </member>
-        <!-- 忽略成員 "M:Sci.MyUtility.Msg.ErrorBox(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxDefaultButton)" 中格式錯誤的 XML 註解 -->
-        <!-- 忽略成員 "M:Sci.MyUtility.Msg.InfoBox(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxDefaultButton)" 中格式錯誤的 XML 註解 -->
-        <!-- 忽略成員 "M:Sci.MyUtility.Msg.QuestionBox(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxDefaultButton)" 中格式錯誤的 XML 註解 -->
-        <!-- 忽略成員 "M:Sci.MyUtility.Msg.WarningBox(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxDefaultButton)" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Msg.ErrorBox(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxDefaultButton)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Msg.InfoBox(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxDefaultButton)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Msg.QuestionBox(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxDefaultButton)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Msg.WarningBox(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxDefaultButton)" -->
         <member name="M:Sci.MyUtility.Msg.WaitWindows(System.Object)">
             <summary>
             WaitWindows()
@@ -1082,7 +1136,7 @@
             <param name="setBulkMapping"></param>
             <returns></returns>
         </member>
-        <!-- 忽略成員 "M:Sci.SQL.FinalizeForMerge(Sci.SQL.MergeOption)" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.SQL.FinalizeForMerge(Sci.SQL.MergeOption)" -->
         <member name="M:Sci.SQL.BulkMergeInsert(Sci.SQL)">
             <summary>
             Merge 有問題, 當條件mapping之後, 已存在的話不會被insert
@@ -1129,8 +1183,8 @@
             <param name="copyTable">copyTable 的欄位順序要和DB Table一樣</param>
             <returns></returns>
         </member>
-        <!-- 忽略成員 "M:Sci.SQL.example_BulkMergeInsertUpdate1" 中格式錯誤的 XML 註解 -->
-        <!-- 忽略成員 "M:Sci.SQL.example_BulkMergeInsertUpdate2" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.SQL.example_BulkMergeInsertUpdate1" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.SQL.example_BulkMergeInsertUpdate2" -->
         <member name="M:Sci.SQL.example_BulkInsertForColumns_1">
             <summary>
             ForColumns 適用狀況1: 
@@ -1413,7 +1467,7 @@
             the contents of this method with the code editor.
             </summary>
         </member>
-        <!-- 忽略成員 "M:Sci.Win.UI.SelectReason.#ctor(System.String,System.Boolean)" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.UI.SelectReason.#ctor(System.String,System.Boolean)" -->
         <member name="F:Sci.Win.UI.SelectReason.components">
             <summary>
             設計工具所需的變數。
