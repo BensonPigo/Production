@@ -119,7 +119,7 @@ select 0 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
                         MyUtility.Msg.WarningBox("Query Data Fail --\r\n" + result.ToString());
                         return;
                     }
-                    PublicPrg.Prgs.PackingListToExcel_PackingListReport("Packing_P03_PackingListReport.xltx", dr, radioButton1.Checked ? "1" : "2", printData, ctnDim, qtyBDown);
+                    PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dr, radioButton1.Checked ? "1" : "2", printData, ctnDim, qtyBDown);
                 }
             }
             MyUtility.Msg.InfoBox("Complete.");

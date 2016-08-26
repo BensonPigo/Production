@@ -88,11 +88,11 @@ namespace Sci.Production.Packing
         {
             if (reportType == "1" || reportType == "2")
             {
-                PublicPrg.Prgs.PackingListToExcel_PackingListReport("Packing_P03_PackingListReport.xltx", masterData, reportType, printData, ctnDim, qtyBDown);
+                PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", masterData, reportType, printData, ctnDim, qtyBDown);
             }
             else if (reportType == "3")
             {
-                PublicPrg.Prgs.PackingListToExcel_PackingGuideReport("Packing_P03_PackingGuideReport.xltx", printData, ctnDim, qtyCtn, articleSizeTtlShipQty, printGroupData, clipData, masterData, orderQty, specialInstruction);
+                PublicPrg.Prgs.PackingListToExcel_PackingGuideReport("\\Packing_P03_PackingGuideReport.xltx", printData, ctnDim, qtyCtn, articleSizeTtlShipQty, printGroupData, clipData, masterData, orderQty, specialInstruction);
 
             }
 

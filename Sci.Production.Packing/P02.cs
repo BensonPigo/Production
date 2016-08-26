@@ -437,7 +437,7 @@ where o.ID = '{0}'
 order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out QtyCtn);
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "Packing_P02.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P02.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             MyUtility.Msg.WaitWindows("Starting to excel...");

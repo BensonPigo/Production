@@ -164,7 +164,7 @@ order by RefNo", MyUtility.Convert.GetString(masterData["ID"]));
         {
             if (reportType == "1")
             {
-                string strXltName = Sci.Env.Cfg.XltPathDir + "Packing_P04_PackingListReport.xltx";
+                string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P04_PackingListReport.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null) return false;
                 MyUtility.Msg.WaitWindows("Starting to excel...");
