@@ -99,7 +99,7 @@ group by UnitID", MyUtility.Convert.GetString(masterData["ID"]));
             if (reportType == "1")
             {
                 #region Detail List
-                string strXltName = Sci.Env.Cfg.XltPathDir + "Shipping_P02_Print_DetailList.xltx";
+                string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P02_Print_DetailList.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null) return false;
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
@@ -157,7 +157,7 @@ group by UnitID", MyUtility.Convert.GetString(masterData["ID"]));
             else if (reportType == "2")
             {
                 #region Packing List
-                string strXltName = Sci.Env.Cfg.XltPathDir + "Shipping_P02_Print_PackingList.xltx";
+                string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P02_Print_PackingList.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null) return false;
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
@@ -243,7 +243,7 @@ group by UnitID", MyUtility.Convert.GetString(masterData["ID"]));
             else
             {
                 #region Detail Packing List
-                string strXltName = Sci.Env.Cfg.XltPathDir + "Shipping_P02_Print_DetailPackingList.xltx";
+                string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P02_Print_DetailPackingList.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null) return false;
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];

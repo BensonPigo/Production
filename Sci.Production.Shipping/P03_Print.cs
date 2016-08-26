@@ -97,7 +97,7 @@ order by e.ID", (MyUtility.Check.Empty(eta1) ? "" : " and e.Eta >= '" + eta1 + "
         {
             if (reportType == "1")
             {
-                string strXltName = Sci.Env.Cfg.XltPathDir + "Shipping_P03_Detail.xltx";
+                string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P03_Detail.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null) return false;
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
@@ -161,7 +161,7 @@ order by e.ID", (MyUtility.Check.Empty(eta1) ? "" : " and e.Eta >= '" + eta1 + "
                     return false;
                 }
 
-                string strXltName = Sci.Env.Cfg.XltPathDir + "Shipping_P03_List.xltx";
+                string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P03_List.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null) return false;
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];

@@ -139,7 +139,7 @@ and iif(PulloutDate is null,EstPulloutDate,PulloutDate) is not null ");
                 MyUtility.Msg.WarningBox("No data!!");
                 return;
             }
-            string strXltName = Sci.Env.Cfg.XltPathDir + "Shipping_P09.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P09.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];

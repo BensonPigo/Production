@@ -330,7 +330,7 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "Shipping_P06.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P06.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];

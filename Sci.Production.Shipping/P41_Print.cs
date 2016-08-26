@@ -122,7 +122,7 @@ from tmpSumDetail
             MyUtility.Msg.WaitWindows("Starting EXCEL...");
 
             //填內容值
-            string strXltName = Sci.Env.Cfg.XltPathDir + "Shipping_P41_Print.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P41_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[2];

@@ -104,7 +104,7 @@ and s.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), C
             }
 
             MyUtility.Msg.WaitWindows("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "Shipping_R05_OutstandingPaymentList.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R05_OutstandingPaymentList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
