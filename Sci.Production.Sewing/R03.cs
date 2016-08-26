@@ -341,7 +341,7 @@ Order by ProgramID,StyleID,BrandID,CdCodeID,SeasonID", sqlCmd.ToString());
             }
 
             MyUtility.Msg.WaitWindows("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "Sewing_R03_ProdEfficiencyAnalysisReport.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Sewing_R03_ProdEfficiencyAnalysisReport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];

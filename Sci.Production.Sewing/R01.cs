@@ -288,7 +288,7 @@ group by ArtworkTypeID",
             }
 
             MyUtility.Msg.WaitWindows("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "Sewing_R01_DailyCMPReport.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Sewing_R01_DailyCMPReport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
