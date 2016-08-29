@@ -1246,6 +1246,14 @@
             <param name="columnNumber"></param>
             <returns></returns>
         </member>
+        <member name="M:Sci.Utility.Excel.MyExcelPrg.GetExcelColumnIndex(System.String)">
+            <summary>
+            Edward : Excel欄位名稱如AA、AB轉成數字索引
+                create : 2016-08-26 15:00:00
+            </summary>
+            <param name="columnNumber"></param>
+            <returns></returns>
+        </member>
         <member name="T:Sci.Utility.Excel.SaveDataToExcel">
             <summary>
             Edward : Data轉存成Excel，可自設是否加Pivot Table及其他屬性
