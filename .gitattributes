@@ -490,6 +490,15 @@ Database/dbo/Views/View_TransactionList.sql -text
 Database/dbo/Views/View_Unitrate.sql -text
 Database/dbo/Views/dbo.View_Unitrate.sql -text
 Database/匯入結構描述記錄/ProductionDB_20151006014853.log -text
+/Production.Daily.sln -text
+/Production.Daily.v11.suo -text
+Production.Daily/App.config -text
+Production.Daily/Main.Designer.cs -text
+Production.Daily/Main.cs -text
+Production.Daily/Main.resx -text
+Production.Daily/Production.Daily.csproj -text
+Production.Daily/Program.cs -text
+Production.Daily/Properties/AssemblyInfo.cs -text
 /Production.sln -text
 Sci.Production.Basic/B01.Designer.cs -text
 Sci.Production.Basic/B01.cs -text
