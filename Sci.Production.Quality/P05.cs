@@ -13,6 +13,8 @@ using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
 using System.Data.SqlClient;
+using Sci.Trade.Class.Commons;
+
 
 namespace Sci.Production.Quality
 {
@@ -39,11 +41,11 @@ namespace Sci.Production.Quality
             DataRow dr,drEarly,drSci;
 
             string sql_cmd =
-@"select a.ID,b.StyleID,b.SeasonID,b.BrandID,b.CutInLine,c.Article,c.Result,a.OvenLaboratoryRemark,b.factoryid 
-from [Production].[dbo].po a 
-left join Orders b on a.ID = b.POID
-left join Oven c on a.ID=c.POID
-where a.id=@id";
+                @"select a.ID,b.StyleID,b.SeasonID,b.BrandID,b.CutInLine,c.Article,c.Result,a.OvenLaboratoryRemark,b.factoryid 
+                from po a 
+                left join Orders b on a.ID = b.POID
+                left join Oven c on a.ID=c.POID
+                where a.id=@id";
             spam.Add(new SqlParameter("@id", CurrentMaintain["ID"].ToString()));
 
             if (MyUtility.Check.Seek(sql_cmd, spam, out dr))
@@ -57,13 +59,21 @@ where a.id=@id";
             
             if (MyUtility.Check.Seek("select min(a.CutInLine) as CutInLine from Orders a left join PO b on a.POID=b.ID",out drEarly))
             {
-                this.Cutting_text.Text = drEarly["CutInLine"].ToString();
+                this.Cutting_text.Text = Convert.ToDateTime(drEarly["CutInLine"]).ToShortDateString();
             }
             if (MyUtility.Check.Seek(string.Format("select * from dbo.GetSCI('{0}','')",CurrentMaintain["id"].ToString()),out drSci))
             {
-                this.Earliest_text.Text = drSci["MinSciDelivery"].ToString();
+                if (!MyUtility.Check.Empty(drSci["MinSciDelivery"]))
+                {
+                    this.Earliest_text.Text = Convert.ToDateTime(drSci["MinSciDelivery"]).ToShortDateString();
+                }
             }
-            DateTime? targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(drEarly["CUTINLINE"], drSci["MinSciDelivery"]);
+
+            DateTime? targT = null;
+            if (!MyUtility.Check.Empty(drEarly["CUTINLINE"]) && !MyUtility.Check.Empty(drSci["MinSciDelivery"]))
+            {
+                targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(drEarly["CUTINLINE"], drSci["MinSciDelivery"]);
+            }
             if (targT != null)
             {
                 Target_text.Text = ((DateTime)targT).ToShortDateString();
@@ -75,23 +85,37 @@ where a.id=@id";
             decimal dRowCount = DetailDatas.Count;
             string inspnum = "0";
             DataTable articleDT = (DataTable)detailgridbs.DataSource;
-           
-           
-            if (articleDT.Rows.Count!=0)
+
+            if (articleDT.Rows.Count != 0)
             {
                 DataRow[] articleAry = articleDT.Select("status='Confirmed'");
                 if (articleAry.Length > 0)
                 {
-                    inspnum = Math.Round(((decimal)articleAry.Length/ dRowCount) * 100,2).ToString();
+                    inspnum = Math.Round(((decimal)articleAry.Length / dRowCount) * 100, 2).ToString();
                     Article_text.Text = inspnum + "%";
                 }
+                else
+                {
+                    Article_text.Text = "";
+                }
             }
+            else
+            {
+                Article_text.Text = "";
+            }
+
+
             DateTime CompDate;
-            if (inspnum=="100")
-            {               
-                CompDate= ((DateTime)articleDT.Compute("Max(Inspdate)",""));
-                compl_text.Text = CompDate.ToString();
+            if (inspnum == "100")
+            {
+                CompDate = ((DateTime)articleDT.Compute("Max(Inspdate)", ""));
+                compl_text.Text = CompDate.ToShortDateString();
             }
+            else
+            {
+                compl_text.Text = "";
+            }
+
             //判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
             contextMenuStrip();
             
@@ -176,8 +200,8 @@ where a.id=@id";
                 .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:articleCell)
                 .Text("Result", header: "Result", width: Widths.AnsiChars(10),iseditingreadonly:true,settings:resultCell)
                 .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(5),iseditingreadonly:true,settings:inspectorCell)
-                .Text("Remark", header: "Remark", width: Widths.AnsiChars(5),iseditingreadonly:true)
-                .Text("", header: "Last Update", width: Widths.AnsiChars(5),iseditingreadonly:true);
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(25),iseditingreadonly:true)
+                .Text("LastUpdate", header: "Last Update", width: Widths.AnsiChars(30), iseditingreadonly: true);
             
         }
        
@@ -191,7 +215,7 @@ where a.id=@id";
 
             base.OnFormLoaded();
         }
-             private void CreateNewTest()
+        private void CreateNewTest()
         {
             DataTable dt;
             DBProxy.Current.Select(null, "select Max(id) as id from Oven", out dt);
@@ -291,6 +315,20 @@ where a.id=@id";
         
         }
 
+        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
+        {
+
+            DataTable dt = (DataTable)e.Details;
+            dt.Columns.Add("LastUpdate", typeof(string));
+            int i = 0;
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                dr["LastUpdate"] = UserPrg.GetName(dt.Rows[i]["EditName"].ToString(), UserPrg.NameType.nameOnly) + " - " + dt.Rows[i]["EditDate"].ToString();
+                i++;
+            }
+            return base.OnRenewDataDetailPost(e);
+        }
 
     }
 }
