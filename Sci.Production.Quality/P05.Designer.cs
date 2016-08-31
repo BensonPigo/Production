@@ -288,7 +288,6 @@
             // sp_text
             // 
             this.sp_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.sp_text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StyleID", true));
             this.sp_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.sp_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.sp_text.Location = new System.Drawing.Point(107, 18);

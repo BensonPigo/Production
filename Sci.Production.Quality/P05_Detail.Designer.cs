@@ -252,6 +252,7 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label2);
             this.DefaultOrder = "ovenGroup,SEQ1,SEQ2";
+            this.EditMode = true;
             this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.Name = "P05_Detail";
