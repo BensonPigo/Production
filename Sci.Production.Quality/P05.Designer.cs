@@ -338,51 +338,39 @@
             // 
             // Cutting_text
             // 
-            this.Cutting_text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
-            this.Cutting_text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
-            this.Cutting_text.IsSupportCalendar = false;
             this.Cutting_text.IsSupportEditMode = false;
             this.Cutting_text.Location = new System.Drawing.Point(195, 57);
             this.Cutting_text.Name = "Cutting_text";
             this.Cutting_text.ReadOnly = true;
-            this.Cutting_text.Size = new System.Drawing.Size(130, 23);
-            this.Cutting_text.TabIndex = 47;
+            this.Cutting_text.Size = new System.Drawing.Size(140, 23);
+            this.Cutting_text.TabIndex = 65;
             // 
             // Earliest_text
             // 
-            this.Earliest_text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
-            this.Earliest_text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
-            this.Earliest_text.IsSupportCalendar = false;
             this.Earliest_text.IsSupportEditMode = false;
             this.Earliest_text.Location = new System.Drawing.Point(455, 57);
             this.Earliest_text.Name = "Earliest_text";
             this.Earliest_text.ReadOnly = true;
             this.Earliest_text.Size = new System.Drawing.Size(120, 23);
-            this.Earliest_text.TabIndex = 48;
+            this.Earliest_text.TabIndex = 66;
             // 
             // Target_text
             // 
-            this.Target_text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
-            this.Target_text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
-            this.Target_text.IsSupportCalendar = false;
             this.Target_text.IsSupportEditMode = false;
             this.Target_text.Location = new System.Drawing.Point(705, 57);
             this.Target_text.Name = "Target_text";
             this.Target_text.ReadOnly = true;
             this.Target_text.Size = new System.Drawing.Size(120, 23);
-            this.Target_text.TabIndex = 49;
+            this.Target_text.TabIndex = 67;
             // 
             // compl_text
             // 
-            this.compl_text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
-            this.compl_text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
-            this.compl_text.IsSupportCalendar = false;
             this.compl_text.IsSupportEditMode = false;
             this.compl_text.Location = new System.Drawing.Point(953, 57);
             this.compl_text.Name = "compl_text";
             this.compl_text.ReadOnly = true;
             this.compl_text.Size = new System.Drawing.Size(120, 23);
-            this.compl_text.TabIndex = 50;
+            this.compl_text.TabIndex = 68;
             // 
             // P05
             // 

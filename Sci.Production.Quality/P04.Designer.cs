@@ -132,8 +132,8 @@
             this.masterpanel.Controls.SetChildIndex(this.Brand_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Comment_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Article_Text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Last_Date_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.Last_Date_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Early_inline_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Early_off_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.DeadLine_Text, 0);
@@ -438,75 +438,57 @@
             // 
             // Last_Date_Text
             // 
-            this.Last_Date_Text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
-            this.Last_Date_Text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
-            this.Last_Date_Text.IsSupportCalendar = false;
             this.Last_Date_Text.IsSupportEditMode = false;
             this.Last_Date_Text.Location = new System.Drawing.Point(143, 221);
             this.Last_Date_Text.Name = "Last_Date_Text";
             this.Last_Date_Text.ReadOnly = true;
             this.Last_Date_Text.Size = new System.Drawing.Size(140, 23);
-            this.Last_Date_Text.TabIndex = 46;
+            this.Last_Date_Text.TabIndex = 64;
             // 
             // Early_inline_Text
             // 
-            this.Early_inline_Text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
-            this.Early_inline_Text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
-            this.Early_inline_Text.IsSupportCalendar = false;
             this.Early_inline_Text.IsSupportEditMode = false;
             this.Early_inline_Text.Location = new System.Drawing.Point(437, 101);
             this.Early_inline_Text.Name = "Early_inline_Text";
             this.Early_inline_Text.ReadOnly = true;
             this.Early_inline_Text.Size = new System.Drawing.Size(140, 23);
-            this.Early_inline_Text.TabIndex = 47;
+            this.Early_inline_Text.TabIndex = 65;
             // 
             // Early_off_Text
             // 
-            this.Early_off_Text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
-            this.Early_off_Text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
-            this.Early_off_Text.IsSupportCalendar = false;
             this.Early_off_Text.IsSupportEditMode = false;
-            this.Early_off_Text.Location = new System.Drawing.Point(437, 142);
+            this.Early_off_Text.Location = new System.Drawing.Point(437, 140);
             this.Early_off_Text.Name = "Early_off_Text";
             this.Early_off_Text.ReadOnly = true;
             this.Early_off_Text.Size = new System.Drawing.Size(140, 23);
-            this.Early_off_Text.TabIndex = 48;
+            this.Early_off_Text.TabIndex = 66;
             // 
             // DeadLine_Text
             // 
-            this.DeadLine_Text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
-            this.DeadLine_Text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
-            this.DeadLine_Text.IsSupportCalendar = false;
             this.DeadLine_Text.IsSupportEditMode = false;
             this.DeadLine_Text.Location = new System.Drawing.Point(746, 59);
             this.DeadLine_Text.Name = "DeadLine_Text";
             this.DeadLine_Text.ReadOnly = true;
             this.DeadLine_Text.Size = new System.Drawing.Size(150, 23);
-            this.DeadLine_Text.TabIndex = 49;
+            this.DeadLine_Text.TabIndex = 67;
             // 
             // Early_SCI_Text
             // 
-            this.Early_SCI_Text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
-            this.Early_SCI_Text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
-            this.Early_SCI_Text.IsSupportCalendar = false;
             this.Early_SCI_Text.IsSupportEditMode = false;
             this.Early_SCI_Text.Location = new System.Drawing.Point(746, 101);
             this.Early_SCI_Text.Name = "Early_SCI_Text";
             this.Early_SCI_Text.ReadOnly = true;
             this.Early_SCI_Text.Size = new System.Drawing.Size(150, 23);
-            this.Early_SCI_Text.TabIndex = 50;
+            this.Early_SCI_Text.TabIndex = 68;
             // 
             // Early_Buyer_Text
             // 
-            this.Early_Buyer_Text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
-            this.Early_Buyer_Text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
-            this.Early_Buyer_Text.IsSupportCalendar = false;
             this.Early_Buyer_Text.IsSupportEditMode = false;
-            this.Early_Buyer_Text.Location = new System.Drawing.Point(746, 140);
+            this.Early_Buyer_Text.Location = new System.Drawing.Point(746, 142);
             this.Early_Buyer_Text.Name = "Early_Buyer_Text";
             this.Early_Buyer_Text.ReadOnly = true;
             this.Early_Buyer_Text.Size = new System.Drawing.Size(150, 23);
-            this.Early_Buyer_Text.TabIndex = 51;
+            this.Early_Buyer_Text.TabIndex = 69;
             // 
             // P04
             // 
