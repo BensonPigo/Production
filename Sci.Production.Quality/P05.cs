@@ -59,13 +59,15 @@ namespace Sci.Production.Quality
             
             if (MyUtility.Check.Seek("select min(a.CutInLine) as CutInLine from Orders a left join PO b on a.POID=b.ID",out drEarly))
             {
-                this.Cutting_text.Text = Convert.ToDateTime(drEarly["CutInLine"]).ToShortDateString();
+                if (drEarly["CutInLine"] == DBNull.Value) Cutting_text.Text = "";
+                else Cutting_text.Value = Convert.ToDateTime(drEarly["CutInLine"]);
             }
             if (MyUtility.Check.Seek(string.Format("select * from dbo.GetSCI('{0}','')",CurrentMaintain["id"].ToString()),out drSci))
             {
                 if (!MyUtility.Check.Empty(drSci["MinSciDelivery"]))
                 {
-                    this.Earliest_text.Text = Convert.ToDateTime(drSci["MinSciDelivery"]).ToShortDateString();
+                    if (drSci["MinSciDelivery"] == DBNull.Value) Earliest_text.Text = "";
+                    else Earliest_text.Value = Convert.ToDateTime(drSci["MinSciDelivery"]);
                 }
             }
 
@@ -76,7 +78,7 @@ namespace Sci.Production.Quality
             }
             if (targT != null)
             {
-                Target_text.Text = ((DateTime)targT).ToShortDateString();
+                Target_text.Value = targT;
             }
             else
             {
@@ -109,7 +111,7 @@ namespace Sci.Production.Quality
             if (inspnum == "100")
             {
                 CompDate = ((DateTime)articleDT.Compute("Max(Inspdate)", ""));
-                compl_text.Text = CompDate.ToShortDateString();
+                compl_text.Value = CompDate;
             }
             else
             {

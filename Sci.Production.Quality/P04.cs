@@ -45,8 +45,11 @@ namespace Sci.Production.Quality
             {
                 if (dt.Rows.Count > 0)
                 {
-                    this.Early_SCI_Text.Text = dt.Rows[0]["MinSciDelivery"].ToString();
-                    this.Early_Buyer_Text.Text = dt.Rows[0]["MinBuyerDelivery"].ToString();
+                    if (dt.Rows[0]["MinSciDelivery"] == DBNull.Value) Early_SCI_Text.Text = "";
+                    else Early_SCI_Text.Value = Convert.ToDateTime(dt.Rows[0]["MinSciDelivery"]);
+
+                    if (dt.Rows[0]["MinBuyerDelivery"] == DBNull.Value) Early_Buyer_Text.Text = "";
+                    else Early_Buyer_Text.Value = Convert.ToDateTime(dt.Rows[0]["MinBuyerDelivery"]);
                 }
             }
 
@@ -62,26 +65,21 @@ namespace Sci.Production.Quality
             
             //[Last Test Date]
             if (CurrentMaintain["date"] == DBNull.Value) Last_Date_Text.Text = "";
-            else Last_Date_Text.Text = Convert.ToDateTime(CurrentMaintain["date"]).ToShortDateString();
+            else Last_Date_Text.Value = Convert.ToDateTime(CurrentMaintain["date"]);
 
             //[Earliest Inline]
             if (CurrentMaintain["SewingInline"] == DBNull.Value) Early_inline_Text.Text = "";
-            else Early_inline_Text.Text = Convert.ToDateTime(CurrentMaintain["SewingInline"]).ToShortDateString();
+            else Early_inline_Text.Value = Convert.ToDateTime(CurrentMaintain["SewingInline"]);
 
             //[Earliest Offline]
             if (CurrentMaintain["SewingOffLine"] == DBNull.Value) Early_off_Text.Text = "";
-            else Early_off_Text.Text = Convert.ToDateTime(CurrentMaintain["SewingOffLine"]).ToShortDateString();
+            else Early_off_Text.Value = Convert.ToDateTime(CurrentMaintain["SewingOffLine"]);
 
             //[DeadLine]
             if (CurrentMaintain["Deadline"] == DBNull.Value) DeadLine_Text.Text = "";
-            else DeadLine_Text.Text = Convert.ToDateTime(CurrentMaintain["Deadline"]).ToShortDateString();
-
-            //[Earliest SCI Dlv][Earliest Buyer Dlv]
-            if (!MyUtility.Check.Empty(Early_SCI_Text.Text)) Early_SCI_Text.Text = Convert.ToDateTime(Early_SCI_Text.Text).ToShortDateString();
-            if (!MyUtility.Check.Empty(Early_Buyer_Text.Text)) Early_Buyer_Text.Text = Convert.ToDateTime(Early_Buyer_Text.Text).ToShortDateString();
+            else DeadLine_Text.Value = Convert.ToDateTime(CurrentMaintain["Deadline"]);
 
             DataTable datas = (DataTable)detailgridbs.DataSource;
-
         }
 
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)

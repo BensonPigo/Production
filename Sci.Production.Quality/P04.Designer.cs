@@ -49,16 +49,16 @@
             this.First_sp_Text = new Sci.Win.UI.DisplayBox();
             this.Factory_Text = new Sci.Win.UI.DisplayBox();
             this.Last_Result_Text = new Sci.Win.UI.DisplayBox();
-            this.Last_Date_Text = new Sci.Win.UI.DisplayBox();
             this.Season_Text = new Sci.Win.UI.DisplayBox();
             this.Brand_Text = new Sci.Win.UI.DisplayBox();
-            this.Early_inline_Text = new Sci.Win.UI.DisplayBox();
-            this.Early_off_Text = new Sci.Win.UI.DisplayBox();
             this.Comment_text = new Sci.Win.UI.DisplayBox();
             this.Article_Text = new Sci.Win.UI.DisplayBox();
-            this.DeadLine_Text = new Sci.Win.UI.DisplayBox();
-            this.Early_SCI_Text = new Sci.Win.UI.DisplayBox();
-            this.Early_Buyer_Text = new Sci.Win.UI.DisplayBox();
+            this.Last_Date_Text = new Sci.Win.UI.DateBox();
+            this.Early_inline_Text = new Sci.Win.UI.DateBox();
+            this.Early_off_Text = new Sci.Win.UI.DateBox();
+            this.DeadLine_Text = new Sci.Win.UI.DateBox();
+            this.Early_SCI_Text = new Sci.Win.UI.DateBox();
+            this.Early_Buyer_Text = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -78,13 +78,13 @@
             this.masterpanel.Controls.Add(this.Early_Buyer_Text);
             this.masterpanel.Controls.Add(this.Early_SCI_Text);
             this.masterpanel.Controls.Add(this.DeadLine_Text);
-            this.masterpanel.Controls.Add(this.Article_Text);
-            this.masterpanel.Controls.Add(this.Comment_text);
             this.masterpanel.Controls.Add(this.Early_off_Text);
             this.masterpanel.Controls.Add(this.Early_inline_Text);
+            this.masterpanel.Controls.Add(this.Last_Date_Text);
+            this.masterpanel.Controls.Add(this.Article_Text);
+            this.masterpanel.Controls.Add(this.Comment_text);
             this.masterpanel.Controls.Add(this.Brand_Text);
             this.masterpanel.Controls.Add(this.Season_Text);
-            this.masterpanel.Controls.Add(this.Last_Date_Text);
             this.masterpanel.Controls.Add(this.Last_Result_Text);
             this.masterpanel.Controls.Add(this.Factory_Text);
             this.masterpanel.Controls.Add(this.First_sp_Text);
@@ -128,14 +128,14 @@
             this.masterpanel.Controls.SetChildIndex(this.First_sp_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Factory_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Last_Result_Text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Last_Date_Text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.Season_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Brand_Text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Early_inline_Text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Early_off_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Comment_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Article_Text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.Last_Date_Text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.Early_inline_Text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.Early_off_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.DeadLine_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Early_SCI_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Early_Buyer_Text, 0);
@@ -390,17 +390,6 @@
             this.Last_Result_Text.Size = new System.Drawing.Size(140, 21);
             this.Last_Result_Text.TabIndex = 35;
             // 
-            // Last_Date_Text
-            // 
-            this.Last_Date_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Last_Date_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Date", true));
-            this.Last_Date_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.Last_Date_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Last_Date_Text.Location = new System.Drawing.Point(143, 223);
-            this.Last_Date_Text.Name = "Last_Date_Text";
-            this.Last_Date_Text.Size = new System.Drawing.Size(140, 21);
-            this.Last_Date_Text.TabIndex = 36;
-            // 
             // Season_Text
             // 
             this.Season_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -422,28 +411,6 @@
             this.Brand_Text.Name = "Brand_Text";
             this.Brand_Text.Size = new System.Drawing.Size(140, 21);
             this.Brand_Text.TabIndex = 38;
-            // 
-            // Early_inline_Text
-            // 
-            this.Early_inline_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Early_inline_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewingInline", true));
-            this.Early_inline_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.Early_inline_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Early_inline_Text.Location = new System.Drawing.Point(437, 103);
-            this.Early_inline_Text.Name = "Early_inline_Text";
-            this.Early_inline_Text.Size = new System.Drawing.Size(140, 21);
-            this.Early_inline_Text.TabIndex = 39;
-            // 
-            // Early_off_Text
-            // 
-            this.Early_off_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Early_off_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewingOffline", true));
-            this.Early_off_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.Early_off_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Early_off_Text.Location = new System.Drawing.Point(437, 142);
-            this.Early_off_Text.Name = "Early_off_Text";
-            this.Early_off_Text.Size = new System.Drawing.Size(140, 21);
-            this.Early_off_Text.TabIndex = 40;
             // 
             // Comment_text
             // 
@@ -469,36 +436,77 @@
             this.Article_Text.Size = new System.Drawing.Size(150, 21);
             this.Article_Text.TabIndex = 42;
             // 
+            // Last_Date_Text
+            // 
+            this.Last_Date_Text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
+            this.Last_Date_Text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
+            this.Last_Date_Text.IsSupportCalendar = false;
+            this.Last_Date_Text.IsSupportEditMode = false;
+            this.Last_Date_Text.Location = new System.Drawing.Point(143, 221);
+            this.Last_Date_Text.Name = "Last_Date_Text";
+            this.Last_Date_Text.ReadOnly = true;
+            this.Last_Date_Text.Size = new System.Drawing.Size(140, 23);
+            this.Last_Date_Text.TabIndex = 46;
+            // 
+            // Early_inline_Text
+            // 
+            this.Early_inline_Text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
+            this.Early_inline_Text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
+            this.Early_inline_Text.IsSupportCalendar = false;
+            this.Early_inline_Text.IsSupportEditMode = false;
+            this.Early_inline_Text.Location = new System.Drawing.Point(437, 101);
+            this.Early_inline_Text.Name = "Early_inline_Text";
+            this.Early_inline_Text.ReadOnly = true;
+            this.Early_inline_Text.Size = new System.Drawing.Size(140, 23);
+            this.Early_inline_Text.TabIndex = 47;
+            // 
+            // Early_off_Text
+            // 
+            this.Early_off_Text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
+            this.Early_off_Text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
+            this.Early_off_Text.IsSupportCalendar = false;
+            this.Early_off_Text.IsSupportEditMode = false;
+            this.Early_off_Text.Location = new System.Drawing.Point(437, 142);
+            this.Early_off_Text.Name = "Early_off_Text";
+            this.Early_off_Text.ReadOnly = true;
+            this.Early_off_Text.Size = new System.Drawing.Size(140, 23);
+            this.Early_off_Text.TabIndex = 48;
+            // 
             // DeadLine_Text
             // 
-            this.DeadLine_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.DeadLine_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Deadline", true));
-            this.DeadLine_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.DeadLine_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.DeadLine_Text.Location = new System.Drawing.Point(746, 61);
+            this.DeadLine_Text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
+            this.DeadLine_Text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
+            this.DeadLine_Text.IsSupportCalendar = false;
+            this.DeadLine_Text.IsSupportEditMode = false;
+            this.DeadLine_Text.Location = new System.Drawing.Point(746, 59);
             this.DeadLine_Text.Name = "DeadLine_Text";
-            this.DeadLine_Text.Size = new System.Drawing.Size(150, 21);
-            this.DeadLine_Text.TabIndex = 43;
+            this.DeadLine_Text.ReadOnly = true;
+            this.DeadLine_Text.Size = new System.Drawing.Size(150, 23);
+            this.DeadLine_Text.TabIndex = 49;
             // 
             // Early_SCI_Text
             // 
-            this.Early_SCI_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Early_SCI_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.Early_SCI_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Early_SCI_Text.Location = new System.Drawing.Point(746, 103);
+            this.Early_SCI_Text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
+            this.Early_SCI_Text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
+            this.Early_SCI_Text.IsSupportCalendar = false;
+            this.Early_SCI_Text.IsSupportEditMode = false;
+            this.Early_SCI_Text.Location = new System.Drawing.Point(746, 101);
             this.Early_SCI_Text.Name = "Early_SCI_Text";
-            this.Early_SCI_Text.Size = new System.Drawing.Size(150, 21);
-            this.Early_SCI_Text.TabIndex = 44;
+            this.Early_SCI_Text.ReadOnly = true;
+            this.Early_SCI_Text.Size = new System.Drawing.Size(150, 23);
+            this.Early_SCI_Text.TabIndex = 50;
             // 
             // Early_Buyer_Text
             // 
-            this.Early_Buyer_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Early_Buyer_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.Early_Buyer_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Early_Buyer_Text.Location = new System.Drawing.Point(746, 142);
+            this.Early_Buyer_Text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
+            this.Early_Buyer_Text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
+            this.Early_Buyer_Text.IsSupportCalendar = false;
+            this.Early_Buyer_Text.IsSupportEditMode = false;
+            this.Early_Buyer_Text.Location = new System.Drawing.Point(746, 140);
             this.Early_Buyer_Text.Name = "Early_Buyer_Text";
-            this.Early_Buyer_Text.Size = new System.Drawing.Size(150, 21);
-            this.Early_Buyer_Text.TabIndex = 45;
+            this.Early_Buyer_Text.ReadOnly = true;
+            this.Early_Buyer_Text.Size = new System.Drawing.Size(150, 23);
+            this.Early_Buyer_Text.TabIndex = 51;
             // 
             // P04
             // 
@@ -559,16 +567,16 @@
         private Win.UI.DisplayBox style_text;
         private Win.UI.DisplayBox First_sp_Text;
         private Win.UI.DisplayBox Factory_Text;
-        private Win.UI.DisplayBox Last_Date_Text;
         private Win.UI.DisplayBox Last_Result_Text;
-        private Win.UI.DisplayBox Early_off_Text;
-        private Win.UI.DisplayBox Early_inline_Text;
         private Win.UI.DisplayBox Brand_Text;
         private Win.UI.DisplayBox Season_Text;
         private Win.UI.DisplayBox Comment_text;
-        private Win.UI.DisplayBox Early_Buyer_Text;
-        private Win.UI.DisplayBox Early_SCI_Text;
-        private Win.UI.DisplayBox DeadLine_Text;
         private Win.UI.DisplayBox Article_Text;
+        private Win.UI.DateBox Last_Date_Text;
+        private Win.UI.DateBox Early_Buyer_Text;
+        private Win.UI.DateBox Early_SCI_Text;
+        private Win.UI.DateBox DeadLine_Text;
+        private Win.UI.DateBox Early_off_Text;
+        private Win.UI.DateBox Early_inline_Text;
     }
 }

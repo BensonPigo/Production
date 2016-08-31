@@ -48,10 +48,10 @@
             this.style_text = new Sci.Win.UI.DisplayBox();
             this.season_text = new Sci.Win.UI.DisplayBox();
             this.Article_text = new Sci.Win.UI.DisplayBox();
-            this.Cutting_text = new Sci.Win.UI.DisplayBox();
-            this.Earliest_text = new Sci.Win.UI.DisplayBox();
-            this.Target_text = new Sci.Win.UI.DisplayBox();
-            this.compl_text = new Sci.Win.UI.DisplayBox();
+            this.Cutting_text = new Sci.Win.UI.DateBox();
+            this.Earliest_text = new Sci.Win.UI.DateBox();
+            this.Target_text = new Sci.Win.UI.DateBox();
+            this.compl_text = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -338,43 +338,51 @@
             // 
             // Cutting_text
             // 
-            this.Cutting_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Cutting_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.Cutting_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Cutting_text.Location = new System.Drawing.Point(198, 59);
+            this.Cutting_text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
+            this.Cutting_text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
+            this.Cutting_text.IsSupportCalendar = false;
+            this.Cutting_text.IsSupportEditMode = false;
+            this.Cutting_text.Location = new System.Drawing.Point(195, 57);
             this.Cutting_text.Name = "Cutting_text";
-            this.Cutting_text.Size = new System.Drawing.Size(118, 21);
-            this.Cutting_text.TabIndex = 38;
+            this.Cutting_text.ReadOnly = true;
+            this.Cutting_text.Size = new System.Drawing.Size(130, 23);
+            this.Cutting_text.TabIndex = 47;
             // 
             // Earliest_text
             // 
-            this.Earliest_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Earliest_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.Earliest_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Earliest_text.Location = new System.Drawing.Point(457, 59);
+            this.Earliest_text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
+            this.Earliest_text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
+            this.Earliest_text.IsSupportCalendar = false;
+            this.Earliest_text.IsSupportEditMode = false;
+            this.Earliest_text.Location = new System.Drawing.Point(455, 57);
             this.Earliest_text.Name = "Earliest_text";
-            this.Earliest_text.Size = new System.Drawing.Size(118, 21);
-            this.Earliest_text.TabIndex = 39;
+            this.Earliest_text.ReadOnly = true;
+            this.Earliest_text.Size = new System.Drawing.Size(120, 23);
+            this.Earliest_text.TabIndex = 48;
             // 
             // Target_text
             // 
-            this.Target_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Target_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.Target_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Target_text.Location = new System.Drawing.Point(707, 59);
+            this.Target_text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
+            this.Target_text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
+            this.Target_text.IsSupportCalendar = false;
+            this.Target_text.IsSupportEditMode = false;
+            this.Target_text.Location = new System.Drawing.Point(705, 57);
             this.Target_text.Name = "Target_text";
-            this.Target_text.Size = new System.Drawing.Size(118, 21);
-            this.Target_text.TabIndex = 40;
+            this.Target_text.ReadOnly = true;
+            this.Target_text.Size = new System.Drawing.Size(120, 23);
+            this.Target_text.TabIndex = 49;
             // 
             // compl_text
             // 
-            this.compl_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.compl_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.compl_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.compl_text.Location = new System.Drawing.Point(955, 59);
+            this.compl_text.DisplayStyle = Ict.Win.UI.DateBoxDisplayStyle.YYYYMMDD;
+            this.compl_text.IconVisibility = Ict.Win.UI.TextBox2IconVisibility.None;
+            this.compl_text.IsSupportCalendar = false;
+            this.compl_text.IsSupportEditMode = false;
+            this.compl_text.Location = new System.Drawing.Point(953, 57);
             this.compl_text.Name = "compl_text";
-            this.compl_text.Size = new System.Drawing.Size(118, 21);
-            this.compl_text.TabIndex = 41;
+            this.compl_text.ReadOnly = true;
+            this.compl_text.Size = new System.Drawing.Size(120, 23);
+            this.compl_text.TabIndex = 50;
             // 
             // P05
             // 
@@ -432,13 +440,13 @@
         private System.Windows.Forms.ToolStripMenuItem editThisRecordsDetailToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteThisRecordsDetailToolStripMenuItem;
         private Win.UI.DisplayBox sp_text;
-        private Win.UI.DisplayBox compl_text;
-        private Win.UI.DisplayBox Target_text;
-        private Win.UI.DisplayBox Earliest_text;
-        private Win.UI.DisplayBox Cutting_text;
         private Win.UI.DisplayBox Article_text;
         private Win.UI.DisplayBox season_text;
         private Win.UI.DisplayBox style_text;
         private Win.UI.DisplayBox brand_text;
+        private Win.UI.DateBox compl_text;
+        private Win.UI.DateBox Target_text;
+        private Win.UI.DateBox Earliest_text;
+        private Win.UI.DateBox Cutting_text;
     }
 }
