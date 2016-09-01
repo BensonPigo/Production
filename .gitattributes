@@ -794,6 +794,8 @@ Sci.Production.Cutting/P11_copytocutref.resx -text
 Sci.Production.Cutting/P12.Designer.cs -text
 Sci.Production.Cutting/P12.cs -text
 Sci.Production.Cutting/P12.resx -text
+Sci.Production.Cutting/P12_Print.rdlc -text
+Sci.Production.Cutting/P12_PrintData.cs -text
 Sci.Production.Cutting/P20.Designer.cs -text
 Sci.Production.Cutting/P20.cs -text
 Sci.Production.Cutting/P20.resx -text

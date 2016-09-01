@@ -193,6 +193,7 @@
     <Compile Include="P12.Designer.cs">
       <DependentUpon>P12.cs</DependentUpon>
     </Compile>
+    <Compile Include="P12_PrintData.cs" />
     <Compile Include="P20_Detail.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -356,6 +357,7 @@
     <EmbeddedResource Include="P12.resx">
       <DependentUpon>P12.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P12_Print.rdlc" />
     <EmbeddedResource Include="P20_Detail.resx">
       <DependentUpon>P20_Detail.cs</DependentUpon>
     </EmbeddedResource>

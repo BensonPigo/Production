@@ -25,7 +25,7 @@ namespace Sci.Production.Cutting
            InitializeComponent();
           this.CurrentDataRow = row;
          toexcel.Enabled = false;
-            
+           
         }
 
         string Bundle_Card;
