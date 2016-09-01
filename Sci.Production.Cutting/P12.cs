@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Cutting
 {
@@ -21,9 +22,11 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             InitializeComponent();
-            //this.GridSetup();  
+            GridSetup();
+            this.EditMode = true;
             
         }
+
        string Cut_Ref;
        string Cut_Ref1;
        string SP;
@@ -36,23 +39,53 @@ namespace Sci.Production.Cutting
        string size;
        string Sort_by;
        string Extend;
-        
+       DualResult result;
+
+       void GridSetup()
+       {
+           this.grid1.IsEditingReadOnly = false;
+           Helper.Controls.Grid.Generator(this.grid1)
+               .CheckBox("selected", header: "Sel", width: Widths.AnsiChars(4), iseditable: true, trueValue: true, falseValue: false)
+               .Text("Bundle", header: "Bundle#", width: Widths.AnsiChars(16), iseditingreadonly: true)
+               .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(4), iseditingreadonly: true)
+               .Text("POID", header: "POID", width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Text("SP", header: "SP#", width: Widths.AnsiChars(9), iseditingreadonly: true)
+               .Text("Group", header: "Group", width: Widths.AnsiChars(9), iseditingreadonly: true)
+               .Text("Line", header: "Line", width: Widths.AnsiChars(9), iseditingreadonly: true)
+               .Text("Cell", header: "Cell", width: Widths.AnsiChars(9), iseditingreadonly: true)
+               .Text("Style", header: "Style", width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Text("Item", header: "Item", width: Widths.AnsiChars(9), iseditingreadonly: true)
+               .Text("Comb", header: "Comb", width: Widths.AnsiChars(9), iseditingreadonly: true)
+               .Text("Cut", header: "Cut#", width: Widths.AnsiChars(9), iseditingreadonly: true)
+               .Text("Article", header: "Article", width: Widths.AnsiChars(9), iseditingreadonly: true)
+               .Text("Color", header: "Color", width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Text("Size", header: "Size", width: Widths.AnsiChars(9), iseditingreadonly: true)
+               .Text("Cutpart", header: "Cutpart Name", width: Widths.AnsiChars(9), iseditingreadonly: true)
+               .Text("Description", header: "Description", width: Widths.AnsiChars(9), iseditingreadonly: true)
+               .Text("Parts", header: "Parts", width: Widths.AnsiChars(9), iseditingreadonly: true)
+               .Numeric("Qty", header: "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)
+               ;
+
+       }
        private void button1_Click(object sender, EventArgs e)
        {
-           if (!this.textBox1.Text.Empty()&&textBox2.Text.Empty()&&textBox4.Text.Empty()&&textBox3.Text.Empty()&&textBox7.Text.Empty()&&textBox6.Text.Empty()
-               &&textBox5.Text.Empty()&&dateBox1.Value.Empty())
+
+           if (this.textBox1.Text.Empty() || this.textBox2.Text.Empty() || this.textBox4.Text.Empty() || this.textBox3.Text.Empty() || this.textBox7.Text.Empty() || this.textBox6.Text.Empty()
+               || this.textBox5.Text.Empty() || this.dateBox1.Value.Empty())
            {
                MyUtility.Msg.ErrorBox("[Cut_Ref# and SP# and POID and Bundle# and Est.Cut Date] can not is null");
                textBox1.Focus();
-               textBox2.Focus();
-               textBox4.Focus();
-               textBox3.Focus();
-               textBox7.Focus();
-               textBox6.Focus();
-               textBox5.Focus();
-               dateBox1.Focus();
-               return;
+
+               return ;
            }
+           //if (MyUtility.Check.Empty(textBox1.Text))
+           //{
+           //    MyUtility.Msg.ErrorBox("[Cut_Ref# and SP# and POID and Bundle# and Est.Cut Date] can not is null");
+           //    return; 
+           //}
+         
+
+            
            Cut_Ref = textBox1.Text.ToString();
            Cut_Ref1 = textBox2.Text.ToString();
            SP=textBox4.Text.ToString();
@@ -68,7 +101,7 @@ namespace Sci.Production.Cutting
 
 
            List<SqlParameter> lis = new List<SqlParameter>();
-           string sqlWhere = "";  string sb=""; string ff="";
+           string sqlWhere = "";  string sb="";
            List<string> sqlWheres = new List<string>();
            
            if (!this.textBox1.Text.Empty() && !this.textBox2.Text.Empty())
@@ -111,16 +144,16 @@ namespace Sci.Production.Cutting
                lis.Add(new SqlParameter("@Est_CutDate", Est_CutDate));
            }
 
-          if(this.comboBox1.Text=="Bundle#")
-          {
-             sb="order by a.BundleNo, b.OrderID, b.PatternPanel, b.Article,a.SizeCode";
-          }
-          else if(this.comboBox1.Text=="SP#")
-          {
-          sb=" order by b.OrderID,b.CutRef,b.PatternPanel,b.Article,a.SizeCode";
-          }
+           if(this.comboBox1.Text=="Bundle#")
+           {
+               sb = "order by a.BundleNo,b.OrderID,b.PatternPanel,bArticle,a.SizeCode";
+           }
+           else if (this.comboBox1.Text=="SP#")
+           {
+               sb="order by b.OrderID,b.CutRef,b.PatternPanel,b.Article,a.SizeCode";
+           }
            
-          ff="b.MDivisionID = Sci.Env.User.Keyword";
+          
             
           sqlWhere = string.Join(" and ", sqlWheres);
           if (!sqlWhere.Empty())
@@ -156,6 +189,7 @@ namespace Sci.Production.Cutting
                                                 left join dbo.bundle b on a.id=b.ID
                                                 left join dbo.Orders c on c.id=b.Orderid
                                                 left join dbo.Bundle_Detail_Allpart d on d.id=a.id and d.BundleNo=a.BundleNo
+                                                left join dbo.WorkOrder e on b.CutRef=e.CutRef
                                                 outer apply(select iif(a1.PatternCode = 'ALLPARTS',iif(@extend='1',d1.PatternCode,a1.PatternCode),a1.PatternCode) [Cutpart]
                                                              from dbo.Bundle_Detail a1 
                                                              left join dbo.Bundle_Detail_Allpart d1 on d1.id=a1.Id and d1.BundleNo=a1.BundleNo 
@@ -163,26 +197,35 @@ namespace Sci.Production.Cutting
                                                 outer apply(select SubProcess = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 							                                                     from dbo.Bundle_Detail_Art e1
 							                                                     where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= qq.Cutpart
-							                                                     for xml path('')))as SubProcess " + ff + " " + sqlWhere + " " + sb);
+							                                                     for xml path('')))as SubProcess "+ sqlWhere+""+sb);
           result = DBProxy.Current.Select("", sqlcmd, lis, out dtt);
-            
 
+          listControlBindingSource1.DataSource = dtt;
+
+        string MD = dtt.Rows[0]["MDivisionID"].ToString();
+               MD = Sci.Env.User.Keyword;
        }
        DataTable dtt;
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
+       DataTable dd;
+       DataTable da;
+      
 
         private void button2_Click(object sender, EventArgs e)
         {
+            //if (this.grid1.)
+            //{
+            //    MyUtility.Msg.ErrorBox("Grid must be chose one");
+            //    grid1.Focus();
+            //    return;
+            //}
+
             List<SqlParameter> pars = new List<SqlParameter>();
             pars = new List<SqlParameter>();
            
             DataTable dd;
-            DualResult result = DBProxy.Current.Select("",
-            @"select a.BundleGroup [Group_right]
+           
+            string sqlcmd = string.Format
+            (@"select a.BundleGroup [Group_right]
                     ,a.BundleNo [Group_left]
                     ,b.Sewinglineid [Line]
                     ,b.SewingCell [Cell]
@@ -201,6 +244,7 @@ namespace Sci.Production.Cutting
                     left join dbo.bundle b on a.id=b.ID
                     left join dbo.Orders c on c.id=b.Orderid
                     left join dbo.Bundle_Detail_Allpart d on d.id=a.id and d.BundleNo=a.BundleNo
+                    left join dbo.WorkOrder e on b.CutRef=e.CutRef
                     outer apply(select iif(a1.PatternCode = 'ALLPARTS',iif(@extend='1',d1.PatternCode,a1.PatternCode),a1.PatternCode) [Cutpart]
                                  from dbo.Bundle_Detail a1 
                                  left join dbo.Bundle_Detail_Allpart d1 on d1.id=a1.Id and d1.BundleNo=a1.BundleNo 
@@ -208,7 +252,8 @@ namespace Sci.Production.Cutting
                     outer apply(select SubProcess = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 							                         from dbo.Bundle_Detail_Art e1
 							                         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= qq.Cutpart
-							                         for xml path('')))as SubProcess", pars, out dd);
+							                         for xml path('')))as SubProcess ");
+            result = DBProxy.Current.Select("", sqlcmd, pars, out dd);
             if (!result) { this.ShowErr(result); }
            ReportDefinition report = new ReportDefinition();
             // 傳 list 資料            
@@ -234,25 +279,68 @@ namespace Sci.Production.Cutting
 
             report.ReportDataSource = data;
         }
-    
 
-       //void GridSetup()
-       //{
-       //    this.grid1.IsEditingReadOnly = false;
-       //    Helper.Controls.Grid.Generator(this.grid1)
-       //        .CheckBox("selected", header: "Sele", width: Widths.AnsiChars(14), iseditable: true, trueValue: true, falseValue: false)
-       //        .Text("POID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
-       //        .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(4), iseditingreadonly: true)
-       //        .Text("Roll", header: "Roll#", width: Widths.AnsiChars(5), iseditingreadonly: true)
-       //        .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(9), iseditingreadonly: true)
-       //        ;
+        private void button3_Click(object sender, EventArgs e)
+        {
+            List<SqlParameter> li = new List<SqlParameter>();
+            
+            if (checkBox1.Checked)
+                li.Add(new SqlParameter("@extend", "1"));
+            else
+                li.Add(new SqlParameter("@extend", "0"));
 
-       //}
+            string sqlcmd = string.Format(@"select a.BundleNo [Bundle]
+                                                  ,b.CutRef [CutRef]
+                                                  ,b.POID [POID]
+                                                  ,b.Orderid [SP]
+                                                  ,a.BundleGroup [Group]
+                                                  ,b.Sewinglineid [Line]
+                                                  ,b.SewingCell [Cell]
+                                                  ,c.StyleID [Style]
+                                                  ,b.Item [Item]
+                                                  ,b.PatternPanel [Comb]
+                                                  ,b.cutno [Cut]
+                                                  ,b.Article [Article]
+                                                  ,b.Colorid [Color]
+                                                  ,a.SizeCode [Size]
+                                                  ,qq.Cutpart [Cutpart]
+                                                  ,[Description]=iif(a.Patterncode = 'ALLPARTS',iif(@extend='1',d.PatternDesc,a.PatternDesc),a.PatternDesc)
+                                                  ,SubProcess.SubProcess [SubProcess]
+                                                  ,[Parts]=iif(a.Patterncode = 'ALLPARTS',iif(@extend='1',d.Parts,a.Parts),a.Parts)
+                                                  ,a.Qty [Qty]
+                                                  from dbo.Bundle_Detail a
+                                                  left join dbo.bundle b on a.id=b.ID
+                                                  left join dbo.Orders c on c.id=b.Orderid
+                                                  left join dbo.Bundle_Detail_Allpart d on d.id=a.id and d.BundleNo=a.BundleNo
+                                                  left join dbo.WorkOrder e on b.CutRef=e.CutRef 
+                                                  outer apply(select iif(a1.PatternCode = 'ALLPARTS',iif(@extend='1',d1.PatternCode,a1.PatternCode),a1.PatternCode) [Cutpart]
+                                                               from dbo.Bundle_Detail a1 
+                                                               left join dbo.Bundle_Detail_Allpart d1 on d1.id=a1.Id and d1.BundleNo=a1.BundleNo 
+			                                                   where a1.Id = a.ID and d1.BundleNo = d.BundleNo and d1.Patterncode = d.Patterncode)[qq]
+                                                  outer apply(select SubProcess = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
+							                                                         from dbo.Bundle_Detail_Art e1
+							                                                         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= qq.Cutpart
+							                                                         for xml path('')))as SubProcess");
+            result = DBProxy.Current.Select("", sqlcmd, li, out da);
 
-        //protected override bool ValidateInput()
-        //{
-        //    return base.ValidateInput();
-        //}
-       
+            if (dtt == null || da.Rows.Count == 0)
+            {
+                MyUtility.Msg.ErrorBox("Data not found");
+                return ;
+            }
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P12.xltx"); //預先開啟excel app                         
+            MyUtility.Excel.CopyToXls(da, "", "Cutting_P12.xltx", 1, true, null, objApp);      // 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            return ;
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+
     }
 }

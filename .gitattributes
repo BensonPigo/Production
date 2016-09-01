@@ -807,6 +807,7 @@ Sci.Production.Cutting/P20_Import_Workorder.cs -text
 Sci.Production.Cutting/P20_Import_Workorder.resx -text
 Sci.Production.Cutting/Properties/AssemblyInfo.cs -text
 Sci.Production.Cutting/Properties/DataSources/P10_PrintData.datasource -text
+Sci.Production.Cutting/Properties/DataSources/P12_PrintData.datasource -text
 Sci.Production.Cutting/Sci.Production.Cutting.csproj -text
 Sci.Production.IE/B01.Designer.cs -text
 Sci.Production.IE/B01.cs -text
