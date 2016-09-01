@@ -1480,6 +1480,9 @@ Sci.Production.Quality/P30.resx -text
 Sci.Production.Quality/Properties/AssemblyInfo.cs -text
 Sci.Production.Quality/Properties/Resources.Designer.cs -text
 Sci.Production.Quality/Properties/Resources.resx -text
+Sci.Production.Quality/R01.Designer.cs -text
+Sci.Production.Quality/R01.cs -text
+Sci.Production.Quality/R01.resx -text
 Sci.Production.Quality/R21.Designer.cs -text
 Sci.Production.Quality/R21.cs -text
 Sci.Production.Quality/R21.resx -text
