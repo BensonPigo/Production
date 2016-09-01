@@ -1464,6 +1464,12 @@ Sci.Production.Quality/P05.resx -text
 Sci.Production.Quality/P05_Detail.Designer.cs -text
 Sci.Production.Quality/P05_Detail.cs -text
 Sci.Production.Quality/P05_Detail.resx -text
+Sci.Production.Quality/P06.Designer.cs -text
+Sci.Production.Quality/P06.cs -text
+Sci.Production.Quality/P06.resx -text
+Sci.Production.Quality/P06_Detail.Designer.cs -text
+Sci.Production.Quality/P06_Detail.cs -text
+Sci.Production.Quality/P06_Detail.resx -text
 Sci.Production.Quality/P21.Designer.cs -text
 Sci.Production.Quality/P21.cs -text
 Sci.Production.Quality/P21.resx -text
@@ -2491,6 +2497,7 @@ XLT/P03_Crocking_Test.xltx -text
 XLT/P03_Heat_Test.xltx -text
 XLT/P03_Wash_Test.xltx -text
 XLT/P05_Detail_Report.xltx -text
+XLT/P06_Detail_Report.xltx -text
 XLT/PPIC_P01_BatchShipmentFinished.xltx -text
 XLT/PPIC_P01_StdGSDList.xltx -text
 XLT/PPIC_P02.xltx -text

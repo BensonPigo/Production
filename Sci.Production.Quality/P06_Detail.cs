@@ -14,20 +14,20 @@ using System.Transactions;
 using System.Windows.Forms;
 using Ict;
 
+
 namespace Sci.Production.Quality
 {
-    public partial class P05_Detail : Sci.Win.Subs.Input4
+    public partial class P06_Detail : Sci.Win.Subs.Input4
     {
         private string loginID = Sci.Env.User.UserID;
-        private string  aa = Sci.Env.User.Keyword;
         private DataRow maindr;
-        private string PoID,ID;
-        private DataTable dtOven;
-        private bool newOven=false;
+        private string PoID, ID;
+        private DataTable dtColorFastness;  //dtOven
+        private bool newOven = false;
         private bool isModify = false;  //註記[Test Date][Article][Inspector][Remark]是否修改
 
 
-        public P05_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr,string Poid)
+        public P06_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr,string Poid)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
             InitializeComponent();
@@ -43,50 +43,50 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Empty(ID) || canedit)
             {
                 this.EditMode = true;
-            }
-                       
+            }        
         }
+
         protected override void OnEditModeChanged()
         {
             DataTable dt;
-            DBProxy.Current.Select(null,string.Format("select * from oven_detail where id='{0}'",ID),out dt);
-            
-            if (dt.Rows.Count>=1)
+            DBProxy.Current.Select(null, string.Format("select * from ColorFastness_Detail where id='{0}'", ID), out dt);
+
+            if (dt.Rows.Count >= 1)
             {
                 newOven = false;
             }
             base.OnEditModeChanged();
         }
+
         protected override Ict.DualResult OnRequery(out System.Data.DataTable datas)
         {
-      
             Dictionary<String, String> Result_RowSource = new Dictionary<string, string>();
             Result_RowSource.Add("Pass", "Pass");
             Result_RowSource.Add("Fail", "Fail");
             comboBox1.DataSource = new BindingSource(Result_RowSource, null);
             comboBox1.ValueMember = "Key";
             comboBox1.DisplayMember = "Value";
+            
             #region 表頭設定
-                
             Ict.DualResult dResult;
-            string cmd = "select * from oven where id=@id";      
-                      
+            string cmd = "select * from ColorFastness where id=@id";
+
             List<SqlParameter> sqm = new List<SqlParameter>();
-            sqm.Add(new SqlParameter("@id",ID));
-            if (dResult = DBProxy.Current.Select(null, cmd, sqm, out dtOven))
+            sqm.Add(new SqlParameter("@id", ID));
+            if (dResult = DBProxy.Current.Select(null, cmd, sqm, out dtColorFastness))
             {
-                if (dtOven.Rows.Count > 0)
-                {                    
-                    this.testno.Text = dtOven.Rows[0]["testno"].ToString();
-                    this.poid.Text = dtOven.Rows[0]["POID"].ToString();
-                    this.inspdate.Value = Convert.ToDateTime(dtOven.Rows[0]["Inspdate"]);
-                    this.article.Text = dtOven.Rows[0]["article"].ToString();
-                    this.txtuser1.TextBox1Binding = dtOven.Rows[0]["inspector"].ToString();
-                    this.remark.Text = dtOven.Rows[0]["Remark"].ToString();
-                    comboBox1.SelectedValue = dtOven.Rows[0]["Result"].ToString();
-                    if (dtOven.Rows[0]["Status"].ToString()=="New" || dtOven.Rows[0]["Status"].ToString()=="")
+                if (dtColorFastness.Rows.Count > 0)
+                {
+                    this.testno.Text = dtColorFastness.Rows[0]["testno"].ToString();
+                    this.poid.Text = dtColorFastness.Rows[0]["POID"].ToString();
+                    this.inspdate.Value = Convert.ToDateTime(dtColorFastness.Rows[0]["Inspdate"]);
+                    this.article.Text = dtColorFastness.Rows[0]["article"].ToString();
+                    this.txtuser1.TextBox1Binding = dtColorFastness.Rows[0]["inspector"].ToString();
+                    this.remark.Text = dtColorFastness.Rows[0]["Remark"].ToString();
+                    comboBox1.SelectedValue = dtColorFastness.Rows[0]["Result"].ToString();
+                    if (dtColorFastness.Rows[0]["Status"].ToString() == "New" || dtColorFastness.Rows[0]["Status"].ToString() == "")
                     {
-                        this.encode_btn.Text="Encode";
+                        this.encode_btn.Text = "Encode";
                         this.save.Enabled = true;
                     }
                     else
@@ -94,7 +94,7 @@ namespace Sci.Production.Quality
                         this.encode_btn.Text = "Amend";
                         this.save.Enabled = false;
                     }
-                       
+
                 }
                 else
                 {
@@ -106,32 +106,32 @@ namespace Sci.Production.Quality
                     this.remark.Text = "";
                     this.comboBox1.Text = "";
                 }
-            }           
-          
+            }
             #endregion
 
             return base.OnRequery(out datas);
         }
+
         // 重組grid view 
         protected override void OnRequeryPost(System.Data.DataTable datas)
         {
-            
             base.OnRequeryPost(datas);
-            DataTable dtpo,dtsupp;
+            DataTable dtpo, dtsupp;
             // Gridview新增欄位
             datas.Columns.Add("SCIRefno", typeof(string));
             datas.Columns.Add("Colorid", typeof(string));
             datas.Columns.Add("SEQ", typeof(string));
             datas.Columns.Add("LastUpdate", typeof(string));
-            datas.Columns.Add("Supplier",typeof(string));
+            datas.Columns.Add("Supplier", typeof(string));
             int i = 0;
-            //跑迴圈丟值進去
+
+            #region 跑迴圈丟值進去
             foreach (DataRow dr in datas.Rows)
             {
-                if (datas.Rows.Count<=0)
+                if (datas.Rows.Count <= 0)
                 {
                     return;
-                }   
+                }
                 List<SqlParameter> spm = new List<SqlParameter>();
                 string cmdd = "select * from PO_Supp_Detail where id=@id and seq1=@seq1 and seq2=@seq2";
                 spm.Add(new SqlParameter("@id", PoID));
@@ -141,18 +141,18 @@ namespace Sci.Production.Quality
                 //Suppliers
                 List<SqlParameter> spmSupp = new List<SqlParameter>();
                 string cmddSupp =
-@"SELECT a.ID,a.SuppID,a.SEQ1,a.SuppID+'-'+b.AbbEN as supplier 
-from PO_Supp a
-left join supp b on a.SuppID=b.ID
-where a.ID=@id
-and a.seq1=@seq1";
+                    @"SELECT a.ID,a.SuppID,a.SEQ1,a.SuppID+'-'+b.AbbEN as supplier 
+                    from PO_Supp a
+                    left join supp b on a.SuppID=b.ID
+                    where a.ID=@id
+                    and a.seq1=@seq1";
                 spmSupp.Add(new SqlParameter("@id", PoID));
                 spmSupp.Add(new SqlParameter("@seq1", datas.Rows[i]["seq1"]));
                 DBProxy.Current.Select(null, cmddSupp, spmSupp, out dtsupp);
                 if (dtpo.Rows.Count <= 0)
                 {
-                     dr["SCIRefno"] = "";
-                     dr["Colorid"] = "";
+                    dr["SCIRefno"] = "";
+                    dr["Colorid"] = "";
                 }
                 else
                 {
@@ -160,13 +160,15 @@ and a.seq1=@seq1";
                     dr["SCIRefno"] = dtpo.Rows[0]["SCIRefno"].ToString();
                     dr["Colorid"] = dtpo.Rows[0]["Colorid"].ToString();
                     dr["Supplier"] = dtsupp.Rows[0]["supplier"].ToString();
-                    dr["LastUpdate"] = datas.Rows[i]["EditName"].ToString() + " - " + datas.Rows[i]["EditDate"].ToString();   
+                    dr["LastUpdate"] = datas.Rows[i]["EditName"].ToString() + " - " + datas.Rows[i]["EditDate"].ToString();
                 }
-                             
+
                 i++;
             }
+            #endregion
 
         }
+
         protected override bool OnGridSetup()
         {
             Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings groupCell = new DataGridViewGeneratorMaskedTextColumnSettings();
@@ -175,7 +177,6 @@ and a.seq1=@seq1";
             DataGridViewGeneratorTextColumnSettings chgCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings staCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings resultCell = new DataGridViewGeneratorTextColumnSettings();
-        
 
             #region MouseClick
             seqCell.CellMouseClick += (s, e) =>
@@ -191,14 +192,14 @@ and a.seq1=@seq1";
                     if (dresult == DialogResult.Cancel)
                     {
                         return;
-                    }          
-                    dr["SEQ"] = item.GetSelectedString(); 
-                    Char splitChar='-';
+                    }
+                    dr["SEQ"] = item.GetSelectedString();
+                    Char splitChar = '-';
                     string[] seqSplit = item.GetSelectedString().Split(splitChar);
                     dr["seq1"] = seqSplit[0];
                     dr["seq2"] = seqSplit[1];
-                   
-                }                 
+
+                }
 
             };
             rollCell.CellMouseClick += (s, e) =>
@@ -207,11 +208,9 @@ and a.seq1=@seq1";
                 if (this.EditMode == false) return;
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
-                    
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-
                     if (newOven) //新資料 不判斷SEQ
-                    {                       
+                    {
                         string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>'' ";
                         List<SqlParameter> spam = new List<SqlParameter>();
                         spam.Add(new SqlParameter("@poid", PoID));
@@ -223,11 +222,10 @@ and a.seq1=@seq1";
                         }
                         dr["Roll"] = item.GetSelectedString();
                         dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
-                                
+
                     }
                     else
                     {
-                       
                         string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2";
                         List<SqlParameter> spam = new List<SqlParameter>();
                         spam.Add(new SqlParameter("@poid", PoID));
@@ -242,7 +240,7 @@ and a.seq1=@seq1";
                         dr["Roll"] = item.GetSelectedString();
                         dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
                     }
-                   
+
                 }
 
             };
@@ -254,8 +252,8 @@ and a.seq1=@seq1";
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     string item_cmd = "select id from Scale where Junk=0 ";
-                   
-                    SelectItem item = new SelectItem(item_cmd,"10", dr["Changescale"].ToString());
+
+                    SelectItem item = new SelectItem(item_cmd, "10", dr["Changescale"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
@@ -285,16 +283,17 @@ and a.seq1=@seq1";
 
             };
             #endregion
+
             #region Valid
-           // 個位數需補0
-            groupCell.CellValidating+=(s,e)=>
+            // 個位數需補0
+            groupCell.CellValidating += (s, e) =>
             {
                 if (this.EditMode == false) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (e.FormattedValue.ToString().Length!=2)
+                if (e.FormattedValue.ToString().Length != 2)
                 {
-                    dr["OvenGroup"]="0"+e.FormattedValue.ToString();
-                }                            
+                    dr["ColorFastnessGroup"] = "0" + e.FormattedValue.ToString();
+                }
             };
             rollCell.CellValidating += (s, e) =>
             {
@@ -306,7 +305,7 @@ and a.seq1=@seq1";
                 {
                     string cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>'' ";
                     List<SqlParameter> spam = new List<SqlParameter>();
-                    spam.Add(new SqlParameter("@poid", PoID));                   
+                    spam.Add(new SqlParameter("@poid", PoID));
                     DBProxy.Current.Select(null, cmd, spam, out dt);
                     if (dt.Rows.Count <= 0)
                     {
@@ -324,7 +323,6 @@ and a.seq1=@seq1";
                 }
                 else
                 {
-                    //string cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2";
                     string cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2 and Roll=@Roll ";
                     List<SqlParameter> spam = new List<SqlParameter>();
                     spam.Add(new SqlParameter("@poid", PoID));
@@ -341,74 +339,73 @@ and a.seq1=@seq1";
                     }
                     else
                     {
-                        //List<SqlParameter> spamUpdate = new List<SqlParameter>();
-                        //spamUpdate.Add(new SqlParameter("@dyelot", dr["dyelot"]));
-                        //DBProxy.Current.Execute(null, "update FtyInventory set dyelot=@dyelot", spamUpdate);
                         dr["Roll"] = e.FormattedValue;
                         dr["Dyelot"] = dt.Rows[0]["Dyelot"].ToString().Trim();
                     }
                 }
-                
-                                
-            };
-           chgCell.CellValidating += (s, e) =>
-           {
-               if (this.EditMode == false) return;
-               if (e.FormattedValue == "") return;
-               DataTable dt;
-               DataRow dr = grid.GetDataRow(e.RowIndex);
-               string cmd = "select id from Scale where Junk=0  and id=@ChangeScale";
-               List<SqlParameter> spam = new List<SqlParameter>();
-               spam.Add(new SqlParameter("@ChangeScale", e.FormattedValue));
-               
-               DBProxy.Current.Select(null, cmd, spam, out dt);
-               if (dt.Rows.Count <= 0)
-               {
-                   MyUtility.Msg.InfoBox("<Color Change Scal> doesn't exist in Data!");
-                   dr["Changescale"] = "";
-                   return;
-               }
-           };
-           staCell.CellValidating += (s, e) =>
-           {
-               if (this.EditMode == false) return;
-               if (e.FormattedValue == "") return;
-               DataTable dt;
-               DataRow dr = grid.GetDataRow(e.RowIndex);
-               string cmd = "select id from Scale where Junk=0  and id=@StainingScale";
-               List<SqlParameter> spam = new List<SqlParameter>();
-               spam.Add(new SqlParameter("@StainingScale", e.FormattedValue));
 
-               DBProxy.Current.Select(null, cmd, spam, out dt);
-               if (dt.Rows.Count <= 0)
-               {
-                   MyUtility.Msg.InfoBox("<Color Staining Scale> doesn't exist in Data!");
-                   dr["StainingScale"] = "";
-                   return;
-               }
-           };
-           resultCell.CellMouseDoubleClick += (s, e) =>
+
+            };
+            chgCell.CellValidating += (s, e) =>
+            {
+                if (this.EditMode == false) return;
+                if (e.FormattedValue == "") return;
+                DataTable dt;
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                string cmd = "select id from Scale where Junk=0  and id=@ChangeScale";
+                List<SqlParameter> spam = new List<SqlParameter>();
+                spam.Add(new SqlParameter("@ChangeScale", e.FormattedValue));
+
+                DBProxy.Current.Select(null, cmd, spam, out dt);
+                if (dt.Rows.Count <= 0)
+                {
+                    MyUtility.Msg.InfoBox("<Color Change Scal> doesn't exist in Data!");
+                    dr["Changescale"] = "";
+                    return;
+                }
+            };
+            staCell.CellValidating += (s, e) =>
+            {
+                if (this.EditMode == false) return;
+                if (e.FormattedValue == "") return;
+                DataTable dt;
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                string cmd = "select id from Scale where Junk=0  and id=@StainingScale";
+                List<SqlParameter> spam = new List<SqlParameter>();
+                spam.Add(new SqlParameter("@StainingScale", e.FormattedValue));
+
+                DBProxy.Current.Select(null, cmd, spam, out dt);
+                if (dt.Rows.Count <= 0)
+                {
+                    MyUtility.Msg.InfoBox("<Color Staining Scale> doesn't exist in Data!");
+                    dr["StainingScale"] = "";
+                    return;
+                }
+            };
+            resultCell.CellMouseDoubleClick += (s, e) =>
             {
                 if (this.EditMode == false) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (dr["result"].ToString() == "Pass") { dr["result"] = "Fail"; }
                 else { dr["result"] = "Pass"; }
             };
-            #endregion           
-            Helper.Controls.Grid.Generator(this.grid)               
-                .MaskedText("OvenGroup","00","Group",width: Widths.AnsiChars(5), settings:groupCell)
-                .Text("SEQ", header: "SEQ#", width: Widths.AnsiChars(10),iseditable:false, settings : seqCell)
+            #endregion
+
+            Helper.Controls.Grid.Generator(this.grid)
+                .MaskedText("ColorFastnessGroup", "00", "Group", width: Widths.AnsiChars(5), settings: groupCell)
+                .Text("SEQ", header: "SEQ#", width: Widths.AnsiChars(10), iseditable: false, settings: seqCell)
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(5), settings: rollCell)
-                .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5),iseditingreadonly:true)
+                .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("Colorid", header: "Color", width: Widths.AnsiChars(8),iseditingreadonly:true)
+                .Text("Colorid", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Changescale", header: "Color Change Scale", width: Widths.AnsiChars(16), settings: chgCell)
                 .Text("StainingScale", header: "Color Staining Scale", width: Widths.AnsiChars(10), settings: staCell)
-                .Text("Result", header: "Result", width: Widths.AnsiChars(8),settings:resultCell)
+                .Text("Result", header: "Result", width: Widths.AnsiChars(8), settings: resultCell)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(30))
                 .Text("LastUpdate", header: "LastUpdate", width: Widths.AnsiChars(30), iseditingreadonly: true);
             return true;
         }
+
         protected override bool OnSaveBefore()
         {
             if (MyUtility.Check.Empty(this.article.Text))
@@ -428,6 +425,7 @@ and a.seq1=@seq1";
             }
             return base.OnSaveBefore();
         }
+
         protected override Ict.DualResult OnSave()
         {
             DualResult upResult = new DualResult(true);
@@ -438,9 +436,9 @@ and a.seq1=@seq1";
                 if (dr.RowState == DataRowState.Deleted)
                 {
                     List<SqlParameter> spamDet = new List<SqlParameter>();
-                    update_cmd = "Delete From Oven_Detail Where id =@id and ovenGroup=@ovenGroup and seq1=@seq1 and seq2=@seq2 ";
+                    update_cmd = "Delete From ColorFastness_Detail Where id =@id and ColorFastnessGroup=@ColorFastnessGroup and seq1=@seq1 and seq2=@seq2 ";
                     spamDet.Add(new SqlParameter("@id", dr["ID", DataRowVersion.Original]));
-                    spamDet.Add(new SqlParameter("@ovenGroup", dr["ovenGroup", DataRowVersion.Original]));
+                    spamDet.Add(new SqlParameter("@ColorFastnessGroup", dr["ColorFastnessGroup", DataRowVersion.Original]));
 
                     string seq1 = dr["SEQ", DataRowVersion.Original].ToString().Split('-')[0].Trim();
                     string seq2 = dr["SEQ", DataRowVersion.Original].ToString().Split('-')[1].Trim();
@@ -451,44 +449,42 @@ and a.seq1=@seq1";
                     continue;
                 }
 
-                //ii.刪除空白SEQ 的Oven_Detail資料
+                //ii.刪除空白SEQ 的ColorFastness_Detail資料
                 if (MyUtility.Check.Empty(dr["SEQ"]))
                 {
                     List<SqlParameter> spamDet = new List<SqlParameter>();
-                    update_cmd = "Delete From Oven_Detail Where id =@id and ovenGroup=@ovenGroup and seq1='' and seq2='' ";
+                    update_cmd = "Delete From ColorFastness_Detail Where id =@id and ColorFastnessGroup=@ColorFastnessGroup and seq1='' and seq2='' ";
                     spamDet.Add(new SqlParameter("@id", dr["ID", DataRowVersion.Original]));
-                    spamDet.Add(new SqlParameter("@ovenGroup", dr["ovenGroup", DataRowVersion.Original]));
+                    spamDet.Add(new SqlParameter("@ColorFastnessGroup", dr["ColorFastnessGroup", DataRowVersion.Original]));
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamDet);
                     continue;
                 }
 
-                
                 string Today = DateTime.Now.ToShortDateString();
-                
 
                 //新增
-                if (dr.RowState==DataRowState.Added)
+                if (dr.RowState == DataRowState.Added)
                 {
-                    
-                    if (newOven)// insert 新資料進oven
+
+                    if (newOven)  //insert 新資料進ColorFastness
                     {
                         string insCmd = @"
-SET IDENTITY_INSERT oven ON
-insert into Oven(ID,POID,TestNo,InspDate,Article,Result,Status,Inspector,Remark,addName,addDate)
-values(@id ,@poid,'1',GETDATE(),@Article,'Pass','New',@logid,@remark,@logid,GETDATE())
-SET IDENTITY_INSERT oven off";
+                            SET IDENTITY_INSERT ColorFastness ON
+                            insert into ColorFastness(ID,POID,TestNo,InspDate,Article,Result,Status,Inspector,Remark,addName,addDate)
+                            values(@id ,@poid,'1',GETDATE(),@Article,'Pass','New',@logid,@remark,@logid,GETDATE())
+                            SET IDENTITY_INSERT ColorFastness off";
                         List<SqlParameter> spamAddNew = new List<SqlParameter>();
                         spamAddNew.Add(new SqlParameter("@id", ID));//New ID
                         spamAddNew.Add(new SqlParameter("@poid", PoID));
                         spamAddNew.Add(new SqlParameter("@article", this.article.Text));
                         spamAddNew.Add(new SqlParameter("@logid", loginID));
                         spamAddNew.Add(new SqlParameter("@remark", this.remark.Text));
-                        upResult= DBProxy.Current.Execute(null, insCmd,spamAddNew);
-                    }                
+                        upResult = DBProxy.Current.Execute(null, insCmd, spamAddNew);
+                    }
                 }
                 if (dr.RowState == DataRowState.Modified || isModify)
                 {
-                    string editCmd = @"update oven set inspdate=@insDate,Article=@Article,Inspector=@insor,remark=@remark , EditName=@EditName , EditDate=@EditDate
+                    string editCmd = @"update ColorFastness set inspdate=@insDate,Article=@Article,Inspector=@insor,remark=@remark , EditName=@EditName , EditDate=@EditDate
                                        where id=@id";
                     List<SqlParameter> spamEdit = new List<SqlParameter>();
                     spamEdit.Add(new SqlParameter("@id", ID));//New ID
@@ -498,34 +494,32 @@ SET IDENTITY_INSERT oven off";
                     spamEdit.Add(new SqlParameter("@remark", this.remark.Text));
                     spamEdit.Add(new SqlParameter("@EditName", loginID));
                     spamEdit.Add(new SqlParameter("@EditDate", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
-                    upResult= DBProxy.Current.Execute(null, editCmd,spamEdit);
+                    upResult = DBProxy.Current.Execute(null, editCmd, spamEdit);
                 }
             }
 
             return base.OnSave();
-
         }
-       
+
         protected override void OnInsert()
         {
-           
             DataTable dt;
             DataTable dtGrid = (DataTable)gridbs.DataSource;
-            DBProxy.Current.Select(null, string.Format("select * from oven_detail where id='{0}'", ID), out dt);
+            DBProxy.Current.Select(null, string.Format("select * from ColorFastness_Detail where id='{0}'", ID), out dt);
             int rows = dt.Rows.Count;
-            base.OnInsert();           
-            if (rows<=0)
-	        {
-                dtGrid.Rows[0]["OvenGroup"] = 01;
-	        }
+            base.OnInsert();
+            if (rows <= 0)
+            {
+                dtGrid.Rows[0]["ColorFastnessGroup"] = 01;
+            }
             else
             {
-                int group = MyUtility.Convert.GetInt(dtGrid.Rows[rows-1]["ovengroup"]);
+                int group = MyUtility.Convert.GetInt(dtGrid.Rows[rows - 1]["ColorFastnessGroup"]);
 
-                dtGrid.Rows[rows]["ovengroup"] = group + 1;
+                dtGrid.Rows[rows]["ColorFastnessGroup"] = group + 1;
             }
-            
         }
+
         #region 表頭Article 右鍵事件: 1.右鍵selectItem 2.判斷validated
         private void article_MouseDown(object sender, MouseEventArgs e)
         {
@@ -533,10 +527,10 @@ SET IDENTITY_INSERT oven off";
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
                 string cmd =
-@"select a.Article from Order_Qty a
-left join Oven b on a.ID=b.POID
-where a.id=@poid
-group by a.Article";
+                    @"select a.Article from Order_Qty a
+                    left join ColorFastness b on a.ID=b.POID
+                    where a.id=@poid
+                    group by a.Article";
                 List<SqlParameter> spm = new List<SqlParameter>();
                 spm.Add(new SqlParameter("@poid", PoID));
                 SelectItem item = new SelectItem(cmd, spm, "12", null, null);
@@ -544,12 +538,11 @@ group by a.Article";
                 if (result == DialogResult.Cancel)
                 {
                     return;
-                    
                 }
                 this.article.Text = item.GetSelectedString();
             }
         }
-       
+
         private void article_Validated(object sender, EventArgs e)
         {
             DualResult dresult;
@@ -557,9 +550,9 @@ group by a.Article";
             string cmd = "select * from order_qty where article=@art";
             List<SqlParameter> spm = new List<SqlParameter>();
             spm.Add(new SqlParameter("@art", article.Text));
-            if (dresult = DBProxy.Current.Select(null,cmd,spm,out dt))
+            if (dresult = DBProxy.Current.Select(null, cmd, spm, out dt))
             {
-                if (dt.Rows.Count<=0)
+                if (dt.Rows.Count <= 0)
                 {
                     MyUtility.Msg.InfoBox("Article doesn't exist in orders");
                     article.Text = "";
@@ -571,26 +564,26 @@ group by a.Article";
                 return;
             }
         }
-#endregion
+        #endregion
 
         private void encode_btn_Click(object sender, EventArgs e)
         {
-            DataTable dt =(DataTable)gridbs.DataSource;            
+            DataTable dt = (DataTable)gridbs.DataSource;
             bool result = true;
 
             if (this.encode_btn.Text == "Encode")
             {
                 if (dt.Rows.Count <= 0)
-	            {
+                {
                     MyUtility.Msg.InfoBox("Data is empty please Append first!");
                     return;
-	            }
+                }
 
                 else
                 {
                     foreach (DataRow dr in ((DataTable)gridbs.DataSource).Rows)
                     {
-                        if (MyUtility.Check.Empty(dr["ovenGroup"]))
+                        if (MyUtility.Check.Empty(dr["ColorFastnessGroup"]))
                         {
                             MyUtility.Msg.InfoBox("<Group> can not be empty!");
                             return;
@@ -618,35 +611,30 @@ group by a.Article";
                         if (dr["Result"].ToString().Trim() == "Fail")
                         {
                             result = false;
-                            DBProxy.Current.Execute(null, string.Format("update oven set result='Fail',status='Confirmed',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dr["id"]));
+                            DBProxy.Current.Execute(null, string.Format("update ColorFastness set result='Fail',status='Confirmed',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dr["id"]));
 
                         }
-                        if (dr["Result"].ToString().Trim()== "Pass" && result)
+                        if (dr["Result"].ToString().Trim() == "Pass" && result)
                         {
-                            DBProxy.Current.Execute(null, string.Format("update oven set result='Pass',status='Confirmed',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dr["id"]));
-                            
+                            DBProxy.Current.Execute(null, string.Format("update ColorFastness set result='Pass',status='Confirmed',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dr["id"]));
+
                         }
                     }
                 }
-              
+
             }
             // Amend
             else
             {
-                DBProxy.Current.Execute(null, string.Format("update oven set result='',status='New',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dt.Rows[0]["id"]));
+                DBProxy.Current.Execute(null, string.Format("update ColorFastness set result='',status='New',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dt.Rows[0]["id"]));
             }
             OnRequery();
         }
 
-        private void save_Click(object sender, EventArgs e)
-        {
-
-        }
-         
         private void ToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)gridbs.DataSource;
-            string[] columnNames = new string[] { "OvenGroup", "SEQ", "Roll", "Dyelot", "SCIRefno", "Colorid", "Supplier", "Changescale", "StainingScale", "Result","Remark" };
+            string[] columnNames = new string[] { "ColorFastnessGroup", "SEQ", "Roll", "Dyelot", "SCIRefno", "Colorid", "Supplier", "Changescale", "StainingScale", "Result", "Remark" };
             var ret = Array.CreateInstance(typeof(object), dt.Rows.Count, grid.Columns.Count) as object[,];
             for (int i = 0; i < dt.Rows.Count; i++)
             {
@@ -667,7 +655,7 @@ group by a.Article";
                 }
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\P05_Detail_Report.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\P06_Detail_Report.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
@@ -677,7 +665,7 @@ group by a.Article";
             worksheet.Cells[1, 6] = dtPo.Rows[0]["SeasonID"].ToString();
             worksheet.Cells[1, 8] = this.article.Text.ToString();
             worksheet.Cells[1, 10] = this.testno.Text.ToString();
-            worksheet.Cells[2, 2] = dtOven.Rows[0]["status"].ToString();
+            worksheet.Cells[2, 2] = dtColorFastness.Rows[0]["status"].ToString();
             worksheet.Cells[2, 4] = this.comboBox1.Text;
             worksheet.Cells[2, 6] = this.inspdate.Text;
             worksheet.Cells[2, 8] = this.txtuser1.TextBox1.Text.ToString();

@@ -170,6 +170,7 @@
             this.article.Name = "article";
             this.article.Size = new System.Drawing.Size(100, 23);
             this.article.TabIndex = 3;
+            this.article.TextChanged += new System.EventHandler(this.TextChanged);
             this.article.MouseDown += new System.Windows.Forms.MouseEventHandler(this.article_MouseDown);
             this.article.Validated += new System.EventHandler(this.article_Validated);
             // 
@@ -194,6 +195,7 @@
             this.remark.Name = "remark";
             this.remark.Size = new System.Drawing.Size(315, 23);
             this.remark.TabIndex = 6;
+            this.remark.TextChanged += new System.EventHandler(this.TextChanged);
             // 
             // encode_btn
             // 
@@ -225,6 +227,7 @@
             this.txtuser1.Size = new System.Drawing.Size(296, 23);
             this.txtuser1.TabIndex = 5;
             this.txtuser1.TextBox1Binding = "";
+            this.txtuser1.Validating += new System.ComponentModel.CancelEventHandler(this.txtuser1_Validating);
             // 
             // inspdate
             // 
@@ -232,6 +235,7 @@
             this.inspdate.Name = "inspdate";
             this.inspdate.Size = new System.Drawing.Size(130, 23);
             this.inspdate.TabIndex = 98;
+            this.inspdate.TextChanged += new System.EventHandler(this.TextChanged);
             // 
             // P05_Detail
             // 

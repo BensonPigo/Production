@@ -1,0 +1,332 @@
+﻿using Ict;
+using Ict.Win;
+using Sci.Production.Class;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Sci.Win;
+using Sci.Data;
+using System.Transactions;
+using Sci.Win.Tools;
+using System.Data.SqlClient;
+using Sci.Trade.Class.Commons;
+
+
+namespace Sci.Production.Quality
+{
+    public partial class P06 : Sci.Win.Tems.Input6
+    {
+        // 宣告Context Menu Item
+        ToolStripMenuItem add, edit, delete;
+        bool IsSupportEdit = true;
+
+
+        public P06(ToolStripMenuItem menuitem)
+            : base(menuitem)
+        {
+            InitializeComponent();
+        }
+
+        //refresh
+        protected override void OnDetailEntered()
+        {
+            List<SqlParameter> spam = new List<SqlParameter>();
+            DataRow dr, drEarly, drSci;
+
+            string sql_cmd =
+                @"select a.ID,b.StyleID,b.SeasonID,b.BrandID,b.CutInLine,c.Article,c.Result,a.ColorFastnessLaboratoryRemark,b.factoryid 
+                from po a 
+                left join Orders b on a.ID = b.POID
+                left join ColorFastness c on a.ID=c.POID
+                where a.id=@id";
+            spam.Add(new SqlParameter("@id", CurrentMaintain["ID"].ToString()));
+
+            if (MyUtility.Check.Seek(sql_cmd, spam, out dr))
+            {
+                this.sp_text.Text = dr["id"].ToString();
+                this.style_text.Text = dr["StyleID"].ToString();
+                this.season_text.Text = dr["SeasonID"].ToString();
+                this.brand_text.Text = dr["BrandID"].ToString();
+                this.remark_text.Text = dr["ColorFastnessLaboratoryRemark"].ToString();
+            }
+
+            if (MyUtility.Check.Seek("select min(a.CutInLine) as CutInLine from Orders a left join PO b on a.POID=b.ID", out drEarly))
+            {
+                if (drEarly["CutInLine"] == DBNull.Value) Cutting_text.Text = "";
+                else Cutting_text.Value = Convert.ToDateTime(drEarly["CutInLine"]);
+            }
+            if (MyUtility.Check.Seek(string.Format("select * from dbo.GetSCI('{0}','')", CurrentMaintain["id"].ToString()), out drSci))
+            {
+                if (!MyUtility.Check.Empty(drSci["MinSciDelivery"]))
+                {
+                    if (drSci["MinSciDelivery"] == DBNull.Value) Earliest_text.Text = "";
+                    else Earliest_text.Value = Convert.ToDateTime(drSci["MinSciDelivery"]);
+                }
+            }
+
+            DateTime? targT = null;
+            if (!MyUtility.Check.Empty(drEarly["CUTINLINE"]) && !MyUtility.Check.Empty(drSci["MinSciDelivery"]))
+            {
+                targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(drEarly["CUTINLINE"], drSci["MinSciDelivery"]);
+            }
+            if (targT != null)
+            {
+                Target_text.Value = targT;
+            }
+            else
+            {
+                Target_text.Text = "";
+            }
+            decimal dRowCount = DetailDatas.Count;
+            string inspnum = "0";
+            DataTable articleDT = (DataTable)detailgridbs.DataSource;
+
+            if (articleDT.Rows.Count != 0)
+            {
+                DataRow[] articleAry = articleDT.Select("status='Confirmed'");
+                if (articleAry.Length > 0)
+                {
+                    inspnum = Math.Round(((decimal)articleAry.Length / dRowCount) * 100, 2).ToString();
+                    Article_text.Text = inspnum + "%";
+                }
+                else
+                {
+                    Article_text.Text = "";
+                }
+            }
+            else
+            {
+                Article_text.Text = "";
+            }
+
+            DateTime CompDate;
+            if (inspnum == "100")
+            {
+                CompDate = ((DateTime)articleDT.Compute("Max(Inspdate)", ""));
+                compl_text.Value = CompDate;
+            }
+            else
+            {
+                compl_text.Text = "";
+            }
+
+            //判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
+            contextMenuStrip();
+
+            base.OnDetailEntered();
+        }
+
+        protected override void OnDetailGridSetup()
+        {
+            DataGridViewGeneratorNumericColumnSettings testNoCell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorDateColumnSettings inspDate = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorTextColumnSettings articleCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings resultCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings inspectorCell = new DataGridViewGeneratorTextColumnSettings();
+
+            #region MouseClick
+            testNoCell.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr == null)
+                {
+                    return;
+                }
+                var frm = new Sci.Production.Quality.P06_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.sp_text.Text);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            inspDate.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr == null)
+                {
+                    return;
+                }
+                var frm = new Sci.Production.Quality.P06_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.sp_text.Text);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            articleCell.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr == null)
+                {
+                    return;
+                }
+                var frm = new Sci.Production.Quality.P06_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.sp_text.Text);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            resultCell.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr == null)
+                {
+                    return;
+                }
+                var frm = new Sci.Production.Quality.P06_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.sp_text.Text);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            inspectorCell.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr == null)
+                {
+                    return;
+                }
+                var frm = new Sci.Production.Quality.P06_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.sp_text.Text);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            #endregion
+
+            Helper.Controls.Grid.Generator(this.detailgrid)
+                .Numeric("Testno", header: "No of Test", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: testNoCell)
+                .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: inspDate)
+                .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: articleCell)
+                .Text("Result", header: "Result", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: resultCell)
+                .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: inspectorCell)
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(25), iseditingreadonly: true)
+                .Text("LastUpdate", header: "Last Update", width: Widths.AnsiChars(30), iseditingreadonly: true);
+
+        }
+
+        protected override void OnFormLoaded()
+        {
+            detailgridmenus.Items.Clear();//清空原有的Menu Item
+            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Create New Test", onclick: (s, e) => CreateNewTest()).Get(out add);
+            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Record's detail", onclick: (s, e) => EditThisDetail()).Get(out edit);
+            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record's detail", onclick: (s, e) => DeleteThisDetail()).Get(out delete);
+            base.OnFormLoaded();
+        }
+
+        // Context Menu選擇Create New test
+        private void CreateNewTest()
+        {
+            DataTable dt;
+            DBProxy.Current.Select(null, "select Max(id) as id from ColorFastness", out dt);
+
+            int ID = MyUtility.Convert.GetInt(dt.Rows[0]["id"]);
+            ID = ID + 1;
+
+            Sci.Production.Quality.P06_Detail callNewDetailForm = new P06_Detail(IsSupportEdit, ID.ToString(), null, null, null, this.sp_text.Text);
+            callNewDetailForm.ShowDialog(this);
+            callNewDetailForm.Dispose();
+            this.RenewData();
+            OnDetailEntered();
+        }
+
+        // Context Menu選擇Edit This Record's Detail
+        private void EditThisDetail()
+        {
+            var dr = this.CurrentDetailData; if (null == dr) return;
+            var frm = new Sci.Production.Quality.P06_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr, sp_text.Text);
+            frm.ShowDialog(this);
+            frm.Dispose();
+            contextMenuStrip();
+            this.RenewData();
+        }
+        
+        // Context Menu選擇Delete This Record's Detail
+        private void DeleteThisDetail()
+        {
+            DataTable dt = (DataTable)gridbs.DataSource;
+            var dr = this.CurrentDetailData;
+
+            if (dr["Status"].ToString() == "Confirmed")
+            {
+                return;
+            }
+            else
+            {
+                DualResult dResult;
+                List<SqlParameter> spam = new List<SqlParameter>();
+                spam.Add(new SqlParameter("@id", CurrentDetailData["ID"].ToString()));
+                if (dResult = DBProxy.Current.Execute(null, @"delete from ColorFastness_Detail where id=@id  delete from ColorFastness where id=@id", spam))
+                {
+                    MyUtility.Msg.InfoBox("Data has been Delete! ");
+                }
+                else
+                {
+                    MyUtility.Msg.InfoBox("fail");
+                }
+            }
+            contextMenuStrip();
+            this.RenewData();
+        }
+
+        private void contextMenuStrip()
+        {
+            var dr = this.CurrentDetailData;
+            DataTable dtCheck;
+            if (dr == null) // ColorFastness 空的
+            {
+                add.Enabled = true;
+                edit.Enabled = false;
+                delete.Enabled = false;
+                return;
+            }
+            else // ColorFastness 有東西
+            {
+                DBProxy.Current.Select(null, string.Format("select * from ColorFastness where id='{0}'", CurrentDetailData["ID"].ToString()), out dtCheck);
+                if (dtCheck.Rows.Count <= 0)
+                {
+                    add.Enabled = true;
+                    edit.Enabled = false;
+                    delete.Enabled = false;
+                    return;
+                }
+                if (dtCheck.Rows[0]["Status"].ToString().Trim() == "New")
+                {
+                    add.Enabled = false;
+                    edit.Enabled = true;
+                    delete.Enabled = true;
+                }
+                else
+                {
+                    add.Enabled = false;
+                    edit.Enabled = true;
+                    delete.Enabled = false;
+                }
+            }
+
+            DataTable dt = (DataTable)detailgridbs.DataSource;
+
+            //判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
+            if (dtCheck.Rows.Count <= 0)
+            {
+                add.Enabled = true;
+                edit.Enabled = false;
+                delete.Enabled = false;
+            }
+
+        }
+
+        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
+        {
+            DataTable dt = (DataTable)e.Details;
+            dt.Columns.Add("LastUpdate", typeof(string));
+            int i = 0;
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                dr["LastUpdate"] = UserPrg.GetName(dt.Rows[i]["EditName"].ToString(), UserPrg.NameType.nameOnly) + " - " + dt.Rows[i]["EditDate"].ToString();
+                i++;
+            }
+            return base.OnRenewDataDetailPost(e);
+        }
+
+
+    }
+}
