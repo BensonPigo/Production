@@ -19,7 +19,7 @@ namespace Sci.Production.Cutting
 {
     public partial class P12 : Sci.Win.Tems.QueryForm
     {
-        BindingList<P12_PrintData> Data = new BindingList<P12_PrintData>();
+        //BindingList<P12_PrintData> Data = new BindingList<P12_PrintData>();
        public P12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -216,12 +216,26 @@ namespace Sci.Production.Cutting
         private void button2_Click(object sender, EventArgs e)
         {
             #region report
-            //if (this.grid1.)
-            //{
-            //    MyUtility.Msg.ErrorBox("Grid must be chose one");
-            //    grid1.Focus();
-            //    return;
-            //}
+            bool checkone = false;
+            for (int i = 0; i < this.grid1.Rows.Count; i++)
+			{
+			    if(!MyUtility.Check.Empty(this.grid1[0,i].Value)  //判斷是否為空值
+                    && (bool)this.grid1[0,i].Value == true)　//判斷是否有打勾
+                {
+                    checkone = true;
+                }
+
+                if (false && true)
+                { 
+                    //execute aaa
+                }
+			}
+            if (!checkone)
+            {
+                MyUtility.Msg.ErrorBox("Grid must be chose one");
+                grid1.Focus();
+                return;
+            }
 
             List<SqlParameter> pars = new List<SqlParameter>();
             pars = new List<SqlParameter>();
@@ -231,29 +245,29 @@ namespace Sci.Production.Cutting
                  .CopyToDataTable();
            
              //傳 list 資料            
-                 dtt.AsEnumerable()
-                .Select(row1 => new P12_PrintData()
-                {
-                    Group_right = row1["Group"].ToString(),
-                    Group_left = row1["Bundle"].ToString(),
-                    Line = row1["Line"].ToString(),
-                    Cell = row1["Cell"].ToString(),
-                    SP = row1["SP"].ToString(),
-                    Style = row1["Style"].ToString(),
-                    Item = row1["Item"].ToString(),
-                    Body_Cut = row1["Body_Cut"].ToString(),
-                    Parts = row1["Parts"].ToString(),
-                    Color = row1["Color"].ToString(),
-                    Size = row1["Size"].ToString(),
-                    Desc = row1["Description"].ToString(),
-                    SubProcess = row1["SubProcess"].ToString(),
-                    Qty = row1["Qty"].ToString(),
-                    Barcode = row1["Bundle"].ToString()
-                }).ToList()
-                .ForEach(d => Data.Add(d));
+            dtt.AsEnumerable()
+           .Select(row1 => new P12_PrintData()
+           {
+               Group_right = row1["Group"].ToString(),
+               Group_left = row1["Bundle"].ToString(),
+               Line = row1["Line"].ToString(),
+               Cell = row1["Cell"].ToString(),
+               SP = row1["SP"].ToString(),
+               Style = row1["Style"].ToString(),
+               Item = row1["Item"].ToString(),
+               Body_Cut = row1["Body_Cut"].ToString(),
+               Parts = row1["Parts"].ToString(),
+               Color = row1["Color"].ToString(),
+               Size = row1["Size"].ToString(),
+               Desc = row1["Description"].ToString(),
+               SubProcess = row1["SubProcess"].ToString(),
+               Qty = row1["Qty"].ToString(),
+               Barcode = row1["Bundle"].ToString()
+           }).ToList();
+                //.ForEach(d => Data.Add(d));
 
 
-            //List<P12_PrintData> tmpData = Data.Where(dtt => dtt."selected").ToList();
+            //List<P12_PrintData> tmpData = Data.Where(d => dtt.'selected').ToList();
 
 
 
@@ -284,13 +298,26 @@ namespace Sci.Production.Cutting
         private void button3_Click(object sender, EventArgs e)
         {
             #region excel
-            //if()
-            //{
-            //  MyUtility.Msg.ErrorBox("Grid must be chose one");
-            //   grid1.Focus();
-            //   return ;
-            
-            //}
+            bool checkone = false;
+            for (int i = 0; i < this.grid1.Rows.Count; i++)
+            {
+                if (!MyUtility.Check.Empty(this.grid1[0, i].Value)  //判斷是否為空值
+                    && (bool)this.grid1[0, i].Value == true)　//判斷是否有打勾
+                {
+                    checkone = true;
+                }
+
+                if (false && true)
+                {
+                    //execute aaa
+                }
+            }
+            if (!checkone)
+            {
+                MyUtility.Msg.ErrorBox("Grid must be chose one");
+                grid1.Focus();
+                return;
+            }
             DataTable selects = dtt.AsEnumerable()
                 .Where(row => (bool)row["selected"])
                 .CopyToDataTable();
