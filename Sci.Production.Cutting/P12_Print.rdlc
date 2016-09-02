@@ -430,7 +430,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Barcode.Value</Value>
+                                  <Value>=Fields!SP.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>

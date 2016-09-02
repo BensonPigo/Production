@@ -285,7 +285,6 @@ namespace Sci.Production.Cutting
             ReportDefinition report = new ReportDefinition();
             report.ReportDataSource = sele;
             report.ReportResource = reportresource;
-
              //開啟 report view
             var frm = new Sci.Win.Subs.ReportView(report);
             frm.MdiParent = MdiParent;
