@@ -54,12 +54,12 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.grid1 = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label11 = new Sci.Win.UI.Label();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.button2 = new Sci.Win.UI.Button();
             this.button3 = new Sci.Win.UI.Button();
             this.button4 = new Sci.Win.UI.Button();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -127,6 +127,7 @@
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(100, 23);
             this.textBox7.TabIndex = 4;
+            this.textBox7.Text = "14100300CA002";
             // 
             // label10
             // 
@@ -172,6 +173,7 @@
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(99, 23);
             this.textBox3.TabIndex = 3;
+            this.textBox3.Text = "14100300CA002";
             // 
             // textBox4
             // 
@@ -181,6 +183,7 @@
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(99, 23);
             this.textBox4.TabIndex = 2;
+            this.textBox4.Text = "14100300CA002";
             // 
             // label9
             // 
@@ -220,6 +223,7 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(99, 23);
             this.textBox2.TabIndex = 1;
+            this.textBox2.Text = "01PV6J";
             // 
             // textBox1
             // 
@@ -229,6 +233,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(99, 23);
             this.textBox1.TabIndex = 0;
+            this.textBox1.Text = "01PV6J";
             // 
             // label7
             // 
