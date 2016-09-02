@@ -100,6 +100,7 @@
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
             this.dateBox1.TabIndex = 19;
+            this.dateBox1.Value = new System.DateTime(2014, 9, 4, 0, 0, 0, 0);
             // 
             // textBox10
             // 
@@ -146,6 +147,7 @@
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(99, 23);
             this.textBox5.TabIndex = 6;
+            this.textBox5.Text = "140903G979";
             // 
             // textBox6
             // 
@@ -155,6 +157,7 @@
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(99, 23);
             this.textBox6.TabIndex = 5;
+            this.textBox6.Text = "140903G979";
             // 
             // label8
             // 
