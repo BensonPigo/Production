@@ -191,6 +191,7 @@ namespace Sci.Production.Cutting
                                                 ,SubProcess.SubProcess [SubProcess]
                                                 ,[Parts]=iif(a.Patterncode = 'ALLPARTS',iif(@extend='1',d.Parts,a.Parts),a.Parts)
                                                 ,a.Qty [Qty]
+                                                ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
                                                 from dbo.Bundle_Detail a
                                                 left join dbo.bundle b on a.id=b.ID
                                                 left join dbo.Orders c on c.id=b.Orderid
@@ -203,7 +204,7 @@ namespace Sci.Production.Cutting
                                                 outer apply(select SubProcess = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 							                                                     from dbo.Bundle_Detail_Art e1
 							                                                     where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= qq.Cutpart
-							                                                     for xml path('')))as SubProcess " +sqlWhere+" "+sb);
+							                                                     for xml path('')))as SubProcess " + sqlWhere+" "+sb);
           result = DBProxy.Current.Select("", sqlcmd, lis, out dtt);
 
           listControlBindingSource1.DataSource = dtt;
@@ -244,7 +245,7 @@ namespace Sci.Production.Cutting
                     Parts = row1["Parts"].ToString(),
                     Color = row1["Color"].ToString(),
                     Size = row1["Size"].ToString(),
-                    Desc = row1["Desc"].ToString(),
+                    Desc = row1["Description"].ToString(),
                     SubProcess = row1["SubProcess"].ToString(),
                     Qty = row1["Qty"].ToString(),
                     Barcode = row1["Bundle"].ToString()
