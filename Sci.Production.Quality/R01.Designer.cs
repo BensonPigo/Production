@@ -29,6 +29,12 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.Over_comboBox = new Sci.Win.UI.ComboBox();
+            this.txtSupplier1 = new Sci.Trade.Class.TxtSupplier();
+            this.Cate_comboBox = new Sci.Win.UI.ComboBox();
+            this.Ref_textBox = new Sci.Win.UI.TextBox();
+            this.txtBrand1 = new Sci.Trade.Class.TxtBrand();
+            this.txtSeason1 = new Sci.Trade.Class.TxtSeason();
             this.label13 = new Sci.Win.UI.Label();
             this.SP_textBox2 = new Sci.Win.UI.TextBox();
             this.SP_textBox1 = new Sci.Win.UI.TextBox();
@@ -50,12 +56,6 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtSeason1 = new Sci.Trade.Class.TxtSeason();
-            this.txtBrand1 = new Sci.Trade.Class.TxtBrand();
-            this.Ref_textBox = new Sci.Win.UI.TextBox();
-            this.Cate_comboBox = new Sci.Win.UI.ComboBox();
-            this.txtSupplier1 = new Sci.Trade.Class.TxtSupplier();
-            this.Over_comboBox = new Sci.Win.UI.ComboBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -92,6 +92,88 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(491, 506);
             this.panel1.TabIndex = 94;
+            // 
+            // Over_comboBox
+            // 
+            this.Over_comboBox.BackColor = System.Drawing.Color.White;
+            this.Over_comboBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.Over_comboBox.FormattingEnabled = true;
+            this.Over_comboBox.IsSupportUnselect = true;
+            this.Over_comboBox.Items.AddRange(new object[] {
+            "All",
+            "Pass",
+            "Fail",
+            "Empty Result",
+            "N/A inspection & test"});
+            this.Over_comboBox.Location = new System.Drawing.Point(192, 458);
+            this.Over_comboBox.Name = "Over_comboBox";
+            this.Over_comboBox.Size = new System.Drawing.Size(161, 24);
+            this.Over_comboBox.TabIndex = 26;
+            // 
+            // txtSupplier1
+            // 
+            this.txtSupplier1.DisplayBox1Binding = "";
+            this.txtSupplier1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.txtSupplier1.Location = new System.Drawing.Point(192, 415);
+            this.txtSupplier1.Margin = new System.Windows.Forms.Padding(0);
+            this.txtSupplier1.MySCIRefnoName = null;
+            this.txtSupplier1.MySuppIDName = null;
+            this.txtSupplier1.Name = "txtSupplier1";
+            this.txtSupplier1.Size = new System.Drawing.Size(243, 23);
+            this.txtSupplier1.TabIndex = 25;
+            // 
+            // 
+            // 
+            this.txtSupplier1.TextBox1.BackColor = System.Drawing.Color.White;
+            this.txtSupplier1.TextBox1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.txtSupplier1.TextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.txtSupplier1.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSupplier1.TextBox1.Location = new System.Drawing.Point(0, 0);
+            this.txtSupplier1.TextBox1.Margin = new System.Windows.Forms.Padding(0);
+            this.txtSupplier1.TextBox1.MaxLength = 6;
+            this.txtSupplier1.TextBox1.Name = "textBox1";
+            this.txtSupplier1.TextBox1.Size = new System.Drawing.Size(68, 23);
+            this.txtSupplier1.TextBox1.TabIndex = 0;
+            this.txtSupplier1.TextBox1Binding = "";
+            // 
+            // Cate_comboBox
+            // 
+            this.Cate_comboBox.BackColor = System.Drawing.Color.White;
+            this.Cate_comboBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.Cate_comboBox.FormattingEnabled = true;
+            this.Cate_comboBox.IsSupportUnselect = true;
+            this.Cate_comboBox.Location = new System.Drawing.Point(192, 373);
+            this.Cate_comboBox.Name = "Cate_comboBox";
+            this.Cate_comboBox.Size = new System.Drawing.Size(125, 24);
+            this.Cate_comboBox.TabIndex = 24;
+            // 
+            // Ref_textBox
+            // 
+            this.Ref_textBox.BackColor = System.Drawing.Color.White;
+            this.Ref_textBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.Ref_textBox.Location = new System.Drawing.Point(192, 332);
+            this.Ref_textBox.Name = "Ref_textBox";
+            this.Ref_textBox.Size = new System.Drawing.Size(253, 23);
+            this.Ref_textBox.TabIndex = 23;
+            // 
+            // txtBrand1
+            // 
+            this.txtBrand1.BackColor = System.Drawing.Color.White;
+            this.txtBrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand1.Location = new System.Drawing.Point(192, 291);
+            this.txtBrand1.Name = "txtBrand1";
+            this.txtBrand1.Size = new System.Drawing.Size(114, 23);
+            this.txtBrand1.TabIndex = 22;
+            // 
+            // txtSeason1
+            // 
+            this.txtSeason1.BackColor = System.Drawing.Color.White;
+            this.txtSeason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeason1.Location = new System.Drawing.Point(192, 249);
+            this.txtSeason1.myBrandName = null;
+            this.txtSeason1.Name = "txtSeason1";
+            this.txtSeason1.Size = new System.Drawing.Size(136, 23);
+            this.txtSeason1.TabIndex = 21;
             // 
             // label13
             // 
@@ -271,88 +353,6 @@
             this.label1.Size = new System.Drawing.Size(154, 23);
             this.label1.TabIndex = 0;
             this.label1.Text = "last Physical Insp Date:";
-            // 
-            // txtSeason1
-            // 
-            this.txtSeason1.BackColor = System.Drawing.Color.White;
-            this.txtSeason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeason1.Location = new System.Drawing.Point(192, 249);
-            this.txtSeason1.myBrandName = null;
-            this.txtSeason1.Name = "txtSeason1";
-            this.txtSeason1.Size = new System.Drawing.Size(136, 23);
-            this.txtSeason1.TabIndex = 21;
-            // 
-            // txtBrand1
-            // 
-            this.txtBrand1.BackColor = System.Drawing.Color.White;
-            this.txtBrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand1.Location = new System.Drawing.Point(192, 291);
-            this.txtBrand1.Name = "txtBrand1";
-            this.txtBrand1.Size = new System.Drawing.Size(114, 23);
-            this.txtBrand1.TabIndex = 22;
-            // 
-            // Ref_textBox
-            // 
-            this.Ref_textBox.BackColor = System.Drawing.Color.White;
-            this.Ref_textBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Ref_textBox.Location = new System.Drawing.Point(192, 332);
-            this.Ref_textBox.Name = "Ref_textBox";
-            this.Ref_textBox.Size = new System.Drawing.Size(253, 23);
-            this.Ref_textBox.TabIndex = 23;
-            // 
-            // Cate_comboBox
-            // 
-            this.Cate_comboBox.BackColor = System.Drawing.Color.White;
-            this.Cate_comboBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Cate_comboBox.FormattingEnabled = true;
-            this.Cate_comboBox.IsSupportUnselect = true;
-            this.Cate_comboBox.Location = new System.Drawing.Point(192, 373);
-            this.Cate_comboBox.Name = "Cate_comboBox";
-            this.Cate_comboBox.Size = new System.Drawing.Size(125, 24);
-            this.Cate_comboBox.TabIndex = 24;
-            // 
-            // txtSupplier1
-            // 
-            this.txtSupplier1.DisplayBox1Binding = "";
-            this.txtSupplier1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtSupplier1.Location = new System.Drawing.Point(192, 415);
-            this.txtSupplier1.Margin = new System.Windows.Forms.Padding(0);
-            this.txtSupplier1.MySCIRefnoName = null;
-            this.txtSupplier1.MySuppIDName = null;
-            this.txtSupplier1.Name = "txtSupplier1";
-            this.txtSupplier1.Size = new System.Drawing.Size(243, 23);
-            this.txtSupplier1.TabIndex = 25;
-            // 
-            // 
-            // 
-            this.txtSupplier1.TextBox1.BackColor = System.Drawing.Color.White;
-            this.txtSupplier1.TextBox1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.txtSupplier1.TextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtSupplier1.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSupplier1.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtSupplier1.TextBox1.Margin = new System.Windows.Forms.Padding(0);
-            this.txtSupplier1.TextBox1.MaxLength = 6;
-            this.txtSupplier1.TextBox1.Name = "textBox1";
-            this.txtSupplier1.TextBox1.Size = new System.Drawing.Size(68, 23);
-            this.txtSupplier1.TextBox1.TabIndex = 0;
-            this.txtSupplier1.TextBox1Binding = "";
-            // 
-            // Over_comboBox
-            // 
-            this.Over_comboBox.BackColor = System.Drawing.Color.White;
-            this.Over_comboBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Over_comboBox.FormattingEnabled = true;
-            this.Over_comboBox.IsSupportUnselect = true;
-            this.Over_comboBox.Items.AddRange(new object[] {
-            "A",
-            "P",
-            "F",
-            "E",
-            "N"});
-            this.Over_comboBox.Location = new System.Drawing.Point(192, 458);
-            this.Over_comboBox.Name = "Over_comboBox";
-            this.Over_comboBox.Size = new System.Drawing.Size(161, 24);
-            this.Over_comboBox.TabIndex = 26;
             // 
             // R01
             // 
