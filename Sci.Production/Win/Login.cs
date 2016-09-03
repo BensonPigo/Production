@@ -55,18 +55,18 @@ namespace Sci.Production.Win
                 return;
             }
 
-            if (!(result = DBProxy.Current.Select(null, string.Format("SELECT KeyWord FROM Factory WHERE ID = '{0}'", loginFactory), out dtFactory)))
+            if (!(result = DBProxy.Current.Select(null, string.Format("SELECT MDivisionID FROM Factory WHERE ID = '{0}'", loginFactory), out dtFactory)))
             {
                 ShowErr(result.ToString());
                 return;
             }
-            if (dtFactory.Rows.Count > 0 && !MyUtility.Check.Empty(dtFactory.Rows[0]["Keyword"].ToString()))
+            if (dtFactory.Rows.Count > 0 && !MyUtility.Check.Empty(dtFactory.Rows[0]["MDivisionID"].ToString()))
             {
-                keyword = dtFactory.Rows[0]["Keyword"].ToString();
+                keyword = dtFactory.Rows[0]["MDivisionID"].ToString();
             }
             else
             {
-                ShowErr("Keyword is not exist!");
+                ShowErr("M is not exist!");
                 return;
             }
 
