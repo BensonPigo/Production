@@ -1504,6 +1504,12 @@ Sci.Production.Quality/P06.resx -text
 Sci.Production.Quality/P06_Detail.Designer.cs -text
 Sci.Production.Quality/P06_Detail.cs -text
 Sci.Production.Quality/P06_Detail.resx -text
+Sci.Production.Quality/P07.Designer.cs -text
+Sci.Production.Quality/P07.cs -text
+Sci.Production.Quality/P07.resx -text
+Sci.Production.Quality/P07_Oven.Designer.cs -text
+Sci.Production.Quality/P07_Oven.cs -text
+Sci.Production.Quality/P07_Oven.resx -text
 Sci.Production.Quality/P21.Designer.cs -text
 Sci.Production.Quality/P21.cs -text
 Sci.Production.Quality/P21.resx -text
