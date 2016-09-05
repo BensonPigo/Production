@@ -100,8 +100,8 @@ namespace Sci.Production.Class
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-            if (myForm.EditMode == false)
-            {
+            //if (myForm.EditMode == false)
+            //{
                 string selectSql = string.Format("Select Name from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
                 string name = MyUtility.GetValue.Lookup(selectSql);
                 selectSql = string.Format("Select ExtNo from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
@@ -109,7 +109,7 @@ namespace Sci.Production.Class
                 if (!string.IsNullOrWhiteSpace(name)) { this.displayBox1.Text = name; }
                 else this.displayBox1.Text = "";
                 if (!string.IsNullOrWhiteSpace(extNo)) { this.displayBox1.Text = name + " #" + extNo; }
-            }
+            //}
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -120,6 +120,7 @@ namespace Sci.Production.Class
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
+            this.displayBox1.Text = item.GetSelecteds()[0]["Name"].ToString().TrimEnd();
         }
     }
 }
