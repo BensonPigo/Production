@@ -77,15 +77,15 @@
             this.button2 = new Sci.Win.UI.Button();
             this.button3 = new Sci.Win.UI.Button();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.lineShape4 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.lineShape5 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.lineShape6 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.lineShape7 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.lineShape8 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape9 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape8 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape7 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape6 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape5 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape4 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
@@ -649,68 +649,14 @@
             this.shapeContainer1.TabIndex = 49;
             this.shapeContainer1.TabStop = false;
             // 
-            // lineShape1
+            // lineShape9
             // 
-            this.lineShape1.BorderColor = System.Drawing.Color.DarkGray;
-            this.lineShape1.Name = "lineShape1";
-            this.lineShape1.X1 = 12;
-            this.lineShape1.X2 = 730;
-            this.lineShape1.Y1 = 42;
-            this.lineShape1.Y2 = 42;
-            // 
-            // lineShape2
-            // 
-            this.lineShape2.BorderColor = System.Drawing.Color.DarkGray;
-            this.lineShape2.Name = "lineShape2";
-            this.lineShape2.X1 = 12;
-            this.lineShape2.X2 = 730;
-            this.lineShape2.Y1 = 81;
-            this.lineShape2.Y2 = 81;
-            // 
-            // lineShape3
-            // 
-            this.lineShape3.BorderColor = System.Drawing.Color.DarkGray;
-            this.lineShape3.Name = "lineShape3";
-            this.lineShape3.X1 = 12;
-            this.lineShape3.X2 = 730;
-            this.lineShape3.Y1 = 149;
-            this.lineShape3.Y2 = 149;
-            // 
-            // lineShape4
-            // 
-            this.lineShape4.BorderColor = System.Drawing.Color.DarkGray;
-            this.lineShape4.Name = "lineShape4";
-            this.lineShape4.X1 = 12;
-            this.lineShape4.X2 = 730;
-            this.lineShape4.Y1 = 188;
-            this.lineShape4.Y2 = 188;
-            // 
-            // lineShape5
-            // 
-            this.lineShape5.BorderColor = System.Drawing.Color.DarkGray;
-            this.lineShape5.Name = "lineShape5";
-            this.lineShape5.X1 = 12;
-            this.lineShape5.X2 = 730;
-            this.lineShape5.Y1 = 228;
-            this.lineShape5.Y2 = 228;
-            // 
-            // lineShape6
-            // 
-            this.lineShape6.BorderColor = System.Drawing.Color.DarkGray;
-            this.lineShape6.Name = "lineShape6";
-            this.lineShape6.X1 = 12;
-            this.lineShape6.X2 = 730;
-            this.lineShape6.Y1 = 383;
-            this.lineShape6.Y2 = 383;
-            // 
-            // lineShape7
-            // 
-            this.lineShape7.BorderColor = System.Drawing.Color.DarkGray;
-            this.lineShape7.Name = "lineShape7";
-            this.lineShape7.X1 = 12;
-            this.lineShape7.X2 = 730;
-            this.lineShape7.Y1 = 451;
-            this.lineShape7.Y2 = 451;
+            this.lineShape9.BorderColor = System.Drawing.Color.DarkGray;
+            this.lineShape9.Name = "lineShape9";
+            this.lineShape9.X1 = 730;
+            this.lineShape9.X2 = 730;
+            this.lineShape9.Y1 = 42;
+            this.lineShape9.Y2 = 451;
             // 
             // lineShape8
             // 
@@ -721,14 +667,68 @@
             this.lineShape8.Y1 = 42;
             this.lineShape8.Y2 = 451;
             // 
-            // lineShape9
+            // lineShape7
             // 
-            this.lineShape9.BorderColor = System.Drawing.Color.DarkGray;
-            this.lineShape9.Name = "lineShape9";
-            this.lineShape9.X1 = 730;
-            this.lineShape9.X2 = 730;
-            this.lineShape9.Y1 = 42;
-            this.lineShape9.Y2 = 451;
+            this.lineShape7.BorderColor = System.Drawing.Color.DarkGray;
+            this.lineShape7.Name = "lineShape7";
+            this.lineShape7.X1 = 12;
+            this.lineShape7.X2 = 730;
+            this.lineShape7.Y1 = 451;
+            this.lineShape7.Y2 = 451;
+            // 
+            // lineShape6
+            // 
+            this.lineShape6.BorderColor = System.Drawing.Color.DarkGray;
+            this.lineShape6.Name = "lineShape6";
+            this.lineShape6.X1 = 12;
+            this.lineShape6.X2 = 730;
+            this.lineShape6.Y1 = 383;
+            this.lineShape6.Y2 = 383;
+            // 
+            // lineShape5
+            // 
+            this.lineShape5.BorderColor = System.Drawing.Color.DarkGray;
+            this.lineShape5.Name = "lineShape5";
+            this.lineShape5.X1 = 12;
+            this.lineShape5.X2 = 730;
+            this.lineShape5.Y1 = 228;
+            this.lineShape5.Y2 = 228;
+            // 
+            // lineShape4
+            // 
+            this.lineShape4.BorderColor = System.Drawing.Color.DarkGray;
+            this.lineShape4.Name = "lineShape4";
+            this.lineShape4.X1 = 12;
+            this.lineShape4.X2 = 730;
+            this.lineShape4.Y1 = 188;
+            this.lineShape4.Y2 = 188;
+            // 
+            // lineShape3
+            // 
+            this.lineShape3.BorderColor = System.Drawing.Color.DarkGray;
+            this.lineShape3.Name = "lineShape3";
+            this.lineShape3.X1 = 12;
+            this.lineShape3.X2 = 730;
+            this.lineShape3.Y1 = 149;
+            this.lineShape3.Y2 = 149;
+            // 
+            // lineShape2
+            // 
+            this.lineShape2.BorderColor = System.Drawing.Color.DarkGray;
+            this.lineShape2.Name = "lineShape2";
+            this.lineShape2.X1 = 12;
+            this.lineShape2.X2 = 730;
+            this.lineShape2.Y1 = 81;
+            this.lineShape2.Y2 = 81;
+            // 
+            // lineShape1
+            // 
+            this.lineShape1.BorderColor = System.Drawing.Color.DarkGray;
+            this.lineShape1.Name = "lineShape1";
+            this.lineShape1.X1 = 12;
+            this.lineShape1.X2 = 730;
+            this.lineShape1.Y1 = 42;
+            this.lineShape1.Y2 = 42;
             // 
             // B02
             // 
