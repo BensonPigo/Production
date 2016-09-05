@@ -100,7 +100,6 @@
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
             this.dateBox1.TabIndex = 19;
-            this.dateBox1.Value = new System.DateTime(2014, 9, 4, 0, 0, 0, 0);
             // 
             // textBox10
             // 
@@ -128,7 +127,6 @@
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(100, 23);
             this.textBox7.TabIndex = 4;
-            this.textBox7.Text = "14100300CA002";
             // 
             // label10
             // 
@@ -147,7 +145,6 @@
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(99, 23);
             this.textBox5.TabIndex = 6;
-            this.textBox5.Text = "140903G979";
             // 
             // textBox6
             // 
@@ -157,7 +154,6 @@
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(99, 23);
             this.textBox6.TabIndex = 5;
-            this.textBox6.Text = "140903G979";
             // 
             // label8
             // 
@@ -176,7 +172,6 @@
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(99, 23);
             this.textBox3.TabIndex = 3;
-            this.textBox3.Text = "14100300CA002";
             // 
             // textBox4
             // 
@@ -186,7 +181,6 @@
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(99, 23);
             this.textBox4.TabIndex = 2;
-            this.textBox4.Text = "14100300CA002";
             // 
             // label9
             // 
@@ -226,7 +220,6 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(99, 23);
             this.textBox2.TabIndex = 1;
-            this.textBox2.Text = "01PV6J";
             // 
             // textBox1
             // 
@@ -236,7 +229,6 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(99, 23);
             this.textBox1.TabIndex = 0;
-            this.textBox1.Text = "01PV6J";
             // 
             // label7
             // 
