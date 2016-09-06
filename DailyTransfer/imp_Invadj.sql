@@ -1,24 +1,19 @@
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
+USE [Production]
+GO
+
+/****** Object:  StoredProcedure [dbo].[imp_Invadj]    Script Date: 2016/9/6 ¤U¤È 02:00:37 ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author:		LEO
 -- Create date: 20160903
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE imp_Invadj
+CREATE PROCEDURE [dbo].[imp_Invadj]
 	-- Add the parameters for the stored procedure here
 
 AS
@@ -72,7 +67,7 @@ select
       ,GarmentInvoiceID
       ,OrderID
       ,PullDate
-      ,Ukey_Pullout
+      ,PulloutUkey
       ,BrandID
       ,FactoryID
       ,ARVoucherID
@@ -174,4 +169,7 @@ drop table #TMPPullout2Cdate
 
 
 END
+
 GO
+
+
