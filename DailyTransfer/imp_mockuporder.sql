@@ -1,12 +1,13 @@
 USE [Production]
 GO
 
-/****** Object:  StoredProcedure [dbo].[imp_MockupOrder]    Script Date: 2016/9/2 ¤W¤È 11:16:58 ******/
+/****** Object:  StoredProcedure [dbo].[imp_MockupOrder]    Script Date: 2016/9/5 ¤U¤È 04:48:15 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 -- =============================================
 -- Author:		<Willy S01910>
@@ -146,7 +147,9 @@ BEGIN
 		inner join Trade_To_Pms.dbo.MockupOrder b on a.id=b.id and a.FactoryID in (select id from @Sayfty)
 		where a.SCIDelivery >=@Odate_s
 	
+	drop table #tempMO
 END
+
 
 
 GO

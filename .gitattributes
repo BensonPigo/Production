@@ -30,7 +30,7 @@ DailyTransfer/imp_debit.sql -text
 DailyTransfer/imp_export.sql -text
 DailyTransfer/imp_mockuporder.sql -text
 DailyTransfer/imp_order.sql -text
-DailyTransfer/imp_part.sql -text
+DailyTransfer/imp_part.sql -text svneol=unset#application/octet-stream
 DailyTransfer/imp_replacement.sql -text
 Database/Production.sql -text
 Database/ProductionDB.dbmdl -text

@@ -1,12 +1,13 @@
 USE [Production]
 GO
 
-/****** Object:  StoredProcedure [dbo].[imp_Export]    Script Date: 2016/9/2 ¤W¤È 11:16:44 ******/
+/****** Object:  StoredProcedure [dbo].[imp_Export]    Script Date: 2016/9/5 ¤U¤È 04:45:34 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 -- =============================================
 -- Author:		<Willy S01910>
@@ -160,7 +161,12 @@ values (TE2.[ID],TE2.[PoID],TE2.[Seq1],TE2.[Seq2],TE2.[ExportIDOld],TE2.[Ukey],T
 	  when not matched by source and PE2.id in (select id from @T)then
 	  delete;
 
+
+drop table #TExport;
+
 END
+
+
 
 GO
 
