@@ -128,8 +128,19 @@ namespace Sci.Production.Quality
                 lis.Add(new SqlParameter("@Ref", Ref));
             } if (!this.combobox_Cate.SelectedItem.ToString().Empty())
             {
-                sqlWheres.Add("D.Category = @Cate");
-                lis.Add(new SqlParameter("@Cate", Cate));
+                sqlWheres.Add("O.Category = @Cate");
+                if (Cate == "Bulk")
+                {
+                    lis.Add(new SqlParameter("@Cate", "B"));
+                }
+                if (Cate == "Sample")
+                {
+                    lis.Add(new SqlParameter("@Cate", "S"));
+                }
+                if (Cate == "Material")
+                {
+                    lis.Add(new SqlParameter("@Cate", "M"));
+                }  
             } if (this.txtsupplier1.Text.Empty())
             {
                 lis.Add(new SqlParameter("@Supp", Supp));
@@ -184,27 +195,24 @@ namespace Sci.Production.Quality
                         inner join (select distinct R.WhseArrival,R.InvNo,R.ExportId,R.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty
 			                        from dbo.Receiving R
 			                        inner join dbo.Receiving_Detail RD on RD.Id = R.Id"
-                                    +RWhere+@" 
+                                    + RWhere+ @" 
 			                        ) t
                         on t.PoId = F.POID and t.Seq1 = F.SEQ1 and t.Seq2 = F.SEQ2
                         inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category from dbo.Orders o "
-                                    +OWhere+@"
+                                    + OWhere+@"
 		                           ) O on O.poid = F.POID
-                        OUTER APPLY( select Category=name
-                                     from  dbo.DropDownList
-                                     where type = 'Category' and id != 'O')D
-                        inner join dbo.PO_Supp SP on SP.id = F.POID and SP.SEQ1 = F.SEQ1 and SP.SEQ1 = F.SEQ2
+                        inner join dbo.PO_Supp SP on SP.id = F.POID and SP.SEQ1 = F.SEQ1
                         inner join dbo.PO_Supp_Detail P on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
-                        OUTER APPLY(SELECT * FROM  supp s WHERE s.id = SP.SuppID AND SP.id = F.Poid and SP.seq1 = F.Seq1)s
+                        inner join supp s on s.id = SP.SuppID 
                         OUTER APPLY(SELECT * FROM  Fabric C WHERE C.SCIRefno = F.SCIRefno)C
-                        OUTER APPLY(SELECT * FROM  FIR_Laboratory L WHERE L.CrockingEncode=1 AND L.ID = F.ID AND L.SEQ1 = F.SEQ1 AND L.SEQ1 = F.SEQ2)L
+                        OUTER APPLY(SELECT * FROM  FIR_Laboratory L WHERE L.CrockingEncode=1 AND L.ID = F.ID AND L.SEQ1 = F.SEQ1 AND L.SEQ2 = F.SEQ2)L
                         OUTER APPLY(select od.Result from dbo.Oven ov 
                         inner join dbo.Oven_Detail od on od.ID = ov.ID
                         where ov.POID=F.POID and od.SEQ1=F.Seq1 and seq2=F.Seq2 and ov.Status='Confirmed'
                         )V
                         OUTER APPLY(select cd.Result from dbo.ColorFastness CF inner join dbo.ColorFastness_Detail cd on cd.ID = CF.ID
                         where CF.Status = 'Confirmed' and CF.POID=F.POID and cd.SEQ1=F.Seq1 and cd.seq2=F.Seq2
-                        )CFD" + sqlWhere );
+                        )CFD" + sqlWhere);
             #endregion
             return base.ValidateInput();
         }
