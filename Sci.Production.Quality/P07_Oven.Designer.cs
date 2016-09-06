@@ -46,18 +46,18 @@
             this.Color_text = new Sci.Win.UI.DisplayBox();
             this.btnEncode = new Sci.Win.UI.Button();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.Qty_text = new Sci.Win.UI.NumericBox();
-            this.lbScale = new Sci.Win.UI.Label();
-            this.txtScale = new Sci.Win.UI.TextBox();
-            this.lbResult = new Sci.Win.UI.Label();
-            this.comboResult = new Sci.Win.UI.ComboBox();
-            this.lbRemark = new Sci.Win.UI.Label();
-            this.txtRemark = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.Supplier_text = new Sci.Win.UI.DisplayBox();
-            this.lbDate = new Sci.Win.UI.Label();
             this.OvenDate = new Sci.Win.UI.DateBox();
+            this.lbDate = new Sci.Win.UI.Label();
+            this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtRemark = new Sci.Win.UI.TextBox();
+            this.lbRemark = new Sci.Win.UI.Label();
+            this.comboResult = new Sci.Win.UI.ComboBox();
+            this.lbResult = new Sci.Win.UI.Label();
+            this.txtScale = new Sci.Win.UI.TextBox();
+            this.lbScale = new Sci.Win.UI.Label();
+            this.Qty_text = new Sci.Win.UI.NumericBox();
+            this.Supplier_text = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -223,6 +223,7 @@
             this.btnEncode.TabIndex = 119;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
+            this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
             // 
             // groupBox1
             // 
@@ -241,6 +242,106 @@
             this.groupBox1.Size = new System.Drawing.Size(528, 190);
             this.groupBox1.TabIndex = 120;
             this.groupBox1.TabStop = false;
+            // 
+            // OvenDate
+            // 
+            this.OvenDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OvenDate", true));
+            this.OvenDate.Location = new System.Drawing.Point(103, 145);
+            this.OvenDate.Name = "OvenDate";
+            this.OvenDate.ReadOnly = true;
+            this.OvenDate.Size = new System.Drawing.Size(120, 23);
+            this.OvenDate.TabIndex = 123;
+            // 
+            // lbDate
+            // 
+            this.lbDate.Lines = 0;
+            this.lbDate.Location = new System.Drawing.Point(15, 145);
+            this.lbDate.Name = "lbDate";
+            this.lbDate.Size = new System.Drawing.Size(85, 23);
+            this.lbDate.TabIndex = 122;
+            this.lbDate.Text = "Inspect Date";
+            // 
+            // txtuser1
+            // 
+            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "OvenInspector", true));
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(83, 112);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(296, 23);
+            this.txtuser1.TabIndex = 121;
+            this.txtuser1.TextBox1Binding = "";
+            // 
+            // label2
+            // 
+            this.label2.Lines = 0;
+            this.label2.Location = new System.Drawing.Point(15, 112);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(65, 23);
+            this.label2.TabIndex = 120;
+            this.label2.Text = "Lab Tech";
+            // 
+            // txtRemark
+            // 
+            this.txtRemark.BackColor = System.Drawing.Color.White;
+            this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OvenRemark", true));
+            this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRemark.Location = new System.Drawing.Point(73, 82);
+            this.txtRemark.Name = "txtRemark";
+            this.txtRemark.Size = new System.Drawing.Size(430, 23);
+            this.txtRemark.TabIndex = 119;
+            // 
+            // lbRemark
+            // 
+            this.lbRemark.Lines = 0;
+            this.lbRemark.Location = new System.Drawing.Point(15, 82);
+            this.lbRemark.Name = "lbRemark";
+            this.lbRemark.Size = new System.Drawing.Size(55, 23);
+            this.lbRemark.TabIndex = 118;
+            this.lbRemark.Text = "Remark";
+            // 
+            // comboResult
+            // 
+            this.comboResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboResult.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Oven", true));
+            this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.comboResult.FormattingEnabled = true;
+            this.comboResult.IsSupportUnselect = true;
+            this.comboResult.Location = new System.Drawing.Point(68, 51);
+            this.comboResult.Name = "comboResult";
+            this.comboResult.ReadOnly = true;
+            this.comboResult.Size = new System.Drawing.Size(103, 24);
+            this.comboResult.TabIndex = 117;
+            // 
+            // lbResult
+            // 
+            this.lbResult.Lines = 0;
+            this.lbResult.Location = new System.Drawing.Point(15, 51);
+            this.lbResult.Name = "lbResult";
+            this.lbResult.Size = new System.Drawing.Size(50, 23);
+            this.lbResult.TabIndex = 112;
+            this.lbResult.Text = "Result";
+            // 
+            // txtScale
+            // 
+            this.txtScale.BackColor = System.Drawing.Color.White;
+            this.txtScale.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OvenScale", true));
+            this.txtScale.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtScale.Location = new System.Drawing.Point(68, 19);
+            this.txtScale.Name = "txtScale";
+            this.txtScale.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
+            this.txtScale.Size = new System.Drawing.Size(103, 23);
+            this.txtScale.TabIndex = 111;
+            this.txtScale.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtScale_PopUp);
+            this.txtScale.Validating += new System.ComponentModel.CancelEventHandler(this.txtScale_Validating);
+            // 
+            // lbScale
+            // 
+            this.lbScale.Lines = 0;
+            this.lbScale.Location = new System.Drawing.Point(15, 19);
+            this.lbScale.Name = "lbScale";
+            this.lbScale.Size = new System.Drawing.Size(50, 23);
+            this.lbScale.TabIndex = 110;
+            this.lbScale.Text = "Scale";
             // 
             // Qty_text
             // 
@@ -274,86 +375,6 @@
             0,
             0});
             // 
-            // lbScale
-            // 
-            this.lbScale.Lines = 0;
-            this.lbScale.Location = new System.Drawing.Point(15, 19);
-            this.lbScale.Name = "lbScale";
-            this.lbScale.Size = new System.Drawing.Size(50, 23);
-            this.lbScale.TabIndex = 110;
-            this.lbScale.Text = "Scale";
-            // 
-            // txtScale
-            // 
-            this.txtScale.BackColor = System.Drawing.Color.White;
-            this.txtScale.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OvenScale", true));
-            this.txtScale.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtScale.Location = new System.Drawing.Point(68, 19);
-            this.txtScale.Name = "txtScale";
-            this.txtScale.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
-            this.txtScale.Size = new System.Drawing.Size(103, 23);
-            this.txtScale.TabIndex = 111;
-            // 
-            // lbResult
-            // 
-            this.lbResult.Lines = 0;
-            this.lbResult.Location = new System.Drawing.Point(15, 51);
-            this.lbResult.Name = "lbResult";
-            this.lbResult.Size = new System.Drawing.Size(50, 23);
-            this.lbResult.TabIndex = 112;
-            this.lbResult.Text = "Result";
-            // 
-            // comboResult
-            // 
-            this.comboResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.comboResult.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Oven", true));
-            this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.comboResult.FormattingEnabled = true;
-            this.comboResult.IsSupportUnselect = true;
-            this.comboResult.Location = new System.Drawing.Point(68, 51);
-            this.comboResult.Name = "comboResult";
-            this.comboResult.ReadOnly = true;
-            this.comboResult.Size = new System.Drawing.Size(103, 24);
-            this.comboResult.TabIndex = 117;
-            // 
-            // lbRemark
-            // 
-            this.lbRemark.Lines = 0;
-            this.lbRemark.Location = new System.Drawing.Point(15, 82);
-            this.lbRemark.Name = "lbRemark";
-            this.lbRemark.Size = new System.Drawing.Size(55, 23);
-            this.lbRemark.TabIndex = 118;
-            this.lbRemark.Text = "Remark";
-            // 
-            // txtRemark
-            // 
-            this.txtRemark.BackColor = System.Drawing.Color.White;
-            this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OvenRemark", true));
-            this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRemark.Location = new System.Drawing.Point(73, 82);
-            this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(430, 23);
-            this.txtRemark.TabIndex = 119;
-            // 
-            // label2
-            // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(15, 112);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(65, 23);
-            this.label2.TabIndex = 120;
-            this.label2.Text = "Lab Tech";
-            // 
-            // txtuser1
-            // 
-            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "OvenInspector", true));
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(83, 112);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(296, 23);
-            this.txtuser1.TabIndex = 121;
-            this.txtuser1.TextBox1Binding = "";
-            // 
             // Supplier_text
             // 
             this.Supplier_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -363,24 +384,6 @@
             this.Supplier_text.Name = "Supplier_text";
             this.Supplier_text.Size = new System.Drawing.Size(150, 21);
             this.Supplier_text.TabIndex = 122;
-            // 
-            // lbDate
-            // 
-            this.lbDate.Lines = 0;
-            this.lbDate.Location = new System.Drawing.Point(15, 145);
-            this.lbDate.Name = "lbDate";
-            this.lbDate.Size = new System.Drawing.Size(85, 23);
-            this.lbDate.TabIndex = 122;
-            this.lbDate.Text = "Inspect Date";
-            // 
-            // OvenDate
-            // 
-            this.OvenDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OvenDate", true));
-            this.OvenDate.Location = new System.Drawing.Point(103, 145);
-            this.OvenDate.Name = "OvenDate";
-            this.OvenDate.ReadOnly = true;
-            this.OvenDate.Size = new System.Drawing.Size(120, 23);
-            this.OvenDate.TabIndex = 123;
             // 
             // P07_Oven
             // 

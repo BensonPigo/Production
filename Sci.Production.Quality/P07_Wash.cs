@@ -9,10 +9,9 @@ using Ict;
 using System.Data.SqlClient;
 using Sci.Data;
 
-
 namespace Sci.Production.Quality
 {
-    public partial class P07_Oven : Sci.Win.Subs.Input2A
+    public partial class P07_Wash : Sci.Win.Subs.Input2A
     {
         private DataRow maindr;
         private string ID, PoID, SEQ1, SEQ2;
@@ -21,7 +20,7 @@ namespace Sci.Production.Quality
         DataRow DR;
 
 
-        public P07_Oven(bool canedit, string id, string Poid, string seq1, string seq2, DataRow mainDr)
+        public P07_Wash(bool canedit, string id, string Poid, string seq1, string seq2, DataRow mainDr)
         {
             InitializeComponent();
             maindr = mainDr;
@@ -62,7 +61,7 @@ namespace Sci.Production.Quality
             #endregion
 
             #region [btnEncode]
-            if (Convert.ToBoolean(maindr["OvenEncode"]))
+            if (Convert.ToBoolean(maindr["WashEncode"]))
                 btnEncode.Text = "Amend";
             else
                 btnEncode.Text = "Encode";
@@ -73,14 +72,14 @@ namespace Sci.Production.Quality
 
         private void OnRequery()
         {
-             sql = string.Format(@"select  C.ExportId , B.ArriveQty , E.StockUnit , E.SizeSpec , B.SCIRefno
+            sql = string.Format(@"select  C.ExportId , B.ArriveQty , E.StockUnit , E.SizeSpec , B.SCIRefno
 	                                    , B.Refno , B.Suppid + '-' + D.AbbEN as supplier , E.ColorID
                                     from AIR_Laboratory A
                                     left join AIR B on A.id=B.id
                                     left join Receiving C on C.id=B.receivingID
                                     left join Supp D on D.ID=B.Suppid
                                     left join PO_Supp_Detail E on E.ID=A.POID and E.SEQ1=A.SEQ1 and E.SEQ2=A.SEQ2
-                                    where A.id={0} and A.POID='{1}' and A.SEQ1='{2}' and A.SEQ2='{3}'", ID,PoID,SEQ1,SEQ2);
+                                    where A.id={0} and A.POID='{1}' and A.SEQ1='{2}' and A.SEQ2='{3}'", ID, PoID, SEQ1, SEQ2);
             if (MyUtility.Check.Seek(sql, out DR))
             {
                 sp_text.Text = maindr["SEQ1"] + "-" + maindr["SEQ2"];
@@ -94,7 +93,7 @@ namespace Sci.Production.Quality
                 Color_text.Text = DR["ColorID"].ToString().Trim();
             }
 
-            comboResult.SelectedValue2 = maindr["Oven"].ToString().Trim();
+            comboResult.SelectedValue2 = maindr["Wash"].ToString().Trim();
 
         }
 
@@ -135,7 +134,7 @@ namespace Sci.Production.Quality
                     MyUtility.Msg.WarningBox("[Result] can not be empty !!");
                     return;
                 }
-                if (MyUtility.Check.Empty(OvenDate.Value))
+                if (MyUtility.Check.Empty(WashDate.Value))
                 {
                     MyUtility.Msg.WarningBox("[Inspect Date] can not be empty !!");
                     return;
@@ -147,15 +146,15 @@ namespace Sci.Production.Quality
                 }
                 #endregion
 
-                #region ii.填入Air_Laboratory.OvenEncode = T。iv.填入Air_Laboratory.EditName=Userid, Air_Laboratory.EditDate=Datetime()
-                sql = string.Format(@"update Air_Laboratory set OvenEncode=1 , editName='{0}', editDate='{1}'
+                #region ii.填入Air_Laboratory.WashEncode = T。iv.填入Air_Laboratory.EditName=Userid, Air_Laboratory.EditDate=Datetime()
+                sql = string.Format(@"update Air_Laboratory set WashEncode=1 , editName='{0}', editDate='{1}'
                                       where ID='{2}' and POID='{3}' and SEQ1='{4}' and SEQ2='{5}'"
                                     , Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), ID, PoID, SEQ1, SEQ2);
                 DBProxy.Current.Execute(null, sql);
                 #endregion
 
-                #region iii.Air_Laboratory.WashEncode 為.T.時或Air_Laboratory.NonWash=.T.時，判斷當Air_Laboratory.Oven 與Air_Laboratory.Wash 只要有一個為’Fail’則Air_Laboratory.Result=‘Fail’，否則填入Air_Laboratory.Result=‘Pass’
-                if (Convert.ToBoolean(maindr["WashEncode"]) || Convert.ToBoolean(maindr["NonWash"]))
+                #region iii.Air_Laboratory.OvenEncode 為.T.時或Air_Laboratory.NonOven=.T.時，判斷當Air_Laboratory.Oven 與Air_Laboratory.Wash 只要有一個為’Fail’則Air_Laboratory.Result=‘Fail’，否則填入Air_Laboratory.Result=‘Pass’
+                if (Convert.ToBoolean(maindr["OvenEncode"]) || Convert.ToBoolean(maindr["NonOven"]))
                 {
                     if (maindr["Oven"].ToString().Trim() == "Fail" || maindr["Wash"].ToString().Trim() == "Fail")
                     {
@@ -180,8 +179,8 @@ namespace Sci.Production.Quality
             else if (btnEncode.Text == "Amend")
             {
 
-                #region i.將Air_Laboratory.OvenEncode 改為.F。ii.清空Air_Laboratory.Result。iii.填入Air_Laboratory.EditName=Userid, Air_Laboratory.EditDate=Datetime()
-                sql = string.Format(@"update Air_Laboratory set OvenEncode=0 , Result='' ,  editName='{0}', editDate='{1}'
+                #region i.將Air_Laboratory.WashEncode 改為.F。ii.清空Air_Laboratory.Result。iii.填入Air_Laboratory.EditName=Userid, Air_Laboratory.EditDate=Datetime()
+                sql = string.Format(@"update Air_Laboratory set WashEncode=0 , Result='' ,  editName='{0}', editDate='{1}'
                                       where ID='{2}' and POID='{3}' and SEQ1='{4}' and SEQ2='{5}'"
                                     , Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), ID, PoID, SEQ1, SEQ2);
                 DBProxy.Current.Execute(null, sql);
@@ -196,15 +195,16 @@ namespace Sci.Production.Quality
         {
             if (MyUtility.Check.Empty(txtuser1.TextBox1.Text))
             {
-                CurrentData["OvenInspector"] = Sci.Env.User.UserID;
+                CurrentData["WashInspector"] = Sci.Env.User.UserID;
             }
-            if (MyUtility.Check.Empty(OvenDate.Value))
+            if (MyUtility.Check.Empty(WashDate.Value))
             {
-                CurrentData["OvenDate"] = DateTime.Now;
+                CurrentData["WashDate"] = DateTime.Now;
             }
 
             return true;
         }
+
 
 
     }

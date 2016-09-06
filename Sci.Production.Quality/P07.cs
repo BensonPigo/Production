@@ -146,7 +146,11 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorDateColumnSettings OvenDateCell = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorTextColumnSettings OvenInspectorCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings OvenRemarkCell = new DataGridViewGeneratorTextColumnSettings();
-
+            DataGridViewGeneratorTextColumnSettings WashCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings WashScaleCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorDateColumnSettings WashDateCell = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorTextColumnSettings WashInspectorCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings WashRemarkCell = new DataGridViewGeneratorTextColumnSettings();
 
             #region MouseClick
             OvenCell.CellMouseClick += (s, e) =>
@@ -214,6 +218,72 @@ namespace Sci.Production.Quality
                     this.RenewData();
                 }
             };
+
+            WashCell.CellMouseClick += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    var dr = this.CurrentDetailData;
+                    if (dr == null) return;
+                    var frm = new Sci.Production.Quality.P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                    frm.ShowDialog(this);
+                    frm.Dispose();
+                    this.RenewData();
+                }
+            };
+            WashScaleCell.CellMouseClick += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    var dr = this.CurrentDetailData;
+                    if (dr == null) return;
+                    var frm = new Sci.Production.Quality.P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                    frm.ShowDialog(this);
+                    frm.Dispose();
+                    this.RenewData();
+                }
+            };
+            WashDateCell.CellMouseClick += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    var dr = this.CurrentDetailData;
+                    if (dr == null) return;
+                    var frm = new Sci.Production.Quality.P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                    frm.ShowDialog(this);
+                    frm.Dispose();
+                    this.RenewData();
+                }
+            };
+            WashInspectorCell.CellMouseClick += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    var dr = this.CurrentDetailData;
+                    if (dr == null) return;
+                    var frm = new Sci.Production.Quality.P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                    frm.ShowDialog(this);
+                    frm.Dispose();
+                    this.RenewData();
+                }
+            };
+            WashRemarkCell.CellMouseClick += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    var dr = this.CurrentDetailData;
+                    if (dr == null) return;
+                    var frm = new Sci.Production.Quality.P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                    frm.ShowDialog(this);
+                    frm.Dispose();
+                    this.RenewData();
+                }
+            };
             #endregion
 
             #region CellMouseDoubleClick
@@ -262,8 +332,53 @@ namespace Sci.Production.Quality
                 frm.Dispose();
                 this.RenewData();
             };
-            #endregion
 
+            WashCell.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr == null) return;
+                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            WashScaleCell.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr == null) return;
+                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            WashDateCell.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr == null) return;
+                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            WashInspectorCell.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr == null) return;
+                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            WashRemarkCell.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr == null) return;
+                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            #endregion
 
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("SEQ", header: "SEQ#", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -284,11 +399,11 @@ namespace Sci.Production.Quality
                 .Text("OvenInspector", header: "Oven Lab Tech", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: OvenInspectorCell).Get(out col_OvenInspector)
                 .Text("OvenRemark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: OvenRemarkCell).Get(out col_OvenRemark)
                 .CheckBox("nonWash", header: "Wash N/A", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_NonWash)
-                .Text("Wash", header: "Wash Result", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out col_Wash)
-                .Text("Washscale", header: "Wash Scale", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out col_Washscale)
-                .Date("WashDate", header: "Wash Last Date", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out col_WashDate)
-                .Text("Washinspector", header: "Wash Lab Tech", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out col_Washinspector)
-                .Text("WashRemark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out col_WashRemark)
+                .Text("Wash", header: "Wash Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: WashCell).Get(out col_Wash)
+                .Text("Washscale", header: "Wash Scale", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: WashScaleCell).Get(out col_Washscale)
+                .Date("WashDate", header: "Wash Last Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: WashDateCell).Get(out col_WashDate)
+                .Text("Washinspector", header: "Wash Lab Tech", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: WashInspectorCell).Get(out col_Washinspector)
+                .Text("WashRemark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: WashRemarkCell).Get(out col_WashRemark)
                 .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(13), iseditingreadonly: true);
 
             col_NonOven.DefaultCellStyle.BackColor = Color.Pink;
