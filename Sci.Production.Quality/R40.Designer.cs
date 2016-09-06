@@ -113,6 +113,7 @@
             this.ClientSize = new System.Drawing.Size(627, 314);
             this.Controls.Add(this.radioPanel1);
             this.Name = "R40";
+            this.Text = "R40. AdiComp Summary Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
