@@ -29,21 +29,21 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
-            this.Over_comboBox = new Sci.Win.UI.ComboBox();
-            this.txtSupplier1 = new Sci.Trade.Class.TxtSupplier();
-            this.Cate_comboBox = new Sci.Win.UI.ComboBox();
-            this.Ref_textBox = new Sci.Win.UI.TextBox();
+            this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
+            this.comboBox_Over = new Sci.Win.UI.ComboBox();
+            this.combobox_Cate = new Sci.Win.UI.ComboBox();
+            this.textBox_Ref = new Sci.Win.UI.TextBox();
             this.txtBrand1 = new Sci.Trade.Class.TxtBrand();
             this.txtSeason1 = new Sci.Trade.Class.TxtSeason();
             this.label13 = new Sci.Win.UI.Label();
-            this.SP_textBox2 = new Sci.Win.UI.TextBox();
-            this.SP_textBox1 = new Sci.Win.UI.TextBox();
-            this.Est_dateRange = new Sci.Win.UI.DateRange();
-            this.Sew_dateRange = new Sci.Win.UI.DateRange();
+            this.textBox_SP2 = new Sci.Win.UI.TextBox();
+            this.textBox_SP = new Sci.Win.UI.TextBox();
+            this.date_Est = new Sci.Win.UI.DateRange();
+            this.date_Sewing = new Sci.Win.UI.DateRange();
             this.dateRange4 = new Sci.Win.UI.DateRange();
-            this.SCI_dateRange = new Sci.Win.UI.DateRange();
-            this.Arr_dateRange = new Sci.Win.UI.DateRange();
-            this.Last_dateRange = new Sci.Win.UI.DateRange();
+            this.date_SCI = new Sci.Win.UI.DateRange();
+            this.date_Arrive = new Sci.Win.UI.DateRange();
+            this.date_Last = new Sci.Win.UI.DateRange();
             this.label12 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
@@ -61,21 +61,21 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.Over_comboBox);
-            this.panel1.Controls.Add(this.txtSupplier1);
-            this.panel1.Controls.Add(this.Cate_comboBox);
-            this.panel1.Controls.Add(this.Ref_textBox);
+            this.panel1.Controls.Add(this.txtsupplier1);
+            this.panel1.Controls.Add(this.comboBox_Over);
+            this.panel1.Controls.Add(this.combobox_Cate);
+            this.panel1.Controls.Add(this.textBox_Ref);
             this.panel1.Controls.Add(this.txtBrand1);
             this.panel1.Controls.Add(this.txtSeason1);
             this.panel1.Controls.Add(this.label13);
-            this.panel1.Controls.Add(this.SP_textBox2);
-            this.panel1.Controls.Add(this.SP_textBox1);
-            this.panel1.Controls.Add(this.Est_dateRange);
-            this.panel1.Controls.Add(this.Sew_dateRange);
+            this.panel1.Controls.Add(this.textBox_SP2);
+            this.panel1.Controls.Add(this.textBox_SP);
+            this.panel1.Controls.Add(this.date_Est);
+            this.panel1.Controls.Add(this.date_Sewing);
             this.panel1.Controls.Add(this.dateRange4);
-            this.panel1.Controls.Add(this.SCI_dateRange);
-            this.panel1.Controls.Add(this.Arr_dateRange);
-            this.panel1.Controls.Add(this.Last_dateRange);
+            this.panel1.Controls.Add(this.date_SCI);
+            this.panel1.Controls.Add(this.date_Arrive);
+            this.panel1.Controls.Add(this.date_Last);
             this.panel1.Controls.Add(this.label12);
             this.panel1.Controls.Add(this.label11);
             this.panel1.Controls.Add(this.label10);
@@ -93,68 +93,51 @@
             this.panel1.Size = new System.Drawing.Size(491, 506);
             this.panel1.TabIndex = 94;
             // 
-            // Over_comboBox
+            // txtsupplier1
             // 
-            this.Over_comboBox.BackColor = System.Drawing.Color.White;
-            this.Over_comboBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Over_comboBox.FormattingEnabled = true;
-            this.Over_comboBox.IsSupportUnselect = true;
-            this.Over_comboBox.Items.AddRange(new object[] {
+            this.txtsupplier1.DisplayBox1Binding = "";
+            this.txtsupplier1.Location = new System.Drawing.Point(192, 414);
+            this.txtsupplier1.Name = "txtsupplier1";
+            this.txtsupplier1.Size = new System.Drawing.Size(147, 23);
+            this.txtsupplier1.TabIndex = 27;
+            this.txtsupplier1.TextBox1Binding = "";
+            // 
+            // comboBox_Over
+            // 
+            this.comboBox_Over.BackColor = System.Drawing.Color.White;
+            this.comboBox_Over.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox_Over.FormattingEnabled = true;
+            this.comboBox_Over.IsSupportUnselect = true;
+            this.comboBox_Over.Items.AddRange(new object[] {
             "All",
             "Pass",
             "Fail",
             "Empty Result",
             "N/A inspection & test"});
-            this.Over_comboBox.Location = new System.Drawing.Point(192, 458);
-            this.Over_comboBox.Name = "Over_comboBox";
-            this.Over_comboBox.Size = new System.Drawing.Size(161, 24);
-            this.Over_comboBox.TabIndex = 26;
+            this.comboBox_Over.Location = new System.Drawing.Point(192, 458);
+            this.comboBox_Over.Name = "comboBox_Over";
+            this.comboBox_Over.Size = new System.Drawing.Size(161, 24);
+            this.comboBox_Over.TabIndex = 26;
             // 
-            // txtSupplier1
+            // combobox_Cate
             // 
-            this.txtSupplier1.DisplayBox1Binding = "";
-            this.txtSupplier1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtSupplier1.Location = new System.Drawing.Point(192, 415);
-            this.txtSupplier1.Margin = new System.Windows.Forms.Padding(0);
-            this.txtSupplier1.MySCIRefnoName = null;
-            this.txtSupplier1.MySuppIDName = null;
-            this.txtSupplier1.Name = "txtSupplier1";
-            this.txtSupplier1.Size = new System.Drawing.Size(243, 23);
-            this.txtSupplier1.TabIndex = 25;
+            this.combobox_Cate.BackColor = System.Drawing.Color.White;
+            this.combobox_Cate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.combobox_Cate.FormattingEnabled = true;
+            this.combobox_Cate.IsSupportUnselect = true;
+            this.combobox_Cate.Location = new System.Drawing.Point(192, 373);
+            this.combobox_Cate.Name = "combobox_Cate";
+            this.combobox_Cate.Size = new System.Drawing.Size(125, 24);
+            this.combobox_Cate.TabIndex = 24;
             // 
+            // textBox_Ref
             // 
-            // 
-            this.txtSupplier1.TextBox1.BackColor = System.Drawing.Color.White;
-            this.txtSupplier1.TextBox1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.txtSupplier1.TextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtSupplier1.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSupplier1.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtSupplier1.TextBox1.Margin = new System.Windows.Forms.Padding(0);
-            this.txtSupplier1.TextBox1.MaxLength = 6;
-            this.txtSupplier1.TextBox1.Name = "textBox1";
-            this.txtSupplier1.TextBox1.Size = new System.Drawing.Size(68, 23);
-            this.txtSupplier1.TextBox1.TabIndex = 0;
-            this.txtSupplier1.TextBox1Binding = "";
-            // 
-            // Cate_comboBox
-            // 
-            this.Cate_comboBox.BackColor = System.Drawing.Color.White;
-            this.Cate_comboBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Cate_comboBox.FormattingEnabled = true;
-            this.Cate_comboBox.IsSupportUnselect = true;
-            this.Cate_comboBox.Location = new System.Drawing.Point(192, 373);
-            this.Cate_comboBox.Name = "Cate_comboBox";
-            this.Cate_comboBox.Size = new System.Drawing.Size(125, 24);
-            this.Cate_comboBox.TabIndex = 24;
-            // 
-            // Ref_textBox
-            // 
-            this.Ref_textBox.BackColor = System.Drawing.Color.White;
-            this.Ref_textBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Ref_textBox.Location = new System.Drawing.Point(192, 332);
-            this.Ref_textBox.Name = "Ref_textBox";
-            this.Ref_textBox.Size = new System.Drawing.Size(253, 23);
-            this.Ref_textBox.TabIndex = 23;
+            this.textBox_Ref.BackColor = System.Drawing.Color.White;
+            this.textBox_Ref.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox_Ref.Location = new System.Drawing.Point(192, 332);
+            this.textBox_Ref.Name = "textBox_Ref";
+            this.textBox_Ref.Size = new System.Drawing.Size(253, 23);
+            this.textBox_Ref.TabIndex = 23;
             // 
             // txtBrand1
             // 
@@ -186,37 +169,37 @@
             this.label13.Text = "～";
             this.label13.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // SP_textBox2
+            // textBox_SP2
             // 
-            this.SP_textBox2.BackColor = System.Drawing.Color.White;
-            this.SP_textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.SP_textBox2.Location = new System.Drawing.Point(341, 204);
-            this.SP_textBox2.Name = "SP_textBox2";
-            this.SP_textBox2.Size = new System.Drawing.Size(131, 23);
-            this.SP_textBox2.TabIndex = 19;
+            this.textBox_SP2.BackColor = System.Drawing.Color.White;
+            this.textBox_SP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox_SP2.Location = new System.Drawing.Point(341, 204);
+            this.textBox_SP2.Name = "textBox_SP2";
+            this.textBox_SP2.Size = new System.Drawing.Size(131, 23);
+            this.textBox_SP2.TabIndex = 19;
             // 
-            // SP_textBox1
+            // textBox_SP
             // 
-            this.SP_textBox1.BackColor = System.Drawing.Color.White;
-            this.SP_textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.SP_textBox1.Location = new System.Drawing.Point(192, 204);
-            this.SP_textBox1.Name = "SP_textBox1";
-            this.SP_textBox1.Size = new System.Drawing.Size(125, 23);
-            this.SP_textBox1.TabIndex = 18;
+            this.textBox_SP.BackColor = System.Drawing.Color.White;
+            this.textBox_SP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox_SP.Location = new System.Drawing.Point(192, 204);
+            this.textBox_SP.Name = "textBox_SP";
+            this.textBox_SP.Size = new System.Drawing.Size(125, 23);
+            this.textBox_SP.TabIndex = 18;
             // 
-            // Est_dateRange
+            // date_Est
             // 
-            this.Est_dateRange.Location = new System.Drawing.Point(192, 165);
-            this.Est_dateRange.Name = "Est_dateRange";
-            this.Est_dateRange.Size = new System.Drawing.Size(280, 23);
-            this.Est_dateRange.TabIndex = 17;
+            this.date_Est.Location = new System.Drawing.Point(192, 165);
+            this.date_Est.Name = "date_Est";
+            this.date_Est.Size = new System.Drawing.Size(280, 23);
+            this.date_Est.TabIndex = 17;
             // 
-            // Sew_dateRange
+            // date_Sewing
             // 
-            this.Sew_dateRange.Location = new System.Drawing.Point(192, 127);
-            this.Sew_dateRange.Name = "Sew_dateRange";
-            this.Sew_dateRange.Size = new System.Drawing.Size(280, 23);
-            this.Sew_dateRange.TabIndex = 16;
+            this.date_Sewing.Location = new System.Drawing.Point(192, 127);
+            this.date_Sewing.Name = "date_Sewing";
+            this.date_Sewing.Size = new System.Drawing.Size(280, 23);
+            this.date_Sewing.TabIndex = 16;
             // 
             // dateRange4
             // 
@@ -225,26 +208,26 @@
             this.dateRange4.Size = new System.Drawing.Size(8, 23);
             this.dateRange4.TabIndex = 15;
             // 
-            // SCI_dateRange
+            // date_SCI
             // 
-            this.SCI_dateRange.Location = new System.Drawing.Point(192, 90);
-            this.SCI_dateRange.Name = "SCI_dateRange";
-            this.SCI_dateRange.Size = new System.Drawing.Size(280, 23);
-            this.SCI_dateRange.TabIndex = 14;
+            this.date_SCI.Location = new System.Drawing.Point(192, 90);
+            this.date_SCI.Name = "date_SCI";
+            this.date_SCI.Size = new System.Drawing.Size(280, 23);
+            this.date_SCI.TabIndex = 14;
             // 
-            // Arr_dateRange
+            // date_Arrive
             // 
-            this.Arr_dateRange.Location = new System.Drawing.Point(192, 53);
-            this.Arr_dateRange.Name = "Arr_dateRange";
-            this.Arr_dateRange.Size = new System.Drawing.Size(280, 23);
-            this.Arr_dateRange.TabIndex = 13;
+            this.date_Arrive.Location = new System.Drawing.Point(192, 53);
+            this.date_Arrive.Name = "date_Arrive";
+            this.date_Arrive.Size = new System.Drawing.Size(280, 23);
+            this.date_Arrive.TabIndex = 13;
             // 
-            // Last_dateRange
+            // date_Last
             // 
-            this.Last_dateRange.Location = new System.Drawing.Point(192, 18);
-            this.Last_dateRange.Name = "Last_dateRange";
-            this.Last_dateRange.Size = new System.Drawing.Size(280, 23);
-            this.Last_dateRange.TabIndex = 12;
+            this.date_Last.Location = new System.Drawing.Point(192, 18);
+            this.date_Last.Name = "date_Last";
+            this.date_Last.Size = new System.Drawing.Size(280, 23);
+            this.date_Last.TabIndex = 12;
             // 
             // label12
             // 
@@ -359,6 +342,7 @@
             this.ClientSize = new System.Drawing.Size(627, 578);
             this.Controls.Add(this.panel1);
             this.Name = "R01";
+            this.Text = "R01.Fabric Inspection & Laboratory List Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -385,20 +369,20 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
-        private Win.UI.TextBox SP_textBox2;
-        private Win.UI.TextBox SP_textBox1;
-        private Win.UI.DateRange Est_dateRange;
-        private Win.UI.DateRange Sew_dateRange;
+        private Win.UI.TextBox textBox_SP2;
+        private Win.UI.TextBox textBox_SP;
+        private Win.UI.DateRange date_Est;
+        private Win.UI.DateRange date_Sewing;
         private Win.UI.DateRange dateRange4;
-        private Win.UI.DateRange SCI_dateRange;
-        private Win.UI.DateRange Arr_dateRange;
-        private Win.UI.DateRange Last_dateRange;
+        private Win.UI.DateRange date_SCI;
+        private Win.UI.DateRange date_Arrive;
+        private Win.UI.DateRange date_Last;
         private Win.UI.Label label13;
         private Trade.Class.TxtSeason txtSeason1;
-        private Win.UI.ComboBox Over_comboBox;
-        private Trade.Class.TxtSupplier txtSupplier1;
-        private Win.UI.ComboBox Cate_comboBox;
-        private Win.UI.TextBox Ref_textBox;
+        private Win.UI.ComboBox comboBox_Over;
+        private Win.UI.ComboBox combobox_Cate;
+        private Win.UI.TextBox textBox_Ref;
         private Trade.Class.TxtBrand txtBrand1;
+        private Class.txtsupplier txtsupplier1;
     }
 }

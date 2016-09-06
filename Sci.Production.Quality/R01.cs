@@ -26,162 +26,185 @@ namespace Sci.Production.Quality
         {
             InitializeComponent();
             DataTable ORS = null;
-            string sqlm = (@" select distinct case Category
-                              when 'B' then 'Bulk'
-                              WHEN 'S' THEN 'Sample'
-                              WHEN 'M' THEN 'Material'
-                              end [Category]
-                            from Orders WHERE Category!='O'");
+            string sqlm = (@" 
+                        select
+                             Category=name
+                        from  dbo.DropDownList
+                        where type = 'Category' and id != 'O'
+                        ");
             DBProxy.Current.Select("", sqlm, out ORS);
             ORS.Rows.Add(new string[] { "" });
             ORS.DefaultView.Sort = "Category";
-            this.Cate_comboBox.DataSource = ORS;
-            this.Cate_comboBox.ValueMember = "Category";
-            this.Cate_comboBox.DisplayMember = "Category";
-            this.Cate_comboBox.SelectedIndex = 1;
-            this.Over_comboBox.SelectedIndex = 0;
+            this.combobox_Cate.DataSource = ORS;
+            this.combobox_Cate.ValueMember = "Category";
+            this.combobox_Cate.DisplayMember = "Category";
+            this.combobox_Cate.SelectedIndex = 1;
+            this.comboBox_Over.SelectedIndex = 0;
             
             print.Enabled = false;
         }
         protected override bool ValidateInput()
         {
-            bool dateRange1_Empty = !this.Last_dateRange.HasValue, dateRange2_Empty = !this.Arr_dateRange.HasValue, dateRange3_Empty = !this.SCI_dateRange.HasValue, dateRange4_Empty = !this.Sew_dateRange.HasValue, dateRange5_Empty = !this.Est_dateRange.HasValue,
-                textbox1_Empty = this.SP_textBox1.Text.Empty(), textbox2_Empty = this.SP_textBox2.Text.Empty(), txtSEA_Empty = this.txtSeason1.Text.Empty()
-           , txtBrand_Empty = this.txtBrand1.Text.Empty(), txtRef_Empty = this.Ref_textBox.Text.Empty(), Cate_comboBox_Empty = this.Cate_comboBox.Text.Empty(), Supp_Empty = this.txtSupplier1.Text.Empty(), Over_comboBox_Empty = this.Over_comboBox.Text.Empty();
+            bool date_Last_Empty = !this.date_Last.HasValue, date_Arrive_Empty = !this.date_Arrive.HasValue, date_SCI_Empty = !this.date_SCI.HasValue, date_Sewing_Empty = !this.date_Sewing.HasValue, date_Est_Empty = !this.date_Est.HasValue,
+                textBox_SP_Empty = this.textBox_SP.Text.Empty(), textBox_SP2_Empty = this.textBox_SP2.Text.Empty(), txtSeason_Empty = this.txtSeason1.Text.Empty()
+           , txtBrand_Empty = this.txtBrand1.Text.Empty(), txtRef_Empty = this.textBox_Ref.Text.Empty(), Cate_comboBox_Empty = this.combobox_Cate.Text.Empty(), Supp_Empty = this.txtsupplier1.Text.Empty(), Over_comboBox_Empty = this.comboBox_Over.Text.Empty();
 
-            if (dateRange1_Empty && dateRange2_Empty && dateRange3_Empty && textbox1_Empty && textbox2_Empty && dateRange4_Empty && dateRange5_Empty && textbox1_Empty && textbox2_Empty)
+            if (date_Last_Empty && date_Arrive_Empty && date_SCI_Empty && textBox_SP_Empty && textBox_SP2_Empty && date_Sewing_Empty && date_Est_Empty )
             {
                 MyUtility.Msg.ErrorBox("Please select 'Last Inspection Date' or 'Arrive W/H Date' or 'SCI Delivery' or 'Sewing in-line Date' or 'Est. Cutting Date' or 'SP#'  at least one field entry");
 
-                Arr_dateRange.Focus();
+                date_Arrive.Focus();
 
                 return false;
             }
 
-            LastDate1 = Last_dateRange.Value1;
-            LastDate2 = Last_dateRange.Value2;
-            ArrDate1 = Arr_dateRange.Value1;
-            ArrDate2 = Arr_dateRange.Value2;
-            SCIDate1 = SCI_dateRange.Value1;
-            SCIDate2 = SCI_dateRange.Value2;
-            SewDate1 = Sew_dateRange.Value1;
-            SewDate2 = Sew_dateRange.Value2;
-            Est1 = Est_dateRange.Value1;
-            Est2 = Est_dateRange.Value2;
-            sp1 = SP_textBox1.Text.ToString();
-            sp2 = SP_textBox2.Text.ToString();
+            LastDate1 = date_Last.Value1;
+            LastDate2 = date_Last.Value2;
+            ArrDate1 = date_Arrive.Value1;
+            ArrDate2 = date_Arrive.Value2;
+            SCIDate1 = date_SCI.Value1;
+            SCIDate2 = date_SCI.Value2;
+            SewDate1 = date_Sewing.Value1;
+            SewDate2 = date_Sewing.Value2;
+            Est1 = date_Est.Value1;
+            Est2 = date_Est.Value2;
+            sp1 = textBox_SP.Text.ToString();
+            sp2 = textBox_SP2.Text.ToString();
             Sea = txtSeason1.Text;
             Brand = txtBrand1.Text;
-            Ref = Ref_textBox.Text.ToString();
-            Cate = Cate_comboBox.SelectedItem.ToString();
-            Supp = txtSupplier1.Text;
-            Over = Over_comboBox.SelectedItem.ToString();
+            Ref = textBox_Ref.Text.ToString();
+            Cate = combobox_Cate.Text;
+            Supp = txtsupplier1.Text;
+            Over = comboBox_Over.SelectedItem.ToString();
 
             lis = new List<SqlParameter>();
-            string sqlWhere = ""; 
+            string sqlWhere = "",RWhere ="",OWhere=""; 
             List<string> sqlWheres = new List<string>();
+            List<string> RWheres = new List<string>();
+            List<string> OWheres = new List<string>();
             #region --組WHERE--
 
-            if (!this.Last_dateRange.Value1.Empty() && !this.Last_dateRange.Value2.Empty())
+            if (!this.date_Last.Value1.Empty() && !this.date_Last.Value2.Empty())
             {
                 sqlWheres.Add("F.PhysicalDate between @LastDate1 and @LastDate2");
                 lis.Add(new SqlParameter("@LastDate1", LastDate1));
                 lis.Add(new SqlParameter("@LastDate2", LastDate2));
-            } if (!this.Arr_dateRange.Value1.Empty() && !this.Arr_dateRange.Value2.Empty())
+            } if (!this.date_Arrive.Value1.Empty() && !this.date_Arrive.Value2.Empty())
             {
-                sqlWheres.Add("R.WhseArrival between @ArrDate1 and @ArrDate2");
+                RWheres.Add("R.WhseArrival between @ArrDate1 and @ArrDate2");
                 lis.Add(new SqlParameter("@ArrDate1", ArrDate1));
                 lis.Add(new SqlParameter("@ArrDate2", ArrDate2));
-            } if (!this.SCI_dateRange.Value1.Empty() && !this.SCI_dateRange.Value2.Empty())
+            } if (!this.date_SCI.Value1.Empty() && !this.date_SCI.Value2.Empty())
             {
-                sqlWheres.Add("O.SciDelivery between @SCIDate1 and @SCIDate2");
+                OWheres.Add("O.SciDelivery between @SCIDate1 and @SCIDate2");
                 lis.Add(new SqlParameter("@SCIDate1", SCIDate1));
                 lis.Add(new SqlParameter("@SCIDate2", SCIDate2));
-            } if (!this.Sew_dateRange.Value1.Empty() && !this.Sew_dateRange.Value2.Empty())
+            } if (!this.date_Sewing.Value1.Empty() && !this.date_Sewing.Value2.Empty())
             {
-                sqlWheres.Add("O.SewInLine between @SewDate1 and @SewDate2");
+                OWheres.Add("O.SewInLine between @SewDate1 and @SewDate2");
                 lis.Add(new SqlParameter("@SewDate1", SewDate1));
                 lis.Add(new SqlParameter("@SewDate2", SewDate2));
-            } if (!this.Est_dateRange.Value1.Empty() && !this.Est_dateRange.Value2.Empty())
+            } if (!this.date_Est.Value1.Empty() && !this.date_Est.Value2.Empty())
             {
-                sqlWheres.Add("O.CutInLine between @Est1 and @Est2");
+                OWheres.Add("O.CutInLine between @Est1 and @Est2");
                 lis.Add(new SqlParameter("@Est1", Est1));
                 lis.Add(new SqlParameter("@Est2", Est2));
-            } if (!this.SP_textBox1.Text.Empty())
+            } if (!this.textBox_SP.Text.Empty())
             {
-                sqlWheres.Add("O.Id between @sp1 and @sp2");
+                OWheres.Add("O.Id between @sp1 and @sp2");
                 lis.Add(new SqlParameter("@sp1", sp1));
                 lis.Add(new SqlParameter("@sp2", sp2));
             } if (!this.txtSeason1.Text.Empty())
             {
-                sqlWheres.Add("O.SeasonID = @Sea");
+                OWheres.Add("O.SeasonID = @Sea");
                 lis.Add(new SqlParameter("@Sea", Sea));
             } if (!this.txtBrand1.Text.Empty())
             {
-                sqlWheres.Add("O.BrandID = @Brand");
+                OWheres.Add("O.BrandID = @Brand");
                 lis.Add(new SqlParameter("@Brand", Brand));
-            } if (!this.Ref_textBox.Text.Empty())
+            } if (!this.textBox_Ref.Text.Empty())
             {
                 sqlWheres.Add("P.Refno = @Ref");
                 lis.Add(new SqlParameter("@Ref", Ref));
-            } if (!this.Cate_comboBox.SelectedItem.ToString().Empty())
+            } if (!this.combobox_Cate.SelectedItem.ToString().Empty())
             {
-                sqlWheres.Add("O.Category = @Cate");
+                sqlWheres.Add("D.Category = @Cate");
                 lis.Add(new SqlParameter("@Cate", Cate));
-            } if (this.txtSupplier1.Text.Empty())
+            } if (this.txtsupplier1.Text.Empty())
             {
                 lis.Add(new SqlParameter("@Supp", Supp));
 
-            } if (this.Over_comboBox.Text == "Pass")
+            } if (this.comboBox_Over.Text == "Pass")
             {
-                sqlWheres.Add("dbo.GetFirResult(fir.id) = 'Pass'");
+                sqlWheres.Add("dbo.GetFirResult(F.id) = 'Pass'");
 
-            } if (this.Over_comboBox.Text == "Fail")
+            } if (this.comboBox_Over.Text == "Fail")
             {
-                sqlWheres.Add("dbo.GetFirResult(fir.id) = 'Faill'");
+                sqlWheres.Add("dbo.GetFirResult(F.id) = 'Faill'");
 
-            } if (this.Over_comboBox.Text == "Empty Result")
+            } if (this.comboBox_Over.Text == "Empty Result")
             {
-                sqlWheres.Add("dbo.GetFirResult(fir.id) = ' '");
+                sqlWheres.Add("dbo.GetFirResult(F.id) = ' '");
 
-            } if (this.Over_comboBox.Text == "N/A inspection & test")
+            } if (this.comboBox_Over.Text == "N/A inspection & test")
             {
-                sqlWheres.Add("dbo.GetFirResult(fir.id) = 'None'");
+                sqlWheres.Add("dbo.GetFirResult(F.id) = 'None'");
 
             }
             
             #endregion
             sqlWhere = string.Join(" and ", sqlWheres);
+            OWhere = string.Join(" and ", OWheres);
             if (!sqlWhere.Empty())
             {
                 sqlWhere = " where " + sqlWhere;
             }
+            if (!RWhere.Empty())
+            {
+                RWhere = " where " + RWhere;
+            }
+            if (!OWhere.Empty())
+            {
+                OWhere = " where " + OWhere;
+            }
             #region --撈ListExcel資料--
 
             cmd = string.Format(@"
-                SELECT F.POID,(F.SEQ1+'-'+F.SEQ2)SEQ,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
-	                   R.ExportId,R.InvNo,R.WhseArrival,rd.StockQty,
-	                   (SELECT MinSciDelivery FROM  DBO.GetSCI(F.Poid,O.Category))[MinSciDelivery],
-	                   (SELECT MinBuyerDelivery  FROM  DBO.GetSCI(F.Poid,O.Category))[MinBuyerDelivery],
-	                   F.Refno,P.ColorID,(SP.SuppID+'-'+s.AbbEN)Supplier,C.WeaveTypeID,
-	                   IIF(F.Nonphysical = 1,'Y',' ')[N/A Physical],F.Result,F.Physical,F.PhysicalDate,
-	                   F.TotalInspYds,F.Weight,F.WeightDate,F.ShadeBond,F.ShadeBondDate,F.Continuity,
-	                   F.ContinuityDate,L.Result,IIF(L.nonCrocking=1,'Y',' ')[N/A Crocking],L.Crocking,
-	                   L.CrockingDate,IIF(L.nonHeat=1,'Y',' ')[N/A Heat Shrinkage],L.Heat,L.HeatDate,
-	                   IIF(L.nonWash=1,'Y',' ' )[N/A Wash Shrinkage],L.Wash,L.WashDate,OD.Result,CD.Result
-                FROM   FIR F
-                LEFT JOIN Orders O ON O.POID = F.POID
-                LEFT JOIN Receiving_Detail RD on RD.Id = F.Id
-                LEFT JOIN Receiving R ON  R.ID = RD.Id
-                LEFT JOIN  PO_Supp_Detail P ON P.ID=F.POID and P.seq1 = F.SEQ1 and P.seq2 = F.Seq2
-                inner join PO_Supp SP on SP.id = P.ID 
-                inner join supp s on s.id = SP.SuppID AND SP.id = F.Poid and SP.seq1 = F.Seq1
-                LEFT JOIN Fabric C ON C.SCIRefno = F.SCIRefno
-                LEFT JOIN FIR_Laboratory L ON L.CrockingEncode=1 AND L.ID = F.ID AND L.SEQ1 = F.SEQ1 AND L.SEQ2 = F.SEQ2
-                LEFT JOIN Oven OV ON OV.POID = F.POID
-                INNER JOIN Oven_Detail OD ON OD.ID= OV.ID AND OD.SEQ1 = F.SEQ1 AND OD.SEQ2 = F.SEQ2 AND OV.Status ='Confirmed'
-                INNER JOIN ColorFastness CF ON CF.Status = 'Confirmed'  AND CF.POID = F.POID 
-                INNER JOIN ColorFastness_Detail CD ON CD.ID = CF.ID AND CD.SEQ1=F.SEQ1 AND CD.SEQ2 = F.SEQ2" + sqlWhere );
+                        select  F.POID,(F.SEQ1+'-'+F.SEQ2)SEQ,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
+	                            t.ExportId,t.InvNo,t.WhseArrival,t.StockQty,
+	                            (SELECT MinSciDelivery FROM  DBO.GetSCI(F.Poid,O.Category))[MinSciDelivery],
+	                            (SELECT MinBuyerDelivery  FROM  DBO.GetSCI(F.Poid,O.Category))[MinBuyerDelivery],
+	                            F.Refno,P.ColorID,(SP.SuppID+'-'+s.AbbEN)Supplier,C.WeaveTypeID,
+	                            IIF(F.Nonphysical = 1,'Y',' ')[N/A Physical],F.Result,F.Physical,F.PhysicalDate,
+	                            F.TotalInspYds,F.Weight,F.WeightDate,F.ShadeBond,F.ShadeBondDate,F.Continuity,
+	                            F.ContinuityDate,L.Result,IIF(L.nonCrocking=1,'Y',' ')[N/A Crocking],L.Crocking,
+	                            L.CrockingDate,IIF(L.nonHeat=1,'Y',' ')[N/A Heat Shrinkage],L.Heat,L.HeatDate,
+	                            IIF(L.nonWash=1,'Y',' ' )[N/A Wash Shrinkage],L.Wash,L.WashDate,V.Result,CFD.Result
+                        from dbo.FIR F
+                        inner join (select distinct R.WhseArrival,R.InvNo,R.ExportId,R.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty
+			                        from dbo.Receiving R
+			                        inner join dbo.Receiving_Detail RD on RD.Id = R.Id"
+                                    +RWhere+@" 
+			                        ) t
+                        on t.PoId = F.POID and t.Seq1 = F.SEQ1 and t.Seq2 = F.SEQ2
+                        inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category from dbo.Orders o "
+                                    +OWhere+@"
+		                           ) O on O.poid = F.POID
+                        OUTER APPLY( select Category=name
+                                     from  dbo.DropDownList
+                                     where type = 'Category' and id != 'O')D
+                        inner join dbo.PO_Supp SP on SP.id = F.POID and SP.SEQ1 = F.SEQ1 and SP.SEQ1 = F.SEQ2
+                        inner join dbo.PO_Supp_Detail P on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
+                        OUTER APPLY(SELECT * FROM  supp s WHERE s.id = SP.SuppID AND SP.id = F.Poid and SP.seq1 = F.Seq1)s
+                        OUTER APPLY(SELECT * FROM  Fabric C WHERE C.SCIRefno = F.SCIRefno)C
+                        OUTER APPLY(SELECT * FROM  FIR_Laboratory L WHERE L.CrockingEncode=1 AND L.ID = F.ID AND L.SEQ1 = F.SEQ1 AND L.SEQ1 = F.SEQ2)L
+                        OUTER APPLY(select od.Result from dbo.Oven ov 
+                        inner join dbo.Oven_Detail od on od.ID = ov.ID
+                        where ov.POID=F.POID and od.SEQ1=F.Seq1 and seq2=F.Seq2 and ov.Status='Confirmed'
+                        )V
+                        OUTER APPLY(select cd.Result from dbo.ColorFastness CF inner join dbo.ColorFastness_Detail cd on cd.ID = CF.ID
+                        where CF.Status = 'Confirmed' and CF.POID=F.POID and cd.SEQ1=F.Seq1 and cd.seq2=F.Seq2
+                        )CFD" + sqlWhere );
             #endregion
             return base.ValidateInput();
         }
