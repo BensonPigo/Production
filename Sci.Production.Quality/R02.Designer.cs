@@ -29,6 +29,20 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtsupplier = new Sci.Production.Class.txtsupplier();
+            this.comboOverallResSta = new Sci.Win.UI.ComboBox();
+            this.comboCategory = new Sci.Win.UI.ComboBox();
+            this.txtRefno = new Sci.Win.UI.TextBox();
+            this.txtBrand = new Sci.Trade.Class.TxtBrand();
+            this.txtSeason = new Sci.Trade.Class.TxtSeason();
+            this.label13 = new Sci.Win.UI.Label();
+            this.txtSPEnd = new Sci.Win.UI.TextBox();
+            this.txtSPStart = new Sci.Win.UI.TextBox();
+            this.DateEstCutting = new Sci.Win.UI.DateRange();
+            this.DateSewInLine = new Sci.Win.UI.DateRange();
+            this.dateRange4 = new Sci.Win.UI.DateRange();
+            this.DateSCIDelivery = new Sci.Win.UI.DateRange();
+            this.DateArriveWH = new Sci.Win.UI.DateRange();
             this.label12 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
@@ -40,39 +54,25 @@
             this.label4 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
-            this.comboBox_Over = new Sci.Win.UI.ComboBox();
-            this.textBox_Cate = new Sci.Win.UI.ComboBox();
-            this.textBox_Ref = new Sci.Win.UI.TextBox();
-            this.txtBrand1 = new Sci.Trade.Class.TxtBrand();
-            this.txtSeason1 = new Sci.Trade.Class.TxtSeason();
-            this.label13 = new Sci.Win.UI.Label();
-            this.textBox_SP2 = new Sci.Win.UI.TextBox();
-            this.textBox_SP = new Sci.Win.UI.TextBox();
-            this.date_Est = new Sci.Win.UI.DateRange();
-            this.date_Sewing = new Sci.Win.UI.DateRange();
-            this.dateRange4 = new Sci.Win.UI.DateRange();
-            this.date_SCI = new Sci.Win.UI.DateRange();
-            this.date_Arrive = new Sci.Win.UI.DateRange();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.txtsupplier1);
-            this.panel1.Controls.Add(this.comboBox_Over);
-            this.panel1.Controls.Add(this.textBox_Cate);
-            this.panel1.Controls.Add(this.textBox_Ref);
-            this.panel1.Controls.Add(this.txtBrand1);
-            this.panel1.Controls.Add(this.txtSeason1);
+            this.panel1.Controls.Add(this.txtsupplier);
+            this.panel1.Controls.Add(this.comboOverallResSta);
+            this.panel1.Controls.Add(this.comboCategory);
+            this.panel1.Controls.Add(this.txtRefno);
+            this.panel1.Controls.Add(this.txtBrand);
+            this.panel1.Controls.Add(this.txtSeason);
             this.panel1.Controls.Add(this.label13);
-            this.panel1.Controls.Add(this.textBox_SP2);
-            this.panel1.Controls.Add(this.textBox_SP);
-            this.panel1.Controls.Add(this.date_Est);
-            this.panel1.Controls.Add(this.date_Sewing);
+            this.panel1.Controls.Add(this.txtSPEnd);
+            this.panel1.Controls.Add(this.txtSPStart);
+            this.panel1.Controls.Add(this.DateEstCutting);
+            this.panel1.Controls.Add(this.DateSewInLine);
             this.panel1.Controls.Add(this.dateRange4);
-            this.panel1.Controls.Add(this.date_SCI);
-            this.panel1.Controls.Add(this.date_Arrive);
+            this.panel1.Controls.Add(this.DateSCIDelivery);
+            this.panel1.Controls.Add(this.DateArriveWH);
             this.panel1.Controls.Add(this.label12);
             this.panel1.Controls.Add(this.label11);
             this.panel1.Controls.Add(this.label10);
@@ -88,6 +88,135 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(472, 466);
             this.panel1.TabIndex = 94;
+            // 
+            // txtsupplier
+            // 
+            this.txtsupplier.DisplayBox1Binding = "";
+            this.txtsupplier.Location = new System.Drawing.Point(174, 380);
+            this.txtsupplier.Name = "txtsupplier";
+            this.txtsupplier.Size = new System.Drawing.Size(147, 23);
+            this.txtsupplier.TabIndex = 41;
+            this.txtsupplier.TextBox1Binding = "";
+            // 
+            // comboOverallResSta
+            // 
+            this.comboOverallResSta.BackColor = System.Drawing.Color.White;
+            this.comboOverallResSta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboOverallResSta.FormattingEnabled = true;
+            this.comboOverallResSta.IsSupportUnselect = true;
+            this.comboOverallResSta.Items.AddRange(new object[] {
+            "All",
+            "Pass",
+            "Fail",
+            "Empty Result",
+            "N/A inspection & test"});
+            this.comboOverallResSta.Location = new System.Drawing.Point(174, 424);
+            this.comboOverallResSta.Name = "comboOverallResSta";
+            this.comboOverallResSta.Size = new System.Drawing.Size(161, 24);
+            this.comboOverallResSta.TabIndex = 40;
+            // 
+            // comboCategory
+            // 
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(174, 339);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.Size = new System.Drawing.Size(125, 24);
+            this.comboCategory.TabIndex = 39;
+            // 
+            // txtRefno
+            // 
+            this.txtRefno.BackColor = System.Drawing.Color.White;
+            this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefno.Location = new System.Drawing.Point(174, 298);
+            this.txtRefno.Name = "txtRefno";
+            this.txtRefno.Size = new System.Drawing.Size(253, 23);
+            this.txtRefno.TabIndex = 38;
+            // 
+            // txtBrand
+            // 
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(174, 257);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(114, 23);
+            this.txtBrand.TabIndex = 37;
+            // 
+            // txtSeason
+            // 
+            this.txtSeason.BackColor = System.Drawing.Color.White;
+            this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeason.Location = new System.Drawing.Point(174, 215);
+            this.txtSeason.myBrandName = null;
+            this.txtSeason.Name = "txtSeason";
+            this.txtSeason.Size = new System.Drawing.Size(136, 23);
+            this.txtSeason.TabIndex = 36;
+            // 
+            // label13
+            // 
+            this.label13.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.label13.Lines = 0;
+            this.label13.Location = new System.Drawing.Point(302, 170);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(22, 23);
+            this.label13.TabIndex = 35;
+            this.label13.Text = "～";
+            this.label13.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // txtSPEnd
+            // 
+            this.txtSPEnd.BackColor = System.Drawing.Color.White;
+            this.txtSPEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPEnd.Location = new System.Drawing.Point(323, 170);
+            this.txtSPEnd.Name = "txtSPEnd";
+            this.txtSPEnd.Size = new System.Drawing.Size(131, 23);
+            this.txtSPEnd.TabIndex = 34;
+            // 
+            // txtSPStart
+            // 
+            this.txtSPStart.BackColor = System.Drawing.Color.White;
+            this.txtSPStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPStart.Location = new System.Drawing.Point(174, 170);
+            this.txtSPStart.Name = "txtSPStart";
+            this.txtSPStart.Size = new System.Drawing.Size(125, 23);
+            this.txtSPStart.TabIndex = 33;
+            // 
+            // DateEstCutting
+            // 
+            this.DateEstCutting.Location = new System.Drawing.Point(174, 131);
+            this.DateEstCutting.Name = "DateEstCutting";
+            this.DateEstCutting.Size = new System.Drawing.Size(280, 23);
+            this.DateEstCutting.TabIndex = 32;
+            // 
+            // DateSewInLine
+            // 
+            this.DateSewInLine.Location = new System.Drawing.Point(174, 93);
+            this.DateSewInLine.Name = "DateSewInLine";
+            this.DateSewInLine.Size = new System.Drawing.Size(280, 23);
+            this.DateSewInLine.TabIndex = 31;
+            // 
+            // dateRange4
+            // 
+            this.dateRange4.Location = new System.Drawing.Point(247, 93);
+            this.dateRange4.Name = "dateRange4";
+            this.dateRange4.Size = new System.Drawing.Size(8, 23);
+            this.dateRange4.TabIndex = 30;
+            // 
+            // DateSCIDelivery
+            // 
+            this.DateSCIDelivery.Location = new System.Drawing.Point(174, 56);
+            this.DateSCIDelivery.Name = "DateSCIDelivery";
+            this.DateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.DateSCIDelivery.TabIndex = 29;
+            // 
+            // DateArriveWH
+            // 
+            this.DateArriveWH.Location = new System.Drawing.Point(174, 19);
+            this.DateArriveWH.Name = "DateArriveWH";
+            this.DateArriveWH.Size = new System.Drawing.Size(280, 23);
+            this.DateArriveWH.TabIndex = 28;
             // 
             // label12
             // 
@@ -188,135 +317,6 @@
             this.label2.TabIndex = 12;
             this.label2.Text = "Arrive W/H Date........:";
             // 
-            // txtsupplier1
-            // 
-            this.txtsupplier1.DisplayBox1Binding = "";
-            this.txtsupplier1.Location = new System.Drawing.Point(174, 380);
-            this.txtsupplier1.Name = "txtsupplier1";
-            this.txtsupplier1.Size = new System.Drawing.Size(147, 23);
-            this.txtsupplier1.TabIndex = 41;
-            this.txtsupplier1.TextBox1Binding = "";
-            // 
-            // comboBox_Over
-            // 
-            this.comboBox_Over.BackColor = System.Drawing.Color.White;
-            this.comboBox_Over.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox_Over.FormattingEnabled = true;
-            this.comboBox_Over.IsSupportUnselect = true;
-            this.comboBox_Over.Items.AddRange(new object[] {
-            "All",
-            "Pass",
-            "Fail",
-            "Empty Result",
-            "N/A inspection & test"});
-            this.comboBox_Over.Location = new System.Drawing.Point(174, 424);
-            this.comboBox_Over.Name = "comboBox_Over";
-            this.comboBox_Over.Size = new System.Drawing.Size(161, 24);
-            this.comboBox_Over.TabIndex = 40;
-            // 
-            // textBox_Cate
-            // 
-            this.textBox_Cate.BackColor = System.Drawing.Color.White;
-            this.textBox_Cate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox_Cate.FormattingEnabled = true;
-            this.textBox_Cate.IsSupportUnselect = true;
-            this.textBox_Cate.Location = new System.Drawing.Point(174, 339);
-            this.textBox_Cate.Name = "textBox_Cate";
-            this.textBox_Cate.Size = new System.Drawing.Size(125, 24);
-            this.textBox_Cate.TabIndex = 39;
-            // 
-            // textBox_Ref
-            // 
-            this.textBox_Ref.BackColor = System.Drawing.Color.White;
-            this.textBox_Ref.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox_Ref.Location = new System.Drawing.Point(174, 298);
-            this.textBox_Ref.Name = "textBox_Ref";
-            this.textBox_Ref.Size = new System.Drawing.Size(253, 23);
-            this.textBox_Ref.TabIndex = 38;
-            // 
-            // txtBrand1
-            // 
-            this.txtBrand1.BackColor = System.Drawing.Color.White;
-            this.txtBrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand1.Location = new System.Drawing.Point(174, 257);
-            this.txtBrand1.Name = "txtBrand1";
-            this.txtBrand1.Size = new System.Drawing.Size(114, 23);
-            this.txtBrand1.TabIndex = 37;
-            // 
-            // txtSeason1
-            // 
-            this.txtSeason1.BackColor = System.Drawing.Color.White;
-            this.txtSeason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeason1.Location = new System.Drawing.Point(174, 215);
-            this.txtSeason1.myBrandName = null;
-            this.txtSeason1.Name = "txtSeason1";
-            this.txtSeason1.Size = new System.Drawing.Size(136, 23);
-            this.txtSeason1.TabIndex = 36;
-            // 
-            // label13
-            // 
-            this.label13.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(302, 170);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(22, 23);
-            this.label13.TabIndex = 35;
-            this.label13.Text = "～";
-            this.label13.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // textBox_SP2
-            // 
-            this.textBox_SP2.BackColor = System.Drawing.Color.White;
-            this.textBox_SP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox_SP2.Location = new System.Drawing.Point(323, 170);
-            this.textBox_SP2.Name = "textBox_SP2";
-            this.textBox_SP2.Size = new System.Drawing.Size(131, 23);
-            this.textBox_SP2.TabIndex = 34;
-            // 
-            // textBox_SP
-            // 
-            this.textBox_SP.BackColor = System.Drawing.Color.White;
-            this.textBox_SP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox_SP.Location = new System.Drawing.Point(174, 170);
-            this.textBox_SP.Name = "textBox_SP";
-            this.textBox_SP.Size = new System.Drawing.Size(125, 23);
-            this.textBox_SP.TabIndex = 33;
-            // 
-            // date_Est
-            // 
-            this.date_Est.Location = new System.Drawing.Point(174, 131);
-            this.date_Est.Name = "date_Est";
-            this.date_Est.Size = new System.Drawing.Size(280, 23);
-            this.date_Est.TabIndex = 32;
-            // 
-            // date_Sewing
-            // 
-            this.date_Sewing.Location = new System.Drawing.Point(174, 93);
-            this.date_Sewing.Name = "date_Sewing";
-            this.date_Sewing.Size = new System.Drawing.Size(280, 23);
-            this.date_Sewing.TabIndex = 31;
-            // 
-            // dateRange4
-            // 
-            this.dateRange4.Location = new System.Drawing.Point(247, 93);
-            this.dateRange4.Name = "dateRange4";
-            this.dateRange4.Size = new System.Drawing.Size(8, 23);
-            this.dateRange4.TabIndex = 30;
-            // 
-            // date_SCI
-            // 
-            this.date_SCI.Location = new System.Drawing.Point(174, 56);
-            this.date_SCI.Name = "date_SCI";
-            this.date_SCI.Size = new System.Drawing.Size(280, 23);
-            this.date_SCI.TabIndex = 29;
-            // 
-            // date_Arrive
-            // 
-            this.date_Arrive.Location = new System.Drawing.Point(174, 19);
-            this.date_Arrive.Name = "date_Arrive";
-            this.date_Arrive.Size = new System.Drawing.Size(280, 23);
-            this.date_Arrive.TabIndex = 28;
-            // 
             // R02
             // 
             this.ClientSize = new System.Drawing.Size(627, 509);
@@ -348,19 +348,19 @@
         private Win.UI.Label label4;
         private Win.UI.Label label3;
         private Win.UI.Label label2;
-        private Class.txtsupplier txtsupplier1;
-        private Win.UI.ComboBox comboBox_Over;
-        private Win.UI.ComboBox textBox_Cate;
-        private Win.UI.TextBox textBox_Ref;
-        private Trade.Class.TxtBrand txtBrand1;
-        private Trade.Class.TxtSeason txtSeason1;
+        private Class.txtsupplier txtsupplier;
+        private Win.UI.ComboBox comboOverallResSta;
+        private Win.UI.ComboBox comboCategory;
+        private Win.UI.TextBox txtRefno;
+        private Trade.Class.TxtBrand txtBrand;
+        private Trade.Class.TxtSeason txtSeason;
         private Win.UI.Label label13;
-        private Win.UI.TextBox textBox_SP2;
-        private Win.UI.TextBox textBox_SP;
-        private Win.UI.DateRange date_Est;
-        private Win.UI.DateRange date_Sewing;
+        private Win.UI.TextBox txtSPEnd;
+        private Win.UI.TextBox txtSPStart;
+        private Win.UI.DateRange DateEstCutting;
+        private Win.UI.DateRange DateSewInLine;
         private Win.UI.DateRange dateRange4;
-        private Win.UI.DateRange date_SCI;
-        private Win.UI.DateRange date_Arrive;
+        private Win.UI.DateRange DateSCIDelivery;
+        private Win.UI.DateRange DateArriveWH;
     }
 }
