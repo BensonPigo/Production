@@ -13,7 +13,7 @@ GO
 -- Create date: <2016/08/18>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE [dbo].[exp_Pullout]
+Create PROCEDURE [dbo].[exp_Pullout]
 	
 AS
 BEGIN
@@ -44,7 +44,7 @@ SELECT *
 INTO  #CUR_PULLOUT1
 FROM 
 Production.dbo.Pullout
-WHERE (LockDate BETWEEN (select DATEADD(DAY,1,PullLock) from Production.dbo.System) AND GETDATE() OR LockDate IS NULL) 
+WHERE (LockDate BETWEEN (select DATEADD(DAY,1,PullLock) from Production.dbo.System) AND CONVERT(date, GETDATE()) OR LockDate IS NULL) 
 AND Status <> 'New'
 ORDER BY Id
 
@@ -74,7 +74,7 @@ ORDER BY B.ID
 
 SELECT b.* ,'G' AS DataFrom ,'             'AS HCID
 INTO  #tmpFtyBooking1
-FROM Pullout_Detail  a, Production.dbo.GMTBooking b 
+FROM Production.dbo.Pullout_Detail  a, Production.dbo.GMTBooking b 
 WHERE a. INVNo = b.id 
 ORDER BY b.id 
 
@@ -82,10 +82,10 @@ Update #tmpFtyBooking1 set Status = 'N'
 
 select a.PackingListID as ID
 , po1.PulloutDate as  InvDate, po1.PulloutDate as ETD, po1.PulloutDate as FCRDate, p1.BrandID, 'ZZ' as Dest , p1. FactoryID as Shupper
-, p1.ShipQty as TotalShipQty, IIF(po1.LockDate is null,'N','F') as Status, (select top(1) PackingListType from Pullout_Detail where PackingListID = a.PackingListID) as DataFrom, p1. ExpressID as HCID
+, p1.ShipQty as TotalShipQty, IIF(po1.LockDate is null,'N','F') as Status, (select top(1) PackingListType from Production.dbo.Pullout_Detail where PackingListID = a.PackingListID) as DataFrom, p1. ExpressID as HCID
 into #tmpFtyBooking2
  from (	
-select distinct PackingListID from Pullout_Detail where (PackingListType = 'F' or PackingListType = 'I') and PackingListID <> ''
+select distinct PackingListID from Production.dbo.Pullout_Detail where (PackingListType = 'F' or PackingListType = 'I') and PackingListID <> ''
 except
 select ID as PackingListID from #tmpFtyBooking1
 ) a
@@ -115,7 +115,7 @@ from #tmpFtyBooking2
 
 
 UPDATE  Production.dbo.Pullout
-SET SendToTPE = GETDATE()
+SET SendToTPE = CONVERT(date, GETDATE())
 FROM Production.dbo.Pullout a
 INNER JOIN #CUR_PULLOUT1 b ON a.ID=b.ID
 WHERE a.SendToTPE IS NULL 

@@ -6,7 +6,7 @@ DailyTransfer/exp_Debit.sql -text
 DailyTransfer/exp_Export.sql -text
 DailyTransfer/exp_Express.sql -text
 DailyTransfer/exp_Machine.sql -text
-DailyTransfer/exp_Order.sql -text
+DailyTransfer/exp_Order.sql -text svneol=unset#unset
 DailyTransfer/exp_OrderSchedule.sql -text
 DailyTransfer/exp_Part.sql -text
 DailyTransfer/exp_Pass1.sql -text

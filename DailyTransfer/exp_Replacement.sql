@@ -7,13 +7,12 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 -- =============================================
 -- Author:		<Willy S01910>
 -- Create date: <2016/08/17>
 -- Description:	<exp_Replacement>
 -- =============================================
-CREATE PROCEDURE [dbo].[exp_Replacement]
+Create PROCEDURE [dbo].[exp_Replacement]
 	
 AS
 
@@ -40,7 +39,7 @@ ORDER BY Id
 
 SELECT b.* 
 INTO ReplacementReport_Detail
-FROM ReplacementReport a, Production.dbo.ReplacementReport_Detail b
+FROM Production.dbo.ReplacementReport a, Production.dbo.ReplacementReport_Detail b
 WHERE a.Id = b.Id 
 ORDER BY b.Id 
 

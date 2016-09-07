@@ -39,14 +39,14 @@ SELECT * INTO Express
 FROM [Production].dbo.Express  WHERE (AddDate >= DATEADD(DAY, -30, GETDATE()) or EditDate >= DATEADD(DAY, -30, GETDATE())) ORDER BY Id
 
 SELECT B.* INTO Express_Detail
-FROM  Express  A, [Production].dbo.Express_Detail  B WHERE A.ID = B.ID ORDER BY B.ID 
+FROM  Production.dbo.Express  A, [Production].dbo.Express_Detail  B WHERE A.ID = B.ID ORDER BY B.ID 
 
 SELECT B.* INTO  Express_CTNData
-FROM Express A, [Production].dbo.Express_CTNData B WHERE A.ID = B.ID ORDER BY B.ID 
+FROM Production.dbo.Express A, [Production].dbo.Express_CTNData B WHERE A.ID = B.ID ORDER BY B.ID 
 
 UPDATE [Production].dbo.Express 
 SET  SendDate =GETDATE()
-FROM [Production].dbo.Express A  INNER JOIN Express ON A.Id = Express.Id
+FROM [Production].dbo.Express A  INNER JOIN Production.dbo.Express ON A.Id = Express.Id
 WHERE A.SendDate IS NULL
 AND A.Status in ('Approved','Junked')
 

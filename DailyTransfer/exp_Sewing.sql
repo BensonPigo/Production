@@ -38,14 +38,14 @@ rollback
 --SewingOutput
 SELECT *
 INTO SewingOutput
-FROM Production_test.dbo.SewingOutput a
-WHERE a.LockDate  BETWEEN (select DATEADD(DAY,1,SewLock) from Production.dbo.System)  AND GETDATE()
+FROM Production.dbo.SewingOutput a
+WHERE a.LockDate  BETWEEN (select DATEADD(DAY,1,SewLock) from Production.dbo.System)  AND CONVERT(date, GETDATE())
 OR a.LockDate is null
 
 --SewingOutput_detail
 SELECT b.*
 INTO SewingOutput_Detail
-from SewingOutput a, Production_test.dbo.SewingOutput_Detail b
+from Pms_To_Trade.dbo.SewingOutput a, Production.dbo.dbo.SewingOutput_Detail b
 where a.Id = b.Id 
 
 
@@ -53,7 +53,7 @@ where a.Id = b.Id
 ----SewingOutput_detail_detail
 SELECT b.*
 INTO SewingOutput_Detail_Detail
-FROM SewingOutput a , Production_test.dbo.SewingOutput_Detail_Detail b
+FROM Pms_To_Trade.dbo.SewingOutput a ,Production.dbo.SewingOutput_Detail_Detail b
 where a.id=b.ID
 
 

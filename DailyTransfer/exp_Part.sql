@@ -13,7 +13,7 @@ GO
 -- Create date: <2016/08/17>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE [dbo].[exp_Part]
+Create PROCEDURE [dbo].[exp_Part]
 	
 AS
 BEGIN
@@ -77,12 +77,12 @@ AND PurchaseFrom = 'T'
 
 SELECT pod.ID,pod.PartID, pod.UnitID, pod.PRICE, pod.QTY, pod.PartBrandID, pod.suppid, pod.SEQ2 
 INTO  PartPO_Detail
-FROM PartPO, Machine.dbo.PartPO_Detail  pod
+FROM Machine.dbo.PartPO, Machine.dbo.PartPO_Detail  pod
 WHERE PartPO.id= pod.id  
 ORDER BY PartPO.id 
 
 UPDATE Machine.dbo.PartPO
-SET TranstoTPE = GETDATE()
+SET TranstoTPE = CONVERT(date, GETDATE())
 FROM Machine.dbo.PartPO AS Partpo1
 LEFT JOIN PartPO ON Partpo1.ID = PartPO.ID
 WHERE Partpo1.TranstoTPE  IS NULL
@@ -95,7 +95,7 @@ AND (cdate>=DATEADD(DAY,-7,GETDATE()) or EditDate>=DATEADD(DAY,-7,GETDATE()))
 
 SELECT Partrcvre2.* 
 INTO   PartReturnReceive_Detail
-FROM PartReturnReceive, Machine.dbo.PartReturnReceive_Detail as Partrcvre2 
+FROM Machine.dbo.PartReturnReceive, Machine.dbo.PartReturnReceive_Detail as Partrcvre2 
 WHERE PartReturnReceive.id=Partrcvre2.id 
 ORDER BY  PartReturnReceive.id 
 
@@ -107,7 +107,7 @@ AND (cdate>=DATEADD(DAY,-7,GETDATE()) or EditDate>=DATEADD(DAY,-7,GETDATE()))
 
 SELECT Partapp2.* 
 INTO  NewPart_Detail
-FROM NewPart, Machine.dbo.NewPart_Detail as Partapp2 
+FROM Machine.dbo.NewPart, Machine.dbo.NewPart_Detail as Partapp2 
 WHERE NewPart.id=Partapp2.id 
 ORDER BY NewPart.id 
 
@@ -125,13 +125,13 @@ AND mp.PurchaseFrom = 'T'
 
 SELECT Machreturn2.* 
 INTO MachineReturn_Detail
-FROM MachineReturn, Machine.dbo.MachineReturn_Detail as Machreturn2 
+FROM Machine.dbo.MachineReturn, Machine.dbo.MachineReturn_Detail as Machreturn2 
 WHERE MachineReturn.id=Machreturn2.id 
 ORDER BY Machreturn2.id 
 
-Update Machine.dbo.MachineReturn
-Set TranstoTPE = getdate()
-From Machine.dbo.MachineReturn as a  inner join  MachineReturn as b on a.ID= b.ID
+Update a
+Set TranstoTPE = CONVERT(date, GETDATE())
+From Machine.dbo.MachineReturn as a  inner join  Machine.dbo.MachineReturn as b on a.ID= b.ID
 Where  a.TranstoTPE  is null
 
 SELECT ID 
@@ -151,14 +151,13 @@ AND MachIn1. EditInspDate >=DATEADD(DAY,-7,GETDATE())
 
 SELECT MachIn2.* 
 INTO MachineIn_Detail
-FROM MachineIn, Machine.dbo.MachineIn_Detail AS MachIn2
+FROM Machine.dbo.MachineIn, Machine.dbo.MachineIn_Detail AS MachIn2
 WHERE MachineIn.ID = MachIn2.ID ORDER BY MachineIn.ID 
 
 
 
-
-
-
+drop table #TPI_MachIn1
+drop table #TPI_PartPO1
 
 
 END

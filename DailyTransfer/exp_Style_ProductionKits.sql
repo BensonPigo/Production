@@ -7,7 +7,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 -- =============================================
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
@@ -28,8 +27,8 @@ DROP TABLE Style_ProductionKits
 END
 
 SELECT Ukey, ReceiveDate, FtyHandle,
-(SELECT Email FROM [Production].dbo.Pass1 where Pass1.id= Style_ProductionKits.FtyHandle) as MCEMAIL,
-(SELECT ExtNo FROM [Production].dbo.Pass1 where Pass1.id= Style_ProductionKits.FtyHandle) as MCEXT,
+(SELECT Email FROM [Production].dbo.Pass1 where Pass1.id= [Production].dbo.Style_ProductionKits.FtyHandle) as MCEMAIL,
+(SELECT ExtNo FROM [Production].dbo.Pass1 where Pass1.id= [Production].dbo.Style_ProductionKits.FtyHandle) as MCEXT,
 FtyLastDate, FtyRemark 
 INTO  Style_ProductionKits
 FROM [Production].dbo.Style_ProductionKits

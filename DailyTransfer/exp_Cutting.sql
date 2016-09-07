@@ -47,13 +47,13 @@ CUT1. ID,CUT2.CutRef,CUT2.CuttingID,
 CUT2. Cutno,CUT2. MarkerName,CUT2. Markerlength,CUT2. Layer,CUT2. Cons,
 CUT2 .UKey, CUT2. WorkOrderUkey,CUT2. Colorid
 INTO CuttingOutput_Detail
-FROM CuttingOutput CUT1 , Production.dbo.CuttingOutput_Detail CUT2  
+FROM Production.dbo.CuttingOutput CUT1 , Production.dbo.CuttingOutput_Detail CUT2  
 WHERE CUT1. ID = CUT2.ID
 
 
 SELECT CUT1.ID,CUT3.CuttingOutput_detailUkey,CUT3.CuttingID, CUT3.SizeCode,CUT3.Qty
 INTO  CuttingOutput_Detail_Detail
-FROM CuttingOutput CUT1, Production.dbo.CuttingOutput_Detail_Detail CUT3 
+FROM Production.dbo.CuttingOutput CUT1, Production.dbo.CuttingOutput_Detail_Detail CUT3 
 WHERE CUT1. ID = CUT3. ID
 
 END

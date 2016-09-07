@@ -45,8 +45,8 @@ WHERE Receiving.id= Receiving_Detail.Id
 AND Receiving.id=LocalReceiving.Id
 AND Receiving.Status=' Confirmed' 
 AND Receiving.TYPE = 'A' 
-AND (Receiving.WhseArrival BETWEEN CONVERT(DATE,DATEADD(day,-30,GETDATE())) AND  GETDATE()
-OR Receiving.EditDate BETWEEN CONVERT(DATE,DATEADD(day,-30,GETDATE())) AND GETDATE()) 
+AND (Receiving.WhseArrival BETWEEN CONVERT(DATE,DATEADD(day,-30,GETDATE())) AND  CONVERT(date, GETDATE())
+OR Receiving.EditDate BETWEEN CONVERT(DATE,DATEADD(day,-30,GETDATE())) AND CONVERT(date, GETDATE()) )
 AND  IsNull(Receiving_Detail.PoId,'')='' 
 AND (Receiving_Detail.seq1 IS NOT NULL or Receiving_Detail.seq1 IS NOT NULL)
 AND Receiving_Detail.StockQty is not null AND Receiving.THIRD = 1
@@ -72,8 +72,8 @@ WHERE SubTransfer.id= SubTransfer_Detail.Id
 And SubTransfer_Detail.FromPOID =Po_Supp_Detail.ID and SubTransfer_Detail.FromSeq1=Po_Supp_Detail.seq1 and SubTransfer_Detail.FromSeq2= Po_Supp_Detail.Seq2
 AND SubTransfer.Status='Confirmed'  And SubTransfer.type='B'
 AND 
-(SubTransfer.IssueDate  BETWEEN CONVERT(DATE,DATEADD(day,-30,GETDATE())) AND  GETDATE() 
-OR SubTransfer.EditDate BETWEEN CONVERT(DATE,DATEADD(day,-30,GETDATE())) AND  GETDATE()
+(SubTransfer.IssueDate  BETWEEN CONVERT(DATE,DATEADD(day,-30,GETDATE())) AND  CONVERT(date, GETDATE())
+OR SubTransfer.EditDate BETWEEN CONVERT(DATE,DATEADD(day,-30,GETDATE())) AND  CONVERT(date, GETDATE())
 ) 
 AND SubTransfer_Detail.ToPOID is not null 
 AND SubTransfer_Detail.FromSeq1 is not null
@@ -100,7 +100,7 @@ FROM  Production.dbo.TransferIn,  Production.dbo.TransferIn_Detail,  Production.
 WHERE TransferIn.id=TransferIn_Detail.id 
 And TransferIn_Detail.POID = Po_Supp_Detail.ID and TransferIn_Detail.seq1= Po_Supp_Detail.seq1 and TransferIn_Detail.seq2= Po_Supp_Detail.seq2
 AND TransferIn.Status='Confirmed'
-AND TransferIn. IssueDate  BETWEEN CONVERT(DATE,DATEADD(day,-30,GETDATE())) AND  GETDATE()  
+AND TransferIn. IssueDate  BETWEEN CONVERT(DATE,DATEADD(day,-30,GETDATE())) AND  CONVERT(date, GETDATE())
 AND TransferIn_Detail.poid is not null
 AND TransferIn_Detail.seq1 is not null
 AND TransferIn_Detail.seq2 is not null
@@ -129,8 +129,8 @@ AND LocalPO_Detail.OrderId=ReturnReceipt_Detail.POID
 AND LocalPO_Detail.OldSeq1=ReturnReceipt_Detail.Seq1
 AND LocalPO_Detail.OldSeq2=ReturnReceipt_Detail.Seq2
 AND ReturnReceipt.Status=' Confirmed' 
-AND ReturnReceipt.IssueDate BETWEEN CONVERT(DATE,DATEADD(day,-30,GETDATE())) AND  GETDATE()
-OR ReturnReceipt.EditDate BETWEEN CONVERT(DATE,DATEADD(day,-30,GETDATE())) AND  GETDATE()
+AND ReturnReceipt.IssueDate BETWEEN CONVERT(DATE,DATEADD(day,-30,GETDATE())) AND  CONVERT(date, GETDATE())
+OR ReturnReceipt.EditDate BETWEEN CONVERT(DATE,DATEADD(day,-30,GETDATE())) AND  CONVERT(date, GETDATE())
 AND ReturnReceipt_Detail.POID IS NOT NULL 
 AND ReturnReceipt_Detail.seq1 IS NOT NULL
 AND ReturnReceipt_Detail.seq2 IS NOT NULL
@@ -162,7 +162,7 @@ OrderQty = PO_Supp_Detail.Qty,
 OrderFOC = 0,
 OrderUnit = PO_Supp_Detail.POUnit, 
 [Over] = IIF(PO_Supp_Detail.InputQty  >=PO_Supp_Detail.Qty,'Y','N')
-From ThirdReport 
+From Pms_To_Trade.dbo.ThirdReport 
 INNER join Production.dbo.PO_Supp on ThirdReport.orderid = PO_Supp.id and ThirdReport.Seq1= PO_Supp.seq1
 INNER join Production.dbo.PO_Supp_Detail on ThirdReport.orderid = PO_Supp_Detail.id and ThirdReport.Seq1 = PO_Supp_Detail.seq1
 And ThirdReport.Seq2 =PO_Supp_Detail.seq2
@@ -170,7 +170,7 @@ And ThirdReport.Seq2 =PO_Supp_Detail.seq2
 ------update QTY * unit.Rate-------
 Update ThirdReport
 Set Qty=ROUND(Qty * UnitRate.rate, 2)
-From ThirdReport 
+From Pms_To_Trade.dbo.ThirdReport 
 outer apply
 (
 select rate= [Production].[dbo].[getUnitRate](ThirdReport. FtyUnit,ThirdReport.OrderUnit) 
@@ -180,18 +180,18 @@ where UnitRate.rate is not null
 
 -- Receiving  SubTransfer
 UPDATE Receiving  
-SET Receiving.Transfer2Taipei= GetDate()
+SET Receiving.Transfer2Taipei= CONVERT(date, GETDATE())
 From Production.dbo.Receiving
-inner join ThirdReport on Receiving.id = ThirdReport.id
+inner join Pms_To_Trade.dbo.ThirdReport on Receiving.id = ThirdReport.id
 Where IsNull(Transfer2Taipei, '' ) = ''
 And  Receiving.id <> (Select top 1 Receiving.id from Production.dbo.Receiving
-inner join ThirdReport on Receiving.id = ThirdReport.id
+inner join Pms_To_Trade.dbo.ThirdReport on Receiving.id = ThirdReport.id
 Order by Receiving.id desc
 )
 
 --&& 只在最後一筆壓結清
 
-update ThirdReport
+update Pms_To_Trade.dbo.ThirdReport
 set [over]='New'
 where [over]='confrim'
 and CDate=(select MAX(CDate) from ThirdReport)
