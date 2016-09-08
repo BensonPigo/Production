@@ -1,12 +1,13 @@
 USE [Pms_To_Trade]
 GO
 
-/****** Object:  StoredProcedure [dbo].[exp_3rd]    Script Date: 2016/9/2 上午 10:34:18 ******/
+/****** Object:  StoredProcedure [dbo].[exp_3rd]    Script Date: 2016/9/8 下午 12:23:24 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 -- =============================================
 -- Author:		<Willy S01910>
@@ -23,9 +24,7 @@ BEGIN
 END
 
 BEGIN
-	with
-p07 as
-(SELECT 
+SELECT 
 		Receiving.Id,
 		Receiving. WhseArrival as CDate,
 		Receiving_Detail. PoId as OrderId,
@@ -36,10 +35,11 @@ p07 as
 		Receiving.MDivisionID ,
 		(select SUM(Receiving_Detail.StockQty)  from Production.dbo.Receiving_Detail where Receiving.id= Receiving_Detail.Id  )as Qty,
 		Receiving_Detail. StockUnit as FtyUnit,
-		'' as OrderQty,
-		'' as OrderFOC,
+		0.00 as OrderQty,
+		0 as OrderFOC,
 		'' as OrderUnit,
 		'' as [Over]
+	INTO ThirdReport
 FROM  Production.dbo.Receiving,  Production.dbo.Receiving_Detail, Production.dbo.LocalReceiving
 WHERE Receiving.id= Receiving_Detail.Id 
 AND Receiving.id=LocalReceiving.Id
@@ -50,21 +50,21 @@ OR Receiving.EditDate BETWEEN CONVERT(DATE,DATEADD(day,-30,GETDATE())) AND CONVE
 AND  IsNull(Receiving_Detail.PoId,'')='' 
 AND (Receiving_Detail.seq1 IS NOT NULL or Receiving_Detail.seq1 IS NOT NULL)
 AND Receiving_Detail.StockQty is not null AND Receiving.THIRD = 1
-),
-p23 as
-(
-SELECT 	SubTransfer.Id,
+
+
+MERGE ThirdReport AS T
+USING (SELECT 	SubTransfer.Id,
 		SubTransfer. IssueDate as CDate,	
-		SubTransfer_Detail.ToPOID as ISSUEDSP,
-		SubTransfer_Detail.FromSeq1,
-		SubTransfer_Detail.FromSeq2,
+		SubTransfer_Detail.ToPOID as OrderId,
+		SubTransfer_Detail.FromSeq1 AS SEQ1,
+		SubTransfer_Detail.FromSeq2 AS SEQ2,
 		'' as ETA, 
 		'' as SuppID, 
 		SubTransfer.MDivisionID,
 		(Select SUM(SubTransfer_Detail.Qty) from Production.dbo.SubTransfer_Detail where SubTransfer.id= SubTransfer_Detail.Id ) as Qty,
 		Po_Supp_Detail.StockUnit  as FtyUnit,
-		'' as OrderQty,
-		'' as OrderFOC,
+		0.00 as OrderQty,
+		0 as OrderFOC,
 		'' as OrderUnit,
 		'' as [Over]
 FROM  Production.dbo.SubTransfer,  Production.dbo.SubTransfer_Detail,  Production.dbo.Po_Supp_Detail
@@ -79,10 +79,15 @@ AND SubTransfer_Detail.ToPOID is not null
 AND SubTransfer_Detail.FromSeq1 is not null
 AND SubTransfer_Detail.FromSeq2 is not null
 AND SubTransfer_Detail.Qty is not null
-),
-p18 as
-(
-SELECT 	TransferIn.id,
+) AS S
+ON T.ID=S.ID AND T.SEQ1=S.SEQ1 AND T.SEQ2=S.SEQ2
+WHEN NOT MATCHED BY TARGET THEN 
+INSERT(ID,CDate,OrderID,Seq1,Seq2,ETA,SuppID,MDivisionID,Qty,FtyUnit,OrderQty,OrderFOC,OrderUnit,[Over])
+VALUES(s.ID,s.CDate,s.OrderID,s.Seq1,s.Seq2,s.ETA,s.SuppID,s.MDivisionID,s.Qty,s.FtyUnit,s.OrderQty,s.OrderFOC,s.OrderUnit,s.[Over]);
+
+
+MERGE ThirdReport AS T
+USING (SELECT 	TransferIn.id,
 		TransferIn. IssueDate as CDate,
 		TransferIn_Detail.poid as OrderId,
 		TransferIn_Detail.seq1,
@@ -92,8 +97,8 @@ SELECT 	TransferIn.id,
 		TransferIn. MDivisionID,
 		(Select SUM(TransferIn_Detail.qty) from Production.dbo.TransferIn_Detail where TransferIn.id=TransferIn_Detail.id) as Qty,
 		Po_Supp_Detail.StockUnit as FtyUnit,
-		'' as OrderQty,
-		'' as OrderFOC,
+		0.00 as OrderQty,
+		0 as OrderFOC,
 		'' as OrderUnit,
 		'' as [Over]
 FROM  Production.dbo.TransferIn,  Production.dbo.TransferIn_Detail,  Production.dbo.Po_Supp_Detail
@@ -106,10 +111,14 @@ AND TransferIn_Detail.seq1 is not null
 AND TransferIn_Detail.seq2 is not null
 AND TransferIn_Detail.Seq1 like'7%'
 AND TransferIn_Detail.Qty is not null
-),
-p37 as
-(
-SELECT    ReturnReceipt.id,
+) AS S
+ON T.ID=S.ID AND T.SEQ1=S.SEQ1 AND T.SEQ2=S.SEQ2
+WHEN NOT MATCHED BY TARGET THEN 
+INSERT(ID,CDate,OrderID,Seq1,Seq2,ETA,SuppID,MDivisionID,Qty,FtyUnit,OrderQty,OrderFOC,OrderUnit,[Over])
+VALUES(s.ID,s.CDate,s.OrderID,s.Seq1,s.Seq2,s.ETA,s.SuppID,s.MDivisionID,s.Qty,s.FtyUnit,s.OrderQty,s.OrderFOC,s.OrderUnit,s.[Over]);
+
+MERGE ThirdReport AS T
+USING (SELECT    ReturnReceipt.id,
 		ReturnReceipt.IssueDate as CDate,
 		ReturnReceipt_Detail.POID as OrderId,
 		ReturnReceipt_Detail .seq1,
@@ -118,9 +127,9 @@ SELECT    ReturnReceipt.id,
 		'' as SuppID, 
 		ReturnReceipt.MDivisionID,
 		0 - (Select SUM(ReturnReceipt_Detail.qty) from Production.dbo.ReturnReceipt_Detail where ReturnReceipt.id=ReturnReceipt_Detail.id ) as Qty,
-		LocalPO_Detail.UnitId,
-		'' as OrderQty,
-		'' as OrderFOC,
+		LocalPO_Detail.UnitId as FtyUnit,
+		0.00 as OrderQty,
+		0 as OrderFOC,
 		'' as OrderUnit,
 		'' as [Over]
 FROM Production.dbo.ReturnReceipt,  Production.dbo.ReturnReceipt_Detail	,Production.dbo.LocalPO_Detail
@@ -135,23 +144,22 @@ AND ReturnReceipt_Detail.POID IS NOT NULL
 AND ReturnReceipt_Detail.seq1 IS NOT NULL
 AND ReturnReceipt_Detail.seq2 IS NOT NULL
 AND ReturnReceipt_Detail.Qty IS NOT NULL
-)
-SELECT * 
-INTO ThirdReport
-from p07
-union (select p23.* from p23 inner join p07 on p23.ISSUEDSP=p07.OrderId)
-union (select * from p18)
-union (select * from p37)
+) AS S
+ON T.ID=S.ID AND T.SEQ1=S.SEQ1 AND T.SEQ2=S.SEQ2
+WHEN NOT MATCHED BY TARGET THEN 
+INSERT(ID,CDate,OrderID,Seq1,Seq2,ETA,SuppID,MDivisionID,Qty,FtyUnit,OrderQty,OrderFOC,OrderUnit,[Over])
+VALUES(s.ID,s.CDate,s.OrderID,s.Seq1,s.Seq2,s.ETA,s.SuppID,s.MDivisionID,s.Qty,s.FtyUnit,s.OrderQty,s.OrderFOC,s.OrderUnit,s.[Over]);
+
 
 --修改欄位型態
 alter table ThirdReport
-alter column OrderQty numeric(8,1)
+alter column OrderQty numeric(9,2)
 alter table ThirdReport
 alter column OrderFOC numeric(8,1)
 alter table ThirdReport
-alter column OrderUnit varchar(50)
+alter column OrderUnit varchar(8)
 alter table ThirdReport
-alter column [Over] varchar(20)
+alter column [Over] varchar(1)
 
 
 
@@ -179,24 +187,22 @@ where UnitRate.rate is not null
 
 
 -- Receiving  SubTransfer
-UPDATE Receiving  
-SET Receiving.Transfer2Taipei= CONVERT(date, GETDATE())
-From Production.dbo.Receiving
-inner join Pms_To_Trade.dbo.ThirdReport on Receiving.id = ThirdReport.id
-Where IsNull(Transfer2Taipei, '' ) = ''
-And  Receiving.id <> (Select top 1 Receiving.id from Production.dbo.Receiving
-inner join Pms_To_Trade.dbo.ThirdReport on Receiving.id = ThirdReport.id
-Order by Receiving.id desc
-)
+MERGE Production.dbo.Receiving AS T
+USING ThirdReport AS S 
+ON T.ID=S.ID
+WHEN MATCHED AND T.Transfer2Taipei IS NULL THEN 
+	UPDATE SET
+	T.Transfer2Taipei= CONVERT(date, GETDATE());
 
 --&& 只在最後一筆壓結清
 
 update Pms_To_Trade.dbo.ThirdReport
-set [over]='New'
-where [over]='confrim'
+set [over]='N'
+where [over]='Y'
 and CDate=(select MAX(CDate) from ThirdReport)
 
 END
+
 
 
 GO
