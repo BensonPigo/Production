@@ -33,7 +33,6 @@ BEGIN
   DROP TABLE SewingOutput_Detail_Detail
 END
 
-rollback
 
 --SewingOutput
 SELECT *
@@ -45,9 +44,8 @@ OR a.LockDate is null
 --SewingOutput_detail
 SELECT b.*
 INTO SewingOutput_Detail
-from Pms_To_Trade.dbo.SewingOutput a, Production.dbo.dbo.SewingOutput_Detail b
+from Pms_To_Trade.dbo.SewingOutput a, Production.dbo.SewingOutput_Detail b
 where a.Id = b.Id 
-
 
 
 ----SewingOutput_detail_detail
