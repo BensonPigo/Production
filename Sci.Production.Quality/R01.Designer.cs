@@ -33,8 +33,6 @@
             this.comboOverallResSta = new Sci.Win.UI.ComboBox();
             this.comboCategory = new Sci.Win.UI.ComboBox();
             this.txtRefno = new Sci.Win.UI.TextBox();
-            this.txtBrand = new Sci.Trade.Class.TxtBrand();
-            this.txtSeason = new Sci.Trade.Class.TxtSeason();
             this.label13 = new Sci.Win.UI.Label();
             this.txtSPEnd = new Sci.Win.UI.TextBox();
             this.txtSPStart = new Sci.Win.UI.TextBox();
@@ -56,17 +54,19 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
+            this.txtBrand = new Sci.Production.Class.txtbrand();
+            this.txtSeason = new Sci.Production.Class.txtseason();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtSeason);
+            this.panel1.Controls.Add(this.txtBrand);
             this.panel1.Controls.Add(this.txtsupplier);
             this.panel1.Controls.Add(this.comboOverallResSta);
             this.panel1.Controls.Add(this.comboCategory);
             this.panel1.Controls.Add(this.txtRefno);
-            this.panel1.Controls.Add(this.txtBrand);
-            this.panel1.Controls.Add(this.txtSeason);
             this.panel1.Controls.Add(this.label13);
             this.panel1.Controls.Add(this.txtSPEnd);
             this.panel1.Controls.Add(this.txtSPStart);
@@ -138,25 +138,6 @@
             this.txtRefno.Name = "txtRefno";
             this.txtRefno.Size = new System.Drawing.Size(253, 23);
             this.txtRefno.TabIndex = 23;
-            // 
-            // txtBrand
-            // 
-            this.txtBrand.BackColor = System.Drawing.Color.White;
-            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand.Location = new System.Drawing.Point(192, 291);
-            this.txtBrand.Name = "txtBrand";
-            this.txtBrand.Size = new System.Drawing.Size(114, 23);
-            this.txtBrand.TabIndex = 22;
-            // 
-            // txtSeason
-            // 
-            this.txtSeason.BackColor = System.Drawing.Color.White;
-            this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeason.Location = new System.Drawing.Point(192, 249);
-            this.txtSeason.myBrandName = null;
-            this.txtSeason.Name = "txtSeason";
-            this.txtSeason.Size = new System.Drawing.Size(136, 23);
-            this.txtSeason.TabIndex = 21;
             // 
             // label13
             // 
@@ -337,6 +318,25 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "last Physical Insp Date:";
             // 
+            // txtBrand
+            // 
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(192, 291);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(108, 23);
+            this.txtBrand.TabIndex = 28;
+            // 
+            // txtSeason
+            // 
+            this.txtSeason.BackColor = System.Drawing.Color.White;
+            this.txtSeason.BrandObjectName = null;
+            this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeason.Location = new System.Drawing.Point(192, 249);
+            this.txtSeason.Name = "txtSeason";
+            this.txtSeason.Size = new System.Drawing.Size(135, 23);
+            this.txtSeason.TabIndex = 50;
+            // 
             // R01
             // 
             this.ClientSize = new System.Drawing.Size(627, 578);
@@ -378,11 +378,11 @@
         private Win.UI.DateRange DateArriveWH;
         private Win.UI.DateRange DateLastPhyIns;
         private Win.UI.Label label13;
-        private Trade.Class.TxtSeason txtSeason;
         private Win.UI.ComboBox comboOverallResSta;
         private Win.UI.ComboBox comboCategory;
         private Win.UI.TextBox txtRefno;
-        private Trade.Class.TxtBrand txtBrand;
         private Class.txtsupplier txtsupplier;
+        private Class.txtbrand txtBrand;
+        private Class.txtseason txtSeason;
     }
 }
