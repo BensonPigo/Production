@@ -1,5 +1,5 @@
 * text=auto !eol
-DailyTransfer/exp_3rd.sql -text
+DailyTransfer/exp_3rd.sql -text svneol=unset#unset
 DailyTransfer/exp_Airpp.sql -text
 DailyTransfer/exp_Cutting.sql -text
 DailyTransfer/exp_Debit.sql -text
