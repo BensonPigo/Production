@@ -24,78 +24,101 @@ namespace Sci.Production.Quality
         string Brand;
         string Year;
         string Factory;
+        string tsql;
         DualResult result;
         DataTable dtt;
+        DataTable dt_All;
+        DataTable dt_Tmp;
 
         protected override bool ValidateInput()
         {
             Brand = comboBox_brand.SelectedItem.ToString();
             Year = radiobtn_byYear.Checked.ToString();
             Factory = radiobtn_byfactory.Checked.ToString();
-            return base.ValidateInput();
-        }
 
-     
+            tsql =@"declare @dRanges table(starts int , ends int, name varchar(3))
+                    insert into @dRanges values
+                    (1,1,'Jan'),
+                    (2,2,'Feb'),
+                    (3,3,'Mar'),
+                    (4,4,'Apr'),
+                    (5,5,'May'),
+                    (6,6,'Jun'),
+                    (7,7,'Jul'),
+                    (8,8,'Aug'),
+                    (9,9,'Sep'),
+                    (10,10,'Oct'),
+                    (11,11,'Nov'),
+                    (12,12,'Dec')
+
+                    declare @d date = dateadd(MONTH, -1, getdate()) 
+                    select @d
+                    declare @y1 varchar(4) = cast(datepart(year, dateadd(year,-2, @d) ) as varchar(4))
+                    declare @y2 varchar(4) = cast(datepart(year, dateadd(year,-1, @d) ) as varchar(4))
+                    declare @y3 varchar(4) = cast(datepart(year,@d) as varchar(4))
+
+                    select Target,Claimed.Claimed,sh.qty[Shipped],isnull(round(sum(Claimed.Claimed)/sum(sh.qty),6)*100,0) [adiComp],Claimed.month1
+                    into #temp
+                    from dbo.ADIDASComplainTarget 
+                    outer apply(SELECT left(cast(a.StartDate as varchar(10)),7) ym , sum(b.Qty) Claimed,dateadd(MONTH,-3,a.StartDate) themonth ,MONTH(a.StartDate)[month1]
+			                    FROM dbo.ADIDASComplain a
+			                    INNER JOIN DBO.ADIDASComplain_Detail b ON B.ID = a.ID
+			                    where a.StartDate in (@y1,@y2,@y3)
+			                    group by a.StartDate) Claimed
+                    outer apply(SELECT dateadd(MONTH,5,Claimed.themonth) as six
+			                    FROM dbo.ADIDASComplain a
+			                    where a.StartDate in (@y1,@y2,@y3)
+			                    group by a.StartDate) as ff 
+                    outer apply (SELECT ISNULL(SUM(a.Qty),0)/6 AS Qty FROM ADIDASComplain_MonthlyQty a
+			                    WHERE a.YearMonth BETWEEN claimed.themonth AND ff.six
+			                    AND a.BrandID = 'ADIDAS' 
+			                    AND a.factoryid in (select id from dbo.SCIFty 
+			                    where CountryID= (select f.CountryID from dbo.Factory f where f.id='MAI')))sh
+                    where year in (@y1,@y2,@y3)
+                    group by Target,Claimed.Claimed,sh.qty,Claimed.month1
+
+                    select #temp.*,dRanges.name from dbo.#temp
+                    inner join @dRanges as dRanges on #temp.month1 between dRanges.starts and dRanges.ends
+
+                    drop table #temp";
+
+
+            return base.ValidateInput();
+
+        }
+        
+
+       
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            List<SqlParameter> lis = new List<SqlParameter>();
-            string sqlWhere = ""; string gb = ""; string ob = "";
-            List<string> sqlWheres = new List<string>();
-            if (DateTime.Now.Month==01)
-            {
-                int year=DateTime.Today.Year;
-                
-                sqlWheres.Add("a.startdate between @year and @year2");
-                lis.Add(new SqlParameter("@year", DateTime.Today.AddYears(-3).AddMonths(1).AddDays(-DateTime.Now.AddMonths(1).Day)));
-                lis.Add(new SqlParameter("@year1", DateTime.Today.AddYears(-2)));
-                lis.Add(new SqlParameter("@year2", DateTime.Today.AddYears(-1)));
+            dt_All = null;
+            dt_Tmp = null;
+            
+            SortedList<string, string> year_All = new SortedList<string, string>();
+            Dictionary<string, Dictionary<string, decimal>> month_FtyAmt = new Dictionary<string, Dictionary<string, decimal>>();           
 
-                DateTime.Now.AddMonths(1).AddDays(-DateTime.Now.AddMonths(1).Day);
-            }
-            else
+            // 抓Query資料並list有哪些years
+            DataTable years = new DataTable();
+            SqlConnection conn;
+            result = DBProxy.Current.OpenConnection("", out conn);
+            if (!result) { return result; }
+            result = DBProxy.Current.SelectByConn(conn, tsql, out years);
+            //DualResult result1 = DBProxy.Current.SelectByConn(conn, tsql, out years);
+            //if (!result1) { return result1; }
+
+            //用years重組Pivot的Tsql
+            if (null == years || years.Rows.Count == 0)
             {
-                int year = DateTime.Today.Year;
-                sqlWheres.Add("a.startdate between @year and @year2");
-                lis.Add(new SqlParameter("@year", DateTime.Today.AddYears(-2)));
-                lis.Add(new SqlParameter("@year1", DateTime.Today.AddYears(-1)));
-                lis.Add(new SqlParameter("@year2", DateTime.Today.AddYears(-1+1)));
+                return new DualResult(false, "Data not fund");
             }
 
-            gb = "group by a.StartDate,c.Target";
-            ob = "order by a.StartDate,c.Target";
-            sqlWhere = string.Join(" and ", sqlWheres);
-            if (!sqlWhere.Empty())
-            {
-                sqlWhere = " where " + sqlWhere;
-            }
+            string listByYear = 
+@"
+";
 
-            //if (checkBox1.Checked)
-            //    lis.Add(new SqlParameter("@extend", "1"));
-            //else
-            //    lis.Add(new SqlParameter("@extend", "0"));
-//            DataTable dtStartDate;
-//            string sqlcmd1 = string.Format(@"select distinct left(StartDate,4) 
-//	                    from dbo.ADIDASComplain"+ sqlWhere);
-//            string StartDate = "";
-//            result = DBProxy.Current.Select("", sqlcmd1, lis, out dtStartDate);
-//            foreach (DataRow dr in dtStartDate.Rows)
-//            {
-//                StartDate +=  dr["StartDate"].ToString() + ",";
-//            }
-//            StartDate = StartDate.Substring(0, StartDate.Length - 1);
-
-
-            string sqlcmd = string.Format(@"SELECT  left(cast(a.StartDate as varchar(10)),4) [Y],format(a.StartDate,'MMM') [M],c.Target [Target], sum(b.Qty) [Claimed]
-                                                     FROM 
-                                                     DBO.ADIDASComplain a
-                                                     inner JOIN DBO.ADIDASComplain_Detail B ON B.ID = a.ID
-                                                     left join dbo.ADIDASComplainTarget c ON C.Year=left(a.StartDate,4)" + sqlWhere+" "+gb+" "+ob);
-            result = DBProxy.Current.Select("", sqlcmd, lis, out dtt);
-
-
-            return result; //base.OnAsyncDataLoad(e);
+            return base.OnAsyncDataLoad(e);
         }
-
+        
    protected override bool OnToExcel(Win.ReportDefinition report)
         {
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
