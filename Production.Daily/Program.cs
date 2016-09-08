@@ -13,10 +13,17 @@ namespace Production.Daily
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
             Sci.Env.AppInit();
             Sci.Env.User = new DailyUser();
-            Application.Run(new Main());
+
+            if (args.Length == 0)
+            {
+                Application.Run(new Main());
+            }
+            else
+            {
+                Application.Run(new Main(args[0].ToString()));
+            }
             Sci.Env.AppShutdown();
         }
         public class DailyUser : Sci.IUserInfo

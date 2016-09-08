@@ -122,7 +122,7 @@
             this.textFtpPwd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textFtpPwd.Location = new System.Drawing.Point(573, 10);
             this.textFtpPwd.Name = "textFtpPwd";
-            this.textFtpPwd.Size = new System.Drawing.Size(80, 21);
+            this.textFtpPwd.Size = new System.Drawing.Size(92, 21);
             this.textFtpPwd.TabIndex = 5;
             // 
             // textFtpID
@@ -251,6 +251,7 @@
             this.checkSendBack.TabIndex = 15;
             this.checkSendBack.Text = "Don\'t send back to Taipei";
             this.checkSendBack.UseVisualStyleBackColor = true;
+            this.checkSendBack.Visible = false;
             // 
             // checkDailyUpdateSendMail
             // 
@@ -262,6 +263,7 @@
             this.checkDailyUpdateSendMail.TabIndex = 14;
             this.checkDailyUpdateSendMail.Text = "Send an e-mail from update";
             this.checkDailyUpdateSendMail.UseVisualStyleBackColor = true;
+            this.checkDailyUpdateSendMail.Visible = false;
             // 
             // label3
             // 
@@ -456,9 +458,9 @@
             this.checkDeleteFile.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkDeleteFile.Location = new System.Drawing.Point(188, 66);
             this.checkDeleteFile.Name = "checkDeleteFile";
-            this.checkDeleteFile.Size = new System.Drawing.Size(200, 19);
+            this.checkDeleteFile.Size = new System.Drawing.Size(197, 19);
             this.checkDeleteFile.TabIndex = 6;
-            this.checkDeleteFile.Text = "Delete file from exporting folder ";
+            this.checkDeleteFile.Text = "Delete file from exporting folder";
             this.checkDeleteFile.UseVisualStyleBackColor = true;
             // 
             // displayExportDataPath
