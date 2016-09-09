@@ -47,7 +47,7 @@ namespace Sci.Production.Quality
         protected override bool ValidateInput()
         {
             bool date_SCI_Empty = !this.DateSCIDelivery.HasValue, date_Sewing_Empty = !this.DateSewInLine.HasValue, date_Est_Empty = !this.DateEstCutting.HasValue,
-                txtSeason_Empty = this.txtSeason.Text.Empty(), txtBrand_Empty = this.txtBrand.Text.Empty() ,comboFactory_Empty = this.comboFactory.Text.Empty();
+                txtSeason_Empty = this.txtSeason.Text.Empty(), txtBrand_Empty = this.txtBrand.Text.Empty(),  Cate_comboBox_Empty = this.comboCategory.Text.Empty(),comboFactory_Empty = this.comboFactory.Text.Empty();
             if (date_SCI_Empty && date_Sewing_Empty && date_Est_Empty && txtSeason_Empty && txtBrand_Empty)
             {
                 MyUtility.Msg.ErrorBox("Please select 'SCI Delivery' or 'Sewing in-line Date' or 'Est. Cutting Date' or 'Season' or 'Brand' at least one field entry");
