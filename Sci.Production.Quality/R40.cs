@@ -36,7 +36,7 @@ namespace Sci.Production.Quality
             Year = radiobtn_byYear.Checked.ToString();
             Factory = radiobtn_byfactory.Checked.ToString();
 
-            tsql =@"declare @dRanges table(starts int , ends int, name varchar(3))
+            tsql = @"declare @dRanges table(starts int , ends int, name varchar(3))
                     insert into @dRanges values
                     (1,1,'Jan'),
                     (2,2,'Feb'),
@@ -57,30 +57,30 @@ namespace Sci.Production.Quality
                     declare @y2 varchar(4) = cast(datepart(year, dateadd(year,-1, @d) ) as varchar(4))
                     declare @y3 varchar(4) = cast(datepart(year,@d) as varchar(4))
 
-                    select Target,Claimed.Claimed,sh.qty[Shipped],isnull(round(sum(Claimed.Claimed)/sum(sh.qty),6)*100,0) [adiComp],Claimed.month1
+                    select Target,Claimed.Claimed,sh.qty[Shipped],isnull(round(sum(Claimed.Claimed)/sum(sh.qty),6)*100,0) [adiComp],Claimed.month1,Claimed.YEAR1
                     into #temp
                     from dbo.ADIDASComplainTarget 
-                    outer apply(SELECT left(cast(a.StartDate as varchar(10)),7) ym , sum(b.Qty) Claimed,dateadd(MONTH,-3,a.StartDate) themonth ,MONTH(a.StartDate)[month1]
+                    outer apply(SELECT left(cast(a.StartDate as varchar(10)),7) ym , sum(b.Qty) Claimed,dateadd(MONTH,-3,a.StartDate) themonth ,MONTH(a.StartDate)[month1],YEAR(a.StartDate) [YEAR1]
 			                    FROM dbo.ADIDASComplain a
 			                    INNER JOIN DBO.ADIDASComplain_Detail b ON B.ID = a.ID
 			                    where a.StartDate in (@y1,@y2,@y3)
 			                    group by a.StartDate) Claimed
-                    outer apply(SELECT dateadd(MONTH,5,Claimed.themonth) as six
+                    outer apply(SELECT dateadd(MONTH,5,Claimed.themonth) as six,YEAR(a.StartDate)[YEAR1]
 			                    FROM dbo.ADIDASComplain a
 			                    where a.StartDate in (@y1,@y2,@y3)
 			                    group by a.StartDate) as ff 
                     outer apply (SELECT ISNULL(SUM(a.Qty),0)/6 AS Qty FROM ADIDASComplain_MonthlyQty a
 			                    WHERE a.YearMonth BETWEEN claimed.themonth AND ff.six
-			                    AND a.BrandID = 'ADIDAS' 
-			                    AND a.factoryid in (select id from dbo.SCIFty 
-			                    where CountryID= (select f.CountryID from dbo.Factory f where f.id='MAI')))sh
+			                    AND a.BrandID = 'ADIDAS')sh
                     where year in (@y1,@y2,@y3)
-                    group by Target,Claimed.Claimed,sh.qty,Claimed.month1
+                    group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1
 
-                    select #temp.*,dRanges.name from dbo.#temp
+                    select dRanges.name,#temp.Target,year1.Claimed,year1.Shipped,year1.adiComp,year2.Claimed,year2.Shipped,year2.adiComp,year3.Claimed,year3.Shipped,year3.adiComp from dbo.#temp
                     inner join @dRanges as dRanges on #temp.month1 between dRanges.starts and dRanges.ends
-
-                    drop table #temp";
+					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE YEAR1=@y1)AS year1
+					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE YEAR1=@y2)AS year2
+					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE YEAR1=@y3)AS year3
+                    DROP TABLE #temp";
 
 
             return base.ValidateInput();
@@ -114,6 +114,7 @@ namespace Sci.Production.Quality
 
             string listByYear = 
 @"
+
 ";
 
             return base.OnAsyncDataLoad(e);
