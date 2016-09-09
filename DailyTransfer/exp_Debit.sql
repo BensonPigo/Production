@@ -32,7 +32,7 @@ SELECT *
 INTO Debit
 FROM Production.dbo.Debit
 WHERE EditDate 
-BETWEEN Convert(DATE,DATEADD(day,-30,GETDATE()))AND GetDate() OR SysDate BETWEEN Convert(DATE,DATEADD(day,-30,GETDATE())) AND GetDate()
+BETWEEN Convert(DATE,DATEADD(day,-30,GETDATE()))AND CONVERT(date,Getdate()) OR SysDate BETWEEN Convert(DATE,DATEADD(day,-30,GETDATE())) AND CONVERT(date,Getdate())
 ORDER BY ID 
 
 
@@ -42,9 +42,9 @@ from Production.dbo.Debit_Schedule ds
 inner join Production.dbo.Debit d on ds.ID = d.ID
 where exists (select 1 from Production.dbo.Debit_Schedule tds 
 where tds.ID = ds.ID 
-and (tds.AddDate between Convert(DATE,DATEADD(day,-30,GETDATE())) AND GetDate() 
-or tds.EditDate between  Convert(DATE,DATEADD(day,-30,GETDATE())) AND GetDate()
-or tds.SysDate between  Convert(DATE,DATEADD(day,-30,GETDATE())) AND GetDate())
+and (tds.AddDate between Convert(DATE,DATEADD(day,-30,GETDATE())) AND  CONVERT(date,Getdate())
+or tds.EditDate between  Convert(DATE,DATEADD(day,-30,GETDATE())) AND  CONVERT(date,Getdate())
+or tds.SysDate between  Convert(DATE,DATEADD(day,-30,GETDATE())) AND  CONVERT(date,Getdate()))
 )
 
 

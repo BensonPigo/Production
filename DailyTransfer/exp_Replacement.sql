@@ -45,7 +45,7 @@ ORDER BY b.Id
 
 
 UPDATE ReplacementReport
-SET ExportToTPE =GetDate()
+SET ExportToTPE =CONVERT(date, GetDate())
 Where ExportToTPE is null
 
 
