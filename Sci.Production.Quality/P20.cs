@@ -29,8 +29,9 @@ namespace Sci.Production.Quality
 
         private void GenComboBox()
         {
-            this.comboShift.Type = "shift";
-            this.comboTeam.Type = "Team";
+            //this.comboShift.Type = "shift";
+            //this.comboTeam.Type = "Team";
+            MyUtility.Tool.SetupCombox(comboTeam, 1, 1, "A,B");
         }
 
         // 新增時預設資料

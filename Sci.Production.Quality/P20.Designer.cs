@@ -57,8 +57,8 @@
             this.btnEncode = new Sci.Win.UI.Button();
             this.DisplayStyle = new Sci.Win.UI.DisplayBox();
             this.DisplayDest = new Sci.Win.UI.DisplayBox();
-            this.comboShift = new Sci.Trade.Class.ComboDropDownList();
-            this.comboTeam = new Sci.Trade.Class.ComboDropDownList();
+            this.comboShift = new Sci.Production.Class.txtdropdownlist();
+            this.comboTeam = new Sci.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -502,35 +502,28 @@
             // 
             // comboShift
             // 
-            this.comboShift._RaiseErrMsg = null;
-            this.comboShift._Type = Sci.Trade.Class.ComboDropDownList.ComboDropDownList_Type._None;
-            this.comboShift.AddEmpty = false;
             this.comboShift.BackColor = System.Drawing.Color.White;
-            this.comboShift.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue2", this.mtbs, "Shift", true));
+            this.comboShift.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Shift", true));
             this.comboShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboShift.FormattingEnabled = true;
             this.comboShift.IsSupportUnselect = true;
             this.comboShift.Location = new System.Drawing.Point(296, 5);
             this.comboShift.Name = "comboShift";
             this.comboShift.Size = new System.Drawing.Size(150, 24);
-            this.comboShift.TabIndex = 270;
-            this.comboShift.Type = "Responsible";
+            this.comboShift.TabIndex = 272;
+            this.comboShift.Type = "SewingOutput_Shift";
             // 
             // comboTeam
             // 
-            this.comboTeam._RaiseErrMsg = null;
-            this.comboTeam._Type = Sci.Trade.Class.ComboDropDownList.ComboDropDownList_Type._None;
-            this.comboTeam.AddEmpty = false;
             this.comboTeam.BackColor = System.Drawing.Color.White;
-            this.comboTeam.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue2", this.mtbs, "Team", true));
+            this.comboTeam.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Team", true));
             this.comboTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboTeam.FormattingEnabled = true;
             this.comboTeam.IsSupportUnselect = true;
-            this.comboTeam.Location = new System.Drawing.Point(574, 7);
+            this.comboTeam.Location = new System.Drawing.Point(576, 6);
             this.comboTeam.Name = "comboTeam";
-            this.comboTeam.Size = new System.Drawing.Size(100, 24);
-            this.comboTeam.TabIndex = 271;
-            this.comboTeam.Type = "Responsible";
+            this.comboTeam.Size = new System.Drawing.Size(98, 24);
+            this.comboTeam.TabIndex = 273;
             // 
             // P20
             // 
@@ -595,7 +588,7 @@
         private Win.UI.Button btnEncode;
         private Win.UI.DisplayBox DisplayDest;
         private Win.UI.DisplayBox DisplayStyle;
-        private Trade.Class.ComboDropDownList comboShift;
-        private Trade.Class.ComboDropDownList comboTeam;
+        private Class.txtdropdownlist comboShift;
+        private Win.UI.ComboBox comboTeam;
     }
 }
