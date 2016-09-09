@@ -23,11 +23,13 @@ namespace Sci.Production.Warehouse
 {
     public partial class P01_TrimCardPrint : Sci.Win.Tems.PrintForm
     {
-        DataTable dtPrint, dtPrint2, dtColorCombo;
+        DataTable dtPrint, dtPrint2, dtColor, dtColor2;
         DataRow rowColor;
-        string sql, temp, orderID, StyleID, SeasonID, FactoryID, BrandID;
+        string sql, temp, orderID, StyleID, SeasonID, FactoryID, BrandID, POID, colorName, ColorID;
+        List<string> ListColor = new List<string>();
 
-        public P01_TrimCardPrint(string _orderID, string _StyleID, string _SeasonID, string _FactoryID, string _BrandID)
+
+        public P01_TrimCardPrint(string _orderID, string _StyleID, string _SeasonID, string _FactoryID, string _BrandID, string _POID)
         {
             InitializeComponent();
             orderID = _orderID;
@@ -35,6 +37,7 @@ namespace Sci.Production.Warehouse
             SeasonID = _SeasonID;
             FactoryID = _FactoryID;
             BrandID = _BrandID;
+            POID = _POID;
         }
 
         //欄位檢核
@@ -54,29 +57,100 @@ namespace Sci.Production.Warehouse
             DualResult result = Result.True;
             if (dtPrint != null) dtPrint.Rows.Clear();
 
-            sql = string.Format(@"select  A.PatternPanel , A.FabricCode , B.Refno , C.Description , A.Lectracode
+            #region SQL
+            if (radioFabric.Checked)
+            {
+                #region FABRIC
+                sql = string.Format(@"select  A.PatternPanel , A.FabricCode , B.Refno , C.Description , A.Lectracode
                                 from Order_FabricCode A
                                 left join Order_BOF B on B.Id=A.Id and B.FabricCode=A.FabricCode
                                 left join Fabric C on C.SCIRefno=B.SCIRefno
                                 where A.ID='{0}'
                                 order by FabricCode", orderID);
-            result = DBProxy.Current.Select(null, sql, out dtPrint);
-            if (!result) return result;
+                result = DBProxy.Current.Select(null, sql, out dtPrint);
+                if (!result) return result;
 
-            sql = string.Format(@"select distinct Article 
+                sql = string.Format(@"select distinct Article 
                                 from Order_ColorCombo 
                                 where Id='{0}' and LectraCode in (select LectraCode from Order_FabricCode where ID='{0}')", orderID);
-            result = DBProxy.Current.Select(null, sql, out dtPrint2);
-            if (!result) return result;
+                result = DBProxy.Current.Select(null, sql, out dtPrint2);
+                if (!result) return result;
 
-            sql = string.Format(@"select ColorID , B.Name , LectraCode , Article
+                sql = string.Format(@"select ColorID , B.Name , LectraCode , Article
                                 from Order_ColorCombo A
                                 left join Color B on B.BrandId='{0}' and B.ID=A.ColorID
-                                where A.Id='{1}'", BrandID , orderID);
-            result = DBProxy.Current.Select(null, sql, out dtColorCombo);
-            if (!result) return result;
+                                where A.Id='{1}'", BrandID, orderID);
+                result = DBProxy.Current.Select(null, sql, out dtColor);
+                if (!result) return result;
 
+                sql = string.Format(@"select ColorID , B.Name , LectraCode , Article
+                                from Order_ColorCombo A
+                                left join Color B on B.BrandId='{0}' and B.ID=A.ColorID
+                                where A.Id='{1}'", BrandID, orderID);
+                result = DBProxy.Current.Select(null, sql, out dtColor);
+                if (!result) return result;
+                #endregion
+            }
+            else if (radioAccessory.Checked)
+            {
+                #region ACCESSORY
+                sql = string.Format(@"select A.Refno, B.Description 
+                                    from Order_BOA_Expend A
+                                    left join Fabric B on B.SCIRefno=A.SCIRefno
+                                    where Id='{0}' and Article<>'' and ColorId<>''
+                                    group by A.Refno, B.Description ", orderID);
+                result = DBProxy.Current.Select(null, sql, out dtPrint);
+                if (!result) return result;
 
+                sql = string.Format(@"select distinct article 
+                                    from Order_BOA_Expend A
+                                    left join Fabric B on B.SCIRefno=A.SCIRefno
+                                    where Id='{0}' and Article<>'' and ColorId<>''
+                                    group by A.Refno, B.Description , article, ColorId
+                                    order by Article", orderID);
+                result = DBProxy.Current.Select(null, sql, out dtPrint2);
+                if (!result) return result;
+
+                sql = string.Format(@"select A.Refno, B.Description , article , ColorId
+                                    from Order_BOA_Expend A
+                                    left join Fabric B on B.SCIRefno=A.SCIRefno
+                                    where Id='{0}' and Article<>'' and ColorId<>''
+                                    group by A.Refno, B.Description , article, ColorId", orderID);
+                result = DBProxy.Current.Select(null, sql, out dtColor);
+                if (!result) return result;
+
+                sql = string.Format(@"select ID , Name from Color where BrandId='{0}' and JUNK=0", BrandID);
+                result = DBProxy.Current.Select(null, sql, out dtColor2);
+                if (!result) return result;
+                #endregion
+            }
+            else if (radioOther.Checked)
+            {
+                #region OTHER
+                //架構要調，先HOLD住
+
+                #endregion
+            }
+            else if (radioThread.Checked)
+            {
+                #region Thread
+                sql = string.Format(@"select B.Article , A.ThreadColorID
+                                    from ThreadRequisition_Detail A
+                                    left join ThreadRequisition_Detail_Cons B on B.Ukey=A.Ukey
+                                    where A.orderid= '{0}'
+                                    group by article, threadcolorid", POID);
+                result = DBProxy.Current.Select(null, sql, out dtPrint);
+                if (!result) return result;
+
+                sql = string.Format(@"select distinct B.Article 
+                                    from ThreadRequisition_Detail A
+                                    left join ThreadRequisition_Detail_Cons B on B.Ukey=A.Ukey
+                                    where A.orderid= '201109391N'", POID);
+                result = DBProxy.Current.Select(null, sql, out dtPrint2);
+                if (!result) return result;
+                #endregion
+            }
+            #endregion
 
             try
             {
@@ -142,39 +216,29 @@ namespace Sci.Production.Warehouse
                 #region ROW2
                 if (radioFabric.Checked)
                 {
-                    for (int i = 2; i < tables.Columns.Count; i++) tables.Cell(2, i).Range.Text = "FABRIC";
+                    for (int i = 2; i <= tables.Columns.Count; i++) tables.Cell(2, i).Range.Text = "FABRIC";
                 }
                 else if (radioAccessory.Checked)
                 {
-                    for (int i = 2; i < tables.Columns.Count; i++) tables.Cell(2, i).Range.Text = "ACCESSORY";
+                    for (int i = 2; i <= tables.Columns.Count; i++) tables.Cell(2, i).Range.Text = "ACCESSORY";
                 }
                 else if (radioOther.Checked)
                 {
-                    for (int i = 2; i < tables.Columns.Count; i++) tables.Cell(2, i).Range.Text = "OTHER";
+                    for (int i = 2; i <= tables.Columns.Count; i++) tables.Cell(2, i).Range.Text = "OTHER";
                 }
                 else if (radioThread.Checked)
                 {
-                    for (int i = 2; i < tables.Columns.Count; i++) tables.Cell(2, i).Range.Text = "Thread";
+                    for (int i = 2; i <= tables.Columns.Count; i++) tables.Cell(2, i).Range.Text = "Thread";
                 }
                 #endregion
 
                 #region ROW4 抬頭
-                if (radioFabric.Checked)
+                if (radioFabric.Checked || radioAccessory.Checked || radioThread.Checked)
                 {
                     for (int i = 0; i < dtPrint2.Rows.Count; i++)
                         tables.Cell(i + 4, 1).Range.Text = dtPrint2.Rows[i]["Article"].ToString().Trim();
                 }
-                else if (radioAccessory.Checked)
-                {
-                    
-
-                }
                 else if (radioOther.Checked)
-                {
-                    
-
-                }
-                else if (radioThread.Checked)
                 {
                     
 
@@ -193,12 +257,13 @@ namespace Sci.Production.Warehouse
 
                 //Word.Tables AllTable = document.Tables;
 
-                #region ROW3
+                #region [ROW3][ROW4]
                 int count = 1;
                 int NowPage = 1;
                 int columnIndex;
                 if (radioFabric.Checked)
                 {
+                    #region Fabric
                     foreach (DataRow row in dtPrint.Rows)
                     {
                         NowPage = ((count - 1) / 6);  //從0開始(例:0,1,2...)
@@ -214,9 +279,9 @@ namespace Sci.Production.Warehouse
                         {
                             sql = string.Format(@"LectraCode='{0}' and Article='{1}'", row["Lectracode"].ToString().Trim(), dtPrint2.Rows[i]["Article"].ToString().Trim());
                             
-                            if (dtColorCombo.Select(sql).Length > 0)
+                            if (dtColor.Select(sql).Length > 0)
                             {
-                                rowColor = dtColorCombo.Select(sql)[0];
+                                rowColor = dtColor.Select(sql)[0];
                                 temp = rowColor["Name"].ToString().Trim() + Environment.NewLine + rowColor["ColorID"].ToString().Trim();
                             }
                             else
@@ -228,27 +293,60 @@ namespace Sci.Production.Warehouse
 
                         }
 
-                        //foreach (DataRow row2 in dtPrint2.Rows)
-                        //{
-                        //    sql = string.Format(@"LectraCode='{0}' and Article='{1}'", row["Lectracode"].ToString().Trim(), row2["Article"].ToString().Trim());
-                        //    rowColor = dtColorCombo.Select(sql)[0];
-                        //    if (MyUtility.Check.Empty(rowColor))
-                        //        temp = "";
-                        //    else
-                        //        temp = rowColor["Name"].ToString().Trim() + Environment.NewLine + rowColor["ColorID"].ToString().Trim();
-                        //    tables.Cell(4 + 7 * NowPage, columnIndex).Range.Text = temp;
-                        //}
+                        count++;
+                    }
+                    #endregion
+                }
+                else if (radioAccessory.Checked)
+                {
+                    #region Accessory
+                    foreach (DataRow row in dtPrint.Rows)
+                    {
+                        NowPage = ((count - 1) / 6);  //從0開始(例:0,1,2...)
+                        columnIndex = ((count - 1) % 6) + 2;
+
+                        temp = row["Refno"].ToString().Trim() + Environment.NewLine + row["Description"].ToString().Trim();
+                        tables.Cell(3 + 7 * NowPage, columnIndex).Range.Text = temp;
+
                         
+                        for (int i = 0; i < dtPrint2.Rows.Count; i++)
+                        {
+                            sql = string.Format(@"Refno='{0}' and Article='{1}'", row["Refno"].ToString().Trim(), dtPrint2.Rows[i]["Article"].ToString().Trim());
 
+                            ListColor.Clear();
+                            colorName = string.Empty;
+                            ColorID = string.Empty;
+                            if (dtColor.Select(sql).Length > 0)
+                            {
+                                foreach (DataRow rowC in dtColor.Select(sql))
+                                {
+                                    temp = string.Join(",", rowC["colorID"].ToString().Trim().Split(',').Select(s => s.Trim()).ToArray());
+                                    ListColor.AddRange(temp.Split(',').ToList());
+                                }
+                                ListColor = ListColor.Distinct().ToList();  //去除重複的值
 
+                                foreach (string color in ListColor)
+                                {
+                                    colorName += dtColor2.Select(string.Format("ID='{0}'", color))[0]["Name"].ToString() + "/" ;
+                                    ColorID += color + "/";
+                                }
+                                colorName = colorName.TrimEnd('/');
+                                ColorID = ColorID.TrimEnd('/');
+
+                                temp = colorName + Environment.NewLine + ColorID;
+                            }
+                            else
+                            {
+                                temp = "";
+                            }
+
+                            tables.Cell((4 + i) + (7 * NowPage), columnIndex).Range.Text = temp;
+
+                        }
 
                         count++;
                     }
-                }
-                else if (radioAccessory.Checked)
-                {
-                        
-
+                    #endregion
                 }
                 else if (radioOther.Checked)
                 {
@@ -257,47 +355,34 @@ namespace Sci.Production.Warehouse
                 }
                 else if (radioThread.Checked)
                 {
-                        
+                    #region Thread
+                    foreach (DataRow row in dtPrint.Rows)
+                    {
+                        NowPage = ((count - 1) / 6);  //從0開始(例:0,1,2...)
+                        columnIndex = ((count - 1) % 6) + 2;
 
+                        for (int i = 0; i < dtPrint2.Rows.Count; i++)
+                        {
+                            sql = string.Format(@"Article='{1}'", dtPrint2.Rows[i]["Article"].ToString().Trim());
+
+                            if (dtPrint.Select(sql).Length > 0)
+                            {
+                                temp = dtPrint.Select(sql)[0].ToString().Trim();
+                            }
+                            else
+                            {
+                                temp = "";
+                            }
+
+                            tables.Cell((4 + i) + (7 * NowPage), columnIndex).Range.Text = temp;
+
+                        }
+
+                        count++;
+                    }
+                    #endregion  
                 }
-                #endregion
-
-                #region ROW4
-                if (radioFabric.Checked)
-                {
-                    //foreach (DataRow row in dtPrint.Rows)
-                    //{
-                    //    NowPage = ((count - 1) / 6);  //從0開始(例:0,1,2...)
-                    //    columnIndex = ((count - 1) % 6) + 2;
-
-                    //    temp = "Pattern Panel:" + row["PatternPanel"].ToString().Trim() + Environment.NewLine
-                    //         + "Fabric Code:" + row["FabricCode"].ToString().Trim() + Environment.NewLine
-                    //         + row["Refno"].ToString().Trim() + Environment.NewLine
-                    //         + row["Description"].ToString().Trim();
-                    //    tables.Cell(3 + 7 * NowPage, columnIndex).Range.Text = temp;
-                    //    count++;
-                    //}
-                }
-                else if (radioAccessory.Checked)
-                {
-
-
-                }
-                else if (radioOther.Checked)
-                {
-
-
-                }
-                else if (radioThread.Checked)
-                {
-
-
-                }
-                #endregion
-
-
-
-                                  
+                #endregion          
 
                 winword.Quit(ref missing, ref missing, ref missing);     //close word application
                 winword = null;
@@ -315,7 +400,6 @@ namespace Sci.Production.Warehouse
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
                 //Marshal.FinalReleaseComObject(winword);
-
             }
 
         }
@@ -324,15 +408,6 @@ namespace Sci.Production.Warehouse
         {
             return true;
         }
-
-
-
-
-
-
-
-
-
 
 
     }

@@ -416,7 +416,8 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
                                                                   , CurrentMaintain["StyleID"].ToString().Trim()
                                                                   , CurrentMaintain["SeasonID"].ToString().Trim()
                                                                   , CurrentMaintain["FactoryID"].ToString().Trim()
-                                                                  , CurrentMaintain["BrandID"].ToString().Trim());
+                                                                  , CurrentMaintain["BrandID"].ToString().Trim()
+                                                                  , CurrentMaintain["POID"].ToString().Trim());
             TrimCardPrint.ShowDialog(this);
         }
 
