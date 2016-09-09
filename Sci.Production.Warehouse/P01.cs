@@ -408,9 +408,16 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             callNextForm.ShowDialog(this);
         }
 
+        //[Trim Card Print]
         private void btnTrimCard_Click(object sender, EventArgs e)
         {
-
+            //ID , StyleID , SeasonID , FactoryID
+            P01_TrimCardPrint TrimCardPrint = new P01_TrimCardPrint(CurrentMaintain["ID"].ToString().Trim()
+                                                                  , CurrentMaintain["StyleID"].ToString().Trim()
+                                                                  , CurrentMaintain["SeasonID"].ToString().Trim()
+                                                                  , CurrentMaintain["FactoryID"].ToString().Trim()
+                                                                  , CurrentMaintain["BrandID"].ToString().Trim());
+            TrimCardPrint.ShowDialog(this);
         }
 
         private void btnCloseMTL_Click(object sender, EventArgs e)
