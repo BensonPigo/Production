@@ -1,12 +1,4 @@
-USE [Pms_To_Trade]
-GO
 
-/****** Object:  StoredProcedure [dbo].[exp_Replacement]    Script Date: 2016/9/2 ¤W¤È 10:46:49 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 -- =============================================
 -- Author:		<Willy S01910>
 -- Create date: <2016/08/17>
@@ -50,6 +42,6 @@ Where ExportToTPE is null
 
 
 
-GO
+
 
 

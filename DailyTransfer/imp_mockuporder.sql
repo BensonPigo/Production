@@ -1,12 +1,3 @@
-USE [Production]
-GO
-
-/****** Object:  StoredProcedure [dbo].[imp_MockupOrder]    Script Date: 2016/9/5 ¤U¤È 04:48:15 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 
 -- =============================================
@@ -152,6 +143,6 @@ END
 
 
 
-GO
+
 
 

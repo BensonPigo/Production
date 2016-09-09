@@ -1,12 +1,3 @@
-USE [Production]
-GO
-
-/****** Object:  StoredProcedure [dbo].[imp_Base]    Script Date: 2016/9/3 ¤U¤È 02:48:40 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 -- =============================================
 -- Author:		<Author,,Name>
@@ -2315,6 +2306,6 @@ where not exists(select id from Production.dbo.ADIDASMiSetup_ColorComb as a wher
   
 END
 
-GO
+
 
 

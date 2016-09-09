@@ -1,12 +1,4 @@
-USE [Pms_To_Trade]
-GO
 
-/****** Object:  StoredProcedure [dbo].[exp_Sewing]    Script Date: 2016/9/2 ¤W¤È 10:47:04 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 -- =============================================
 -- Author:		<Willy S01910>
@@ -57,6 +49,6 @@ where a.id=b.ID
 
 END
 
-GO
+
 
 

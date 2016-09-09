@@ -1,12 +1,4 @@
-USE [Pms_To_Trade]
-GO
 
-/****** Object:  StoredProcedure [dbo].[exp_WkHours]    Script Date: 2016/9/2 ¤W¤È 10:47:39 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 -- =============================================
 -- Author:		<Willy S01910>
@@ -30,6 +22,6 @@ GROUP BY FactoryID, Date
 	
 
 
-GO
+
 
 

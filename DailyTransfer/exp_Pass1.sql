@@ -1,12 +1,4 @@
-USE [Pms_To_Trade]
-GO
 
-/****** Object:  StoredProcedure [dbo].[exp_Pass1]    Script Date: 2016/9/2 ¤W¤È 10:46:24 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 -- =============================================
 -- Author:		<Leo 01921>
@@ -41,6 +33,6 @@ Update Pass1
 set Factory = (select RgCode from [Production].dbo.System)
 END
 
-GO
+
 
 

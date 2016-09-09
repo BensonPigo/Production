@@ -1,12 +1,4 @@
-USE [Production]
-GO
 
-/****** Object:  StoredProcedure [dbo].[imp_Debit]    Script Date: 2016/9/2 ¤W¤È 11:16:29 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 -- =============================================
 -- Author:		<Willy S01910>
@@ -159,6 +151,6 @@ inner join Trade_To_Pms.dbo.debit as td1 on td1.id = td2.id
 
 END
 
-GO
+
 
 

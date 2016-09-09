@@ -1,12 +1,4 @@
-USE [Production]
-GO
 
-/****** Object:  StoredProcedure [dbo].[imp_Airboat]    Script Date: 2016/9/3 ¤U¤È 02:56:04 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 -- =============================================
 -- Author:		LEO
@@ -63,6 +55,6 @@ from Production.dbo.Express as a inner join Trade_To_Pms.dbo.FactoryExpress as b
 
 END
 
-GO
+
 
 

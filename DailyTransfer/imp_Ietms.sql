@@ -1,18 +1,4 @@
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
+
 -- =============================================
 -- Author:		LEO	
 -- Create date:20160903
@@ -521,4 +507,4 @@ from Trade_To_Pms.dbo.Marker_Send as b
 where not exists(select 1 from Production.dbo.Marker_Send as a where a.id = b.id)
 
 END
-GO
+

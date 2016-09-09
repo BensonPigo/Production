@@ -1,12 +1,4 @@
-USE [Pms_To_Trade]
-GO
 
-/****** Object:  StoredProcedure [dbo].[exp_Pullout]    Script Date: 2016/9/2 ¤W¤È 10:46:36 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 -- =============================================
 -- Author:		<LEO>
@@ -126,6 +118,6 @@ DROP TABLE #tmpFtyBooking1
 DROP TABLE #tmpFtyBooking2
 END
 
-GO
+
 
 

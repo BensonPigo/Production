@@ -1,12 +1,3 @@
-USE [Pms_To_Trade]
-GO
-
-/****** Object:  StoredProcedure [dbo].[exp_Airpp]    Script Date: 2016/9/2 ¤W¤È 10:37:15 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 -- =============================================
 -- Author:		<Leo 01921>
@@ -50,6 +41,6 @@ AND CONVERT(DATETIME, AddDate) <= CONVERT(DATETIME, EditDate)))
 AND Status IN ('New','Checked','Approved','Junked') AND FtyMgrApvDate is not null AND FtySendDate is null
 END
 
-GO
+
 
 

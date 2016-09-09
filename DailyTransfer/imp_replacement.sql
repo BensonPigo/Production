@@ -1,12 +1,3 @@
-USE [Production]
-GO
-
-/****** Object:  StoredProcedure [dbo].[imp_Replacement]    Script Date: 2016/9/2 ¤W¤È 11:17:49 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 -- =============================================
 -- Author:		<Willy S01910>
@@ -50,6 +41,6 @@ BEGIN
 
 END
 
-GO
+
 
 

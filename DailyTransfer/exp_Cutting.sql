@@ -1,12 +1,3 @@
-USE [Pms_To_Trade]
-GO
-
-/****** Object:  StoredProcedure [dbo].[exp_Cutting]    Script Date: 2016/9/2 ¤W¤È 10:38:13 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 -- =============================================
 -- Author:		<Leo 01921>
@@ -58,6 +49,6 @@ WHERE CUT1. ID = CUT3. ID
 
 END
 
-GO
+
 
 

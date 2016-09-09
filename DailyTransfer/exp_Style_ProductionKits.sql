@@ -1,12 +1,4 @@
-USE [Pms_To_Trade]
-GO
 
-/****** Object:  StoredProcedure [dbo].[exp_Style_ProductionKits]    Script Date: 2016/9/2 ¤W¤È 10:48:40 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 -- =============================================
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
@@ -36,6 +28,6 @@ WHERE CONVERT(DATE,FtyLastDate) >= CONVERT(DATE,DATEADD(month, -2, GetDate()))
 
 END
 
-GO
+
 
 

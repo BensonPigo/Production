@@ -1,13 +1,3 @@
-USE [Production]
-GO
-
-/****** Object:  StoredProcedure [dbo].[imp_part]    Script Date: 2016/9/6 ¤W¤È 11:06:10 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
 
 -- =============================================
 -- Author:		<Willy S01910>
@@ -328,6 +318,5 @@ output inserted.id into @T;
 END
 
 
-GO
 
 

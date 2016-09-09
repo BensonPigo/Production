@@ -1,12 +1,4 @@
-USE [Production]
-GO
 
-/****** Object:  StoredProcedure [dbo].[imp_Airpp]    Script Date: 2016/9/3 ¤U¤È 02:57:44 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 -- =============================================
 -- Author:		LEO
@@ -95,6 +87,6 @@ from Production.dbo.AirPP as a inner join Trade_To_Pms.dbo.AirPP as b ON a.id=b.
 
 END
 
-GO
+
 
 

@@ -1,12 +1,4 @@
-USE [Pms_To_Trade]
-GO
 
-/****** Object:  StoredProcedure [dbo].[exp_Part]    Script Date: 2016/9/2 ¤W¤È 10:40:20 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 -- =============================================
 -- Author:		<Leo 01921>
@@ -162,6 +154,6 @@ drop table #TPI_PartPO1
 
 END
 
-GO
+
 
 

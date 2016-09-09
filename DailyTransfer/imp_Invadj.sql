@@ -1,12 +1,3 @@
-USE [Production]
-GO
-
-/****** Object:  StoredProcedure [dbo].[imp_Invadj]    Script Date: 2016/9/6 ¤U¤È 02:00:37 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 -- =============================================
 -- Author:		LEO
@@ -170,6 +161,6 @@ drop table #TMPPullout2Cdate
 
 END
 
-GO
+
 
 

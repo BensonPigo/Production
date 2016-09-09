@@ -1,12 +1,4 @@
-USE [Production]
-GO
 
-/****** Object:  StoredProcedure [dbo].[imp_Export]    Script Date: 2016/9/5 ¤U¤È 04:45:34 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 
 -- =============================================
@@ -168,6 +160,6 @@ END
 
 
 
-GO
+
 
 
