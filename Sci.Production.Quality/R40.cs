@@ -75,13 +75,14 @@ namespace Sci.Production.Quality
                     where year in (@y1,@y2,@y3)
                     group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1
 
-                    select dRanges.name,#temp.Target,year1.Claimed,year1.Shipped,year1.adiComp,year2.Claimed,year2.Shipped,year2.adiComp,year3.Claimed,year3.Shipped,year3.adiComp from dbo.#temp
-                    inner join @dRanges as dRanges on #temp.month1 between dRanges.starts and dRanges.ends
+                    select dRanges.name,#temp.Target,SUM(year1.Claimed)[Claimed],SUM(year1.Shipped)[Shipped],SUM(year1.adiComp)[adiComp],SUM(year2.Claimed)[Claimed],SUM(year2.Shipped)[Shipped],SUM(year2.adiComp)[adiComp],SUM(year3.Claimed)[Claimed],SUM(year3.Shipped)[Shipped],SUM(year3.adiComp)[adiComp] from dbo.#temp
+                    inner join @dRanges as dRanges on #temp.month1 between dRanges.starts and dRanges.ends 
 					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE YEAR1=@y1)AS year1
 					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE YEAR1=@y2)AS year2
 					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE YEAR1=@y3)AS year3
+					GROUP BY dRanges.name,#temp.Target,year1.Claimed,year1.Shipped,year1.adiComp,year2.Claimed,year2.Shipped,year2.adiComp,year2.Claimed,year2.Shipped,year2.adiComp
                     DROP TABLE #temp";
-
+            result = DBProxy.Current.Select("", tsql,out dtt);
 
             return base.ValidateInput();
 
@@ -91,31 +92,7 @@ namespace Sci.Production.Quality
        
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            dt_All = null;
-            dt_Tmp = null;
-            
-            SortedList<string, string> year_All = new SortedList<string, string>();
-            Dictionary<string, Dictionary<string, decimal>> month_FtyAmt = new Dictionary<string, Dictionary<string, decimal>>();           
-
-            // 抓Query資料並list有哪些years
-            DataTable years = new DataTable();
-            SqlConnection conn;
-            result = DBProxy.Current.OpenConnection("", out conn);
-            if (!result) { return result; }
-            result = DBProxy.Current.SelectByConn(conn, tsql, out years);
-            //DualResult result1 = DBProxy.Current.SelectByConn(conn, tsql, out years);
-            //if (!result1) { return result1; }
-
-            //用years重組Pivot的Tsql
-            if (null == years || years.Rows.Count == 0)
-            {
-                return new DualResult(false, "Data not fund");
-            }
-
-            string listByYear = 
-@"
-
-";
+           
 
             return base.OnAsyncDataLoad(e);
         }
