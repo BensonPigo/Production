@@ -12,31 +12,33 @@ BEGIN
 	declare @Sayfty table(id varchar(10)) --¤u¼t¥N½X
 	insert @Sayfty select id from Production.dbo.Factory
 
+	declare  @tReplace table (id varchar(13))
 
--- update Production.dbo.ReplacementReport
-	update Production.dbo.ReplacementReport
-	set TPECFMName=tr1.TPECFMName,
-	TPECFMDate=tr1.TPECFMDate,
-	TPEEditName=tr1.EditName,
-	TPEEditDate=tr1.EditDate
-	from Trade_To_Pms.dbo.ReplacementReport tr1
-	inner join Production.dbo.ReplacementReport pr1 on tr1.id=pr1.ID
-	where tr1.TPECFMDate <> pr1.TPECFMDate
-	and tr1.FactoryID in (select id from @Sayfty)
+	--Merge Replace1
+	Merge Production.dbo.ReplacementReport as t
+	Using (select * from Trade.dbo.ReplacementReport where factoryid in (select id from @Sayfty))as s
+	on t.id=s.id 
+		When matched and t.TPECFMDate <> s.TPECFMDate then
+		update set
+		t.TPECFMName = s.TPECFMName,
+		t.TPECFMDate =s.TPECFMDate,
+		t.TPEEditName=s.EditName,
+		t.TPEEditDate=s.EditDate
+	output inserted.id into @tReplace;
 
--- update Production.dbo.ReplacementReport_Detail
-	update Production.dbo.ReplacementReport_Detail
-	set EstInQty = tr2.EstInQty,
-	ActInQty = tr2.ActInQty, 
-	AGradeRequest = tr2.AGradeRequest, 
-	BGradeRequest = tr2.BGradeRequest, 
-	NarrowRequest = tr2.NarrowRequest, 
-	TotalRequest = tr2.TotalRequest, 
-	AfterCuttingRequest = tr2.AfterCuttingRequest
-	from Trade_To_Pms.dbo.ReplacementReport_Detail tr2
-	inner join Production.dbo.ReplacementReport_Detail pr2 on tr2.id=pr2.id
-	inner join Trade_To_Pms.dbo.ReplacementReport tr1 on tr1.id=tr2.id
-	where tr1.FactoryID in (select id from @Sayfty)
+	--Merge Replace2
+	Merge Production.dbo.ReplacementReport_Detail as t
+	Using (select * from Trade.dbo.ReplacementReport_Detail where id in (select id from @tReplace)) as s
+	on t.ukey=s.ukey
+		when matched then
+		update set
+	    t.EstInQty = s.EstInQty,
+		t.ActInQty = s.ActInQty, 
+		t.AGradeRequest = s.AGradeRequest, 
+		t.BGradeRequest = s.BGradeRequest, 
+		t.NarrowRequest = s.NarrowRequest, 
+		t.TotalRequest = s.TotalRequest, 
+		t.AfterCuttingRequest = s.AfterCuttingRequest;
 
 
 END
