@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioPanel = new Sci.Win.UI.RadioPanel();
+            this.radioDetail = new Sci.Win.UI.RadioButton();
+            this.radioSummary = new Sci.Win.UI.RadioButton();
             this.label2 = new Sci.Win.UI.Label();
             this.comboMaterialType = new Sci.Win.UI.ComboBox();
             this.label1 = new Sci.Win.UI.Label();
@@ -36,26 +38,48 @@
             this.label10 = new Sci.Win.UI.Label();
             this.DateSCIDelivery = new Sci.Win.UI.DateRange();
             this.label3 = new Sci.Win.UI.Label();
-            this.radioSummary = new Sci.Win.UI.RadioButton();
-            this.radioDetail = new Sci.Win.UI.RadioButton();
-            this.radioPanel1.SuspendLayout();
+            this.radioPanel.SuspendLayout();
             this.SuspendLayout();
             // 
-            // radioPanel1
+            // radioPanel
             // 
-            this.radioPanel1.Controls.Add(this.radioDetail);
-            this.radioPanel1.Controls.Add(this.radioSummary);
-            this.radioPanel1.Controls.Add(this.label2);
-            this.radioPanel1.Controls.Add(this.comboMaterialType);
-            this.radioPanel1.Controls.Add(this.label1);
-            this.radioPanel1.Controls.Add(this.comboCategory);
-            this.radioPanel1.Controls.Add(this.label10);
-            this.radioPanel1.Controls.Add(this.DateSCIDelivery);
-            this.radioPanel1.Controls.Add(this.label3);
-            this.radioPanel1.Location = new System.Drawing.Point(30, 24);
-            this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(440, 217);
-            this.radioPanel1.TabIndex = 94;
+            this.radioPanel.Controls.Add(this.radioDetail);
+            this.radioPanel.Controls.Add(this.radioSummary);
+            this.radioPanel.Controls.Add(this.label2);
+            this.radioPanel.Controls.Add(this.comboMaterialType);
+            this.radioPanel.Controls.Add(this.label1);
+            this.radioPanel.Controls.Add(this.comboCategory);
+            this.radioPanel.Controls.Add(this.label10);
+            this.radioPanel.Controls.Add(this.DateSCIDelivery);
+            this.radioPanel.Controls.Add(this.label3);
+            this.radioPanel.Location = new System.Drawing.Point(30, 24);
+            this.radioPanel.Name = "radioPanel";
+            this.radioPanel.Size = new System.Drawing.Size(440, 217);
+            this.radioPanel.TabIndex = 94;
+            // 
+            // radioDetail
+            // 
+            this.radioDetail.AutoSize = true;
+            this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioDetail.Location = new System.Drawing.Point(128, 173);
+            this.radioDetail.Name = "radioDetail";
+            this.radioDetail.Size = new System.Drawing.Size(62, 21);
+            this.radioDetail.TabIndex = 106;
+            this.radioDetail.Text = "Detail";
+            this.radioDetail.UseVisualStyleBackColor = true;
+            // 
+            // radioSummary
+            // 
+            this.radioSummary.AutoSize = true;
+            this.radioSummary.Checked = true;
+            this.radioSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSummary.Location = new System.Drawing.Point(128, 146);
+            this.radioSummary.Name = "radioSummary";
+            this.radioSummary.Size = new System.Drawing.Size(85, 21);
+            this.radioSummary.TabIndex = 105;
+            this.radioSummary.TabStop = true;
+            this.radioSummary.Text = "Summary";
+            this.radioSummary.UseVisualStyleBackColor = true;
             // 
             // label2
             // 
@@ -122,42 +146,18 @@
             this.label3.TabIndex = 98;
             this.label3.Text = "SCI Delivery:";
             // 
-            // radioSummary
-            // 
-            this.radioSummary.AutoSize = true;
-            this.radioSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioSummary.Location = new System.Drawing.Point(128, 146);
-            this.radioSummary.Name = "radioSummary";
-            this.radioSummary.Size = new System.Drawing.Size(85, 21);
-            this.radioSummary.TabIndex = 105;
-            this.radioSummary.TabStop = true;
-            this.radioSummary.Text = "Summary";
-            this.radioSummary.UseVisualStyleBackColor = true;
-            // 
-            // radioDetail
-            // 
-            this.radioDetail.AutoSize = true;
-            this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioDetail.Location = new System.Drawing.Point(128, 173);
-            this.radioDetail.Name = "radioDetail";
-            this.radioDetail.Size = new System.Drawing.Size(62, 21);
-            this.radioDetail.TabIndex = 106;
-            this.radioDetail.TabStop = true;
-            this.radioDetail.Text = "Detail";
-            this.radioDetail.UseVisualStyleBackColor = true;
-            // 
             // R05
             // 
             this.ClientSize = new System.Drawing.Size(627, 290);
-            this.Controls.Add(this.radioPanel1);
+            this.Controls.Add(this.radioPanel);
             this.Name = "R05";
             this.Text = "R05.Monthly Material Suppliers Evaluation Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.radioPanel1, 0);
-            this.radioPanel1.ResumeLayout(false);
-            this.radioPanel1.PerformLayout();
+            this.Controls.SetChildIndex(this.radioPanel, 0);
+            this.radioPanel.ResumeLayout(false);
+            this.radioPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -165,7 +165,7 @@
 
         #endregion
 
-        private Win.UI.RadioPanel radioPanel1;
+        private Win.UI.RadioPanel radioPanel;
         private Win.UI.RadioButton radioDetail;
         private Win.UI.RadioButton radioSummary;
         private Win.UI.Label label2;
