@@ -31,7 +31,10 @@ namespace Sci.Production.Cutting
             DBProxy.Current.Select(null, "select '' as ID union all select distinct MDivisionID from WorkOrder", out WorkOrder);
             MyUtility.Tool.SetupCombox(cmb_MDivisionID, 1, WorkOrder);
             cmb_MDivisionID.Text = Sci.Env.User.Keyword;
+            createfolder();
         }
+
+         
 
         private void radiobtn_Bydetail_CheckedChanged(object sender, EventArgs e)
         {
@@ -813,6 +816,14 @@ drop table #tmpall");
 
             boolsend = false;
             return true;
+        }
+
+        protected void createfolder()
+        {
+            if (!Directory.Exists(Sci.Env.Cfg.ReportTempDir))
+            {
+                Directory.CreateDirectory(Sci.Env.Cfg.ReportTempDir);
+            }
         }
 
         private void btn_sendmail_Click(object sender, EventArgs e)
