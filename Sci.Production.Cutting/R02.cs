@@ -28,7 +28,7 @@ namespace Sci.Production.Cutting
         {
             InitializeComponent();
             DataTable WorkOrder;
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct MDivisionID from WorkOrder", out WorkOrder);
+            DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder", out WorkOrder);
             MyUtility.Tool.SetupCombox(cmb_MDivisionID, 1, WorkOrder);
             cmb_MDivisionID.Text = Sci.Env.User.Keyword;
             createfolder();

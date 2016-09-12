@@ -23,81 +23,76 @@ namespace Sci.Production.Cutting
         {
             InitializeComponent();
             DataTable WorkOrder;
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct MDivisionID from WorkOrder", out WorkOrder);
-            MyUtility.Tool.SetupCombox(cmbM, 1, WorkOrder);
-            cmbM.Text = Sci.Env.User.Keyword;
+            DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder", out WorkOrder);
+            MyUtility.Tool.SetupCombox(cmb_M, 1, WorkOrder);
+            cmb_M.Text = Sci.Env.User.Keyword;
         }
         
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        private void radiobtn1_ByM_CheckedChanged(object sender, EventArgs e)
         {
-            if (radiobtnByM.Checked)
+            if (radiobtn_ByM.Checked)
             {
-                dateRangeEstCutDate.Control2.Enabled = true;
-                dateRangeEstCutDate.IsRequired = true;
-                textBox1.Enabled = textBox2.Enabled = false;
+                dateR_EstCutDate.Control2.Enabled = true;
+                dateR_EstCutDate.IsRequired = true;
+                txt_CutCell1.Enabled = txt_CutCell2.Enabled = false;
+                txt_CutCell2.Text = "";
             }
         }
 
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        private void radioBtn2_ByCutCell_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioBtnByCutCell.Checked)
+            if (radioBtn_ByCutCell.Checked)
             {
-                dateRangeEstCutDate.Control2.Enabled = true;
-                dateRangeEstCutDate.IsRequired = false;
-                dateRangeEstCutDate.IsRequired = true;
-                textBox1.Enabled = textBox2.Enabled = true;
+                dateR_EstCutDate.Control2.Enabled = true;
+                dateR_EstCutDate.IsRequired = true;
+                txt_CutCell1.Enabled = txt_CutCell2.Enabled = true;
             }
         }
 
-        private void radioButton3_CheckedChanged(object sender, EventArgs e)
+        private void radioBtn3_ByDetail_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioBtnByDetail.Checked)
+            if (radioBtn_ByDetail.Checked)
             {
-                dateRangeEstCutDate.Control2.Enabled = false;
-                dateRangeEstCutDate.Control2.Text = "";
-                dateRangeEstCutDate.IsRequired = false;
-                textBox1.Enabled = textBox2.Enabled = true;
+                dateR_EstCutDate.Control2.Enabled = false;
+                dateR_EstCutDate.Control2.Text = "";
+                dateR_EstCutDate.IsRequired = false;
+                txt_CutCell1.Enabled = txt_CutCell2.Enabled = true;
             }
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRangeEstCutDate.Value1))
+            WorkOrder = cmb_M.Text;
+            Est_CutDate1 = dateR_EstCutDate.Value1;
+            Est_CutDate2 = dateR_EstCutDate.Value2;
+            CutCell1 = txt_CutCell1.Text;
+            CutCell2 = txt_CutCell2.Text;
+
+            if (MyUtility.Check.Empty(Est_CutDate1))
             {
                 MyUtility.Msg.WarningBox("Est. Cut Date can't empty!!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(cmbM.Text))
-            {
-                MyUtility.Msg.WarningBox("WorkOrder can't empty!!");
-                return false;
-            }
-
-            WorkOrder = cmbM.Text;
-            Est_CutDate1 = dateRangeEstCutDate.Value1;
-            Est_CutDate2 = dateRangeEstCutDate.Value2;
-            CutCell1 = textBox1.Text;
-            CutCell2 = textBox2.Text;
-
             return base.ValidateInput();
         }
 
+        //非同步讀取資料
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
 
             #region radiobtnByM
-            if (radiobtnByM.Checked)
+            if (radiobtn_ByM.Checked)
             {
                 sqlCmd.Append(@"
-if OBJECT_ID('#DateRanges') is not null
-	drop table #DateRanges
-if OBJECT_ID('#tmpWO') is not null
-	drop table #tmpWO
-select distinct wo.EstCutDate
-into #DateRanges
+IF OBJECT_ID('tempdb.dbo.#DateRanges', 'U') IS NOT NULL
+  DROP TABLE #DateRanges
+ IF OBJECT_ID('tempdb.dbo.#tmpWO', 'U') IS NOT NULL
+  DROP TABLE #tmpWO
+select distinct wo.EstCutDate 
+into #DateRanges 
 from workorder wo
 where 1 = 1
 ");
@@ -107,11 +102,13 @@ where 1 = 1
                 }
 
                 sqlCmd.Append(@"
-select wo.id,co.Status,wo.EstCutDate, wo.mdivisionid,co.CDate
+select wo.id,co.Status,wo.EstCutDate, wo.mdivisionid,co.CDate,c.Finished
 into #tmpWO
-from dbo.WorkOrder as wo
+from MDivision
+inner join dbo.WorkOrder as wo on MDivision.ID = wo.MDivisionID
 inner join CuttingOutput_Detail cod on  cod.WorkOrderUKey = wo.UKey 
-inner join CuttingOutput as co on co.ID = cod.ID 
+inner join CuttingOutput as co on co.ID = cod.ID
+inner join Cutting as c on c.ID = wo.ID
 where 1 = 1
 ");
                 if (!MyUtility.Check.Empty(WorkOrder))
@@ -135,69 +132,59 @@ from #DateRanges as dr
 outer apply(select distinct wo.MDivisionId from #tmpWO as WO) as M
 outer apply(
 	select count(*) as ct 
-	from #tmpWO as WO 
-	Where wo.EstCutDate = dr.EstCutDate and wo.MDivisionId = M.MDivisionId
+	from #tmpWO
+	Where EstCutDate = dr.EstCutDate 
+	and MDivisionId = M.MDivisionId
 ) as d1
 outer apply(
 	select count(*) as ct
-	from #tmpWO as WO 
-		inner join cutting c on c.ID = wo.ID
-	where (wo.EstCutDate < dr.EstCutDate  
-		 and ((wo.EstCutDate < CDate and CDate >= dr.EstCutDate) 
-			   or (CDate is null and c.Finished = 0 )		  
+	from #tmpWO 
+	where (EstCutDate < dr.EstCutDate  
+		 and ((EstCutDate < CDate and CDate >= dr.EstCutDate) 
+			   or (CDate is null and Finished = 0 )		  
 			 )
 		)
-		and wo.MDivisionId = M.MDivisionId
+		and MDivisionId = M.MDivisionId
 ) as d2
 outer apply(
 	select count(*) as ct 
-	from #tmpWO as WO 
-	Where wo.EstCutDate = dr.EstCutDate 
+	from #tmpWO 
+	Where EstCutDate = dr.EstCutDate 
 		and CDate < dr.EstCutDate
-		and wo.MDivisionId = M.MDivisionId
+		and MDivisionId = M.MDivisionId
 ) as d3
 outer apply(
 	select count(*) as ct 
-	from #tmpWO as WO 
+	from #tmpWO
 	Where EstCutDate < dr.EstCutDate 
-	and CDate = dr.EstCutDate
-		and wo.MDivisionId = M.MDivisionId
+		and CDate = dr.EstCutDate
+		and MDivisionId = M.MDivisionId
 ) as d4
 outer apply(	
 		select count(*) as ct 
-		from #tmpWO as WO 
+		from #tmpWO 
 		where Status = 'Confrimed'
 			and CDate = dr.EstCutDate
 			and CDate < EstCutDate
 			and EstCutDate > dr.EstCutDate
-			and wo.MDivisionId = M.MDivisionId	
+			and MDivisionId = M.MDivisionId
 ) as d5
 order by dr.EstCutDate
 
 drop table #DateRanges
 drop table #tmpWO
-");
-                #region Append condition Est_CutDate
-                condition_Est_CutDate.Clear();
-                if (!MyUtility.Check.Empty(Est_CutDate1))
-                {
-                    condition_Est_CutDate.Append(string.Format(@"{0} ~ {1}"
-                        , Convert.ToDateTime(Est_CutDate1).ToString("d")
-                        , Convert.ToDateTime(Est_CutDate2).ToString("d")
-                        ));
-                }
-                #endregion
+");         
             }
             #endregion
 
             #region radioBtnByCutCell
-            if (radioBtnByCutCell.Checked)
+            if (radioBtn_ByCutCell.Checked)
             {
                 sqlCmd.Append(@"
-if OBJECT_ID('#DateRanges') is not null
-	drop table #DateRanges
-if OBJECT_ID('#tmpWO') is not null
-	drop table #tmpWO
+IF OBJECT_ID('tempdb.dbo.#DateRanges', 'U') IS NOT NULL
+  DROP TABLE #DateRanges
+ IF OBJECT_ID('tempdb.dbo.#tmpWO', 'U') IS NOT NULL
+  DROP TABLE #tmpWO
 select distinct wo.EstCutDate 
 into #DateRanges 
 from workorder wo
@@ -209,12 +196,14 @@ where 1 = 1
                 }
 
                 sqlCmd.Append(@"
-select wo.id,co.Status,wo.EstCutDate, wo.mdivisionid,co.CDate,cc.id as ccid,wo.cutcellid
+select wo.id,co.Status,wo.EstCutDate, wo.mdivisionid,co.CDate,cc.id as ccid,wo.cutcellid,c.Finished
 into #tmpWO
-from dbo.WorkOrder as wo
-inner join CutCell as cc on cc.ID = wo.CutCellID
+from MDivision
+inner join WorkOrder as wo on MDivision.ID = wo.MDivisionID and wo.EstCutDate is not null
+inner join CutCell as cc on cc.ID = wo.CutCellID and MDivision.ID = cc.MDivisionID
 inner join CuttingOutput_Detail cod on  cod.WorkOrderUKey = wo.UKey 
 inner join CuttingOutput as co on co.ID = cod.ID
+inner join Cutting as c on c.ID = wo.ID 
 where 1 = 1
 ");
                 if (!MyUtility.Check.Empty(WorkOrder))
@@ -235,7 +224,7 @@ where 1 = 1
                 sqlCmd.Append(@"
 select 
 	[Date] = dr.EstCutDate,
-	[M] = m.MDivisionId,
+	[M] = M.MDivisionId,
 	[Cut Cell] = m2.ccid,
 	[Estimate Total# of Cuttings on schedule] = d1.ct,
 	[Estimate Total# of Backlog] = d2.ct, 
@@ -250,67 +239,57 @@ outer apply(select distinct wo.MDivisionId from #tmpWO as WO) as M
 outer apply(select distinct cc.ccid from #tmpWO as cc)as M2
 outer apply(
 	select count(*) as ct 
-	from #tmpWO as WO 
-	Where wo.EstCutDate = dr.EstCutDate and wo.MDivisionId = M.MDivisionId
-	and wo.CutCellID = m2.ccid
+	from #tmpWO 
+	Where EstCutDate = dr.EstCutDate 
+	and MDivisionId = M.MDivisionId
+	and CutCellID = m2.ccid
 ) as d1
 outer apply(
 	select count(*) as ct
-	from #tmpWO as WO 
-		inner join cutting c on c.ID = wo.ID
-	where (wo.EstCutDate < dr.EstCutDate  
-		 and ((wo.EstCutDate < CDate and CDate >= dr.EstCutDate) 
-			   or (CDate is null and c.Finished = 0 )		  
+	from #tmpWO
+	where (EstCutDate < dr.EstCutDate  
+		 and ((EstCutDate < CDate and CDate >= dr.EstCutDate) 
+			   or (CDate is null and Finished = 0 )		  
 			 )
 		)
-		and wo.MDivisionId = M.MDivisionId
-		and wo.CutCellID = m2.ccid
+		and MDivisionId = M.MDivisionId
+		and CutCellID = m2.ccid
 ) as d2
 outer apply(
 	select count(*) as ct 
-	from #tmpWO as WO 
-	Where wo.EstCutDate = dr.EstCutDate 
+	from #tmpWO 
+	Where EstCutDate = dr.EstCutDate 
 		and CDate < dr.EstCutDate
-		and wo.MDivisionId = M.MDivisionId
-		and wo.CutCellID = m2.ccid
+		and MDivisionId = M.MDivisionId
+		and CutCellID = m2.ccid
 ) as d3
 outer apply(
 	select count(*) as ct 
-	from #tmpWO as WO 
+	from #tmpWO
 	Where EstCutDate < dr.EstCutDate 
 	and CDate = dr.EstCutDate
-		and wo.MDivisionId = M.MDivisionId
-		and wo.CutCellID = m2.ccid
+		and MDivisionId = M.MDivisionId
+		and CutCellID = m2.ccid
 ) as d4
 outer apply(	
 		select count(*) as ct 
-		from #tmpWO as WO 
-		where wo.Status = 'Confrimed'
+		from #tmpWO
+		where Status = 'Confrimed'
 			and CDate = dr.EstCutDate
 			and CDate < EstCutDate
 			and EstCutDate > dr.EstCutDate
-			and wo.MDivisionId = M.MDivisionId	
-			and wo.CutCellID = m2.ccid
+			and MDivisionId = M.MDivisionId	
+			and CutCellID = m2.ccid
 ) as d5
 order by dr.EstCutDate,m2.ccid
 drop table #DateRanges
 drop table #tmpWO
 ");
-                #region Append condition Est_CutDate
-                condition_Est_CutDate.Clear();
-                if (!MyUtility.Check.Empty(Est_CutDate1))
-                {
-                    condition_Est_CutDate.Append(string.Format(@"{0} ~ {1}"
-                        , Convert.ToDateTime(Est_CutDate1).ToString("d")
-                        , Convert.ToDateTime(Est_CutDate2).ToString("d")
-                        ));
-                }
-                #endregion
             }
 #endregion
 
             #region radiobtn By Detail3
-            if (radioBtnByDetail.Checked)
+            if (radioBtn_ByDetail.Checked)
             {
                 sqlCmd.Append(@"
 select
@@ -333,19 +312,17 @@ select
 
 from WorkOrder wo
 	 left join CuttingOutput_Detail COD on wo.UKey = COD.WorkOrderUKey
-	 left Join CuttingOutput CO on CO.ID = COD.ID 
-								and CO.Status = 'Confirmed'
+	 left Join CuttingOutput CO on CO.ID = COD.ID and CO.Status = 'Confirmed'
 	 Inner Join Cutting C on C.ID = wo.ID
-	 outer apply(
-	 select AC= (
-		 Select distinct concat('/', WOD.Article)
-		 from WorkOrder_Distribute WOD,Cutplan_Detail CD
-		 where WOD.WorkOrderUKey = CD.WorkOrderUKey 
-			   and WOD.Article != '' 
-			   and WOD.WorkOrderUKey = wo.UKey
-		 for xml path('')
-	 )
-	 ) as woda
+outer apply(
+	select AC= (
+		Select distinct concat('/', WOD.Article)
+		from WorkOrder_Distribute WOD
+		where WOD.WorkOrderUKey = wo.UKey
+			and WOD.Article != '' 
+		for xml path('')
+	)
+) as woda
 	 outer apply(
 		Select Sum(Qty) as sqty 
 		from WorkOrder_Distribute 
@@ -379,9 +356,11 @@ where 1=1
                 {
                     sqlCmd.Append(string.Format(" and wo.CutCellid <= '{0}'", CutCell2));
                 }
+
+                string  d1= Convert.ToDateTime(Est_CutDate1).ToString("d");
                 if (!MyUtility.Check.Empty(Est_CutDate1))
                 {
-                    sqlCmd.Append(string.Format(" and (CO.CDate >= '{0}' or (CO.cDate is null and C.Finished = 0))", Convert.ToDateTime(Est_CutDate1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and (wo.EstCutDate ='{0}' or (wo.EstCutDate< '{1}' and (CO.CDate >= '{2}' or (CO.cDate is null and C.Finished = 0))))", d1,d1,d1));
                 }
                 #endregion
                 sqlCmd.Append(@"
@@ -389,6 +368,7 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
 ");
             }
             #endregion            
+
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             if (!result)
             {
@@ -410,38 +390,36 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
                 return false;
             }
 
-            if (radiobtnByM.Checked)
+            if (radiobtn_ByM.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R04_Cutting BCSReportByFactory.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Cutting_R04_Cutting BCSReportByFactory.xltx", 4, true, null, objApp);      // 將datatable copy to excel
+                MyUtility.Excel.CopyToXls(printData, "", "Cutting_R04_Cutting BCSReportByFactory.xltx", 3, true, null, objApp);      // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                objSheets.Cells[2, 3] = condition_Est_CutDate.ToString();   // 條件字串寫入excel
+                objSheets.Cells[1, 3] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d"));// 條件字串寫入excel
                 if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             }
 
-            if (radioBtnByCutCell.Checked)
+            if (radioBtn_ByCutCell.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R04_CuttingBCSReportByCutCell.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Cutting_R04_CuttingBCSReportByCutCell.xltx", 4, true, null, objApp);      // 將datatable copy to excel
+                MyUtility.Excel.CopyToXls(printData, "", "Cutting_R04_CuttingBCSReportByCutCell.xltx", 3, true, null, objApp);      // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                objSheets.Cells[2, 3] = condition_Est_CutDate.ToString();   // 條件字串寫入excel
+                objSheets.Cells[1, 3] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d"));  // 條件字串寫入excel
                 if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             }
 
-            if (radioBtnByDetail.Checked)
+            if (radioBtn_ByDetail.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R04_Cutting BCS Report ByDetail.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Cutting_R04_Cutting BCS Report ByDetail.xltx", 2, true, null, objApp);      // 將datatable copy to excel
+                MyUtility.Excel.CopyToXls(printData, "", "Cutting_R04_Cutting BCS Report ByDetail.xltx", 1, true, null, objApp);// 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp            
             }
 
             return true;
-        }
-
-        
+        }        
     }
 }
