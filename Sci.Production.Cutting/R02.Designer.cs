@@ -137,6 +137,7 @@
             this.txt_CutCell2.BackColor = System.Drawing.Color.White;
             this.txt_CutCell2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txt_CutCell2.Location = new System.Drawing.Point(214, 59);
+            this.txt_CutCell2.MaxLength = 2;
             this.txt_CutCell2.Name = "txt_CutCell2";
             this.txt_CutCell2.Size = new System.Drawing.Size(65, 23);
             this.txt_CutCell2.TabIndex = 110;
@@ -160,6 +161,7 @@
             this.txt_CutCell1.BackColor = System.Drawing.Color.White;
             this.txt_CutCell1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txt_CutCell1.Location = new System.Drawing.Point(123, 59);
+            this.txt_CutCell1.MaxLength = 2;
             this.txt_CutCell1.Name = "txt_CutCell1";
             this.txt_CutCell1.Size = new System.Drawing.Size(65, 23);
             this.txt_CutCell1.TabIndex = 108;
