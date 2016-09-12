@@ -48,6 +48,7 @@
             // 
             // print
             // 
+            this.print.Enabled = false;
             this.print.Location = new System.Drawing.Point(528, 12);
             this.print.Size = new System.Drawing.Size(87, 30);
             // 
