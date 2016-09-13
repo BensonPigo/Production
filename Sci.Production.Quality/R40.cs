@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Utility.Excel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -89,12 +90,12 @@ namespace Sci.Production.Quality
                     where year in (@y1,@y2,@y3)
                     group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1
 
-                    select dRanges.name,#temp.Target,SUM(year1.Claimed)[Claimed],SUM(year1.Shipped)[Shipped],SUM(year1.adiComp)[adiComp],SUM(year2.Claimed)[Claimed],SUM(year2.Shipped)[Shipped],SUM(year2.adiComp)[adiComp],SUM(year3.Claimed)[Claimed],SUM(year3.Shipped)[Shipped],SUM(year3.adiComp)[adiComp] from dbo.#temp
+                    select dRanges.name,#temp.Target,SUM(year1.Claimed)[Claimed1],SUM(year1.Shipped)[Shipped1],SUM(year2.Claimed)[Claimed2],SUM(year2.Shipped)[Shipped2],SUM(year3.Claimed)[Claimed3],SUM(year3.Shipped)[Shipped3] from dbo.#temp
                     inner join @dRanges as dRanges on #temp.month1 between dRanges.starts and dRanges.ends 
-					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE YEAR1=@y1)AS year1
-					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE YEAR1=@y2)AS year2
-					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE YEAR1=@y3)AS year3
-					GROUP BY dRanges.name,#temp.Target,year1.Claimed,year1.Shipped,year1.adiComp,year2.Claimed,year2.Shipped,year2.adiComp,year3.Claimed,year3.Shipped,year3.adiComp
+					OUTER APPLY(SELECT Claimed,#temp.Shipped FROM #temp WHERE YEAR1=@y1)AS year1
+					OUTER APPLY(SELECT Claimed,#temp.Shipped FROM #temp WHERE YEAR1=@y2)AS year2
+					OUTER APPLY(SELECT Claimed,#temp.Shipped FROM #temp WHERE YEAR1=@y3)AS year3
+					GROUP BY dRanges.name,#temp.Target,year1.Claimed,year1.Shipped,year2.Claimed,year2.Shipped,year3.Claimed,year3.Shipped
                     DROP TABLE #temp");
                 result = DBProxy.Current.Select("", sqlcmd, out dtt);
 
@@ -120,15 +121,12 @@ namespace Sci.Production.Quality
 
                 dtt.Rows.Add(totalrow);
                 DataColumn percent = dtt.Columns.Add("adiComp");
-                percent.SetOrdinal(2);
-                percent.Expression = string.Format("[收款金額] / {0}", dtt.Rows[dtt.Rows.Count - 1]["收款金額"]);
-                for (int i = 0; i < kpiCodes.Rows.Count; i++)
-                {
-                    percent = dtt.Columns.Add("Range-" + (i + 1));
-                    percent.SetOrdinal(4 + (i * 2));
-                    percent.Expression = "[" + kpiCodes.Rows[i]["name"].ToString() + "] / [收款金額]";
-                }
-
+                percent.SetOrdinal(4);
+                percent.Expression = "[Claimed1] / [Shipped1]";
+                percent.SetOrdinal(7);
+                percent.Expression ="[Claimed2] / [Shipped2]";
+                percent.SetOrdinal(10);
+                percent.Expression = "[Claimed3] / [Shipped3]";
 
                 dtt.Rows.Add(totalrow);
 
@@ -287,6 +285,11 @@ namespace Sci.Production.Quality
                 {
                     return false;
                 }
+                Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R40.xltx");
+                SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dt_All);
+                xdt_All.ShowHeader = true;
+                xl.dicDatas.Add("##by_year", xdt_All);
+                xl.Save(outpath, true);
             }
             else if(radiobtn_byfactory.Checked==true)
             {
