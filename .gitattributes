@@ -2639,6 +2639,13 @@ XLT/Quality_R05_AccessoryDetail.xltx -text
 XLT/Quality_R05_AccessorySummary.xltx -text
 XLT/Quality_R05_FabricDetail.xltx -text
 XLT/Quality_R05_FabricSummary.xltx -text
+XLT/Quality_R20_AllData.xltx -text
+XLT/Quality_R20_Detail.xltx -text
+XLT/Quality_R20_PerCell.xltx -text
+XLT/Quality_R20_PerLine.xltx -text
+XLT/Quality_R20_SummarybyDateaAndStyle.xltx -text
+XLT/Quality_R20_SummarybySP.xltx -text
+XLT/Quality_R20_SummarybyStyle.xltx -text
 XLT/Quality_R21_CFA_InlineReport_detail.xltx -text
 XLT/Quality_R21_CFM_InlineReport_Summary.xltx -text
 XLT/Quality_R40.xltx -text
