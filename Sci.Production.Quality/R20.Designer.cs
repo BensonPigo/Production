@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txt_DefectType = new Sci.Win.UI.TextBox();
-            this.txt_DefectCode = new Sci.Win.UI.TextBox();
+            this.txtDefectType = new Sci.Win.UI.TextBox();
+            this.txtDefectCode = new Sci.Win.UI.TextBox();
             this.radiobtn_SummybyDateandStyle = new Sci.Win.UI.RadioButton();
             this.radiobtn_SummybyStyle = new Sci.Win.UI.RadioButton();
             this.radioBtn_SummybySP = new Sci.Win.UI.RadioButton();
@@ -38,10 +38,10 @@
             this.radiobtn_AllData = new Sci.Win.UI.RadioButton();
             this.radiobtn_PerCell = new Sci.Win.UI.RadioButton();
             this.radiobtn_PerLine = new Sci.Win.UI.RadioButton();
-            this.txt_Cell = new Sci.Win.UI.TextBox();
-            this.txt_Line = new Sci.Win.UI.TextBox();
-            this.txt_Brand = new Sci.Win.UI.TextBox();
-            this.cmb_Factory = new Sci.Win.UI.ComboBox();
+            this.txtCell = new Sci.Win.UI.TextBox();
+            this.txtLine = new Sci.Win.UI.TextBox();
+            this.txtBrand = new Sci.Win.UI.TextBox();
+            this.ComboFactory = new Sci.Win.UI.ComboBox();
             this.datePeriod = new Sci.Win.UI.DateRange();
             this.label8 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
@@ -70,8 +70,8 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.txt_DefectType);
-            this.panel1.Controls.Add(this.txt_DefectCode);
+            this.panel1.Controls.Add(this.txtDefectType);
+            this.panel1.Controls.Add(this.txtDefectCode);
             this.panel1.Controls.Add(this.radiobtn_SummybyDateandStyle);
             this.panel1.Controls.Add(this.radiobtn_SummybyStyle);
             this.panel1.Controls.Add(this.radioBtn_SummybySP);
@@ -79,10 +79,10 @@
             this.panel1.Controls.Add(this.radiobtn_AllData);
             this.panel1.Controls.Add(this.radiobtn_PerCell);
             this.panel1.Controls.Add(this.radiobtn_PerLine);
-            this.panel1.Controls.Add(this.txt_Cell);
-            this.panel1.Controls.Add(this.txt_Line);
-            this.panel1.Controls.Add(this.txt_Brand);
-            this.panel1.Controls.Add(this.cmb_Factory);
+            this.panel1.Controls.Add(this.txtCell);
+            this.panel1.Controls.Add(this.txtLine);
+            this.panel1.Controls.Add(this.txtBrand);
+            this.panel1.Controls.Add(this.ComboFactory);
             this.panel1.Controls.Add(this.datePeriod);
             this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.label7);
@@ -97,25 +97,27 @@
             this.panel1.Size = new System.Drawing.Size(391, 407);
             this.panel1.TabIndex = 94;
             // 
-            // txt_DefectType
+            // txtDefectType
             // 
-            this.txt_DefectType.BackColor = System.Drawing.Color.White;
-            this.txt_DefectType.Enabled = false;
-            this.txt_DefectType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txt_DefectType.Location = new System.Drawing.Point(100, 371);
-            this.txt_DefectType.Name = "txt_DefectType";
-            this.txt_DefectType.Size = new System.Drawing.Size(100, 23);
-            this.txt_DefectType.TabIndex = 21;
+            this.txtDefectType.BackColor = System.Drawing.Color.White;
+            this.txtDefectType.Enabled = false;
+            this.txtDefectType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDefectType.Location = new System.Drawing.Point(100, 371);
+            this.txtDefectType.MaxLength = 1;
+            this.txtDefectType.Name = "txtDefectType";
+            this.txtDefectType.Size = new System.Drawing.Size(36, 23);
+            this.txtDefectType.TabIndex = 21;
             // 
-            // txt_DefectCode
+            // txtDefectCode
             // 
-            this.txt_DefectCode.BackColor = System.Drawing.Color.White;
-            this.txt_DefectCode.Enabled = false;
-            this.txt_DefectCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txt_DefectCode.Location = new System.Drawing.Point(100, 342);
-            this.txt_DefectCode.Name = "txt_DefectCode";
-            this.txt_DefectCode.Size = new System.Drawing.Size(100, 23);
-            this.txt_DefectCode.TabIndex = 20;
+            this.txtDefectCode.BackColor = System.Drawing.Color.White;
+            this.txtDefectCode.Enabled = false;
+            this.txtDefectCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDefectCode.Location = new System.Drawing.Point(100, 342);
+            this.txtDefectCode.MaxLength = 3;
+            this.txtDefectCode.Name = "txtDefectCode";
+            this.txtDefectCode.Size = new System.Drawing.Size(100, 23);
+            this.txtDefectCode.TabIndex = 20;
             // 
             // radiobtn_SummybyDateandStyle
             // 
@@ -203,46 +205,46 @@
             this.radiobtn_PerLine.UseVisualStyleBackColor = true;
             this.radiobtn_PerLine.CheckedChanged += new System.EventHandler(this.radiobtn_PerLine_CheckedChanged);
             // 
-            // txt_Cell
+            // txtCell
             // 
-            this.txt_Cell.BackColor = System.Drawing.Color.White;
-            this.txt_Cell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txt_Cell.Location = new System.Drawing.Point(100, 124);
-            this.txt_Cell.MaxLength = 1;
-            this.txt_Cell.Name = "txt_Cell";
-            this.txt_Cell.Size = new System.Drawing.Size(36, 23);
-            this.txt_Cell.TabIndex = 12;
+            this.txtCell.BackColor = System.Drawing.Color.White;
+            this.txtCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCell.Location = new System.Drawing.Point(100, 124);
+            this.txtCell.MaxLength = 1;
+            this.txtCell.Name = "txtCell";
+            this.txtCell.Size = new System.Drawing.Size(36, 23);
+            this.txtCell.TabIndex = 12;
             // 
-            // txt_Line
+            // txtLine
             // 
-            this.txt_Line.BackColor = System.Drawing.Color.White;
-            this.txt_Line.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txt_Line.Location = new System.Drawing.Point(100, 95);
-            this.txt_Line.MaxLength = 2;
-            this.txt_Line.Name = "txt_Line";
-            this.txt_Line.Size = new System.Drawing.Size(36, 23);
-            this.txt_Line.TabIndex = 11;
+            this.txtLine.BackColor = System.Drawing.Color.White;
+            this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLine.Location = new System.Drawing.Point(100, 95);
+            this.txtLine.MaxLength = 2;
+            this.txtLine.Name = "txtLine";
+            this.txtLine.Size = new System.Drawing.Size(36, 23);
+            this.txtLine.TabIndex = 11;
             // 
-            // txt_Brand
+            // txtBrand
             // 
-            this.txt_Brand.BackColor = System.Drawing.Color.White;
-            this.txt_Brand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txt_Brand.Location = new System.Drawing.Point(100, 66);
-            this.txt_Brand.MaxLength = 10;
-            this.txt_Brand.Name = "txt_Brand";
-            this.txt_Brand.Size = new System.Drawing.Size(100, 23);
-            this.txt_Brand.TabIndex = 10;
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(100, 66);
+            this.txtBrand.MaxLength = 10;
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(100, 23);
+            this.txtBrand.TabIndex = 10;
             // 
-            // cmb_Factory
+            // ComboFactory
             // 
-            this.cmb_Factory.BackColor = System.Drawing.Color.White;
-            this.cmb_Factory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmb_Factory.FormattingEnabled = true;
-            this.cmb_Factory.IsSupportUnselect = true;
-            this.cmb_Factory.Location = new System.Drawing.Point(100, 36);
-            this.cmb_Factory.Name = "cmb_Factory";
-            this.cmb_Factory.Size = new System.Drawing.Size(121, 24);
-            this.cmb_Factory.TabIndex = 9;
+            this.ComboFactory.BackColor = System.Drawing.Color.White;
+            this.ComboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.ComboFactory.FormattingEnabled = true;
+            this.ComboFactory.IsSupportUnselect = true;
+            this.ComboFactory.Location = new System.Drawing.Point(100, 36);
+            this.ComboFactory.Name = "ComboFactory";
+            this.ComboFactory.Size = new System.Drawing.Size(121, 24);
+            this.ComboFactory.TabIndex = 9;
             // 
             // datePeriod
             // 
@@ -353,8 +355,8 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private Win.UI.TextBox txt_DefectType;
-        private Win.UI.TextBox txt_DefectCode;
+        private Win.UI.TextBox txtDefectType;
+        private Win.UI.TextBox txtDefectCode;
         private Win.UI.RadioButton radiobtn_SummybyDateandStyle;
         private Win.UI.RadioButton radiobtn_SummybyStyle;
         private Win.UI.RadioButton radioBtn_SummybySP;
@@ -362,10 +364,10 @@
         private Win.UI.RadioButton radiobtn_AllData;
         private Win.UI.RadioButton radiobtn_PerCell;
         private Win.UI.RadioButton radiobtn_PerLine;
-        private Win.UI.TextBox txt_Cell;
-        private Win.UI.TextBox txt_Line;
-        private Win.UI.TextBox txt_Brand;
-        private Win.UI.ComboBox cmb_Factory;
+        private Win.UI.TextBox txtCell;
+        private Win.UI.TextBox txtLine;
+        private Win.UI.TextBox txtBrand;
+        private Win.UI.ComboBox ComboFactory;
         private Win.UI.DateRange datePeriod;
         private Win.UI.Label label8;
         private Win.UI.Label label7;
