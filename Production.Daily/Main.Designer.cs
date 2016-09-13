@@ -128,11 +128,12 @@
             // textFtpID
             // 
             this.textFtpID.BackColor = System.Drawing.Color.White;
+            this.textFtpID.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.textFtpID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpID", true));
             this.textFtpID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textFtpID.Location = new System.Drawing.Point(369, 10);
             this.textFtpID.Name = "textFtpID";
-            this.textFtpID.Size = new System.Drawing.Size(80, 21);
+            this.textFtpID.Size = new System.Drawing.Size(100, 21);
             this.textFtpID.TabIndex = 3;
             // 
             // displayRgCode
