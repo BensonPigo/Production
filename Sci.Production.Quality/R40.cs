@@ -47,6 +47,8 @@ namespace Sci.Production.Quality
         {
             dt_All = null;
             dtt = null;
+            dt = null;
+            dat = null;
 
             if (radiobtn_byYear.Checked == true)
             {
@@ -119,6 +121,12 @@ namespace Sci.Production.Quality
                     totalrow[colIdx] = TTColumnAMT;
                 }
 
+                if (null == dtt || dtt.Rows.Count == 0)
+                {
+                    return new DualResult(false, "Data not found");
+                }
+
+                
                 dtt.Rows.Add(totalrow);
                 DataColumn percent = dtt.Columns.Add("adiComp");
                 percent.SetOrdinal(4);
@@ -127,7 +135,7 @@ namespace Sci.Production.Quality
                 percent.Expression ="[Claimed2] / [Shipped2]";
                 percent.SetOrdinal(10);
                 percent.Expression = "[Claimed3] / [Shipped3]";
-
+                
                 dtt.Rows.Add(totalrow);
 
                 if (null == dt_All || 0 == dt_All.Rows.Count)
@@ -141,7 +149,8 @@ namespace Sci.Production.Quality
 
                 if (!result)
                 {
-                    return result;
+                    //this.ShowErr(result); 
+                  return result;
                 }
                 #endregion
             }
@@ -187,7 +196,7 @@ namespace Sci.Production.Quality
 			                    where CountryID= (select f.CountryID from dbo.Factory f where f.id="+"'"+userfactory+"'"+ @")))sh
                     where year in (@y1,@y2,@y3)
                     group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1,Claimed.factory
-                    select dRanges.name,#temp.Target,SUM(year1.Claimed)[Claimed],SUM(year1.Shipped)[Shipped],SUM(year1.adiComp)[adiComp],SUM(year2.Claimed)[Claimed],SUM(year2.Shipped)[Shipped],SUM(year2.adiComp)[adiComp],SUM(year3.Claimed)[Claimed],SUM(year3.Shipped)[Shipped],SUM(year3.adiComp)[adiComp],#temp.factory from dbo.#temp
+                    select dRanges.name,#temp.Target,SUM(year1.Claimed)[Claimed1],SUM(year1.Shipped)[Shipped1],SUM(year2.Claimed)[Claimed2],SUM(year2.Shipped)[Shipped2],SUM(year3.Claimed)[Claimed3],SUM(year3.Shipped)[Shipped3],#temp.factory from dbo.#temp
                     inner join @dRanges as dRanges on #temp.month1 between dRanges.starts and dRanges.ends 
 					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE YEAR1=@y1 AND factory=factory)AS year1
 					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE YEAR1=@y2 AND factory=factory)AS year2
@@ -195,6 +204,53 @@ namespace Sci.Production.Quality
 					GROUP BY dRanges.name,#temp.Target,year1.Claimed,year1.Shipped,year1.adiComp,year2.Claimed,year2.Shipped,year2.adiComp,year3.Claimed,year3.Shipped,year3.adiComp,#temp.factory
                     DROP TABLE #temp");
                 result = DBProxy.Current.Select("", scmd, out dt);
+
+                int startIndex = 2;
+                //最後一列Total
+
+                DataRow totalrow = dt.NewRow();
+                totalrow[0] = "YTD";
+
+                //for dt每個欄位
+                decimal TTColumnAMT = 0;
+                for (int colIdx = startIndex; colIdx < dt.Columns.Count; colIdx++)
+                {
+                    TTColumnAMT = 0;
+                    //for dt每一列
+                    for (int rowIdx = 0; rowIdx < dt.Rows.Count; rowIdx++)
+                    {
+                        TTColumnAMT += Convert.ToDecimal(dt.Rows[rowIdx][colIdx]);
+                    }
+
+                    totalrow[colIdx] = TTColumnAMT;
+                }
+
+                if (null == dt || dt.Rows.Count == 0)
+                {
+                    return new DualResult(false, "Data not found");
+                }
+
+
+                dt.Rows.Add(totalrow);
+                DataColumn percent = dt.Columns.Add("adiComp");
+                percent.SetOrdinal(4);
+                percent.Expression = "[Claimed1] / [Shipped1]";
+                percent.SetOrdinal(7);
+                percent.Expression = "[Claimed2] / [Shipped2]";
+                percent.SetOrdinal(10);
+                percent.Expression = "[Claimed3] / [Shipped3]";
+
+                dt.Rows.Add(totalrow);
+
+                if (null == dt_All || 0 == dt_All.Rows.Count)
+                {
+                    dt_All = dtt;
+                }
+                else
+                {
+                    dt_All.Merge(dtt);
+                }
+
                 if (!result)
                 {
                     return result;
@@ -241,7 +297,7 @@ namespace Sci.Production.Quality
 			                    where CountryID= (select f.CountryID from dbo.Factory f where f.id="+ "'" + userfactory + "'" + @")))sh
                     where year in (@y1,@y2,@y3)
                     group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1,Claimed.factory
-                    select dRanges.name,#temp.Target,SUM(factory1.Claimed)[Claimed],SUM(factory1.Shipped)[Shipped],SUM(factory1.adiComp)[adiComp],SUM(factory2.Claimed)[Claimed],SUM(factory2.Shipped)[Shipped],SUM(factory2.adiComp)[adiComp],SUM(factory3.Claimed)[Claimed],SUM(factory3.Shipped)[Shipped],SUM(factory3.adiComp)[adiComp],#temp.factoryfrom dbo.#temp
+                    select dRanges.name,#temp.Target,SUM(factory1.Claimed)[Claimed],SUM(factory1.Shipped)[Shipped],SUM(factory1.adiComp)[adiComp],SUM(factory2.Claimed)[Claimed],SUM(factory2.Shipped)[Shipped],SUM(factory2.adiComp)[adiComp],SUM(factory3.Claimed)[Claimed],SUM(factory3.Shipped)[Shipped],SUM(factory3.adiComp)[adiComp],#temp.factory from dbo.#temp
                     inner join @dRanges as dRanges on #temp.month1 between dRanges.starts and dRanges.ends 
 					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE factory=factory )AS factory1
 					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE factory=factory )AS factory2
@@ -285,8 +341,15 @@ namespace Sci.Production.Quality
                 {
                     return false;
                 }
-                Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R40.xltx");
+                Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R40_ByYear.xltx");
                 SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dt_All);
+
+                Dictionary<string, string> dic = new Dictionary<string, string>();
+                dic.Add(" ", "1,2");
+                //dic.Add(string.Format=("3,5", xdt_All.Columns.Count));
+                //dic.Add(string.Format=("6,8", xdt_All.Columns.Count));
+                //dic.Add(string.Format=("9,11", xdt_All.Columns.Count));
+                xdt_All.lisTitleMerge.Add(dic);
                 xdt_All.ShowHeader = true;
                 xl.dicDatas.Add("##by_year", xdt_All);
                 xl.Save(outpath, true);
@@ -301,7 +364,7 @@ namespace Sci.Production.Quality
                 {
                     return false;
                 }
-            //    Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Shipping_Mark.xltx");
+                //    Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Quality_R40_ByFactory.xltx");
             //    x1.CopySheet.Add(1, shm.Rows.Count - 1);
             //    x1.VarToSheetName = "##theorderid";
 
