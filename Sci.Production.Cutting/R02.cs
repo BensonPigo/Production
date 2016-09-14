@@ -696,6 +696,7 @@ drop table #tmpall");
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            createfolder();
             SetCount(printData[0].Rows.Count);
             if (!boolsend)
             {
