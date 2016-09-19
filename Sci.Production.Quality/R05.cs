@@ -14,7 +14,7 @@ namespace Sci.Production.Quality
     public partial class R05 : Sci.Win.Tems.PrintForm
     {       DateTime? DateSCIStart; DateTime? DateSCIEnd;
             List<SqlParameter> lis; DualResult res;
-            DataTable dt; string cmd, str_Category, str_Material, ReportType; 
+            DataTable dt,dtAccessory ; string cmd,cmdAccessory ,str_Category, str_Material, ReportType; 
         public R05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -66,13 +66,14 @@ namespace Sci.Production.Quality
             }
             DateSCIStart = DateSCIDelivery.Value1;
             DateSCIEnd = DateSCIDelivery.Value2;
-            str_Category = comboCategory.Text.ToString();
-            str_Material = comboMaterialType.Text.ToString();
+            str_Category = comboCategory.Text;
+            str_Material = comboMaterialType.Text;
             ReportType = radioPanel.Value.ToString();
 
             lis = new List<SqlParameter>();
             string sqlWhere = ""; string sqlOrdersWhere = "";
-
+            string CATEGORY = "";
+            List<string> sqlCATEGORY = new List<string>();
             List<string> sqlWheres = new List<string>();
             List<string> sqlOrderWheres = new List<string>();
             #region --組WHERE--
@@ -81,17 +82,20 @@ namespace Sci.Production.Quality
                 sqlOrderWheres.Add("SciDelivery between @SCIDate1 and @SCIDate2");
                 lis.Add(new SqlParameter("@SCIDate1", DateSCIStart));
                 lis.Add(new SqlParameter("@SCIDate2", DateSCIEnd));
-            } if (!this.comboCategory.SelectedItem.ToString().Empty())
+            } 
+            if (!this.comboCategory.SelectedItem.ToString().Empty())
             {
                 sqlOrderWheres.Add("Category = @Cate");
+                sqlCATEGORY.Add("@Cate");
                 if (str_Category == "Bulk")
                 {
                     lis.Add(new SqlParameter("@Cate", "B"));
-                }if (str_Category == "Sample")
+                }
+                if (str_Category == "Sample")
                 {
                     lis.Add(new SqlParameter("@Cate", "S"));
                 }
-
+            
             } if (!this.comboMaterialType.SelectedItem.ToString().Empty())
             {
                 sqlWheres.Add("psd.FabricType=@FabricType");
@@ -106,9 +110,10 @@ namespace Sci.Production.Quality
             #endregion
             sqlOrdersWhere = string.Join(" and ", sqlOrderWheres);
             sqlWhere = string.Join(" and ", sqlWheres);
+            CATEGORY = string.Join("", sqlCATEGORY);
             if (!sqlWhere.Empty())
             {
-                sqlWhere = " AND " + sqlWhere;
+                sqlWhere =  sqlWhere +" AND ";
             } if (!sqlOrdersWhere.Empty())
             {
                 sqlOrdersWhere = " AND " + sqlOrdersWhere;
@@ -133,8 +138,8 @@ namespace Sci.Production.Quality
                 ,f.Physical
                 ,(select WhseArrival from dbo.Receiving where id = f.ReceivingID)[WhseArrival]
                 ,(select scidelivery from dbo.orders where id = a.POID)[scidelivery]
-                ,iif(@category='B',iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving where id = f.ReceivingID),(select scidelivery from dbo.orders where id = a.POID))<25,'Y','')
-		                ,iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving where id = f.ReceivingID),(select scidelivery from dbo.orders where id = a.POID) )<15,'Y','')
+                ,iif(" + CATEGORY + @"='B',iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving where id = f.ReceivingID),(select scidelivery from dbo.orders where id = a.POID))<25,'Y','')
+		        ,iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving where id = f.ReceivingID),(select scidelivery from dbo.orders where id = a.POID) )<15,'Y','')
 		                ) [Delay]
                 ,psd.ID
                 ,psd.seq1+'-'+psd.seq2[SEQ#]
@@ -148,15 +153,18 @@ namespace Sci.Production.Quality
                 from order_rawdata a
                 inner join dbo.PO_Supp_Detail psd on psd.ID = a.POID
                 inner join FIR f on f.POID = psd.ID and f.SEQ1 = psd.Seq1 and f.seq2 = psd.Seq2
-                where psd.SEQ1 NOT LIKE '5%'" + sqlWheres);
+                where " + sqlWhere +@" psd.SEQ1 NOT LIKE '5%'");
             #endregion
-
+            #region --撈Accessory Detail 資料--
+            cmdAccessory = string.Format(@" ");
+            #endregion
             return base.ValidateInput();
         }
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
             res = DBProxy.Current.Select("", cmd, lis, out dt);
+ 
             if (!res)
             {
                 return res;
