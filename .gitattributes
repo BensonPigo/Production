@@ -2648,6 +2648,9 @@ XLT/Quality_R20_SummarybySP.xltx -text
 XLT/Quality_R20_SummarybyStyle.xltx -text
 XLT/Quality_R21_CFA_InlineReport_detail.xltx -text
 XLT/Quality_R21_CFM_InlineReport_Summary.xltx -text
+XLT/Quality_R22_PerBrand.xltx -text
+XLT/Quality_R22_PerDate(Brand).xltx -text
+XLT/Quality_R22_PerDate(Factory).xltx -text
 XLT/Quality_R40.xltx -text
 XLT/Sewing_R01_DailyCMPReport.xltx -text
 XLT/Sewing_R02_MonthlyReportByDate.xltx -text
