@@ -1,4 +1,5 @@
 ﻿using Ict;
+using Microsoft.Office.Interop.Excel;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Sci.Production.Quality
     public partial class R22 : Sci.Win.Tems.PrintForm
     {
         DateTime? AuditDate1, AuditDate2;
-        DataTable printData;
+        System.Data.DataTable printData;
 
         public R22(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -883,6 +884,14 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 objSheets.get_Range("A" + (3 + printData.Rows.Count), lastright).Interior.Color = Color.FromArgb(204, 255, 102);//最後一列儲存格背景色
                 objSheets.get_Range("A2", lastright).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;//設定有資料範圍所有框線
                 objSheets.get_Range("A2", lastright).EntireRow.AutoFit();//自動調整列高
+
+                //TEST cell1,cell2一定要先宣告Range再放入get_Range(,)內
+                //Range cell1 = objSheets.Cells[1, 1];
+                //Range cell2 = objSheets.Cells[6, 6];
+                //objSheets.get_Range(cell1, cell2).Interior.Color = Color.FromArgb(222, 186, 252);
+
+                //Range all = objSheets.get_Range(top, bottom);
+                //all.Interior.Color = Color.FromArgb(222, 186, 252);
 
                 objApp.Visible = true;//Excell顯示
                 if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
