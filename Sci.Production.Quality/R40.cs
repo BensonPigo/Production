@@ -153,6 +153,8 @@ namespace Sci.Production.Quality
                   return result;
                 }
                 #endregion
+
+                
             }
             else
             {
@@ -397,6 +399,147 @@ namespace Sci.Production.Quality
 
             return true;//base.OnToExcel(report);
         }
+
+   private void button1_Click(object sender, EventArgs e)
+   {
+       Microsoft.Office.Interop.Excel._Application myExcel = null;
+       Microsoft.Office.Interop.Excel._Workbook myBook = null;
+       Microsoft.Office.Interop.Excel._Worksheet mySheet = null;
+
+       try
+       {
+           myExcel = new Microsoft.Office.Interop.Excel.Application();    //開啟一個新的應用程式
+           myExcel.DisplayAlerts = false;        //停用警告訊息
+           myBook = myExcel.Workbooks.Add(true); //新增活頁簿
+           mySheet = (Microsoft.Office.Interop.Excel._Worksheet)myBook.Worksheets[1];//引用第一張工作表
+           myExcel.Visible = true;               //顯示Excel程式
+
+           mySheet.Cells.Font.Name = "標楷體";   //設定Excel資料字體字型
+           mySheet.Cells.Font.Size = 20;         //設定Excel資料字體大小
+
+           //Excel寫入資料
+           //mySheet.Cells[1, 1] = "A";
+           //mySheet.Cells[1, 2] = "5";
+           //mySheet.Cells[1, 3] = "ㄅ";
+
+           //mySheet.Cells[2, 1] = "B";
+           //mySheet.Cells[2, 2] = "6";
+           //mySheet.Cells[2, 3] = "ㄆ";
+
+           //mySheet.Cells[3, 1] = "C";
+           //mySheet.Cells[3, 2] = "7";
+           //mySheet.Cells[3, 3] = "ㄇ";
+
+           //mySheet.Cells[4, 1] = "D";
+           //mySheet.Cells[4, 2] = "8";
+           //mySheet.Cells[4, 3] = "ㄈ";
+
+
+           //在工作簿 新增一張 統計圖表，單獨放在一個分頁裡面
+           myBook.Charts.Add(Type.Missing, Type.Missing, 1, Type.Missing);
+           //選擇 統計圖表 的 圖表種類
+           myBook.ActiveChart.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLineMarkers;//插入折線圖
+           //設定數據範圍
+           string strRange = "A1:K14";
+           //設定 統計圖表 的 數據範圍內容
+           myBook.ActiveChart.SetSourceData(mySheet.get_Range(strRange), Microsoft.Office.Interop.Excel.XlRowCol.xlColumns);
+           //將新增的統計圖表 插入到 指定位置(可以從單獨的分頁放到一個分頁裡面)
+           myBook.ActiveChart.Location(Microsoft.Office.Interop.Excel.XlChartLocation.xlLocationAsObject, mySheet.Name);
+
+           mySheet.Shapes.Item("Chart 1").Width = 600;   //調整圖表寬度
+           mySheet.Shapes.Item("Chart 1").Height = 400;  //調整圖表高度
+           mySheet.Shapes.Item("Chart 1").Top = 400;      //調整圖表在分頁中的高度(上邊距) 位置
+           mySheet.Shapes.Item("Chart 1").Left = 0;    //調整圖表在分頁中的左右(左邊距) 位置
+
+           //設定 繪圖區 的 背景顏色
+           myBook.ActiveChart.PlotArea.Interior.Color = ColorTranslator.ToOle(Color.LightGray);
+           //設定 繪圖區 的 邊框線條樣式
+           //myBook.ActiveChart.PlotArea.Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlDash;
+           //設定 繪圖區 的 寬度
+           myBook.ActiveChart.PlotArea.Width = 580;
+           //設定 繪圖區 的 高度
+           myBook.ActiveChart.PlotArea.Height = 350;
+           //設定 繪圖區 在 圖表中的 高低位置(上邊距)
+           myBook.ActiveChart.PlotArea.Top = 5;
+           //設定 繪圖區 在 圖表中的 左右位置(左邊距)
+           myBook.ActiveChart.PlotArea.Left = 2;
+           //設定 繪圖區 的 x軸名稱下方 顯示y軸的 數據資料
+           myBook.ActiveChart.HasDataTable = false;
+
+           //設定 圖表的 背景顏色__方法1 使用colorIndex(放上色彩索引)
+           myBook.ActiveChart.ChartArea.Interior.ColorIndex = 10;
+           //設定 圖表的 背景顏色__方法2 使用color(放入色彩名稱)
+           myBook.ActiveChart.ChartArea.Interior.Color = ColorTranslator.ToOle(Color.White);
+           //設定 圖表的 邊框顏色__方法1 使用colorIndex(放上色彩索引)
+           myBook.ActiveChart.ChartArea.Border.ColorIndex = 10;
+           //設定 圖表的 邊框顏色__方法2 使用color(放入色彩名稱)
+           myBook.ActiveChart.ChartArea.Border.Color = ColorTranslator.ToOle(Color.Black);
+           //設定 圖表的 邊框樣式 
+           myBook.ActiveChart.ChartArea.Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+
+           //設置Legend圖例
+           myBook.ActiveChart.Legend.Top = 0;           //設定 圖例 的 上邊距
+           myBook.ActiveChart.Legend.Left = 200;        //設定 圖例 的 左邊距
+           //設定 圖例 的 背景色彩
+           myBook.ActiveChart.Legend.Interior.Color = ColorTranslator.ToOle(Color.White);
+           myBook.ActiveChart.Legend.Width = 55;        //設定 圖例 的 寬度
+           myBook.ActiveChart.Legend.Height = 20;       //設定 圖例 的 高度
+           myBook.ActiveChart.Legend.Font.Size = 11;    //設定 圖例 的 字體大小 
+           myBook.ActiveChart.Legend.Font.Bold = true;  //設定 圖例 的 字體樣式=粗體
+           myBook.ActiveChart.Legend.Font.Name = "細明體";//設定 圖例 的 字體字型=細明體
+           myBook.ActiveChart.Legend.Position = Microsoft.Office.Interop.Excel.XlLegendPosition.xlLegendPositionBottom;//設訂 圖例 的 位置靠上 
+           //myBook.ActiveChart.Legend.Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlDot;//設定 圖例 的 邊框線條
+
+           //設定 圖表 x 軸 內容
+           //宣告
+           Microsoft.Office.Interop.Excel.Axis xAxis = (Microsoft.Office.Interop.Excel.Axis)myBook.ActiveChart.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlValue, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
+           //設定 圖表 x軸 橫向線條 線條樣式
+           //xAxis.MajorGridlines.Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlDashDotDot;
+           //設定 圖表 x軸 橫向線條顏色__方法1
+           xAxis.MajorGridlines.Border.ColorIndex = 8;
+           //設定 圖表 x軸 橫向線條顏色__方法2
+           xAxis.MajorGridlines.Border.Color = ColorTranslator.ToOle(Color.Black);
+           xAxis.HasTitle = false;  //設定 x軸 座標軸標題 = false(不顯示)，不打就是不顯示
+           xAxis.MinimumScale = 1;  //設定 x軸 數值 最小值      
+           xAxis.MaximumScale = 10;  //設定 x軸 數值 最大值
+           xAxis.TickLabels.Font.Name = "標楷體"; //設定 x軸 字體字型=標楷體
+           xAxis.TickLabels.Font.Size = 14;       //設定 x軸 字體大小
+
+           //設定 圖表 y軸 內容
+           Microsoft.Office.Interop.Excel.Axis yAxis = (Microsoft.Office.Interop.Excel.Axis)myBook.ActiveChart.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlCategory, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
+           yAxis.TickLabels.Font.Name = "標楷體"; //設定 y軸 字體字型=標楷體 
+           yAxis.TickLabels.Font.Size = 14;       //設定 y軸 字體大小
+
+           //設定 圖表 標題 顯示 = false(關閉)
+           myBook.ActiveChart.HasTitle = false;
+           //設定 圖表 標題 = 匯率
+           myBook.ActiveChart.ChartTitle.Text = "匯率";
+           //設定 圖表 標題 陰影 = false(關閉)
+           myBook.ActiveChart.ChartTitle.Shadow = false;
+           //設定 圖表 標題 邊框樣式
+           //myBook.ActiveChart.ChartTitle.Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlDash;
+
+           ////選擇統計圖表的 圖表種類=3D類型的統計圖表 Floor才可以使用
+           //myBook.ActiveChart.ChartType = Excel.XlChartType.xl3DColumn;//插入3D統計圖表
+           ////設定 圖表的 Floor顏色__方法1 使用colorIndex(放上色彩索引)
+           //myBook.ActiveChart.Floor.Interior.ColorIndex = 1;
+           ////設定 圖表的 Floor顏色__方法2 使用color(放入色彩名稱)
+           //myBook.ActiveChart.Floor.Interior.Color = ColorTranslator.ToOle(Color.LightGreen);           
+       }
+       catch (Exception)
+       {
+           myExcel.Visible = true;
+       }
+       finally
+       {
+           //把執行的Excel資源釋放
+           System.Runtime.InteropServices.Marshal.ReleaseComObject(myExcel);
+           myExcel = null;
+           myBook = null;
+           mySheet = null;
+       }
+       
+   }
 
     }
 }

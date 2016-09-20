@@ -34,6 +34,7 @@
             this.radiobtn_byYear = new Sci.Win.UI.RadioButton();
             this.comboBox_brand = new Sci.Win.UI.ComboBox();
             this.label1 = new Sci.Win.UI.Label();
+            this.button1 = new Sci.Win.UI.Button();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -108,9 +109,20 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Brand:";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(478, 155);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(80, 30);
+            this.button1.TabIndex = 95;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // R40
             // 
             this.ClientSize = new System.Drawing.Size(627, 314);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.radioPanel1);
             this.Name = "R40";
             this.Text = "R40. AdiComp Summary Report";
@@ -118,6 +130,7 @@
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);
+            this.Controls.SetChildIndex(this.button1, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -133,5 +146,6 @@
         private Win.UI.RadioButton radiobtn_byYear;
         private Win.UI.ComboBox comboBox_brand;
         private Win.UI.Label label1;
+        private Win.UI.Button button1;
     }
 }
