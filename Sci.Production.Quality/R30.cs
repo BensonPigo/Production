@@ -92,11 +92,11 @@ where 1=1
             }
             if (!MyUtility.Check.Empty(Season))
             {
-                sqlCmd.Append(string.Format(" and a.SeasonID <='{0}'",Season ));
+                sqlCmd.Append(string.Format(" and a.SeasonID <='{0}'", Season));
             }
             if (!MyUtility.Check.Empty(Brand))
             {
-                sqlCmd.Append(string.Format(" and a.BrandID <='{0}'",Brand ));
+                sqlCmd.Append(string.Format(" and a.BrandID <='{0}'", Brand));
             }
             if (!MyUtility.Check.Empty(Factory))
             {
@@ -164,7 +164,7 @@ order by a.ID
             {
                 c.Append(string.Format(@"~ {0}", Convert.ToDateTime(Buyerdelivery2).ToString("d")));
             }
-            objSheets.Cells[3, 2] =c.ToString();
+            objSheets.Cells[3, 2] = c.ToString();
 
             if (!MyUtility.Check.Empty(InspectionDate1))
             {
