@@ -306,11 +306,29 @@
     <Compile Include="R05.Designer.cs">
       <DependentUpon>R05.cs</DependentUpon>
     </Compile>
+    <Compile Include="R20.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R20.Designer.cs">
+      <DependentUpon>R20.cs</DependentUpon>
+    </Compile>
     <Compile Include="R21.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="R21.Designer.cs">
       <DependentUpon>R21.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R22.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R22.Designer.cs">
+      <DependentUpon>R22.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R30.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R30.Designer.cs">
+      <DependentUpon>R30.cs</DependentUpon>
     </Compile>
     <Compile Include="R40.cs">
       <SubType>Form</SubType>
@@ -438,8 +456,17 @@
     <EmbeddedResource Include="R05.resx">
       <DependentUpon>R05.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="R20.resx">
+      <DependentUpon>R20.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R21.resx">
       <DependentUpon>R21.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R22.resx">
+      <DependentUpon>R22.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R30.resx">
+      <DependentUpon>R30.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R40.resx">
       <DependentUpon>R40.cs</DependentUpon>
