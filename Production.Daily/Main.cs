@@ -14,6 +14,8 @@ using Ict.Win;
 using Sci.Data;
 using System.Net;
 using System.IO;
+using Sci;
+using System.Diagnostics;
 
 namespace Production.Daily
 {
@@ -49,9 +51,10 @@ namespace Production.Daily
             if (isAuto)
             {
                 ClickExport();
+                this.Close();
             }
         }
-
+       
         private void OnRequery()
         {
             DataTable _mailTo;
@@ -129,6 +132,10 @@ namespace Production.Daily
             {
                 ShowErr(result);
             }
+            else
+            {
+                MyUtility.Msg.InfoBox("Connecting is Successful");
+            }
         }
 
         private void BtnTestMail_Click(object sender, EventArgs e)
@@ -163,10 +170,10 @@ namespace Production.Daily
             transferPMS.SetSMTP(mailServer, 25, eMailID, eMailPwd);
             
             String sendFrom = this.CurrentData["SendFrom"].ToString();
-            //String toAddress = mailTo["ToAddress"].ToString();
-            //String ccAddress = mailTo["CcAddress"].ToString();
-            String toAddress = "ben.chen@sportscity.com.tw";
-            String ccAddress = "";
+            String toAddress = mailTo["ToAddress"].ToString();
+            String ccAddress = mailTo["CcAddress"].ToString();
+            //String toAddress = "ben.chen@sportscity.com.tw";
+            //String ccAddress = "";
             if (String.IsNullOrEmpty(subject))
             {
                 subject = mailTo["Subject"].ToString();
@@ -264,7 +271,9 @@ namespace Production.Daily
             #endregion
             #region 判斷[Export datas path]路徑底下的轉入當日的Week
             String weekDayPath = GetWeekDayPath();
-            exportDataPath = exportDataPath + weekDayPath;
+            
+            //exportDataPath = exportDataPath + weekDayPath;
+
             if (!Directory.Exists(exportDataPath))
             {
                 Directory.CreateDirectory(exportDataPath);
@@ -313,6 +322,10 @@ namespace Production.Daily
 
             result = GetTransRegion("I", importRgCode, importDataPath, importFileName, out importRegion);
             if (!result) { return result; }
+            #endregion
+
+            #region 先把Trade_To_Pms的DB drop掉
+            transferPMS.DeleteDatabase(importRegion);
             #endregion
 
             #region 解壓縮檔案到資料夾裡
@@ -396,7 +409,7 @@ namespace Production.Daily
             SendMail(subject, desc);
             #endregion
 
-            return Result.True;
+            return Ict.Result.True;
         }
         #endregion
 
@@ -405,7 +418,7 @@ namespace Production.Daily
         {
             DualResult result;
             String sqlCmd = "";
-            String ftpIP = "Ftp://" + this.CurrentData["FtpIP"].ToString().Trim() + "/";
+            String ftpIP = this.CurrentData["FtpIP"].ToString().Trim() ;
             String ftpID = this.CurrentData["FtpID"].ToString().Trim();
             String ftpPwd = this.CurrentData["FtpPwd"].ToString().Trim();
 
@@ -417,7 +430,7 @@ namespace Production.Daily
             #endregion
             
             #region 刪除FTP的檔案
-            /*
+            
             if (IsFtpFileExist(exportRegion.RarName))
             {
                 if (!transferPMS.Delete_Rar_On_Ftp(exportRegion))
@@ -425,7 +438,7 @@ namespace Production.Daily
                     return new DualResult(false, "Delete FTP File failed!");
                 }
             }
-            */
+            
             #endregion
 
             #region 判斷若DB不存在，就掛載
@@ -501,7 +514,7 @@ namespace Production.Daily
             transferPMS.Export_EndTransfer_RarUpload(exportRegion.DirName, exportRegion.RarName, exportRegion);
             #endregion
             */
-            return Result.True;
+            return Ict.Result.True;
         }
         #endregion
 
@@ -509,7 +522,7 @@ namespace Production.Daily
         private DualResult DailyImport(TransRegion region)
         {
             DualResult result;
-            String ftpIP = "Ftp://" + this.CurrentData["FtpIP"].ToString().Trim() + "/";
+            String ftpIP = this.CurrentData["FtpIP"].ToString().Trim() ;
             String ftpID = this.CurrentData["FtpID"].ToString().Trim();
             String ftpPwd = this.CurrentData["FtpPwd"].ToString().Trim();
             
@@ -529,7 +542,7 @@ namespace Production.Daily
                 String subject = "PMS transfer data (New) ERROR";
                 String desc = "Wrong the downloaded file date!!,Pls contact with Taipei.";
                 SendMail(subject, desc);
-                return Result.F("Wrong the downloaded file date!!,Pls contact with Taipei.");
+                return Ict.Result.F("Wrong the downloaded file date!!,Pls contact with Taipei.");
             }
             #endregion
             #region 刪除DataBase
@@ -559,7 +572,8 @@ namespace Production.Daily
             #region 將資料Copy To DB資料夾以掛載
             String fromPath = this.CurrentData["ImportDataPath"].ToString();
             String toPath = transImport.Rows[0]["DirName"].ToString();
-            File.Copy(Path.Combine(fromPath, region.DBFileName + ".mdf"), Path.Combine(toPath, region.DBFileName + ".mdf"),true);
+            transferPMS.UnRAR_To_ImportDir(region);
+           // File.Copy(Path.Combine(fromPath, region.DBFileName + ".mdf"), Path.Combine(toPath, region.DBFileName + ".mdf"),true);
             #endregion
             #region 掛載資料庫
             transferPMS.Attach_DataBase(region, 1);
@@ -575,8 +589,12 @@ namespace Production.Daily
             if (!transferPMS.Import_Trade_To_Pms(ftpIP, ftpID, ftpPwd))
             {
                 return new DualResult(false, "Update failed!");
+                String subject = "PMS transfer data (New) ERROR";
+                String desc = "Wrong the Update failed!!,Pls contact with Taipei.";
+                SendMail(subject, desc);
+                return Ict.Result.F("Wrong the Update failed!!,Pls contact with Taipei.");
             }
-            return Result.True;
+            return Ict.Result.True;
         }
         #endregion
 
@@ -588,7 +606,7 @@ namespace Production.Daily
         private bool IsFtpFileExist(String fileName)
         {
             bool isExists = false;
-            String ftpIP = "Ftp://" + this.CurrentData["FtpIP"].ToString().Trim() + "/";
+            String ftpIP = @"ftp://"+this.CurrentData["FtpIP"].ToString().Trim()+@"/" ;
             String ftpID = this.CurrentData["FtpID"].ToString().Trim();
             String ftpPwd = this.CurrentData["FtpPwd"].ToString().Trim();
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpIP + fileName);

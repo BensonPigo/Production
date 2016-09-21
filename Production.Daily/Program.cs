@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,21 +10,33 @@ namespace Production.Daily
     class Program
     {
         [STAThread]
-        static void Main(string[] args)
+        static void Main(string[] args = null)
         {
+            string pStartForm = (args.Length == 0) ? "" : args[0].ToString();
+            Sci.Env.User = new DailyUser();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Sci.Env.AppInit();
-            Sci.Env.User = new DailyUser();
+            
+            DBProxy.Current.DefaultTimeout = 3600;
+            //pStartForm = "DailyTransfer";
 
-            if (args.Length == 0)
+            switch (pStartForm)
             {
-                Application.Run(new Main());
+                case "DailyTransfer": Application.Run(new Main("")); break;
+                case "": Application.Run(new Main()); break;
             }
-            else
-            {
-                Application.Run(new Main(args[0].ToString()));
-            }
+           
+            
+            
+            //if (args.Length == 0)
+            //{
+            //    Application.Run(new Main());
+            //}
+            //else
+            //{
+            //    Application.Run(new Main(args[0].ToString()));
+            //}
             Sci.Env.AppShutdown();
         }
         public class DailyUser : Sci.IUserInfo
