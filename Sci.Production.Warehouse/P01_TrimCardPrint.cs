@@ -83,12 +83,6 @@ namespace Sci.Production.Warehouse
                 result = DBProxy.Current.Select(null, sql, out dtColor);
                 if (!result) return result;
 
-                sql = string.Format(@"select ColorID , B.Name , LectraCode , Article
-                                from Order_ColorCombo A
-                                left join Color B on B.BrandId='{0}' and B.ID=A.ColorID
-                                where A.Id='{1}'", BrandID, orderID);
-                result = DBProxy.Current.Select(null, sql, out dtColor);
-                if (!result) return result;
                 #endregion
             }
             else if (radioAccessory.Checked)
@@ -128,7 +122,19 @@ namespace Sci.Production.Warehouse
             {
                 #region OTHER
                 //架構要調，先HOLD住
+                sql = string.Format(@"select A.Refno,B.DescDetail
+                                    from Order_BOA_Expend A
+                                    left join Fabric B on B.SCIRefno=A.SCIRefno
+                                    where Id='{0}' and Article<>'' and ColorId<>''
+                                    group by A.Refno, B.DescDetail ", orderID);
+                result = DBProxy.Current.Select(null, sql, out dtPrint);
+                if (!result) return result;
 
+                sql = string.Format(@"select distinct orders.ID 
+                                    from orders
+                                    where orders.POID='{0}'", POID);
+                result = DBProxy.Current.Select(null, sql, out dtPrint2);
+                if (!result) return result;
                 #endregion
             }
             else if (radioThread.Checked)
@@ -240,8 +246,8 @@ namespace Sci.Production.Warehouse
                 }
                 else if (radioOther.Checked)
                 {
-                    
-
+                    for (int i = 0; i < dtPrint2.Rows.Count; i++)
+                        tables.Cell(i + 4+(3*(i/7)), 1).Range.Text = dtPrint2.Rows[i]["ID"].ToString().Trim();
                 }
                 #endregion
 
@@ -305,7 +311,8 @@ namespace Sci.Production.Warehouse
                         NowPage = ((count - 1) / 6);  //從0開始(例:0,1,2...)
                         columnIndex = ((count - 1) % 6) + 2;
 
-                        temp = row["Refno"].ToString().Trim() + Environment.NewLine + row["Description"].ToString().Trim();
+                        temp = row["Refno"].ToString().Trim() + Environment.NewLine 
+                             + row["Description"].ToString().Trim();
                         tables.Cell(3 + 7 * NowPage, columnIndex).Range.Text = temp;
 
                         
@@ -350,8 +357,17 @@ namespace Sci.Production.Warehouse
                 }
                 else if (radioOther.Checked)
                 {
-                        
+                    foreach (DataRow row in dtPrint.Rows)
+                    {
+                        NowPage = ((count - 1) / 6);  //從0開始(例:0,1,2...)
+                        columnIndex = ((count - 1) % 6) + 2;
 
+                        temp = row["Refno"].ToString().Trim() + Environment.NewLine
+                             + row["DescDetail"].ToString().Trim();
+                        tables.Cell(3 + 10 * NowPage, columnIndex).Range.Text = temp;
+                        
+                        count++;
+                    }
                 }
                 else if (radioThread.Checked)
                 {
