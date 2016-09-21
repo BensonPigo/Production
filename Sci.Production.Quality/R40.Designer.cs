@@ -35,6 +35,7 @@
             this.comboBox_brand = new Sci.Win.UI.ComboBox();
             this.label1 = new Sci.Win.UI.Label();
             this.button1 = new Sci.Win.UI.Button();
+            this.button2 = new Sci.Win.UI.Button();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -119,9 +120,20 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(495, 211);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(80, 30);
+            this.button2.TabIndex = 96;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // R40
             // 
             this.ClientSize = new System.Drawing.Size(627, 314);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.radioPanel1);
             this.Name = "R40";
@@ -131,6 +143,7 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);
             this.Controls.SetChildIndex(this.button1, 0);
+            this.Controls.SetChildIndex(this.button2, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -147,5 +160,6 @@
         private Win.UI.ComboBox comboBox_brand;
         private Win.UI.Label label1;
         private Win.UI.Button button1;
+        private Win.UI.Button button2;
     }
 }

@@ -74,10 +74,10 @@ namespace Sci.Production.Quality
                     declare @y2 varchar(4) = cast(datepart(year, dateadd(year,-1, @d) ) as varchar(4))
                     declare @y3 varchar(4) = cast(datepart(year,@d) as varchar(4))
 
-                    select Target,Claimed.Claimed,sh.qty[Shipped],isnull(round(sum(Claimed.Claimed)/sum(sh.qty),6)*100,0) [adiComp],Claimed.month1,Claimed.YEAR1
+                    select Target,Claimed.Claimed,sh.qty[Shipped],convert(varchar(10),Claimed.month1)[month1],convert(varchar(10),Claimed.YEAR1)[YEAR1]
                     into #temp
                     from dbo.ADIDASComplainTarget 
-                    outer apply(SELECT left(cast(a.StartDate as varchar(10)),7) ym , sum(b.Qty) Claimed,dateadd(MONTH,-3,a.StartDate) themonth ,MONTH(a.StartDate)[month1],YEAR(a.StartDate) [YEAR1]
+                    outer apply(SELECT left(cast(a.StartDate as varchar(10)),7) ym , sum(b.Qty) Claimed,convert(varchar(10),dateadd(MONTH,-3,a.StartDate)) themonth ,convert(varchar(10),MONTH(a.StartDate))[month1],convert(varchar(10),YEAR(a.StartDate)) [YEAR1]
 			                    FROM dbo.ADIDASComplain a
 			                    INNER JOIN DBO.ADIDASComplain_Detail b ON B.ID = a.ID
 			                    where a.StartDate in (@y1,@y2,@y3)
@@ -92,7 +92,7 @@ namespace Sci.Production.Quality
                     where year in (@y1,@y2,@y3)
                     group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1
 
-                    select dRanges.name,#temp.Target,SUM(year1.Claimed)[Claimed1],SUM(year1.Shipped)[Shipped1],SUM(year2.Claimed)[Claimed2],SUM(year2.Shipped)[Shipped2],SUM(year3.Claimed)[Claimed3],SUM(year3.Shipped)[Shipped3] from dbo.#temp
+                    select dRanges.name,#temp.Target,isnull(SUM(year1.Claimed),0)[Claimed1],isnull(SUM(year1.Shipped),0)[Shipped1],isnull(SUM(year2.Claimed),0)[Claimed2],isnull(SUM(year2.Shipped),0)[Shipped2],isnull(SUM(year3.Claimed),0)[Claimed3],isnull(SUM(year3.Shipped),0)[Shipped3] from dbo.#temp
                     inner join @dRanges as dRanges on #temp.month1 between dRanges.starts and dRanges.ends 
 					OUTER APPLY(SELECT Claimed,#temp.Shipped FROM #temp WHERE YEAR1=@y1)AS year1
 					OUTER APPLY(SELECT Claimed,#temp.Shipped FROM #temp WHERE YEAR1=@y2)AS year2
@@ -130,7 +130,7 @@ namespace Sci.Production.Quality
                 dtt.Rows.Add(totalrow);
                 DataColumn percent = dtt.Columns.Add("adiComp");
                 percent.SetOrdinal(4);
-                percent.Expression = "[Claimed1] / [Shipped1]";
+                percent.Expression = "[Claimed1] / isnull([Shipped1],0)";
                 percent.SetOrdinal(7);
                 percent.Expression ="[Claimed2] / [Shipped2]";
                 percent.SetOrdinal(10);
@@ -418,6 +418,7 @@ namespace Sci.Production.Quality
            mySheet.Cells.Font.Size = 20;         //設定Excel資料字體大小
 
            //Excel寫入資料
+          
            //mySheet.Cells[1, 1] = "A";
            //mySheet.Cells[1, 2] = "5";
            //mySheet.Cells[1, 3] = "ㄅ";
@@ -541,5 +542,9 @@ namespace Sci.Production.Quality
        
    }
 
-    }
+   private void button2_Click(object sender, EventArgs e)
+   {
+       
+   }
+}
 }
