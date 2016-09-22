@@ -175,7 +175,7 @@
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B03";
-            this.Text = "Refund Reason";
+            this.Text = "B03.Refund Reason";
             this.WorkAlias = "WhseReason";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();

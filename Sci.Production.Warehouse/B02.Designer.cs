@@ -38,8 +38,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(900, 395);
             // 
             // detailcont
             // 
@@ -49,6 +54,19 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label5);
+            this.detailcont.Size = new System.Drawing.Size(900, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(900, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(900, 395);
+            // 
+            // tabs
+            // 
+            this.tabs.Size = new System.Drawing.Size(908, 424);
             // 
             // label3
             // 
@@ -114,13 +132,15 @@
             this.ClientSize = new System.Drawing.Size(908, 457);
             this.IsSupportPrint = false;
             this.Name = "B02";
-            this.Text = "Material Location Index";
+            this.Text = "B02.Material Location Index";
             this.WorkAlias = "mtlLocation";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

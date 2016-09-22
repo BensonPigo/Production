@@ -18,14 +18,19 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-
-            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("I", "Inventory");
-            comboBox1_RowSource.Add("B", "Bulk");
-            comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
+            DataTable combos = new DataTable();
+            combos.ColumnsStringAdd("Key");
+            combos.ColumnsStringAdd("Value");
+            combos.Rows.Add(new object[] { "I", "Inventory" });
+            combos.Rows.Add(new object[] { "B", "Bulk" });
+            //Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
+            //comboBox1_RowSource.Add("I", "Inventory");
+            //comboBox1_RowSource.Add("B", "Bulk");
+            comboBox1.DataSource = combos;//new BindingSource(comboBox1_RowSource, null);
             comboBox1.ValueMember = "Key";
             comboBox1.DisplayMember = "Value";
 
+            
         }
 
         //編輯狀態限制
@@ -58,7 +63,7 @@ namespace Sci.Production.Warehouse
                 this.textBox2.Focus();
                 return false;
             }
-
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;//MDivisionID為登入的ID
             return base.ClickSaveBefore();
         }
     }
