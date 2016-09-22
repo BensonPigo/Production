@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[MtlLocation] (
     [MDivisionID] VARCHAR (8)   NOT NULL,
     [ID]          VARCHAR (10)  CONSTRAINT [DF_MtlLocation_ID] DEFAULT ('') NOT NULL,
-    [StockType]   CHAR (10)     CONSTRAINT [DF_MtlLocation_StockType] DEFAULT ('') NOT NULL,
+    [StockType]   VARCHAR(10)     CONSTRAINT [DF_MtlLocation_StockType] DEFAULT ('') NOT NULL,
     [Junk]        BIT           NULL,
     [Description] NVARCHAR (40) CONSTRAINT [DF_MtlLocation_Description] DEFAULT ('') NULL,
     [AddName]     VARCHAR (10)  CONSTRAINT [DF_MtlLocation_AddName] DEFAULT ('') NULL,
