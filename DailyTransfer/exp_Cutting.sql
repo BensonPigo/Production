@@ -32,15 +32,26 @@ WHERE CUT1. Status != 'New'
 AND  (CUT1.Lock  BETWEEN (SELECT DATEADD(DAY,1,SewLock) FROM Production.dbo.System) AND  getdate() or  CUT1.Lock IS NULL)
 
 
+--SELECT 
+--CUT1. ID,CUT2.CutRef,CUT2.CuttingID,
+--(select isnull(FabricCombo,'') from Production.dbo.WorkOrder where UKey = CUT2.WorkOrderUKey) as FabricCombo,
+--CUT2. Cutno,CUT2. MarkerName,CUT2. Markerlength,CUT2. Layer,CUT2. Cons,
+--CUT2 .UKey, CUT2. WorkOrderUkey,CUT2. Colorid
+--INTO CuttingOutput_Detail
+--FROM Production.dbo.CuttingOutput CUT1 , Production.dbo.CuttingOutput_Detail CUT2  
+--WHERE CUT1. ID = CUT2.ID
+SELECT ID,CutRef,CuttingID,isnull(FabricCombo,'') as FabricCombo,Cutno,MarkerName,Markerlength,Layer,Cons,UKey,WorkOrderUkey,Colorid 
+INTO CuttingOutput_Detail
+FROM (
 SELECT 
 CUT1. ID,CUT2.CutRef,CUT2.CuttingID,
 (select isnull(FabricCombo,'') from Production.dbo.WorkOrder where UKey = CUT2.WorkOrderUKey) as FabricCombo,
 CUT2. Cutno,CUT2. MarkerName,CUT2. Markerlength,CUT2. Layer,CUT2. Cons,
 CUT2 .UKey, CUT2. WorkOrderUkey,CUT2. Colorid
-INTO CuttingOutput_Detail
+--INTO CuttingOutput_Detail
 FROM Production.dbo.CuttingOutput CUT1 , Production.dbo.CuttingOutput_Detail CUT2  
 WHERE CUT1. ID = CUT2.ID
-
+)as aaa
 
 SELECT CUT1.ID,CUT3.CuttingOutput_detailUkey,CUT3.CuttingID, CUT3.SizeCode,CUT3.Qty
 INTO  CuttingOutput_Detail_Detail
