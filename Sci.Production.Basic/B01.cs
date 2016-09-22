@@ -40,19 +40,21 @@ namespace Sci.Production.Basic
 
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 this.textBox1.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["NameEN"]))
+            if (MyUtility.Check.Empty(CurrentMaintain["NameEN"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Name > can not be empty!");
                 this.textBox2.Focus();
                 return false;
             }
+            
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;//MDivisionID為登入的ID
 
             return base.ClickSaveBefore();
         }
