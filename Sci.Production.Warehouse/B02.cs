@@ -63,7 +63,9 @@ namespace Sci.Production.Warehouse
                 this.textBox2.Focus();
                 return false;
             }
+
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;//MDivisionID為登入的ID
+
             return base.ClickSaveBefore();
         }
     }
