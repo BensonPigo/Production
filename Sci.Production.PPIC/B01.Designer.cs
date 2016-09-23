@@ -141,7 +141,6 @@
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
-            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B01";
             this.Text = "B01. Fabric Lacking & Replacement Reason";
