@@ -1,10 +1,9 @@
-
--- =============================================
+ï»¿-- =============================================
 -- Author:		LEO	
 -- Create date:20160903
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE imp_Ietms
+CREATE PROCEDURE [dbo].[imp_Ietms]
 	
 AS
 BEGIN
@@ -15,12 +14,12 @@ BEGIN
   -- ietms
 --ietms
 
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------ï¿½Rï¿½ï¿½ï¿½DTABLEï¿½hï¿½ï¿½ï¿½ï¿½ï¿½
 Delete Production.dbo.IETMS
 from Production.dbo.IETMS as a left join Trade_To_Pms.dbo.IETMS as b
 on a.id = b.id AND a.Version = b.Version
 where b.id is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ï¿½DTABLEï¿½ï¿½Ó·ï¿½TABLE ï¿½ï¿½ï¿½@ï¿½ï¿½(ï¿½DTABLEï¿½hï¿½ï¿½ï¿½ï¿½ ï¿½Oï¿½_ï¿½ï¿½ ~ï¿½Ó·ï¿½TABLEï¿½hï¿½ï¿½ï¿½Ü¤ï¿½ï¿½zï¿½|)
 UPDATE a
 SET  
 a.ID	= b.ID
@@ -36,7 +35,7 @@ a.ID	= b.ID
 ,a.EditDate	= b.EditDate
 
 from Production.dbo.IETMS as a inner join Trade_To_Pms.dbo.IETMS as b ON a.id=b.id AND a.Version = b.Version
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO ï¿½ï¿½
 INSERT INTO Production.dbo.IETMS(
 ID
 ,Version
@@ -69,14 +68,14 @@ where not exists(select id from Production.dbo.IETMS as a where a.id = b.id AND 
 --IETMS1
 --IETMS_Detail
 
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------ï¿½Rï¿½ï¿½ï¿½DTABLEï¿½hï¿½ï¿½ï¿½ï¿½ï¿½
 Delete Production.dbo.IETMS_Detail
 from Production.dbo.IETMS_Detail as a 
 INNER JOIN Trade_To_Pms.dbo.IETMS as t on a.IETMSUkey=t.Ukey
 left join Trade_To_Pms.dbo.IETMS_Detail as b
 on a.Ukey = b.Ukey
 where b.Ukey is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ï¿½DTABLEï¿½ï¿½Ó·ï¿½TABLE ï¿½ï¿½ï¿½@ï¿½ï¿½(ï¿½DTABLEï¿½hï¿½ï¿½ï¿½ï¿½ ï¿½Oï¿½_ï¿½ï¿½ ~ï¿½Ó·ï¿½TABLEï¿½hï¿½ï¿½ï¿½Ü¤ï¿½ï¿½zï¿½|)
 UPDATE a
 SET  
 a.IETMSUkey	= b.IETMSUkey
@@ -92,7 +91,7 @@ a.IETMSUkey	= b.IETMSUkey
 
 from Production.dbo.IETMS_Detail as a 
 inner join Trade_To_Pms.dbo.IETMS_Detail as b ON a.Ukey = b.Ukey
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO ï¿½ï¿½
 INSERT INTO Production.dbo.IETMS_Detail(
 IETMSUkey
 ,SEQ
@@ -124,12 +123,12 @@ where not exists(select 1 from Production.dbo.IETMS_Detail as a where a.UKey = b
 
 --Operation
 --Operation
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------ï¿½Rï¿½ï¿½ï¿½DTABLEï¿½hï¿½ï¿½ï¿½ï¿½ï¿½
 Delete Production.dbo.Operation
 from Production.dbo.Operation as a left join Trade_To_Pms.dbo.Operation as b
 on a.id = b.id
 where b.id is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ï¿½DTABLEï¿½ï¿½Ó·ï¿½TABLE ï¿½ï¿½ï¿½@ï¿½ï¿½(ï¿½DTABLEï¿½hï¿½ï¿½ï¿½ï¿½ ï¿½Oï¿½_ï¿½ï¿½ ~ï¿½Ó·ï¿½TABLEï¿½hï¿½ï¿½ï¿½Ü¤ï¿½ï¿½zï¿½|)
 UPDATE a
 SET  
 a.ID	= b.ID
@@ -168,7 +167,7 @@ a.ID	= b.ID
 ,a.EditDate	= b.EditDate
 
 from Production.dbo.Operation as a inner join Trade_To_Pms.dbo.Operation as b ON a.id=b.id
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO ï¿½ï¿½
 INSERT INTO Production.dbo.Operation(
 ID
 ,FromGSD
@@ -247,12 +246,12 @@ where not exists(select id from Production.dbo.Operation as a where a.id = b.id)
 
 --MACHTYPE
 --MachineType
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------ï¿½Rï¿½ï¿½ï¿½DTABLEï¿½hï¿½ï¿½ï¿½ï¿½ï¿½
 Delete Production.dbo.MachineType
 from Production.dbo.MachineType as a left join Trade_To_Pms.dbo.MachineType as b
 on a.id = b.id
 where b.id is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ï¿½DTABLEï¿½ï¿½Ó·ï¿½TABLE ï¿½ï¿½ï¿½@ï¿½ï¿½(ï¿½DTABLEï¿½hï¿½ï¿½ï¿½ï¿½ ï¿½Oï¿½_ï¿½ï¿½ ~ï¿½Ó·ï¿½TABLEï¿½hï¿½ï¿½ï¿½Ü¤ï¿½ï¿½zï¿½|)
 UPDATE a
 SET  
 a.ID	= b.ID
@@ -276,7 +275,7 @@ a.ID	= b.ID
 ,a.EditDate	= b.EditDate
 
 from Production.dbo.MachineType as a inner join Trade_To_Pms.dbo.MachineType as b ON a.id=b.id
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO ï¿½ï¿½
 INSERT INTO Production.dbo.MachineType(
 ID
 ,Description
@@ -325,12 +324,12 @@ where not exists(select id from Production.dbo.MachineType as a where a.id = b.i
 
 --ATTACH
 --MOLD
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------ï¿½Rï¿½ï¿½ï¿½DTABLEï¿½hï¿½ï¿½ï¿½ï¿½ï¿½
 Delete Production.dbo.Mold
 from Production.dbo.Mold as a left join Trade_To_Pms.dbo.Mold as b
 on a.id = b.id
 where b.id is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ï¿½DTABLEï¿½ï¿½Ó·ï¿½TABLE ï¿½ï¿½ï¿½@ï¿½ï¿½(ï¿½DTABLEï¿½hï¿½ï¿½ï¿½ï¿½ ï¿½Oï¿½_ï¿½ï¿½ ~ï¿½Ó·ï¿½TABLEï¿½hï¿½ï¿½ï¿½Ü¤ï¿½ï¿½zï¿½|)
 UPDATE a
 SET  
 a.ID	= b.ID
@@ -344,7 +343,7 @@ a.ID	= b.ID
 ,a.EditDate	= b.EditDate
 
 from Production.dbo.Mold as a inner join Trade_To_Pms.dbo.Mold as b ON a.id=b.id
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO ï¿½ï¿½
 INSERT INTO Production.dbo.Mold(
 ID
 ,Type
@@ -372,7 +371,7 @@ from Trade_To_Pms.dbo.Mold as b
 where not exists(select id from Production.dbo.Mold as a where a.id = b.id)
 --SMNotice
 --SMNotice
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ï¿½DTABLEï¿½ï¿½Ó·ï¿½TABLE ï¿½ï¿½ï¿½@ï¿½ï¿½(ï¿½DTABLEï¿½hï¿½ï¿½ï¿½ï¿½ ï¿½Oï¿½_ï¿½ï¿½ ~ï¿½Ó·ï¿½TABLEï¿½hï¿½ï¿½ï¿½Ü¤ï¿½ï¿½zï¿½|)
 UPDATE a
 SET  
 a.ID	= b.ID
@@ -399,7 +398,7 @@ a.ID	= b.ID
 ,a.EditDate	= b.EditDate
 
 from Production.dbo.SMNotice as a inner join Trade_To_Pms.dbo.SMNotice as b ON a.id=b.id
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO ï¿½ï¿½
 INSERT INTO Production.dbo.SMNotice(
 ID
 ,MainID
@@ -454,14 +453,14 @@ where not exists(select id from Production.dbo.SMNotice as a where a.id = b.id)
 
 --MarkerSend
 --Marker_Send
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------ï¿½Rï¿½ï¿½ï¿½DTABLEï¿½hï¿½ï¿½ï¿½ï¿½ï¿½
 Delete Production.dbo.Marker_Send
 from Production.dbo.Marker_Send as a 
 INNER JOIN Trade_To_Pms.dbo.SMNotice as t on a.id=t.id
 left join Trade_To_Pms.dbo.Marker_Send as b
-on a.id = b.id
+on a.id = b.id and a.SEQ=b.SEQ and a.MarkerVersion = b.MarkerVersion
 where b.id is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ï¿½DTABLEï¿½ï¿½Ó·ï¿½TABLE ï¿½ï¿½ï¿½@ï¿½ï¿½(ï¿½DTABLEï¿½hï¿½ï¿½ï¿½ï¿½ ï¿½Oï¿½_ï¿½ï¿½ ~ï¿½Ó·ï¿½TABLEï¿½hï¿½ï¿½ï¿½Ü¤ï¿½ï¿½zï¿½|)
 UPDATE a
 SET  
 a.ID	= b.ID
@@ -476,8 +475,8 @@ a.ID	= b.ID
 ,a.AddDate	= b.AddDate
 
 from Production.dbo.Marker_Send as a 
-inner join Trade_To_Pms.dbo.Marker_Send as b ON a.id=b.id
--------------------------- INSERT INTO §ì
+inner join Trade_To_Pms.dbo.Marker_Send as b ON a.id=b.id and a.SEQ=b.SEQ and a.MarkerVersion = b.MarkerVersion
+-------------------------- INSERT INTO ï¿½ï¿½
 INSERT INTO Production.dbo.Marker_Send(
 ID
 ,SEQ
@@ -504,7 +503,10 @@ ID
 ,AddDate
  
 from Trade_To_Pms.dbo.Marker_Send as b
-where not exists(select 1 from Production.dbo.Marker_Send as a where a.id = b.id)
+where not exists(select 1 from Production.dbo.Marker_Send as a where a.id = b.id and a.SEQ=b.SEQ and a.MarkerVersion = b.MarkerVersion)
 
 END
+
+
+
 
