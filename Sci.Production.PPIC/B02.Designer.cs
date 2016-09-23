@@ -141,7 +141,6 @@
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
-            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B02";
             this.Text = "B02. Accessory Lacking & Replacement Reason";
