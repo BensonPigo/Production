@@ -36,6 +36,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -51,7 +52,7 @@
             this.masterpanel.Controls.Add(this.displayBox1);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Size = new System.Drawing.Size(757, 100);
+            this.masterpanel.Size = new System.Drawing.Size(892, 100);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
@@ -60,7 +61,7 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Size = new System.Drawing.Size(757, 249);
+            this.detailpanel.Size = new System.Drawing.Size(892, 249);
             // 
             // gridicon
             // 
@@ -72,19 +73,36 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(757, 249);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 249);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(757, 387);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(757, 349);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(757, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(757, 387);
             // 
             // tabs
             // 
@@ -140,7 +158,6 @@
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
-            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.Name = "B08";
@@ -153,6 +170,7 @@
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
