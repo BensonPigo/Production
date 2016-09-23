@@ -49,7 +49,8 @@ namespace Sci.Production.Quality
             dtt = null;
             dt = null;
             dat = null;
-
+            
+            
             if (radiobtn_byYear.Checked == true)
             {
                 #region By Year
@@ -92,25 +93,30 @@ namespace Sci.Production.Quality
                     where year in (@y1,@y2,@y3)
                     group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1
 
-                    select dRanges.name,#temp.Target,isnull(SUM(year1.Claimed),0)[Claimed1],isnull(SUM(year1.Shipped),0)[Shipped1],isnull(SUM(year2.Claimed),0)[Claimed2],isnull(SUM(year2.Shipped),0)[Shipped2],isnull(SUM(year3.Claimed),0)[Claimed3],isnull(SUM(year3.Shipped),0)[Shipped3] from dbo.#temp
-                    inner join @dRanges as dRanges on #temp.month1 between dRanges.starts and dRanges.ends 
-					OUTER APPLY(SELECT Claimed,#temp.Shipped FROM #temp WHERE YEAR1=@y1)AS year1
-					OUTER APPLY(SELECT Claimed,#temp.Shipped FROM #temp WHERE YEAR1=@y2)AS year2
-					OUTER APPLY(SELECT Claimed,#temp.Shipped FROM #temp WHERE YEAR1=@y3)AS year3
-					GROUP BY dRanges.name,#temp.Target,year1.Claimed,year1.Shipped,year2.Claimed,year2.Shipped,year3.Claimed,year3.Shipped
+                    select dRanges.name,dRanges.starts,#temp.Target,isnull(SUM(year1.Claimed),0)[Claimed1],isnull(SUM(year1.Shipped),0)[Shipped1],isnull(SUM(year2.Claimed),0)[Claimed2],isnull(SUM(year2.Shipped),0)[Shipped2],isnull(SUM(year3.Claimed),0)[Claimed3],isnull(SUM(year3.Shipped),0)[Shipped3] from dbo.#temp
+                    inner join @dRanges as dRanges on dRanges.starts between dRanges.starts and dRanges.ends 
+					OUTER APPLY(SELECT Claimed,#temp.Shipped FROM #temp WHERE YEAR1=@y1 and dRanges.starts=month1)AS year1
+					OUTER APPLY(SELECT Claimed,#temp.Shipped FROM #temp WHERE YEAR1=@y2 and dRanges.starts=month1)AS year2
+					OUTER APPLY(SELECT Claimed,#temp.Shipped FROM #temp WHERE YEAR1=@y3 and dRanges.starts=month1)AS year3
+					GROUP BY dRanges.name,#temp.Target,year1.Claimed,year1.Shipped,year2.Claimed,year2.Shipped,year3.Claimed,year3.Shipped,dRanges.starts
+                    order by dRanges.starts
                     DROP TABLE #temp");
                 result = DBProxy.Current.Select("", sqlcmd, out dtt);
 
-                int startIndex = 2;
+                dtt.Columns.Remove("starts");
+                int startIndex = 1;
                 //最後一列Total
 
                 DataRow totalrow = dtt.NewRow();
                 totalrow[0] = "YTD";
 
+                
                 //for dt每個欄位
                 decimal TTColumnAMT = 0;
                 for (int colIdx = startIndex; colIdx < dtt.Columns.Count; colIdx++)
                 {
+                   
+                  
                     TTColumnAMT = 0;
                     //for dt每一列
                     for (int rowIdx = 0; rowIdx < dtt.Rows.Count; rowIdx++)
@@ -128,16 +134,44 @@ namespace Sci.Production.Quality
 
                 
                 dtt.Rows.Add(totalrow);
-                DataColumn percent = dtt.Columns.Add("adiComp");
-                percent.SetOrdinal(4);
-                percent.Expression = "[Claimed1] / isnull([Shipped1],0)";
-                percent.SetOrdinal(7);
-                percent.Expression ="[Claimed2] / [Shipped2]";
-                percent.SetOrdinal(10);
-                percent.Expression = "[Claimed3] / [Shipped3]";
-                
-                dtt.Rows.Add(totalrow);
+               DataColumn percent = dtt.Columns.Add("adiComp1");
+               DataColumn percent1 = dtt.Columns.Add("adiComp2");
+               DataColumn percent2= dtt.Columns.Add("adiComp3");
+               DataColumn percent3 = dtt.Columns.Add(" ");
+                foreach( DataRow row in dtt.Rows)
+                {
+                    if (row["Shipped1"].Empty())
+                    {
+                        percent.SetOrdinal(4);
+                        percent.Expression = "0";
+                    }
+                    else
+                    {   
+                        percent.SetOrdinal(4);
+                        percent.Expression = "[Claimed1] / [Shipped1]";
+                    }
 
+                    percent1.SetOrdinal(7);
+                    if (row["Shipped2"].Empty())
+                    {
+                        percent1.Expression = "0";  
+                    }
+                    else
+                    {
+                        percent1.Expression = "[Claimed2] / [Shipped2]";
+                    }
+
+                    percent2.SetOrdinal(10);
+                    if (row["Shipped3"].Empty())
+                    {
+                        percent2.Expression = "0";
+                    }
+                    else
+                    {
+                        percent2.Expression = "[Claimed3] / [Shipped3]";
+                    }
+                }
+            
                 if (null == dt_All || 0 == dt_All.Rows.Count)
                 {
                     dt_All = dtt;
@@ -149,8 +183,9 @@ namespace Sci.Production.Quality
 
                 if (!result)
                 {
-                    //this.ShowErr(result); 
-                  return result;
+                    
+                  return result; 
+                 //this.ShowErr(result);
                 }
                 #endregion
 
@@ -179,15 +214,15 @@ namespace Sci.Production.Quality
                     declare @y1 varchar(4) = cast(datepart(year, dateadd(year,-2, @d) ) as varchar(4))
                     declare @y2 varchar(4) = cast(datepart(year, dateadd(year,-1, @d) ) as varchar(4))
                     declare @y3 varchar(4) = cast(datepart(year,@d) as varchar(4))
-                    select Target,Claimed.Claimed,sh.qty[Shipped],isnull(round(sum(Claimed.Claimed)/sum(sh.qty),6)*100,0) [adiComp],Claimed.month1,Claimed.YEAR1,Claimed.factory
+                    select Target,Claimed.Claimed,sh.qty[Shipped],convert(varchar(10),Claimed.month1)[month1],convert(varchar(10),Claimed.YEAR1)[YEAR1],Claimed.factory
                     into #temp
                     from dbo.ADIDASComplainTarget 
-                    outer apply(SELECT left(cast(a.StartDate as varchar(10)),7) ym , sum(b.Qty) Claimed,dateadd(MONTH,-3,a.StartDate) themonth ,MONTH(a.StartDate)[month1],YEAR(a.StartDate) [YEAR1],b.FactoryID [factory]
+                    outer apply(SELECT left(cast(a.StartDate as varchar(10)),7) ym , sum(b.Qty) Claimed,convert(varchar(10),dateadd(MONTH,-3,a.StartDate)) themonth ,MONTH(a.StartDate)[month1],YEAR(a.StartDate) [YEAR1],b.FactoryID [factory]
 			                    FROM dbo.ADIDASComplain a
 			                    INNER JOIN DBO.ADIDASComplain_Detail b ON B.ID = a.ID
 			                    where a.StartDate in (@y1,@y2,@y3)
 			                    group by a.StartDate,B.FactoryID) Claimed
-                    outer apply(SELECT dateadd(MONTH,5,Claimed.themonth) as six,YEAR(a.StartDate)[YEAR1]
+                    outer apply(SELECT convert(varchar(10),dateadd(MONTH,5,Claimed.themonth)) as six,YEAR(a.StartDate)[YEAR1]
 			                    FROM dbo.ADIDASComplain a
 			                    where a.StartDate in (@y1,@y2,@y3)
 			                    group by a.StartDate) as ff 
@@ -195,15 +230,15 @@ namespace Sci.Production.Quality
 			                    WHERE a.YearMonth BETWEEN claimed.themonth AND ff.six
 			                    AND a.BrandID = 'ADIDAS'
 								AND a.factoryid in (select id from dbo.SCIFty 
-			                    where CountryID= (select f.CountryID from dbo.Factory f where f.id="+"'"+userfactory+"'"+ @")))sh
+			                    where CountryID= (select f.CountryID from dbo.Factory f where f.id=" + "'" + userfactory + "'" + @")))sh
                     where year in (@y1,@y2,@y3)
                     group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1,Claimed.factory
                     select dRanges.name,#temp.Target,SUM(year1.Claimed)[Claimed1],SUM(year1.Shipped)[Shipped1],SUM(year2.Claimed)[Claimed2],SUM(year2.Shipped)[Shipped2],SUM(year3.Claimed)[Claimed3],SUM(year3.Shipped)[Shipped3],#temp.factory from dbo.#temp
                     inner join @dRanges as dRanges on #temp.month1 between dRanges.starts and dRanges.ends 
-					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE YEAR1=@y1 AND factory=factory)AS year1
-					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE YEAR1=@y2 AND factory=factory)AS year2
-					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE YEAR1=@y3 AND factory=factory)AS year3
-					GROUP BY dRanges.name,#temp.Target,year1.Claimed,year1.Shipped,year1.adiComp,year2.Claimed,year2.Shipped,year2.adiComp,year3.Claimed,year3.Shipped,year3.adiComp,#temp.factory
+					OUTER APPLY(SELECT Claimed,#temp.Shipped  FROM #temp WHERE YEAR1=@y1 AND factory=factory)AS year1
+					OUTER APPLY(SELECT Claimed,#temp.Shipped  FROM #temp WHERE YEAR1=@y2 AND factory=factory)AS year2
+					OUTER APPLY(SELECT Claimed,#temp.Shipped  FROM #temp WHERE YEAR1=@y3 AND factory=factory)AS year3
+					GROUP BY dRanges.name,#temp.Target,year1.Claimed,year1.Shipped,year2.Claimed,year2.Shipped,year3.Claimed,year3.Shipped,#temp.factory
                     DROP TABLE #temp");
                 result = DBProxy.Current.Select("", scmd, out dt);
 
@@ -280,15 +315,15 @@ namespace Sci.Production.Quality
                     declare @y1 varchar(4) = cast(datepart(year, dateadd(year,-2, @d) ) as varchar(4))
                     declare @y2 varchar(4) = cast(datepart(year, dateadd(year,-1, @d) ) as varchar(4))
                     declare @y3 varchar(4) = cast(datepart(year,@d) as varchar(4))
-                    select Target,Claimed.Claimed,sh.qty[Shipped],isnull(round(sum(Claimed.Claimed)/sum(sh.qty),6)*100,0) [adiComp],Claimed.month1,Claimed.YEAR1,Claimed.factory
+                    select Target,Claimed.Claimed,sh.qty[Shipped],convert(varchar(10),Claimed.month1)[month1],convert(varchar(10),Claimed.YEAR1)[YEAR1],Claimed.factory
                     into #temp
                     from dbo.ADIDASComplainTarget 
-                    outer apply(SELECT left(cast(a.StartDate as varchar(10)),7) ym , sum(b.Qty) Claimed,dateadd(MONTH,-3,a.StartDate) themonth ,MONTH(a.StartDate)[month1],YEAR(a.StartDate) [YEAR1],b.FactoryID [factory]
+                    outer apply(SELECT left(cast(a.StartDate as varchar(10)),7) ym , sum(b.Qty) Claimed,convert(varchar(10),dateadd(MONTH,-3,a.StartDate)) themonth ,MONTH(a.StartDate)[month1],YEAR(a.StartDate) [YEAR1],b.FactoryID [factory]
 			                    FROM dbo.ADIDASComplain a
 			                    INNER JOIN DBO.ADIDASComplain_Detail b ON B.ID = a.ID
 			                    where a.StartDate in (@y1,@y2,@y3)
 			                    group by a.StartDate,B.FactoryID) Claimed
-                    outer apply(SELECT dateadd(MONTH,5,Claimed.themonth) as six,YEAR(a.StartDate)[YEAR1]
+                    outer apply(SELECT convert(varchar(10),dateadd(MONTH,5,Claimed.themonth)) as six,YEAR(a.StartDate)[YEAR1]
 			                    FROM dbo.ADIDASComplain a
 			                    where a.StartDate in (@y1,@y2,@y3)
 			                    group by a.StartDate) as ff 
@@ -296,15 +331,15 @@ namespace Sci.Production.Quality
 			                    WHERE a.YearMonth BETWEEN claimed.themonth AND ff.six
 			                    AND a.BrandID = 'ADIDAS'
 								AND a.factoryid in (select id from dbo.SCIFty 
-			                    where CountryID= (select f.CountryID from dbo.Factory f where f.id="+ "'" + userfactory + "'" + @")))sh
+			                    where CountryID= (select f.CountryID from dbo.Factory f where f.id=" + "'" + userfactory + "'" + @")))sh
                     where year in (@y1,@y2,@y3)
                     group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1,Claimed.factory
-                    select dRanges.name,#temp.Target,SUM(factory1.Claimed)[Claimed],SUM(factory1.Shipped)[Shipped],SUM(factory1.adiComp)[adiComp],SUM(factory2.Claimed)[Claimed],SUM(factory2.Shipped)[Shipped],SUM(factory2.adiComp)[adiComp],SUM(factory3.Claimed)[Claimed],SUM(factory3.Shipped)[Shipped],SUM(factory3.adiComp)[adiComp],#temp.factory from dbo.#temp
+                    select dRanges.name,#temp.Target,SUM(factory1.Claimed)[Claimed],SUM(factory1.Shipped)[Shipped],SUM(factory2.Claimed)[Claimed],SUM(factory2.Shipped)[Shipped],SUM(factory3.Claimed)[Claimed],SUM(factory3.Shipped)[Shipped],#temp.factory from dbo.#temp
                     inner join @dRanges as dRanges on #temp.month1 between dRanges.starts and dRanges.ends 
-					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE factory=factory )AS factory1
-					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE factory=factory )AS factory2
-					OUTER APPLY(SELECT Claimed,#temp.Shipped,#temp.adiComp  FROM #temp WHERE factory=factory )AS factory3
-					GROUP BY dRanges.name,#temp.Target,factory1.Claimed,factory1.Shipped,factory1.adiComp,factory2.Claimed,factory2.Shipped,factory2.adiComp,factory3.Claimed,factory3.Shipped,factory3.adiComp,#temp.factory
+					OUTER APPLY(SELECT Claimed,#temp.Shipped FROM #temp WHERE factory=factory )AS factory1
+					OUTER APPLY(SELECT Claimed,#temp.Shipped FROM #temp WHERE factory=factory )AS factory2
+					OUTER APPLY(SELECT Claimed,#temp.Shipped FROM #temp WHERE factory=factory )AS factory3
+					GROUP BY dRanges.name,#temp.Target,factory1.Claimed,factory1.Shipped,factory2.Claimed,factory2.Shipped,factory3.Claimed,factory3.Shipped,#temp.factory
                     DROP TABLE #temp");
                 result = DBProxy.Current.Select("", sqcmd, out dat);
                 if (!result)
@@ -323,19 +358,21 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
-            if (dt == null || dt.Rows.Count == 0)
-            {
-                MyUtility.Msg.ErrorBox("Data not found");
-                return false;
-            }
-            if (dat == null || dat.Rows.Count == 0)
-            {
-                MyUtility.Msg.ErrorBox("Data not found");
-                return false;
-            }
+
+            //if (dt == null || dt.Rows.Count == 0)
+            //{
+            //    MyUtility.Msg.ErrorBox("Data not found");
+            //    return false;
+            //}
+            //if (dat == null || dat.Rows.Count == 0)
+            //{
+            //    MyUtility.Msg.ErrorBox("Data not found");
+            //    return false;
+            //}
 
             if (radiobtn_byYear.Checked == true)
             {
+               
                 var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
                 saveDialog.ShowDialog();
                 string outpath = saveDialog.FileName;
@@ -345,14 +382,36 @@ namespace Sci.Production.Quality
                 }
                 Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R40_ByYear.xltx");
                 SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dt_All);
-
+                DateTime newtodaty =DateTime.Today;
+                int year1 =newtodaty.Year;
+                int year2;
+                int year3;
+                int year4;
+                int Month =newtodaty.Month;
+                if(Month==1)
+                {
+                    year2=year1-1;
+                    year3=year1-2;
+                    year4=year1-3;
+                }else
+                {
+                    year2=year1;
+                    year3=year1-1;
+                    year4=year1-2;
+                }
+                string  stringyear2=Convert.ToString(year2); 
+                string  stringyear3=Convert.ToString(year3);
+                string  stringyear4=Convert.ToString(year4);
                 Dictionary<string, string> dic = new Dictionary<string, string>();
-                dic.Add(" ", "1,2");
-                //dic.Add(string.Format=("3,5", xdt_All.Columns.Count));
-                //dic.Add(string.Format=("6,8", xdt_All.Columns.Count));
-                //dic.Add(string.Format=("9,11", xdt_All.Columns.Count));
+                dic.Add(" ","1,2");
+                dic.Add(stringyear4,"3,5");
+                dic.Add(stringyear3, "6,8");
+                dic.Add(stringyear2, "9,11");
                 xdt_All.lisTitleMerge.Add(dic);
+
                 xdt_All.ShowHeader = true;
+
+
                 xl.dicDatas.Add("##by_year", xdt_All);
                 xl.Save(outpath, true);
             }
