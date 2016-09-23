@@ -67,7 +67,7 @@ And Status <> 'Junked'
 AND PurchaseFrom = 'T'
 
 
-SELECT pod.ID,pod.PartID, pod.UnitID, pod.PRICE, pod.QTY, pod.PartBrandID, pod.suppid, pod.SEQ2 
+SELECT pod.ID,pod.PartID, pod.UnitID, pod.PRICE, pod.QTY, pod.PartBrandID, pod.suppid,pod.SEQ1, pod.SEQ2 
 INTO  PartPO_Detail
 FROM Machine.dbo.PartPO, Machine.dbo.PartPO_Detail  pod
 WHERE PartPO.id= pod.id  
