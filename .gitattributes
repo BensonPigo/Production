@@ -533,6 +533,7 @@ Production.Daily/Production.Daily.csproj -text
 Production.Daily/Program.cs -text
 Production.Daily/Properties/AssemblyInfo.cs -text
 /Production.sln -text
+/Production.v11.suo -text
 Sci.Production.Basic/B01.Designer.cs -text
 Sci.Production.Basic/B01.cs -text
 Sci.Production.Basic/B01.resx -text
