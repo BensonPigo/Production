@@ -31,6 +31,24 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ict">
       <HintPath>..\_Dll\Ict.dll</HintPath>
@@ -74,9 +92,6 @@
     </Reference>
     <Reference Include="Sci.Proj">
       <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
-    </Reference>
-    <Reference Include="Sci.Trade.Class">
-      <HintPath>..\Sci.Trade.Class\bin\Debug\Sci.Trade.Class.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -1455,6 +1470,10 @@
     <ProjectReference Include="..\Sci.Production.Shipping\Sci.Production.Shipping.csproj">
       <Project>{558a6ae9-f802-4d9b-bad4-73fdf0a33326}</Project>
       <Name>Sci.Production.Shipping</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Trade.Class\Sci.Trade.Class.csproj">
+      <Project>{23a1d79e-68ab-4d45-8c1d-11a34edd3369}</Project>
+      <Name>Sci.Trade.Class</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
