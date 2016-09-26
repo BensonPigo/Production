@@ -67,11 +67,43 @@ And Status <> 'Junked'
 AND PurchaseFrom = 'T'
 
 
+SELECT * 
+INTO  MiscPO
+FROM Machine.dbo.MiscPO 
+WHERE Approve IS NOT NULL
+AND (cdate>=DATEADD(DAY,-7,GETDATE()) OR TranstoTPE IS NULL OR EditDate >= DATEADD(DAY,-7,GETDATE()))
+And Status <> 'Junked'
+AND PurchaseFrom = 'T'
+
+SELECT * 
+INTO  MachinePO
+FROM Machine.dbo.MachinePO 
+WHERE Approve IS NOT NULL
+--AND (cdate>=DATEADD(DAY,-7,GETDATE()) OR TranstoTPE IS NULL OR EditDate >= DATEADD(DAY,-7,GETDATE()))
+AND (cdate>=DATEADD(DAY,-7,GETDATE())  OR EditDate >= DATEADD(DAY,-7,GETDATE()))
+And Status <> 'Junked'
+AND PurchaseFrom = 'T'
+------------------------------------------------
+
 SELECT pod.ID,pod.PartID, pod.UnitID, pod.PRICE, pod.QTY, pod.PartBrandID, pod.suppid, pod.SEQ2 
 INTO  PartPO_Detail
 FROM Machine.dbo.PartPO, Machine.dbo.PartPO_Detail  pod
 WHERE PartPO.id= pod.id  
 ORDER BY PartPO.id 
+
+--SELECT pod.ID,pod.PartID, pod.UnitID, pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid, pod.SEQ2 
+SELECT pod.ID, pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid, pod.SEQ2 
+INTO  MachinePO_Detail
+FROM Machine.dbo.MachinePO, Machine.dbo.MachinePO_Detail  pod
+WHERE MachinePO.id= pod.id  
+ORDER BY MachinePO.id 
+
+SELECT pod.ID,pod.MiscID, pod.UnitID, pod.PRICE, pod.QTY, pod.MiscBrandID, pod.suppid, pod.SEQ2 
+INTO  MiscPO_Detail
+FROM Machine.dbo.MiscPO, Machine.dbo.MiscPO_Detail  pod
+WHERE MiscPO.id= pod.id  
+ORDER BY MiscPO.id 
+---------------------------------------------------------------
 
 UPDATE Machine.dbo.PartPO
 SET TranstoTPE = CONVERT(date, GETDATE())
@@ -79,6 +111,18 @@ FROM Machine.dbo.PartPO AS Partpo1
 LEFT JOIN PartPO ON Partpo1.ID = PartPO.ID
 WHERE Partpo1.TranstoTPE  IS NULL
 
+UPDATE Machine.dbo.MiscPO
+SET TranstoTPE = CONVERT(date, GETDATE())
+FROM Machine.dbo.MiscPO AS MiscPO1
+LEFT JOIN MiscPO ON MiscPO1.ID = MiscPO.ID
+WHERE MiscPO1.TranstoTPE  IS NULL
+
+--UPDATE Machine.dbo.MachinePO
+--SET TranstoTPE = CONVERT(date, GETDATE())
+--FROM Machine.dbo.PartPO AS Partpo1
+--LEFT JOIN PartPO ON Partpo1.ID = PartPO.ID
+--WHERE Partpo1.TranstoTPE  IS NULL
+----------------------------------------------------------------
 SELECT * 
 INTO  PartReturnReceive
 FROM Machine.dbo.PartReturnReceive 
@@ -88,7 +132,7 @@ AND (cdate>=DATEADD(DAY,-7,GETDATE()) or EditDate>=DATEADD(DAY,-7,GETDATE()))
 SELECT Partrcvre2.* 
 INTO   PartReturnReceive_Detail
 FROM Machine.dbo.PartReturnReceive, Machine.dbo.PartReturnReceive_Detail as Partrcvre2 
-WHERE PartReturnReceive.id=Partrcvre2.id 
+WHERE PartReturnReceive.id=Partrcvre2.id  
 ORDER BY  PartReturnReceive.id 
 
 SELECT  * 
@@ -106,6 +150,7 @@ ORDER BY NewPart.id
 SELECT * 
 INTO PartStock
 FROM Machine.dbo.PartStock 
+
 
 SELECT mr.* 
 Into MachineReturn
@@ -125,6 +170,7 @@ Update a
 Set TranstoTPE = CONVERT(date, GETDATE())
 From Machine.dbo.MachineReturn as a  inner join  Machine.dbo.MachineReturn as b on a.ID= b.ID
 Where  a.TranstoTPE  is null
+---------------------------------------------------------------------------------------------------
 
 SELECT ID 
 INTO #TPI_PartPO1
