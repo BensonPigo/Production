@@ -21,15 +21,12 @@ namespace Sci.Production.Quality
         private string loginID = Sci.Env.User.UserID;
         private string Factory = Sci.Env.User.Keyword;
 
-        private Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
           
         public P04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
                    
-            InitializeComponent();
-            ResultCombo.Add("P", "Pass");
-            ResultCombo.Add("F", "Fail");            
+            InitializeComponent();         
             DefaultFilter = string.Format("MDivisionid='{0}'",Factory);                     
         }
 
@@ -115,14 +112,24 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorTextColumnSettings SendCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings SenderCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings ReceiveCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ReceiverCell = new DataGridViewGeneratorTextColumnSettings();                 
+            DataGridViewGeneratorTextColumnSettings ReceiverCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorComboBoxColumnSettings ResultValid = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
+
+            Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
+            ResultCombo.Add("P", "Pass");
+            ResultCombo.Add("F", "Fail");
+            ResultComboCell.DataSource = new BindingSource(ResultCombo, null);
+            ResultComboCell.ValueMember = "Key";
+            ResultComboCell.DisplayMember = "Value";
 
             #region CellEditable 事件
             inspDateCell.CellEditable += (s, e) =>
             {
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
+                if (this.EditMode && !MyUtility.Check.Empty(dr["SendDate"]) && !MyUtility.Check.Empty(dr["ReceiveDate"])) e.IsEditable = true;
+                else
+                    e.IsEditable = false;
             };
             ResultValid.CellEditable += (s, e) =>
             {
@@ -332,12 +339,12 @@ namespace Sci.Production.Quality
             };
             #endregion
 
-            Ict.Win.UI.DataGridViewComboBoxColumn ResultComboCell;// 一定要加Ict.Win.UI 不然會跟C#原生的有所衝突
+            //Ict.Win.UI.DataGridViewComboBoxColumn ResultComboCell;// 一定要加Ict.Win.UI 不然會跟C#原生的有所衝突
             
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .ComboBox("Result", header: "Result", width: Widths.AnsiChars(10), settings: ResultValid).Get(out ResultComboCell)
-            .Text("No", header: "No. Of Test", width: Widths.AnsiChars(5),iseditingreadonly:true)
-            .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), settings: inspDateCell)
+            .Text("No", header: "No. Of Test", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), settings: inspDateCell, iseditingreadonly: false)
+            .ComboBox("Result", header: "Result", width: Widths.AnsiChars(10), settings: ResultComboCell)//.Get(out ResultComboCell)
             .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(10),settings:inspectorCell)
             .Text("Inspector", header: "Inspector Name", width: Widths.AnsiChars(10),iseditingreadonly:true)
             .Text("Remark", header: "Comments", width: Widths.AnsiChars(10),settings:CommentsCell)
@@ -349,10 +356,7 @@ namespace Sci.Production.Quality
             .Date("ReceiveDate", header: "Receive Date", width: Widths.AnsiChars(10),iseditingreadonly:true)
             .Text("AddName", header: "Add Name", width: Widths.AnsiChars(25),iseditingreadonly:true)// addName + addDate
             .Text("LastEditName", header: "Last Edit Name", width: Widths.AnsiChars(25),iseditingreadonly:true);//editName + editDate
-
-            ResultComboCell.DataSource = new BindingSource(ResultCombo, null);
-            ResultComboCell.ValueMember = "Key";
-            ResultComboCell.DisplayMember = "Value";
+            
         }
 
         protected override void ClickNewAfter()
