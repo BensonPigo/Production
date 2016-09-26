@@ -41,6 +41,10 @@
             this.radioPanel.SuspendLayout();
             this.SuspendLayout();
             // 
+            // toexcel
+            // 
+            this.toexcel.Click += new System.EventHandler(this.toexcel_Click);
+            // 
             // radioPanel
             // 
             this.radioPanel.Controls.Add(this.radioDetail);
