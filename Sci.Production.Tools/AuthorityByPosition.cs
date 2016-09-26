@@ -92,6 +92,7 @@ namespace Sci.Production.Tools
                 this.comboBox1.DisplayMember = "Value";
                 this.comboBox1.SelectedValue = "";
             }
+            this.comboBox1.ReadOnly = false;
         }
 
         protected override bool OnGridSetup()
@@ -234,7 +235,7 @@ namespace Sci.Production.Tools
             newRow["Remark"] = strChangeMemo;
 
             dtDetail.DefaultView.RowFilter = "";
-
+            this.comboBox1.ReadOnly = false;
             return base.ClickSaveBefore();
         }
 
@@ -275,6 +276,7 @@ namespace Sci.Production.Tools
         {
             base.OnDetailEntered();
             this.comboBox1.SelectedValue = "";
+            this.comboBox1.ReadOnly = false;
         }
 
         // 檢查Position是否重複
@@ -468,6 +470,7 @@ namespace Sci.Production.Tools
         protected void LockCheckBox(String menuOption)
         {
             dtDetail = (DataTable)this.detailgridbs.DataSource;
+            if (dtDetail == null) return;
             dtDetail.DefaultView.RowFilter = MyUtility.Check.Empty(menuOption) ? "" : string.Format("MenuName = '{0}'", menuOption);;
             if (dtDetail.DefaultView.Count == 0) return;
 
@@ -521,10 +524,10 @@ namespace Sci.Production.Tools
         // ComboBox SelectChange
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (this.EditMode)
-            {
-                this.LockCheckBox(this.comboBox1.SelectedValue.ToString());
-            }
+            //if (this.EditMode)
+            //{
+            this.LockCheckBox(this.comboBox1.SelectedValue.ToString());                
+            //}
         }
     }
 }
