@@ -19,10 +19,15 @@ namespace Sci.Production.PPIC
 
         protected override void OnDetailGridSetup()
         {
+            
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Numeric("Day",header:"Day")
-                .Numeric("Efficiency", header: "Efficiency (%)");
+                .Numeric("Day",header:"Day", iseditingreadonly:true)
+                .Numeric("Efficiency", header: "Efficiency (%)",iseditingreadonly: false);
         }
+
+        
+
+
 
     }
 }

@@ -30,8 +30,8 @@
         {
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.editBox1 = new Sci.Win.UI.EditBox();
+            this.textBox1 = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -48,20 +48,20 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.textBox1);
             this.masterpanel.Controls.Add(this.editBox1);
-            this.masterpanel.Controls.Add(this.displayBox1);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Size = new System.Drawing.Size(892, 100);
+            this.masterpanel.Size = new System.Drawing.Size(757, 100);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Size = new System.Drawing.Size(892, 249);
+            this.detailpanel.Size = new System.Drawing.Size(757, 249);
             // 
             // gridicon
             // 
@@ -73,7 +73,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 249);
+            this.detailgridcont.Size = new System.Drawing.Size(757, 249);
             // 
             // detail2
             // 
@@ -89,16 +89,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(757, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(757, 349);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Size = new System.Drawing.Size(757, 38);
             // 
             // browse
             // 
@@ -126,16 +126,6 @@
             this.label4.TabIndex = 2;
             this.label4.Text = "Description";
             // 
-            // displayBox1
-            // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Name", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(90, 13);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(320, 23);
-            this.displayBox1.TabIndex = 3;
-            // 
             // editBox1
             // 
             this.editBox1.BackColor = System.Drawing.Color.White;
@@ -147,17 +137,24 @@
             this.editBox1.Size = new System.Drawing.Size(320, 50);
             this.editBox1.TabIndex = 4;
             // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Name", true));
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.Location = new System.Drawing.Point(90, 13);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(320, 23);
+            this.textBox1.TabIndex = 5;
+            // 
             // B08
             // 
             this.ClientSize = new System.Drawing.Size(765, 449);
             this.DefaultDetailOrder = "Day";
             this.DefaultOrder = "Name";
             this.GridAlias = "LearnCurve_Detail";
-            this.GridEdit = false;
             this.IsGridIconVisible = false;
             this.IsSupportCopy = false;
-            this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.Name = "B08";
@@ -187,8 +184,8 @@
         #endregion
 
         private Win.UI.EditBox editBox1;
-        private Win.UI.DisplayBox displayBox1;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
+        private Win.UI.TextBox textBox1;
     }
 }
