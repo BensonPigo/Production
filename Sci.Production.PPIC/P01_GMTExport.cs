@@ -45,16 +45,18 @@ order by oa.Seq,os.Seq",orderID);
             object bookingQty = QtyBDown.Compute("sum(BookingQty)", "");
             object pulloutQty = QtyBDown.Compute("sum(PulloutQty)", "");
             object adjQty = QtyBDown.Compute("sum(AdjQty)", "");
-            numericBox1.Value = Convert.ToInt32(orderQty);
-            numericBox2.Value = Convert.ToInt32(packlistQty);
-            numericBox3.Value = Convert.ToInt32(bookingQty);
-            numericBox4.Value = Convert.ToInt32(pulloutQty);
-            numericBox5.Value = Convert.ToInt32(adjQty);
+            numericBox1.Value = orderQty.Empty() ? 0 : Convert.ToInt32(orderQty);
+            numericBox2.Value = packlistQty.Empty() ? 0 : Convert.ToInt32(packlistQty);
+            numericBox3.Value = bookingQty.Empty() ? 0 : Convert.ToInt32(bookingQty);
+            numericBox4.Value = pulloutQty.Empty() ? 0 : Convert.ToInt32(pulloutQty);
+            numericBox5.Value = adjQty.Empty() ? 0 : Convert.ToInt32(adjQty);
 
             sqlCmd = string.Format(@"with tmpPackingList
 as (
 select *,
-(select isnull(sum(iq.DiffQty),0) from Pullout_Detail pd, InvAdjust i, InvAdjust_Qty iq where pd.ID = a.PulloutID and pd.OrderID = '{0}' and pd.UKey = i.Pullout3Ukey and i.ID = iq.ID) as adjQty
+(select isnull(sum(iq.DiffQty),0) 
+from Pullout_Detail pd, InvAdjust i, InvAdjust_Qty iq 
+where pd.ID = a.PulloutID and pd.OrderID = '{0}' and pd.UKey = i.Ukey_Pullout and i.ID = iq.ID) as adjQty
 from (select pl.ShipModeID,pl.FactoryID,pl.ID,pl.INVNo,pl.PulloutID,p.PulloutDate,pl.CTNQty,sum(pd.ShipQty) as ShipQty
 from PackingList pl
 inner join PackingList_Detail pd on pl.ID = pd.ID
@@ -65,7 +67,7 @@ group by pl.ShipModeID,pl.FactoryID,pl.ID,pl.INVNo,pl.PulloutID,p.PulloutDate,pl
 tmpPullout
 as(
 select *,
-(select isnull(sum(iq.DiffQty),0) from Pullout_Detail pd, InvAdjust i, InvAdjust_Qty iq where pd.ID = a.PulloutID and pd.OrderID = '{0}' and pd.UKey = i.Pullout3Ukey and i.ID = iq.ID) as adjQty
+(select isnull(sum(iq.DiffQty),0) from Pullout_Detail pd, InvAdjust i, InvAdjust_Qty iq where pd.ID = a.PulloutID and pd.OrderID = '{0}' and pd.UKey = i.Ukey_Pullout and i.ID = iq.ID) as adjQty
 from (select '' as ShipModeID,p.FactoryID,'' as ID,'' as INVNo,p.ID as PulloutID, p.PulloutDate,0 as CTNQty, sum(pd.ShipQty) as ShipQty
 from Pullout_Detail pd, Pullout p
 where pd.OrderID = '{0}'
@@ -77,12 +79,12 @@ group by p.FactoryID,p.ID,p.PulloutDate) a
 tmpInvAdj
 as
 (
-select '' as ShipModeID,''  as FactoryID,'' as ID,i.NegoinvID as INVNo,'' as PulloutID, null as PulloutDate,0 as CTNQty, 0 as ShipQty,sum(iq.DiffQty) as adjQty
+select '' as ShipModeID,''  as FactoryID,'' as ID,i.GarmentInvoiceID as INVNo,'' as PulloutID, null as PulloutDate,0 as CTNQty, 0 as ShipQty,sum(iq.DiffQty) as adjQty
 from InvAdjust i, InvAdjust_Qty iq
 where i.ID = iq.ID
 and i.OrderID = '{0}'
-and not exists (select 1 from tmpPackingList where INVNo = i.NegoinvID)
-group by i.NegoinvID
+and not exists (select 1 from tmpPackingList where INVNo = i.GarmentInvoiceID)
+group by i.GarmentInvoiceID
 )
 select * from tmpPackingList
 union all

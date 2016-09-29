@@ -16,5 +16,37 @@ namespace Sci.Production.PPIC
             InitializeComponent();
             MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "L,Lacking,R,Replacement");
         }
+
+        //存檔前檢查
+        protected override bool ClickSaveBefore()
+        {
+            if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
+            {
+                MyUtility.Msg.WarningBox("< ID > can not be empty!");
+                this.textBox1.Focus();
+                return false;
+            }
+
+            if (String.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
+            {
+                MyUtility.Msg.WarningBox("< Description > can not be empty!");
+                this.comboBox1.Focus();
+                return false;
+            }
+
+            if (String.IsNullOrWhiteSpace(CurrentMaintain["TypeForUse"].ToString()))
+            {
+                MyUtility.Msg.WarningBox("< Type> can not be empty!");
+                this.textBox2.Focus();
+                return false;
+            }
+
+            if (String.IsNullOrWhiteSpace(CurrentMaintain["Type"].ToString()))
+            {
+                CurrentMaintain["Type"] = "FL";
+
+            }
+            return base.ClickSaveBefore();
+        }
     }
 }
