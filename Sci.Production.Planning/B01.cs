@@ -67,7 +67,7 @@ namespace Sci.Production.Planning
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["headsno"].ToString()) && CurrentMaintain["artworktypeid"].ToString().TrimEnd()=="Embroidery")
+            if (String.IsNullOrWhiteSpace(CurrentMaintain["heads"].ToString()) && CurrentMaintain["artworktypeid"].ToString().TrimEnd()=="Embroidery")
             {
                 MyUtility.Msg.WarningBox("< # of Heads > can not be empty!");
                 this.numericBox2.Focus();
