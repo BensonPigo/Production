@@ -30,14 +30,14 @@
         {
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.checkBox2 = new Sci.Win.UI.CheckBox();
             this.checkBox3 = new Sci.Win.UI.CheckBox();
             this.checkBox4 = new Sci.Win.UI.CheckBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
             this.label3 = new Sci.Win.UI.Label();
+            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.textBox3 = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -48,14 +48,14 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.displayBox3);
+            this.detailcont.Controls.Add(this.textBox3);
+            this.detailcont.Controls.Add(this.textBox2);
+            this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.checkBox4);
             this.detailcont.Controls.Add(this.checkBox3);
             this.detailcont.Controls.Add(this.checkBox2);
             this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.displayBox2);
-            this.detailcont.Controls.Add(this.displayBox1);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             // 
@@ -76,26 +76,6 @@
             this.label2.Size = new System.Drawing.Size(89, 23);
             this.label2.TabIndex = 1;
             this.label2.Text = "Show Seq";
-            // 
-            // displayBox1
-            // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(162, 57);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(90, 23);
-            this.displayBox1.TabIndex = 2;
-            // 
-            // displayBox2
-            // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "showseq", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(162, 167);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(53, 23);
-            this.displayBox2.TabIndex = 3;
             // 
             // checkBox1
             // 
@@ -145,16 +125,6 @@
             this.checkBox4.Text = "Process";
             this.checkBox4.UseVisualStyleBackColor = true;
             // 
-            // displayBox3
-            // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "artworktypeid", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(162, 112);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(138, 23);
-            this.displayBox3.TabIndex = 9;
-            // 
             // label3
             // 
             this.label3.Lines = 0;
@@ -164,6 +134,36 @@
             this.label3.TabIndex = 8;
             this.label3.Text = "Artwork Type";
             // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.Location = new System.Drawing.Point(162, 55);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(90, 23);
+            this.textBox1.TabIndex = 10;
+            // 
+            // textBox2
+            // 
+            this.textBox2.BackColor = System.Drawing.Color.White;
+            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
+            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox2.Location = new System.Drawing.Point(162, 112);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(138, 23);
+            this.textBox2.TabIndex = 11;
+            // 
+            // textBox3
+            // 
+            this.textBox3.BackColor = System.Drawing.Color.White;
+            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "showseq", true));
+            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox3.Location = new System.Drawing.Point(162, 167);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(53, 23);
+            this.textBox3.TabIndex = 12;
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(905, 457);
@@ -171,7 +171,6 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
             this.IsSupportPrint = false;
             this.Name = "B01";
             this.Text = "B01.SubProcess Data";
@@ -191,15 +190,15 @@
 
         #endregion
 
-        private Win.UI.DisplayBox displayBox3;
         private Win.UI.Label label3;
         private Win.UI.CheckBox checkBox4;
         private Win.UI.CheckBox checkBox3;
         private Win.UI.CheckBox checkBox2;
         private Win.UI.CheckBox checkBox1;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private Win.UI.TextBox textBox3;
+        private Win.UI.TextBox textBox2;
+        private Win.UI.TextBox textBox1;
     }
 }
