@@ -41,7 +41,7 @@
     [CareCode]            VARCHAR (8)    CONSTRAINT [DF_Style_CareCode] DEFAULT ('') NULL,
     [SpecialMark]         VARCHAR (5)    CONSTRAINT [DF_Style_SpecialMark] DEFAULT ('') NULL,
     [Lining]              VARCHAR (15)   CONSTRAINT [DF_Style_Lining] DEFAULT ('') NULL,
-    [StyleUnit]           VARCHAR (6)    CONSTRAINT [DF_Style_StyleUnit] DEFAULT ('') NULL,
+    [StyleUnit]           VARCHAR (8)    CONSTRAINT [DF_Style_StyleUnit] DEFAULT ('') NULL,
     [ExpectionForm]       BIT            CONSTRAINT [DF_Style_ExpectionForm] DEFAULT ((0)) NULL,
     [ExpectionFormRemark] NVARCHAR (MAX) CONSTRAINT [DF_Style_ExpectionFormRemark] DEFAULT ('') NULL,
     [LocalMR]             VARCHAR (10)   CONSTRAINT [DF_Style_LocalMR] DEFAULT ('') NULL,
