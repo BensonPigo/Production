@@ -25,7 +25,7 @@ namespace Sci.Production.Planning
             InitializeComponent();
             this.detailgrid.CellValueChanged += new DataGridViewCellEventHandler(ComboxChange);
             this.DefaultFilter = string.Format(@"qty > 0 and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 and factoryid  
-in (select id from dbo.factory where mdivisionid='{0}'", Sci.Env.User.Keyword);
+in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
         }
         public P01(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
