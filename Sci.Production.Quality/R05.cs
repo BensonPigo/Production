@@ -256,69 +256,62 @@ namespace Sci.Production.Quality
             #endregion
             #region --撈 Accessory Summary 資料--
             cmdAccessorySummary = string.Format(@"
-                with order_rawdata as
-                (
-	                select distinct poid from dbo.orders
-	                where Junk =0  " + sqlOrdersWhere + @"
-                )
-                select
-	                psd.ID,psd.SEQ1,psd.SEQ2,ps.SuppID,f.Refno,s.AbbEN,DelayItemsRef.TF
-	                ,n.StockUnit,n.StockQty,n.PoUnit,n.ShipQty,f.TotalDefectPoint,f.TotalInspYds
-                into #tmp
-                from order_rawdata a
-                inner join dbo.PO_Supp_Detail psd on psd.ID = a.POID
-                inner join FIR f on f.POID = psd.ID and f.SEQ1 = psd.Seq1 and f.seq2 = psd.Seq2
-                inner join dbo.PO_Supp as ps on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
-                inner join dbo.Supp as s on s.ID = ps.SuppID
-                inner join dbo.Receiving as m on m.id = f.ReceivingID
-                inner join dbo.Receiving_Detail as n on n.Id = m.Id and n.PoId = psd.ID and n.seq1 = psd.seq1 and n.seq2 = psd.SEQ2
-                OUTER APPLY (SELECT iif(" + CATEGORY + @"='B',iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving where id = f.ReceivingID),(select scidelivery from dbo.orders where id = a.POID))<25,'Y','')
-									                 ,iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving where id = f.ReceivingID),(select scidelivery from dbo.orders where id = a.POID) )<15,'Y',''))  
-								                      TF)DelayItemsRef
-                WHERE " + sqlWhere + @" AND psd.SEQ1 NOT BETWEEN '50'AND'79'
+            ; declare @testcategory as varchar(1);
+            set @testcategory = 'B';             
+            with order_rawdata as
+            (
+                 select distinct poid from dbo.orders
+                 where Junk =0  " + sqlOrdersWhere + @"
+            )
+            select
+                 psd.ID,psd.SEQ1,psd.SEQ2,ps.SuppID,ai.Refno,s.AbbEN,DelayItemsRef.TF
+                 ,n.StockUnit,n.StockQty,n.PoUnit,n.ShipQty,ai.InspQty,ai.Result
+            into #tmp
+            from order_rawdata a
+            inner join dbo.PO_Supp_Detail psd on psd.ID = a.POID
+            inner join AIR ai on ai.POID = psd.ID and ai.SEQ1 = psd.Seq1 and ai.seq2 = psd.Seq2
+            inner join dbo.PO_Supp as ps on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
+            inner join dbo.Supp as s on s.ID = ps.SuppID
+            inner join dbo.Receiving as m on m.id = ai.ReceivingID
+            inner join dbo.Receiving_Detail as n on n.Id = m.Id and n.PoId = psd.ID and n.seq1 = psd.seq1 and n.seq2 = psd.SEQ2
+            OUTER APPLY (SELECT iif(" + CATEGORY + @"='B',iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving where id = ai.ReceivingID),(select scidelivery from dbo.orders where id = a.POID))<25,'Y','')
+                                                     ,iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving where id = ai.ReceivingID),(select scidelivery from dbo.orders where id = a.POID) )<15,'Y',''))  
+                                                       TF)DelayItemsRef
+            WHERE " + sqlWhere + @" AND psd.SEQ1 NOT BETWEEN '50'AND'79'
 
-                /*
-	                if want summary
-                */
-                --declare @summary bit = 1
-                if @summary  = 1
-	                select
-		                (Suppid+'-'+AbbEN)[Supplier]
-		                ,ItemRef = s.counts
-		                ,SUM(TF)OVER(PARTITION BY  s.counts)[TotalDelay]
-		                ,[ShipQty]
-		                ,[ArriveQty]
-		                ,[Balance]=[ShipQty]-[ArriveQty]
-		                ,100-ROUND((TF/s.counts*100),0)[% On-Time Delivery]
-		                ,SUM((TotalDefectPoint)*5 )OVER(PARTITION BY suppid,s.counts)[TotalDefect]
-		                ,SUM(TotalInspYds)OVER(PARTITION BY suppid, s.counts)[TotalInspected]
-		                ,SUM([ShipQty])OVER(PARTITION BY suppid, s.counts)[Total Arrived]
-		                ,IIF(SUM(TotalInspYds)!=0,ROUND(SUM((TotalDefectPoint)*5) OVER(PARTITION BY suppid,s.counts)/SUM(TotalInspYds)OVER(PARTITION BY suppid, s.counts)*100,0),0)[DefectPercentage]
-		                ,IIF([ArriveQty]!=0,ROUND(SUM(TotalInspYds)OVER(PARTITION BY suppid, s.counts)/[ArriveQty]*100,0),0)[Total % of Inspection]
-	                    ,[QualityRating]=100-[DefectPercentage]
-		
-	                from (select suppid,AbbEN,IIF(TF='Y',1,0)TF
-				                 ,sum(dbo.getUnitRate(PoUnit,'YDS')*ShipQty)[ShipQty]
-				                 ,sum(dbo.getUnitRate(StockUnit,'YDS')*StockQty)[ArriveQty]
-				                 ,TotalDefectPoint
-		                         ,TotalInspYds
-		                         ,IIF(SUM(TotalInspYds)!=0,ROUND(SUM((TotalDefectPoint)*5) OVER(PARTITION BY suppid)/SUM(TotalInspYds)OVER(PARTITION BY suppid)*100,0),0)[DefectPercentage]
-				 
-		                from #tmp as tmp
-		                group by SuppID,AbbEN,TF,TotalDefectPoint,TotalInspYds
-	                ) tmp
-	                outer apply(
-		                select count(*) counts 
-		                from (select distinct Refno from #tmp as sTmp where sTmp.suppid = tmp.SuppID
-		                ) as s 
-		
-	                )as s
-	                GROUP BY SuppID,s.counts,AbbEN,TF,[ShipQty],[ArriveQty],TotalDefectPoint,TotalInspYds,DefectPercentage
+            /*
+                 if want summary
+            */
+
+            -- declare @summary bit = 1
+            if @summary  = 1
+	            select (Suppid+'-'+AbbEN)[Supplier]
+		            ,s.*
+		            ,fr.*
+		            ,[Quality Rating]=iif(s.ItemRef!=0,round((fr.failCount /cast(s.ItemRef AS decimal))*100,0,1),0)
+	            from (
+                 select
+                     SuppID,AbbEN
+                     ,ItemRef = max(s.counts)
+                     ,SUM(iif(TF='Y',1,0))[TotalDelay]
+                     ,sum([ShipQty])[ShipQty]
+                     ,sum([ArriveQty])[ArriveQty]
+                     ,[Balance]=sum([ShipQty])-sum([ArriveQty])
+                     ,100-ROUND((sum(iif(TF='Y',1,0))/sum(s.counts)*100),0)[% On-Time Delivery]
+                     ,SUM(InspQty)[TotalInspectedQty]
+   
+                 from #tmp tmp
+                 outer apply( select count(distinct Refno) counts from #tmp as sTmp where sTmp.suppid = tmp.SuppID )as s
+                 outer apply (select dbo.getUnitRate(StockUnit,'YDS')*StockQty as ArriveQty) aq
+    
+                 GROUP BY SuppID,AbbEN
+	             ) as s 
+                 outer apply( select failCount =count(*) from (select distinct  Refno from #tmp as sTmp where sTmp.suppid = s.SuppID and Result='fail' ) as f)as fr
+
+	             else
+	             select * from #tmp
 	
-                else
-	                select * from #tmp
-
-	                drop table #tmp");
+	            drop table #tmp");
             #endregion
 
             return base.ValidateInput();
@@ -355,6 +348,8 @@ namespace Sci.Production.Quality
                 if (radioSummary.Checked)
                 {
                     res = DBProxy.Current.Select("", cmdAccessorySummary, lis, out dtAccessorySummary);
+                    dtAccessorySummary.Columns.Remove("SuppID");
+                    dtAccessorySummary.Columns.Remove("AbbEN");
                 }
             }
 
@@ -362,16 +357,7 @@ namespace Sci.Production.Quality
         }
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            //if (dtFabric == null || dtFabric.Rows.Count == 0)
-            //{
-            //    MyUtility.Msg.ErrorBox("Data not found");
-            //    return false;
-            //} if (dtAccessory == null || dtAccessory.Rows.Count == 0)
-            //{
-            //    MyUtility.Msg.ErrorBox("Data not found");
-            //    return false;
-            //}
-
+           
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
             saveDialog.ShowDialog();
             string outpath = saveDialog.FileName;
@@ -384,12 +370,22 @@ namespace Sci.Production.Quality
             {
                 if (radioDetail.Checked) //("Detail".EqualString(this.radioDetail.Text))
                 {
+                    if (dtFabricDetail == null || dtFabricDetail.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.ErrorBox("Data not found");
+                        return false;
+                    }
                     Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R05_FabricDetail.xltx");
                     xl.dicDatas.Add("##BODY", dtFabricDetail);
                     xl.Save(outpath, false);
                 }
                 if (radioSummary.Checked)//("Summary".EqualString(this.radioSummary.Text))
                 {
+                    if (dtFabricSummary == null || dtFabricSummary.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.ErrorBox("Data not found");
+                        return false;
+                    }
                     Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R05_FabricSummary.xltx");
                     xl.dicDatas.Add("##BODY", dtFabricSummary);
                     xl.Save(outpath, false);
@@ -398,14 +394,25 @@ namespace Sci.Production.Quality
             }
             else if ("Accessory".EqualString(this.comboMaterialType.Text))
             {
+               
                 if (radioDetail.Checked) //("Detail".EqualString(this.radioDetail.Text))
                 {
+                    if (dtAccessoryDetail == null || dtAccessoryDetail.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.ErrorBox("Data not found");
+                        return false;
+                    }
                     Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R05_AccessoryDetail.xltx");
                     xl.dicDatas.Add("##BODY", dtAccessoryDetail);
                     xl.Save(outpath, false);
                 }
                 if (radioSummary.Checked)//("Summary".EqualString(this.radioSummary.Text))
                 {
+                    if (dtAccessorySummary == null || dtAccessorySummary.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.ErrorBox("Data not found");
+                        return false;
+                    }
                     Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R05_AccessorySummary.xltx");
                     xl.dicDatas.Add("##BODY", dtAccessorySummary);
                     xl.Save(outpath, false);

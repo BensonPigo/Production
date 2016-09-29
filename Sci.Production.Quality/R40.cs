@@ -505,8 +505,8 @@ namespace Sci.Production.Quality
                 xdt_All.lisTitleMerge.Add(dic);
                 xdt_All.ShowHeader = true;
                 xl.dicDatas.Add("##by_year", xdt_All);
-                SaveXltReportCls.ReplaceAction a = AddRpt;
-                xl.dicDatas.Add("##addrpt", a);
+             //   SaveXltReportCls.ReplaceAction a = AddRpt;
+              //  xl.dicDatas.Add("##addrpt", a);
                 xl.Save(outpath, true);
             }
             else if (radiobtn_byfactory.Checked == true)
