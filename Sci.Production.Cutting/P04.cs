@@ -138,8 +138,8 @@ namespace Sci.Production.Cutting
             #endregion
             insertmk = string.Format(
             @"Insert into MarkerReq
-            (id,estctdate,mDivisionid,CutCellid,Status,Cutplanid,AddName,AddDate) 
-            values('{0}','{1}','{2}','{3}','New','{4}','{5}',getdate()));",
+            (id,estcutdate,mDivisionid,CutCellid,Status,Cutplanid,AddName,AddDate) 
+            values('{0}','{1}','{2}','{3}','New','{4}','{5}',getdate());",
             reqid, CurrentMaintain["estcutdate"], CurrentMaintain["mDivisionid"],
             CurrentMaintain["cutcellid"], CurrentMaintain["ID"], loginID);
 
