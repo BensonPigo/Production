@@ -269,7 +269,7 @@ namespace Sci.Production.Quality
                         @"Select distinct dyelot from Receiving_Detail a where 
                         a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
                         and not exists 
-                        (Select distinct dyelot from FIR_ShadeBond b where b.id={1} and a.dyelot = b.dyelot)"
+                        (Select distinct dyelot from FIR_ShadeBone b where b.id={1} and a.dyelot = b.dyelot)"
                            , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
 
                         DualResult dResult = DBProxy.Current.Select(null, cmd, out dyeDt);

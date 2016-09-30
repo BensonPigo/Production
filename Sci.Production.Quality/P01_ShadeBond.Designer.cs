@@ -500,7 +500,7 @@
             this.KeyField1 = "ID";
             this.Name = "P01_ShadeBond";
             this.Text = "Shade Bond ";
-            this.WorkAlias = "Fir_shadebond";
+            this.WorkAlias = "Fir_shadebone";
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label4, 0);
