@@ -58,7 +58,10 @@ where s.ID = @styleid and s.SeasonID = @seasonid and s.BrandID = @brandid";
                 displayBox2.Value = styleData.Rows[0]["Picture2"].ToString().Trim();
                 pictureBox1.ImageLocation = styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture1"].ToString().Trim();
                 pictureBox2.ImageLocation = styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture2"].ToString().Trim();
+               
             }
+            //Image images = Image.FromFile(@"D:\images.jpg");
+            //pictureBox1.BackgroundImage = images;
         }
     }
 }
