@@ -33,7 +33,7 @@ namespace Sci.Production.IE
 from LineMapping_Detail ld
 left join Employee e on ld.EmployeeID = e.ID
 left join Operation o on ld.OperationID = o.ID
-where ld.ID = {0} order by ld.No,ld.GroupKey", masterID);
+where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
