@@ -73,7 +73,7 @@ a.ID	= b.ID
 ,a.ComboType	= b.ComboType
 ,a.AddName	= b.AddName
 ,a.AddDate	= b.AddDate
-,a.EditName	= IIF(a.EditDate >= b.EditDate,a.EditDate,b.EditName)
+,a.EditName	= IIF(a.EditDate >= b.EditDate,a.EditName,b.EditName)
 ,a.EditDate	= IIF(a.EditDate >= b.EditDate,a.EditDate,b.EditDate)
 ,a.SizeUnit	= b.SizeUnit
 ,a.ModularParent	= b.ModularParent
@@ -134,7 +134,7 @@ a.ID	= b.ID
 ,a.ComboType	= b.ComboType
 ,a.AddName	= b.AddName
 ,a.AddDate	= b.AddDate
-,a.EditName	= IIF(a.EditDate >= b.EditDate,a.EditDate,b.EditName)
+,a.EditName	= IIF(a.EditDate >= b.EditDate,a.EditName,b.EditName)
 ,a.EditDate	= IIF(a.EditDate >= b.EditDate,a.EditDate,b.EditDate)
 ,a.SizeUnit	= b.SizeUnit
 ,a.ModularParent	= b.ModularParent
