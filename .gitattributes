@@ -18,6 +18,9 @@ DailyTransfer/exp_WkHours.sql -text
 DailyTransfer/imp_Airboat.sql -text
 DailyTransfer/imp_Airpp.sql -text
 DailyTransfer/imp_Ietms.sql -text
+DailyTransfer/imp_Ietms1.sql -text
+DailyTransfer/imp_Ietms2.sql -text
+DailyTransfer/imp_Ietms3.sql -text
 DailyTransfer/imp_Inv.sql -text
 DailyTransfer/imp_Invadj.sql -text
 DailyTransfer/imp_Pattern.sql -text
