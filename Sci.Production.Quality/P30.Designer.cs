@@ -64,6 +64,7 @@
             this.textBox16 = new Sci.Win.UI.TextBox();
             this.button1 = new Sci.Win.UI.Button();
             this.dropDownListTableAdapter1 = new Sci.Trade.Report.GSchemas.GLOTableAdapters.DropDownListTableAdapter();
+            this.button2 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -80,6 +81,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.button2);
             this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.textBox16);
             this.masterpanel.Controls.Add(this.textBox15);
@@ -115,7 +117,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 341);
+            this.masterpanel.Size = new System.Drawing.Size(949, 341);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -152,11 +154,12 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox15, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox16, 0);
             this.masterpanel.Controls.SetChildIndex(this.button1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 341);
-            this.detailpanel.Size = new System.Drawing.Size(892, 8);
+            this.detailpanel.Size = new System.Drawing.Size(949, 179);
             // 
             // gridicon
             // 
@@ -166,7 +169,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 8);
+            this.detailgridcont.Size = new System.Drawing.Size(949, 179);
             // 
             // detail2
             // 
@@ -182,16 +185,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(949, 558);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(949, 520);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 520);
+            this.detailbtm.Size = new System.Drawing.Size(949, 38);
             // 
             // browse
             // 
@@ -565,6 +568,16 @@
             // 
             this.dropDownListTableAdapter1.ClearBeforeFill = true;
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(647, 213);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(80, 30);
+            this.button2.TabIndex = 35;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // P30
             // 
             this.ClientSize = new System.Drawing.Size(957, 620);
@@ -644,5 +657,6 @@
         private Win.UI.CheckBox checkBox1;
         private Win.UI.ComboBox comboBox1;
         private Trade.Report.GSchemas.GLOTableAdapters.DropDownListTableAdapter dropDownListTableAdapter1;
+        private Win.UI.Button button2;
     }
 }
