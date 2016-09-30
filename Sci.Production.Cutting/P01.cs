@@ -183,8 +183,8 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
 
             if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_ColorCombo", "ID")) button12.ForeColor = Color.Blue;
             else button12.ForeColor = Color.Black;
-
-            if( MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Bundle", "CuttingId"))
+            // iif(exists( select * from Bundle where CuttingId = 'CurrentMaintain["ID"].ToString()'  ) , true, false)
+            if( MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Bundle", "POID"))
             {
                 button3.ForeColor = Color.Blue;
                 button9.ForeColor = Color.Blue;
