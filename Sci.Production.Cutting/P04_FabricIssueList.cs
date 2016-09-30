@@ -19,9 +19,13 @@ namespace Sci.Production.Cutting
     {
         DataTable gridTb;
         string cutplanid;
-        public P04_FabricIssueList(string str)
+        public P04_FabricIssueList()
         {
             InitializeComponent();
+        }
+
+        public P04_FabricIssueList(string str)
+        {
             cutplanid = str;
             DBProxy.Current.Select(null, string.Format("Select id,issuedate from Issue Where Cutplanid ='{0}'", str), out gridTb);
             grid1.DataSource = gridTb;
