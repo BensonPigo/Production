@@ -570,7 +570,6 @@
             // P21
             // 
             this.ClientSize = new System.Drawing.Size(1042, 650);
-            this.DefaultWhere = "id=\'P39v0VUNVZ\'";
             this.GridAlias = "CFA_Detail";
             this.KeyField1 = "ID";
             this.Name = "P21";

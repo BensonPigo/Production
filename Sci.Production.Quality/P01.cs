@@ -261,8 +261,9 @@ namespace Sci.Production.Quality
                 ShowErr(dResult);
                 return;
             }
+           
             DataTable sciTb;
-            string query_cmd = string.Format(" select * from [dbo].[Getsci]('{0}','{1}')", CurrentMaintain["ID"],queryDr["Category"]);
+            string query_cmd = string.Format(" select * from [dbo].[Getsci]('{0}','{1}')", CurrentMaintain["ID"],MyUtility.Check.Empty(queryDr)?"": queryDr["Category"]);
             DBProxy.Current.Select(null,query_cmd,out sciTb);
             if (!dResult)
             {
@@ -277,15 +278,28 @@ namespace Sci.Production.Quality
             else
             {
                 scidelivery_box.Text = "";
+                estcutdate_box.Text = "";
             }
-            DateTime? targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
+            DateTime? targT;
+            if (MyUtility.Check.Empty(queryDr))
+            {
+                targT = null;
+                estcutdate_box.Text = "";
+            }
+            else
+            {
+                 targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? "" : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
+                if (queryDr["cutinline"] == DBNull.Value) estcutdate_box.Text = "";
+                 else estcutdate_box.Text = Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
+            }
+           
             if (targT != null) leadtime_box.Text = ((DateTime)targT).ToShortDateString();
             else leadtime_box.Text = "";
-            style_box.Text = queryDr["Styleid"].ToString();
-            season_box.Text = queryDr["Seasonid"].ToString();
-            brand_box.Text = queryDr["brandid"].ToString();
-            if (queryDr["cutinline"] == DBNull.Value) estcutdate_box.Text = "";
-            else estcutdate_box.Text = Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
+            style_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Styleid"].ToString();
+            season_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Seasonid"].ToString();
+            brand_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["brandid"].ToString();
+            // if (queryDr["cutinline"] == DBNull.Value) estcutdate_box.Text = "";
+           // else estcutdate_box.Text = Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
                
             mtl_box.Text = CurrentMaintain["Complete"].ToString() == "1" ? "Y" : "";
             decimal detailRowCount = DetailDatas.Count;

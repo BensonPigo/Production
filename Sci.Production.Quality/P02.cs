@@ -143,7 +143,7 @@ namespace Sci.Production.Quality
                 return;
             }
             DataTable sciTb;
-            string query_cmd = string.Format("select * from Getsci('{0}','{1}')", CurrentMaintain["ID"], queryDr["Category"]);
+            string query_cmd = string.Format("select * from Getsci('{0}','{1}')", CurrentMaintain["ID"], MyUtility.Check.Empty(queryDr) ? "" : queryDr["Category"]);
             DBProxy.Current.Select(null, query_cmd, out sciTb);
             if (!dResult)
             {
@@ -167,7 +167,7 @@ namespace Sci.Production.Quality
                 scidelivery_box.Text = "";
             }
             //找出Cutinline and MinSciDelivery 比較早的日期
-            DateTime? targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
+            DateTime? targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? "" : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
             if (targT!=null)
             {
                 leadtime_box.Text = ((DateTime)targT).ToShortDateString();
@@ -176,17 +176,19 @@ namespace Sci.Production.Quality
             {
                 leadtime_box.Text = "";
             }
-            style_box.Text = queryDr["Styleid"].ToString();
-            season_box.Text = queryDr["Seasonid"].ToString();
-            brand_box.Text = queryDr["brandid"].ToString();
-            if (queryDr["cutinline"]==DBNull.Value)
+            style_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Styleid"].ToString();
+            season_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Seasonid"].ToString();
+            brand_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["brandid"].ToString();
+            if (MyUtility.Check.Empty(queryDr))
             {
                 estcutdate_box.Text = "";
             }
             else
             {
-                estcutdate_box.Text = Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
+                if (queryDr["cutinline"] == DBNull.Value) estcutdate_box.Text = "";
+                else estcutdate_box.Text = Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
             }
+           
             mtl_box.Text = CurrentMaintain["Complete"].ToString() == "1" ? "Y" : "";
             decimal detailRowCount = DetailDatas.Count;
             string inspnum = "0";

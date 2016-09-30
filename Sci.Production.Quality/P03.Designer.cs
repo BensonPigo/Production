@@ -107,7 +107,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(1017, 164);
+            this.masterpanel.Size = new System.Drawing.Size(892, 164);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -142,7 +142,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 164);
-            this.detailpanel.Size = new System.Drawing.Size(1017, 185);
+            this.detailpanel.Size = new System.Drawing.Size(892, 185);
             // 
             // gridicon
             // 
@@ -151,7 +151,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1017, 185);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 185);
             // 
             // detail2
             // 
@@ -167,16 +167,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1017, 387);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1017, 349);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(1017, 38);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -518,7 +518,6 @@
             this.ClientSize = new System.Drawing.Size(1025, 449);
             this.DefaultDetailOrder = "Seq,Wkno";
             this.DefaultOrder = "ID";
-            this.DefaultWhere = "id=\'15010211II\'";
             this.GridAlias = "FIR";
             this.IsGridIcon2Visible = false;
             this.IsGridIconVisible = false;

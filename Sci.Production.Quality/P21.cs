@@ -80,7 +80,7 @@ namespace Sci.Production.Quality
             @"SELECT a.ID,a.cDate,a.OrderID,a.FactoryID,a.InspectQty,
 		a.DefectQty,a.SewingLineID,a.Team,a.GarmentOutput,a.Stage,a.CFA,a.Shift,a.Result,a.Remark,a.Status,
 		b.StyleID,b.Dest,b.CustPONo,b.Qty	
-		 FROM [Production_Spin].[dbo].[Cfa] a
+		 FROM [Production].[dbo].[Cfa] a
         left join Orders b on a.OrderID=b.ID where a.id=@id";
             spam.Add(new SqlParameter("@id", CurrentMaintain["ID"].ToString()));
 
