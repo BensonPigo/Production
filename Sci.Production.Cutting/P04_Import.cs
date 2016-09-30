@@ -81,7 +81,7 @@ namespace Sci.Production.Cutting
                             line = MyUtility.GetValue.Lookup(string.Format("Select SewingLineid from Sewingschedule_Detail Where Orderid = '{0}' ", dr["orderid_b"]), null);
                         }
                         dr["Sewinglineid"] = line;
-                        DataRow[] griddray = gridTable.Select(string.Format("cuttingid = '{0}' and cutcellid ='{1}'", dr["cuttingid"], dr["cutcellid"]));
+                        DataRow[] griddray = gridTable.Select(string.Format("cuttingid = '{0}' and cutcellid ='{1}'", dr["id"], dr["cutcellid"]));
                         if (griddray.Length == 0)
                         {
                             DataRow newdr = gridTable.NewRow();
