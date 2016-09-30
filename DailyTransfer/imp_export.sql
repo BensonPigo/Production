@@ -1,6 +1,3 @@
-
-
-
 -- =============================================
 -- Author:		<Willy S01910>
 -- Create date: <2016/08/20>
@@ -13,7 +10,7 @@ BEGIN
 
 	SET NOCOUNT ON;
 
-		declare @Sayfty table(id varchar(10)) --¤u¼t¥N½X
+		declare @Sayfty table(id varchar(10)) --?u?t?N?X
 		insert @Sayfty select id from Production.dbo.Factory
 
 
@@ -26,7 +23,7 @@ BEGIN
 	set TE1.factoryID = PF.FTYGroup
 	from #TExport TE1
 	inner join Production.dbo.Factory PF on pf.ID = TE1.FactoryID
-
+	
 
 --------------------------Export---------------------------
 	declare @T table (id varchar(13))
@@ -90,8 +87,8 @@ BEGIN
 		t.Junk = s.Junk ,
 		t.AddName = s.AddName ,
 		t.AddDate = s.AddDate ,
-		t.EditName= iif(s.[EditDate] <= t.EditDate,'',s.[EditName]),
-		t.EditDate= iif(s.[EditDate] <= t.EditDate,'',s.[EditDate])
+		t.EditName= iif(s.[EditDate] <= t.EditDate,t.EditName,s.[EditName]),
+		t.EditDate= iif(s.[EditDate] <= t.EditDate,t.EditDate,s.[EditDate])
 	  when not matched  by target then 
 		insert (ID ,ScheduleID ,ScheduleDate ,LoadDate ,CloseDate ,Etd ,Eta ,ExportCountry ,ImportCountry ,ExportPort ,ImportPort ,CYCFS ,ShipModeID ,ShipmentTerm ,FactoryID ,ShipMark ,ShipMarkDesc ,Consignee ,Handle ,Posting ,Payer ,CompanyID ,Confirm ,LastEdit ,Remark ,Ecfa ,FormStatus ,Carrier ,Forwarder ,Vessel ,ShipTo ,Sono ,Blno ,InvNo ,Exchange ,Packages ,WeightKg ,NetKg ,Cbm ,CbmFor ,Takings ,TakingFee ,PackingArrival ,WhseArrival ,PortArrival ,DocArrival ,Broker ,Insurer ,Trailer1 ,Trailer2 ,Freight ,Insurance ,Junk ,AddName ,AddDate ,EditName ,EditDate)
 	    values( s.ID ,s.ScheduleID ,s.ScheduleDate ,s.LoadDate ,s.CloseDate ,s.Etd ,s.Eta ,s.ExportCountry ,s.ImportCountry ,s.ExportPort ,s.ImportPort ,s.CYCFS ,s.ShipModeID ,s.ShipmentTerm ,s.FactoryID ,s.ShipMark ,s.ShipMarkDesc ,s.Consignee ,s.Handle ,s.Posting ,s.Payer ,s.CompanyID ,s.Confirm ,s.LastEdit ,s.Remark ,s.Ecfa ,s.FormStatus ,s.Carrier ,s.Forwarder ,s.Vessel ,s.ShipTo ,s.Sono ,s.Blno ,s.InvNo ,s.Exchange ,s.Packages ,s.WeightKg ,s.NetKg ,s.Cbm ,s.CbmFor ,s.Takings ,s.TakingFee 
@@ -105,7 +102,7 @@ BEGIN
 
 	Merge  Production.dbo.Export_Detail as PE2 
 	using (select * from Trade_To_Pms.dbo.Export_Detail where Trade_To_Pms.dbo.Export_Detail.id in (select ID from @T)) as TE2
-	on PE2.id=TE2.ID and TE2.PoID=PE2.PoID and TE2.Seq1=PE2.Seq1 and TE2.Seq2=PE2.Seq2 and PE2.Ukey=TE2.Ukey
+	on  PE2.Ukey=TE2.Ukey and PE2.ShipPlanHandle=TE2.ShipPlanHandle
 	 when matched then 
 		update set
        PE2.[ExportIDOld]= TE2.[ExportIDOld]
@@ -129,7 +126,6 @@ BEGIN
       ,PE2.[SuppIDOld]=TE2.[SuppIDOld]
       ,PE2.[PriceOld]=TE2.[PriceOld]
       ,PE2.[ShipPlanID]=TE2.[ShipPlanID]
-      ,PE2.[ShipPlanHandle]=TE2.[ShipPlanHandle]
       ,PE2.[PoHandle]=TE2.[PoHandle]
       ,PE2.[PcHandle]=TE2.[PcHandle]
       ,PE2.[IsFormA]=TE2.[IsFormA]
@@ -157,9 +153,5 @@ values (TE2.[ID],TE2.[PoID],TE2.[Seq1],TE2.[Seq2],TE2.[ExportIDOld],TE2.[Ukey],T
 drop table #TExport;
 
 END
-
-
-
-
 
 
