@@ -46,6 +46,7 @@
             // 
             // append
             // 
+            this.append.Location = new System.Drawing.Point(170, 5);
             this.append.Visible = false;
             // 
             // revise
@@ -54,6 +55,7 @@
             // 
             // delete
             // 
+            this.delete.Location = new System.Drawing.Point(10, 5);
             this.delete.Visible = false;
             // 
             // save
@@ -75,6 +77,7 @@
             // P02_NewCheckList
             // 
             this.ClientSize = new System.Drawing.Size(831, 497);
+            this.KeyField1 = "ID";
             this.Name = "P02_NewCheckList";
             this.Text = "Check List - New";
             this.WorkAlias = "ChgOver_Check";

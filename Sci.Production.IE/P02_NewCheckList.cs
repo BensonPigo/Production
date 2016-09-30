@@ -35,12 +35,12 @@ namespace Sci.Production.IE
             grid.Columns[5].DefaultCellStyle.BackColor = Color.Pink;
             return true;
         }
-
+        
         protected override DualResult OnRequery()
         {
             string selectCommand = string.Format(@"select cc.*,iif(cc.BaseOn = 1,'Change Over','SCI Delivery') as BaseOnDesc,
 cl.Description as ChkListDesc
-from ChgOver_Check cc
+     from ChgOver_Check cc
 left join ChgOverCheckList cl on cc.ChgOverCheckListID = cl.ID
 where cc.ID = {0} order by cc.ChgOverCheckListID", this.KeyValue1);
             Ict.DualResult returnResult;
