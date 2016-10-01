@@ -18,12 +18,13 @@ using Sci.Win;
 using Sci;
 using Sci.Production;
 using Sci.Utility.Excel;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
     public partial class P03_Print : Sci.Win.Tems.PrintForm
     {
-        
+        DataTable dt;
         DataRow CurrentDataRow;
         public P03_Print(DataRow row)
         {
@@ -39,14 +40,14 @@ namespace Sci.Production.Warehouse
       
         protected override bool ValidateInput()
         {
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-           outpa = saveDialog.FileName;
-            if (outpa.Empty())
-            {
+           // var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+           // saveDialog.ShowDialog();
+           //outpa = saveDialog.FileName;
+           // if (outpa.Empty())
+           // {
                 
-                return false;
-            }
+           //     return false;
+           // }
             return base.ValidateInput();
         }
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
@@ -56,12 +57,11 @@ namespace Sci.Production.Warehouse
             string id = row["ID"].ToString();
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            DataTable dt;
-            string xlt;
+            //string xlt;
 
             if (this.radioPanel1.Value == this.radioButton1.Value)
             {
-                xlt = @"Warehouse_P03_Print-1.xltx";
+                //xlt = @"Warehouse_P03_Print-1.xltx";
                 DBProxy.Current.Select("", @"select a.id [sp]
 			                                       ,b.StyleID [style#]
 			                                       ,a.SEQ1+a.SEQ2 [SEQ]
@@ -125,7 +125,7 @@ namespace Sci.Production.Warehouse
           }
           else  
           {
-           xlt = @"Warehouse_P03_Print-2.xltx";
+           //xlt = @"Warehouse_P03_Print-2.xltx";
            DBProxy.Current.Select("", @"select a.id [sp]
                                               ,b.StyleID [style]
                                               ,a.SEQ1+a.SEQ2 [SEQ]
@@ -164,14 +164,37 @@ namespace Sci.Production.Warehouse
                                        left join dbo.Supp f on f.id=c.SuppID
                                        where a.id=@ID", pars, out dt);                          
           }
-          SaveXltReportCls xl = new SaveXltReportCls(xlt);
-          xl.dicDatas.Add("##sp", dt);
-          xl.Save(outpa, false);
+          //SaveXltReportCls xl = new SaveXltReportCls(xlt);
+          //xl.dicDatas.Add("##sp", dt);
+          //xl.Save(outpa, false);
           return Result.True;
         }
 
         protected override bool OnToExcel(ReportDefinition report)
         {
+            // 顯示筆數於PrintForm上Count欄位
+            SetCount(dt.Rows.Count);
+
+            if (dt.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return false;
+            }
+            if (this.radioPanel1.Value == this.radioButton1.Value)
+            {
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-1.xltx"); //預先開啟excel app
+                MyUtility.Excel.CopyToXls(dt, "", "Warehouse_P03_Print-1.xltx", 1, true, null, objApp);      // 將datatable copy to excel
+                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
+                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            }
+            else {
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-2.xltx"); //預先開啟excel app
+                MyUtility.Excel.CopyToXls(dt, "", "Warehouse_P03_Print-2.xltx", 1, true, null, objApp);      // 將datatable copy to excel
+                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
+                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            }
             return true;
         }
 
