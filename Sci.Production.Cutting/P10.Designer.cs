@@ -202,15 +202,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(870, 502);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(864, 456);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(864, 40);
             // 
             // detail
             // 
@@ -636,6 +636,7 @@
             this.textBox_Line.Name = "textBox_Line";
             this.textBox_Line.Size = new System.Drawing.Size(56, 23);
             this.textBox_Line.TabIndex = 2;
+            this.textBox_Line.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox_Line_MouseDown);
             // 
             // numericBox_Cutno
             // 

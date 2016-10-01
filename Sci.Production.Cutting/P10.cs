@@ -10,6 +10,7 @@ using Sci.Data;
 using Sci.Win.UI;
 using Ict.Data;
 using Ict;
+using Sci.Win.Tools;
 
 namespace Sci.Production.Cutting
 {
@@ -56,7 +57,8 @@ namespace Sci.Production.Cutting
                 displayBox_Style.Text = "";
             }
             string estcutdate = MyUtility.GetValue.Lookup(string.Format("Select estcutdate from workorder where id='{0}' and cutref = '{1}'", cuttingid, cutref), null);
-            displayBox_EstCutdate.Text = estcutdate;
+            displayBox_EstCutdate.Text = Convert.ToDateTime(estcutdate).ToString("yyyy/MM/dd");
+            
             int qty = 0;
             if(bundle_Detail_Qty_Tb.Rows.Count==0)  qty =0;
             else  qty = Convert.ToInt16(bundle_Detail_Qty_Tb.Compute("Sum(Qty)",""));
@@ -687,6 +689,23 @@ namespace Sci.Production.Cutting
 
             return true;
 
+        }
+
+       
+
+        private void textBox_Line_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (!this.EditMode) return;
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+
+                string sqlcmd1 = "語法需有文件確認才可以填上去";
+                SelectItem item1 = new SelectItem(sqlcmd1, "30", textBox_Line.Text.ToString());
+                DialogResult result1 = item1.ShowDialog();
+                if (result1 == DialogResult.Cancel) { return; }
+                //
+                textBox_Line.Text = item1.GetSelectedString();
+            }
         }
     }
 }
