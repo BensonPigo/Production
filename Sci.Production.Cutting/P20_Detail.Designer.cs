@@ -269,6 +269,7 @@
             this.Name = "P20_Detail";
             this.Text = "Cutting Daily Output";
             this.WorkAlias = "ThreadRequisition_Detail_Cons";
+            this.Load += new System.EventHandler(this.P20_Detail_Load);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label3, 0);

@@ -58,5 +58,10 @@ namespace Sci.Production.Cutting
             return true;
         }
 
+        private void P20_Detail_Load(object sender, EventArgs e)
+        {
+            viewText();
+        }
+
     }
 }
