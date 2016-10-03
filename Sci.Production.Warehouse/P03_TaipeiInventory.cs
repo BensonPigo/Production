@@ -40,7 +40,7 @@ SELECT invtrans.ID,Type,case Type
 			when '5' then '5:Obsolescene'
 			when '6' then '6:Return'
 			end as typename , ConfirmDate, Qty inqty,0 outqty, TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
-                                                                        , Po3Seq70
+                                                                        , concat(seq70poid,'-',seq70seq1,'-',seq70seq2) as seq70
                                                                         , case type when '3' then TransferFactory else FactoryID end as factoryid, invtransreason.ReasonEN
                                                                         ,case type when '3' then 2 else 1 end AS SEQ
                                                                         ,invtrans.remark
@@ -59,7 +59,7 @@ SELECT invtrans.ID, Type,case Type
 			when '5' then '5:Obsolescene'
 			when '6' then '6:Return'
 			end as typename, ConfirmDate, 0 inqty,Qty outqty, TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
-                                                                        , Po3Seq70
+                                                                        , concat(seq70poid,'-',seq70seq1,'-',seq70seq2) as seq70
                                                                         ,  case type when '3' then FactoryID else FactoryID end as FactoryID
                                                                         , invtransreason.ReasonEN
                                                                         ,case type when '3' then 1 else 2 end AS SEQ
@@ -71,7 +71,7 @@ SELECT invtrans.ID, Type,case Type
                                                                         and InventorySeq2 = '{2}'
 																		and type in (2,3,5)
                                                                         ) TMP 
-                                                                        GROUP BY TMP.ID,TMP.TYPE,TMP.typename,TMP.ConfirmDate,TMP.ConfirmHandle,TMP.factoryid,TMP.Po3Seq70,TMP.ReasonEN,TMP.SEQ,TMP.inqty,TMP.outqty,tmp.remark "
+                                                                        GROUP BY TMP.ID,TMP.TYPE,TMP.typename,TMP.ConfirmDate,TMP.ConfirmHandle,TMP.factoryid,TMP.seq70,TMP.ReasonEN,TMP.SEQ,TMP.inqty,TMP.outqty,tmp.remark "
                                                 , dr["id"].ToString()
                                                 , dr["seq1"].ToString()
                                                 , dr["seq2"].ToString());
