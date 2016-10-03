@@ -251,9 +251,19 @@
             this.num_variance.IsSupportEditMode = false;
             this.num_variance.Location = new System.Drawing.Point(563, 62);
             this.num_variance.Name = "num_variance";
+            this.num_variance.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.num_variance.ReadOnly = true;
             this.num_variance.Size = new System.Drawing.Size(111, 23);
             this.num_variance.TabIndex = 113;
+            this.num_variance.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // num_issue
             // 
@@ -263,9 +273,19 @@
             this.num_issue.IsSupportEditMode = false;
             this.num_issue.Location = new System.Drawing.Point(336, 62);
             this.num_issue.Name = "num_issue";
+            this.num_issue.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.num_issue.ReadOnly = true;
             this.num_issue.Size = new System.Drawing.Size(111, 23);
             this.num_issue.TabIndex = 112;
+            this.num_issue.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // num_balance
             // 
@@ -275,9 +295,19 @@
             this.num_balance.IsSupportEditMode = false;
             this.num_balance.Location = new System.Drawing.Point(563, 29);
             this.num_balance.Name = "num_balance";
+            this.num_balance.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.num_balance.ReadOnly = true;
             this.num_balance.Size = new System.Drawing.Size(111, 23);
             this.num_balance.TabIndex = 111;
+            this.num_balance.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // num_accuIssue
             // 
@@ -287,9 +317,19 @@
             this.num_accuIssue.IsSupportEditMode = false;
             this.num_accuIssue.Location = new System.Drawing.Point(336, 29);
             this.num_accuIssue.Name = "num_accuIssue";
+            this.num_accuIssue.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.num_accuIssue.ReadOnly = true;
             this.num_accuIssue.Size = new System.Drawing.Size(111, 23);
             this.num_accuIssue.TabIndex = 110;
+            this.num_accuIssue.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // num_requestqty
             // 
@@ -299,9 +339,19 @@
             this.num_requestqty.IsSupportEditMode = false;
             this.num_requestqty.Location = new System.Drawing.Point(107, 29);
             this.num_requestqty.Name = "num_requestqty";
+            this.num_requestqty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.num_requestqty.ReadOnly = true;
             this.num_requestqty.Size = new System.Drawing.Size(111, 23);
             this.num_requestqty.TabIndex = 109;
+            this.num_requestqty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label9
             // 

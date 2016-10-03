@@ -24,7 +24,7 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
-            ChangeDetailColor();
+          //  ChangeDetailColor();
             di_fabrictype.Add("F", "Fabric");
             di_fabrictype.Add("A", "Accessory");
             di_stocktype.Add("B", "Bulk");
@@ -52,7 +52,7 @@ namespace Sci.Production.Warehouse
             this.IsSupportDelete = false;
             this.IsSupportConfirm = false;
             this.IsSupportUnconfirm = false;
-            ChangeDetailColor();
+          //  ChangeDetailColor();
             di_fabrictype.Add("F", "Fabric");
             di_fabrictype.Add("A", "Accessory");
             di_stocktype.Add("B", "Bulk");
@@ -70,23 +70,23 @@ namespace Sci.Production.Warehouse
             CurrentMaintain["WhseArrival"] = DateTime.Now;
         }
 
-        private void ChangeDetailColor()
-        {
-            detailgrid.RowPostPaint += (s, e) =>
-            {
-                if (!this.EditMode)
-                {
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    if (detailgrid.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
+        //private void ChangeDetailColor()
+        //{
+        //    detailgrid.RowPostPaint += (s, e) =>
+        //    {
+        //        if (!this.EditMode)
+        //        {
+        //            DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+        //            if (detailgrid.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
 
-                    int i = e.RowIndex;
-                    if (MyUtility.Check.Empty(dr["stocktype"]) || MyUtility.Check.Empty(dr["stockunit"]))
-                    {
-                        detailgrid.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
-                    }
-                }
-            };
-        }
+        //            int i = e.RowIndex;
+        //            if (MyUtility.Check.Empty(dr["stocktype"]) || MyUtility.Check.Empty(dr["stockunit"]))
+        //            {
+        //                detailgrid.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
+        //            }
+        //        }
+        //    };
+        //}
 
         // delete前檢查
         protected override bool ClickDeleteBefore()
@@ -177,6 +177,7 @@ namespace Sci.Production.Warehouse
             if (!MyUtility.Check.Empty(warningmsg.ToString()))
             {
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
+                
                 return false;
             }
 

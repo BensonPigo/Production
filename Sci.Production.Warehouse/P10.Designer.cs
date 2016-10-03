@@ -106,7 +106,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(1539, 70);
+            this.gridicon.Location = new System.Drawing.Point(1757, 70);
             // 
             // refresh
             // 
@@ -340,7 +340,7 @@
             this.SubDetailKeyField1 = "id";
             this.SubDetailKeyField2 = "Issue_SummaryUkey";
             this.SubGridAlias = "Issue_Detail";
-            this.Text = "P10. Issue Fabric";
+            this.Text = "P10. Issue Fabric to Cutting Section";
             this.UnApvChkValue = "Confirmed";
             this.WorkAlias = "Issue";
             this.Controls.SetChildIndex(this.tabs, 0);
