@@ -9,12 +9,14 @@ using Ict.Win;
 using Sci;
 using Sci.Data;
 using Ict;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
     public partial class P03_Refno : Sci.Win.Subs.Base
     {
         DataRow dr;
+        DataTable selectDataTable1;
         protected Sci.Win.UI.ContextMenuStrip myCMS = new Win.UI.ContextMenuStrip();
         public P03_Refno(DataRow data)
         {
@@ -22,8 +24,7 @@ namespace Sci.Production.Warehouse
             dr = data;
             //Helper.Controls.ContextMenu.Generator(myCMS).Menu("item1", onclick: (s, e) => DoMyCMS());
             grid1.ContextMenuStrip = myCMS;
-            this.Text+=string.Format(" ({0})",dr["refno"]);
-            
+            this.Text += string.Format(" ({0})", dr["refno"]);
         }
 
         protected override void OnFormLoaded()
@@ -46,32 +47,85 @@ and b.seq1 = c.seq1
 and a.WhseClose is null
 and md.mdivisionid='{1}'
 order by ColorID, SizeSpec ,SewinLine
-", dr["scirefno"].ToString(),Sci.Env.User.Keyword);
-            DataTable selectDataTable1;
+", dr["scirefno"].ToString(), Sci.Env.User.Keyword);
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
             if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);
             else
             {
-                listControlBindingSource1.DataSource = selectDataTable1;
+                Filter();
             }
-            //設定Grid1的顯示欄位
-            MyUtility.Tool.SetGridFrozen(grid1);
-            MyUtility.Tool.AddMenuToPopupGridFilter(this, this.grid1, null,"factoryid,colorid,sizespec");
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
-                 .Text("mdivisionid", header: "M", width: Widths.AnsiChars(8))
-                 .Text("id", header: "SP#", width: Widths.AnsiChars(13))
-                 .Text("seq", header: "Seq", width: Widths.AnsiChars(5))
-                 .Text("colorid", header: "Color", width: Widths.AnsiChars(6))
-                 .Text("sizespec", header: "Size", width: Widths.AnsiChars(15))
-                 .Text("suppid", header: "Supp", width: Widths.AnsiChars(6))
-                 .Date("sewinline", header: "Sewing Inline Date", width: Widths.AnsiChars(10))
-                  .Text("sewline", header: "Sewing Line#", width: Widths.AnsiChars(10))
-                   .Date("FinalETD", header: "FinalETD", width: Widths.AnsiChars(10))
-                 .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                  .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(8))
-                 ;
+
+            //分別加入comboboxitem
+            comboM.Items.Clear();
+            comboColor.Items.Clear();
+            comboSize.Items.Clear();
+//            string s1
+//                = string.Format(@"select '' as ID union all 
+//Select distinct md.mdivisionid
+//from orders a
+//, po_supp_detail b left join dbo.MDivisionPoDetail md on md.POID = b.id and md.seq1 = b.seq2 and md.seq2 = b.seq2
+//, po_supp c
+//where b.scirefno = '{0}'
+//and a.id = b.id
+//and a.id = c.id
+//and b.seq1 = c.seq1
+//and a.WhseClose is null
+//and md.mdivisionid='{1}'
+//", dr["scirefno"].ToString(), Sci.Env.User.Keyword);
+//            string s2
+//                = string.Format(@"select '' as ID union all 
+//Select distinct b.colorid
+//from orders a
+//, po_supp_detail b left join dbo.MDivisionPoDetail md on md.POID = b.id and md.seq1 = b.seq2 and md.seq2 = b.seq2
+//, po_supp c
+//where b.scirefno = '{0}'
+//and a.id = b.id
+//and a.id = c.id
+//and b.seq1 = c.seq1
+//and a.WhseClose is null
+//and md.mdivisionid='{1}'
+//", dr["scirefno"].ToString(), Sci.Env.User.Keyword);
+//            string s3
+//                = string.Format(@"select '' as ID union all 
+//Select distinct b.sizespec
+//from orders a
+//, po_supp_detail b left join dbo.MDivisionPoDetail md on md.POID = b.id and md.seq1 = b.seq2 and md.seq2 = b.seq2
+//, po_supp c
+//where b.scirefno = '{0}'
+//and a.id = b.id
+//and a.id = c.id
+//and b.seq1 = c.seq1
+//and a.WhseClose is null
+//and md.mdivisionid='{1}'
+//", dr["scirefno"].ToString(), Sci.Env.User.Keyword);
+            List<string> dts1 = selectDataTable1.AsEnumerable().Select(row => row["mdivisionid"].ToString()).Distinct().ToList();
+            List<string> dts2 = selectDataTable1.AsEnumerable().Select(row => row["colorid"].ToString()).Distinct().ToList();
+            List<string> dts3 = selectDataTable1.AsEnumerable().Select(row => row["sizespec"].ToString()).Distinct().ToList();
+            dts1.Insert(0, "All");
+            dts2.Insert(0, "All");
+            dts3.Insert(0, "All");
+            //DataTable dt1;
+            //DataTable dt2;
+            //DataTable dt3;
+            //DBProxy.Current.Select(null, s1, out dt1);
+            //DBProxy.Current.Select(null, s2, out dt2);
+            //DBProxy.Current.Select(null, s3, out dt3);
+            if (!dts1.Empty())
+            {
+                //MyUtility.Tool.SetupCombox(comboM, 1, dt1);
+                comboM.DataSource = dts1;
+            }
+            if (!dts2.Empty())
+            {
+                comboColor.DataSource = dts2;
+                //MyUtility.Tool.SetupCombox(comboColor, 1, dt2);
+            }
+            if (!dts2.Empty())
+            {
+                comboSize.DataSource = dts3;
+                //MyUtility.Tool.SetupCombox(comboSize, 1, dt3);
+            }
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -105,6 +159,63 @@ order by ColorID, SizeSpec ,SewinLine
             {
                 return;
             }
+        }
+
+        private void comboM_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Filter();
+        }
+
+        private void comboColor_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Filter();
+        }
+
+        private void comboSize_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Filter();
+        }
+
+        protected void Filter()
+        {
+            DataTable ntb=null;
+            string s1 = comboM.Text, s2 = comboColor.Text, s3 = comboSize.Text;
+            //第一趟進來combobox都還未加入item都是""字串
+            if (comboM.Text != "" || comboColor.Text != "" || comboSize.Text != "")
+            {
+                IEnumerable<DataRow> query =
+                    from o in selectDataTable1.AsEnumerable()
+                    where
+                    (comboM.Text != "All"? o.Field<String>("mdivisionid") ==s1:1==1) &&
+                    (comboColor.Text != "All" ? o.Field<String>("colorid") == s2 : 1 == 1) &&
+                    (comboSize.Text != "All" ? o.Field<String>("sizespec") == s3 : 1 == 1)
+                    select o;
+                ntb = query.CopyToDataTable<DataRow>();
+                listControlBindingSource1.DataSource = ntb;
+
+            }
+            else
+            {
+                listControlBindingSource1.DataSource = selectDataTable1;
+            }
+            //設定Grid1的顯示欄位
+            MyUtility.Tool.SetGridFrozen(grid1);
+            MyUtility.Tool.AddMenuToPopupGridFilter(this, this.grid1, null, "factoryid,colorid,sizespec");
+            this.grid1.IsEditingReadOnly = true;
+            this.grid1.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.grid1)
+                 .Text("mdivisionid", header: "M", width: Widths.AnsiChars(8))
+                 .Text("id", header: "SP#", width: Widths.AnsiChars(13))
+                 .Text("seq", header: "Seq", width: Widths.AnsiChars(5))
+                 .Text("colorid", header: "Color", width: Widths.AnsiChars(6))
+                 .Text("sizespec", header: "Size", width: Widths.AnsiChars(15))
+                 .Text("suppid", header: "Supp", width: Widths.AnsiChars(6))
+                 .Date("sewinline", header: "Sewing Inline Date", width: Widths.AnsiChars(10))
+                  .Text("sewline", header: "Sewing Line#", width: Widths.AnsiChars(10))
+                   .Date("FinalETD", header: "FinalETD", width: Widths.AnsiChars(10))
+                 .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                  .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(8))
+                 ;
         }
     }
 }
