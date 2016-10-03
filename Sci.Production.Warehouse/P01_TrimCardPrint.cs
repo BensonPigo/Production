@@ -194,7 +194,7 @@ namespace Sci.Production.Warehouse
             Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
 
             //Set status for word application is to be visible or not.
-            winword.Visible = false;
+            winword.Visible = true;
 
             //Create a missing variable for missing value
             object missing = System.Reflection.Missing.Value;
