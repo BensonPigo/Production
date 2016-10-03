@@ -704,8 +704,9 @@ Where DetailUkey = {15};",
                 DualResult dcResult;
 
                 if (dcResult = DBProxy.Current.Select("Production", string.Format(
-		@"select a.ID,a.Roll,'Continuity' type_c,a.Result,a.Remark,a.Inspector,'Shadebond' type_s,b.Result,b.Remark,b.Inspector,'Weight' type_w,c.Result,c.Remark,c.Inspector from FIR_Continuity a
-		left join FIR_Shadebond b on a.ID=b.ID and a.Roll=b.Roll
+        @"select a.ID,a.Roll,'Continuity' type_c,a.Result,a.Remark,a.Inspector,'Shadebond' type_s,b.Result,b.Remark,b.Inspector,'Weight' type_w,c.Result,c.Remark,c.Inspector ,'' as Comment 
+        from FIR_Continuity a
+		left join FIR_Shadebone b on a.ID=b.ID and a.Roll=b.Roll
 		left join FIR_Weight c on a.ID=c.ID and a.Roll=c.Roll
 		where a.ID='{0}' and a.Roll='{1}'", textID.Text,dt.Rows[i]["roll"].ToString()), out dtcombo))
                 {
@@ -731,17 +732,18 @@ Where DetailUkey = {15};",
                         excel.Cells[20 + (i * 8), 1] = "Weight";
                         excel.Cells[21 + (i * 8), 1] = "Moisture";
 
-                        excel.Cells[19 + (i * 8), 2] = dtcombo.Rows[i]["Result"].ToString();
-                        excel.Cells[19 + (i * 8), 3] = dtcombo.Rows[i]["Comment"].ToString();
-                        excel.Cells[19 + (i * 8), 4] = dtcombo.Rows[i]["Inspector"].ToString();
+                   
+                        excel.Cells[19 + (i * 8), 2] = dtcombo.Rows[0]["Result"].ToString();
+                        excel.Cells[19 + (i * 8), 3] = dtcombo.Rows[0]["Comment"].ToString();
+                        excel.Cells[19 + (i * 8), 4] = dtcombo.Rows[0]["Inspector"].ToString();
 
-                        excel.Cells[20 + (i * 8), 2] = dtcombo.Rows[i]["Result"].ToString();
-                        excel.Cells[20 + (i * 8), 3] = dtcombo.Rows[i]["Comment"].ToString();
-                        excel.Cells[20 + (i * 8), 4] = dtcombo.Rows[i]["Inspector"].ToString();
+                        excel.Cells[20 + (i * 8), 2] = dtcombo.Rows[0]["Result"].ToString();
+                        excel.Cells[20 + (i * 8), 3] = dtcombo.Rows[0]["Comment"].ToString();
+                        excel.Cells[20 + (i * 8), 4] = dtcombo.Rows[0]["Inspector"].ToString();
 
-                        excel.Cells[21 + (i * 8), 2] = dtcombo.Rows[i]["Result"].ToString();
-                        excel.Cells[21 + (i * 8), 3] = dtcombo.Rows[i]["Comment"].ToString();
-                        excel.Cells[21 + (i * 8), 4] = dtcombo.Rows[i]["Inspector"].ToString();
+                        excel.Cells[21 + (i * 8), 2] = dtcombo.Rows[0]["Result"].ToString();
+                        excel.Cells[21 + (i * 8), 3] = dtcombo.Rows[0]["Comment"].ToString();
+                        excel.Cells[21 + (i * 8), 4] = dtcombo.Rows[0]["Inspector"].ToString();
                         worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 4]].Interior.Color = Color.Pink;
                         worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 4]].Borders.LineStyle = 1;
                     }
