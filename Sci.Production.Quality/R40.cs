@@ -359,7 +359,7 @@ namespace Sci.Production.Quality
 			                    WHERE a.YearMonth BETWEEN claimed.themonth AND ff.six
 			                    AND a.BrandID = 'ADIDAS'
 								AND a.factoryid in (select id from dbo.SCIFty 
-			                    where CountryID= (select f.CountryID from dbo.Factory f where f.id='MAI')))sh
+			                    where CountryID= (select f.CountryID from dbo.Factory f where f.id=" + "'" + userfactory + "'" + @")))sh
                     where year in (@y1,@y2,@y3)
                     group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1,Claimed.factory
                     select dRanges.name[ ],dRanges.starts,#temp.Target,ISNULL(SUM(factory1.Claimed),0)[Claimed1],ISNULL(SUM(factory1.Shipped),0)[Shipped1],ISNULL(SUM(factory2.Claimed),0)[Claimed2],ISNULL(SUM(factory2.Shipped),0)[Shipped2],ISNULL(SUM(factory3.Claimed),0)[Claimed3],ISNULL(SUM(factory3.Shipped),0)[Shipped3] from dbo.#temp
@@ -606,7 +606,7 @@ namespace Sci.Production.Quality
         {
             #region By Year
             //改名字
-            mySheet.Cells[1,1] ="Target";
+            
             mySheet.Cells[2,3] ="Claimed";
             mySheet.Cells[2,4] ="Shipped";
             mySheet.Cells[2,5] ="adiComp";
@@ -616,8 +616,7 @@ namespace Sci.Production.Quality
             mySheet.Cells[2,9] ="Claimed";
             mySheet.Cells[2,10] ="Shipped";
             mySheet.Cells[2,11] ="adiComp";
-            mySheet.Cells[1,1].font.Color = ColorTranslator.ToOle(Color.White);
-       
+           
             
             Microsoft.Office.Interop.Excel._Application myExcel = null;
             Microsoft.Office.Interop.Excel._Workbook myBook = null;
@@ -628,43 +627,50 @@ namespace Sci.Production.Quality
             {
 
                 //在工作簿 新增一張 統計圖表，單獨放在一個分頁裡面
+                mySheet.get_Range("B3", "B14").Select();
                 myBook.Charts.Add(Type.Missing, Type.Missing, 1, Type.Missing);
                 //選擇 統計圖表 的 圖表種類
                 myBook.ActiveChart.Location(XlChartLocation.xlLocationAsObject, mySheet.Name);
                 myBook.ActiveChart.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLineMarkers;//插入折線圖
                 //設定數據範圍
-                string strRange = "A2:K14";
-                //設定 統計圖表 的 數據範圍內容
-                myBook.ActiveChart.SetSourceData(mySheet.get_Range(strRange), Microsoft.Office.Interop.Excel.XlRowCol.xlColumns);
 
                 Chart c = myBook.ActiveChart;
                 SeriesCollection seriesCollection = c.SeriesCollection();
-                Series series1 = seriesCollection.NewSeries();
-                series1.Name = stringyear2;
+                
+                Series series1 = seriesCollection.Item(1); //seriesCollection.NewSeries();
+                series1.Name = "Target";
                 series1.XValues = mySheet.Range["A3", "A14"];
-                series1.Values = mySheet.Range["E3", "E14"];
+                series1.Values = mySheet.Range["B3", "B14"];
 
                 Series series2 = seriesCollection.NewSeries();
-                series2.Name = stringyear3;
-               // series1.XValues = mySheet.Range["A3", "A14"];
-                series2.Values = mySheet.Range["H3", "H14"];
-
+                series2.Name = stringyear4;
+                series2.XValues = mySheet.Range["A3", "A14"];
+                series2.Values = mySheet.Range["E3", "E14"];
+               
                 Series series3 = seriesCollection.NewSeries();
-                series3.Name = stringyear4;
-              //  series1.XValues = mySheet.Range["A3", "A14"];
-                series3.Values = mySheet.Range["K3","K14"];
+                series3.Name = stringyear3;
+                series3.XValues = mySheet.Range["A3", "A14"];
+                series3.Values = mySheet.Range["H3", "H14"];
 
-                
+
+                Series series4 = seriesCollection.NewSeries();
+                series4.Name = stringyear2;
+                series4.XValues = mySheet.Range["A3", "A14"];
+                series4.Values = mySheet.Range["K3","K14"];
+
+                //c.HasLegend = true;
+                //((Microsoft.Office.Interop.Excel.ChartObject)c).Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+                //((Microsoft.Office.Interop.Excel.ChartObject)mySheet.ChartObjects("Chart 1")).Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlDot;
+                               
                 mySheet.Shapes.Item("Chart 1").Width = 690;   //調整圖表寬度
-                mySheet.Shapes.Item("Chart 1").Height = 400;  //調整圖表高度
+                mySheet.Shapes.Item("Chart 1").Height = 300;  //調整圖表高度
                 mySheet.Shapes.Item("Chart 1").Top =280;      //調整圖表在分頁中的高度(上邊距) 位置
-                mySheet.Shapes.Item("Chart 1").Left =0;    //調整圖表在分頁中的左右(左邊距) 位置
+                mySheet.Shapes.Item("Chart 1").Left =3;    //調整圖表在分頁中的左右(左邊距) 位置
  
                 //myBook.ActiveChart.PlotArea.Width =2000;   //調整圖表寬度
                 //myBook.ActiveChart.PlotArea.Height =1500;  //調整圖表高度
-               // myBook.ActiveChart.PlotArea.Top = 2000;      //調整圖表在分頁中的高度(上邊距) 位置
+                //myBook.ActiveChart.PlotArea.Top = 2000;      //調整圖表在分頁中的高度(上邊距) 位置
                 //myBook.ActiveChart.PlotArea.Left =0;    //調整圖表在分頁中的左右(左邊距) 位置
-
 
 
                 //設定 繪圖區 的 背景顏色
@@ -704,7 +710,7 @@ namespace Sci.Production.Quality
                 myBook.ActiveChart.Legend.Font.Bold = true;  //設定 圖例 的 字體樣式=粗體
                 myBook.ActiveChart.Legend.Font.Name = "細明體";//設定 圖例 的 字體字型=細明體
                 myBook.ActiveChart.Legend.Position = Microsoft.Office.Interop.Excel.XlLegendPosition.xlLegendPositionBottom;//設訂 圖例 的 位置靠上 
-                //myBook.ActiveChart.Legend.Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlDot;//設定 圖例 的 邊框線條
+                myBook.ActiveChart.Legend.Border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlDash;//設定 圖例 的 邊框線條
 
                 //設定 圖表 x 軸 內容
                 //宣告
