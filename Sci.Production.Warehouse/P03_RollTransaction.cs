@@ -401,7 +401,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Roll", Roll));
 
 
-            string xlt = @"Warehouse_P03_RollTransaction.xltx";
+            string xlt = Sci.Env.Cfg.XltPathDir + @"\\Warehouse_P03_RollTransaction.xltx";
             SaveXltReportCls xl = new SaveXltReportCls(xlt);
             
             xl.dicDatas.Add("##SP",SP );
