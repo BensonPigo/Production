@@ -42,6 +42,7 @@ namespace Sci.Production.Planning
         {
             base.ClickNewAfter();
             this.CurrentMaintain["unit"] = 1;
+            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
         }
         //存檔前檢查
         protected override bool ClickSaveBefore()
