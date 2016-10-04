@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
             this.textBox4 = new Sci.Win.UI.TextBox();
             this.txtuser3 = new Sci.Production.Class.txtuser();
@@ -57,7 +58,7 @@
             this.label4 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -137,6 +138,7 @@
             this.textBox4.IsSupportEditMode = false;
             this.textBox4.Location = new System.Drawing.Point(96, 275);
             this.textBox4.Name = "textBox4";
+            this.textBox4.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.textBox4.ReadOnly = true;
             this.textBox4.Size = new System.Drawing.Size(133, 23);
             this.textBox4.TabIndex = 10;
@@ -240,6 +242,7 @@
             this.editBox1.Location = new System.Drawing.Point(96, 84);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
+            this.editBox1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.editBox1.ReadOnly = true;
             this.editBox1.Size = new System.Drawing.Size(356, 50);
             this.editBox1.TabIndex = 5;
@@ -406,7 +409,7 @@
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(479, 8);
             this.grid1.Name = "grid1";

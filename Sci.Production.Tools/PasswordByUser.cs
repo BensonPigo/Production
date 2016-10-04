@@ -53,7 +53,7 @@ namespace Sci.Production.Tools
 
                 this.textBox4.PopUp += (s, e) =>
                 {
-                    Sci.Win.Tools.SelectItem seleItem = new Sci.Win.Tools.SelectItem("SELECT ID, Description, PKey From Pass0 ORDER BY ID", "15,30", this.textBox4.Text, "Position,Description");
+                    Sci.Win.Tools.SelectItem seleItem = new Sci.Win.Tools.SelectItem("SELECT ID, Description, PKey From Pass0 ORDER BY ID", "15,25", this.textBox4.Text, "Position,Description");
                     IList<DataRow> listSelect = null;
                     if (seleItem.ShowDialog(this) == DialogResult.OK)
                     {
