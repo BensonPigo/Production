@@ -11,7 +11,7 @@
     [CdCodeID]            VARCHAR (6)    CONSTRAINT [DF_Style_CdCodeID] DEFAULT ('') NOT NULL,
     [ApparelType]         VARCHAR (5)    CONSTRAINT [DF_Style_ApparelType] DEFAULT ('') NOT NULL,
     [FabricType]          VARCHAR (5)    CONSTRAINT [DF_Style_FabricType] DEFAULT ('') NOT NULL,
-    [Contents]             NVARCHAR (MAX) CONSTRAINT [DF_Style_Content] DEFAULT ('') NOT NULL,
+    [Contents]            NVARCHAR (MAX) CONSTRAINT [DF_Style_Content] DEFAULT ('') NOT NULL,
     [GMTLT]               SMALLINT       CONSTRAINT [DF_Style_GMTLT] DEFAULT ((0)) NOT NULL,
     [CPU]                 NUMERIC (5, 3) CONSTRAINT [DF_Style_CPU] DEFAULT ((0)) NULL,
     [Factories]           NVARCHAR (180) CONSTRAINT [DF_Style_Factories] DEFAULT ('') NULL,
@@ -58,9 +58,11 @@
     [CPUAdjusted]         NUMERIC (6, 4) CONSTRAINT [DF_Style_CPUAdjusted] DEFAULT ((0)) NULL,
     [Phase]               VARCHAR (10)   CONSTRAINT [DF_Style_Phase1] DEFAULT ('') NULL,
     [Gender]              VARCHAR (10)   CONSTRAINT [DF_Style_Gender1] DEFAULT ('') NULL,
-    [Type] VARCHAR(10) NULL DEFAULT (''), 
-    CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID], [BrandID], [SeasonID])
+    [Type]                VARCHAR (10)   CONSTRAINT [DF__Style__Type__00EAD9C6] DEFAULT ('') NULL,
+    CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
+
+
 
 
 

@@ -28,6 +28,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Receiving Detail', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail';
 
@@ -108,4 +110,9 @@ GO
 CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
     ON [dbo].[Receiving_Detail]([PoId] ASC, [Seq1] ASC, [Seq2] ASC, [Remark] ASC)
     INCLUDE([Id]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [id_UKEY]
+    ON [dbo].[Receiving_Detail]([Id] ASC, [Ukey] ASC);
 

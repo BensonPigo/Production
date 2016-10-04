@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[MDivisionPoDetail] (
+CREATE TABLE [dbo].[MDivisionPoDetail] (
     [MDivisionID] VARCHAR (8)     CONSTRAINT [DF_MDivisionPoDetail_MDivisionId] DEFAULT ('') NOT NULL,
     [POID]        VARCHAR (13)    CONSTRAINT [DF_MDivisionPoDetail_POID] DEFAULT ('') NOT NULL,
     [Seq1]        VARCHAR (3)     CONSTRAINT [DF_MDivisionPoDetail_Seq1] DEFAULT ('') NOT NULL,
@@ -11,8 +11,10 @@
     [ALocation]   VARCHAR (100)   CONSTRAINT [DF_MDivisionPoDetail_ALocation] DEFAULT ('') NULL,
     [BLocation]   VARCHAR (100)   CONSTRAINT [DF_MDivisionPoDetail_BLocation] DEFAULT ('') NULL,
     [Ukey]        BIGINT          IDENTITY (1, 1) NOT NULL,
-    CONSTRAINT [PK__MDivisio__07AF6F03481FB32F] PRIMARY KEY CLUSTERED ([Ukey] ASC) ON [SLAVE]
+    CONSTRAINT [PK__MDivisio__07AF6F03481FB32F] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -85,20 +87,25 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'調整數�
 
 
 GO
-CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
-    ON [dbo].[MDivisionPoDetail]([MDivisionID] ASC, [POID] ASC)
-    ON [SLAVE];
+
 
 
 GO
-CREATE NONCLUSTERED INDEX [<Name2 of Missing Index, sysname,>]
-    ON [dbo].[MDivisionPoDetail]([POID] ASC)
-    ON [SLAVE];
+
 
 
 GO
-CREATE NONCLUSTERED INDEX [<Name3 of Missing Index, sysname,>]
+CREATE NONCLUSTERED INDEX [POID]
+    ON [dbo].[MDivisionPoDetail]([POID] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [MDID_POID]
+    ON [dbo].[MDivisionPoDetail]([MDivisionID] ASC, [POID] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [MDID]
     ON [dbo].[MDivisionPoDetail]([MDivisionID] ASC)
-    INCLUDE([POID], [Seq1], [Seq2])
-    ON [SLAVE];
+    INCLUDE([POID], [Seq1], [Seq2]);
 

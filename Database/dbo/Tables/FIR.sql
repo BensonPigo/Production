@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[FIR] (
+CREATE TABLE [dbo].[FIR] (
     [ID]                  BIGINT          IDENTITY (1, 1) NOT NULL,
     [POID]                VARCHAR (13)    CONSTRAINT [DF_FIR_POID] DEFAULT ('') NOT NULL,
     [SEQ1]                VARCHAR (3)     CONSTRAINT [DF_FIR_SEQ] DEFAULT ('') NOT NULL,
@@ -39,6 +39,8 @@
     [Status]              VARCHAR (15)    CONSTRAINT [DF_FIR_Status] DEFAULT ('') NULL,
     CONSTRAINT [PK_FIR] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -208,6 +210,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠商Refno
 
 
 GO
-CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
-    ON [dbo].[FIR]([POID] ASC);
+CREATE NONCLUSTERED INDEX [PO_Seq]
+    ON [dbo].[FIR]([POID] ASC, [SEQ1] ASC, [SEQ2] ASC);
 

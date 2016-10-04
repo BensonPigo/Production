@@ -30,6 +30,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Accessory Inspection Report', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AIR';
 
@@ -124,4 +126,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Brand Refno', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AIR', @level2type = N'COLUMN', @level2name = N'Refno';
+
+
+GO
+CREATE NONCLUSTERED INDEX [PO_Seq]
+    ON [dbo].[AIR]([POID] ASC, [SEQ1] ASC, [SEQ2] ASC);
 
