@@ -19,7 +19,8 @@ namespace Sci.Production.Warehouse
     {
         DataRow Master;
         DataTable dtQtyBreakDown, dtIssueBreakDown, dtSizeCode;
-        StringBuilder sbSizecode, sbSizecode2;
+        StringBuilder sbSizecode, sbSizecode2, strsbIssueBreakDown;//LEO 10/04多加一個變數
+      // StringBuilder strsbIssueBreakDown;//LEO 10/04多加一個變數
         public P11_IssueBreakDown()
         {
             InitializeComponent();
@@ -76,7 +77,7 @@ pivot
 	sum(qty)
 	for sizecode in ({1})
 )as pvt
-order by [OrderID],[Article]", Master["orderid"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));
+order by [OrderID],[Article]", Master["orderid"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));//.Replace("[", "[_")
             if (!(result = DBProxy.Current.Select(null, sbQtyBreakDown.ToString(), out dtQtyBreakDown)))
             {
                 ShowErr(sqlcmd, result);
@@ -106,7 +107,8 @@ pivot
 	sum(qty)
 	for sizecode in ({2})
 )as pvt
-order by [OrderID],[Article]", Master["orderid"], Master["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));
+order by [OrderID],[Article]", Master["orderid"], Master["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));//.Replace("[", "[_")
+            //strsbIssueBreakDown = sbIssueBreakDown;//多加一個變數來接 不改變欄位
             if (!(result = DBProxy.Current.Select(null, sbIssueBreakDown.ToString(), out dtIssueBreakDown)))
             {
                 ShowErr(sqlcmd, result);
@@ -147,8 +149,9 @@ SET QTY = S.QTY
 WHEN NOT MATCHED THEN
 INSERT (ID,ORDERID,ARTICLE,SIZECODE,QTY)
 VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
-;delete from dbo.issue_breakdown where id='{0}' and qty = 0; ", Master["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1));
+;delete from dbo.issue_breakdown where id='{0}' and qty = 0; ", Master["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1));//.Replace("[", "[_")
 
+            string aaa = sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1).Replace("[", "").Replace("]", "");//.Replace("[", "").Replace("]", "")
 //            sqlcmd = string.Format(string.Format(@";WITH UNPIVOT_1
 //AS
 //(
@@ -161,7 +164,7 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
 //AS PVT
 //)SELECT * FROM UNPIVOT_1;", Master["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));
 
-            ProcessWithDatatable2(dtIssueBreakDown, "OrderID,Article," + sbSizecode2.ToString().Substring(0, sbSizecode2.ToString().Length - 1)
+            ProcessWithDatatable2(dtIssueBreakDown, "OrderID,Article," + aaa
                 , sqlcmd, out result, "#tmp");
             MyUtility.Msg.InfoBox("Save completed!!");
             this.Dispose();
@@ -186,31 +189,31 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                 switch (Type.GetTypeCode(source.Columns[cols[i]].DataType))
                 {
                     case TypeCode.Boolean:
-                        sb.Append(string.Format("{0} bit", cols[i]));
+                        sb.Append(string.Format("[{0}] bit", cols[i]));
                         break;
 
                     case TypeCode.Char:
-                        sb.Append(string.Format("{0} varchar(1)", cols[i]));
+                        sb.Append(string.Format("[{0}] varchar(1)", cols[i]));
                         break;
 
                     case TypeCode.DateTime:
-                        sb.Append(string.Format("{0} datetime", cols[i]));
+                        sb.Append(string.Format("[{0}] datetime", cols[i]));
                         break;
 
                     case TypeCode.Decimal:
-                        sb.Append(string.Format("{0} numeric(24,8)", cols[i]));
+                        sb.Append(string.Format("[{0}] numeric(24,8)", cols[i]));
                         break;
 
                     case TypeCode.Int32:
-                        sb.Append(string.Format("{0} int", cols[i]));
+                        sb.Append(string.Format("[{0}] int", cols[i]));
                         break;
 
                     case TypeCode.String:
-                        sb.Append(string.Format("{0} varchar(max)", cols[i]));
+                        sb.Append(string.Format("[{0}] varchar(max)", cols[i]));
                         break;
 
                     case TypeCode.Int64:
-                        sb.Append(string.Format("{0} bigint", cols[i]));
+                        sb.Append(string.Format("[{0}] bigint", cols[i]));
                         break;
                     default:
                         break;
