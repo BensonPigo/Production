@@ -193,7 +193,7 @@ and o.ID = pld.OrderID");
                 return;
             }
             string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
+            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Sci.Env.Cfg.XltPathDir);
             SaveFileDialog dlg = new SaveFileDialog();
             dlg.RestoreDirectory = true;
             dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
