@@ -168,7 +168,7 @@ namespace Sci.Production.Warehouse
             .Text("ColorID", header: "Color", iseditingreadonly: true)  //9
             .Text("SizeSpec", header: "Size", iseditingreadonly: true)  //10
             .Text("CurrencyID", header: "Currency", iseditingreadonly: true)  //11
-            .Numeric("unitqty", header: "@Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //12
+            .Numeric("unitqty", header: "@Qty", decimal_places: 4, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //12
             .Numeric("Qty", header: "Order Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //13
             .Numeric("NETQty", header: "Net Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //14
             .Numeric("useqty", header: "Use Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //15
@@ -260,10 +260,10 @@ Select POID,SEQ1,SEQ2,CASE
 			 )");
             sqlcmd += string.Format(@" select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
             ,substring(convert(varchar,a.RevisedETA, 101),1,5) as RevisedETD,a.Refno,a.SCIRefno
-            ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',a.FabricType)) as fabrictype2
+            ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
             , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
             ,a.ColorID,a.SizeSpec
-            ,a.UsedQty unitqty,A.Qty,A.NETQty,A.NETQty+A.lossQty useqty ,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,a.Complete
+            ,ROUND(a.UsedQty,4) unitqty,A.Qty,A.NETQty,A.NETQty+A.lossQty useqty ,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,iif(a.Complete='1','Y','N') as Complete
             ,a.FinalETA,m.InQty,a.StockUnit
             ,m.OutQty,m.AdjustQty
 			,m.InQty - m.OutQty + m.AdjustQty balanceqty
@@ -289,10 +289,10 @@ Select POID,SEQ1,SEQ2,CASE
             union
             select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
             ,substring(convert(varchar,a.RevisedETA, 101),1,5) as RevisedETD,a.Refno,a.SCIRefno
-            ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',a.FabricType)) as fabrictype2
+            ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
              , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
             ,a.ColorID,a.SizeSpec
-            ,a.UsedQty unitqty,A.Qty,A.NETQty,A.NETQty+A.lossQty useqty ,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,a.Complete
+            ,ROUND(a.UsedQty,4) unitqty,A.Qty,A.NETQty,A.NETQty+A.lossQty useqty ,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,iif(a.Complete='1','Y','N') as Complete
             ,a.FinalETA,m.InQty,a.StockUnit
             ,m.OutQty,m.AdjustQty
 			,m.InQty - m.OutQty + m.AdjustQty balanceqty
@@ -369,15 +369,17 @@ Select POID,SEQ1,SEQ2,CASE
         }
 
         //locate
-        private void button2_Click(object sender, EventArgs e)
-        {
-            if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
-            int index = listControlBindingSource1.Find("poid", tb_locate.Text.TrimEnd());
-            if (index == -1)
-            { MyUtility.Msg.WarningBox("Data was not found!!"); }
-            else
-            { listControlBindingSource1.Position = index; }
-        }
+        //private void button2_Click(object sender, EventArgs e)
+        //{
+        //    if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
+            
+        //    int index = listControlBindingSource1.Find("id", tb_locate.Text.TrimEnd());
+        //    if (index == -1)
+        //    { MyUtility.Msg.WarningBox("Data was not found!!"); }
+        //    else
+        //    { listControlBindingSource1.Position = index; }                
+            
+        //}
 
         //Excel
         private void button3_Click(object sender, EventArgs e)

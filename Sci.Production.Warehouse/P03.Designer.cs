@@ -33,10 +33,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.tb_Spno = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
-            this.button2 = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
-            this.tb_locate = new Sci.Win.UI.TextBox();
-            this.label4 = new Sci.Win.UI.Label();
             this.panel3 = new Sci.Win.UI.Panel();
             this.label12 = new Sci.Win.UI.Label();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
@@ -55,10 +52,7 @@
             // 
             this.panel1.Controls.Add(this.tb_Spno);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.button1);
-            this.panel1.Controls.Add(this.tb_locate);
-            this.panel1.Controls.Add(this.label4);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -83,16 +77,6 @@
             this.label1.TabIndex = 18;
             this.label1.Text = "SP#";
             // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(272, 46);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(98, 30);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Find";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(272, 8);
@@ -102,24 +86,6 @@
             this.button1.Text = "Query";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // tb_locate
-            // 
-            this.tb_locate.BackColor = System.Drawing.Color.White;
-            this.tb_locate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.tb_locate.Location = new System.Drawing.Point(121, 50);
-            this.tb_locate.Name = "tb_locate";
-            this.tb_locate.Size = new System.Drawing.Size(145, 23);
-            this.tb_locate.TabIndex = 2;
-            // 
-            // label4
-            // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(9, 50);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(109, 23);
-            this.label4.TabIndex = 16;
-            this.label4.Text = "Locate for SP#";
             // 
             // panel3
             // 
@@ -242,10 +208,7 @@
 
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Panel panel1;
-        private Win.UI.Button button2;
         private Win.UI.Button button1;
-        private Win.UI.TextBox tb_locate;
-        private Win.UI.Label label4;
         private Win.UI.Panel panel3;
         private Win.UI.Button button4;
         private Win.UI.Panel panel2;
