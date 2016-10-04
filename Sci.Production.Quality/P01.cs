@@ -12,6 +12,8 @@ using Sci.Win;
 using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
+using Sci;
+
 
 namespace Sci.Production.Quality
 {
@@ -318,20 +320,26 @@ namespace Sci.Production.Quality
                 }
             }
             insp_box.Text = inspnum;
-            DateTime completedate ,Physicalcompletedate , Weightcompletedate , ShadeBondcompletedate , Continuitycompletedate ;
+            DateTime? completedate ,Physicalcompletedate , Weightcompletedate , ShadeBondcompletedate , Continuitycompletedate ;
             if (inspnum == "100")
             {
+                
+                Physicalcompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(PhysicalDate)", ""));
+                Weightcompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(WeightDate)", "")); //((DateTime)detailTb.Compute("Max(WeightDate)", ""));
+                ShadeBondcompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(ShadeBondDate)", "")); //((DateTime)detailTb.Compute("Max(ShadeBondDate)", ""));
+                Continuitycompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(ContinuityDate)", "")); //((DateTime)detailTb.Compute("Max(ContinuityDate)", ""));
+                if (MyUtility.Math.DateMinus(Physicalcompletedate, Weightcompletedate).TotalSeconds < 0) completedate = Weightcompletedate;
+                else completedate = Physicalcompletedate;
 
-                Physicalcompletedate = ((DateTime)detailTb.Compute("Max(PhysicalDate)", ""));
-                Weightcompletedate = ((DateTime)detailTb.Compute("Max(WeightDate)", ""));
-                ShadeBondcompletedate = ((DateTime)detailTb.Compute("Max(ShadeBondDate)", ""));
-                Continuitycompletedate = ((DateTime)detailTb.Compute("Max(ContinuityDate)", ""));
-                if (DateTime.Compare(Physicalcompletedate, Weightcompletedate) < 0) completedate = Weightcompletedate;
+                if (MyUtility.Math.DateMinus(completedate, ShadeBondcompletedate).TotalSeconds < 0) completedate = ShadeBondcompletedate;
+                if (MyUtility.Math.DateMinus(completedate, Continuitycompletedate).TotalSeconds < 0) completedate = Continuitycompletedate;
+
+                /*if (DateTime.Compare(Physicalcompletedate, Weightcompletedate) < 0) completedate = Weightcompletedate;
                 else completedate = Physicalcompletedate;
                 if (DateTime.Compare(completedate, ShadeBondcompletedate) < 0) completedate = ShadeBondcompletedate;
                 if (DateTime.Compare(completedate, Continuitycompletedate) < 0) completedate = Continuitycompletedate;
-
-                Complete_box.Text = completedate.ToShortDateString(); ;
+                */
+                Complete_box.Text = completedate ==null ? "": ((DateTime)completedate).ToShortDateString(); ;
             }
             else Complete_box.Text = "";
 
