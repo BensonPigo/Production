@@ -53,10 +53,12 @@ select FromPoId,FromSeq1,FromSeq2,borrowedqty,isnull(acc.qty,0.00) qty
 ,isnull(cc.current_return,0.00) current_return 
 ,isnull(borrowedqty,0.00) - isnull(acc.qty,0.00) - isnull(cc.current_return,0.00) as balance
 ,p.Refno
-,(select color.name from color where id = p.ColorID) as color_name
+--,(select color.name from color where id = p.ColorID) as color_name
+,color.name as color_name
 ,dbo.getMtlDesc(FromPoId,FromSeq1,FromSeq2,2,0) as [description] from borrow left join acc on borrow.FromPoId = acc.ToPoid and borrow.FromSeq1 = acc.ToSeq1 and borrow.FromSeq2 = acc.ToSeq2
 left join cc on borrow.FromPoId = cc.ToPoid and borrow.FromSeq1 = cc.ToSeq1 and borrow.FromSeq2 = cc.ToSeq2
-left join dbo.PO_Supp_Detail p on  borrow.FromPoId = p.id and borrow.FromSeq1 = p.SEQ1 and borrow.FromSeq2 = p.SEQ2"
+left join dbo.PO_Supp_Detail p on  borrow.FromPoId = p.id and borrow.FromSeq1 = p.SEQ1 and borrow.FromSeq2 = p.SEQ2
+inner join color color on color.id=p.ColorID"
                 , dr["id"].ToString(), dr["borrowid"].ToString()));
 
             DataTable selectDataTable1;

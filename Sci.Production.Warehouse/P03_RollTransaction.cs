@@ -39,6 +39,7 @@ namespace Sci.Production.Warehouse
             this.numericBox2.Value = decimal.Parse(dr["outqty"].ToString());
             this.numericBox3.Value = decimal.Parse(dr["inqty"].ToString()) - decimal.Parse(dr["outqty"].ToString()) + decimal.Parse(dr["adjustqty"].ToString());
 
+
             #region Grid1 - Sql command
             string selectCommand1
                 = string.Format(@"Select a.Roll,a.Dyelot,a.StockType,a.InQty,a.OutQty,a.AdjustQty
