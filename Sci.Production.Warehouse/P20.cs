@@ -106,6 +106,11 @@ namespace Sci.Production.Warehouse
         //Query
         private void button2_Click(object sender, EventArgs e)
         {
+            //搜尋前先清空資料
+            bindingSource1.DataSource = null;
+            bindingSource2.DataSource = null;
+            bindingSource3.DataSource = null;
+
             string spno, seq1, seq2;
             spno = textBox1.Text;
             seq1 = textBox2.Text;
@@ -241,6 +246,7 @@ select i.poid,i.seq1,i.Seq2,t.id
             if (dtTpeIventory.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!!");
+                return;
             }
 
             dtTpeIventory.Columns.Add("InputQty_unit", typeof(decimal), "InputQty * rate");
