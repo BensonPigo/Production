@@ -86,7 +86,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(850, 142);
+            this.masterpanel.Size = new System.Drawing.Size(892, 142);
             this.masterpanel.Title = "3";
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
@@ -114,7 +114,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 142);
-            this.detailpanel.Size = new System.Drawing.Size(850, 303);
+            this.detailpanel.Size = new System.Drawing.Size(892, 207);
             // 
             // gridicon
             // 
@@ -126,7 +126,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(850, 303);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 207);
             // 
             // detail2
             // 
@@ -142,16 +142,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(850, 483);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(850, 445);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 445);
-            this.detailbtm.Size = new System.Drawing.Size(850, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -206,9 +206,19 @@
             this.numericBox1.IsSupportEditMode = false;
             this.numericBox1.Location = new System.Drawing.Point(68, 59);
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.ReadOnly = true;
             this.numericBox1.Size = new System.Drawing.Size(60, 23);
             this.numericBox1.TabIndex = 7;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // editBox1
             // 
@@ -267,8 +277,18 @@
             0,
             0});
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.Size = new System.Drawing.Size(75, 23);
             this.numericBox2.TabIndex = 2;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox3
             // 
@@ -288,8 +308,18 @@
             0,
             0});
             this.numericBox3.Name = "numericBox3";
+            this.numericBox3.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox3.Size = new System.Drawing.Size(75, 23);
             this.numericBox3.TabIndex = 3;
+            this.numericBox3.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label8
             // 
@@ -401,6 +431,7 @@
             this.GridUniqueKey = "ID,OrderID,OrderShipmodeSeq,Article,SizeCode";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P05";
