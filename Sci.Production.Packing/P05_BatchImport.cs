@@ -111,7 +111,7 @@ as
 (select pdd.OrderID, pd.OrderShipmodeSeq, pdd.Article, pdd.SizeCode, sum(pdd.ShipQty) as PulloutQty
  from FOCData fd, Pullout_Detail pd, Pullout_Detail_Detail pdd
  where pdd.OrderID = fd.ID
- and pd.UKey = pdd.UKey
+ and pd.UKey = pdd.Pullout_DetailUKey
  group by pdd.OrderID, pd.OrderShipmodeSeq, pdd.Article, pdd.SizeCode
 )
 select 0 as Selected, od.ID as OrderID, od.Seq as OrderShipmodeSeq, od.StyleID, od.BuyerDelivery, od.CustPONo, od.Article, od.SizeCode, (od.Qty-isnull(pd.PulloutQty,0)) as ShipQty, isnull(voc.ColorID,'') as Color, isnull(pd.PulloutQty,0) as PulloutQty, isnull(fd.Price,-1) as Price
