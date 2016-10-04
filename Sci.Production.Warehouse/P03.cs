@@ -239,23 +239,13 @@ namespace Sci.Production.Warehouse
             string sqlcmd
                 = string.Format(@";WITH QA AS (
 Select POID,SEQ1,SEQ2,CASE 
-	            when a.result = 'P' then 'Pass'
-	            when a.result = 'L' then 'L/G'
-	            when a.result = 'R' then 'Reject'
-	            when a.result = 'F' then 'Fail' 
 	            when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 then 'N/A'
-	            else ''
+	            else a.result
             END as [Result] from dbo.FIR a where a.POID LIKE @sp1 
 			and (a.ContinuityEncode = 1 or a.PhysicalEncode = 1 or a.ShadebondEncode =1 or a.WeightEncode = 1 
                     or (a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1))
 			UNION ALL
-			Select POID,SEQ1,SEQ2,CASE 
-	            when a.result = 'P' then 'Pass'
-	            when a.result = 'L' then 'L/G'
-	            when a.result = 'R' then 'Reject'
-	            when a.result = 'F' then 'Fail' 
-	            else ''
-            END as [Result] 
+			Select POID,SEQ1,SEQ2,a.result as [Result] 
 			from dbo.AIR a where a.POID LIKE @sp1 and a.Result !=''
 			 )");
             sqlcmd += string.Format(@" select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
@@ -270,7 +260,7 @@ Select POID,SEQ1,SEQ2,CASE
 			,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
             ,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
             ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.refno,a.seq1,a.seq2),1,0)) AS description,s.currencyid
-            ,(select t.Result+' / ' from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')) FIR
+            ,stuff((select Concat('/',t.Result) from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')),1,1,'') FIR
             ,(Select cast(tmp.Remark as nvarchar)+',' 
                         from (select b1.remark 
                                     from receiving a1 
@@ -299,7 +289,7 @@ Select POID,SEQ1,SEQ2,CASE
 			,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
             ,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
             ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.refno,a.seq1,a.seq2),1,0)) AS description,s.currencyid
-            ,(select t.Result+' / ' from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')) FIR
+            ,stuff((select Concat('/',t.Result) from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')),1,1,'') FIR
             ,(Select cast(tmp.Remark as nvarchar)+',' 
                         from (select b1.remark 
                                     from receiving a1 
