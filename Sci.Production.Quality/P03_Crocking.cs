@@ -338,6 +338,20 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.WarningBox("<Roll> can not be empty.");
                 return false;
             }
+            else
+            {
+                foreach (DataRow dr in ((DataTable)gridbs.DataSource).Rows)
+                {
+                    drArray = gridTb.Select(string.Format("Roll='{0}'",MyUtility.Convert.GetString(dr["Roll"])));
+                    if (drArray.Length>1)
+                    {
+                         MyUtility.Msg.WarningBox("<Roll>"+ MyUtility.Convert.GetString(dr["Roll"])+" is already exist ! ");
+                        return false;
+                    }                   
+                }            
+                
+            }
+            
             drArray = gridTb.Select("DryScale='0'");
             if (drArray.Length != 0)
             {
@@ -368,6 +382,7 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.WarningBox("<Inspector> can not be empty.");
                 return false;
             }
+          
             #endregion
 
             return base.OnSaveBefore();
@@ -581,7 +596,7 @@ namespace Sci.Production.Quality
             DataTable dtSeason;
             DualResult sResult;         
             if (sResult = DBProxy.Current.Select("Production", string.Format(
-            "select C.SeasonID from FIR_Shadebond a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", maindr["ID"]), out dtSeason))
+            "select C.SeasonID from FIR_Shadebone a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", maindr["ID"]), out dtSeason))
             {
                 if (dtSeason.Rows.Count <= 0)
                 {
@@ -592,22 +607,37 @@ namespace Sci.Production.Quality
 
             Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\P03_Crocking_Test.xltx"); //預先開啟excel app
             MyUtility.Excel.CopyToXls(ret, xltFileName:"P03_Crocking_Test.xltx", headerline:5, excelAppObj:excel);
-            Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表            
-            excelSheets.Cells[2, 2] = sptext.Text.ToString();
-            excelSheets.Cells[2, 4] = SEQtext.Text.ToString();
-            excelSheets.Cells[2, 6] = Colortext.Text.ToString();
-            excelSheets.Cells[2, 8] = Styletext.Text.ToString();
-            excelSheets.Cells[2, 10] = dtSeason.Rows[0]["SeasonID"];
-            excelSheets.Cells[3, 2] = SRnotext.Text.ToString();
-            excelSheets.Cells[3, 4] = Wknotext.Text.ToString();
-            excelSheets.Cells[3, 6] = ResultText.Text.ToString();
-            excelSheets.Cells[3, 8] = LIDate.Text.ToString();
-            excelSheets.Cells[3, 10] = Brandtext.Text.ToString();
-            excelSheets.Cells[4, 2] = BRnotext.Text.ToString();
-            excelSheets.Cells[4, 4] = AQtytext.Text.ToString();
-            excelSheets.Cells[4, 6] = Arrdate.Text.ToString();
-            excelSheets.Cells[4, 8] = Supptext.Text.ToString();
-            excelSheets.Cells[4, 10] = checkBox1.Value.ToString();
+            Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表      
+            excel.Cells[2, 2] = sptext.Text.ToString();
+            excel.Cells[2, 4] = SEQtext.Text.ToString();
+            excel.Cells[2, 6] = Colortext.Text.ToString();
+            excel.Cells[2, 8] = Styletext.Text.ToString();
+            excel.Cells[2, 10] = dtSeason.Rows[0]["SeasonID"];
+            excel.Cells[3, 2] = SRnotext.Text.ToString();
+            excel.Cells[3, 4] = Wknotext.Text.ToString();
+            excel.Cells[3, 6] = ResultText.Text.ToString();
+            excel.Cells[3, 8] = LIDate.Text.ToString();
+            excel.Cells[3, 10] = Brandtext.Text.ToString();
+            excel.Cells[4, 2] = BRnotext.Text.ToString();
+            excel.Cells[4, 4] = AQtytext.Text.ToString();
+            excel.Cells[4, 6] = Arrdate.Text.ToString();
+            excel.Cells[4, 8] = Supptext.Text.ToString();
+            excel.Cells[4, 10] = checkBox1.Value.ToString();
+            //excelSheets.Cells[2, 2] = sptext.Text.ToString();
+            //excelSheets.Cells[2, 4] = SEQtext.Text.ToString();
+            //excelSheets.Cells[2, 6] = Colortext.Text.ToString();
+            //excelSheets.Cells[2, 8] = Styletext.Text.ToString();
+            //excelSheets.Cells[2, 10] = dtSeason.Rows[0]["SeasonID"];
+            //excelSheets.Cells[3, 2] = SRnotext.Text.ToString();
+            //excelSheets.Cells[3, 4] = Wknotext.Text.ToString();
+            //excelSheets.Cells[3, 6] = ResultText.Text.ToString();
+            //excelSheets.Cells[3, 8] = LIDate.Text.ToString();
+            //excelSheets.Cells[3, 10] = Brandtext.Text.ToString();
+            //excelSheets.Cells[4, 2] = BRnotext.Text.ToString();
+            //excelSheets.Cells[4, 4] = AQtytext.Text.ToString();
+            //excelSheets.Cells[4, 6] = Arrdate.Text.ToString();
+            //excelSheets.Cells[4, 8] = Supptext.Text.ToString();
+            //excelSheets.Cells[4, 10] = checkBox1.Value.ToString();
 
             if (excelSheets != null) Marshal.FinalReleaseComObject(excelSheets);//釋放sheet
             if (excel != null) Marshal.FinalReleaseComObject(excel);          //釋放objApp

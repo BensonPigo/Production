@@ -440,7 +440,7 @@ namespace Sci.Production.Quality
             #region Excel Grid Value
             DataTable dt;
             DualResult xresult;
-             if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,Scale,Result,Inspdate,Inspector,Remark from FIR_Shadebond where id='{0}'", textID.Text), out dt))
+            if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,Scale,Result,Inspdate,Inspector,Remark from FIR_Shadebone where id='{0}'", textID.Text), out dt))
             //if (xresult = DBProxy.Current.Select("Production", "select Roll,Dyelot,Scale,Result,Inspdate,Inspector,Remark from FIR_Shadebond  where id in ('487992')", out dt)) //測試用
             {
                 if (dt.Rows.Count <= 0)
@@ -456,7 +456,7 @@ namespace Sci.Production.Quality
            // if (xresult1 = DBProxy.Current.Select("Production",
              //   "select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID from FIR_Shadebond a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID in ('487992')", out dt1))//測試用
             if (xresult1 = DBProxy.Current.Select("Production", string.Format(
-            "select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID from FIR_Shadebond a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", textID.Text), out dt1))
+            "select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID from FIR_Shadebone a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", textID.Text), out dt1))
             {
                 if (dt1.Rows.Count <= 0)
                 {

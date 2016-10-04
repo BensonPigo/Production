@@ -768,7 +768,7 @@ namespace Sci.Production.Quality
             DataTable dtSeason;
             DualResult sResult;
             if (sResult = DBProxy.Current.Select("Production", string.Format(
-            "select C.SeasonID from FIR_Shadebond a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", maindr["ID"]), out dtSeason))
+            "select C.SeasonID from FIR_Shadebone a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", maindr["ID"]), out dtSeason))
             {
                 if (dtSeason.Rows.Count <= 0)
                 {
