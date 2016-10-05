@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Sci.Data;
 
 namespace Sci.Production
 {
@@ -15,8 +16,9 @@ namespace Sci.Production
         {
             //Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
+            
             Sci.Env.AppInit();
+            DBProxy.Current.DefaultTimeout = 300;  //加長時間為5分鐘，避免timeout
             Application.Run(new Main());
             Sci.Env.AppShutdown();
         }
