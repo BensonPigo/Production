@@ -209,6 +209,7 @@ namespace Sci.Production.PPIC
                 textBox3.Text = "";
                 displayBox1.Value = "";
                 e.Cancel = true;
+                textBox1.Focus();
                 return;
             }
         }
