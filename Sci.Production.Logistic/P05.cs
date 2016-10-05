@@ -53,7 +53,7 @@ from ClogReceive cr
 left join Orders o on cr.OrderID =  o.ID
 left join Country c on o.Dest = c.ID
 left join PackingList_Detail pd on pd.ID = cr.PackingListID and pd.OrderID = cr.OrderID and pd.CTNStartNo = cr.CTNStartNo and pd.CTNQty > 0
-left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+inner join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(dateRange1.Value1))
