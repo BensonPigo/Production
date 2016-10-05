@@ -156,13 +156,12 @@
             // 
             // textBox4
             // 
-            this.textBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.textBox4.BackColor = System.Drawing.Color.White;
             this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "actioncode", true));
             this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox4.IsSupportEditMode = false;
             this.textBox4.Location = new System.Drawing.Point(102, 112);
             this.textBox4.Name = "textBox4";
-            this.textBox4.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.textBox4.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditMode;
             this.textBox4.ReadOnly = true;
             this.textBox4.Size = new System.Drawing.Size(198, 23);
             this.textBox4.TabIndex = 19;
