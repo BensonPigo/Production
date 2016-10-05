@@ -57,7 +57,7 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList where MDivisio
             Helper.Controls.Grid.Generator(this.grid1)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5))
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(14))
-                .Text("StyleID", header: "Style", width: Widths.AnsiChars(10))
+                .Text("OriginalStyleID", header: "Style", width: Widths.AnsiChars(10))
                 .Numeric("OriginalQty", header: "Order\r\nQty", settings: oriqty, width: Widths.AnsiChars(5))
                 .Text("OriginalBuyerDelivery", header: "Buyer\r\nDel", width: Widths.AnsiChars(5))
                 .Text("OriginalSCIDelivery", header: "SCI\r\nDel", width: Widths.AnsiChars(5))
