@@ -608,10 +608,16 @@ namespace Sci.Production.Subcon
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
+            //bug fix:0000244:SUBCON_P30_Local Purchase，1.新增資料存檔後，表身資料會不見。
+//            this.DetailSelectCommand = string.Format(@"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
+//                                                        from localpo_detail 
+//                                                            inner join orders on localpo_detail.orderid = orders.id
+//                                                            inner join localitem on localitem.refno = localpo_detail.refno 
+//                                                        Where localpo_detail.id = '{0}' order by orderid,localpo_detail.refno,threadcolorid ", masterID);
             this.DetailSelectCommand = string.Format(@"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
                                                         from localpo_detail 
-                                                            inner join orders on localpo_detail.orderid = orders.id
-                                                            inner join localitem on localitem.refno = localpo_detail.refno 
+                                                            left join orders on localpo_detail.orderid = orders.id
+                                                            left join localitem on localitem.refno = localpo_detail.refno 
                                                         Where localpo_detail.id = '{0}' order by orderid,localpo_detail.refno,threadcolorid ", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -620,10 +626,15 @@ namespace Sci.Production.Subcon
 
         protected override bool ClickNewBefore()
         {
+//            this.DetailSelectCommand = string.Format(@"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
+//                                                        from localpo_detail 
+//                                                            inner join orders on localpo_detail.orderid = orders.id
+//                                                            inner join localitem on localitem.refno = localpo_detail.refno 
+//                                                        where 1=2 order by orderid,localpo_detail.refno,threadcolorid ");
             this.DetailSelectCommand = string.Format(@"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
                                                         from localpo_detail 
-                                                            inner join orders on localpo_detail.orderid = orders.id
-                                                            inner join localitem on localitem.refno = localpo_detail.refno 
+                                                            left join orders on localpo_detail.orderid = orders.id
+                                                            left join localitem on localitem.refno = localpo_detail.refno 
                                                         where 1=2 order by orderid,localpo_detail.refno,threadcolorid ");
             return base.ClickNewBefore();
         }
