@@ -20,11 +20,13 @@ namespace Sci.Production.Quality
         DataTable DefectTb, DefectFilterTb;
 
         private DataTable gridTb;
+        public DataRow mainrow;
         
-        public P01_PhysicalInspection_Defect(DataTable defectTb)
+        public P01_PhysicalInspection_Defect(DataTable defectTb,DataRow maindr)
         {
             InitializeComponent();
             DefectTb = defectTb;
+            mainrow = maindr;
 
         }
         protected override void OnAttached(DataRow data)
@@ -182,13 +184,14 @@ namespace Sci.Production.Quality
             CurrentData["TotalPoint"] = SumPoint;
             CurrentData["PointRate"] = Math.Round((SumPoint / MyUtility.Convert.GetDouble(CurrentData["ActualYds"])) * 100, 2);
             #region Grade,Result
-            string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", CurrentData["SCiRefno"].ToString(), "Fabric", "SciRefno");
+           // string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", CurrentData["SCiRefno"].ToString(), "Fabric", "SciRefno");
+            string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", mainrow["SCiRefno"].ToString(), "Fabric", "SciRefno");
             string grade_cmd = String.Format("SELECT MIN(GRADE) grade FROM FIR_Grade WHERE WEAVETYPEID = '{0}' AND PERCENTAGE >= IIF({1} > 100,100,{1})", WeaveTypeid, CurrentData["PointRate"]);
             DataRow grade_dr;
             if (MyUtility.Check.Seek(grade_cmd, out grade_dr))
             {
-                CurrentData["Grade"] = grade_dr["ID"];
-                CurrentData["Result"] = MyUtility.GetValue.Lookup(string.Format("Select Result from Fir_Grade wher WEAVETYPEID = '{0}' and Grand = '{1}'",WeaveTypeid,grade_dr["ID"]),null);
+                CurrentData["Grade"] = grade_dr["grade"];
+                CurrentData["Result"] = MyUtility.GetValue.Lookup(string.Format("Select Result from Fir_Grade where WEAVETYPEID = '{0}' and Grade = '{1}'", WeaveTypeid, grade_dr["grade"]), null);
             }
             #endregion
             return base.DoSave();

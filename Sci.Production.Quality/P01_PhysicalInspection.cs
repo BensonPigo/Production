@@ -134,9 +134,10 @@ namespace Sci.Production.Quality
             TotalPointcell.EditingMouseDoubleClick += (s, e) =>
             {
                 grid.ValidateControl();
-                P01_PhysicalInspection_Defect frm = new P01_PhysicalInspection_Defect(Fir_physical_Defect);
+                P01_PhysicalInspection_Defect frm = new P01_PhysicalInspection_Defect(Fir_physical_Defect,maindr);
                 frm.Set(EditMode, Datas, grid.GetDataRow(e.RowIndex));
-                frm.ShowDialog(this);     
+                frm.ShowDialog(this);   
+               
             };
             #endregion
             #region Roll

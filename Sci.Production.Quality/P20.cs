@@ -49,7 +49,7 @@ namespace Sci.Production.Quality
             {
                 if (!MyUtility.Check.Seek(string.Format(@"select id from Orders where ID='{0}' and FactoryID='{1}'", textValue, Sci.Env.User.Factory)))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< SP# > is not exist OR Factory is not match !!", textValue));
+                    MyUtility.Msg.WarningBox(string.Format("< SP# > does not exist OR Factory is not match !!", textValue));
                     this.txtSP.Text = "";
                     e.Cancel = true;
                     return;

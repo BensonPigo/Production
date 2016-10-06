@@ -99,7 +99,7 @@ namespace Sci.Production.Quality
              }
              if (dtCode.Rows.Count == 0)
              {
-                 MyUtility.Msg.WarningBox("The first word is not exist in <GarmentDefectType-ID>");
+                 MyUtility.Msg.WarningBox("The first word does not exist in <GarmentDefectType-ID>");
                  this.textBox1.Focus();
                  return false;
              }
