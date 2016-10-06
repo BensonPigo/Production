@@ -101,7 +101,6 @@
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportLocate = false;
-            this.IsSupportMove = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B05";

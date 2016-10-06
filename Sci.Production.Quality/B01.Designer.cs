@@ -43,10 +43,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(897, 428);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.editBox1);
@@ -56,16 +52,6 @@
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(897, 390);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 390);
-            // 
-            // tabs
-            // 
-            this.tabs.Location = new System.Drawing.Point(0, 0);
-            this.tabs.Size = new System.Drawing.Size(905, 457);
             // 
             // label1
             // 
@@ -102,7 +88,7 @@
             this.textBox1.Location = new System.Drawing.Point(171, 46);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 7;
+            this.textBox1.TabIndex = 3;
             // 
             // textBox3
             // 
@@ -112,7 +98,7 @@
             this.textBox3.Location = new System.Drawing.Point(171, 210);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(100, 23);
-            this.textBox3.TabIndex = 9;
+            this.textBox3.TabIndex = 6;
             // 
             // checkBox1
             // 
@@ -122,7 +108,7 @@
             this.checkBox1.Location = new System.Drawing.Point(311, 46);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 10;
+            this.checkBox1.TabIndex = 4;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -134,17 +120,18 @@
             this.editBox1.Location = new System.Drawing.Point(171, 122);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(197, 50);
-            this.editBox1.TabIndex = 11;
+            this.editBox1.Size = new System.Drawing.Size(292, 50);
+            this.editBox1.TabIndex = 5;
             // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(905, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "editBox1";
             this.IsDeleteOnBrowse = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportLocate = false;
-            this.IsSupportMove = false;
             this.IsSupportPrint = false;
             this.Name = "B01";
             this.Text = "B01. Defect Code For Fabric Inspection";
@@ -158,6 +145,7 @@
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

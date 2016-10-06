@@ -39,11 +39,20 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(857, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Size = new System.Drawing.Size(857, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(857, 38);
             // 
             // browse
             // 
@@ -91,7 +100,6 @@
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportLocate = false;
-            this.IsSupportMove = false;
             this.IsSupportPrint = false;
             this.Name = "B03";
             this.Text = "B03. Grey Scale";

@@ -96,7 +96,7 @@
             this.textBox1.Location = new System.Drawing.Point(188, 54);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 22;
+            this.textBox1.TabIndex = 4;
             // 
             // label1
             // 
@@ -152,7 +152,7 @@
             this.textBox2.Location = new System.Drawing.Point(188, 130);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(100, 23);
-            this.textBox2.TabIndex = 28;
+            this.textBox2.TabIndex = 5;
             // 
             // textBox3
             // 
@@ -162,7 +162,7 @@
             this.textBox3.Location = new System.Drawing.Point(379, 130);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(100, 23);
-            this.textBox3.TabIndex = 29;
+            this.textBox3.TabIndex = 6;
             // 
             // comboBox1
             // 
@@ -174,16 +174,17 @@
             this.comboBox1.Location = new System.Drawing.Point(188, 209);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 30;
+            this.comboBox1.TabIndex = 7;
             // 
             // B04
             // 
             this.ClientSize = new System.Drawing.Size(854, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox2";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportLocate = false;
-            this.IsSupportMove = false;
             this.IsSupportPrint = false;
             this.Name = "B04";
             this.Text = "B04 .The Level of Supplier";

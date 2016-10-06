@@ -24,10 +24,9 @@ namespace Sci.Production.Quality
             Dictionary<String,String> combobox1_RowSource = new Dictionary<string,string>();
             combobox1_RowSource.Add("F", "Fabric");
             combobox1_RowSource.Add("A", "Accessories");
-            combobox1_RowSource.Add("", "");
             comboBox1.DataSource = new BindingSource(combobox1_RowSource, null);
             comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Values";
+            comboBox1.DisplayMember = "Value";
         }
         protected override void ClickEditAfter()
         {

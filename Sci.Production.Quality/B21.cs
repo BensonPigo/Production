@@ -24,10 +24,20 @@ namespace Sci.Production.Quality
         }
          protected override void ClickEditAfter()
          {
-             base.ClickEditAfter();
              this.textBox1.ReadOnly = true;
              this.textBox3.ReadOnly = true;
-             
+             base.ClickEditAfter();           
+                         
+         }
+         protected override bool ClickNewBefore()
+         {
+             this.textBox3.Text = "";
+             return base.ClickNewBefore();
+         }
+         protected override void ClickNewAfter()
+         {
+             this.textBox3.ReadOnly = true;
+             base.ClickNewAfter();
          }
          private void chk_typeCodeID(object sender, CancelEventArgs e)
          {
@@ -48,7 +58,7 @@ namespace Sci.Production.Quality
              }
              if (dtCode.Rows.Count == 0)
              {
-                 MyUtility.Msg.WarningBox("The first word is not exist in <GarmentDefectType>");
+                 MyUtility.Msg.WarningBox("The first word does not exist in <GarmentDefectType>");
                  e.Cancel = true;
                  return;
              }
@@ -113,22 +123,22 @@ namespace Sci.Production.Quality
              
          }
 
-         private void textBox2_Click(object sender, EventArgs e)
-         {
-             if (this.textBox1.Text != "")
-             {
-                 this.textBox3.Text = (this.textBox1.Text).ToString().Substring(0, 1);
+         //private void textBox2_Click(object sender, EventArgs e)
+         //{
+         //    if (this.textBox1.Text != "")
+         //    {
+         //        this.textBox3.Text = (this.textBox1.Text).ToString().Substring(0, 1);
 
-             }
-         }
-         private void textBox2_KeyUp(object sender, KeyEventArgs e)
-         {
+         //    }
+         //}
+         //private void textBox2_KeyUp(object sender, KeyEventArgs e)
+         //{
           
-             if (this.textBox1.Text != "")
-             {
-                 this.textBox3.Text = (this.textBox1.Text).ToString().Substring(0, 1);
+         //    if (this.textBox1.Text != "")
+         //    {
+         //        this.textBox3.Text = (this.textBox1.Text).ToString().Substring(0, 1);
 
-             }
-         }
+         //    }
+         //}
     }
 }

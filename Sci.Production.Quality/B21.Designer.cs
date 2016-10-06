@@ -44,7 +44,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(703, 395);
+            this.detail.Size = new System.Drawing.Size(922, 395);
             // 
             // detailcont
             // 
@@ -54,19 +54,19 @@
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(703, 357);
+            this.detailcont.Size = new System.Drawing.Size(922, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(703, 38);
+            this.detailbtm.Size = new System.Drawing.Size(922, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(703, 395);
+            this.browse.Size = new System.Drawing.Size(922, 395);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(711, 424);
+            this.tabs.Size = new System.Drawing.Size(930, 424);
             // 
             // label1
             // 
@@ -103,19 +103,18 @@
             this.textBox1.Location = new System.Drawing.Point(156, 66);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 5;
+            this.textBox1.TabIndex = 0;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // textBox3
             // 
             this.textBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "GarmentDefectTypeID", true));
             this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.textBox3.Location = new System.Drawing.Point(409, 66);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
             this.textBox3.Size = new System.Drawing.Size(100, 23);
-            this.textBox3.TabIndex = 7;
+            this.textBox3.TabIndex = 1;
             // 
             // editBox1
             // 
@@ -126,20 +125,20 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(221, 71);
-            this.editBox1.TabIndex = 8;
+            this.editBox1.TabIndex = 2;
             // 
             // B21
             // 
-            this.ClientSize = new System.Drawing.Size(711, 457);
+            this.ClientSize = new System.Drawing.Size(930, 457);
+            this.DefaultControl = "textBox1";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportLocate = false;
-            this.IsSupportMove = false;
             this.IsSupportPrint = false;
             this.KeyPreview = true;
             this.Name = "B21";
-            this.Text = "B21. Defect Detail for REF/CFA(Garment)       ";
+            this.Text = "B21. Defect Detail for RFT/CFA(Garment)       ";
             this.WorkAlias = "GarmentDefectCode";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
