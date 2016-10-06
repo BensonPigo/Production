@@ -330,6 +330,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         {
             base.ClickNewAfter();
             CurrentMaintain["Status"] = "New";
+            textBox2.BackColor = Color.White;
         }
 
         protected override void ClickCopyAfter()
@@ -338,6 +339,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
             CurrentMaintain["Version"] = DBNull.Value;
             CurrentMaintain["IEReasonID"] = "";
             CurrentMaintain["Status"] = "New";
+            textBox2.BackColor = Color.White;
         }
 
         protected override bool ClickEditBefore()
@@ -353,6 +355,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                 MyUtility.Msg.WarningBox("This record already confirmed, so can't modify this record!!");
                 return false;
             }
+            textBox2.BackColor = Color.White;
             return true;
         }
 
@@ -433,6 +436,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                 }
                 CurrentMaintain["Version"] = newVersion;
             }
+            textBox2.BackColor = textBox7.BackColor;
             return true;
         }
         
@@ -468,6 +472,12 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
             Sci.Production.IE.P03_Print callNextForm = new Sci.Production.IE.P03_Print(CurrentMaintain, MyUtility.Convert.GetDecimal(numericBox8.Value));
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
+        }
+
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            textBox2.BackColor = textBox7.BackColor;
         }
 
         //加總傳入的GroupKey的GSD & Cycle Time

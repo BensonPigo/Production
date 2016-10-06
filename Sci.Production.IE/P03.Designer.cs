@@ -371,9 +371,19 @@
             this.numericBox1.IsSupportEditMode = false;
             this.numericBox1.Location = new System.Drawing.Point(57, 7);
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.ReadOnly = true;
             this.numericBox1.Size = new System.Drawing.Size(43, 21);
             this.numericBox1.TabIndex = 7;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // textBox1
             // 
@@ -530,9 +540,19 @@
             this.numericBox2.IsSupportEditMode = false;
             this.numericBox2.Location = new System.Drawing.Point(331, 35);
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(55, 21);
             this.numericBox2.TabIndex = 21;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox3
             // 
@@ -542,9 +562,19 @@
             this.numericBox3.IsSupportEditMode = false;
             this.numericBox3.Location = new System.Drawing.Point(331, 63);
             this.numericBox3.Name = "numericBox3";
+            this.numericBox3.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox3.ReadOnly = true;
             this.numericBox3.Size = new System.Drawing.Size(55, 21);
             this.numericBox3.TabIndex = 22;
+            this.numericBox3.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox4
             // 
@@ -554,9 +584,19 @@
             this.numericBox4.IsSupportEditMode = false;
             this.numericBox4.Location = new System.Drawing.Point(331, 91);
             this.numericBox4.Name = "numericBox4";
+            this.numericBox4.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox4.ReadOnly = true;
             this.numericBox4.Size = new System.Drawing.Size(55, 21);
             this.numericBox4.TabIndex = 23;
+            this.numericBox4.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox5
             // 
@@ -565,9 +605,19 @@
             this.numericBox5.IsSupportEditMode = false;
             this.numericBox5.Location = new System.Drawing.Point(395, 91);
             this.numericBox5.Name = "numericBox5";
+            this.numericBox5.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox5.ReadOnly = true;
             this.numericBox5.Size = new System.Drawing.Size(55, 21);
             this.numericBox5.TabIndex = 26;
+            this.numericBox5.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox6
             // 
@@ -576,9 +626,19 @@
             this.numericBox6.IsSupportEditMode = false;
             this.numericBox6.Location = new System.Drawing.Point(395, 63);
             this.numericBox6.Name = "numericBox6";
+            this.numericBox6.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox6.ReadOnly = true;
             this.numericBox6.Size = new System.Drawing.Size(55, 21);
             this.numericBox6.TabIndex = 25;
+            this.numericBox6.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox7
             // 
@@ -587,9 +647,19 @@
             this.numericBox7.IsSupportEditMode = false;
             this.numericBox7.Location = new System.Drawing.Point(395, 35);
             this.numericBox7.Name = "numericBox7";
+            this.numericBox7.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox7.ReadOnly = true;
             this.numericBox7.Size = new System.Drawing.Size(55, 21);
             this.numericBox7.TabIndex = 24;
+            this.numericBox7.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // shapeContainer1
             // 
@@ -755,9 +825,19 @@
             this.numericBox8.IsSupportEditMode = false;
             this.numericBox8.Location = new System.Drawing.Point(57, 147);
             this.numericBox8.Name = "numericBox8";
+            this.numericBox8.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox8.ReadOnly = true;
             this.numericBox8.Size = new System.Drawing.Size(65, 21);
             this.numericBox8.TabIndex = 32;
+            this.numericBox8.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label16
             // 
@@ -803,9 +883,19 @@
             this.numericBox9.IsSupportEditMode = false;
             this.numericBox9.Location = new System.Drawing.Point(578, 7);
             this.numericBox9.Name = "numericBox9";
+            this.numericBox9.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox9.ReadOnly = true;
             this.numericBox9.Size = new System.Drawing.Size(50, 21);
             this.numericBox9.TabIndex = 39;
+            this.numericBox9.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox10
             // 
@@ -815,9 +905,19 @@
             this.numericBox10.IsSupportEditMode = false;
             this.numericBox10.Location = new System.Drawing.Point(578, 35);
             this.numericBox10.Name = "numericBox10";
+            this.numericBox10.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox10.ReadOnly = true;
             this.numericBox10.Size = new System.Drawing.Size(50, 21);
             this.numericBox10.TabIndex = 40;
+            this.numericBox10.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox12
             // 
@@ -827,9 +927,19 @@
             this.numericBox12.IsSupportEditMode = false;
             this.numericBox12.Location = new System.Drawing.Point(331, 119);
             this.numericBox12.Name = "numericBox12";
+            this.numericBox12.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox12.ReadOnly = true;
             this.numericBox12.Size = new System.Drawing.Size(55, 21);
             this.numericBox12.TabIndex = 42;
+            this.numericBox12.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox13
             // 
@@ -838,8 +948,18 @@
             this.numericBox13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox13.Location = new System.Drawing.Point(395, 118);
             this.numericBox13.Name = "numericBox13";
+            this.numericBox13.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox13.Size = new System.Drawing.Size(55, 21);
             this.numericBox13.TabIndex = 3;
+            this.numericBox13.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox13.Validated += new System.EventHandler(this.numericBox13_Validated);
             // 
             // numericBox14
@@ -849,8 +969,18 @@
             this.numericBox14.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox14.Location = new System.Drawing.Point(559, 147);
             this.numericBox14.Name = "numericBox14";
+            this.numericBox14.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox14.Size = new System.Drawing.Size(50, 21);
             this.numericBox14.TabIndex = 6;
+            this.numericBox14.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox14.Validated += new System.EventHandler(this.numericBox14_Validated);
             // 
             // numericBox16
@@ -861,9 +991,19 @@
             this.numericBox16.IsSupportEditMode = false;
             this.numericBox16.Location = new System.Drawing.Point(590, 119);
             this.numericBox16.Name = "numericBox16";
+            this.numericBox16.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox16.ReadOnly = true;
             this.numericBox16.Size = new System.Drawing.Size(50, 21);
             this.numericBox16.TabIndex = 55;
+            this.numericBox16.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox17
             // 
@@ -873,9 +1013,19 @@
             this.numericBox17.IsSupportEditMode = false;
             this.numericBox17.Location = new System.Drawing.Point(579, 91);
             this.numericBox17.Name = "numericBox17";
+            this.numericBox17.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox17.ReadOnly = true;
             this.numericBox17.Size = new System.Drawing.Size(50, 21);
             this.numericBox17.TabIndex = 54;
+            this.numericBox17.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox19
             // 
@@ -886,9 +1036,19 @@
             this.numericBox19.IsSupportEditMode = false;
             this.numericBox19.Location = new System.Drawing.Point(773, 34);
             this.numericBox19.Name = "numericBox19";
+            this.numericBox19.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox19.ReadOnly = true;
             this.numericBox19.Size = new System.Drawing.Size(50, 21);
             this.numericBox19.TabIndex = 52;
+            this.numericBox19.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox20
             // 
@@ -899,9 +1059,19 @@
             this.numericBox20.IsSupportEditMode = false;
             this.numericBox20.Location = new System.Drawing.Point(773, 6);
             this.numericBox20.Name = "numericBox20";
+            this.numericBox20.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox20.ReadOnly = true;
             this.numericBox20.Size = new System.Drawing.Size(50, 21);
             this.numericBox20.TabIndex = 51;
+            this.numericBox20.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label23
             // 
@@ -992,9 +1162,19 @@
             this.numericBox21.IsSupportEditMode = false;
             this.numericBox21.Location = new System.Drawing.Point(743, 119);
             this.numericBox21.Name = "numericBox21";
+            this.numericBox21.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox21.ReadOnly = true;
             this.numericBox21.Size = new System.Drawing.Size(68, 21);
             this.numericBox21.TabIndex = 61;
+            this.numericBox21.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox22
             // 
@@ -1004,9 +1184,19 @@
             this.numericBox22.IsSupportEditMode = false;
             this.numericBox22.Location = new System.Drawing.Point(743, 147);
             this.numericBox22.Name = "numericBox22";
+            this.numericBox22.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox22.ReadOnly = true;
             this.numericBox22.Size = new System.Drawing.Size(68, 21);
             this.numericBox22.TabIndex = 62;
+            this.numericBox22.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox23
             // 
@@ -1016,9 +1206,19 @@
             this.numericBox23.IsSupportEditMode = false;
             this.numericBox23.Location = new System.Drawing.Point(743, 175);
             this.numericBox23.Name = "numericBox23";
+            this.numericBox23.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox23.ReadOnly = true;
             this.numericBox23.Size = new System.Drawing.Size(68, 21);
             this.numericBox23.TabIndex = 63;
+            this.numericBox23.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // button1
             // 
@@ -1075,9 +1275,19 @@
             this.numericBox11.IsSupportEditMode = false;
             this.numericBox11.Location = new System.Drawing.Point(578, 63);
             this.numericBox11.Name = "numericBox11";
+            this.numericBox11.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox11.ReadOnly = true;
             this.numericBox11.Size = new System.Drawing.Size(58, 21);
             this.numericBox11.TabIndex = 71;
+            this.numericBox11.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox15
             // 
@@ -1087,9 +1297,19 @@
             this.numericBox15.IsSupportEditMode = false;
             this.numericBox15.Location = new System.Drawing.Point(773, 63);
             this.numericBox15.Name = "numericBox15";
+            this.numericBox15.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox15.ReadOnly = true;
             this.numericBox15.Size = new System.Drawing.Size(58, 21);
             this.numericBox15.TabIndex = 72;
+            this.numericBox15.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox18
             // 
@@ -1099,9 +1319,19 @@
             this.numericBox18.IsSupportEditMode = false;
             this.numericBox18.Location = new System.Drawing.Point(743, 91);
             this.numericBox18.Name = "numericBox18";
+            this.numericBox18.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox18.ReadOnly = true;
             this.numericBox18.Size = new System.Drawing.Size(58, 21);
             this.numericBox18.TabIndex = 73;
+            this.numericBox18.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label31
             // 
