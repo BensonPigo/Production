@@ -74,8 +74,8 @@
             this.editBox1.Location = new System.Drawing.Point(188, 119);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(197, 50);
-            this.editBox1.TabIndex = 18;
+            this.editBox1.Size = new System.Drawing.Size(401, 109);
+            this.editBox1.TabIndex = 1;
             // 
             // checkBox1
             // 
@@ -85,7 +85,7 @@
             this.checkBox1.Location = new System.Drawing.Point(328, 43);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 17;
+            this.checkBox1.TabIndex = 2;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -97,7 +97,7 @@
             this.textBox1.Location = new System.Drawing.Point(188, 43);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 15;
+            this.textBox1.TabIndex = 0;
             // 
             // label1
             // 
@@ -120,11 +120,12 @@
             // B02
             // 
             this.ClientSize = new System.Drawing.Size(860, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "editBox1";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportLocate = false;
-            this.IsSupportMove = false;
             this.IsSupportPrint = false;
             this.Name = "B02";
             this.Text = "B02. Defect Code For Accessory Inspection";

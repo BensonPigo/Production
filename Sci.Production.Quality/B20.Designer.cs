@@ -41,6 +41,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(828, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.editBox1);
@@ -48,6 +52,11 @@
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.label2);
+            this.detailcont.Size = new System.Drawing.Size(828, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(828, 38);
             // 
             // browse
             // 
@@ -83,7 +92,7 @@
             this.checkBox1.Location = new System.Drawing.Point(352, 54);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 6;
+            this.checkBox1.TabIndex = 2;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -95,7 +104,7 @@
             this.textBox1.Location = new System.Drawing.Point(226, 54);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 7;
+            this.textBox1.TabIndex = 0;
             // 
             // editBox1
             // 
@@ -106,19 +115,20 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(171, 64);
-            this.editBox1.TabIndex = 8;
+            this.editBox1.TabIndex = 1;
             // 
             // B20
             // 
             this.ClientSize = new System.Drawing.Size(836, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "editBox1";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportLocate = false;
-            this.IsSupportMove = false;
             this.IsSupportPrint = false;
             this.Name = "B20";
-            this.Text = "B20. Defect type for REF/CFA(Garment))";
+            this.Text = "B20. Defect type for RFT/CFA(Garment)";
             this.WorkAlias = "GarmentDefectType";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
