@@ -131,7 +131,7 @@ left join ATData a2 on a2.FakeID = st.Seq+'Pri'";
 
             //填內容值
             int intRowsStart = 3;
-            object[,] objArray = new object[1, 64];
+            object[,] objArray = new object[1, 100];
             foreach (DataRow dr in printData.Rows)
             {
                 objArray[0, 0] = dr["ID"];
