@@ -436,7 +436,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                 System.Data.SqlClient.SqlParameter sp_StocktakingID = new System.Data.SqlClient.SqlParameter();
                 sp_StocktakingID.ParameterName = "@poid";
-                sp_StocktakingID.Value = dr["poid"].ToString();
+                sp_StocktakingID.Value = dr["poid"].ToString().Trim();
                 cmds.Add(sp_StocktakingID);
                 System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
                 sp_mdivision.ParameterName = "@MDivisionid";

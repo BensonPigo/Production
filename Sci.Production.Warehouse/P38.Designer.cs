@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
             this.cbxStockType = new Sci.Win.UI.ComboBox();
             this.label3 = new Sci.Win.UI.Label();
@@ -39,11 +40,11 @@
             this.panel2 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.btnExcel = new Sci.Win.UI.Button();
             this.btnLock = new Sci.Win.UI.Button();
             this.button4 = new Sci.Win.UI.Button();
             this.btnUnlock = new Sci.Win.UI.Button();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
-            this.btnExcel = new Sci.Win.UI.Button();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
@@ -190,6 +191,17 @@
             this.panel3.Size = new System.Drawing.Size(1008, 60);
             this.panel3.TabIndex = 0;
             // 
+            // btnExcel
+            // 
+            this.btnExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExcel.Location = new System.Drawing.Point(664, 15);
+            this.btnExcel.Name = "btnExcel";
+            this.btnExcel.Size = new System.Drawing.Size(80, 30);
+            this.btnExcel.TabIndex = 3;
+            this.btnExcel.Text = "To Excel";
+            this.btnExcel.UseVisualStyleBackColor = true;
+            this.btnExcel.Click += new System.EventHandler(this.btnExcel_Click);
+            // 
             // btnLock
             // 
             this.btnLock.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -222,17 +234,6 @@
             this.btnUnlock.Text = "Unlock";
             this.btnUnlock.UseVisualStyleBackColor = true;
             this.btnUnlock.Click += new System.EventHandler(this.btnUnlock_Click);
-            // 
-            // btnExcel
-            // 
-            this.btnExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExcel.Location = new System.Drawing.Point(664, 15);
-            this.btnExcel.Name = "btnExcel";
-            this.btnExcel.Size = new System.Drawing.Size(80, 30);
-            this.btnExcel.TabIndex = 3;
-            this.btnExcel.Text = "To Excel";
-            this.btnExcel.UseVisualStyleBackColor = true;
-            this.btnExcel.Click += new System.EventHandler(this.btnExcel_Click);
             // 
             // P38
             // 

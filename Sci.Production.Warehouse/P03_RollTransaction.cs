@@ -35,9 +35,10 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
             this.displayBox1.Text = dr["seq1"].ToString() + "-" + dr["seq2"].ToString();
             this.displayBox2.Text = MyUtility.GetValue.Lookup(string.Format("select dbo.getmtldesc('{0}','{1}','{2}',2,0)", dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString()));
-            this.numericBox1.Value = decimal.Parse(dr["inqty"].ToString());
-            this.numericBox2.Value = decimal.Parse(dr["outqty"].ToString());
-            this.numericBox3.Value = decimal.Parse(dr["inqty"].ToString()) - decimal.Parse(dr["outqty"].ToString()) + decimal.Parse(dr["adjustqty"].ToString());
+            this.numericBox1.Value = MyUtility.Check.Empty( dr["inqty"]) ? decimal.Parse("0.00"): decimal.Parse(dr["inqty"].ToString());
+            this.numericBox2.Value = MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["outqty"].ToString());
+            this.numericBox3.Value = (MyUtility.Check.Empty(dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["inqty"].ToString())) -
+              ( MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["outqty"].ToString())) +(MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["adjustqty"].ToString()));
 
 
             #region Grid1 - Sql command
