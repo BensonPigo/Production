@@ -86,14 +86,6 @@
             <param name="region"></param>
             <returns></returns>
         </member>
-        <member name="M:Sci.DB.Transfer.List_DatabaseFile(Sci.DB.TransRegion,System.Collections.Generic.List{System.String}@)">
-            <summary>
-            查詢 DB 的實體檔案路徑
-            </summary>
-            <param name="dbName"></param>
-            <param name="files"></param>
-            <returns></returns>
-        </member>
         <member name="M:Sci.DB.Transfer.Detach_Database(Sci.DB.TransRegion)">
             <summary>
             將 DB Detach,並刪除 log檔( .ldf )
