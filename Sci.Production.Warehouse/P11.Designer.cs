@@ -367,7 +367,8 @@
             // btnBreakDown
             // 
             this.btnBreakDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBreakDown.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnBreakDown.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnBreakDown.Enabled = false;
             this.btnBreakDown.Location = new System.Drawing.Point(887, 65);
             this.btnBreakDown.Name = "btnBreakDown";
             this.btnBreakDown.Size = new System.Drawing.Size(104, 30);
