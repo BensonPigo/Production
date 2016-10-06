@@ -18,8 +18,11 @@ namespace Sci.Production.Planning
         public P01_BatchApprove(string orderid)
         {
             InitializeComponent();
-            this.textBoxSp1.Text = orderid;
-            this.textBoxSp2.Text = orderid;
+
+            //BUG FIX:0000388: PLANNING_P01_BatchApprove。2.sp#不需要預設帶值。
+            //this.textBoxSp1.Text = orderid;
+            //this.textBoxSp2.Text = orderid;
+
             dateRangeApvDate.Enabled = false;
             btnUnApprove.Enabled = false;
         }
