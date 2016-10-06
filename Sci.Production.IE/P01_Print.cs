@@ -134,7 +134,10 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(masterData["ID
             worksheet.Cells[intRowsStart, 1] = "Machine:";
             worksheet.Range[String.Format("C{0}:L{0}", intRowsStart)].Merge(Type.Missing);
             worksheet.Range[String.Format("C{0}:L{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
-            worksheet.Cells[intRowsStart, 3] = machineID.Substring(0, machineID.Length - 2);
+
+            //避免machineID為空所產生的錯誤
+            if (machineID.Length > 2) worksheet.Cells[intRowsStart, 3] = machineID.Substring(0, machineID.Length - 2);
+
             worksheet.Range[String.Format("A{0}:L{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 3; //1: 虛線, 2:實線, 3:粗體線
             worksheet.Range[String.Format("A{0}:L{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
             intRowsStart++;
@@ -169,21 +172,39 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(masterData["ID
             worksheet.Range[String.Format("A{0}:C{0}", intRowsStart)].Merge(Type.Missing);
             worksheet.Range[String.Format("A{0}:C{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
             worksheet.Cells[intRowsStart, 1] = "100% Output/Hr:";
-            worksheet.Cells[intRowsStart, 4] = MyUtility.Math.Round(3600/MyUtility.Convert.GetDecimal(masterData["TotalSewingTime"])*MyUtility.Convert.GetDecimal(masterData["NumberSewer"]),0);
+
+            //避免分母為0的錯誤
+            if (MyUtility.Convert.GetDecimal(masterData["TotalSewingTime"]) > 0 && MyUtility.Convert.GetDecimal(masterData["NumberSewer"]) > 0)
+            {
+                worksheet.Cells[intRowsStart, 4] = MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(masterData["TotalSewingTime"]) * MyUtility.Convert.GetDecimal(masterData["NumberSewer"]), 0);
+            }
+            
             worksheet.Cells[intRowsStart, 5] = "Pcs";
 
             intRowsStart++;
             worksheet.Range[String.Format("A{0}:C{0}", intRowsStart)].Merge(Type.Missing);
             worksheet.Range[String.Format("A{0}:C{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
             worksheet.Cells[intRowsStart, 1] = string.Format("{0}%", MyUtility.Convert.GetString(efficiency));
-            worksheet.Cells[intRowsStart, 4] = MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(masterData["TotalSewingTime"]) * MyUtility.Convert.GetDecimal(masterData["NumberSewer"]) * efficiency/100, 0);
+
+            //避免分母為0的錯誤
+            if (MyUtility.Convert.GetDecimal(masterData["TotalSewingTime"]) > 0 && MyUtility.Convert.GetDecimal(masterData["NumberSewer"]) > 0)
+            {
+                worksheet.Cells[intRowsStart, 4] = MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(masterData["TotalSewingTime"]) * MyUtility.Convert.GetDecimal(masterData["NumberSewer"]) * efficiency / 100, 0);
+            }
+
             worksheet.Cells[intRowsStart, 5] = "Pcs";
 
             intRowsStart++;
             worksheet.Range[String.Format("A{0}:C{0}", intRowsStart)].Merge(Type.Missing);
             worksheet.Range[String.Format("A{0}:C{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
             worksheet.Cells[intRowsStart, 1] = "PCS/HR/Sewer:";
-            worksheet.Cells[intRowsStart, 4] = MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(masterData["TotalSewingTime"]), 2);
+
+            //避免分母為0的錯誤
+            if (MyUtility.Convert.GetDecimal(masterData["TotalSewingTime"]) > 0 && MyUtility.Convert.GetDecimal(masterData["NumberSewer"]) > 0)
+            {
+                worksheet.Cells[intRowsStart, 4] = MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(masterData["TotalSewingTime"]), 2);
+            }
+
             worksheet.Cells[intRowsStart, 5] = "Pcs";
             worksheet.Cells[intRowsStart, 7] = "Noted by:";
             worksheet.Range[String.Format("H{0}:L{0}", intRowsStart)].Merge(Type.Missing);
