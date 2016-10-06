@@ -115,7 +115,7 @@ as
                   from OrderQty oq1, Pullout_Detail pd, Pullout_Detail_Detail pdd
 				  where oq1.OrderID = pd.OrderID
 				  and oq1.OrderShipmodeSeq = pd.OrderShipmodeSeq
-				  and pdd.UKey = pd.UKey
+				  and pdd.Pullout_DetailUKey = pd.UKey
 				  and pdd.Article = oq1.Article
 				  and pdd.SizeCode = oq1.SizeCode
 				  group by oq1.OrderID,oq1.OrderShipmodeSeq,pdd.Article,pdd.SizeCode) a on a.OrderID = oq.OrderID and a.OrderShipmodeSeq = oq.OrderShipmodeSeq and a.Article = oq.Article and a.SizeCode = oq.SizeCode
