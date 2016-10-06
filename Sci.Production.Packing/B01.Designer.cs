@@ -41,10 +41,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(676, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayBox2);
@@ -52,11 +48,6 @@
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(676, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(676, 38);
             // 
             // browse
             // 
@@ -125,8 +116,6 @@
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
-            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B01";
             this.Text = "B01. Overrun garment reason";
