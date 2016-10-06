@@ -107,17 +107,24 @@ namespace Sci.Production.Subcon
             return base.ClickEditBefore();
         }
 
-        // edit後，更新detail的farm in跟accu. ap qty
-        protected override void ClickEditAfter()
-        {
-            base.ClickEditAfter();
-            foreach (DataRow dr in DetailDatas)
-            {
-                dr["Farmin"] = MyUtility.GetValue.Lookup(string.Format("select farmin from artworkpo_detail where ukey = '{0}'", dr["artworkpo_detailukey"].ToString()));
-                dr["accumulatedqty"] = MyUtility.GetValue.Lookup(string.Format("select apqty from artworkpo_detail where ukey = '{0}'", dr["artworkpo_detailukey"].ToString()));
-                dr["balance"] = (decimal)dr["Farmin"] - (decimal)dr["accumulatedqty"];
-            }
-        }
+        //// edit後，更新detail的farm in跟accu. ap qty
+        //protected override void ClickEditAfter()
+        //{
+        //    base.ClickEditAfter();
+        //    foreach (DataRow dr in DetailDatas)
+        //    {
+        //        var v = MyUtility.GetValue.Lookup(string.Format("select farmin from artworkpo_detail where ukey = '{0}'", dr["artworkpo_detailukey"].ToString()));
+        //        decimal accQty; 
+        //        Decimal.TryParse(v,out accQty);
+        //        dr["Farmin"] = accQty;
+        //        var v2=MyUtility.GetValue.Lookup(string.Format("select apqty from artworkpo_detail where ukey = '{0}'", dr["artworkpo_detailukey"].ToString()));
+        //        decimal accQty2;
+        //        Decimal.TryParse(v2,out accQty2);
+        //        dr["accumulatedqty"] = accQty2;
+        //        //無此資料行且結果必=0
+        //        //dr["balance"] = (decimal)dr["Farmin"] - (decimal)dr["accumulatedqty"];
+        //    }
+        //}
 
         // detail 新增時設定預設值
         protected override void OnDetailGridInsert(int index = -1)

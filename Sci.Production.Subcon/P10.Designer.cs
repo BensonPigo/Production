@@ -47,7 +47,6 @@
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox7 = new Sci.Win.UI.DisplayBox();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.numericBox1 = new Sci.Win.UI.NumericBox();
             this.numericBox2 = new Sci.Win.UI.NumericBox();
@@ -64,6 +63,7 @@
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.label8 = new Sci.Win.UI.Label();
             this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
+            this.dateBox2 = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -80,6 +80,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.txtmfactory1);
             this.masterpanel.Controls.Add(this.displayBox4);
             this.masterpanel.Controls.Add(this.label8);
@@ -94,7 +95,6 @@
             this.masterpanel.Controls.Add(this.txtuser1);
             this.masterpanel.Controls.Add(this.numericBox1);
             this.masterpanel.Controls.Add(this.textBox2);
-            this.masterpanel.Controls.Add(this.displayBox7);
             this.masterpanel.Controls.Add(this.txtartworktype_fty1);
             this.masterpanel.Controls.Add(this.displayBox2);
             this.masterpanel.Controls.Add(this.txtsubcon1);
@@ -139,7 +139,6 @@
             this.masterpanel.Controls.SetChildIndex(this.txtsubcon1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtartworktype_fty1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox7, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtuser1, 0);
@@ -154,6 +153,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtmfactory1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
             // 
             // detailpanel
             // 
@@ -176,15 +176,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(1058, 515);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(1052, 469);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(1052, 40);
             // 
             // detail
             // 
@@ -384,16 +384,6 @@
             this.displayBox2.Size = new System.Drawing.Size(100, 23);
             this.displayBox2.TabIndex = 5;
             // 
-            // displayBox7
-            // 
-            this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "apvdate", true));
-            this.displayBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox7.Location = new System.Drawing.Point(589, 189);
-            this.displayBox7.Name = "displayBox7";
-            this.displayBox7.Size = new System.Drawing.Size(182, 23);
-            this.displayBox7.TabIndex = 16;
-            // 
             // textBox2
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
@@ -422,8 +412,18 @@
             0,
             0});
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
             this.numericBox1.TabIndex = 6;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox2
             // 
@@ -434,9 +434,19 @@
             this.numericBox2.IsSupportEditMode = false;
             this.numericBox2.Location = new System.Drawing.Point(781, 49);
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
             this.numericBox2.TabIndex = 10;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox3
             // 
@@ -447,9 +457,19 @@
             this.numericBox3.IsSupportEditMode = false;
             this.numericBox3.Location = new System.Drawing.Point(781, 15);
             this.numericBox3.Name = "numericBox3";
+            this.numericBox3.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox3.ReadOnly = true;
             this.numericBox3.Size = new System.Drawing.Size(100, 23);
             this.numericBox3.TabIndex = 9;
+            this.numericBox3.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox4
             // 
@@ -459,9 +479,19 @@
             this.numericBox4.IsSupportEditMode = false;
             this.numericBox4.Location = new System.Drawing.Point(781, 84);
             this.numericBox4.Name = "numericBox4";
+            this.numericBox4.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox4.ReadOnly = true;
             this.numericBox4.Size = new System.Drawing.Size(100, 23);
             this.numericBox4.TabIndex = 11;
+            this.numericBox4.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // txtuser2
             // 
@@ -576,6 +606,15 @@
             this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory1.TabIndex = 52;
             // 
+            // dateBox2
+            // 
+            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "apvdate", true));
+            this.dateBox2.Location = new System.Drawing.Point(589, 189);
+            this.dateBox2.Name = "dateBox2";
+            this.dateBox2.ReadOnly = true;
+            this.dateBox2.Size = new System.Drawing.Size(130, 23);
+            this.dateBox2.TabIndex = 53;
+            // 
             // P10
             // 
             this.ApvChkValue = "New";
@@ -629,7 +668,6 @@
         private Win.UI.Label label3;
         private Win.UI.NumericBox numericBox1;
         private Win.UI.TextBox textBox2;
-        private Win.UI.DisplayBox displayBox7;
         private Class.txtartworktype_fty txtartworktype_fty1;
         private Win.UI.DisplayBox displayBox2;
         private Win.UI.DateBox dateBox1;
@@ -649,5 +687,6 @@
         private Class.txtpayterm_fty txtpayterm_fty1;
         private Win.UI.Label label1;
         private Class.txtmfactory txtmfactory1;
+        private Win.UI.DateBox dateBox2;
     }
 }
