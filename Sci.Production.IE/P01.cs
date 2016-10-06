@@ -52,8 +52,20 @@ order by td.Seq", masterID);
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "T,B,I,O");
+            //MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "T,B,I,O");
             MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "Estimate,Initial,Prelim,Final");
+
+            #region modify comboBox1 DataSource as Style_Location
+            String sqlCmd = "select distinct Location from Style_Location";
+            DualResult result;
+            DataTable dtLocation;
+            result = DBProxy.Current.Select(null, sqlCmd, out dtLocation);
+
+            this.comboBox1.DataSource = dtLocation;
+            this.comboBox1.DisplayMember = "Location";
+            this.comboBox1.ValueMember = "Location";
+            #endregion
+
         }
 
         protected override void OnDetailEntered()
