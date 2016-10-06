@@ -59,14 +59,14 @@ order by Seq", orderID);
             #region 組撈Transaction Detail的Sql
             string sqlCmd = string.Format(@"with Transferclog
 as(
-select t.PackingListID,t.CTNStartNo,'Send to clog' as Type,t.TransferDate as TypeDate,'' as Location,t.AddDate as UpdateDate, isnull(pd.Seq,0) as Seq
+select t.PackingListID,t.CTNStartNo,'Send to clog' as Type,t.ID,t.TransferDate as TypeDate,'' as Location,t.AddDate as UpdateDate, isnull(pd.Seq,0) as Seq
 from TransferToClog t 
 left join PackingList_Detail pd on pd.ID = t.PackingListID and pd.OrderID = t.OrderID and pd.CTNStartNo = t.CTNStartNo
 where t.OrderID = '{0}' and pd.CTNQty > 0
 ),
 CReceive
 as(
-select c.PackingListId,c.CTNStartNo,'Receive' as Type,c.ReceiveDate as TypeDate,c.ClogLocationId as Location,
+select c.PackingListId,c.CTNStartNo,'Receive' as Type,c.ID,c.ReceiveDate as TypeDate,c.ClogLocationId as Location,
 c.AddDate UpdateDate, isnull(pd.Seq,0) as Seq
 from ClogReceive c
 left join PackingList_Detail pd on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
@@ -74,7 +74,7 @@ where c.OrderId = '{0}' and pd.CTNQty > 0
 ),
 CReturn 
 as (
-select c.PackingListId,c.CTNStartNo,'Return' as Type,c.ReturnDate as TypeDate,'' as Location,
+select c.PackingListId,c.CTNStartNo,'Return' as Type,c.ID,c.ReturnDate as TypeDate,'' as Location,
 c.AddDate as UpdateDate, isnull(pd.Seq,0) as Seq
 from ClogReturn c
 left join PackingList_Detail pd on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
@@ -107,6 +107,7 @@ order by p.ID,pd.Seq", orderID);
                 .Text("PackingListID", header: "Packing List ID", width: Widths.AnsiChars(15))
                 .Text("CTNStartNo", header: "Ctn#", width: Widths.AnsiChars(6))
                 .Text("Type", header: "Trans. Type", width: Widths.AnsiChars(12))
+                .Text("id", header: "Trans. No", width: Widths.AnsiChars(12))
                 .Date("TypeDate", header: "Trans. Date", width: Widths.AnsiChars(10))
                 .Text("Location", header: "Location", width: Widths.AnsiChars(8))
                 .DateTime("UpdateDate", header: "Last update datetime", width: Widths.AnsiChars(20));
