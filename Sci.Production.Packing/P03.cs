@@ -584,6 +584,13 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 return false;
             }
 
+            //計算needPackQty
+            string OrderIDs = string.Empty;
+            foreach (DataRow dr in DetailDatas) OrderIDs += "'" + dr["OrderID"].ToString().Trim() + "',";
+            OrderIDs = OrderIDs.TrimEnd(',');
+            sqlCmd = string.Format("select SUM(ShipQty) as Qty from PackingList_Detail where OrderID IN ({0})", OrderIDs);
+            needPackQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd));
+
             foreach (DataRow dr in DetailDatas)
             {
                 #region 刪除表身SP No.或Qty為空白的資料
@@ -639,7 +646,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
 
                 #region 重算表身Grid的Bal. Qty
                 //目前還有多少衣服尚未裝箱
-                needPackQty = 0;
+                //needPackQty = 0;
                 filter = string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
                 detailData = needPackData.Select(filter);
                 if (detailData.Length <= 0)
@@ -669,13 +676,13 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
                     }
                 }
 
-                needPackQty = 0;
+                //needPackQty = 0;
                 filter = string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}' and Article = '{2}' and SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
-                detailData = needPackData.Select(filter);
-                if (detailData.Length > 0)
-                {
-                    needPackQty = MyUtility.Convert.GetInt(detailData[0]["Qty"].ToString());
-                }
+                //detailData = needPackData.Select(filter);
+                //if (detailData.Length > 0)
+                //{
+                //    needPackQty = MyUtility.Convert.GetInt(detailData[0]["Qty"].ToString());
+                //}
 
                 //加總表身特定Article/SizeCode的Ship Qty數量
                 detailData = ((DataTable)detailgridbs.DataSource).Select(filter);
@@ -1086,7 +1093,9 @@ left join Order_QtyShip oq on oq.Id = a.OrderID and oq.Seq = a.OrderShipmodeSeq"
         //UnConfirm History
         private void button3_Click(object sender, EventArgs e)
         {
-            Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("PackingList_History", CurrentMaintain["ID"].ToString(), "Status", caption: "UnConfirm History", haveRemark: true, customerGridFormatTable: "HisType", moduleName: "PackingList");
+            //Bug fix:0000276: PACKING_P03_Packing List Weight & Summary(Bulk)，1.點選[Unconfirm history]會出現錯誤訊息。
+            //Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("PackingList_History", CurrentMaintain["ID"].ToString(), "Status", caption: "UnConfirm History", haveRemark: true, customerGridFormatTable: "HisType", moduleName: "PackingList");
+            Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("PackingList_History", CurrentMaintain["ID"].ToString(), "Status", caption: "UnConfirm History", haveRemark: true, customerGridFormatTable: "HisType", moduleName: "Packing");
             callNextForm.ShowDialog(this);
         }
 
