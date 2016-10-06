@@ -53,6 +53,11 @@ where od.ID = '{0}'", masterID);
                 displayBox1.Value = dr["StyleID"].ToString();
                 displayBox2.Value = dr["SeasonID"].ToString();
             }
+            else
+            {
+                displayBox1.Text = "";
+                displayBox2.Text = "";                
+            }
         }
 
         protected override void OnDetailGridSetup()
@@ -401,5 +406,7 @@ where od.ID = '{0}'", masterID);
             OnDetailEntered();
             EnsureToolbarExt();
         }
+
+
     }
 }

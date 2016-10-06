@@ -122,6 +122,7 @@
             // 
             // detailbtm
             // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
             this.detailbtm.Size = new System.Drawing.Size(753, 38);
             // 
             // browse
