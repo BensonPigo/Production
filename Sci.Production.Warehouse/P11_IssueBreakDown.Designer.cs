@@ -113,6 +113,7 @@
             this.gridIssueBreakDown.Size = new System.Drawing.Size(784, 267);
             this.gridIssueBreakDown.TabIndex = 0;
             this.gridIssueBreakDown.TabStop = false;
+            this.gridIssueBreakDown.CellValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridIssueBreakDown_CellValidated);
             // 
             // panel1
             // 

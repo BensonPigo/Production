@@ -127,6 +127,7 @@ order by [OrderID],[Article]", Master["orderid"], Master["id"], sbSizecode.ToStr
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            if (!this.gridIssueBreakDown.ValidateControl()) { return; }
             DataTable result = null;
             string sqlcmd;
             sqlcmd = string.Format(@";WITH UNPIVOT_1
@@ -141,7 +142,7 @@ FOR SIZECODE IN ({1})
 AS PVT
 )
 MERGE INTO DBO.ISSUE_BREAKDOWN T
-USING UNPIVOT_1 S
+USING UnPivot_1 S
 ON T.ID = '{0}' AND T.ORDERID= S.OrderID AND T.ARTICLE = S.ARTICLE AND T.SIZECODE = S.SIZECODE
 WHEN MATCHED THEN
 UPDATE
@@ -227,8 +228,8 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
 
             try
             {
-                DBProxy.Current.ExecuteByConn(conn, sb.ToString());
-
+                DualResult result2 = DBProxy.Current.ExecuteByConn(conn, sb.ToString());
+                if (!result2) { MyUtility.Msg.ShowException(null, result2); return; }
                 using (System.Data.SqlClient.SqlBulkCopy bulkcopy = new System.Data.SqlClient.SqlBulkCopy(conn))
                 {
                     bulkcopy.BulkCopyTimeout = 60;
@@ -248,7 +249,9 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                     bulkcopy.WriteToServer(source);
                     bulkcopy.Close();
                 }
-                DBProxy.Current.SelectByConn(conn, sqlcmd, out result);
+                result2 = DBProxy.Current.SelectByConn(conn, sqlcmd, out result);
+                if (!result2) { MyUtility.Msg.ShowException(null, result2); return; }
+                
             }
             catch (Exception ex)
             {
@@ -257,6 +260,22 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
             finally
             {
                 conn.Close();
+            }
+        }
+
+        private void gridIssueBreakDown_CellValidated(object sender, DataGridViewCellEventArgs e)
+        {
+            var dataRow = this.gridIssueBreakDown.GetDataRow(this.gridIssueBreakDownBS.Position);
+            if (e.ColumnIndex > 1
+                && null != dataRow
+                
+                ) { 
+            
+                string col_name = this.gridIssueBreakDown.Columns[e.ColumnIndex].DataPropertyName;
+                if(dataRow[col_name].Empty()){
+                    dataRow[col_name] = 0;
+                }
+                
             }
         }
 
