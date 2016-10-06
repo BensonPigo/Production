@@ -522,7 +522,7 @@ order by td.Seq", masterID);
             {
                 if (LocationData.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.WarningBox("This style not correct, can't save");
+                    MyUtility.Msg.WarningBox("This style not correct, can't save. [Style_Location] table don't have relation data.");
                     return false;
                 }
             }
