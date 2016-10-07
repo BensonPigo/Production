@@ -129,7 +129,7 @@ namespace Sci.Production.Planning
 
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("Ukey", header: "Ukey", width: Widths.AnsiChars(6), iseditingreadonly: true)  //0
+            //.Text("Ukey", header: "Ukey", width: Widths.AnsiChars(6), iseditingreadonly: true)  //0
             .Text("localsuppid", header: "Supplier", width: Widths.AnsiChars(6), settings: ts4)  //1
             .Text("suppname", header: "Name", width: Widths.AnsiChars(10), iseditingreadonly: true)  //2
             .Text("currencyid", header: "Currency", width: Widths.AnsiChars(10), iseditingreadonly: true)  //3
@@ -147,7 +147,7 @@ namespace Sci.Production.Planning
 
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.grid1)
-            .Text("Ukey", header: "Ukey", width: Widths.AnsiChars(6), iseditingreadonly: true)  //0
+            //.Text("Ukey", header: "Ukey", width: Widths.AnsiChars(6), iseditingreadonly: true)  //0
             .Text("artworktypeid", header: "Artwork Type", width: Widths.AnsiChars(16), iseditingreadonly: true)  //0
             .Text("article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)  //1
             .Text("artworkid", header: "Artwork", width: Widths.AnsiChars(10))  //2

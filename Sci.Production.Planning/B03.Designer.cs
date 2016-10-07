@@ -28,7 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.components = new System.ComponentModel.Container();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.grid1 = new Sci.Win.UI.Grid();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.label1 = new Sci.Win.UI.Label();
@@ -119,10 +120,11 @@
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 494);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(892, 496);
+            this.browse.Size = new System.Drawing.Size(892, 532);
             // 
             // tabs
             // 
@@ -135,7 +137,6 @@
             this.grid1.AllowUserToResizeRows = false;
             this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.grid1.AutoGenerateColumns = false;
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -257,6 +258,7 @@
             this.DefaultOrder = "id,seasonid";
             this.GridAlias = "style_artwork_quot";
             this.GridUniqueKey = "styleukey,ukey,localsuppid";
+            this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
