@@ -127,10 +127,18 @@ order by ld.Seq1,ld.Seq2", masterID);
                         }
 
                         DataRow poData;
-                        string sqlCmd = string.Format(@"select left(seq1+' ',3)+seq2 as Seq, Refno,InQty,OutQty,seq1,seq2, 
-dbo.getmtldesc(id,seq1,seq2,2,0) as Description 
-from dbo.PO_Supp_Detail
-where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'A'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(e.FormattedValue).Substring(0, 3), MyUtility.Convert.GetString(e.FormattedValue).Substring(2, 2));
+
+                        //bug fix:直接輸入seq會有錯誤訊息
+                        //string sqlCmd = string.Format(@"select left(seq1+' ',3)+seq2 as Seq, Refno,InQty,OutQty,seq1,seq2, 
+                        //dbo.getmtldesc(id,seq1,seq2,2,0) as Description 
+                        //from dbo.PO_Supp_Detail
+                        //where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'A'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(e.FormattedValue).Substring(0, 3), MyUtility.Convert.GetString(e.FormattedValue).Substring(2, 2));
+                        string sqlCmd = string.Format(@"select left(seq1+' ',3)+seq2 as Seq, Refno,InputQty,OutputQty,seq1,seq2, 
+                                                        dbo.getmtldesc(id,seq1,seq2,2,0) as Description 
+                                                        from dbo.PO_Supp_Detail
+                                                        where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'A'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(e.FormattedValue).Substring(0, 2), MyUtility.Convert.GetString(e.FormattedValue).Substring(3, 2));
+
+
                         if (!MyUtility.Check.Seek(sqlCmd, out poData))
                         {
                             MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
@@ -145,8 +153,8 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'A'", MyUtili
                             dr["Seq2"] = MyUtility.Convert.GetString(poData["Seq2"]);
                             dr["RefNo"] = MyUtility.Convert.GetString(poData["RefNo"]);
                             dr["Description"] = MyUtility.Convert.GetString(poData["Description"]);
-                            dr["InQty"] = MyUtility.Convert.GetDecimal(poData["InQty"]);
-                            dr["OutQty"] = MyUtility.Convert.GetDecimal(poData["OutQty"]);
+                            dr["InQty"] = MyUtility.Convert.GetDecimal(poData["InputQty"]);
+                            dr["OutQty"] = MyUtility.Convert.GetDecimal(poData["OutputQty"]);
                             DateTime? maxIssueDate = MaxIssueDate(MyUtility.Convert.GetString(poData["Seq1"]), MyUtility.Convert.GetString(poData["Seq2"]));
                             if (MyUtility.Check.Empty(maxIssueDate))
                             {
