@@ -1211,7 +1211,9 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
                 DataRow[] gridselect = qtybreakTb.Select(string.Format("id = '{0}' and article = '{1}' and sizecode = '{2}'", dr["orderid"], dr["article"], dr["sizecode"], dr["PatternPanel"], dr["Qty"]));
                 if (gridselect.Length != 0)
                 {
-                    gridselect[0][dr["PatternPanel"].ToString()] = MyUtility.Convert.GetDecimal((gridselect[0][dr["PatternPanel"].ToString()])) + MyUtility.Convert.GetDecimal(dr["Qty"]);
+                    //20161007 leo 微調唯一值為LectraCode
+                    //gridselect[0][dr["PatternPanel"].ToString()] = MyUtility.Convert.GetDecimal((gridselect[0][dr["PatternPanel"].ToString()])) + MyUtility.Convert.GetDecimal(dr["Qty"]);
+                    gridselect[0][dr["LectraCode"].ToString()] = MyUtility.Convert.GetDecimal((gridselect[0][dr["LectraCode"].ToString()])) + MyUtility.Convert.GetDecimal(dr["Qty"]);
                 }
 
             }
