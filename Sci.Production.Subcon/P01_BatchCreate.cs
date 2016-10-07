@@ -371,27 +371,28 @@ Order_TmsCost.ApvDate
 
             if (query.ToList().Count > 0)
             {
-
+                
+                ITableSchema tableSchema = null;
+                DualResult result;
+                //result = new DualResult(false, "Get Schema(dbo.Artworkpo) Faild!!, Please re-try it later!!",);
+                result = DBProxy.Current.GetTableSchema(null, "Artworkpo", out tableSchema); 
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox("Get Schema(dbo.Artworkpo) Faild!!, Please re-try it later!!");
+                    return;
+                }
                 string sqlcmd;
 
                 foreach (var q in query.ToList())
                 {
                     TransactionScope _transactionscope = new TransactionScope();
-                    DualResult result;
                     using (_transactionscope)
                     {
                         try
                         {
                             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
                             string ftyKeyWord = MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory where id='{0}'", q.ftygroup));
-                            ITableSchema tableSchema = null;
-                            result = DBProxy.Current.GetTableSchema(null, "dbo.Artworkpo", out tableSchema);
-                            if (!result)
-                            {
-                                _transactionscope.Dispose();
-                                MyUtility.Msg.WarningBox("Get Schema(dbo.Artworkpo) Faild!!, Please re-try it later!!");
-                                return;
-                            }
+                            
                             string id = Sci.MyUtility.GetValue.GetID(ftyKeyWord + "OS", "artworkpo", DateTime.Parse(dateBox1.Text));
                             if (MyUtility.Check.Empty(id))
                             {
@@ -574,6 +575,7 @@ Order_TmsCost.ApvDate
                         }
                         catch (Exception ex)
                         {
+                            result = new DualResult(false,"Commit transaction error.",ex);
                             ShowErr("Commit transaction error.", ex);
                             return;
                         }
@@ -593,7 +595,9 @@ Order_TmsCost.ApvDate
         private void button4_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            MyUtility.Excel.CopyToXls(dt, "");
+            Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
+            sdExcel.Save();
+            //MyUtility.Excel.CopyToXls(dt, "");
         }
 
         private void txtartworktype_fty1_Validating(object sender, CancelEventArgs e)
