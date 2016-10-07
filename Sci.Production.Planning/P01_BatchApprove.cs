@@ -261,7 +261,7 @@ where ods.finished=0 and ods.isforecast = 0
         private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            MyUtility.Excel.CopyToXls(dt, "");
+            MyUtility.Excel.CopyToXls(dt, "", "Planning_P01_BatchApprove.xltx", 1);
         }
 
         //unApprove
