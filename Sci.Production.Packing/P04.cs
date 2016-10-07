@@ -809,7 +809,7 @@ where ID = @INVNo";
             {
                 if (MyUtility.GetValue.Lookup("Status", CurrentMaintain["INVNo"].ToString(), "GMTBooking", "ID") == "Confirmed")
                 {
-                    MyUtility.Msg.WarningBox("Garment booking already confirmed, so can't unconfirm! ");
+                    MyUtility.Msg.WarningBox(string.Format("Garment booking already confirmed, so can't unconfirm! \n pullout report:{0}", CurrentMaintain["INVNo"].ToString()));
                     return;
                 }
             }
