@@ -95,7 +95,7 @@ namespace Sci.Production.Quality
             arriveqty_box.Text = maindr["arriveQty"].ToString();
             arrwhdate_box.Text = MyUtility.Convert.GetDate(maindr["whseArrival"]).ToString();
             //brandrefno_box.Text = maindr["SCIRefno"].ToString();
-            color_box.Text = maindr["Colorid"].ToString();
+            //color_box.Text = maindr["Colorid"].ToString();
             lastinspdate_box.Text = MyUtility.Convert.GetDate(maindr["physicalDate"]).ToString();
             refdesc_box.Text = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
             //scirefno_box.Text = maindr["SciRefno"].ToString();
@@ -787,6 +787,9 @@ Where DetailUkey = {15};",
             Random random = new Random();
             string excelFile = "Excelaaa" + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
             worksheet.SaveAs("D:\\Excel\\QA_P01" + excelFile);
+
+            excel.Cells.EntireColumn.AutoFit();    //自動欄寬
+            excel.Cells.EntireRow.AutoFit();       ////自動欄高
 
             if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放sheet
             if (excel != null) Marshal.FinalReleaseComObject(excel);          //釋放objApp
