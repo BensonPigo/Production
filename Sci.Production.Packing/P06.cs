@@ -853,7 +853,7 @@ and p.ID = pl.PulloutID", CurrentMaintain["ID"].ToString());
                         DataRow qtyShipData;
                         if (MyUtility.Check.Seek(sqlCmd, out qtyShipData))
                         {
-                            if (qtyShipData["ShipModeID"].ToString() != txtshipmode1.SelectedValue.ToString())
+                            if (!qtyShipData["ShipModeID"].EqualString(txtshipmode1.SelectedValue.ToString()))
                             {
                                 MyUtility.Msg.WarningBox("ShipMode is incorrect!");
                                 txtshipmode1.SelectedValue = "";
