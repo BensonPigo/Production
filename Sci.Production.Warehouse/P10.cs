@@ -151,11 +151,17 @@ a.Id
 ,(select DescDetail from fabric where scirefno= a.scirefno) [description]
 ,isnull((select sum(cons) from dbo.Cutplan_Detail_Cons c inner join dbo.PO_Supp_Detail p on p.ID=c.Poid and p.SEQ1 = c.Seq1 and p.SEQ2 = c.Seq2
 where  c.id='{1}' and p.scirefno = a.scirefno and c.poid = a.poid and p.colorid = a.colorid and p.SizeSpec = a.SizeSpec),0.00) as requestqty
-,isnull((select sum(qty) from issue a1 inner join issue_summary b1 on b1.id = a1.id where a1.cutplanid = '{1}' and b1.poid = a.poid and b1.scirefno = a.scirefno and b1.colorid = a.colorid and a1.id != '{0}' and a1.status='Confirmed'),0.00) as accu_issue
+,isnull((select sum(qty) from issue a1 inner join issue_summary b1 on b1.id = a1.id where a1.cutplanid = '{1}' 
+--and b1.poid = a.poid and b1.scirefno = a.scirefno and b1.colorid = a.colorid  --20161006 by willy,這2欄位是空的,先mark做測試
+and a1.id != '{0}' and a1.status='Confirmed'),0.00) as accu_issue
 ,a.qty
 ,a.Ukey
-,(select sum(NETQty) from dbo.PO_Supp_Detail where SCIRefno = a.SCIRefno and Colorid = a.Colorid and SizeSpec = a.SizeSpec 
-and id = a.Poid and seq1 = (select min(seq1) from dbo.PO_Supp_Detail where SCIRefno = a.SCIRefno and Colorid = a.Colorid and SizeSpec = a.SizeSpec and id = a.Poid)) netqty
+,(select sum(NETQty) from dbo.PO_Supp_Detail 
+where 1=1
+--SCIRefno = a.SCIRefno and Colorid = a.Colorid and SizeSpec = a.SizeSpec  --20161006 by willy,這2欄位是空的,先mark做測試
+and id = a.Poid and seq1 = (select min(seq1) from dbo.PO_Supp_Detail where id = a.Poid
+--and SCIRefno = a.SCIRefno and Colorid = a.Colorid and SizeSpec = a.SizeSpec 
+)) netqty
 from dbo.Issue_Summary a
 Where a.id = '{0}'", masterID, cutplanID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -308,10 +314,17 @@ Where a.id = '{0}'", masterID, cutplanID);
                 }
                 else
                 {
-                    sqlcmd = string.Format(@"select poid,t.SCIRefno,t.ColorID,t.SizeSpec,sum(cons)requestqty,0.00 as qty,0.00 as accu_issue 
+                    sqlcmd = string.Format(@"
+select poid,t.SCIRefno,t.ColorID,t.SizeSpec,sum(cons)requestqty,0.00 as qty,
+(select sum(qty) from Issue_Summary a
+inner join Issue b on a.Id=b.Id
+inner join Cutplan d on b.CutplanID=d.ID
+where d.ID='{0}' and b.status='Confirmed') as accu_issue
 ,'{1}' as id, '' [description], 0.00 as NETQty
-from dbo.Cutplan_Detail_Cons c inner join dbo.PO_Supp_Detail t on t.id=c.Poid and t.seq1=c.seq1 and t.seq2=c.Seq2
-where c.ID='{0}' group by poid,t.SCIRefno,t.ColorID,t.SizeSpec", txtRequest.Text, CurrentMaintain["id"]);
+from dbo.Cutplan_Detail_Cons c 
+inner join dbo.PO_Supp_Detail t on t.id=c.Poid and t.seq1=c.seq1 and t.seq2=c.Seq2
+where c.ID='{0}'
+group by poid,t.SCIRefno,t.ColorID,t.SizeSpec", txtRequest.Text, CurrentMaintain["id"]);
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     if (MyUtility.Check.Empty(dt) || MyUtility.Check.Empty(dt.Rows.Count))
                     {
