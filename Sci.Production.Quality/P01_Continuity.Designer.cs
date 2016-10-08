@@ -50,7 +50,6 @@
             this.arriveqty_box = new Sci.Win.UI.DisplayBox();
             this.label11 = new Sci.Win.UI.Label();
             this.label12 = new Sci.Win.UI.Label();
-            this.arrwhdate_box = new Sci.Win.UI.DisplayBox();
             this.lastinspdate_box = new Sci.Win.UI.DisplayBox();
             this.label13 = new Sci.Win.UI.Label();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
@@ -64,6 +63,7 @@
             this.result_box = new Sci.Win.UI.DisplayBox();
             this.button1 = new Sci.Win.UI.Button();
             this.textID = new Sci.Win.UI.DisplayBox();
+            this.arrwhdate_box = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -74,7 +74,7 @@
             this.btmcont.Controls.Add(this.button1);
             this.btmcont.Controls.Add(this.button3);
             this.btmcont.Location = new System.Drawing.Point(0, 693);
-            this.btmcont.Size = new System.Drawing.Size(913, 40);
+            this.btmcont.Size = new System.Drawing.Size(988, 40);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
@@ -86,15 +86,15 @@
             // gridcont
             // 
             this.gridcont.Location = new System.Drawing.Point(12, 163);
-            this.gridcont.Size = new System.Drawing.Size(889, 520);
+            this.gridcont.Size = new System.Drawing.Size(964, 520);
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(823, 5);
+            this.undo.Location = new System.Drawing.Point(898, 5);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(743, 5);
+            this.save.Location = new System.Drawing.Point(818, 5);
             // 
             // brand_box
             // 
@@ -316,16 +316,6 @@
             this.label12.TabIndex = 121;
             this.label12.Text = "Last Inspection Date";
             // 
-            // arrwhdate_box
-            // 
-            this.arrwhdate_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.arrwhdate_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.arrwhdate_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.arrwhdate_box.Location = new System.Drawing.Point(793, 12);
-            this.arrwhdate_box.Name = "arrwhdate_box";
-            this.arrwhdate_box.Size = new System.Drawing.Size(90, 21);
-            this.arrwhdate_box.TabIndex = 122;
-            // 
             // lastinspdate_box
             // 
             this.lastinspdate_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -457,9 +447,18 @@
             this.textID.TabIndex = 134;
             this.textID.Visible = false;
             // 
+            // arrwhdate_box
+            // 
+            this.arrwhdate_box.Location = new System.Drawing.Point(793, 13);
+            this.arrwhdate_box.Name = "arrwhdate_box";
+            this.arrwhdate_box.ReadOnly = true;
+            this.arrwhdate_box.Size = new System.Drawing.Size(130, 23);
+            this.arrwhdate_box.TabIndex = 135;
+            // 
             // P01_Continuity
             // 
-            this.ClientSize = new System.Drawing.Size(913, 733);
+            this.ClientSize = new System.Drawing.Size(988, 733);
+            this.Controls.Add(this.arrwhdate_box);
             this.Controls.Add(this.textID);
             this.Controls.Add(this.result_box);
             this.Controls.Add(this.txtuser1);
@@ -470,7 +469,6 @@
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.lastinspdate_box);
-            this.Controls.Add(this.arrwhdate_box);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.arriveqty_box);
@@ -526,7 +524,6 @@
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
             this.Controls.SetChildIndex(this.label12, 0);
-            this.Controls.SetChildIndex(this.arrwhdate_box, 0);
             this.Controls.SetChildIndex(this.lastinspdate_box, 0);
             this.Controls.SetChildIndex(this.label13, 0);
             this.Controls.SetChildIndex(this.checkBox1, 0);
@@ -537,6 +534,7 @@
             this.Controls.SetChildIndex(this.txtuser1, 0);
             this.Controls.SetChildIndex(this.result_box, 0);
             this.Controls.SetChildIndex(this.textID, 0);
+            this.Controls.SetChildIndex(this.arrwhdate_box, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -571,7 +569,6 @@
         private Win.UI.Label label11;
         private Win.UI.Label label12;
         private Win.UI.Button button3;
-        private Win.UI.DisplayBox arrwhdate_box;
         private Win.UI.DisplayBox lastinspdate_box;
         private Win.UI.Label label13;
         private Win.UI.CheckBox checkBox1;
@@ -583,5 +580,6 @@
         private Win.UI.DisplayBox result_box;
         private Win.UI.Button button1;
         private Win.UI.DisplayBox textID;
+        private Win.UI.DateBox arrwhdate_box;
     }
 }

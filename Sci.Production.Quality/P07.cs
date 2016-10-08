@@ -108,11 +108,23 @@ namespace Sci.Production.Quality
                 Article_text.Text = "";
             }
 
-            DateTime CompDate;
+            DateTime? CompDate,OvenDate,WashDate; 
             if (inspnum == "100")
             {
-                CompDate = DateTime.Compare((DateTime)articleDT.Compute("Max(OvenDate)", ""),(DateTime)articleDT.Compute("Max(WashDate)", "")) > 0 ? (DateTime)articleDT.Compute("Max(OvenDate)", "") : (DateTime)articleDT.Compute("Max(WashDate)", "") ;
-                compl_text.Value = CompDate;
+                OvenDate= MyUtility.Convert.GetDate(articleDT.Compute("Max(OvenDate)", ""));
+                WashDate= MyUtility.Convert.GetDate(articleDT.Compute("Max(WashDate)", ""));
+                if (MyUtility.Math.DateMinus(OvenDate,WashDate).TotalSeconds < 0)
+	            {
+		            CompDate = WashDate;
+	            }
+                else
+	            {
+                    CompDate = OvenDate;
+	            }
+                compl_text.Text = CompDate == null ? "" : ((DateTime)CompDate).ToShortDateString(); 
+                ////CompDate = DateTime.Compare((DateTime)articleDT.Compute("Max(OvenDate)", ""),(DateTime)articleDT.Compute("Max(WashDate)", "")) > 0 ? (DateTime)articleDT.Compute("Max(OvenDate)", "") : (DateTime)articleDT.Compute("Max(WashDate)", "") ;                              
+          
+                //compl_text.Value = CompDate;
             }
             else
             {

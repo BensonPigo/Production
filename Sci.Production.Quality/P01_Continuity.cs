@@ -483,7 +483,8 @@ namespace Sci.Production.Quality
             objSheets.Cells[3, 10] = brand_box.Text.ToString();
             objSheets.Cells[4, 2] = brandrefno_box.Text.ToString();
             objSheets.Cells[4, 4] = arriveqty_box.Text.ToString();
-            objSheets.Cells[4, 6] = arrwhdate_box.Text.ToString();
+            //objSheets.Cells[4, 6] = ((DateTime)arrwhdate_box.Text).ToShortDateString();
+            objSheets.Cells[4, 6] = arriveqty_box.Text;
             objSheets.Cells[4, 8] = txtsupplier1.Text.ToString();
             objSheets.Cells[4, 10] = wk_box.Text.ToString();
 

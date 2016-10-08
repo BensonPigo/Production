@@ -342,7 +342,7 @@ namespace Sci.Production.Quality
             //Ict.Win.UI.DataGridViewComboBoxColumn ResultComboCell;// 一定要加Ict.Win.UI 不然會跟C#原生的有所衝突
             
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("No", header: "No. Of Test", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Numeric("No", header: "No. Of Test", integer_places: 8, decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(8))
             .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), settings: inspDateCell, iseditingreadonly: false)
             .ComboBox("Result", header: "Result", width: Widths.AnsiChars(10), settings: ResultComboCell)//.Get(out ResultComboCell)
             .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(10),settings:inspectorCell)
@@ -367,20 +367,20 @@ namespace Sci.Production.Quality
 
         protected override void OnDetailGridInsert(int index = -1)
         {
-            int MaxNo = 0;
+            base.OnDetailGridInsert(index);
             DataTable dt = (DataTable)detailgridbs.DataSource;
-
+           
+            int MaxNo;
             if (dt.Rows.Count == 0)
             {
+                MaxNo = 0;
                 base.OnDetailGridInsert(0);
                 CurrentDetailData["No"] = MaxNo + 1;
             }
             else
-            {
-                MaxNo = Convert.ToInt32(dt.Compute("Max(No)", string.Empty));
-                base.OnDetailGridInsert(0);
-                //dt.Rows[index]["no"].ToString() = 2;
-                CurrentDetailData["No"] = MaxNo + 1;
+            {                
+                MaxNo = Convert.ToInt32(dt.Compute("Max(No)", ""));
+                CurrentDetailData["No"] = MaxNo+1 ;
             }
             
         }
