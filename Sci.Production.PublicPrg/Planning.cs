@@ -92,7 +92,14 @@ namespace Sci.Production.PublicPrg
 	 having isnull(b.hours,0) > 0) tmp", orderid);
             DBProxy.Current.Select(null,sqlcmd,out dt);
             //return int.Parse(dt.Rows[0][0].ToString());
-            return int.Parse(Math.Ceiling(decimal.Parse(MyUtility.GetValue.Lookup(sqlcmd, null))).ToString());
+            if (dt.Rows[0][0].Empty())
+            {
+                return 0;
+            }
+            else
+            {
+                return int.Parse(Math.Ceiling(decimal.Parse(MyUtility.GetValue.Lookup(sqlcmd, null))).ToString());
+            }
         }
         #endregion
     }
