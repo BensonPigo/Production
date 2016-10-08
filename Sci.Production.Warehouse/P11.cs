@@ -842,7 +842,12 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
         protected override bool ClickPrint()
         {
-
+            label25.Text = CurrentMaintain["status"].ToString();
+            if (label25.Text.ToUpper() !="CONFIRMED")
+            {
+                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
+                return false;
+            }
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
             saveDialog.ShowDialog();
             string outpath = saveDialog.FileName;
@@ -899,7 +904,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             {
                 sizecodes += "[" + dr["sizecode"].ToString() + "]" + ",";
             }
-            sizecodes = sizecodes.Substring(0, sizecodes.Length - 1);
+            if (sizecodes.Length!=0)
+            {
+                sizecodes = sizecodes.Substring(0, sizecodes.Length - 1);
+            }
+            
 
             DataTable dtseq;
 
