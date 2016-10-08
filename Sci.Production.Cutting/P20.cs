@@ -256,7 +256,7 @@ namespace Sci.Production.Cutting
                 if (MyUtility.Check.Seek(sql, null))
                 {
                     MyUtility.Msg.WarningBox("The <Date> had been existed already.");
-                    CurrentMaintain["cDate"] = "";
+                    //CurrentMaintain["cDate"] = "";
                     return false;
                 }
             }
