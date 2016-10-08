@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
+
 
 namespace Sci.Production.IE
 {
@@ -299,6 +301,141 @@ select {0},ID,'{1}',GETDATE() from IEReason where Type = 'CP' and Junk = 0", Cur
             OnDetailEntered();
             EnsureToolbarExt();
         }
+
+        //Print
+        protected override bool ClickPrint()
+        {
+            ToExcel(false);
+            return base.ClickPrint();
+        }
+
+        private bool ToExcel(bool autoSave)
+        {
+            DataTable dtTitle;
+            string BrandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders where ID = '{0}'", CurrentMaintain["OrderID"].ToString().Trim()));
+            string StyleID = CurrentMaintain["StyleID"].ToString().Trim();
+            string SeasonID = CurrentMaintain["SeasonID"].ToString().Trim();
+            string CPU = MyUtility.GetValue.Lookup(string.Format("select CPU from Style where BrandID='{0}' and ID='{1}' and SeasonID='{2}'", BrandID, StyleID, SeasonID));
+            string FirstOutputTime = CurrentMaintain["FirstOutputTime"].ToString().Trim();
+            FirstOutputTime = MyUtility.Check.Empty(FirstOutputTime) ? "" : FirstOutputTime.Substring(0, 2) + ":" + FirstOutputTime.Substring(2, 2);
+            string LastOutputTime = CurrentMaintain["LastOutputTime"].ToString().Trim();
+            LastOutputTime = MyUtility.Check.Empty(LastOutputTime) ? "" : LastOutputTime.Substring(0, 2) + ":" + LastOutputTime.Substring(2, 2);
+            string SewingDate = MyUtility.GetValue.Lookup(string.Format(@"select convert(varchar, min(a.OutputDate), 111) as SewingDate
+                                                                        from SewingOutput a
+                                                                        left join SewingOutput_Detail b on a.ID=b.ID
+                                                                        where b.OrderId='{0}'", CurrentMaintain["OrderID"].ToString().Trim()));
+
+            #region 取出ChgOverTarget.Target，然後再依ChgOver.Inline找出最接近但沒有超過這一天的Target
+            string MDivisionID = CurrentMaintain["MDivisionID"].ToString().Trim();
+            DateTime Inline = Convert.ToDateTime(CurrentMaintain["Inline"]);
+            string Target_COPT = MyUtility.GetValue.Lookup(string.Format(@"Select top 1 Target from ChgOverTarget 
+                                                                        where Type = 'COPT' and MDivisionID = '{0}' and EffectiveDate <= '{1}' 
+                                                                        Order by EffectiveDate desc", MDivisionID, Inline.ToShortDateString()));
+            string Target_COT = MyUtility.GetValue.Lookup(string.Format(@"Select top 1 Target from ChgOverTarget 
+                                                                        where Type = 'COT' and MDivisionID = '{0}' and EffectiveDate <= '{1}' 
+                                                                        Order by EffectiveDate desc", MDivisionID, Inline.ToShortDateString()));
+            #endregion
+
+            string CDCodeID = CurrentMaintain["CDCodeID"].ToString().Trim();
+            DataRow TYPE = GetType(CurrentMaintain["ComboType"].ToString().Trim() , CDCodeID);
+
+            #region 找出上一筆
+            DataRow PreviousDR = null;
+            DataRow Previous_TYPE = null;
+            string Previous_CPU = string.Empty;
+            DataTable dt = (DataTable)gridbs.DataSource;
+            int index = dt.Rows.IndexOf(CurrentMaintain);
+            if (index > 0)
+            {
+                PreviousDR = dt.Rows[index - 1];
+                string Previous_BrandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders where ID = '{0}'", PreviousDR["OrderID"].ToString().Trim()));
+                string Previous_StyleID = PreviousDR["StyleID"].ToString().Trim();
+                string Previous_SeasonID = PreviousDR["SeasonID"].ToString().Trim();
+                Previous_CPU = MyUtility.GetValue.Lookup(string.Format("select CPU from Style where BrandID='{0}' and ID='{1}' and SeasonID='{2}'", Previous_BrandID, Previous_StyleID, Previous_SeasonID));
+                Previous_TYPE = GetType(PreviousDR["ComboType"].ToString().Trim(), PreviousDR["CDCodeID"].ToString().Trim());
+            } 
+            #endregion
+        
+
+            string cmdsql = string.Format("SELECT TOP 1 'CHANGEOVER REPORT'  FROM ChgOver where 1=1");
+            DualResult dResult = DBProxy.Current.Select(null, cmdsql, out dtTitle);
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\IE_P02_ChangeoverReport.xlt"); //預先開啟excel app
+
+            if (MyUtility.Excel.CopyToXls(dtTitle, "", "IE_P02_ChangeoverReport.xlt", 2, !autoSave, null, objApp, false))
+            {// 將datatable copy to excel
+                Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
+
+                objSheet.Cells[9, 4] = CurrentMaintain["FactoryID"].ToString().Trim();  //Factory
+                objSheet.Cells[9, 7] = CurrentMaintain["SewingLineID"].ToString().Trim();  //Line No.
+                objSheet.Cells[9, 11] = CurrentMaintain["CellNo2"].ToString().Trim();  //Cell No.
+                objSheet.Cells[12, 4] = StyleID;  //Style No.
+                objSheet.Cells[13, 4] = CPU;  //CPU/pc
+                objSheet.Cells[14, 4] = CDCodeID;  //CD Code
+                objSheet.Cells[14, 5] = TYPE["ProdType"];  //Prod. Type
+                objSheet.Cells[14, 6] = TYPE["FabricType"];  //Fab. Type
+
+                #region 抓上一筆資料
+                if (PreviousDR != null)
+                {
+                    objSheet.Cells[12, 9] = PreviousDR["StyleID"].ToString().Trim();  //Style No.
+                    objSheet.Cells[13, 9] = Previous_CPU;  //CPU/pc
+                    objSheet.Cells[14, 9] = PreviousDR["CDCodeID"].ToString().Trim();  //CD Code
+                }
+                if (Previous_TYPE != null)
+                {
+                    objSheet.Cells[14, 10] = Previous_TYPE["ProdType"];  //Prod. Type
+                    objSheet.Cells[14, 11] = Previous_TYPE["FabricType"];  //Fab. Type
+                }
+                #endregion
+
+                objSheet.Cells[18, 5] = CurrentMaintain["Type"].ToString() == "N" ? "New" : "Repeat";  //Classification
+                objSheet.Cells[19, 4] = CurrentMaintain["Category"].ToString().Trim();  //Category
+                objSheet.Cells[20, 4] = Inline.ToShortDateString();  //Inline Date
+                objSheet.Cells[21, 5] = Inline.ToString("hh:mm");  //Inline Time(hh:mm)
+                objSheet.Cells[22, 6] = FirstOutputTime;  //Time of First Good Output (hh:mm):
+                objSheet.Cells[22, 11] = LastOutputTime;  //Time of Last Good Output (hh:mm):
+
+                objSheet.Cells[27, 3] = Target_COPT;  //Target
+                objSheet.Cells[27, 8] = Target_COT;  //Target
+                objSheet.Cells[27, 4] = CurrentMaintain["COPT"].ToString().Trim();  //Actual
+                objSheet.Cells[27, 9] = CurrentMaintain["COT"].ToString().Trim();  //Actual
+
+                objSheet.Cells[32, 1] = SewingDate;  //Date
+
+
+
+                //objSheet.Cells[3, 12] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(loginID);
+
+                if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);    //釋放sheet
+                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+                
+            }
+
+            return true;
+
+        }
+
+        private DataRow GetType(string ComboType, string CDCodeID)
+        {
+            DataRow returnValue = null;
+            DataTable dtTemp;
+            string sql;
+            if (ComboType == "T" || ComboType == "")
+                sql = string.Format("select  TopProductionType as ProdType,TopFabricType as FabricType  from CDCode_Content where ID='{0}'", CDCodeID);
+            else if (ComboType == "B")
+                sql = string.Format("select BottomProductionType as ProdType,BottomFabricType as FabricType  from CDCode_Content where ID='{0}'", CDCodeID);
+            else if (ComboType == "I")
+                sql = string.Format("select InnerProductionType as ProdType,InnerFabricType as FabricType  from CDCode_Content where ID='{0}'", CDCodeID);
+            else
+                sql = string.Format("select OuterProductionType as ProdType,OuterFabricType as FabricType  from CDCode_Content where ID='{0}'", CDCodeID);
+            DualResult result = DBProxy.Current.Select(null, sql, out dtTemp);
+            if (result && dtTemp.Rows.Count>0) returnValue = dtTemp.Rows[0];
+            return returnValue;
+        }
+
+
 
     }
 }
