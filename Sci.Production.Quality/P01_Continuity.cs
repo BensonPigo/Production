@@ -76,18 +76,42 @@ namespace Sci.Production.Quality
             {
                 txtsupplier1.TextBox1.Text = "";
             }
+            string Receiving_cmd = string.Format("select a.exportid,a.WhseArrival  from Receiving a inner join FIR b on a.Id=b.Receivingid where b.id='{0}'", maindr["id"]);
+            DataRow rec_dr;
+            if (MyUtility.Check.Seek(Receiving_cmd,out rec_dr))
+            {
+                wk_box.Text = rec_dr["exportid"].ToString();
+                arrwhdate_box.Value = MyUtility.Convert.GetDate(rec_dr["WhseArrival"]);            
+            }
+            else
+            {
+                wk_box.Text = "";
+            }
+            string po_supp_detail_cmd = string.Format("select SCIRefno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}'", maindr["POID"], maindr["seq1"], maindr["seq2"]);
+            DataRow po_supp_detail_dr;
+            if (MyUtility.Check.Seek(po_supp_detail_cmd, out po_supp_detail_dr))
+            {
+                scirefno_box.Text = po_supp_detail_dr["SCIRefno"].ToString();
+                brandrefno_box.Text = "";// po_supp_detail_dr["BrandRefno"].ToString();// 沒有BRANDREFNO 
+                color_box.Text = po_supp_detail_dr["colorid"].ToString();
+            }
+            else
+            {
+                scirefno_box.Text = "";
+                brandrefno_box.Text = "";
+            }
 
             approve_box.Text = maindr["ApproveDate"].ToString();
             arriveqty_box.Text = maindr["arriveQty"].ToString();
-            arrwhdate_box.Text = MyUtility.Convert.GetDate(maindr["whseArrival"]).ToString();
-            brandrefno_box.Text = maindr["SCIRefno"].ToString();
-            color_box.Text = maindr["Colorid"].ToString();
-            lastinspdate_box.Text = MyUtility.Convert.GetDate(maindr["WeightDate"]).ToString();
+            //arrwhdate_box.Value = MyUtility.Convert.GetDate(maindr["whseArrival"]);            
+            //brandrefno_box.Text = maindr["SCIRefno"].ToString();
+            //color_box.Text = maindr["Colorid"].ToString();
+            lastinspdate_box.Value = MyUtility.Convert.GetDate(maindr["ContinuityDate"]);
             refdesc_box.Text = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
-            scirefno_box.Text = maindr["SciRefno"].ToString();
+            //scirefno_box.Text = maindr["SciRefno"].ToString();
             seq_box.Text = maindr["Seq1"].ToString() + "-" + maindr["Seq2"].ToString();
             sp_box.Text = maindr["POID"].ToString();
-            wk_box.Text = maindr["Exportid"].ToString();
+            //wk_box.Text = maindr["Exportid"].ToString();
             checkBox1.Value = maindr["nonContinuity"].ToString();
             result_box.Text = maindr["Continuity"].ToString();
             txtuser1.TextBox1.Text = maindr["Approve"].ToString();
@@ -479,17 +503,23 @@ namespace Sci.Production.Quality
             objSheets.Cells[3, 2] = scirefno_box.Text.ToString();
             objSheets.Cells[3, 4] = dt1.Rows[0]["ContinuityEncode"]; //Encode can not find
             objSheets.Cells[3, 6] = result_box.Text.ToString();
-            objSheets.Cells[3, 8] = lastinspdate_box.Text.ToString();
+            objSheets.Cells[3, 8] = lastinspdate_box.Value;
             objSheets.Cells[3, 10] = brand_box.Text.ToString();
             objSheets.Cells[4, 2] = brandrefno_box.Text.ToString();
             objSheets.Cells[4, 4] = arriveqty_box.Text.ToString();
             //objSheets.Cells[4, 6] = ((DateTime)arrwhdate_box.Text).ToShortDateString();
-            objSheets.Cells[4, 6] = arriveqty_box.Text;
-            objSheets.Cells[4, 8] = txtsupplier1.Text.ToString();
+            objSheets.Cells[4, 6] = arrwhdate_box.Value;
+            //objSheets.Cells[4, 8] = txtsupplier1.Text.ToString();
+            objSheets.Cells[4, 8] = txtsupplier1.DisplayBox1.Text.ToString();
             objSheets.Cells[4, 10] = wk_box.Text.ToString();
+
+            objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
+            objApp.Cells.EntireRow.AutoFit();       ////自動欄高
 
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+
+          
         }
 
       

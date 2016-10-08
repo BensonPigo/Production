@@ -50,7 +50,6 @@
             this.arriveqty_box = new Sci.Win.UI.DisplayBox();
             this.label11 = new Sci.Win.UI.Label();
             this.label12 = new Sci.Win.UI.Label();
-            this.lastinspdate_box = new Sci.Win.UI.DisplayBox();
             this.label13 = new Sci.Win.UI.Label();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.approve_button = new Sci.Win.UI.Button();
@@ -58,12 +57,14 @@
             this.label14 = new Sci.Win.UI.Label();
             this.approve_box = new Sci.Win.UI.DisplayBox();
             this.button3 = new Sci.Win.UI.Button();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
             this.result_box = new Sci.Win.UI.DisplayBox();
             this.button1 = new Sci.Win.UI.Button();
-            this.textID = new Sci.Win.UI.DisplayBox();
             this.arrwhdate_box = new Sci.Win.UI.DateBox();
+            this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
+            this.dateBox1 = new Sci.Win.UI.DateBox();
+            this.textID = new Sci.Win.UI.DisplayBox();
+            this.lastinspdate_box = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -74,7 +75,7 @@
             this.btmcont.Controls.Add(this.button1);
             this.btmcont.Controls.Add(this.button3);
             this.btmcont.Location = new System.Drawing.Point(0, 693);
-            this.btmcont.Size = new System.Drawing.Size(988, 40);
+            this.btmcont.Size = new System.Drawing.Size(1073, 40);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
@@ -86,15 +87,15 @@
             // gridcont
             // 
             this.gridcont.Location = new System.Drawing.Point(12, 163);
-            this.gridcont.Size = new System.Drawing.Size(964, 520);
+            this.gridcont.Size = new System.Drawing.Size(1049, 520);
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(898, 5);
+            this.undo.Location = new System.Drawing.Point(983, 5);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(818, 5);
+            this.save.Location = new System.Drawing.Point(903, 5);
             // 
             // brand_box
             // 
@@ -316,16 +317,6 @@
             this.label12.TabIndex = 121;
             this.label12.Text = "Last Inspection Date";
             // 
-            // lastinspdate_box
-            // 
-            this.lastinspdate_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.lastinspdate_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.lastinspdate_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.lastinspdate_box.Location = new System.Drawing.Point(793, 42);
-            this.lastinspdate_box.Name = "lastinspdate_box";
-            this.lastinspdate_box.Size = new System.Drawing.Size(90, 21);
-            this.lastinspdate_box.TabIndex = 123;
-            // 
             // label13
             // 
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -399,24 +390,6 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // txtuser1
-            // 
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(93, 129);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(305, 23);
-            this.txtuser1.TabIndex = 131;
-            this.txtuser1.TextBox1Binding = "";
-            // 
-            // txtsupplier1
-            // 
-            this.txtsupplier1.DisplayBox1Binding = "";
-            this.txtsupplier1.Location = new System.Drawing.Point(305, 41);
-            this.txtsupplier1.Name = "txtsupplier1";
-            this.txtsupplier1.Size = new System.Drawing.Size(147, 23);
-            this.txtsupplier1.TabIndex = 109;
-            this.txtsupplier1.TextBox1Binding = "";
-            // 
             // result_box
             // 
             this.result_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -436,6 +409,40 @@
             this.button1.Text = "Print Format Report";
             this.button1.UseVisualStyleBackColor = true;
             // 
+            // arrwhdate_box
+            // 
+            this.arrwhdate_box.Location = new System.Drawing.Point(793, 13);
+            this.arrwhdate_box.Name = "arrwhdate_box";
+            this.arrwhdate_box.ReadOnly = true;
+            this.arrwhdate_box.Size = new System.Drawing.Size(130, 23);
+            this.arrwhdate_box.TabIndex = 135;
+            // 
+            // txtuser1
+            // 
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(93, 129);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(305, 23);
+            this.txtuser1.TabIndex = 131;
+            this.txtuser1.TextBox1Binding = "";
+            // 
+            // txtsupplier1
+            // 
+            this.txtsupplier1.DisplayBox1Binding = "";
+            this.txtsupplier1.Location = new System.Drawing.Point(305, 41);
+            this.txtsupplier1.Name = "txtsupplier1";
+            this.txtsupplier1.Size = new System.Drawing.Size(147, 23);
+            this.txtsupplier1.TabIndex = 109;
+            this.txtsupplier1.TextBox1Binding = "";
+            // 
+            // dateBox1
+            // 
+            this.dateBox1.Location = new System.Drawing.Point(429, 355);
+            this.dateBox1.Name = "dateBox1";
+            this.dateBox1.ReadOnly = true;
+            this.dateBox1.Size = new System.Drawing.Size(130, 23);
+            this.dateBox1.TabIndex = 136;
+            // 
             // textID
             // 
             this.textID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -447,17 +454,19 @@
             this.textID.TabIndex = 134;
             this.textID.Visible = false;
             // 
-            // arrwhdate_box
+            // lastinspdate_box
             // 
-            this.arrwhdate_box.Location = new System.Drawing.Point(793, 13);
-            this.arrwhdate_box.Name = "arrwhdate_box";
-            this.arrwhdate_box.ReadOnly = true;
-            this.arrwhdate_box.Size = new System.Drawing.Size(130, 23);
-            this.arrwhdate_box.TabIndex = 135;
+            this.lastinspdate_box.Location = new System.Drawing.Point(793, 42);
+            this.lastinspdate_box.Name = "lastinspdate_box";
+            this.lastinspdate_box.ReadOnly = true;
+            this.lastinspdate_box.Size = new System.Drawing.Size(130, 23);
+            this.lastinspdate_box.TabIndex = 136;
             // 
             // P01_Continuity
             // 
-            this.ClientSize = new System.Drawing.Size(988, 733);
+            this.ClientSize = new System.Drawing.Size(1073, 733);
+            this.Controls.Add(this.lastinspdate_box);
+            this.Controls.Add(this.dateBox1);
             this.Controls.Add(this.arrwhdate_box);
             this.Controls.Add(this.textID);
             this.Controls.Add(this.result_box);
@@ -468,7 +477,6 @@
             this.Controls.Add(this.approve_button);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label13);
-            this.Controls.Add(this.lastinspdate_box);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.arriveqty_box);
@@ -521,10 +529,7 @@
             this.Controls.SetChildIndex(this.label10, 0);
             this.Controls.SetChildIndex(this.arriveqty_box, 0);
             this.Controls.SetChildIndex(this.label11, 0);
-            this.Controls.SetChildIndex(this.btmcont, 0);
-            this.Controls.SetChildIndex(this.gridcont, 0);
             this.Controls.SetChildIndex(this.label12, 0);
-            this.Controls.SetChildIndex(this.lastinspdate_box, 0);
             this.Controls.SetChildIndex(this.label13, 0);
             this.Controls.SetChildIndex(this.checkBox1, 0);
             this.Controls.SetChildIndex(this.approve_button, 0);
@@ -535,6 +540,10 @@
             this.Controls.SetChildIndex(this.result_box, 0);
             this.Controls.SetChildIndex(this.textID, 0);
             this.Controls.SetChildIndex(this.arrwhdate_box, 0);
+            this.Controls.SetChildIndex(this.dateBox1, 0);
+            this.Controls.SetChildIndex(this.btmcont, 0);
+            this.Controls.SetChildIndex(this.gridcont, 0);
+            this.Controls.SetChildIndex(this.lastinspdate_box, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -569,7 +578,6 @@
         private Win.UI.Label label11;
         private Win.UI.Label label12;
         private Win.UI.Button button3;
-        private Win.UI.DisplayBox lastinspdate_box;
         private Win.UI.Label label13;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.Button approve_button;
@@ -579,7 +587,9 @@
         private Class.txtuser txtuser1;
         private Win.UI.DisplayBox result_box;
         private Win.UI.Button button1;
-        private Win.UI.DisplayBox textID;
         private Win.UI.DateBox arrwhdate_box;
+        private Win.UI.DateBox dateBox1;
+        private Win.UI.DisplayBox textID;
+        private Win.UI.DateBox lastinspdate_box;
     }
 }
