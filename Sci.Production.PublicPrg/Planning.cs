@@ -77,7 +77,7 @@ namespace Sci.Production.PublicPrg
                     ,A.OrderID
                     ,sewinglineid
                     ,a.FactoryID
-                    ,(a.WorkHour / a.WorkDay * a.StandardOutput) stdq
+                    ,iif(a.WorkDay=0,(a.WorkHour / 1 * a.StandardOutput),(a.WorkHour / a.WorkDay * a.StandardOutput)) stdq
                     ,a.ComboType
 	  FROM SewingSchedule A WHERE ORDERID='{0}'
       UNION ALL  
