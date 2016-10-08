@@ -353,27 +353,28 @@ namespace Sci.Production.Subcon
             this.EnsureToolbarExt();
         }
 
-        protected override void ClickUnconfirm()
-        {
-            base.ClickUnconfirm();
-            String sqlcmd;
+        //無權
+        //protected override void ClickUnconfirm()
+        //{
+        //    base.ClickUnconfirm();
+        //    String sqlcmd;
 
-            DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
-            if (dResult.ToString().ToUpper() == "NO") return;
-            sqlcmd = string.Format("update artworkpo set status = 'New', apvname='', apvdate = null , editname = '{0}' , editdate = GETDATE() " +
-                            "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+        //    DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+        //    if (dResult.ToString().ToUpper() == "NO") return;
+        //    sqlcmd = string.Format("update artworkpo set status = 'New', apvname='', apvdate = null , editname = '{0}' , editdate = GETDATE() " +
+        //                    "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
 
-            DualResult result;
-            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
-            {
-                ShowErr(sqlcmd, result);
-                return;
-            }
-            RenewData();
-            OnDetailEntered();
-            this.EnsureToolbarExt();
-        }
+        //    DualResult result;
+        //    if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+        //    {
+        //        ShowErr(sqlcmd, result);
+        //        return;
+        //    }
+        //    RenewData();
+        //    OnDetailEntered();
+        //    this.EnsureToolbarExt();
+        //}
 
         protected override void ClickClose()
         {
@@ -401,7 +402,7 @@ namespace Sci.Production.Subcon
         protected override void ClickUnclose()
         {
             base.ClickUnclose();
-            if (!(Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["apvname"].ToString() != Env.User.UserID))
+            if (!(Prgs.GetAuthority(Env.User.UserID)))
             {
                 MyUtility.Msg.InfoBox("Only Apporver & leader can unclose!");
                 return;
