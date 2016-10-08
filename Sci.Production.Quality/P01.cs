@@ -59,7 +59,8 @@ namespace Sci.Production.Quality
                 (Select weavetypeid from Fabric b where b.SCIRefno =a.SCIrefno) as weavetypeid,
                 c.Exportid,c.whseArrival,dbo.getPass1(a.Approve) as approve1,approveDate,approve,
                 (Select d.colorid from PO_Supp_Detail d Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2) as Colorid,
-                (Select AbbEn From Supp Where a.suppid = supp.id) as SuppEn
+                (Select ID+' - '+ AbbEn From Supp Where a.suppid = supp.id) as SuppEn,
+                c.ExportID as Wkno
                 From FIR a Left join Receiving c on c.id = a.receivingid
                 Where a.poid='{0}' order by seq1,seq2  ", masterID);
             this.DetailSelectCommand = cmd;
@@ -83,6 +84,7 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorDateColumnSettings shaD = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorTextColumnSettings Con = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorDateColumnSettings ConD = new DataGridViewGeneratorDateColumnSettings();
+            #region ClickEvent
             phy.CellMouseDoubleClick += (s, e) =>
             {
                     var dr = this.CurrentDetailData; if (null == dr) return;
@@ -156,6 +158,8 @@ namespace Sci.Production.Quality
                 frm.Dispose();
                 this.RenewData();
             };
+            #endregion
+            #region Validat & Editable
             nonPhy.CellEditable += (s, e) =>
             {
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
@@ -205,16 +209,18 @@ namespace Sci.Production.Quality
                 dr.EndEdit();
                 FinalResult(dr);
             };
+            #endregion
             #region set grid
             this.detailgrid.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("WKNO", header: "Wkno", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("whseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Refno", header: "Brand Ref#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SCIRefno", header: "SCI Ref#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("SuppEn", header: "Supplier", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("SuppEn", header: "Supplier", width: Widths.AnsiChars(17), iseditingreadonly: true)
                 .Numeric("ArriveQty", header: "Arrive Qty", width: Widths.AnsiChars(8), integer_places: 10,decimal_places:2,iseditingreadonly:true)
                 .Text("weavetypeid", header: "Weave Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("InspDeadline", header: "Insp. Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -477,7 +483,7 @@ namespace Sci.Production.Quality
             var frm = new Sci.Production.Quality.P01_PhysicalInspection(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
-            this.RenewData();
+            //this.RenewData();會讓資料renew導致記憶被洗掉
         }
 
         
@@ -487,7 +493,7 @@ namespace Sci.Production.Quality
             var frm = new Sci.Production.Quality.P01_Weight(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
-            this.RenewData();
+            //this.RenewData();會讓資料renew導致記憶被洗掉
         }
 
         private void modifyShadeBondToolStripMenuItem_Click(object sender, EventArgs e)
@@ -496,7 +502,7 @@ namespace Sci.Production.Quality
             var frm = new Sci.Production.Quality.P01_ShadeBond(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
-            this.RenewData();
+            //this.RenewData();會讓資料renew導致記憶被洗掉
         }
 
         private void modifyContinuityToolStripMenuItem_Click(object sender, EventArgs e)
@@ -505,7 +511,7 @@ namespace Sci.Production.Quality
             var frm = new Sci.Production.Quality.P01_Continuity(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
-            this.RenewData();
+            //this.RenewData();會讓資料renew導致記憶被洗掉
         }
     }
 }

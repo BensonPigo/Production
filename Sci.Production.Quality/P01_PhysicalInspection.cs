@@ -77,15 +77,28 @@ namespace Sci.Production.Quality
             {
                 txtsupplier1.TextBox1.Text = "";
             }
+            string po_supp_detail_cmd = string.Format("select SCIRefno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}'", maindr["POID"], maindr["seq1"], maindr["seq2"]);
+            DataRow po_supp_detail_dr;
+            if (MyUtility.Check.Seek(po_supp_detail_cmd, out po_supp_detail_dr))
+            {
+                scirefno_box.Text = po_supp_detail_dr["SCIRefno"].ToString();
+                brandrefno_box.Text = "";// po_supp_detail_dr["BrandRefno"].ToString();// 沒有BRANDREFNO 
+                color_box.Text = po_supp_detail_dr["colorid"].ToString();
+            }
+            else
+            {
+                scirefno_box.Text = "";
+                brandrefno_box.Text = "";
+            }
 
             approve_box.Text = maindr["ApproveDate"].ToString();
             arriveqty_box.Text = maindr["arriveQty"].ToString();
             arrwhdate_box.Text = MyUtility.Convert.GetDate(maindr["whseArrival"]).ToString();
-            brandrefno_box.Text = maindr["SCIRefno"].ToString();
+            //brandrefno_box.Text = maindr["SCIRefno"].ToString();
             color_box.Text = maindr["Colorid"].ToString();
             lastinspdate_box.Text = MyUtility.Convert.GetDate(maindr["physicalDate"]).ToString();
             refdesc_box.Text = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
-            scirefno_box.Text = maindr["SciRefno"].ToString();
+            //scirefno_box.Text = maindr["SciRefno"].ToString();
             seq_box.Text = maindr["Seq1"].ToString() + "-" + maindr["Seq2"].ToString();
             sp_box.Text = maindr["POID"].ToString();
             wk_box.Text = maindr["Exportid"].ToString();
