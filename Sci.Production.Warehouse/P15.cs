@@ -107,7 +107,7 @@ namespace Sci.Production.Warehouse
         // Print - subreport
         private void MySubreportEventHandler(object sender, SubreportProcessingEventArgs e)
         {
-            e.DataSources.Add(new ReportDataSource("DataSet1", (DataTable)this.detailgridbs.DataSource));
+                e.DataSources.Add(new ReportDataSource("DataSet1", (DataTable)this.detailgridbs.DataSource));            
         }
 
         // save前檢查 & 取id
@@ -648,6 +648,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
 
             protected override bool ClickPrint()
             {
+                if (CurrentMaintain["Status"].ToString() != "Confirmed") return false;
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
