@@ -93,6 +93,23 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(892, 387);
+            // 
             // label1
             // 
             this.label1.Lines = 0;
@@ -169,7 +186,6 @@
             this.GridUniqueKey = "ID";
             this.IsGridIconVisible = false;
             this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "Ukey";
