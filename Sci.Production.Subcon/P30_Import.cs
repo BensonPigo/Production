@@ -338,8 +338,11 @@ and a.Mdivisionid = '{1}'
         // To Excel
         private void button4_Click(object sender, EventArgs e)
         {
+
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            MyUtility.Excel.CopyToXls(dt,"");
+            Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
+            sdExcel.Save();
+
         }
     }
 }
