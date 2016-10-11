@@ -310,6 +310,7 @@
             this.GridUniqueKey = "FromFtyInventoryUkey,ToMdivisionid,ToPoid,ToSeq1,ToSeq2,ToRoll,ToDyelot";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
             this.IsSupportNew = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
