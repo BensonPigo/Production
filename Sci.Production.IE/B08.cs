@@ -18,6 +18,7 @@ namespace Sci.Production.IE
         {
             InitializeComponent();
             this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
+            
         }
 
         protected override void OnFormLoaded()
@@ -175,12 +176,14 @@ namespace Sci.Production.IE
             base.ClickNewAfter();
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            textBox3.BackColor = Color.White;
         }
 
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
+            textBox3.BackColor = Color.White;
         }
 
         protected override bool ClickSaveBefore()
@@ -219,7 +222,7 @@ namespace Sci.Production.IE
                 this.txtsewingline1.Focus();
                 return false;
             }
-
+            textBox3.BackColor = displayBox2.BackColor;
             return base.ClickSaveBefore();
         }
 
@@ -256,6 +259,12 @@ namespace Sci.Production.IE
             }
             excel.Visible = true;
             return base.ClickPrint();
+        }
+        
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            textBox3.BackColor = displayBox2.BackColor;
         }
 
         private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)

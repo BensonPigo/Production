@@ -42,8 +42,8 @@
             this.dateBox2 = new Sci.Win.UI.DateBox();
             this.label1 = new Sci.Win.UI.Label();
             this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.txtsewingline1 = new Sci.Production.Class.txtsewingline();
             this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
+            this.txtsewingline1 = new Sci.Production.Class.txtsewingline();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -51,10 +51,6 @@
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(803, 395);
             // 
             // detailcont
             // 
@@ -74,11 +70,6 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(803, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(803, 38);
             // 
             // browse
             // 
@@ -174,11 +165,14 @@
             // 
             // textBox3
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
+            this.textBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Skill", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.textBox3.IsSupportEditMode = false;
             this.textBox3.Location = new System.Drawing.Point(132, 182);
             this.textBox3.Name = "textBox3";
+            this.textBox3.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.textBox3.ReadOnly = true;
             this.textBox3.Size = new System.Drawing.Size(140, 23);
             this.textBox3.TabIndex = 10;
             this.textBox3.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
@@ -218,17 +212,6 @@
             this.displayBox2.Size = new System.Drawing.Size(40, 23);
             this.displayBox2.TabIndex = 15;
             // 
-            // txtsewingline1
-            // 
-            this.txtsewingline1.BackColor = System.Drawing.Color.White;
-            this.txtsewingline1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtsewingline1.factoryobjectName = null;
-            this.txtsewingline1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtsewingline1.Location = new System.Drawing.Point(479, 132);
-            this.txtsewingline1.Name = "txtsewingline1";
-            this.txtsewingline1.Size = new System.Drawing.Size(60, 23);
-            this.txtsewingline1.TabIndex = 13;
-            // 
             // txtmfactory1
             // 
             this.txtmfactory1.BackColor = System.Drawing.Color.White;
@@ -238,6 +221,17 @@
             this.txtmfactory1.Name = "txtmfactory1";
             this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory1.TabIndex = 16;
+            // 
+            // txtsewingline1
+            // 
+            this.txtsewingline1.BackColor = System.Drawing.Color.White;
+            this.txtsewingline1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
+            this.txtsewingline1.factoryobjectName = this.txtmfactory1;
+            this.txtsewingline1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtsewingline1.Location = new System.Drawing.Point(479, 132);
+            this.txtsewingline1.Name = "txtsewingline1";
+            this.txtsewingline1.Size = new System.Drawing.Size(60, 23);
+            this.txtsewingline1.TabIndex = 13;
             // 
             // B08
             // 
