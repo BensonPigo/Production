@@ -56,8 +56,8 @@ isnull((select SUM(c.Qty)
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out summaryQty);
             dateBox1.Value = MyUtility.Convert.GetDate(summaryQty.Rows[0]["LastSewingDate"]);
             numericBox1.Value = MyUtility.Convert.GetInt(masterData["Qty"]);
-            numericBox2.Value = MyUtility.Convert.GetInt(summaryQty.Rows[0]["SewingQty"]);
-            numericBox3.Value = MyUtility.Convert.GetInt(summaryQty.Rows[0]["CutQty"]);
+            //numericBox2.Value = MyUtility.Convert.GetInt(summaryQty.Rows[0]["SewingQty"]);
+            //numericBox3.Value = MyUtility.Convert.GetInt(summaryQty.Rows[0]["CutQty"]);
             numericBox4.Value = MyUtility.Convert.GetInt(masterData["Qty"]);
 
             sewingqty.CellMouseDoubleClick += (s, e) =>
@@ -249,6 +249,10 @@ order by oa.Seq,os.Seq", cuttingWorkType == "1" ? string.Format("o.CuttingSP = '
 
             DataTable CuttingData;
             result = DBProxy.Current.Select(null, sqlCmd, out CuttingData);
+
+            //bug fix:0000294: PPIC_P01_ProductionOutput
+            numericBox2.Value = MyUtility.Convert.GetInt(SewingData.Compute("sum(SewQty)", ""));  //Sewing Q'ty
+            numericBox3.Value = MyUtility.Convert.GetDecimal(CuttingData.Compute("sum(CutQty)", ""));  //Cutting Q'ty
 
             listControlBindingSource1.DataSource = SewingData;
             listControlBindingSource2.DataSource = CuttingData;
