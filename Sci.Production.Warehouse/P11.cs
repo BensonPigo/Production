@@ -91,7 +91,7 @@ from dbo.ftyinventory a inner join dbo.po_supp_detail b on b.id=a.POID and b.seq
 inner join Fabric f on f.SCIRefno = b.SCIRefno
 inner join MtlType m on m.ID = f.MtlTypeID
 where lock=0 and inqty-outqty+adjustqty > 0 
-and mdivisionid='{0}' and poid='{1}' and stocktype='B'
+and mdivisionid='{0}' and poid='{1}' --and stocktype='B'
 and b.FabricType='A'
 and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, CurrentDetailData["poid"]);
                     IList<DataRow> x;
@@ -140,7 +140,7 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, Current
 from dbo.ftyinventory a inner join dbo.po_supp_detail b on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
 inner join Fabric f on f.SCIRefno = b.SCIRefno
 inner join MtlType m on m.ID = f.MtlTypeID
-where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivisionid='{3}' and stocktype='B' and inqty-outqty+adjustqty > 0"
+where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivisionid='{3}'  and inqty-outqty+adjustqty > 0  --and stocktype='B' "
                             , CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3)
                                                  , e.FormattedValue.ToString().PadRight(5).Substring(3, 2), Sci.Env.User.Keyword), out dr, null))
                         {
