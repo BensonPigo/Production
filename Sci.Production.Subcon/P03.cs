@@ -37,11 +37,12 @@ namespace Sci.Production.Subcon
         {
             Production.Class.txtartworktype_fty o;
             o = (Production.Class.txtartworktype_fty)sender;
-
+            //值有變更時表身資料清空,從最後一列
             if ((o.Text != o.OldValue) && this.EditMode)
             {
-                foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
-                {
+                DataTable dt = (DataTable)detailgridbs.DataSource;
+                for (int i = dt.Rows.Count-1 ; i >= 0  ;i--){
+                    DataRow dr  = dt.Rows[i];
                     dr.Delete();
                 }
             }
@@ -166,31 +167,50 @@ namespace Sci.Production.Subcon
             return base.ClickSaveBefore();
         }
 
-        // grid 加工填值
-        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
-            if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
-            {
-                (e.Details).Columns.Add("StyleId", typeof(String));
-                (e.Details).Columns.Add("Variance", typeof(decimal));
-                (e.Details).Columns.Add("BalQty", typeof(decimal));
+            string id = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            this.DetailSelectCommand = string.Format(@"select 
+BundleNo, OrderID, styleID, ArtworkPoID, ArtworkID, PatternCode, PatternDesc, ArtworkPoQty, OnHand, 
+(artworkpoqty - onhand) Variance, 
+Qty, 
+(artworkpoqty - onhand - qty) BalQty 
+from FarmOut_Detail 
+outer apply(
+	select styleID
+	from orders
+	where orders.id = FarmOut_Detail.Orderid	
+) styleID where id='{0}'", id);
 
-                foreach (DataRow dr in e.Details.Rows)
-                {
-                    dr["Variance"] = (decimal)dr["artworkpoqty"] - (decimal)dr["onhand"];
-                    dr["BalQty"] = (decimal)dr["artworkpoqty"] - (decimal)dr["onhand"] - (decimal)dr["qty"];
-                    DataTable order_dt;
-                    DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders where id='{0}'", dr["orderid"].ToString()), out order_dt);
-                    if (order_dt.Rows.Count == 0)
-                        continue;
-                    dr["StyleId"] = order_dt.Rows[0]["styleid"].ToString();
-
-                }
-            }
-            return base.OnRenewDataDetailPost(e);
+            return base.OnDetailSelectCommandPrepare(e);
         }
 
+        // grid 加工填值
+        //protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
+        //{
+        //    if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
+        //    {
+        //        (e.Details).Columns.Add("StyleId", typeof(String));
+        //        (e.Details).Columns.Add("Variance", typeof(decimal));
+        //        (e.Details).Columns.Add("BalQty", typeof(decimal));
+
+        //        foreach (DataRow dr in e.Details.Rows)
+        //        {
+        //            dr["Variance"] = (decimal)dr["artworkpoqty"] - (decimal)dr["onhand"];
+        //            dr["BalQty"] = (decimal)dr["artworkpoqty"] - (decimal)dr["onhand"] - (decimal)dr["qty"];
+        //            DataTable order_dt;
+        //            DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders where id='{0}'", dr["orderid"].ToString()), out order_dt);
+        //            if (order_dt.Rows.Count == 0)
+        //                continue;
+        //            dr["StyleId"] = order_dt.Rows[0]["styleid"].ToString();
+
+        //        }
+        //    }
+        //    return base.OnRenewDataDetailPost(e);
+        //}
+
         //refresh
+
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -213,16 +233,24 @@ namespace Sci.Production.Subcon
             ts.CellValidating += (s, e) =>
             {
 
-                if (!(this.EditMode) || this.IsDetailInserting) return;
-                if (!(MyUtility.Check.Empty(e.FormattedValue)) && e.FormattedValue.ToString().TrimEnd() != ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex)["orderid"].ToString().TrimEnd())
+                if (!(this.EditMode) || !(this.IsDetailInserting)) return;              
+                   // && MyUtility.Check.Empty(string.Format("select styleid from orders where id ='{0}'", e.FormattedValue)))
+
+                if (!(MyUtility.Check.Empty(e.FormattedValue)))
                 {
-                    CurrentDetailData["styleid"] = MyUtility.Check.Empty(string.Format("select styleid from orders where id ='{0}'", e.FormattedValue));
-                    CurrentDetailData["artworkid"] = "";
-                    CurrentDetailData["patterndesc"] = "";
-                    CurrentDetailData["artworkpoqty"] = 0;
-                    CurrentDetailData["onhand"] = 0;
-                    CurrentDetailData["ArtworkPo_DetailUkey"] = DBNull.Value;
+                    CurrentDetailData["OrderID"] = e.FormattedValue;
+                    CurrentDetailData["StyleID"] = MyUtility.GetValue.Lookup(string.Format("select styleid from orders where id ='{0}'", e.FormattedValue));
+                    CurrentDetailData["ArtworkPoID"] = "";
+                    CurrentDetailData["ArtworkId"] = "";
+                    CurrentDetailData["PatternCode"] = "";
+                    CurrentDetailData["PatternCode"] = "";
+                    CurrentDetailData["PatternDesc"] = "";
+                    CurrentDetailData["ArtworkPoQty"] = 0;
+                    CurrentDetailData["OnHand"] = 0;
+                    CurrentDetailData["Variance"] = 0;
                     CurrentDetailData["qty"] = 0;
+                    CurrentDetailData["BalQty"] = 0;
+                    CurrentDetailData["ArtworkPo_DetailUkey"] = DBNull.Value;
                 }
             };
             #endregion
@@ -626,6 +654,12 @@ and a.artworktypeid = '{1}'", CurrentMaintain["id"], CurrentMaintain["artworktyp
         private void label25_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //P03_Import TrimCardPrint = new P03_Import();
+            //P03_Import.ShowDialog(this);
         }
 
     }
