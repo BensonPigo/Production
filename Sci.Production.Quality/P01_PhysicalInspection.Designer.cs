@@ -50,8 +50,6 @@
             this.arriveqty_box = new Sci.Win.UI.DisplayBox();
             this.label11 = new Sci.Win.UI.Label();
             this.label12 = new Sci.Win.UI.Label();
-            this.arrwhdate_box = new Sci.Win.UI.DisplayBox();
-            this.lastinspdate_box = new Sci.Win.UI.DisplayBox();
             this.label13 = new Sci.Win.UI.Label();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.approve_button = new Sci.Win.UI.Button();
@@ -63,6 +61,8 @@
             this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
             this.result_box = new Sci.Win.UI.DisplayBox();
             this.textID = new Sci.Win.UI.TextBox();
+            this.lastinspdate_box = new Sci.Win.UI.DateBox();
+            this.arrwhdate_box = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -313,26 +313,6 @@
             this.label12.TabIndex = 121;
             this.label12.Text = "Last Inspection Date";
             // 
-            // arrwhdate_box
-            // 
-            this.arrwhdate_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.arrwhdate_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.arrwhdate_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.arrwhdate_box.Location = new System.Drawing.Point(793, 12);
-            this.arrwhdate_box.Name = "arrwhdate_box";
-            this.arrwhdate_box.Size = new System.Drawing.Size(90, 21);
-            this.arrwhdate_box.TabIndex = 122;
-            // 
-            // lastinspdate_box
-            // 
-            this.lastinspdate_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.lastinspdate_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.lastinspdate_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.lastinspdate_box.Location = new System.Drawing.Point(793, 42);
-            this.lastinspdate_box.Name = "lastinspdate_box";
-            this.lastinspdate_box.Size = new System.Drawing.Size(90, 21);
-            this.lastinspdate_box.TabIndex = 123;
-            // 
             // label13
             // 
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -445,9 +425,27 @@
             this.textID.TabIndex = 1;
             this.textID.Visible = false;
             // 
+            // lastinspdate_box
+            // 
+            this.lastinspdate_box.Location = new System.Drawing.Point(793, 42);
+            this.lastinspdate_box.Name = "lastinspdate_box";
+            this.lastinspdate_box.ReadOnly = true;
+            this.lastinspdate_box.Size = new System.Drawing.Size(130, 23);
+            this.lastinspdate_box.TabIndex = 138;
+            // 
+            // arrwhdate_box
+            // 
+            this.arrwhdate_box.Location = new System.Drawing.Point(793, 13);
+            this.arrwhdate_box.Name = "arrwhdate_box";
+            this.arrwhdate_box.ReadOnly = true;
+            this.arrwhdate_box.Size = new System.Drawing.Size(130, 23);
+            this.arrwhdate_box.TabIndex = 139;
+            // 
             // P01_PhysicalInspection
             // 
             this.ClientSize = new System.Drawing.Size(1096, 733);
+            this.Controls.Add(this.arrwhdate_box);
+            this.Controls.Add(this.lastinspdate_box);
             this.Controls.Add(this.textID);
             this.Controls.Add(this.result_box);
             this.Controls.Add(this.txtuser1);
@@ -457,8 +455,6 @@
             this.Controls.Add(this.approve_button);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label13);
-            this.Controls.Add(this.lastinspdate_box);
-            this.Controls.Add(this.arrwhdate_box);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.arriveqty_box);
@@ -482,6 +478,7 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultOrder = "Roll,Dyelot";
             this.EditMode = true;
             this.GridPopUp = false;
             this.GridUniqueKey = "Roll,Dyelot";
@@ -514,8 +511,6 @@
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
             this.Controls.SetChildIndex(this.label12, 0);
-            this.Controls.SetChildIndex(this.arrwhdate_box, 0);
-            this.Controls.SetChildIndex(this.lastinspdate_box, 0);
             this.Controls.SetChildIndex(this.label13, 0);
             this.Controls.SetChildIndex(this.checkBox1, 0);
             this.Controls.SetChildIndex(this.approve_button, 0);
@@ -525,6 +520,8 @@
             this.Controls.SetChildIndex(this.txtuser1, 0);
             this.Controls.SetChildIndex(this.result_box, 0);
             this.Controls.SetChildIndex(this.textID, 0);
+            this.Controls.SetChildIndex(this.lastinspdate_box, 0);
+            this.Controls.SetChildIndex(this.arrwhdate_box, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -559,8 +556,6 @@
         private Win.UI.Label label11;
         private Win.UI.Label label12;
         private Win.UI.Button button3;
-        private Win.UI.DisplayBox arrwhdate_box;
-        private Win.UI.DisplayBox lastinspdate_box;
         private Win.UI.Label label13;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.Button approve_button;
@@ -570,5 +565,7 @@
         private Class.txtuser txtuser1;
         private Win.UI.DisplayBox result_box;
         private Win.UI.TextBox textID;
+        private Win.UI.DateBox lastinspdate_box;
+        private Win.UI.DateBox arrwhdate_box;
     }
 }

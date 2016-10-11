@@ -504,7 +504,7 @@ namespace Sci.Production.Quality
             objSheets.Cells[2, 4] = seq_box.Text.ToString();
             objSheets.Cells[2, 6] = color_box.Text.ToString();
             objSheets.Cells[2, 8] = style_box.Text.ToString();
-            objSheets.Cells[2, 10] = dt1.Rows[0]["SeasonID"];//Season can not find
+            objSheets.Cells[2, 10] = dt1.Rows[0]["SeasonID"];
             objSheets.Cells[3, 2] = scirefno_box.Text.ToString();
             objSheets.Cells[3, 4] = dt1.Rows[0]["ContinuityEncode"]; //Encode can not find
             objSheets.Cells[3, 6] = result_box.Text.ToString();
