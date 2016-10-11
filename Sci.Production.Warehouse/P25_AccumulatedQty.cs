@@ -32,7 +32,7 @@ namespace Sci.Production.Warehouse
 from dbo.SubTransfer_Detail a 
 inner join PO_Supp_Detail b on a.FromPoId = b.id and a.FromSeq1 = b.seq1 and a.FromSeq2 = b.SEQ2
 where a.Id = '{0}'
-group by a.FromPoId,a.FromSeq1,a.FromSeq2", dr["id"].ToString()));
+group by a.FromPoId,a.FromSeq1,a.FromSeq2,b.stockunit", dr["id"].ToString()));
 
             DataTable selectDataTable1;
             MyUtility.Msg.WaitWindows("Data Loading...");
