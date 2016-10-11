@@ -271,6 +271,10 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                     && !MyUtility.Check.Empty(CurrentDetailData["poid"]) 
                     && !MyUtility.Check.Empty(CurrentDetailData["seq"]) )
                 {
+                    //bug fix:364: WAREHOUSE_P51_Warehouse Backward Stocktaking
+                    if (MyUtility.Check.Empty(CurrentDetailData["mdivisionid"])) CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
+                    if (MyUtility.Check.Empty(CurrentDetailData["stocktype"])) CurrentDetailData["stocktype"] = CurrentMaintain["stocktype"].ToString();
+
                     string sqlcmd = string.Format(@"select ukey,roll,dyelot,inqty-outqty+adjustqty qty from dbo.ftyinventory 
                                         where mdivisionid='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' 
                                         and stocktype='{4}' and lock =0",CurrentDetailData["mdivisionid"]
@@ -313,6 +317,10 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                     }
                     else
                     {
+                        //bug fix:364: WAREHOUSE_P51_Warehouse Backward Stocktaking
+                        if (MyUtility.Check.Empty(CurrentDetailData["mdivisionid"])) CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
+                        if (MyUtility.Check.Empty(CurrentDetailData["stocktype"])) CurrentDetailData["stocktype"] = CurrentMaintain["stocktype"].ToString();
+
                         if (!MyUtility.Check.Seek(string.Format(@"select ukey,roll,dyelot,inqty-outqty+adjustqty qty 
                                         from dbo.ftyinventory where mdivisionid='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' 
                                         and stocktype='{4}' and roll='{5}' and lock =0" ,CurrentDetailData["mdivisionid"]
