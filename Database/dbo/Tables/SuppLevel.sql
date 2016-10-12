@@ -9,8 +9,10 @@
     [AddDate]  DATETIME       NULL,
     [EditName] VARCHAR (10)   CONSTRAINT [DF_SuppLevel_EditName] DEFAULT ('') NULL,
     [EditDate] DATETIME       NULL,
-    CONSTRAINT [PK_SuppLevel] PRIMARY KEY CLUSTERED ([Type], [ID])
+    CONSTRAINT [PK_SuppLevel] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

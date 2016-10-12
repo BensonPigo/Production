@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[MDivisionPoDetail] (
+﻿CREATE TABLE [dbo].[MDivisionPoDetail] (
     [MDivisionID] VARCHAR (8)     CONSTRAINT [DF_MDivisionPoDetail_MDivisionId] DEFAULT ('') NOT NULL,
     [POID]        VARCHAR (13)    CONSTRAINT [DF_MDivisionPoDetail_POID] DEFAULT ('') NOT NULL,
     [Seq1]        VARCHAR (3)     CONSTRAINT [DF_MDivisionPoDetail_Seq1] DEFAULT ('') NOT NULL,
@@ -13,6 +13,8 @@ CREATE TABLE [dbo].[MDivisionPoDetail] (
     [Ukey]        BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK__MDivisio__07AF6F03481FB32F] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -101,11 +103,11 @@ CREATE NONCLUSTERED INDEX [POID]
 
 GO
 CREATE NONCLUSTERED INDEX [MDID_POID]
-    ON [dbo].[MDivisionPoDetail]([MDivisionID] ASC, [POID] ASC);
+    ON [dbo].[MDivisionPoDetail]([MDivisionID] ASC, [POID] ASC, [Seq1] ASC, [Seq2] ASC);
+
+
 
 
 GO
-CREATE NONCLUSTERED INDEX [MDID]
-    ON [dbo].[MDivisionPoDetail]([MDivisionID] ASC)
-    INCLUDE([POID], [Seq1], [Seq2]);
+
 
