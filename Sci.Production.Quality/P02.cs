@@ -39,7 +39,11 @@ namespace Sci.Production.Quality
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmd = string.Format(
                 @"Select a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,
-                ArriveQty,InspDeadline,Result,a.InspQty,a.RejectQty,a.Defect,a.Result,a.InspDate,a.Inspector,a.Remark,a.ReplacementReportID,
+                ArriveQty,InspDeadline,Result,a.InspQty,a.RejectQty,a.Defect,a.Result,a.InspDate,
+                (
+				select Pass1.Name from Pass1 where a.Inspector = pass1.id
+				) AS Inspector,
+                a.Remark,a.ReplacementReportID,
                 a.Status,ReplacementReportID,(seq1+seq2) as seq,
                 (
                 Select weavetypeid from Fabric b where b.SCIRefno =a.SCIrefno
