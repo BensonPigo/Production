@@ -81,7 +81,7 @@
             this.masterpanel.Controls.Add(this.label11);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(1058, 214);
+            this.masterpanel.Size = new System.Drawing.Size(892, 214);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label11, 0);
@@ -105,7 +105,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 214);
-            this.detailpanel.Size = new System.Drawing.Size(1058, 263);
+            this.detailpanel.Size = new System.Drawing.Size(892, 135);
             // 
             // gridicon
             // 
@@ -120,7 +120,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1058, 263);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 135);
             // 
             // detail2
             // 
@@ -136,16 +136,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1058, 515);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1058, 477);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -222,7 +222,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1058, 214);
+            this.shapeContainer1.Size = new System.Drawing.Size(892, 214);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -363,7 +363,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P37";
-            this.Text = "P37. Return Receipt";
+            this.Text = "P37. Return Receiving Material ";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";
             this.WorkAlias = "returnReceipt";
