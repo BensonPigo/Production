@@ -287,8 +287,8 @@ Begin
 			Set @SuppColor = dbo.GetSuppColorList(@SciRefNo, @BoaSuppID, @ColorID, @BrandID, @SeasonID, @ProgramID, @StyleID);
 			
 			--取得 Fabric Price
-			Set @Price = IsNull(dbo.GetPriceFromMtl(@SciRefNo, @BoaSuppID, @SeasonID, @UsageQty, @Category, @CfmDate, '', @ColorID), 0);
-			
+			--Set @Price = IsNull(dbo.GetPriceFromMtl(@SciRefNo, @BoaSuppID, @SeasonID, @UsageQty, @Category, @CfmDate, '', @ColorID), 0);
+			Set @Price =0;
 			Insert Into #Tmp_BoaExpend
 				(  ID, Order_BOAUkey, RefNo, SCIRefNo, Article, ColorID, SuppColor
 				 , SizeCode, SizeSpec, SizeUnit, Remark, OrderQty, Price, UsageQty
