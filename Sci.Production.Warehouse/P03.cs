@@ -256,7 +256,10 @@ Select POID,SEQ1,SEQ2,CASE
             ,ROUND(a.UsedQty,4) unitqty,A.Qty,A.NETQty,A.NETQty+A.lossQty useqty ,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,iif(a.Complete='1','Y','N') as Complete
             ,a.FinalETA,m.InQty,a.StockUnit
             ,iif(m.OutQty is null,'0.00',m.OutQty) as OutQty,m.AdjustQty
-			,m.InQty - m.OutQty + m.AdjustQty balanceqty
+
+			--,m.InQty - m.OutQty + m.AdjustQty balanceqty
+            ,m.InQty - iif(m.OutQty is null,'0.00',m.OutQty) + m.AdjustQty balanceqty
+
 			,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
             ,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
             ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.refno,a.seq1,a.seq2),1,0)) AS description,s.currencyid
@@ -285,7 +288,10 @@ Select POID,SEQ1,SEQ2,CASE
             ,ROUND(a.UsedQty,4) unitqty,A.Qty,A.NETQty,A.NETQty+A.lossQty useqty ,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,iif(a.Complete='1','Y','N') as Complete
             ,a.FinalETA,m.InQty,a.StockUnit
             ,iif(m.OutQty is null,'0.00',m.OutQty) as OutQty,m.AdjustQty
-			,m.InQty - m.OutQty + m.AdjustQty balanceqty
+
+			--,m.InQty - m.OutQty + m.AdjustQty balanceqty
+            ,m.InQty - iif(m.OutQty is null,'0.00',m.OutQty) + m.AdjustQty balanceqty
+
 			,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
             ,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
             ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.refno,a.seq1,a.seq2),1,0)) AS description,s.currencyid

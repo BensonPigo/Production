@@ -33,6 +33,7 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            this.Text += string.Format(@" ({0}-{1}-{2})", dr["id"], dr["seq1"], dr["seq2"]);  //351: WAREHOUSE_P03_RollTransaction_Transaction Detail by Roll#，3.Tool bar要帶出SP# & Seq
             this.displayBox1.Text = dr["seq1"].ToString() + "-" + dr["seq2"].ToString();
             this.displayBox2.Text = MyUtility.GetValue.Lookup(string.Format("select dbo.getmtldesc('{0}','{1}','{2}',2,0)", dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString()));
             this.numericBox1.Value = MyUtility.Check.Empty( dr["inqty"]) ? decimal.Parse("0.00"): decimal.Parse(dr["inqty"].ToString());
@@ -54,7 +55,9 @@ namespace Sci.Production.Warehouse
                                             from FtyInventory a 
                                             where a.Poid = '{0}'
                                             and a.Seq1 = '{1}'
-                                            and a.Seq2 = '{2}' order by a.dyelot,a.roll,a.stocktype"
+                                            and a.Seq2 = '{2}' 
+                                            and MDivisionPoDetailUkey is not null  --避免下面Relations發生問題
+                                            order by a.dyelot,a.roll,a.stocktype"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString());
