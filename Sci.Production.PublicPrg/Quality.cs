@@ -41,14 +41,15 @@ namespace Sci.Production.PublicPrg
         {
             DateTime? cutinline,sciDelv;
 
-            if (cu == DBNull.Value) cutinline = null;
+            if (cu == DBNull.Value||cu.Empty()) cutinline = null;
             else cutinline = Convert.ToDateTime(cu);
 
             if (del == DBNull.Value) sciDelv = null;
             else sciDelv = Convert.ToDateTime(del);
             DateTime? TargetSciDel;
             double mtlLeadT = Convert.ToDouble(MyUtility.GetValue.Lookup("Select MtlLeadTime from System", null));
-            if (MyUtility.Check.Empty(mtlLeadT))  TargetSciDel= sciDelv;
+            if (sciDelv == null) return null;
+            if (MyUtility.Check.Empty(mtlLeadT)) TargetSciDel = sciDelv; 
             else TargetSciDel = ((DateTime)sciDelv).AddDays(Convert.ToDouble(mtlLeadT));
             
             if (cutinline < TargetSciDel) return cutinline;
