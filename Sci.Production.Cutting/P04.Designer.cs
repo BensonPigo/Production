@@ -114,15 +114,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1078, 456);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(1072, 410);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(1072, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -260,11 +260,11 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(748, 77);
+            this.button1.Location = new System.Drawing.Point(772, 77);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(121, 30);
+            this.button1.Size = new System.Drawing.Size(97, 30);
             this.button1.TabIndex = 17;
-            this.button1.Text = "Fabric Issue List";
+            this.button1.Text = "import";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
