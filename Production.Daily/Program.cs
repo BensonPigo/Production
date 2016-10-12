@@ -18,7 +18,7 @@ namespace Production.Daily
             Application.SetCompatibleTextRenderingDefault(false);
             Sci.Env.AppInit();
             
-            DBProxy.Current.DefaultTimeout = 3600;
+            DBProxy.Current.DefaultTimeout = 999999999;
             //pStartForm = "DailyTransfer";
 
             switch (pStartForm)

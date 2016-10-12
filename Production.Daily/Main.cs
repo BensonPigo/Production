@@ -28,7 +28,7 @@ namespace Production.Daily
         public Main()
         {
             InitializeComponent();
-            isAuto = false; 
+            isAuto = false;
         }
 
         public Main(String _isAuto)
@@ -54,7 +54,7 @@ namespace Production.Daily
                 this.Close();
             }
         }
-       
+
         private void OnRequery()
         {
             DataTable _mailTo;
@@ -90,7 +90,7 @@ namespace Production.Daily
             paras.Add(new SqlParameter("@RarName", this.CurrentData["ImportDataFileName"]));
             result = DBProxy.Current.Execute(null, sqlCmd, paras);
             if (!result) { return result; }
-            
+
             return base.ClickSavePost();
         }
 
@@ -127,7 +127,7 @@ namespace Production.Daily
         {
             DualResult result;
             result = transferPMS.Ftp_Ping(this.CurrentData["FtpIP"].ToString(), this.CurrentData["FtpID"].ToString(), this.CurrentData["FtpPwd"].ToString());
-            
+
             if (!result)
             {
                 ShowErr(result);
@@ -168,7 +168,7 @@ namespace Production.Daily
             String eMailID = this.CurrentData["EMailID"].ToString();
             String eMailPwd = this.CurrentData["EMailPwd"].ToString();
             transferPMS.SetSMTP(mailServer, 25, eMailID, eMailPwd);
-            
+
             String sendFrom = this.CurrentData["SendFrom"].ToString();
             String toAddress = mailTo["ToAddress"].ToString();
             String ccAddress = mailTo["CcAddress"].ToString();
@@ -182,7 +182,7 @@ namespace Production.Daily
             {
                 desc = mailTo["Content"].ToString();
             }
-            Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(sendFrom, toAddress, ccAddress, subject, "", desc,true,true);
+            Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(sendFrom, toAddress, ccAddress, subject, "", desc, true, true);
 
             mail.ShowDialog();
         }
@@ -219,7 +219,7 @@ namespace Production.Daily
             String subject = "";
             String desc = "";
             String sqlCmd = "";
-            
+
             String ftpIP = this.CurrentData["FtpIP"].ToString().Trim() + "/";
             String ftpID = this.CurrentData["FtpID"].ToString().Trim();
             String ftpPwd = this.CurrentData["FtpPwd"].ToString().Trim();
@@ -271,7 +271,7 @@ namespace Production.Daily
             #endregion
             #region 判斷[Export datas path]路徑底下的轉入當日的Week
             String weekDayPath = GetWeekDayPath();
-            
+
             //exportDataPath = exportDataPath + weekDayPath;
 
             if (!Directory.Exists(exportDataPath))
@@ -299,7 +299,7 @@ namespace Production.Daily
                 Directory.CreateDirectory(exportDataPath);
             }
             #endregion
-            
+
             result = transferPMS.Ftp_Ping(ftpIP, ftpID, ftpPwd);
             if (!result) { return result; }
 
@@ -335,19 +335,31 @@ namespace Production.Daily
             };
             #endregion
             startDate = DateTime.Now;
-            
+
             #region 開始執行轉出
             result = DailyExport(exportRegion, importRegion);
-            if (!result) { return result; }
+
+            if (!result) 
+            {
+                ErrMail("Export", exportRegion);
+                return result; 
+            }
             #endregion
-            
+
             endDate = DateTime.Now;
 
             #region 開始執行轉入
             result = DailyImport(importRegion);
-            if (!result) { return result; }
-            #endregion
+
             
+
+            if (!result) 
+            {
+                ErrMail("Import", importRegion);
+                return result;             
+            }
+            #endregion
+
             #region 完成後發送Mail
             DataTable orderComparisonList;
             DataTable dateInfo;
@@ -388,10 +400,10 @@ namespace Production.Daily
                    "--------------------------------------------------------"
                    ;
             #region 取得各個function的起訖日期，寫入mail desc.
-            sqlCmd = "Select 1 as Seq, 'Export' as TransState, Name, DateStart, DateEnd From Pms_To_Trade.dbo.DateInfo" +
-                     "Union All" +
-                     "Select 2 as Seq, 'Upload' as TransState, Name, DateStart, DateEnd From Trade_To_Pms.dbo.DateInfo" +
-                     " Order by Seq";
+            sqlCmd = "Select 1 as Seq, 'Export' as TransState, Name, DateStart, DateEnd From Pms_To_Trade.dbo.DateInfo \n" +
+                     " Union All \n" +
+                     " Select 2 as Seq, 'Upload' as TransState, Name, DateStart, DateEnd From Trade_To_Pms.dbo.DateInfo \n" +
+                     " Order by Seq ";
             result = DBProxy.Current.Select(null, sqlCmd, out dateInfo);
             if (result && orderComparisonList.Rows.Count > 0)
             {
@@ -411,6 +423,42 @@ namespace Production.Daily
 
             return Ict.Result.True;
         }
+
+        void ErrMail(string Type , TransRegion Region)
+        {
+            #region --export mail--
+            string formatStr = @"Dear  All
+                (**Please don't reply this mail. **)
+
+{0} data from PMS system.
+
+Region      Succeeded       Message
+***--------------------------------------------------------***
+{1}
+***--------------------------------------------------------***
+";
+            string totalMsg = "";
+            string RegionStr = Region.Region;
+            string Msg = "";//tfTrade.Regions_All[i].Message;
+            bool success = Region.Succeeded;
+            for (int k = 0; k < Region.Logs.Count; k++)
+            {
+                Msg += string.Format("time: {0} {2} message:{1} {3}"
+                    , Region.Logs[k].Key
+                    , Region.Logs[k].Value.ToString()
+                    , Environment.NewLine
+                    , Environment.NewLine + "--------------------------------------------------------" + Environment.NewLine);
+            }
+            totalMsg += RegionStr + "      " + success + "      " + Environment.NewLine + Msg;
+            formatStr = string.Format(formatStr, Type, totalMsg);
+
+            string title = string.Format("Trans{0}_{1} {2}", Type, RegionStr, DateTime.Now.ToShortDateString());
+            if (!isAuto) title = "<<手動執行>> " + title;
+
+            SendMail(title, formatStr);
+            #endregion
+        }
+
         #endregion
 
         #region Export
@@ -418,7 +466,7 @@ namespace Production.Daily
         {
             DualResult result;
             String sqlCmd = "";
-            String ftpIP = this.CurrentData["FtpIP"].ToString().Trim() ;
+            String ftpIP = this.CurrentData["FtpIP"].ToString().Trim();
             String ftpID = this.CurrentData["FtpID"].ToString().Trim();
             String ftpPwd = this.CurrentData["FtpPwd"].ToString().Trim();
 
@@ -428,9 +476,9 @@ namespace Production.Daily
                 File.Delete(exportRegion.DirName + exportRegion.RarName);
             }
             #endregion
-            
+
             #region 刪除FTP的檔案
-            
+
             if (IsFtpFileExist(exportRegion.RarName))
             {
                 if (!transferPMS.Delete_Rar_On_Ftp(exportRegion))
@@ -438,7 +486,7 @@ namespace Production.Daily
                     return new DualResult(false, "Delete FTP File failed!");
                 }
             }
-            
+
             #endregion
 
             #region 判斷若DB不存在，就掛載
@@ -464,7 +512,7 @@ namespace Production.Daily
                 exportRegion.Logs.Add(item.Value);
             }
             #endregion
-            
+
             #region 刪除Table所有資料
             if (!transferPMS.Drop_Tables(exportRegion))
             {
@@ -490,7 +538,7 @@ namespace Production.Daily
                     _fromPath = row["DirName"].ToString();
                     row["DirName"] = exportRegion.DirName;
                 }
-                
+
                 transferPMS.SetupData(transExport);
             }
             #endregion
@@ -522,10 +570,10 @@ namespace Production.Daily
         private DualResult DailyImport(TransRegion region)
         {
             DualResult result;
-            String ftpIP = this.CurrentData["FtpIP"].ToString().Trim() ;
+            String ftpIP = this.CurrentData["FtpIP"].ToString().Trim();
             String ftpID = this.CurrentData["FtpID"].ToString().Trim();
             String ftpPwd = this.CurrentData["FtpPwd"].ToString().Trim();
-            
+
             /*
             TransRegion region = new TransRegion();
             region.Region = importFileName;
@@ -573,13 +621,13 @@ namespace Production.Daily
             String fromPath = this.CurrentData["ImportDataPath"].ToString();
             String toPath = transImport.Rows[0]["DirName"].ToString();
             transferPMS.UnRAR_To_ImportDir(region);
-           // File.Copy(Path.Combine(fromPath, region.DBFileName + ".mdf"), Path.Combine(toPath, region.DBFileName + ".mdf"),true);
+            // File.Copy(Path.Combine(fromPath, region.DBFileName + ".mdf"), Path.Combine(toPath, region.DBFileName + ".mdf"),true);
             #endregion
             #region 掛載資料庫
             transferPMS.Attach_DataBase(region, 1);
             #endregion
             #region Deploy procedure 到Production
-            Dictionary<string, KeyValuePair<DateTime?, DualResult>> resDic = transferPMS.Deploy_Procedure(region.DirName, prefix: "imp_", connectionName: region.ConnectionName);
+            Dictionary<string, KeyValuePair<DateTime?, DualResult>> resDic = transferPMS.Deploy_Procedure(region.DirName, prefix: "imp_", connectionName: transferPMS.fromSystem);
             foreach (var item in resDic)
             {
                 region.Logs.Add(item.Value);
@@ -606,7 +654,7 @@ namespace Production.Daily
         private bool IsFtpFileExist(String fileName)
         {
             bool isExists = false;
-            String ftpIP = @"ftp://"+this.CurrentData["FtpIP"].ToString().Trim()+@"/" ;
+            String ftpIP = @"ftp://" + this.CurrentData["FtpIP"].ToString().Trim() + @"/";
             String ftpID = this.CurrentData["FtpID"].ToString().Trim();
             String ftpPwd = this.CurrentData["FtpPwd"].ToString().Trim();
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpIP + fileName);
@@ -620,7 +668,7 @@ namespace Production.Daily
                 response = (FtpWebResponse)request.GetResponse();
                 isExists = true;
             }
-            catch(WebException ex)
+            catch (WebException ex)
             {
                 response = (FtpWebResponse)ex.Response;
                 if (response.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
