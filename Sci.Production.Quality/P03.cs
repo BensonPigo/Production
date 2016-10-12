@@ -139,7 +139,17 @@ namespace Sci.Production.Quality
         {
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmd = string.Format(
-                @"select a.id,a.poid,(a.SEQ1+a.SEQ2) as seq,a.SEQ1,a.SEQ2,Receivingid,Refno,a.SCIRefno,
+                @"select 
+                a.id,
+                a.poid,
+                (a.SEQ1+a.SEQ2) as seq,
+                c.ExportID as wkno,
+                c.WhseArrival,
+                a.SEQ1,
+                a.SEQ2,
+                Receivingid,
+                Refno,
+                a.SCIRefno, 
                 b.CrockingEncode,b.HeatEncode,b.WashEncode,
                 ArriveQty,
 				 (
@@ -149,7 +159,7 @@ namespace Sci.Production.Quality
 				select Suppid+f.AbbEN as supplier from Supp f where a.Suppid=f.ID
 				) as Supplier,
 				b.ReceiveSampleDate,b.InspDeadline,b.Result,b.Crocking,b.nonCrocking,b.CrockingDate,b.nonHeat,Heat,b.HeatDate,
-				b.nonWash,b.Wash,b.WashDate
+				b.nonWash,b.Wash,b.WashDate,a.ReceivingID
 				from FIR a 
 				left join FIR_Laboratory b on a.ID=b.ID
 				left join Receiving c on c.id = a.receivingid
@@ -268,14 +278,14 @@ namespace Sci.Production.Quality
 
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Text("ExportID", header: "WKNO", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Date("whseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("wkno", header: "WKNO", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Date("WhseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SCIRefno", header: "SCI Ref#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Refno", header: "Brand Ref#", width: Widths.AnsiChars(15), iseditingreadonly: true)                
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("SuppEn", header: "Supplier", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("ArriveQty", header: "Arrive Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
-                .Date("ReceiveSamoleDate", header: "Sample Rcv.Date", width: Widths.AnsiChars(10))//write
+                .Date("ReceiveSampleDate", header: "Sample Rcv.Date", width: Widths.AnsiChars(10))//write
                 .Date("InspDeadline", header: "Insp. Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Result", header: "All Result", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .CheckBox("nonCrocking", header: "Crocking N/A", width: Widths.AnsiChars(1), iseditable: true, trueValue: 1, falseValue: 0, settings: nonCrocking)
@@ -287,7 +297,7 @@ namespace Sci.Production.Quality
                 .CheckBox("nonWash", header: "Wash N/A", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0,settings:nonWash)
                 .Text("Wash", header: "Wash Result", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:wash)
                 .Date("WashDate", header: "Wash Last Test Date", width: Widths.AnsiChars(10),iseditingreadonly:true,settings:washD)
-                .Text("ExportID", header: "Receiving ID", width: Widths.AnsiChars(10), iseditingreadonly: true);
+                .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
 
             detailgrid.Columns[8].DefaultCellStyle.BackColor = Color.MistyRose;
@@ -324,10 +334,11 @@ namespace Sci.Production.Quality
                     int nonCk = dr["nonCrocking"].ToString() == "True" ? 1 : 0;
                     int nonWash = dr["nonWash"].ToString() == "True" ? 1 : 0;
                     int nonHeat = dr["nonHeat"].ToString() == "True" ? 1 : 0;
-                    string save_non_cmd = "Update FIR_Laboratory set nonCrocking=@nonCk, nonWash=@nonWash, nonHeat=@nonHeat where id=@id";                   
+                    string save_non_cmd = "Update FIR_Laboratory set nonCrocking=@nonCk, nonWash=@nonWash, nonHeat=@nonHeat, ReceiveSampleDate=@RSD where id=@id";                   
                     spam_non.Add(new SqlParameter("@nonCk", nonCk));
                     spam_non.Add(new SqlParameter("@nonWash",nonWash));
                     spam_non.Add(new SqlParameter("@nonHeat", nonHeat));
+                    spam_non.Add(new SqlParameter("@RSD", dr["ReceiveSampleDate"]));
                     spam_non.Add(new SqlParameter("@id", dr["ID"]));
                     DBProxy.Current.Execute(null, save_non_cmd, spam_non);
                     
@@ -381,6 +392,7 @@ namespace Sci.Production.Quality
             EnsureToolbarExt();
             return Result.True;
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
             DataTable detDtb = (DataTable)detailgridbs.DataSource;
