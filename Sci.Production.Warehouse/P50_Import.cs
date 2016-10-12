@@ -250,5 +250,35 @@ and a.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
                
             }
         }
+
+        private void txtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            if (myForm.EditMode == false || txtLocation.ReadOnly == true) return;
+            string sql = string.Format("select id,Description from mtllocation where junk=0 or Junk is null and stocktype='{0}' and MDivisionID='{1}'", dr_master["stocktype"], dr_master["MDivisionID"]);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "10,20", this.txtLocation.Text);
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel) { return; }
+            this.txtLocation.Text = item.GetSelectedString();
+        }
+
+        private void txtLocation_Validating(object sender, CancelEventArgs e)
+        {
+            base.OnValidating(e);
+            string textValue = this.txtLocation.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtLocation.OldValue)
+            {
+                string sql = string.Format("select id,Description from mtllocation where junk=0 or Junk is null and stocktype='{0}' and MDivisionID='{1}' and id='{2}'", dr_master["stocktype"], dr_master["MDivisionID"], textValue);
+                if (!MyUtility.Check.Seek(sql))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("< Location: {0} > not found!!!", textValue));
+                    this.txtLocation.Text = "";
+                    e.Cancel = true;
+                    return;
+                }
+            }
+        }
+
+
     }
 }

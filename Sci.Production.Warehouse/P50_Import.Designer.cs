@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.button3 = new Sci.Win.UI.Button();
             this.checkBox2 = new Sci.Win.UI.CheckBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
@@ -35,6 +36,8 @@
             this.button1 = new Sci.Win.UI.Button();
             this.txtSP1 = new Sci.Win.UI.TextBox();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.label5 = new Sci.Win.UI.Label();
+            this.cbbSort = new Sci.Win.UI.ComboBox();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.label3 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
@@ -51,9 +54,7 @@
             this.txtSP2 = new Sci.Win.UI.TextBox();
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
-            this.label5 = new Sci.Win.UI.Label();
-            this.cbbSort = new Sci.Win.UI.ComboBox();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -149,6 +150,31 @@
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
             // 
+            // label5
+            // 
+            this.label5.Lines = 0;
+            this.label5.Location = new System.Drawing.Point(46, 19);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(75, 23);
+            this.label5.TabIndex = 6;
+            this.label5.Text = "Sort by";
+            // 
+            // cbbSort
+            // 
+            this.cbbSort.BackColor = System.Drawing.Color.White;
+            this.cbbSort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cbbSort.FormattingEnabled = true;
+            this.cbbSort.IsSupportUnselect = true;
+            this.cbbSort.Items.AddRange(new object[] {
+            "ALL",
+            "Bulk",
+            "Inventory"});
+            this.cbbSort.Location = new System.Drawing.Point(124, 19);
+            this.cbbSort.Name = "cbbSort";
+            this.cbbSort.Size = new System.Drawing.Size(100, 24);
+            this.cbbSort.TabIndex = 5;
+            this.cbbSort.SelectedIndexChanged += new System.EventHandler(this.cbbSort_SelectedIndexChanged);
+            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.label3);
@@ -220,7 +246,7 @@
             this.nbRandom.Size = new System.Drawing.Size(63, 23);
             this.nbRandom.TabIndex = 7;
             this.nbRandom.Value = new decimal(new int[] {
-            20,
+            5,
             0,
             0,
             0});
@@ -243,6 +269,8 @@
             this.txtLocation.Name = "txtLocation";
             this.txtLocation.Size = new System.Drawing.Size(100, 23);
             this.txtLocation.TabIndex = 3;
+            this.txtLocation.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLocation_PopUp);
+            this.txtLocation.Validating += new System.ComponentModel.CancelEventHandler(this.txtLocation_Validating);
             // 
             // label6
             // 
@@ -373,31 +401,6 @@
             this.grid1.Size = new System.Drawing.Size(1008, 376);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
-            // 
-            // label5
-            // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(46, 19);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "Sort by";
-            // 
-            // cbbSort
-            // 
-            this.cbbSort.BackColor = System.Drawing.Color.White;
-            this.cbbSort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cbbSort.FormattingEnabled = true;
-            this.cbbSort.IsSupportUnselect = true;
-            this.cbbSort.Items.AddRange(new object[] {
-            "ALL",
-            "Bulk",
-            "Inventory"});
-            this.cbbSort.Location = new System.Drawing.Point(124, 19);
-            this.cbbSort.Name = "cbbSort";
-            this.cbbSort.Size = new System.Drawing.Size(100, 24);
-            this.cbbSort.TabIndex = 5;
-            this.cbbSort.SelectedIndexChanged += new System.EventHandler(this.cbbSort_SelectedIndexChanged);
             // 
             // P50_Import
             // 
