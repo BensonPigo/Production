@@ -15,5 +15,10 @@ namespace Sci.Production.Packing
         {
             InitializeComponent();
         }
+        protected override void ClickNewAfter()
+        {
+            base.ClickNewAfter();
+            CurrentMaintain["Type"] = "OG";
+        }
     }
 }
