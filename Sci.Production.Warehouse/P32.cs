@@ -537,7 +537,7 @@ with acc
 as
 (
 select bd1.ToPoid,bd1.ToSeq1,bd1.ToSeq2,sum(bd1.qty) qty
-from dbo.BorrowBack b1 inner join dbo.BorrowBack_Detail bd1 on bd1.id = bd1.id 
+from dbo.BorrowBack b1 inner join dbo.BorrowBack_Detail bd1 on b1.id = bd1.id 
 where b1.BorrowId='{1}' and b1.Status = 'Confirmed'
 group by bd1.ToPoid,bd1.ToSeq1,bd1.ToSeq2
 )
@@ -759,7 +759,7 @@ with acc
 as
 (
 select bd1.ToPoid,bd1.ToSeq1,bd1.ToSeq2,sum(bd1.qty) qty
-from dbo.BorrowBack b1 inner join dbo.BorrowBack_Detail bd1 on bd1.id = bd1.id 
+from dbo.BorrowBack b1 inner join dbo.BorrowBack_Detail bd1 on b1.id = bd1.id 
 where b1.BorrowId='{1}' and b1.Status = 'Confirmed'
 group by bd1.ToPoid,bd1.ToSeq1,bd1.ToSeq2
 )
