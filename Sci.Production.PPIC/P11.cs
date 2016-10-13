@@ -416,9 +416,12 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                 return false;
             }
             StringBuilder msg = new StringBuilder();
-            foreach (DataRow dr in ExceedData.Rows)
+            if (comboBox1.Text != "Lacking")
             {
-                msg.Append(string.Format("Seq#:{0}  < Request Qty >:{1} exceed stock qty:{2}\r\n",MyUtility.Convert.GetString(dr["Seq"]),MyUtility.Convert.GetString(dr["RequestQty"]),MyUtility.Convert.GetString(dr["StockQty"])));
+                foreach (DataRow dr in ExceedData.Rows)
+                {
+                    msg.Append(string.Format("Seq#:{0}  < Request Qty >:{1} exceed stock qty:{2}\r\n", MyUtility.Convert.GetString(dr["Seq"]), MyUtility.Convert.GetString(dr["RequestQty"]), MyUtility.Convert.GetString(dr["StockQty"])));
+                }
             }
             if (msg.Length != 0)
             {
