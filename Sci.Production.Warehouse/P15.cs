@@ -102,12 +102,12 @@ namespace Sci.Production.Warehouse
             return base.ClickEditBefore();
         }
 
-        
+
 
         // Print - subreport
         private void MySubreportEventHandler(object sender, SubreportProcessingEventArgs e)
         {
-                e.DataSources.Add(new ReportDataSource("DataSet1", (DataTable)this.detailgridbs.DataSource));            
+            e.DataSources.Add(new ReportDataSource("DataSet1", (DataTable)this.detailgridbs.DataSource));
         }
 
         // save前檢查 & 取id
@@ -214,8 +214,8 @@ namespace Sci.Production.Warehouse
             Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //1
-            //.Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
-            //.Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
+                //.Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
+                //.Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //6
@@ -406,7 +406,7 @@ where dbo.Lack_Detail.id = '{1}' and dbo.Lack_Detail.seq1 = t.Seq1 and dbo.Lack_
             StringBuilder sqlupd2 = new StringBuilder();
             StringBuilder sqlupd4 = new StringBuilder();
             string sqlcmd = "", sqlupd3 = "", ids = "";
-            DualResult result, result2,result3;
+            DualResult result, result2, result3;
 
             if (CurrentMaintain["type"].ToString() == "R")
             {
@@ -649,9 +649,10 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
         }
 
 
-            protected override bool ClickPrint()
-            {
-                if (CurrentMaintain["Status"].ToString() != "Confirmed") return false;
+        protected override bool ClickPrint()
+        {
+            if (CurrentMaintain["Status"].ToString() != "Confirmed")
+            { ShowErr("Data is not confirmed, can't print"); return false; }
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
@@ -701,7 +702,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
 		         on c.id=d.RequestID and c.Seq1=a.Seq1 and c.Seq2=a.Seq2
              where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
-           
+
             // 傳 list 資料            
             List<P15_PrintData> data = dd.AsEnumerable()
                 .Select(row1 => new P15_PrintData()
@@ -739,8 +740,8 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             var frm = new Sci.Win.Subs.ReportView(report);
             frm.MdiParent = MdiParent;
             frm.Show();
-  
-           return true;
+
+            return true;
 
         }
     }
