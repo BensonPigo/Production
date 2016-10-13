@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.button3 = new Sci.Win.UI.Button();
             this.checkBox2 = new Sci.Win.UI.CheckBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
@@ -39,6 +40,7 @@
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.label2 = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.grid2 = new Sci.Win.UI.Grid();
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.label7 = new Sci.Win.UI.Label();
             this.displayBox3 = new Sci.Win.UI.DisplayBox();
@@ -50,15 +52,14 @@
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
-            this.grid2 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.SuspendLayout();
             // 
@@ -135,6 +136,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(122, 23);
             this.textBox1.TabIndex = 0;
+            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // label1
@@ -144,7 +146,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(95, 23);
             this.label1.TabIndex = 0;
-            this.label1.Text = "To SP# Seq#";
+            this.label1.Text = "Return to SP#";
             // 
             // groupBox2
             // 
@@ -200,6 +202,30 @@
             this.groupBox1.Size = new System.Drawing.Size(1008, 237);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
+            // 
+            // grid2
+            // 
+            this.grid2.AllowUserToAddRows = false;
+            this.grid2.AllowUserToDeleteRows = false;
+            this.grid2.AllowUserToResizeRows = false;
+            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.grid2.Location = new System.Drawing.Point(7, 15);
+            this.grid2.Name = "grid2";
+            this.grid2.RowHeadersVisible = false;
+            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.grid2.RowTemplate.Height = 24;
+            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid2.Size = new System.Drawing.Size(466, 209);
+            this.grid2.TabIndex = 13;
+            this.grid2.TabStop = false;
             // 
             // displayBox4
             // 
@@ -321,30 +347,6 @@
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
-            // grid2
-            // 
-            this.grid2.AllowUserToAddRows = false;
-            this.grid2.AllowUserToDeleteRows = false;
-            this.grid2.AllowUserToResizeRows = false;
-            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(7, 15);
-            this.grid2.Name = "grid2";
-            this.grid2.RowHeadersVisible = false;
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid2.RowTemplate.Height = 24;
-            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(466, 209);
-            this.grid2.TabIndex = 13;
-            this.grid2.TabStop = false;
-            // 
             // P32_Import
             // 
             this.ClientSize = new System.Drawing.Size(1008, 530);
@@ -357,10 +359,10 @@
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.ResumeLayout(false);
 

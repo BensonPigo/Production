@@ -124,9 +124,9 @@ and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and c.stocktype !='O'"
                 .Text("fromseq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(2), settings: ts) //1
                 .Text("fromseq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(2), settings: ts) //2
                 .ComboBox("fromstock", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false, width: Widths.AnsiChars(6)).Get(out cbb_stocktype)    //3
-                .Numeric("qty", header: "Borrow" + Environment.NewLine + "Qty", iseditable: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //4
-                .Numeric("returnqty", header: "Accu." + Environment.NewLine + "Return", iseditable: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //5
-                .Numeric("balance", header: "Balance", iseditable: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //6
+                .Numeric("qty", header: "Borrow" + Environment.NewLine + "Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //4
+                .Numeric("returnqty", header: "Accu." + Environment.NewLine + "Return", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //5
+                .Numeric("balance", header: "Balance", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //6
                ;
             cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
@@ -193,7 +193,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(4))      //7
                 .Text("toseq", header: "To" + Environment.NewLine + "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //8
                 .Text("toroll", header: "To" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6)) //9
-                .Numeric("balance", header: "Stock Qty", iseditable: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //10
+                .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //10
                 .Numeric("qty", header: "Issue" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6))  //11
                 .ComboBox("Tostocktype", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)    //12
                 ;
@@ -388,5 +388,16 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             e.Cancel = CheckAndShowInfo(sp, seq.Substring(0, 3), seq.Substring(3, 2));
 
         }
+
+        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string sql = string.Format("select distinct frompoid as [SP#] from borrowback_detail where id='{0}'", dr_master["id"]);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "20", textBox1.Text);
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            this.textBox1.Text = item.GetSelectedString();
+        }
+
+
     }
 }
