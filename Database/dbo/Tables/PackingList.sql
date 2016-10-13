@@ -35,6 +35,8 @@
     [AddDate]           DATETIME       NULL,
     [EditName]          VARCHAR (10)   CONSTRAINT [DF_PackingList_EditName] DEFAULT ('') NULL,
     [EditDate]          DATETIME       NULL,
+    [TransFerToClogID] VARCHAR(13) NULL, 
+    [ClogReceiveID] VARCHAR(13) NULL, 
     CONSTRAINT [PK_PackingList] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
