@@ -39,8 +39,8 @@ namespace Sci.Production.Shipping
                 emptyDTMask = emptyDTMask + empmask;
             }
 
-            this.textBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutOffDate", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
-            this.textBox6.Mask = dateTimeMask;
+            //this.textBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutOffDate", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
+            //this.textBox6.Mask = dateTimeMask;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -255,7 +255,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                 comboBox1.ReadOnly = true;
                 textBox3.ReadOnly = true;
                 textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndNonReadOnly;
-                textBox6.ReadOnly = true;
+               // textBox6.ReadOnly = true;
                 col_lock.IsEditingReadOnly = true;
                 col_crd.IsEditingReadOnly = true;
                 detailgrid.Columns[0].DefaultCellStyle.ForeColor = Color.Black;
@@ -767,22 +767,23 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         }
 
         //檢查輸入的Cut-off Date是否正確
-        private void textBox6_Validating(object sender, CancelEventArgs e)
-        {
-            if (this.EditMode && textBox6.Text != emptyDTMask)
-            {
-                string cutOffDate = textBox6.Text.Substring(0, 10).Replace(" ","1");
-                if (!CheckDate((DateTime)MyUtility.Convert.GetDate(cutOffDate), -12, 12))
-                {
-                    MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
-                    textBox6.Text = null;
-                    e.Cancel = true;
-                    return;
-                }
-            }
-        }
+        //private void textBox6_Validating(object sender, CancelEventArgs e)
+        //{
+        //    if (this.EditMode && textBox6.Text != emptyDTMask)
+        //    {
+        //        string cutOffDate = textBox6.Text.Substring(0, 10).Replace(" ","1");
+        //        if (!CheckDate((DateTime)MyUtility.Convert.GetDate(cutOffDate), -12, 12))
+        //        {
+        //            MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
+        //            textBox6.Text = null;
+        //            e.Cancel = true;
+        //            return;
+        //        }
+        //    }
+        //}
 
         //檢查輸入的ETD是否正確
+
         private void dateBox5_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(dateBox5.Value))
