@@ -165,7 +165,7 @@ namespace Sci.Production.Warehouse
             string sqlcmd = @"select  
 			ROW_NUMBER() OVER(ORDER BY R.POID,R.SEQ1,R.SEQ2) AS NoID
 			,R.poid AS SP,R.seq1  + '-' +R.seq2 as SEQ
-			,dbo.getMtlDesc(R.POID,R.Seq1,R.Seq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) [desc]
+			,Replace(dbo.getMtlDesc(R.POID,R.Seq1,R.Seq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) , Char(13) + Char(10), '') [desc]
             ,p.StockUnit,R.Roll,R.dyelot,R.qty
 		    ,case R.StockType
 			WHEN 'I'THEN 'Inventory'
@@ -180,11 +180,7 @@ namespace Sci.Production.Warehouse
            p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
             where R.id= @ID";
             result1 = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
-        
-
             if (!result1) { this.ShowErr(sqlcmd, result1); }
-
-
 
             // 傳 list 資料            
             List<P37_PrintData> data = dtDetail.AsEnumerable()
