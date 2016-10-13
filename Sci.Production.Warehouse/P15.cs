@@ -356,11 +356,14 @@ where dbo.Lack_Detail.id = '{1}' and dbo.Lack_Detail.seq1 = t.Seq1 and dbo.Lack_
             {
                 try
                 {
-                    if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                    if (CurrentMaintain["type"].ToString() == "R")
                     {
-                        _transactionscope.Dispose();
-                        ShowErr(sqlupd2.ToString(), result2);
-                        return;
+                        if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                        {
+                            _transactionscope.Dispose();
+                            ShowErr(sqlupd2.ToString(), result2);
+                            return;
+                        }
                     }
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
