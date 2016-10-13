@@ -1,6 +1,4 @@
-﻿
-
--- =============================================
+﻿-- =============================================
 -- Author:		LEO	
 -- Create date:20160903
 -- Description:	<Description,,>
@@ -89,7 +87,7 @@ a.IETMSUkey	= b.IETMSUkey
 ,a.Frequency	= b.Frequency
 ,a.SMV	= b.SMV
 ,a.SeamLength	= b.SeamLength
-,a.UKey	= b.UKey
+--,a.UKey	= b.UKey
 
 from Production.dbo.IETMS_Detail as a 
 inner join Trade_To_Pms.dbo.IETMS_Detail as b ON a.Ukey = b.Ukey
