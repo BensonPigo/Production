@@ -43,6 +43,10 @@ namespace Sci.Production.Sewing
             numericBox2.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(AccumQty)", ""));
             numericBox3.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(Variance)", ""));
             CalculateTotal();
+
+            //528: SEWING_P01_QAOutput_QA Output，QA QTY無法輸入
+            this.EditMode = true;
+            this.grid.IsEditingReadOnly = !this.EditMode;
         }
 
         protected override bool OnGridSetup()
@@ -81,7 +85,7 @@ namespace Sci.Production.Sewing
                 .Numeric("OrderQty", header: "Order Q'ty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("AccumQty", header: "Accum. Q'ty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("Variance", header: "Variance", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("QAQty", header: "QA Q'ty", width: Widths.AnsiChars(10), settings: qaqty)
+                .Numeric("QAQty", header: "QA Q'ty", width: Widths.AnsiChars(10), iseditingreadonly:false, settings: qaqty)
                 .Numeric("BalQty", header: "Bal. Q'ty", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
             for (int i = 0; i < grid.ColumnCount; i++)

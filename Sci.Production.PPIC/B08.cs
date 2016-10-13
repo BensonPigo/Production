@@ -66,6 +66,7 @@ namespace Sci.Production.PPIC
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
+            CurrentMaintain["ID"] = DBNull.Value;
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
 
             //Detail資料自動新增10筆Record，Day填入1~10
