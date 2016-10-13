@@ -31,17 +31,8 @@ namespace Sci.Production.Quality
             SEQ2 = seq2.Trim();
 
             #region 設定可否編輯
-            if (!canedit)
-            {
-                EDIT = false;
-                this.save.Enabled = false;
-                btnEncode.Enabled = false;
-            }
-            else
-            {
-                EDIT = true;
-                btnEncode.Enabled = true;
-            }
+            if (!canedit) EDIT = false;
+            else EDIT = true;
             #endregion
 
         }
@@ -61,10 +52,20 @@ namespace Sci.Production.Quality
             #endregion
 
             #region [btnEncode]
-            if (Convert.ToBoolean(maindr["WashEncode"]))
-                btnEncode.Text = "Amend";
-            else
-                btnEncode.Text = "Encode";
+            save.Enabled = false;
+            if (EDIT)
+            {
+                if (Convert.ToBoolean(maindr["WashEncode"]))
+                {
+                    btnEncode.Text = "Amend";
+                    btnEncode.Enabled = true;
+                }
+                else
+                {
+                    btnEncode.Text = "Encode";
+                    save.Enabled = true;
+                }
+            }            
             #endregion
 
             OnRequery();
@@ -178,7 +179,6 @@ namespace Sci.Production.Quality
             }
             else if (btnEncode.Text == "Amend")
             {
-
                 #region i.將Air_Laboratory.WashEncode 改為.F。ii.清空Air_Laboratory.Result。iii.填入Air_Laboratory.EditName=Userid, Air_Laboratory.EditDate=Datetime()
                 sql = string.Format(@"update Air_Laboratory set WashEncode=0 , Result='' ,  editName='{0}', editDate='{1}'
                                       where ID='{2}' and POID='{3}' and SEQ1='{4}' and SEQ2='{5}'"
@@ -187,22 +187,42 @@ namespace Sci.Production.Quality
                 #endregion
 
                 btnEncode.Text = "Encode";
-
+                btnEncode.Enabled = false;
+                save.Enabled = true;
             }
         }
 
         protected override bool OnSaveBefore()
         {
-            if (MyUtility.Check.Empty(txtuser1.TextBox1.Text))
+            if (save.Text == "Edit")
             {
-                CurrentData["WashInspector"] = Sci.Env.User.UserID;
+                txtScale.Enabled = true;
+                comboResult.Enabled = true;
+                txtRemark.Enabled = true;
+                txtuser1.Enabled = true;
+                WashDate.Enabled = true;
+                save.Text = "save";
+                return false;
             }
-            if (MyUtility.Check.Empty(WashDate.Value))
+            else
             {
-                CurrentData["WashDate"] = DateTime.Now;
+                if (MyUtility.Check.Empty(txtuser1.TextBox1.Text))
+                {
+                    CurrentData["WashInspector"] = Sci.Env.User.UserID;
+                }
+                if (MyUtility.Check.Empty(WashDate.Value))
+                {
+                    CurrentData["WashDate"] = DateTime.Now;
+                }
+                txtScale.Enabled = false;
+                comboResult.Enabled = false;
+                txtRemark.Enabled = false;
+                txtuser1.Enabled = false;
+                WashDate.Enabled = false;
+                save.Text = "Edit";
+                return true;
             }
 
-            return true;
         }
 
 

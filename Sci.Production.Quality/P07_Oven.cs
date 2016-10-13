@@ -32,17 +32,8 @@ namespace Sci.Production.Quality
             SEQ2 = seq2.Trim();
 
             #region 設定可否編輯
-            if (!canedit)
-            {
-                EDIT = false;
-                this.save.Enabled = false;
-                btnEncode.Enabled = false;
-            }
-            else
-            {
-                EDIT = true;
-                btnEncode.Enabled = true;
-            }
+            if (!canedit) EDIT = false;
+            else EDIT = true;    
             #endregion
 
         }
@@ -62,10 +53,20 @@ namespace Sci.Production.Quality
             #endregion
 
             #region [btnEncode]
-            if (Convert.ToBoolean(maindr["OvenEncode"]))
-                btnEncode.Text = "Amend";
-            else
-                btnEncode.Text = "Encode";
+            save.Enabled = false;
+            if (EDIT)
+            {
+                if (Convert.ToBoolean(maindr["OvenEncode"]))
+                {
+                    btnEncode.Text = "Amend";
+                    btnEncode.Enabled = true;
+                }
+                else
+                {
+                    btnEncode.Text = "Encode";
+                    save.Enabled = true;
+                }
+            }            
             #endregion
 
             OnRequery();
@@ -188,22 +189,44 @@ namespace Sci.Production.Quality
                 #endregion
 
                 btnEncode.Text = "Encode";
+                btnEncode.Enabled = false;
+                save.Enabled = true;
 
             }
         }
 
         protected override bool OnSaveBefore()
         {
-            if (MyUtility.Check.Empty(txtuser1.TextBox1.Text))
+            if (save.Text == "Edit")
             {
-                CurrentData["OvenInspector"] = Sci.Env.User.UserID;
+                txtScale.Enabled = true;
+                comboResult.Enabled = true;
+                txtRemark.Enabled = true;
+                txtuser1.Enabled = true;
+                OvenDate.Enabled = true;
+                save.Text = "save";
+                return false;
             }
-            if (MyUtility.Check.Empty(OvenDate.Value))
+            else
             {
-                CurrentData["OvenDate"] = DateTime.Now;
+                if (MyUtility.Check.Empty(txtuser1.TextBox1.Text))
+                {
+                    CurrentData["OvenInspector"] = Sci.Env.User.UserID;
+                }
+                if (MyUtility.Check.Empty(OvenDate.Value))
+                {
+                    CurrentData["OvenDate"] = DateTime.Now;
+                }
+                txtScale.Enabled = false;
+                comboResult.Enabled = false;
+                txtRemark.Enabled = false;
+                txtuser1.Enabled = false;
+                OvenDate.Enabled = false;
+                save.Text = "Edit";
+
+                return true;
             }
 
-            return true;
         }
 
 

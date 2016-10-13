@@ -63,6 +63,11 @@
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // save
+            // 
+            this.save.Enabled = false;
+            this.save.Text = "Edit";
+            // 
             // sp_text
             // 
             this.sp_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -216,6 +221,7 @@
             // 
             // btnEncode
             // 
+            this.btnEncode.Enabled = false;
             this.btnEncode.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEncode.Location = new System.Drawing.Point(457, 11);
             this.btnEncode.Name = "btnEncode";
@@ -245,7 +251,9 @@
             // 
             // OvenDate
             // 
+            this.OvenDate.CausesValidation = false;
             this.OvenDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OvenDate", true));
+            this.OvenDate.Enabled = false;
             this.OvenDate.Location = new System.Drawing.Point(103, 145);
             this.OvenDate.Name = "OvenDate";
             this.OvenDate.ReadOnly = true;
@@ -265,6 +273,7 @@
             // 
             this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "OvenInspector", true));
             this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Enabled = false;
             this.txtuser1.Location = new System.Drawing.Point(83, 112);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(296, 23);
@@ -284,6 +293,7 @@
             // 
             this.txtRemark.BackColor = System.Drawing.Color.White;
             this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OvenRemark", true));
+            this.txtRemark.Enabled = false;
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRemark.Location = new System.Drawing.Point(73, 82);
             this.txtRemark.Name = "txtRemark";
@@ -303,6 +313,7 @@
             // 
             this.comboResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.comboResult.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Oven", true));
+            this.comboResult.Enabled = false;
             this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboResult.FormattingEnabled = true;
             this.comboResult.IsSupportUnselect = true;
@@ -325,6 +336,7 @@
             // 
             this.txtScale.BackColor = System.Drawing.Color.White;
             this.txtScale.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OvenScale", true));
+            this.txtScale.Enabled = false;
             this.txtScale.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtScale.Location = new System.Drawing.Point(68, 19);
             this.txtScale.Name = "txtScale";

@@ -63,6 +63,11 @@
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // save
+            // 
+            this.save.Enabled = false;
+            this.save.Text = "Edit";
+            // 
             // Supplier_text
             // 
             this.Supplier_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -126,6 +131,7 @@
             // WashDate
             // 
             this.WashDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WashDate", true));
+            this.WashDate.Enabled = false;
             this.WashDate.Location = new System.Drawing.Point(103, 145);
             this.WashDate.Name = "WashDate";
             this.WashDate.ReadOnly = true;
@@ -145,6 +151,7 @@
             // 
             this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "WashInspector", true));
             this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Enabled = false;
             this.txtuser1.Location = new System.Drawing.Point(83, 112);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(296, 23);
@@ -164,6 +171,7 @@
             // 
             this.txtRemark.BackColor = System.Drawing.Color.White;
             this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "WashRemark", true));
+            this.txtRemark.Enabled = false;
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRemark.Location = new System.Drawing.Point(73, 82);
             this.txtRemark.Name = "txtRemark";
@@ -183,6 +191,7 @@
             // 
             this.comboResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.comboResult.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Wash", true));
+            this.comboResult.Enabled = false;
             this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboResult.FormattingEnabled = true;
             this.comboResult.IsSupportUnselect = true;
@@ -205,6 +214,7 @@
             // 
             this.txtScale.BackColor = System.Drawing.Color.White;
             this.txtScale.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "WashScale", true));
+            this.txtScale.Enabled = false;
             this.txtScale.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtScale.Location = new System.Drawing.Point(68, 19);
             this.txtScale.Name = "txtScale";
@@ -225,6 +235,7 @@
             // 
             // btnEncode
             // 
+            this.btnEncode.Enabled = false;
             this.btnEncode.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEncode.Location = new System.Drawing.Point(457, 11);
             this.btnEncode.Name = "btnEncode";
