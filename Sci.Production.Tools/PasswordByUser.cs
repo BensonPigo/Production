@@ -140,12 +140,15 @@ namespace Sci.Production.Tools
                     MyUtility.Msg.ErrorBox("< ID > length can not be greate than 9 characters!!");
                     return false;
                 }
-                if (!(result = DBProxy.Current.Select(null, "SELECT acctkeywd  FROM System", out dtSystem)))
+
+                //bug fix:475: Tools-Password by user，存檔出現錯誤訊息
+                //if (!(result = DBProxy.Current.Select(null, "SELECT acctkeywd  FROM System", out dtSystem)))
+                if (!(result = DBProxy.Current.Select(null, "SELECT AccountKeyword  FROM System", out dtSystem)))
                 {
                     MyUtility.Msg.ErrorBox(result.ToString());
                     return false;
                 }
-                CurrentMaintain["ID"] = dtSystem.Rows[0]["AcctKeywd"].ToString() + CurrentMaintain["ID"].ToString().Trim();
+                CurrentMaintain["ID"] = dtSystem.Rows[0]["AccountKeyword"].ToString() + CurrentMaintain["ID"].ToString().Trim();
             }
 
             return base.ClickSaveBefore();
