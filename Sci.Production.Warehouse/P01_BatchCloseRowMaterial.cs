@@ -102,19 +102,23 @@ namespace Sci.Production.Warehouse
                 strSQLCmd.Append(string.Format(@" and factoryid = '{0}' ", factory));
             }
 
-            strSQLCmd.Append(string.Format(@")
-select 0 Selected, m.poid
-,x.FactoryID,x.Category,x.StyleID,x.BrandID,x.BuyerDelivery,m.ActPulloutDate,m.ppicClose
-,dbo.getPOComboList(m.poid,m.poid) [PoCombo] from (
-select a.POID
-,max(a.ActPulloutDate) ActPulloutDate, max(a.gmtclose) ppicClose
-from dbo.orders a 
-inner join cte_order b on b.POID = a.POID
-where  a.MDivisionID = 'mwi' and a.Finished=1 and a.WhseClose is null 
-group by a.poid
-) m
-cross apply (select * from dbo.orders a1 where a1.id=m.POID) x
-order by m.POID"));
+            strSQLCmd.Append(string.Format(@"
+                )
+                select 0 Selected
+                , m.poid
+                ,x.FactoryID,x.Category,x.StyleID,x.BrandID,x.BuyerDelivery,m.ActPulloutDate,m.ppicClose
+                ,dbo.getPOComboList(m.poid,m.poid) [PoCombo] 
+                from (
+                    select a.POID
+                    ,max(a.ActPulloutDate) ActPulloutDate, max(a.gmtclose) ppicClose
+                    from dbo.orders a 
+                    inner join cte_order b on b.POID = a.POID
+                    where  a.MDivisionID = '{0}' and a.Finished=1 and a.WhseClose is null 
+                    group by a.poid
+                ) m
+                cross apply (select * from dbo.orders a1 where a1.id=m.POID) x
+                order by m.POID", Sci.Env.User.Keyword
+            ));
 
             MyUtility.Msg.WaitWindows("Data Loading....");
 

@@ -106,11 +106,11 @@
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(799, 17);
+            this.button2.Location = new System.Drawing.Point(767, 17);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(107, 30);
+            this.button2.Size = new System.Drawing.Size(139, 30);
             this.button2.TabIndex = 4;
-            this.button2.Text = "Batch Close";
+            this.button2.Text = "Batch Close R/MTL";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -151,7 +151,7 @@
             // 
             // btnToEexcel
             // 
-            this.btnToEexcel.Location = new System.Drawing.Point(703, 17);
+            this.btnToEexcel.Location = new System.Drawing.Point(671, 17);
             this.btnToEexcel.Name = "btnToEexcel";
             this.btnToEexcel.Size = new System.Drawing.Size(90, 30);
             this.btnToEexcel.TabIndex = 3;
