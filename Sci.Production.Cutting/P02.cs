@@ -55,7 +55,7 @@ namespace Sci.Production.Cutting
             }
 
             Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("PatternPanel", "Pattern Panel");
+            comboBox1_RowSource.Add("LectraCode", "Pattern Panel");
             comboBox1_RowSource.Add("SP", "SP");
             comboBox1_RowSource.Add("Cut#", "Cut#");
             comboBox1_RowSource.Add("Ref#", "Ref#");
@@ -134,6 +134,12 @@ namespace Sci.Production.Cutting
                 Where  c.WorkOrderUkey =a.Ukey 
                 For XML path('')
             ) as CutQty,
+            (
+                Select LectraCode+'+ ' 
+                From WorkOrder_PatternPanel c
+                Where c.WorkOrderUkey =a.Ukey 
+                For XML path('')
+            ) as LectraCode,
             (
                 Select PatternPanel+'+ ' 
                 From WorkOrder_PatternPanel c
@@ -271,7 +277,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
                 .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), integer_places: 3).Get(out col_cutno)
                 .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5)).Get(out col_Markername)
                 .Text("Fabriccombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                .Text("PatternPanel", header: "PatternPanel", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("LectraCode", header: "LectraCode", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -313,6 +319,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             changeeditable();
 
         }
+
         #region Grid Cell 物件設定
         private void changeeditable()
         {
@@ -1177,18 +1184,19 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
            
             DataTable fabcodetb;
             #region 找出有哪些部位
-            string fabcodesql = string.Format(@"Select distinct a.PatternPanel
+            string fabcodesql = string.Format(@"Select distinct a.LectraCode
             from Order_ColorCombo a ,Order_EachCons b 
             where a.id = '{0}' and a.FabricCode is not null and a.FabricCode !='' 
-            and b.id = '{0}' and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel
-            order by patternpanel", masterID);
+            and b.id = '{0}' and a.id = b.id 
+            --and b.cuttingpiece='0' and  b.FabricCombo = a.LectraCode
+            order by LectraCode", masterID);
             DualResult fabresult = DBProxy.Current.Select("Production", fabcodesql, out fabcodetb);
             #endregion
             #region 建立Grid
             string settbsql = "Select a.id,article,sizecode,a.qty,0 as balance"; //寫SQL建立Table
             foreach (DataRow dr in fabcodetb.Rows) //組動態欄位
             {
-                settbsql = settbsql + ", 0 as " + dr["PatternPanel"];
+                settbsql = settbsql + ", 0 as " + dr["LectraCode"];
             }
             settbsql = settbsql + string.Format(" From Order_Qty a,orders b Where b.cuttingsp ='{0}' and a.id = b.id order by id,article,sizecode", masterID);
 
@@ -1199,7 +1207,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             #endregion
             #region 寫入部位數量
             string getqtysql = string.Format(
-            @"Select b.article,b.sizecode,b.qty,c.PatternPanel,b.orderid 
+            @"Select b.article,b.sizecode,b.qty,c.LectraCode,b.orderid 
             From Workorder a, workorder_Distribute b, workorder_PatternPanel c 
             Where a.id = '{0}' and a.ukey = b.workorderukey and a.ukey = c.workorderukey 
             and b.workorderukey = c.workorderukey and b.article !=''", masterID);
@@ -1208,7 +1216,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             gridResult = DBProxy.Current.Select(null, getqtysql, out getqtytb);
             foreach (DataRow dr in getqtytb.Rows)
             {
-                DataRow[] gridselect = qtybreakTb.Select(string.Format("id = '{0}' and article = '{1}' and sizecode = '{2}'", dr["orderid"], dr["article"], dr["sizecode"], dr["PatternPanel"], dr["Qty"]));
+                DataRow[] gridselect = qtybreakTb.Select(string.Format("id = '{0}' and article = '{1}' and sizecode = '{2}'", dr["orderid"], dr["article"], dr["sizecode"], dr["LectraCode"], dr["Qty"]));
                 if (gridselect.Length != 0)
                 {
                     //20161007 leo 微調唯一值為LectraCode
@@ -1220,11 +1228,11 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             #endregion
             #region 判斷是否Complete
             DataTable panneltb;
-            fabcodesql = string.Format(@"Select distinct a.Article,a.PatternPanel
+            fabcodesql = string.Format(@"Select distinct a.Article,a.LectraCode
             from Order_ColorCombo a ,Order_EachCons b
             where a.id = '{0}' and a.FabricCode is not null 
-            and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel
-            and a.FabricCode !='' order by Article,PatternPanel", masterID);
+            and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.LectraCode
+            and a.FabricCode !='' order by Article,LectraCode", masterID);
             gridResult = DBProxy.Current.Select(null, fabcodesql, out panneltb);
             decimal minqty = 0;
             foreach (DataRow dr in qtybreakTb.Rows)
@@ -1233,7 +1241,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
                 DataRow[] sel = panneltb.Select(string.Format("Article = '{0}'", dr["Article"]));
                 foreach (DataRow pdr in sel)
                 {
-                    if (minqty > MyUtility.Convert.GetDecimal(dr[pdr["Patternpanel"].ToString()])) minqty = MyUtility.Convert.GetDecimal(dr[pdr["Patternpanel"].ToString()]);
+                    if (minqty > MyUtility.Convert.GetDecimal(dr[pdr["LectraCode"].ToString()])) minqty = MyUtility.Convert.GetDecimal(dr[pdr["LectraCode"].ToString()]);
 
                 }
                 dr["balance"] = minqty;
@@ -1284,7 +1292,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
         {
             gridValid();
             grid.ValidateControl();
-            #region 變更先將同d,Cutref, PatternPanel, CutNo, MarkerName, estcutdate 且有cutref,Cuno無cutplanid 的cutref值找出來Group by→cutref 會相同
+            #region 變更先將同d,Cutref, LectraCode, CutNo, MarkerName, estcutdate 且有cutref,Cuno無cutplanid 的cutref值找出來Group by→cutref 會相同
             string cmdsql = string.Format(@"            
             SELECT isnull(Cutref,'') as cutref, isnull(FabricCombo,'') as FabricCombo, isnull(CutNo,0) as cutno, 
             isnull(MarkerName,'') as MarkerName, estcutdate 
