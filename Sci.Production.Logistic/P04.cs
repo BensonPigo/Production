@@ -260,12 +260,17 @@ from (
                         DataRow currentRow = currentRowView.Row;
                         if (currentRow["Selected"].ToString() == "1")
                         {
-                            string updateCmd = @"update ClogReceive_Detail 
-                                                                set ClogLocationId = @clogLocationId 
-                                                                where ID = @clogReceiveID and PackingListId = @id and OrderId = @orderId and CTNStartNo = @ctnStartNo;
-                                                          update PackingList_Detail 
-                                                                set ClogLocationId = @clogLocationId, Remark = @remark 
-                                                                where id = @id and CTNStartNo = @ctnStartNo;";
+                            //BUG FIX:512: LOGISTIC_P04_Update Location，存檔出現失敗訊息
+                            //string updateCmd = @"update ClogReceive_Detail 
+                            //                                    set ClogLocationId = @clogLocationId 
+                            //                                    where ID = @clogReceiveID and PackingListId = @id and OrderId = @orderId and CTNStartNo = @ctnStartNo;
+                            //                              update PackingList_Detail 
+                            //                                    set ClogLocationId = @clogLocationId, Remark = @remark 
+                            //                                    where id = @id and CTNStartNo = @ctnStartNo;";
+                            string updateCmd = @"update PackingList_Detail 
+                                                set ClogLocationId = @clogLocationId, Remark = @remark 
+                                                where id = @id and CTNStartNo = @ctnStartNo;";
+
                             #region 準備sql參數資料
                             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
                             sp1.ParameterName = "@clogLocationId";
