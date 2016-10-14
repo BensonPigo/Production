@@ -168,11 +168,11 @@ BundleNo, OrderID, styleID, ArtworkPoID, ArtworkID, PatternCode, PatternDesc, Ar
 (artworkpoqty - onhand) Variance, 
 Qty, 
 (artworkpoqty - onhand - qty) BalQty 
-from FarmOut_Detail 
+from FarmIn_Detail 
 outer apply(
 	select styleID
 	from orders
-	where orders.id = FarmOut_Detail.Orderid	
+	where orders.id = FarmIn_Detail.Orderid	
 ) styleID where id='{0}'", id);
 
             return base.OnDetailSelectCommandPrepare(e);
