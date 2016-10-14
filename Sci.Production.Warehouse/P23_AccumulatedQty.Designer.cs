@@ -93,13 +93,13 @@
             this.panel2.Size = new System.Drawing.Size(1008, 48);
             this.panel2.TabIndex = 0;
             // 
-            // P22_AccumulatedQty
+            // P23_AccumulatedQty
             // 
             this.ClientSize = new System.Drawing.Size(1008, 521);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.Name = "P22_AccumulatedQty";
-            this.Text = "P22. Accumulated Qty";
+            this.Name = "P23_AccumulatedQty";
+            this.Text = "P23. Accumulated Qty";
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             this.panel1.ResumeLayout(false);
