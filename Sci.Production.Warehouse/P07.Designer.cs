@@ -532,7 +532,8 @@
             this.comboBox1.Items.AddRange(new object[] {
             "ALL",
             "Fabric",
-            "Accessory"});
+            "Accessory",
+            "Other"});
             this.comboBox1.Location = new System.Drawing.Point(468, 178);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(100, 24);

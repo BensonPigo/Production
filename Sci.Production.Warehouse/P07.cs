@@ -27,6 +27,7 @@ namespace Sci.Production.Warehouse
             ChangeDetailColor();
             di_fabrictype.Add("F", "Fabric");
             di_fabrictype.Add("A", "Accessory");
+            di_fabrictype.Add("O", "Other");
             di_stocktype.Add("B", "Bulk");
             di_stocktype.Add("I", "Inventory");
             //
@@ -55,6 +56,7 @@ namespace Sci.Production.Warehouse
             ChangeDetailColor();
             di_fabrictype.Add("F", "Fabric");
             di_fabrictype.Add("A", "Accessory");
+            di_fabrictype.Add("O", "Other");
             di_stocktype.Add("B", "Bulk");
             di_stocktype.Add("I", "Inventory");
         }
@@ -356,9 +358,9 @@ namespace Sci.Production.Warehouse
                         sqlcmd = string.Format(@"select e.poid,e.seq1+e.seq2 as seq, e.Refno, dbo.getmtldesc(e.poid,e.seq1,e.seq2,2,0) as [Description]
 ,p.ColorID
 ,(SELECT eta from dbo.export where id = e.id) as eta
-,p.InQty,p.pounit,p.StockUnit,p.OutQty,p.AdjustQty
-,p.inqty - p.OutQty + p.AdjustQty as balance
-,p.LInvQty
+--,p.InQty,p.pounit,p.StockUnit,p.OutQty,p.AdjustQty
+--,p.inqty - p.OutQty + p.AdjustQty as balance
+--,p.LInvQty
 ,p.fabrictype
 ,e.seq1
 ,e.seq2
@@ -450,11 +452,16 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    CurrentDetailData["shipqty"] = e.FormattedValue;
-                    CurrentDetailData["Actualqty"] = e.FormattedValue;
-                    string rate = MyUtility.GetValue.Lookup(string.Format(@"select Rate from dbo.View_Unitrate v
+                    if (!MyUtility.Check.Empty(CurrentDetailData["pounit"]) && !MyUtility.Check.Empty(CurrentDetailData["stockunit"]))
+                    {
+                        CurrentDetailData["shipqty"] = e.FormattedValue;
+                        CurrentDetailData["Actualqty"] = e.FormattedValue;
+                        string rate = MyUtility.GetValue.Lookup(string.Format(@"select Rate from dbo.View_Unitrate v
                     where v.FROM_U ='{0}' and v.TO_U='{1}'", CurrentDetailData["pounit"], CurrentDetailData["stockunit"]));
-                    CurrentDetailData["stockqty"] = MyUtility.Math.Round(decimal.Parse(e.FormattedValue.ToString()) * decimal.Parse(rate), 2);
+                        //string aa = string.Format(@"select Rate from dbo.View_Unitrate v
+                   // where v.FROM_U ='{0}' and v.TO_U='{1}'", CurrentDetailData["pounit"], CurrentDetailData["stockunit"]);
+                        CurrentDetailData["stockqty"] = MyUtility.Math.Round(decimal.Parse(e.FormattedValue.ToString()) * decimal.Parse(rate), 2);
+                    }
                 }
             };
 
@@ -1081,6 +1088,9 @@ where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword), out dt);
                     break;
                 case 2:
                     detailgridbs.Filter = "fabrictype ='A'";
+                    break;
+                case 3:
+                    detailgridbs.Filter = "fabrictype ='O'";
                     break;
             }
         }
