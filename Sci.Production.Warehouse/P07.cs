@@ -1024,9 +1024,13 @@ Where a.id = '{0}' ", masterID);
 , '' as remark
 , '' as location
 , '{1}' as mdivisionid
+--,ff.UsageUnit,mm.IsExtensionUnit,uu.ExtensionUnit
 from dbo.Export_Detail a inner join dbo.PO_Supp_Detail b on a.PoID= b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
 inner join orders c on c.id = a.poid
-inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit
+inner join [dbo].[Fabric] ff on b.SCIRefno= ff.SCIRefno
+inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
+inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
+inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U = (IIF ( mm.IsExtensionUnit > 0, uu.ExtensionUnit, ff.UsageUnit ))--b.StockUnit
 where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword), out dt);
                     if (MyUtility.Check.Empty(dt) || MyUtility.Check.Empty(dt.Rows.Count))
                     {
