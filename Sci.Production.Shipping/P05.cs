@@ -39,8 +39,8 @@ namespace Sci.Production.Shipping
                 emptyDTMask = emptyDTMask + empmask;
             }
 
-            //this.textBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutOffDate", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
-            //this.textBox6.Mask = dateTimeMask;
+            this.textBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutOffDate", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
+            this.textBox6.Mask = dateTimeMask;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)

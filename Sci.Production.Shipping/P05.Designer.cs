@@ -95,7 +95,7 @@
             this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.textBox7 = new Sci.Win.UI.TextBox();
-            this.dateBox3 = new Sci.Win.UI.DateBox();
+            this.textBox6 = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -112,8 +112,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.textBox6);
             this.masterpanel.Controls.Add(this.button6);
-            this.masterpanel.Controls.Add(this.dateBox3);
             this.masterpanel.Controls.Add(this.textBox7);
             this.masterpanel.Controls.Add(this.comboBox1);
             this.masterpanel.Controls.Add(this.textBox4);
@@ -248,8 +248,8 @@
             this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox7, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.button6, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox6, 0);
             // 
             // detailpanel
             // 
@@ -1065,15 +1065,14 @@
             this.textBox7.TabIndex = 71;
             this.textBox7.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox7_PopUp);
             // 
-            // dateBox3
+            // textBox6
             // 
-            this.dateBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CutOffDate", true));
-            this.dateBox3.IsSupportEditMode = false;
-            this.dateBox3.Location = new System.Drawing.Point(658, 139);
-            this.dateBox3.Name = "dateBox3";
-            this.dateBox3.ReadOnly = true;
-            this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 72;
+            this.textBox6.BackColor = System.Drawing.Color.White;
+            this.textBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox6.Location = new System.Drawing.Point(658, 139);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(153, 23);
+            this.textBox6.TabIndex = 73;
             // 
             // P05
             // 
@@ -1181,6 +1180,6 @@
         private Win.UI.TextBox textBox3;
         private Win.UI.ComboBox comboBox1;
         private Win.UI.TextBox textBox7;
-        private Win.UI.DateBox dateBox3;
+        private Win.UI.TextBox textBox6;
     }
 }
