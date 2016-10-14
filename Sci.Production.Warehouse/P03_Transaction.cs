@@ -539,7 +539,9 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name");
                 MyUtility.Msg.WarningBox(ex.Message);
                 return;
             }
+
             MyUtility.Msg.InfoBox("Finished!!");
+            this.Dispose();  //重算完自動關閉視窗
         }
     }
 }

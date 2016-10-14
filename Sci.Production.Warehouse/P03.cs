@@ -95,7 +95,8 @@ namespace Sci.Production.Warehouse
                 var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P03_Transaction(dr);
-                frm.ShowDialog(this);
+                DialogResult DR =  frm.ShowDialog(this);
+                if (DR == DialogResult.OK) button1_Click(null,null);
             };
             #endregion
             #region Inventory Qty 開窗
