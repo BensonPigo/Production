@@ -133,7 +133,7 @@ namespace Sci.Production.Quality
                     return;
                 }   
                 List<SqlParameter> spm = new List<SqlParameter>();
-                string cmdd = "select * from PO_Supp_Detail where id=@id and seq1=@seq1 and seq2=@seq2";
+                string cmdd = "select * from PO_Supp_Detail where id=@id and seq1=@seq1 and seq2=@seq2 and FabricType='F'";
                 spm.Add(new SqlParameter("@id", PoID));
                 spm.Add(new SqlParameter("@seq1", datas.Rows[i]["seq1"]));
                 spm.Add(new SqlParameter("@seq2", datas.Rows[i]["seq2"]));
@@ -185,7 +185,7 @@ and a.seq1=@seq1";
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}'", PoID);
+                    string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
                     SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -432,8 +432,13 @@ and a.seq1=@seq1";
         {
             DualResult upResult = new DualResult(true);
             string update_cmd = "";
-            foreach (DataRow dr in ((DataTable)gridbs.DataSource).Rows)
-            {
+            //foreach (DataRow dr in ((DataTable)gridbs.DataSource).Rows)
+
+            
+            DataRow dr = ((DataTable)gridbs.DataSource).NewRow();
+            for (int i = ((DataTable)gridbs.DataSource).Rows.Count; i > 0; i--)
+            {                
+                dr = ((DataTable)gridbs.DataSource).Rows[i-1];
                 //刪除
                 if (dr.RowState == DataRowState.Deleted)
                 {
@@ -454,11 +459,13 @@ and a.seq1=@seq1";
                 //ii.刪除空白SEQ 的Oven_Detail資料
                 if (MyUtility.Check.Empty(dr["SEQ"]))
                 {
-                    List<SqlParameter> spamDet = new List<SqlParameter>();
-                    update_cmd = "Delete From Oven_Detail Where id =@id and ovenGroup=@ovenGroup and seq1='' and seq2='' ";
-                    spamDet.Add(new SqlParameter("@id", dr["ID", DataRowVersion.Original]));
-                    spamDet.Add(new SqlParameter("@ovenGroup", dr["ovenGroup", DataRowVersion.Original]));
-                    upResult = DBProxy.Current.Execute(null, update_cmd, spamDet);
+                    dr.Delete();
+
+                    //List<SqlParameter> spamDet = new List<SqlParameter>();
+                    //update_cmd = "Delete From Oven_Detail Where id =@id and ovenGroup=@ovenGroup and seq1='' and seq2='' ";
+                    //spamDet.Add(new SqlParameter("@id", dr["ID"]));
+                    //spamDet.Add(new SqlParameter("@ovenGroup", dr["ovenGroup"]));
+                    //upResult = DBProxy.Current.Execute(null, update_cmd, spamDet);
                     continue;
                 }
 
@@ -526,6 +533,7 @@ SET IDENTITY_INSERT oven off";
             }
             
         }
+
         #region 表頭Article 右鍵事件: 1.右鍵selectItem 2.判斷validated
         private void article_MouseDown(object sender, MouseEventArgs e)
         {

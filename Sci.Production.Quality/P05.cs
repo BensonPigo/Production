@@ -56,8 +56,8 @@ namespace Sci.Production.Quality
                 this.brand_text.Text = dr["BrandID"].ToString();
                 this.remark_text.Text = dr["OvenLaboratoryRemark"].ToString();
             }
-            
-            if (MyUtility.Check.Seek("select min(a.CutInLine) as CutInLine from Orders a left join PO b on a.POID=b.ID",out drEarly))
+
+            if (MyUtility.Check.Seek(string.Format("select min(a.CutInLine) as CutInLine from Orders a where a.POID='{0}'", CurrentMaintain["id"].ToString()), out drEarly))
             {
                 if (drEarly["CutInLine"] == DBNull.Value) Cutting_text.Text = "";
                 else Cutting_text.Value = Convert.ToDateTime(drEarly["CutInLine"]);
@@ -123,6 +123,7 @@ namespace Sci.Production.Quality
             
             base.OnDetailEntered();
         }
+
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorNumericColumnSettings testNoCell = new DataGridViewGeneratorNumericColumnSettings();            
@@ -217,6 +218,7 @@ namespace Sci.Production.Quality
 
             base.OnFormLoaded();
         }
+
         private void CreateNewTest()
         {
             DataTable dt;
@@ -240,6 +242,8 @@ namespace Sci.Production.Quality
             frm.Dispose();
             contextMenuStrip();
             this.RenewData();
+
+            OnDetailEntered();
         }
         // Context Menu選擇Delete This Record's Detail
         private void DeleteThisDetail()
@@ -273,9 +277,11 @@ namespace Sci.Production.Quality
         {
             var dr = this.CurrentDetailData;
             DataTable dtCheck;
+
+            add.Enabled = true;
+
             if (dr == null) // oven 空的
             {
-                add.Enabled = true;
                 edit.Enabled = false;
                 delete.Enabled = false;
                 return;
@@ -285,20 +291,17 @@ namespace Sci.Production.Quality
                 DBProxy.Current.Select(null, string.Format("select * from oven where id='{0}'", CurrentDetailData["ID"].ToString()), out dtCheck);
                 if (dtCheck.Rows.Count<=0)
                 {
-                     add.Enabled = true;
                      edit.Enabled = false;
                      delete.Enabled = false;
                      return;
                 }
                 if (dtCheck.Rows[0]["Status"].ToString().Trim() == "New")
                 {
-                    add.Enabled = false;
                     edit.Enabled = true;
                     delete.Enabled = true;
                 }
                 else
                 {
-                    add.Enabled = false;
                     edit.Enabled = true;
                     delete.Enabled = false;
                 }
@@ -309,7 +312,13 @@ namespace Sci.Production.Quality
             //判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
             if (dtCheck.Rows.Count <= 0)
             {
-                add.Enabled = true;
+                edit.Enabled = false;
+                delete.Enabled = false;
+            }
+
+            if (EditMode)
+            {
+                add.Enabled = false;
                 edit.Enabled = false;
                 delete.Enabled = false;
             }

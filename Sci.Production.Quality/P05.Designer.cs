@@ -69,10 +69,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.compl_text);
-            this.masterpanel.Controls.Add(this.Target_text);
-            this.masterpanel.Controls.Add(this.Earliest_text);
-            this.masterpanel.Controls.Add(this.Cutting_text);
             this.masterpanel.Controls.Add(this.Article_text);
             this.masterpanel.Controls.Add(this.season_text);
             this.masterpanel.Controls.Add(this.style_text);
@@ -89,8 +85,16 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.compl_text);
+            this.masterpanel.Controls.Add(this.Target_text);
+            this.masterpanel.Controls.Add(this.Earliest_text);
+            this.masterpanel.Controls.Add(this.Cutting_text);
             this.masterpanel.Size = new System.Drawing.Size(1143, 150);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.Cutting_text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.Earliest_text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.Target_text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.compl_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -107,10 +111,6 @@
             this.masterpanel.Controls.SetChildIndex(this.style_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.season_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Article_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Cutting_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Earliest_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Target_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.compl_text, 0);
             // 
             // detailpanel
             // 
@@ -379,6 +379,7 @@
             this.DefaultOrder = "id";
             this.GridAlias = "oven";
             this.IsGridIconVisible = false;
+            this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
