@@ -767,20 +767,30 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         }
 
         //檢查輸入的Cut-off Date是否正確
-        //private void textBox6_Validating(object sender, CancelEventArgs e)
-        //{
-        //    if (this.EditMode && textBox6.Text != emptyDTMask)
-        //    {
-        //        string cutOffDate = textBox6.Text.Substring(0, 10).Replace(" ","1");
-        //        if (!CheckDate((DateTime)MyUtility.Convert.GetDate(cutOffDate), -12, 12))
-        //        {
-        //            MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
-        //            textBox6.Text = null;
-        //            e.Cancel = true;
-        //            return;
-        //        }
-        //    }
-        //}
+        private void textBox6_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.EditMode && textBox6.Text != emptyDTMask)
+            {
+                string cutOffDate = textBox6.Text.Substring(0, 10).Replace(" ","1");
+                try
+                {
+                    if (!CheckDate((DateTime)MyUtility.Convert.GetDate(cutOffDate), -12, 12))
+                    {
+                        MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
+                        textBox6.Text = null;
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+                catch (Exception )
+                {
+                    MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
+                    e.Cancel = true;
+                    return;
+                }
+                
+            }
+        }
 
         //檢查輸入的ETD是否正確
 

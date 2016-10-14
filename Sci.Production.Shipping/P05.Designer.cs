@@ -247,9 +247,9 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox4, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.button6, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox6, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             // 
             // detailpanel
             // 
@@ -1073,6 +1073,7 @@
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(153, 23);
             this.textBox6.TabIndex = 73;
+            this.textBox6.Validating += new System.ComponentModel.CancelEventHandler(this.textBox6_Validating);
             // 
             // P05
             // 
