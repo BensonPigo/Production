@@ -77,18 +77,27 @@ namespace Sci.Production.Quality
             {
                 txtsupplier1.TextBox1.Text = "";
             }
+            string Receiving_cmd = string.Format("select b.Refno from Receiving a inner join FIR b on a.Id=b.Receivingid where b.id='{0}'", maindr["id"]);
+            DataRow rec_dr;
+            if (MyUtility.Check.Seek(Receiving_cmd, out rec_dr))
+            {                
+                brandrefno_box.Text = rec_dr["Refno"].ToString();
+            }
+            else
+            {               
+                brandrefno_box.Text = "";
+            }
             string po_supp_detail_cmd = string.Format("select SCIRefno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}'", maindr["POID"], maindr["seq1"], maindr["seq2"]);
             DataRow po_supp_detail_dr;
             if (MyUtility.Check.Seek(po_supp_detail_cmd, out po_supp_detail_dr))
             {
                 scirefno_box.Text = po_supp_detail_dr["SCIRefno"].ToString();
-                brandrefno_box.Text = "";// po_supp_detail_dr["BrandRefno"].ToString();// 沒有BRANDREFNO 
                 color_box.Text = po_supp_detail_dr["colorid"].ToString();
             }
             else
             {
-                scirefno_box.Text = "";
-                brandrefno_box.Text = "";
+                scirefno_box.Text = "";                
+                color_box.Text = "";
             }
 
             approve_box.Text = maindr["ApproveDate"].ToString();
