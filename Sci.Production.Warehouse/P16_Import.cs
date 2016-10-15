@@ -20,12 +20,13 @@ namespace Sci.Production.Warehouse
         bool flag;
         string poType;
         protected DataTable dtlack, dtftyinventory;
-
-        public P16_Import(DataRow master, DataTable detail)
+        string Type;
+        public P16_Import(DataRow master, DataTable detail,string type)
         {
             InitializeComponent();
             dr_master = master;
             dt_detail = detail;
+            Type = type;
         }
 
         private void sum_checkedqty()
@@ -64,7 +65,12 @@ where a.id = '{0}';", dr_master["requestid"]));
 from dbo.Lack_Detail a
 inner join dbo.Lack b on b.ID= a.ID
 inner join dbo.ftyinventory c on c.poid = b.POID and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
-Where a.id = '{0}' and c.lock = 0 and (c.inqty-c.outqty + c.adjustqty) > 0 and c.mdivisionid='{1}' ", dr_master["requestid"],Sci.Env.User.Keyword)); // 
+Where a.id = '{0}' and c.lock = 0  and c.mdivisionid='{1}' ", dr_master["requestid"],Sci.Env.User.Keyword)); // 
+           //判斷LACKING
+            //
+            if (Type != "Lacking")
+            { strSQLCmd.Append(" and (c.inqty-c.outqty + c.adjustqty) > 0"); }
+           // string AA = strSQLCmd.ToString();
             #endregion
 
             MyUtility.Msg.WaitWindows("Data Loading....");
@@ -135,11 +141,14 @@ Where a.id = '{0}' and c.lock = 0 and (c.inqty-c.outqty + c.adjustqty) > 0 and c
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                     {
                         grid2.GetDataRow(e.RowIndex)["qty"] = e.FormattedValue;
-                        if ((decimal)e.FormattedValue > (decimal)grid2.GetDataRow(e.RowIndex)["balance"])
+                        if (Type != "Lacking")
                         {
-                            MyUtility.Msg.WarningBox("Issue qty can't be more than Stock qty!!");
-                            e.Cancel = true;
-                            return;
+                            if ((decimal)e.FormattedValue > (decimal)grid2.GetDataRow(e.RowIndex)["balance"])
+                            {
+                                MyUtility.Msg.WarningBox("Issue qty can't be more than Stock qty!!");
+                                e.Cancel = true;
+                                return;
+                            }
                         }
                         grid2.GetDataRow(e.RowIndex)["selected"] = true;
                         this.sum_checkedqty();
