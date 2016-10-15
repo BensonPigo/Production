@@ -318,5 +318,19 @@ Where a.id = '{0}' ", masterID);
             frm.ShowDialog(this);
             this.RenewData();
         }
+
+        //217: WAREHOUSE_P26_Mtl Location update，2.當表身已經有值時，編輯時若換了stock type則表身要一併清空。
+        private void comboBox1_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.EditMode && !MyUtility.Check.Empty(comboBox1.SelectedValue) && comboBox1.SelectedValue != comboBox1.OldValue)
+            {
+                if (detailgridbs.DataSource != null && ((DataTable)detailgridbs.DataSource).Rows.Count > 0)
+                {
+                    ((DataTable)detailgridbs.DataSource).Rows.Clear();
+                }
+            }
+        }
+
+
     }
 }
