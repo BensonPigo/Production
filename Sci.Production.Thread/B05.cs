@@ -93,6 +93,7 @@ namespace Sci.Production.Thread
             if (CurrentDetailData == null) return;
             gridTb.DefaultView.RowFilter = string.Format("ThreadColorid = '{0}' and ThreadLocationid = '{1}'", CurrentDetailData["ThreadColorid"], CurrentDetailData["ThreadLocationid"]);
         }
+
         private void initqty(string date2, int recal=0) //Init Qty
         {
             string date = Convert.ToDateTime(date2).AddDays(-1).ToShortDateString();
@@ -132,7 +133,7 @@ namespace Sci.Production.Thread
                         if (!(upResult = DBProxy.Current.Execute(null, updatestock)))
                         {
                             _transactionscope.Dispose();
-                            ShowErr(updatestock, upResult);
+                            MessageBox.Show("No data re-calculate ");
                             return;
                         }
 
@@ -153,6 +154,7 @@ namespace Sci.Production.Thread
             
 
         }
+
         private void transrecord(string date1, string date2)
         {
             initqty(date1); //計算Init
