@@ -113,7 +113,7 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.button1.Enabled = (CurrentMaintain["Status"].ToString().ToUpper() == "NEW") && this.EditMode;
+            this.button1.Enabled = (CurrentMaintain["Status"].ToString().ToUpper() == "NEW") && !this.EditMode;
         }
 
         //Encode button
