@@ -599,6 +599,13 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
             string sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
 
+            //564: WAREHOUSE_P31_Material Borrow，若已有Act. Return date則不能unconfirm
+            if (!MyUtility.Check.Empty(dr["backdate"]))
+            {
+                MyUtility.Msg.WarningBox("[Act. Return Date] already has value, can't unconfirm !!", "Warning");
+                return;
+            }
+
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
