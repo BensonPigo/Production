@@ -84,81 +84,63 @@ namespace Sci.Production.Warehouse
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                 return false;
             }
+
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
-            string Remark = row["Remark"].ToString();
             string CDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string MDivisionID = row["MDivisionID"].ToString();
+            string Remark = row["Remark"].ToString().Trim();
+
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select("",
-            @"select    
-            b.name 
-            from dbo.Issue  a 
-            inner join dbo.mdivision  b 
-            on b.id = a.mdivisionid
-            where b.id = a.mdivisionid
-            and a.id = @ID", pars, out dt);
-            if (!result) { this.ShowErr(result); }
-            string RptTitle = dt.Rows[0]["name"].ToString();
+            DualResult result;
             ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", CDate));
-
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("MDivisionID", MDivisionID));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             #endregion
+
             #region -- 撈表身資料 --
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
-            string sqlcmd = @"select t.POID,t.seq1+ '-' +t.seq2 as SEQ,
-       p.Scirefno,p.seq1,p.seq2
-,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) [desc]
-,t.Roll,t.Dyelot,t.Qty,p.StockUnit
-            ,dbo.Getlocation(b.ukey) [location],[Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.seq1,t.seq2 )            
-            from dbo.Issue_Detail t 
-            left join dbo.PO_Supp_Detail p 
-            on 
-            p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
-            inner join FtyInventory b
-            on b.poid = t.poid and b.seq1 =t.seq1 and b.seq2=t.seq2 and b.Roll =t.Roll and b.Dyelot =t.Dyelot and b.StockType = t.StockType where t.id= @ID";
-            result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
+
+            string sqlcmd = string.Format(@"select a.PoId,a.scirefno
+                                                ,dbo.getItemDesc('PM1',a.scirefno) as [description]
+                                                ,a.sizespec
+                                                ,a.Qty
+                                            from dbo.Issue_Summary as a 
+                                            Where a.id = '{0}'", id, Sci.Env.User.Keyword);
+
+            result = DBProxy.Current.Select("", sqlcmd, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }
             
-
-
             // 傳 list 資料            
-            List<P13_PrintData> data = dtDetail.AsEnumerable()
-                .Select(row1 => new P13_PrintData()
+            List<P61_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P61_PrintData()
                 {
-                    POID = row1["POID"].ToString(),
-                    SEQ = row1["SEQ"].ToString(),
-                    DESC = row1["desc"].ToString(),
-                    Location = row1["Location"].ToString(),
-                    StockUnit = row1["StockUnit"].ToString(),
-                    Roll = row1["Roll"].ToString(),
-                    DYELOT = row1["Dyelot"].ToString(),
-                    QTY = row1["Qty"].ToString(),
-                    TotalQTY = row1["Total"].ToString()
+                    POID = row1["PoId"].ToString(),
+                    SCIREFNO = row1["scirefno"].ToString(),
+                    DESCRIPTION = row1["description"].ToString(),
+                    SIZESPEC = row1["sizespec"].ToString(),
+                    QTY = row1["Qty"].ToString()
                 }).ToList();
 
             report.ReportDataSource = data;
             #endregion
+
             // 指定是哪個 RDLC
-            //DualResult result;
-            Type ReportResourceNamespace = typeof(P13_PrintData);
+            Type ReportResourceNamespace = typeof(P61_PrintData);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P13_Print.rdlc";
+            string ReportResourceName = "P61_Print.rdlc";
 
             IReportResource reportresource;
             if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
             {
-                //this.ShowException(result);
                 return false;
             }
-
             report.ReportResource = reportresource;
 
             // 開啟 report view
@@ -166,10 +148,6 @@ namespace Sci.Production.Warehouse
             frm.MdiParent = MdiParent;
             frm.Show();
 
-
-
-          
-            
             return base.ClickPrint();
         }
 

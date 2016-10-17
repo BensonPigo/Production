@@ -2501,6 +2501,8 @@ Sci.Production.Warehouse/P61.resx -text
 Sci.Production.Warehouse/P61_Import.Designer.cs -text
 Sci.Production.Warehouse/P61_Import.cs -text
 Sci.Production.Warehouse/P61_Import.resx -text
+Sci.Production.Warehouse/P61_Print.rdlc -text
+Sci.Production.Warehouse/P61_PrintData.cs -text
 Sci.Production.Warehouse/Properties/AssemblyInfo.cs -text
 Sci.Production.Warehouse/Properties/Resources.Designer.cs -text
 Sci.Production.Warehouse/Properties/Resources.resx -text
