@@ -90,13 +90,11 @@ namespace Sci.Production.Quality
 			                    INNER JOIN DBO.ADIDASComplain_Detail b ON B.ID = a.ID
 			                    where year(a.StartDate) in (@y1,@y2,@y3)
 			                    group by a.StartDate) Claimed
-                    outer apply(SELECT convert(varchar(10),dateadd(MONTH,5,Claimed.themonth)) as six,YEAR(a.StartDate)[YEAR1]
-			                    FROM dbo.ADIDASComplain a
-			                    where year(a.StartDate) in (@y1,@y2,@y3)
-			                    group by a.StartDate) as ff 
-                    outer apply (SELECT ISNULL(SUM(a.Qty),0)/6 AS Qty FROM ADIDASComplain_MonthlyQty a
-			                    WHERE a.YearMonth BETWEEN claimed.themonth AND ff.six
-			                    AND a.BrandID = 'ADIDAS')sh
+                   outer apply (SELECT startMonth = format(dateadd(month,-3, concat(Claimed.YEAR1,'/',Claimed.month1,'/1' )),'yyyyMM'),
+					            EndMonth = format(dateadd(month,2, concat(Claimed.YEAR1,'/',Claimed.month1,'/1' )),'yyyyMM') ) as ff 
+
+                   outer apply (SELECT ISNULL(SUM(a.Qty),0)/6 AS Qty FROM ADIDASComplain_MonthlyQty a
+		                         WHERE a.YearMonth BETWEEN ff.startMonth AND ff.EndMonth and a.BrandID = 'ADIDAS')sh
                     where year in (@y1,@y2,@y3)
                     group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1
 
@@ -246,7 +244,7 @@ namespace Sci.Production.Quality
 					startMonth = format(dateadd(month,-3, concat(t.YEAR1,'/',t.month1,'/1' )),'yyyyMM'),
 					EndMonth = format(dateadd(month,2, concat(t.YEAR1,'/',t.month1,'/1' )),'yyyyMM') ) as ff 
                  outer apply (SELECT ISNULL(SUM(a.Qty),0)/6 AS Qty FROM ADIDASComplain_MonthlyQty a
-		                      WHERE a.YearMonth BETWEEN ff.startMonth AND ff.EndMonth)sh
+		                      WHERE a.YearMonth BETWEEN ff.startMonth AND ff.EndMonth and a.BrandID = 'ADIDAS')sh
 
                  --select * from #Shipped
 
@@ -295,7 +293,7 @@ namespace Sci.Production.Quality
                     s = s + Environment.NewLine + o;
                 }
                 s = s + Environment.NewLine + "order by starts";
-
+                //string  Replace("{0}_Claimed","Claimed");
                 result = DBProxy.Current.SelectByConn(conn, s, out alltemp);
                 //result = MyUtility.Tool.ProcessWithDatatable(alltemps[2], "month,fty,Target,Claimed,Shipped,adicomp", s, out alltemp, "#AllTemp", conn, null);
                 if (!result) { return result; }
@@ -347,57 +345,6 @@ namespace Sci.Production.Quality
                 #endregion
 
                 #region By Factory 橫年度 縱月份
-                /*
-                string scmd = string.Format(@"declare @dRanges table(starts int , ends int, name varchar(3))
-                    insert into @dRanges values
-                    (1,1,'Jan'),
-                    (2,2,'Feb'),
-                    (3,3,'Mar'),
-                    (4,4,'Apr'),
-                    (5,5,'May'),
-                    (6,6,'Jun'),
-                    (7,7,'Jul'),
-                    (8,8,'Aug'),
-                    (9,9,'Sep'),
-                    (10,10,'Oct'),
-                    (11,11,'Nov'),
-                    (12,12,'Dec')
-
-                    declare @d date = dateadd(MONTH, -1, getdate()) 
-                    --select @d
-                    declare @y1 varchar(4) = cast(datepart(year, dateadd(year,-2, @d) ) as varchar(4))
-                    declare @y2 varchar(4) = cast(datepart(year, dateadd(year,-1, @d) ) as varchar(4))
-                    declare @y3 varchar(4) = cast(datepart(year,@d) as varchar(4))
-
-                    select Target,Claimed.Claimed,sh.qty[Shipped],convert(varchar(10),Claimed.month1)[month1],convert(varchar(10),Claimed.YEAR1)[YEAR1],fty.ID,Claimed.factoryid
-                    into #temp
-                    from dbo.ADIDASComplainTarget 
-                    outer apply(SELECT left(cast(a.StartDate as varchar(10)),7) ym , sum(b.Qty) Claimed,convert(varchar(10),dateadd(MONTH,-3,a.StartDate)) themonth ,convert(varchar(10),MONTH(a.StartDate))[month1],convert(varchar(10),YEAR(a.StartDate)) [YEAR1],b.FactoryID [factoryid]
-			                    FROM dbo.ADIDASComplain a
-			                    INNER JOIN DBO.ADIDASComplain_Detail b ON B.ID = a.ID
-			                    where year(a.StartDate) in (@y1,@y2,@y3)
-			                    group by a.StartDate,b.FactoryID) Claimed
-                    outer apply(SELECT convert(varchar(10),dateadd(MONTH,5,Claimed.themonth)) as six,YEAR(a.StartDate)[YEAR1]
-			                    FROM dbo.ADIDASComplain a
-			                    where year(a.StartDate) in (@y1,@y2,@y3)
-			                    group by a.StartDate) as ff 
-                    outer apply (SELECT ISNULL(SUM(a.Qty),0)/6 AS Qty FROM ADIDASComplain_MonthlyQty a
-			                    WHERE a.YearMonth BETWEEN claimed.themonth AND ff.six
-			                    AND a.BrandID = 'ADIDAS')sh
-					outer apply(select distinct id   from dbo.SCIFty 
-                                where CountryID= (select f.CountryID from dbo.Factory f where f.id=" + "'" + userfactory + "'" + @"))fty
-                    where year in (@y1,@y2,@y3)
-                    group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1,fty.ID,Claimed.factoryid
-
-                    select dRanges.name[ ],dRanges.starts,tg1.Target1 [Target],isnull(SUM(year1.Claimed),0)[Claimed1],isnull(SUM(year1.Shipped),0)[Shipped1],isnull(year1.adicomp,0)[adicomp1],isnull(SUM(year2.Claimed),0)[Claimed2],isnull(SUM(year2.Shipped),0)[Shipped2],isnull(year2.adicomp,0)[adicomp2],isnull(SUM(year3.Claimed),0)[Claimed3],isnull(SUM(year3.Shipped),0)[Shipped3],isnull(year3.adicomp,0)[adicomp3] from dbo.#temp
-                    inner join @dRanges as dRanges on  dRanges.starts between dRanges.starts and dRanges.ends 
-					OUTER APPLY(SELECT #temp.Claimed,#temp.Shipped,adicomp=round(sum(#temp.Claimed)/sum(#temp.Shipped),6)*100 FROM #temp WHERE YEAR1=@y1 and dRanges.starts=month1 and ID=factoryid group by #temp.Claimed,#temp.Shipped)AS year1
-					OUTER APPLY(SELECT #temp.Claimed,#temp.Shipped,adicomp=round(sum(#temp.Claimed)/sum(#temp.Shipped),6)*100 FROM #temp WHERE YEAR1=@y2 and dRanges.starts=month1 and ID=factoryid group by #temp.Claimed,#temp.Shipped)AS year2
-					OUTER APPLY(SELECT #temp.Claimed,#temp.Shipped,adicomp=round(sum(#temp.Claimed)/sum(#temp.Shipped),6)*100 FROM #temp WHERE YEAR1=@y3 and dRanges.starts=month1 and ID=factoryid group by #temp.Claimed,#temp.Shipped)AS year3
-					outer apply(select Target1=isnull(sum(#temp.Target),0) from #temp where YEAR1 in (@y1,@y2,@y3) and dRanges.starts=month1)AS tg1
-					GROUP BY dRanges.name,tg1.Target1,year1.Claimed,year1.Shipped,year2.Claimed,year2.Shipped,year3.Claimed,year3.Shipped,dRanges.starts,year1.adicomp,year2.adicomp,year3.adicomp
-                    order by dRanges.starts
-                    DROP TABLE #temp");*/
 
                 allFactory = alltemps[0];
                 dicFTY.Clear();
@@ -440,9 +387,9 @@ namespace Sci.Production.Quality
 			            [adicomp3]  =isnull(year3.adicomp,0)
 		            from #AllTemp as t
                     inner join @dRanges as dRanges on  dRanges.starts between dRanges.starts and dRanges.ends 
-		            OUTER APPLY(SELECT s.Claimed,s.Shipped,adicomp=round(sum(s.Claimed)/sum(s.Shipped),6)*100 FROM #AllTemp as s WHERE YEAR1=@y1 and dRanges.starts=month1 and fty=factoryid group by s.Claimed,s.Shipped)AS year1
-		            OUTER APPLY(SELECT s.Claimed,s.Shipped,adicomp=round(sum(s.Claimed)/sum(s.Shipped),6)*100 FROM #AllTemp as s WHERE YEAR1=@y2 and dRanges.starts=month1 and fty=factoryid group by s.Claimed,s.Shipped)AS year2
-		            OUTER APPLY(SELECT s.Claimed,s.Shipped,adicomp=round(sum(s.Claimed)/sum(s.Shipped),6)*100 FROM #AllTemp as s WHERE YEAR1=@y3 and dRanges.starts=month1 and fty=factoryid group by s.Claimed,s.Shipped)AS year3
+		            OUTER APPLY(SELECT s.Claimed,s.Shipped,adicomp=round(sum(s.Claimed)/sum(s.Shipped),6)*100 FROM #AllTemp as s WHERE YEAR1=@y1 and dRanges.starts=month1 and fty='{0}' group by s.Claimed,s.Shipped)AS year1
+		            OUTER APPLY(SELECT s.Claimed,s.Shipped,adicomp=round(sum(s.Claimed)/sum(s.Shipped),6)*100 FROM #AllTemp as s WHERE YEAR1=@y2 and dRanges.starts=month1 and fty='{0}' group by s.Claimed,s.Shipped)AS year2
+		            OUTER APPLY(SELECT s.Claimed,s.Shipped,adicomp=round(sum(s.Claimed)/sum(s.Shipped),6)*100 FROM #AllTemp as s WHERE YEAR1=@y3 and dRanges.starts=month1 and fty='{0}' group by s.Claimed,s.Shipped)AS year3
 		            outer apply(select Target1=isnull(sum(s.Target),0) from #AllTemp as s where YEAR1 in (@y1,@y2,@y3) and dRanges.starts=month1)AS tg1
 					where  t.CountryID= (select f.CountryID from dbo.Factory f where f.id='" + userfactory + @"') and t.fty=t.factoryid and t.year1 in (@y1,@y2,@y3) 
 					GROUP BY dRanges.name,tg1.Target1,year1.Claimed,year1.Shipped,year2.Claimed,year2.Shipped,year3.Claimed,year3.Shipped,dRanges.starts,year1.adicomp,year2.adicomp,year3.adicomp
@@ -453,7 +400,7 @@ namespace Sci.Production.Quality
                     //result = MyUtility.Tool.ProcessWithDatatable(alltemps[2], "", scmd, out dt, "#temp", conn, null);
 
                     if (!result) { return result; }
-                   
+
 
                     dt.Columns.Remove("starts");
                     int startIndex1 = 1;
@@ -483,18 +430,7 @@ namespace Sci.Production.Quality
 
 
                     dt.Rows.Add(totalrow1);
-
-
                     dicFTY.Add(sss, dt);
-
-                    //if (null == dt_All || 0 == dt_All.Rows.Count)
-                    //{
-                    //    dt_All = dt;
-                    //}
-                    //else
-                    //{
-                    //    dt_All.Merge(dt);
-                    //}
 
                     if (!result)
                     {
@@ -568,7 +504,7 @@ namespace Sci.Production.Quality
             {
                 #region By Factory
 
-                
+
                 var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
                 saveDialog.ShowDialog();
                 string outpath = saveDialog.FileName;
@@ -578,7 +514,7 @@ namespace Sci.Production.Quality
                 }
                 Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R40_ByFactory.xltx");
                 SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(alltemp_All);
-               
+
                 Dictionary<string, string> dic = new Dictionary<string, string>();
                 dic.Add(" ", "1,2");
                 for (int i = 0; i < allFactory.Rows.Count; i++)
@@ -623,22 +559,7 @@ namespace Sci.Production.Quality
                     dic1.Add(stringyear3, "6,8");
                     dic1.Add(stringyear2, "9,11");
                     x_All.lisTitleMerge.Add(dic1);
-                    //SaveXltReportCls.xlsColumnInfo Target = new SaveXltReportCls.xlsColumnInfo("B3:B15");
-                    //Target.NumberFormate =  "p";
-                    //SaveXltReportCls.xlsColumnInfo adiComp1 = new SaveXltReportCls.xlsColumnInfo("D3:D15");
-                    //adiComp1.NumberFormate = "p,CurrencyGroupSizes";
-                    //SaveXltReportCls.xlsColumnInfo adiComp2 = new SaveXltReportCls.xlsColumnInfo(8);
-                    //adiComp2.NumberFormate = "@%";
-                    //SaveXltReportCls.xlsColumnInfo adiComp3 = new SaveXltReportCls.xlsColumnInfo(11);
-                    //adiComp3.NumberFormate = "@%";
 
-
-
-
-                    //x_All.lisColumnInfo.Add(Target);
-                    //x_All.lisColumnInfo.Add(adiComp1);
-                    //x_All.lisColumnInfo.Add(adiComp2);
-                    //x_All.lisColumnInfo.Add(adiComp3);
                     xl.dicDatas.Add("##ftySheetName" + fty, item.Key);
                     xl.dicDatas.Add("##ftyDetail" + fty, x_All);
 
@@ -689,13 +610,13 @@ namespace Sci.Production.Quality
             {
 
                 //在工作簿 新增一張 統計圖表，單獨放在一個分頁裡面
-               mySheet.get_Range("a1", "a14").Select();
+                mySheet.get_Range("a1", "a14").Select();
                 myBook.Charts.Add(Type.Missing, Type.Missing, 1, Type.Missing);
                 //選擇 統計圖表 的 圖表種類
                 myBook.ActiveChart.Location(XlChartLocation.xlLocationAsObject, mySheet.Name);
                 myBook.ActiveChart.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLineMarkers;//插入折線圖
                 //設定數據範圍
-               
+
 
                 Chart c = myBook.ActiveChart;
                 SeriesCollection seriesCollection = c.SeriesCollection();
@@ -783,7 +704,7 @@ namespace Sci.Production.Quality
                 xAxis.HasTitle = false;  //設定 x軸 座標軸標題 = false(不顯示)，不打就是不顯示
                 //yAxis.MinimumScale = 0;//設定 x軸 數值 最小值 
                 xAxis.MaximumScale = 10;//設定 x軸 數值 最大值     
-                 
+
                 xAxis.TickLabels.Font.Size = 14;//設定 x軸 字體大小
 
                 //設定 圖表 y軸 內容
@@ -818,6 +739,23 @@ namespace Sci.Production.Quality
             mySheet.Cells[2, 10] = "Shipped";
             mySheet.Cells[2, 11] = "adiComp";
 
+            Range formatRange;
+
+            formatRange = mySheet.get_Range("B3", "B15");
+            formatRange.NumberFormat = "0.0000%";
+            formatRange = mySheet.get_Range("E3", "E15");
+            formatRange.NumberFormat = "0.0000%";
+            formatRange = mySheet.get_Range("H3", "H15");
+            formatRange.NumberFormat = "0.0000%";
+            formatRange = mySheet.get_Range("K3", "K15");
+            formatRange.NumberFormat = "0.0000%";
+
+            formatRange = mySheet.get_Range("D3", "D15");
+            formatRange.NumberFormat = "#,##0.0000";
+            formatRange = mySheet.get_Range("G3", "G15");
+            formatRange.NumberFormat = "#,##0.0000";
+            formatRange = mySheet.get_Range("J3", "J15");
+            formatRange.NumberFormat = "#,##0.0000";
 
             Microsoft.Office.Interop.Excel._Application myExcel = null;
             Microsoft.Office.Interop.Excel._Workbook myBook = null;
@@ -865,13 +803,6 @@ namespace Sci.Production.Quality
                 mySheet.Shapes.Item("Chart 1").Height = 300;  //調整圖表高度
                 mySheet.Shapes.Item("Chart 1").Top = 280;      //調整圖表在分頁中的高度(上邊距) 位置
                 mySheet.Shapes.Item("Chart 1").Left = 3;    //調整圖表在分頁中的左右(左邊距) 位置
-
-            
-                //myBook.ActiveChart.PlotArea.Width =2000;   //調整圖表寬度
-                //myBook.ActiveChart.PlotArea.Height =1500;  //調整圖表高度
-                //myBook.ActiveChart.PlotArea.Top = 2000;      //調整圖表在分頁中的高度(上邊距) 位置
-                //myBook.ActiveChart.PlotArea.Left =0;    //調整圖表在分頁中的左右(左邊距) 位置
-
 
                 //設定 繪圖區 的 背景顏色
                 myBook.ActiveChart.PlotArea.Interior.Color = ColorTranslator.ToOle(Color.LightGray);
@@ -922,8 +853,8 @@ namespace Sci.Production.Quality
                 //設定 圖表 x軸 橫向線條顏色__方法2
                 xAxis.MajorGridlines.Border.Color = ColorTranslator.ToOle(Color.Black);
                 xAxis.HasTitle = false;  //設定 x軸 座標軸標題 = false(不顯示)，不打就是不顯示
-               // xAxis.MinimumScale = 0;  //設定 x軸 數值 最小值      
-                xAxis.MaximumScale = 10;  //設定 x軸 數值 最大值
+                // xAxis.MinimumScale = 0;  //設定 x軸 數值 最小值      
+                //xAxis.MaximumScale = 0.9;  //設定 x軸 數值 最大值
                 xAxis.TickLabels.Font.Name = "Arial"; //設定 x軸 字體字型=標楷體
                 xAxis.TickLabels.Font.Size = 14;       //設定 x軸 字體大小
 
@@ -931,7 +862,7 @@ namespace Sci.Production.Quality
                 Microsoft.Office.Interop.Excel.Axis yAxis = (Microsoft.Office.Interop.Excel.Axis)myBook.ActiveChart.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlCategory, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
                 yAxis.TickLabels.Font.Name = "Arial"; //設定 y軸 字體字型=標楷體 
                 yAxis.TickLabels.Font.Size = 14;//設定 y軸 字體大小
-                
+
             }
             catch (Exception e)
             {
@@ -957,15 +888,23 @@ namespace Sci.Production.Quality
             myBook = myExcel.ActiveWorkbook;
 
             Worksheet aftersheet = mySheet;
+            int idx = 0;
             foreach (var item in dicFTY)
             {
-               
+                mySheet.Cells[2, 1] = " ";
+                idx += 1;
+
+                mySheet.Cells[2, idx * 3 ] = "Claimed";
+                mySheet.Cells[2, idx * 3 + 1] = "Shipped";
+                mySheet.Cells[2, idx * 3 + 2] = "Adicomp";
+
                 aftersheet = myExcel.Sheets.Add(After: aftersheet);
                 aftersheet.Cells[1, 1] = "##ftyDetail" + item.Key;
                 aftersheet.Cells[2, 1] = "##addfactory";
                 aftersheet.Cells[3, 1] = "##ftySheetName" + item.Key;
+
             }
-            
+
         }
 
     }
