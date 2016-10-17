@@ -43,23 +43,15 @@ namespace Sci.Production.Quality
                 else { ShowErr(tResult); }
 
                 Dictionary<String, String> Stage_RowSource = new Dictionary<string, string>();
-                Stage_RowSource.Add("I", "In-Line");
-                Stage_RowSource.Add("P", "Prefinal");
-                Stage_RowSource.Add("F", "Final");
+                Stage_RowSource.Add("I", "Comments/Roving");
+                Stage_RowSource.Add("C", "Change Over");
+                Stage_RowSource.Add("P", "Stagger");
+                Stage_RowSource.Add("R", "Re-Stagger");
+                Stage_RowSource.Add("F", "Final");                              
+                Stage_RowSource.Add("B", "Buyer");
                 InspectStage_combo.DataSource = new BindingSource(Stage_RowSource, null);
                 InspectStage_combo.ValueMember = "Key";
                 InspectStage_combo.DisplayMember = "Value";
-
-
-                DataTable dtShift;
-                Ict.DualResult sResult;
-                if (sResult = DBProxy.Current.Select(null, "select distinct Shift from Cfa ", out dtShift))
-                {
-                    this.Shift_combo.DataSource = dtShift;
-                    this.Shift_combo.DisplayMember = "Shift";
-                    this.Shift_combo.ValueMember = "Shift";
-                }
-                else { ShowErr(sResult); }
 
                 Dictionary<String, String> Result_RowSource = new Dictionary<string, string>();
                 Result_RowSource.Add("P", "Pass");
@@ -129,6 +121,22 @@ namespace Sci.Production.Quality
 
             base.OnDetailEntered();
         }
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        {
+            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            this.DetailSelectCommand = string.Format(@"select a.GarmentDefectTypeid,
+a.GarmentDefectCodeID,
+b.Description,
+c.Remark,
+a.Qty,
+a.Action 
+from CFA_Detail a
+left join GarmentDefectCode b on b.ID=a.GarmentDefectCodeID
+left join Cfa c on a.ID=c.ID
+where a.ID='{0}'
+",masterID);
+            return base.OnDetailSelectCommandPrepare(e);
+        }
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings defectCode = new DataGridViewGeneratorTextColumnSettings();
@@ -190,10 +198,10 @@ namespace Sci.Production.Quality
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("GarmentDefectTypeID", header: "Defect Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("GarmentDefectCodeid", header: "Defect Code", width: Widths.AnsiChars(10),settings:defectCode)
-            .Text("Invoice", header: "Description", width: Widths.AnsiChars(10),iseditingreadonly:true)
-            .Text("Remark", header: "Remark", width: Widths.AnsiChars(5))
+            .Text("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
+            .Text("Remark", header: "Remark", width: Widths.AnsiChars(30))
             .Numeric("qty", header: "No.of Defects", width: Widths.AnsiChars(5),settings:defectQty)
-            .Text("", header: "Action", width: Widths.AnsiChars(5));
+            .Text("Action", header: "Action", width: Widths.AnsiChars(5));
             
         }
 
@@ -269,7 +277,7 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.WarningBox("<Line#> cannot be empty", "Warning");
                 return false;
             }
-            if (MyUtility.Check.Empty(this.Shift_combo.Text))
+            if (MyUtility.Check.Empty(this.txtdropdownlist1.Text))
             {
                 MyUtility.Msg.WarningBox("<Shift> cannot be empty", "Warning");
                 return false;
@@ -296,7 +304,7 @@ namespace Sci.Production.Quality
                     MyUtility.Msg.WarningBox("<Defect Code> cannot be empty", "Warning");
                     return false;
                 }
-                if (MyUtility.Check.Empty(dr["Qty"]) && dr["Qty"] == "")
+                if (MyUtility.Check.Empty(dr["Qty"]))
                 {
                     MyUtility.Msg.WarningBox("<No. of Defects> cannot be empty", "Warning");
                     return false;
@@ -333,10 +341,7 @@ namespace Sci.Production.Quality
         }
 
         protected override void ClickSaveAfter()
-        {
-            
-            
-
+        {                  
             
             base.ClickSaveAfter();
         }
@@ -372,7 +377,7 @@ namespace Sci.Production.Quality
         protected override DualResult ClickSave()
         {
             DualResult dresult;
-            string updCmd = "update Cfa set cDate=@cDate,OrderID=@orderID,InspectQty=@InsQty,SewingLineID=@line,CFA=@cfa,Remark=@Remark where id=@id ";
+            string updCmd = "update Cfa set cDate=@cDate,OrderID=@orderID,InspectQty=@InsQty,SewingLineID=@line,CFA=@cfa,Remark=@Remark,DefectQty=@DefectQty where id=@id ";
             List<SqlParameter> spam = new List<SqlParameter>();
             spam.Add(new SqlParameter("@cDate",Audit_Date.Text));
             spam.Add(new SqlParameter("@orderID", SP_text.Text));
@@ -381,12 +386,44 @@ namespace Sci.Production.Quality
             spam.Add(new SqlParameter("@cfa", CFA1_text.Text));
             spam.Add(new SqlParameter("@Remark", Remark_text.Text));
             spam.Add(new SqlParameter("@id", CurrentMaintain["id"]));
+            spam.Add(new SqlParameter("@DefectQty", DefectsQty_text.Text));
             if (dresult=DBProxy.Current.Execute(null, updCmd, spam))
             {
                 MyUtility.Msg.InfoBox("save successful");
             }
+       
             
             return base.ClickSave();
+        }
+
+        private void InspectStage_combo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+           
+            switch (InspectStage_combo.Text)
+            {
+                case "Comments/Roving":
+                    this.txtStageInfo.Text = "Still in the line/no complete carton";
+                        break;
+                case "Change Over":
+                        this.txtStageInfo.Text = "0~10% complete cartons";
+                        break;
+                case "Stagger":
+                        this.txtStageInfo.Text = "11~79% complete cartons";
+                        break;
+                case "Re-Stagger":
+                        this.txtStageInfo.Text = "Re-inspection";
+                        break;
+                case "Final":
+                        this.txtStageInfo.Text = "80~100% complete cartons";
+                    break;
+                case "Buyer":
+                    this.txtStageInfo.Text = "Buyer inspector, third party inspection, CFA";
+                    break;
+                case "":
+                     this.txtStageInfo.Text = "";
+                    break;
+                                
+            }
         }
 
     }

@@ -57,14 +57,16 @@
             this.InspectQty_text = new Sci.Win.UI.TextBox();
             this.DefectsQty_text = new Sci.Win.UI.TextBox();
             this.Garment_text = new Sci.Win.UI.TextBox();
-            this.Team_combo = new Sci.Win.UI.ComboBox();
             this.InspectStage_combo = new Sci.Win.UI.ComboBox();
-            this.Shift_combo = new Sci.Win.UI.ComboBox();
             this.Result_combo = new Sci.Win.UI.ComboBox();
             this.Encode_btn = new Sci.Win.UI.Button();
             this.Audit_Date = new Sci.Win.UI.DateBox();
             this.CFA1_text = new Sci.Production.Class.txtuser();
             this.Line_text = new Sci.Production.Class.txtsewingline();
+            this.label19 = new Sci.Win.UI.Label();
+            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
+            this.Team_combo = new Sci.Win.UI.ComboBox();
+            this.txtStageInfo = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -81,13 +83,15 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtStageInfo);
+            this.masterpanel.Controls.Add(this.Team_combo);
+            this.masterpanel.Controls.Add(this.txtdropdownlist1);
+            this.masterpanel.Controls.Add(this.label19);
             this.masterpanel.Controls.Add(this.Line_text);
             this.masterpanel.Controls.Add(this.CFA1_text);
             this.masterpanel.Controls.Add(this.Encode_btn);
             this.masterpanel.Controls.Add(this.Result_combo);
-            this.masterpanel.Controls.Add(this.Shift_combo);
             this.masterpanel.Controls.Add(this.InspectStage_combo);
-            this.masterpanel.Controls.Add(this.Team_combo);
             this.masterpanel.Controls.Add(this.Garment_text);
             this.masterpanel.Controls.Add(this.DefectsQty_text);
             this.masterpanel.Controls.Add(this.InspectQty_text);
@@ -118,7 +122,7 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.Audit_Date);
-            this.masterpanel.Size = new System.Drawing.Size(1034, 277);
+            this.masterpanel.Size = new System.Drawing.Size(1223, 277);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.Audit_Date, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -150,18 +154,20 @@
             this.masterpanel.Controls.SetChildIndex(this.InspectQty_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.DefectsQty_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Garment_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Team_combo, 0);
             this.masterpanel.Controls.SetChildIndex(this.InspectStage_combo, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Shift_combo, 0);
             this.masterpanel.Controls.SetChildIndex(this.Result_combo, 0);
             this.masterpanel.Controls.SetChildIndex(this.Encode_btn, 0);
             this.masterpanel.Controls.SetChildIndex(this.CFA1_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Line_text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label19, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtdropdownlist1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.Team_combo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtStageInfo, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 277);
-            this.detailpanel.Size = new System.Drawing.Size(1034, 273);
+            this.detailpanel.Size = new System.Drawing.Size(1223, 273);
             // 
             // gridicon
             // 
@@ -169,7 +175,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1034, 273);
+            this.detailgridcont.Size = new System.Drawing.Size(1223, 273);
             // 
             // detail2
             // 
@@ -185,16 +191,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1034, 588);
+            this.detail.Size = new System.Drawing.Size(1223, 588);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1034, 550);
+            this.detailcont.Size = new System.Drawing.Size(1223, 550);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 550);
-            this.detailbtm.Size = new System.Drawing.Size(1034, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1223, 38);
             // 
             // browse
             // 
@@ -202,7 +208,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1042, 617);
+            this.tabs.Size = new System.Drawing.Size(1231, 617);
             // 
             // label1
             // 
@@ -478,20 +484,8 @@
             this.Garment_text.Location = new System.Drawing.Point(799, 45);
             this.Garment_text.Name = "Garment_text";
             this.Garment_text.ReadOnly = true;
-            this.Garment_text.Size = new System.Drawing.Size(100, 23);
+            this.Garment_text.Size = new System.Drawing.Size(121, 23);
             this.Garment_text.TabIndex = 31;
-            // 
-            // Team_combo
-            // 
-            this.Team_combo.BackColor = System.Drawing.Color.White;
-            this.Team_combo.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "team", true));
-            this.Team_combo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Team_combo.FormattingEnabled = true;
-            this.Team_combo.IsSupportUnselect = true;
-            this.Team_combo.Location = new System.Drawing.Point(439, 182);
-            this.Team_combo.Name = "Team_combo";
-            this.Team_combo.Size = new System.Drawing.Size(121, 24);
-            this.Team_combo.TabIndex = 34;
             // 
             // InspectStage_combo
             // 
@@ -504,18 +498,7 @@
             this.InspectStage_combo.Name = "InspectStage_combo";
             this.InspectStage_combo.Size = new System.Drawing.Size(121, 24);
             this.InspectStage_combo.TabIndex = 35;
-            // 
-            // Shift_combo
-            // 
-            this.Shift_combo.BackColor = System.Drawing.Color.White;
-            this.Shift_combo.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Shift", true));
-            this.Shift_combo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Shift_combo.FormattingEnabled = true;
-            this.Shift_combo.IsSupportUnselect = true;
-            this.Shift_combo.Location = new System.Drawing.Point(799, 145);
-            this.Shift_combo.Name = "Shift_combo";
-            this.Shift_combo.Size = new System.Drawing.Size(121, 24);
-            this.Shift_combo.TabIndex = 36;
+            this.InspectStage_combo.SelectedIndexChanged += new System.EventHandler(this.InspectStage_combo_SelectedIndexChanged);
             // 
             // Result_combo
             // 
@@ -567,9 +550,54 @@
             this.Line_text.Size = new System.Drawing.Size(77, 23);
             this.Line_text.TabIndex = 41;
             // 
+            // label19
+            // 
+            this.label19.Lines = 0;
+            this.label19.Location = new System.Drawing.Point(923, 45);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(28, 23);
+            this.label19.TabIndex = 15;
+            this.label19.Text = "%";
+            // 
+            // txtdropdownlist1
+            // 
+            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
+            this.txtdropdownlist1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Shift", true));
+            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdropdownlist1.FormattingEnabled = true;
+            this.txtdropdownlist1.IsSupportUnselect = true;
+            this.txtdropdownlist1.Location = new System.Drawing.Point(799, 145);
+            this.txtdropdownlist1.Name = "txtdropdownlist1";
+            this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
+            this.txtdropdownlist1.TabIndex = 3;
+            this.txtdropdownlist1.Type = "SewingOutput_Shift";
+            // 
+            // Team_combo
+            // 
+            this.Team_combo.BackColor = System.Drawing.Color.White;
+            this.Team_combo.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "team", true));
+            this.Team_combo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.Team_combo.FormattingEnabled = true;
+            this.Team_combo.IsSupportUnselect = true;
+            this.Team_combo.Location = new System.Drawing.Point(439, 185);
+            this.Team_combo.Name = "Team_combo";
+            this.Team_combo.Size = new System.Drawing.Size(121, 24);
+            this.Team_combo.TabIndex = 42;
+            // 
+            // txtStageInfo
+            // 
+            this.txtStageInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtStageInfo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtStageInfo.IsSupportEditMode = false;
+            this.txtStageInfo.Location = new System.Drawing.Point(923, 74);
+            this.txtStageInfo.Name = "txtStageInfo";
+            this.txtStageInfo.ReadOnly = true;
+            this.txtStageInfo.Size = new System.Drawing.Size(260, 23);
+            this.txtStageInfo.TabIndex = 4;
+            // 
             // P21
             // 
-            this.ClientSize = new System.Drawing.Size(1042, 650);
+            this.ClientSize = new System.Drawing.Size(1231, 650);
             this.GridAlias = "CFA_Detail";
             this.KeyField1 = "ID";
             this.Name = "P21";
@@ -599,9 +627,7 @@
 
         private Win.UI.Button Encode_btn;
         private Win.UI.ComboBox Result_combo;
-        private Win.UI.ComboBox Shift_combo;
         private Win.UI.ComboBox InspectStage_combo;
-        private Win.UI.ComboBox Team_combo;
         private Win.UI.TextBox Garment_text;
         private Win.UI.TextBox DefectsQty_text;
         private Win.UI.TextBox InspectQty_text;
@@ -634,5 +660,9 @@
         private Win.UI.DateBox Audit_Date;
         private Class.txtuser CFA1_text;
         private Class.txtsewingline Line_text;
+        private Win.UI.Label label19;
+        private Class.txtdropdownlist txtdropdownlist1;
+        private Win.UI.ComboBox Team_combo;
+        private Win.UI.TextBox txtStageInfo;
     }
 }

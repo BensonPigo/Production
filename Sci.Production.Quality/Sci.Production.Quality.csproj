@@ -51,6 +51,7 @@
     <Reference Include="Ict">
       <HintPath>..\_Dll\Ict.dll</HintPath>
     </Reference>
+    <Reference Include="Ict.Win, Version=1.0.1603.700, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Ict.Win.App">
       <HintPath>..\_Dll\Ict.Win.App.dll</HintPath>
     </Reference>
@@ -127,6 +128,12 @@
     </Compile>
     <Compile Include="B05.Designer.cs">
       <DependentUpon>B05.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B06.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B06.Designer.cs">
+      <DependentUpon>B06.cs</DependentUpon>
     </Compile>
     <Compile Include="B20.cs">
       <SubType>Form</SubType>
@@ -379,6 +386,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B05.resx">
       <DependentUpon>B05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B06.resx">
+      <DependentUpon>B06.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B20.resx">
       <DependentUpon>B20.cs</DependentUpon>
