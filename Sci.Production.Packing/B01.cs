@@ -20,5 +20,11 @@ namespace Sci.Production.Packing
             base.ClickNewAfter();
             CurrentMaintain["Type"] = "OG";
         }
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            textBox1.ReadOnly = true;
+        }
+
     }
 }
