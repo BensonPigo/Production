@@ -107,13 +107,13 @@ namespace Sci.Production.Warehouse
                         , row["frompoid"], row["fromseq1"], row["fromseq2"], row["fromroll"], row["fromdyelot"]) + Environment.NewLine);
                 }
 
-                if (row["fabrictype"].ToString().ToUpper() == "F" && (MyUtility.Check.Empty(row["fromroll"]) || MyUtility.Check.Empty(row["fromdyelot"])))
+                if (row["fabrictype"].ToString().ToUpper() == "FABRIC" && (MyUtility.Check.Empty(row["fromroll"]) || MyUtility.Check.Empty(row["fromdyelot"])))
                 {
                     warningmsg.Append(string.Format(@" SP#: {0}  Seq#: {1}-{2}  Roll#:{3}  Dyelot:{4} Roll and Dyelot can't be empty"
                         , row["frompoid"], row["fromseq1"], row["fromseq2"], row["fromroll"], row["fromdyelot"]) + Environment.NewLine);
                 }
 
-                if (row["fabrictype"].ToString().ToUpper() != "F")
+                if (row["fabrictype"].ToString().ToUpper() != "FABRIC")
                 {
                     row["toroll"] = "";
                     row["todyelot"] = "";
@@ -553,7 +553,8 @@ a.id
 ,a.FromSeq1
 ,a.FromSeq2
 ,left(a.FromSeq1+' ',3)+a.FromSeq2 as FromSeq
-,p1.FabricType
+--,p1.FabricType
+,case p1.FabricType when 'F' then 'Fabric' when 'A' then 'Accessory' when 'O' then 'Other' else p1.FabricType end as FabricType  
 ,p1.stockunit
 ,dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0) as [description]
 ,a.FromRoll
