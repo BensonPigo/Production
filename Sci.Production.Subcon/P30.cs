@@ -67,6 +67,7 @@ namespace Sci.Production.Subcon
             CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
             CurrentMaintain["VatRate"] = 0;
             CurrentMaintain["Status"] = "New";
+            txtmfactory1.ReadOnly = true;  //新增時[factory]預設唯讀
             //((DataTable)(detailgridbs.DataSource)).Rows[0].Delete();
         }
 
@@ -240,6 +241,13 @@ namespace Sci.Production.Subcon
                     decimal amount = (decimal)CurrentMaintain["amount"] + (decimal)CurrentMaintain["vat"];
                     numericBox4.Text = amount.ToString();
                 }
+
+                //[Apv. Date]格式調整，僅顯示YYYY/MM/DD
+                if (!(CurrentMaintain["ApvDate"] == DBNull.Value))
+                {
+                    displayBox7.Text = Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToShortDateString();
+                }
+
             }
             txtsubcon1.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
