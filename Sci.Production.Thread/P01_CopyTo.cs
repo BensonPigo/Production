@@ -141,7 +141,8 @@ namespace Sci.Production.Thread
                     }
                     if (!(upResult = DBProxy.Current.Execute(null, insertSql)))
                     {
-                        ShowErr(insertSql, upResult);
+                        MyUtility.Msg.WarningBox(string.Format("Season <{0}> exists, can't copy!!!", txtseason1.Text));
+                        
                         return;
                     }
                     _transactionscope.Complete();
