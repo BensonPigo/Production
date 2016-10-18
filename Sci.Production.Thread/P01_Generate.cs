@@ -15,18 +15,20 @@ using Ict.Data;
 using Sci.Production.Class;
 using System.Collections;
 using System.Transactions;
+using System.Linq;
 
 namespace Sci.Production.Thread
 {
     public partial class P01_Generate : Sci.Win.Subs.Base
     {
-        private DataTable gridTable,detTable;
+        private DataTable gridTable, detTable, gridTable2;
         private string styleid,season,id,styleUkey;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public P01_Generate(string str_styleukey, string str_styleid,string str_season,string str_brandid)
         {
             InitializeComponent();
             
+
             string sql = string.Format(
             @"with a as (
             Select threadcombid,operationid ,isnull(a.id,'') as id,f.id as styleid,f.seasonid,f.brandid
@@ -53,6 +55,7 @@ namespace Sci.Production.Thread
                 ShowErr(sql);
                 return;
             }
+            gridTable2 = gridTable.Copy();//存檔時拿去判斷用
 
             DataGridViewGeneratorTextColumnSettings threadcombcell = cellthreadcomb.GetGridCell(true);
            // DataGridViewGeneratorTextColumnSettings  combCell = new DataGridViewGeneratorTextColumnSettings();
@@ -102,37 +105,65 @@ namespace Sci.Production.Thread
         {
             this.Close();
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
             grid1.ValidateControl();
-            DataTable groupTable,countTable,operTable;
+            DataTable groupTable, countTable, operTable, groupTable2;
+            DataTable gridTable3;
             string sql="",str_Select,delesql="";
             List<string> SqlList = new List<string>();
             List<string> gridList = new List<string>();
 
-            MyUtility.Tool.ProcessWithDatatable(gridTable, "threadcombid,Machinetypeid",
-                                                @"Select threadcombid,Machinetypeid from #tmp where threadcombid is not null and rtrim(threadcombid) <>''  group by threadcombid,machinetypeid"
-                                                , out groupTable);
-            MyUtility.Tool.ProcessWithDatatable(groupTable, "threadcombid,Machinetypeid",
-                                    @"Select count(Threadcombid) as tt , threadcombid from #tmp  group by threadcombid having count(Threadcombid) > 1"
-                                    , out countTable);
-            string msg = "There is <Thread Combination > over use two <Machine Type> \n";
-            if (countTable.Rows.Count != 0) 
+            if (!gridTable.AsEnumerable().Any(row=> !MyUtility.Check.isTrue(row["sel"])))
             {
-                foreach (DataRow dr in countTable.Rows)
+                gridTable3 = gridTable.Select("sel=1").CopyToDataTable(); 
+                MyUtility.Tool.ProcessWithDatatable(gridTable3, "threadcombid,Machinetypeid",
+                                                 @"Select threadcombid,Machinetypeid from #tmp where threadcombid is not null and rtrim(threadcombid) <>'' group by threadcombid,machinetypeid"
+                                                 , out groupTable);
+                MyUtility.Tool.ProcessWithDatatable(groupTable, "threadcombid,Machinetypeid",
+                                        @"Select count(Threadcombid) as tt , threadcombid from #tmp  group by threadcombid having count(Threadcombid) > 1"
+                                        , out countTable);
+                string msg = "There is <Thread Combination > over use two <Machine Type> \n";
+                if (countTable.Rows.Count != 0)
                 {
-                    msg = msg+"\n"+dr["ThreadCombid"];
+                    foreach (DataRow dr in countTable.Rows)
+                    {
+                        msg = msg + "\n" + dr["ThreadCombid"];
+                    }
+                    MyUtility.Msg.WarningBox(msg);
+                    return;
                 }
-                MyUtility.Msg.WarningBox(msg);
-                return;
+            }            
+
+            MyUtility.Tool.ProcessWithDatatable(gridTable2, "threadcombid,Machinetypeid",
+                                                @"Select threadcombid,Machinetypeid from #tmp where threadcombid is not null and rtrim(threadcombid) <>''  group by threadcombid,machinetypeid"
+                                                , out groupTable2);
+            if (groupTable2.Rows.Count!=0)
+            {
+                 DialogResult buttonFinished = MyUtility.Msg.QuestionBox("All related data of this style will be clear, please confirm", "Question", MessageBoxButtons.YesNo);
+                 if (buttonFinished == DialogResult.No)
+                {
+                    return;
+                }
             }
+
             foreach (DataRow dr in gridTable.Rows) //先刪除資料
             {
-                if (dr.RowState == DataRowState.Modified && MyUtility.Check.Empty(dr["threadcombid"]))
-                {
+                //if (dr.RowState == DataRowState.Modified && MyUtility.Check.Empty(dr["threadcombid"]))
+                //{
                     delesql = delesql + string.Format("Delete from threadcolorcomb where id='{0}';delete from threadcolorcomb_operation where id='{0}' and operationid = '{1}';delete from threadcolorcomb_Detail where id='{0}'", dr["ID"].ToString(),dr["operationid"].ToString());
+                //}
+            }
+
+            for (int i = gridTable.Rows.Count; i > 0; i--)
+            {
+                if (gridTable.Rows[i-1]["sel"].ToString() == "0")
+                {
+                    gridTable.Rows[i-1].Delete();
                 }
             }
+
             MyUtility.Tool.ProcessWithDatatable(gridTable, "id,threadcombid,Machinetypeid,seamlength",
                                     @"Select id ,threadcombid,Machinetypeid ,isnull(sum(seamlength),0) as Length
                                     from #tmp where threadcombid is not null and rtrim(threadcombid) <>'' group
@@ -143,6 +174,7 @@ namespace Sci.Production.Thread
                                     @"Select threadcombid,operationid,Machinetypeid
                                     from #tmp where threadcombid is not null and rtrim(threadcombid) <>'' group
                                     by threadcombid,operationid,Machinetypeid", out operTable, "#tmp");
+
             foreach (DataRow dr in groupTable.Rows)
             {
                 
@@ -218,6 +250,7 @@ namespace Sci.Production.Thread
             #endregion
             this.Close();
         }
+
         private void button4_Click(object sender, EventArgs e)
         {
             
