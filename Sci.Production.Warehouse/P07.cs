@@ -192,11 +192,12 @@ namespace Sci.Production.Warehouse
                         , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
                 }
 
-                if (MyUtility.Check.Empty(row["stockunit"]))
-                {
-                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Stock Unit can't be empty"
-                        , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
-                }
+                //565: WAREHOUSE_P07_Material Receiving，移除表身[stockunit]必填的檢核
+                //if (MyUtility.Check.Empty(row["stockunit"]))
+                //{
+                //    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Stock Unit can't be empty"
+                //        , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
+                //}
 
                 if (MyUtility.Check.Empty(row["stocktype"]))
                 {
