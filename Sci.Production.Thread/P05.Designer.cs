@@ -80,7 +80,7 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(960, 146);
+            this.masterpanel.Size = new System.Drawing.Size(892, 146);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -104,7 +104,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 146);
-            this.detailpanel.Size = new System.Drawing.Size(960, 261);
+            this.detailpanel.Size = new System.Drawing.Size(892, 203);
             // 
             // gridicon
             // 
@@ -112,7 +112,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(960, 261);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 203);
             // 
             // detail2
             // 
@@ -128,16 +128,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(960, 445);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(960, 407);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 407);
-            this.detailbtm.Size = new System.Drawing.Size(960, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -334,6 +334,7 @@
             this.GridNew = 0;
             this.GridUniqueKey = "Refno,Threadcolorid,threadlocationid";
             this.IsSupportConfirm = true;
+            this.IsSupportCopy = false;
             this.KeyField1 = "ID";
             this.Name = "P05";
             this.Text = "P05.Thread Inventory";
