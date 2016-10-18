@@ -173,7 +173,7 @@ namespace Sci.Production.Thread
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(20), settings: refno_col);
                 //前4個是MachineType_ThreadRatio,後一個Refno是ThreadColorComb_Detail
 
-            grid1.Columns[3].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns[4].DefaultCellStyle.BackColor = Color.Pink;
 
             for(int i = 0;i < tbArticle.Rows.Count;i++)
             {
