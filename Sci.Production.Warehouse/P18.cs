@@ -513,54 +513,56 @@ where d.Id = '{0}' and f.id is null", CurrentMaintain["id"]);
                 ShowErr(sqlcmd, result2);
                 return;
             }
-            else
-            {
-                if (datacheck.Rows.Count > 0)
-                {
-                    sqlupd2.Append(string.Format(@"insert into po_supp_detail 
-(
-	id,seq1,seq2
-	,scirefno
-	,StockUnit
-	,POUnit
-	,FinalETA
-	,ColorID
-    ,brandid
-	,sizespec
-    ,sizeunit
-	,BomArticle
-	,BomBuymonth
-	,BomCountry
-	,BomCustCD
-	,BomCustPONo
-	,BomFactory
-	,BomStyle
-	,BomZipperInsert
-	,width
-    ,stockpoid
-    ,stockseq1
-    ,stockseq2
-	,fabrictype
-	,addname
-    ,adddate
-) 
-Select distinct t.*
-,ISNULL((select Fabric.Type from dbo.Fabric where fabric.SCIRefno = t.SCIRefno),'') as fabrictype
-,'{1}'
-,GETDATE()
-from dbo.TransferIn_Detail d 
-left join (select i.POID,i.Seq1,i.Seq2,i.scirefno,dbo.getstockunit(b.SCIRefno,s.suppid) as stockunit
-					,i.UnitID pounit,i.ETA,ir.ColorID,i.brandid,ir.SizeSpec,ir.SizeUnit,ir.BomArticle,ir.BomBuymonth
-					,ir.BomCountry,ir.BomCustCD,ir.BomCustPONo,ir.BomFactory,ir.BomStyle,ir.BomZipperInsert
-					,ir.Width,poid stockpoid,seq1 stockseq1,seq2 stockseq2
-			from dbo.Inventory i inner join dbo.Inventoryrefno ir on i.InventoryRefnoID = ir.id
-            left join dbo.PO_Supp_Detail b on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
-            left join dbo.PO_Supp as s on s.ID = b.ID and s.Seq1 = b.SEQ1
-) t 
-	on t.POID = d.poid and t.Seq1 = d.seq1 and t.seq2 = d.seq2
-where d.Id = '{0}' and t.POID is not null;" + Environment.NewLine,CurrentMaintain["id"],Env.User.UserID));
-                }
-            }
+
+        //這段條件 已經改了 不是舊的條件
+            //else
+            //{
+            //    if (datacheck.Rows.Count > 0)
+            //    {
+//                    sqlupd2.Append(string.Format(@"insert into po_supp_detail 
+//(
+//	id,seq1,seq2
+//	,scirefno
+//	,StockUnit
+//	,POUnit
+//	,FinalETA
+//	,ColorID
+//    ,brandid
+//	,sizespec
+//    ,sizeunit
+//	,BomArticle
+//	,BomBuymonth
+//	,BomCountry
+//	,BomCustCD
+//	,BomCustPONo
+//	,BomFactory
+//	,BomStyle
+//	,BomZipperInsert
+//	,width
+//    ,stockpoid
+//    ,stockseq1
+//    ,stockseq2
+//	,fabrictype
+//	,addname
+//    ,adddate
+//) 
+//Select distinct t.*
+//,ISNULL((select Fabric.Type from dbo.Fabric where fabric.SCIRefno = t.SCIRefno),'') as fabrictype
+//,'{1}'
+//,GETDATE()
+//from dbo.TransferIn_Detail d 
+//left join (select i.POID,i.Seq1,i.Seq2,i.scirefno,dbo.getstockunit(b.SCIRefno,s.suppid) as stockunit
+//					,i.UnitID pounit,i.ETA,ir.ColorID,i.brandid,ir.SizeSpec,ir.SizeUnit,ir.BomArticle,ir.BomBuymonth
+//					,ir.BomCountry,ir.BomCustCD,ir.BomCustPONo,ir.BomFactory,ir.BomStyle,ir.BomZipperInsert
+//					,ir.Width,poid stockpoid,seq1 stockseq1,seq2 stockseq2
+//			from dbo.Inventory i inner join dbo.Inventoryrefno ir on i.InventoryRefnoID = ir.id
+//            left join dbo.PO_Supp_Detail b on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
+//            left join dbo.PO_Supp as s on s.ID = b.ID and s.Seq1 = b.SEQ1
+//) t 
+//	on t.POID = d.poid and t.Seq1 = d.seq1 and t.seq2 = d.seq2
+//where d.Id = '{0}' and t.POID is not null;" + Environment.NewLine,CurrentMaintain["id"],Env.User.UserID));
+            //    }
+            //}
 
             #endregion
 
