@@ -126,9 +126,13 @@ namespace Sci.Production.Warehouse
             sqlcmd.Append(@"select i.poid,i.seq1,i.seq2,i.BrandID,i.InputQty,i.OutputQty,i.Qty
 ,case i.FabricType when 'F' then 'Fabric' when 'A' then 'Accessory' end as fabrictype
 ,i.FactoryID,i.ETA
-,i.MtlTypeID,i.ProjectID,i.Deadline,i.Refno,i.Ukey,I.SCIRefno,I.UnitID POUNIT,DBO.getStockUnit(I.SCIRefno,I.suppid) AS STOCKUNIT
+,i.MtlTypeID,i.ProjectID,i.Deadline,i.Refno,i.Ukey,I.SCIRefno,I.UnitID POUNIT,DBO.getStockUnit(b.SCIRefno,s.suppid) AS STOCKUNIT
 ,ISNULL((SELECT cast(V.Rate as numeric) FROM dbo.View_Unitrate V WHERE V.FROM_U=I.UnitID AND V.TO_U = DBO.getStockUnit(I.SCIRefno,I.suppid)),1.0) RATE
- from inventory i inner join factory f on i.FactoryID = f.ID where f.Junk = 0 ");
+ from inventory i 
+inner join factory f on i.FactoryID = f.ID 
+left join dbo.PO_Supp_Detail b on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
+left join dbo.PO_Supp as s on s.ID = b.ID and s.Seq1 = b.SEQ1
+where f.Junk = 0 ");
             if (!MyUtility.Check.Empty(spno))
                 sqlcmd.Append(" and i.poid = @spno");
             if (!MyUtility.Check.Empty(seq1))

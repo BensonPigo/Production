@@ -28,9 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel2 = new Sci.Win.UI.Panel();
             this.button1 = new Sci.Win.UI.Button();
-            this.bindingSource1 = new Sci.Win.UI.BindingSource();
+            this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
             this.panel3 = new Sci.Win.UI.Panel();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.label3 = new Sci.Win.UI.Label();
@@ -40,8 +41,8 @@
             this.label2 = new Sci.Win.UI.Label();
             this.button2 = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
-            this.bindingSource2 = new Sci.Win.UI.BindingSource();
-            this.bindingSource3 = new Sci.Win.UI.BindingSource();
+            this.bindingSource2 = new Sci.Win.UI.BindingSource(this.components);
+            this.bindingSource3 = new Sci.Win.UI.BindingSource(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.grid1 = new Sci.Win.UI.Grid();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
@@ -222,7 +223,7 @@
             this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
@@ -265,7 +266,7 @@
             this.grid2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid2.Location = new System.Drawing.Point(0, 0);
             this.grid2.Name = "grid2";
@@ -290,7 +291,7 @@
             this.grid3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid3.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid3.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid3.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid3.Location = new System.Drawing.Point(0, 0);
             this.grid3.Name = "grid3";
