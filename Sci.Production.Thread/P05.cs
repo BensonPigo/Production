@@ -335,7 +335,7 @@ namespace Sci.Production.Thread
                 {
                     insertSql = insertSql + string.Format("insert ThreadStock(refno,mDivisionid,threadcolorid,threadlocationid,newcone,usedcone,addName,AddDate) values('{0}','{1}','{2}','{3}',{4},{5},'{6}',GetDate())", dr["refno"],keyWord,dr["ThreadColorid"], dr["ThreadLocationid"],(decimal)dr["NewCone"] - (decimal)dr["NewConeBook"], (decimal)dr["UsedCone"] - (decimal)dr["UsedConeBook"],loginID );
                 }
-                if ((decimal)dr["NewCone"] - (decimal)dr["NewConeBook"] > 0 || (decimal)dr["UsedCone"] - (decimal)dr["UsedConeBook"] > 0)
+                if ((decimal)dr["NewCone"] - (decimal)dr["NewConeBook"] != 0 || (decimal)dr["UsedCone"] - (decimal)dr["UsedConeBook"] != 0)
                 {
                     insertAd = insertAd + string.Format("Insert into ThreadAdjust_Detail(ID,Refno,ThreadColorid,ThreadLocationid,NewConeBook,NewCone,UsedConeBook,UsedCone) Values('{0}','{1}','{2}','{3}',{4},{5},{6},{7});", id, dr["refno"], dr["threadcolorid"], dr["ThreadLocationid"], dr["NewConeBook"], dr["NewCone"], dr["UsedConeBook"], dr["UsedCone"]);
                     sql = String.Format("Update ThreadInventory set Status = 'Confirmed',editname='{0}', editdate = GETDATE(),ThreadAdjustid = '{2}' where id='{1}'", loginID, CurrentMaintain["ID"].ToString(), id);
