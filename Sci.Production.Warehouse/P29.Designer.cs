@@ -28,8 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource();
+            this.components = new System.ComponentModel.Container();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
             this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
             this.cbxCategory = new Sci.Win.UI.ComboBox();
