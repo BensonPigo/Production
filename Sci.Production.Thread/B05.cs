@@ -62,7 +62,7 @@ namespace Sci.Production.Thread
              .Numeric("Usedin", header: "Used Cone\nIn Qty", width: Widths.AnsiChars(5), integer_places: 9, iseditingreadonly: true)
               .Numeric("Usedout", header: "Used Cone\nOut Qty", width: Widths.AnsiChars(5), integer_places: 9, iseditingreadonly: true)
              .Numeric("Usedbalance", header: "Used Cone\nBalance", width: Widths.AnsiChars(5), integer_places: 9, iseditingreadonly: true)
-             .Text("editname", header: "Create by", width: Widths.AnsiChars(20), iseditingreadonly: true);
+             .Text("editname", header: "Last update", width: Widths.AnsiChars(20), iseditingreadonly: true);
              return base.OnGridSetup();
         }
         protected override void OnRefreshClick()
