@@ -549,11 +549,14 @@ Select distinct t.*
 ,'{1}'
 ,GETDATE()
 from dbo.TransferIn_Detail d 
-left join (select i.POID,i.Seq1,i.Seq2,i.scirefno,dbo.getstockunit(i.SCIRefno,i.suppid) as stockunit
+left join (select i.POID,i.Seq1,i.Seq2,i.scirefno,dbo.getstockunit(b.SCIRefno,s.suppid) as stockunit
 					,i.UnitID pounit,i.ETA,ir.ColorID,i.brandid,ir.SizeSpec,ir.SizeUnit,ir.BomArticle,ir.BomBuymonth
 					,ir.BomCountry,ir.BomCustCD,ir.BomCustPONo,ir.BomFactory,ir.BomStyle,ir.BomZipperInsert
 					,ir.Width,poid stockpoid,seq1 stockseq1,seq2 stockseq2
-			from dbo.Inventory i inner join dbo.Inventoryrefno ir on i.InventoryRefnoID = ir.id) t 
+			from dbo.Inventory i inner join dbo.Inventoryrefno ir on i.InventoryRefnoID = ir.id
+            left join dbo.PO_Supp_Detail b on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
+            left join dbo.PO_Supp as s on s.ID = b.ID and s.Seq1 = b.SEQ1
+) t 
 	on t.POID = d.poid and t.Seq1 = d.seq1 and t.seq2 = d.seq2
 where d.Id = '{0}' and t.POID is not null;" + Environment.NewLine,CurrentMaintain["id"],Env.User.UserID));
                 }
