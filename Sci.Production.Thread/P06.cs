@@ -176,12 +176,12 @@ namespace Sci.Production.Thread
             .CellThreadLocation("ThreadLocationid", header: "Location", width: Widths.AnsiChars(10), settings: thlocation)
             .Numeric("NewConebook", header: "New Cone\nperbooks", width: Widths.AnsiChars(5), integer_places: 3,iseditingreadonly:true)
             .Numeric("NewCone", header: "New Cone", width: Widths.AnsiChars(5), integer_places: 5, settings: qty)
-            .Numeric("NewConeVar", header: "New Cone\nVariance", width: Widths.AnsiChars(5), integer_places: 5)
+            .Numeric("NewConeVar", header: "New Cone\nVariance", width: Widths.AnsiChars(5), integer_places: 5, iseditable:false)
 
             .Numeric("UsedConebook", header: "Used cone\nperbooks", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: 
             true)
             .Numeric("UsedCone", header: "Used Cone", width: Widths.AnsiChars(5), integer_places: 5, settings: qty)
-             .Numeric("UsedConeVar", header: "Used CSone\nVariance", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
+             .Numeric("UsedConeVar", header: "Used CSone\nVariance", width: Widths.AnsiChars(5), integer_places: 5, iseditable: false)
             .Text("ThreadTypeid", header: "Thread Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Numeric("ThreadTex", header: "Tex", width: Widths.AnsiChars(5), integer_places: 3, iseditingreadonly: true)
             .Text("category", header: "Category", width: Widths.AnsiChars(20), iseditingreadonly: true)
