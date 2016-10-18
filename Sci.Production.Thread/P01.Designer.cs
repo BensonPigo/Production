@@ -169,6 +169,7 @@
             // 
             // button1
             // 
+            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button1.Location = new System.Drawing.Point(790, 15);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);

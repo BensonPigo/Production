@@ -52,14 +52,14 @@ namespace Sci.Production.Thread
             #endregion
 
         }
-
+        
         private void button1_Click(object sender, EventArgs e)
         {
             DataTable detTable = ((DataTable)this.detailgridbs.DataSource);
             Form P01_Generate = new Sci.Production.Thread.P01_Generate(CurrentMaintain["Ukey"].ToString(), CurrentMaintain["id"].ToString(), CurrentMaintain["seasonid"].ToString(), CurrentMaintain["brandid"].ToString());
             P01_Generate.ShowDialog();
-            this.RenewData();
         }
+
 
         protected override bool ClickCopy()
         {
