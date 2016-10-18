@@ -311,7 +311,8 @@ Select POID,SEQ1,SEQ2,CASE
             left join fabric on fabric.SCIRefno = a.scirefno
 	        left join po_supp b on a.id = b.id and a.SEQ1 = b.SEQ1
             left join supp s on s.id = b.suppid
-            where m.MDivisionID='{0}' and m.poid like @sp1 
+            where m.MDivisionID='{0}' and m.poid like @sp1  
+                AND a.id IS NOT NULL --0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
             order by m.mdivisionid,a.id,a.refno,a.colorid
             "
             , Sci.Env.User.Keyword);
