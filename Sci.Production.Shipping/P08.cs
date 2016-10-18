@@ -441,7 +441,7 @@ where sd.ID = '{0}'", masterID);
         {
             if (haveEditShareFee)
             {
-                DualResult result = DBProxy.Current.Execute(null, string.Format("delete form ShareExpense where ShippingAPID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+                DualResult result = DBProxy.Current.Execute(null, string.Format("delete from ShareExpense where ShippingAPID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Delete ShareExpense fail\r\n" + result.ToString());
