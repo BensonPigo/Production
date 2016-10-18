@@ -267,8 +267,8 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 return;
             }
             if (!MyUtility.Check.Seek(string.Format("Select * from Orders where id='{0}'", id), out drOrder)) return;
-            dateBox3.Value = (DateTime)drOrder["SciDelivery"];
-            dateBox4.Value = (DateTime)drOrder["SewInLine"];
+            dateBox3.Value = MyUtility.Convert.GetDate(drOrder["SciDelivery"]);
+            dateBox4.Value = MyUtility.Convert.GetDate(drOrder["SewInLine"]);
             CurrentMaintain["Styleid"] = drOrder["Styleid"].ToString();
             CurrentMaintain["Seasonid"] = drOrder["Seasonid"].ToString();
             CurrentMaintain["Brandid"] = drOrder["Brandid"].ToString();
