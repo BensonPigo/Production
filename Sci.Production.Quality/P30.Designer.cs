@@ -64,7 +64,6 @@
             this.textBox16 = new Sci.Win.UI.TextBox();
             this.button1 = new Sci.Win.UI.Button();
             this.dropDownListTableAdapter1 = new Sci.Trade.Report.GSchemas.GLOTableAdapters.DropDownListTableAdapter();
-            this.button2 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -81,7 +80,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.button2);
             this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.textBox16);
             this.masterpanel.Controls.Add(this.textBox15);
@@ -154,7 +152,6 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox15, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox16, 0);
             this.masterpanel.Controls.SetChildIndex(this.button1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
             // 
             // detailpanel
             // 
@@ -568,16 +565,6 @@
             // 
             this.dropDownListTableAdapter1.ClearBeforeFill = true;
             // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(647, 213);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 35;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // P30
             // 
             this.ClientSize = new System.Drawing.Size(957, 620);
@@ -591,7 +578,6 @@
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportMove = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
@@ -657,6 +643,5 @@
         private Win.UI.CheckBox checkBox1;
         private Win.UI.ComboBox comboBox1;
         private Trade.Report.GSchemas.GLOTableAdapters.DropDownListTableAdapter dropDownListTableAdapter1;
-        private Win.UI.Button button2;
     }
 }
