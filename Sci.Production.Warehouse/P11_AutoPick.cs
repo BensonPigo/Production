@@ -30,13 +30,17 @@ namespace Sci.Production.Warehouse
             this.Text += string.Format(" ({0})", poid);
             gridBOA.RowPostPaint += (s, e) =>
             {
-                DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+                DataTable dtSource = (DataTable)listControlBindingSource1.DataSource;
 
                 DataRow dr = gridBOA.GetDataRow(e.RowIndex);
-                bool exists = dt.AsEnumerable().Where(c => c.Field<string>("scirefno").EqualString(dr["scirefno"])
-                    && c.Field<string>("colorid").EqualString(dr["colorid"])
-                    && c.Field<string>("sizespec").EqualString(dr["sizespec"])
-                    ).Count() > 0;
+                bool exists = dtSource
+                    .AsEnumerable()
+                    .Any(dataRow =>
+                    {
+                        return string.Compare(dataRow.Field<string>("scirefno"), dr.Field<string>("scirefno"), true) == 0 &&
+                               string.Compare(dataRow.Field<string>("colorid"), dr.Field<string>("colorid"), true) == 0 &&
+                               string.Compare(dataRow.Field<string>("sizespec"), dr.Field<string>("sizespec"), true) == 0;
+                    });
 
                 if (exists)
                 {
@@ -148,8 +152,25 @@ namespace Sci.Production.Warehouse
 
             this.grid1.AutoResizeColumns();
             this.gridBOA.DataSource = BOA;
-            this.gridBOA.AutoGenerateColumns = true;
-            this.gridBOA.AutoResizeColumns();
+            Helper.Controls.Grid.Generator(this.gridBOA)
+
+               .Text("ID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //1
+               .Text("RefNo", header: "RefNo", iseditingreadonly: true, width: Widths.AnsiChars(13)) //2
+               .Text("SCIRefNo", header: "SCIRefNo", iseditingreadonly: true, width: Widths.AnsiChars(17)) //2
+                .Text("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+                 .Text("ColorID", header: "ColorID", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+                  .Text("SizeCode", header: "SizeCode", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+                    .Text("SizeSpec", header: "SizeSpec", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+                       .Text("OrderQty", header: "OrderQty", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+                       .Text("UsageQty", header: "UsageQty", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+                       .Text("UsageUnit", header: "UsageUnit", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+                       .Text("SysUsageQty", header: "SysUsageQty", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+
+              // .Numeric("", header: "SizeSpec", iseditingreadonly: true, decimal_places: 2, integer_places: 10) //3
+
+               ;
+            // this.gridBOA.AutoGenerateColumns = true;
+            // this.gridBOA.AutoResizeColumns();
 
 
             #region --Pick Qty 開窗--
