@@ -51,12 +51,12 @@ namespace Sci.Production.Warehouse
             Helper.Controls.Grid.Generator(this.grid)
                 //.Text("id", header: "id", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
                 //.Numeric("Issue_SummaryUkey", header: "Issue_SummaryUkey", width: Widths.AnsiChars(8), integer_places: 10)    //6
-            .Text("FtyInventoryUkey", header: "FtyInventory" + Environment.NewLine + "Ukey", width: Widths.AnsiChars(8), iseditingreadonly: true)    //0
-            .CellPOIDWithSeqRollDyelot("poid", header: "poid", width: Widths.AnsiChars(14))  //1
-            .Text("seq1", header: "seq1", width: Widths.AnsiChars(4))  //2
-            .Text("seq2", header: "seq2", width: Widths.AnsiChars(3))  //3
-            .Text("roll", header: "roll", width: Widths.AnsiChars(10))  //4
-            .Text("dyelot", header: "dyelot", width: Widths.AnsiChars(6))  //5
+            //.Text("FtyInventoryUkey", header: "FtyInventory" + Environment.NewLine + "Ukey", width: Widths.AnsiChars(8), iseditingreadonly: true)    //0
+            .CellPOIDWithSeqRollDyelot("poid", header: "poid", width: Widths.AnsiChars(14), iseditingreadonly: true)  //1
+            .Text("seq1", header: "seq1", width: Widths.AnsiChars(4), iseditingreadonly: true)  //2
+            .Text("seq2", header: "seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)  //3
+            .Text("roll", header: "roll", width: Widths.AnsiChars(10), iseditingreadonly: true)  //4
+            .Text("dyelot", header: "dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //5
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8)    //6
             .Text("location", header: "Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(10), iseditingreadonly: true)  //5
             .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //6
