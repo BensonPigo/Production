@@ -304,7 +304,9 @@ where type='C' and Status='Confirmed' and topoid='{0}' and toseq1 = '{1}' and to
                 , Sci.Env.User.Keyword));
             if (_byroll)
             {
-                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                //0000584: WAREHOUSE_P20_Detail_Transaction detail
+                //selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and ToRoll='{0}' and ToDyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
             selectCommand1.Append(string.Format(@"group by a.id, topoid, toSeq1, toSeq2,a.IssueDate,a.Type,a.remark
@@ -320,9 +322,11 @@ where (type='D' or type='E') and Status='Confirmed' and Frompoid='{0}' and Froms
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
                 , Sci.Env.User.Keyword));
-if (_byroll)
+            if (_byroll)
             {
-                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                //0000584: WAREHOUSE_P20_Detail_Transaction detail
+                //selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+                selectCommand1.Append(string.Format(@" and FromRoll='{0}' and FromDyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 selectCommand1.Append(@"group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,a.remark) tmp
 group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name");
