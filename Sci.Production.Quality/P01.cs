@@ -472,6 +472,10 @@ namespace Sci.Production.Quality
             else  
             {
                 index++;
+                if (find_dr==null)
+                {
+                    return;
+                }
                 if (index >= find_dr.Length) index = 0;
             }
             detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);

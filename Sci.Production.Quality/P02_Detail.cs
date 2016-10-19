@@ -41,23 +41,34 @@ namespace Sci.Production.Quality
             comboBox1.ValueMember = "Key";
             comboBox1.DisplayMember = "Value";
 
-
             // 串接table Po_Supp_Detail
             DataTable dtPoSuppDetail;
             Ict.DualResult pstResult;
             if (pstResult = DBProxy.Current.Select(null, string.Format("select a.SCIRefno,a.Refno,a.ColorID,a.ColorID,a.StockUnit,a.SizeSpec from PO_Supp_Detail a left join AIR b on a.ID=b.POID and a.SEQ1=b.SEQ1 and a.SEQ2=b.SEQ2 where b.ID='{0}'", id), out dtPoSuppDetail))
             {
-                if (dtPoSuppDetail.Rows.Count > 0)
+                if (dtPoSuppDetail.Rows.Count != 0)
                 {
                     ref_text.Text = dtPoSuppDetail.Rows[0]["SCIRefno"].ToString();
-                    brand_text.Text = dtPoSuppDetail.Rows[0]["Refno"].ToString();
-                    lable_color.Text = dtPoSuppDetail.Rows[0]["colorid"].ToString();
+                    brand_text.Text = dtPoSuppDetail.Rows[0]["Refno"].ToString();                   
                     unit_text.Text = dtPoSuppDetail.Rows[0]["StockUnit"].ToString();
                     size_text.Text = dtPoSuppDetail.Rows[0]["sizespec"].ToString();
+                    color_text.Text = dtPoSuppDetail.Rows[0]["ColorID"].ToString();
                 }
 
             }
-
+            DataTable dtSupplier;
+            DBProxy.Current.Select(null, string.Format(@"select a.Suppid,b.AbbEN from AIR a inner join Supp b on a.Suppid=b.ID
+                                  where a.ID='{0}'", id), out dtSupplier);
+            if (dtSupplier.Rows.Count != 0)
+            {
+                txtsupplier1.TextBox1.Text = dtSupplier.Rows[0]["Suppid"].ToString();
+                txtsupplier1.DisplayBox1.Text = dtSupplier.Rows[0]["AbbEN"].ToString();
+            }
+            else
+            {
+                txtsupplier1.TextBox1.Text = "";
+                txtsupplier1.DisplayBox1.Text = "";
+            }
             //串接table Receiving
             DataTable dtRec;
             Ict.DualResult wknoResult;
@@ -69,7 +80,7 @@ namespace Sci.Production.Quality
                 }
                 else
                 {
-                    return;
+                    wkno_text.Text = "";
                 }
                 
             }
@@ -79,11 +90,24 @@ namespace Sci.Production.Quality
                 seq_text.Text = dr["SEQ1"].ToString() + " - " + dr["SEQ2"].ToString();
                 inspQty_text.Text = dr["inspQty"].ToString();
                 RejQty_text.Text = dr["REjectQty"].ToString();
-                InsDate_text.Text = Convert.ToDateTime(dr["inspdate"]).ToShortDateString().Replace("/", "-");
+                InsDate_text.Value = MyUtility.Convert.GetDate(dr["inspdate"]);                  
                 Instor_text.Text = dr["inspector"].ToString();
                 Remark_text.Text = dr["remark"].ToString();
                 this.comboBox1.DisplayMember = dr["Result"].ToString();
                 this.editBox1.Text = dr["Defect"].ToString();
+                this.Arrive_qty_text.Text = dr["ArriveQty"].ToString();
+            }
+            else
+            {
+                seq_text.Text = "";
+                inspQty_text.Text = "";
+                RejQty_text.Text = "";
+                InsDate_text.Text = "";
+                Instor_text.Text = "";
+                Remark_text.Text = "";
+                this.comboBox1.DisplayMember = "";
+                this.editBox1.Text = "";
+                this.Arrive_qty_text.Text = "";
             }
 
         }
@@ -100,7 +124,7 @@ namespace Sci.Production.Quality
         private void save_Click(object sender, EventArgs e)
         {
             string strSqlcmd = "";
-
+            this.Encode.Enabled = false;
 
             DualResult result;
             DataTable dt;
@@ -158,7 +182,7 @@ namespace Sci.Production.Quality
                         #region  寫入實體Table Encode
                         updatesql = string.Format(
                         "Update Air set InspQty= '{0}',RejectQty='{1}',Inspdate = '{2}',Inspector = '{3}',Result= '{4}',Defect='{5}',Remark='{6}' where id ='{7}'",
-                        this.inspQty_text.Text, this.RejQty_text.Text, InsDate_text.Text, Instor_text.Text, comboBox1.Text, editBox1.Text, Remark_text.Text,  textID.Text);
+                        this.inspQty_text.Text, this.RejQty_text.Text,string.Format("{0:yyyy-MM-dd}",InsDate_text.Value) , Instor_text.Text, comboBox1.Text, editBox1.Text, Remark_text.Text,  textID.Text);
                         DualResult upResult;
                         TransactionScope _transactionscope = new TransactionScope();
                         using (_transactionscope)
@@ -175,6 +199,7 @@ namespace Sci.Production.Quality
                                 MyUtility.Msg.WarningBox("Successfully");
                                 this.Encode.Text = "Encode";
                                 this.save.Text = "Edit";
+                                this.Encode.Enabled = true;
                             }
                             catch (Exception ex)
                             {
@@ -197,7 +222,8 @@ namespace Sci.Production.Quality
                     {
                         if (dt.Rows[0]["Status"].ToString().Trim() == "Confirmed")
                         {
-                            MyUtility.Msg.InfoBox("已經Confirmed");
+                            MyUtility.Msg.InfoBox("It's already Confirmed");
+                            this.Encode.Enabled = true;
                             return;
                         }
                         if (dt.Rows[0]["Status"].ToString().Trim() != "Confirmed")
@@ -255,14 +281,14 @@ namespace Sci.Production.Quality
                             }
                             _transactionscope1.Complete();
                             btn_status(this.textID.Text);
-                            this.inspQty_text.ReadOnly = false;
-                            this.RejQty_text.ReadOnly = false;
-                            this.InsDate_text.ReadOnly = false;
-                            this.Instor_text.ReadOnly = false;
-                            this.comboBox1.ReadOnly = false;
-                            this.Remark_text.ReadOnly = false;
-                            this.editBox1.ReadOnly = false;
-                            this.save.Text = "Save";
+                            //this.inspQty_text.ReadOnly = false;
+                            //this.RejQty_text.ReadOnly = false;
+                            //this.InsDate_text.ReadOnly = false;
+                            //this.Instor_text.ReadOnly = false;
+                            //this.comboBox1.ReadOnly = false;
+                            //this.Remark_text.ReadOnly = false;
+                            //this.editBox1.ReadOnly = false;
+                            this.save.Text = "Edit";
                         }
                         catch (Exception ex)
                         {

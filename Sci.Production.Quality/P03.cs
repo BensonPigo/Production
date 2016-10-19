@@ -96,14 +96,7 @@ namespace Sci.Production.Quality
                  if (queryDr["cutinline"] == DBNull.Value) estcutdate_box.Text = "";
                  else estcutdate_box.Text = Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
              }
-             //if (queryDr["cutinline"] == DBNull.Value)
-             //{
-             //    estcutdate_box.Text = "";
-             //}
-             //else
-             //{
-             //    estcutdate_box.Text = Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
-             //}
+
              mtl_box.Text = CurrentMaintain["Complete"].ToString() == "True" ? "Y" : "N";
              decimal detailRowCount = DetailDatas.Count;
              string inspnum = "0";

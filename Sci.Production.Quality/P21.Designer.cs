@@ -204,7 +204,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1034, 588);
+            this.browse.Size = new System.Drawing.Size(1223, 588);
             // 
             // tabs
             // 
@@ -543,7 +543,7 @@
             // 
             this.Line_text.BackColor = System.Drawing.Color.White;
             this.Line_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "sewinglineID", true));
-            this.Line_text.factoryobjectName = null;
+            this.Line_text.factoryobjectName = this.Factory_text;
             this.Line_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.Line_text.Location = new System.Drawing.Point(439, 146);
             this.Line_text.Name = "Line_text";

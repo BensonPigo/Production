@@ -126,7 +126,7 @@ namespace Sci.Production.Quality
                 .Text("Colorid", header: "Color", width: Ict.Win.Widths.AnsiChars(20),iseditingreadonly:true, settings: colorSelect)
                  .Date("inspdate", header: "Inspdate", width: Ict.Win.Widths.AnsiChars(18))
                  .Text("Result", header: "Result", width: Ict.Win.Widths.AnsiChars(50));
-
+            detailgrid.ValidateControl();
       
         }
 
@@ -217,22 +217,9 @@ namespace Sci.Production.Quality
 
             if (this.CurrentDetailData["Type"].StrStartsWith("Cutparts") || this.CurrentDetailData["Type"].StrStartsWith("Garment"))
             {
-
                 MyUtility.Msg.WarningBox("If <Main item no> is Cutparts or Garment cannot delete");
                 return;
             }
-            /*
-            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
-            {
-                
-                if (dr.RowState== DataRowState.Deleted)
-                {
-                    if (dr["Type",DataRowVersion.Original].ToString()=="Cutparts")
-                    {
-                    }
-                }
-            }
-            */
             base.OnDetailGridDelete();
         }
         
