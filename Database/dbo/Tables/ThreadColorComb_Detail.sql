@@ -1,15 +1,17 @@
 ﻿CREATE TABLE [dbo].[ThreadColorComb_Detail] (
-    [Id] BIGINT CONSTRAINT [DF_ThreadColorComb_Detail_ThreadColorCombUkey] DEFAULT ('') NOT NULL,
-    [Machinetypeid]       VARCHAR (10) CONSTRAINT [DF_ThreadColorComb_Detail_Machinetypeid] DEFAULT ('') NOT NULL,
-    [ThreadCombid]       VARCHAR (10) CONSTRAINT [DF_ThreadColorComb_Detail_ThreadComboid] DEFAULT ('') NOT NULL,
-    [Refno]               VARCHAR (21) CONSTRAINT [DF_ThreadColorComb_Detail_Refno] DEFAULT ('') NOT NULL,
-    [Article]             VARCHAR (8)  CONSTRAINT [DF_ThreadColorComb_Detail_Article] DEFAULT ('') NOT NULL,
-    [ThreadColorid]       VARCHAR (15) CONSTRAINT [DF_ThreadColorComb_Detail_ThreadColorid] DEFAULT ('') NULL,
-    [SEQ]                 VARCHAR (2)  CONSTRAINT [DF_ThreadColorComb_Detail_SEQ] DEFAULT ('') NULL,
-    [ThreadLocationID]    VARCHAR (4)  CONSTRAINT [DF_ThreadColorComb_Detail_ThreadLocationID] DEFAULT ('') NULL,
-    [Ukey]                BIGINT       IDENTITY (1, 1) NOT NULL,
+    [Id]               BIGINT       CONSTRAINT [DF_ThreadColorComb_Detail_ThreadColorCombUkey] DEFAULT ('') NOT NULL,
+    [Machinetypeid]    VARCHAR (10) CONSTRAINT [DF_ThreadColorComb_Detail_Machinetypeid] DEFAULT ('') NOT NULL,
+    [ThreadCombid]     VARCHAR (10) CONSTRAINT [DF_ThreadColorComb_Detail_ThreadComboid] DEFAULT ('') NOT NULL,
+    [Refno]            VARCHAR (21) CONSTRAINT [DF_ThreadColorComb_Detail_Refno] DEFAULT ('') NOT NULL,
+    [Article]          VARCHAR (8)  CONSTRAINT [DF_ThreadColorComb_Detail_Article] DEFAULT ('') NOT NULL,
+    [ThreadColorid]    VARCHAR (15) CONSTRAINT [DF_ThreadColorComb_Detail_ThreadColorid] DEFAULT ('') NULL,
+    [SEQ]              VARCHAR (2)  CONSTRAINT [DF_ThreadColorComb_Detail_SEQ] DEFAULT ('') NULL,
+    [ThreadLocationID] VARCHAR (20) CONSTRAINT [DF_ThreadColorComb_Detail_ThreadLocationID] DEFAULT ('') NULL,
+    [Ukey]             BIGINT       IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_ThreadColorComb_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO

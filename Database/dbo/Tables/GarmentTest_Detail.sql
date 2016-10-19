@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[GarmentTest_Detail] (
-    [ID]          BIGINT   CONSTRAINT [DF_GarmentTest_Detail_ID] DEFAULT ((0)) NOT NULL,
-    [No]          VARCHAR (2)    CONSTRAINT [DF_GarmentTest_Detail_No] DEFAULT ('') NOT NULL,
+    [ID]          BIGINT         CONSTRAINT [DF_GarmentTest_Detail_ID] DEFAULT ((0)) NOT NULL,
+    [No]          INT            CONSTRAINT [DF_GarmentTest_Detail_No] DEFAULT ('') NOT NULL,
     [Result]      VARCHAR (1)    CONSTRAINT [DF_GarmentTest_Detail_Result] DEFAULT ('') NULL,
     [inspdate]    DATE           NULL,
     [inspector]   VARCHAR (10)   CONSTRAINT [DF_GarmentTest_Detail_inspector] DEFAULT ('') NULL,
@@ -13,9 +13,11 @@
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_GarmentTest_Detail_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME       NULL,
-    [OldUkey] VARCHAR(10) NULL DEFAULT (''), 
+    [OldUkey]     VARCHAR (10)   CONSTRAINT [DF__tmp_ms_xx__OldUk__560B68B9] DEFAULT ('') NULL,
     CONSTRAINT [PK_GarmentTest_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [No] ASC)
 );
+
+
 
 
 GO

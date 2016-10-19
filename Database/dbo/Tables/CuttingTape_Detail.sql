@@ -5,7 +5,7 @@
     [Seq2]        VARCHAR (2)  NOT NULL,
     [TapeInline]  DATE         NULL,
     [TapeOffline] DATE         NULL,
-    CONSTRAINT [PK_CuttingTape_Detail] PRIMARY KEY CLUSTERED ([MDivisionID] ASC, [POID] ASC, [Seq1] ASC, [Seq2] ASC) ON [SLAVE]
+    CONSTRAINT [PK_CuttingTape_Detail] PRIMARY KEY CLUSTERED ([MDivisionID] ASC, [POID] ASC, [Seq1] ASC, [Seq2] ASC) 
 );
 
 

@@ -353,7 +353,10 @@ BEGIN
 						into #PatternPanel_cutlayer
 						From Order_EachCons_PatternPanel
 						Where Order_EachConsUkey = @ukey
+
+
 						set @WorkOrder_SizeRatioRowid = 1
+
 						Select @WorkOrder_SizeRatioRowid = Min(Rowid),@WorkOrder_SizeRatioRowCount = Max(RowID) 
 						From #PatternPanel_cutlayer
 						While @WorkOrder_SizeRatioRowid <= @WorkOrder_SizeRatioRowCount
@@ -362,8 +365,9 @@ BEGIN
 								   @WorkOrder_LectraCode = LectraCode
 							From #PatternPanel_cutlayer
 							Where Rowid = @WorkOrder_SizeRatioRowid
-							Insert into #NewWorkOrder_PatternPanel(ID,PatternPanel,LectraCode,newKey)
-							Values(@Cuttingid,@WorkOrder_PatternPanel,@WorkOrder_LectraCode,@NewKey)
+							--insert NewWorkOrder_PatternPanel  error
+							Insert into #NewWorkOrder_PatternPanel(ID,WorkOrderUkey,PatternPanel,LectraCode,newKey)
+							Values(@Cuttingid,@NewKey,@WorkOrder_PatternPanel,@WorkOrder_LectraCode,@NewKey)
 							set @WorkOrder_SizeRatioRowid += 1
 						End;
 						drop table #PatternPanel_cutlayer
@@ -488,8 +492,10 @@ BEGIN
 							   @WorkOrder_LectraCode = LectraCode
 						From #PatternPanel_modlayer 
 						Where Rowid = @WorkOrder_SizeRatioRowid
-						Insert into #NewWorkOrder_PatternPanel(ID,PatternPanel,LectraCode,newKey)
-						Values(@Cuttingid,@WorkOrder_PatternPanel,@WorkOrder_LectraCode,@NewKey)
+
+						-- insert error
+						Insert into #NewWorkOrder_PatternPanel(ID,WorkOrderUkey,PatternPanel,LectraCode,newKey)
+						Values(@Cuttingid,@NewKey,@WorkOrder_PatternPanel,@WorkOrder_LectraCode,@NewKey)
 						set @WorkOrder_SizeRatioRowid += 1
 					End;
 					drop table #PatternPanel_modlayer 

@@ -1,16 +1,18 @@
 ﻿CREATE TABLE [dbo].[SuppLevel] (
-    [ID]       VARCHAR (1)    CONSTRAINT [DF_SuppLevel_ID] DEFAULT ('') NOT NULL,
-    [Type]     VARCHAR (1)    CONSTRAINT [DF_SuppLevel_Type] DEFAULT ('') NOT NULL,
-    [Junk]     BIT            CONSTRAINT [DF_SuppLevel_Junk] DEFAULT ((0)) NULL,
-    [Range1]   NUMERIC (5, 2) CONSTRAINT [DF_SuppLevel_Range1] DEFAULT ((0)) NOT NULL,
-    [Range2]   NUMERIC (5, 2) CONSTRAINT [DF_SuppLevel_Range2] DEFAULT ((0)) NOT NULL,
-    [Result]   VARCHAR (1)    CONSTRAINT [DF_SuppLevel_Result] DEFAULT ('') NULL,
-    [AddName]  VARCHAR (10)   CONSTRAINT [DF_SuppLevel_AddName] DEFAULT ('') NULL,
+    [ID]       VARCHAR (1)    NOT NULL,
+    [Type]     VARCHAR (1)    NOT NULL,
+    [Junk]     BIT            NULL,
+    [Range1]   NUMERIC (5, 2) NOT NULL,
+    [Range2]   NUMERIC (5, 2) NOT NULL,
+    [Result]   VARCHAR (1)    NULL,
+    [AddName]  VARCHAR (10)   NULL,
     [AddDate]  DATETIME       NULL,
-    [EditName] VARCHAR (10)   CONSTRAINT [DF_SuppLevel_EditName] DEFAULT ('') NULL,
+    [EditName] VARCHAR (10)   NULL,
     [EditDate] DATETIME       NULL,
-    CONSTRAINT [PK_SuppLevel] PRIMARY KEY CLUSTERED ([ID] ASC)
+    CONSTRAINT [PK_SuppLevel] PRIMARY KEY CLUSTERED ([ID] ASC, [Type] ASC)
 );
+
+
 
 
 

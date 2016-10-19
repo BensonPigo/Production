@@ -116,7 +116,7 @@ BEGIN
 		);
 	Create NonClustered Index Idx_ID on #Tmp_BoaExpend (ID, Order_BOAUkey, ColorID) -- table index
 
-	Exec BoaExpend @POID, @Order_BOAUkey, @TestType, @UserID;
+	Exec BoaExpend @POID, @Order_BOAUkey, @TestType, @UserID,0,1;
 	Drop Table #tmpOrder_Qty;
 
 	select p.id as [poid], p.seq1, p.seq2, p.SCIRefno,dbo.getMtlDesc(p.id, p.seq1, p.seq2,2,0) [description] 
@@ -157,4 +157,6 @@ BEGIN
 		where Order_SizeCode.id = @POID) z 
 	left join cte on cte.SizeCode = z.SizeCode and cte.poid = z.poid and cte.seq1 = z.seq1 and cte.seq2 = z.seq2
 	order by z.seq1,z.seq2,z.Seq
+
+
 END

@@ -1,38 +1,45 @@
-﻿CREATE Procedure [dbo].[BoaExpend]
+﻿	              
+
+CREATE Procedure [dbo].[BoaExpend]
 (
 	  @ID				VarChar(13)				--採購母單
 	 ,@Order_BOAUkey	BigInt		= 0			--BOA Ukey
 	 ,@TestType			Bit			= 0			--是否為虛擬庫存計算
 	 ,@UserID			VarChar(10) = ''
+	 ,@IsGetFabQuot		Bit			= 1
+	 ,@IsExpendDetail	Bit			= 0			--是否一律展開至最詳細
 )
 As
 Begin
 	Set NoCount On;
-	/*
-	If @TestType = 0
+
+	If Object_ID('tempdb..#Tmp_BoaExpend') Is Null
 	Begin
-		--
-	End;
-	*/
-	IF OBJECT_ID('tempdb..#Tmp_BoaExpend') IS NULL
-    begin
-            
 		Create Table #Tmp_BoaExpend
 			(  ExpendUkey BigInt Identity(1,1) Not Null, ID Varchar(13), Order_BOAUkey BigInt
 			 , RefNo VarChar(20), SCIRefNo VarChar(26), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
 			 , SizeCode VarChar(8), SizeSpec VarChar(15), SizeUnit VarChar(8), Remark NVarChar(Max)
 			 , OrderQty Numeric(6,0), Price Numeric(8,4), UsageQty Numeric(9,2), UsageUnit VarChar(8), SysUsageQty  Numeric(9,2)
-			 , BomFactory VarChar(8), BomCountry VarChar(2), BomStyle VarChar(15), BomCustCD VarChar(20)
-			 , BomArticle VarChar(8), BomZipperInsert VarChar(5), BomBuymonth VarChar(10), BomCustPONo VarChar(30)
+			 , BomZipperInsert VarChar(5), BomCustPONo VarChar(30)
 			 , Primary Key (ExpendUkey)
+			 , Index Idx_ID NonClustered (ID, Order_BOAUkey, ColorID) -- table index
 			);
-		Create NonClustered Index Idx_ID on #Tmp_BoaExpend (ID, Order_BOAUkey, ColorID) -- table index
-
-    end
-	Create Table #Tmp_BoaExpend_OrderList
-		(ExpendUkey BigInt, ID Varchar(13), OrderID Varchar(13)
-		);
-	Create NonClustered Index Idx_ID on #Tmp_BoaExpend_OrderList (ExpendUkey, ID, OrderID) -- table index
+	End;	
+	If Object_ID('tempdb..#Tmp_BoaExpend_OrderList') Is Null
+	Begin
+		Create Table #Tmp_BoaExpend_OrderList
+			(ExpendUkey BigInt, ID Varchar(13), OrderID Varchar(13)
+			 Index Idx_ID NonClustered (ExpendUkey, ID, OrderID) -- table index
+			);
+	End;	
+	If Object_ID('tempdb..#Tmp_Order_Qty') Is Null
+	Begin
+		Select Order_Qty.* Into #Tmp_Order_Qty
+		  From dbo.Order_Qty
+		 Inner Join dbo.Orders
+			On Orders.ID = Order_Qty.ID
+		 Where Orders.PoID = @ID;
+	End;
 
 	Declare @ExpendUkey BigInt;
 
@@ -69,7 +76,7 @@ Begin
 	Declare @SizeUnit Varchar(8);
 	Declare @SysUsageQty Numeric(9,2)
 	Declare @Remark NVarchar(Max);
-	Declare @BomFactory VarChar(8);
+	--Declare @BomFactory VarChar(8);
 	Declare @BomCustCD VarChar(16);
 	Declare @BomZipperInsert VarChar(5);
 	Declare @BomCustPONo VarChar(30);
@@ -86,42 +93,38 @@ Begin
 	Declare @SizeSpec_Cal Numeric(15,4);
 
 	--取得採購組合的訂單Q'ty breakdown
-	if (@TestType = 0)
-	begin 
-	create Table #tmpOrder_Qty
+	Declare @tmpOrder_Qty Table
 		(  ID Varchar(13), FactoryID Varchar(8), CustCDID Varchar(16), ZipperInsert Varchar(5)
 		 , CustPONo VarChar(30), BuyMonth VarChar(16), CountryID VarChar(2), StyleID Varchar(15)
 		 , Article VarChar(8), SizeSeq VarChar(2), SizeCode VarChar(8), Qty Numeric(6,0)
 		);
-	Insert Into #tmpOrder_Qty
-		Select Orders.ID AS ID, Orders.FactoryID, Orders.CustCDID, CustCD.ZipperInsert
-			 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID AS CountryID, Orders.StyleID
-			 , Order_Article.Article Article, Order_SizeCode.Seq Seq, Order_SizeCode.SizeCode SizeCode
-			 , IsNull(Order_Qty.Qty, 0) Qty
+	Insert Into @tmpOrder_Qty
+		Select Orders.ID, Orders.FactoryID, Orders.CustCDID, CustCD.ZipperInsert
+			 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
+			 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
+			 , IsNull(Tmp_Order_Qty.Qty, 0) Qty
 		  From dbo.Orders
 		  Left Join dbo.Order_SizeCode
 			On Order_SizeCode.ID = Orders.POID
 		  Left Join dbo.Order_Article
 			On Order_Article.ID = Orders.ID
-		  Left Join dbo.Order_Qty
-			On	   Order_Qty.ID = Orders.ID
-			   And Order_Qty.SizeCode = Order_SizeCode.SizeCode
-			   And Order_Qty.Article = Order_Article.Article
-		  Left Join dbo.CustCD
+		  Left Join #Tmp_Order_Qty as Tmp_Order_Qty
+			On	   Tmp_Order_Qty.ID = Orders.ID
+			   And Tmp_Order_Qty.SizeCode = Order_SizeCode.SizeCode
+			   And Tmp_Order_Qty.Article = Order_Article.Article
+		  Left Join Trade.dbo.CustCD
 			On	   CustCD.BrandID = Orders.BrandID
 			   And CustCD.ID = Orders.CustCDID
-		  Left Join dbo.Factory
+		  Left Join Trade.dbo.Factory
 			On Factory.ID = Orders.FactoryID
 		 Where Orders.POID = @ID
 		   And Orders.Junk = 0
 		 Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
 				, CountryID, StyleID, Article, Seq, SizeCode;
-	end;
-
+	
 	Declare @Sum_Qty Table
 		(  RowID BigInt Identity(1,1) Not Null, OrderID VarChar(13), ColorID VarChar(6), Article VarChar(8)
-		 , BomFactory Varchar(8), BomCustCD Varchar(16), BomZipperInsert Varchar(5), BomCustPONo VarChar(30)
-		 , BomBuymonth VarChar(16), BomCountry VarChar(2), BomStyle Varchar(15), BomArticle VarChar(8)
+		 , BomZipperInsert Varchar(5), BomCustPONo VarChar(30)
 		 , SizeSeq VarChar(2), SizeCode VarChar(8), SizeSpec VarChar(8), SizeUnit VarChar(8), OrderQty Numeric(6,0), UsageQty Numeric(9,2)
 		);
 	Declare @Sum_QtyRowID Int;		--Sum_Qty ID
@@ -134,20 +137,15 @@ Begin
 	Declare @BoaSizeItem_Elastic VarChar(3);
 	Declare @BoaConsPC Numeric(8,4);
 	Declare @BoaBomTypeFactory Bit;
-	Declare @BoaBomTypeCustCD Bit;
 	Declare @BoaBomTypeZipper Bit;
 	Declare @BoaBomTypePo Bit;
-	Declare @BoaBomTypeBuyMonth Bit;
-	Declare @BoaBomTypeCountry Bit;
-	Declare @BoaBomTypeStyle Bit;
 	Declare @BoaBomTypeSize Bit;
-	Declare @BoaBomTypeArticle Bit;
 	Declare @BoaBomTypeColor Bit;
 	Declare @BoaCursor Table
 		(  RowID BigInt Identity(1,1) Not Null, Ukey BigInt, SCIRefNo VarChar(26), SuppID VarChar(6)
 		 , PatternPanel VarChar(2), SizeItem VarChar(3), SizeItem_Elastic VarChar(3), ConsPC Numeric(8,4), Remark NVarChar(Max)
-		 , BomTypeFactory Bit, BomTypeCustCD Bit, BomTypeZipper Bit, BomTypePo Bit
-		 , BomTypeBuyMonth Bit, BomTypeCountry Bit, BomTypeStyle Bit, BomTypeSize Bit
+		 , BomTypeZipper Bit, BomTypePo Bit
+		 , BomTypeSize Bit
 		 , BomTypeArticle Bit, BomTypeColor Bit
 		);
 	Declare @BoaRowID Int;
@@ -155,14 +153,10 @@ Begin
 	
 	Insert Into @BoaCursor
 		(  Ukey, SCIRefNo, SuppID, PatternPanel, SizeItem, SizeItem_Elastic, ConsPC, Remark
-		 , BomTypeFactory, BomTypeCustCD, BomTypeZipper, BomTypePo
-		 , BomTypeBuyMonth, BomTypeCountry, BomTypeStyle, BomTypeSize
-		 , BomTypeArticle, BomTypeColor
+		 , BomTypeZipper, BomTypePo, BomTypeSize, BomTypeColor
 		)
 		Select Ukey, SCIRefNo, SuppID, PatternPanel, SizeItem, SizeItem_Elastic, ConsPC, Remark
-			 , BomTypeFactory, BomTypeCustCD, BomTypeZipper, BomTypePo
-			 , BomTypeBuyMonth, BomTypeCountry, BomTypeStyle, BomTypeSize
-			 , BomTypeArticle, BomTypeColor
+			 , BomTypeZipper, BomTypePo, BomTypeSize, BomTypeColor
 		  From dbo.Order_BOA
 		 Where ID = @ID
 		   And (   IsNull(@Order_BOAUkey, 0) = 0
@@ -171,7 +165,6 @@ Begin
 		 Order by Ukey;
 
 	Set @BoaRowID = 1;
-	--Select @BoaRowCount = Count(*) From @BoaCursor;
 	Select @BoaRowID = Min(RowID), @BoaRowCount = Max(RowID) From @BoaCursor;
 	While @BoaRowID <= @BoaRowCount
 	Begin
@@ -183,15 +176,9 @@ Begin
 			 , @BoaSizeItem_Elastic = SizeItem_Elastic
 			 , @BoaConsPC = ConsPC
 			 , @Remark = Remark
-			 , @BoaBomTypeFactory = BomTypeFactory
-			 , @BoaBomTypeCustCD = BomTypeCustCD
 			 , @BoaBomTypeZipper = BomTypeZipper
 			 , @BoaBomTypePo = BomTypePo
-			 , @BoaBomTypeBuyMonth = BomTypeBuyMonth
-			 , @BoaBomTypeCountry = BomTypeCountry
-			 , @BoaBomTypeStyle = BomTypeStyle
 			 , @BoaBomTypeSize = BomTypeSize
-			 , @BoaBomTypeArticle = BomTypeArticle
 			 , @BoaBomTypeColor = BomTypeColor
 		  From @BoaCursor
 		 Where RowID = @BoaRowID;
@@ -202,7 +189,7 @@ Begin
 			 , @UsageUnit = UsageUnit
 			 , @BomTypeCalculate = BomTypeCalculate
 			 , @NoSizeUnit = NoSizeUnit
-		  From dbo.Fabric
+		  From Trade.dbo.Fabric
 		 Where SCIRefNo = @SciRefNo;
 		
 		--取得SizeItem,當為Elastic，且SizeItem為S開頭時，改取SizeItem_Elastic
@@ -217,46 +204,59 @@ Begin
 		Delete From @Sum_Qty;
 
 		Insert Into @Sum_Qty
-			(  ColorID, Article, BomFactory, BomCustCD, BomZipperInsert, BomCustPONo, BomBuymonth
-			 , BomCountry, BomStyle, BomArticle, SizeSeq, SizeCode, SizeSpec, SizeUnit, OrderQty, UsageQty
+			(  ColorID, Article, BomZipperInsert, BomCustPONo
+			 , SizeSeq, SizeCode, SizeSpec, SizeUnit, OrderQty, UsageQty
 			)
-			Select ColorID, Article, BomFactory, BomCustCD, BomZipperInsert, BomCustPONo
-				 , BomBuymonth, BomCountry, BomStyle, BomArticle, SizeSeq, SizeCode, SizeSpec, SizeUnit
+			Select ColorID, Article, BomZipperInsert, BomCustPONo
+				 , SizeSeq, SizeCode, SizeSpec, SizeUnit
 				 , Sum(OrderQty) as OrderQty, Sum(UsageQty) as UsageQty
-			  From (Select tmpOrder_Qty.ID
-						 , IIF(@BoaBomTypeColor = 1, IsNull(Order_ColorCombo.ColorID,''), '') ColorID
-						 , IIF(@BoaBomTypeColor = 1, tmpOrder_Qty.Article, '') Article
-						 , IIF(@BoaBomTypeFactory = 1, tmpOrder_Qty.FactoryID, '') BomFactory
-						 , IIF(@BoaBomTypeCustCD = 1, tmpOrder_Qty.CustCDID, '') BomCustCD
-						 , IIF(@BoaBomTypeZipper = 1, tmpOrder_Qty.ZipperInsert, '') BomZipperInsert
-						 , IIF(@BoaBomTypePo = 1, tmpOrder_Qty.CustPONo, '') BomCustPONo
-						 , IIF(@BoaBomTypeBuyMonth = 1, tmpOrder_Qty.BuyMonth, '') BomBuymonth
-						 , IIF(@BoaBomTypeCountry = 1, tmpOrder_Qty.CountryID, '') BomCountry
-						 , IIF(@BoaBomTypeStyle = 1, tmpOrder_Qty.StyleID, '') BomStyle
-						 , IIF(@BoaBomTypeArticle = 1, tmpOrder_Qty.Article, '') BomArticle
-						 , IIF(@BoaBomTypeSize = 1, tmpOrder_Qty.SizeSeq, '') SizeSeq
-						 , IIF(@BoaBomTypeSize = 1, tmpOrder_Qty.SizeCode, '') SizeCode
-						 , IIF(@BoaBomTypeSize = 1, tmpOrder_SizeSpec.SizeSpec, '') SizeSpec
-						 , IIF(@BoaBomTypeSize = 1, @SizeUnit, '') SizeUnit
-						 , IIF(@BoaBomTypeSize = 1 And IsNull(tmpOrder_SizeSpec.SizeSpec, '') = '', 0, Qty) as OrderQty
+			  From (Select tmpQtyBreakDown.ID
+						 , IIF(@BoaBomTypeColor = 1 Or @IsExpendDetail = 1, IsNull(Order_ColorCombo.ColorID,''), '') as ColorID
+						 , IIF(@BoaBomTypeColor = 1 Or @IsExpendDetail = 1, tmpQtyBreakDown.Article, '') as Article
+						 --, IIF(@BoaBomTypeFactory = 1, tmpQtyBreakDown.FactoryID, '') as BomFactory
+						 --, IIF(@BoaBomTypeCustCD = 1, tmpQtyBreakDown.CustCDID, '') as BomCustCD
+						 , IIF(@BoaBomTypeZipper = 1 Or @IsExpendDetail = 1, tmpQtyBreakDown.ZipperInsert, '') as BomZipperInsert
+						 , IIF(@BoaBomTypePo = 1 Or @IsExpendDetail = 1, tmpQtyBreakDown.CustPONo, '') as BomCustPONo
+						 --, IIF(@BoaBomTypeBuyMonth = 1, tmpQtyBreakDown.BuyMonth, '') as BomBuymonth
+						 --, IIF(@BoaBomTypeCountry = 1, tmpQtyBreakDown.CountryID, '') as BomCountry
+						 --, IIF(@BoaBomTypeStyle = 1, tmpQtyBreakDown.StyleID, '') as BomStyle
+						 --, IIF(@BoaBomTypeArticle = 1, tmpQtyBreakDown.Article, '') as BomArticle
+						 , IIF(@BoaBomTypeSize = 1 Or @IsExpendDetail = 1, tmpQtyBreakDown.SizeSeq, '') as SizeSeq
+						 , IIF(@BoaBomTypeSize = 1 Or @IsExpendDetail = 1, tmpQtyBreakDown.SizeCode, '') as SizeCode
+						 --, tmpQtyBreakDown.SizeSeq as SizeSeq
+						 --, tmpQtyBreakDown.SizeCode as SizeCode
+						 , IIF(@BoaBomTypeSize = 1, tmpOrder_SizeSpec.SizeSpec, '') as SizeSpec
+						 , IIF(@BoaBomTypeSize = 1 Or @IsExpendDetail = 1, @SizeUnit, '') as SizeUnit
+						 --, IIF(@BoaBomTypeSize = 1 And IsNull(tmpOrder_SizeSpec.SizeSpec, '') = '', 0, Qty) as OrderQty
+						 , Qty as OrderQty
 						 , (Qty * IsNull(tmpOrder_SizeSpec.SizeSpec_Cal, 1) * @BoaConsPC) as UsageQty
-					  From #tmpOrder_Qty as tmpOrder_Qty
+					  From @tmpOrder_Qty as tmpQtyBreakDown
 					  Left Join dbo.Order_ColorCombo
 						On	   Order_ColorCombo.ID = @ID
-						   And Order_ColorCombo.Article = tmpOrder_Qty.Article
+						   And Order_ColorCombo.Article = tmpQtyBreakDown.Article
 						   And Order_ColorCombo.LectraCode = @BoaPatternPanel
 					  Left Join (Select ID, SizeItem, SizeCode, SizeSpec
-									  , IIF(@BomTypeCalculate = 1, IIF(@UsageUnit = 'CM' Or @UsageUnit = 'INCH', dbo.GetDigitalValue(SizeSpec), 0), 1) as SizeSpec_Cal
+									  , IIF(@BomTypeCalculate = 1, IIF(@UsageUnit = 'CM' Or @UsageUnit = 'INCH', Trade.dbo.GetDigitalValue(SizeSpec), 0), 1) as SizeSpec_Cal
 								   From dbo.Order_SizeSpec
 								) tmpOrder_SizeSpec
 					    On	   tmpOrder_SizeSpec.ID = @ID
 						   And tmpOrder_SizeSpec.SizeItem = @SizeItem
-						   And tmpOrder_SizeSpec.SizeCode = tmpOrder_Qty.SizeCode
-				   ) as tmpOrder_Qty
-			 Group by ColorID, Article, BomFactory, BomCustCD, BomZipperInsert, BomCustPONo, BomBuymonth
-					, BomCountry, BomStyle, BomArticle, SizeSeq, SizeCode, SizeSpec, SizeUnit
-			 Order by BomFactory, BomCustCD, BomZipperInsert, BomCustPONo, BomBuymonth
-					, BomCountry, BomStyle, Article, ColorID, BomArticle, SizeSeq, SizeCode, SizeSpec;
+						   And tmpOrder_SizeSpec.SizeCode = tmpQtyBreakDown.SizeCode
+					  Left Join (Select Order_BOA_CustCD.*
+									  , Convert(Bit, 1) as IsExist
+								   From dbo.Order_BOA_CustCD
+								) as tmpBOA_CustCD
+						On tmpBOA_CustCD.Order_BOAUkey = @BoaUkey
+					 Where (IsNull(tmpBOA_CustCD.IsExist, 0) = 0)
+						Or (	tmpBOA_CustCD.IsExist = 1
+							And tmpBOA_CustCD.CustCDID = tmpQtyBreakDown.CustCDID
+						   )
+				   ) as tmpQtyBreakDown
+			 Where OrderQty > 0
+			 Group by ColorID, Article, BomZipperInsert, BomCustPONo
+					, SizeSeq, SizeCode, SizeSpec, SizeUnit
+			 Order by BomZipperInsert, BomCustPONo
+					, Article, ColorID, SizeSeq, SizeCode, SizeSpec;
 		
 		Set @Sum_QtyRowID = 1;
 		--Select @Sum_QtyRowCount = Count(*) From @Sum_Qty;
@@ -266,14 +266,14 @@ Begin
 			Select @OrderID = OrderID
 				 , @ColorID = ColorID
 				 , @Article = Article
-				 , @BomFactory = BomFactory
-				 , @BomCustCD = BomCustCD
+				 --, @BomFactory = BomFactory
+				 --, @BomCustCD = BomCustCD
 				 , @BomZipperInsert = BomZipperInsert
 				 , @BomCustPONo = BomCustPONo
-				 , @BomBuymonth = BomBuymonth
-				 , @BomCountry = BomCountry
-				 , @BomStyle = BomStyle
-				 , @BomArticle = BomArticle
+				 --, @BomBuymonth = BomBuymonth
+				 --, @BomCountry = BomCountry
+				 --, @BomStyle = BomStyle
+				 --, @BomArticle = BomArticle
 				 , @SizeCode = SizeCode
 				 , @SizeSpec = SizeSpec
 				 , @SizeUnit = SizeUnit
@@ -284,52 +284,69 @@ Begin
 			
 			Set @SysUsageQty = @UsageQty;
 			--取得 Supplier Color
-			Set @SuppColor = dbo.GetSuppColorList(@SciRefNo, @BoaSuppID, @ColorID, @BrandID, @SeasonID, @ProgramID, @StyleID);
+			Set @SuppColor = Trade.dbo.GetSuppColorList(@SciRefNo, @BoaSuppID, @ColorID, @BrandID, @SeasonID, @ProgramID, @StyleID);
 			
 			--取得 Fabric Price
-			--Set @Price = IsNull(dbo.GetPriceFromMtl(@SciRefNo, @BoaSuppID, @SeasonID, @UsageQty, @Category, @CfmDate, '', @ColorID), 0);
-			Set @Price =0;
+			If @IsGetFabQuot = 1
+			Begin
+				Set @Price = IsNull(Trade.dbo.GetPriceFromMtl(@SciRefNo, @BoaSuppID, @SeasonID, @UsageQty, @Category, @CfmDate, '', @ColorID), 0);
+			End;
+			Else
+			Begin
+				Set @Price = 0;
+			End;
+			
 			Insert Into #Tmp_BoaExpend
 				(  ID, Order_BOAUkey, RefNo, SCIRefNo, Article, ColorID, SuppColor
 				 , SizeCode, SizeSpec, SizeUnit, Remark, OrderQty, Price, UsageQty
-				 , UsageUnit, SysUsageQty, BomFactory, BomCountry, BomStyle, BomCustCD
-				 , BomArticle, BomZipperInsert, BomBuymonth, BomCustPONo
+				 , UsageUnit, SysUsageQty, BomZipperInsert, BomCustPONo
 				)
 			Values
 				(  @ID, @BoaUkey, @RefNo, @SCIRefNo, @Article, @ColorID, @SuppColor
 				 , @SizeCode, @SizeSpec, @SizeUnit, @Remark, @OrderQty, @Price, @UsageQty
-				 , @UsageUnit, @SysUsageQty, @BomFactory, @BomCountry, @BomStyle, @BomCustCD
-				 , @BomArticle, @BomZipperInsert, @BomBuymonth, @BomCustPONo
+				 , @UsageUnit, @SysUsageQty, @BomZipperInsert, @BomCustPONo
 				);
 			
-			Set @ExpendUkey = @@IDENTITY;
+			Set @ExpendUkey = Scope_Identity();
 
 			Insert Into #Tmp_BoaExpend_OrderList
 				(ID, ExpendUkey, OrderID)
-				Select @ID, @ExpendUkey, tmpOrder_Qty.ID
-				  From #tmpOrder_Qty as tmpOrder_Qty
+				Select @ID, @ExpendUkey, tmpQtyBreakDown.ID
+				  From @tmpOrder_Qty as tmpQtyBreakDown
 				  Left Join dbo.Order_ColorCombo
 					On	   Order_ColorCombo.ID = @ID
-					   And Order_ColorCombo.Article = tmpOrder_Qty.Article
+					   And Order_ColorCombo.Article = tmpQtyBreakDown.Article
 					   And Order_ColorCombo.LectraCode = @BoaPatternPanel
 				  Left Join dbo.Order_SizeSpec
 				    On	   Order_SizeSpec.ID = @ID
 					   And Order_SizeSpec.SizeItem = @SizeItem
-					   And Order_SizeSpec.SizeCode = tmpOrder_Qty.SizeCode
-				 Where IIF(@BoaBomTypeColor = 1, Order_ColorCombo.ColorID, '') = @ColorID
-				   And IIF(@BoaBomTypeColor = 1, tmpOrder_Qty.Article, '') = @Article
-				   And IIF(@BoaBomTypeFactory = 1, tmpOrder_Qty.FactoryID, '') = @BomFactory
-				   And IIF(@BoaBomTypeCustCD = 1, tmpOrder_Qty.CustCDID, '') = @BomCustCD
-				   And IIF(@BoaBomTypeZipper = 1, tmpOrder_Qty.ZipperInsert, '') = @BomZipperInsert
-				   And IIF(@BoaBomTypePo = 1, tmpOrder_Qty.CustPONo, '') = @BomCustPONo
-				   And IIF(@BoaBomTypeBuyMonth = 1, tmpOrder_Qty.BuyMonth, '') = @BomBuymonth
-				   And IIF(@BoaBomTypeCountry = 1, tmpOrder_Qty.CountryID, '') = @BomCountry
-				   And IIF(@BoaBomTypeStyle = 1, tmpOrder_Qty.StyleID, '') = @BomStyle
-				   And IIF(@BoaBomTypeArticle = 1, tmpOrder_Qty.Article, '') = @BomArticle
-				   And IIF(@BoaBomTypeSize = 1, tmpOrder_Qty.SizeCode, '') = @SizeCode
-				   And IIF(@BoaBomTypeSize = 1 And IsNull(Order_SizeSpec.SizeSpec, '') = '', 0, Qty) > 0
-				 Group by tmpOrder_Qty.ID;
-
+					   And Order_SizeSpec.SizeCode = tmpQtyBreakDown.SizeCode
+				  Left Join (Select Order_BOA_CustCD.*
+								  , Convert(Bit, 1) as IsExist
+							   From dbo.Order_BOA_CustCD
+							) as tmpBOA_CustCD
+					On tmpBOA_CustCD.Order_BOAUkey = @BoaUkey
+				 Where IIF(@BoaBomTypeColor = 1 Or @IsExpendDetail = 1, Order_ColorCombo.ColorID, '') = @ColorID
+				   And IIF(@BoaBomTypeColor = 1 Or @IsExpendDetail = 1, tmpQtyBreakDown.Article, '') = @Article
+				   --And IIF(@BoaBomTypeFactory = 1, tmpQtyBreakDown.FactoryID, '') = @BomFactory
+				   --And IIF(@BoaBomTypeCustCD = 1, tmpQtyBreakDown.CustCDID, '') = @BomCustCD
+				   And IIF(@BoaBomTypeZipper = 1 Or @IsExpendDetail = 1, tmpQtyBreakDown.ZipperInsert, '') = @BomZipperInsert
+				   And IIF(@BoaBomTypePo = 1 Or @IsExpendDetail = 1, tmpQtyBreakDown.CustPONo, '') = @BomCustPONo
+				   --And IIF(@BoaBomTypeBuyMonth = 1, tmpQtyBreakDown.BuyMonth, '') = @BomBuymonth
+				   --And IIF(@BoaBomTypeCountry = 1, tmpQtyBreakDown.CountryID, '') = @BomCountry
+				   --And IIF(@BoaBomTypeStyle = 1, tmpQtyBreakDown.StyleID, '') = @BomStyle
+				   --And IIF(@BoaBomTypeArticle = 1, tmpQtyBreakDown.Article, '') = @BomArticle
+				   And IIF(@BoaBomTypeSize = 1 Or @IsExpendDetail = 1, tmpQtyBreakDown.SizeCode, '') = @SizeCode
+				   --And tmpQtyBreakDown.SizeCode = @SizeCode
+				   --And IIF(@BoaBomTypeSize = 1 And IsNull(Order_SizeSpec.SizeSpec, '') = '', 0, Qty) > 0
+				   And Qty > 0
+				   And (   (IsNull(tmpBOA_CustCD.IsExist, 0) = 0)
+						Or (	IsNull(tmpBOA_CustCD.IsExist, 0) = 1
+							And tmpBOA_CustCD.CustCDID = tmpQtyBreakDown.CustCDID
+						   )
+					   )
+				 Group by tmpQtyBreakDown.ID;
+			
 			Set @Sum_QtyRowID += 1;
 		End;
 

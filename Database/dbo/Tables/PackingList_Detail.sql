@@ -24,8 +24,12 @@
     [ScanQty]          SMALLINT       CONSTRAINT [DF_PackingList_Detail_ScanQty] DEFAULT ((0)) NULL,
     [ScanEditDate]     DATETIME       NULL,
     [Remark]           NVARCHAR (40)  CONSTRAINT [DF_PackingList_Detail_Remark] DEFAULT ('') NULL,
+    [TransferToClogID] VARCHAR (13)   NULL,
+    [ClogReceiveID]    VARCHAR (13)   NULL,
     CONSTRAINT [PK_PackingList_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC)
 );
+
+
 
 
 

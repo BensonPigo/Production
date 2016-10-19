@@ -7,7 +7,7 @@
     [AddDate]         DATETIME     NULL,
     [EditName]        VARCHAR (10) CONSTRAINT [DF_CuttingTape_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME     NULL,
-    CONSTRAINT [PK_CuttingTape] PRIMARY KEY CLUSTERED ([POID] ASC, [MDivisionID] ASC) ON [SLAVE]
+    CONSTRAINT [PK_CuttingTape] PRIMARY KEY CLUSTERED ([POID] ASC, [MDivisionID] ASC) 
 );
 
 
