@@ -18,9 +18,12 @@ namespace Sci.Production.Quality
             InitializeComponent();
             print.Enabled = false;
         }
-
+          string Brand;
+          string Year;
           protected override bool ValidateInput()
           {
+              Brand = combo_Brand.Text.ToString();
+              Year = combo_Year.Text.ToString();
               return base.ValidateInput();
           }
 

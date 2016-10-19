@@ -51,7 +51,9 @@
     <Reference Include="Ict">
       <HintPath>..\_Dll\Ict.dll</HintPath>
     </Reference>
-    <Reference Include="Ict.Win, Version=1.0.1603.700, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Ict.Win">
+      <HintPath>..\_Dll\Ict.Win.dll</HintPath>
+    </Reference>
     <Reference Include="Ict.Win.App">
       <HintPath>..\_Dll\Ict.Win.App.dll</HintPath>
     </Reference>
@@ -371,6 +373,18 @@
     <Compile Include="R40.Designer.cs">
       <DependentUpon>R40.cs</DependentUpon>
     </Compile>
+    <Compile Include="R41.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R41.Designer.cs">
+      <DependentUpon>R41.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R42.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R42.Designer.cs">
+      <DependentUpon>R42.cs</DependentUpon>
+    </Compile>
     <Compile Include="R43.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -516,6 +530,12 @@
     <EmbeddedResource Include="R40.resx">
       <DependentUpon>R40.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="R41.resx">
+      <DependentUpon>R41.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R42.resx">
+      <DependentUpon>R42.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R43.resx">
       <DependentUpon>R43.cs</DependentUpon>
     </EmbeddedResource>
@@ -542,7 +562,7 @@
       <Name>Sci.Production.Tools</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sci.Trade.Class\Sci.Trade.Class.csproj">
-      <Project>{23A1D79E-68AB-4D45-8C1D-11A34EDD3369}</Project>
+      <Project>{23a1d79e-68ab-4d45-8c1d-11a34edd3369}</Project>
       <Name>Sci.Trade.Class</Name>
     </ProjectReference>
   </ItemGroup>

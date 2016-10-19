@@ -18,9 +18,16 @@ namespace Sci.Production.Quality
             InitializeComponent();
             print.Enabled = false;
         }
-
+         string Brand;
+         string Year;
+         string Report_Type1;
+         string Report_Type2;
          protected override bool ValidateInput()
          {
+             Brand = combo_Brand.Text.ToString();
+             Year = combo_Year.Text.ToString();
+             Report_Type1 = radiobtn_pill_snagg_detail.Checked.ToString();
+             Report_Type2 = radiobtn_print_detail.Checked.ToString();
              return base.ValidateInput();
          }
 
