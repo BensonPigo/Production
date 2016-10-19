@@ -37,10 +37,7 @@ namespace Sci.Production.Subcon
                 if (this.EditMode && this.txtsubcon1.TextBox1.Text != this.txtsubcon1.TextBox1.OldValue)
                 {
                     CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
-                    foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
-                    {
-                        dr.Delete();
-                    }
+                    ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
                 }
             };
 
@@ -480,10 +477,7 @@ namespace Sci.Production.Subcon
 
             if ((o.Text != o.OldValue) && this.EditMode)
             {
-                foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
-                {
-                    dr.Delete();
-                }
+                ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
             }
         }
 

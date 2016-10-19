@@ -487,10 +487,7 @@ Where a.id = '{0}' ", masterID);
         //delete all
         private void button9_Click(object sender, EventArgs e)
         {
-            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
-            {
-                dr.Delete();
-            }
+            ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
         }
 
         //find

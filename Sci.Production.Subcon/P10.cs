@@ -41,10 +41,7 @@ namespace Sci.Production.Subcon
                 {
                     CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
                     CurrentMaintain["Paytermid"] = MyUtility.GetValue.Lookup("paytermid", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
-                    foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
-                    {
-                        dr.Delete();
-                    }
+                    ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
                 }
             };
 
@@ -57,10 +54,7 @@ namespace Sci.Production.Subcon
 
             if ((o.Text != o.OldValue) && this.EditMode)
             {
-                foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
-                {
-                    dr.Delete();
-                }
+                ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
                 string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype where id='{0}'", o.Text));
                 if (artworkunit == "") { artworkunit = "PCS"; }
                 this.detailgrid.Columns[3].HeaderText = artworkunit; 

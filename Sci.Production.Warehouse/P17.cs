@@ -813,10 +813,7 @@ Where a.id = '{0}'", masterID);
 
             if (!MyUtility.Check.Empty(textBox2.Text) && textBox2.Text != textBox2.OldValue)
             {
-                foreach (DataRow dr2 in ((DataTable)detailgridbs.DataSource).Rows)
-                {
-                    dr2.Delete();
-                }
+                ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
 
                 DataRow dr;
                 DataTable dt;

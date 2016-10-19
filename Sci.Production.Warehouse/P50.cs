@@ -296,10 +296,7 @@ Where a.id = '{0}'", masterID);
             {
                 if (detailgridbs.DataSource != null)
                 {
-                    foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
-                    {
-                        dr.Delete();
-                    }
+                    ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
                 }
             }
         }
