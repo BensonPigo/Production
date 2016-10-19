@@ -19,7 +19,7 @@ namespace Sci.Production.Class
     public partial class txtsewingline : Sci.Win.UI.TextBox
     {
         private string fty = "";
-        public Control factoryObject;	//欄位.存入要取值的<控制項>
+        public Control factoryObject = null;	//欄位.存入要取值的<控制項>
 
         // 屬性. 利用Control來設定要存取的<控制項>
         [Category("Custom Properties")]
@@ -37,8 +37,23 @@ namespace Sci.Production.Class
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
-            fty = factoryObject.Text;
-            string sql = string.Format("Select ID,FactoryID,Description From SewingLine Where FactoryId = '{0}'", fty);
+
+            if (null == factoryObject || MyUtility.Check.Empty(factoryObject.Text))
+            {
+                fty = "";
+            }
+            else
+            {
+                fty = factoryObject.Text;
+            }
+
+            string ftyWhere = "";
+            if (!fty.Empty())
+            {
+                ftyWhere = string.Format("Where FactoryId = '{0}'", fty);
+            }
+            //fty = factoryObject.Text;
+            string sql = string.Format("Select ID,FactoryID,Description From SewingLine {0} ", ftyWhere);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2,8,16", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
