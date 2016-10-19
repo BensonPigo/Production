@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Transactions;
@@ -1133,10 +1134,16 @@ where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword), out dt);
 
         private void btDownloadSample_Click(object sender, EventArgs e)
         {
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Warehouse_P07_ImportExcelFormat.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return;
-            excel.Visible = true;
+            //呼叫執行檔絕對路徑
+            DirectoryInfo dir = new DirectoryInfo(System.Windows.Forms.Application.StartupPath);
+            //執行檔上一層絕對路徑
+            string xltpath = dir.Parent.FullName.ToString();
+            Microsoft.Office.Interop.Excel._Application ObjApp = MyUtility.Excel.ConnectExcel(xltpath + "\\xlt\\Warehouse_P07_ImportExcelFormat.xltx");
+
+            //string strXltName = Sci.Env.Cfg.XltPathDir + "\\Warehouse_P07_ImportExcelFormat.xltx";
+           // Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            //if (excel == null) return;
+            //excel.Visible = true;
         }
         protected override bool ClickPrint()
         {
