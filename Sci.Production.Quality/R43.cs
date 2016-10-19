@@ -1,8 +1,12 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
@@ -14,47 +18,123 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
+
+            DataTable Year = null;
+            string cmd = (@" declare @d date = getdate()
+                            declare @y1 varchar(4) = cast(datepart(year, dateadd(year,-2, @d) ) as varchar(4))
+                            declare @y2 varchar(4) = cast(datepart(year, dateadd(year,-1, @d) ) as varchar(4))
+                            declare @y3 varchar(4) = cast(datepart(year,@d) as varchar(4))
+                            select @y1 as y1,@y2 as y2,@y3 as y3 into #temp 
+                            select * from #temp 
+                            unpivot(M FOR #temp IN 
+                            (y1,y2,y3)) as years");
+            DBProxy.Current.Select("", cmd, out Year);
+            Year.DefaultView.Sort = "M";
+            
+            this.comboBox_year.DataSource = Year;
+            this.comboBox_year.ValueMember = "M";
+            this.comboBox_year.DisplayMember = "M";
+           
+
+            DataTable Month = null;
+            string scmd = (@"select  distinct month(startdate) as md from dbo.ADIDASComplain");
+            DBProxy.Current.Select("", scmd, out Month);
+            Month.DefaultView.Sort = "md";
+            this.comboBox_month.DataSource = Month;
+            this.comboBox_month.ValueMember = "md";
+            this.comboBox_month.DisplayMember = "md";
+            this.comboBox_brand.SelectedIndex = 0;
             print.Enabled = false;
-           
-           
+          
         }
         string Brand;
         string Year;
         string Month;
+        DataTable dt;
         protected override bool ValidateInput()
         {
-            Brand = comboBox_brand.SelectedItem.ToString();
-            Year = comboBox_year.SelectedItem.ToString();
-            Month = comboBox_month.SelectedItem.ToString();
+            Brand = comboBox_brand.Text.ToString();
+            Year = comboBox_year.Text.ToString();
+            Month = comboBox_month.Text.ToString();
             return base.ValidateInput();
         }
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            return base.OnAsyncDataLoad(e);
-        }
-       
+            List<SqlParameter> lis = new List<SqlParameter>();
+            string sqlWhere = "";
+            List<string> sqlWheres = new List<string>();
+
+            if (Brand != "")
+            {
+                sqlWheres.Add(" b.BrandID =@Brand");
+                lis.Add(new SqlParameter("@Brand", Brand));
+            }
+            if (Year != "") 
+            {
+                sqlWheres.Add("year(a.StartDate)=@Year");
+                lis.Add(new SqlParameter("@Year", Year));
+            }
+
+            if (Month != "")
+             {
+                 sqlWheres.Add("MONTH(a.StartDate)=@Month");
+                 lis.Add(new SqlParameter("@Month", Month));
+             }
+           
+            sqlWhere = string.Join(" and ", sqlWheres);
+            if (!sqlWhere.Empty())
+            {
+                sqlWhere = " where " + sqlWhere;
+            }
+            DualResult result;
+
+            string sqlcmd = string.Format(@"select a.AGCCode [Factory ID]
+                                                  ,b.SeasonId [Season]
+                                                  ,b.BulkMR [DevMR]
+                                                  ,b.SampleMR [BulkMR]
+                                                  ,b.Supplier [Supplier]
+                                                  ,b.FactoryID [Factory]
+                                                  ,b.Refno [Shell]
+                                                  ,b.SalesName [Sales_Org_Name]
+                                                  ,b.StyleID [Style]
+                                                  ,b.Article [Article_ID]
+                                                  ,b.ArticleName [ArticleName]
+                                                  ,b.OrderID [SP]
+                                                  ,b.CustPONo [PO]
+                                                  ,b.ProductionDate [ProductionDate]
+                                                  ,b.DefectMainID [DefectMainID]
+                                                  ,b.DefectSubID [DefectSubID]
+                                                  ,b.FOB [FOB_Price]
+                                                  ,b.Qty [Qty]
+                                                  ,b.ValueinUSD [Complaint_Value]
+                                                  ,b.ValueINExRate [Exrate]
+                                                  ,c.Name [Defect_Main_Name]
+                                                  ,d.SubName [Defect_Sub_Name]
+                                         from dbo.ADIDASComplain a
+                                         inner join dbo.ADIDASComplain_Detail b on a.id=b.ID
+                                         left join dbo.ADIDASComplainDefect c on b.DefectMainID=c.ID
+                                         left join dbo.ADIDASComplainDefect_Detail d on d.ID=b.DefectMainID and d.SubID=b.DefectSubID " + sqlWhere);
+           result = DBProxy.Current.Select("", sqlcmd,lis, out dt);
+            
+
+            return result; //base.OnAsyncDataLoad(e);
+            }
+           
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            return base.OnToExcel(report);
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.ErrorBox("Data not found");
+                return false;
+            }
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R43.xltx"); //預先開啟excel app                         
+            MyUtility.Excel.CopyToXls(dt, "", "Quality_R43.xltx", 1, true, null, objApp);      // 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            return true;
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 }
