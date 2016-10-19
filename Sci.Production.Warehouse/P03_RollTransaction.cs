@@ -162,7 +162,8 @@ union all
                                         and b1.ToSeq2 = b.ToSeq2 group by b1.ToLocation) tmp 
                         for XML PATH('')),'') as ToLocation
 from SubTransfer a, SubTransfer_Detail b 
-where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id
+where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id  
+    AND TYPE <>'D' --570: WAREHOUSE_P03_RollTransaction。C倉不用算，所以要把TYPE為D的資料濾掉
 group by a.id, ToPoid, ToSeq1,ToSeq2, remark ,a.IssueDate,b.ToRoll,b.ToStockType,b.ToDyelot,a.type	    
 
 union all
