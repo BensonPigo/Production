@@ -64,6 +64,14 @@ namespace Sci.Production.Warehouse
         protected override bool ClickDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+
+            //602: WAREHOUSE_P74_Material Borrow cross M (Request)，SENT之後不能刪除。
+            if (dr["status"].ToString().ToUpper() == "SENT")
+            {
+                MyUtility.Msg.WarningBox("Data is sent, can't delete.", "Warning");
+                return false;
+            }
+
             if (dr["status"].ToString().ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't delete.", "Warning");
@@ -76,6 +84,14 @@ namespace Sci.Production.Warehouse
         protected override bool ClickEditBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+
+            //602: WAREHOUSE_P74_Material Borrow cross M (Request)，SENT之後不能修改。
+            if (dr["status"].ToString().ToUpper() == "SENT")
+            {
+                MyUtility.Msg.WarningBox("Data is sent, can't modify.", "Warning");
+                return false;
+            }
+
             if (dr["status"].ToString().ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
