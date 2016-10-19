@@ -31,12 +31,11 @@ namespace Sci.Production.Quality
                         where type = 'Category' and id != 'O'
                         ");
             DBProxy.Current.Select("", sqlm, out ORS);
-            ORS.Rows.Add(new string[] { "" });
             ORS.DefaultView.Sort = "Category";
             this.comboCategory.DataSource = ORS;
             this.comboCategory.ValueMember = "Category";
             this.comboCategory.DisplayMember = "Category";
-            this.comboCategory.SelectedIndex = 1;
+            this.comboCategory.SelectedIndex = 0;
             DataTable factory;
             DBProxy.Current.Select(null, "select distinct FTYGroup from Factory order by FTYGroup", out factory);
             MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
