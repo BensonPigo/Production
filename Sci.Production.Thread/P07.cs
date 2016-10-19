@@ -43,6 +43,7 @@ namespace Sci.Production.Thread
             DataGridViewGeneratorTextColumnSettings thlocationfrom = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings thlocationto = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings qty2 = new DataGridViewGeneratorNumericColumnSettings();
 
             #region Refno Cell
             refno.CellValidating += (s, e) =>
@@ -188,7 +189,26 @@ namespace Sci.Production.Thread
                 }
                 CurrentDetailData.EndEdit();
             };
-            #endregion      
+            #endregion
+
+            qty.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode || e.RowIndex == -1) return;
+                decimal nc = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                if (nc>(decimal)CurrentDetailData["NewConebook"])
+                {
+                    CurrentDetailData["NewCone"] = 0;
+                }
+            };
+            qty2.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode || e.RowIndex == -1) return;
+                decimal nc = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                if (nc > (decimal)CurrentDetailData["UsedConebook"])
+                {
+                    CurrentDetailData["UsedCone"] = 0;
+                }
+            };
             #region setup Grid
 
             Helper.Controls.Grid.Generator(this.detailgrid)
@@ -197,12 +217,12 @@ namespace Sci.Production.Thread
             .CellThreadColor("ThreadColorid", header: "Color", width: Widths.AnsiChars(15), settings: thcolor)
             .Text("Colordesc", header: "Color Description", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Locationfrom", header: "Location (From)", width: Widths.AnsiChars(10), settings: thlocationfrom)
-            .Text("Locationto", header: "Location (To)", width: Widths.AnsiChars(10), settings: thlocationto)
             .Numeric("NewConebook", header: "New Cone\nin Stock", width: Widths.AnsiChars(5), integer_places: 3,iseditingreadonly:true)
-            .Numeric("NewCone", header: "New Cone", width: Widths.AnsiChars(5), integer_places: 5, settings: qty)
-             .Numeric("UsedConebook", header: "Used cone\nin Stock", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: 
+            .Numeric("UsedConebook", header: "Used cone\nin Stock", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly:
             true)
-            .Numeric("UsedCone", header: "Used Cone", width: Widths.AnsiChars(5), integer_places: 5, settings: qty)
+            .Text("Locationto", header: "Location (To)", width: Widths.AnsiChars(10), settings: thlocationto)
+            .Numeric("NewCone", header: "New Cone", width: Widths.AnsiChars(5), integer_places: 5, settings: qty)
+            .Numeric("UsedCone", header: "Used Cone", width: Widths.AnsiChars(5), integer_places: 5, settings: qty2)
             .Text("category", header: "Category", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("remark", header: "Remark", width: Widths.AnsiChars(60));
             #endregion
@@ -210,8 +230,8 @@ namespace Sci.Production.Thread
             this.detailgrid.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns[2].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns[4].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns[5].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
 
             return base.OnGridSetup();
@@ -280,6 +300,16 @@ namespace Sci.Production.Thread
                     MyUtility.Msg.WarningBox("<Location(to)> can not be empty!", "Warning");
                     return false;
                 }
+                if ((decimal)dr["NewCone"] > (decimal)dr["NewConebook"])
+                {
+                    MyUtility.Msg.WarningBox("<NewCone> can not more than NewConeinStock !", "Warning");
+                    return false;
+                }
+                if ((decimal)dr["UsedCone"] > (decimal)dr["UsedConebook"])
+                {
+                    MyUtility.Msg.WarningBox("<UsedCone> can not more than UsedConeinStock!", "Warning");
+                    return false;
+                }
             }
 
             if (this.DetailDatas.Count == 0)
@@ -325,15 +355,20 @@ namespace Sci.Production.Thread
 
             foreach (DataRow dr in this.DetailDatas)
             {
-                checksql = string.Format("Select * from ThreadStock where refno ='{0}' and threadLocationid = '{1}' and threadcolorid = '{2}' and mDivisionid = '{3}'", dr["refno"], dr["locationfrom"], dr["threadcolorid"], keyWord);
+                checksql = string.Format(@"Select a.*,d.newCone as newconebook,d.usedcone as usedconebook 
+from ThreadTransfer_Detail a 
+left join ThreadStock d on d.refno = a.refno 
+and d.threadColorid = a.threadColorid 
+and d.threadLocationid = a.Locationfrom 
+where d.refno ='{0}' and threadLocationid = '{1}' and d.threadcolorid = '{2}' and mDivisionid = '{3}'", dr["refno"], dr["locationfrom"], dr["threadcolorid"], keyWord);
                 if (MyUtility.Check.Seek(checksql, out stdr))//找不到庫存或不夠不可confirm
                 {
-                    if ((decimal)stdr["Newcone"] < (decimal)dr["NewCone"])
+                    if ((decimal)stdr["NewConebook"] < (decimal)dr["NewCone"])
                     {
                         msg1 = msg1 + string.Format("<{0}>,<{1}>,<{2}>\n", dr["refno"], dr["Threadcolorid"], dr["locationfrom"]);
                         lmsg1 = true;
                     }
-                    if ((decimal)stdr["UsedCone"] < (decimal)dr["UsedCone"])
+                    if ((decimal)stdr["UsedConebook"] < (decimal)dr["UsedCone"])
                     {
                         msg2 = msg2 + string.Format("<{0}>,<{1}>,<{2}>\n", dr["refno"], dr["Threadcolorid"], dr["locationfrom"]);
                         lmsg2 = true;
@@ -352,12 +387,12 @@ namespace Sci.Production.Thread
                 }
                 else
                 {
-                    if ((decimal)stdr["Newcone"] < (decimal)dr["NewCone"])
+                    if ((decimal)stdr["NewConebook"] < (decimal)dr["NewCone"])
                     {
                         msg1 = msg1 + string.Format("<{0}>,<{1}>,<{2}>\n", dr["refno"], dr["Threadcolorid"], dr["locationfrom"]);
                         lmsg1 = true;
                     }
-                    if ((decimal)stdr["UsedCone"] < (decimal)dr["UsedCone"])
+                    if ((decimal)stdr["UsedConebook"] < (decimal)dr["UsedCone"])
                     {
                         msg2 = msg2 + string.Format("<{0}>,<{1}>,<{2}>\n", dr["refno"], dr["Threadcolorid"], dr["locationfrom"]);
                         lmsg2 = true;
@@ -524,5 +559,6 @@ namespace Sci.Production.Thread
             Form P07_import = new Sci.Production.Thread.P07_Import(detTable);
             P07_import.ShowDialog();
         }
+
     }
 }
