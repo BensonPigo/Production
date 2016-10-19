@@ -53,7 +53,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.comboCategory = new Sci.Win.UI.ComboBox();
             this.txtsupplier = new Sci.Production.Class.txtsupplier();
-            this.comboFabricType = new Sci.Win.UI.ComboBox();
+            this.comboMaterialType = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -70,7 +70,7 @@
             // panel1
             // 
             this.panel1.Controls.Add(this.comboFactory);
-            this.panel1.Controls.Add(this.comboFabricType);
+            this.panel1.Controls.Add(this.comboMaterialType);
             this.panel1.Controls.Add(this.txtsupplier);
             this.panel1.Controls.Add(this.comboCategory);
             this.panel1.Controls.Add(this.txtRefno);
@@ -201,7 +201,7 @@
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(135, 23);
             this.label11.TabIndex = 105;
-            this.label11.Text = "Fabric Type............:";
+            this.label11.Text = "Material Type..........:";
             // 
             // label10
             // 
@@ -304,16 +304,16 @@
             this.txtsupplier.TabIndex = 118;
             this.txtsupplier.TextBox1Binding = "";
             // 
-            // comboFabricType
+            // comboMaterialType
             // 
-            this.comboFabricType.BackColor = System.Drawing.Color.White;
-            this.comboFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFabricType.FormattingEnabled = true;
-            this.comboFabricType.IsSupportUnselect = true;
-            this.comboFabricType.Location = new System.Drawing.Point(161, 401);
-            this.comboFabricType.Name = "comboFabricType";
-            this.comboFabricType.Size = new System.Drawing.Size(142, 24);
-            this.comboFabricType.TabIndex = 119;
+            this.comboMaterialType.BackColor = System.Drawing.Color.White;
+            this.comboMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMaterialType.FormattingEnabled = true;
+            this.comboMaterialType.IsSupportUnselect = true;
+            this.comboMaterialType.Location = new System.Drawing.Point(161, 401);
+            this.comboMaterialType.Name = "comboMaterialType";
+            this.comboMaterialType.Size = new System.Drawing.Size(142, 24);
+            this.comboMaterialType.TabIndex = 119;
             // 
             // comboFactory
             // 
@@ -369,7 +369,7 @@
         private Class.txtbrand txtbrand;
         private Class.txtseason txtseason;
         private Win.UI.ComboBox comboCategory;
-        private Win.UI.ComboBox comboFabricType;
+        private Win.UI.ComboBox comboMaterialType;
         private Class.txtsupplier txtsupplier;
         private Win.UI.ComboBox comboFactory;
 
