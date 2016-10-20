@@ -2130,10 +2130,12 @@ Sci.Production.Warehouse/CrossM/P71_Import.cs -text
 Sci.Production.Warehouse/CrossM/P71_Import.resx -text
 Sci.Production.Warehouse/CrossM/P72.Designer.cs -text
 Sci.Production.Warehouse/CrossM/P72.cs -text
+Sci.Production.Warehouse/CrossM/P72.rdlc -text
 Sci.Production.Warehouse/CrossM/P72.resx -text
 Sci.Production.Warehouse/CrossM/P72_Import.Designer.cs -text
 Sci.Production.Warehouse/CrossM/P72_Import.cs -text
 Sci.Production.Warehouse/CrossM/P72_Import.resx -text
+Sci.Production.Warehouse/CrossM/P72_PrintData.cs -text
 Sci.Production.Warehouse/CrossM/P73.Designer.cs -text
 Sci.Production.Warehouse/CrossM/P73.cs -text
 Sci.Production.Warehouse/CrossM/P73.resx -text
