@@ -38,8 +38,14 @@ namespace Sci.Production.Warehouse
             this.displayBox2.Text = MyUtility.GetValue.Lookup(string.Format("select dbo.getmtldesc('{0}','{1}','{2}',2,0)", dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString()));
             this.numericBox1.Value = MyUtility.Check.Empty( dr["inqty"]) ? decimal.Parse("0.00"): decimal.Parse(dr["inqty"].ToString());
             this.numericBox2.Value = MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["outqty"].ToString());
-            this.numericBox3.Value = (MyUtility.Check.Empty(dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["inqty"].ToString())) -
-              ( MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["outqty"].ToString())) +(MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["adjustqty"].ToString()));
+
+            //this.numericBox3.Value = (MyUtility.Check.Empty(dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["inqty"].ToString())) -
+            //  ( MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["outqty"].ToString())) +(MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["adjustqty"].ToString()));
+            decimal IN = (MyUtility.Check.Empty(dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["inqty"].ToString()));
+            decimal OUT = (MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["outqty"].ToString()));
+            decimal ADJ = (MyUtility.Check.Empty(dr["adjustqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["adjustqty"].ToString()));
+            this.numericBox3.Value = IN - OUT + ADJ;
+
 
 
             #region Grid1 - Sql command
@@ -103,7 +109,8 @@ union all
 	,case type when 'A' then 'P10. Issue Fabric to Cutting Section' 
                     when 'B' then 'P11. Issue Sewing Material by Transfer Guide' 
                     when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
-                    when 'D' then 'P13. Issue Material by Item' end name
+                    when 'D' then 'P13. Issue Material by Item' 
+                    when 'F' then 'P75. Material Borrow cross M (Confirm)' end name
 	,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
 from Issue a, Issue_Detail b 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 

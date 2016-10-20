@@ -351,6 +351,15 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             string sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
 
+            #region 603: WAREHOUSE_P75_Material Borrow cross M (Confirmed)。若P76已經收料了，則不能unconfirm。
+            string P76_status = MyUtility.GetValue.Lookup(string.Format(@"select Status from RequestCrossM where ID='{0}'", CurrentMaintain["CutplanID"]));
+            if (P76_status.ToUpper() == "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("This request id already confirmed in P76 , can't unconfirm.", "Warning");
+                return;
+            }
+            #endregion
+
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty

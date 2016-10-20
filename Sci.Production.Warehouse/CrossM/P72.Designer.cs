@@ -283,7 +283,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P72";
-            this.Text = "P72. Transfer Inventory to Bulk (Confirme)";
+            this.Text = "P72. Transfer Inventory to Bulk (Confirm)";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";
             this.WorkAlias = "Issue";

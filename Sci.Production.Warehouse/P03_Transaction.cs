@@ -131,7 +131,8 @@ union all
 	,case type when 'A' then 'P10. Issue Fabric to Cutting Section' 
 when 'B' then 'P11. Issue Sewing Material by Transfer Guide' 
 when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
-when 'D' then 'P13. Issue Material by Item' end name
+when 'D' then 'P13. Issue Material by Item'
+when 'F' then 'P75. Material Borrow cross M (Confirm)'  end name
 	,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
 from Issue a, Issue_Detail b 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
