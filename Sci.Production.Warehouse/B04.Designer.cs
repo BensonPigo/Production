@@ -45,7 +45,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(900, 395);
+            this.detail.Size = new System.Drawing.Size(726, 395);
             // 
             // detailcont
             // 
@@ -56,19 +56,19 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Size = new System.Drawing.Size(900, 357);
+            this.detailcont.Size = new System.Drawing.Size(726, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(900, 38);
+            this.detailbtm.Size = new System.Drawing.Size(726, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(900, 395);
+            this.browse.Size = new System.Drawing.Size(776, 395);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(908, 424);
+            this.tabs.Size = new System.Drawing.Size(734, 424);
             // 
             // label3
             // 
@@ -143,12 +143,12 @@
             // 
             // B04
             // 
-            this.ClientSize = new System.Drawing.Size(908, 457);
+            this.ClientSize = new System.Drawing.Size(734, 457);
             this.DefaultFilter = "type=\'RA\'";
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B04";
-            this.Text = "Refund Action Code";
+            this.Text = "B04.Refund Action Code";
             this.WorkAlias = "WhseReason";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
