@@ -150,11 +150,12 @@ namespace Sci.Production.Warehouse
                         , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
                 }
 
-                if (MyUtility.Check.Empty(row["stockunit"]))
-                {
-                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Stock Unit can't be empty"
-                        , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
-                }
+                //600: WAREHOUSE_P08，移除表身[stockunit]必填的檢核
+                //if (MyUtility.Check.Empty(row["stockunit"]))
+                //{
+                //    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Stock Unit can't be empty"
+                //        , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
+                //}
 
                 if (MyUtility.Check.Empty(row["stocktype"]))
                 {
@@ -658,10 +659,7 @@ Where a.id = '{0}' ", masterID);
         //delete all
         private void button9_Click(object sender, EventArgs e)
         {
-            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
-            {
-                dr.Delete();
-            }
+            ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
         }
 
         //Accumulated Qty
