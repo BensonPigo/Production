@@ -15,6 +15,6 @@ namespace Sci.Production.Warehouse.CrossM
         public string InventorySeq { get; set; }
         public string StockUnit { get; set; }
         public string QTY { get; set; }
-       
+ 
     }
 }

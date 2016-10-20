@@ -539,7 +539,7 @@ Where a.id = '{0}'", masterID);
             string Remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             string Requestid = row["cutplanid"].ToString();
-            #region -- 撈表頭資料 --
+           
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
@@ -549,7 +549,6 @@ Where a.id = '{0}'", masterID);
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
 
-            #endregion
             #region -- 撈表身資料 --
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
@@ -570,6 +569,7 @@ Where a.id = '{0}'", masterID);
             res = DBProxy.Current.Select("", sqlcmd, pars, out dt);
             if (!res)
             {
+                this.ShowErr(res);
                 return res;
             }
       
