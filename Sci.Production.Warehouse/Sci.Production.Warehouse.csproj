@@ -132,6 +132,7 @@
     </Compile>
     <Compile Include="CrossM\P71_PrintData.cs" />
     <Compile Include="CrossM\P72_PrintData.cs" />
+    <Compile Include="CrossM\P73_PrintData.cs" />
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -957,6 +958,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CrossM\P71_Print.rdlc" />
     <EmbeddedResource Include="CrossM\P72.rdlc" />
+    <EmbeddedResource Include="CrossM\P73_Print.rdlc" />
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>
