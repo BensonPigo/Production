@@ -57,10 +57,12 @@ namespace Sci.Production.Warehouse
                                             and a.Seq1 = '{1}'
                                             and a.Seq2 = '{2}' 
                                             and MDivisionPoDetailUkey is not null  --避免下面Relations發生問題
+                                            and MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
                                             order by a.dyelot,a.roll,a.stocktype"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString());
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword);
             #endregion
 
             #region Grid2 - Sql Command
@@ -76,6 +78,7 @@ from (
 ,0 as inqty,0 as outqty, sum(QtyAfter - QtyBefore) adjust, remark ,'' location
 from Adjust a, Adjust_Detail b 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+    and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate,type,b.roll,b.stocktype,b.dyelot
 union all
 	select b.FromRoll,b.FromStockType,b.FromDyelot,a.IssueDate, a.id
@@ -84,6 +87,7 @@ union all
 ,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location
 from BorrowBack a, BorrowBack_Detail b 
 where Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id 
+    and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
 group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,b.FromRoll,b.FromStockType,b.FromDyelot,a.type
 union all
 	select b.ToRoll,b.ToStockType,b.ToDyelot,issuedate, a.id
@@ -92,6 +96,7 @@ union all
 , sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location
 from BorrowBack a, BorrowBack_Detail b 
 where Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id 
+    and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
 group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,b.ToRoll,b.ToStockType,b.ToDyelot,a.type
 union all
 	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
@@ -102,6 +107,7 @@ union all
 	,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
 from Issue a, Issue_Detail b 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+    and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type,b.roll,b.stocktype,b.dyelot,a.type                                                             
 union all
 	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
@@ -110,11 +116,13 @@ union all
 	, 0 as inqty,sum(b.Qty) outqty ,0 as adjust, remark ,'' location
 from IssueLack a, IssueLack_Detail b 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+    and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
 group by a.id, poid, seq1,Seq2, remark  ,a.IssueDate,a.FabricType,b.roll,b.stocktype,b.dyelot                                                               
 union all
 	select b.roll,b.stocktype,b.dyelot,issuedate, a.id,'P17. R/Mtl Return' name, 0 as inqty, sum(0.00 - b.Qty) released,0 as adjust, remark,'' location
 from IssueReturn a, IssueReturn_Detail b 
 where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+    and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
 group by a.Id, poid, seq1,Seq2, remark,a.IssueDate,b.roll,b.stocktype,b.dyelot                                                                           
 union all
 	select b.roll,b.stocktype,b.dyelot
@@ -125,13 +133,15 @@ union all
 	    , sum(b.StockQty) inqty,0 as outqty,0 as adjust,'' remark ,'' location
     from Receiving a, Receiving_Detail b 
     where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+        and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
     group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,b.roll,b.stocktype,b.dyelot,a.eta
 union all
 	select b.roll,b.stocktype,b.dyelot,issuedate
     ,'P37. Return Receiving Material' name
 , a.id, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
 from ReturnReceipt a, ReturnReceipt_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id
+    and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯 
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate,b.roll,b.stocktype,b.dyelot                                                                           
 union all
 	select b.FromRoll,b.FromStockType,b.FromDyelot,issuedate, a.id
@@ -144,6 +154,7 @@ union all
 	, 0 as inqty, sum(Qty) released,0 as adjust ,isnull(a.remark,'') remark ,'' location
 from SubTransfer a, SubTransfer_Detail b 
 where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}' and FromSeq2 = '{2}'  and a.id = b.id
+    and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
 group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,b.FromRoll,b.FromStockType,b.FromDyelot,a.Type,a.remark
                                                                              
 union all
@@ -164,6 +175,7 @@ union all
 from SubTransfer a, SubTransfer_Detail b 
 where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id  
     AND TYPE <>'D' --570: WAREHOUSE_P03_RollTransaction。C倉不用算，所以要把TYPE為D的資料濾掉
+    and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
 group by a.id, ToPoid, ToSeq1,ToSeq2, remark ,a.IssueDate,b.ToRoll,b.ToStockType,b.ToDyelot,a.type	    
 
 union all
@@ -181,6 +193,7 @@ union all
                         for XML PATH('')) as Location
 from TransferIn a, TransferIn_Detail b 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+    and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate,b.roll,b.stocktype,b.dyelot                                                                        
 union all
 	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
@@ -188,12 +201,14 @@ union all
             , 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
 from TransferOut a, TransferOut_Detail b 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+    and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
 group by a.id, poid, Seq1,Seq2, remark,a.IssueDate,b.roll,b.stocktype,b.dyelot) tmp
 group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.stocktype,tmp.dyelot
 "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString());
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword);
 
             #endregion
 
