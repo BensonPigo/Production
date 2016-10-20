@@ -455,7 +455,7 @@
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(127, 23);
             this.label21.TabIndex = 36;
-            this.label21.Text = "Carton Ext. Arrived";
+            this.label21.Text = "Carton Est. Arrived";
             // 
             // dateBox2
             // 

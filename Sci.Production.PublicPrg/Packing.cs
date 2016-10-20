@@ -138,7 +138,7 @@ as
  and pd.OrderID = '{0}'
  and pd.OrderShipmodeSeq = '{1}'
  and p.ID = pdd.ID
- and pd.UKey = pdd.UKey
+ and pd.UKey = pdd.Pullout_DetailUKey
  and pdd.Article = '{2}'
  and pdd.SizeCode = '{3}'
 ),
