@@ -22,7 +22,6 @@ namespace Sci.Production.Cutting
         public P10(ToolStripMenuItem menuitem,string history)
             : base(menuitem)
         {
-
             InitializeComponent();
             if (history == "0") this.DefaultFilter = string.Format("Orderid in (Select id from orders where finished=0) and mDivisionid='{0}'", keyword);
             else this.DefaultFilter = string.Format("Orderid in (Select id from orders where finished=1) and mDivisionid='{0}'",keyword);
@@ -64,6 +63,10 @@ namespace Sci.Production.Cutting
             else  qty = Convert.ToInt16(bundle_Detail_Qty_Tb.Compute("Sum(Qty)",""));
            
             numericBox_GroupQty.Value = qty;
+
+            string factoryid = MyUtility.GetValue.Lookup(string.Format("SELECT o.FactoryID FROM Bundle b inner join orders o on b.Orderid=o.ID where b.Orderid='{0}'",orderid), null);
+
+            //txtsewingline1.factoryobjectName = (Control)factoryid;
 
         }
         public void queryTable()
@@ -693,19 +696,19 @@ namespace Sci.Production.Cutting
 
        
 
-        private void textBox_Line_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (!this.EditMode) return;
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
-            {
+        //private void textBox_Line_MouseDown(object sender, MouseEventArgs e)
+        //{
+        //    if (!this.EditMode) return;
+        //    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+        //    {
 
-                string sqlcmd1 = "語法需有文件確認才可以填上去";
-                SelectItem item1 = new SelectItem(sqlcmd1, "30", textBox_Line.Text.ToString());
-                DialogResult result1 = item1.ShowDialog();
-                if (result1 == DialogResult.Cancel) { return; }
-                //
-                textBox_Line.Text = item1.GetSelectedString();
-            }
-        }
+        //        string sqlcmd1 = "語法需有文件確認才可以填上去";
+        //        SelectItem item1 = new SelectItem(sqlcmd1, "30", textBox_Line.Text.ToString());
+        //        DialogResult result1 = item1.ShowDialog();
+        //        if (result1 == DialogResult.Cancel) { return; }
+        //        //
+        //        textBox_Line.Text = item1.GetSelectedString();
+        //    }
+        //}
     }
 }

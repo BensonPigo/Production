@@ -64,7 +64,6 @@
             this.textBox_orderid = new Sci.Win.UI.TextBox();
             this.textBox_item = new Sci.Win.UI.TextBox();
             this.textBox_cell = new Sci.Win.UI.TextBox();
-            this.textBox_Line = new Sci.Win.UI.TextBox();
             this.numericBox_Cutno = new Sci.Win.UI.NumericBox();
             this.dateBox_Date = new Sci.Win.UI.DateBox();
             this.textBox_FabricCombo = new Sci.Win.UI.TextBox();
@@ -74,6 +73,7 @@
             this.textBox_Colorid = new Sci.Win.UI.TextBox();
             this.Generate_Button = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
+            this.txtsewingline1 = new Sci.Production.Class.txtsewingline();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -90,6 +90,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtsewingline1);
             this.masterpanel.Controls.Add(this.Generate_Button);
             this.masterpanel.Controls.Add(this.textBox_Colorid);
             this.masterpanel.Controls.Add(this.textBox_Article);
@@ -97,7 +98,6 @@
             this.masterpanel.Controls.Add(this.textBox_Size);
             this.masterpanel.Controls.Add(this.textBox_FabricCombo);
             this.masterpanel.Controls.Add(this.numericBox_Cutno);
-            this.masterpanel.Controls.Add(this.textBox_Line);
             this.masterpanel.Controls.Add(this.textBox_cell);
             this.masterpanel.Controls.Add(this.textBox_item);
             this.masterpanel.Controls.Add(this.textBox_orderid);
@@ -174,7 +174,6 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox_orderid, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox_item, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox_cell, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox_Line, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericBox_Cutno, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox_FabricCombo, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox_Size, 0);
@@ -182,6 +181,7 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox_Article, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox_Colorid, 0);
             this.masterpanel.Controls.SetChildIndex(this.Generate_Button, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtsewingline1, 0);
             // 
             // detailpanel
             // 
@@ -202,15 +202,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(870, 502);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(864, 456);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(864, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -627,17 +627,6 @@
             this.textBox_cell.Size = new System.Drawing.Size(56, 23);
             this.textBox_cell.TabIndex = 36;
             // 
-            // textBox_Line
-            // 
-            this.textBox_Line.BackColor = System.Drawing.Color.White;
-            this.textBox_Line.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "sewinglineid", true));
-            this.textBox_Line.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox_Line.Location = new System.Drawing.Point(97, 115);
-            this.textBox_Line.Name = "textBox_Line";
-            this.textBox_Line.Size = new System.Drawing.Size(56, 23);
-            this.textBox_Line.TabIndex = 2;
-            this.textBox_Line.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox_Line_MouseDown);
-            // 
             // numericBox_Cutno
             // 
             this.numericBox_Cutno.BackColor = System.Drawing.Color.White;
@@ -738,6 +727,17 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // txtsewingline1
+            // 
+            this.txtsewingline1.BackColor = System.Drawing.Color.White;
+            this.txtsewingline1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "sewinglineid", true));
+            this.txtsewingline1.factoryobjectName = null;
+            this.txtsewingline1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtsewingline1.Location = new System.Drawing.Point(96, 115);
+            this.txtsewingline1.Name = "txtsewingline1";
+            this.txtsewingline1.Size = new System.Drawing.Size(53, 23);
+            this.txtsewingline1.TabIndex = 47;
+            // 
             // P10
             // 
             this.ClientSize = new System.Drawing.Size(878, 564);
@@ -810,7 +810,6 @@
         private Win.UI.TextBox textBox_FabricCombo;
         private Win.UI.DateBox dateBox_Date;
         private Win.UI.NumericBox numericBox_Cutno;
-        private Win.UI.TextBox textBox_Line;
         private Win.UI.TextBox textBox_cell;
         private Win.UI.TextBox textBox_item;
         private Win.UI.TextBox textBox_orderid;
@@ -818,5 +817,6 @@
         private Win.UI.NumericBox numericBox_GroupQty;
         private Win.UI.Button Generate_Button;
         private Win.UI.Button button1;
+        private Class.txtsewingline txtsewingline1;
     }
 }
