@@ -209,28 +209,28 @@ namespace Sci.Production.Subcon
         }
 
         // grid 加工填值
-        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
-        {
-            if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
-            {
-                (e.Details).Columns.Add("Style", typeof(String));
-                (e.Details).Columns.Add("sewinline", typeof(DateTime));
-                (e.Details).Columns.Add("scidelivery", typeof(DateTime));
+        //protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
+        //{
+        //    if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
+        //    {
+        //        (e.Details).Columns.Add("Style", typeof(String));
+        //        (e.Details).Columns.Add("sewinline", typeof(DateTime));
+        //        (e.Details).Columns.Add("scidelivery", typeof(DateTime));
 
-                foreach (DataRow dr in e.Details.Rows)
-                {
-                    dr["Price"] = (Decimal)dr["unitprice"] * (Decimal)dr["qtygarment"];
-                    DataTable order_dt;
-                    DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders where id='{0}'", dr["orderid"].ToString()), out order_dt);
-                    if (order_dt.Rows.Count == 0)
-                        break;
-                    dr["style"] = order_dt.Rows[0]["styleid"].ToString();
-                    dr["sewinline"] = order_dt.Rows[0]["sewinline"];
-                    dr["scidelivery"] = order_dt.Rows[0]["scidelivery"];
-                }
-            }
-            return base.OnRenewDataDetailPost(e);
-        }
+        //        foreach (DataRow dr in e.Details.Rows)
+        //        {
+        //            dr["Price"] = (Decimal)dr["unitprice"] * (Decimal)dr["qtygarment"];
+        //            DataTable order_dt;
+        //            DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders where id='{0}'", dr["orderid"].ToString()), out order_dt);
+        //            if (order_dt.Rows.Count == 0)
+        //                break;
+        //            dr["style"] = order_dt.Rows[0]["styleid"].ToString();
+        //            dr["sewinline"] = order_dt.Rows[0]["sewinline"];
+        //            dr["scidelivery"] = order_dt.Rows[0]["scidelivery"];
+        //        }
+        //    }
+        //    return base.OnRenewDataDetailPost(e);
+        //}
 
         //refresh
         protected override void OnDetailEntered()
@@ -503,6 +503,22 @@ namespace Sci.Production.Subcon
             }
             var frm = new Sci.Production.Subcon.P01_Import(dr, (DataTable)detailgridbs.DataSource, "P01");
             frm.ShowDialog(this);
+
+            DataTable dg = (DataTable)detailgridbs.DataSource;
+            if (dg.Columns["style"] == null) dg.Columns.Add("Style", typeof(String));
+            if (dg.Columns["sewinline"] == null) dg.Columns.Add("sewinline", typeof(DateTime));
+            if (dg.Columns["scidelivery"] == null) dg.Columns.Add("scidelivery", typeof(DateTime));
+            foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
+            {
+                drr["Price"] = (Decimal)drr["unitprice"] * (Decimal)drr["qtygarment"];
+                DataTable order_dt;
+                DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders where id='{0}'", drr["orderid"].ToString()), out order_dt);
+                if (order_dt.Rows.Count == 0)
+                    break;
+                drr["style"] = order_dt.Rows[0]["styleid"].ToString();
+                drr["sewinline"] = order_dt.Rows[0]["sewinline"];
+                drr["scidelivery"] = order_dt.Rows[0]["scidelivery"];
+            }
             this.RenewData();
         }
 
