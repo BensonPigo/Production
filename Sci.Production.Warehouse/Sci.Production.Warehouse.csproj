@@ -130,6 +130,7 @@
     <Compile Include="B04.Designer.cs">
       <DependentUpon>B04.cs</DependentUpon>
     </Compile>
+    <Compile Include="CrossM\P71_PrintData.cs" />
     <Compile Include="CrossM\P72_PrintData.cs" />
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
@@ -954,6 +955,7 @@
       <DependentUpon>B04.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="CrossM\P71_Print.rdlc" />
     <EmbeddedResource Include="CrossM\P72.rdlc" />
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
@@ -1679,6 +1681,7 @@
     <None Include="Properties\DataSources\R17.datasource" />
     <None Include="Properties\DataSources\R18.datasource" />
     <None Include="Properties\DataSources\R19.datasource" />
+    <None Include="Properties\DataSources\Sci.Production.Warehouse.CrossM.P71_PrintData.datasource" />
     <None Include="Properties\DataSources\Sci.Production.Warehouse.CrossM.P72_PrintData.datasource" />
     <None Include="Properties\DataSources\Sci.Production.Warehouse.Properties.Resources.datasource" />
   </ItemGroup>
