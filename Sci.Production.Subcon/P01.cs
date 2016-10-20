@@ -208,29 +208,29 @@ namespace Sci.Production.Subcon
             return base.ClickSaveBefore();
         }
 
-        // grid 加工填值
-        //protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
-        //{
-        //    if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
-        //    {
-        //        (e.Details).Columns.Add("Style", typeof(String));
-        //        (e.Details).Columns.Add("sewinline", typeof(DateTime));
-        //        (e.Details).Columns.Add("scidelivery", typeof(DateTime));
+         //grid 加工填值
+        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
+        {
+            if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
+            {
+                (e.Details).Columns.Add("Style", typeof(String));
+                (e.Details).Columns.Add("sewinline", typeof(DateTime));
+                (e.Details).Columns.Add("scidelivery", typeof(DateTime));
 
-        //        foreach (DataRow dr in e.Details.Rows)
-        //        {
-        //            dr["Price"] = (Decimal)dr["unitprice"] * (Decimal)dr["qtygarment"];
-        //            DataTable order_dt;
-        //            DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders where id='{0}'", dr["orderid"].ToString()), out order_dt);
-        //            if (order_dt.Rows.Count == 0)
-        //                break;
-        //            dr["style"] = order_dt.Rows[0]["styleid"].ToString();
-        //            dr["sewinline"] = order_dt.Rows[0]["sewinline"];
-        //            dr["scidelivery"] = order_dt.Rows[0]["scidelivery"];
-        //        }
-        //    }
-        //    return base.OnRenewDataDetailPost(e);
-        //}
+                foreach (DataRow dr in e.Details.Rows)
+                {
+                    dr["Price"] = (Decimal)dr["unitprice"] * (Decimal)dr["qtygarment"];
+                    DataTable order_dt;
+                    DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders where id='{0}'", dr["orderid"].ToString()), out order_dt);
+                    if (order_dt.Rows.Count == 0)
+                        break;
+                    dr["style"] = order_dt.Rows[0]["styleid"].ToString();
+                    dr["sewinline"] = order_dt.Rows[0]["sewinline"];
+                    dr["scidelivery"] = order_dt.Rows[0]["scidelivery"];
+                }
+            }
+            return base.OnRenewDataDetailPost(e);
+        }
 
         //refresh
         protected override void OnDetailEntered()
