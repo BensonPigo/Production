@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[ThreadRequisition_Detail] (
     [OrderID]        VARCHAR (13)   CONSTRAINT [DF_ThreadRequisition_Detail_OrderID] DEFAULT ('') NOT NULL,
-    [Refno]          VARCHAR (21)   CONSTRAINT [DF_ThreadRequisition_Detail_Refno] DEFAULT ('') NOT NULL,
+    [Refno]          VARCHAR (24)   CONSTRAINT [DF_ThreadRequisition_Detail_Refno] DEFAULT ('') NOT NULL,
     [ThreadColorID]  VARCHAR (15)   CONSTRAINT [DF_ThreadRequisition_Detail_ThreadColorID] DEFAULT ('') NOT NULL,
     [ConsumptionQty] NUMERIC (6)    CONSTRAINT [DF_ThreadRequisition_Detail_ConsumptionQty] DEFAULT ((0)) NULL,
     [TotalQty]       NUMERIC (6)    CONSTRAINT [DF_ThreadRequisition_Detail_TotalQty] DEFAULT ((0)) NULL,
@@ -8,11 +8,13 @@
     [UseStockQty]    NUMERIC (6)    CONSTRAINT [DF_ThreadRequisition_Detail_UseStockQty] DEFAULT ((0)) NULL,
     [PurchaseQty]    NUMERIC (6)    CONSTRAINT [DF_ThreadRequisition_Detail_PurchaseQty] DEFAULT ((0)) NOT NULL,
     [PoId]           VARCHAR (13)   CONSTRAINT [DF_ThreadRequisition_Detail_PoId] DEFAULT ('') NULL,
-    [Remark]         NVARCHAR (100) CONSTRAINT [DF_ThreadRequisition_Detail_Remark] DEFAULT ('') NULL,
+    [Remark]         NVARCHAR (200) CONSTRAINT [DF_ThreadRequisition_Detail_Remark] DEFAULT ('') NULL,
     [Ukey]           BIGINT         IDENTITY (1, 1) NOT NULL,
     [AutoCreate]     BIT            CONSTRAINT [DF_ThreadRequisition_Detail_AutoCreate] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_ThreadRequisition_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
