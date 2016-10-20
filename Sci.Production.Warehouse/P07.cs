@@ -70,7 +70,9 @@ namespace Sci.Production.Warehouse
             CurrentMaintain["Third"] = 1;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Type"] = "A";
+           
         }
+      
 
         private void ChangeDetailColor()
         {
@@ -1128,8 +1130,14 @@ where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword), out dt);
 
         private void btImportFromExcel_Click(object sender, EventArgs e)
         {
+            if (textBox3.Text == "")
+            {
+                MyUtility.Msg.WarningBox("Invoice# Can't Null");
+            }
+            else { 
             Sci.Production.Warehouse.P07_ExcelImport callNextForm = new Sci.Production.Warehouse.P07_ExcelImport(CurrentMaintain,(DataTable)detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
+            }
         }
 
         private void btDownloadSample_Click(object sender, EventArgs e)
