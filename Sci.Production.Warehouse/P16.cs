@@ -654,6 +654,12 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
         //Print
         protected override bool ClickPrint()
         {
+            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
+                return false;
+            }
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
             string Requestno = row["requestid"].ToString();
