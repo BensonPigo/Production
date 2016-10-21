@@ -721,7 +721,7 @@ Where a.id = '{0}'", masterID);
             from dbo.Subtransfer_detail t 
             left join dbo.PO_Supp_Detail p 
             on 
-           t.ID = p.ID and   p.id= t.FromPOID and p.SEQ1 = t.FromSeq1 and p.seq2 = t.FromSeq2 where t.id= @ID";
+            p.id= t.FromPOID and p.SEQ1 = t.FromSeq1 and p.seq2 = t.FromSeq2 where t.id= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }
             

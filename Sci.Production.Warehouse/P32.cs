@@ -153,7 +153,7 @@ namespace Sci.Production.Warehouse
             from dbo.Borrowback_detail t 
             left join dbo.PO_Supp_Detail p 
             on 
-           t.ID = p.ID and   p.id= t.FromPOID and p.SEQ1 = t.FromSeq1 and p.seq2 = t.FromSeq2 
+            p.id= t.FromPOID and p.SEQ1 = t.FromSeq1 and p.seq2 = t.FromSeq2 
             where t.id= @ID";
             result1 = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result1) { this.ShowErr(sqlcmd, result1); }
