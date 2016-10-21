@@ -150,6 +150,10 @@ namespace Sci.Production.Cutting
         protected override void OnGridRowChanged()
         {
             DualResult result;
+            if (MyUtility.Check.Empty(CurrentData))
+            {
+                return;
+            }
             sizetb.DefaultView.RowFilter =string.Format("Order_EachConsUkey = '{0}'", CurrentData["ukey"]);
             base.OnGridRowChanged();
         }
