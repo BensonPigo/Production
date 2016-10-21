@@ -1418,15 +1418,23 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
 
         protected override void OnDetailGridInsert(int index = -1)
         {
-            base.OnDetailGridInsert(index); //先給一個NewKey
-            int maxkey;
+            //DataTable Cdt = new DataTable();
+            //DataRow newrow = Cdt.NewRow();
+            //newrow.ItemArray = CurrentDetailData.ItemArray.Clone() as object[];
+
+            //DataTable Cdt = new DataTable();
+            //Cdt.ImportRow(CurrentDetailData);
             
+            base.OnDetailGridInsert(index); //先給一個NewKey
+            
+            int maxkey;
             object comput = ((DataTable)detailgridbs.DataSource).Compute("Max(newkey)", "");
             if (comput == DBNull.Value) maxkey = 0;
             else maxkey = Convert.ToInt32(comput);
             maxkey = maxkey + 1;
             CurrentDetailData["Newkey"] = maxkey;
-
+            CurrentDetailData["CutRef"] = "";
+            CurrentDetailData["Cutno"] = 0;
         }
 
         protected override void OnDetailGridDelete()
