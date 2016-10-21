@@ -58,6 +58,7 @@ namespace Sci.Production.Thread
             DataTable detTable = ((DataTable)this.detailgridbs.DataSource);
             Form P01_Generate = new Sci.Production.Thread.P01_Generate(CurrentMaintain["Ukey"].ToString(), CurrentMaintain["id"].ToString(), CurrentMaintain["seasonid"].ToString(), CurrentMaintain["brandid"].ToString());
             P01_Generate.ShowDialog();
+            RenewData();
         }
 
 
