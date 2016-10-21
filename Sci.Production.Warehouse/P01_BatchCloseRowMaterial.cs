@@ -83,7 +83,8 @@ namespace Sci.Production.Warehouse
             }
             if (!MyUtility.Check.Empty(sp1) || !MyUtility.Check.Empty(sp2))
             {
-                strSQLCmd.Append(string.Format(@" and id between '{0}' and '{1}' ", sp1, sp2.PadLeft(13, 'Z')));
+                strSQLCmd.Append(string.Format(@" and id between '{0}' and '{1}' ", sp1, sp2));
+                //strSQLCmd.Append(string.Format(@" and id between '{0}' and '{1}' ", sp1, sp2.PadLeft(13, 'Z')));
             }
             if (!MyUtility.Check.Empty(category))
             {
@@ -116,7 +117,7 @@ namespace Sci.Production.Warehouse
                     where  a.MDivisionID = '{0}' and a.Finished=1 and a.WhseClose is null 
                     group by a.poid
                 ) m
-                cross apply (select * from dbo.orders a1 where a1.id=m.POID) x
+                cross apply (select * from dbo.orders a1 where a1.id=m.POID and MDivisionID = '{0}') x
                 order by m.POID", Sci.Env.User.Keyword
             ));
 
