@@ -129,17 +129,23 @@ namespace Sci.Production.Warehouse
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
-            string sqlcmd = @"select t.POID,t.seq1+ '-' +t.seq2 as SEQ,
-       p.Scirefno,p.seq1,p.seq2
-,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) [desc]
-,t.Roll,t.Dyelot,t.Qty,p.StockUnit
-            ,dbo.Getlocation(b.ukey) [location],[Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.seq1,t.seq2 )            
+            string sqlcmd = @"
+            select t.POID,
+	               t.seq1+ '-' +t.seq2 as SEQ,
+                   p.Scirefno,
+	               p.seq1,
+	               p.seq2,
+	               dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) [desc],
+	               t.Roll,
+	               t.Dyelot,
+	               t.Qty,
+	               p.StockUnit,
+                   dbo.Getlocation(t.FtyInventoryUkey) [location],
+	               [Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.seq1,t.seq2 )            
             from dbo.Issue_Detail t 
-            left join dbo.PO_Supp_Detail p 
-            on 
-            p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
-            inner join FtyInventory b
-            on b.poid = t.poid and b.seq1 =t.seq1 and b.seq2=t.seq2 and b.Roll =t.Roll and b.Dyelot =t.Dyelot and b.StockType = t.StockType where t.id= @ID";
+                   left join dbo.PO_Supp_Detail p 
+                   on p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
+            where t.id= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }
             
