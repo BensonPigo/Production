@@ -2152,6 +2152,8 @@ Sci.Production.Warehouse/CrossM/P74.resx -text
 Sci.Production.Warehouse/CrossM/P74_Import.Designer.cs -text
 Sci.Production.Warehouse/CrossM/P74_Import.cs -text
 Sci.Production.Warehouse/CrossM/P74_Import.resx -text
+Sci.Production.Warehouse/CrossM/P74_Print.rdlc -text
+Sci.Production.Warehouse/CrossM/P74_PrintData.cs -text
 Sci.Production.Warehouse/CrossM/P75.Designer.cs -text
 Sci.Production.Warehouse/CrossM/P75.cs -text
 Sci.Production.Warehouse/CrossM/P75.resx -text
