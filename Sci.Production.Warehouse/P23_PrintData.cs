@@ -20,6 +20,7 @@ namespace Sci.Production.Warehouse
         public string INVENTORYLOCATION {get; set; }
         public string QTY { get; set; }
         public string TotalQTY { get; set; }
+        public string groupby { get { return this.StockSP + this.StockSEQ; } }
         
     }
 }

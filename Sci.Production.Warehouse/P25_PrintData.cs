@@ -8,7 +8,7 @@ namespace Sci.Production.Warehouse
 {
     class P25_PrintData
     {
-        
+        public string SP { get; set; }
         public string SEQ { get; set; }
         public string Roll { get; set; }
         public string DYELOT { get; set; }
@@ -17,5 +17,6 @@ namespace Sci.Production.Warehouse
         public string Type { get; set; }
         public string ActQty { get; set; }
         public string oLocation { get; set; }
+        public string groupby { get { return this.SP + this.SEQ; } }
     }
 }

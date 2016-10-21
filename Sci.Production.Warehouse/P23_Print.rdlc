@@ -510,32 +510,18 @@
         <TablixRowHierarchy>
           <TablixMembers>
             <TablixMember>
-              <Group Name="StockSEQ">
+              <Group Name="groupby">
                 <GroupExpressions>
-                  <GroupExpression>=Fields!StockSEQ.Value</GroupExpression>
+                  <GroupExpression>=Fields!groupby.Value</GroupExpression>
                 </GroupExpressions>
               </Group>
               <SortExpressions>
                 <SortExpression>
-                  <Value>=Fields!StockSEQ.Value</Value>
+                  <Value>=Fields!groupby.Value</Value>
                 </SortExpression>
               </SortExpressions>
               <TablixMembers>
-                <TablixMember>
-                  <Group Name="StockSP">
-                    <GroupExpressions>
-                      <GroupExpression>=Fields!StockSP.Value</GroupExpression>
-                    </GroupExpressions>
-                  </Group>
-                  <SortExpressions>
-                    <SortExpression>
-                      <Value>=Fields!StockSP.Value</Value>
-                    </SortExpression>
-                  </SortExpressions>
-                  <TablixMembers>
-                    <TablixMember />
-                  </TablixMembers>
-                </TablixMember>
+                <TablixMember />
               </TablixMembers>
             </TablixMember>
           </TablixMembers>
@@ -552,7 +538,7 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>0.89584in</Height>
+    <Height>0.97917in</Height>
     <Style />
   </Body>
   <Width>8.2in</Width>
@@ -1495,6 +1481,10 @@
         </Field>
         <Field Name="DYELOT">
           <DataField>DYELOT</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="groupby">
+          <DataField>groupby</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="INVENTORYLOCATION">

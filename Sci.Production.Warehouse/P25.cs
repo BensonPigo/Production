@@ -644,7 +644,7 @@ Where a.id = '{0}'", masterID);
             #region -- 撈表身資料 --
             DataTable dtDetail;
             result = DBProxy.Current.Select("",
-            @"select  a.fromseq1+'-'+a.fromseq2 as SEQ,a.FromRoll,a.FromDyelot ,
+            @"select  frompoid,a.fromseq1+'-'+a.fromseq2 as SEQ,a.FromRoll,a.FromDyelot ,
 	        dbo.Getmtldesc(a.FromPOID, a.FromSeq1, a.FromSeq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.refno, b.seq1, b.seq2),1,0)) [Description]
             ,b.StockUnit
 			, case b.fabrictype
@@ -666,7 +666,7 @@ Where a.id = '{0}'", masterID);
             List<P25_PrintData> data = dtDetail.AsEnumerable()
                 .Select(row1 => new P25_PrintData()
                 {
-                    
+                    SP = row1["frompoid"].ToString(),
                     SEQ = row1["SEQ"].ToString(),
                     Roll = row1["FromRoll"].ToString(),
                     DYELOT = row1["FromDyelot"].ToString(),

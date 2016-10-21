@@ -18,6 +18,6 @@ namespace Sci.Production.Warehouse.CrossM
         public string QTY { get; set; } 
         public string Location { get; set; }
         public string TotalQty { get; set; }
-      
+        public string Groupby { get { return this.SPNo + this.BulkSeq; } }
     }
 }

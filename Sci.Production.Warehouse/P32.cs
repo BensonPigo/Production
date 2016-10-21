@@ -135,7 +135,7 @@ namespace Sci.Production.Warehouse
 
             #region -- 撈表身資料 --
             DataTable dtDetail;
-            string sqlcmd = @"select  t.frompoid+(t.fromseq1 + '-' +t.fromseq2) as StockSEQ,t.topoid+(t.toseq1  + '-' +t.toseq2) as ToSP
+            string sqlcmd = @"select  t.frompoid+' '+(t.fromseq1 + '-' +t.fromseq2) as StockSEQ,t.topoid+' '+(t.toseq1  + '-' +t.toseq2) as ToSP
 			,dbo.getMtlDesc(t.FromPOID,t.FromSeq1,t.FromSeq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) [desc]
             ,case t.FromStockType
 			WHEN 'B'THEN 'Bulk'

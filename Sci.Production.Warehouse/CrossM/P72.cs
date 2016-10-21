@@ -559,11 +559,10 @@ Where a.id = '{0}'", masterID);
 	   dbo.getMtlDesc(issd.poid,issd.seq1,issd.seq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) [desc],
 	   p.StockUnit,
 	   issd.Qty,
-	   dbo.Getlocation(f.ukey) [location],
+	   dbo.Getlocation(issd.FtyInventoryUkey) [location],
 	   [Total]=sum(issd.Qty) OVER (PARTITION BY issd.POID ,issd.seq1,issd.seq2 )     
        from Issue_Detail issd
        left join dbo.PO_Supp_Detail p on p.id= issd.poid and p.SEQ1 = issd.Seq1 and p.seq2 = issd.Seq2
-       inner join FtyInventory f on f.poid = issd.poid and f.seq1 =issd.seq1 and f.seq2=issd.seq2 and f.Roll =issd.Roll and f.Dyelot =issd.Dyelot and f.StockType = issd.StockType
        where issd.id = @ID";
             DualResult res;
             res = DBProxy.Current.Select("", sqlcmd, pars, out dt);
