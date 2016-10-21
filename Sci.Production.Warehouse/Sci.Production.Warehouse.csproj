@@ -1691,6 +1691,7 @@
     <None Include="Properties\DataSources\Sci.Production.Warehouse.CrossM.P72_PrintData.datasource" />
     <None Include="Properties\DataSources\Sci.Production.Warehouse.CrossM.P73_PrintData.datasource" />
     <None Include="Properties\DataSources\Sci.Production.Warehouse.CrossM.P74_PrintData.datasource" />
+    <None Include="Properties\DataSources\Sci.Production.Warehouse.CrossM.P75_PrintData.datasource" />
     <None Include="Properties\DataSources\Sci.Production.Warehouse.Properties.Resources.datasource" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
