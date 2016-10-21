@@ -152,7 +152,7 @@ union all
                               when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
 	, 0 as inqty,sum(b.Qty) outqty ,0 as adjust, remark ,'' location
 from IssueLack a, IssueLack_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}' and Type='R'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
