@@ -2160,6 +2160,8 @@ Sci.Production.Warehouse/CrossM/P75.resx -text
 Sci.Production.Warehouse/CrossM/P75_Import.Designer.cs -text
 Sci.Production.Warehouse/CrossM/P75_Import.cs -text
 Sci.Production.Warehouse/CrossM/P75_Import.resx -text
+Sci.Production.Warehouse/CrossM/P75_Print.rdlc -text
+Sci.Production.Warehouse/CrossM/P75_PrintData.cs -text
 Sci.Production.Warehouse/CrossM/P76.Designer.cs -text
 Sci.Production.Warehouse/CrossM/P76.cs -text
 Sci.Production.Warehouse/CrossM/P76.resx -text
