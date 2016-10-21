@@ -136,6 +136,7 @@
     <Compile Include="CrossM\P74_PrintData.cs" />
     <Compile Include="CrossM\P75_PrintData.cs" />
     <Compile Include="CrossM\P76_PrintData.cs" />
+    <Compile Include="CrossM\P77_PrintData.cs" />
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -965,6 +966,7 @@
     <EmbeddedResource Include="CrossM\P74_Print.rdlc" />
     <EmbeddedResource Include="CrossM\P75_Print.rdlc" />
     <EmbeddedResource Include="CrossM\P76_Print.rdlc" />
+    <EmbeddedResource Include="CrossM\P77_Print.rdlc" />
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>
@@ -1695,6 +1697,7 @@
     <None Include="Properties\DataSources\Sci.Production.Warehouse.CrossM.P74_PrintData.datasource" />
     <None Include="Properties\DataSources\Sci.Production.Warehouse.CrossM.P75_PrintData.datasource" />
     <None Include="Properties\DataSources\Sci.Production.Warehouse.CrossM.P76_PrintData.datasource" />
+    <None Include="Properties\DataSources\Sci.Production.Warehouse.CrossM.P77_PrintData.datasource" />
     <None Include="Properties\DataSources\Sci.Production.Warehouse.Properties.Resources.datasource" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
