@@ -50,7 +50,7 @@ namespace Sci.Production.Quality
             string fir_cmd = string.Format(
                 @"select distinct a.Poid,a.SEQ1+a.SEQ2 as seq,a.ArriveQty,
 				b.styleid,b.BrandID,c.ExportId,c.WhseArrival,f.SuppID,d.SCIRefno,d.Refno,d.ColorID,
-				e.CrockingDate,e.Result,e.nonCrocking												
+				e.CrockingDate,e.Crocking,e.nonCrocking												
 				 from FIR a
 				left join Orders b on a.POID=b.POID
 				left join Receiving c on a.ReceivingID=c.Id
@@ -73,7 +73,7 @@ namespace Sci.Production.Quality
                 BRnotext.Text = fir_dr["Refno"].ToString();
                 Colortext.Text = fir_dr["colorid"].ToString();
                 LIDate.Value=MyUtility.Convert.GetDate(fir_dr["CrockingDate"]);
-                ResultText.Text = fir_dr["Result"].ToString();
+                ResultText.Text = fir_dr["Crocking"].ToString();
                 checkBox1.Value = fir_dr["nonCrocking"].ToString();
             }
             else
@@ -446,12 +446,14 @@ namespace Sci.Production.Quality
                     spamDet.Add(new SqlParameter("@id", dr["ID", DataRowVersion.Original]));
                     spamDet.Add(new SqlParameter("@roll", dr["Roll", DataRowVersion.Original]));
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamDet);
+                    if (!upResult) { return upResult; }
                     continue;
                 }
                 //轉換時間型態
                 string inspdate;
                 if (MyUtility.Check.Empty(dr["InspDate"])) inspdate = ""; //判斷Inspect Date
-                else inspdate = Convert.ToDateTime(dr["InspDate"]).ToShortDateString();
+                //else inspdate = Convert.ToDateTime(dr["InspDate"]).ToShortDateString();
+                else inspdate = string.Format("{0:yyyy-MM-dd}", dr["InspDate"]);
                 string Today = DateTime.Now.ToShortDateString();
                 if (dr.RowState == DataRowState.Added)
                 {
@@ -470,7 +472,8 @@ namespace Sci.Production.Quality
                     spamAdd.Add(new SqlParameter("@AddDate", Today));
                     spamAdd.Add(new SqlParameter("@AddName", loginID));
 
-                    upResult = DBProxy.Current.Execute(null, update_cmd, spamAdd);                   
+                    upResult = DBProxy.Current.Execute(null, update_cmd, spamAdd);
+                    if (!upResult) { return upResult; }
                 }
                 if (dr.RowState == DataRowState.Modified)
                 {
@@ -494,6 +497,7 @@ namespace Sci.Production.Quality
                     spamUpd.Add(new SqlParameter("@rollbefore", dr["Roll", DataRowVersion.Original]));
 
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamUpd);
+                    if (!upResult) { return upResult; }
 
                 }
             }

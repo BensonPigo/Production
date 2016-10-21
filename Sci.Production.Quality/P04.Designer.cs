@@ -44,11 +44,9 @@
             this.label14 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
             this.SP_Text = new Sci.Win.UI.TextBox();
-            this.Send_mail_btn = new Sci.Win.UI.Button();
             this.style_text = new Sci.Win.UI.DisplayBox();
             this.First_sp_Text = new Sci.Win.UI.DisplayBox();
             this.Factory_Text = new Sci.Win.UI.DisplayBox();
-            this.Last_Result_Text = new Sci.Win.UI.DisplayBox();
             this.Season_Text = new Sci.Win.UI.DisplayBox();
             this.Brand_Text = new Sci.Win.UI.DisplayBox();
             this.Comment_text = new Sci.Win.UI.DisplayBox();
@@ -59,6 +57,7 @@
             this.DeadLine_Text = new Sci.Win.UI.DateBox();
             this.Early_SCI_Text = new Sci.Win.UI.DateBox();
             this.Early_Buyer_Text = new Sci.Win.UI.DateBox();
+            this.Last_Result_Text = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -75,6 +74,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.Last_Result_Text);
             this.masterpanel.Controls.Add(this.Early_Buyer_Text);
             this.masterpanel.Controls.Add(this.Early_SCI_Text);
             this.masterpanel.Controls.Add(this.DeadLine_Text);
@@ -85,11 +85,9 @@
             this.masterpanel.Controls.Add(this.Comment_text);
             this.masterpanel.Controls.Add(this.Brand_Text);
             this.masterpanel.Controls.Add(this.Season_Text);
-            this.masterpanel.Controls.Add(this.Last_Result_Text);
             this.masterpanel.Controls.Add(this.Factory_Text);
             this.masterpanel.Controls.Add(this.First_sp_Text);
             this.masterpanel.Controls.Add(this.style_text);
-            this.masterpanel.Controls.Add(this.Send_mail_btn);
             this.masterpanel.Controls.Add(this.SP_Text);
             this.masterpanel.Controls.Add(this.label15);
             this.masterpanel.Controls.Add(this.label14);
@@ -123,11 +121,9 @@
             this.masterpanel.Controls.SetChildIndex(this.label14, 0);
             this.masterpanel.Controls.SetChildIndex(this.label15, 0);
             this.masterpanel.Controls.SetChildIndex(this.SP_Text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Send_mail_btn, 0);
             this.masterpanel.Controls.SetChildIndex(this.style_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.First_sp_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Factory_Text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Last_Result_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Season_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Brand_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Comment_text, 0);
@@ -139,6 +135,7 @@
             this.masterpanel.Controls.SetChildIndex(this.DeadLine_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Early_SCI_Text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Early_Buyer_Text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.Last_Result_Text, 0);
             // 
             // detailpanel
             // 
@@ -224,7 +221,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(104, 23);
             this.label4.TabIndex = 4;
-            this.label4.Text = "Factory";
+            this.label4.Text = "MDivisionID :";
             // 
             // label5
             // 
@@ -336,16 +333,6 @@
             this.SP_Text.TabIndex = 18;
             this.SP_Text.Validated += new System.EventHandler(this.SP_Text_Validated);
             // 
-            // Send_mail_btn
-            // 
-            this.Send_mail_btn.Location = new System.Drawing.Point(931, 19);
-            this.Send_mail_btn.Name = "Send_mail_btn";
-            this.Send_mail_btn.Size = new System.Drawing.Size(80, 30);
-            this.Send_mail_btn.TabIndex = 1;
-            this.Send_mail_btn.Text = "Send Mail";
-            this.Send_mail_btn.UseVisualStyleBackColor = true;
-            this.Send_mail_btn.Click += new System.EventHandler(this.Send_mail_btn_Click);
-            // 
             // style_text
             // 
             this.style_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -363,7 +350,7 @@
             this.First_sp_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FirstOrderID", true));
             this.First_sp_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.First_sp_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.First_sp_Text.Location = new System.Drawing.Point(143, 59);
+            this.First_sp_Text.Location = new System.Drawing.Point(143, 60);
             this.First_sp_Text.Name = "First_sp_Text";
             this.First_sp_Text.Size = new System.Drawing.Size(140, 21);
             this.First_sp_Text.TabIndex = 33;
@@ -378,17 +365,6 @@
             this.Factory_Text.Name = "Factory_Text";
             this.Factory_Text.Size = new System.Drawing.Size(140, 21);
             this.Factory_Text.TabIndex = 34;
-            // 
-            // Last_Result_Text
-            // 
-            this.Last_Result_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Last_Result_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Result", true));
-            this.Last_Result_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.Last_Result_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Last_Result_Text.Location = new System.Drawing.Point(143, 183);
-            this.Last_Result_Text.Name = "Last_Result_Text";
-            this.Last_Result_Text.Size = new System.Drawing.Size(140, 21);
-            this.Last_Result_Text.TabIndex = 35;
             // 
             // Season_Text
             // 
@@ -490,6 +466,17 @@
             this.Early_Buyer_Text.Size = new System.Drawing.Size(150, 23);
             this.Early_Buyer_Text.TabIndex = 69;
             // 
+            // Last_Result_Text
+            // 
+            this.Last_Result_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Last_Result_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.Last_Result_Text.IsSupportEditMode = false;
+            this.Last_Result_Text.Location = new System.Drawing.Point(143, 181);
+            this.Last_Result_Text.Name = "Last_Result_Text";
+            this.Last_Result_Text.ReadOnly = true;
+            this.Last_Result_Text.Size = new System.Drawing.Size(140, 23);
+            this.Last_Result_Text.TabIndex = 70;
+            // 
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(1070, 556);
@@ -545,11 +532,9 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
-        private Win.UI.Button Send_mail_btn;
         private Win.UI.DisplayBox style_text;
         private Win.UI.DisplayBox First_sp_Text;
         private Win.UI.DisplayBox Factory_Text;
-        private Win.UI.DisplayBox Last_Result_Text;
         private Win.UI.DisplayBox Brand_Text;
         private Win.UI.DisplayBox Season_Text;
         private Win.UI.DisplayBox Comment_text;
@@ -560,5 +545,6 @@
         private Win.UI.DateBox DeadLine_Text;
         private Win.UI.DateBox Early_off_Text;
         private Win.UI.DateBox Early_inline_Text;
+        private Win.UI.TextBox Last_Result_Text;
     }
 }

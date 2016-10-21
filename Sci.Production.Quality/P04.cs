@@ -49,16 +49,15 @@ namespace Sci.Production.Quality
                     else Early_Buyer_Text.Value = Convert.ToDateTime(dt.Rows[0]["MinBuyerDelivery"]);
                 }
             }
-
-            //[Last Result]
-            if (CurrentMaintain["result"].ToString().Trim() == "P")
+            if (CurrentMaintain["Result"].ToString()=="P")
             {
-                Last_Result_Text.Text = "Pass";
+                 Last_Result_Text.Text = "Pass";
             }
-            else if (CurrentMaintain["result"].ToString().Trim() == "F")
+            else
             {
                 Last_Result_Text.Text = "Fail";
             }
+           
             
             //[Last Test Date]
             if (CurrentMaintain["date"] == DBNull.Value) Last_Date_Text.Text = "";
@@ -103,6 +102,18 @@ namespace Sci.Production.Quality
             return base.OnRenewDataDetailPost(e);
         }
 
+        private void btnReceive(object sender, EventArgs e)
+        {
+            CurrentDetailData["Receiver"] = loginID;
+            CurrentDetailData["ReceiveDate"] = DateTime.Now.ToShortDateString();
+
+        }
+        private void btnSend(object sender, EventArgs e)
+        {
+            CurrentDetailData["Sender"] = loginID;
+            CurrentDetailData["SendDate"] = DateTime.Now.ToShortDateString();
+            Send_Mail();
+        }
         protected override void OnDetailGridSetup()
         {
             
@@ -115,6 +126,8 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorTextColumnSettings ReceiverCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorComboBoxColumnSettings ResultValid = new DataGridViewGeneratorComboBoxColumnSettings();
             DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
+            
+            
 
             Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
             ResultCombo.Add("P", "Pass");
@@ -122,6 +135,8 @@ namespace Sci.Production.Quality
             ResultComboCell.DataSource = new BindingSource(ResultCombo, null);
             ResultComboCell.ValueMember = "Key";
             ResultComboCell.DisplayMember = "Value";
+
+            
 
             #region CellEditable 事件
             inspDateCell.CellEditable += (s, e) =>
@@ -182,23 +197,23 @@ namespace Sci.Production.Quality
                     dr["EditDate"] = DateTime.Now.ToShortDateString();
                 }
             };
-            SenderCell.CellMouseClick += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    string scalecmd = @"select id,name from Pass1 where Resign is null";
-                    SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Sender"].ToString());
-                    DialogResult result = item1.ShowDialog();
-                    if (result == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-                    dr["Sender"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
-                }
-            };
+            //SenderCell.CellMouseClick += (s, e) =>
+            //{
+            //    if (e.RowIndex == -1) return;
+            //    if (this.EditMode == false) return;
+            //    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            //    {
+            //        DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+            //        string scalecmd = @"select id,name from Pass1 where Resign is null";
+            //        SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Sender"].ToString());
+            //        DialogResult result = item1.ShowDialog();
+            //        if (result == DialogResult.Cancel)
+            //        {
+            //            return;
+            //        }
+            //        dr["Sender"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+            //    }
+            //};
             ReceiveCell.CellMouseClick += (s, e) =>
             {
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
@@ -210,6 +225,7 @@ namespace Sci.Production.Quality
                     dr["EditDate"] = DateTime.Now.ToShortDateString();
                 }
             };
+            /*
             ReceiverCell.CellMouseClick += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
@@ -227,7 +243,7 @@ namespace Sci.Production.Quality
                     dr["Receiver"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
                 }
             };
-
+            */
             #endregion
 
             #region Valid 事件
@@ -293,27 +309,28 @@ namespace Sci.Production.Quality
                     }
                 };
         
-            SenderCell.CellValidating += (s, e) =>
-            {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
-                if (dr.RowState == DataRowState.Modified)
-                {
-                    DataTable dt;
-                    string cmd = "select * from pass1 where id=@id and Resign is null";
-                    List<SqlParameter> spam = new List<SqlParameter>();
-                    spam.Add(new SqlParameter("@id", e.FormattedValue));
-                    DualResult result;
-                    if (result = DBProxy.Current.Select(null, cmd, spam, out dt))
-                    {
-                        if (dt.Rows.Count > 0)
-                        {
-                            dr["EditName"] = loginID;
-                            dr["EditDate"] = DateTime.Now.ToShortDateString();
-                            dr["sender"] = e.FormattedValue;
-                        }
-                    }
-                }               
-            };
+            //SenderCell.CellValidating += (s, e) =>
+            //{
+            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
+            //    if (dr.RowState == DataRowState.Modified)
+            //    {
+            //        DataTable dt;
+            //        string cmd = "select * from pass1 where id=@id and Resign is null";
+            //        List<SqlParameter> spam = new List<SqlParameter>();
+            //        spam.Add(new SqlParameter("@id", e.FormattedValue));
+            //        DualResult result;
+            //        if (result = DBProxy.Current.Select(null, cmd, spam, out dt))
+            //        {
+            //            if (dt.Rows.Count > 0)
+            //            {
+            //                dr["EditName"] = loginID;
+            //                dr["EditDate"] = DateTime.Now.ToShortDateString();
+            //                dr["sender"] = e.FormattedValue;
+            //            }
+            //        }
+            //    }               
+            //};
+            /*
             ReceiverCell.CellValidating += (s, e) =>
             {
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
@@ -337,28 +354,35 @@ namespace Sci.Production.Quality
                 }     
                     
             };
+             * */
             #endregion
+
+            
 
             //Ict.Win.UI.DataGridViewComboBoxColumn ResultComboCell;// 一定要加Ict.Win.UI 不然會跟C#原生的有所衝突
             
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Numeric("No", header: "No. Of Test", integer_places: 8, decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(8))
-            .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), settings: inspDateCell, iseditingreadonly: false)
+            .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), settings: inspDateCell)
             .ComboBox("Result", header: "Result", width: Widths.AnsiChars(10), settings: ResultComboCell)//.Get(out ResultComboCell)
             .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(10),settings:inspectorCell)
             .Text("Inspector", header: "Inspector Name", width: Widths.AnsiChars(10),iseditingreadonly:true)
             .Text("Remark", header: "Comments", width: Widths.AnsiChars(10),settings:CommentsCell)
-            .Text("Send", header: "Send", width: Widths.AnsiChars(10),settings:SendCell)// source empty
-            .Text("Sender", header: "Sender", width: Widths.AnsiChars(10),settings:SenderCell)
+            .Button("Send", null, header: "Send", width: Widths.AnsiChars(5), onclick: btnSend)            
+            //.Text("Send", header: "Send", width: Widths.AnsiChars(10),settings:SendCell)
+            .Text("Sender", header: "Sender", width: Widths.AnsiChars(10),iseditingreadonly:true)
             .Date("SendDate", header: "Send Date", width: Widths.AnsiChars(10),iseditingreadonly:true)
-            .Text("Receive", header: "Receive", width: Widths.AnsiChars(5),settings:ReceiveCell)// source empty
-            .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(5),settings:ReceiverCell)
+             //將Receive換成button,按Receive之後將登入帳號填入Receiver、Receive填入今天的日期 20161020
+            .Button("Receive", null, header: "Receive", width: Widths.AnsiChars(5), onclick: btnReceive)            
+            //.Text("Receive", header: "Receive", width: Widths.AnsiChars(5),settings:ReceiveCell)// source empty
+            .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(5),iseditingreadonly:true)
             .Date("ReceiveDate", header: "Receive Date", width: Widths.AnsiChars(10),iseditingreadonly:true)
             .Text("AddName", header: "Add Name", width: Widths.AnsiChars(25),iseditingreadonly:true)// addName + addDate
             .Text("LastEditName", header: "Last Edit Name", width: Widths.AnsiChars(25),iseditingreadonly:true);//editName + editDate
             
+            
         }
-
+       
         protected override void ClickNewAfter()
         {
             CurrentMaintain["No"] = (int)CurrentMaintain["No"]+1;
@@ -442,7 +466,7 @@ namespace Sci.Production.Quality
                 CurrentMaintain["Result"] = DetailRow["Result"];
                 CurrentMaintain["Date"] = DetailRow["inspdate"];
                 CurrentMaintain["Remark"] = DetailRow["remark"];
-
+                
             }
             else
             {
@@ -450,8 +474,10 @@ namespace Sci.Production.Quality
                 CurrentMaintain["Date"] = DBNull.Value;
                 CurrentMaintain["Remark"] = "";
             }
-   
+           
             return base.ClickSave();
+
+          
         }
 
         private void SP_Text_Validated(object sender, EventArgs e)
@@ -474,17 +500,15 @@ left join Order_Qty c on a.ID=c.ID and c.Article=b.Article where a.id=@orderID";
             }
         }
      
-        private void Send_mail_btn_Click(object sender, EventArgs e)
-        {
-            Send_Mail();
-        }
+      
         private void Send_Mail()
         {           
               
-            string mailto = "";
+            string mailto = "fill the email account";
+            string mailcc = "fill the email account";
             string subject = "Garment Test - Style #:" + style_text.Text + ", Season :" + Season_Text.Text;
             string content = "Garment Test - Style #:" + style_text.Text + ", Season :" + Season_Text.Text + " had been sent, please receive and confirm";
-            var email = new MailTo(Sci.Env.User.MailAddress, mailto, Sci.Env.User.MailAddress, subject, null, content.ToString(), false, true);
+            var email = new MailTo(Sci.Env.User.MailAddress, mailto, mailcc, subject, null, content.ToString(), false, true);
             //var email = new MailTo("willy.wei@sportscity.com", "willy.wei@sportscity.com", "willy.wei@sportscity.com", subject, null, content.ToString(), false, true);
             email.ShowDialog(this);            
           
