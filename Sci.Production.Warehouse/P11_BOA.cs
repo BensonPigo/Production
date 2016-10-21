@@ -55,7 +55,7 @@ namespace Sci.Production.Warehouse
                 sqlCmd.Parameters.Add(new SqlParameter("@UserID", Env.User.UserID));
                 sqlCmd.Parameters.Add(new SqlParameter("@IssueType", "Sewing"));
                 sqlCmd.Parameters.Add(new SqlParameter("@MDivisionId", Env.User.Keyword));
-
+                sqlCmd.CommandTimeout = 300;
                 sqlDataAdapter = new SqlDataAdapter(sqlCmd);
 
                 sqlDataAdapter.Fill(dataSet);
