@@ -80,7 +80,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.dateBox3);
             this.masterpanel.Controls.Add(this.txtmfactory1);
             this.masterpanel.Controls.Add(this.displayBox4);
             this.masterpanel.Controls.Add(this.label8);
@@ -115,10 +114,12 @@
             this.masterpanel.Controls.Add(this.label5);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.dateBox3);
             this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Size = new System.Drawing.Size(1058, 258);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
@@ -153,7 +154,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtmfactory1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
             // 
             // detailpanel
             // 
@@ -524,7 +524,7 @@
             // displayBox4
             // 
             this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "voucherNo", true));
+            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "VoucherID", true));
             this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox4.Location = new System.Drawing.Point(589, 224);
             this.displayBox4.Name = "displayBox4";

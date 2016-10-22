@@ -61,6 +61,9 @@
             this.label25 = new Sci.Win.UI.Label();
             this.label26 = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.numericBox9 = new Sci.Win.UI.NumericBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
             this.numericBox7 = new Sci.Win.UI.NumericBox();
             this.numericBox3 = new Sci.Win.UI.NumericBox();
             this.numericBox2 = new Sci.Win.UI.NumericBox();
@@ -75,9 +78,6 @@
             this.button2 = new Sci.Win.UI.Button();
             this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
             this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.numericBox9 = new Sci.Win.UI.NumericBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -415,7 +415,7 @@
             // textBox12
             // 
             this.textBox12.BackColor = System.Drawing.Color.White;
-            this.textBox12.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountNo", true));
+            this.textBox12.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountID", true));
             this.textBox12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox12.Location = new System.Drawing.Point(104, 390);
             this.textBox12.Name = "textBox12";
@@ -467,6 +467,56 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Carton Only";
             // 
+            // numericBox9
+            // 
+            this.numericBox9.BackColor = System.Drawing.Color.White;
+            this.numericBox9.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CtnWeight", true));
+            this.numericBox9.DecimalPlaces = 6;
+            this.numericBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox9.Location = new System.Drawing.Point(664, 51);
+            this.numericBox9.Maximum = new decimal(new int[] {
+            999999999,
+            0,
+            0,
+            262144});
+            this.numericBox9.MaxLength = 12;
+            this.numericBox9.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            262144});
+            this.numericBox9.Name = "numericBox9";
+            this.numericBox9.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox9.Size = new System.Drawing.Size(100, 23);
+            this.numericBox9.TabIndex = 4;
+            this.numericBox9.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label1
+            // 
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(767, 51);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(27, 23);
+            this.label1.TabIndex = 43;
+            this.label1.Text = "kg";
+            // 
+            // label2
+            // 
+            this.label2.Lines = 0;
+            this.label2.Location = new System.Drawing.Point(551, 51);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(110, 23);
+            this.label2.TabIndex = 44;
+            this.label2.Text = "CTN. Weight";
+            // 
             // numericBox7
             // 
             this.numericBox7.BackColor = System.Drawing.Color.White;
@@ -486,8 +536,18 @@
             0,
             196608});
             this.numericBox7.Name = "numericBox7";
+            this.numericBox7.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox7.Size = new System.Drawing.Size(95, 23);
             this.numericBox7.TabIndex = 2;
+            this.numericBox7.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox7.Validated += new System.EventHandler(this.textBox3_Validated);
             // 
             // numericBox3
@@ -509,8 +569,18 @@
             0,
             262144});
             this.numericBox3.Name = "numericBox3";
+            this.numericBox3.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox3.Size = new System.Drawing.Size(135, 23);
             this.numericBox3.TabIndex = 3;
+            this.numericBox3.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox2
             // 
@@ -531,8 +601,18 @@
             0,
             196608});
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.Size = new System.Drawing.Size(95, 23);
             this.numericBox2.TabIndex = 1;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.Validated += new System.EventHandler(this.textBox3_Validated);
             // 
             // numericBox1
@@ -554,8 +634,18 @@
             0,
             196608});
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Size = new System.Drawing.Size(95, 23);
             this.numericBox1.TabIndex = 0;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Validated += new System.EventHandler(this.textBox3_Validated);
             // 
             // groupBox2
@@ -600,8 +690,18 @@
             0,
             65536});
             this.numericBox8.Name = "numericBox8";
+            this.numericBox8.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox8.Size = new System.Drawing.Size(100, 23);
             this.numericBox8.TabIndex = 0;
+            this.numericBox8.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox6
             // 
@@ -622,8 +722,18 @@
             0,
             262144});
             this.numericBox6.Name = "numericBox6";
+            this.numericBox6.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox6.Size = new System.Drawing.Size(100, 23);
             this.numericBox6.TabIndex = 20;
+            this.numericBox6.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox5
             // 
@@ -643,8 +753,18 @@
             0,
             0});
             this.numericBox5.Name = "numericBox5";
+            this.numericBox5.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox5.Size = new System.Drawing.Size(100, 23);
             this.numericBox5.TabIndex = 2;
+            this.numericBox5.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox4
             // 
@@ -665,8 +785,18 @@
             0,
             393216});
             this.numericBox4.Name = "numericBox4";
+            this.numericBox4.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox4.Size = new System.Drawing.Size(100, 23);
             this.numericBox4.TabIndex = 3;
+            this.numericBox4.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // checkBox1
             // 
@@ -724,46 +854,6 @@
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
             this.dateBox1.TabIndex = 8;
-            // 
-            // numericBox9
-            // 
-            this.numericBox9.BackColor = System.Drawing.Color.White;
-            this.numericBox9.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CtnWeight", true));
-            this.numericBox9.DecimalPlaces = 6;
-            this.numericBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox9.Location = new System.Drawing.Point(664, 51);
-            this.numericBox9.Maximum = new decimal(new int[] {
-            999999999,
-            0,
-            0,
-            262144});
-            this.numericBox9.MaxLength = 12;
-            this.numericBox9.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            262144});
-            this.numericBox9.Name = "numericBox9";
-            this.numericBox9.Size = new System.Drawing.Size(100, 23);
-            this.numericBox9.TabIndex = 4;
-            // 
-            // label1
-            // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(767, 51);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(27, 23);
-            this.label1.TabIndex = 43;
-            this.label1.Text = "kg";
-            // 
-            // label2
-            // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(551, 51);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(110, 23);
-            this.label2.TabIndex = 44;
-            this.label2.Text = "CTN. Weight";
             // 
             // B01
             // 

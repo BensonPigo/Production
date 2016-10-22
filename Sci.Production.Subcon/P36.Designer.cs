@@ -169,7 +169,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(1767, 184);
+            this.gridicon.Location = new System.Drawing.Point(1892, 184);
             // 
             // refresh
             // 
@@ -222,11 +222,6 @@
             this.detailbtm.Controls.SetChildIndex(this.txtuser4, 0);
             this.detailbtm.Controls.SetChildIndex(this.label15, 0);
             this.detailbtm.Controls.SetChildIndex(this.txtuser5, 0);
-            this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
-            this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
-            this.detailbtm.Controls.SetChildIndex(this.editby, 0);
-            this.detailbtm.Controls.SetChildIndex(this.createby, 0);
-            this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
             this.detailbtm.Controls.SetChildIndex(this.txtAccountNo1, 0);
             this.detailbtm.Controls.SetChildIndex(this.label16, 0);
             this.detailbtm.Controls.SetChildIndex(this.label18, 0);
@@ -234,6 +229,11 @@
             this.detailbtm.Controls.SetChildIndex(this.displayBox7, 0);
             this.detailbtm.Controls.SetChildIndex(this.displayBox6, 0);
             this.detailbtm.Controls.SetChildIndex(this.displayBoxSettleDate, 0);
+            this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.editby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.createby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
             // 
             // browse
             // 
@@ -649,7 +649,7 @@
             // 
             // txtAccountNo1
             // 
-            this.txtAccountNo1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "accid", true));
+            this.txtAccountNo1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "AccountID", true));
             this.txtAccountNo1.DisplayBox1Binding = "";
             this.txtAccountNo1.Location = new System.Drawing.Point(494, 74);
             this.txtAccountNo1.Name = "txtAccountNo1";

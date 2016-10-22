@@ -214,7 +214,7 @@
             // 
             // txtAccountNo1
             // 
-            this.txtAccountNo1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "accid", true));
+            this.txtAccountNo1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "AccountID", true));
             this.txtAccountNo1.DisplayBox1Binding = "";
             this.txtAccountNo1.Location = new System.Drawing.Point(94, 258);
             this.txtAccountNo1.Name = "txtAccountNo1";

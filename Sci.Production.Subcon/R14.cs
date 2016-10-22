@@ -165,7 +165,7 @@ from dbo.ArtworkAP a inner join dbo.ArtworkAP_Detail b on b.id = a.id " );
 
             if (!MyUtility.Check.Empty(GLdate1))
             {
-                sqlCmd.Append(" and a.transdate between @GLdate1 and @GLdate1");
+                sqlCmd.Append(" and a.VoucherDate  between @GLdate1 and @GLdate1");
                 sp_gldate1.Value = GLdate1;
                 cmds.Add(sp_gldate1);
                 sp_gldate2.Value = GLdate2;

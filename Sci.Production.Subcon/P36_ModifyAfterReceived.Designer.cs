@@ -33,12 +33,12 @@
             this.button2 = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.editBox1 = new Sci.Win.UI.EditBox();
+            this.mtbs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label16 = new Sci.Win.UI.Label();
             this.txtAccountNo1 = new Sci.Production.Class.txtAccountNo();
             this.txtuser4 = new Sci.Production.Class.txtuser();
             this.label14 = new Sci.Win.UI.Label();
             this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.mtbs = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.SuspendLayout();
             // 
@@ -95,7 +95,7 @@
             // 
             // txtAccountNo1
             // 
-            this.txtAccountNo1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "accid", true));
+            this.txtAccountNo1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "AccountID", true));
             this.txtAccountNo1.DisplayBox1Binding = "";
             this.txtAccountNo1.Location = new System.Drawing.Point(87, 242);
             this.txtAccountNo1.Name = "txtAccountNo1";
