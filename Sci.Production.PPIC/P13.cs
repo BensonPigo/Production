@@ -29,13 +29,14 @@ namespace Sci.Production.PPIC
 
         protected override void OnFormLoaded()
         {
+            base.OnFormLoaded();
             if (MyUtility.GetValue.Lookup(string.Format("select UseAPS from Factory where ID = '{0}'", Sci.Env.User.Factory)) == "True")
             {
                 MyUtility.Msg.WarningBox("Please use APS system to assign schedule.");
                 Close();
+                return;
             }
 
-            base.OnFormLoaded();
 
             cutReadyDate.CellValidating += (s, e) =>
             {
@@ -52,7 +53,7 @@ namespace Sci.Production.PPIC
                 {
                     if (MyUtility.Convert.GetDate(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddDays(-30))
                     {
-                        MyUtility.Msg.WarningBox("< Cutting Ready Date > is invalid!!");
+                        MyUtility.Msg.WarningBox("Cutting Ready Date can't exceed 30 days before today!!");
                         dr["CutReadyDate"] = DBNull.Value;
                         e.Cancel = true;
                         return;
@@ -67,7 +68,7 @@ namespace Sci.Production.PPIC
                 {
                     if (MyUtility.Convert.GetDate(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddDays(-30))
                     {
-                        MyUtility.Msg.WarningBox("< In Line Date > is invalid!!");
+                        MyUtility.Msg.WarningBox("Inline date can't exceed 30 days before today!!");
                         dr["SewInLine"] = DBNull.Value;
                         e.Cancel = true;
                         return;
@@ -80,7 +81,7 @@ namespace Sci.Production.PPIC
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                 if (!MyUtility.Check.Empty(e.FormattedValue) && (MyUtility.Check.Empty(dr["SewInLine"]) || (MyUtility.Convert.GetDate(e.FormattedValue) < MyUtility.Convert.GetDate(dr["SewInLine"]))))
                 {
-                    MyUtility.Msg.WarningBox("< Off Line Date > is invalid!!");
+                    MyUtility.Msg.WarningBox("Offline date can't less than Inline date!!");
                     dr["SewOffLine"] = DBNull.Value;
                     e.Cancel = true;
                     return;
@@ -198,20 +199,22 @@ namespace Sci.Production.PPIC
         private void textBox3_Validating(object sender, CancelEventArgs e)
         {
             string textBox3Value = textBox3.Text;
-            if (TPEUserValidating(textBox3Value))
+            if (textBox3Value!="")
             {
-                textBox3.Text = textBox3Value;
-                displayBox1.Value = GetUserName(textBox3.Text);
-            }
-            else
-            {
-                MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textBox3Value));
-                textBox3.Text = "";
-                displayBox1.Value = "";
-                e.Cancel = true;
-                textBox1.Focus();
-                return;
-            }
+                if (TPEUserValidating(textBox3Value))
+                {
+                    textBox3.Text = textBox3Value;
+                    displayBox1.Value = GetUserName(textBox3.Text);
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textBox3Value));
+                    textBox3.Text = "";
+                    displayBox1.Value = "";
+                    e.Cancel = true;
+                    return;
+                }
+            }            
         }
 
         //MR
