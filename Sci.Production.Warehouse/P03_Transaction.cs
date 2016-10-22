@@ -129,10 +129,12 @@ where type='B' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and To
 union all
 	select issuedate, a.id
 	,case type when 'A' then 'P10. Issue Fabric to Cutting Section' 
-when 'B' then 'P11. Issue Sewing Material by Transfer Guide' 
-when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
-when 'D' then 'P13. Issue Material by Item'
-when 'F' then 'P75. Material Borrow cross M (Confirm)'  end name
+			when 'B' then 'P11. Issue Sewing Material by Transfer Guide' 
+			when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
+			when 'D' then 'P13. Issue Material by Item'
+			when 'E' then 'P72. Transfer Inventory to Bulk (Confirme)'
+			when 'F' then 'P75. Material Borrow cross M (Confirme)'
+			when 'G' then 'P77. Material Return Back cross M (Request)'  end name
 	,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
 from Issue a, Issue_Detail b 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
@@ -311,6 +313,28 @@ where type='C' and Status='Confirmed' and topoid='{0}' and toseq1 = '{1}' and to
             }
 
             selectCommand1.Append(string.Format(@"group by a.id, topoid, toSeq1, toSeq2,a.IssueDate,a.Type,a.remark
+
+            
+            union all
+            select issuedate, a.id
+	            ,case type when 'B' then 'P73. Transfer Inventory to Bulk cross M (Receive)' 
+			            when 'D' then 'P76. Material Borrow cross M (Receive)' 
+			            when 'G' then 'P78. Material Return Back cross M (Receive)'  end name
+	            ,sum(Qty) as inqty, 0 released,0 as adjust, remark,'' location
+            from RequestCrossM a, RequestCrossM_Receive b 
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+                , dr["id"].ToString()
+                , dr["seq1"].ToString()
+                , dr["seq2"].ToString()
+                , Sci.Env.User.Keyword));
+            if (_byroll)
+            {
+                selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
+            }
+
+            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type,a.remark
+
+
 union all
 	select issuedate, a.id
 	,case type when 'D' then 'P25. Transfer Bulk to Scrap' 
