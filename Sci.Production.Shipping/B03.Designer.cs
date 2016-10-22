@@ -196,9 +196,19 @@
             this.numericBox1.IsSupportEditMode = false;
             this.numericBox1.Location = new System.Drawing.Point(161, 190);
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.ReadOnly = true;
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
             this.numericBox1.TabIndex = 12;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // dateBox1
             // 
@@ -213,7 +223,7 @@
             // textBox2
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountNo", true));
+            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountID", true));
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox2.Location = new System.Drawing.Point(120, 260);
             this.textBox2.Mask = "9999-9999";

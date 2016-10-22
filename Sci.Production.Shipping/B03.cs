@@ -81,7 +81,7 @@ namespace Sci.Production.Shipping
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(MyUtility.Convert.GetString(CurrentMaintain["AccountNo"])))
+            if (string.IsNullOrWhiteSpace(MyUtility.Convert.GetString(CurrentMaintain["AccountID"])))
             {
                 MyUtility.Msg.WarningBox("< Account No > can not be empty!");
                 this.textBox2.Focus();

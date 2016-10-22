@@ -64,7 +64,7 @@ namespace Sci.Production.Shipping
             this.grid2.IsEditingReadOnly = true;
             grid2.DataSource = listControlBindingSource2;
             Helper.Controls.Grid.Generator(this.grid2)
-                .Text("AccountNo", header: "Account No", width: Widths.AnsiChars(8))
+                .Text("AccountID", header: "Account No", width: Widths.AnsiChars(8))
                 .Text("AccountName", header: "Account Name", width: Widths.AnsiChars(30))
                 .Numeric("Amount", header: "Amount", decimal_places: 2)
                 .Text("ShareRule", header: "Share by", width: Widths.AnsiChars(19));
@@ -83,8 +83,8 @@ namespace Sci.Production.Shipping
             sqlCmd = string.Format(@"select sh.*,an.Name as AccountName,
 case when sh.ShareBase = 'G' then 'G.W.' when sh.ShareBase = 'C' then 'CBM' else ' Number od Deliver Sheets' end as ShareRule 
 from ShareExpense sh
-left join [Finance].dbo.AccountNo an on an.ID = sh.AccountNo
-where sh.ShippingAPID = '{0}' order by sh.AccountNo", MyUtility.Convert.GetString(apData["ID"]));
+left join [Finance].dbo.AccountNo an on an.ID = sh.AccountID
+where sh.ShippingAPID = '{0}' order by sh.AccountID", MyUtility.Convert.GetString(apData["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out SEData);
             if (!result)
             {
@@ -183,7 +183,7 @@ where sh.ShippingAPID = '{0}' order by sh.AccountNo", MyUtility.Convert.GetStrin
             }
             else
             {
-                bool forwarderFee = MyUtility.Check.Seek(string.Format("select se.AccountNo from ShippingAP_Detail sd, ShipExpense se where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and (se.AccountNo = '61022001' or se.AccountNo = '61012001')", MyUtility.Convert.GetString(apData["ID"])));
+                bool forwarderFee = MyUtility.Check.Seek(string.Format("select se.AccountID from ShippingAP_Detail sd, ShipExpense se where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and (se.AccountID = '61022001' or se.AccountID = '61012001')", MyUtility.Convert.GetString(apData["ID"])));
                 bool haveSea = false, noExistNotSea = true;
                 DataTable duplicData;
                 DBProxy.Current.Select(null, "select BLNo,WKNo,InvNo from ShareExpense where 1=0", out duplicData);
@@ -242,7 +242,7 @@ where sh.ShippingAPID = '{0}' order by sh.AccountNo", MyUtility.Convert.GetStrin
                 IList<string> deleteCmds = new List<string>();
                 IList<string> addCmds = new List<string>();
 
-                string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountNo from ShippingAP_Detail sd, ShipExpense se where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountNo != ''", MyUtility.Convert.GetString(apData["ID"])));
+                string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd, ShipExpense se where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(apData["ID"])));
                 //刪除實體資料
                 foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
                 {
@@ -257,7 +257,7 @@ where sh.ShippingAPID = '{0}' order by sh.AccountNo", MyUtility.Convert.GetStrin
                 {
                     if (dr.RowState == DataRowState.Added)
                     {
-                        addCmds.Add(string.Format(@"insert into ShareExpense (ShippingAPID,BLNo,WKNo,InvNo,Type,GW,CBM,CurrencyID,ShipModeID,FtyWK,AccountNo)
+                        addCmds.Add(string.Format(@"insert into ShareExpense (ShippingAPID,BLNo,WKNo,InvNo,Type,GW,CBM,CurrencyID,ShipModeID,FtyWK,AccountID)
  values ('{0}','{1}','{2}','{3}','{4}',{5},{6},'{7}','{8}',{9},'{10}');", MyUtility.Convert.GetString(apData["ID"]), MyUtility.Convert.GetString(dr["BLNo"]), MyUtility.Convert.GetString(dr["WKNo"]), MyUtility.Convert.GetString(dr["InvNo"]),
                                                                  MyUtility.Convert.GetString(apData["SubType"]), MyUtility.Convert.GetString(dr["GW"]), MyUtility.Convert.GetString(dr["CBM"]), MyUtility.Convert.GetString(apData["CurrencyID"]), MyUtility.Convert.GetString(dr["ShipModeID"]),
                                                                  MyUtility.Convert.GetString(dr["FtyWK"]) == "True" ? "1" : "0", accNo));

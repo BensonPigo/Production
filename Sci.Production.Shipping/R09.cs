@@ -56,7 +56,7 @@ namespace Sci.Production.Shipping
 as (
 select e.InvNo,'Material' as Type,e.ID as WKNo,'' as FtyWKNo,e.ShipModeID,
 e.CYCFS,e.Packages,e.Blno,e.WeightKg,e.Cbm,e.Forwarder+'-'+isnull(supp.AbbEN,'') as Forwarder,
-e.PortArrival,e.DocArrival,se.CurrencyID,se.Amount,se.AccountNo
+e.PortArrival,e.DocArrival,se.CurrencyID,se.Amount,se.AccountID
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 inner join Export e on se.WKNo = e.ID
@@ -100,7 +100,7 @@ FtyExportData
 as (
 select fe.InvNo,IIF(fe.Type = 1,'3rd Country',IIF(fe.Type = 2,'Transfer In','Local Purchase')) as Type,'' as WKNo,fe.ID as FtyWKNo,fe.ShipModeID,
 fe.CYCFS,fe.Packages,fe.Blno,fe.WeightKg,fe.Cbm,fe.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,
-fe.PortArrival,fe.DocArrival,se.CurrencyID,se.Amount,se.AccountNo
+fe.PortArrival,fe.DocArrival,se.CurrencyID,se.Amount,se.AccountID
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 left join FtyExport fe on se.InvNo = fe.ID
@@ -182,13 +182,13 @@ FOR AccountNo IN ({0})) a", allAccno.ToString()));
 as (
 select e.InvNo,'Material' as Type,s.MDivisionID,e.Consignee,e.ID as WKNo,'' as FtyWKNo,e.ShipModeID,
 e.CYCFS,e.Packages,e.Blno,e.WeightKg,e.Cbm,e.Forwarder+'-'+isnull(supp.AbbEN,'') as Forwarder,
-e.PortArrival,e.DocArrival,se.AccountNo+'-'+isnull(a.Name,'') as AccountNo,se.Amount,se.CurrencyID,se.ShippingAPID,
-s.CDate,s.ApvDate,s.VoucherNo,s.SubType
+e.PortArrival,e.DocArrival,se.AccountID+'-'+isnull(a.Name,'') as AccountNo,se.Amount,se.CurrencyID,se.ShippingAPID,
+s.CDate,s.ApvDate,s.VoucherID,s.SubType
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 inner join Export e on se.WKNo = e.ID
 left join Supp on supp.ID = e.Forwarder
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountNo
+left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'IMPORT'");
                 if (!MyUtility.Check.Empty(arrivePortDate1))
                 {
@@ -228,13 +228,13 @@ FtyExportData
 as (
 select fe.InvNo,IIF(fe.Type = 1,'3rd Country',IIF(fe.Type = 2,'Transfer In','Local Purchase')) as Type,s.MDivisionID,fe.Consignee,'' as WKNo,fe.ID as FtyWKNo,fe.ShipModeID,
 fe.CYCFS,fe.Packages,fe.Blno,fe.WeightKg,fe.Cbm,fe.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,
-fe.PortArrival,fe.DocArrival,se.AccountNo+'-'+isnull(a.Name,'') as AccountNo,se.Amount,se.CurrencyID,se.ShippingAPID,
-s.CDate,s.ApvDate,s.VoucherNo,s.SubType
+fe.PortArrival,fe.DocArrival,se.AccountID+'-'+isnull(a.Name,'') as AccountNo,se.Amount,se.CurrencyID,se.ShippingAPID,
+s.CDate,s.ApvDate,s.VoucherID,s.SubType
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 left join FtyExport fe on se.InvNo = fe.ID
 left join LocalSupp ls on ls.ID = fe.Forwarder
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountNo
+left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
 where fe.Type <> 3");
                 if (!MyUtility.Check.Empty(arrivePortDate1))
                 {
@@ -376,7 +376,7 @@ select * from FtyExportData");
                     objArray[0, 18] = dr["ShippingAPID"];
                     objArray[0, 19] = dr["CDate"];
                     objArray[0, 20] = dr["ApvDate"];
-                    objArray[0, 21] = dr["VoucherNo"];
+                    objArray[0, 21] = dr["VoucherID"];
                     objArray[0, 22] = dr["SubType"];
 
                     worksheet.Range[String.Format("A{0}:W{0}", intRowsStart)].Value2 = objArray;

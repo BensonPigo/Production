@@ -59,7 +59,7 @@ namespace Sci.Production.Shipping
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"select s.Type,s.LocalSuppID+'-'+ISNULL(l.Abb,'') as Supplier,s.ID,s.VoucherNo,
+            sqlCmd.Append(@"select s.Type,s.LocalSuppID+'-'+ISNULL(l.Abb,'') as Supplier,s.ID,s.VoucherID,
 s.CDate,s.ApvDate,s.MDivisionID,s.CurrencyID,s.Amount+s.VAT as Amt,s.BLNo,s.Remark,s.InvNo,
 isnull((select CONCAT(InvNo,'/') from (select distinct InvNo from ShareExpense where ShippingAPID = s.ID) a for xml path('')),'') as ExportInv
 from ShippingAP s
@@ -150,7 +150,7 @@ where s.Status = 'Approved'");
                 objArray[0, 0] = dr["Type"];
                 objArray[0, 1] = dr["Supplier"];
                 objArray[0, 2] = dr["ID"];
-                objArray[0, 3] = dr["VoucherNo"];
+                objArray[0, 3] = dr["VoucherID"];
                 objArray[0, 4] = dr["CDate"];
                 objArray[0, 5] = dr["ApvDate"];
                 objArray[0, 6] = dr["MDivisionID"];

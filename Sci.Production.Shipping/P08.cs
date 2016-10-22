@@ -97,10 +97,10 @@ namespace Sci.Production.Shipping
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(@"select sd.*,isnull(se.Description,'') as Description, (isnull(se.AccountNo,'') + '-' + isnull(a.Name,'')) as Account
+            this.DetailSelectCommand = string.Format(@"select sd.*,isnull(se.Description,'') as Description, (isnull(se.AccountID,'') + '-' + isnull(a.Name,'')) as Account
 from ShippingAP_Detail sd
 left join ShipExpense se on se.ID = sd.ShipExpenseID
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountNo
+left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
 where sd.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -124,7 +124,7 @@ where sd.ID = '{0}'", masterID);
             base.OnDetailEntered();
             ChangeCombo2DataSource();
             bool status = MyUtility.Check.Empty(CurrentMaintain["Accountant"]);
-            button2.Enabled = status ? !EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, this.Text, "CanConfirm") : MyUtility.Check.Empty(CurrentMaintain["VoucherNo"]) && Prgs.GetAuthority(CurrentMaintain["Accountant"].ToString(), this.Text, "CanUnConfirm");
+            button2.Enabled = status ? !EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, this.Text, "CanConfirm") : MyUtility.Check.Empty(CurrentMaintain["VoucherID"]) && Prgs.GetAuthority(CurrentMaintain["Accountant"].ToString(), this.Text, "CanUnConfirm");
             button2.Text = status ? "Acct. Approve" : "Acct. Unapprove";
             button2.ForeColor = status ? Color.Blue : Color.Black;
         }
@@ -145,7 +145,7 @@ where sd.ID = '{0}'", masterID);
                             {
                                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                                 string localSuppID = MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID"]);
-                                string sqlCmd = string.Format("select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense where Junk = 0 and LocalSuppID = '{0}' and AccountNo != ''", localSuppID);
+                                string sqlCmd = string.Format("select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense where Junk = 0 and LocalSuppID = '{0}' and AccountID != ''", localSuppID);
                                 Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,50,6,3,11,8", MyUtility.Convert.GetString(dr["ShipExpenseID"]));
                                 DialogResult returnResult = item.ShowDialog();
                                 if (returnResult == DialogResult.Cancel) { return; }
@@ -172,7 +172,7 @@ where sd.ID = '{0}'", masterID);
                         cmds.Add(sp2);
 
                         DataTable ExpenseData;
-                        string sqlCmd = "select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense where Junk = 0 and LocalSuppID = @localsuppid and ID = @shipexpenseid  and AccountNo != ''";
+                        string sqlCmd = "select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense where Junk = 0 and LocalSuppID = @localsuppid and ID = @shipexpenseid  and AccountID != ''";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ExpenseData);
                         if (!result || ExpenseData.Rows.Count <= 0)
                         {

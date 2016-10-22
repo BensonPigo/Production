@@ -89,7 +89,7 @@ namespace Sci.Production.Shipping
 as (
 select distinct 'GARMENT' as Type,g.ID,g.Shipper,g.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 isnull(oq.Qty,0) as OQty,g.CustCDID,g.Dest,g.ShipModeID,p.PulloutDate,p.ShipQty,p.CTNQty,
-p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.CurrencyID,se.AccountNo,se.Amount
+p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.CurrencyID,se.AccountID,se.Amount
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 inner join GMTBooking g on g.ID = se.InvNo
@@ -139,14 +139,14 @@ where s.Type = 'EXPORT'");
 as (
 select distinct 'GARMENT' as Type,p.ID,'' as Shipper,o.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 isnull(oq.Qty,0) as OQty,o.CustCDID,o.Dest,p.ShipModeID,p.PulloutDate,p.ShipQty,p.CTNQty,
-p.GW,p.CBM,'' as Forwarder,s.BLNo,se.CurrencyID,se.AccountNo,se.Amount
+p.GW,p.CBM,'' as Forwarder,s.BLNo,se.CurrencyID,se.AccountID,se.Amount
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 inner join PackingList p on p.ID = se.InvNo
 inner join PackingList_Detail pd on pd.ID = p.ID
 left join Orders o on o.ID = pd.OrderID
 left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountNo
+left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                         if (!MyUtility.Check.Empty(date1))
                         {
@@ -190,7 +190,7 @@ where s.Type = 'EXPORT'");
 as (
 select distinct 'GARMENT' as Type,g.ID,g.Shipper,g.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,g.CustCDID,g.Dest,g.ShipModeID,p.ID as PackID, p.PulloutID,p.PulloutDate,p.ShipQty,p.CTNQty,
-p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.CurrencyID,se.AccountNo,se.Amount
+p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.CurrencyID,se.AccountID,se.Amount
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 inner join GMTBooking g on g.ID = se.InvNo
@@ -240,14 +240,14 @@ where s.Type = 'EXPORT'");
 as (
 select distinct 'GARMENT' as Type,p.ID,'' as Shipper,o.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,o.CustCDID,o.Dest,p.ShipModeID,p.ID as PackID, p.PulloutID,p.PulloutDate,p.ShipQty,p.CTNQty,
-p.GW,p.CBM,'' as Forwarder,s.BLNo,se.CurrencyID,se.AccountNo,se.Amount
+p.GW,p.CBM,'' as Forwarder,s.BLNo,se.CurrencyID,se.AccountID,se.Amount
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 inner join PackingList p on p.ID = se.InvNo
 inner join PackingList_Detail pd on pd.ID = p.ID
 left join Orders o on o.ID = pd.OrderID
 left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountNo
+left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                         if (!MyUtility.Check.Empty(date1))
                         {
@@ -286,9 +286,9 @@ where s.Type = 'EXPORT'");
                     }
                     queryAccount = string.Format("{0}{1}", sqlCmd.ToString(), @") 
 select distinct a.* from (
-select AccountNo as Accno from tmpGB where AccountNo not in ('61022001','61022002','61022003','61022004','61022005','59121111')
+select AccountID as Accno from tmpGB where AccountID not in ('61022001','61022002','61022003','61022004','61022005','59121111')
 union
-select AccountNo as Accno from tmpPL where AccountNo not in ('61022001','61022002','61022003','61022004','61022005','59121111')
+select AccountID as Accno from tmpPL where AccountID not in ('61022001','61022002','61022003','61022004','61022005','59121111')
 ) a
 order by Accno");
                     result = DBProxy.Current.Select(null, queryAccount, out accnoData);
@@ -312,7 +312,7 @@ select * from tmpPL)
 
 select * from tmpAllData
 PIVOT (SUM(Amount)
-FOR AccountNo IN ({0})) a", allAccno.ToString()));
+FOR AccountID IN ({0})) a", allAccno.ToString()));
                 }
 
                 else
@@ -322,8 +322,8 @@ FOR AccountNo IN ({0})) a", allAccno.ToString()));
 as (
 select distinct 'GARMENT' as Type,g.ID,g.Shipper,g.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,g.CustCDID,g.Dest,g.ShipModeID,p.ID as PackID, p.PulloutID,p.PulloutDate,p.ShipQty,p.CTNQty,
-p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.AccountNo+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,
-s.ID as APID,s.CDate,s.ApvDate,s.VoucherNo,s.SubType
+p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.AccountID+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,
+s.ID as APID,s.CDate,s.ApvDate,s.VoucherID,s.SubType
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 inner join GMTBooking g on g.ID = se.InvNo
@@ -332,7 +332,7 @@ inner join PackingList_Detail pd on pd.ID = p.ID
 left join Orders o on o.ID = pd.OrderID
 left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 left join LocalSupp ls on ls.ID = g.Forwarder
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountNo
+left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                     if (!MyUtility.Check.Empty(date1))
                     {
@@ -375,15 +375,15 @@ tmpPL
 as (
 select distinct 'GARMENT' as Type,p.ID,'' as Shipper,o.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,o.CustCDID,o.Dest,p.ShipModeID,p.ID as PackID, p.PulloutID,p.PulloutDate,p.ShipQty,p.CTNQty,
-p.GW,p.CBM,'' as Forwarder,s.BLNo,se.AccountNo+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,
-s.ID as APID,s.CDate,s.ApvDate,s.VoucherNo,s.SubType
+p.GW,p.CBM,'' as Forwarder,s.BLNo,se.AccountID+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,
+s.ID as APID,s.CDate,s.ApvDate,s.VoucherID,s.SubType
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 inner join PackingList p on p.ID = se.InvNo
 inner join PackingList_Detail pd on pd.ID = p.ID
 left join Orders o on o.ID = pd.OrderID
 left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountNo
+left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                     if (!MyUtility.Check.Empty(date1))
                     {
@@ -436,7 +436,7 @@ order by ID,OrderID,PackID");
 as (
 select 'MATERIAL' as Type, f.ID,s.MDivisionID as Shipper,'' as BrandID,'' as Category,
 0 as OQty,'' as CustCDID,f.ImportCountry as Dest,f.ShipModeID,f.PortArrival as PulloutDate,0 as ShipQty,
-0 as CTNQty,f.WeightKg as GW,f.Cbm as CBM,f.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,f.Blno as BLNo,se.CurrencyID,se.AccountNo,
+0 as CTNQty,f.WeightKg as GW,f.Cbm as CBM,f.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,f.Blno as BLNo,se.CurrencyID,se.AccountID,
 se.Amount
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
@@ -453,7 +453,7 @@ as (
 select 'MATERIAL' as Type, f.ID,s.MDivisionID as Shipper,'' as BrandID,'' as Category,'' as OrderID, null as BuyerDelivery,
 0 as OQty,'' as CustCDID,f.ImportCountry as Dest,f.ShipModeID,'' as PackID,'' as PulloutID,f.PortArrival as PulloutDate,
 0 as ShipQty,0 as CTNQty,f.WeightKg as GW,f.Cbm as CBM,f.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,f.Blno as BLNo,
-se.CurrencyID,se.AccountNo,se.Amount
+se.CurrencyID,se.AccountID,se.Amount
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 inner join FtyExport f on f.ID = se.InvNo
@@ -493,7 +493,7 @@ where s.Type = 'EXPORT'");
                     #endregion
                     queryAccount = string.Format("{0}{1}", sqlCmd.ToString(), @") 
 select distinct a.* from (
-select AccountNo as Accno from tmpMaterialData where AccountNo not in ('61012001','61012002','61012003','61012004','61012005','59121111')) a
+select Accountid as Accno from tmpMaterialData where AccountID not in ('61012001','61012002','61012003','61012004','61012005','59121111')) a
 order by Accno");
                     result = DBProxy.Current.Select(null, queryAccount, out accnoData);
                     if (!result)
@@ -510,7 +510,7 @@ order by Accno");
                     sqlCmd.Append(string.Format(@")
 select * from tmpMaterialData
 PIVOT (SUM(Amount)
-FOR AccountNo IN ({0})) a", allAccno.ToString()));
+FOR AccountID IN ({0})) a", allAccno.ToString()));
                 }
                 else
                 {   //Detail List by SP# by Fee Type
@@ -518,12 +518,12 @@ FOR AccountNo IN ({0})) a", allAccno.ToString()));
                     sqlCmd.Append(@"select 'MATERIAL' as Type, f.ID,s.MDivisionID as Shipper,'' as BrandID,'' as Category,'' as OrderID, null as BuyerDelivery,
 0 as OQty,'' as CustCDID,f.ImportCountry as Dest,f.ShipModeID,'' as PackID,'' as PulloutID,f.PortArrival as PulloutDate,
 0 as ShipQty,0 as CTNQty,f.WeightKg as GW,f.Cbm as CBM,f.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,f.Blno as BLNo,
-se.AccountNo+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,s.ID as APID,s.CDate,s.ApvDate,s.VoucherNo,s.SubType
+se.AccountID+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,s.ID as APID,s.CDate,s.ApvDate,s.VoucherID,s.SubType
 from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 inner join FtyExport f on f.ID = se.InvNo
 left join LocalSupp ls on ls.ID = f.Forwarder
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountNo
+left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                     if (!MyUtility.Check.Empty(date1))
                     {
@@ -702,7 +702,7 @@ where s.Type = 'EXPORT'");
                     objArray[0, 23] = dr["APID"];
                     objArray[0, 24] = dr["CDate"];
                     objArray[0, 25] = dr["ApvDate"];
-                    objArray[0, 26] = dr["VoucherNo"];
+                    objArray[0, 26] = dr["VoucherID"];
                     objArray[0, 27] = dr["SubType"];
 
                     worksheet.Range[String.Format("A{0}:AB{0}", intRowsStart)].Value2 = objArray;

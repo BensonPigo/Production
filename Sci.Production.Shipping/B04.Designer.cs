@@ -165,7 +165,7 @@
             // textBox1
             // 
             this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountNo", true));
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountID", true));
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox1.Location = new System.Drawing.Point(151, 30);
             this.textBox1.Mask = "CCCC-CCCC";
