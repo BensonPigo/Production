@@ -46,27 +46,27 @@ SELECT @exact = isnull(c.Exact,0) FROM ShippingAP s, Currency c WHERE s.ID = @id
 DECLARE cursor_ttlAmount CURSOR FOR
 	select a.*,isnull(isnull(sr.ShareBase,sr1.ShareBase),'') as ShareBase
 	from (select *
-		  from (select isnull(se.AccountNo,'') as AccountNo, sum(sd.Amount) as Amount, s.CurrencyID
+		  from (select isnull(se.AccountID,'') as AccountID, sum(sd.Amount) as Amount, s.CurrencyID
 				from ShippingAP_Detail sd
 				left join ShipExpense se on se.ID = sd.ShipExpenseID
-				left join [Finance].dbo.AccountNo a on a.ID = se.AccountNo
+				left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
 				left join ShippingAP s on s.ID = sd.ID
 				where sd.ID = @id
-				group by se.AccountNo, a.Name, s.CurrencyID) a,
+				group by se.AccountID, a.Name, s.CurrencyID) a,
 				(select distinct BLNo,WKNo,InvNo,Type,GW,CBM,ShipModeID,FtyWK
 				from ShareExpense
 				where ShippingAPID = @id) b) a
-	left join ShareRule sr on sr.AccountNo = a.AccountNo and sr.ExpenseReason = a.Type and (sr.ShipModeID = '' or sr.ShipModeID like '%'+a.ShipModeID+'%')
-	left join ShareRule sr1 on sr1.AccountNo = left(a.AccountNo,4) and sr1.ExpenseReason = a.Type and (sr1.ShipModeID = '' or sr1.ShipModeID like '%'+a.ShipModeID+'%')
-	order by a.AccountNo,GW,CBM
+	left join ShareRule sr on sr.AccountID = a.AccountID and sr.ExpenseReason = a.Type and (sr.ShipModeID = '' or sr.ShipModeID like '%'+a.ShipModeID+'%')
+	left join ShareRule sr1 on sr1.AccountID = left(a.AccountID,4) and sr1.ExpenseReason = a.Type and (sr1.ShipModeID = '' or sr1.ShipModeID like '%'+a.ShipModeID+'%')
+	order by a.AccountID,GW,CBM
 
 --撈出費用分攤中已不存在AP中的會科
 DECLARE cursor_diffAccNo CURSOR FOR
-	select distinct AccountNo
+	select distinct AccountID
 	from ShareExpense
 	where ShippingAPID = @id
 	except
-	select distinct se.AccountNo
+	select distinct se.AccountID
 	from ShippingAP_Detail sd
 	left join ShipExpense se on se.ID = sd.ShipExpenseID
 	where sd.ID = @id
@@ -76,7 +76,7 @@ OPEN cursor_diffAccNo
 FETCH NEXT FROM cursor_diffAccNo INTO @accno
 WHILE @@FETCH_STATUS = 0
 BEGIN
-	delete from ShareExpense where ShippingAPID = @id and AccountNo = @accno
+	delete from ShareExpense where ShippingAPID = @id and AccountID = @accno
 	FETCH NEXT FROM cursor_diffAccNo INTO @accno
 END
 CLOSE cursor_diffAccNo
@@ -162,17 +162,17 @@ BEGIN
 				SET @inputamount = ROUND(@minusamount,@exact)
 			END
 
-	select @recno = isnull(count(ShippingAPID),0) from ShareExpense where ShippingAPID = @id and WKNo = @wkno and BLNo = @blno and InvNo = @invno and AccountNo = @accno
+	select @recno = isnull(count(ShippingAPID),0) from ShareExpense where ShippingAPID = @id and WKNo = @wkno and BLNo = @blno and InvNo = @invno and AccountID = @accno
 	IF @recno = 0
 		BEGIN
-			INSERT INTO ShareExpense(ShippingAPID,BLNo,WKNo,InvNo,Type,GW,CBM,CurrencyID,Amount,ShipModeID,ShareBase,FtyWK,AccountNo,EditName,EditDate)
+			INSERT INTO ShareExpense(ShippingAPID,BLNo,WKNo,InvNo,Type,GW,CBM,CurrencyID,Amount,ShipModeID,ShareBase,FtyWK,AccountID,EditName,EditDate)
 				VALUES (@id, @blno, @wkno, @invno, @type, @gw, @cbm, @currency, @inputamount, @shipmodeid, @1stsharebase, @ftywk, @accno, @login, @adddate)
 		END
 	ELSE
 		BEGIN
 			UPDATE ShareExpense 
 			SET CurrencyID = @currency, Amount = @inputamount, ShareBase = @1stsharebase, EditName = @login, EditDate = @adddate 
-			where ShippingAPID = @id and WKNo = @wkno and BLNo = @blno and InvNo = @invno and AccountNo = @accno
+			where ShippingAPID = @id and WKNo = @wkno and BLNo = @blno and InvNo = @invno and AccountID = @accno
 		END
 
 	
@@ -184,7 +184,7 @@ BEGIN
 				BEGIN
 					UPDATE ShareExpense 
 			SET CurrencyID = @currency, Amount = Amount + @remainamount, EditName = @login, EditDate = @adddate 
-			where ShippingAPID = @id and WKNo = @maxwkno and BLNo = @maxblno and InvNo = @maxinvno and AccountNo = @accno
+			where ShippingAPID = @id and WKNo = @maxwkno and BLNo = @maxblno and InvNo = @maxinvno and AccountID = @accno
 				END
 		END
 	ELSE
