@@ -34,7 +34,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.txtthreadcomb1 = new Sci.Production.Class.txtthreadcomb();
             this.button2 = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btn_Generate = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
             this.panel1 = new Sci.Win.UI.Panel();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
@@ -62,7 +62,7 @@
             this.panel2.Controls.Add(this.label2);
             this.panel2.Controls.Add(this.txtthreadcomb1);
             this.panel2.Controls.Add(this.button2);
-            this.panel2.Controls.Add(this.button1);
+            this.panel2.Controls.Add(this.btn_Generate);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 430);
             this.panel2.Name = "panel2";
@@ -112,16 +112,16 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button1
+            // btn_Generate
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(770, 40);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Generate";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btn_Generate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_Generate.Location = new System.Drawing.Point(770, 40);
+            this.btn_Generate.Name = "btn_Generate";
+            this.btn_Generate.Size = new System.Drawing.Size(80, 30);
+            this.btn_Generate.TabIndex = 0;
+            this.btn_Generate.Text = "Generate";
+            this.btn_Generate.UseVisualStyleBackColor = true;
+            this.btn_Generate.Click += new System.EventHandler(this.btn_Generate_Click);
             // 
             // grid1
             // 
@@ -210,7 +210,7 @@
         private Win.UI.Button button3;
         private Win.UI.Panel panel2;
         private Win.UI.Button button2;
-        private Win.UI.Button button1;
+        private Win.UI.Button btn_Generate;
         private Win.UI.Grid grid1;
         private Win.UI.Panel panel1;
         private Win.UI.CheckBox checkBox1;
