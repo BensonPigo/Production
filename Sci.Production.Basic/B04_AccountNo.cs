@@ -32,9 +32,9 @@ namespace Sci.Production.Basic
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
 
-            string selectCommand = @"select @id as ID,a.ID as ArtworkTypeID, a.Seq, b.AccountNo, b.AddName,b.AddDate, b.EditName, b.EditDate 
+            string selectCommand = @"select @id as ID,a.ID as ArtworkTypeID, a.Seq, b.AccountID, b.AddName,b.AddDate, b.EditName, b.EditDate 
 from (select ID,Seq from ArtworkType where IsSubprocess = 1 or Classify = 'P' or SystemType = 'P') a 
-left join (select ArtworkTypeID,AccountNo,AddName,AddDate,EditName,EditDate from LocalSupp_AccountNo where ID = @id) b on a.ID = b.ArtworkTypeID 
+left join (select ArtworkTypeID,AccountID,AddName,AddDate,EditName,EditDate from LocalSupp_AccountNo where ID = @id) b on a.ID = b.ArtworkTypeID 
 order by a.Seq";
             Ict.DualResult returnResult;
             DataTable ArtworkTable = new DataTable();
@@ -53,7 +53,7 @@ order by a.Seq";
 
             Helper.Controls.Grid.Generator(this.grid)
                 .Text("ArtworkTypeID", header: "Type", width: Widths.AnsiChars(20),iseditable:false)
-                .MaskedText("AccountNo", "0000-0000", header: "Account No", width: Widths.AnsiChars(8), settings: accountNo);
+                .MaskedText("AccountID", "0000-0000", header: "Account No", width: Widths.AnsiChars(8), settings: accountNo);
             
             return true;
         }
@@ -76,7 +76,7 @@ order by a.Seq";
             {
                 if (currentRecord.RowState == DataRowState.Modified)
                 {
-                    if (MyUtility.Check.Empty(currentRecord["AccountNo"]))
+                    if (MyUtility.Check.Empty(currentRecord["AccountID"]))
                     {
                         returnResult = DBProxy.Current.Delete(null, tableSchema, currentRecord);
                         if (!returnResult)
