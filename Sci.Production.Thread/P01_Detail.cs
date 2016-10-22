@@ -23,7 +23,7 @@ namespace Sci.Production.Thread
     {
         private DataRow detail,master;
         private string loginID = Sci.Env.User.UserID;
-        private string styleUkey;
+        private string styleUkey,combdetail_id;
         private DataTable headerTable,gridTable,tbArticle;
         private DataRow masterRow,detailRow;
       
@@ -39,6 +39,7 @@ namespace Sci.Production.Thread
             displayBox2.Value = masterrow["id"].ToString();
             displayBox3.Value = masterrow["Seasonid"].ToString();
             displayBox4.Value = detailrow["ThreadCombID"].ToString();
+            combdetail_id = detailrow["id"].ToString();
             button1.Visible = editmode;
             //建立Gird
             generateGrid();
@@ -207,7 +208,8 @@ namespace Sci.Production.Thread
 	                        where Machinetypeid=MT.ID
                             and SEQ = MT.SEQ
 	                        and Article='{0}'
-                        )TC{1}", tbArticle.Rows[i][0].ToString().Trim(),i));
+                            and t.id ='{2}'
+                        )TC{1}", tbArticle.Rows[i][0].ToString().Trim(), i, combdetail_id));
             }
             sql = string.Format(@"
                     select
@@ -224,10 +226,11 @@ namespace Sci.Production.Thread
 	                    from ThreadColorComb_Detail t
 	                    where Machinetypeid=MT.ID
 						and SEQ = MT.SEQ
+                        and t.id ='{3}'
                         group by t.Refno,t.id
                     )TD
 					{2}
-                    where MT.ID='{0}'", detailRow["Machinetypeid"].ToString(), art_col,op.ToString());
+                    where MT.ID='{0}'", detailRow["Machinetypeid"].ToString(), art_col, op.ToString(),combdetail_id);
             dResult = DBProxy.Current.Select(null, sql, out gridTable);
             if (!dResult)
             {
