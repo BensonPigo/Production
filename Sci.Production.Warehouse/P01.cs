@@ -70,6 +70,7 @@ namespace Sci.Production.Warehouse
             btnBatchClose.Visible = dataType != "Y";
             #endregion
             MyUtility.Tool.SetupCombox(cbbCategory, 2, 1, "B,Bulk,S,Sample,M,Material");
+
         }
 
         private void btnBatchClose_Click(object sender, EventArgs e)
