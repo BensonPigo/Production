@@ -104,6 +104,13 @@ namespace Sci.Production.Warehouse
         //print
         protected override bool ClickPrint()
         {
+            //329: WAREHOUSE_P18 Print，資料如果未confirm不能列印。
+            if (CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("Data is not confirmed, can't print !!", "Warning");
+                return false;
+            }
+
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
             string fromFactory = row["FromFtyID"].ToString();
