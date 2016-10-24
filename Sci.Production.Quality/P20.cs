@@ -25,6 +25,7 @@ namespace Sci.Production.Quality
         {
             InitializeComponent();
             GenComboBox();
+            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
         }
 
         private void GenComboBox()
@@ -70,14 +71,14 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Seek(sql, out dr))
             {
                 this.DisplayStyle.Text = dr["StyleID"].ToString().Trim();
-                this.DisplayCell.Text = dr["SewingCell"].ToString().Trim();
+                //this.DisplayCell.Text = dr["SewingCell"].ToString().Trim();
                 this.DisplayDest.Text = dr["Dest"].ToString().Trim();
-                this.NumCPU.Text = dr["CPU"].ToString().Trim();
+                this.NumCPU.Text = MyUtility.Convert.GetDecimal(dr["CPU"]).ToString().Trim();
                 this.NumRFT.Text = dr["RFT_percentage"].ToString().Trim();
             }
 
             #region btnEncode
-            btnEncode.Enabled = this.EditMode;
+            btnEncode.Enabled = !this.EditMode;
             if (MyUtility.Check.Empty(CurrentMaintain)) btnEncode.Enabled = false;
             if (CurrentMaintain["status"].ToString().Trim() == "Confirmed") btnEncode.Text = "Amend";
             else btnEncode.Text = "Encode";
@@ -93,6 +94,7 @@ namespace Sci.Production.Quality
             #region MouseClick
             GarmentDefectCodeIDCell.CellMouseClick += (s, e) =>
             {
+                DataRow drDesc;
                 if (e.RowIndex == -1) return;
                 if (this.EditMode == false) return;
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -104,6 +106,40 @@ namespace Sci.Production.Quality
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel) return;
                     dr["GarmentDefectCodeID"] = item.GetSelectedString();
+                    string sqlcmd = string.Format(@"select Description from GarmentDefectCode a inner join Rft_Detail b on a.id=b.GarmentDefectCodeID where b.GarmentDefectCodeID='{0}'", item.GetSelectedString());
+                    if (MyUtility.Check.Seek(sqlcmd, out drDesc))
+                    {
+                        dr["Description"] = drDesc["Description"];
+                    }
+                    else
+                    {
+                        dr["Description"] = "";
+                    }
+                }
+            };
+            GarmentDefectCodeIDCell.EditingMouseDown += (s, e) =>
+            {
+                DataRow drDesc;
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    var dr = this.CurrentDetailData;
+                    string item_cmd = "Select ID from GarmentDefectCode ";
+
+                    SelectItem item = new SelectItem(item_cmd, "10", dr["GarmentDefectCodeID"].ToString());
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel) return;
+                    dr["GarmentDefectCodeID"] = item.GetSelectedString();
+                    string sqlcmd = string.Format(@"select Description from GarmentDefectCode a inner join Rft_Detail b on a.id=b.GarmentDefectCodeID where b.GarmentDefectCodeID='{0}'", item.GetSelectedString());
+                    if (MyUtility.Check.Seek(sqlcmd, out drDesc))
+                    {
+                        dr["Description"] = drDesc["Description"];
+                    }
+                    else
+                    {
+                        dr["Description"] = "";
+                    }
                 }
             };
             #endregion
@@ -132,7 +168,7 @@ namespace Sci.Production.Quality
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("GarmentDefectTypeid", header: "Defect Type", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("GarmentDefectCodeID", header: "Defect Code", width: Widths.AnsiChars(5), settings: GarmentDefectCodeIDCell)
-                .Text("Description", header: "Desctiption", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .Text("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), decimal_places: 0, integer_places: 5);
 
         }
@@ -238,12 +274,23 @@ namespace Sci.Production.Quality
 
         private void txtLine_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
+            DataRow dr;
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || txtLine.ReadOnly == true) return;
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select distinct id from SewingLine", "10", this.txtLine.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.txtLine.Text = item.GetSelectedString();
+            string sqlcmd=string.Format(@"select sewingcell from Sewingline where id='{0}'",item.GetSelectedString());
+            if (MyUtility.Check.Seek(sqlcmd,out dr))
+            {
+                this.DisplayCell.Text = dr["sewingcell"].ToString();
+            }
+            else
+            {
+                this.DisplayCell.Text = "";
+            }
+            //this.DisplayCell.Text= 
         }
 
         private void txtLine_Validating(object sender, CancelEventArgs e)
@@ -285,6 +332,14 @@ namespace Sci.Production.Quality
             return base.ClickEditBefore();
         }
 
-
+        protected override bool ClickNew()
+        {
+            
+            this.DisplayStyle.Text = "";
+            this.DisplayDest.Text = "";
+            this.NumRFT.Text="";
+            this.NumCPU.Text = "";
+            return base.ClickNew();
+        }
     }
 }

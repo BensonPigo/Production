@@ -64,6 +64,7 @@ namespace Sci.Production.Quality
                 else
                 {
                     btnEncode.Text = "Encode";
+                    btnEncode.Enabled = true;
                     save.Enabled = true;
                 }
             }            
@@ -228,7 +229,10 @@ namespace Sci.Production.Quality
             }
 
         }
-
+        protected override DualResult OnSave()
+        {
+            return base.OnSave();
+        }
 
     }
 }

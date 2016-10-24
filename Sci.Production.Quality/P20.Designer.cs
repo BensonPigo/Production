@@ -49,9 +49,7 @@
             this.NumDefect = new Sci.Win.UI.NumericBox();
             this.lbTeam = new Sci.Win.UI.Label();
             this.lbCPU = new Sci.Win.UI.Label();
-            this.NumCPU = new Sci.Win.UI.NumericBox();
             this.lbRFT = new Sci.Win.UI.Label();
-            this.NumRFT = new Sci.Win.UI.NumericBox();
             this.lbFactory = new Sci.Win.UI.Label();
             this.DisplayFactory = new Sci.Win.UI.DisplayBox();
             this.btnEncode = new Sci.Win.UI.Button();
@@ -59,6 +57,8 @@
             this.DisplayDest = new Sci.Win.UI.DisplayBox();
             this.comboShift = new Sci.Production.Class.txtdropdownlist();
             this.comboTeam = new Sci.Win.UI.ComboBox();
+            this.NumCPU = new Sci.Win.UI.TextBox();
+            this.NumRFT = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -75,15 +75,15 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.NumRFT);
+            this.masterpanel.Controls.Add(this.NumCPU);
             this.masterpanel.Controls.Add(this.comboTeam);
             this.masterpanel.Controls.Add(this.comboShift);
             this.masterpanel.Controls.Add(this.DisplayDest);
             this.masterpanel.Controls.Add(this.btnEncode);
             this.masterpanel.Controls.Add(this.DisplayFactory);
             this.masterpanel.Controls.Add(this.lbFactory);
-            this.masterpanel.Controls.Add(this.NumRFT);
             this.masterpanel.Controls.Add(this.lbRFT);
-            this.masterpanel.Controls.Add(this.NumCPU);
             this.masterpanel.Controls.Add(this.lbCPU);
             this.masterpanel.Controls.Add(this.lbTeam);
             this.masterpanel.Controls.Add(this.NumDefect);
@@ -129,9 +129,7 @@
             this.masterpanel.Controls.SetChildIndex(this.NumDefect, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbTeam, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbCPU, 0);
-            this.masterpanel.Controls.SetChildIndex(this.NumCPU, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbRFT, 0);
-            this.masterpanel.Controls.SetChildIndex(this.NumRFT, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.DisplayFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnEncode, 0);
@@ -139,6 +137,8 @@
             this.masterpanel.Controls.SetChildIndex(this.DisplayDest, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboShift, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboTeam, 0);
+            this.masterpanel.Controls.SetChildIndex(this.NumCPU, 0);
+            this.masterpanel.Controls.SetChildIndex(this.NumRFT, 0);
             // 
             // detailpanel
             // 
@@ -194,7 +194,7 @@
             this.txtSP.Location = new System.Drawing.Point(66, 33);
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(118, 23);
-            this.txtSP.TabIndex = 101;
+            this.txtSP.TabIndex = 1;
             this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.txtSP_Validating);
             // 
             // lbDate
@@ -212,7 +212,7 @@
             this.CDate.Location = new System.Drawing.Point(66, 6);
             this.CDate.Name = "CDate";
             this.CDate.Size = new System.Drawing.Size(120, 23);
-            this.CDate.TabIndex = 109;
+            this.CDate.TabIndex = 0;
             // 
             // lbSP
             // 
@@ -249,7 +249,7 @@
             this.txtLine.Location = new System.Drawing.Point(66, 87);
             this.txtLine.Name = "txtLine";
             this.txtLine.Size = new System.Drawing.Size(118, 23);
-            this.txtLine.TabIndex = 114;
+            this.txtLine.TabIndex = 3;
             this.txtLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLine_PopUp);
             this.txtLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtLine_Validating);
             // 
@@ -261,7 +261,7 @@
             this.DisplayCell.Location = new System.Drawing.Point(66, 116);
             this.DisplayCell.Name = "DisplayCell";
             this.DisplayCell.Size = new System.Drawing.Size(118, 21);
-            this.DisplayCell.TabIndex = 116;
+            this.DisplayCell.TabIndex = 4;
             // 
             // lbCell
             // 
@@ -280,7 +280,7 @@
             this.txtRemark.Location = new System.Drawing.Point(77, 140);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(521, 23);
-            this.txtRemark.TabIndex = 118;
+            this.txtRemark.TabIndex = 5;
             // 
             // lbRemark
             // 
@@ -349,7 +349,7 @@
             0,
             0});
             this.NumInspected.Size = new System.Drawing.Size(100, 23);
-            this.NumInspected.TabIndex = 125;
+            this.NumInspected.TabIndex = 7;
             this.NumInspected.Value = new decimal(new int[] {
             0,
             0,
@@ -369,7 +369,7 @@
             0,
             0});
             this.NumRejected.Size = new System.Drawing.Size(100, 23);
-            this.NumRejected.TabIndex = 126;
+            this.NumRejected.TabIndex = 8;
             this.NumRejected.Value = new decimal(new int[] {
             0,
             0,
@@ -391,7 +391,7 @@
             0});
             this.NumDefect.ReadOnly = true;
             this.NumDefect.Size = new System.Drawing.Size(100, 23);
-            this.NumDefect.TabIndex = 127;
+            this.NumDefect.TabIndex = 9;
             this.NumDefect.Value = new decimal(new int[] {
             0,
             0,
@@ -416,18 +416,6 @@
             this.lbCPU.TabIndex = 131;
             this.lbCPU.Text = "CPU:";
             // 
-            // NumCPU
-            // 
-            this.NumCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.NumCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.NumCPU.IsSupportEditMode = false;
-            this.NumCPU.Location = new System.Drawing.Point(574, 33);
-            this.NumCPU.Name = "NumCPU";
-            this.NumCPU.NullValue = null;
-            this.NumCPU.ReadOnly = true;
-            this.NumCPU.Size = new System.Drawing.Size(100, 23);
-            this.NumCPU.TabIndex = 132;
-            // 
             // lbRFT
             // 
             this.lbRFT.Lines = 0;
@@ -436,18 +424,6 @@
             this.lbRFT.Size = new System.Drawing.Size(60, 23);
             this.lbRFT.TabIndex = 133;
             this.lbRFT.Text = "RFT(%):";
-            // 
-            // NumRFT
-            // 
-            this.NumRFT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.NumRFT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.NumRFT.IsSupportEditMode = false;
-            this.NumRFT.Location = new System.Drawing.Point(574, 60);
-            this.NumRFT.Name = "NumRFT";
-            this.NumRFT.NullValue = null;
-            this.NumRFT.ReadOnly = true;
-            this.NumRFT.Size = new System.Drawing.Size(100, 23);
-            this.NumRFT.TabIndex = 134;
             // 
             // lbFactory
             // 
@@ -464,10 +440,10 @@
             this.DisplayFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
             this.DisplayFactory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.DisplayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.DisplayFactory.Location = new System.Drawing.Point(574, 87);
+            this.DisplayFactory.Location = new System.Drawing.Point(576, 87);
             this.DisplayFactory.Name = "DisplayFactory";
             this.DisplayFactory.Size = new System.Drawing.Size(98, 21);
-            this.DisplayFactory.TabIndex = 136;
+            this.DisplayFactory.TabIndex = 14;
             // 
             // btnEncode
             // 
@@ -475,7 +451,7 @@
             this.btnEncode.Location = new System.Drawing.Point(680, 7);
             this.btnEncode.Name = "btnEncode";
             this.btnEncode.Size = new System.Drawing.Size(100, 25);
-            this.btnEncode.TabIndex = 137;
+            this.btnEncode.TabIndex = 15;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
             this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
@@ -488,7 +464,7 @@
             this.DisplayStyle.Location = new System.Drawing.Point(66, 62);
             this.DisplayStyle.Name = "DisplayStyle";
             this.DisplayStyle.Size = new System.Drawing.Size(118, 21);
-            this.DisplayStyle.TabIndex = 112;
+            this.DisplayStyle.TabIndex = 2;
             // 
             // DisplayDest
             // 
@@ -498,7 +474,7 @@
             this.DisplayDest.Location = new System.Drawing.Point(346, 116);
             this.DisplayDest.Name = "DisplayDest";
             this.DisplayDest.Size = new System.Drawing.Size(252, 21);
-            this.DisplayDest.TabIndex = 138;
+            this.DisplayDest.TabIndex = 10;
             // 
             // comboShift
             // 
@@ -510,7 +486,7 @@
             this.comboShift.Location = new System.Drawing.Point(296, 5);
             this.comboShift.Name = "comboShift";
             this.comboShift.Size = new System.Drawing.Size(150, 24);
-            this.comboShift.TabIndex = 272;
+            this.comboShift.TabIndex = 6;
             this.comboShift.Type = "SewingOutput_Shift";
             // 
             // comboTeam
@@ -523,11 +499,34 @@
             this.comboTeam.Location = new System.Drawing.Point(576, 6);
             this.comboTeam.Name = "comboTeam";
             this.comboTeam.Size = new System.Drawing.Size(98, 24);
-            this.comboTeam.TabIndex = 273;
+            this.comboTeam.TabIndex = 11;
+            // 
+            // NumCPU
+            // 
+            this.NumCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.NumCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.NumCPU.IsSupportEditMode = false;
+            this.NumCPU.Location = new System.Drawing.Point(576, 33);
+            this.NumCPU.Name = "NumCPU";
+            this.NumCPU.ReadOnly = true;
+            this.NumCPU.Size = new System.Drawing.Size(98, 23);
+            this.NumCPU.TabIndex = 136;
+            // 
+            // NumRFT
+            // 
+            this.NumRFT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.NumRFT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.NumRFT.IsSupportEditMode = false;
+            this.NumRFT.Location = new System.Drawing.Point(576, 60);
+            this.NumRFT.Name = "NumRFT";
+            this.NumRFT.ReadOnly = true;
+            this.NumRFT.Size = new System.Drawing.Size(98, 23);
+            this.NumRFT.TabIndex = 137;
             // 
             // P20
             // 
             this.ClientSize = new System.Drawing.Size(884, 462);
+            this.DefaultControl = "CDate";
             this.DefaultDetailOrder = "GarmentDefectTypeid,GarmentDefectCodeID";
             this.DefaultOrder = "ID";
             this.GridAlias = "Rft_Detail";
@@ -581,14 +580,14 @@
         private Win.UI.Label lbTeam;
         private Win.UI.DisplayBox DisplayFactory;
         private Win.UI.Label lbFactory;
-        private Win.UI.NumericBox NumRFT;
         private Win.UI.Label lbRFT;
-        private Win.UI.NumericBox NumCPU;
         private Win.UI.Label lbCPU;
         private Win.UI.Button btnEncode;
         private Win.UI.DisplayBox DisplayDest;
         private Win.UI.DisplayBox DisplayStyle;
         private Class.txtdropdownlist comboShift;
         private Win.UI.ComboBox comboTeam;
+        private Win.UI.TextBox NumCPU;
+        private Win.UI.TextBox NumRFT;
     }
 }

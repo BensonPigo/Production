@@ -171,7 +171,8 @@ namespace Sci.Production.Quality
 
         protected override bool OnGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings groupCell = new DataGridViewGeneratorMaskedTextColumnSettings();
+           // Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings groupCell = new DataGridViewGeneratorMaskedTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings groupCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings seqCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings rollCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings chgCell = new DataGridViewGeneratorTextColumnSettings();
@@ -179,6 +180,7 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorTextColumnSettings resultCell = new DataGridViewGeneratorTextColumnSettings();
 
             #region MouseClick
+          
             seqCell.CellMouseClick += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
@@ -186,7 +188,8 @@ namespace Sci.Production.Quality
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}'", PoID);
+                    string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
+                    //string item_cmd = string.Format("select seq1,seq2,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
                     SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -194,6 +197,7 @@ namespace Sci.Production.Quality
                         return;
                     }
                     dr["SEQ"] = item.GetSelectedString();
+                    dr["SCIRefno"] = item.GetSelectedString();
                     Char splitChar = '-';
                     string[] seqSplit = item.GetSelectedString().Split(splitChar);
                     dr["seq1"] = seqSplit[0];
@@ -202,6 +206,32 @@ namespace Sci.Production.Quality
                 }
 
             };
+            seqCell.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
+                    //string item_cmd = string.Format("select seq1,seq2,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
+                    SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    dr["SEQ"] = item.GetSelectedString();
+                    dr["SCIRefno"] = item.GetSelectedString();
+                    Char splitChar = '-';
+                    string[] seqSplit = item.GetSelectedString().Split(splitChar);
+                    dr["seq1"] = seqSplit[0];
+                    dr["seq2"] = seqSplit[1];
+
+                }
+
+            };
+            
             rollCell.CellMouseClick += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
@@ -211,7 +241,49 @@ namespace Sci.Production.Quality
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     if (newOven) //新資料 不判斷SEQ
                     {
-                        string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>'' ";
+                        string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>''";
+                        List<SqlParameter> spam = new List<SqlParameter>();
+                        spam.Add(new SqlParameter("@poid", PoID));
+                        SelectItem item = new SelectItem(item_cmd, spam, "10,10", dr["Roll"].ToString());
+                        DialogResult dresult = item.ShowDialog();
+                        if (dresult == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+                        dr["Roll"] = item.GetSelectedString();
+                        dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
+
+                    }
+                    else
+                    {
+                        string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2";
+                        List<SqlParameter> spam = new List<SqlParameter>();
+                        spam.Add(new SqlParameter("@poid", PoID));
+                        spam.Add(new SqlParameter("@seq1", dr["seq1"]));
+                        spam.Add(new SqlParameter("@seq2", dr["seq2"]));
+                        SelectItem item = new SelectItem(item_cmd, spam, "10,10", dr["Roll"].ToString());
+                        DialogResult dresult = item.ShowDialog();
+                        if (dresult == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+                        dr["Roll"] = item.GetSelectedString();
+                        dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
+                    }
+
+                }
+
+            };
+            rollCell.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    if (newOven) //新資料 不判斷SEQ
+                    {
+                        string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>''";
                         List<SqlParameter> spam = new List<SqlParameter>();
                         spam.Add(new SqlParameter("@poid", PoID));
                         SelectItem item = new SelectItem(item_cmd, spam, "10,10", dr["Roll"].ToString());
@@ -263,7 +335,46 @@ namespace Sci.Production.Quality
                 }
 
             };
+
+            chgCell.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string item_cmd = "select id from Scale where Junk=0 ";
+
+                    SelectItem item = new SelectItem(item_cmd, "10", dr["Changescale"].ToString());
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    dr["Changescale"] = item.GetSelectedString();
+                }
+
+            };
             staCell.CellMouseClick += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string item_cmd = "select id from Scale where Junk=0 ";
+
+                    SelectItem item = new SelectItem(item_cmd, "10", dr["StainingScale"].ToString());
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    dr["StainingScale"] = item.GetSelectedString();
+                }
+
+            };
+            staCell.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
                 if (this.EditMode == false) return;
@@ -285,16 +396,19 @@ namespace Sci.Production.Quality
             #endregion
 
             #region Valid
-            // 個位數需補0
+            //// 個位數需補0
             groupCell.CellValidating += (s, e) =>
             {
                 if (this.EditMode == false) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (e.FormattedValue.ToString().Length != 2)
+                if (e.FormattedValue.ToString().Length > 2)
                 {
-                    dr["ColorFastnessGroup"] = "0" + e.FormattedValue.ToString();
+                    MyUtility.Msg.InfoBox("<Body> cannot insert over than 2 char");
+                    dr["ColorFastnessGroup"] = dr["ColorFastnessGroup"];
                 }
+         
             };
+            
             rollCell.CellValidating += (s, e) =>
             {
                 if (this.EditMode == false) return;
@@ -392,7 +506,8 @@ namespace Sci.Production.Quality
             #endregion
 
             Helper.Controls.Grid.Generator(this.grid)
-                .MaskedText("ColorFastnessGroup", "00", "Group", width: Widths.AnsiChars(5), settings: groupCell)
+                //.MaskedText("ColorFastnessGroup", "00", "Body", width: Widths.AnsiChars(5), settings: groupCell)
+                .Text("ColorFastnessGroup","Body",width:Widths.AnsiChars(5),settings:groupCell)
                 .Text("SEQ", header: "SEQ#", width: Widths.AnsiChars(10), iseditable: false, settings: seqCell)
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(5), settings: rollCell)
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -500,25 +615,26 @@ namespace Sci.Production.Quality
 
             return base.OnSave();
         }
+       
+        // 20161021 新增,讓使用者自行輸入
+        //protected override void OnInsert()
+        //{
+        //    DataTable dt;
+        //    DataTable dtGrid = (DataTable)gridbs.DataSource;
+        //    DBProxy.Current.Select(null, string.Format("select * from ColorFastness_Detail where id='{0}'", ID), out dt);
+        //    int rows = dt.Rows.Count;
+        //    base.OnInsert();
+        //    if (rows <= 0)
+        //    {
+        //        dtGrid.Rows[0]["ColorFastnessGroup"] = 01;
+        //    }
+        //    else
+        //    {
+        //        int group = MyUtility.Convert.GetInt(dtGrid.Rows[rows - 1]["ColorFastnessGroup"]);
 
-        protected override void OnInsert()
-        {
-            DataTable dt;
-            DataTable dtGrid = (DataTable)gridbs.DataSource;
-            DBProxy.Current.Select(null, string.Format("select * from ColorFastness_Detail where id='{0}'", ID), out dt);
-            int rows = dt.Rows.Count;
-            base.OnInsert();
-            if (rows <= 0)
-            {
-                dtGrid.Rows[0]["ColorFastnessGroup"] = 01;
-            }
-            else
-            {
-                int group = MyUtility.Convert.GetInt(dtGrid.Rows[rows - 1]["ColorFastnessGroup"]);
-
-                dtGrid.Rows[rows]["ColorFastnessGroup"] = group + 1;
-            }
-        }
+        //        dtGrid.Rows[rows]["ColorFastnessGroup"] = group + 1;
+        //    }
+        //}
 
         #region 表頭Article 右鍵事件: 1.右鍵selectItem 2.判斷validated
         private void article_MouseDown(object sender, MouseEventArgs e)

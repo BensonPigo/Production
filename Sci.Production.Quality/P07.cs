@@ -33,6 +33,7 @@ namespace Sci.Production.Quality
         {
             InitializeComponent();
             GenComboBox();
+            this.detailgrid.ContextMenuStrip = detailgridmenus;                
         }
 
         private void GenComboBox()
@@ -92,7 +93,7 @@ namespace Sci.Production.Quality
 
             if (articleDT.Rows.Count != 0)
             {
-                DataRow[] articleAry = articleDT.Select("Result<>'' or NonOven=1 or NonWash=1 ");
+                DataRow[] articleAry = articleDT.Select("Result<>'' and NonOven='True' and NonWash='True' ");
                 if (articleAry.Length > 0)
                 {
                     inspnum = Math.Round(((decimal)articleAry.Length / dRowCount) * 100, 2).ToString();
@@ -165,137 +166,137 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorTextColumnSettings WashRemarkCell = new DataGridViewGeneratorTextColumnSettings();
 
             #region MouseClick
-            OvenCell.CellMouseClick += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    var dr = this.CurrentDetailData;
-                    if (dr == null) return;
-                    var frm = new Sci.Production.Quality.P07_Oven(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString() , dr);
-                    frm.ShowDialog(this);
-                    frm.Dispose();
-                    this.RenewData();
-                }
-            };
-            OvenScaleCell.CellMouseClick += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    var dr = this.CurrentDetailData;
-                    if (dr == null) return;
-                    var frm = new Sci.Production.Quality.P07_Oven(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
-                    frm.ShowDialog(this);
-                    frm.Dispose();
-                    this.RenewData();
-                }
-            };
-            OvenDateCell.CellMouseClick += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    var dr = this.CurrentDetailData;
-                    if (dr == null) return;
-                    var frm = new Sci.Production.Quality.P07_Oven(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
-                    frm.ShowDialog(this);
-                    frm.Dispose();
-                    this.RenewData();
-                }
-            };
-            OvenInspectorCell.CellMouseClick += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    var dr = this.CurrentDetailData;
-                    if (dr == null) return;
-                    var frm = new Sci.Production.Quality.P07_Oven(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
-                    frm.ShowDialog(this);
-                    frm.Dispose();
-                    this.RenewData();
-                }
-            };
-            OvenRemarkCell.CellMouseClick += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    var dr = this.CurrentDetailData;
-                    if (dr == null) return;
-                    var frm = new Sci.Production.Quality.P07_Oven(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
-                    frm.ShowDialog(this);
-                    frm.Dispose();
-                    this.RenewData();
-                }
-            };
+            //OvenCell.CellMouseClick += (s, e) =>
+            //{
+            //    if (e.RowIndex == -1) return;
+            //    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            //    {
+            //        var dr = this.CurrentDetailData;
+            //        if (dr == null) return;
+            //        var frm = new Sci.Production.Quality.P07_Oven(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            //        frm.ShowDialog(this);
+            //        frm.Dispose();
+            //        this.RenewData();
+            //    }
+            //};
+            //OvenScaleCell.CellMouseClick += (s, e) =>
+            //{
+            //    if (e.RowIndex == -1) return;
+            //    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            //    {
+            //        var dr = this.CurrentDetailData;
+            //        if (dr == null) return;
+            //        var frm = new Sci.Production.Quality.P07_Oven(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            //        frm.ShowDialog(this);
+            //        frm.Dispose();
+            //        this.RenewData();
+            //    }
+            //};
+            //OvenDateCell.CellMouseClick += (s, e) =>
+            //{
+            //    if (e.RowIndex == -1) return;
+            //    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            //    {
+            //        var dr = this.CurrentDetailData;
+            //        if (dr == null) return;
+            //        var frm = new Sci.Production.Quality.P07_Oven(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            //        frm.ShowDialog(this);
+            //        frm.Dispose();
+            //        this.RenewData();
+            //    }
+            //};
+            //OvenInspectorCell.CellMouseClick += (s, e) =>
+            //{
+            //    if (e.RowIndex == -1) return;
+            //    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            //    {
+            //        var dr = this.CurrentDetailData;
+            //        if (dr == null) return;
+            //        var frm = new Sci.Production.Quality.P07_Oven(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            //        frm.ShowDialog(this);
+            //        frm.Dispose();
+            //        this.RenewData();
+            //    }
+            //};
+            //OvenRemarkCell.CellMouseClick += (s, e) =>
+            //{
+            //    if (e.RowIndex == -1) return;
+            //    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            //    {
+            //        var dr = this.CurrentDetailData;
+            //        if (dr == null) return;
+            //        var frm = new Sci.Production.Quality.P07_Oven(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            //        frm.ShowDialog(this);
+            //        frm.Dispose();
+            //        this.RenewData();
+            //    }
+            //};
 
-            WashCell.CellMouseClick += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    var dr = this.CurrentDetailData;
-                    if (dr == null) return;
-                    var frm = new Sci.Production.Quality.P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
-                    frm.ShowDialog(this);
-                    frm.Dispose();
-                    this.RenewData();
-                }
-            };
-            WashScaleCell.CellMouseClick += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    var dr = this.CurrentDetailData;
-                    if (dr == null) return;
-                    var frm = new Sci.Production.Quality.P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
-                    frm.ShowDialog(this);
-                    frm.Dispose();
-                    this.RenewData();
-                }
-            };
-            WashDateCell.CellMouseClick += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    var dr = this.CurrentDetailData;
-                    if (dr == null) return;
-                    var frm = new Sci.Production.Quality.P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
-                    frm.ShowDialog(this);
-                    frm.Dispose();
-                    this.RenewData();
-                }
-            };
-            WashInspectorCell.CellMouseClick += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    var dr = this.CurrentDetailData;
-                    if (dr == null) return;
-                    var frm = new Sci.Production.Quality.P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
-                    frm.ShowDialog(this);
-                    frm.Dispose();
-                    this.RenewData();
-                }
-            };
-            WashRemarkCell.CellMouseClick += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    var dr = this.CurrentDetailData;
-                    if (dr == null) return;
-                    var frm = new Sci.Production.Quality.P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
-                    frm.ShowDialog(this);
-                    frm.Dispose();
-                    this.RenewData();
-                }
-            };
+            //WashCell.CellMouseClick += (s, e) =>
+            //{
+            //    if (e.RowIndex == -1) return;
+            //    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            //    {
+            //        var dr = this.CurrentDetailData;
+            //        if (dr == null) return;
+            //        var frm = new Sci.Production.Quality.P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            //        frm.ShowDialog(this);
+            //        frm.Dispose();
+            //        this.RenewData();
+            //    }
+            //};
+            //WashScaleCell.CellMouseClick += (s, e) =>
+            //{
+            //    if (e.RowIndex == -1) return;
+            //    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            //    {
+            //        var dr = this.CurrentDetailData;
+            //        if (dr == null) return;
+            //        var frm = new Sci.Production.Quality.P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            //        frm.ShowDialog(this);
+            //        frm.Dispose();
+            //        this.RenewData();
+            //    }
+            //};
+            //WashDateCell.CellMouseClick += (s, e) =>
+            //{
+            //    if (e.RowIndex == -1) return;
+            //    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            //    {
+            //        var dr = this.CurrentDetailData;
+            //        if (dr == null) return;
+            //        var frm = new Sci.Production.Quality.P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            //        frm.ShowDialog(this);
+            //        frm.Dispose();
+            //        this.RenewData();
+            //    }
+            //};
+            //WashInspectorCell.CellMouseClick += (s, e) =>
+            //{
+            //    if (e.RowIndex == -1) return;
+            //    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            //    {
+            //        var dr = this.CurrentDetailData;
+            //        if (dr == null) return;
+            //        var frm = new Sci.Production.Quality.P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            //        frm.ShowDialog(this);
+            //        frm.Dispose();
+            //        this.RenewData();
+            //    }
+            //};
+            //WashRemarkCell.CellMouseClick += (s, e) =>
+            //{
+            //    if (e.RowIndex == -1) return;
+            //    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            //    {
+            //        var dr = this.CurrentDetailData;
+            //        if (dr == null) return;
+            //        var frm = new Sci.Production.Quality.P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            //        frm.ShowDialog(this);
+            //        frm.Dispose();
+            //        this.RenewData();
+            //    }
+            //};
             #endregion
 
             #region CellMouseDoubleClick
@@ -432,7 +433,37 @@ namespace Sci.Production.Quality
             col_WashRemark.DefaultCellStyle.BackColor = Color.SkyBlue;
 
         }
+        protected override void OnFormLoaded()
+        {
+            
+            detailgridmenus.Items.Clear();
+            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Modify Oven Test", onclick: (s, e) => OvenTest());
+            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Modify Wash Test", onclick: (s, e) => WashTest());
 
+            base.OnFormLoaded();
+        }
+
+        private void OvenTest()
+        {
+           
+            var dr = this.CurrentDetailData;
+            if (dr == null) return;
+            Sci.Production.Quality.P07_Oven callOvenDetailForm=new P07_Oven(true,this.CurrentDetailData["ID"].ToString(),this.sp_text.Text,this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString() , dr);
+            callOvenDetailForm.ShowDialog(this);
+            callOvenDetailForm.Dispose();
+            this.RenewData();
+            OnDetailEntered();
+        }
+        private void WashTest()
+        {
+            var dr = this.CurrentDetailData;
+            if (dr == null) return;
+            Sci.Production.Quality.P07_Wash callWasHDetailForm = new P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            callWasHDetailForm.ShowDialog(this);
+            callWasHDetailForm.Dispose();
+            this.RenewData();
+            OnDetailEntered();
+        }
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             DataTable dt = (DataTable)e.Details;

@@ -102,7 +102,7 @@
             this.masterpanel.Controls.Add(this.Target_text);
             this.masterpanel.Controls.Add(this.Earliest_text);
             this.masterpanel.Controls.Add(this.Cutting_text);
-            this.masterpanel.Size = new System.Drawing.Size(1143, 123);
+            this.masterpanel.Size = new System.Drawing.Size(892, 123);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.Cutting_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Earliest_text, 0);
@@ -137,7 +137,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 123);
-            this.detailpanel.Size = new System.Drawing.Size(1143, 358);
+            this.detailpanel.Size = new System.Drawing.Size(892, 226);
             // 
             // gridicon
             // 
@@ -145,7 +145,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1143, 358);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 226);
             // 
             // detail2
             // 
@@ -161,16 +161,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1143, 519);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1143, 481);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 481);
-            this.detailbtm.Size = new System.Drawing.Size(1143, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -436,19 +436,19 @@
             // 
             // comboBox1
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.comboBox1.BackColor = System.Drawing.Color.White;
+            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
             this.comboBox1.Location = new System.Drawing.Point(564, 91);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.ReadOnly = true;
             this.comboBox1.Size = new System.Drawing.Size(120, 24);
             this.comboBox1.TabIndex = 116;
             // 
             // btnBatchUpdate
             // 
+            this.btnBatchUpdate.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnBatchUpdate.Enabled = false;
             this.btnBatchUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnBatchUpdate.Location = new System.Drawing.Point(685, 90);
             this.btnBatchUpdate.Name = "btnBatchUpdate";
@@ -464,6 +464,9 @@
             this.DefaultDetailOrder = "seq1,seq2";
             this.DefaultOrder = "id";
             this.GridAlias = "AIR_Laboratory";
+            this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
+            this.IsSupportNew = false;
             this.KeyField1 = "id";
             this.KeyField2 = "POID";
             this.Name = "P07";

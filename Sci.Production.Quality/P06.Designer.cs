@@ -122,15 +122,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(1143, 519);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(1137, 473);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(1137, 40);
             // 
             // detail
             // 
@@ -342,11 +342,11 @@
             // P06
             // 
             this.ClientSize = new System.Drawing.Size(1151, 581);
-            this.ContextMenuStrip = this.detailgridmenus;
             this.DefaultDetailOrder = "InspDate,Testno";
             this.DefaultOrder = "id";
             this.GridAlias = "ColorFastness";
             this.IsGridIconVisible = false;
+            this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;

@@ -29,6 +29,7 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
+            this.detailgrid.ContextMenuStrip = detailgridmenus;
         }
 
         //refresh
@@ -54,7 +55,7 @@ namespace Sci.Production.Quality
                 this.remark_text.Text = dr["ColorFastnessLaboratoryRemark"].ToString();
             }
 
-            if (MyUtility.Check.Seek("select min(a.CutInLine) as CutInLine from Orders a left join PO b on a.POID=b.ID", out drEarly))
+            if (MyUtility.Check.Seek(string.Format("select min(a.CutInLine) as CutInLine from Orders a left join PO b on a.POID=b.ID WHERE a.Poid='{0}'",CurrentMaintain["id"]), out drEarly))
             {
                 if (drEarly["CutInLine"] == DBNull.Value) Cutting_text.Text = "";
                 else Cutting_text.Value = Convert.ToDateTime(drEarly["CutInLine"]);
@@ -204,12 +205,17 @@ namespace Sci.Production.Quality
 
         protected override void OnFormLoaded()
         {
+            
+           
             detailgridmenus.Items.Clear();//清空原有的Menu Item
             Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Create New Test", onclick: (s, e) => CreateNewTest()).Get(out add);
             Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Record's detail", onclick: (s, e) => EditThisDetail()).Get(out edit);
             Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record's detail", onclick: (s, e) => DeleteThisDetail()).Get(out delete);
+           
+            
             base.OnFormLoaded();
         }
+       
 
         // Context Menu選擇Create New test
         private void CreateNewTest()
@@ -270,6 +276,7 @@ namespace Sci.Production.Quality
         {
             var dr = this.CurrentDetailData;
             DataTable dtCheck;
+            add.Enabled = true;
             if (dr == null) // ColorFastness 空的
             {
                 add.Enabled = true;
@@ -282,20 +289,17 @@ namespace Sci.Production.Quality
                 DBProxy.Current.Select(null, string.Format("select * from ColorFastness where id='{0}'", CurrentDetailData["ID"].ToString()), out dtCheck);
                 if (dtCheck.Rows.Count <= 0)
                 {
-                    add.Enabled = true;
                     edit.Enabled = false;
                     delete.Enabled = false;
                     return;
                 }
                 if (dtCheck.Rows[0]["Status"].ToString().Trim() == "New")
                 {
-                    add.Enabled = false;
                     edit.Enabled = true;
                     delete.Enabled = true;
                 }
                 else
                 {
-                    add.Enabled = false;
                     edit.Enabled = true;
                     delete.Enabled = false;
                 }
@@ -306,7 +310,6 @@ namespace Sci.Production.Quality
             //判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
             if (dtCheck.Rows.Count <= 0)
             {
-                add.Enabled = true;
                 edit.Enabled = false;
                 delete.Enabled = false;
             }

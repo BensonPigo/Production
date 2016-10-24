@@ -31,6 +31,7 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
+            this.detailgrid.ContextMenuStrip = detailgridmenus;
         }
        
       

@@ -63,6 +63,7 @@ namespace Sci.Production.Quality
                 else
                 {
                     btnEncode.Text = "Encode";
+                    btnEncode.Enabled = true;
                     save.Enabled = true;
                 }
             }            
