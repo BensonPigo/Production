@@ -801,6 +801,32 @@
             <param name="option"></param>
             <returns></returns>
         </member>
+        <member name="M:Sci.MyUtility.Tool.ProcessWithObject(System.Collections.Generic.IEnumerable{System.Object},System.String,System.String,System.Data.DataTable@,System.String,System.Data.SqlClient.SqlConnection,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter})">
+            <summary>
+            將任意Type的 source (by properties of Type) 轉換成DataTable後 , 呼叫 ProcessWithDataTable
+            </summary>
+            <param name="source"></param>
+            <param name="tmp_columns"></param>
+            <param name="sqlcmd"></param>
+            <param name="result"></param>
+            <param name="temptablename"></param>
+            <param name="conn"></param>
+            <param name="paramters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.MyUtility.Tool.ProcessWithObject(System.Collections.Generic.IEnumerable{System.Object},System.String,System.String,System.Data.DataTable[]@,System.String,System.Data.SqlClient.SqlConnection,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter})">
+            <summary>
+            將任意Type的 source (by properties of Type) 轉換成DataTable後 , 呼叫 ProcessWithDataTable
+            </summary>
+            <param name="source"></param>
+            <param name="tmp_columns"></param>
+            <param name="sqlcmd"></param>
+            <param name="result"></param>
+            <param name="temptablename"></param>
+            <param name="conn"></param>
+            <param name="paramters"></param>
+            <returns></returns>
+        </member>
         <member name="M:Sci.MyUtility.Tool.ProcessWithDatatable(System.Data.DataTable,System.String,System.String,System.Data.DataTable@,System.String,System.Data.SqlClient.SqlConnection,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter})">
             <summary>
             ProcessWithDatatable
@@ -992,6 +1018,16 @@
             <param name="fieldNames">fieldNames 須以","隔開
             <para>fieldNames 內填法若是 " id=tmpID,name=remark" , 則會update : target["id"]=source["tmpID"] ; target["name"]=source["remark"]  </para>
             </param>
+        </member>
+        <member name="M:Sci.ProjExts.Sum(System.Data.DataTable,System.String,System.String)">
+            <summary>
+            指定欄位作加總並置入dataTable中, 
+            <para>若有指定groupColumns的話, 會再作group subTotal</para> 
+            </summary>
+            <param name="sourceTable"></param>
+            <param name="sumColumns">指定有哪些欄位要做加總 <para>可用逗號隔開 ex:"Qty,Foc,Amount"</para></param>
+            <param name="groupColumns">指定要依照哪些column 作group by <para>可用逗號隔開 ex:"poid,seq1,seq2"</para></param>
+            <returns>subTotal和overall total 的dataRow</returns>
         </member>
         <member name="M:Sci.ProjExts.GetSameFields(System.Data.DataTable,System.Data.DataTable)">
             <summary>
