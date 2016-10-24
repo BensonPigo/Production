@@ -391,7 +391,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sql = string.Format("select distinct frompoid as [SP#] from borrowback_detail where id='{0}'", dr_master["id"]);
+            string sql = string.Format("select distinct frompoid as [SP#] from borrowback_detail where id='{0}'", dr_master["BorrowID"]);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "20", textBox1.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
