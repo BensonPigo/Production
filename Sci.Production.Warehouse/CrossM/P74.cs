@@ -389,7 +389,7 @@ Where a.id = '{0}'", masterID);
                 {
                     POID = row1["ToPOID"].ToString(),
                     SEQ = row1["seq"].ToString(),
-                    DESC = row1["description"].ToString(),
+                    DESC = row1["description"].ToString().Replace(Environment.NewLine, ""),
                     FROMSP = row1["FromPOID"].ToString(),
                     FROMSEQ = row1["fromseq"].ToString(),
                     StockUnit = row1["StockUnit"].ToString(),

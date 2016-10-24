@@ -381,7 +381,7 @@ Where a.id = '{0}'", masterID);
                 {
                     SPNo = row1["ToPOID"].ToString(),
                     BulkSeq = row1["BulkSEQ"].ToString(),
-                    DESC = row1["description"].ToString(),
+                    DESC = row1["description"].ToString().Replace(Environment.NewLine,""),
                     InventorySP = row1["FromPOID"].ToString(),
                     InventorySeq = row1["InventorySEQ"].ToString(),
                     StockUnit = row1["StockUnit"].ToString(),
