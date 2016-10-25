@@ -45,12 +45,20 @@ namespace Sci.Production.Thread
                 dateBox4.Text = "";
 
             }
+            /*
+            if (this.EditMode)
+            {
+                DataTable t = (DataTable)this.detailgridbs.DataSource;
+                t.Columns["UseStockQty"].Expression = "NewCone+UsedCone";
+                t.Columns["PurchaseQty"].Expression = "TotalQty+AllowanceQty-UseStockQty";
+            }*/
         }
+
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["OrderID"].ToString();
             this.DetailSelectCommand = string.Format(
-            @"SELECT a.*, b.description, b.MetertoCone ,c.description as colordesc,d.newCone,d.usedcone
+            @"SELECT a.*, b.description, b.MetertoCone ,c.description as colordesc,isnull(d.newCone,0) as newCone,isnull(d.usedcone,0) as usedcone
             FROM ThreadRequisition_Detail a
             Left Join Localitem b on a.refno = b.refno
             Left join ThreadColor c on c.id = a.ThreadColorid
@@ -59,6 +67,7 @@ namespace Sci.Production.Thread
 
             return base.OnDetailSelectCommandPrepare(e);
         }
+
         protected override DualResult OnSubDetailSelectCommandPrepare(Win.Tems.Input8.PrepareSubDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Detail == null) ? "" : e.Detail["Ukey"].ToString();
@@ -72,13 +81,18 @@ Left join Reason c on c.reasontypeid = 'ThreadLocation' and c.id = a.threadlocat
 where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             return base.OnSubDetailSelectCommandPrepare(e);
         } 
+
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
             DataGridViewGeneratorTextColumnSettings refno = celllocalitem.GetGridCell("Thread");
             DataGridViewGeneratorTextColumnSettings thcolor = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings cons = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings usestock = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings NewCone = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings UsedCone = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings poqty1 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings poqty2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings poqty3 = new DataGridViewGeneratorNumericColumnSettings();
             #region Refno Cell
             refno.CellValidating += (s, e) =>
             {
@@ -114,6 +128,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 }
                 ReQty(CurrentDetailData);
                 CurrentDetailData.EndEdit();
+                this.update_detailgrid_CellValidated(e.RowIndex);
             };
             #endregion
             #region Color Cell
@@ -146,19 +161,9 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                     CurrentDetailData["NewCone"] = 0;
                     CurrentDetailData["UsedCone"] = 0;
                 }
-                ReQty(CurrentDetailData);
+               // ReQty(CurrentDetailData);
                 CurrentDetailData.EndEdit();
-            };
-            #endregion
-            #region useStock Cell
-            usestock.CellValidating += (s, e) =>
-            {
-                decimal oldvalue = (decimal)CurrentDetailData["UseStockQty"];
-                decimal newvalue = (decimal)e.FormattedValue;
-                if (!this.EditMode || oldvalue == newvalue) return;
-                CurrentDetailData["PurchaseQty"] = (decimal)CurrentDetailData["TotalQty"] + (decimal)CurrentDetailData["AllowanceQty"] - newvalue;
-                CurrentDetailData["UseStockQty"] = newvalue;
-                CurrentDetailData.EndEdit();
+                this.update_detailgrid_CellValidated(e.RowIndex);
             };
             #endregion
             #region cons Cell
@@ -168,12 +173,11 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 decimal newvalue = (decimal)e.FormattedValue;
                 if (!this.EditMode || oldvalue == newvalue) return;
                 CurrentDetailData["ConsumptionQty"] = newvalue;
-                ReQty(CurrentDetailData);
+                //ReQty(CurrentDetailData);
                 CurrentDetailData.EndEdit();
             };
             cons.CellMouseDoubleClick += (s, e) =>
             {
-                
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
                     OpenSubDetailPage();
@@ -181,9 +185,63 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             };
 
             #endregion
-
+            #region useStock CellValidating by (NewCone)+UsedCone
+            NewCone.CellValidating += (s, e) =>
+            {
+                /*int nc = Convert.ToInt32(e.FormattedValue);
+                int uc = Convert.ToInt32(CurrentDetailData["UsedCone"]);
+                if (!this.EditMode) return;
+                CurrentDetailData["NewCone"] = nc;
+                CurrentDetailData["UseStockQty"] = nc + uc;
+                CurrentDetailData.EndEdit();*/
+            };
+            #endregion
+            #region useStock CellValidating by NewCone+(UsedCone)
+            UsedCone.CellValidating += (s, e) =>
+            {
+                /*int nc = Convert.ToInt32(CurrentDetailData["NewCone"]);
+                int uc = Convert.ToInt32(e.FormattedValue);
+                if (!this.EditMode) return;
+                CurrentDetailData["UsedCone"] = uc;
+                CurrentDetailData["UseStockQty"] = nc + uc;
+                CurrentDetailData.EndEdit();*/
+            };
+            #endregion            
+            #region poqty CellValidating by (TotalQty) + AllowanceQty - UseStockQty
+            poqty1.CellValidating += (s, e) =>
+            {
+                /*int tq = Convert.ToInt32(CurrentDetailData["TotalQty"]);
+                int aq = Convert.ToInt32(CurrentDetailData["AllowanceQty"]);
+                int usq = Convert.ToInt32(CurrentDetailData["UseStockQty"]);
+                if (!this.EditMode) return;
+                CurrentDetailData["PurchaseQty"] = tq + aq - usq;
+                CurrentDetailData.EndEdit();*/
+            };
+            #endregion
+            #region poqty CellValidating by TotalQty + (AllowanceQty) - UseStockQty
+            poqty2.CellValidating += (s, e) =>
+            {
+                /*int tq = Convert.ToInt32(CurrentDetailData["TotalQty"]);
+                int aq = Convert.ToInt32(e.FormattedValue);
+                int usq = Convert.ToInt32(CurrentDetailData["UseStockQty"]);
+                if (!this.EditMode) return;
+                CurrentDetailData["AllowanceQty"] = aq;
+                CurrentDetailData["PurchaseQty"] = tq + aq - usq;
+                CurrentDetailData.EndEdit();*/
+            };
+            #endregion
+            #region poqty CellValidating by TotalQty + AllowanceQty - (UseStockQty)
+            poqty3.EditingValueChanged += (s, e) =>
+            {
+                /*int tq = Convert.ToInt32(CurrentDetailData["TotalQty"]);
+                int aq = Convert.ToInt32(CurrentDetailData["AllowanceQty"]);
+                int usq = Convert.ToInt32(CurrentDetailData["UseStockQty"]);
+                if (!this.EditMode) return;
+                CurrentDetailData["PurchaseQty"] = tq + aq - usq;
+                CurrentDetailData.EndEdit();*/
+            };
+            #endregion
             
-
             #region set grid
             Helper.Controls.Grid.Generator(this.detailgrid)
            .Text("Refno", header: "Thread Refno", width: Widths.AnsiChars(20),settings:refno).Get(out col_refno)
@@ -192,19 +250,48 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
            .Text("Colordesc", header: "Thread Color Desc", width: Widths.AnsiChars(10), iseditingreadonly: true)
            .Numeric("ConsumptionQty", header: "Total Consumptions", width: Widths.AnsiChars(5), integer_places: 6,settings: cons).Get(out col_cons)
            .Numeric("MeterToCone", header: "No. of Meters Per Cons", width: Widths.AnsiChars(5), integer_places: 7, decimal_places: 1, iseditingreadonly: true)
-           .Numeric("TotalQty", header: "No. of Cones", width: Widths.AnsiChars(5), integer_places: 6, iseditingreadonly: true)
-           .Numeric("AllowanceQty", header: "20% allowance", width: Widths.AnsiChars(5), integer_places: 6, iseditingreadonly: true)
-           .Numeric("NewCone", header: "New Cone", width: Widths.AnsiChars(5), integer_places: 6, iseditingreadonly: true)
-           .Numeric("UsedCone", header: "Use Cone", width: Widths.AnsiChars(5), integer_places: 6, iseditingreadonly: true)
-           .Numeric("UseStockQty", header: "Use Stock", width: Widths.AnsiChars(5), integer_places: 6, settings: usestock)
-           .Numeric("PurchaseQty", header: "PO Qty", width: Widths.AnsiChars(5), integer_places: 6)
+           .Numeric("TotalQty", header: "No. of Cones", width: Widths.AnsiChars(5), integer_places: 6, iseditingreadonly: true, settings:poqty1)
+
+           .Numeric("AllowanceQty", header: "20% allowance", width: Widths.AnsiChars(5), integer_places: 6, settings: poqty2).Get(out this.col_Allowance)
+           .Numeric("NewCone", header: "New Cone", width: Widths.AnsiChars(5), integer_places: 6, settings: NewCone).Get(out this.col_NewCone)
+           .Numeric("UsedCone", header: "Use Cone", width: Widths.AnsiChars(5), integer_places: 6, settings: UsedCone).Get(out this.col_UsedCone)
+
+           .Numeric("UseStockQty", header: "Use Stock", width: Widths.AnsiChars(5), integer_places: 6, iseditingreadonly: true, settings: poqty3)
+           .Numeric("PurchaseQty", header: "PO Qty", width: Widths.AnsiChars(5), integer_places: 6, iseditingreadonly: true)
            .Text("Remark", header: "Remark", width: Widths.AnsiChars(10))
            .Text("POID", header: "PO ID", width: Widths.AnsiChars(10), iseditingreadonly: true);
-            this.detailgrid.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns[11].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["AllowanceQty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["NewCone"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["UsedCone"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
             change_record();
+
+            this.detailgrid.CellValidated += detailgrid_CellValidated;
         }
+        DataGridViewColumn col_Allowance;
+        DataGridViewColumn col_NewCone;
+        DataGridViewColumn col_UsedCone;
+        void detailgrid_CellValidated(object sender, DataGridViewCellEventArgs e)
+        {
+            if (!this.EditMode 
+                || ( e.ColumnIndex != this.col_Allowance.Index
+                    && e.ColumnIndex != this.col_NewCone.Index
+                    && e.ColumnIndex != this.col_UsedCone.Index)
+                )return;
+            this.update_detailgrid_CellValidated(e.RowIndex);
+        }
+        void update_detailgrid_CellValidated(int RowIndex) {
+            int nc = Convert.ToInt32(CurrentDetailData["NewCone"]);
+            int uc = Convert.ToInt32(CurrentDetailData["UsedCone"]);
+            int usq = nc + uc;
+            CurrentDetailData["UseStockQty"] = usq;
+
+            int tq = Convert.ToInt32(CurrentDetailData["TotalQty"]);
+            int aq = Convert.ToInt32(CurrentDetailData["AllowanceQty"]);
+            CurrentDetailData["PurchaseQty"] = tq + aq - usq;
+            this.detailgrid.InvalidateRow(RowIndex);
+        }
+
         protected override bool ClickDeleteBefore()
         {
             if (CurrentMaintain["Status"].ToString() != "New")
@@ -221,6 +308,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             CurrentMaintain["Factoryid"] = factory;
             CurrentMaintain["mDivisionid"] = keyWord;
         }
+
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(CurrentMaintain["estbookDate"]))
@@ -260,13 +348,27 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
         {
             string id = textBox1.Text;
             DataRow drOrder;
+            DataTable pretb_cons, TR_DUK;
+            string sqlpre;
+            string sqltr_duk;
+            //確認order.poid 同(po.id)有沒有這筆,沒有則return
             if (!MyUtility.Check.Seek(string.Format("Select * from PO where id='{0}'", id)))
             {
-                MyUtility.Msg.WarningBox("<PO No> data not found");
+                MyUtility.Msg.WarningBox("This order is not purchase master!!!");
                 e.Cancel = true;
+                textBox1.Text = "";
                 return;
             }
-            if (!MyUtility.Check.Seek(string.Format("Select * from Orders where id='{0}'", id), out drOrder)) return;
+            //確認ThreadRequisition有沒有這筆,有則return
+            if (MyUtility.Check.Seek(string.Format("Select * from ThreadRequisition where OrderID='{0}'", id)))
+            {
+                MyUtility.Msg.WarningBox("Order number exists!!!");
+                e.Cancel = true;
+                textBox1.Text = "";
+                return;
+            }
+            //輸入的POno帶出其他6個表頭
+            if (!MyUtility.Check.Seek(string.Format("Select * from Orders where poid='{0}'", id), out drOrder)) return;
             dateBox3.Value = MyUtility.Convert.GetDate(drOrder["SciDelivery"]);
             dateBox4.Value = MyUtility.Convert.GetDate(drOrder["SewInLine"]);
             CurrentMaintain["Styleid"] = drOrder["Styleid"].ToString();
@@ -274,90 +376,181 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             CurrentMaintain["Brandid"] = drOrder["Brandid"].ToString();
             CurrentMaintain["factoryid"] = drOrder["factoryid"].ToString();
             CurrentMaintain["OrderID"] = id;
-            //用TimeStudy 的原因是因為Operationid有可能在FTY GSD被改變
-            string lengthsql = string.Format(
-@"with 
-a as 
-(Select a.*,b.refno,b.ThreadColorid,b.Article,b.ThreadLocationid,b.seq,c.UseRatio,c.UseRatioNumeric
-from ThreadColorComb a,ThreadColorComb_Detail b,MachineType_ThreadRatio c      
-Where a.id = b.id and a.styleukey = '{0}' and c.id = a.Machinetypeid and c.seq = b.seq and c.threadlocation = b.threadlocationid ),
-b as 
-(Select a.styleukey,b.operationid,d.machinetypeid,d.seamlength from ThreadColorComb a,ThreadColorComb_operation b, timestudy c,timestudy_Detail d
-Where a.id = b.id and b.operationid = d.operationid and c.id = d.id and c.styleid = '{1}' and c.seasonid = '{2}' and c.brandid = '{3}')
-Select a.*,b.operationid,b.seamlength from a,b where a.machinetypeid = b.machinetypeid
-", drOrder["StyleUkey"].ToString(), drOrder["Styleid"].ToString(), drOrder["Seasonid"].ToString(), drOrder["Brandid"].ToString());
-            DataTable lengthdt,totalqty,refartdt;
-            DBProxy.Current.Select(null, lengthsql, out lengthdt); //找出此Style 所有的用線量
+            //事先整理資料
+            sqlpre = string.Format(@"Select    	a.ThreadColorId,  	d.Allowance,	a.Article,	a.ThreadCombId,
+	                                b.OperationId,e.SeamLength,a.Seq, a.ThreadLocationId, a.Refno,d.UseRatioNumeric,
+                                    a.MachineTypeId,  f.OrderQty,g.MeterToCone
+	                                from ThreadColorComb_Detail a 
+	                                cross join ThreadColorComb_Operation b
+	                                left join ThreadColorcomb c on a.id=c.id 
+	                                left join MachineType_ThreadRatio d on a.Machinetypeid=d.Id and a.seq=d.seq
+	                                left join Operation e on b.OperationId= e.Id
+	                                Left join (Select Article,sum(qty) as OrderQty 
+                                               from Order_Qty a where a.id='{0}' group by Article) f
+	                                           on a.Article=f.Article
+	                                Left join LocalItem g on a.Refno=g.Refno
+	                                where c.Styleukey =(select o.Styleukey from Orders o where o.id = '{0}')",id);
+            DBProxy.Current.Select(null, sqlpre, out pretb_cons);
 
-            string sql = string.Format(@"Select ThreadCombId,MachineTypeId,a.Article,StyleUkey,ID,Refno,ThreadColorid,SEQ,UseRatio,UseRatioNumeric,operationid,seamlength,ThreadLocationid,Qty from #tmp a join (Select a.article,sum(a.Qty) as Qty from Order_Qty a,Orders b where a.id = b.id and b.poid = '{0}' and b.junk = 0 group by article) b On a.article = b.article", id);
-            MyUtility.Tool.ProcessWithDatatable(lengthdt, "ThreadCombId,MachineTypeId,Article,StyleUkey,ID,Refno,ThreadColorid,SEQ,UseRatio,UseRatioNumeric,operationid,seamlength,ThreadLocationid",
-sql, out totalqty);
-
-            MyUtility.Tool.ProcessWithDatatable(totalqty, "Refno,ThreadColorid", 
-string.Format(@"Select distinct a.Refno,a.ThreadColorid,b.description,c.description as colordesc,b.MeterToCone ,isnull(newCone,0) as newCone, isnull(usedcone,0) as usedcone
-from #tmp a 
-left join localitem b on a.refno = b.refno 
-left join threadcolor c on c.id = a.threadcolorid 
-left join (Select refno,threadcolorid,isnull(sum(NewCone),0) as newcone,isnull(sum(UsedCone),0) as usedcone from ThreadStock where  mDivisionid = '{0}' group by refno ,ThreadColorid) as d on d.refno = a.refno and d.threadcolorid = a.threadcolorid 
-",keyWord), out refartdt); //表身
-            DataTable detailtb = (DataTable)detailgridbs.DataSource;
-            foreach (DataRow dr in refartdt.Rows) //新增表身 by refno,ThreadColorid 增加
-            {
-                DataRow newdr = detailtb.NewRow();
-                //newdr["OrderID"] = id;
-                newdr["Refno"] = dr["Refno"];
-                newdr["ThreadColorid"] = dr["ThreadColorid"];
-                newdr["AutoCreate"] = 1;
-                newdr["usestockqty"] = 0;
-                newdr["Description"] = dr["Description"];
-                newdr["colordesc"] = dr["colordesc"];
-                newdr["MeterToCone"] = dr["MeterToCone"];
-                newdr["NewCone"] = dr["NewCone"];
-                newdr["UsedCone"] = dr["UsedCone"];
-                newdr["ConsumptionQty"] = 0;
-                newdr["TotalQty"] = 0;
-                newdr["AllowanceQty"] = 0;
-                newdr["UseStockQty"] = 0;
-                newdr["PurchaseQty"] = 0;
-                detailtb.Rows.Add(newdr);
-            }
-            DataTable subtb,sqltb;
+            //做資料匯整select group 後填入ThreadRequisition_Detail
+            sqltr_duk = string.Format(@"select '{0}' as Orderid, Refno,  ThreadColorId, 
+                    Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) as ConsumptionQty, 
+                    MeterToCone,
+                    sum(CEILING(CEILING((OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / MeterToCone) * 0.2)) as AllowanceQty,
+                    sum(CEILING((OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / MeterToCone)) as TotalQty,
+                    sum(CEILING((OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / MeterToCone))+
+                    sum(CEILING(CEILING((OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / MeterToCone) * 0.2))  as PurchaseQty,
+                    'true' as AutoCreate , 0 as UseStockQty, '' as POID, '' as Remark
+                    from #tmp
+                    group by Refno,MeterToCone, ThreadColorId", id);
+            if (pretb_cons.Rows.Count<=0) TR_DUK = pretb_cons.Clone();
+            else MyUtility.Tool.ProcessWithDatatable(pretb_cons, "*", sqltr_duk, out TR_DUK, "#tmp");//TR_DUK為表身
             
+            //detailgridbs.DataSource = TR_DUK;
+
+            DataTable detailtb = (DataTable)detailgridbs.DataSource;
+            detailtb = TR_DUK.Copy();
+
+
+            DataTable subtb, sqltb;
             foreach (DataRow dr in detailtb.Rows)
-            {
-                sql = string.Format(@"Select ThreadCombId,MachineTypeId,ID,Refno,Article,ThreadLocationid,SEQ,UseRatio,isnull(UseRatioNumeric,0) as UseRatioNumeric,operationid,isnull(seamlength,0) as seamlength ,isnull(Qty ,0) as Qty
-from #tmp a where a.refno = '{0}' and a.threadColorid='{1}'", dr["Refno"].ToString(), dr["threadColorid"].ToString());
-                GetSubDetailDatas(dr, out subtb);
-                MyUtility.Tool.ProcessWithDatatable(totalqty,
-@"ThreadCombId,MachineTypeId,ID,Refno,Article,ThreadLocationid,SEQ,UseRatio,UseRatioNumeric,operationid,seamlength,Qty,ThreadColorid",
-sql, out sqltb);
-                decimal cons = 0;
+            {                
                 #region 新增第三層
-                foreach (DataRow ddr in sqltb.Rows)
+                GetSubDetailDatas(dr, out subtb);
+                foreach (DataRow ddr in pretb_cons.Rows)
                 {
                     DataRow newdr = subtb.NewRow();
                     newdr["Orderid"] = id;
                     newdr["Article"] = ddr["Article"];
-                    newdr["ThreadLocationid"] = ddr["ThreadLocationid"];
-                    newdr["SEQ"] = ddr["SEQ"];
-                    newdr["UseRatio"] = ddr["UseRatio"];
-                    newdr["UseRatioNumeric"] = ddr["UseRatioNumeric"];
+                    newdr["ThreadCombID"] = ddr["ThreadCombId"];
                     newdr["operationid"] = ddr["operationid"];
                     newdr["SeamLength"] = ddr["SeamLength"];
+                    newdr["SEQ"] = ddr["SEQ"];
+                    newdr["ThreadLocationid"] = ddr["ThreadLocationid"];
+                    //newdr["UseRatio"] = "";//已不需要
+                    newdr["UseRatioNumeric"] = ddr["UseRatioNumeric"];
                     newdr["Machinetypeid"] = ddr["Machinetypeid"];
-                    newdr["ThreadCombID"] = ddr["ThreadCombId"];
-                    newdr["OrderQty"] = ddr["Qty"];
+                    newdr["OrderQty"] = ddr["OrderQty"];
                     subtb.Rows.Add(newdr);
-                    cons = cons + Convert.ToDecimal(ddr["UseRatioNumeric"]) * Convert.ToDecimal(ddr["Qty"]) * Convert.ToDecimal(ddr["SeamLength"]);
                 }
-                #endregion
-                //填入Cons
-                dr["ConsumptionQty"] = cons;
-                dr["TotalQty"] =Convert.ToDecimal(dr["MeterToCone"])!=0? Math.Ceiling(cons / Convert.ToDecimal(dr["MeterToCone"])):0;
-                dr["AllowanceQty"] = Convert.ToDouble(dr["TotalQty"]) * 0.2;
-                dr["PurchaseQty"] =Convert.ToDecimal(dr["TotalQty"]) + Convert.ToDecimal(dr["AllowanceQty"]) - Convert.ToDecimal(dr["UseStockQty"]);
+                #endregion                
             }
         }
+                
+        #region 舊公式
+//        private void textBox1_Validating(object sender, CancelEventArgs e)
+//        {
+//            string id = textBox1.Text;
+//            DataRow drOrder;
+//            if (!MyUtility.Check.Seek(string.Format("Select * from PO where id='{0}'", id)))
+//            {
+//                MyUtility.Msg.WarningBox("This order is not purchase master!!!");
+//                e.Cancel = true;
+//                textBox1.Text = "";
+//                return;
+//            }
+//            if (MyUtility.Check.Seek(string.Format("Select * from ThreadRequisition where OrderID='{0}'", id)))
+//            {
+//                MyUtility.Msg.WarningBox("Order number exists!!!");
+//                e.Cancel = true;
+//                textBox1.Text = "";
+//                return;
+//            }
+//            if (!MyUtility.Check.Seek(string.Format("Select * from Orders where id='{0}'", id), out drOrder)) return;
+//            dateBox3.Value = MyUtility.Convert.GetDate(drOrder["SciDelivery"]);
+//            dateBox4.Value = MyUtility.Convert.GetDate(drOrder["SewInLine"]);
+//            CurrentMaintain["Styleid"] = drOrder["Styleid"].ToString();
+//            CurrentMaintain["Seasonid"] = drOrder["Seasonid"].ToString();
+//            CurrentMaintain["Brandid"] = drOrder["Brandid"].ToString();
+//            CurrentMaintain["factoryid"] = drOrder["factoryid"].ToString();
+//            CurrentMaintain["OrderID"] = id;
+//            //用TimeStudy 的原因是因為Operationid有可能在FTY GSD被改變
+//            string lengthsql = string.Format(
+//@"with 
+//a as 
+//(Select a.*,b.refno,b.ThreadColorid,b.Article,b.ThreadLocationid,b.seq,c.UseRatio,c.UseRatioNumeric
+//from ThreadColorComb a,ThreadColorComb_Detail b,MachineType_ThreadRatio c      
+//Where a.id = b.id and a.styleukey = '{0}' and c.id = a.Machinetypeid and c.seq = b.seq and c.threadlocation = b.threadlocationid ),
+//b as 
+//(Select a.styleukey,b.operationid,d.machinetypeid,d.seamlength from ThreadColorComb a,ThreadColorComb_operation b, timestudy c,timestudy_Detail d
+//Where a.id = b.id and b.operationid = d.operationid and c.id = d.id and c.styleid = '{1}' and c.seasonid = '{2}' and c.brandid = '{3}')
+//Select a.*,b.operationid,b.seamlength from a,b where a.machinetypeid = b.machinetypeid
+//", drOrder["StyleUkey"].ToString(), drOrder["Styleid"].ToString(), drOrder["Seasonid"].ToString(), drOrder["Brandid"].ToString());
+//            DataTable lengthdt,totalqty,refartdt;
+//            DBProxy.Current.Select(null, lengthsql, out lengthdt); //找出此Style 所有的用線量
+
+//            string sql = string.Format(@"Select ThreadCombId,MachineTypeId,a.Article,StyleUkey,ID,Refno,ThreadColorid,SEQ,UseRatio,UseRatioNumeric,operationid,seamlength,ThreadLocationid,Qty from #tmp a join (Select a.article,sum(a.Qty) as Qty from Order_Qty a,Orders b where a.id = b.id and b.poid = '{0}' and b.junk = 0 group by article) b On a.article = b.article", id);
+//            MyUtility.Tool.ProcessWithDatatable(lengthdt, "ThreadCombId,MachineTypeId,Article,StyleUkey,ID,Refno,ThreadColorid,SEQ,UseRatio,UseRatioNumeric,operationid,seamlength,ThreadLocationid",
+//sql, out totalqty);
+
+//            MyUtility.Tool.ProcessWithDatatable(totalqty, "Refno,ThreadColorid", 
+//string.Format(@"Select distinct a.Refno,a.ThreadColorid,b.description,c.description as colordesc,b.MeterToCone ,isnull(newCone,0) as newCone, isnull(usedcone,0) as usedcone
+//from #tmp a 
+//left join localitem b on a.refno = b.refno 
+//left join threadcolor c on c.id = a.threadcolorid 
+//left join (Select refno,threadcolorid,isnull(sum(NewCone),0) as newcone,isnull(sum(UsedCone),0) as usedcone from ThreadStock where  mDivisionid = '{0}' group by refno ,ThreadColorid) as d on d.refno = a.refno and d.threadcolorid = a.threadcolorid 
+//",keyWord), out refartdt); //表身
+//----------------------------------------------------------------------------------------------------------------------------------------------//
+//            DataTable detailtb = (DataTable)detailgridbs.DataSource;
+//            foreach (DataRow dr in refartdt.Rows) //新增表身 by refno,ThreadColorid 增加
+//            {
+//                DataRow newdr = detailtb.NewRow();
+//                //newdr["OrderID"] = id;
+//                newdr["Refno"] = dr["Refno"];
+//                newdr["ThreadColorid"] = dr["ThreadColorid"];
+//                newdr["AutoCreate"] = 1;
+//                newdr["usestockqty"] = 0;
+//                newdr["Description"] = dr["Description"];
+//                newdr["colordesc"] = dr["colordesc"];
+//                newdr["MeterToCone"] = dr["MeterToCone"];
+//                newdr["NewCone"] = dr["NewCone"];
+//                newdr["UsedCone"] = dr["UsedCone"];
+//                newdr["ConsumptionQty"] = 0;
+//                newdr["TotalQty"] = 0;
+//                newdr["AllowanceQty"] = 0;
+//                newdr["UseStockQty"] = 0;
+//                newdr["PurchaseQty"] = 0;
+//                detailtb.Rows.Add(newdr);
+//            }
+//----------------------------------------------------------------------------------------------------------------------------------------------//
+
+//            DataTable subtb,sqltb;            
+//            foreach (DataRow dr in detailtb.Rows)
+//            {
+//                sql = string.Format(@"Select ThreadCombId,MachineTypeId,ID,Refno,Article,ThreadLocationid,SEQ,UseRatio,isnull(UseRatioNumeric,0) as UseRatioNumeric,operationid,isnull(seamlength,0) as seamlength ,isnull(Qty ,0) as Qty
+//from #tmp a where a.refno = '{0}' and a.threadColorid='{1}'", dr["Refno"].ToString(), dr["threadColorid"].ToString());
+//                GetSubDetailDatas(dr, out subtb);
+//                MyUtility.Tool.ProcessWithDatatable(totalqty,
+//@"ThreadCombId,MachineTypeId,ID,Refno,Article,ThreadLocationid,SEQ,UseRatio,UseRatioNumeric,operationid,seamlength,Qty,ThreadColorid",
+//sql, out sqltb);
+//                decimal cons = 0;
+//                #region 新增第三層
+//                foreach (DataRow ddr in sqltb.Rows)
+//                {
+//                    DataRow newdr = subtb.NewRow();
+//                    newdr["Orderid"] = id;
+//                    newdr["Article"] = ddr["Article"];
+//                    newdr["ThreadLocationid"] = ddr["ThreadLocationid"];
+//                    newdr["SEQ"] = ddr["SEQ"];
+//                    newdr["UseRatio"] = ddr["UseRatio"];
+//                    newdr["UseRatioNumeric"] = ddr["UseRatioNumeric"];
+//                    newdr["operationid"] = ddr["operationid"];
+//                    newdr["SeamLength"] = ddr["SeamLength"];
+//                    newdr["Machinetypeid"] = ddr["Machinetypeid"];
+//                    newdr["ThreadCombID"] = ddr["ThreadCombId"];
+//                    newdr["OrderQty"] = ddr["Qty"];
+//                    subtb.Rows.Add(newdr);
+//                    cons = cons + Convert.ToDecimal(ddr["UseRatioNumeric"]) * Convert.ToDecimal(ddr["Qty"]) * Convert.ToDecimal(ddr["SeamLength"]);
+//                }
+//                #endregion
+//                //填入Cons
+//                dr["ConsumptionQty"] = cons;
+//                dr["TotalQty"] =Convert.ToDecimal(dr["MeterToCone"])!=0? Math.Ceiling(cons / Convert.ToDecimal(dr["MeterToCone"])):0;
+//                dr["AllowanceQty"] = Convert.ToDouble(dr["TotalQty"]) * 0.2;
+//                dr["PurchaseQty"] =Convert.ToDecimal(dr["TotalQty"]) + Convert.ToDecimal(dr["AllowanceQty"]) - Convert.ToDecimal(dr["UseStockQty"]);
+//            }
+//        }
+        #endregion
 
         protected override void OnDetailGridDataInserted(DataRow data)
         {
