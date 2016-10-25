@@ -23,7 +23,7 @@ namespace Sci.Production.Shipping
         {
             base.OnDetailEntered();
             //撈Account Name資料
-            string selectCommand = string.Format("select Name from AccountNo where ID = '{0}'", CurrentMaintain["AccountNo"].ToString());
+            string selectCommand = string.Format("select Name from AccountNo where ID = '{0}'", CurrentMaintain["AccountID"].ToString());
             DataTable AccountNoTable;
             DualResult selectResult = DBProxy.Current.Select("Finance", selectCommand, out AccountNoTable);
             if (AccountNoTable != null && AccountNoTable.Rows.Count > 0)
