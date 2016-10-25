@@ -140,8 +140,8 @@ namespace Sci.Production.Warehouse
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result1 = DBProxy.Current.Select("",
-            @"select a.FromSeq1+'-'+a.Fromseq2 as FromSP
-	                ,a.ToSeq1+'-'+a.ToSeq2 as TOSP
+            @"select a.FromPOID+'('+a.FromSeq1+'-'+a.Fromseq2+')' as FromSP
+	                ,a.Topoid + '('+a.ToSeq1+'-'+a.ToSeq2+')' as TOSP
 	                ,[DESC]=dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.refno, b.seq1,b.seq2),1,0))
 	                ,case a.FromStockType
 	                     when 'B' then 'Bulk'
