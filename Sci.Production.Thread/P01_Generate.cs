@@ -21,8 +21,8 @@ namespace Sci.Production.Thread
 {
     public partial class P01_Generate : Sci.Win.Subs.Base
     {
-        private DataTable gridTable, detTable;
-        private string styleid, season, id, styleUkey;
+        private DataTable gridTable;
+        private string styleUkey;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public P01_Generate(string str_styleukey, string str_styleid, string str_season, string str_brandid)
         {
@@ -76,14 +76,14 @@ namespace Sci.Production.Thread
 
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             Helper.Controls.Grid.Generator(this.grid1)
-            .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-            .Text("Seq", header: "SEQ", width: Widths.AnsiChars(4), iseditingreadonly: true)
-            .Text("Operationid", header: "Operation Code", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Text("descEN", header: "Operation Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Numeric("Seamlength", header: "Seam Length", width: Widths.AnsiChars(9), integer_places: 9, decimal_places: 2, iseditingreadonly: true)
-            .Text("MachineTypeid", header: "Machine Type", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Text("Threadcombid", header: "Thread Combination", width: Widths.AnsiChars(10), settings: threadcombcell);
+            .CheckBox("Sel", header: "", width: Widths.Auto(true), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+            .Text("Seq", header: "SEQ", width: Widths.Auto(true), iseditingreadonly: true)
+            .Text("Operationid", header: "Operation Code", width: Widths.Auto(true), iseditingreadonly: true)
+            .Text("descEN", header: "Operation Description", width: Widths.Auto(true), iseditingreadonly: true)
+            .Text("Annotation", header: "Annotation", width: Widths.Auto(true), iseditingreadonly: true)
+            .Numeric("Seamlength", header: "Seam Length", width: Widths.Auto(true), integer_places: 9, decimal_places: 2, iseditingreadonly: true)
+            .Text("MachineTypeid", header: "Machine Type", width: Widths.Auto(true), iseditingreadonly: true)
+            .Text("Threadcombid", header: "Thread Combination", width: Widths.Auto(true), settings: threadcombcell);
             grid1.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
             grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
         }

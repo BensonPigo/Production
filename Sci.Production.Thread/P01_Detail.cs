@@ -24,7 +24,7 @@ namespace Sci.Production.Thread
         private DataRow detail,master;
         private string loginID = Sci.Env.User.UserID;
         private string styleUkey,combdetail_id;
-        private DataTable headerTable,gridTable,tbArticle;
+        private DataTable gridTable,tbArticle;
         private DataRow masterRow,detailRow;
       
         public P01_Detail(DataRow masterrow,DataRow detailrow,bool editmode)
@@ -40,7 +40,8 @@ namespace Sci.Production.Thread
             displayBox3.Value = masterrow["Seasonid"].ToString();
             displayBox4.Value = detailrow["ThreadCombID"].ToString();
             combdetail_id = detailrow["id"].ToString();
-            button1.Visible = editmode;
+            button1.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
+            button1.Visible = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
             //建立Gird
             generateGrid();
 
@@ -167,11 +168,11 @@ namespace Sci.Production.Thread
             };
 
             Helper.Controls.Grid.Generator(grid1)
-                .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                .Text("ThreadLocation", header: "Thread Location", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                .Text("UseRatioNumeric", header: "UseRatioNumeric", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("Allowance", header: "Allowance", width: Widths.AnsiChars(20), iseditingreadonly: true)                
-                .Text("Refno", header: "Refno", width: Widths.AnsiChars(20), settings: refno_col);
+                .Text("SEQ", header: "SEQ", width: Widths.Auto(true), iseditingreadonly: true)
+                .Text("ThreadLocation", header: "Thread Location", width: Widths.Auto(true), iseditingreadonly: true)
+                .Text("UseRatioNumeric", header: "UseRatioNumeric", width: Widths.Auto(true), iseditingreadonly: true)
+                .Text("Allowance", header: "Allowance", width: Widths.Auto(true), iseditingreadonly: true)
+                .Text("Refno", header: "Refno", width: Widths.Auto(true), settings: refno_col);
                 //前4個是MachineType_ThreadRatio,後一個Refno是ThreadColorComb_Detail
 
             grid1.Columns[4].DefaultCellStyle.BackColor = Color.Pink;
@@ -179,9 +180,8 @@ namespace Sci.Production.Thread
             for(int i = 0;i < tbArticle.Rows.Count;i++)
             {
                 Helper.Controls.Grid.Generator(grid1)
-                    .Text(tbArticle.Rows[i]["article"].ToString().Trim(), header: tbArticle.Rows[i]["article"].ToString().Trim(), width: Widths.AnsiChars(20), settings: threadcolor_col);
+                    .Text(tbArticle.Rows[i]["article"].ToString().Trim(), header: tbArticle.Rows[i]["article"].ToString().Trim(), width: Widths.Auto(true), settings: threadcolor_col);
 
-                grid1.Columns[i+5].Width = 120;
                 grid1.Columns[i + 5].DefaultCellStyle.BackColor = Color.Pink;
             }
             #endregion

@@ -21,9 +21,9 @@ namespace Sci.Production.Thread
             : base(menuitem)
        {
             InitializeComponent();
-            button1.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
-            //button1.Enabled = false;
+            //button1.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");            
         }
+
        private void buttoncell(object sender, DataGridViewCellEventArgs e)
        {
            DataTable detTable = ((DataTable)this.detailgridbs.DataSource);
@@ -36,9 +36,9 @@ namespace Sci.Production.Thread
         {
             base.OnDetailGridSetup();
             Helper.Controls.Grid.Generator(this.detailgrid)
-           .Text("ThreadCombID", header: "Thread Combination", width: Widths.AnsiChars(20), iseditingreadonly: true)
-           .Text("MachineTypeid", header: "Machine Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
-           .Numeric("Length", header: "Length", width: Widths.AnsiChars(5), integer_places: 9, decimal_places: 2, iseditingreadonly: true)
+           .Text("ThreadCombID", header: "Thread Combination", width: Widths.Auto(true), iseditingreadonly: true)
+           .Text("MachineTypeid", header: "Machine Type", width: Widths.Auto(true), iseditingreadonly: true)
+           .Numeric("Length", header: "Length", width: Widths.Auto(true), integer_places: 9, decimal_places: 2, iseditingreadonly: true)
            .Button(header: "Color Combination", onclick: new EventHandler<DataGridViewCellEventArgs>(buttoncell));
             #region Button也可這樣寫
             //.Button(header: "Color Combination", onclick: (s,e)=>{
@@ -50,6 +50,8 @@ namespace Sci.Production.Thread
            //    P01_Detail.ShowDialog();
             //}});
             #endregion
+            button1.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
+            button1.Visible = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
 
         }
         
