@@ -462,15 +462,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 ShowErr(sqlcmd, result2);
                 return;
             }
-            //sqlupd2.Append("declare @iden as bigint;");
-            //sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
+
             foreach (DataRow item in datacheck.Rows)
             {
                 sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString()
                     , (decimal)item["qty"]
                     , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), true));
             }
-            //sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
 
             var bs1 = (from b in datacheck.AsEnumerable()
                        group b by new
@@ -503,12 +501,16 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             {
                 try
                 {
-                    if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                    if (!MyUtility.Check.Empty(sqlupd2.ToString()))
                     {
-                        _transactionscope.Dispose();
-                        ShowErr(sqlupd2.ToString(), result2);
-                        return;
+                        if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                        {
+                            _transactionscope.Dispose();
+                            ShowErr(sqlupd2.ToString(), result2);
+                            return;
+                        }
                     }
+
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
@@ -615,14 +617,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 ShowErr(sqlcmd, result2);
                 return;
             }
-            //sqlupd2.Append("declare @iden as bigint;");
-            //sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
+
             foreach (DataRow item in datacheck.Rows)
             {
                 sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), (decimal)item["qty"]
                     , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), false));
             }
-            //sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
+
             var bs1 = (from b in datacheck.AsEnumerable()
                        group b by new
                        {
@@ -654,11 +655,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             {
                 try
                 {
-                    if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                    if (!MyUtility.Check.Empty(sqlupd2.ToString()))
                     {
-                        _transactionscope.Dispose();
-                        ShowErr(sqlupd2.ToString(), result2);
-                        return;
+                        if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                        {
+                            _transactionscope.Dispose();
+                            ShowErr(sqlupd2.ToString(), result2);
+                            return;
+                        }
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
