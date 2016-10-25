@@ -190,7 +190,9 @@ order by ColorID, SizeSpec ,SewinLine
                     (comboColor.Text != "All" ? o.Field<String>("colorid") == s2 : 1 == 1) &&
                     (comboSize.Text != "All" ? o.Field<String>("sizespec") == s3 : 1 == 1)
                     select o;
-                ntb = query.CopyToDataTable<DataRow>();
+
+                int FilterCount = query.ToList<DataRow>().Count;
+                if (FilterCount > 0)  ntb = query.CopyToDataTable<DataRow>();
                 listControlBindingSource1.DataSource = ntb;
 
             }
