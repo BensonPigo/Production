@@ -266,16 +266,20 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
         private void gridIssueBreakDown_CellValidated(object sender, DataGridViewCellEventArgs e)
         {
             var dataRow = this.gridIssueBreakDown.GetDataRow(this.gridIssueBreakDownBS.Position);
-            if (e.ColumnIndex > 1
-                && null != dataRow
-                
-                ) { 
-            
+            if (e.ColumnIndex > 1 && null != dataRow) 
+            { 
                 string col_name = this.gridIssueBreakDown.Columns[e.ColumnIndex].DataPropertyName;
-                if(dataRow[col_name].Empty()){
-                    dataRow[col_name] = 0;
-                }
-                
+                if (dataRow[col_name].Empty()) dataRow[col_name] = 0;
+            }
+        }
+
+        private void gridIssueBreakDown_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            var dataRow = this.gridIssueBreakDown.GetDataRow(this.gridIssueBreakDownBS.Position);
+            if (e.ColumnIndex > 1 && null != dataRow)
+            {
+                string col_name = this.gridIssueBreakDown.Columns[e.ColumnIndex].DataPropertyName;
+                if (dataRow[col_name].Empty()) dataRow[col_name] = 0;
             }
         }
 

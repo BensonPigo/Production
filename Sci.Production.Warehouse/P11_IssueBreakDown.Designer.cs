@@ -114,6 +114,7 @@
             this.gridIssueBreakDown.TabIndex = 0;
             this.gridIssueBreakDown.TabStop = false;
             this.gridIssueBreakDown.CellValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridIssueBreakDown_CellValidated);
+            this.gridIssueBreakDown.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.gridIssueBreakDown_DataError);
             // 
             // panel1
             // 
