@@ -37,7 +37,7 @@ namespace Sci.Production.Quality
         {
            
             this.textBox1.ReadOnly = true;
-            this.textBox2.ReadOnly = true;
+            this.numericBox1.ReadOnly = true;
             return base.ClickNewBefore();
         }
 

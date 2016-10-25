@@ -31,7 +31,7 @@
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.numericBox1 = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -40,12 +40,21 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(779, 395);
+            // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.textBox2);
+            this.detailcont.Controls.Add(this.numericBox1);
             this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.label2);
+            this.detailcont.Size = new System.Drawing.Size(779, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(779, 38);
             // 
             // browse
             // 
@@ -84,15 +93,31 @@
             this.label2.TabIndex = 9;
             this.label2.Text = "Description";
             // 
-            // textBox2
+            // numericBox1
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Weight", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(200, 129);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 23);
-            this.textBox2.TabIndex = 11;
+            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "weight", true));
+            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBox1.Location = new System.Drawing.Point(200, 129);
+            this.numericBox1.Maximum = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+            this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox1.ReadOnly = true;
+            this.numericBox1.Size = new System.Drawing.Size(100, 23);
+            this.numericBox1.TabIndex = 12;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // B05
             // 
@@ -121,9 +146,9 @@
 
         #endregion
 
-        private Win.UI.TextBox textBox2;
         private Win.UI.TextBox textBox1;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
+        private Win.UI.NumericBox numericBox1;
     }
 }
