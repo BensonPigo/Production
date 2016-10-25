@@ -431,8 +431,8 @@
             result = Sci.Data.DBProxy.Current.Execute(null, "INSERT INTO CURRENCY(ID,NAME)  VALUES('222','222name')");
             </example>
         </member>
-        <!-- 忽略成員 "M:Sci.Data.IDBProxy.Execute(System.String,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter})" 中格式錯誤的 XML 註解 -->
-        <!-- 忽略成員 "M:Sci.Data.IDBProxy.Executes(System.String,System.Collections.Generic.IList{System.String})" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Data.IDBProxy.Execute(System.String,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter})" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Data.IDBProxy.Executes(System.String,System.Collections.Generic.IList{System.String})" -->
         <member name="M:Sci.Data.IDBProxy.Executes(System.String,System.Collections.Generic.IList{Sci.Data.SqlCommandText})">
             <summary>
             Execute multiple  SQL statement commands.
@@ -488,9 +488,9 @@
             result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM CURRENCY", out datas);
             </example>
         </member>
-        <!-- 忽略成員 "M:Sci.Data.IDBProxy.Select(System.String,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},System.Data.DataTable@)" 中格式錯誤的 XML 註解 -->
-        <!-- 忽略成員 "M:Sci.Data.IDBProxy.Select``1(System.String,System.String,``0@)" 中格式錯誤的 XML 註解 -->
-        <!-- 忽略成員 "M:Sci.Data.IDBProxy.Select``1(System.String,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},``0@)" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Data.IDBProxy.Select(System.String,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},System.Data.DataTable@)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Data.IDBProxy.Select``1(System.String,System.String,``0@)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Data.IDBProxy.Select``1(System.String,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},``0@)" -->
         <member name="M:Sci.Data.IDBProxy.SelectByConn(System.Data.SqlClient.SqlConnection,System.String,System.Data.DataTable@)">
             <summary>
             Select Data From Database. with specified connection.
@@ -545,7 +545,7 @@
             result = Sci.Data.DBProxy.Current.Select(null, "SELECT * FROM CURRENCY", out datas);
             </example>
         </member>
-        <!-- 忽略成員 "M:Sci.Data.IDBProxy.Select(System.String,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},System.Data.DataTable[]@)" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Data.IDBProxy.Select(System.String,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},System.Data.DataTable[]@)" -->
         <member name="M:Sci.Data.IDBProxy.SelectByConn(System.Data.SqlClient.SqlConnection,System.String,System.Data.DataTable[]@)">
             <summary>
             Select Data From Database. with specified connection.
@@ -757,8 +757,8 @@
             result = Sci.Data.DBProxy.Current.Insert(null, ts, dr2);
             </example>
         </member>
-        <!-- 忽略成員 "M:Sci.Data.IDBProxy.Inserts(System.String,Sci.Data.ITableSchema,System.Collections.Generic.IList{System.Data.DataRow})" 中格式錯誤的 XML 註解 -->
-        <!-- 忽略成員 "M:Sci.Data.IDBProxy.InsertsByConn(System.Data.SqlClient.SqlConnection,Sci.Data.ITableSchema,System.Collections.Generic.IList{System.Data.DataRow})" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Data.IDBProxy.Inserts(System.String,Sci.Data.ITableSchema,System.Collections.Generic.IList{System.Data.DataRow})" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Data.IDBProxy.InsertsByConn(System.Data.SqlClient.SqlConnection,Sci.Data.ITableSchema,System.Collections.Generic.IList{System.Data.DataRow})" -->
         <member name="M:Sci.Data.IDBProxy.Delete(System.String,Sci.Data.ITableSchema,System.Data.DataRow)">
             <summary>
             Delete DataRow from Database.
@@ -957,8 +957,8 @@
             result = Sci.Data.DBProxy.Current.Execute(null, "INSERT INTO CURRENCY(ID,NAME)  VALUES('222','222name')");
             </example>
         </member>
-        <!-- 忽略成員 "M:Sci.Data.DBProxy.Execute(System.String,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter})" 中格式錯誤的 XML 註解 -->
-        <!-- 忽略成員 "M:Sci.Data.DBProxy.Executes(System.String,System.Collections.Generic.IList{System.String})" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Data.DBProxy.Execute(System.String,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter})" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Data.DBProxy.Executes(System.String,System.Collections.Generic.IList{System.String})" -->
         <member name="M:Sci.Data.DBProxy.Executes(System.String,System.Collections.Generic.IList{Sci.Data.SqlCommandText})">
             <summary>
             Execute multiple  SQL statement commands.
@@ -1042,7 +1042,7 @@
             <param name="datas">result DataTable of retrieve.</param>
             <returns>result of the SQL command is executed.</returns>
         </member>
-        <!-- 忽略成員 "M:Sci.Data.DBProxy.Select``1(System.String,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},``0@)" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Data.DBProxy.Select``1(System.String,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},``0@)" -->
         <member name="M:Sci.Data.DBProxy.SelectSet(System.Data.SqlClient.SqlConnection,System.String,System.Data.DataSet@)">
             <summary>
             Select Data From Database. with specified connection.
@@ -1389,8 +1389,8 @@
             <param name="table"></param>
             <param name="datas"></param>
         </member>
-        <!-- 忽略成員 "M:Sci.Data.DBProxy.Inserts(System.String,Sci.Data.ITableSchema,System.Collections.Generic.IList{System.Data.DataRow})" 中格式錯誤的 XML 註解 -->
-        <!-- 忽略成員 "M:Sci.Data.DBProxy.InsertsByConn(System.Data.SqlClient.SqlConnection,Sci.Data.ITableSchema,System.Collections.Generic.IList{System.Data.DataRow})" 中格式錯誤的 XML 註解 -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Data.DBProxy.Inserts(System.String,Sci.Data.ITableSchema,System.Collections.Generic.IList{System.Data.DataRow})" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Data.DBProxy.InsertsByConn(System.Data.SqlClient.SqlConnection,Sci.Data.ITableSchema,System.Collections.Generic.IList{System.Data.DataRow})" -->
         <member name="M:Sci.Data.DBProxy.OnInsert(Sci.Data.ITableSchema,System.Data.DataRow,System.Data.SqlClient.SqlCommand@)">
             <summary>
             DataRow insert into database.
@@ -5090,6 +5090,14 @@
             <returns>List of DataRow.</returns>
         </member>
         <member name="M:Sci.Win.Subs.Input4Plus.GetDetailDatas(System.Data.DataRow,System.Data.DataTable@)">
+            <summary>
+            Get Detail datatable.
+            </summary>
+            <param name="master">current master DataRow.</param>
+            <param name="datas">detail datatable.</param>
+            <returns>result of process.</returns>
+        </member>
+        <member name="M:Sci.Win.Subs.Input4Plus.SetDetailDatas(System.Data.DataRow,System.Data.DataTable)">
             <summary>
             Get Detail datatable.
             </summary>
