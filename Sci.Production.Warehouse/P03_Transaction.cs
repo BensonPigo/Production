@@ -168,7 +168,7 @@ where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.
 union all
 	select issuedate, a.id
 ,'P17. R/Mtl Return' name
-, 0 as inqty, sum(b.Qty) released,0 as adjust, remark,'' location
+, 0 as inqty, sum(0-b.Qty) released,0 as adjust, remark,'' location
 from IssueReturn a, IssueReturn_Detail b 
 where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
