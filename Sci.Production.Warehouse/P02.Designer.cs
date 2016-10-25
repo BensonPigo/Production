@@ -782,7 +782,7 @@
             this.IsSupportNew = false;
             this.KeyField1 = "ID";
             this.Name = "P02";
-            this.Text = "P02. Machine Arrived";
+            this.Text = "P02. Import schedule";
             this.UniqueExpress = "ID";
             this.WorkAlias = "Export";
             this.Controls.SetChildIndex(this.tabs, 0);
