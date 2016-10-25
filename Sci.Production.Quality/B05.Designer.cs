@@ -69,10 +69,11 @@
             this.textBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox1.Location = new System.Drawing.Point(200, 53);
+            this.textBox1.IsSupportEditMode = false;
+            this.textBox1.Location = new System.Drawing.Point(160, 53);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
+            this.textBox1.Size = new System.Drawing.Size(129, 23);
             this.textBox1.TabIndex = 10;
             // 
             // label1
@@ -82,23 +83,23 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
             this.label1.TabIndex = 8;
-            this.label1.Text = "Code";
+            this.label1.Text = "Code :";
             // 
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(82, 129);
+            this.label2.Location = new System.Drawing.Point(82, 99);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(75, 23);
             this.label2.TabIndex = 9;
-            this.label2.Text = "Description";
+            this.label2.Text = "Weight:";
             // 
             // numericBox1
             // 
             this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "weight", true));
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.Location = new System.Drawing.Point(200, 129);
+            this.numericBox1.Location = new System.Drawing.Point(160, 99);
             this.numericBox1.Maximum = new decimal(new int[] {
             99,
             0,
@@ -111,7 +112,7 @@
             0,
             0});
             this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(100, 23);
+            this.numericBox1.Size = new System.Drawing.Size(129, 23);
             this.numericBox1.TabIndex = 12;
             this.numericBox1.Value = new decimal(new int[] {
             0,
