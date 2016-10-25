@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel2 = new Sci.Win.UI.Panel();
+            this.button2 = new Sci.Win.UI.Button();
             this.label6 = new Sci.Win.UI.Label();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.button1 = new Sci.Win.UI.Button();
@@ -51,7 +52,6 @@
             this.grid1 = new Sci.Win.UI.Grid();
             this.grid2 = new Sci.Win.UI.Grid();
             this.grid3 = new Sci.Win.UI.Grid();
-            this.button2 = new Sci.Win.UI.Button();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
@@ -77,6 +77,17 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1008, 48);
             this.panel2.TabIndex = 0;
+            // 
+            // button2
+            // 
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button2.Location = new System.Drawing.Point(816, 11);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(80, 30);
+            this.button2.TabIndex = 5;
+            this.button2.Text = "Print";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // label6
             // 
@@ -361,16 +372,6 @@
             this.grid3.Size = new System.Drawing.Size(568, 183);
             this.grid3.TabIndex = 5;
             this.grid3.TabStop = false;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(816, 11);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "Print";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // P03_RollTransaction
             // 

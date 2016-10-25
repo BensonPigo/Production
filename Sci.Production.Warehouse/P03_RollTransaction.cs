@@ -64,6 +64,7 @@ namespace Sci.Production.Warehouse
                                             and a.Seq2 = '{2}' 
                                             and MDivisionPoDetailUkey is not null  --避免下面Relations發生問題
                                             and MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
+                                            and StockType <> 'O'  --C倉不用算
                                             order by a.dyelot,a.roll,a.stocktype"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
@@ -183,7 +184,7 @@ union all
                         for XML PATH('')),'') as ToLocation
 from SubTransfer a, SubTransfer_Detail b 
 where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id  
-    AND TYPE <>'D' --570: WAREHOUSE_P03_RollTransaction。C倉不用算，所以要把TYPE為D的資料濾掉
+    AND TYPE not in ('D','E')  --570: WAREHOUSE_P03_RollTransaction。C倉不用算，所以要把TYPE為D及E的資料濾掉
     and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
 group by a.id, ToPoid, ToSeq1,ToSeq2, remark ,a.IssueDate,b.ToRoll,b.ToStockType,b.ToDyelot,a.type	    
 
@@ -246,7 +247,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             dtTrans.TableName = "dtTrans";
             data.Tables.Add(dtFtyinventory);
             data.Tables.Add(dtTrans);
-            //data.Tables.Add("dtSummary");
+            data.Tables.Add("dtSummary");
 
             //remove [Dyelot] DataRelation
             //DataRelation relation = new DataRelation("rel1"
@@ -302,7 +303,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                  .Text("roll", header: "Rolls", width: Widths.AnsiChars(13))
                  .Numeric("inqty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("outQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                 .Numeric("Adjust", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                 .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  ;
         }
@@ -314,6 +315,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            bindingSource1_PositionChanged(sender, e);  //687: WAREHOUSE_P03_RollTransaction_Transaction Detail by Roll#，1.Grid3值不對
             switch (comboBox1.SelectedIndex)
             {
                 case 0:
@@ -363,18 +365,14 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                            roll = string.Join(";", m.Select(r => r.Field<string>("roll")).Distinct()),
                            inqty = m.Sum(w => w.Field<decimal>("inqty")),
                            outQty = m.Sum(w => w.Field<decimal>("outqty")),
-                           Adjust = m.Sum(i => i.Field<decimal>("AdjustQty")),
+                           AdjustQty = m.Sum(i => i.Field<decimal>("AdjustQty")),
                            balance = m.Sum(w => w.Field<decimal>("inqty")) - m.Sum(w => w.Field<decimal>("outqty")) + m.Sum(i => i.Field<decimal>("AdjustQty"))
                        };
 
             dtSummary.Rows.Clear();
-            tmp.ToList().ForEach(q2 => dtSummary.Rows.Add(q2.roll, q2.dyelot, null, q2.inqty, q2.outQty, q2.Adjust, q2.balance, null, q2.rollcount));
+            tmp.ToList().ForEach(q2 => dtSummary.Rows.Add(q2.roll, q2.dyelot, null, q2.inqty, q2.outQty, q2.AdjustQty, q2.balance, null, q2.rollcount));
             
         }
-
-        
-
-       
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -471,6 +469,8 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             
             return; 
         }
+
+
     }
 }
 
