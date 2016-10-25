@@ -210,7 +210,6 @@
     <None Include="SCHEMAS.xss">
       <DependentUpon>SCHEMAS.xsd</DependentUpon>
     </None>
-    <None Include="Sci.Production_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
