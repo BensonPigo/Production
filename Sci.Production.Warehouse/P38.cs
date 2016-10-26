@@ -72,7 +72,7 @@ namespace Sci.Production.Warehouse
             String sp1 = this.textBox1.Text.TrimEnd() + '%';
 
 
-            if (string.IsNullOrWhiteSpace(sp1))
+            if (string.IsNullOrWhiteSpace(this.textBox1.Text.TrimEnd()))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
                 textBox1.Focus();
