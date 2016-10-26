@@ -347,7 +347,20 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             DataRow drOrder;
             DataTable pretb_cons, TR_DUK;
             string sqlpre;
-            string sqltr_duk;
+            string sqltr_duk; 
+            DataTable detailtb = (DataTable)detailgridbs.DataSource;
+
+            foreach (Control item in masterpanel.Controls)
+            {
+                if (item is Sci.Win.UI.Label || item == displayBox4 || item == textBox1) { }
+                else
+                {
+                    item.Text = "";                
+                }
+            }
+            detailtb.Clear();
+
+            if (textBox1.Text == "") return;
             //確認order.poid 同(po.id)有沒有這筆,沒有則return
             if (!MyUtility.Check.Seek(string.Format("Select * from PO where id='{0}'", id)))
             {
@@ -386,7 +399,9 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                                                from Order_Qty a where a.id='{0}' group by Article) f
 	                                           on a.Article=f.Article
 	                                Left join LocalItem g on a.Refno=g.Refno
-	                                where c.Styleukey =(select o.Styleukey from Orders o where o.id = '{0}')", id);
+	                                where c.Styleukey =(select o.Styleukey from Orders o where o.id = '{0}')
+                                    and a.ThreadColorId is not null and a.ThreadColorId !=''
+	                                and a.Refno is not null and a.Refno !=''", id);
 
             DualResult result;
             result = DBProxy.Current.Select(null, sqlpre, out pretb_cons);
@@ -413,7 +428,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 if (!result) { this.ShowErr(result); return; }
             }
            
-            DataTable detailtb = (DataTable)detailgridbs.DataSource;
+            
             foreach (DataRow dr in TR_DUK.Rows) //新增表身
             {
                 DataRow newdr = detailtb.NewRow();
