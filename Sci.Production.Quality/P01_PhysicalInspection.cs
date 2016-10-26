@@ -868,7 +868,6 @@ Where DetailUkey = {15};",
 
             Random random = new Random();
             string excelFile = "Excelaaa" + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
-            worksheet.SaveAs("D:\\Excel\\QA_P01" + excelFile);
 
             excel.Cells.EntireColumn.AutoFit();    //自動欄寬
             excel.Cells.EntireRow.AutoFit();       ////自動欄高

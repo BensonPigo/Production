@@ -60,7 +60,6 @@
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
             this.result_box = new Sci.Win.UI.DisplayBox();
-            this.button1 = new Sci.Win.UI.Button();
             this.textID = new Sci.Win.UI.TextBox();
             this.lastinspdate_box = new Sci.Win.UI.DateBox();
             this.arrwhdate_box = new Sci.Win.UI.DateBox();
@@ -71,7 +70,6 @@
             // 
             // btmcont
             // 
-            this.btmcont.Controls.Add(this.button1);
             this.btmcont.Controls.Add(this.button3);
             this.btmcont.Location = new System.Drawing.Point(0, 693);
             this.btmcont.Size = new System.Drawing.Size(1035, 40);
@@ -81,7 +79,6 @@
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.button3, 0);
-            this.btmcont.Controls.SetChildIndex(this.button1, 0);
             // 
             // gridcont
             // 
@@ -214,7 +211,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(75, 23);
             this.label7.TabIndex = 110;
-            this.label7.Text = "Brand Refno";
+            this.label7.Text = "Refno";
             // 
             // scirefno_box
             // 
@@ -417,16 +414,6 @@
             this.result_box.Size = new System.Drawing.Size(78, 21);
             this.result_box.TabIndex = 133;
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(473, 5);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(148, 30);
-            this.button1.TabIndex = 133;
-            this.button1.Text = "Print Format Report";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // textID
             // 
             this.textID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -576,7 +563,6 @@
         private Win.UI.DisplayBox approve_box;
         private Class.txtuser txtuser1;
         private Win.UI.DisplayBox result_box;
-        private Win.UI.Button button1;
         private Win.UI.TextBox textID;
         private Win.UI.DateBox lastinspdate_box;
         private Win.UI.DateBox arrwhdate_box;

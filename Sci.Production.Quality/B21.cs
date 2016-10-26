@@ -39,31 +39,6 @@ namespace Sci.Production.Quality
              this.textBox3.ReadOnly = true;
              base.ClickNewAfter();
          }
-         private void chk_typeCodeID(object sender, CancelEventArgs e)
-         {
-
-             DataTable dtCode;
-             string SQLCmd = "select ID from GarmentDefectType where ID=@ID";
-             System.Data.SqlClient.SqlParameter sq1 = new System.Data.SqlClient.SqlParameter();
-             sq1.ParameterName = "@ID";
-             sq1.Value = (this.textBox1).ToString().Substring(1, 1);
-             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-             cmds.Add(sq1);
-
-             if (!(result = DBProxy.Current.Select(null, SQLCmd, cmds, out dtCode)))
-             {
-                 MyUtility.Msg.ErrorBox(result.ToString());
-                 e.Cancel = true;
-                 return;
-             }
-             if (dtCode.Rows.Count == 0)
-             {
-                 MyUtility.Msg.WarningBox("The first word does not exist in <GarmentDefectType>");
-                 e.Cancel = true;
-                 return;
-             }
-
-         }
          protected override bool ClickSaveBefore()
          {
 
@@ -111,34 +86,16 @@ namespace Sci.Production.Quality
              }
 
              return base.ClickSaveBefore();
-         }
-         
-         private void textBox1_TextChanged(object sender, EventArgs e)
+         }         
+        
+         private void textBox1_Validated(object sender, EventArgs e)
          {
-             if (this.textBox1.Text !="")
+             if (this.textBox1.Text != "")
              {
-                 this.textBox3.Text = (this.textBox1.Text).ToString().Substring(0, 1);    
+                 this.textBox3.Text = (this.textBox1.Text).ToString().Substring(0, 1);
                  
              }
-             
          }
 
-         //private void textBox2_Click(object sender, EventArgs e)
-         //{
-         //    if (this.textBox1.Text != "")
-         //    {
-         //        this.textBox3.Text = (this.textBox1.Text).ToString().Substring(0, 1);
-
-         //    }
-         //}
-         //private void textBox2_KeyUp(object sender, KeyEventArgs e)
-         //{
-          
-         //    if (this.textBox1.Text != "")
-         //    {
-         //        this.textBox3.Text = (this.textBox1.Text).ToString().Substring(0, 1);
-
-         //    }
-         //}
     }
 }

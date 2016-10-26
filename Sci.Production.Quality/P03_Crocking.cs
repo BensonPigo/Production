@@ -135,6 +135,7 @@ namespace Sci.Production.Quality
                         e.EditingControl.Text = item.GetSelectedString();//將選取selectitem value帶入GridView
                     }
                 };
+
                 dryScaleCell.EditingMouseDown += (s, e) =>
                     {
                         if (e.RowIndex == -1) return;
@@ -149,10 +150,13 @@ namespace Sci.Production.Quality
                             {
                                 return;
                             }
-                            e.EditingControl.Text = item1.GetSelectedString(); 
+                            e.EditingControl.Text = item1.GetSelectedString();
+                            dr["DryScale"] = item1.GetSelectedString(); 
                         }
                     
                     };
+
+              
                 wetScaleCell.EditingMouseDown += (s, e) =>
                 {
                     if (e.RowIndex == -1) return;
@@ -161,13 +165,14 @@ namespace Sci.Production.Quality
                     {
                         DataRow dr = grid.GetDataRow(e.RowIndex);
                         string scalecmd = @"select id from Scale where junk!=1";
-                        SelectItem item1 = new SelectItem(scalecmd, "15", dr["DryScale"].ToString());
+                        SelectItem item1 = new SelectItem(scalecmd, "15", dr["WetScale"].ToString());
                         DialogResult result = item1.ShowDialog();
                         if (result == DialogResult.Cancel)
                         {
                             return;
                         }
                         e.EditingControl.Text = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                        dr["WetScale"] = item1.GetSelectedString();
                     }
 
                 };
@@ -178,14 +183,15 @@ namespace Sci.Production.Quality
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
                     {
                         DataRow dr = grid.GetDataRow(e.RowIndex);
-                        string scalecmd = @"select id,name from Pass1 where Resign is not null";
-                        SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["DryScale"].ToString());
+                        string scalecmd = @"select id,name from Pass1 ";
+                        SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Inspector"].ToString());
                         DialogResult result = item1.ShowDialog();
                         if (result == DialogResult.Cancel)
                         {
                             return;
                         }
                         e.EditingControl.Text = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                        dr["Inspector"] = item1.GetSelectedString();
                     }
                 };
                 
@@ -203,6 +209,7 @@ namespace Sci.Production.Quality
                     if (dr["Result"].ToString() == "Pass") dr["Result"] = "Fail";
                     else dr["Result"] = "Pass";
                 };
+           
             #endregion
                 #region Valid 檢驗
                 Rollcell.CellValidating += (s, e) =>
@@ -247,19 +254,15 @@ namespace Sci.Production.Quality
                         
                         string dryScale_cmd = string.Format(@"	select DryScale from FIR_Laboratory_Crocking a left join Scale b on a.DryScale=b.id where a.id ='{0}'", maindr["id"]);
                         DataRow roll_dr;
-                        if (MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
+                        if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
                         {
-                            dr["DryScale"] = roll_dr["DryScale"];                            
-                            dr.EndEdit();
+                             MyUtility.Msg.WarningBox("<Dry Scale> data not found!");
+                             dr["DryScale"] = "";
+                             dr.EndEdit();
+                             e.Cancel = true;
+                             return;
                         }
-                        else
-                        {
-                            MyUtility.Msg.WarningBox("<Dry Scale> data not found!");
-                            dr["DryScale"] = "";
-                            dr.EndEdit();
-                            e.Cancel = true;
-                            return;
-                        }
+                     
                     };
                 wetScaleCell.CellValidating += (s, e) =>
                 {
@@ -274,12 +277,7 @@ namespace Sci.Production.Quality
                     
                     string dryScale_cmd = string.Format(@"select wetScale from FIR_Laboratory_Crocking a left join Scale b on a.DryScale=b.id where a.id ='{0}'", maindr["id"]);
                     DataRow roll_dr;
-                    if (MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
-                    {
-                        dr["wetScale"] = roll_dr["wetScale"];
-                        dr.EndEdit();
-                    }
-                    else
+                    if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
                     {
                         MyUtility.Msg.WarningBox("<Wet Scale> data not found!");
                         dr["wetScale"] = "";
@@ -287,6 +285,7 @@ namespace Sci.Production.Quality
                         e.Cancel = true;
                         return;
                     }
+                
                 };
                 LabTechCell.CellValidating += (s, e) =>
                 {
@@ -300,19 +299,16 @@ namespace Sci.Production.Quality
                     }                      
                     string dryScale_cmd = string.Format(@"select Inspector from FIR_Laboratory_Crocking a	left join Pass1 b on a.Inspector=b.ID and b.Resign is not null where a.id ='{0}'", maindr["id"]);
                     DataRow roll_dr;
-                    if (MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
+                    if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
                     {
-                        dr["Inspector"] = roll_dr["Inspector"];
-                        dr.EndEdit();
-                    }
-                    else
-                    {
+
                         MyUtility.Msg.WarningBox("<Inspector> data not found!");
                         dr["Inspector"] = "";
                         dr.EndEdit();
                         e.Cancel = true;
                         return;
                     }
+                   
                 };
                 ResultCell.CellValidating += (s, e) =>
                 {
@@ -333,9 +329,7 @@ namespace Sci.Production.Quality
                         MyUtility.Msg.WarningBox("<inspdate> cannot be empty!");
                         return;
                     }
-                };
-                
-                
+                };                               
                 
                 #endregion
 
@@ -344,7 +338,7 @@ namespace Sci.Production.Quality
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("DryScale", header: "Dry Scale", width: Widths.AnsiChars(5), settings: dryScaleCell)
                 .Text("WetScale", header: "Wet Scale", width: Widths.AnsiChars(5), settings: wetScaleCell)
-                .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell)
+                .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell,iseditable:false)
                 .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10), settings: InspDateCell)
                 .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16),iseditingreadonly:true,settings:LabTechCell)
                 .CellUser("Inspector", header: "Name", width: Widths.AnsiChars(10), userNamePropertyName: "Name",iseditingreadonly:true)
@@ -535,6 +529,7 @@ namespace Sci.Production.Quality
                 DataTable gridDt = (DataTable)gridbs.DataSource;
                 DataRow[] ResultAry = gridDt.Select("Result='Fail'");
                 string result = "Pass";
+                string Today = DateTime.Now.ToShortDateString();
                 if (ResultAry.Length > 0) result = "Fail";
                 #endregion
                
@@ -554,9 +549,10 @@ namespace Sci.Production.Quality
                
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir_Laboratory set CrockingDate = '{2}',CrockingEncode=1,Crocking='{0}' where id ='{1}'", result, maindr["ID"],lastDate.ToShortDateString());
+                @"Update Fir_Laboratory set CrockingEncode=1,Crocking='{0}',CrockingDate ='{2}' where id ='{1}'",
+                result, maindr["ID"], lastDate.ToShortDateString());
 
-                updatesql = updatesql + string.Format(@"update FIR_Laboratory_Crocking set editName='{0}',editDate=Getdate() where id='{1}'", loginID, maindr["ID"]);
+                updatesql = updatesql + string.Format(@"update FIR_Laboratory_Crocking set inspDate='{1}' where id='{0}'", maindr["ID"], Today);
                 #endregion                           
 
             }
@@ -566,7 +562,7 @@ namespace Sci.Production.Quality
                 updatesql = string.Format(
                 @"Update Fir_Laboratory set CrockingDate = null,CrockingEncode= 0 where id ='{0}'",  maindr["ID"]);
 
-                updatesql = updatesql + string.Format(@"update FIR_Laboratory_Crocking set editName='{0}',editDate=Getdate() where id='{1}'", loginID, maindr["ID"]);
+                //updatesql = updatesql + string.Format(@"update Fir_Laboratory set editName='{0}',editDate=Getdate() where id='{1}'", loginID, maindr["ID"]);
                 #endregion
             }
             DualResult upResult;
@@ -626,17 +622,7 @@ namespace Sci.Production.Quality
         }
 
         private void ToExcelBtn_Click(object sender, EventArgs e)
-        {
-            /*
-            DataTable dt = (DataTable)gridbs.DataSource;
-            dt.Columns.Remove("ID"); dt.Columns.Remove("AddName"); dt.Columns.Remove("AddDate"); dt.Columns.Remove("NewKey");
-            dt.Columns.Remove("EditName"); dt.Columns.Remove("EditDate"); dt.Columns.Remove("Poid"); dt.Columns.Remove("Seq1"); dt.Columns.Remove("Seq2");
-
-            dt.DefaultView.Sort = "Roll,Dyelot,DryScale,WetScale,Result,InspDate,Inspector,Name,Remark,Last update";
-            dt.AsEnumerable().OrderBy(row => row["Roll"]).OrderBy(row => row["Dyelot"]).OrderBy(row => row["DryScale"]).OrderBy(row => row["WetScale"]).OrderBy(row => row["Result"])
-            .OrderBy(row => row["InspDate"]).OrderBy(row => row["Inspector"]).OrderBy(row => row["Name"]).OrderBy(row => row["Remark"]).OrderBy(row => row["Last update"]);
-             * */
-
+        {           
             DataTable dt = (DataTable)gridbs.DataSource;
             string[] columnNames = new string[] { "Roll","Dyelot","DryScale","WetScale","Result","InspDate","Inspector","Remark","Last update" };
             var ret = Array.CreateInstance(typeof(object), dt.Rows.Count, grid.Columns.Count) as object[,];

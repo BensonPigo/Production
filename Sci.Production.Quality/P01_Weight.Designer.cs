@@ -211,7 +211,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(75, 23);
             this.label7.TabIndex = 110;
-            this.label7.Text = "Brand Refno";
+            this.label7.Text = "Refno";
             // 
             // scirefno_box
             // 
