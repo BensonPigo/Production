@@ -15,12 +15,79 @@ BEGIN
 	SET NOCOUNT ON;
 IF OBJECT_ID(N'dbo.AirPP') IS NOT NULL
 BEGIN
-  DROP TABLE Express
+  DROP TABLE AirPP
 END
-SELECT *
-,LEFT((SELECT  S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder),12) AS ForWardN
-,LEFT((SELECT  S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder1),12) AS ForWard1N
-,LEFT((SELECT  S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder2),12) AS ForWard2N
+SELECT [ID]
+      ,[CDate]
+      ,[OrderID]
+      ,[OrderShipmodeSeq]
+      ,[MDivisionID]
+      ,[ShipQty]
+      ,[ETA]
+      ,[ReceiveDoxDate]
+      ,[GW]
+      ,[VW]
+      ,[Forwarder]
+      ,[Quotation]
+      ,[Forwarder1]
+      ,[Quotation1]
+      ,[Forwarder2]
+      ,[Quotation2]
+      ,[EstAmount]
+      ,[ActualAmount]
+      ,[Rate]
+      ,[SRNo]
+      ,[Voucher]
+      ,[PayDate]
+      ,[ReasonID]
+      ,[FtyDesc]
+      ,[Remark]
+      ,[MRComment]
+      ,[ResponsibleFty]
+      ,[RatioFty]
+      ,[ResponsibleFtyNo]
+      ,[ResponsibleSubcon]
+      ,[RatioSubcon]
+      ,[SubconDBCNo]
+      ,[SubconDBCRemark]
+      ,[SubConName]
+      ,[ResponsibleSCI]
+      ,[RatioSCI]
+      ,[SCIICRNo]
+      ,[SCIICRRemark]
+      ,[ResponsibleSupp]
+      ,[RatioSupp]
+      ,[SuppDBCNo]
+      ,[SuppDBCRemark]
+      ,[ResponsibleBuyer]
+      ,[RatioBuyer]
+      ,[BuyerDBCNo]
+      ,[BuyerDBCRemark]
+      ,[BuyerICRNo]
+      ,[BuyerICRRemark]
+      ,[BuyerRemark]
+      ,[PPICMgr]
+      ,[PPICMgrApvDate]
+      ,[FtyMgr]
+      ,[FtyMgrApvDate]
+      ,[POHandle]
+      ,[POSMR]
+      ,[MRHandle]
+      ,[SMR]
+      ,[SMRApvDate]
+      ,[Task]
+      ,[TaskApvDate]
+      ,[Status]
+      ,[FtySendDate]
+      ,[AddName]
+      ,[AddDate]
+      ,iif([EditName] is null,'',[EditName]) as [EditName]
+      ,[EditDate]
+      ,[TPEEditName]
+      ,[TPEEditDate]
+,iif((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder) is null,'',LEFT((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder),12) ) AS ForWardN
+,iif((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder1) is null,'',LEFT((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder1),12) ) AS ForWard1N
+,iif((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder2) is null,'',LEFT((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder2),12) ) AS ForWard2N
 INTO AirPP
 FROM Production.dbo.AirPP AS A
 WHERE 
