@@ -36,8 +36,12 @@ namespace Sci.Production.Thread
             DataRow dr;
             if (MyUtility.Check.Seek(string.Format("Select * from orders where id='{0}'", CurrentMaintain["OrderID"].ToString()), out dr))
             {
+                if (!MyUtility.Check.Empty(dr["SciDelivery"]))
                 dateBox3.Value = Convert.ToDateTime(dr["SciDelivery"]);
+                else dateBox3.Text = "";
+                if (!MyUtility.Check.Empty(dr["SewInLine"]))
                 dateBox4.Value = Convert.ToDateTime(dr["SewInLine"]);
+                else dateBox4.Text = "";
             }
             else
             {
@@ -45,13 +49,6 @@ namespace Sci.Production.Thread
                 dateBox4.Text = "";
 
             }
-            /*
-            if (this.EditMode)
-            {
-                DataTable t = (DataTable)this.detailgridbs.DataSource;
-                t.Columns["UseStockQty"].Expression = "NewCone+UsedCone";
-                t.Columns["PurchaseQty"].Expression = "TotalQty+AllowanceQty-UseStockQty";
-            }*/
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
@@ -379,7 +376,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             //事先整理資料
             sqlpre = string.Format(@"Select    	a.ThreadColorId,  	d.Allowance,	a.Article,	a.ThreadCombId,
 	                                b.OperationId,e.SeamLength,a.Seq, a.ThreadLocationId, a.Refno,d.UseRatioNumeric,
-                                    a.MachineTypeId,  f.OrderQty,g.MeterToCone
+                                    a.MachineTypeId,  isnull(f.OrderQty,0) as OrderQty ,g.MeterToCone
 	                                from ThreadColorComb_Detail a 
 	                                cross join ThreadColorComb_Operation b
 	                                left join ThreadColorcomb c on a.id=c.id 
@@ -389,30 +386,59 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                                                from Order_Qty a where a.id='{0}' group by Article) f
 	                                           on a.Article=f.Article
 	                                Left join LocalItem g on a.Refno=g.Refno
-	                                where c.Styleukey =(select o.Styleukey from Orders o where o.id = '{0}')",id);
-            DBProxy.Current.Select(null, sqlpre, out pretb_cons);
+	                                where c.Styleukey =(select o.Styleukey from Orders o where o.id = '{0}')", id);
 
+            DualResult result;
+            result = DBProxy.Current.Select(null, sqlpre, out pretb_cons);
+            if (!result) { this.ShowErr(result); return; }
             //做資料匯整select group 後填入ThreadRequisition_Detail
-            sqltr_duk = string.Format(@"select '{0}' as Orderid, Refno,  ThreadColorId, 
-                    Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) as ConsumptionQty, 
-                    MeterToCone,
-                    sum(CEILING(CEILING((OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / MeterToCone) * 0.2)) as AllowanceQty,
-                    sum(CEILING((OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / MeterToCone)) as TotalQty,
-                    sum(CEILING((OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / MeterToCone))+
-                    sum(CEILING(CEILING((OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / MeterToCone) * 0.2))  as PurchaseQty,
-                    'true' as AutoCreate , 0 as UseStockQty, '' as POID, '' as Remark
-                    from #tmp
-                    group by Refno,MeterToCone, ThreadColorId", id);
-            if (pretb_cons.Rows.Count<=0) TR_DUK = pretb_cons.Clone();
-            else MyUtility.Tool.ProcessWithDatatable(pretb_cons, "*", sqltr_duk, out TR_DUK, "#tmp");//TR_DUK為表身
+            sqltr_duk = string.Format(@"select '{0}' as Orderid, #tmp.Refno,  ThreadColorId, 
+                        b.Description,c.Description as colordesc,
+                        Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) as ConsumptionQty, 
+                        #tmp.MeterToCone,
+                        sum(CEILING(CEILING((OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone) * 0.2)) as AllowanceQty,
+                        sum(CEILING((OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone)) as TotalQty,
+                        sum(CEILING((OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone))+
+                        sum(CEILING(CEILING((OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone) * 0.2))  as PurchaseQty,
+                        'true' as AutoCreate , 0 as UseStockQty, '' as POID, '' as Remark
+                        from #tmp
+                        left join localitem b on #tmp.refno = b.refno 
+                        left join threadcolor c on c.id = #tmp.threadcolorid 
+
+                        group by b.Description,c.Description,#tmp.Refno,#tmp.MeterToCone, ThreadColorId", id);
             
-            //detailgridbs.DataSource = TR_DUK;
-
+            if (pretb_cons.Rows.Count <= 0) TR_DUK = pretb_cons.Clone();
+            else
+            {
+                result= MyUtility.Tool.ProcessWithDatatable(pretb_cons, "", sqltr_duk, out TR_DUK, "#tmp");//TR_DUK為表身
+                if (!result) { this.ShowErr(result); return; }
+            }
+           
             DataTable detailtb = (DataTable)detailgridbs.DataSource;
-            detailtb = TR_DUK.Copy();
+            foreach (DataRow dr in TR_DUK.Rows) //新增表身
+            {
+                DataRow newdr = detailtb.NewRow();
+                newdr["OrderID"] = id;
+                newdr["Refno"] = dr["Refno"];
+                newdr["ThreadColorid"] = dr["ThreadColorId"];
+                newdr["ConsumptionQty"] = dr["ConsumptionQty"];
+                newdr["MeterToCone"] = dr["MeterToCone"];
+                newdr["AllowanceQty"] = dr["AllowanceQty"];
+                newdr["TotalQty"] = dr["TotalQty"];
+                newdr["PurchaseQty"] = dr["PurchaseQty"];
+                newdr["AutoCreate"] = 1;
+                newdr["UseStockQty"] = 0;
+                newdr["POID"] = dr["POID"];
+                newdr["Remark"] = dr["Remark"];
+                newdr["Description"] = dr["Description"];
+                newdr["colordesc"] = dr["colordesc"];
+                newdr["NewCone"] = 0;
+                newdr["UsedCone"] = 0;
+                newdr["UseStockQty"] = 0;
+                detailtb.Rows.Add(newdr);
+            }
 
-
-            DataTable subtb, sqltb;
+            DataTable subtb;
             foreach (DataRow dr in detailtb.Rows)
             {                
                 #region 新增第三層
@@ -478,8 +504,9 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 //", drOrder["StyleUkey"].ToString(), drOrder["Styleid"].ToString(), drOrder["Seasonid"].ToString(), drOrder["Brandid"].ToString());
 //            DataTable lengthdt,totalqty,refartdt;
 //            DBProxy.Current.Select(null, lengthsql, out lengthdt); //找出此Style 所有的用線量
-
+//-------------------------------------------------------------------------------------------------------------------------------------------//
 //            string sql = string.Format(@"Select ThreadCombId,MachineTypeId,a.Article,StyleUkey,ID,Refno,ThreadColorid,SEQ,UseRatio,UseRatioNumeric,operationid,seamlength,ThreadLocationid,Qty from #tmp a join (Select a.article,sum(a.Qty) as Qty from Order_Qty a,Orders b where a.id = b.id and b.poid = '{0}' and b.junk = 0 group by article) b On a.article = b.article", id);
+
 //            MyUtility.Tool.ProcessWithDatatable(lengthdt, "ThreadCombId,MachineTypeId,Article,StyleUkey,ID,Refno,ThreadColorid,SEQ,UseRatio,UseRatioNumeric,operationid,seamlength,ThreadLocationid",
 //sql, out totalqty);
 
@@ -490,7 +517,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 //left join threadcolor c on c.id = a.threadcolorid 
 //left join (Select refno,threadcolorid,isnull(sum(NewCone),0) as newcone,isnull(sum(UsedCone),0) as usedcone from ThreadStock where  mDivisionid = '{0}' group by refno ,ThreadColorid) as d on d.refno = a.refno and d.threadcolorid = a.threadcolorid 
 //",keyWord), out refartdt); //表身
-//----------------------------------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------------------------------------------------------------------------------------//
 //            DataTable detailtb = (DataTable)detailgridbs.DataSource;
 //            foreach (DataRow dr in refartdt.Rows) //新增表身 by refno,ThreadColorid 增加
 //            {
