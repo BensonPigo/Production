@@ -139,10 +139,6 @@
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
             this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
-            // browse
-            // 
-            this.browse.Size = new System.Drawing.Size(892, 387);
-            // 
             // displayBox4
             // 
             this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
