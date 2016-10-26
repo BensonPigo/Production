@@ -246,6 +246,7 @@
       <DependentUpon>P51_Print.cs</DependentUpon>
     </Compile>
     <Compile Include="P51_PrintData.cs" />
+    <Compile Include="P60_PrintData.cs" />
     <Compile Include="P61_PrintData.cs" />
     <Compile Include="Report\R02.cs">
       <SubType>Form</SubType>
@@ -1067,6 +1068,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P51_Report1.rdlc" />
     <EmbeddedResource Include="P51_Report2.rdlc" />
+    <EmbeddedResource Include="P60_Print.rdlc" />
     <EmbeddedResource Include="P61_Print.rdlc" />
     <EmbeddedResource Include="Report\R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
@@ -1660,6 +1662,7 @@
     <None Include="Properties\DataSources\P51_PrintData3.datasource" />
     <None Include="Properties\DataSources\P60.datasource" />
     <None Include="Properties\DataSources\P60_Import.datasource" />
+    <None Include="Properties\DataSources\P60_PrintData.datasource" />
     <None Include="Properties\DataSources\P61.datasource" />
     <None Include="Properties\DataSources\P61_Import.datasource" />
     <None Include="Properties\DataSources\P61_PrintData.datasource" />
