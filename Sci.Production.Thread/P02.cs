@@ -394,19 +394,17 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             //做資料匯整select group 後填入ThreadRequisition_Detail
             sqltr_duk = string.Format(@"select '{0}' as Orderid, #tmp.Refno,  ThreadColorId, 
                         b.Description,c.Description as colordesc,
-                        Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) as ConsumptionQty, 
                         #tmp.MeterToCone,
-                        CEILING(CEILING((OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone) * 0.2) as AllowanceQty,
-                        CEILING((OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone) as TotalQty,
-                        CEILING((OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone)+
-                        CEILING(CEILING((OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone) * 0.2) as PurchaseQty,
+                        Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) as ConsumptionQty,
+                        CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone) as TotalQty,
+                        CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone) * 0.2) as AllowanceQty,
+                        CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone)+
+                        CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone) * 0.2) as PurchaseQty,
                         'true' as AutoCreate , 0 as UseStockQty, '' as POID, '' as Remark
                         from #tmp
                         left join localitem b on #tmp.refno = b.refno 
-                        left join threadcolor c on c.id = #tmp.threadcolorid 
-
-                        group by b.Description,c.Description,#tmp.Refno,#tmp.MeterToCone, ThreadColorId,
-                        ThreadColorId,Seamlength,UseRatioNumeric,Allowance,OrderQty", id);
+                        left join threadcolor c on c.id = #tmp.threadcolorid
+                        group by b.Description,c.Description,#tmp.Refno,#tmp.MeterToCone,ThreadColorId", id);
             
             if (pretb_cons.Rows.Count <= 0) TR_DUK = pretb_cons.Clone();
             else
