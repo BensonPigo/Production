@@ -564,8 +564,7 @@ Where a.id = '{0}' ", masterID);
 	               ld.qty,
 	               ld.Remark
             from LocalReceiving_Detail ld
-            left join LocalPO_Detail lpd on ld.LocalPoId=lpd.Id and ld.OrderId=lpd.OrderId and ld.Refno=lpd.Refno
-            and ld.OldSeq1=lpd.OldSeq1 and ld.OldSeq2=lpd.OldSeq2
+            left join LocalPO_Detail lpd on ld.LocalPoId=lpd.Id and ld.LocalPo_detailukey=lpd.Ukey
             where ld.ID= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }
