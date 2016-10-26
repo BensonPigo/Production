@@ -2,12 +2,15 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.PublicPrg;
+using Sci.Win;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
@@ -513,6 +516,100 @@ Where a.id = '{0}' ", masterID);
             var frm = new Sci.Production.Warehouse.P60_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
+        }
+        protected override bool ClickPrint()
+        {
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString();
+            string Issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string Invoice = row["InvNo"].ToString();
+            string Remarks = row["Remark"].ToString();
+            string Rpttitle = Sci.Env.User.Factory;
+           
+
+            #region -- 撈表頭資料 --
+            DataTable dt;
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DualResult result = DBProxy.Current.Select("",
+            @"select l.localsuppid + s.Abb as Supplier
+            from Localreceiving l
+            left join localsupp s on l.LocalSuppID=s.id
+            where l.id = @ID", pars, out dt);
+            if (!result) { this.ShowErr(result); }
+            string Supplier = dt.Rows[0]["Supplier"].ToString();
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invoice", Invoice));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remarks));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issuedate", Issuedate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", Supplier));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", Rpttitle));
+        
+
+            #endregion
+            #region -- 撈表身資料 --
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dtDetail;
+            string sqlcmd = @"
+            select ld.LocalPoId,
+	               ld.OrderId,
+	               ld.Refno,
+	               dbo.getItemDesc(ld.Category,ld.Refno)[desc],
+	               lpd.qty [poqty],
+	               lpd.UnitId,
+	               lpd.Price,
+	               lpd.qty - lpd.InQty [OnRoad],
+	               ld.qty,
+	               ld.Remark
+            from LocalReceiving_Detail ld
+            left join LocalPO_Detail lpd on ld.LocalPoId=lpd.Id and ld.OrderId=lpd.OrderId and ld.Refno=lpd.Refno
+            and ld.OldSeq1=lpd.OldSeq1 and ld.OldSeq2=lpd.OldSeq2
+            where ld.ID= @ID";
+            result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
+            if (!result) { this.ShowErr(sqlcmd, result); }
+         
+          
+            // 傳 list 資料            
+            List<P60_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P60_PrintData()
+                {
+                    LocalPOID = row1["LocalPoId"].ToString(),
+                    SPNo = row1["OrderId"].ToString(),
+                    RefNo = row1["Refno"].ToString(),
+                    Desc = row1["desc"].ToString(),
+                    POQTY = row1["poqty"].ToString(),
+                    Unit = row1["UnitId"].ToString(),
+                    POPrice = row1["Price"].ToString(),
+                    OnRoad = row1["OnRoad"].ToString(),
+                    QTY = row1["qty"].ToString(),
+                    Remark = row1["Remark"].ToString()
+                }).ToList();
+
+            report.ReportDataSource = data;
+            #endregion
+            // 指定是哪個 RDLC
+            //DualResult result;
+            Type ReportResourceNamespace = typeof(P60_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P60_Print.rdlc";
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                //this.ShowException(result);
+                return false;
+            }
+
+            report.ReportResource = reportresource;
+
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
+
+            return true;
         }
     }
 }
