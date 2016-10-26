@@ -2520,6 +2520,8 @@ Sci.Production.Warehouse/P60.resx -text
 Sci.Production.Warehouse/P60_Import.Designer.cs -text
 Sci.Production.Warehouse/P60_Import.cs -text
 Sci.Production.Warehouse/P60_Import.resx -text
+Sci.Production.Warehouse/P60_Print.rdlc -text
+Sci.Production.Warehouse/P60_PrintData.cs -text
 Sci.Production.Warehouse/P61.Designer.cs -text
 Sci.Production.Warehouse/P61.cs -text
 Sci.Production.Warehouse/P61.resx -text
