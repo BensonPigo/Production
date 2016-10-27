@@ -475,7 +475,7 @@
             this.gridIssueBreakDown.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridIssueBreakDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridIssueBreakDown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridIssueBreakDown.Location = new System.Drawing.Point(0, 3);
+            this.gridIssueBreakDown.Location = new System.Drawing.Point(0, -11);
             this.gridIssueBreakDown.Name = "gridIssueBreakDown";
             this.gridIssueBreakDown.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridIssueBreakDown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
@@ -495,7 +495,7 @@
             this.DefaultOrder = "issuedate,id";
             this.GridAlias = "Issue_Detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "id,ftyinventoryukey";
+            this.GridUniqueKey = "POID,Seq1,Seq2,MDivisionID";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;

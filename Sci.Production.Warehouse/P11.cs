@@ -217,7 +217,7 @@ a.Id
 ,isnull((select t.MtlLocationID+',' from (select mtllocationid from dbo.FtyInventory_Detail where ukey=a.FtyInventoryUkey)t for xml path('')),'') [location]
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
 ,isnull((select sum(Issue_Detail.qty) from dbo.issue inner join dbo.Issue_Detail on Issue_Detail.id = Issue.Id where Issue.type = 'B' and Issue.Status='Confirmed' and issue.id!=a.Id and Issue_Detail.FtyInventoryUkey = a.FtyInventoryUkey),0.00) [accu_issue]
-,isnull((select v.sizeqty+', ' from (select (rtrim(Issue_Size.SizeCode) +'*'+convert(varchar,Issue_Size.Qty)) as sizeqty from dbo.Issue_Size where Issue_Size.Issue_DetailUkey = a.ukey) v for xml path('')),'') [output]
+,isnull((select v.sizeqty+', ' from (select (rtrim(Issue_Size.SizeCode) +'*'+convert(varchar,Issue_Size.Qty)) as sizeqty from dbo.Issue_Size where Issue_Size.Issue_DetailUkey = a.ukey and Issue_Size.Qty != '0.00') v for xml path('')),'') [output]
 ,a.Ukey
 ,isnull((select inqty-outqty+adjustqty from dbo.ftyinventory where ukey = a.ftyinventoryukey),0.00) as balanceqty
 from dbo.Issue_Detail a left join dbo.po_supp_detail p on p.id  = a.poid and p.seq1= a.seq1 and p.seq2 =a.seq2
