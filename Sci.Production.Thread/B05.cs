@@ -165,7 +165,7 @@ namespace Sci.Production.Thread
             if (res)
             {
                 decimal  newIn, newOut, usedIn, usedOut,newbal,usedbal, newbalance =0, usedbalance=0 ;
-                gridTb.Merge(tb);
+                gridTb=tb.Copy();
                 foreach (DataRow drg in DetailDatas)
                 {
                     newbalance = 0;
