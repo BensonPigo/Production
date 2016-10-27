@@ -45,7 +45,6 @@
             this.radioGroup1.Size = new System.Drawing.Size(183, 114);
             this.radioGroup1.TabIndex = 0;
             this.radioGroup1.TabStop = false;
-            this.radioGroup1.Text = "radioGroup1";
             // 
             // BYSP
             // 
