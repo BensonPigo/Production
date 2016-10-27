@@ -91,6 +91,9 @@
             this.combo_Brand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.combo_Brand.FormattingEnabled = true;
             this.combo_Brand.IsSupportUnselect = true;
+            this.combo_Brand.Items.AddRange(new object[] {
+            "ADIDAS",
+            "REEBOK"});
             this.combo_Brand.Location = new System.Drawing.Point(81, 26);
             this.combo_Brand.Name = "combo_Brand";
             this.combo_Brand.Size = new System.Drawing.Size(121, 24);
