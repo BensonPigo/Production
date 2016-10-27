@@ -15,6 +15,22 @@ namespace Sci.Production.Thread
         {
             InitializeComponent();
         }
+        
+        private void P02_Detail_Load(object sender, EventArgs e)
+        {
+            Cal();
+        }
+
+        private void Cal()
+        {
+            decimal a=0;
+            foreach (DataRow dr in CurrentSubDetailDatas.Rows)
+            {
+                a += Convert.ToDecimal(dr["TotalLength"]);
+            }
+            textBoxTotalLength.Text = a.ToString();        
+        }
+
         protected override bool OnGridSetup()
         {
             #region set grid
@@ -26,13 +42,15 @@ namespace Sci.Production.Thread
            .Text("Operationid", header: "Operationid", width: Widths.AnsiChars(20), iseditingreadonly: true)
            .Numeric("Seamlength", header: "Seam Length", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2, iseditingreadonly: true)
            .Text("SEQ", header: "Thread Location SEQ", width: Widths.AnsiChars(2), iseditingreadonly: true)
-           .Text("ThreadLocation", header: "Thread Location", width: Widths.AnsiChars(6), iseditingreadonly: true)
-           .Text("useratio", header: "Use Ratio", width: Widths.AnsiChars(15), iseditingreadonly: true)
+           .Text("ThreadLocationid", header: "Thread Location", width: Widths.AnsiChars(6), iseditingreadonly: true)
+           .Text("UseRatioNumeric", header: "UseRatio", width: Widths.AnsiChars(15), iseditingreadonly: true)
+           .Numeric("Allowance", header: "Allowance", width: Widths.AnsiChars(7), integer_places: 7, iseditingreadonly: true)
            .Numeric("UseLength", header: "Use Length", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2, iseditingreadonly: true)
            .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(7), integer_places: 7, iseditingreadonly: true)
            .Numeric("TotalLength", header: "Total Length", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2, iseditingreadonly: true);
             #endregion
             return true;
         }
+
     }
 }
