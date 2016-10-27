@@ -162,9 +162,9 @@ group by a.Id, poid, seq1,Seq2,a.eta,a.Type
 and roll='{3}' and dyelot='{4}'
 group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type                                                                              
             union all
-            select issuedate
+            select issuedate, a.id
             ,'P37. Return Receiving Material' name
-            , a.id, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
+            , 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
             from ReturnReceipt a, ReturnReceipt_Detail b 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
 and roll='{3}' and dyelot='{4}'
