@@ -1387,9 +1387,16 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
                 if (MyUtility.Check.Empty(dr["cutno"]))
                 {
                     DataTable wk = (DataTable)detailgridbs.DataSource;
-                    int maxno = Convert.ToInt16(wk.Compute("Max(cutno)", string.Format("FabricCombo ='{0}'", dr["FabricCombo"])));
-                    if (maxno == 0) maxcutno = 1;
-                    else maxcutno = maxno + 1;
+                    string temp = wk.Compute("Max(cutno)", string.Format("FabricCombo ='{0}'", dr["FabricCombo"])).ToString();
+                    if (MyUtility.Check.Empty(temp))
+                    {
+                        maxcutno = 1;
+                    }
+                    else
+                    {
+                        int maxno = Convert.ToInt16(wk.Compute("Max(cutno)", string.Format("FabricCombo ='{0}'", dr["FabricCombo"])));
+                        maxcutno = maxno + 1;
+                    }
 
                     dr["cutno"] = maxcutno;
                 }
