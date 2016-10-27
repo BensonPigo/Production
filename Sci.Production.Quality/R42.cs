@@ -127,19 +127,18 @@ namespace Sci.Production.Quality
                                     INNER join #dRanges as dRanges on dRanges.starts between dRanges.starts and dRanges.ends" + " " + sqlWhere + " " + rt + " " + gb + " " +
                                     @"select name as mon from (select DISTINCT dRanges.name,dRanges.starts from #temp T 
 				                      left join #dRanges as dRanges on dRanges.starts between dRanges.starts and dRanges.ends
-				                      GROUP BY m ,dRanges.starts,dRanges.name)as s  ORDER BY starts"
-                                    +" "+ @"select * from #temp
-                                        drop table #dRanges
-                                        --drop table #temp");
+				                      GROUP BY m ,dRanges.starts,dRanges.name)as s  ORDER BY starts
+                                    select distinct supplier from #temp
+                                    select * from #temp
+                                        ");
                  SqlConnection conn;
                  result = DBProxy.Current.OpenConnection("", out conn);
                  if (!result){return result;}
                  result = DBProxy.Current.SelectByConn(conn,sqlcmd,lis,out alldt);
                  if (!result) {return result; }
 
-
                  string sp = @"select * from (select supplier from  #temp  group by supplier) as sp";
-                 sp = sp + Environment.NewLine;
+       
                  month12 = alldt[0];
                  for (int i = 0; i < month12.Rows.Count; i++)
                  {
@@ -147,15 +146,81 @@ namespace Sci.Production.Quality
                      string o = string.Format("outer apply(select supplier,m,styleid as Style,Refno as Shell,sum(QTY)as Qty,sum(ValueinUSD)as Complaint_Value from #temp t where t.m ='{0}' and t.supplier=sp.supplier group by supplier,m,styleid,Refno,Qty,ValueinUSD) as {0}", sss);
                      sp = sp + Environment.NewLine + o;
                  }
-                 result = DBProxy.Current.SelectByConn(conn,sp,lis, out dt);
+                 result = DBProxy.Current.SelectByConn(conn,sp,out dt);
                  if (!result) {return result;}
-                 ////dt.Columns.Remove("starts");
+
+
+                 DataTable dtGroup = dt.DefaultView.ToTable(true, "supplier");
+                 dtGroup.Columns.Add("QTY");
+                 dtGroup.Columns.Add("ValueinUSD");
+
+                            
+                 for (int i = 0; i < dtGroup.Rows.Count; i++)
+                 {
+                     //取資料，用String是因為上方加欄位時，沒指定型別為數字
+
+                     string strSum = dt.Compute("SUM(QTY)", "supplier='" + dtGroup.Rows[i]["supplier"].ToString() + "'").ToString();
+                     string strSum1 = dt.Compute("SUM(ValueinUSD)", "supplier='" + dtGroup.Rows[i]["supplier"].ToString() + "'").ToString();
+
+                     //設定資料
+                     dtGroup.Rows[i]["SumColumn"] = (strSum == " " ? "0" : strSum);
+                     dtGroup.Rows[i]["SumColumn"] = (strSum1 == " " ? "0" : strSum1);
+                 }
+
+
+
+             /* int startIndex = 2;
+                 int rowIdx;
+                 string tsupplier = dt.Rows[0]["supplier"].ToString();
+                 List<decimal> list = new List<decimal>();
+                 for (int colIdx = startIndex; colIdx < dt.Columns.Count; colIdx++)
+                 {
+                     list.Add(0);
+                 }
+                 for (rowIdx = 0; rowIdx < dt.Rows.Count; rowIdx++)
+                 {
+                     //for dt每一列
+                     DataRow row = dt.Rows[rowIdx];
+                     string supplier = row["supplier"].ToString();
+
+                     if (tsupplier != supplier | rowIdx == dt.Rows.Count - 1)
+                     {
+                         int newrowidx = rowIdx;
+                         if (rowIdx == dt.Rows.Count - 1)
+                         {
+                             newrowidx += 1;
+                             for (int colIdx = startIndex; colIdx < dt.Columns.Count; colIdx++)
+                             {
+                                 list[colIdx - startIndex] += Convert.ToDecimal(row[colIdx]);
+                             }
+                         }
+
+                         DataRow total = dt.NewRow();
+                         total[1] = "supplier"+"-"+"Total";
+                         for (int colIdx = startIndex; colIdx < dt.Columns.Count; colIdx++)
+                         {
+                             total[colIdx] = lis[colIdx - startIndex];
+                             list[colIdx - startIndex] = 0;
+                         }
+                         dt.Rows.InsertAt(total, newrowidx);
+                         rowIdx += 1;
+                         tsupplier = supplier;
+                     }
+
+                     for (int colIdx = startIndex; colIdx < dt.Columns.Count; colIdx++)
+                     {
+                         list[colIdx - startIndex] += Convert.ToDecimal(row[colIdx]);
+                     }
+                   
+                 }*/
+                
+                /*dt.Columns.Remove("starts");
 
                  //int startIndex = 1;
                  ////最後一列Total
 
                  //DataRow totalrow = dt.NewRow();
-                 //totalrow[0] = "YTD";
+                 //totalrow[0] = "Grand Ttotal";
 
 
                  ////for alltemp每個欄位
@@ -171,7 +236,8 @@ namespace Sci.Production.Quality
                  //    }
 
                  //    totalrow[colIdx] = TTColumnAMT;
-                 //}
+                 //}*/
+                
 
                  if (null == dt || dt.Rows.Count == 0)
                  {
@@ -191,8 +257,8 @@ namespace Sci.Production.Quality
 
                  if (!result)
                  {
-                     return result;
-                     //this.ShowErr(result);
+                     //return result;
+                     this.ShowErr(result);
                  }
 
                  else
@@ -217,7 +283,7 @@ namespace Sci.Production.Quality
                  Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R42_Pilling & Snagging Detail.xltx");
                  SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dt_All);
 
-
+                 
                  Dictionary<string, string> dic = new Dictionary<string, string>();
                  dic.Add(" ", "1,1");
                  dic.Add("January", "2,5");
