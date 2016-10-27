@@ -106,10 +106,6 @@
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
             this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
-            // browse
-            // 
-            this.browse.Size = new System.Drawing.Size(892, 387);
-            // 
             // label1
             // 
             this.label1.Lines = 0;
@@ -192,6 +188,7 @@
             this.KeyField1 = "Ukey";
             this.KeyField2 = "StyleUkey";
             this.Name = "P01";
+            this.SubGridAlias = "ThreadColorcomb_Operation";
             this.Text = "P01.Thread Color Combination";
             this.WorkAlias = "Style";
             this.Controls.SetChildIndex(this.tabs, 0);

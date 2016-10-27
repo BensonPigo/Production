@@ -12,49 +12,69 @@ using Sci.Production.Class;
 
 namespace Sci.Production.Thread
 {
-    public partial class P01 : Sci.Win.Tems.Input6
+    public partial class P01 : Sci.Win.Tems.Input8
     {
-       private string factory = Sci.Env.User.Factory;
-       private string loginID = Sci.Env.User.UserID;
-       private string keyWord = Sci.Env.User.Keyword;
-       public P01(ToolStripMenuItem menuitem)
+        private string factory = Sci.Env.User.Factory;
+        private string loginID = Sci.Env.User.UserID;
+        private string keyWord = Sci.Env.User.Keyword;
+
+        public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
-       {
+        {
             InitializeComponent();
-            //button1.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");            
+            //button1.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
+            DoSubForm = new P01_Operation();
         }
 
-       private void buttoncell(object sender, DataGridViewCellEventArgs e)
-       {
-           DataTable detTable = ((DataTable)this.detailgridbs.DataSource);
-
-           Sci.Production.Thread.P01_Detail P01_Detail = new Sci.Production.Thread.P01_Detail(CurrentMaintain, CurrentDetailData, Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit"));
-           P01_Detail.ShowDialog();
-       }
-       
-       protected override void OnDetailGridSetup()
+        private void buttoncell(object sender, DataGridViewCellEventArgs e)
         {
+            DataTable detTable = ((DataTable)this.detailgridbs.DataSource);
+
+            Sci.Production.Thread.P01_Detail P01_Detail = new Sci.Production.Thread.P01_Detail(CurrentMaintain, CurrentDetailData, Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit"));
+            P01_Detail.ShowDialog();
+        }
+
+        protected override Ict.DualResult OnSubDetailSelectCommandPrepare(Win.Tems.Input8.PrepareSubDetailSelectCommandEventArgs e)
+        {
+            this.SubDetailSelectCommand = string.Format(@"select Operationid,DescEN, SeamLength  
+                                            from ThreadColorComb_Operation a,Operation b 
+                                            where b.Id = a.OperationId and a.id='{0}'",CurrentDetailData["id"]);
+            return base.OnSubDetailSelectCommandPrepare(e);
+        }
+
+        protected override void OnDetailGridSetup()
+        {
+            DataGridViewGeneratorTextColumnSettings operation = new DataGridViewGeneratorTextColumnSettings();
+
+            operation.CellMouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                {
+                    OpenSubDetailPage();
+                }
+            };
+
             base.OnDetailGridSetup();
             Helper.Controls.Grid.Generator(this.detailgrid)
-           .Text("ThreadCombID", header: "Thread Combination", width: Widths.Auto(true), iseditingreadonly: true)
+           .Text("ThreadCombID", header: "Thread Combination", width: Widths.Auto(true), iseditingreadonly: true, settings: operation)
            .Text("MachineTypeid", header: "Machine Type", width: Widths.Auto(true), iseditingreadonly: true)
            .Numeric("Length", header: "Length", width: Widths.Auto(true), integer_places: 9, decimal_places: 2, iseditingreadonly: true)
            .Button(header: "Color Combination", onclick: new EventHandler<DataGridViewCellEventArgs>(buttoncell));
             #region Button也可這樣寫
             //.Button(header: "Color Combination", onclick: (s,e)=>{
-           //        if (EditMode)
-           //{
+            //        if (EditMode)
+            //{
 
-           //    DataTable detTable = ((DataTable)this.detailgridbs.DataSource);
-           //    Form P01_Detail = new Sci.Production.Thread.P01_Detail(CurrentMaintain["Ukey"].ToString(), CurrentMaintain["id"].ToString(), CurrentMaintain["seasonid"].ToString(), CurrentMaintain["brandid"].ToString());
-           //    P01_Detail.ShowDialog();
+            //    DataTable detTable = ((DataTable)this.detailgridbs.DataSource);
+            //    Form P01_Detail = new Sci.Production.Thread.P01_Detail(CurrentMaintain["Ukey"].ToString(), CurrentMaintain["id"].ToString(), CurrentMaintain["seasonid"].ToString(), CurrentMaintain["brandid"].ToString());
+            //    P01_Detail.ShowDialog();
             //}});
             #endregion
             button1.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
             button1.Visible = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
 
         }
-        
+
         private void button1_Click(object sender, EventArgs e)
         {
             DataTable detTable = ((DataTable)this.detailgridbs.DataSource);
@@ -62,12 +82,11 @@ namespace Sci.Production.Thread
             P01_Generate.ShowDialog();
             RenewData();
         }
-
-
+        
         protected override bool ClickCopy()
         {
             Sci.Production.Thread.P01_CopyTo P01_CopyTo = new Sci.Production.Thread.P01_CopyTo(CurrentMaintain);
-            P01_CopyTo.ShowDialog(); 
+            P01_CopyTo.ShowDialog();
             //return base.ClickCopy();
             return true;
         }
