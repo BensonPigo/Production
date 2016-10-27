@@ -254,16 +254,23 @@ namespace Sci.Production.Warehouse
         protected override void ClickRecall()
         {
             base.ClickRecall();
-        
-            DataTable datacheck;
             DataTable dt = (DataTable)detailgridbs.DataSource;
+
+            #region 602: WAREHOUSE_P74_Material Borrow cross M (Request)，若P75已經Confirm了，還不能recall。
+            string P75_Status = MyUtility.GetValue.Lookup(string.Format(@"select Status from Issue where CutplanID='{0}'", CurrentMaintain["id"]));
+            if (P75_Status.ToUpper() == "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("Data is confirmed in [P75. Material Borrow cross M (Confirm)], can't recall !!", "Warning");
+                return;
+            }
+            #endregion
 
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to recall it?");
             if (dResult.ToString().ToUpper() == "NO") return;
             var dr = this.CurrentMaintain; if (null == dr) return;
             StringBuilder sqlupd2 = new StringBuilder();
-            string sqlcmd = "", sqlupd3 = "", ids = "";
-            DualResult result, result2;
+            string sqlupd3 = "";
+            DualResult result;
 
             
             #region -- 更新表頭狀態資料 --
