@@ -94,7 +94,7 @@
             this.comboBox_brand.IsSupportUnselect = true;
             this.comboBox_brand.Items.AddRange(new object[] {
             "ADIDAS",
-            "REBOOK"});
+            "REEBOK"});
             this.comboBox_brand.Location = new System.Drawing.Point(88, 32);
             this.comboBox_brand.Name = "comboBox_brand";
             this.comboBox_brand.Size = new System.Drawing.Size(121, 24);
