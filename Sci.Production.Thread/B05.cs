@@ -90,7 +90,7 @@ namespace Sci.Production.Thread
             dateRange1.TextBox2.Text = DateTime.Now.ToShortDateString();
             transrecord(dateRange1.TextBox1.Text, dateRange1.TextBox2.Text);
             grid1.DataSource = gridTb; //因重新Generator 所以要重給
-            OnDetailGridRowChanged();            
+            OnDetailGridRowChanged();
         }
         protected override void OnDetailGridRowChanged()
         {
@@ -203,6 +203,7 @@ namespace Sci.Production.Thread
             gridTb.Clear();
             transrecord(dateRange1.TextBox1.Text, dateRange1.TextBox2.Text);
             this.grid1.DataSource = gridTb;
+            OnDetailGridRowChanged();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -219,9 +220,8 @@ namespace Sci.Production.Thread
 
         private void button2_Click(object sender, EventArgs e)
         {
-
             initqty(DateTime.Now.ToShortDateString(), 1);
-            RenewData();
+            OnRefreshClick();
         }
     }
 }
