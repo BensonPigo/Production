@@ -185,7 +185,7 @@ namespace Sci.Production.Thread
             .CellThreadLocation("ThreadLocationid", header: "Location", width: Widths.AnsiChars(10), settings: thlocation)
             .Numeric("NewConebook", header: "New Cone\nperbooks", width: Widths.AnsiChars(5), integer_places: 3,iseditingreadonly:true)
             .Numeric("NewCone", header: "New Cone", width: Widths.AnsiChars(5), integer_places: 5, settings: qty)
-            .Numeric("NewConeVar", header: "New Cone\nVariance", width: Widths.AnsiChars(5), integer_places: 5)
+            .Numeric("NewConeVar", header: "New Cone\nVariance", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
 
             .Numeric("UsedConebook", header: "Used cone\nperbooks", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: 
             true)
