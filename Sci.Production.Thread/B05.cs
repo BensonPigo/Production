@@ -35,12 +35,17 @@ namespace Sci.Production.Thread
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["refno"].ToString();
+
             this.DetailSelectCommand = string.Format(@"select a.*,b.description as colordesc
             from threadstock a 
-            left join threadcolor b on a.threadcolorid = b.id where a.refno = '{0}' and mDivisionid = '{1}'", masterID, keyWord);
+            left join threadcolor b on a.threadcolorid = b.id 
+            where a.refno = '{0}' and mDivisionid = '{1}'", masterID, keyWord);
 
-            string sql = "Select cdate, id, '' as name, 0.0 as Newin,0.0 as Newout,0.0 as Newbalance, 0.0 as Usedin,0.0 as Usedout ,0.0 as Usedbalance,'' as ThreadColorid,'' as ThreadLocationid, '' as editname from ThreadIncoming a where 1=0";
+            string sql = @"Select cdate, id, '' as name, 0.0 as Newin,0.0 as Newout,0.0 as Newbalance, 0.0 as Usedin,0.0 as Usedout ,
+                            0.0 as Usedbalance,'' as ThreadColorid,'' as ThreadLocationid, '' as editname 
+                            from ThreadIncoming a where 1=0";
             DualResult sqlReault = DBProxy.Current.Select(null, sql, out gridTb);
+
             return base.OnDetailSelectCommandPrepare(e);
         }
         protected override bool OnGridSetup()
@@ -69,7 +74,7 @@ namespace Sci.Production.Thread
         {
             base.OnRefreshClick();
             detailgridbs.Filter = ""; //清空Filter
-            dateRange1.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
+            dateRange1.TextBox1.Text = "1900/01/01";
             dateRange1.TextBox2.Text = DateTime.Now.ToShortDateString();
             transrecord(dateRange1.TextBox1.Text, dateRange1.TextBox2.Text);
             grid1.DataSource = gridTb; //因重新Generator 所以要重給
@@ -78,7 +83,7 @@ namespace Sci.Production.Thread
         {
             base.OnDetailEntered();
             detailgridbs.Filter = ""; //清空Filter
-            dateRange1.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
+            dateRange1.TextBox1.Text = "1900/01/01";
             dateRange1.TextBox2.Text = DateTime.Now.ToShortDateString();
             transrecord(dateRange1.TextBox1.Text, dateRange1.TextBox2.Text);
             grid1.DataSource = gridTb; //因重新Generator 所以要重給
@@ -119,7 +124,6 @@ namespace Sci.Production.Thread
                     ndr["Usedbalance"] = dr["UsedBalance"];
                     gridTb.Rows.Add(ndr);
                 }
-
             }
             if (recal == 1)
             {
@@ -148,11 +152,8 @@ namespace Sci.Production.Thread
                 }
                 _transactionscope.Dispose();
                 _transactionscope = null;
-
                 #endregion
             }
-            
-
         }
 
         private void transrecord(string date1, string date2)
@@ -163,7 +164,6 @@ namespace Sci.Production.Thread
             DualResult res = DBProxy.Current.Select(null, sql, out tb);
             if (res)
             {
-                string updatestock = "";
                 decimal  newIn, newOut, usedIn, usedOut,newbal,usedbal, newbalance =0, usedbalance=0 ;
                 gridTb.Merge(tb);
                 foreach (DataRow drg in DetailDatas)
@@ -190,8 +190,6 @@ namespace Sci.Production.Thread
                         usedbalance = usedbalance + usedIn - usedOut + usedbal;
                         dr["Newbalance"] = newbalance;
                         dr["Usedbalance"] = usedbalance;
-
-
                     }
                 }
             }
