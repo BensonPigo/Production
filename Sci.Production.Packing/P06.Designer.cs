@@ -36,7 +36,6 @@
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.txtshipmode1 = new Sci.Production.Class.txtshipmode();
             this.editBox1 = new Sci.Win.UI.EditBox();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.label9 = new Sci.Win.UI.Label();
@@ -56,6 +55,7 @@
             this.displayBox6 = new Sci.Win.UI.DisplayBox();
             this.numericBox3 = new Sci.Win.UI.NumericBox();
             this.numericBox4 = new Sci.Win.UI.NumericBox();
+            this.textBox3 = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -72,6 +72,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.textBox3);
             this.masterpanel.Controls.Add(this.numericBox4);
             this.masterpanel.Controls.Add(this.numericBox3);
             this.masterpanel.Controls.Add(this.displayBox6);
@@ -90,7 +91,6 @@
             this.masterpanel.Controls.Add(this.textBox2);
             this.masterpanel.Controls.Add(this.label9);
             this.masterpanel.Controls.Add(this.editBox1);
-            this.masterpanel.Controls.Add(this.txtshipmode1);
             this.masterpanel.Controls.Add(this.displayBox2);
             this.masterpanel.Controls.Add(this.textBox1);
             this.masterpanel.Controls.Add(this.displayBox1);
@@ -111,7 +111,6 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtshipmode1, 0);
             this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label9, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
@@ -130,6 +129,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBox6, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericBox4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox3, 0);
             // 
             // detailpanel
             // 
@@ -256,20 +256,6 @@
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(135, 23);
             this.displayBox2.TabIndex = 8;
-            // 
-            // txtshipmode1
-            // 
-            this.txtshipmode1.BackColor = System.Drawing.Color.White;
-            this.txtshipmode1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
-            this.txtshipmode1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshipmode1.FormattingEnabled = true;
-            this.txtshipmode1.IsSupportUnselect = true;
-            this.txtshipmode1.Location = new System.Drawing.Point(358, 4);
-            this.txtshipmode1.Name = "txtshipmode1";
-            this.txtshipmode1.Size = new System.Drawing.Size(121, 24);
-            this.txtshipmode1.TabIndex = 9;
-            this.txtshipmode1.UseFunction = null;
-            this.txtshipmode1.SelectionChangeCommitted += new System.EventHandler(this.txtshipmode1_SelectionChangeCommitted);
             // 
             // editBox1
             // 
@@ -498,6 +484,18 @@
             0,
             0});
             // 
+            // textBox3
+            // 
+            this.textBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ShipModeID", true));
+            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.textBox3.IsSupportEditMode = false;
+            this.textBox3.Location = new System.Drawing.Point(358, 4);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.ReadOnly = true;
+            this.textBox3.Size = new System.Drawing.Size(100, 23);
+            this.textBox3.TabIndex = 33;
+            // 
             // P06
             // 
             this.ApvChkValue = "New";
@@ -546,7 +544,6 @@
         private Win.UI.TextBox textBox1;
         private Win.UI.DisplayBox displayBox1;
         private Win.UI.EditBox editBox1;
-        private Class.txtshipmode txtshipmode1;
         private Win.UI.DisplayBox displayBox2;
         private Win.UI.TextBox textBox2;
         private Win.UI.Label label9;
@@ -566,5 +563,6 @@
         private Win.UI.Label label12;
         private Win.UI.Label label11;
         private Win.UI.NumericBox numericBox2;
+        private Win.UI.TextBox textBox3;
     }
 }
