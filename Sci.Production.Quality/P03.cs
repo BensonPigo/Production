@@ -89,12 +89,13 @@ namespace Sci.Production.Quality
              brand_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["brandid"].ToString();
              if (MyUtility.Check.Empty(queryDr))
              {
-                 estcutdate_box.Text = "";
+                 estcutdate_box.Value = null;
              }
              else
              {
                  if (queryDr["cutinline"] == DBNull.Value) estcutdate_box.Text = "";
-                 else estcutdate_box.Text = Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
+                 else estcutdate_box.Value = MyUtility.Convert.GetDate(queryDr["cutinline"]);
+                     //Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
              }
 
              mtl_box.Text = CurrentMaintain["Complete"].ToString() == "True" ? "Y" : "N";
@@ -398,7 +399,7 @@ namespace Sci.Production.Quality
 
             if (!MyUtility.Check.Empty(wk))
             {
-                find_new = string.Format("Exportid='{0}'", wk);
+                find_new = string.Format("wkno='{0}'", wk);
             }
             if (!MyUtility.Check.Empty(seq1))
             {
@@ -428,15 +429,23 @@ namespace Sci.Production.Quality
                 find_dr = detDtb.Select(find_new);
                 if (find_dr.Length == 0)
                 {
-                    MyUtility.Msg.WarningBox("Not Found");
+                    MyUtility.Msg.WarningBox("Not+ Found");
                     return;
                 }
                 else { index = 0; }
             }
             else
             {
-                index++;
-                if (index >= find_dr.Length) index = 0;
+                if (find_dr == null)
+                {
+                    return;
+                }
+                else
+                {
+                    index++;
+                    if (index >= find_dr.Length) index = 0;
+                }
+                
             }
             detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);
         }
@@ -465,67 +474,14 @@ namespace Sci.Production.Quality
                 dr["Result"] = returnResult[0];
             }
         }
-        private void button1_Click_1(object sender, EventArgs e)
-        {
-            DataTable detDtb = (DataTable)detailgridbs.DataSource;
-            //移到指定那筆
-            string wk = wk_box.Text;
-            string seq1 = seq1_box.Text;
-            string seq2 = seq2_box.Text;
-            string find_new = "";
-
-            if (!MyUtility.Check.Empty(wk))
-            {
-                find_new = string.Format("Exportid='{0}'", wk);
-            }
-            if (!MyUtility.Check.Empty(seq1))
-            {
-                if (!MyUtility.Check.Empty(find_new))
-                {
-                    find_new = find_new + string.Format(" and SEQ1 = '{0}'", seq1);
-                }
-                else
-                {
-                    find_new = string.Format("SEQ1 = '{0}'", seq1);
-                }
-            }
-            if (!MyUtility.Check.Empty(seq2))
-            {
-                if (!MyUtility.Check.Empty(find_new))
-                {
-                    find_new = find_new + string.Format(" and SEQ2 = '{0}'", seq2);
-                }
-                else
-                {
-                    find_new = string.Format("SEQ2 = '{0}'", seq2);
-                }
-            }
-            if (find != find_new)
-            {
-                find = find_new;
-                find_dr = detDtb.Select(find_new);
-                if (find_dr.Length == 0)
-                {
-                    MyUtility.Msg.WarningBox("Not Found");
-                    return;
-                }
-                else { index = 0; }
-            }
-            else
-            {
-                index++;
-                if (index >= find_dr.Length) index = 0;
-            }
-            detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);
-        }
-
+      
         private void modifyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentDetailData; if (null == dr) return;
             var frm = new Sci.Production.Quality.P03_Crocking(IsSupportEdit, CurrentDetailData["ID"].ToString(),null,null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
-            this.RenewData();
+            //this.RenewData();會讓資料renew導致記憶被洗掉
         }
 
         private void modifyHeatTestToolStripMenuItem_Click(object sender, EventArgs e)
@@ -534,7 +490,7 @@ namespace Sci.Production.Quality
             var frm = new Sci.Production.Quality.P03_Heat(IsSupportEdit, CurrentDetailData["ID"].ToString(),null,null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
-            this.RenewData();
+            //this.RenewData();會讓資料renew導致記憶被洗掉
         }
 
         private void modifyWashTestToolStripMenuItem_Click(object sender, EventArgs e)
@@ -543,7 +499,7 @@ namespace Sci.Production.Quality
             var frm = new Sci.Production.Quality.P03_Wash(IsSupportEdit, CurrentDetailData["ID"].ToString(),null,null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
-            this.RenewData();
+            //this.RenewData();會讓資料renew導致記憶被洗掉
         }
 
     }

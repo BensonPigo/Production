@@ -165,6 +165,7 @@
             // 
             // refresh
             // 
+            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.refresh.Location = new System.Drawing.Point(912, 3);
             // 
             // detailgridcont

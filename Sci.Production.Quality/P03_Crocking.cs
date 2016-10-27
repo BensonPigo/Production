@@ -194,20 +194,14 @@ namespace Sci.Production.Quality
                         dr["Inspector"] = item1.GetSelectedString();
                     }
                 };
-                
-                ResultCell.EditingMouseDoubleClick += (s, e) =>
-                {
-                    if (!this.EditMode) return;
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
-                    if (dr["Result"].ToString() == "Pass") dr["Result"] = "Fail";
-                    else dr["Result"] = "Pass";
-                };
+                              
                 ResultCell.CellMouseDoubleClick+=(s,e)=>
                 {
                     if (!this.EditMode) return;
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    if (dr["Result"].ToString() == "Pass") dr["Result"] = "Fail";
-                    else dr["Result"] = "Pass";
+
+                    if (dr["Result"].ToString() == "PASS") dr["Result"] = "FAIL";
+                    else dr["Result"] = "PASS";
                 };
            
             #endregion
@@ -336,16 +330,15 @@ namespace Sci.Production.Quality
                 Helper.Controls.Grid.Generator(this.grid)
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), settings: Rollcell)
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                .Text("DryScale", header: "Dry Scale", width: Widths.AnsiChars(5), settings: dryScaleCell)
-                .Text("WetScale", header: "Wet Scale", width: Widths.AnsiChars(5), settings: wetScaleCell)
-                .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell,iseditable:false)
+                .Text("DryScale", header: "Dry Scale", width: Widths.AnsiChars(5), settings: dryScaleCell,iseditingreadonly:true)
+                .Text("WetScale", header: "Wet Scale", width: Widths.AnsiChars(5), settings: wetScaleCell,iseditingreadonly:true)
+                .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell,iseditingreadonly:true)
                 .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10), settings: InspDateCell)
                 .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16),iseditingreadonly:true,settings:LabTechCell)
                 .CellUser("Inspector", header: "Name", width: Widths.AnsiChars(10), userNamePropertyName: "Name",iseditingreadonly:true)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
                 .Text("Last update", header: "Last update",width: Widths.AnsiChars(50), iseditingreadonly: true);
-
-           
+                       
 
             return true;
         }
@@ -446,9 +439,8 @@ namespace Sci.Production.Quality
                 //轉換時間型態
                 string inspdate;
                 if (MyUtility.Check.Empty(dr["InspDate"])) inspdate = ""; //判斷Inspect Date
-                //else inspdate = Convert.ToDateTime(dr["InspDate"]).ToShortDateString();
                 else inspdate = string.Format("{0:yyyy-MM-dd}", dr["InspDate"]);
-                string Today = DateTime.Now.ToShortDateString();
+                DateTime Today =  DateTime.Now;
                 if (dr.RowState == DataRowState.Added)
                 {
                     List<SqlParameter> spamAdd = new List<SqlParameter>();
@@ -528,11 +520,11 @@ namespace Sci.Production.Quality
                 #region 判斷Crocking Result
                 DataTable gridDt = (DataTable)gridbs.DataSource;
                 DataRow[] ResultAry = gridDt.Select("Result='Fail'");
-                string result = "Pass";
+                string result = "Pass";                
                 string Today = DateTime.Now.ToShortDateString();
                 if (ResultAry.Length > 0) result = "Fail";
                 #endregion
-               
+
                 #region 判斷表身最晚時間
                 DataTable dt = (DataTable)gridbs.DataSource;
                 DateTime lastDate = Convert.ToDateTime(dt.Rows[0]["inspDate"]);
@@ -561,8 +553,7 @@ namespace Sci.Production.Quality
                 #region  寫入實體Table
                 updatesql = string.Format(
                 @"Update Fir_Laboratory set CrockingDate = null,CrockingEncode= 0 where id ='{0}'",  maindr["ID"]);
-
-                //updatesql = updatesql + string.Format(@"update Fir_Laboratory set editName='{0}',editDate=Getdate() where id='{1}'", loginID, maindr["ID"]);
+              
                 #endregion
             }
             DualResult upResult;
@@ -574,6 +565,7 @@ namespace Sci.Production.Quality
                     if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
                     {
                         _transactionscope.Dispose();
+                        MyUtility.Msg.InfoBox("錯誤訊息：" + upResult);
                         return;
                     }
                     _transactionscope.Complete();
@@ -645,7 +637,7 @@ namespace Sci.Production.Quality
                 }
             }
 
-            Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\P03_Crocking_Test.xltx"); //預先開啟excel app
+            Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
             MyUtility.Excel.CopyToXls(ret, xltFileName:"P03_Crocking_Test.xltx", headerline:5, excelAppObj:excel);
             Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表      
             excel.Cells[2, 2] = sptext.Text.ToString();

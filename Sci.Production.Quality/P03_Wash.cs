@@ -178,7 +178,7 @@ namespace Sci.Production.Quality
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     string scalecmd = @"select id,name from Pass1 where Resign is not null";
-                    SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["DryScale"].ToString());
+                    SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["INSPECTOR"].ToString());
                     DialogResult result = item1.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -187,19 +187,13 @@ namespace Sci.Production.Quality
                     e.EditingControl.Text = item1.GetSelectedString(); //將選取selectitem value帶入GridView
                 }
             };
-            ResultCell.EditingMouseDoubleClick += (s, e) =>
-            {
-                if (!this.EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (dr["Result"].ToString() == "Pass") dr["Result"] = "Fail";
-                else dr["Result"] = "Pass";
-            };
+           
             ResultCell.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (dr["Result"].ToString() == "Pass") dr["Result"] = "Fail";
-                else dr["Result"] = "Pass";
+                if (dr["Result"].ToString() == "PASS") dr["Result"] = "FAIL";
+                else dr["Result"] = "PASS";
             };
             #endregion
             #region 設定Grid Valid事件
@@ -639,7 +633,7 @@ namespace Sci.Production.Quality
                 string inspdate;
                 if (MyUtility.Check.Empty(dr["InspDate"])) inspdate = ""; //判斷Inspect Date                
                 else inspdate = string.Format("{0:yyyy-MM-dd}", dr["InspDate"]);
-                string Today = DateTime.Now.ToShortDateString();
+                DateTime Today = DateTime.Now;
                 if (dr.RowState == DataRowState.Added)
                 {
                     List<SqlParameter> spamAdd = new List<SqlParameter>();
@@ -792,7 +786,7 @@ namespace Sci.Production.Quality
                 string result = "Pass";
                 if (ResultAry.Length > 0) result = "Fail";
                 #endregion
-              
+                string Today = DateTime.Now.ToShortDateString();
                 #region 判斷表身最晚時間
                 DataTable dt = (DataTable)gridbs.DataSource;
                 DateTime lastDate = Convert.ToDateTime(dt.Rows[0]["inspDate"]);
@@ -810,7 +804,7 @@ namespace Sci.Production.Quality
                 updatesql = string.Format(
                 @"Update Fir_Laboratory set WashDate = '{2}',WashEncode = 1,Wash='{0}' where id ='{1}'", result, maindr["ID"], lastDate.ToShortDateString());
 
-                updatesql = updatesql + string.Format(@"update FIR_Laboratory_Wash set editName='{0}',editDate=Getdate() where id='{1}'", loginID, maindr["ID"]);
+                updatesql = updatesql + string.Format(@"update FIR_Laboratory_Wash set editName='{0}',inspdate='{2}' where id='{1}'", loginID, maindr["ID"],Today);
                 #endregion               
             }
 
@@ -820,7 +814,7 @@ namespace Sci.Production.Quality
                 updatesql = string.Format(
                 @"Update Fir_Laboratory set WashDate = null,WashEncode= 0 where id ='{0}'", maindr["ID"]);
 
-                updatesql = updatesql + string.Format(@"update FIR_Laboratory_Wash set editName='{0}',editDate=Getdate() where id='{1}'", loginID, maindr["ID"]);
+               // updatesql = updatesql + string.Format(@"update FIR_Laboratory_Wash set editName='{0}',editDate=Getdate() where id='{1}'", loginID, maindr["ID"]);
                 #endregion
             }
             DualResult upResult;
@@ -884,7 +878,7 @@ namespace Sci.Production.Quality
                     return;
                 }
             }
-            Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\P03_Wash_Test.xltx"); //預先開啟excel app
+            Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
             MyUtility.Excel.CopyToXls(ret, xltFileName: "P03_Wash_Test.xltx", headerline: 5, excelAppObj: excel);
             Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表            
             excelSheets.Cells[2, 2] = sptext.Text.ToString();
