@@ -389,7 +389,8 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             //事先整理資料
             sqlpre = string.Format(@"Select    	a.ThreadColorId,  	d.Allowance,	a.Article,	a.ThreadCombId,
 	                                b.OperationId,e.SeamLength,a.Seq, a.ThreadLocationId, a.Refno,d.UseRatioNumeric,
-                                    a.MachineTypeId,  isnull(f.OrderQty,0) as OrderQty ,g.MeterToCone
+                                    a.MachineTypeId,  isnull(f.OrderQty,0) as OrderQty ,g.MeterToCone,
+                                    g.Description as Threadcombdesc,h.Description as colordesc
 	                                from ThreadColorComb_Detail a 
 	                                cross join ThreadColorComb_Operation b
 	                                left join ThreadColorcomb c on a.id=c.id 
@@ -399,16 +400,19 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                                                from Order_Qty a where a.id='{0}' group by Article) f
 	                                           on a.Article=f.Article
 	                                Left join LocalItem g on a.Refno=g.Refno
+                                    Left join threadcolor h on h.id = a.threadcolorid
+                                    
 	                                where c.Styleukey =(select o.Styleukey from Orders o where o.id = '{0}')
                                     and a.ThreadColorId is not null and a.ThreadColorId !=''
-	                                and a.Refno is not null and a.Refno !=''", id);
+	                                and a.Refno is not null and a.Refno !='' and Seamlength !=0",
+                                    id);
 
             DualResult result;
             result = DBProxy.Current.Select(null, sqlpre, out pretb_cons);
             if (!result) { this.ShowErr(result); return; }
             //做資料匯整select group 後填入ThreadRequisition_Detail
             sqltr_duk = string.Format(@"select '{0}' as Orderid, #tmp.Refno,  ThreadColorId, 
-                        b.Description,c.Description as colordesc,
+                        Threadcombdesc,colordesc,
                         #tmp.MeterToCone,
                         Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) as ConsumptionQty,
                         CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone) as TotalQty,
@@ -417,9 +421,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                         CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone) * 0.2) as PurchaseQty,
                         'true' as AutoCreate , 0 as UseStockQty, '' as POID, '' as Remark
                         from #tmp
-                        left join localitem b on #tmp.refno = b.refno 
-                        left join threadcolor c on c.id = #tmp.threadcolorid
-                        group by b.Description,c.Description,#tmp.Refno,#tmp.MeterToCone,ThreadColorId", id);
+                        group by Threadcombdesc,colordesc,#tmp.Refno,#tmp.MeterToCone,ThreadColorId", id);
             
             if (pretb_cons.Rows.Count <= 0) TR_DUK = pretb_cons.Clone();
             else
@@ -444,7 +446,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 newdr["UseStockQty"] = 0;
                 newdr["POID"] = dr["POID"];
                 newdr["Remark"] = dr["Remark"];
-                newdr["Description"] = dr["Description"];
+                newdr["Description"] = dr["Threadcombdesc"];
                 newdr["colordesc"] = dr["colordesc"];
                 newdr["NewCone"] = 0;
                 newdr["UsedCone"] = 0;
@@ -452,25 +454,39 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 detailtb.Rows.Add(newdr);
             }
 
-            DataTable subtb;
+            DataTable subtb, sqlsubtb;
             foreach (DataRow dr in detailtb.Rows)
-            {                
-                #region 新增第三層
+            {
+                string sqlsub = string.Format(@"select * from #tmp a where a.refno = '{0}' and a.threadColorid='{1}'",
+                                                dr["Refno"].ToString(), dr["threadColorid"].ToString());
                 GetSubDetailDatas(dr, out subtb);
-                foreach (DataRow ddr in pretb_cons.Rows)
+                subtb.Columns.Add("Allowance");
+                MyUtility.Tool.ProcessWithDatatable(pretb_cons, "", sqlsub, out sqlsubtb);
+
+                #region 新增第三層
+                foreach (DataRow ddr in sqlsubtb.Rows)
                 {
+                    Decimal SL = Convert.ToDecimal(ddr["SeamLength"]);
+                    Decimal URN = Convert.ToDecimal(ddr["UseRatioNumeric"]);
+                    Decimal AQ = Convert.ToDecimal(ddr["Allowance"]);
+                    Decimal OQ = Convert.ToDecimal(ddr["OrderQty"]);
+
                     DataRow newdr = subtb.NewRow();
                     newdr["Orderid"] = id;
                     newdr["Article"] = ddr["Article"];
                     newdr["ThreadCombID"] = ddr["ThreadCombId"];
+                    newdr["Threadcombdesc"] = ddr["Threadcombdesc"];
                     newdr["operationid"] = ddr["operationid"];
                     newdr["SeamLength"] = ddr["SeamLength"];
                     newdr["SEQ"] = ddr["SEQ"];
                     newdr["ThreadLocationid"] = ddr["ThreadLocationid"];
                     //newdr["UseRatio"] = "";//已不需要
                     newdr["UseRatioNumeric"] = ddr["UseRatioNumeric"];
+                    newdr["UseLength"]= SL*URN+AQ;
+                    newdr["TotalLength"] = (SL * URN + AQ) * OQ;
                     newdr["Machinetypeid"] = ddr["Machinetypeid"];
                     newdr["OrderQty"] = ddr["OrderQty"];
+                    newdr["Allowance"] = ddr["Allowance"];
                     subtb.Rows.Add(newdr);
                 }
                 #endregion                
