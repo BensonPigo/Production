@@ -86,6 +86,7 @@ namespace Sci.Production.Cutting
             sizeratioMenuStrip.Enabled = this.EditMode;
             distributeMenuStrip.Enabled = this.EditMode;
         }
+
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -108,8 +109,13 @@ namespace Sci.Production.Cutting
             textbox_Line.Text = orderdr == null ? "" : orderdr["SewLine"].ToString();
             string maxcutrefCmd = string.Format("Select Max(Cutref) from workorder where mDivisionid = '{0}'",keyWord);
             textbox_LastCutRef.Text = MyUtility.GetValue.Lookup(maxcutrefCmd);
+            comboBox1.Enabled = !EditMode;  //Sorting於編輯模式時不可選取
+
+            //617: CUTTING_P02_Cutting Work Order，(5) Article值不正確 (最後多了一個/)
+            foreach (DataRow dr in DetailDatas) dr["Article"] = dr["Article"].ToString().TrimEnd('/');
 
         }
+
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
@@ -117,7 +123,7 @@ namespace Sci.Production.Cutting
             @"
             Select a.*,
             (
-                Select distinct Article+'/ ' 
+                Select distinct Article+'/' 
 			    From dbo.WorkOrder_Distribute b
 			    Where b.workorderukey = a.Ukey and b.article!=''
                 For XML path('')
@@ -183,6 +189,19 @@ namespace Sci.Production.Cutting
 				From WorkOrder_SizeRatio size
 				Where a.ukey = size.WorkOrderUkey
 			) as multisize,
+
+            --617: CUTTING_P02_Cutting Work Order
+			(
+				select SEQ
+				from (select WO.Ukey , max(c.Seq) SEQ
+						from WorkOrder WO
+						left join WorkOrder_SizeRatio b on b.WorkOrderUkey=WO.Ukey
+						left join Order_SizeCode c on c.Id=b.ID and c.SizeCode=b.SizeCode
+						where WO.ID='16061104GG'
+						group by WO.Ukey) tmp
+				where tmp.Ukey=a.Ukey
+			) as Order_SizeCode_Seq,
+
 			c.MtlTypeID,c.DescDetail,0 as newkey,substring(a.MarkerLength,1,2) as MarkerLengthY, 
             substring(a.MarkerLength,4,13) as MarkerLengthE
 			from Workorder a
@@ -204,11 +223,16 @@ namespace Sci.Production.Cutting
             cmdsql = string.Format
             (
                 @"Select a.MarkerName,a.Colorid,a.Order_EachconsUkey,isnull(sum(a.layer),0) as layer,
+                    
+                    --(Select isnull(sum(c.layer),0) as TL
+				    --from Order_EachCons b, Order_EachCons_Color c 
+				    --where b.id = '{0}' and b.id = c.id and 
+                    --b.ukey=c.Order_EachConsUkey and a.Order_EachconsUkey = b.Ukey ) as TotallayerUkey,
                     (Select isnull(sum(c.layer),0) as TL
-				    from Order_EachCons b, Order_EachCons_Color c 
-				    where b.id = '{0}' and b.id = c.id and 
-                    b.ukey=c.Order_EachConsUkey and a.Order_EachconsUkey = b.Ukey )  
-                    as TotallayerUkey,
+	                from Order_EachCons b, Order_EachCons_Color c 
+	                where b.id = '{0}' and b.id = c.id and a.MarkerName = b.Markername and a.Colorid = c.Colorid
+                    and b.ukey=c.Order_EachConsUkey and a.Order_EachconsUkey = b.Ukey )  as TotallayerUkey,
+
                     (Select isnull(sum(c.layer),0) as TL2
 				    from Order_EachCons b, Order_EachCons_Color c 
 				    where b.id = '{0}' and b.id = c.id and 
@@ -238,9 +262,7 @@ namespace Sci.Production.Cutting
             if (!dr)
             {
                 ShowErr(cmdsql, dr);
-
             }
-
 
             cmdsql = string.Format
             (
@@ -266,8 +288,7 @@ namespace Sci.Production.Cutting
             {
                 gridValid();
                 grid.ValidateControl();
-                Sci.Production.Cutting.P01_Cutpartchecksummary callNextForm =
-new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToString());
+                Sci.Production.Cutting.P01_Cutpartchecksummary callNextForm = new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToString());
                 callNextForm.ShowDialog(this);
             };
 
@@ -295,11 +316,10 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
                 .Text("Edituser", header: "Edit Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .DateTime("EditDate", header: "Edit Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Adduser", header: "Add Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .DateTime("AddDate", header: "Edit Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .DateTime("AddDate", header: "Add Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("UKey", header: "Key", width: Widths.AnsiChars(10), iseditingreadonly: true);
-
-
             #endregion
+
             Helper.Controls.Grid.Generator(this.sizeratio_grid)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(5)).Get(out col_sizeRatio_size)
                 .Numeric("Qty", header: "Ratio", width: Widths.AnsiChars(5), integer_places: 6).Get(out col_sizeRatio_qty);
@@ -316,6 +336,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(4))
                 .Numeric("Qty", header: "Order \nQty", width: Widths.AnsiChars(5), integer_places: 6)
                 .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(5), integer_places: 6, settings: breakqty);
+
             changeeditable();
 
         }
@@ -1115,7 +1136,8 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             else 
             { //New rule
                 order_EachConsTemp = Convert.ToInt32(CurrentDetailData["Order_EachConsUkey"]);
-                string selectcondition = string.Format("Order_EachConsUkey = {0}", order_EachConsTemp);
+                //string selectcondition = string.Format("Order_EachConsUkey = {0}", order_EachConsTemp);  0000617: CUTTING_P02_Cutting Work Order，(6) Total layer & Balance layer資料不正確
+                string selectcondition = string.Format("Order_EachConsUkey = {0} and  Colorid = '{1}'", order_EachConsTemp, CurrentDetailData["Colorid"]);
                 DataRow[] laydr = layersTb.Select(selectcondition);
                 if (laydr.Length == 0)
                 {
@@ -1275,7 +1297,8 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
                     dv.Sort = "FabricCombo,Cutno,Markername,estcutdate";
                     break;
                 default:
-                    dv.Sort = "FabricCombo,multisize,Article,SizeCode";
+                    //dv.Sort = "FabricCombo,multisize,Article,SizeCode";
+                    dv.Sort = "FabricCombo ASC,multisize ASC,Colorid ASC,Order_SizeCode_Seq DESC";
                     break;
             }
 
@@ -1425,13 +1448,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
 
         protected override void OnDetailGridInsert(int index = -1)
         {
-            //DataTable Cdt = new DataTable();
-            //DataRow newrow = Cdt.NewRow();
-            //newrow.ItemArray = CurrentDetailData.ItemArray.Clone() as object[];
-
-            //DataTable Cdt = new DataTable();
-            //Cdt.ImportRow(CurrentDetailData);
-            
+            DataRow OldRow = CurrentDetailData;  //將游標停駐處的該筆資料複製起來
             base.OnDetailGridInsert(index); //先給一個NewKey
             
             int maxkey;
@@ -1442,6 +1459,25 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             CurrentDetailData["Newkey"] = maxkey;
             CurrentDetailData["CutRef"] = "";
             CurrentDetailData["Cutno"] = 0;
+            CurrentDetailData["Markername"] = OldRow["Markername"];
+            CurrentDetailData["FabricCombo"] = OldRow["FabricCombo"];
+            CurrentDetailData["LectraCode"] = OldRow["LectraCode"];
+            CurrentDetailData["Article"] = OldRow["Article"];
+            CurrentDetailData["Colorid"] = OldRow["Colorid"];
+            CurrentDetailData["SizeCode"] = OldRow["SizeCode"];
+            CurrentDetailData["Layer"] = OldRow["Layer"];
+            CurrentDetailData["CutQty"] = OldRow["CutQty"];
+            CurrentDetailData["orderid"] = OldRow["orderid"];
+            CurrentDetailData["SEQ1"] = OldRow["SEQ1"];
+            CurrentDetailData["SEQ2"] = OldRow["SEQ2"];
+            CurrentDetailData["Fabeta"] = OldRow["Fabeta"];
+            CurrentDetailData["estcutdate"] = OldRow["estcutdate"];
+            CurrentDetailData["sewinline"] = OldRow["sewinline"];
+            CurrentDetailData["Cutcellid"] = OldRow["Cutcellid"];
+            CurrentDetailData["Cutplanid"] = OldRow["Cutplanid"];
+            CurrentDetailData["actcutdate"] = OldRow["actcutdate"];
+            CurrentDetailData["Adduser"] = loginID;
+            
         }
 
         protected override void OnDetailGridDelete()
@@ -1661,6 +1697,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
                 
             }
         }
+        
         protected override bool ClickSaveBefore()
         {
             gridValid();
@@ -1884,5 +1921,7 @@ new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToStrin
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }
+
+
     }
 }
