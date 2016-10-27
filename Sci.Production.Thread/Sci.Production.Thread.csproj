@@ -72,6 +72,12 @@
     <Compile Include="P01_Generate.designer.cs">
       <DependentUpon>P01_Generate.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_Operation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_Operation.Designer.cs">
+      <DependentUpon>P01_Operation.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -200,6 +206,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_Detail.resx">
       <DependentUpon>P01_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_Operation.resx">
+      <DependentUpon>P01_Operation.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02.resx">
       <DependentUpon>P02.cs</DependentUpon>
