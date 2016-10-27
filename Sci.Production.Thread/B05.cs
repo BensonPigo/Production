@@ -72,12 +72,15 @@ namespace Sci.Production.Thread
         }
         protected override void OnRefreshClick()
         {
+            int dgi = detailgrid.GetSelectedRowIndex();
             base.OnRefreshClick();
             detailgridbs.Filter = ""; //清空Filter
             dateRange1.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
             dateRange1.TextBox2.Text = DateTime.Now.ToShortDateString();
             transrecord(dateRange1.TextBox1.Text, dateRange1.TextBox2.Text);
             grid1.DataSource = gridTb; //因重新Generator 所以要重給
+            detailgrid.SelectRowTo(dgi);
+            OnDetailGridRowChanged();
         }
         protected override void OnDetailEntered()
         {
@@ -87,7 +90,7 @@ namespace Sci.Production.Thread
             dateRange1.TextBox2.Text = DateTime.Now.ToShortDateString();
             transrecord(dateRange1.TextBox1.Text, dateRange1.TextBox2.Text);
             grid1.DataSource = gridTb; //因重新Generator 所以要重給
-            
+            OnDetailGridRowChanged();            
         }
         protected override void OnDetailGridRowChanged()
         {
