@@ -25,7 +25,9 @@ namespace Sci.Production.Quality
         private DataTable dtOven;
         private bool newOven=false;
         private bool isModify = false;  //註記[Test Date][Article][Inspector][Remark]是否修改
-
+        private bool isSee = false;
+        bool canEdit = true;
+        
 
         public P05_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr,string Poid)
             : base(canedit, id, keyvalue2, keyvalue3)
@@ -34,29 +36,46 @@ namespace Sci.Production.Quality
             maindr = mainDr;
             PoID = Poid.Trim();
             ID = id.Trim();
+            this.canEdit = canedit;
+            isSee = true;
             //判斷是否為新資料
             if (MyUtility.Check.Empty(maindr))
             {               
-                newOven = true;
+                newOven = true;                
             }
-
-            if (MyUtility.Check.Empty(ID) || canedit)
-            {
-                this.EditMode = true;
-            }
-                       
+          
         }
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            DataTable dt;
+            var result = DBProxy.Current.Select(null, string.Format("select * from oven_detail where id='{0}'", ID), out dt);
+            //ＣreateNew open EditMode
+            if (dt.Rows.Count == 0 && canEdit)
+            {
+                //this.EditMode = true;
+                this.OnUIConvertToMaintain();                
+            }
+            this.ToExcel.Enabled = canEdit && !this.EditMode;
+        }
+
         protected override void OnEditModeChanged()
         {
             DataTable dt;
-            DBProxy.Current.Select(null,string.Format("select * from oven_detail where id='{0}'",ID),out dt);
-            
+            var result =DBProxy.Current.Select(null,string.Format("select * from oven_detail where id='{0}'",ID),out dt);
             if (dt.Rows.Count>=1)
             {
                 newOven = false;
             }
+            
             base.OnEditModeChanged();
+            if (isSee)
+            {
+                this.ToExcel.Enabled = canEdit && !this.EditMode;
+            }
+            
         }
+
         protected override Ict.DualResult OnRequery(out System.Data.DataTable datas)
         {
       
@@ -156,7 +175,8 @@ and a.seq1=@seq1";
                 }
                 else
                 {
-                    dr["SEQ"] = datas.Rows[i]["seq1"].ToString() + "- " + datas.Rows[i]["seq2"].ToString();
+                    dr["SEQ"] = datas.Rows[i]["seq1"].ToString().PadRight(3,' ') + "-" + datas.Rows[i]["seq2"].ToString().TrimEnd();
+                    //dr["SEQ"] = datas.Rows[i]["seq1"].ToString() + "" + datas.Rows[i]["seq2"].ToString();
                     dr["SCIRefno"] = dtpo.Rows[0]["SCIRefno"].ToString();
                     dr["Colorid"] = dtpo.Rows[0]["Colorid"].ToString();
                     dr["Supplier"] = dtsupp.Rows[0]["supplier"].ToString();
@@ -170,6 +190,8 @@ and a.seq1=@seq1";
         protected override bool OnGridSetup()
         {
             Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings groupCell = new DataGridViewGeneratorMaskedTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings seqMskCell = new DataGridViewGeneratorMaskedTextColumnSettings();
+            seqMskCell.TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;
             DataGridViewGeneratorTextColumnSettings seqCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings rollCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings chgCell = new DataGridViewGeneratorTextColumnSettings();
@@ -178,27 +200,57 @@ and a.seq1=@seq1";
         
 
             #region MouseClick
-            seqCell.CellMouseClick += (s, e) =>
+            seqMskCell.CellMouseClick += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
                 if (this.EditMode == false) return;
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
+                    string item_cmd = string.Format("select RTRIM(seq1) +'-'+ RTRIM(seq2) AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
                     SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
                         return;
-                    }          
-                    dr["SEQ"] = item.GetSelectedString(); 
-                    Char splitChar='-';
+                    }
+                    Char splitChar = '-';
                     string[] seqSplit = item.GetSelectedString().Split(splitChar);
                     dr["seq1"] = seqSplit[0];
                     dr["seq2"] = seqSplit[1];
+                    if (seqSplit[0].ToString().Length <= 2)
+                    {
+                        seqSplit[0] =  seqSplit[0]+" ";
+                    }
+                    dr["SEQ"] = seqSplit[0] + "-" + seqSplit[1];
                    
-                }                 
+                }
+              
+            };
+            seqMskCell.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string item_cmd = string.Format("select RTRIM(seq1) +'-'+ RTRIM(seq2) AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
+                    SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }                    
+                    Char splitChar = '-';
+                    string[] seqSplit = item.GetSelectedString().Split(splitChar);
+                    dr["seq1"] = seqSplit[0];
+                    dr["seq2"] = seqSplit[1];
+                    if ( seqSplit[0].ToString().Length<=2)
+                    {
+                         seqSplit[0] =  seqSplit[0]+" ";
+                    }
+                    dr["SEQ"] = seqSplit[0]+"-" + seqSplit[1];
+                }
 
             };
             rollCell.CellMouseClick += (s, e) =>
@@ -246,6 +298,71 @@ and a.seq1=@seq1";
                 }
 
             };
+            rollCell.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+
+                    if (newOven) //新資料 不判斷SEQ
+                    {
+                        string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>'' ";
+                        List<SqlParameter> spam = new List<SqlParameter>();
+                        spam.Add(new SqlParameter("@poid", PoID));
+                        SelectItem item = new SelectItem(item_cmd, spam, "10,10", dr["Roll"].ToString());
+                        DialogResult dresult = item.ShowDialog();
+                        if (dresult == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+                        dr["Roll"] = item.GetSelectedString();
+                        dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
+
+                    }
+                    else
+                    {
+
+                        string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2";
+                        List<SqlParameter> spam = new List<SqlParameter>();
+                        spam.Add(new SqlParameter("@poid", PoID));
+                        spam.Add(new SqlParameter("@seq1", dr["seq1"]));
+                        spam.Add(new SqlParameter("@seq2", dr["seq2"]));
+                        SelectItem item = new SelectItem(item_cmd, spam, "10,10", dr["Roll"].ToString());
+                        DialogResult dresult = item.ShowDialog();
+                        if (dresult == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+                        dr["Roll"] = item.GetSelectedString();
+                        dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
+                    }
+
+                }
+
+            };
+
+            chgCell.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string item_cmd = "select id from Scale where Junk=0 ";
+
+                    SelectItem item = new SelectItem(item_cmd, "10", dr["Changescale"].ToString());
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    dr["Changescale"] = item.GetSelectedString();
+                }
+
+            };
             chgCell.CellMouseClick += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
@@ -254,8 +371,8 @@ and a.seq1=@seq1";
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     string item_cmd = "select id from Scale where Junk=0 ";
-                   
-                    SelectItem item = new SelectItem(item_cmd,"10", dr["Changescale"].ToString());
+
+                    SelectItem item = new SelectItem(item_cmd, "10", dr["Changescale"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
@@ -266,6 +383,25 @@ and a.seq1=@seq1";
 
             };
             staCell.CellMouseClick += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string item_cmd = "select id from Scale where Junk=0 ";
+
+                    SelectItem item = new SelectItem(item_cmd, "10", dr["StainingScale"].ToString());
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    dr["StainingScale"] = item.GetSelectedString();
+                }
+
+            };
+            staCell.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
                 if (this.EditMode == false) return;
@@ -296,9 +432,40 @@ and a.seq1=@seq1";
                     dr["OvenGroup"]="0"+e.FormattedValue.ToString();
                 }                            
             };
+            seqMskCell.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode ) return;
+                if (MyUtility.Check.Empty(e.FormattedValue)) { return; }              
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataTable dt;
+
+                dr["seq1"] = e.FormattedValue.ToString().PadRight(5).Substring(0,3);
+                dr["seq2"] = e.FormattedValue.ToString().PadRight(5).Substring(3,2);
+                if (dr["seq1"].ToString().Length!=3)
+                {
+                     dr["SEQ"] = dr["seq1"] + " -" + dr["seq2"];
+                }
+                else
+                {
+                    dr["SEQ"] = dr["seq1"] + "-" + dr["seq2"];
+                }
+               // dr["SEQ"] = e.FormattedValue;
+                string sql_cmd = string.Format("select seq1,seq2 from PO_Supp_Detail where id='{0}' and FabricType='F' and seq1='{1}' and seq2='{2}'", PoID, dr["seq1"].ToString().Trim(), dr["seq2"].ToString().Trim());
+                DBProxy.Current.Select(null, sql_cmd, out dt);
+                if (dt.Rows.Count<=0)
+                {
+                    MyUtility.Msg.InfoBox("<SEQ#> doesn't exist in Data!");
+                    dr["SEQ"] = "";
+                    dr["seq1"] = "";
+                    dr["seq2"] = "";
+                    return;
+                }
+              
+            };
             rollCell.CellValidating += (s, e) =>
             {
                 if (this.EditMode == false) return;
+                if (MyUtility.Check.Empty(e.FormattedValue)) { return; }
                 DataTable dt;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
 
@@ -309,7 +476,7 @@ and a.seq1=@seq1";
                     spam.Add(new SqlParameter("@poid", PoID));                   
                     DBProxy.Current.Select(null, cmd, spam, out dt);
                     if (dt.Rows.Count <= 0)
-                    {
+                    {                        
                         MyUtility.Msg.InfoBox("<Roll> doesn't exist in Data!");
                         dr["Roll"] = "";
                         dr["Dyelot"] = "";
@@ -323,8 +490,7 @@ and a.seq1=@seq1";
                     }
                 }
                 else
-                {
-                    //string cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2";
+                {                    
                     string cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2 and Roll=@Roll ";
                     List<SqlParameter> spam = new List<SqlParameter>();
                     spam.Add(new SqlParameter("@poid", PoID));
@@ -333,7 +499,7 @@ and a.seq1=@seq1";
                     spam.Add(new SqlParameter("@Roll", e.FormattedValue));
                     DBProxy.Current.Select(null, cmd, spam, out dt);
                     if (dt.Rows.Count <= 0)
-                    {
+                    {                        
                         MyUtility.Msg.InfoBox("<Roll> doesn't exist in Data!");
                         dr["Roll"] = "";
                         dr["Dyelot"] = "";
@@ -341,14 +507,11 @@ and a.seq1=@seq1";
                     }
                     else
                     {
-                        //List<SqlParameter> spamUpdate = new List<SqlParameter>();
-                        //spamUpdate.Add(new SqlParameter("@dyelot", dr["dyelot"]));
-                        //DBProxy.Current.Execute(null, "update FtyInventory set dyelot=@dyelot", spamUpdate);
+
                         dr["Roll"] = e.FormattedValue;
                         dr["Dyelot"] = dt.Rows[0]["Dyelot"].ToString().Trim();
                     }
-                }
-                
+                }                
                                 
             };
            chgCell.CellValidating += (s, e) =>
@@ -397,7 +560,8 @@ and a.seq1=@seq1";
             #endregion           
             Helper.Controls.Grid.Generator(this.grid)               
                 .MaskedText("OvenGroup","00","Group",width: Widths.AnsiChars(5), settings:groupCell)
-                .Text("SEQ", header: "SEQ#", width: Widths.AnsiChars(10),iseditable:false, settings : seqCell)
+                .MaskedText("SEQ", "CCC-CC", "SEQ#", width: Widths.AnsiChars(7), settings: seqMskCell)
+                //.Text("SEQ", header: "SEQ#", width: Widths.AnsiChars(10),iseditable:true, settings : seqCell)
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(5), settings: rollCell)
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5),iseditingreadonly:true)
                 .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -432,8 +596,6 @@ and a.seq1=@seq1";
         {
             DualResult upResult = new DualResult(true);
             string update_cmd = "";
-            //foreach (DataRow dr in ((DataTable)gridbs.DataSource).Rows)
-
             
             DataRow dr = ((DataTable)gridbs.DataSource).NewRow();
             for (int i = ((DataTable)gridbs.DataSource).Rows.Count; i > 0; i--)
@@ -460,19 +622,11 @@ and a.seq1=@seq1";
                 if (MyUtility.Check.Empty(dr["SEQ"]))
                 {
                     dr.Delete();
-
-                    //List<SqlParameter> spamDet = new List<SqlParameter>();
-                    //update_cmd = "Delete From Oven_Detail Where id =@id and ovenGroup=@ovenGroup and seq1='' and seq2='' ";
-                    //spamDet.Add(new SqlParameter("@id", dr["ID"]));
-                    //spamDet.Add(new SqlParameter("@ovenGroup", dr["ovenGroup"]));
-                    //upResult = DBProxy.Current.Execute(null, update_cmd, spamDet);
                     continue;
                 }
-
-                
+                                
                 string Today = DateTime.Now.ToShortDateString();
                 
-
                 //新增
                 if (dr.RowState==DataRowState.Added)
                 {
@@ -510,6 +664,7 @@ SET IDENTITY_INSERT oven off";
             }
 
             return base.OnSave();
+
 
         }
        
@@ -560,6 +715,7 @@ group by a.Article";
        
         private void article_Validated(object sender, EventArgs e)
         {
+            if (!this.EditMode || this.article.Text.Empty()) { return; }
             DualResult dresult;
             DataTable dt;
             string cmd = "select * from order_qty where article=@art";
@@ -644,11 +800,6 @@ group by a.Article";
                 DBProxy.Current.Execute(null, string.Format("update oven set result='',status='New',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dt.Rows[0]["id"]));
             }
             OnRequery();
-        }
-
-        private void save_Click(object sender, EventArgs e)
-        {
-
         }
          
         private void ToExcel_Click(object sender, EventArgs e)

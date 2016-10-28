@@ -565,7 +565,7 @@ namespace Sci.Production.Quality
                     if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
                     {
                         _transactionscope.Dispose();
-                        MyUtility.Msg.InfoBox("錯誤訊息：" + upResult);
+                        MyUtility.Msg.InfoBox("Error Message：" + upResult);
                         return;
                     }
                     _transactionscope.Complete();

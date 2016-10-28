@@ -230,7 +230,8 @@ namespace Sci.Production.Quality
                       
             Sci.Production.Quality.P05_Detail callNewDetailForm = new P05_Detail(IsSupportEdit,ID.ToString(), null, null, null, this.sp_text.Text);
             callNewDetailForm.ShowDialog(this);
-            callNewDetailForm.Dispose();         
+            callNewDetailForm.Dispose();
+            //this.RenewData();會讓資料renew導致記憶被洗掉
             this.RenewData();
             OnDetailEntered();
         }
@@ -238,12 +239,13 @@ namespace Sci.Production.Quality
         private void EditThisDetail()
         {
             var dr = this.CurrentDetailData; if (null == dr) return;
+            string id = CurrentDetailData["ID"].ToString();
             var frm = new Sci.Production.Quality.P05_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr,sp_text.Text);
             frm.ShowDialog(this);
             frm.Dispose();
             contextMenuStrip();
-            this.RenewData();
-
+            //this.RenewData();會讓資料renew導致記憶被洗掉
+            this.RenewData();            
             OnDetailEntered();
         }
         // Context Menu選擇Delete This Record's Detail

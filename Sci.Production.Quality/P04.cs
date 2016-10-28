@@ -104,14 +104,37 @@ namespace Sci.Production.Quality
 
         private void btnReceive(object sender, EventArgs e)
         {
+            if (this.EditMode==true)
+            {
+                return;
+            }
             CurrentDetailData["Receiver"] = loginID;
             CurrentDetailData["ReceiveDate"] = DateTime.Now.ToShortDateString();
+            DualResult result;
+            string sqlcmd = string.Format(@"update Garmenttest_Detail set Receiver ='{0}',ReceiveDate='{1}' where id='{2}' ", loginID, DateTime.Now.ToShortDateString(), CurrentMaintain["ID"]);
+            result = DBProxy.Current.Execute(null, sqlcmd);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("ErrorMsg: " + result);
+                return;
+            }
 
         }
         private void btnSend(object sender, EventArgs e)
         {
+            if (this.EditMode==true)
+            {                
+                return;
+            }
             CurrentDetailData["Sender"] = loginID;
             CurrentDetailData["SendDate"] = DateTime.Now.ToShortDateString();
+            DualResult result;
+            string sqlcmd = string.Format(@"update Garmenttest_Detail set Sender ='{0}',SendDate='{1}' where id='{2}' ", loginID,DateTime.Now.ToShortDateString(),CurrentMaintain["ID"]);
+            result = DBProxy.Current.Execute(null, sqlcmd);
+            if (!result) {
+                MyUtility.Msg.WarningBox("ErrorMsg: "+result);
+                return;  }
+
             Send_Mail();
         }
         protected override void OnDetailGridSetup()
@@ -126,6 +149,8 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorTextColumnSettings ReceiverCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorComboBoxColumnSettings ResultValid = new DataGridViewGeneratorComboBoxColumnSettings();
             DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorTextColumnSettings SendChangeCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ReceiverChangeCell = new DataGridViewGeneratorTextColumnSettings();
             
             
 
@@ -147,6 +172,11 @@ namespace Sci.Production.Quality
                     e.IsEditable = false;
             };
             ResultValid.CellEditable += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
+            };
+            ResultComboCell.CellEditable += (s, e) =>
             {
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
@@ -197,23 +227,7 @@ namespace Sci.Production.Quality
                     dr["EditDate"] = DateTime.Now.ToShortDateString();
                 }
             };
-            //SenderCell.CellMouseClick += (s, e) =>
-            //{
-            //    if (e.RowIndex == -1) return;
-            //    if (this.EditMode == false) return;
-            //    if (e.Button == System.Windows.Forms.MouseButtons.Right)
-            //    {
-            //        DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-            //        string scalecmd = @"select id,name from Pass1 where Resign is null";
-            //        SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Sender"].ToString());
-            //        DialogResult result = item1.ShowDialog();
-            //        if (result == DialogResult.Cancel)
-            //        {
-            //            return;
-            //        }
-            //        dr["Sender"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
-            //    }
-            //};
+        
             ReceiveCell.CellMouseClick += (s, e) =>
             {
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
@@ -225,25 +239,7 @@ namespace Sci.Production.Quality
                     dr["EditDate"] = DateTime.Now.ToShortDateString();
                 }
             };
-            /*
-            ReceiverCell.CellMouseClick += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
-                    string scalecmd = @"select id,name from Pass1 where Resign is null";
-                    SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Receiver"].ToString());
-                    DialogResult result = item1.ShowDialog();
-                    if (result == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-                    dr["Receiver"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
-                }
-            };
-            */
+          
             #endregion
 
             #region Valid 事件
@@ -308,14 +304,14 @@ namespace Sci.Production.Quality
                         }                        
                     }
                 };
-        
-            //SenderCell.CellValidating += (s, e) =>
+
+            //SendChangeCell.CellValidating += (s, e) =>
             //{
-            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
+            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
             //    if (dr.RowState == DataRowState.Modified)
             //    {
             //        DataTable dt;
-            //        string cmd = "select * from pass1 where id=@id and Resign is null";
+            //        string cmd = "select * from pass1 where id=@id and Resign is not null";
             //        List<SqlParameter> spam = new List<SqlParameter>();
             //        spam.Add(new SqlParameter("@id", e.FormattedValue));
             //        DualResult result;
@@ -326,40 +322,43 @@ namespace Sci.Production.Quality
             //                dr["EditName"] = loginID;
             //                dr["EditDate"] = DateTime.Now.ToShortDateString();
             //                dr["sender"] = e.FormattedValue;
+            //               // dr["SendDate"] = e.FormattedValue;
             //            }
             //        }
-            //    }               
+            //    }
             //};
-            /*
-            ReceiverCell.CellValidating += (s, e) =>
-            {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
-                if (dr.RowState == DataRowState.Modified)
-                {
-                    DataTable dt;
-                    string cmd = "select * from pass1 where id=@id and Resign is null";
-                    List<SqlParameter> spam = new List<SqlParameter>();
-                    spam.Add(new SqlParameter("@id", e.FormattedValue));                   
-                    DualResult result;
-                    if (result = DBProxy.Current.Select(null, cmd, spam, out dt) )
-                    {
-                        if (dt.Rows.Count > 0 )
-                        {
-                            dr["EditName"] = loginID;
-                            dr["EditDate"] = DateTime.Now.ToShortDateString();
-                            dr["Receiver"] = e.FormattedValue;
-                        }
-                    }
+
+
+            //ReceiverChangeCell.CellValidating += (s, e) =>
+            //{
+            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
+            //    if (dr.RowState == DataRowState.Modified)
+            //    {
+            //        DataTable dt;
+            //        string cmd = "select * from pass1 where id=@id and Resign is not null";
+            //        List<SqlParameter> spam = new List<SqlParameter>();
+            //        spam.Add(new SqlParameter("@id", e.FormattedValue));                   
+            //        DualResult result;
+            //        if (result = DBProxy.Current.Select(null, cmd, spam, out dt) )
+            //        {
+            //            if (dt.Rows.Count > 0 )
+            //            {
+            //                dr["EditName"] = loginID;
+            //                dr["EditDate"] = DateTime.Now.ToShortDateString();
+            //                dr["Receiver"] = e.FormattedValue;
+            //               // dr["ReceiveDate"] = e.FormattedValue;
+            //            }
+            //        }
                    
-                }     
+            //    }     
                     
-            };
-             * */
+            //};
+           
             #endregion
 
             
 
-            //Ict.Win.UI.DataGridViewComboBoxColumn ResultComboCell;// 一定要加Ict.Win.UI 不然會跟C#原生的有所衝突
+           // Ict.Win.UI.DataGridViewComboBoxColumn ResultComboCell;// 一定要加Ict.Win.UI 不然會跟C#原生的有所衝突
             
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Numeric("No", header: "No. Of Test", integer_places: 8, decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(8))
@@ -369,12 +368,10 @@ namespace Sci.Production.Quality
             .Text("Inspector", header: "Inspector Name", width: Widths.AnsiChars(10),iseditingreadonly:true)
             .Text("Remark", header: "Comments", width: Widths.AnsiChars(10),settings:CommentsCell)
             .Button("Send", null, header: "Send", width: Widths.AnsiChars(5), onclick: btnSend)            
-            //.Text("Send", header: "Send", width: Widths.AnsiChars(10),settings:SendCell)
-            .Text("Sender", header: "Sender", width: Widths.AnsiChars(10),iseditingreadonly:true)
+            .Text("Sender", header: "Sender", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("SendDate", header: "Send Date", width: Widths.AnsiChars(10),iseditingreadonly:true)
              //將Receive換成button,按Receive之後將登入帳號填入Receiver、Receive填入今天的日期 20161020
             .Button("Receive", null, header: "Receive", width: Widths.AnsiChars(5), onclick: btnReceive)            
-            //.Text("Receive", header: "Receive", width: Widths.AnsiChars(5),settings:ReceiveCell)// source empty
             .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(5),iseditingreadonly:true)
             .Date("ReceiveDate", header: "Receive Date", width: Widths.AnsiChars(10),iseditingreadonly:true)
             .Text("AddName", header: "Add Name", width: Widths.AnsiChars(25),iseditingreadonly:true)// addName + addDate
@@ -389,7 +386,7 @@ namespace Sci.Production.Quality
             base.ClickNewAfter();
         }
 
-        protected override void OnDetailGridInsert(int index = -1)
+        protected override void OnDetailGridInsert(int index = 1)
         {
             base.OnDetailGridInsert(index);
             DataTable dt = (DataTable)detailgridbs.DataSource;
@@ -453,7 +450,9 @@ namespace Sci.Production.Quality
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamDet);
                     continue;
                 }
-            }                
+             
+            }
+                
 
             DataTable dt = (DataTable)detailgridbs.DataSource;
             if (DELETE) dt.AcceptChanges();
@@ -475,6 +474,7 @@ namespace Sci.Production.Quality
                 CurrentMaintain["Remark"] = "";
             }
            
+
             return base.ClickSave();
 
           
