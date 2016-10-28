@@ -375,6 +375,7 @@
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;
+            this.IsSupportPrint = false;
             this.KeyField1 = "id";
             this.Name = "P20";
             this.SubDetailKeyField1 = "Ukey";
