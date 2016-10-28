@@ -88,6 +88,7 @@ namespace Sci.Production.Thread
             Sci.Production.Thread.P01_CopyTo P01_CopyTo = new Sci.Production.Thread.P01_CopyTo(CurrentMaintain);
             P01_CopyTo.ShowDialog();
             //return base.ClickCopy();
+            RenewData();
             return true;
         }
     }
