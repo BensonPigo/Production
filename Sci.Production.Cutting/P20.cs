@@ -114,7 +114,7 @@ namespace Sci.Production.Cutting
                         dr["Layer"] =0;
                         dr["Cons"] = 0;
                         dr["PatternPanel"] = "";
-                        dr["Workorderukey"] ="";
+                        dr["Workorderukey"] = 0;
                         dr["SizeRatio"] = "";
                         dr.EndEdit();
                         e.Cancel = true;

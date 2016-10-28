@@ -291,6 +291,7 @@
             // displayBox2
             // 
             this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "pph", true));
             this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox2.Location = new System.Drawing.Point(327, 49);
             this.displayBox2.Name = "displayBox2";
