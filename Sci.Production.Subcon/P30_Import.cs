@@ -36,7 +36,7 @@ namespace Sci.Production.Subcon
             String sp_e = this.textBox2.Text;
             String brandid = this.txtbrand1.Text;
 
-            string booking_b, booking_e, sewinline_b, sewinline_e, arrived_b, arrived_e, approved_b, approved_e, scidelivery_b, scidelivery_e;
+            string booking_b, booking_e, sewinline_b, sewinline_e, arrived_b, arrived_e, approved_b, approved_e, scidelivery_b, scidelivery_e, sql, tmp;
             booking_b = null;
             booking_e = null;
             sewinline_b = null;
@@ -201,8 +201,17 @@ and a.Mdivisionid = '{1}'
                     category = MyUtility.GetValue.Lookup(string.Format(@"select category from orders where id = '{0}'", dr["orderid"]), null);
                     if (category == "B")
                     {
-                        price = decimal.Parse(MyUtility.GetValue.Lookup(string.Format(@"select price from order_tmscost where id='{0}' and artworktypeid='{1}'"                            
-                                                                                            , dr["orderid"], dr_localPO["category"].ToString().TrimEnd().ToUpper()), null));
+                        //554: SUBCON_P30_Import_Import Thread or Carton item
+                        //price = decimal.Parse(MyUtility.GetValue.Lookup(string.Format(@"select price from order_tmscost where id='{0}' and artworktypeid='{1}'"                            
+                        //                                                                    , dr["orderid"], dr_localPO["category"].ToString().TrimEnd().ToUpper()), null));
+                        sql = string.Format(@"select price from order_tmscost where id='{0}' and artworktypeid='{1}'"
+                                            , dr["orderid"], dr_localPO["category"].ToString().TrimEnd().ToUpper());
+                        tmp = MyUtility.GetValue.Lookup(sql);
+                        if (MyUtility.Check.Empty(tmp))
+                            price = 0;
+                        else
+                            price = decimal.Parse(tmp);
+
                         if (MyUtility.Check.Empty(price) || price == 0)
                         {
                             dr["remark"] = "Price is 0, can not be transfered to local purchase!!";
