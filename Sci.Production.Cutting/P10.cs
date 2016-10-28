@@ -55,8 +55,9 @@ namespace Sci.Production.Cutting
                 displayBox_Season.Text = "";
                 displayBox_Style.Text = "";
             }
+
             string estcutdate = MyUtility.GetValue.Lookup(string.Format("Select estcutdate from workorder where id='{0}' and cutref = '{1}'", cuttingid, cutref), null);
-            displayBox_EstCutdate.Text = Convert.ToDateTime(estcutdate).ToString("yyyy/MM/dd");
+            if (!MyUtility.Check.Empty(estcutdate))  displayBox_EstCutdate.Text = Convert.ToDateTime(estcutdate).ToString("yyyy/MM/dd");
             
             int qty = 0;
             if(bundle_Detail_Qty_Tb.Rows.Count==0)  qty =0;
