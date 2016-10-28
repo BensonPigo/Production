@@ -323,8 +323,8 @@ namespace Sci.Production.Cutting
         private void button1_Click(object sender, EventArgs e)
         {
             detailgrid.ValidateControl();
-            var frm = new Sci.Production.Cutting.P04_FabricIssueList();
-            frm.ShowDialog();
+            var frm = new Sci.Production.Cutting.P04_Import();
+            frm.ShowDialog(this);
         }
 
         private bool ToExcel(bool autoSave)

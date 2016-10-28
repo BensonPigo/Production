@@ -133,8 +133,11 @@ namespace Sci.Production.Cutting
 
                             if (!string.IsNullOrWhiteSpace(id))
                             {
-                                insertheader = string.Format("insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName,AddDate,POID) Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GetDate(),'{7}');", id, dr["id"], keyWord, dr["cutcellid"], dr["estcutdate"], "New", loginID, dr["POId"]);
-                                importay = detailTable.Select(string.Format("cuttingid = '{0}' and cutcellid = '{1}'",dr["id"],dr["cutcellid"]));
+                                //insertheader = string.Format("insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName,AddDate,POID) Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GetDate(),'{7}');", id, dr["id"], keyWord, dr["cutcellid"], dr["estcutdate"], "New", loginID, dr["POId"]);
+                                insertheader = string.Format("insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName,AddDate,POID) Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GetDate(),'{7}');", id, dr["CuttingID"], keyWord, dr["cutcellid"], dateBox1.Text, "New", loginID, dr["POId"]);
+
+                                //importay = detailTable.Select(string.Format("cuttingid = '{0}' and cutcellid = '{1}'", dr["id"], dr["cutcellid"]));
+                                importay = detailTable.Select(string.Format("id = '{0}' and cutcellid = '{1}'", dr["CuttingID"], dr["cutcellid"]));
                                 if (importay.Length > 0)
                                 {
                                     foreach (DataRow ddr in importay)
@@ -148,7 +151,9 @@ namespace Sci.Production.Cutting
                                             }
                                         }
 
-                                        insertheader = insertheader + string.Format("insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,cons,WorkOrder_Ukey,POID,Remark) values('{0}','{1}','{2}',{3},'{4}','{5}','{6}',{7},'{8}','{9}','{10}');", id, ddr["Sewinglineid"], ddr["Cutref"], ddr["Cutno"], ddr["OrderID"], ddr["styleid"], ddr["Colorid"], ddr["Cons"], ddr["Ukey"], ddr["POID"],remark);
+                                        //insertheader = insertheader + string.Format("insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,cons,WorkOrder_Ukey,POID,Remark) values('{0}','{1}','{2}',{3},'{4}','{5}','{6}',{7},'{8}','{9}','{10}');", id, ddr["Sewinglineid"], ddr["Cutref"], ddr["Cutno"], ddr["OrderID"], ddr["styleid"], ddr["Colorid"], ddr["Cons"], ddr["Ukey"], ddr["POID"],remark);
+                                        insertheader = insertheader + string.Format("insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,cons,WorkOrder_Ukey,POID,Remark) values('{0}','{1}','{2}',{3},'{4}','{5}','{6}',{7},'{8}','{9}','{10}');", id, ddr["Sewinglineid"], ddr["Cutref"], ddr["Cutno"], ddr["OrderID"], dr["styleid"], ddr["Colorid"], ddr["Cons"], ddr["Ukey"], dr["POID"], remark);
+
                                     }
                                     if (!(upResult = DBProxy.Current.Execute(null, insertheader)))
                                     {
