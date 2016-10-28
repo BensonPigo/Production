@@ -47,7 +47,8 @@ namespace Sci.Production.Cutting
                 For XML path('')
             ) as OrderID,
             (
-                Select SizeCode+'/'+convert(varchar,Qty )
+                --Select SizeCode+'/'+convert(varchar,Qty )
+                Select SizeCode+'*'+convert(varchar,Qty ) + '/ '
                 From CuttingOutput_Detail_Detail c
                 Where c.CuttingOutput_DetailUkey =a.Ukey 
                 For XML path('')
@@ -72,6 +73,10 @@ namespace Sci.Production.Cutting
         {
             base.OnDetailEntered();
             label9.Text = CurrentMaintain["Status"].ToString();
+
+            //去除表身[sizeRatio]最後一個/ 字元
+            foreach (DataRow dr in DetailDatas) dr["sizeRatio"] = dr["sizeRatio"].ToString().Trim().TrimEnd('/');
+
         }
         protected override void OnDetailGridSetup()
         {
@@ -446,8 +451,8 @@ namespace Sci.Production.Cutting
                     pph = 0;
                 }
             }
-            
-            update = update + string.Format("update Cuttingoutput set status='Confirmed',editDate=getdate(),editname ='{0}',actgarment ='{2}',pph='{3}' where id='{1}'", loginID, CurrentMaintain["ID"],gmt);
+
+            update = update + string.Format("update Cuttingoutput set status='Confirmed',editDate=getdate(),editname ='{0}',actgarment ='{2}',pph='{3}' where id='{1}'", loginID, CurrentMaintain["ID"], gmt, pph);
 
 
             #region transaction
@@ -520,7 +525,7 @@ namespace Sci.Production.Cutting
             )
 			Select  a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty from a 
             left join b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
-			group by a.poid,a.id,a.article,a.sizecode", CurrentMaintain["ID"], CurrentMaintain["cdate"]);
+			group by a.poid,a.id,a.article,a.sizecode", CurrentMaintain["ID"], Convert.ToDateTime(CurrentMaintain["cdate"]).ToShortDateString());
 
             DataTable t1;
             DBProxy.Current.Select(null, sql1, out t1);
