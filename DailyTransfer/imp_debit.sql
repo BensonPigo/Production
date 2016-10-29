@@ -1,5 +1,3 @@
-
-
 -- =============================================
 -- Author:		<Willy S01910>
 -- Create date: <2016/08/19>
@@ -21,13 +19,13 @@ insert @Sayfty select id from Production.dbo.Factory
 	on t.id = s.id
 	when matched and (s.sysdate <> t.sysdate or t.EditDate <> s.EditDate) then
 		update set 
-		t.TransidSettle = s.TransidSettle ,
+		t.VoucherSettle = s.VoucherSettle ,
 		t.EditName = s.EditName,
 		t.EditDate = s.EditDate,
 		t.SysDate = s.SysDate
 	when not matched by target then 	
-		insert(	 ID,  CurrencyID,  Amount,  Received,  BuyerID,  BrandID,  BankID,  LCFNO,  LCFDate,  EstPayDate,  Title,  SendFrom,  Attn,  CC,  Subject,  Handle,  SMR,  TransID,  BadID,  Status,  StatusRevise,  StatusReviseNm, CustPayId,   Settled,  SettleDate,  Cfm,  CfmDate,  Lock,  Lockdate,  OldAmount,  Type,  ShareFob,  TransidFactory,  TransidSettle,  IsSubcon,  LCLName,  LCLCurrency,  LCLAmount,  LCLRate,  AddName,  AddDate,  EditName,  EditDate,  SysDate)
-		values(s.ID,s.CurrencyID,s.Amount,s.Received,s.BuyerID,s.BrandID,s.BankID,s.LCFNO,s.LCFDate,s.EstPayDate,s.Title,s.SendFrom,s.Attn,s.CC,s.Subject,s.Handle,s.SMR,s.TransID,s.BadID,s.Status,s.StatusRevise,s.StatusReviseNm,s.CustPayId,s.Settled,s.SettleDate,s.Cfm,s.CfmDate,s.Lock,s.Lockdate,s.OldAmount,s.Type,s.ShareFob,s.TransidFactory,s.TransidSettle,s.IsSubcon,s.LCLName,s.LCLCurrency,s.LCLAmount,s.LCLRate,s.AddName,s.AddDate,s.EditName,s.EditDate,s.SysDate)
+		insert(	 ID,  CurrencyID,  Amount,  Received,  BuyerID,  BrandID,  BankID,  LCFNO,  LCFDate,  EstPayDate,  Title,  SendFrom,  Attn,  CC,  Subject,  Handle,  SMR,  VoucherID,  BadID,  Status,  StatusRevise,  StatusReviseNm, CustPayId,   Settled,  SettleDate,  Cfm,  CfmDate,  Lock,  Lockdate,  OldAmount,  Type,  ShareFob,  VoucherFactory,  VoucherSettle,  IsSubcon,  LCLName,  LCLCurrency,  LCLAmount,  LCLRate,  AddName,  AddDate,  EditName,  EditDate,  SysDate)
+		values(s.ID,s.CurrencyID,s.Amount,s.Received,s.BuyerID,s.BrandID,s.BankID,s.LCFNO,s.LCFDate,s.EstPayDate,s.Title,s.SendFrom,s.Attn,s.CC,s.Subject,s.Handle,s.SMR,s.VoucherID,s.BadID,s.Status,s.StatusRevise,s.StatusReviseNm,s.CustPayId,s.Settled,s.SettleDate,s.Cfm,s.CfmDate,s.Lock,s.Lockdate,s.OldAmount,s.Type,s.ShareFob,s.VoucherFactory,s.VoucherSettle,s.IsSubcon,s.LCLName,s.LCLCurrency,s.LCLAmount,s.LCLRate,s.AddName,s.AddDate,s.EditName,s.EditDate,s.SysDate)
 		output inserted.id,iif(deleted.id='',1,0) into @Tdebit ;
 
 
