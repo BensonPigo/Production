@@ -2052,7 +2052,7 @@ where not exists(select ShipperID from Production.dbo.FSRCpuCost_Detail as a whe
 ----------------------刪除主TABLE多的資料
 Delete Production.dbo.FtyShipper
 from Production.dbo.FtyShipper as a left join Trade_To_Pms.dbo.FtyShipper as b  
-on a.BrandID = b.BrandID and   a.BrandID	    =b.BrandID	
+on a.BrandID = b.BrandID and a.FactoryID=b.FactoryID
 where b.BrandID is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
@@ -2064,7 +2064,7 @@ SET
       ,a.EditDate	      =b.EditDate	
       ,a.EditName	      =b.EditName	
 
-from Production.dbo.FtyShipper as a inner join Trade_To_Pms.dbo.FtyShipper as b ON a.BrandID = b.BrandID and   a.BrandID	    =b.BrandID	
+from Production.dbo.FtyShipper as a inner join Trade_To_Pms.dbo.FtyShipper as b ON a.BrandID = b.BrandID and a.FactoryID=b.FactoryID
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.FtyShipper(
        BrandID
@@ -2084,7 +2084,7 @@ select
       ,EditName
 
 from Trade_To_Pms.dbo.FtyShipper as b
-where not exists(select BrandID from Production.dbo.FtyShipper as a where a.BrandID = b.BrandID and   a.BrandID	    =b.BrandID	)
+where not exists(select BrandID from Production.dbo.FtyShipper as a where a.BrandID = b.BrandID and a.FactoryID=b.FactoryID	)
 
 --FtyShipper_Detail
 --DO releasememvar WITH 'FtyShipper1'
