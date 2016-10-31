@@ -197,7 +197,7 @@ namespace Sci.Production.Cutting
 						from WorkOrder WO
 						left join WorkOrder_SizeRatio b on b.WorkOrderUkey=WO.Ukey
 						left join Order_SizeCode c on c.Id=b.ID and c.SizeCode=b.SizeCode
-						where WO.ID='16061104GG'
+						where WO.ID='{0}'
 						group by WO.Ukey) tmp
 				where tmp.Ukey=a.Ukey
 			) as Order_SizeCode_Seq,
@@ -1109,8 +1109,11 @@ namespace Sci.Production.Cutting
 
             
             #region 根據左邊Grid Filter 右邊資訊
-            sizeratioTb.DefaultView.RowFilter = string.Format("Workorderukey = '{0}'", CurrentDetailData["Ukey"]);
-            distqtyTb.DefaultView.RowFilter = string.Format("Workorderukey = '{0}'", CurrentDetailData["Ukey"]);
+            if (!MyUtility.Check.Empty(CurrentDetailData["Ukey"]))
+            {
+                sizeratioTb.DefaultView.RowFilter = string.Format("Workorderukey = '{0}'", CurrentDetailData["Ukey"]);
+                distqtyTb.DefaultView.RowFilter = string.Format("Workorderukey = '{0}'", CurrentDetailData["Ukey"]);
+            }
             #endregion
 
             #region Total Dist
@@ -1301,7 +1304,7 @@ namespace Sci.Production.Cutting
                     dv.Sort = "FabricCombo ASC,multisize ASC,Colorid ASC,Order_SizeCode_Seq DESC";
                     break;
             }
-
+            
         }
 
         private void comboBox1_Validated(object sender, EventArgs e)
@@ -1375,13 +1378,16 @@ namespace Sci.Production.Cutting
             {
                 try
                 {
-                    if (!(upResult = DBProxy.Current.Execute(null, updatecutref)))
+                    if (!MyUtility.Check.Empty(updatecutref))
                     {
-                        _transactionscope.Dispose();
-                        ShowErr(updatecutref, upResult);
-                        return;
+                        if (!(upResult = DBProxy.Current.Execute(null, updatecutref)))
+                        {
+                            _transactionscope.Dispose();
+                            ShowErr(updatecutref, upResult);
+                            return;
+                        }
+                        _transactionscope.Complete();
                     }
-                    _transactionscope.Complete();
                 }
                 catch (Exception ex)
                 {
@@ -1449,35 +1455,46 @@ namespace Sci.Production.Cutting
         protected override void OnDetailGridInsert(int index = -1)
         {
             DataRow OldRow = CurrentDetailData;  //將游標停駐處的該筆資料複製起來
-            base.OnDetailGridInsert(index); //先給一個NewKey
+            DataRow newRow = OldRow.Table.NewRow();
+            //base.OnDetailGridInsert(index); //先給一個NewKey
             
             int maxkey;
             object comput = ((DataTable)detailgridbs.DataSource).Compute("Max(newkey)", "");
             if (comput == DBNull.Value) maxkey = 0;
             else maxkey = Convert.ToInt32(comput);
             maxkey = maxkey + 1;
-            CurrentDetailData["Newkey"] = maxkey;
-            CurrentDetailData["CutRef"] = "";
-            CurrentDetailData["Cutno"] = 0;
-            CurrentDetailData["Markername"] = OldRow["Markername"];
-            CurrentDetailData["FabricCombo"] = OldRow["FabricCombo"];
-            CurrentDetailData["LectraCode"] = OldRow["LectraCode"];
-            CurrentDetailData["Article"] = OldRow["Article"];
-            CurrentDetailData["Colorid"] = OldRow["Colorid"];
-            CurrentDetailData["SizeCode"] = OldRow["SizeCode"];
-            CurrentDetailData["Layer"] = OldRow["Layer"];
-            CurrentDetailData["CutQty"] = OldRow["CutQty"];
-            CurrentDetailData["orderid"] = OldRow["orderid"];
-            CurrentDetailData["SEQ1"] = OldRow["SEQ1"];
-            CurrentDetailData["SEQ2"] = OldRow["SEQ2"];
-            CurrentDetailData["Fabeta"] = OldRow["Fabeta"];
-            CurrentDetailData["estcutdate"] = OldRow["estcutdate"];
-            CurrentDetailData["sewinline"] = OldRow["sewinline"];
-            CurrentDetailData["Cutcellid"] = OldRow["Cutcellid"];
-            CurrentDetailData["Cutplanid"] = OldRow["Cutplanid"];
-            CurrentDetailData["actcutdate"] = OldRow["actcutdate"];
-            CurrentDetailData["Adduser"] = loginID;
-            
+
+
+            newRow["Newkey"] = maxkey;
+            newRow["CutRef"] = "";
+            newRow["Cutno"] = 0;
+            newRow["Markername"] = OldRow["Markername"];
+            newRow["FabricCombo"] = OldRow["FabricCombo"];
+            newRow["LectraCode"] = OldRow["LectraCode"];
+            newRow["Article"] = OldRow["Article"];
+            newRow["Colorid"] = OldRow["Colorid"];
+            newRow["SizeCode"] = OldRow["SizeCode"];
+            newRow["Layer"] = OldRow["Layer"];
+            newRow["CutQty"] = OldRow["CutQty"];
+            newRow["orderid"] = OldRow["orderid"];
+            newRow["SEQ1"] = OldRow["SEQ1"];
+            newRow["SEQ2"] = OldRow["SEQ2"];
+            newRow["Fabeta"] = OldRow["Fabeta"];
+            newRow["estcutdate"] = OldRow["estcutdate"];
+            newRow["sewinline"] = OldRow["sewinline"];
+            newRow["Cutcellid"] = OldRow["Cutcellid"];
+            newRow["Cutplanid"] = OldRow["Cutplanid"];
+            newRow["actcutdate"] = OldRow["actcutdate"];
+            newRow["multisize"] = OldRow["multisize"];  //test
+            newRow["Order_SizeCode_Seq"] = OldRow["Order_SizeCode_Seq"];  //test
+            newRow["Adduser"] = loginID;
+
+            DataTable detailtmp = (DataTable)detailgridbs.DataSource;
+            int TEMP = ((DataTable)detailgridbs.DataSource).Rows.Count;
+
+            if (index == -1) index = TEMP;
+            OldRow.Table.Rows.InsertAt(newRow, index);
+
         }
 
         protected override void OnDetailGridDelete()
@@ -1602,7 +1619,7 @@ namespace Sci.Production.Cutting
         private void totalDisQty()
         {
             gridValid();
-            if (CurrentDetailData["Ukey"] != null)
+            if (!MyUtility.Check.Empty(CurrentDetailData["Ukey"]))
             {
                 object comput;
                 int disqty;
