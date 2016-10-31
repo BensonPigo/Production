@@ -113,6 +113,7 @@ namespace Sci.Production.Cutting
         {
             DataRow[] importay;
             string insertheader = "";
+
             #region transaction
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
@@ -152,14 +153,26 @@ namespace Sci.Production.Cutting
                                         }
 
                                         //insertheader = insertheader + string.Format("insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,cons,WorkOrder_Ukey,POID,Remark) values('{0}','{1}','{2}',{3},'{4}','{5}','{6}',{7},'{8}','{9}','{10}');", id, ddr["Sewinglineid"], ddr["Cutref"], ddr["Cutno"], ddr["OrderID"], ddr["styleid"], ddr["Colorid"], ddr["Cons"], ddr["Ukey"], ddr["POID"],remark);
-                                        insertheader = insertheader + string.Format("insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,cons,WorkOrder_Ukey,POID,Remark) values('{0}','{1}','{2}',{3},'{4}','{5}','{6}',{7},'{8}','{9}','{10}');", id, ddr["Sewinglineid"], ddr["Cutref"], ddr["Cutno"], ddr["OrderID"], dr["styleid"], ddr["Colorid"], ddr["Cons"], ddr["Ukey"], dr["POID"], remark);
+                                        insertheader = insertheader + string.Format("insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,cons,WorkOrderUkey,POID,Remark) values('{0}','{1}','{2}',{3},'{4}','{5}','{6}',{7},'{8}','{9}','{10}');", id, ddr["Sewinglineid"], ddr["Cutref"], ddr["Cutno"], ddr["OrderID"], dr["styleid"], ddr["Colorid"], ddr["Cons"], ddr["Ukey"], dr["POID"], remark);
 
                                     }
+
+                                    //265: CUTTING_P04_Import_Import From Work Order，將id回寫至Workorder.CutplanID
+                                    string UpdateWorkorder = string.Format(@"update Workorder set CutplanID = '{0}' 
+                                                                            where cutplanid='' and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}'" 
+                                                                            , id , dr["CuttingID"] , dr["cutcellid"],  keyWord, dateBox1.Text);
+
                                     if (!(upResult = DBProxy.Current.Execute(null, insertheader)))
                                     {
                                         _transactionscope.Dispose();
                                         return;
                                     }
+                                    if (!(upResult = DBProxy.Current.Execute(null, UpdateWorkorder)))
+                                    {
+                                        _transactionscope.Dispose();
+                                        return;
+                                    }
+
                                 }
                             }
                         }
@@ -178,7 +191,7 @@ namespace Sci.Production.Cutting
             _transactionscope = null;
             #endregion
 
-
+            this.Close();
         }
 
     }
