@@ -39,8 +39,6 @@
             this.displayBox3 = new Sci.Win.UI.DisplayBox();
             this.label4 = new Sci.Win.UI.Label();
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.displayBox5 = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -59,8 +57,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.displayBox5);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.displayBox4);
             this.masterpanel.Controls.Add(this.label3);
@@ -81,8 +77,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
             // 
             // detailpanel
             // 
@@ -233,25 +227,6 @@
             this.displayBox4.Size = new System.Drawing.Size(353, 23);
             this.displayBox4.TabIndex = 8;
             // 
-            // label5
-            // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(706, 10);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 11;
-            this.label5.Text = "Style Ukey";
-            // 
-            // displayBox5
-            // 
-            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ukey", true));
-            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(784, 10);
-            this.displayBox5.Name = "displayBox5";
-            this.displayBox5.Size = new System.Drawing.Size(100, 23);
-            this.displayBox5.TabIndex = 10;
-            // 
             // B03
             // 
             this.ClientSize = new System.Drawing.Size(900, 594);
@@ -301,7 +276,5 @@
         private Win.UI.DisplayBox displayBox1;
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Label label5;
-        private Win.UI.DisplayBox displayBox5;
     }
 }
