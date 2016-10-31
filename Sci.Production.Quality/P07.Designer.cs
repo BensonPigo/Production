@@ -102,7 +102,7 @@
             this.masterpanel.Controls.Add(this.Target_text);
             this.masterpanel.Controls.Add(this.Earliest_text);
             this.masterpanel.Controls.Add(this.Cutting_text);
-            this.masterpanel.Size = new System.Drawing.Size(892, 123);
+            this.masterpanel.Size = new System.Drawing.Size(1143, 123);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.Cutting_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Earliest_text, 0);
@@ -137,15 +137,20 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 123);
-            this.detailpanel.Size = new System.Drawing.Size(892, 226);
+            this.detailpanel.Size = new System.Drawing.Size(1143, 358);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(5, 88);
+            this.gridicon.Location = new System.Drawing.Point(3, 89);
+            this.gridicon.Visible = false;
+            // 
+            // refresh
+            // 
+            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 226);
+            this.detailgridcont.Size = new System.Drawing.Size(1143, 358);
             // 
             // detail2
             // 
@@ -161,16 +166,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(1143, 519);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(1143, 481);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 481);
+            this.detailbtm.Size = new System.Drawing.Size(1143, 38);
             // 
             // browse
             // 

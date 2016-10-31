@@ -184,10 +184,10 @@ namespace Sci.Production.Quality
 
         protected override bool OnGridSetup()
         {
-           // Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings groupCell = new DataGridViewGeneratorMaskedTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings groupCell = new DataGridViewGeneratorMaskedTextColumnSettings();
             Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings seqMskCell = new DataGridViewGeneratorMaskedTextColumnSettings();
             seqMskCell.TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;
-            DataGridViewGeneratorTextColumnSettings groupCell = new DataGridViewGeneratorTextColumnSettings();
+           // DataGridViewGeneratorTextColumnSettings groupCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings seqCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings rollCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings chgCell = new DataGridViewGeneratorTextColumnSettings();
@@ -416,17 +416,16 @@ namespace Sci.Production.Quality
 
             #region Valid
             //// 個位數需補0
-            groupCell.CellValidating += (s, e) =>
-            {
-                if (this.EditMode == false) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (e.FormattedValue.ToString().Length > 2)
-                {
-                    MyUtility.Msg.InfoBox("<Body> cannot insert over than 2 char");
-                    dr["ColorFastnessGroup"] = dr["ColorFastnessGroup"];
-                }
+            //groupCell.CellValidating += (s, e) =>
+            //{
+            //    if (this.EditMode == false) return;
+            //    DataRow dr = grid.GetDataRow(e.RowIndex);
+            //    if (e.FormattedValue.ToString().Length != 2)
+            //    {
+            //        dr["ColorFastnessGroup"] = "0" + e.FormattedValue.ToString();
+            //    }
          
-            };
+            //};
             seqMskCell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode) return;
@@ -551,14 +550,14 @@ namespace Sci.Production.Quality
             {
                 if (this.EditMode == false) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (dr["result"].ToString() == "Pass") { dr["result"] = "Fail"; }
-                else { dr["result"] = "Pass"; }
+                if (dr["result"].ToString() == "PASS") { dr["result"] = "FAIL"; }
+                else { dr["result"] = "PASS"; }
             };
             #endregion
 
             Helper.Controls.Grid.Generator(this.grid)
-                //.MaskedText("ColorFastnessGroup", "00", "Body", width: Widths.AnsiChars(5), settings: groupCell)
-                .Text("ColorFastnessGroup","Body",width:Widths.AnsiChars(5),settings:groupCell)
+                .MaskedText("ColorFastnessGroup", "CC", "Body", width: Widths.AnsiChars(5), settings: groupCell)
+                //.Text("ColorFastnessGroup","Body",width:Widths.AnsiChars(5),settings:groupCell)
                 .MaskedText("SEQ", "CCC-CC", "SEQ#", width: Widths.AnsiChars(7), settings: seqMskCell)
                 //.Text("SEQ", header: "SEQ#", width: Widths.AnsiChars(10), iseditable: false, settings: seqCell)
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(5), settings: rollCell)
@@ -844,13 +843,13 @@ namespace Sci.Production.Quality
                             MyUtility.Msg.InfoBox("<Result> can not be empty!");
                             return;
                         }
-                        if (dr["Result"].ToString().Trim() == "Fail")
+                        if (dr["Result"].ToString().Trim() == "FAIL")
                         {
                             result = false;
                             DBProxy.Current.Execute(null, string.Format("update ColorFastness set result='Fail',status='Confirmed',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dr["id"]));
 
                         }
-                        if (dr["Result"].ToString().Trim() == "Pass" && result)
+                        if (dr["Result"].ToString().Trim() == "PASS" && result)
                         {
                             DBProxy.Current.Execute(null, string.Format("update ColorFastness set result='Pass',status='Confirmed',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dr["id"]));
 

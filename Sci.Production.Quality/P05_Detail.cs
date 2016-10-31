@@ -554,8 +554,8 @@ and a.seq1=@seq1";
             {
                 if (this.EditMode == false) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (dr["result"].ToString() == "Pass") { dr["result"] = "Fail"; }
-                else { dr["result"] = "Pass"; }
+                if (dr["result"].ToString() == "PASS") { dr["result"] = "FAIL"; }
+                else { dr["result"] = "PASS"; }
             };
             #endregion           
             Helper.Controls.Grid.Generator(this.grid)               
@@ -779,13 +779,13 @@ group by a.Article";
                             MyUtility.Msg.InfoBox("<Result> can not be empty!");
                             return;
                         }
-                        if (dr["Result"].ToString().Trim() == "Fail")
+                        if (dr["Result"].ToString().Trim() == "FAIL")
                         {
                             result = false;
                             DBProxy.Current.Execute(null, string.Format("update oven set result='Fail',status='Confirmed',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dr["id"]));
 
                         }
-                        if (dr["Result"].ToString().Trim()== "Pass" && result)
+                        if (dr["Result"].ToString().Trim()== "PASS" && result)
                         {
                             DBProxy.Current.Execute(null, string.Format("update oven set result='Pass',status='Confirmed',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dr["id"]));
                             

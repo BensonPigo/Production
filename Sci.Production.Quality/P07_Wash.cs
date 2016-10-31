@@ -66,7 +66,14 @@ namespace Sci.Production.Quality
                     btnEncode.Enabled = true;
                     save.Enabled = true;
                 }
-            }            
+            }
+            else
+            {
+                undo.Visible = false;
+                save.Visible = false;
+                btnClose.Visible = true;
+
+            }
             #endregion
 
             OnRequery();
@@ -224,6 +231,11 @@ namespace Sci.Production.Quality
                 return true;
             }
 
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
 

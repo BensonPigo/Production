@@ -56,6 +56,7 @@
             this.lbResult = new Sci.Win.UI.Label();
             this.txtScale = new Sci.Win.UI.TextBox();
             this.lbScale = new Sci.Win.UI.Label();
+            this.btnClose = new Sci.Win.UI.Button();
             this.Qty_text = new Sci.Win.UI.NumericBox();
             this.Supplier_text = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -63,8 +64,20 @@
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // btmcont
+            // 
+            this.btmcont.Controls.Add(this.btnClose);
+            this.btmcont.Controls.SetChildIndex(this.undo, 0);
+            this.btmcont.Controls.SetChildIndex(this.save, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnClose, 0);
+            // 
+            // undo
+            // 
+            this.undo.EditMode = Sci.Win.UI.AdvEditModes.None;
+            // 
             // save
             // 
+            this.save.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.save.Enabled = false;
             this.save.Text = "Edit";
             // 
@@ -355,6 +368,18 @@
             this.lbScale.TabIndex = 110;
             this.lbScale.Text = "Scale";
             // 
+            // btnClose
+            // 
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnClose.Location = new System.Drawing.Point(459, 5);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 123;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Visible = false;
+            this.btnClose.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Qty_text
             // 
             this.Qty_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -485,5 +510,6 @@
         private Win.UI.DisplayBox Supplier_text;
         private Win.UI.Label lbDate;
         private Win.UI.DateBox OvenDate;
+        private Win.UI.Button btnClose;
     }
 }

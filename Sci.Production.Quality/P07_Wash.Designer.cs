@@ -58,13 +58,26 @@
             this.lbWKNO = new Sci.Win.UI.Label();
             this.sp_text = new Sci.Win.UI.DisplayBox();
             this.lbSP = new Sci.Win.UI.Label();
+            this.btnClose = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // btmcont
+            // 
+            this.btmcont.Controls.Add(this.btnClose);
+            this.btmcont.Controls.SetChildIndex(this.undo, 0);
+            this.btmcont.Controls.SetChildIndex(this.save, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnClose, 0);
+            // 
+            // undo
+            // 
+            this.undo.EditMode = Sci.Win.UI.AdvEditModes.None;
+            // 
             // save
             // 
+            this.save.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.save.Enabled = false;
             this.save.Text = "Edit";
             // 
@@ -396,6 +409,18 @@
             this.lbSP.TabIndex = 123;
             this.lbSP.Text = "SP#";
             // 
+            // btnClose
+            // 
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnClose.Location = new System.Drawing.Point(459, 5);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 124;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Visible = false;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
             // P07_Wash
             // 
             this.ClientSize = new System.Drawing.Size(549, 390);
@@ -484,5 +509,6 @@
         private Win.UI.Label lbWKNO;
         private Win.UI.DisplayBox sp_text;
         private Win.UI.Label lbSP;
+        private Win.UI.Button btnClose;
     }
 }

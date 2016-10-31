@@ -67,7 +67,14 @@ namespace Sci.Production.Quality
                     btnEncode.Enabled = true;
                     save.Enabled = true;
                 }
-            }            
+            }
+            else
+            {
+                undo.Visible = false;
+                save.Visible = false;
+                btnClose.Visible = true;
+
+            }
             #endregion
 
             OnRequery();
@@ -232,6 +239,12 @@ namespace Sci.Production.Quality
         protected override DualResult OnSave()
         {
             return base.OnSave();
+        }
+         
+        private void button1_Click(object sender, EventArgs e)
+        {
+                this.Close();
+           
         }
 
     }

@@ -451,7 +451,7 @@ namespace Sci.Production.Quality
             Sci.Production.Quality.P07_Oven callOvenDetailForm=new P07_Oven(true,this.CurrentDetailData["ID"].ToString(),this.sp_text.Text,this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString() , dr);
             callOvenDetailForm.ShowDialog(this);
             callOvenDetailForm.Dispose();
-            this.RenewData();
+            //this.RenewData();
             OnDetailEntered();
         }
         private void WashTest()
@@ -461,7 +461,7 @@ namespace Sci.Production.Quality
             Sci.Production.Quality.P07_Wash callWasHDetailForm = new P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
             callWasHDetailForm.ShowDialog(this);
             callWasHDetailForm.Dispose();
-            this.RenewData();
+            //this.RenewData();
             OnDetailEntered();
         }
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
