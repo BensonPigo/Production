@@ -1116,6 +1116,7 @@
             this.GridUniqueKey = "ukey";
             this.IsSupportClip = false;
             this.IsSupportDelete = false;
+            this.IsSupportCopy = false;
             this.IsSupportNew = false;
             this.KeyField1 = "id";
             this.Name = "P02";

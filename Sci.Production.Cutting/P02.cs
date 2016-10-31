@@ -202,6 +202,8 @@ namespace Sci.Production.Cutting
 				where tmp.Ukey=a.Ukey
 			) as Order_SizeCode_Seq,
 
+            row_number() OVER(ORDER BY CUTNO) As SORT_NUM,  --617: CUTTING_P02_Cutting Work Order
+
 			c.MtlTypeID,c.DescDetail,0 as newkey,substring(a.MarkerLength,1,2) as MarkerLengthY, 
             substring(a.MarkerLength,4,13) as MarkerLengthE
 			from Workorder a
@@ -1282,26 +1284,26 @@ namespace Sci.Production.Cutting
             switch (sort)
             {
                 case "FabricCombo":
-                    dv.Sort = "FabricCombo,multisize,Article,SizeCode";
+                    dv.Sort = "SORT_NUM,FabricCombo,multisize,Article,SizeCode";
                     break;
                 case "SP":
-                    dv.Sort = "Orderid,FabricCombo";
+                    dv.Sort = "SORT_NUM,Orderid,FabricCombo";
                     break;
                 case "Cut#":
-                    dv.Sort = "cutno,FabricCombo";
+                    dv.Sort = "SORT_NUM,cutno,FabricCombo";
                     break;
                 case "Ref#":
-                    dv.Sort = "cutref";
+                    dv.Sort = "SORT_NUM,cutref";
                     break;
                 case "Cutplan#":
-                    dv.Sort = "Cutplanid";
+                    dv.Sort = "SORT_NUM,Cutplanid";
                     break;
                 case "MarkerName":
-                    dv.Sort = "FabricCombo,Cutno,Markername,estcutdate";
+                    dv.Sort = "SORT_NUM,FabricCombo,Cutno,Markername,estcutdate";
                     break;
                 default:
                     //dv.Sort = "FabricCombo,multisize,Article,SizeCode";
-                    dv.Sort = "FabricCombo ASC,multisize ASC,Colorid ASC,Order_SizeCode_Seq DESC";
+                    dv.Sort = "SORT_NUM ASC,FabricCombo ASC,multisize ASC,Colorid ASC,Order_SizeCode_Seq DESC";
                     break;
             }
             
@@ -1485,8 +1487,9 @@ namespace Sci.Production.Cutting
             newRow["Cutcellid"] = OldRow["Cutcellid"];
             newRow["Cutplanid"] = OldRow["Cutplanid"];
             newRow["actcutdate"] = OldRow["actcutdate"];
-            newRow["multisize"] = OldRow["multisize"];  //test
-            newRow["Order_SizeCode_Seq"] = OldRow["Order_SizeCode_Seq"];  //test
+            newRow["multisize"] = OldRow["multisize"];  
+            newRow["Order_SizeCode_Seq"] = OldRow["Order_SizeCode_Seq"];  
+            newRow["SORT_NUM"] = OldRow["SORT_NUM"];  
             newRow["Adduser"] = loginID;
 
             DataTable detailtmp = (DataTable)detailgridbs.DataSource;
@@ -1929,7 +1932,7 @@ namespace Sci.Production.Cutting
             var frm = new Sci.Production.Cutting.P02_PatternPanel(!this.EditMode && MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]), dr["Ukey"].ToString(), null, null, layersTb);
             frm.ShowDialog(this);
             this.RenewData();
-
+            this.OnDetailEntered();
         }
 
         protected override bool ClickPrint()
