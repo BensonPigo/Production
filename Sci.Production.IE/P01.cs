@@ -789,7 +789,7 @@ id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency as IETMSSMV,id.Mold,o.MtlFactorID a
 round(id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency*60,3) as SMV, id.SeamLength,s.IETMSID,s.IETMSVersion
 from Style s
 inner join IETMS i on s.IETMSID = i.ID and s.IETMSVersion = i.Version
-inner join IETMS_Detail id on i.Ukey = id.Ukey
+inner join IETMS_Detail id on i.Ukey = id.IETMSUkey
 left join Operation o on id.OperationID = o.ID
 left join MtlFactor m on o.MtlFactorID = m.ID and m.Type = 'F'
 where s.ID = @id and s.SeasonID = @seasonid and s.BrandID = @brandid and id.Location = @location
