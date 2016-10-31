@@ -1103,13 +1103,13 @@ s.AddDate
 		--------------MNOrder_SizeSpec-----------------M/NOtice-¤Ø¤oªí Size Spec(¦s¤Ø¤o½X)
 		Merge Production.dbo.MNOrder_SizeSpec as t
 		Using (select a.* from Trade_To_Pms.dbo.MNOrder_SizeSpec a inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.SizeItem=s.SizeItem and t.SizeCode=s.SizeCode
+		on t.id=s.id and t.SizeItem=s.SizeItem and t.SizeCode=s.SizeCode and t.ukey=s.ukey
 		when matched then 
 			update set 
 			t.SizeSpec= s.SizeSpec
 		when not matched by target then
-			insert(ID,SizeItem,SizeCode,SizeSpec)
-			values(s.ID,s.SizeItem,s.SizeCode,s.SizeSpec)
+			insert(ID,SizeItem,SizeCode,SizeSpec,ukey)
+			values(s.ID,s.SizeItem,s.SizeCode,s.SizeSpec,s.ukey)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
