@@ -275,7 +275,11 @@ namespace Sci.Production.Cutting
             if (MyUtility.Check.Seek(cmd, out cutdr, null))
             {
                 displayBox_Cell.Text = cutdr["Cutcellid"].ToString();
-                dateBox1.Text = cutdr["estcutdate"].ToString();
+
+                if (MyUtility.Check.Empty(cutdr["estcutdate"]))
+                    dateBox1.Text = "";
+                else
+                    dateBox1.Text = Convert.ToDateTime(cutdr["estcutdate"]).ToShortDateString();
 
                 string marker2sql = string.Format(
                 @"Select b.Orderid,b.MarkerName,sum(b.Layer) as layer,
