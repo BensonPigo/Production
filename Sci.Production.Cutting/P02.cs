@@ -202,7 +202,7 @@ namespace Sci.Production.Cutting
 				where tmp.Ukey=a.Ukey
 			) as Order_SizeCode_Seq,
 
-            row_number() OVER(ORDER BY CUTNO) As SORT_NUM,  --617: CUTTING_P02_Cutting Work Order
+            0 As SORT_NUM,  --617: CUTTING_P02_Cutting Work Order
 
 			c.MtlTypeID,c.DescDetail,0 as newkey,substring(a.MarkerLength,1,2) as MarkerLengthY, 
             substring(a.MarkerLength,4,13) as MarkerLengthE
@@ -1916,6 +1916,7 @@ namespace Sci.Production.Cutting
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
+            foreach (DataRow dr in DetailDatas) dr["SORT_NUM"] = 0;  //編輯後存檔，將[SORT_NUM]歸零
             OnDetailEntered();
         }
 
@@ -1940,6 +1941,18 @@ namespace Sci.Production.Cutting
             Sci.Production.Cutting.P02_Print callNextForm = new P02_Print(CurrentDetailData, CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
+        }
+
+        //編輯時，將[SORT_NUM]賦予流水號
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            int serial = 1;
+            foreach (DataRow dr in DetailDatas)
+            {
+                dr["SORT_NUM"] = serial;
+                serial++;
+            }
         }
 
 
