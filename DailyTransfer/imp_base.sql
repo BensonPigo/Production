@@ -1,4 +1,3 @@
-
 -- =============================================
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
@@ -749,7 +748,7 @@ SET
       ,a.No	       = b.No	
       ,a.ReasonGroup	       = b.ReasonGroup	
       ,a.Kpi	       = b.Kpi	
-      ,a.AccountNo	       = b.AccountNo	
+      ,a.AccountID	       = b.AccountID	
       ,a.FactoryKpi	       = b.FactoryKpi	
       ,a.AddName	       = b.AddName	
       ,a.AddDate	       = b.AddDate	
@@ -767,7 +766,7 @@ INSERT INTO Production.dbo.Reason(
       ,No
       ,ReasonGroup
       ,Kpi
-      ,AccountNo
+      ,AccountID
       ,FactoryKpi
       ,AddName
       ,AddDate
@@ -784,7 +783,7 @@ select
       ,No
       ,ReasonGroup
       ,Kpi
-      ,AccountNo
+      ,AccountID
       ,FactoryKpi
       ,AddName
       ,AddDate
