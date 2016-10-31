@@ -1021,8 +1021,7 @@ Where a.id = '{0}' ", masterID);
                     CurrentMaintain["ETA"] = dr["ETA"];
                     CurrentMaintain["third"] = 0;
                     this.dateBox1.Enabled = false;
-
-                    DBProxy.Current.Select(null, string.Format(@"select a.poid,a.seq1,a.seq2,a.Qty+a.Foc as shipqty,a.UnitId,a.WeightKg as Weight
+                    string selCom = string.Format(@"select a.poid,a.seq1,a.seq2,a.Qty+a.Foc as shipqty,a.UnitId,a.WeightKg as Weight
 , a.NetKg as ActualWeight, iif(c.category='M','I','B') as stocktype
 , b.POUnit ,b.StockUnit,b.FabricType
 , a.seq1+a.seq2 as seq
@@ -1040,7 +1039,8 @@ inner join [dbo].[Fabric] ff on b.SCIRefno= ff.SCIRefno
 inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
 inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
 inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U = (IIF ( mm.IsExtensionUnit > 0, uu.ExtensionUnit, ff.UsageUnit ))--b.StockUnit
-where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword), out dt);
+where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword);
+                    DBProxy.Current.Select(null, selCom, out dt);
                     if (MyUtility.Check.Empty(dt) || MyUtility.Check.Empty(dt.Rows.Count))
                     {
                         MyUtility.Msg.WarningBox("Export Data not found!!");
