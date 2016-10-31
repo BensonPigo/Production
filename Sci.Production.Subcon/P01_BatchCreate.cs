@@ -522,8 +522,10 @@ Order_TmsCost.ApvDate
 
                             foreach (var q2 in query2.ToList()) // 明細資料
                             {
-                                #region 新增明細 Sql Command
-                                sqlcmd = string.Format(@"INSERT INTO [dbo].[ArtworkPO_Detail]
+                                if (q2.ArtworkTypeID.ToString() == "EMBROIDERY")
+                                {
+                                    #region 新增明細 Sql Command
+                                    sqlcmd = string.Format(@"INSERT INTO [dbo].[ArtworkPO_Detail]
                                 ([ID]
                                 ,[OrderID]    
                                 ,[ArtworkId]  
@@ -547,23 +549,70 @@ Order_TmsCost.ApvDate
                                 ,'{1}'  
                                 ,'{2}'  
                                 ,'{3}'  
-                                ,'{4}' 
- 
+                                ,'{4}'  
                                 ,{5}    
                                 ,{6}    
                                 ,{7}    
                                 ,{8}    
-                                ,{9} 
-   
+                                ,{9}    
                                 ,{10}   
                                 ,{11}   
-                                ,{12} 
-  
+                                ,{12}   
                                 ,'{13}')", id, q2.orderid, q2.artworkid, q2.PatternCode, q2.PatternDesc
-                                , q2.coststitch, q2.stitch, q2.unitprice, q2.cost, q2.QtyGarment, q2.poqty
-                                , q2.unitprice * q2.QtyGarment, q2.poqty * q2.unitprice * q2.QtyGarment
-                                , q2.ArtworkTypeID);
-                                #endregion
+                                    , q2.QtyGarment, q2.QtyGarment
+                                    , q2.unitprice, q2.cost
+                                    , 1
+                                    , q2.poqty
+                                    , q2.unitprice * q2.QtyGarment
+                                    , q2.poqty * q2.unitprice * q2.QtyGarment
+                                    , q2.ArtworkTypeID);
+                                    #endregion
+                                }
+                                else
+                                {
+                                    #region 新增明細 Sql Command
+                                    sqlcmd = string.Format(@"INSERT INTO [dbo].[ArtworkPO_Detail]
+                                ([ID]
+                                ,[OrderID]    
+                                ,[ArtworkId]  
+                                ,[PatternCode]
+                                ,[PatternDesc]
+
+                                ,[CostStitch] 
+                                ,[Stitch]     
+                                ,[UnitPrice]  
+                                ,[Cost]       
+                                ,[QtyGarment] 
+
+                                ,[Price]      
+                                ,[Amount]     
+                                ,[PoQty]      
+
+                                ,[ArtworkTypeID])
+
+                                VALUES    
+                                ('{0}'  
+                                ,'{1}'  
+                                ,'{2}'  
+                                ,'{3}'  
+                                ,'{4}'  
+                                ,{5}    
+                                ,{6}    
+                                ,{7}    
+                                ,{8}    
+                                ,{9}    
+                                ,{10}   
+                                ,{11}   
+                                ,{12}   
+                                ,'{13}')", id, q2.orderid, q2.artworkid, q2.PatternCode, q2.PatternDesc
+                                    , q2.coststitch, q2.stitch, q2.unitprice, q2.cost
+                                    , q2.QtyGarment
+                                    , q2.poqty
+                                    , q2.unitprice * q2.QtyGarment
+                                    , q2.poqty * q2.unitprice * q2.QtyGarment
+                                    , q2.ArtworkTypeID);
+                                    #endregion
+                                }
                                 if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd)))
                                 {
                                     MyUtility.Msg.WarningBox("Create failed, Pleaes re-try");
