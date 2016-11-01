@@ -32,7 +32,9 @@ namespace Sci.Production.Warehouse
 ,case when a.FromStocktype ='B' then 'Bulk' when a.FromStocktype='I' then 'Inventory' else a.fromstocktype end as stocktype
 ,dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0) as [Description]
 from dbo.BorrowBack_Detail a left join 
-        (PO_Supp_Detail pd inner join color c on c.id = pd.ColorID AND C.BrandId = PD.BrandId) on a.FromPoId = pd.ID and a.FromSeq1= pd.seq1 and a.FromSeq2 =  pd.seq2
+        (PO_Supp_Detail pd 
+left join Orders o on o.id=pd.ID
+inner join color c on c.id = pd.ColorID AND C.BrandId = o.BrandId) on a.FromPoId = pd.ID and a.FromSeq1= pd.seq1 and a.FromSeq2 =  pd.seq2
 where a.Id = '{0}'
 GROUP BY A.FromPoId,A.FromSeq1,A.FromSeq2,a.FromStocktype,pd.Refno,c.Name", dr["id"].ToString()));
 
