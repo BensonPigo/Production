@@ -99,9 +99,11 @@ as
 POData
 as
 (select od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id as LocalPOID,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,sum(ld.Qty) as POQty,ld.Delivery
- from OrderData od, LocalPO_Detail ld, LocalItem li
+ from OrderData od, LocalPO_Detail ld, LocalItem li,LocalPO LP
  where od.ID = ld.OrderId
  and li.RefNo = ld.Refno
+ and LP.id= ld.id
+ and LP.category='CARTON'
  group by od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4),li.CtnUnit,ld.Delivery
 )
 select isnull(od.BrandID,pd.BrandID) as BrandID,isnull(od.ID,pd.ID) as ID,isnull(od.Alias,isnull(pd.Alias,'')) as Alias,isnull(od.SciDelivery,pd.SciDelivery) as SciDelivery,isnull(od.SewInLine,pd.SewInLine) as SewInLine,isnull(od.Refno,pd.Refno) as Refno,
@@ -163,9 +165,11 @@ as
 POData
 as
 (select od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id as LocalPOID,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,sum(ld.Qty) as POQty,ld.Delivery
- from OrderData od, LocalPO_Detail ld, LocalItem li
+ from OrderData od, LocalPO_Detail ld, LocalItem li,LocalPO LP
  where od.ID = ld.OrderId
  and li.RefNo = ld.Refno
+ and LP.id= ld.id
+ and LP.category='CARTON'
  group by od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4),li.CtnUnit,ld.Delivery
 )
 select isnull(od.BrandID,pd.BrandID) as BrandID,isnull(od.ID,pd.ID) as ID,isnull(od.Alias,isnull(pd.Alias,'')) as Alias,isnull(od.SciDelivery,pd.SciDelivery) as SciDelivery,isnull(od.SewInLine,pd.SewInLine) as SewInLine,isnull(od.Refno,pd.Refno) as Refno,
