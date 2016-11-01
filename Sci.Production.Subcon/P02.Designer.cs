@@ -455,12 +455,11 @@
             this.DefaultFilter = "POTYPE=\'I\'";
             this.DefaultOrder = "issuedate,id";
             this.GridAlias = "ArtworkPO_detail";
-            this.GridUniqueKey = "id,orderid,ArtworkTypeID,artworkid,patterncode";
+            this.GridUniqueKey = "id,artworkid,patterncode";
             this.IsSupportClose = true;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnclose = true;
-            this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P02";
             this.Text = "P02. In-House Requisition";
