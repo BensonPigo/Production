@@ -326,17 +326,20 @@ namespace Sci.Production.Quality
             this.RenewData();
             OnDetailEntered();
 
-            //int rowindex = 0;
-            //for(int rIdx = 0 ; rIdx<detailgrid.Rows.Count; rIdx++){
-            //    DataGridViewRow r = detailgrid.Rows[rIdx];
-            //    DataRow row = (DataRow)r.DataBoundItem;
-            //    if (true){
-            //        rowindex=rIdx;
-            //        break;
-            //    }
+            int rowindex = 0;
+            for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
+            {
+                DataGridViewRow dvr = detailgrid.Rows[rIdx];
+                DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
 
-            //}
-            //detailgrid.SelectRowTo(rowindex);
+                if (row["ID"].ToString()==currentID && row["SEQ1"].ToString() == currentseq1 && row["SEQ2"].ToString() == currentseq2)
+                {
+                    rowindex = rIdx;
+                    break;
+                }
+
+            }
+            detailgrid.SelectRowTo(rowindex);
         }
         private void WashTest()
         {
