@@ -31,36 +31,52 @@ namespace Sci.Production.Thread
         private void button1_Click(object sender, EventArgs e)
         {
             string season = txtseason1.Text;
+            if (season == master["seasonid"].ToString())
+            {
+                MyUtility.Msg.WarningBox("Season can not same.");
+                return;
+            }
+
+            //同ID,品牌會有一筆以上的Seasonid,找出ukey
             string styleSql = string.Format("Select Ukey from Style where id='{0}' and Seasonid = '{1}' and Brandid = '{2}'", master["id"].ToString(), season, master["Brandid"].ToString());
             string ukey_byNewSeason = MyUtility.GetValue.Lookup(styleSql);
-
-            DataTable threadcolorcomb;
-            //同ID,品牌會有一筆以上的Seasonid,找出ukey
             if (MyUtility.Check.Empty(ukey_byNewSeason))
             {
                 MyUtility.Msg.WarningBox("Season dose not found.");
                 return;
             }
-            //如果有舊資料是否刪除
+
+            DataTable threadcolorcomb;
+            StringBuilder del3table = new StringBuilder();
+
+            //如果複製目的有舊資料是否刪除
             string threadColorCombSql = string.Format("Select id from ThreadColorComb where StyleUkey = '{0}'", ukey_byNewSeason);
             if (MyUtility.Check.Seek(threadColorCombSql))
             {
                 DialogResult diaRes = MyUtility.Msg.QuestionBox("Are you sure delete old data and copy data to this season?");
                 if (diaRes == DialogResult.No) return; //不刪除則中斷
-            }
+
+                #region 刪除字串
+                string id_old = MyUtility.GetValue.Lookup(threadColorCombSql);
+                //準備:刪除threadcolorcomb資料
+                del3table.Append(String.Format(@"Delete from threadcolorcomb where StyleUkey = '{0}' ", ukey_byNewSeason));
+                ////準備:刪除 ThreadColorComb_Detail, 和ThreadColorComb_operation
+                del3table.Append(string.Format(@"Delete from ThreadColorComb_Detail where id='{0}' ", id_old));
+                del3table.Append(string.Format(@"Delete from ThreadColorComb_operation where id='{0}' ", id_old));
+                #endregion
+            }         
 
             #region 準備 ThreadColorComb 資料
             string sql = "";
             List<string> threadColorCombList = new List<string>();
             List<string> threadColorCombListid = new List<string>();
             List<string> gridList = new List<string>();
-            StringBuilder del3table = new StringBuilder();
-            //準備ThreadColorComb新增(新season),刪除原本
-            threadColorCombSql =
-                string.Format(@"Select * 
+            //準備ThreadColorComb新增(新season)
+            threadColorCombSql =string.Format(@"Select * 
                                 from ThreadColorComb 
                                 where StyleUkey = '{0}' 
                                 order by StyleUkey", master["Ukey"].ToString());
+
             if (DBProxy.Current.Select(null, threadColorCombSql, out threadcolorcomb))
             {
                 foreach (DataRow dr in threadcolorcomb.Rows)
@@ -72,8 +88,6 @@ namespace Sci.Production.Thread
                             dr["ThreadCombid"].ToString(), dr["Machinetypeid"].ToString(), ukey_byNewSeason, dr["Length"].ToString());
                     threadColorCombList.Add(sql);
                     threadColorCombListid.Add(dr["id"].ToString());
-                    //準備:刪除原本threadcolorcomb的資料依據原本ID
-                    del3table.Append(String.Format("Delete from threadcolorcomb where id= '{0}'", dr["id"]));
                 }
             }
             #endregion
@@ -83,16 +97,23 @@ namespace Sci.Production.Thread
             DualResult upResult;
             string newid, oid;
             StringBuilder insertSql = new StringBuilder();
-
             DataTable Tdeatil;
-
-
 
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
                 try
                 {
+                    //執行刪除
+                    if (!MyUtility.Check.Empty(del3table.ToString()))
+                    {
+                        if (!(upResult = DBProxy.Current.Execute(null, del3table.ToString())))
+                        {
+                            ShowErr(del3table.ToString(), upResult);
+                            return;
+                        }
+                    }
+
                     for (int i = 0; i < threadColorCombList.Count; i++)//逐筆新增ThreadColorComb後刪除
                     {
                         if (!(upResult = DBProxy.Current.Select(null, threadColorCombList[i], out dt_newid)))//新增並取得id
@@ -143,12 +164,7 @@ namespace Sci.Production.Thread
                                     (id,Operationid) 
                                     Select {0},Operationid 
                                     from ThreadColorComb_Operation where id='{1}';",
-                                    newid, oid));                            
-
-                            //準備:此筆原ID有的Article準備完,準備刪除此筆ID ThreadColorComb_Detail, 和ThreadColorComb_operation
-                            del3table.Append(string.Format("Delete from ThreadColorComb_Detail where id={0}",oid));
-                            del3table.Append(string.Format("Delete from ThreadColorComb_operation where id={0}",oid));
-
+                                    newid, oid));
                         }
                     }
                     //執行新增
@@ -156,17 +172,7 @@ namespace Sci.Production.Thread
                     {
                         MyUtility.Msg.WarningBox(string.Format("Season <{0}> exists, can't copy!!!", txtseason1.Text));
                         return;
-                    }
-                    //執行刪除
-                    if (!MyUtility.Check.Empty(del3table.ToString()))
-                    {
-                        if (!(upResult = DBProxy.Current.Execute(null, del3table.ToString())))
-                        {
-                            ShowErr(del3table.ToString(), upResult);
-                            return;
-                        }
-                    }
-
+                    }                    
                     _transactionscope.Complete();
                 }
                 catch (Exception ex)
