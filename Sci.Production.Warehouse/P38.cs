@@ -10,6 +10,7 @@ using Ict;
 using Sci;
 using Sci.Data;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
@@ -214,7 +215,20 @@ where fi.MDivisionID = '{0}' and fi.POID like @poid1
         private void btnExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            MyUtility.Excel.CopyToXls(dt, "");
+            //MyUtility.Excel.CopyToXls(dt, "");
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P38.xltx"); //預先開啟excel app
+            MyUtility.Excel.CopyToXls(dt, "", "Warehouse_P38.xltx", 1, true, null, objApp);      // 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
+
+            objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
+            objApp.Cells.EntireRow.AutoFit();       ////自動欄高
+
+
+            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);//釋放sheet
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+
         }
     }
 }
