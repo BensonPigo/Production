@@ -104,7 +104,7 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, Current
 
                     Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(bulkItems
                             //, "Type,SCIRefno,MtlTypeID,IssueType,Poid,Seq1,Seq2,inqty,outqty,adjustqty,ukey"
-                            , "Type,SCIRefno,MtlTypeID,IssueType,Poid,Seq1,Seq2,inqty,outqty,adjustqty"
+                            , "FabricType,SCIRefno,MtlTypeID,IssueType,Poid,Seq1,Seq2,inqty,outqty,adjustqty"
                             , "4,14,10,10,13,4,3,6,6,6,10", CurrentDetailData["seq"].ToString()
                             , "FabricType,SCIRefno,MtlTypeID,IssueType,Poid,Seq1,Seq2,In Qty,Out Qty,Adjust Qty,Ukey");
                     selepoitem.Width = 1024;
