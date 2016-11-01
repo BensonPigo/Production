@@ -507,7 +507,7 @@ namespace Sci.Production.Cutting
         {
             int newvalue = (int)numericBox_noBundle.Value;
             int oldvalue = (int)numericBox_noBundle.OldValue;
-            if (newvalue == oldvalue) return;
+            //if (newvalue == oldvalue) return;
             distributeQty(newvalue);
         }
 
@@ -908,5 +908,11 @@ namespace Sci.Production.Cutting
             }
             this.Close();
         }
+
+        private void grid_Size_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            button_Qty_Click(sender, e);
+        }
+
     }
 }

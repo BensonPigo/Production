@@ -449,6 +449,7 @@
             this.grid_Size.Size = new System.Drawing.Size(253, 138);
             this.grid_Size.TabIndex = 65;
             this.grid_Size.TabStop = false;
+            this.grid_Size.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid_Size_CellDoubleClick);
             // 
             // P10_Generate
             // 
