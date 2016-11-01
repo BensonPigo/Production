@@ -28,18 +28,19 @@ namespace Sci.Production.Logistic
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
                 .Date("ReceiveDate", header: "Receive Date")
-                .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(15))
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15))
-                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6))
-                .Text("StyleID", header: "Style#", width: Widths.AnsiChars(15))
-                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10))
-                .Text("Customize1", header: "Order#", width: Widths.AnsiChars(15))
-                .Text("CustPONo", header: "PO No.", width: Widths.AnsiChars(15))
-                .Text("Dest", header: "Destination", width: Widths.AnsiChars(20))
-                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5))
-                .Date("BuyerDelivery", header: "Buyer Delivery")
-                .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10))
-                .DateTime("AddDate",header: "Create Date");
+                .Text("PackingListID", header: "Pack ID", width: Widths.Auto())
+                .Text("OrderID", header: "SP#", width: Widths.Auto())
+                .Text("seq", header: "SEQ", width: Widths.Auto())
+                .Text("CTNStartNo", header: "CTN#", width: Widths.Auto())
+                .Text("StyleID", header: "Style#", width: Widths.Auto())
+                .Text("BrandID", header: "Brand", width: Widths.Auto())
+                .Text("Customize1", header: "Order#", width: Widths.Auto())
+                .Text("CustPONo", header: "PO No.", width: Widths.Auto())
+                .Text("Dest", header: "Destination", width: Widths.Auto())
+                .Text("FactoryID", header: "Factory", width: Widths.Auto())
+                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto())
+                .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.Auto())
+                .DateTime("AddDate", header: "Create Date", width: Widths.Auto());
         }
 
         //Query
@@ -48,12 +49,13 @@ namespace Sci.Production.Logistic
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"select cr.ReceiveDate,cr.PackingListID,cr.OrderID,cr.CTNStartNo,
 isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1,
-isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest, isnull(o.FactoryID,'') as FactoryID,oq.BuyerDelivery,cr.ClogLocationId,cr.AddDate
+isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest, isnull(o.FactoryID,'') as FactoryID,oq.BuyerDelivery,cr.ClogLocationId,cr.AddDate,
+oq.Seq
 from ClogReceive cr
 left join Orders o on cr.OrderID =  o.ID
 left join Country c on o.Dest = c.ID
 left join PackingList_Detail pd on pd.ID = cr.PackingListID and pd.OrderID = cr.OrderID and pd.CTNStartNo = cr.CTNStartNo and pd.CTNQty > 0
-inner join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(dateRange1.Value1))
@@ -80,6 +82,7 @@ where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
                 MyUtility.Msg.WarningBox("Query data fail.\r\n"+result.ToString());
             }
             listControlBindingSource1.DataSource = gridData;
+            grid1.AutoResizeColumns();
         }
 
         //Close
