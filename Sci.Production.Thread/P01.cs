@@ -58,7 +58,7 @@ namespace Sci.Production.Thread
             Helper.Controls.Grid.Generator(this.detailgrid)
            .Text("ThreadCombID", header: "Thread Combination", width: Widths.Auto(true), iseditingreadonly: true, settings: operation)
            .Text("MachineTypeid", header: "Machine Type", width: Widths.Auto(true), iseditingreadonly: true)
-           .Numeric("Length", header: "Length", width: Widths.Auto(true), integer_places: 9, decimal_places: 2, iseditingreadonly: true)
+           //.Numeric("Length", header: "Length", width: Widths.Auto(true), integer_places: 9, decimal_places: 2, iseditingreadonly: true)
            .Button(header: "Color Combination", onclick: new EventHandler<DataGridViewCellEventArgs>(buttoncell));
             #region Button也可這樣寫
             //.Button(header: "Color Combination", onclick: (s,e)=>{

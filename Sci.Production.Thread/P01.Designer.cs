@@ -183,12 +183,15 @@
             this.GridUniqueKey = "ID";
             this.IsGridIconVisible = false;
             this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "Ukey";
             this.KeyField2 = "StyleUkey";
             this.Name = "P01";
+            this.SubDetailKeyField1 = "id";
             this.SubGridAlias = "ThreadColorcomb_Operation";
+            this.SubKeyField1 = "id";
             this.Text = "P01.Thread Color Combination";
             this.WorkAlias = "Style";
             this.Controls.SetChildIndex(this.tabs, 0);

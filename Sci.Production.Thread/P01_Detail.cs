@@ -26,7 +26,6 @@ namespace Sci.Production.Thread
         private string styleUkey,combdetail_id;
         private DataTable gridTable,tbArticle;
         private DataRow masterRow,detailRow;
-      
         public P01_Detail(DataRow masterrow,DataRow detailrow,bool editmode)
         {
             InitializeComponent();
@@ -40,12 +39,14 @@ namespace Sci.Production.Thread
             displayBox3.Value = masterrow["Seasonid"].ToString();
             displayBox4.Value = detailrow["ThreadCombID"].ToString();
             combdetail_id = detailrow["id"].ToString();
+            
             button1.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
             button1.Visible = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
             //建立Gird
             generateGrid();
 
         }
+
         
         private void generateGrid() //建立Gird
         {
@@ -328,7 +329,7 @@ namespace Sci.Production.Thread
                         }
                     }
                 }
-                
+                #region 舊做法
 //                foreach (DataRow dr in gridTable.Rows)
 //                {
 //                    if (!MyUtility.Check.Empty(dr["Refno"])) linsert = true; //判斷若僅輸入Refno 就必須新增一筆Data
@@ -394,6 +395,7 @@ namespace Sci.Production.Thread
 //                        }
 //                    }
 //                }
+#endregion
                 DualResult result;
                 TransactionScope _transactionscope = new TransactionScope();
                 using (_transactionscope)
@@ -445,5 +447,7 @@ namespace Sci.Production.Thread
                 grid1.IsEditingReadOnly = !EditMode;
             }
         }
+
+        
     }
 }
