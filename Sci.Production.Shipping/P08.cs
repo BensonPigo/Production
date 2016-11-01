@@ -576,16 +576,20 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
         //設定Combo2的DataSource
         private void ChangeCombo2DataSource()
         {
+            string temp = CurrentMaintain["SubType"].ToString();
             switch (MyUtility.Convert.GetString(CurrentMaintain["Type"]))
             {
                 case "IMPORT":
                     comboBox2.DataSource = comboxbs2_1;
+                    CurrentMaintain["SubType"] = temp;
                     break;
                 case "EXPORT":
                     comboBox2.DataSource = comboxbs2_2;
+                    CurrentMaintain["SubType"] = temp;
                     break;
                 default:
                     comboBox2.DataSource = comboxbs2_1;
+                    CurrentMaintain["SubType"] = temp;
                     break;
             }
         }
