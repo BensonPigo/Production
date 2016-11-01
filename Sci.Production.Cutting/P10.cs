@@ -425,6 +425,13 @@ namespace Sci.Production.Cutting
             if (textBox_Cutref.OldValue.ToString() == newvalue) return;
             string cmd = string.Format(
             @"Select a.*,substring(b.Sewline,1,charindex(',',b.Sewline,1)) as Sewline ,b.poid,b.seasonid,b.styleid,b.styleukey,b.factoryid,
+
+            (
+               Select Top(1) OrderID
+                From Workorder_Distribute WD
+                Where a.ukey =WD.workorderukey --and a.orderid=WD.orderid
+            ) as Workorder_Distribute_OrderID,
+
              (
                 Select d.SizeCode+'/' 
                 From Workorder_SizeRatio d
@@ -438,14 +445,14 @@ namespace Sci.Production.Cutting
                 For XML path('')
             ) as Ratio,
             (
-                Select Top(1)Article
+                Select Top(1) Article
                 From Workorder_Distribute f
-                Where a.ukey =f.workorderukey and a.orderid=f.orderid
+                Where a.ukey =f.workorderukey --and a.orderid=f.orderid
             ) as article,
             (
                 Select count(id)
                 From Workorder_Distribute g 
-                Where a.ukey =g.workorderukey and a.orderid=g.orderid
+                Where a.ukey =g.workorderukey and g.OrderID=(Select Top(1) OrderID From Workorder_Distribute WD Where a.ukey =WD.workorderukey)
             ) as Qty
             From workorder a ,orders b 
             Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id", textBox_Cutref.Text, keyword);
@@ -483,7 +490,7 @@ namespace Sci.Production.Cutting
             {
                 CurrentMaintain["Cutno"] = Convert.ToInt32(cutdr["Cutno"].ToString());
                 CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString();
-                CurrentMaintain["OrderID"] = cutdr["OrderID"].ToString();
+                CurrentMaintain["OrderID"] = cutdr["Workorder_Distribute_OrderID"].ToString();    //cutdr["OrderID"].ToString()
                 CurrentMaintain["POID"] = cutdr["POID"].ToString();
                 CurrentMaintain["PatternPanel"] = cutdr["Fabriccombo"].ToString();
                 CurrentMaintain["Sizecode"] = cutdr["Sizecode"].ToString().Substring(0,cutdr["Sizecode"].ToString().Length-1);
@@ -510,18 +517,23 @@ namespace Sci.Production.Cutting
             }
             
         }
+
         private void textBox_orderid_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
             if (MyUtility.Check.Empty(CurrentMaintain["Cutref"]) || MyUtility.Check.Empty(CurrentMaintain["POID"])) return;
             Sci.Win.Tools.SelectItem item;
             string cuttingid = MyUtility.GetValue.Lookup("Cuttingsp",CurrentMaintain["POID"].ToString(),"Orders","ID");
-            string selectCommand = string.Format("select b.orderid from workorder a, workorder_distribute b where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey and a.id = b.id and b.id = '{1}'", CurrentMaintain["Cutref"], cuttingid);
-
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "13", this.Text);
+            //string selectCommand = string.Format("select b.orderid from workorder a, workorder_distribute b where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey and a.id = b.id and b.id = '{1}'", CurrentMaintain["Cutref"], cuttingid);
+            string selectCommand = string.Format(@"select distinct b.orderid 
+                                                from workorder a, workorder_distribute b 
+                                                where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
+                                                , CurrentMaintain["Cutref"], cuttingid);
+            item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
-            this.Text = item.GetSelectedString();
+            textBox_orderid.Text = item.GetSelectedString();
         }
+
         private void textBox_orderid_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode) return;
@@ -531,7 +543,7 @@ namespace Sci.Production.Cutting
             if (!MyUtility.Check.Empty(CurrentMaintain["Cutref"]))
             {
                 string cuttingid = MyUtility.GetValue.Lookup("id", CurrentMaintain["Cutref"].ToString(), "workorder", "Cutref");
-                if (cuttingsp != cuttingid)
+                if (cuttingsp.Trim() != cuttingid.Trim())
                 {
                     MyUtility.Msg.WarningBox("<Cutref> is different.");
                     textBox_orderid.Text = "";
@@ -551,6 +563,7 @@ namespace Sci.Production.Cutting
                     }
                     CurrentMaintain["Qty"] = articleTb.Rows.Count; //一筆distribute 表示一個bundle
                 }
+                CurrentMaintain["OrderID"] = newvalue;
             }
             else//Issue#969 當CutRef# 為空時，SP No 清空時，清空MasterID與Item、Line
             {
