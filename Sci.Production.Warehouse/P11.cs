@@ -86,7 +86,9 @@ namespace Sci.Production.Warehouse
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataTable bulkItems;
-                    string sqlcmd = string.Format(@"select a.*,b.FabricType,b.SCIRefno,f.MtlTypeID,m.IssueType,left(a.seq1+'   ',3)+a.seq2 seq
+                    string sqlcmd = string.Format(@"select a.*,
+CASE b.FabricType WHEN 'A' THEN 'Accessory' WHEN 'F' THEN 'Fabric'  WHEN 'O' THEN 'Other' END AS FabricType
+,b.SCIRefno,f.MtlTypeID,m.IssueType,left(a.seq1+'   ',3)+a.seq2 seq
 from dbo.ftyinventory a inner join dbo.po_supp_detail b on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
 inner join Fabric f on f.SCIRefno = b.SCIRefno
 inner join MtlType m on m.ID = f.MtlTypeID
