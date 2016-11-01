@@ -431,7 +431,7 @@ namespace Sci.Production.Cutting
                 }
                 else
                 {
-                    update = update + string.Format("Insert into CuttingOutput_WIP(orderid,article,size,qty) values('{0}','{1}','{2}',{3});", dr["OrderID"], dr["Article"], dr["SizeCode"], dr["cutqty"]);
+                    update = update + string.Format("Insert into CuttingOutput_WIP(orderid,article,size,qty) values('{0}','{1}','{2}',{3});", dr["id"], dr["Article"], dr["SizeCode"], dr["cutqty"]);
                     cpu = Convert.ToDecimal(MyUtility.GetValue.Lookup("CPU", dr["id"].ToString(), "Orders", "ID"));
                     ncpu = ncpu + Convert.ToDecimal(dr["cutqty"]) * cpu;
                 }
@@ -533,16 +533,16 @@ namespace Sci.Production.Cutting
             string update = "";
             foreach (DataRow dr in t1.Rows)
             {
-                if (MyUtility.Check.Seek(string.Format("Select * from CuttingOutput_WIP where Orderid='{0}' and article ='{1}' and sizeCode = '{2}'", dr["id"], dr["article"], dr["sizecode"]), null))
+                if (MyUtility.Check.Seek(string.Format("Select * from CuttingOutput_WIP where Orderid='{0}' and article ='{1}' and size = '{2}'", dr["id"], dr["article"], dr["sizecode"]), null))
                 {
-                    update = update + string.Format("update CuttingOutput_WIP set Qty = {0},actgarment =0,pph=0 where Orderid='{1}' and article ='{2}' and sizeCode = '{3}';", dr["Qty"], dr["id"], dr["article"], dr["sizecode"]);
+                    update = update + string.Format("update CuttingOutput_WIP set Qty = {0}  where Orderid='{1}' and article ='{2}' and size = '{3}';", dr["CutQty"], dr["id"], dr["article"], dr["sizecode"]);
                 }
                 else
                 {
-                    update = update + string.Format("Insert into CuttingOutput_WIP(orderid,article,sizecode,qty) values('{0}','{1}','{2}',{3});", dr["OrderID"], dr["Article"], dr["SizeCode"], dr["Qty"]);
+                    update = update + string.Format("Insert into CuttingOutput_WIP(orderid,article,size,qty) values('{0}','{1}','{2}',{3});", dr["ID"], dr["Article"], dr["SizeCode"], dr["CutQty"]);
                 }
             }
-            update = update + string.Format("update Cuttingoutput set status='New',editDate=getdate(),editname ='{0}' where id='{1}'", loginID, CurrentMaintain["ID"]);
+            update = update + string.Format("update Cuttingoutput set status='New',editDate=getdate(),editname ='{0}',actgarment =0,pph=0  where id='{1}'", loginID, CurrentMaintain["ID"]);
 
 
             #region transaction
