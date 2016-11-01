@@ -33,7 +33,18 @@ namespace Sci.Production.IE
         public P01(string StyleID, string BrandID, string SeasonID, string ComboType)
         {
             InitializeComponent();
-            DefaultFilter = string.Format("StyleID = '{0}' and BrandID = '{1}' {2} {3}", StyleID, BrandID, SeasonID == null ? "" : "and SeasonID = '" + SeasonID + "'", ComboType == null ? "" : "and ComboType = '" + ComboType + "'");
+            StringBuilder df = new StringBuilder();
+            df.Append(string.Format("StyleID = '{0}' and BrandID = '{1}' ", StyleID, BrandID));
+            if (SeasonID != null)
+            {
+                df.Append(string.Format("and SeasonID ='{0}'", SeasonID));
+            }
+            if (ComboType != null)
+            {
+                df.Append(string.Format("and ComboType ='{0}'", ComboType));
+            }
+
+            DefaultFilter = df.ToString();
             detailgrid.AllowUserToOrderColumns = true;
             InsertDetailGridOnDoubleClick = false;
         }
@@ -220,7 +231,7 @@ order by td.Seq", masterID);
                             }
                             else
                             {
-                                MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n"+result.ToString());
+                                MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
                                 ChangeToEmptyData(dr);
                             }
                         }
@@ -358,7 +369,7 @@ order by td.Seq", masterID);
 
                         DataTable moldData;
                         string sqlCmd = "select ID,DescEN from Mold where Junk = 0 and ID = @id";
-                        DualResult result = DBProxy.Current.Select(null,sqlCmd,cmds,out moldData);
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out moldData);
                         if (result)
                         {
                             if (moldData.Rows.Count <= 0)
@@ -375,7 +386,7 @@ order by td.Seq", masterID);
                         }
                         else
                         {
-                            MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n"+result.ToString());
+                            MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
                             dr["Mold"] = "";
                         }
                     }
@@ -515,7 +526,7 @@ order by td.Seq", masterID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out LocationData);
             if (!result)
             {
-                MyUtility.Msg.WarningBox("SQL connection fail!!\r\n"+result.ToString());
+                MyUtility.Msg.WarningBox("SQL connection fail!!\r\n" + result.ToString());
                 return false;
             }
             else
@@ -526,7 +537,7 @@ order by td.Seq", masterID);
                     return false;
                 }
             }
-            
+
             #endregion
             #region 檢查表身不可為空
             if (((DataTable)detailgridbs.DataSource).DefaultView.Count == 0)
@@ -586,7 +597,7 @@ order by td.Seq", masterID);
                 return;
             }
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(styleData, "ID,SeasonID,Description,BrandID", "16,10,50,8", this.Text,headercaptions: "Style,Season,Description,Brand");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(styleData, "ID,SeasonID,Description,BrandID", "16,10,50,8", this.Text, headercaptions: "Style,Season,Description,Brand");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             IList<DataRow> selectedData = item.GetSelecteds();
@@ -596,7 +607,7 @@ order by td.Seq", masterID);
 
             sqlCmd = string.Format("select Location from Style_Location where StyleUkey = {0}", MyUtility.Convert.GetInt((selectedData[0])["UKey"]).ToString());
             DataTable LocationData;
-            result = DBProxy.Current.Select(null,sqlCmd,out LocationData);
+            result = DBProxy.Current.Select(null, sqlCmd, out LocationData);
             if (result)
             {
                 if (LocationData.Rows.Count == 1)
@@ -654,7 +665,7 @@ set Version = (select iif(isnull(max(Version),0)+1 < 10,'0'+cast(isnull(max(Vers
 	AddDate = GETDATE(),
 	EditName = '',
 	EditDate = null
-where ID = {0}",CurrentMaintain["ID"].ToString(),Sci.Env.User.UserID);
+where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
                 using (TransactionScope transactionScope = new TransactionScope())
                 {
                     try
@@ -798,7 +809,7 @@ order by id.SEQ";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ietmsData);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query ietms fail!\r\n"+result.ToString());
+                MyUtility.Msg.ErrorBox("Query ietms fail!\r\n" + result.ToString());
                 return;
             }
             //刪除原有資料
@@ -898,8 +909,8 @@ order by id.SEQ";
         {
             //將要Copy的資料記錄起來
             List<DataRow> listDr = new List<DataRow>();
-            DataRow lastRow=null;
-            int index = -1,lastIndex=0;
+            DataRow lastRow = null;
+            int index = -1, lastIndex = 0;
             foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
             {
                 index++;
