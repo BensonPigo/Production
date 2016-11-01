@@ -36,7 +36,7 @@ group by d.ToPoid,d.ToSeq1,d.ToSeq2
 as
 (
 select bd1.ToPoid,bd1.ToSeq1,bd1.ToSeq2,sum(bd1.qty) qty
-from dbo.BorrowBack b1 inner join dbo.BorrowBack_Detail bd1 on bd1.id = bd1.id 
+from dbo.BorrowBack b1 inner join dbo.BorrowBack_Detail bd1 on b1.id = bd1.id 
 where b1.BorrowId='{1}' and b1.Status = 'Confirmed' and b1.id!='{0}'
 group by bd1.ToPoid,bd1.ToSeq1,bd1.ToSeq2
 )
@@ -53,11 +53,12 @@ select FromPoId,FromSeq1,FromSeq2,borrowedqty,isnull(acc.qty,0.00) qty
 ,isnull(cc.current_return,0.00) current_return 
 ,isnull(borrowedqty,0.00) - isnull(acc.qty,0.00) - isnull(cc.current_return,0.00) as balance
 ,p.Refno
-,(select  color.name from color where color.id = p.ColorID AND color.BrandId = P.BrandId) as color_name
+,(select  color.name from color where color.id = p.ColorID AND color.BrandId = o.BrandId) as color_name
 --,color.name as color_name
 ,dbo.getMtlDesc(FromPoId,FromSeq1,FromSeq2,2,0) as [description] from borrow left join acc on borrow.FromPoId = acc.ToPoid and borrow.FromSeq1 = acc.ToSeq1 and borrow.FromSeq2 = acc.ToSeq2
 left join cc on borrow.FromPoId = cc.ToPoid and borrow.FromSeq1 = cc.ToSeq1 and borrow.FromSeq2 = cc.ToSeq2
 left join dbo.PO_Supp_Detail p on  borrow.FromPoId = p.id and borrow.FromSeq1 = p.SEQ1 and borrow.FromSeq2 = p.SEQ2
+left join Orders o  on  p.id = o.id
 --inner join color color on color.id=p.ColorID"
                 , dr["id"].ToString(), dr["borrowid"].ToString()));
 
@@ -75,9 +76,9 @@ left join dbo.PO_Supp_Detail p on  borrow.FromPoId = p.id and borrow.FromSeq1 = 
             this.grid1.IsEditingReadOnly = true;
             this.grid1.DataSource = bindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
-                 .Text("frompoid", header: "From SP#", width: Widths.AnsiChars(13))
-                 .Text("fromseq1", header: "From"+Environment.NewLine+"Seq1", width: Widths.AnsiChars(4))
-                 .Text("fromseq2", header: "From" + Environment.NewLine + "Seq2", width: Widths.AnsiChars(3))
+                 .Text("frompoid", header: "Borrow SP#", width: Widths.AnsiChars(13))
+                 .Text("fromseq1", header: "Borrow" + Environment.NewLine + "Seq1", width: Widths.AnsiChars(4))
+                 .Text("fromseq2", header: "Borrow" + Environment.NewLine + "Seq2", width: Widths.AnsiChars(3))
                  .Numeric("borrowedqty", header: "Borrowing" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2)
                  .Numeric("qty", header: "Accu." + Environment.NewLine + "Return Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2)
                  .Numeric("current_return", header: "Return" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2)
