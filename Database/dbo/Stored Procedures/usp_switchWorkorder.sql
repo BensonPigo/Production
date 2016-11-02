@@ -309,7 +309,7 @@ BEGIN
 									if(@WorkOrder_DisQty>0)
 									Begin
 										insert into #NewWorkOrder_Distribute(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
-										Values(@Cuttingid, @WorkOrder_DisOrderID,@Article,@SizeCode,@WorkOrder_DisQty,@NewKey,0)		
+										Values(@Cuttingid, @WorkOrder_DisOrderID,@Article,@SizeCode,@WorkOrder_DisQty,@NewKey,0)	
 									End
 								End;
 								set @disQtyRowID +=1
@@ -365,17 +365,24 @@ BEGIN
 								   @WorkOrder_LectraCode = LectraCode
 							From #PatternPanel_cutlayer
 							Where Rowid = @WorkOrder_SizeRatioRowid
+
 							--insert NewWorkOrder_PatternPanel  error
 							Insert into #NewWorkOrder_PatternPanel(ID,WorkOrderUkey,PatternPanel,LectraCode,newKey)
 							Values(@Cuttingid,@NewKey,@WorkOrder_PatternPanel,@WorkOrder_LectraCode,@NewKey)
+
 							set @WorkOrder_SizeRatioRowid += 1
 						End;
 						drop table #PatternPanel_cutlayer
 						-------------------------------------
 						SET @Layer = @maxLayer
 						SET @Cons = @Layer * @SizeRatioQty * @ConsPC
+
+						--589: CUTTING_P01_EachConsumption_SwitchWorkOrder
+						--Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,LectraCode,newKey,Order_EachConsUkey)
+						--Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@OrderID,@Layer,@Colorid,@Markername,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@MarkerVerion,@Type,@username,GETDATE(),@MarkerDownLoadid,@FabricCombo,@FabricCode,@LectraCode,@NewKey,@Order_EachConsUkey)
 						Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,LectraCode,newKey,Order_EachConsUkey)
-						Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@OrderID,@Layer,@Colorid,@Markername,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@MarkerVerion,@Type,@username,GETDATE(),@MarkerDownLoadid,@FabricCombo,@FabricCode,@LectraCode,@NewKey,@Order_EachConsUkey)
+						Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Cuttingid,@Layer,@Colorid,@Markername,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@MarkerVerion,@Type,@username,GETDATE(),@MarkerDownLoadid,@FabricCombo,@FabricCode,@LectraCode,@NewKey,@Order_EachConsUkey)
+						
 						SET @NewKey += 1
 						Set @Layernum +=1
 					End
@@ -496,17 +503,25 @@ BEGIN
 						-- insert error
 						Insert into #NewWorkOrder_PatternPanel(ID,WorkOrderUkey,PatternPanel,LectraCode,newKey)
 						Values(@Cuttingid,@NewKey,@WorkOrder_PatternPanel,@WorkOrder_LectraCode,@NewKey)
+
 						set @WorkOrder_SizeRatioRowid += 1
 					End;
 					drop table #PatternPanel_modlayer 
 					-------------------------------------
 					SET @Layer = @modLayer
 					SET @Cons = @Layer * @SizeRatioQty*@ConsPC
+
+					--589: CUTTING_P01_EachConsumption_SwitchWorkOrder
+					--Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,LectraCode,newKey,Order_eachconsUkey)
+					--Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Orderid,@Layer,@Colorid,@Markername,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@MarkerVerion,@Type,@username,GETDATE(),@MarkerDownLoadid,@FabricCombo,@FabricCode,@LectraCode,@NewKey,@Order_EachConsUkey)
 					Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,LectraCode,newKey,Order_eachconsUkey)
-					Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Orderid,@Layer,@Colorid,@Markername,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@MarkerVerion,@Type,@username,GETDATE(),@MarkerDownLoadid,@FabricCombo,@FabricCode,@LectraCode,@NewKey,@Order_EachConsUkey)
+					Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Cuttingid,@Layer,@Colorid,@Markername,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@MarkerVerion,@Type,@username,GETDATE(),@MarkerDownLoadid,@FabricCombo,@FabricCode,@LectraCode,@NewKey,@Order_EachConsUkey)
+					
 					SET @NewKey += 1
 					----------End 餘數層數也要做一筆-----------------------------			
 				End		
+			
+			
 			Else --WorkType by SP#
 			Begin
 				---------排序混碼Size Ratio Qty由大到小，才可以由大的數量先排-------
@@ -681,8 +696,10 @@ BEGIN
 										   @WorkOrder_LectraCode = LectraCode
 									From #PatternPanel_bysp
 									Where Rowid = @WorkOrder_SizeRatioRowid
+
 									Insert into #NewWorkOrder_PatternPanel(ID,PatternPanel,LectraCode,newKey)
 									Values(@Cuttingid,@WorkOrder_PatternPanel,@WorkOrder_LectraCode,@NewKey)
+
 									set @WorkOrder_SizeRatioRowid += 1
 								End;
 								drop table #PatternPanel_bysp
@@ -817,8 +834,10 @@ BEGIN
 										   @WorkOrder_LectraCode = LectraCode
 									From #PatternPanel_byspmod
 									Where Rowid = @WorkOrder_SizeRatioRowid
+
 									Insert into #NewWorkOrder_PatternPanel(ID,PatternPanel,LectraCode,newKey)
 									Values(@Cuttingid,@WorkOrder_PatternPanel,@WorkOrder_LectraCode,@NewKey)
+
 									set @WorkOrder_SizeRatioRowid += 1
 								End;
 								drop table #PatternPanel_byspmod
