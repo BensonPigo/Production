@@ -46,7 +46,6 @@ namespace Sci.Production.Thread
             generateGrid();
 
         }
-
         
         private void generateGrid() //建立Gird
         {
@@ -74,16 +73,9 @@ namespace Sci.Production.Thread
                 foreach (DataRow dr in tbArticle.Rows)
                 {
                     art_col.Append(string.Format(@",{0}", dr["article"].ToString().Trim()));
-                    //art_col = art_col + ", '' as '" +dr["article"].ToString().Trim() + "',0 as '"+dr["article"].ToString().Trim() + "Ukey'";
                 }
             }
-
-            //下4行似乎多餘
-            //dResult = DBProxy.Current.Select(null, articleSql, out headerTable);
-            //if(!dResult)
-            //{
-            //    ShowErr(articleSql, dResult);
-            //}
+           
             #region Grid header,Column  建立 使用自行新增另一種寫法
             //grid1.IsEditingReadOnly = false;
             //grid1.Columns.Add("SEQ", "SEQ");
@@ -160,7 +152,7 @@ namespace Sci.Production.Thread
                     if (!MyUtility.Check.Seek(sql))
                     {
                         MyUtility.Msg.WarningBox(string.Format("<Thread Color> : {0} not found!!!", newValue));
-                        row["Refno"] = "";
+                        row[header] = "";
                         row.EndEdit();
                         e.Cancel = true;
                         return;
@@ -188,17 +180,6 @@ namespace Sci.Production.Thread
             #endregion
 
             #region 資料建立
-            //DataTable cursorTable;
-//            sql = @"Select a.SEQ,a.ThreadLocation,a.UseRatio,
-//                    b.Ukey,b.ID,b.Refno,b.Article,b.ThreadColorid,c.name as ThreadLocationName";
-//            sql = sql + string.Format(@" from MachineType_ThreadRatio a 
-//                    join Reason c on c.Reasontypeid ='Threadlocation' and c.id = a.threadlocation 
-//                    left join ThreadColorComb_detail b 
-//                    on a.id = b.machinetypeid and a.seq = b.seq 
-//                    and a.ThreadLocation = b.threadlocationid and b.id = '{0}' 
-//                    and b.machinetypeid = '{1}' and b.threadcombid ='{2}' 
-//                    where a.id = '{1}' order by ThreadLocationName"
-//                ,detailRow["id"].ToString(), detailRow["Machinetypeid"].ToString(), detailRow["ThreadCombID"].ToString());
             StringBuilder op = new StringBuilder();
             for (int i = 0; i < tbArticle.Rows.Count; i++)
             {
@@ -237,24 +218,6 @@ namespace Sci.Production.Thread
             {
                 ShowErr(sql, dResult);
             }
-
-            //MyUtility.Tool.ProcessWithDatatable(cursorTable,
-//                            @"SEQ,ThreadLocation,UseRatioNumeric,Allowance,Refno",
-//                            @"Select SEQ,ThreadLocation,UseRatioNumeric,Allowance,Refno,ID,ThreadLocationName" + art_col + @" from #tmp group by 
-//                                 SEQ,ThreadLocation,UseRatioNumeric,Allowance,Refno,ID,ThreadLocationName", out gridTable);
-            //string headerArticle, headerArticleUkey;
-            //foreach (DataRow dr in cursorTable.Rows)
-            //{
-            //    if (!MyUtility.Check.Empty(dr["article"]))
-            //    {
-            //        headerArticle = dr["article"].ToString();
-            //        headerArticleUkey = dr["article"].ToString() + "Ukey";
-            //        //不知做這drArray要做啥
-            //        DataRow[] drArray = gridTable.Select(string.Format("SEQ = '{0}' and ThreadLocation='{1}' and UseRatioNumeric ='{2}'", dr["SEQ"], dr["ThreadLocation"], dr["UseRatioNumeric"]));
-            //        drArray[0][headerArticle] = dr["threadcolorid"].ToString();
-            //        drArray[0][headerArticleUkey] = dr["ukey"].ToString();
-            //    }
-            //}
             #endregion
 
             grid1.DataSource = gridTable;           
