@@ -33,14 +33,17 @@ namespace Sci.Production.Tools
                     else
                     {
                         UserInfo user = (UserInfo) Sci.Env.User;
-                        if (!(result = DBProxy.Current.Select(null, string.Format("SELECT id FROM MDivision WHERE ID = '{0}'", (string)this.comboBox1.SelectedValue), out dtFactory)))
+                        //if (!(result = DBProxy.Current.Select(null, string.Format("SELECT id FROM MDivision WHERE ID = '{0}'", (string)this.comboBox1.SelectedValue), out dtFactory)))
+                        if (!(result = DBProxy.Current.Select(null, string.Format("SELECT MDivisionid FROM Factory WHERE ID = '{0}'", (string)this.comboBox1.SelectedValue), out dtFactory)))
                         {
                             ShowErr(result.ToString());
                             return;
                         }
-                        if (dtFactory.Rows.Count > 0 && !MyUtility.Check.Empty(dtFactory.Rows[0]["id"].ToString()))
+                        //if (dtFactory.Rows.Count > 0 && !MyUtility.Check.Empty(dtFactory.Rows[0]["id"].ToString()))
+                        if (dtFactory.Rows.Count > 0 && !MyUtility.Check.Empty(dtFactory.Rows[0]["MDivisionid"].ToString()))
                         {
-                            user.Keyword = dtFactory.Rows[0]["id"].ToString();
+                            //user.Keyword = dtFactory.Rows[0]["id"].ToString();
+                            user.Keyword = dtFactory.Rows[0]["MDivisionid"].ToString();
                         }
                         else
                         {
