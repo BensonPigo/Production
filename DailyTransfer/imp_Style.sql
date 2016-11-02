@@ -1,4 +1,4 @@
-
+ï»¿
 -- =============================================
 -- Author:		LEO
 -- Create date: 20160903
@@ -12,9 +12,48 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+	------
+
+	----------------------20161101ADD_Style_Location
+Delete Production.dbo.Style_Location
+from Production.dbo.Style_Location as a 
+INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
+left join Trade_To_Pms.dbo.Style_Location as b
+on a.StyleUkey= b.StyleUkey AND a.Location	= b.Location
+where b.StyleUkey is null
+---------------------------UPDATE ï¿½DTABLEï¿½ï¿½Ó·ï¿½TABLE ï¿½ï¿½ï¿½@ï¿½ï¿½(ï¿½DTABLEï¿½hï¿½ï¿½ï¿½ï¿½ ï¿½Oï¿½_ï¿½ï¿½ ~ï¿½Ó·ï¿½TABLEï¿½hï¿½ï¿½ï¿½Ü¤ï¿½ï¿½zï¿½|)
+UPDATE a
+SET  
+      a.Rate	      =b.Rate
+      ,a.AddName	      =b.AddName
+      ,a.AddDate	      =b.AddDate
+      ,a.EditName	      =b.EditName
+      ,a.EditDate	      =b.EditDate
+from Production.dbo.Style_Location as a 
+inner join Trade_To_Pms.dbo.Style_Location as b ON a.StyleUkey=b.StyleUkey AND a.Location	= b.Location
+-------------------------- INSERT INTO ï¿½ï¿½
+INSERT INTO Production.dbo.Style_Location(
+StyleUkey
+      ,Location
+      ,Rate
+      ,AddName
+      ,AddDate
+      ,EditName
+      ,EditDate
+)
+select 
+StyleUkey
+      ,Location
+      ,Rate
+      ,AddName
+      ,AddDate
+      ,EditName
+      ,EditDate
+from Trade_To_Pms.dbo.Style_Location as b
+where not exists(select 1 from Production.dbo.Style_Location as a where a.StyleUkey=b.StyleUkey AND a.Location	= b.Location)
 
 --  STYLE
---PMS¦hªºÄæ¦ì
+--PMSå¤šçš„æ¬„ä½
 --,[LocalMR]
 --,[LocalStyle]
 --,[PPMeeting]
@@ -154,7 +193,7 @@ inner join Production.dbo.Style as c ON c.ID=b.ID and c.BrandID=b.BrandID and c.
 where c.LocalStyle=1
 and a.Ukey=c.Ukey
 ---------------------------------------------------------------------------------------------
--------------------------- INSERT STYLE BY¥H¤W¨âºØ¤ñ¹ï±ø¥ó³£§ä¤£¨ìªº®É­Ô INSERT
+-------------------------- INSERT STYLE BYä»¥ä¸Šå…©ç¨®æ¯”å°æ¢ä»¶éƒ½æ‰¾ä¸åˆ°çš„æ™‚å€™ INSERT
 INSERT INTO Production.dbo.Style(
 ID
 ,Ukey
@@ -275,14 +314,14 @@ AND not exists(select id from Production.dbo.Style as a where a.Ukey=b.Ukey )
 
 --Style4
 --Style_TmsCost
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Style_TmsCost
 from Production.dbo.Style_TmsCost as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_TmsCost as b
 on a.StyleUkey= b.StyleUkey AND a.ArtworkTypeID	= b.ArtworkTypeID
 where b.StyleUkey is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
@@ -298,7 +337,7 @@ a.StyleUkey	= b.StyleUkey
 ,a.EditDate	= b.EditDate
 from Production.dbo.Style_TmsCost as a 
 inner join Trade_To_Pms.dbo.Style_TmsCost as b ON a.StyleUkey=b.StyleUkey AND a.ArtworkTypeID	= b.ArtworkTypeID
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Style_TmsCost(
 StyleUkey
 ,ArtworkTypeID
@@ -333,14 +372,14 @@ where not exists(select 1 from Production.dbo.Style_TmsCost as a where a.StyleUk
 
 --STYLEB
 --Style_Artwork
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Style_Artwork
 from Production.dbo.Style_Artwork as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.TradeUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_Artwork as b
 on a.TradeUkey = b.Ukey
 where b.Ukey is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
  a.StyleUkey	= b.StyleUkey
@@ -364,7 +403,7 @@ SET
 
 from Production.dbo.Style_Artwork as a 
 inner join Trade_To_Pms.dbo.Style_Artwork as b ON a.TradeUkey=b.Ukey
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Style_Artwork(
 StyleUkey
 ,ArtworkTypeID
@@ -412,7 +451,7 @@ where not exists(select 1 from Production.dbo.Style_Artwork as a where a.TradeUk
 
 --STYLE1
 --Style_QtyCTN
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
  a.StyleUkey	= b.StyleUkey
@@ -428,7 +467,7 @@ SET
 
 from Production.dbo.Style_QtyCTN as a 
 inner join Trade_To_Pms.dbo.Style_QtyCTN as b ON a.UKey=b.UKey
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Style_QtyCTN(
 StyleUkey
 ,CustCDID
@@ -458,15 +497,15 @@ from Trade_To_Pms.dbo.Style_QtyCTN as b
 where not exists(select 1 from Production.dbo.Style_QtyCTN as a where a.UKey = b.UKey)
 
 --STYLE5
---Style_SizeCode(»İ¦A½T»{ukeyÄæ¦ì)
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+--Style_SizeCode(éœ€å†ç¢ºèªukeyæ¬„ä½)
+----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Style_SizeCode
 from Production.dbo.Style_SizeCode as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_SizeCode as b
 on a.Ukey = b.Ukey
 where b.Ukey is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
@@ -476,7 +515,7 @@ a.StyleUkey	= b.StyleUkey
 ,a.UKey	= b.UKey
 from Production.dbo.Style_SizeCode as a 
 inner join Trade_To_Pms.dbo.Style_SizeCode as b ON a.Ukey=b.Ukey
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Style_SizeCode(
 StyleUkey
 ,Seq
@@ -495,15 +534,15 @@ StyleUkey
 from Trade_To_Pms.dbo.Style_SizeCode as b
 where not exists(select 1 from Production.dbo.Style_SizeCode as a where a.Ukey = b.Ukey)
 --STYLE52
---STYLE_SICESPEC(»İ¦A½T»{ukeyÄæ¦ì)
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+--STYLE_SICESPEC(éœ€å†ç¢ºèªukeyæ¬„ä½)
+----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Style_SizeSpec
 from Production.dbo.Style_SizeSpec as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey =t.Ukey
 left join Trade_To_Pms.dbo.Style_SizeSpec as b
 on a.Ukey = b.Ukey
 where b.Ukey is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
@@ -513,7 +552,7 @@ a.StyleUkey	= b.StyleUkey
 ,a.UKey	= b.UKey
 from Production.dbo.Style_SizeSpec as a 
 inner join Trade_To_Pms.dbo.Style_SizeSpec as b ON a.Ukey=b.Ukey
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Style_SizeSpec(
 StyleUkey
 ,SizeItem
@@ -533,14 +572,14 @@ from Trade_To_Pms.dbo.Style_SizeSpec as b
 where not exists(select 1 from Production.dbo.Style_SizeSpec as a where a.Ukey = b.Ukey)
 --STYLEG
 --STYLE_ARTICLE
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Style_Article
 from Production.dbo.Style_Article as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_Article as b
 on a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article
 where b.StyleUkey is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
@@ -551,7 +590,7 @@ a.StyleUkey	= b.StyleUkey
 ,a.Contents	= b.Contents
 from Production.dbo.Style_Article as a 
 inner join Trade_To_Pms.dbo.Style_Article as b ON a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Style_Article(
 StyleUkey
 ,Seq
@@ -571,14 +610,14 @@ from Trade_To_Pms.dbo.Style_Article as b
 where not exists(select 1 from Production.dbo.Style_Article as a where a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article)
 --STYLEA
 --Style_MarkerList
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Style_MarkerList
 from Production.dbo.Style_MarkerList as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_MarkerList as b
 on a.Ukey = b.Ukey
 where b.Ukey is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
 a. StyleUkey	= b. StyleUkey
@@ -615,7 +654,7 @@ a. StyleUkey	= b. StyleUkey
 
 from Production.dbo.Style_MarkerList as a 
 inner join Trade_To_Pms.dbo.Style_MarkerList as b ON a.Ukey=b.Ukey
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Style_MarkerList(
  StyleUkey
 ,Ukey
@@ -687,14 +726,14 @@ from Trade_To_Pms.dbo.Style_MarkerList as b
 where not exists(select 1 from Production.dbo.Style_MarkerList as a where a.Ukey = b.Ukey)
 --STYLE61
 --Style_FabricCode
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Style_FabricCode
 from Production.dbo.Style_FabricCode as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_FabricCode as b
 on a.StyleUkey = b.StyleUkey AND a.LectraCode	= b.LectraCode
 where b.StyleUkey is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
@@ -709,7 +748,7 @@ a.StyleUkey	= b.StyleUkey
 ,a.QTWidth	= b.QTWidth
 from Production.dbo.Style_FabricCode as a 
 inner join Trade_To_Pms.dbo.Style_FabricCode as b ON a.StyleUkey = b.StyleUkey AND a.LectraCode	= b.LectraCode
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Style_FabricCode(
 StyleUkey
 ,LectraCode
@@ -737,14 +776,14 @@ from Trade_To_Pms.dbo.Style_FabricCode as b
 where not exists(select 1 from Production.dbo.Style_FabricCode as a where a.StyleUkey = b.StyleUkey AND a.LectraCode	= b.LectraCode)
 --STYLE8
 --Style_BOF
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Style_BOF
 from Production.dbo.Style_BOF as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_BOF as b
 on a.Ukey = b.Ukey
 where b.Ukey is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
@@ -758,7 +797,7 @@ a.StyleUkey	= b.StyleUkey
 
 from Production.dbo.Style_BOF as a 
 inner join Trade_To_Pms.dbo.Style_BOF as b ON a.Ukey=b.Ukey
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Style_BOF(
 StyleUkey
 ,FabricCode
@@ -782,21 +821,21 @@ from Trade_To_Pms.dbo.Style_BOF as b
 where not exists(select 1 from Production.dbo.Style_BOF as a where a.Ukey = b.Ukey)
 --STYLE9
 --Style_BOA
---Pms¦hªºÄæ¦ì
+--Pmså¤šçš„æ¬„ä½
 --,[BomTypeStyle]
 --      ,[BomTypeArticle]
 --      ,[BomTypeCustCD]
 --      ,[BomTypeFactory]
 --      ,[BomTypeBuyMonth]
 --      ,[BomTypeCountry]
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Style_BOA
 from Production.dbo.Style_BOA as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_BOA as b
 on a.Ukey = b.Ukey
 where b.Ukey is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
@@ -824,7 +863,7 @@ a.StyleUkey	= b.StyleUkey
 
 from Production.dbo.Style_BOA as a 
 inner join Trade_To_Pms.dbo.Style_BOA as b ON a.Ukey=b.Ukey
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Style_BOA(
 StyleUkey
 ,Ukey
@@ -878,14 +917,14 @@ from Trade_To_Pms.dbo.Style_BOA as b
 where not exists(select 1 from Production.dbo.Style_BOA as a where a.Ukey = b.Ukey)
 --STYLE6
 --Style_ColorCombo
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Style_ColorCombo
 from Production.dbo.Style_ColorCombo as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_ColorCombo as b
 on a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.LectraCode	= b.LectraCode
 where b.StyleUkey is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
 a. StyleUkey	= b. StyleUkey
@@ -901,7 +940,7 @@ a. StyleUkey	= b. StyleUkey
 
 from Production.dbo.Style_ColorCombo as a 
 inner join Trade_To_Pms.dbo.Style_ColorCombo as b ON a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.LectraCode	= b.LectraCode
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Style_ColorCombo(
  StyleUkey
 ,Article
@@ -929,14 +968,14 @@ from Trade_To_Pms.dbo.Style_ColorCombo as b
 where not exists(select 1 from Production.dbo.Style_ColorCombo as a where a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.LectraCode	= b.LectraCode)
 --STYLEJ
 --Style_HSCode
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Style_HSCode
 from Production.dbo.Style_HSCode as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_HSCode as b
 on a.UKEY = b.UKEY
 where b.UKEY is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
@@ -955,7 +994,7 @@ a.StyleUkey	= b.StyleUkey
 
 from Production.dbo.Style_HSCode as a 
 inner join Trade_To_Pms.dbo.Style_HSCode as b ON a.UKEY=b.UKEY
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Style_HSCode(
 StyleUkey
 ,UKEY
@@ -991,14 +1030,14 @@ from Trade_To_Pms.dbo.Style_HSCode as b
 where not exists(select 1 from Production.dbo.Style_HSCode as a where a.UKEY = b.UKEY)
 --STYLEMI
 --Style_MiAdidasColorCombo
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Style_MiAdidasColorCombo
 from Production.dbo.Style_MiAdidasColorCombo as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b
 on a.StyleUkey	= b.StyleUkey AND a.LectraCode	= b.LectraCode AND a.Ukey_old	= b.Ukey_old
 where b.StyleUkey is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
@@ -1012,7 +1051,7 @@ a.StyleUkey	= b.StyleUkey
 
 from Production.dbo.Style_MiAdidasColorCombo as a 
 inner join Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b ON a.StyleUkey	= b.StyleUkey AND a.LectraCode	= b.LectraCode AND a.Ukey_old	= b.Ukey_old
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Style_MiAdidasColorCombo(
 StyleUkey
 ,LectraCode
@@ -1037,14 +1076,14 @@ from Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b
 where not exists(select 1 from Production.dbo.Style_MiAdidasColorCombo as a where a.StyleUkey	= b.StyleUkey AND a.LectraCode	= b.LectraCode AND a.Ukey_old	= b.Ukey_old)
 --STYLELT
 --Style_GMTLTFty
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Style_GMTLTFty
 from Production.dbo.Style_GMTLTFty as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_GMTLTFty as b
 on a.StyleUkey	= b.StyleUkey AND a.FactoryID	= b.FactoryID
 where b.StyleUkey is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
@@ -1056,7 +1095,7 @@ a.StyleUkey	= b.StyleUkey
 ,a.EditDate	= b.EditDate
 from Production.dbo.Style_GMTLTFty as a 
 inner join Trade_To_Pms.dbo.Style_GMTLTFty as b ON a.StyleUkey	= b.StyleUkey AND a.FactoryID	= b.FactoryID
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Style_GMTLTFty(
 StyleUkey
 ,FactoryID
@@ -1078,14 +1117,14 @@ from Trade_To_Pms.dbo.Style_GMTLTFty as b
 where not exists(select 1 from Production.dbo.Style_GMTLTFty as a where a.StyleUkey	= b.StyleUkey AND a.FactoryID	= b.FactoryID)
 --STYLEK
 --Style_SimilarStyle
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Style_SimilarStyle
 from Production.dbo.Style_SimilarStyle as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.MasterStyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_SimilarStyle as b
 on a.MasterStyleUkey	= b.MasterStyleUkey AND a.ChildrenStyleUkey	= b.ChildrenStyleUkey
 where b.MasterStyleUkey is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
 a.MasterBrandID	= b.MasterBrandID
@@ -1103,7 +1142,7 @@ a.MasterBrandID	= b.MasterBrandID
 
 from Production.dbo.Style_SimilarStyle as a 
 inner join Trade_To_Pms.dbo.Style_SimilarStyle as b ON a.MasterStyleUkey	= b.MasterStyleUkey AND a.ChildrenStyleUkey	= b.ChildrenStyleUkey
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Style_SimilarStyle(
 MasterBrandID
 ,MasterStyleID
