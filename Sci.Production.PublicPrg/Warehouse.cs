@@ -412,7 +412,7 @@ where m.mdivisionid = '{1}' and m.poid ='{0}'", poid, Sci.Env.User.Keyword);
             DBProxy.Current.Select(null, sqlcmd, out dt);
 
             Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt
-                            , "Seq,refno,description,colorid,eta,inqty,stockunit,outqty,adjustqty,balanceqty,linvqty"
+                            , "Seq,refno,description,colorid,FinalETA,inqty,stockunit,outqty,adjustqty,balance,linvqty"
                             , "6,8,8,8,10,6,6,6,6,6,6", defaultseq, "Seq,Ref#,Description,Color,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty");
             selepoitem.Width = 1024;
 
