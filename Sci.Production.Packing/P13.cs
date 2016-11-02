@@ -101,6 +101,7 @@ as
 (select od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id as LocalPOID,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,sum(ld.Qty) as POQty,ld.Delivery
  from OrderData od, LocalPO_Detail ld, LocalItem li,LocalPO LP
  where od.ID = ld.OrderId
+ and od.RefNo =ld.Refno
  and li.RefNo = ld.Refno
  and LP.id= ld.id
  and LP.category='CARTON'
@@ -167,6 +168,7 @@ as
 (select od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id as LocalPOID,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,sum(ld.Qty) as POQty,ld.Delivery
  from OrderData od, LocalPO_Detail ld, LocalItem li,LocalPO LP
  where od.ID = ld.OrderId
+ and od.RefNo =ld.Refno
  and li.RefNo = ld.Refno
  and LP.id= ld.id
  and LP.category='CARTON'
