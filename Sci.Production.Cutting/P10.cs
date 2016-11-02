@@ -19,6 +19,8 @@ namespace Sci.Production.Cutting
         string keyword = Sci.Env.User.Keyword;
         string LoginId = Sci.Env.User.UserID;
         DataTable bundle_Detail_allpart_Tb, bundle_Detail_Art_Tb, bundle_Detail_Qty_Tb;
+        string WorkOrder_Ukey;
+
         public P10(ToolStripMenuItem menuitem,string history)
             : base(menuitem)
         {
@@ -482,6 +484,7 @@ namespace Sci.Production.Cutting
                 bundle_Detail_allpart_Tb.Clear();
                 bundle_Detail_Art_Tb.Clear();
                 bundle_Detail_Qty_Tb.Clear();
+                WorkOrder_Ukey = "";
                 CurrentMaintain.EndEdit();
                 e.Cancel = true;
                 return;
@@ -503,16 +506,18 @@ namespace Sci.Production.Cutting
                 displayBox_PrintDate.Text = cutdr["Estcutdate"].ToString();
 
                 string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString()+cutdr["factoryid"].ToString(), "SewingLine", "ID+factoryid");
-
                 CurrentMaintain["SewingCell"] = cellid;
+
                 #region Startno
                 int startno = startNo_Function(CurrentMaintain["OrderID"].ToString());
                 CurrentMaintain["startno"] = startno;
                 #endregion
+
                 string item_cmd = string.Format("Select a.Name from Reason a, Style b where a.Reasontypeid ='Style_Apparel_Type' and b.ukey = '{0}' and b.ApparelType = a.id", cutdr["styleukey"]);
                 string item = MyUtility.GetValue.Lookup(item_cmd, null);
                 CurrentMaintain["ITEM"] = item;
                 CurrentMaintain["Cutref"] = newvalue;
+                WorkOrder_Ukey = cutdr["Ukey"].ToString(); ;
                 CurrentMaintain.EndEdit();
             }
             
@@ -708,7 +713,75 @@ namespace Sci.Production.Cutting
 
         }
 
-       
+        private void textBox_Article_PopUp(object sender, TextBoxPopUpEventArgs e)
+        {
+            string selectCommand;
+            Sci.Win.Tools.SelectItem item;
+            if (!EditMode) return;
+            if (!MyUtility.Check.Empty(CurrentMaintain["cutref"]))
+            {
+                selectCommand = string.Format(@"select distinct Article from Workorder_Distribute 
+                                                where Article!='' and WorkorderUkey={0}", WorkOrder_Ukey);
+                item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
+                DialogResult returnResult = item.ShowDialog();
+                if (returnResult == DialogResult.Cancel) { return; }
+                textBox_Article.Text = item.GetSelectedString();
+            }
+            else
+            {
+                if (!MyUtility.Check.Empty(CurrentMaintain["Orderid"]))
+                {
+                    selectCommand = string.Format(@"select distinct article from Order_Qty  where Id='{0}'", CurrentMaintain["Orderid"]);
+                    item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
+                    DialogResult returnResult = item.ShowDialog();
+                    if (returnResult == DialogResult.Cancel) { return; }
+                    textBox_Article.Text = item.GetSelectedString();
+                }
+            }
+        }
+
+        private void textBox_Article_Validating(object sender, CancelEventArgs e)
+        {
+            if (!this.EditMode) return;
+            string newvalue = textBox_Article.Text;
+            if (textBox_Article.OldValue.ToString() == newvalue) return;
+            string sql;
+            DataTable dtTEMP;
+            if (!MyUtility.Check.Empty(CurrentMaintain["cutref"]))
+            {
+                sql = string.Format(@"select Article from Workorder_Distribute 
+                                                where Article!='' and WorkorderUkey={0} and Article='{1}'", WorkOrder_Ukey, newvalue);
+                if (DBProxy.Current.Select(null, sql, out dtTEMP))
+                {
+                    if (dtTEMP.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.WarningBox("<Article> can't find !!");
+                        textBox_Article.Text = "";
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                if (!MyUtility.Check.Empty(CurrentMaintain["Orderid"]))
+                {
+                    sql = string.Format(@"select article from Order_Qty  where Id='{0}' and Article='{1}'", CurrentMaintain["Orderid"], newvalue);
+                    if (DBProxy.Current.Select(null, sql, out dtTEMP))
+                    {
+                        if (dtTEMP.Rows.Count == 0)
+                        {
+                            MyUtility.Msg.WarningBox("<Article> can't find !!");
+                            textBox_Article.Text = "";
+                            e.Cancel = true;
+                            return;
+                        }
+                    }
+                }
+            }
+
+        }
+
 
         //private void textBox_Line_MouseDown(object sender, MouseEventArgs e)
         //{

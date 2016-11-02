@@ -53,7 +53,9 @@ namespace Sci.Production.Class
                 ftyWhere = string.Format("Where FactoryId = '{0}'", fty);
             }
             //fty = factoryObject.Text;
-            string sql = string.Format("Select ID,FactoryID,Description From SewingLine {0} ", ftyWhere);
+            //string sql = string.Format("Select ID,FactoryID,Description From SewingLine {0} ", ftyWhere);
+            string sql = string.Format(@"Select ID,FactoryID,Description  From SewingLine  
+                                        where FactoryID in (select ID from Factory where MDivisionID='{0}')", Sci.Env.User.Keyword);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2,8,16", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
@@ -67,7 +69,10 @@ namespace Sci.Production.Class
             {
                 if (this.factoryObject == null)
                 {
-                    string tmp = MyUtility.GetValue.Lookup("ID", str, "SewingLine", "id");
+                    //string tmp = MyUtility.GetValue.Lookup("ID", str, "SewingLine", "id");
+                    string sql = string.Format(@"Select ID  From SewingLine  
+                    where FactoryID in (select ID from Factory where MDivisionID='{0}') and ID='{1}'", Sci.Env.User.Keyword, str);
+                    string tmp = MyUtility.GetValue.Lookup(sql);
                     if (string.IsNullOrWhiteSpace(tmp))
                     {
                         MyUtility.Msg.WarningBox(string.Format("< Sewing Line> : {0} not found!!!", str));

@@ -694,6 +694,8 @@
             this.textBox_Article.Name = "textBox_Article";
             this.textBox_Article.Size = new System.Drawing.Size(73, 23);
             this.textBox_Article.TabIndex = 9;
+            this.textBox_Article.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox_Article_PopUp);
+            this.textBox_Article.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_Article_Validating);
             // 
             // textBox_Colorid
             // 
