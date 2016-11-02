@@ -800,6 +800,7 @@ namespace Sci.Production.Cutting
             };
             #endregion
             #endregion
+
             #region SizeRatio
             col_sizeRatio_size.EditingMouseDown += (s, e) =>
             {
@@ -867,6 +868,7 @@ namespace Sci.Production.Cutting
                 totalDisQty();
             };
             #endregion
+
             #region Distribute
             col_dist_sp.EditingMouseDown += (s, e) =>
             {
@@ -874,6 +876,7 @@ namespace Sci.Production.Cutting
                 {
                     // Parent form 若是非編輯狀態就 return 
                     if (!this.EditMode) { return; }
+                    if (CurrentDetailData == null) return;
                     DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
                     if (dr["OrderID"].ToString() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString()!="") return;
@@ -886,6 +889,7 @@ namespace Sci.Production.Cutting
             col_dist_sp.EditingControlShowing += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
+                if (CurrentDetailData == null) return;
                 DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString()!="EXCESS") ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
@@ -930,11 +934,11 @@ namespace Sci.Production.Cutting
 
             col_dist_size.EditingMouseDown += (s, e) =>
             {
-                
                 if (e.Button == MouseButtons.Right)
                 {
                     // Parent form 若是非編輯狀態就 return 
-                    if (!this.EditMode) { return; }       
+                    if (!this.EditMode) { return; }
+                    if (CurrentDetailData == null) return;
                     DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
                     if (dr["OrderID"].ToString() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;
@@ -947,6 +951,7 @@ namespace Sci.Production.Cutting
             col_dist_size.EditingControlShowing += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
+                if (CurrentDetailData == null) return;
                 DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString() != "EXCESS") ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
@@ -994,9 +999,9 @@ namespace Sci.Production.Cutting
                 {
                     // Parent form 若是非編輯狀態就 return 
                     if (!this.EditMode) { return; }
+                    if (CurrentDetailData == null) return;
                     DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
-
                     if (dr["OrderID"].ToString() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;
                     sele = new SelectItem(artTb, "article", "23", dr["Article"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
@@ -1007,6 +1012,7 @@ namespace Sci.Production.Cutting
             col_dist_article.EditingControlShowing += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
+                if (CurrentDetailData == null) return;
                 DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString() != "EXCESS") ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
@@ -1049,6 +1055,7 @@ namespace Sci.Production.Cutting
             col_dist_qty.EditingControlShowing += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
+                if (CurrentDetailData == null) return;
                 DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString() != "EXCESS") ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = true;
@@ -1071,6 +1078,7 @@ namespace Sci.Production.Cutting
 
             };
             #endregion
+
         }
         #endregion
 
@@ -1121,6 +1129,7 @@ namespace Sci.Production.Cutting
             #region Total Dist
             totalDisQty();
             #endregion 
+            
             int order_EachConsTemp;
             if(CurrentDetailData["Order_EachConsUkey"]==DBNull.Value) 
             {//old rule
@@ -1210,6 +1219,7 @@ namespace Sci.Production.Cutting
         {
            
             DataTable fabcodetb;
+
             #region 找出有哪些部位
             string fabcodesql = string.Format(@"Select distinct a.LectraCode
             from Order_ColorCombo a ,Order_EachCons b 
@@ -1219,6 +1229,7 @@ namespace Sci.Production.Cutting
             order by LectraCode", masterID);
             DualResult fabresult = DBProxy.Current.Select("Production", fabcodesql, out fabcodetb);
             #endregion
+
             #region 建立Grid
             string settbsql = "Select a.id,article,sizecode,a.qty,0 as balance"; //寫SQL建立Table
             foreach (DataRow dr in fabcodetb.Rows) //組動態欄位
@@ -1232,6 +1243,7 @@ namespace Sci.Production.Cutting
             MyUtility.Tool.ProcessWithDatatable(qtybreakTb, "article", "Select distinct Article from #tmp", out artTb);
             MyUtility.Tool.ProcessWithDatatable(qtybreakTb, "id", "Select distinct id from #tmp", out spTb);
             #endregion
+
             #region 寫入部位數量
             string getqtysql = string.Format(
             @"Select b.article,b.sizecode,b.qty,c.LectraCode,b.orderid 
@@ -1250,9 +1262,9 @@ namespace Sci.Production.Cutting
                     //gridselect[0][dr["PatternPanel"].ToString()] = MyUtility.Convert.GetDecimal((gridselect[0][dr["PatternPanel"].ToString()])) + MyUtility.Convert.GetDecimal(dr["Qty"]);
                     gridselect[0][dr["LectraCode"].ToString()] = MyUtility.Convert.GetDecimal((gridselect[0][dr["LectraCode"].ToString()])) + MyUtility.Convert.GetDecimal(dr["Qty"]);
                 }
-
             }
             #endregion
+
             #region 判斷是否Complete
             DataTable panneltb;
             fabcodesql = string.Format(@"Select distinct a.Article,a.LectraCode
@@ -1274,6 +1286,7 @@ namespace Sci.Production.Cutting
                 dr["balance"] = minqty;
             }
             #endregion
+
         }
 
         private void sorting(string sort)
@@ -1403,6 +1416,7 @@ namespace Sci.Production.Cutting
 
             #endregion     
             this.RenewData();
+            sorting(comboBox1.Text);  //避免順序亂掉
             this.OnDetailEntered();
 
         }
@@ -1443,6 +1457,7 @@ namespace Sci.Production.Cutting
             var frm = new Sci.Production.Cutting.P02_PackingMethod(false,CurrentMaintain["id"].ToString(),null,null);
             frm.ShowDialog(this);
             this.RenewData();
+            sorting(comboBox1.Text);  //避免順序亂掉
             this.OnDetailEntered();
         }
 
@@ -1933,6 +1948,7 @@ namespace Sci.Production.Cutting
             var frm = new Sci.Production.Cutting.P02_PatternPanel(!this.EditMode && MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]), dr["Ukey"].ToString(), null, null, layersTb);
             frm.ShowDialog(this);
             this.RenewData();
+            sorting(comboBox1.Text);  //避免順序亂掉
             this.OnDetailEntered();
         }
 
@@ -1948,11 +1964,13 @@ namespace Sci.Production.Cutting
         {
             base.ClickEditAfter();
             int serial = 1;
+            this.detailgridbs.SuspendBinding();
             foreach (DataRow dr in DetailDatas)
             {
                 dr["SORT_NUM"] = serial;
                 serial++;
             }
+            this.detailgridbs.ResumeBinding();
         }
 
 
