@@ -73,10 +73,11 @@ namespace Sci.Production.Warehouse
             {
                 DoSubForm.IsSupportDelete = false;
                 DoSubForm.IsSupportNew = false;
+                subform.parentData = this.CurrentDetailData;
                 OpenSubDetailPage();
             };
             #endregion
-
+            //DoSubForm
             #region -- Seq 右鍵開窗 --
 
             Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings ts2 = new DataGridViewGeneratorMaskedTextColumnSettings();
@@ -194,7 +195,7 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivision
 
         protected override void OpenSubDetailPage()
         {
-            subform.master = CurrentMaintain;
+            subform.master = CurrentMaintain;            
             base.OpenSubDetailPage();
         }
 
