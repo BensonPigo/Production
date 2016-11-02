@@ -414,7 +414,22 @@ group by a.Seq1,a.Seq2, left(a.Seq1+' ',3)+a.Seq2,a.Refno,[dbo].getMtlDesc(a.POI
                         ((DataTable)detailgridbs.DataSource).ImportRow(dr);
                     }
                 }
-
+                displayBox4.Value = MyUtility.GetValue.Lookup("StyleID", MyUtility.Convert.GetString(CurrentMaintain["POID"]), "Orders", "ID");
+                DataRow POData;
+                if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])), out POData))
+                {
+                    txttpeuser1.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POSMR"]);
+                    txttpeuser2.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POHandle"]);
+                    txttpeuser4.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCSMR"]);
+                    txttpeuser5.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCHandle"]);
+                }
+                else
+                {
+                    txttpeuser1.DisplayBox1Binding = "";
+                    txttpeuser2.DisplayBox1Binding = "";
+                    txttpeuser4.DisplayBox1Binding = "";
+                    txttpeuser5.DisplayBox1Binding = "";
+                }
             }
         }
 
