@@ -67,7 +67,7 @@
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 66);
+            this.masterpanel.Size = new System.Drawing.Size(903, 66);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
@@ -84,7 +84,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 66);
-            this.detailpanel.Size = new System.Drawing.Size(892, 283);
+            this.detailpanel.Size = new System.Drawing.Size(903, 380);
             // 
             // gridicon
             // 
@@ -94,7 +94,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 283);
+            this.detailgridcont.Size = new System.Drawing.Size(903, 380);
             // 
             // detail2
             // 
@@ -108,9 +108,19 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(903, 484);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(903, 446);
+            // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.button3);
+            this.detailbtm.Location = new System.Drawing.Point(0, 446);
+            this.detailbtm.Size = new System.Drawing.Size(903, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -233,7 +243,7 @@
             // button3
             // 
             this.button3.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button3.Location = new System.Drawing.Point(681, 4);
+            this.button3.Location = new System.Drawing.Point(761, 3);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(130, 30);
             this.button3.TabIndex = 3;
