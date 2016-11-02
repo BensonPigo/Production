@@ -85,7 +85,6 @@
             this.displayBox5 = new Sci.Win.UI.DisplayBox();
             this.numericBox1 = new Sci.Win.UI.NumericBox();
             this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.button10 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -109,7 +108,6 @@
             this.detailcont.Controls.Add(this.dateBox11);
             this.detailcont.Controls.Add(this.button9);
             this.detailcont.Controls.Add(this.dateBox10);
-            this.detailcont.Controls.Add(this.button10);
             this.detailcont.Controls.Add(this.button11);
             this.detailcont.Controls.Add(this.button12);
             this.detailcont.Controls.Add(this.button5);
@@ -536,6 +534,7 @@
             // 
             // button1
             // 
+            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button1.Location = new System.Drawing.Point(734, 14);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(151, 24);
@@ -546,6 +545,7 @@
             // 
             // button2
             // 
+            this.button2.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button2.Location = new System.Drawing.Point(734, 44);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(151, 24);
@@ -556,6 +556,7 @@
             // 
             // button3
             // 
+            this.button3.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button3.Location = new System.Drawing.Point(734, 104);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(151, 24);
@@ -566,6 +567,7 @@
             // 
             // button4
             // 
+            this.button4.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button4.Location = new System.Drawing.Point(734, 74);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(151, 24);
@@ -575,7 +577,8 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(734, 260);
+            this.button5.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.button5.Location = new System.Drawing.Point(734, 210);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(151, 24);
             this.button5.TabIndex = 47;
@@ -584,6 +587,7 @@
             // 
             // button7
             // 
+            this.button7.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button7.Location = new System.Drawing.Point(734, 164);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(151, 42);
@@ -594,6 +598,7 @@
             // 
             // button8
             // 
+            this.button8.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button8.Location = new System.Drawing.Point(734, 134);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(151, 24);
@@ -604,7 +609,8 @@
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(734, 350);
+            this.button9.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.button9.Location = new System.Drawing.Point(734, 300);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(151, 24);
             this.button9.TabIndex = 53;
@@ -614,7 +620,8 @@
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(734, 320);
+            this.button11.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.button11.Location = new System.Drawing.Point(734, 270);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(151, 24);
             this.button11.TabIndex = 51;
@@ -623,7 +630,8 @@
             // 
             // button12
             // 
-            this.button12.Location = new System.Drawing.Point(734, 290);
+            this.button12.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.button12.Location = new System.Drawing.Point(734, 240);
             this.button12.Name = "button12";
             this.button12.Size = new System.Drawing.Size(151, 24);
             this.button12.TabIndex = 50;
@@ -735,15 +743,6 @@
             0,
             0});
             // 
-            // button10
-            // 
-            this.button10.Location = new System.Drawing.Point(734, 212);
-            this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(151, 42);
-            this.button10.TabIndex = 52;
-            this.button10.Text = "Material Inspection List";
-            this.button10.UseVisualStyleBackColor = true;
-            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(904, 504);
@@ -827,6 +826,5 @@
         private Win.UI.DisplayBox displayBox5;
         private Win.UI.NumericBox numericBox2;
         private Win.UI.NumericBox numericBox1;
-        private Win.UI.Button button10;
     }
 }
