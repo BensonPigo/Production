@@ -23,17 +23,32 @@ namespace Sci.Production.Warehouse
             get;
             set;
         }
-
+        public DataRow parentData;
         public P11_Detail()
         {
             InitializeComponent();
             this.KeyField1 = "id";
             this.KeyField2 = "Issue_DetailUkey";
+            
         }
+        protected override void OnSaveAfter()
+        {
+            base.OnSaveAfter();
+            parentData["output"] = string.Join(" , ",
+                    this.CurrentSubDetailDatas
+                    .AsEnumerable()
+                    .Where(row=> !MyUtility.Check.Empty(row["Qty"]) )
+                    .Select(row=> row["SizeCode"].ToString()+"*"+row["Qty"].ToString())
+                
+                );
 
+            
+            
+        }
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            
         }
 
         private DualResult matrix_Reload()
@@ -126,7 +141,7 @@ from dbo.po_supp_detail where id='{0}' and seq1='{1}' and seq2='{2}'"
             }
             #endregion
         }
-
+        
         protected override bool OnGridSetup()
         {
             Helper.Controls.Grid.Generator(this.grid)
