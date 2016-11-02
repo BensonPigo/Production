@@ -67,7 +67,7 @@
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(903, 66);
+            this.masterpanel.Size = new System.Drawing.Size(971, 71);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
@@ -83,18 +83,18 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 66);
-            this.detailpanel.Size = new System.Drawing.Size(903, 380);
+            this.detailpanel.Location = new System.Drawing.Point(0, 71);
+            this.detailpanel.Size = new System.Drawing.Size(971, 439);
             // 
             // gridicon
             // 
             this.gridicon.Enabled = false;
-            this.gridicon.Location = new System.Drawing.Point(791, 31);
+            this.gridicon.Location = new System.Drawing.Point(791, 36);
             this.gridicon.Visible = false;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(903, 380);
+            this.detailgridcont.Size = new System.Drawing.Size(971, 439);
             // 
             // detail2
             // 
@@ -110,17 +110,17 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(903, 484);
+            this.detail.Size = new System.Drawing.Size(971, 548);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(903, 446);
+            this.detailcont.Size = new System.Drawing.Size(971, 510);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.button3);
-            this.detailbtm.Location = new System.Drawing.Point(0, 446);
-            this.detailbtm.Size = new System.Drawing.Size(903, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 510);
+            this.detailbtm.Size = new System.Drawing.Size(971, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -134,7 +134,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(911, 513);
+            this.tabs.Size = new System.Drawing.Size(979, 577);
             // 
             // label1
             // 
@@ -206,9 +206,9 @@
             // button1
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button1.Location = new System.Drawing.Point(630, 9);
+            this.button1.Location = new System.Drawing.Point(612, 5);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(181, 50);
+            this.button1.Size = new System.Drawing.Size(173, 63);
             this.button1.TabIndex = 11;
             this.button1.Text = "Revise from ship plan and FOC/LO packing list";
             this.button1.UseVisualStyleBackColor = true;
@@ -219,7 +219,7 @@
             this.label6.BackColor = System.Drawing.Color.Transparent;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold);
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(827, 5);
+            this.label6.Location = new System.Drawing.Point(791, 5);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(58, 28);
             this.label6.TabIndex = 12;
@@ -232,7 +232,7 @@
             // button2
             // 
             this.button2.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button2.Location = new System.Drawing.Point(818, 32);
+            this.button2.Location = new System.Drawing.Point(852, 5);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(80, 30);
             this.button2.TabIndex = 13;
@@ -263,7 +263,7 @@
             // P06
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(911, 546);
+            this.ClientSize = new System.Drawing.Size(979, 610);
             this.DefaultDetailOrder = "OrderID";
             this.DefaultOrder = "ID";
             this.GridAlias = "Pullout_Detail";
