@@ -92,7 +92,9 @@ namespace Sci.Production.Quality
                 {
                     return;
                 }
-                string sqlcmd1 =string.Format( @"select scirefno from PO_Supp_Detail a,Orders b where a.id=b.POID and a.fabrictype='A'  and a.Scirefno is not null and b.id='{0}' group by a.scirefno"
+                string sqlcmd1 = string.Format(@"select refno from PO_Supp_Detail a,Orders b where a.id=b.POID and a.fabrictype='A'
+                                --and a.Scirefno is not null 
+                and b.id='{0}' group by a.refno"
                     ,textBox1.Text.ToString());
                 SelectItem item1 = new SelectItem(sqlcmd1, "30", dr1["Item"].ToString());
                 DialogResult result1 = item1.ShowDialog();
@@ -107,10 +109,12 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorTextColumnSettings colorSelect = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings itemSelect= new DataGridViewGeneratorTextColumnSettings();
             colorSelect.CellMouseClick += this.colorSelect_CellMouseClick;
-            colorSelect.EditingMouseClick += this.colorSelect_CellMouseClick;
+            colorSelect.EditingMouseDown += this.colorSelect_CellMouseClick;
+
+            //colorSelect.EditingMouseDown
 
             itemSelect.CellMouseClick += this.itemSelect_CellMouseClick;
-            itemSelect.EditingMouseClick += this.itemSelect_CellMouseClick;                     
+            itemSelect.EditingMouseDown += this.itemSelect_CellMouseClick;                     
       
             #endregion                         
              

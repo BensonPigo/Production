@@ -178,7 +178,7 @@ namespace Sci.Production.Quality
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string scalecmd = @"select id,name from Pass1 where Resign is not null";
+                    string scalecmd = @"select id,name from Pass1 where Resign is null";
                     SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["DryScale"].ToString());
                     DialogResult result = item1.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -466,7 +466,7 @@ namespace Sci.Production.Quality
                 string newvalue = e.FormattedValue.ToString();
                 if (this.EditMode == false) return;
                 if (oldvalue == newvalue) return;
-                string dryScale_cmd = string.Format(@"select Inspector from FIR_Laboratory_Crocking a	left join Pass1 b on a.Inspector=b.ID and b.Resign is not null where a.id ='{0}'", maindr["id"]);
+                string dryScale_cmd = string.Format(@"select Inspector from FIR_Laboratory_Crocking a	left join Pass1 b on a.Inspector=b.ID and b.Resign is null where a.id ='{0}'", maindr["id"]);
                 DataRow roll_dr;
                 if (MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
                 {

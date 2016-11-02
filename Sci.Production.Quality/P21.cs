@@ -27,6 +27,7 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
+           this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
         }
         protected override void OnFormLoaded()
         {
@@ -124,17 +125,21 @@ namespace Sci.Production.Quality
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.GarmentDefectTypeid,
+            this.DetailSelectCommand = string.Format(@"
+select a.ID, a.GarmentDefectTypeid,
 a.GarmentDefectCodeID,
 b.Description,
 c.Remark,
 a.Qty,
-a.Action 
+a.Action,
+[CFAAreaID] =d.Id,
+d.Description as AreaDesc
 from CFA_Detail a
 left join GarmentDefectCode b on b.ID=a.GarmentDefectCodeID
 left join Cfa c on a.ID=c.ID
-where a.ID='{0}'
-",masterID);
+left join CFAArea d on a.CFAAreaID=d.Id 
+where a.ID='{0}'",
+ masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
         protected override void OnDetailGridSetup()
@@ -145,6 +150,7 @@ where a.ID='{0}'
             #region MousClick Event
             defectCode.CellMouseClick += (s, e) =>
             {
+                DataRow drDesc;
                 if (e.RowIndex == -1)  return;
                 if (this.EditMode == false) return;
                 if (e.Button== System.Windows.Forms.MouseButtons.Right)
@@ -158,8 +164,44 @@ where a.ID='{0}'
                         return;
                     }
                     dr["GarmentDefectCodeid"] = item.GetSelectedString();
+                    string sqlcmd = string.Format(@"select Description from GarmentDefectCode a inner join Rft_Detail b on a.id=b.GarmentDefectCodeID where b.GarmentDefectCodeID='{0}'", item.GetSelectedString());
+                    if (MyUtility.Check.Seek(sqlcmd, out drDesc))
+                    {
+                        dr["Description"] = drDesc["Description"];
+                    }
+                    else
+                    {
+                        dr["Description"] = "";
+                    }
                 }                 
 
+            };
+            defectCode.EditingMouseDown += (s, e) =>
+            {
+                DataRow drDesc;
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                    string item_cmd = "  select ID from GarmentDefectCode";
+                    SelectItem item = new SelectItem(item_cmd, "15", dr["GarmentDefectCodeid"].ToString());
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    dr["GarmentDefectCodeid"] = item.GetSelectedString();
+                    string sqlcmd = string.Format(@"select Description from GarmentDefectCode a inner join Rft_Detail b on a.id=b.GarmentDefectCodeID where b.GarmentDefectCodeID='{0}'", item.GetSelectedString());
+                    if (MyUtility.Check.Seek(sqlcmd, out drDesc))
+                    {
+                        dr["Description"] = drDesc["Description"];
+                    }
+                    else
+                    {
+                        dr["Description"] = "";
+                    }
+                }
             };
             #endregion
 
@@ -177,13 +219,14 @@ where a.ID='{0}'
                 {
                     if (dt.Rows.Count < 1)
                     {
-                        MyUtility.Msg.InfoBox("Garment Defect CodeID is not exist");
+                        MyUtility.Msg.InfoBox("<Defect Code> is not exist");
                         dr["GarmentDefectCodeid"] = "";
                         return;
                     }
                 }
 
             };
+
             defectQty.CellValidating += (s, e) =>
             {
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
@@ -199,6 +242,8 @@ where a.ID='{0}'
             .Text("GarmentDefectTypeID", header: "Defect Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("GarmentDefectCodeid", header: "Defect Code", width: Widths.AnsiChars(10),settings:defectCode)
             .Text("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
+            .Text("CFAAreaID", header: "Area Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("AreaDesc", header: "Area Desc", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(30))
             .Numeric("qty", header: "No.of Defects", width: Widths.AnsiChars(5),settings:defectQty)
             .Text("Action", header: "Action", width: Widths.AnsiChars(5));
@@ -262,6 +307,13 @@ where a.ID='{0}'
         // save 前檢查
         protected override bool ClickSaveBefore()
         {
+          
+            DataTable gridDT = (DataTable)this.detailgridbs.DataSource;
+            DataTable afterDT = new DataTable();
+            afterDT.Merge(gridDT, true);
+            afterDT.AcceptChanges();
+
+
             if (MyUtility.Check.Empty(this.Audit_Date.Text))
             {
                 MyUtility.Msg.WarningBox("<Audit Date> cannot be empty", "Warning");
@@ -297,7 +349,9 @@ where a.ID='{0}'
                 MyUtility.Msg.WarningBox("<Result> cannot be empty", "Warning");
                 return false;
             }
-            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            //((DataTable)this.detailgridbs.DataSource)
+
+            foreach (DataRow dr in afterDT.Rows)
             {
                 if (MyUtility.Check.Empty(dr["GarmentDefectCodeid"]))
                 {
@@ -356,7 +410,7 @@ where a.ID='{0}'
         // edit前檢查
         protected override bool ClickEditBefore()
         {
-            if (CurrentMaintain["status"] == "CONFIRMED")
+            if (CurrentMaintain["status"].ToString() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
                 return false;
@@ -379,7 +433,7 @@ where a.ID='{0}'
             DualResult dresult;
             string updCmd = "update Cfa set cDate=@cDate,OrderID=@orderID,InspectQty=@InsQty,SewingLineID=@line,CFA=@cfa,Remark=@Remark,DefectQty=@DefectQty where id=@id ";
             List<SqlParameter> spam = new List<SqlParameter>();
-            spam.Add(new SqlParameter("@cDate",Audit_Date.Text));
+            spam.Add(new SqlParameter("@cDate", Audit_Date.Text));
             spam.Add(new SqlParameter("@orderID", SP_text.Text));
             spam.Add(new SqlParameter("@InsQty", InspectQty_text.Text));
             spam.Add(new SqlParameter("@line", Line_text.Text));
@@ -387,7 +441,7 @@ where a.ID='{0}'
             spam.Add(new SqlParameter("@Remark", Remark_text.Text));
             spam.Add(new SqlParameter("@id", CurrentMaintain["id"]));
             spam.Add(new SqlParameter("@DefectQty", DefectsQty_text.Text));
-            if (dresult=DBProxy.Current.Execute(null, updCmd, spam))
+            if (dresult = DBProxy.Current.Execute(null, updCmd, spam))
             {
                 MyUtility.Msg.InfoBox("save successful");
             }

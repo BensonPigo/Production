@@ -173,6 +173,10 @@
             // 
             this.gridicon.Location = new System.Drawing.Point(897, 242);
             // 
+            // refresh
+            // 
+            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
+            // 
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(1223, 273);

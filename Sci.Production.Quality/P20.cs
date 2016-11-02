@@ -48,10 +48,11 @@ namespace Sci.Production.Quality
             string textValue = this.txtSP.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtSP.OldValue)
             {
-                if (!MyUtility.Check.Seek(string.Format(@"select id from Orders where ID='{0}' and FactoryID='{1}'", textValue, Sci.Env.User.Factory)))
+                // 20161101 willy 修改and to or 原因文件上所示：編輯狀態下判斷若RFT.OrderID # Order.ID 或　Order.Factoryid # 登入工廠
+                if (!MyUtility.Check.Seek(string.Format(@"select id from Orders where ID='{0}' and MDivisionID='{1}'", textValue, Sci.Env.User.Keyword)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< SP# > does not exist OR Factory is not match !!", textValue));
-                    this.txtSP.Text = "";
+                    this.txtSP.Text = "";                                       
                     e.Cancel = true;
                     return;
                 }
@@ -61,6 +62,15 @@ namespace Sci.Production.Quality
         //refresh
         protected override void OnDetailEntered()
         {
+           
+            //add column 避免add沒有Description可使用
+            DataTable dt = (DataTable)detailgridbs.DataSource;
+            if (!dt.Columns.Contains("Description"))
+            {
+                 dt.Columns.Add("Description", typeof(string));
+            }
+           // dt.Columns.Add("Description", typeof(string));
+
             DataRow dr;
             sql = string.Format(@"select B.StyleID , C.SewingCell , case when B.Dest is null then '' else B.Dest+'-'+D.NameEN end as Dest , B.CPU , Convert(varchar(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))) as RFT_percentage
                                 from Rft A
@@ -86,7 +96,25 @@ namespace Sci.Production.Quality
 
             base.OnDetailEntered();
         }
+        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
+        {
+            DataTable dt = (DataTable)e.Details;
+            dt.Columns.Add("Description", typeof(string));
 
+            foreach (DataRow dr in dt.Rows)
+            {
+                sql = string.Format(@"select Description from GarmentDefectCode where ID='{0}'", dr["GarmentDefectCodeID"].ToString().Trim());
+                if (MyUtility.Check.Seek(sql, out ROW))
+                {
+                    dr["Description"] = ROW["Description"];
+                }
+                else
+                {
+                    dr["Description"] = "";
+                }
+            }
+            return base.OnRenewDataDetailPost(e);
+        }
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings GarmentDefectCodeIDCell = new DataGridViewGeneratorTextColumnSettings();
@@ -99,7 +127,8 @@ namespace Sci.Production.Quality
                 if (this.EditMode == false) return;
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
-                    var dr = this.CurrentDetailData;
+                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                   
                     string item_cmd = "Select ID from GarmentDefectCode ";
 
                     SelectItem item = new SelectItem(item_cmd, "10", dr["GarmentDefectCodeID"].ToString());
@@ -122,6 +151,7 @@ namespace Sci.Production.Quality
                 DataRow drDesc;
                 if (e.RowIndex == -1) return;
                 if (this.EditMode == false) return;
+             
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     var dr = this.CurrentDetailData;
@@ -143,7 +173,7 @@ namespace Sci.Production.Quality
                 }
             };
             #endregion
-
+            
             #region CellValidating
             GarmentDefectCodeIDCell.CellValidating += (s, e) =>
             {
@@ -173,18 +203,7 @@ namespace Sci.Production.Quality
 
         }
 
-        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
-        {
-            DataTable dt = (DataTable)e.Details;
-            dt.Columns.Add("Description", typeof(string));
-
-            foreach (DataRow dr in dt.Rows)
-            {
-                sql = string.Format(@"select Description from GarmentDefectCode where ID='{0}'" , dr["GarmentDefectCodeID"].ToString().Trim());
-                if (MyUtility.Check.Seek(sql, out ROW)) dr["Description"] = ROW["Description"];
-            }
-            return base.OnRenewDataDetailPost(e);
-        }
+      
 
         //[Encode][Amend]
         private void btnEncode_Click(object sender, EventArgs e)
@@ -265,6 +284,7 @@ namespace Sci.Production.Quality
             //5.當RFT.DefectQty大於RFT.InspQty則Show Message 並Return 不可存檔
             if (Convert.ToDecimal(CurrentMaintain["DefectQty"]) > Convert.ToDecimal(CurrentMaintain["InspectQty"]))
             {
+                
                 MyUtility.Msg.WarningBox("DefectQty can not exceed InspectQty !!", "Warning");
                 return false;
             }
@@ -277,7 +297,7 @@ namespace Sci.Production.Quality
             DataRow dr;
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || txtLine.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select distinct id from SewingLine", "10", this.txtLine.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"select distinct sewinglineid from Rft where OrderID='{0}'",this.txtSP.Text), "10", this.txtLine.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.txtLine.Text = item.GetSelectedString();
@@ -299,6 +319,14 @@ namespace Sci.Production.Quality
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtLine.OldValue)
             {
                 if (!MyUtility.Check.Seek(string.Format(@"select id from SewingLine where id = '{0}'", textValue)))
+                {                   
+                    MyUtility.Msg.WarningBox(string.Format("< Line# : {0} > not found !!", textValue));
+                    this.txtLine.Text = "";
+                    e.Cancel = true;
+                    return;                   
+                }
+                
+                if (!MyUtility.Check.Seek(string.Format(@"select id from Rft where orderid = '{0}' and sewingLineID='{1}'", this.txtSP.Text, textValue)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Line# : {0} > not found !!", textValue));
                     this.txtLine.Text = "";
@@ -340,6 +368,26 @@ namespace Sci.Production.Quality
             this.NumRFT.Text="";
             this.NumCPU.Text = "";
             return base.ClickNew();
+        }
+
+        private void txtSP_Validated(object sender, EventArgs e)
+        {
+        
+            if (MyUtility.Check.Empty(this.txtSP.Text)) return;
+            DataTable dt;
+            DualResult result;
+            string sqlcmd = string.Format(@"select StyleID,Dest,CPU from Orders where id='{0}' ", txtSP.Text.ToString());
+            result = DBProxy.Current.Select(null, sqlcmd,out dt);            
+            if (result)
+            {
+                if (dt.Rows.Count>0)
+                {
+                    DisplayStyle.Text = dt.Rows[0]["styleid"].ToString();
+                    DisplayDest.Text = dt.Rows[0]["dest"].ToString();
+                    NumCPU.Text = dt.Rows[0]["cpu"].ToString();
+                }
+               
+            }
         }
     }
 }

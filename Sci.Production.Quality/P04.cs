@@ -304,55 +304,6 @@ namespace Sci.Production.Quality
                         }                        
                     }
                 };
-
-            //SendChangeCell.CellValidating += (s, e) =>
-            //{
-            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-            //    if (dr.RowState == DataRowState.Modified)
-            //    {
-            //        DataTable dt;
-            //        string cmd = "select * from pass1 where id=@id and Resign is not null";
-            //        List<SqlParameter> spam = new List<SqlParameter>();
-            //        spam.Add(new SqlParameter("@id", e.FormattedValue));
-            //        DualResult result;
-            //        if (result = DBProxy.Current.Select(null, cmd, spam, out dt))
-            //        {
-            //            if (dt.Rows.Count > 0)
-            //            {
-            //                dr["EditName"] = loginID;
-            //                dr["EditDate"] = DateTime.Now.ToShortDateString();
-            //                dr["sender"] = e.FormattedValue;
-            //               // dr["SendDate"] = e.FormattedValue;
-            //            }
-            //        }
-            //    }
-            //};
-
-
-            //ReceiverChangeCell.CellValidating += (s, e) =>
-            //{
-            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
-            //    if (dr.RowState == DataRowState.Modified)
-            //    {
-            //        DataTable dt;
-            //        string cmd = "select * from pass1 where id=@id and Resign is not null";
-            //        List<SqlParameter> spam = new List<SqlParameter>();
-            //        spam.Add(new SqlParameter("@id", e.FormattedValue));                   
-            //        DualResult result;
-            //        if (result = DBProxy.Current.Select(null, cmd, spam, out dt) )
-            //        {
-            //            if (dt.Rows.Count > 0 )
-            //            {
-            //                dr["EditName"] = loginID;
-            //                dr["EditDate"] = DateTime.Now.ToShortDateString();
-            //                dr["Receiver"] = e.FormattedValue;
-            //               // dr["ReceiveDate"] = e.FormattedValue;
-            //            }
-            //        }
-                   
-            //    }     
-                    
-            //};
            
             #endregion
 

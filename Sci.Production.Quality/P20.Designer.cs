@@ -149,6 +149,10 @@
             // 
             this.gridicon.Location = new System.Drawing.Point(769, 135);
             // 
+            // refresh
+            // 
+            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
+            // 
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(876, 192);
@@ -194,8 +198,9 @@
             this.txtSP.Location = new System.Drawing.Point(66, 33);
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(118, 23);
-            this.txtSP.TabIndex = 1;
+            this.txtSP.TabIndex = 3;
             this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.txtSP_Validating);
+            this.txtSP.Validated += new System.EventHandler(this.txtSP_Validated);
             // 
             // lbDate
             // 
@@ -249,7 +254,7 @@
             this.txtLine.Location = new System.Drawing.Point(66, 87);
             this.txtLine.Name = "txtLine";
             this.txtLine.Size = new System.Drawing.Size(118, 23);
-            this.txtLine.TabIndex = 3;
+            this.txtLine.TabIndex = 4;
             this.txtLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLine_PopUp);
             this.txtLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtLine_Validating);
             // 
@@ -280,7 +285,7 @@
             this.txtRemark.Location = new System.Drawing.Point(77, 140);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(521, 23);
-            this.txtRemark.TabIndex = 5;
+            this.txtRemark.TabIndex = 7;
             // 
             // lbRemark
             // 
@@ -349,7 +354,7 @@
             0,
             0});
             this.NumInspected.Size = new System.Drawing.Size(100, 23);
-            this.NumInspected.TabIndex = 7;
+            this.NumInspected.TabIndex = 5;
             this.NumInspected.Value = new decimal(new int[] {
             0,
             0,
@@ -369,7 +374,7 @@
             0,
             0});
             this.NumRejected.Size = new System.Drawing.Size(100, 23);
-            this.NumRejected.TabIndex = 8;
+            this.NumRejected.TabIndex = 6;
             this.NumRejected.Value = new decimal(new int[] {
             0,
             0,
@@ -486,7 +491,7 @@
             this.comboShift.Location = new System.Drawing.Point(296, 5);
             this.comboShift.Name = "comboShift";
             this.comboShift.Size = new System.Drawing.Size(150, 24);
-            this.comboShift.TabIndex = 6;
+            this.comboShift.TabIndex = 1;
             this.comboShift.Type = "SewingOutput_Shift";
             // 
             // comboTeam
@@ -499,7 +504,7 @@
             this.comboTeam.Location = new System.Drawing.Point(576, 6);
             this.comboTeam.Name = "comboTeam";
             this.comboTeam.Size = new System.Drawing.Size(98, 24);
-            this.comboTeam.TabIndex = 11;
+            this.comboTeam.TabIndex = 2;
             // 
             // NumCPU
             // 

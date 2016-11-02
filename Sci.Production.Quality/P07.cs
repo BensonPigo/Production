@@ -311,9 +311,7 @@ namespace Sci.Production.Quality
         }
 
         private void OvenTest()
-        {
-            //int selectCellOut1 = detailgrid.Rows.GetRowCount(DataGridViewElementStates.Selected);
-            //int selectCellOut2 = detailgrid.GetCellCount(DataGridViewElementStates.Selected);
+        {           
             var dr = this.CurrentDetailData;
             if (dr == null) return;
             string currentID = this.CurrentDetailData["ID"].ToString();

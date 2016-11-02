@@ -69,24 +69,26 @@
             // 
             // txtID
             // 
-            this.txtID.BackColor = System.Drawing.Color.White;
+            this.txtID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
-            this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtID.IsSupportEditMode = false;
             this.txtID.Location = new System.Drawing.Point(195, 45);
             this.txtID.Name = "txtID";
+            this.txtID.ReadOnly = true;
             this.txtID.Size = new System.Drawing.Size(100, 23);
-            this.txtID.TabIndex = 2;
+            this.txtID.TabIndex = 0;
             // 
             // txtDesc
             // 
-            this.txtDesc.BackColor = System.Drawing.Color.White;
-            this.txtDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "desc", true));
-            this.txtDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
+            this.txtDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtDesc.Location = new System.Drawing.Point(195, 88);
             this.txtDesc.Name = "txtDesc";
+            this.txtDesc.ReadOnly = true;
             this.txtDesc.Size = new System.Drawing.Size(502, 23);
-            this.txtDesc.TabIndex = 3;
+            this.txtDesc.TabIndex = 2;
             // 
             // chkJunk
             // 
@@ -96,7 +98,7 @@
             this.chkJunk.Location = new System.Drawing.Point(314, 47);
             this.chkJunk.Name = "chkJunk";
             this.chkJunk.Size = new System.Drawing.Size(57, 21);
-            this.chkJunk.TabIndex = 24;
+            this.chkJunk.TabIndex = 1;
             this.chkJunk.Text = "Junk";
             this.chkJunk.UseVisualStyleBackColor = true;
             // 
