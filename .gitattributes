@@ -88,6 +88,8 @@ Database/dbo/Functions/getUsdPrice.sql -text
 Database/dbo/Functions/getVNUnitTransfer.sql -text
 Database/dbo/Stored[!!-~]Procedures/BoaExpend.sql -text
 Database/dbo/Stored[!!-~]Procedures/BoaExpend_Insert.sql -text
+Database/dbo/Stored[!!-~]Procedures/Create_CDC.sql -text
+Database/dbo/Stored[!!-~]Procedures/DailyImport.sql -text
 Database/dbo/Stored[!!-~]Procedures/dbo.insertMygridstd2.sql -text
 Database/dbo/Stored[!!-~]Procedures/insertMygridstd2.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_APSDataDownLoad.sql -text
@@ -138,6 +140,7 @@ Database/dbo/Tables/Capacity.sql -text
 Database/dbo/Tables/Carrier.sql -text
 Database/dbo/Tables/Carrier_FtyRule.sql -text
 Database/dbo/Tables/Cfa.sql -text
+Database/dbo/Tables/CfaArea.sql -text
 Database/dbo/Tables/Cfa_Detail.sql -text
 Database/dbo/Tables/ChgOver.sql -text
 Database/dbo/Tables/ChgOverCheckList.sql -text
@@ -487,6 +490,10 @@ Database/dbo/Tables/TimeStudyHistory.sql -text
 Database/dbo/Tables/TimeStudyHistory_Detail.sql -text
 Database/dbo/Tables/TimeStudy_Detail.sql -text
 Database/dbo/Tables/ToMDivision.sql -text
+Database/dbo/Tables/TransExport.sql -text
+Database/dbo/Tables/TransImport.sql -text
+Database/dbo/Tables/TransLog.sql -text
+Database/dbo/Tables/TransRegion.sql -text
 Database/dbo/Tables/TransferIn.sql -text
 Database/dbo/Tables/TransferIn_Detail.sql -text
 Database/dbo/Tables/TransferOut.sql -text
@@ -519,6 +526,7 @@ Database/dbo/Tables/WorkOrder_Estcutdate.sql -text
 Database/dbo/Tables/WorkOrder_PatternPanel.sql -text
 Database/dbo/Tables/WorkOrder_SizeRatio.sql -text
 Database/dbo/Tables/dbo.InventoryRefno.sql -text
+Database/dbo/Views/ShowName.sql -text
 Database/dbo/Views/View_OrderFAColor.sql -text
 Database/dbo/Views/View_Order_Artworks.sql -text
 Database/dbo/Views/View_Orders_subprocess.sql -text
