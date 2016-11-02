@@ -23,17 +23,6 @@ namespace Sci.Production.PPIC
                 IsSupportNew = false;
             }
 
-            #region SCI Job Tracking System:0000162:登入工廠若非sample room，則不能新增/刪除/修改。
-            sqlCommand = "select IsSampleRoom from factory where ID = '" + Sci.Env.User.Factory + "'";
-            string IsSampleRoom = MyUtility.GetValue.Lookup(sqlCommand, null);
-            if (IsSampleRoom.ToUpper() == "FALSE")
-            {
-                IsSupportDelete = false;
-                IsSupportEdit = false;
-                IsSupportNew = false;
-            }
-            #endregion
-
             InitializeComponent();
             this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
         }
