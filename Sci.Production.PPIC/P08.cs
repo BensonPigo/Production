@@ -371,6 +371,7 @@ order by rd.Seq1,rd.Seq2", masterID);
         //SP No.
         private void textBox1_Validated(object sender, EventArgs e)
         {
+            
             if (EditMode && !MyUtility.Check.Empty(textBox1.Text) && textBox1.OldValue != textBox1.Text)
             {
                 //清空表身Grid資料
@@ -404,6 +405,22 @@ group by f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2,f.Refno,[dbo].getMtlDesc(f.POI
                         dr.SetAdded();
                         ((DataTable)detailgridbs.DataSource).ImportRow(dr);
                     }
+                }
+                displayBox4.Value = MyUtility.GetValue.Lookup("StyleID", MyUtility.Convert.GetString(CurrentMaintain["POID"]), "Orders", "ID");
+                DataRow POData;
+                if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])), out POData))
+                {
+                    txttpeuser1.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POSMR"]);
+                    txttpeuser2.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POHandle"]);
+                    txttpeuser4.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCSMR"]);
+                    txttpeuser5.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCHandle"]);
+                }
+                else
+                {
+                    txttpeuser1.DisplayBox1Binding = "";
+                    txttpeuser2.DisplayBox1Binding = "";
+                    txttpeuser4.DisplayBox1Binding = "";
+                    txttpeuser5.DisplayBox1Binding = "";
                 }
             }
         }
