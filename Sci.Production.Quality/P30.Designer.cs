@@ -62,7 +62,7 @@
             this.textBox14 = new Sci.Win.UI.TextBox();
             this.textBox15 = new Sci.Win.UI.TextBox();
             this.textBox16 = new Sci.Win.UI.TextBox();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnFinished = new Sci.Win.UI.Button();
             this.dropDownListTableAdapter1 = new Sci.Trade.Report.GSchemas.GLOTableAdapters.DropDownListTableAdapter();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -80,7 +80,7 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.button1);
+            this.masterpanel.Controls.Add(this.btnFinished);
             this.masterpanel.Controls.Add(this.textBox16);
             this.masterpanel.Controls.Add(this.textBox15);
             this.masterpanel.Controls.Add(this.textBox14);
@@ -151,7 +151,7 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox14, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox15, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox16, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnFinished, 0);
             // 
             // detailpanel
             // 
@@ -551,15 +551,16 @@
             this.textBox16.Size = new System.Drawing.Size(42, 23);
             this.textBox16.TabIndex = 34;
             // 
-            // button1
+            // btnFinished
             // 
-            this.button1.Location = new System.Drawing.Point(628, 134);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(116, 30);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Finished";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnFinished.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnFinished.Location = new System.Drawing.Point(628, 134);
+            this.btnFinished.Name = "btnFinished";
+            this.btnFinished.Size = new System.Drawing.Size(116, 30);
+            this.btnFinished.TabIndex = 4;
+            this.btnFinished.Text = "Finished";
+            this.btnFinished.UseVisualStyleBackColor = true;
+            this.btnFinished.Click += new System.EventHandler(this.button1_Click);
             // 
             // dropDownListTableAdapter1
             // 
@@ -623,7 +624,7 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnFinished;
         private Win.UI.TextBox textBox16;
         private Win.UI.TextBox textBox15;
         private Win.UI.TextBox textBox14;

@@ -47,6 +47,26 @@ namespace Sci.Production.Quality
            
         }
         
+        protected override void OnEditModeChanged()
+        {
+            //if (EditMode)
+            //{
+            //    this.btnFinished.Enabled = true;
+            //}
+            //else
+            //{
+            //    this.btnFinished.Enabled = false;
+            //}
+            base.OnEditModeChanged();
+        }
+        //public void Grid_editingControl(object sender, DataGridViewTextBoxEditingControlEventArgs e)
+        //{
+        //    this.
+        //}
+        //public void Grid_editing(System.Windows.Forms.MouseButtons eButton, int eRowIndex)
+        //{
+        //    DataGridViewTextBoxEditingControl edd = (DataGridViewTextBoxEditingControl)eButton.Control;
+        //}
         public void colorSelect_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             this.colorSelect_CellMouseClick(e.Button, e.RowIndex);
@@ -92,8 +112,8 @@ namespace Sci.Production.Quality
                 {
                     return;
                 }
-                string sqlcmd1 = string.Format(@"select refno from PO_Supp_Detail a,Orders b where a.id=b.POID and a.fabrictype='A'
-                                --and a.Scirefno is not null 
+                string sqlcmd1 = string.Format(@"select distinct refno from PO_Supp_Detail a,Orders b where a.id=b.POID and a.fabrictype='A'
+                and a.Scirefno is not null 
                 and b.id='{0}' group by a.refno"
                     ,textBox1.Text.ToString());
                 SelectItem item1 = new SelectItem(sqlcmd1, "30", dr1["Item"].ToString());
@@ -107,7 +127,9 @@ namespace Sci.Production.Quality
         {
             #region OnClick Right Click Even
             DataGridViewGeneratorTextColumnSettings colorSelect = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings itemSelect= new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings itemSelect = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings typeSetting = new DataGridViewGeneratorTextColumnSettings();
+            typeSetting.CharacterCasing = CharacterCasing.Normal;
             colorSelect.CellMouseClick += this.colorSelect_CellMouseClick;
             colorSelect.EditingMouseDown += this.colorSelect_CellMouseClick;
 
@@ -123,13 +145,12 @@ namespace Sci.Production.Quality
 
             //設定Grid屬性 text 對應欄位值 header :顯示欄位名稱
 
-            Helper.Controls.Grid.Generator(this.detailgrid)
-                //.ComboBox("Type", header: "Main Item NO", width: Ict.Win.Widths.AnsiChars(20), iseditable: true).Get(out cbb_MD_type)
-                .Text("Type", header: "Main Item NO", width: Ict.Win.Widths.AnsiChars(20), iseditingreadonly:true, iseditable: true)
-                .Text("Item", header: "SEQ Ref", width: Ict.Win.Widths.AnsiChars(20),iseditingreadonly : true,settings: itemSelect)
-                .Text("Colorid", header: "Color", width: Ict.Win.Widths.AnsiChars(20),iseditingreadonly:true, settings: colorSelect)
-                 .Date("inspdate", header: "Inspdate", width: Ict.Win.Widths.AnsiChars(18))
-                 .Text("Result", header: "Result", width: Ict.Win.Widths.AnsiChars(50));
+            Helper.Controls.Grid.Generator(this.detailgrid)               
+            .Text("Type", header: "Main Item NO", width: Ict.Win.Widths.AnsiChars(20), iseditingreadonly: true, iseditable: true, settings: typeSetting)
+            .Text("Item", header: "SEQ Ref", width: Ict.Win.Widths.AnsiChars(20),iseditingreadonly : true,settings: itemSelect)
+            .Text("Colorid", header: "Color", width: Ict.Win.Widths.AnsiChars(20),iseditingreadonly:true, settings: colorSelect)
+            .Date("inspdate", header: "Inspdate", width: Ict.Win.Widths.AnsiChars(18))
+            .Text("Result", header: "Result", width: Ict.Win.Widths.AnsiChars(50));
             detailgrid.ValidateControl();
       
         }
@@ -241,8 +262,7 @@ namespace Sci.Production.Quality
                     //MD.PK都要有值才能save
                     if (detailDt.Rows[i]["Result"].ToString()=="" 
                         ||detailDt.Rows[i]["Type"].ToString()==""
-                        ||detailDt.Rows[i]["Item"].ToString()==""
-                        ||detailDt.Rows[i]["Colorid"].ToString()=="")
+                        ||detailDt.Rows[i]["Item"].ToString()=="" )
                     {
                         //刪除
                         detailDt.Rows[i].Delete();
@@ -300,11 +320,11 @@ namespace Sci.Production.Quality
                         MyUtility.Msg.InfoBox("<SEQ Ref> cannot be null !");
                         return false;
                     }
-                    if (MyUtility.Check.Empty(detailDt.Rows[i]["Colorid"].ToString()))
-                    {
-                        MyUtility.Msg.InfoBox("<SEQ Ref>:" + detailDt.Rows[i]["Item"].ToString() + " <Color> cannot be null !");
-                        return false;
-                    }
+                    //if (MyUtility.Check.Empty(detailDt.Rows[i]["Colorid"].ToString()))
+                    //{
+                    //    MyUtility.Msg.InfoBox("<SEQ Ref>:" + detailDt.Rows[i]["Item"].ToString() + " <Color> cannot be null !");
+                    //    return false;
+                    //}
                     if (MyUtility.Check.Empty(detailDt.Rows[i]["Result"].ToString()))
                     {
                         MyUtility.Msg.InfoBox("<Result> cannot be null !");
