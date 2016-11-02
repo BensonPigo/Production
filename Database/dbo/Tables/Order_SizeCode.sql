@@ -3,8 +3,10 @@
     [Seq]       VARCHAR (2)  CONSTRAINT [DF_Order_SizeCode_Seq] DEFAULT ('') NULL,
     [SizeGroup] VARCHAR (1)  CONSTRAINT [DF_Order_SizeCode_SizeGroup] DEFAULT ('') NULL,
     [SizeCode]  VARCHAR (8)  CONSTRAINT [DF_Order_SizeCode_SizeCode] DEFAULT ('') NOT NULL,
-    CONSTRAINT [PK_Order_SizeCode] PRIMARY KEY CLUSTERED ([Id] ASC, [SizeCode] ASC)
+    [Ukey]      BIGINT       NULL
 );
+
+
 
 
 GO
@@ -25,4 +27,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SizeGroup',
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SizeCode', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_SizeCode', @level2type = N'COLUMN', @level2name = N'SizeCode';
+
+
+GO
+CREATE NONCLUSTERED INDEX [idx_sizeCode]
+    ON [dbo].[Order_SizeCode]([Id] ASC, [SizeCode] ASC, [Ukey] ASC);
 

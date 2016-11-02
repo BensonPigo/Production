@@ -14,8 +14,8 @@
     [ArtworkTypeID] VARCHAR (20)    CONSTRAINT [DF_ArtworkAP_ArtworkTypeID] DEFAULT ('') NOT NULL,
     [ApvDate]       DATE            NULL,
     [ApvName]       VARCHAR (10)    CONSTRAINT [DF_ArtworkAP_ApvName] DEFAULT ('') NULL,
-    [TransID]       VARCHAR (16)    CONSTRAINT [DF_ArtworkAP_TransID] DEFAULT ('') NULL,
-    [TransDate]     DATE            NULL,
+    [VoucherID]     VARCHAR (16)    CONSTRAINT [DF_ArtworkAP_TransID] DEFAULT ('') NULL,
+    [VoucherDate]   DATE            NULL,
     [Remark]        NVARCHAR (60)   CONSTRAINT [DF_ArtworkAP_Remark] DEFAULT ('') NULL,
     [AddName]       VARCHAR (10)    CONSTRAINT [DF_ArtworkAP_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME        NULL,
@@ -28,12 +28,14 @@
 
 
 
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ArtworkAP', @level2type = N'COLUMN', @level2name = N'TransID';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'轉傳票日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ArtworkAP', @level2type = N'COLUMN', @level2name = N'TransDate';
+
+
+
+GO
+
 
 
 GO
@@ -118,4 +120,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'核單日�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'核單人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ArtworkAP', @level2type = N'COLUMN', @level2name = N'ApvName';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ArtworkAP', @level2type = N'COLUMN', @level2name = N'VoucherID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'轉傳票日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ArtworkAP', @level2type = N'COLUMN', @level2name = N'VoucherDate';
 

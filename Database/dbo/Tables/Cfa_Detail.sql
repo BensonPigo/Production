@@ -5,8 +5,11 @@
     [Qty]                 NUMERIC (5)    CONSTRAINT [DF_Cfa_Detail_Qty] DEFAULT ((0)) NULL,
     [Action]              VARCHAR (254)  CONSTRAINT [DF_Cfa_Detail_Action] DEFAULT ('') NULL,
     [Remark]              NVARCHAR (254) CONSTRAINT [DF_Cfa_Detail_Remark] DEFAULT ('') NULL,
+    [CFAAreaID]           VARCHAR (3)    NULL,
     CONSTRAINT [PK_Cfa_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [GarmentDefectCodeID] ASC)
 );
+
+
 
 
 GO

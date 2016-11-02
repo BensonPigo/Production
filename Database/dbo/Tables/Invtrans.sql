@@ -28,7 +28,7 @@
     [LimitHandle]      VARCHAR (10)    CONSTRAINT [DF_Invtrans_LimitHandle] DEFAULT ('') NULL,
     [LimitSmr]         VARCHAR (10)    CONSTRAINT [DF_Invtrans_LimitSmr] DEFAULT ('') NULL,
     [AuthMr]           VARCHAR (10)    CONSTRAINT [DF_Invtrans_AuthMr] DEFAULT ('') NULL,
-    [TransId]          VARCHAR (16)    CONSTRAINT [DF_Invtrans_TransId] DEFAULT ('') NULL,
+    [VoucherID]        VARCHAR (16)    CONSTRAINT [DF_Invtrans_TransId] DEFAULT ('') NULL,
     [TransferUkey]     BIGINT          CONSTRAINT [DF_Invtrans_TransferUkey] DEFAULT ((0)) NULL,
     [Po3QtyOld]        NUMERIC (10, 2) CONSTRAINT [DF_Invtrans_Po3QtyOld] DEFAULT ((0)) NULL,
     [InventoryQtyOld]  NUMERIC (10, 2) CONSTRAINT [DF_Invtrans_InventoryQtyOld] DEFAULT ((0)) NULL,
@@ -62,6 +62,8 @@
     [seq70seq2]        VARCHAR (2)     NULL,
     CONSTRAINT [PK_Invtrans] PRIMARY KEY CLUSTERED ([ID] ASC, [Ukey] ASC)
 );
+
+
 
 
 
@@ -197,7 +199,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'允許使�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Invtrans', @level2type = N'COLUMN', @level2name = N'TransId';
+
 
 
 GO
@@ -322,4 +324,8 @@ GO
 CREATE NONCLUSTERED INDEX [Type_ConfirmDate]
     ON [dbo].[Invtrans]([Type] ASC, [ConfirmDate] ASC)
     INCLUDE([ID], [Qty], [TransferFactory], [InventoryUkey], [InventoryRefnoId], [InventoryPOID], [InventorySeq1], [InventorySeq2], [ReasonID], [Refno], [FactoryID], [UnitID], [seq70poid], [seq70seq1], [seq70seq2]);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Invtrans', @level2type = N'COLUMN', @level2name = N'VoucherID';
 

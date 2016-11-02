@@ -47,7 +47,7 @@ BEGIN
 	a.editname+'-'+c.name +' '+convert(varchar, a.editdate,120) as editname ,a.editdate
 		From ThreadAdjust a left join Pass1 c on c.id=a.editname , ThreadAdjust_Detail b  
 			Where b.Refno =@Refno and a.id = b.id  and status = 'Confirmed' and MDivisionid=@MDivisionid and cdate > = @Date1 and cdate < = @Date2 
-			and (isnull(newCone,0)-isnull(NewConeBook,0))!=0 and (isnull(UsedCone,0)-isnull(UsedConeBook,0))!=0 
+			and ((isnull(newCone,0)-isnull(NewConeBook,0))!=0 or (isnull(UsedCone,0)-isnull(UsedConeBook,0))!=0 )
 	
 	insert into #tmp
 	Select a.cdate,a.ID,'P07.Part Location Transfer(In)' as name, b.ThreadColorid,b.Locationto as ThreadLocationid,
@@ -65,6 +65,6 @@ BEGIN
 			Where b.Refno =@Refno and a.id = b.id  and status = 'Confirmed' and MDivisionid=@MDivisionid and cdate > = @Date1 and cdate < = @Date2
 			
 
-	Select * from #tmp order by ThreadColorid,ThreadLocationid,editdate,name,id  
+	Select * from #tmp order by cdate,editdate,ThreadColorid,ThreadLocationid,name,id  
 
 END

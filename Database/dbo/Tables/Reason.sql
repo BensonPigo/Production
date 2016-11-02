@@ -7,7 +7,7 @@
     [ReasonGroup]  VARCHAR (2)    CONSTRAINT [DF_Reason_ReasonGroup] DEFAULT ('') NULL,
     [Junk]         BIT            CONSTRAINT [DF_Reason_Junk] DEFAULT ((0)) NULL,
     [Kpi]          BIT            CONSTRAINT [DF_Reason_Kpi] DEFAULT ((0)) NULL,
-    [AccountNo]    VARCHAR (8)    CONSTRAINT [DF_Reason_AccountNo] DEFAULT ('') NULL,
+    [AccountID]    VARCHAR (8)    CONSTRAINT [DF_Reason_AccountNo] DEFAULT ('') NULL,
     [AddName]      VARCHAR (10)   CONSTRAINT [DF_Reason_AddName] DEFAULT ('') NULL,
     [AddDate]      DATETIME       NULL,
     [EditName]     VARCHAR (10)   CONSTRAINT [DF_Reason_EditName] DEFAULT ('') NULL,
@@ -15,6 +15,8 @@
     [FactoryKpi]   BIT            CONSTRAINT [DF_Reason_FactoryKpi] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Reason] PRIMARY KEY CLUSTERED ([ReasonTypeID] ASC, [ID] ASC)
 );
+
+
 
 
 GO
@@ -54,7 +56,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否扣KP
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科目', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Reason', @level2type = N'COLUMN', @level2name = N'AccountNo';
+
 
 
 GO
@@ -75,4 +77,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否可更新工廠KPI日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Reason', @level2type = N'COLUMN', @level2name = N'FactoryKpi';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科目', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Reason', @level2type = N'COLUMN', @level2name = N'AccountID';
 

@@ -17,13 +17,15 @@
     [Accountant]  VARCHAR (10)    CONSTRAINT [DF_ShippingAP_Accountant] DEFAULT ('') NULL,
     [Status]      VARCHAR (15)    CONSTRAINT [DF_ShippingAP_Status] DEFAULT ('') NULL,
     [ApvDate]     DATETIME        NULL,
-    [VoucherNo]   VARCHAR (16)    CONSTRAINT [DF_ShippingAP_VoucherNo] DEFAULT ('') NULL,
+    [VoucherID]   VARCHAR (16)    CONSTRAINT [DF_ShippingAP_VoucherNo] DEFAULT ('') NULL,
     [AddName]     VARCHAR (10)    CONSTRAINT [DF_ShippingAP_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME        NULL,
     [EditName]    VARCHAR (10)    CONSTRAINT [DF_ShippingAP_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME        NULL,
     CONSTRAINT [PK_ShippingAP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -107,7 +109,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'審核日�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'VoucherNo';
+
 
 
 GO
@@ -128,4 +130,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'MDivisionID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'VoucherID';
 

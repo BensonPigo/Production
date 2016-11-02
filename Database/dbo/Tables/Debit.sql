@@ -18,7 +18,7 @@
     [Subject]        VARCHAR (100)   CONSTRAINT [DF_Debit_Subject] DEFAULT ('') NULL,
     [Handle]         VARCHAR (10)    CONSTRAINT [DF_Debit_Handle] DEFAULT ('') NULL,
     [SMR]            VARCHAR (10)    CONSTRAINT [DF_Debit_SMR] DEFAULT ('') NULL,
-    [TransID]        VARCHAR (16)    CONSTRAINT [DF_Debit_TransID] DEFAULT ('') NULL,
+    [VoucherID]      VARCHAR (16)    CONSTRAINT [DF_Debit_TransID] DEFAULT ('') NULL,
     [BadID]          VARCHAR (11)    CONSTRAINT [DF_Debit_BadID] DEFAULT ('') NULL,
     [Status]         VARCHAR (15)    CONSTRAINT [DF_Debit_Status] DEFAULT ('') NULL,
     [StatusRevise]   DATE            NULL,
@@ -33,8 +33,8 @@
     [OldAmount]      NUMERIC (13, 2) CONSTRAINT [DF_Debit_OldAmount] DEFAULT ((0)) NULL,
     [Type]           VARCHAR (1)     CONSTRAINT [DF_Debit_Type] DEFAULT ('') NULL,
     [ShareFob]       BIT             CONSTRAINT [DF_Debit_ShareFob] DEFAULT ((0)) NULL,
-    [TransidFactory] VARCHAR (16)    CONSTRAINT [DF_Debit_TransidFactory] DEFAULT ('') NULL,
-    [TransidSettle]  VARCHAR (16)    CONSTRAINT [DF_Debit_TransidSettle] DEFAULT ('') NULL,
+    [VoucherFactory] VARCHAR (16)    CONSTRAINT [DF_Debit_TransidFactory] DEFAULT ('') NULL,
+    [VoucherSettle]  VARCHAR (16)    CONSTRAINT [DF_Debit_TransidSettle] DEFAULT ('') NULL,
     [IsSubcon]       BIT             CONSTRAINT [DF_Debit_IsSubcon] DEFAULT ((0)) NULL,
     [LCLName]        NVARCHAR (50)   CONSTRAINT [DF_Debit_LCLName] DEFAULT ('') NULL,
     [LCLCurrency]    VARCHAR (3)     CONSTRAINT [DF_Debit_LCLCurrency] DEFAULT ('') NULL,
@@ -54,6 +54,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'處理人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit', @level2type = N'COLUMN', @level2name = N'Handle';
 
@@ -63,7 +65,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'主管', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit', @level2type = N'COLUMN', @level2name = N'TransID';
+
 
 
 GO
@@ -123,11 +125,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否分�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠傳票號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit', @level2type = N'COLUMN', @level2name = N'TransidFactory';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'台北沖帳傳票號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit', @level2type = N'COLUMN', @level2name = N'TransidSettle';
+
 
 
 GO
@@ -252,4 +254,16 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'主旨', @l
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit', @level2type = N'COLUMN', @level2name = N'MDivisionID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'台北沖帳傳票號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit', @level2type = N'COLUMN', @level2name = N'VoucherSettle';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit', @level2type = N'COLUMN', @level2name = N'VoucherID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠傳票號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit', @level2type = N'COLUMN', @level2name = N'VoucherFactory';
 

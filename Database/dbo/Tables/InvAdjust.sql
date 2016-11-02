@@ -2,7 +2,7 @@
     [ID]               VARCHAR (13)   CONSTRAINT [DF_InvAdjust_ID] DEFAULT ('') NOT NULL,
     [IssueDate]        DATE           NULL,
     [REASON]           VARCHAR (1)    CONSTRAINT [DF_InvAdjust_REASON] DEFAULT ('') NULL,
-    [GarmentInvoiceID]        VARCHAR (25)   CONSTRAINT [DF_InvAdjust_NegoinvID] DEFAULT ('') NULL,
+    [GarmentInvoiceID] VARCHAR (25)   CONSTRAINT [DF_InvAdjust_NegoinvID] DEFAULT ('') NULL,
     [OrderID]          VARCHAR (13)   CONSTRAINT [DF_InvAdjust_OrderID] DEFAULT ('') NULL,
     [PullDate]         DATE           NULL,
     [Ukey_Pullout]     BIGINT         CONSTRAINT [DF_InvAdjust_Pullout3ukey] DEFAULT ('') NULL,
@@ -26,13 +26,15 @@
     [AdjustDocFee]     NUMERIC (7, 2) CONSTRAINT [DF_InvAdjust_AdjustDocFee] DEFAULT ((0)) NULL,
     [AddName]          VARCHAR (10)   CONSTRAINT [DF_InvAdjust_AddName] DEFAULT ('') NULL,
     [AddDate]          DATETIME       NULL,
-    [Eeit_Name]        VARCHAR (10)   CONSTRAINT [DF_InvAdjust_Eeit_Name] DEFAULT ('') NULL,
+    [Edit_Name]        VARCHAR (10)   CONSTRAINT [DF_InvAdjust_Eeit_Name] DEFAULT ('') NULL,
     [EditDate]         DATETIME       NULL,
     [PriceCheckID]     VARCHAR (13)   CONSTRAINT [DF_InvAdjust_PriceCheckID] DEFAULT ('') NULL,
     [OrderShipmodeSeq] VARCHAR (2)    CONSTRAINT [DF_InvAdjust_OrderShipmodeSeq] DEFAULT ('') NULL,
     [MDivisionID]      VARCHAR (8)    CONSTRAINT [DF_InvAdjust_MDivisionID] DEFAULT ('') NULL,
     CONSTRAINT [PK_InvAdjust] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -152,7 +154,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增人�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust', @level2type = N'COLUMN', @level2name = N'Eeit_Name';
+
 
 
 GO
@@ -177,4 +179,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票編�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'應收帳款的立帳傳票編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust', @level2type = N'COLUMN', @level2name = N'ARVoucherID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust', @level2type = N'COLUMN', @level2name = N'Edit_Name';
 

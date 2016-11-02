@@ -11,11 +11,13 @@
     [ShipModeID]   VARCHAR (10)    CONSTRAINT [DF_ShareExpense_ShipModeID] DEFAULT ('') NULL,
     [ShareBase]    VARCHAR (1)     CONSTRAINT [DF_ShareExpense_ShareBase] DEFAULT ('') NULL,
     [FtyWK]        BIT             CONSTRAINT [DF_ShareExpense_FtyWK] DEFAULT ((0)) NULL,
-    [AccountNo]    VARCHAR (8)     CONSTRAINT [DF_ShareExpense_AccountNo] DEFAULT ('') NOT NULL,
     [EditName]     VARCHAR (10)    CONSTRAINT [DF_ShareExpense_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME        NULL,
-    CONSTRAINT [PK_ShareExpense] PRIMARY KEY CLUSTERED ([ShippingAPID] ASC, [BLNo] ASC, [WKNo] ASC, [InvNo] ASC, [AccountNo] ASC)
+    [AccountID]    VARCHAR (8)     CONSTRAINT [DF_ShareExpense_AccountID] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_ShareExpense_1] PRIMARY KEY CLUSTERED ([ShippingAPID] ASC, [BLNo] ASC, [WKNo] ASC, [InvNo] ASC, [AccountID] ASC)
 );
+
+
 
 
 
@@ -75,7 +77,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠自�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科目', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShareExpense', @level2type = N'COLUMN', @level2name = N'AccountNo';
+
 
 
 GO
@@ -88,4 +90,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShareExpense', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科目', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShareExpense', @level2type = N'COLUMN', @level2name = N'AccountID';
 

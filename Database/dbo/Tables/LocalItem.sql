@@ -15,7 +15,7 @@
     [MeterToCone]    NUMERIC (7, 1)  CONSTRAINT [DF_LocalItem_MeterToCone] DEFAULT ((0)) NULL,
     [ThreadTypeID]   VARCHAR (15)    CONSTRAINT [DF_LocalItem_ThreadTypeID] DEFAULT ('') NULL,
     [ThreadTex]      NUMERIC (3)     CONSTRAINT [DF_LocalItem_ThreadTex] DEFAULT ((0)) NULL,
-    [AccountNo]      VARCHAR (8)     CONSTRAINT [DF_LocalItem_AccountNo] DEFAULT ('') NULL,
+    [AccountID]      VARCHAR (8)     CONSTRAINT [DF_LocalItem_AccountNo] DEFAULT ('') NULL,
     [Weight]         NUMERIC (11, 6) CONSTRAINT [DF_LocalItem_Weight] DEFAULT ((0)) NULL,
     [AxleWeight]     NUMERIC (9, 4)  CONSTRAINT [DF_LocalItem_AxleWeight] DEFAULT ((0)) NULL,
     [CurrencyID]     VARCHAR (3)     CONSTRAINT [DF_LocalItem_CurrencyID] DEFAULT ('') NULL,
@@ -35,6 +35,8 @@
     [NLCodeEditDate] DATETIME        NULL,
     CONSTRAINT [PK_LocalItem] PRIMARY KEY CLUSTERED ([RefNo] ASC)
 );
+
+
 
 
 
@@ -108,7 +110,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'線每千�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科目', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalItem', @level2type = N'COLUMN', @level2name = N'AccountNo';
+
 
 
 GO
@@ -141,4 +143,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalItem', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科目', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalItem', @level2type = N'COLUMN', @level2name = N'AccountID';
 

@@ -6,7 +6,7 @@
     [LocalSuppID] VARCHAR (6)     CONSTRAINT [DF_ShipExpense_LocalSuppID] DEFAULT ('') NULL,
     [Price]       NUMERIC (12, 4) CONSTRAINT [DF_ShipExpense_Price] DEFAULT ((0)) NULL,
     [CanvassDate] DATE            NULL,
-    [AccountNo]   VARCHAR (8)     CONSTRAINT [DF_ShipExpense_AccountNo] DEFAULT ('') NULL,
+    [AccountID]   VARCHAR (8)     CONSTRAINT [DF_ShipExpense_AccountNo] DEFAULT ('') NULL,
     [CurrencyID]  VARCHAR (3)     CONSTRAINT [DF_ShipExpense_CurrencyID] DEFAULT ('') NULL,
     [AddName]     VARCHAR (10)    CONSTRAINT [DF_ShipExpense_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME        NULL,
@@ -14,6 +14,8 @@
     [EditDate]    DATETIME        NULL,
     CONSTRAINT [PK_ShipExpense] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -51,7 +53,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'招商日�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科目', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShipExpense', @level2type = N'COLUMN', @level2name = N'AccountNo';
+
 
 
 GO
@@ -72,4 +74,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShipExpense', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科目', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShipExpense', @level2type = N'COLUMN', @level2name = N'AccountID';
 

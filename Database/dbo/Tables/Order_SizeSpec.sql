@@ -3,8 +3,10 @@
     [SizeItem] VARCHAR (3)  CONSTRAINT [DF_Order_SizeSpec_SizeItem] DEFAULT ('') NOT NULL,
     [SizeCode] VARCHAR (8)  CONSTRAINT [DF_Order_SizeSpec_SizeCode] DEFAULT ('') NOT NULL,
     [SizeSpec] VARCHAR (15) CONSTRAINT [DF_Order_SizeSpec_SizeSpec] DEFAULT ('') NULL,
-    CONSTRAINT [PK_Order_SizeSpec] PRIMARY KEY CLUSTERED ([Id] ASC, [SizeItem] ASC, [SizeCode] ASC)
+    [Ukey]     BIGINT       NULL
 );
+
+
 
 
 GO
@@ -29,4 +31,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'尺寸', @l
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'應對尺寸', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_SizeSpec', @level2type = N'COLUMN', @level2name = N'SizeSpec';
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_SizeSpec]
+    ON [dbo].[Order_SizeSpec]([Id] ASC, [SizeItem] ASC, [SizeCode] ASC, [Ukey] ASC);
 

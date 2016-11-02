@@ -19,10 +19,12 @@
     [AddDate]     DATETIME        NULL,
     [EditName]    VARCHAR (10)    CONSTRAINT [DF_LocalAP_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME        NULL,
-    [VoucherNo]   VARCHAR (16)    CONSTRAINT [DF_LocalAP_VarcherNo] DEFAULT ('') NULL,
+    [VoucherID]   VARCHAR (16)    CONSTRAINT [DF_LocalAP_VarcherNo] DEFAULT ('') NULL,
     [Status]      VARCHAR (15)    CONSTRAINT [DF_LocalAP_Status] DEFAULT ('') NULL,
     CONSTRAINT [PK_LocalAP] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
@@ -110,7 +112,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalAP', @level2type = N'COLUMN', @level2name = N'VoucherNo';
+
 
 
 GO
@@ -119,4 +121,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'狀態', @l
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalAP', @level2type = N'COLUMN', @level2name = N'MDivisionID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalAP', @level2type = N'COLUMN', @level2name = N'VoucherID';
 

@@ -23,7 +23,7 @@
     [TaipeiDBC]        BIT             CONSTRAINT [DF_LocalDebit_TaipeiDBC] DEFAULT ((0)) NULL,
     [TaipeiAMT]        NUMERIC (12, 2) CONSTRAINT [DF_LocalDebit_TaipeiAMT] DEFAULT ((0)) NULL,
     [TaipeiCurrencyID] VARCHAR (3)     CONSTRAINT [DF_LocalDebit_TaipeiCurrencyID] DEFAULT ('') NULL,
-    [AccID]            VARCHAR (8)     CONSTRAINT [DF_LocalDebit_AccID] DEFAULT ('') NULL,
+    [AccountID]        VARCHAR (8)     CONSTRAINT [DF_LocalDebit_AccID] DEFAULT ('') NULL,
     [Issuedate]        DATE            NOT NULL,
     [AddName]          VARCHAR (10)    CONSTRAINT [DF_LocalDebit_AddName] DEFAULT ('') NULL,
     [AddDate]          DATETIME        NULL,
@@ -31,6 +31,8 @@
     [EditDate]         DATETIME        NULL,
     CONSTRAINT [PK_LocalDebit] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -134,7 +136,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'台北扣�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科目', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalDebit', @level2type = N'COLUMN', @level2name = N'AccID';
+
 
 
 GO
@@ -178,3 +180,6 @@ BEGIN
 	   UPDATE DBO.LocalDebit SET AmtReviseDate=GETDATE(), AmtReviseName = @EDITNAME WHERE ID = @ID;
 	END
 END
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科目', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalDebit', @level2type = N'COLUMN', @level2name = N'AccountID';
+

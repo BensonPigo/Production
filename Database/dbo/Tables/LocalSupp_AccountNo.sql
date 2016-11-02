@@ -1,13 +1,15 @@
 ﻿CREATE TABLE [dbo].[LocalSupp_AccountNo] (
     [ID]            VARCHAR (8)  CONSTRAINT [DF_LocalSupp_AccountNo_ID] DEFAULT ('') NOT NULL,
     [ArtworkTypeID] VARCHAR (20) CONSTRAINT [DF_LocalSupp_AccountNo_ArtworkTypeID] DEFAULT ('') NOT NULL,
-    [AccountNo]     VARCHAR (8)  CONSTRAINT [DF_LocalSupp_AccountNo_AccountNo] DEFAULT ('') NULL,
+    [AccountID]     VARCHAR (8)  CONSTRAINT [DF_LocalSupp_AccountNo_AccountNo] DEFAULT ('') NULL,
     [AddName]       VARCHAR (10) CONSTRAINT [DF_LocalSupp_AccountNo_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME     NULL,
     [EditName]      VARCHAR (10) CONSTRAINT [DF_LocalSupp_AccountNo_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME     NULL,
     CONSTRAINT [PK_LocalSupp_AccountNo] PRIMARY KEY CLUSTERED ([ID] ASC, [ArtworkTypeID] ASC)
 );
+
+
 
 
 GO
@@ -23,7 +25,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Artwork Typ
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科目', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_AccountNo', @level2type = N'COLUMN', @level2name = N'AccountNo';
+
 
 
 GO
@@ -40,4 +42,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_AccountNo', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科目', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalSupp_AccountNo', @level2type = N'COLUMN', @level2name = N'AccountID';
 

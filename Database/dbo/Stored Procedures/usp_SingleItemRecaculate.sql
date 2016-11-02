@@ -3,7 +3,7 @@
 -- Create date: 2016/05/24
 -- Description:	重算單一項目庫存
 -- =============================================
-CREATE PROCEDURE usp_SingleItemRecaculate
+CREATE PROCEDURE [dbo].[usp_SingleItemRecaculate]
 	@Ukey bigint,
 	@MDivisionid varchar(8),
 	@Poid varchar(13),
@@ -40,7 +40,7 @@ BEGIN
 				USING (SELECT b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,dyelot
 						, sum(AInqty) AInqty,sum(AOutqty) AOutqty,sum(AAdjustQty) AAdjustQty 
 						FROM View_TransactionList b
-						where b.MDivisionid = @MDivisionid and b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 and (AInqty > 0 or AOutqty > 0  or AAdjustQty > 0 )
+						where b.MDivisionid = @MDivisionid and b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 and (AInqty > 0 or AOutqty > 0  or AAdjustQty > 0 ) AND b.status='confirmed'
 						group by b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,dyelot
 						) AS S (MDivisionid,poid,seq1,seq2,roll,dyelot,AInqty,AOutqty,AAdjustQty)
 				ON T.MDIVISIONID = S.MDivisionid AND T.POID = S.POID AND T.SEQ1 =  S.SEQ1 AND T.SEQ2 = S.SEQ2 AND T.ROLL = S.ROLL and t.stocktype='B'
@@ -55,7 +55,7 @@ BEGIN
 				USING (SELECT b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,dyelot
 						, sum(BInqty) BInqty,sum(BOutqty) BOutqty,sum(BAdjustQty) BAdjustQty 
 						FROM View_TransactionList b
-						where b.MDivisionid = @MDivisionid and b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 and (BInqty > 0 or BOutqty > 0  or BAdjustQty > 0 )
+						where b.MDivisionid = @MDivisionid and b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 and (BInqty > 0 or BOutqty > 0  or BAdjustQty > 0 ) AND b.status='confirmed'
 						group by b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,dyelot
 						) AS S (MDivisionid,poid,seq1,seq2,roll,dyelot,BInqty,BOutqty,BAdjustQty)
 				ON T.MDIVISIONID = S.MDivisionid AND T.POID = S.POID AND T.SEQ1 =  S.SEQ1 AND T.SEQ2 = S.SEQ2 AND T.ROLL = S.ROLL and t.stocktype='I'
@@ -70,7 +70,7 @@ BEGIN
 				USING (SELECT b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,dyelot
 						, sum(CInqty) CInqty,sum(COutqty) COutqty,sum(CAdjustQty) CAdjustQty 
 						FROM View_TransactionList b
-						where b.MDivisionid = @MDivisionid and b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 and (CInqty > 0 or COutqty > 0  or CAdjustQty > 0 )
+						where b.MDivisionid = @MDivisionid and b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 and (CInqty > 0 or COutqty > 0  or CAdjustQty > 0 ) AND b.status='confirmed'
 						group by b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,dyelot
 						) AS S (MDivisionid,poid,seq1,seq2,roll,dyelot,CInqty,COutqty,CAdjustQty)
 				ON T.MDIVISIONID = S.MDivisionid AND T.POID = S.POID AND T.SEQ1 =  S.SEQ1 AND T.SEQ2 = S.SEQ2 AND T.ROLL = S.ROLL and t.stocktype='O'
@@ -89,7 +89,7 @@ BEGIN
 						 , sum(BInqty) - sum(Boutqty) + sum(BAdjustQty) BBalance  
 						 , sum(CInqty) - sum(COutqty) + sum(CAdjustQty) CBalance
 						 FROM View_TransactionList a
-						 where a.MDivisionID = @MDivisionid and a.PoId = @Poid and a.seq1 = @Seq1 and a.seq2 = @Seq2
+						 where a.MDivisionID = @MDivisionid and a.PoId = @Poid and a.seq1 = @Seq1 and a.seq2 = @Seq2 AND a.status='confirmed'
 						 group by a.MDivisionID,a.PoId,a.seq1,a.seq2
 						) T
 				 on T.MDivisionID = MDivisionPoDetail.MDivisionID and t.PoId = MDivisionPoDetail.POID and t.seq1 =MDivisionPoDetail.seq1 and t.seq2 =  MDivisionPoDetail.Seq2 
