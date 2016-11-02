@@ -16,6 +16,7 @@ namespace Sci.Production.Thread
     {
         private string keyWord = Sci.Env.User.Keyword;
         private DataTable gridTb;
+        bool gtbflag=false;
         public B05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -86,7 +87,7 @@ namespace Sci.Production.Thread
         {
             base.OnDetailEntered();
             detailgridbs.Filter = ""; //清空Filter
-            dateRange1.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
+            dateRange1.TextBox1.Text = DateTime.Now.AddDays(-1).ToShortDateString();
             dateRange1.TextBox2.Text = DateTime.Now.ToShortDateString();
             transrecord(dateRange1.TextBox1.Text, dateRange1.TextBox2.Text);
             grid1.DataSource = gridTb; //因重新Generator 所以要重給
@@ -105,7 +106,7 @@ namespace Sci.Production.Thread
         private void initqty(string date2, int recal=0) //Init Qty
         {
             string date = Convert.ToDateTime(date2).AddDays(-1).ToShortDateString();
-            if (recal == 1) date = date2;
+            if (recal == 1) date = date2;            
             string sql = string.Format("dbo.usp_ThreadTransactionList @refno='{0}',@mDivisionid='{1}',@date1 = '{2}' ,@date2='{3}'", CurrentMaintain["Refno"], keyWord, "", date);
             DataTable tb,inittb;
             DualResult res = DBProxy.Current.Select(null, sql, out tb);
@@ -126,6 +127,7 @@ namespace Sci.Production.Thread
                     ndr["Newbalance"] = dr["NewBalance"];
                     ndr["Usedbalance"] = dr["UsedBalance"];
                     gridTb.Rows.Add(ndr);
+                    if (!gtbflag) gtbflag = true;
                 }
             }
             if (recal == 1)
@@ -168,7 +170,9 @@ namespace Sci.Production.Thread
             if (res)
             {
                 decimal  newIn, newOut, usedIn, usedOut,newbal,usedbal, newbalance =0, usedbalance=0 ;
-                gridTb=tb.Copy();
+                if (gtbflag) gridTb.Merge(tb);
+                else gridTb=tb.Copy();
+                gtbflag = false;
                 foreach (DataRow drg in DetailDatas)
                 {
                     newbalance = 0;
