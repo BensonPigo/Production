@@ -133,7 +133,7 @@ WHERE          (ID = @id) AND (PASSWORD = @password)</CommandText>
   <xs:element name="SCHEMAS" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="SCHEMAS" msprop:Generator_UserDSName="SCHEMAS">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="PASS1" msprop:Generator_TableClassName="PASS1DataTable" msprop:Generator_TableVarName="tablePASS1" msprop:Generator_TablePropName="PASS1" msprop:Generator_RowDeletingName="PASS1RowDeleting" msprop:Generator_RowChangingName="PASS1RowChanging" msprop:Generator_RowEvHandlerName="PASS1RowChangeEventHandler" msprop:Generator_RowDeletedName="PASS1RowDeleted" msprop:Generator_UserTableName="PASS1" msprop:Generator_RowChangedName="PASS1RowChanged" msprop:Generator_RowEvArgName="PASS1RowChangeEvent" msprop:Generator_RowClassName="PASS1Row">
+        <xs:element name="PASS1" msprop:Generator_TableClassName="PASS1DataTable" msprop:Generator_TableVarName="tablePASS1" msprop:Generator_RowChangedName="PASS1RowChanged" msprop:Generator_TablePropName="PASS1" msprop:Generator_RowDeletingName="PASS1RowDeleting" msprop:Generator_RowChangingName="PASS1RowChanging" msprop:Generator_RowEvHandlerName="PASS1RowChangeEventHandler" msprop:Generator_RowDeletedName="PASS1RowDeleted" msprop:Generator_RowClassName="PASS1Row" msprop:Generator_UserTableName="PASS1" msprop:Generator_RowEvArgName="PASS1RowChangeEvent">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="ID" msprop:Generator_ColumnVarNameInTable="columnID" msprop:Generator_ColumnPropNameInRow="ID" msprop:Generator_ColumnPropNameInTable="IDColumn" msprop:Generator_UserColumnName="ID">
@@ -146,7 +146,7 @@ WHERE          (ID = @id) AND (PASSWORD = @password)</CommandText>
               <xs:element name="NAME" msprop:Generator_ColumnVarNameInTable="columnNAME" msprop:Generator_ColumnPropNameInRow="NAME" msprop:Generator_ColumnPropNameInTable="NAMEColumn" msprop:Generator_UserColumnName="NAME" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
-                    <xs:maxLength value="20" />
+                    <xs:maxLength value="30" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
