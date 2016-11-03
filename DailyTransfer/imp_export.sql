@@ -92,8 +92,8 @@ BEGIN
 	  when not matched  by target then 
 		insert (ID ,ScheduleID ,ScheduleDate ,LoadDate ,CloseDate ,Etd ,Eta ,ExportCountry ,ImportCountry ,ExportPort ,ImportPort ,CYCFS ,ShipModeID ,ShipmentTerm ,FactoryID ,ShipMark ,ShipMarkDesc ,Consignee ,Handle ,Posting ,Payer ,CompanyID ,Confirm ,LastEdit ,Remark ,Ecfa ,FormStatus ,Carrier ,Forwarder ,Vessel ,ShipTo ,Sono ,Blno ,InvNo ,Exchange ,Packages ,WeightKg ,NetKg ,Cbm ,CbmFor ,Takings ,TakingFee ,PackingArrival ,WhseArrival ,PortArrival ,DocArrival ,Broker ,Insurer ,Trailer1 ,Trailer2 ,Freight ,Insurance ,Junk ,AddName ,AddDate ,EditName ,EditDate)
 	    values( s.ID ,s.ScheduleID ,s.ScheduleDate ,s.LoadDate ,s.CloseDate ,s.Etd ,s.Eta ,s.ExportCountry ,s.ImportCountry ,s.ExportPort ,s.ImportPort ,s.CYCFS ,s.ShipModeID ,s.ShipmentTerm ,s.FactoryID ,s.ShipMark ,s.ShipMarkDesc ,s.Consignee ,s.Handle ,s.Posting ,s.Payer ,s.CompanyID ,s.Confirm ,s.LastEdit ,s.Remark ,s.Ecfa ,s.FormStatus ,s.Carrier ,s.Forwarder ,s.Vessel ,s.ShipTo ,s.Sono ,s.Blno ,s.InvNo ,s.Exchange ,s.Packages ,s.WeightKg ,s.NetKg ,s.Cbm ,s.CbmFor ,s.Takings ,s.TakingFee 
-		,(select PackingReceive from Production.dbo.Receiving  where InvNo=s.id) 
-		,(select WhseArrival from Production.dbo.Receiving  where InvNo=s.id) 
+		,(select TOP 1 PackingReceive from Production.dbo.Receiving  where InvNo=s.id) 
+		,(select TOP 1 WhseArrival from Production.dbo.Receiving  where InvNo=s.id) 
 		,s.PortArrival ,s.DocArrival ,s.Broker ,s.Insurer ,s.Trailer1 ,s.Trailer2 ,s.Freight ,s.Insurance ,s.Junk ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate)
 	  output inserted.id into @T; 
 
