@@ -538,7 +538,9 @@ namespace Sci.Production.Subcon
             frm.ShowDialog(this);
             this.RenewData();
         }
+
         
+
         private void button3_Click(object sender, EventArgs e)
         {
             if (this.EditMode) return;
