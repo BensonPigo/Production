@@ -20,8 +20,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET 
-       a. ID	      = b. ID
-      ,a. NameCH	      = b. NameCH
+      -- a. ID	      = b. ID
+      a. NameCH	      = b. NameCH
       ,a. NameEN	      = b. NameEN
       ,a. CountryID	      = b. CountryID
       ,a. BuyerID	      = b. BuyerID
@@ -140,9 +140,9 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET 
-       a.ID		 =b.ID
-      ,a.BrandID		      =b.BrandID
-      ,a.CostRatio		      =b.CostRatio
+      -- a.ID		 =b.ID
+      --,a.BrandID		      =b.BrandID
+      a.CostRatio		      =b.CostRatio
       ,a.SeasonSCIID		      =b.SeasonSCIID
       ,a.Month		      =b.Month
       ,a.Junk		      =b.Junk
@@ -192,8 +192,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET 
-a.ID		  =b.ID
-      ,a.Junk		      =b.Junk
+--a.ID		  =b.ID
+      a.Junk		      =b.Junk
       ,a.AbbCH		      =b.AbbCH
       ,a.AbbEN		      =b.AbbEN
       ,a.NameCH		      =b.NameCH
@@ -279,8 +279,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID					 =b.ID
-      ,a.Junk		         =b.Junk
+      -- a.ID					 =b.ID
+      a.Junk		         =b.Junk
       ,a.Description		 =b.Description
       ,a.Cpu		          =b.Cpu
       ,a.ComboPcs		      =b.ComboPcs
@@ -378,8 +378,8 @@ where b.id is null
 --------TRADE的EditDate > PMS EditDate 就UPDATE All 如果false 就不UPDATE EditDate & EditName 其他一樣UPDATE
 UPDATE a
 SET  
-       a.ID	      =b.ID		
-      ,a.FullName	      =b.FullName		
+      --a.ID	      =b.ID		
+      a.FullName	      =b.FullName		
       ,a.Type	      =b.Type		
       ,a.Junk	      =b.Junk		
       ,a.IrregularCost	      =b.IrregularCost		
@@ -397,8 +397,8 @@ where b.EditDate > a.EditDate
 
 UPDATE a
 SET  
-       a.ID	      =b.ID		
-      ,a.FullName	      =b.FullName		
+       --a.ID	      =b.ID		
+      a.FullName	      =b.FullName		
       ,a.Type	      =b.Type		
       ,a.Junk	      =b.Junk		
       ,a.IrregularCost	      =b.IrregularCost		
@@ -463,8 +463,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	      =b.ID		
-      ,a.Abbreviation	      =b.Abbreviation		
+       --a.ID	      =b.ID		
+      a.Abbreviation	      =b.Abbreviation		
       ,a.Classify	      =b.Classify		
       ,a.Seq	      =b.Seq		
       ,a.Junk	      =b.Junk		
@@ -545,8 +545,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-	   a.ID		      =b.ID
-      ,a.Description	=b.Description
+	  -- a.ID		      =b.ID
+      a.Description	=b.Description
       ,a.DescCH		      =b.DescCH
       ,a.ISO		      =b.ISO
       ,a.ArtworkTypeID		      =b.ArtworkTypeID
@@ -622,8 +622,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.BrandID		     =b.BrandID
-      ,a.Junk		      =b.Junk
+      -- a.BrandID		     =b.BrandID
+      a.Junk		      =b.Junk
       ,a.ID		      =b.ID
       ,a.CountryID		      =b.CountryID
       ,a.City		      =b.City
@@ -741,9 +741,9 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ReasonTypeID	        = b.ReasonTypeID	
-      ,a.ID	       = b.ID	
-      ,a.Name	       = b.Name	
+       --a.ReasonTypeID	        = b.ReasonTypeID	
+      --,a.ID	       = b.ID	
+      a.Name	       = b.Name	
       ,a.Remark	       = b.Remark	
       ,a.No	       = b.No	
       ,a.ReasonGroup	       = b.ReasonGroup	
@@ -805,8 +805,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-		a.ID	   =b.ID	
-      ,a.Description	  =b.Description	
+		--a.ID	   =b.ID	
+      a.Description	  =b.Description	
       ,a.AddName	      =b.AddName	
       ,a.AddDate	      =b.AddDate	
       ,a.EditName	      =b.EditName	
@@ -849,8 +849,8 @@ where not exists(select id from Production.dbo.SHIPTerm as a where a.id = b.id)
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	    =b.ID	
-      ,a.MDivisionID	      =b.MDivisionID	
+      -- a.ID	    =b.ID	
+      a.MDivisionID	      =b.MDivisionID	
       ,a.Junk	      =b.Junk	
       ,a.Abb	      =b.Abb	
       ,a.NameCH	      =b.NameCH	
@@ -884,11 +884,11 @@ from Production.dbo.Factory as a inner join Trade_To_Pms.dbo.Factory as b ON a.i
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	      =b.ID	
-      ,a.Year	      =b.Year	
-      ,a.ArtworkTypeID	      =b.ArtworkTypeID	
-      ,a.Month	      =b.Month	
-      ,a.TMS	      =b.TMS	
+      -- a.ID	      =b.ID	
+      --,a.Year	      =b.Year	
+      --,a.ArtworkTypeID	      =b.ArtworkTypeID	
+     -- ,a.Month	      =b.Month	
+      a.TMS	      =b.TMS	
 
 from Production.dbo.Factory_Tms as a inner join Trade_To_Pms.dbo.Factory_Tms as b ON a.id=b.id and a.Year=b.Year and a.ArtworkTypeID=b.ArtworkTypeID and a.Month=b.Month
 -------------------------- INSERT INTO 抓
@@ -917,10 +917,10 @@ where not exists(select id from Production.dbo.Factory_Tms as a where a.id = b.i
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID		     =b.ID
-      ,a.BrandID		      =b.BrandID
-      ,a.CDCodeID		      =b.CDCodeID
-      ,a.BrandAreaCode		      =b.BrandAreaCode
+      -- a.ID		     =b.ID
+      --,a.BrandID		      =b.BrandID
+      --,a.CDCodeID		      =b.CDCodeID
+      a.BrandAreaCode		      =b.BrandAreaCode
       ,a.BrandFTYCode		      =b.BrandFTYCode
       ,a.BrandVendorCode		      =b.BrandVendorCode
       ,a.BrandReportCode		      =b.BrandReportCode
@@ -934,10 +934,10 @@ where b.EditDate > a.EditDate
 
 UPDATE a
 SET  
-       a.ID		     =b.ID
-      ,a.BrandID		      =b.BrandID
-      ,a.CDCodeID		      =b.CDCodeID
-      ,a.BrandAreaCode		      =b.BrandAreaCode
+      -- a.ID		     =b.ID
+     -- ,a.BrandID		      =b.BrandID
+      --,a.CDCodeID		      =b.CDCodeID
+      a.BrandAreaCode		      =b.BrandAreaCode
       ,a.BrandFTYCode		      =b.BrandFTYCode
       ,a.BrandVendorCode		      =b.BrandVendorCode
       ,a.BrandReportCode		      =b.BrandReportCode
@@ -987,10 +987,10 @@ where not exists(select id from Production.dbo.Factory_BrandDefinition as a wher
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	     =b.ID	
-      ,a.Year	      =b.Year	
-      ,a.Month	      =b.Month	
-      ,a.HalfMonth1	      =b.HalfMonth1	
+       --a.ID	     =b.ID	
+      --,a.Year	      =b.Year	
+      --,a.Month	      =b.Month	
+      a.HalfMonth1	      =b.HalfMonth1	
       ,a.HalfMonth2	      =b.HalfMonth2	
 
 from Production.dbo.Factory_WorkHour as a inner join Trade_To_Pms.dbo.Factory_WorkHour as b ON a.id=b.id and a.Year=b.Year and a.Month=b.Month
@@ -1021,8 +1021,8 @@ where not exists(select id from Production.dbo.Factory_WorkHour as a where a.id 
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	     =b.ID	
-      ,a.Junk	      =b.Junk	
+      -- a.ID	     =b.ID	
+      a.Junk	      =b.Junk	
       ,a.Abb	      =b.Abb	
       ,a.NameCH	      =b.NameCH	
       ,a.NameEN	      =b.NameEN	
@@ -1095,8 +1095,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	      =b.ID	
-      ,a.PriceRate	      =b.PriceRate	
+     --  a.ID	      =b.ID	
+      a.PriceRate	      =b.PriceRate	
       ,a.Round	      =b.Round	
       ,a.Description	      =b.Description	
       ,a.ExtensionUnit	      =b.ExtensionUnit	
@@ -1148,9 +1148,9 @@ where b.UnitFrom is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.UnitFrom	    =b.UnitFrom	
-      ,a.UnitTo	      =b.UnitTo	
-      ,a.Rate	      =b.Rate	
+      -- a.UnitFrom	    =b.UnitFrom	
+     -- ,a.UnitTo	      =b.UnitTo	
+      a.Rate	      =b.Rate	
       ,a.RateValue	      =b.RateValue	
       ,a.AddName	      =b.AddName	
       ,a.AddDate	      =b.AddDate	
@@ -1195,8 +1195,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
- a.ID	     =b.ID	
-      ,a.Name	      =b.Name	
+ --a.ID	     =b.ID	
+      a.Name	      =b.Name	
       ,a.ExtNo	      =b.ExtNo	
       ,a.EMail	      =b.EMail	
 from Production.dbo.TPEPass1 as a inner join Trade_To_Pms.dbo.Pass1 as b ON a.id=b.id
@@ -1225,9 +1225,9 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
- a.BrandId		 =b.BrandId
-      ,a.ID		      =b.ID
-      ,a.Name		      =b.Name
+ --a.BrandId		 =b.BrandId
+     -- ,a.ID		      =b.ID
+      a.Name		      =b.Name
       ,a.Varicolored		      =b.Varicolored
       ,a.JUNK		      =b.JUNK
       ,a.VIVID		      =b.VIVID
@@ -1277,8 +1277,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID		      =b.ID
-      ,a.StdRate		      =b.StdRate
+      -- a.ID		      =b.ID
+      a.StdRate		      =b.StdRate
       ,a.NameCH		      =b.NameCH
       ,a.NameEN		      =b.NameEN
       ,a.Junk		      =b.Junk
@@ -1332,8 +1332,8 @@ where b.WeaveTypeID is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.WeaveTypeID	     =b.WeaveTypeID		
-      ,a.LossType	      =b.LossType		
+       --a.WeaveTypeID	     =b.WeaveTypeID		
+      a.LossType	      =b.LossType		
       ,a.Limit	      =b.Limit		
       ,a.LimitDown	      =b.LimitDown		
       ,a.TWLimitDown	      =b.TWLimitDown		
@@ -1433,8 +1433,8 @@ where not exists(select MtltypeId from Production.dbo.LossRateAccessory as a whe
 -------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a--特別處理waste的欄位
 SET  
-      a.MtltypeId	     =b.MtltypeId	
-      ,a.LossUnit	      =b.LossUnit	
+    --  a.MtltypeId	     =b.MtltypeId	
+      a.LossUnit	      =b.LossUnit	
       ,a.LossTW	      =b.LossTW	
       ,a.LossNonTW	      =b.LossNonTW	
       ,a.PerQtyTW	      =b.PerQtyTW	
@@ -1455,8 +1455,8 @@ where a.LossUnit=1
 
 UPDATE a--特別處理waste的欄位
 SET  
-      a.MtltypeId	     =b.MtltypeId	
-      ,a.LossUnit	      =b.LossUnit	
+      --a.MtltypeId	     =b.MtltypeId	
+      a.LossUnit	      =b.LossUnit	
       ,a.LossTW	      =b.LossTW	
       ,a.LossNonTW	      =b.LossNonTW	
       ,a.PerQtyTW	      =b.PerQtyTW	
@@ -1486,8 +1486,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID		 =b.ID
-      ,a.SuppID		      =b.SuppID
+       --a.ID		 =b.ID
+      a.SuppID		      =b.SuppID
       ,a.Account		      =b.Account
       ,a.Junk		      =b.Junk
       ,a.AddName		      =b.AddName
@@ -1533,8 +1533,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID			      =b.ID
-      ,a.Description			      =b.Description
+      -- a.ID			      =b.ID
+      a.Description			      =b.Description
       ,a.Term			      =b.Term
       ,a.BeforeAfter			      =b.BeforeAfter
       ,a.BaseDate			      =b.BaseDate
@@ -1607,8 +1607,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	      =b.ID	
-      ,a.Description	      =b.Description	
+       --a.ID	      =b.ID	
+      a.Description	      =b.Description	
       ,a.DescCH	      =b.DescriptionCH	
       ,a.Substitute	      =b.Substitute	
       ,a.Junk	      =b.Junk	
@@ -1662,8 +1662,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	 =b.ID	
-      ,a.Description	      =b.Description	
+      -- a.ID	 =b.ID	
+      a.Description	      =b.Description	
       ,a.SMV	      =b.SMV	
       ,a.CPU	      =b.CPU	
       ,a.AddName	      =b.AddName	
@@ -1703,9 +1703,9 @@ where not exists(select id from Production.dbo.Mockup as a where a.id = b.id)
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-        a.ID	 =b.ID	
-      ,a.BrandID	      =b.BrandID	
-      ,a.PhaseID	      =b.PhaseID	
+       -- a.ID	 =b.ID	
+      --,a.BrandID	      =b.BrandID	
+      a.PhaseID	      =b.PhaseID	
       ,a.ProjectID	      =b.ProjectID	
       ,a.Junk	      =b.Junk	
       ,a.CpuRate	      =b.CpuRate	
@@ -1773,9 +1773,9 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	      =b.ID	
-      ,a.BrandID	      =b.BrandID	
-      ,a.RateCost	      =b.RateCost	
+     -- a.ID	      =b.ID	
+     -- ,a.BrandID	      =b.BrandID	
+      a.RateCost	      =b.RateCost	
       ,a.AddName	      =b.AddName	
       ,a.AddDate	      =b.AddDate	
       ,a.EditName	      =b.EditName	
@@ -1816,9 +1816,9 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.Type	     =b.Type	
-      ,a.ID	      =b.ID	
-      ,a.Pattern	      =b.Pattern	
+     --  a.Type	     =b.Type	
+      --,a.ID	      =b.ID	
+      a.Pattern	      =b.Pattern	
       ,a.PatternCode	      =b.PatternCode	
       ,a.Drape	      =b.Drape	
       ,a.DrapeCode	      =b.DrapeCode	
@@ -1877,8 +1877,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.Id		     =b.Id	
-      ,a.Name		      =b.Name	
+       --a.Id		     =b.Id	
+      a.Name		      =b.Name	
       ,a.CuttingLayer		      =b.CuttingLayer	
       ,a.Junk		      =b.Junk	
       ,a.AddName		      =b.AddName	
@@ -1923,8 +1923,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	     =b.ID	
-      ,a.CountryID	      =b.CountryID	
+     --  a.ID	     =b.ID	
+      a.CountryID	      =b.CountryID	
       ,a.Remark	      =b.Remark	
       ,a.AddName	      =b.AddName	
       ,a.AddDate	      =b.AddDate	
@@ -1974,8 +1974,8 @@ where b.ShipperID is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ShipperID	    =b.ShipperID	
-      ,a.AddDate	      =b.AddDate	
+       --a.ShipperID	    =b.ShipperID	
+      a.AddDate	      =b.AddDate	
       ,a.AddName	      =b.AddName	
       ,a.EditDate	      =b.EditDate	
       ,a.EditName	      =b.EditName	
@@ -2010,10 +2010,10 @@ where b.ShipperID is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ShipperID	    =b.ShipperID	
-      ,a.BeginDate	      =b.BeginDate	
-      ,a.EndDate	      =b.EndDate	
-      ,a.CpuCost	      =b.CpuCost	
+      -- a.ShipperID	    =b.ShipperID	
+     -- ,a.BeginDate	      =b.BeginDate	
+    --  ,a.EndDate	      =b.EndDate	
+      a.CpuCost	      =b.CpuCost	
       ,a.AddDate	      =b.AddDate	
       ,a.AddName	      =b.AddName	
       ,a.EditDate	      =b.EditDate	
@@ -2056,14 +2056,18 @@ where b.BrandID is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.BrandID	    =b.BrandID	
-      ,a.FactoryID	      =b.FactoryID	
-      ,a.AddDate	      =b.AddDate	
+      -- a.BrandID	    =b.BrandID	
+     -- ,a.FactoryID	      =b.FactoryID	
+      a.AddDate	      =b.AddDate	
       ,a.AddName	      =b.AddName	
       ,a.EditDate	      =b.EditDate	
       ,a.EditName	      =b.EditName	
 
+<<<<<<< .mine
+from Production.dbo.FtyShipper as a inner join Trade_To_Pms.dbo.FtyShipper as b ON a.BrandID = b.BrandID and   a.FactoryID	    =b.FactoryID	
+=======
 from Production.dbo.FtyShipper as a inner join Trade_To_Pms.dbo.FtyShipper as b ON a.BrandID = b.BrandID and a.FactoryID=b.FactoryID
+>>>>>>> .r2463
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.FtyShipper(
        BrandID
@@ -2095,10 +2099,10 @@ where b.BrandID is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.BrandID	 =b.BrandID	
-      ,a.FactoryID	      =b.FactoryID	
-      ,a.BeginDate	      =b.BeginDate	
-      ,a.EndDate	      =b.EndDate	
+      -- a.BrandID	 =b.BrandID	
+      --,a.FactoryID	      =b.FactoryID	
+      --,a.BeginDate	      =b.BeginDate	
+      a.EndDate	      =b.EndDate	
       ,a.ShipperID	      =b.ShipperID	
 
 from Production.dbo.FtyShipper_Detail as a inner join Trade_To_Pms.dbo.FtyShipper_Detail as b ON a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate
@@ -2133,9 +2137,9 @@ where b.PhraseTypeName is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.PhraseTypeName	 =b.PhraseTypeName	
-      ,a.Junk	      =b.Junk	
-      ,a.Name	      =b.Name	
+      -- a.PhraseTypeName	 =b.PhraseTypeName	
+      a.Junk	      =b.Junk	
+     -- ,a.Name	      =b.Name	
       ,a.Seq	      =b.Seq	
       ,a.Description	      =b.Description	
       ,a.Module	      =b.Module	
@@ -2185,8 +2189,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	      =b.ID	
-      ,a.Title	      =b.Title	
+       --a.ID	      =b.ID	
+      a.Title	      =b.Title	
       ,a.Abbr	      =b.Abbr	
       ,a.Country	      =b.Country	
       ,a.Junk	      =b.Junk	
@@ -2264,8 +2268,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	      =b.ID	
-      ,a.ExcelName	      =b.ExcelName	
+       --a.ID	      =b.ID	
+      a.ExcelName	      =b.ExcelName	
       ,a.ExcelColumn	      =b.ExcelColumn	
       ,a.isArtwork	      =b.isArtwork	
       ,a.AddName	      =b.AddName	
