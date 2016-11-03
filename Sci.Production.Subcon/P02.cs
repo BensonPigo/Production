@@ -350,28 +350,25 @@ namespace Sci.Production.Subcon
             this.EnsureToolbarExt();
         }
 
-        //無權
-        //protected override void ClickUnconfirm()
-        //{
-        //    base.ClickUnconfirm();
-        //    String sqlcmd;
-
-        //    DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
-        //    if (dResult.ToString().ToUpper() == "NO") return;
-        //    sqlcmd = string.Format("update artworkpo set status = 'New', apvname='', apvdate = null , editname = '{0}' , editdate = GETDATE() " +
-        //                    "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-
-
-        //    DualResult result;
-        //    if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
-        //    {
-        //        ShowErr(sqlcmd, result);
-        //        return;
-        //    }
-        //    RenewData();
-        //    OnDetailEntered();
-        //    this.EnsureToolbarExt();
-        //}
+        protected override void ClickUnconfirm()
+        {
+            base.ClickUnconfirm();
+            DualResult result;
+            String sqlcmd;
+            DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to unapprove it?", "Question", 
+                                                            MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+            if (dResult.ToString().ToUpper() == "NO") return;
+            sqlcmd = string.Format(@"update artworkpo set status = 'New', apvname='', apvdate = null , editname = '{0}' , 
+                                    editdate = GETDATE() where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+            {
+                ShowErr(sqlcmd, result);
+                return;
+            }
+            RenewData();
+            OnDetailEntered();
+            this.EnsureToolbarExt();
+        }
 
         protected override void ClickClose()
         {
