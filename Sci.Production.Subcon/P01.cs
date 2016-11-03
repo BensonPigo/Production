@@ -32,6 +32,7 @@ namespace Sci.Production.Subcon
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
+            dateBox3.ReadOnly = true;
 
             this.txtsubcon1.TextBox1.Validated += (s, e) =>
             {
@@ -42,7 +43,6 @@ namespace Sci.Production.Subcon
                     
                 }
             };
-
         }
 
         // 新增時預設資料
@@ -59,41 +59,34 @@ namespace Sci.Production.Subcon
             ((DataTable)(detailgridbs.DataSource)).Rows[0].Delete();
         }
 
-        // delete前檢查
-
+        // delete前檢查 CurrentMaintain["id"]的FarmOut_Detail/FarmIn_Detail有data則不能刪除
         protected override bool ClickDeleteBefore()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["Status"].ToString() != "New")
+            //DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());//此寫法的dr=CurrentMaintain
+            if (CurrentMaintain["Status"].ToString() != "New")
             {
                 MyUtility.Msg.WarningBox("Data is approved or closed, can't delete.", "Warning");
                 return false;
-            }
+            } 
 
+            //sql參數準備
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
             sp1.ParameterName = "@id";
-            sp1.Value = dr["id"].ToString();
-
+            sp1.Value = CurrentMaintain["id"].ToString();
             IList<System.Data.SqlClient.SqlParameter> paras = new List<System.Data.SqlClient.SqlParameter>();
             paras.Add(sp1);
-
+            //FarmOut_Detail/FarmIn_Detail
             string sqlcmd;
-            sqlcmd = @"select fd.ID from ArtworkPO_Detail ad, FarmOut_Detail fd where ad.Ukey = fd.ArtworkPo_DetailUkey and ad.id = @id
-                        union all 
-                        select fo.ID from ArtworkPO_Detail ad, FarmOut_Detail fo where ad.Ukey = fo.ArtworkPo_DetailUkey and ad.id = @id 
-                           union all
-                        select fi.ID from ArtworkPO_Detail ad, FarmIn_Detail fi where ad.Ukey = fi.ArtworkPo_DetailUkey and ad.id = @id";
+            sqlcmd = @"select distinct fo.ID from ArtworkPO_Detail ad, FarmOut_Detail fo where ad.Ukey = fo.ArtworkPo_DetailUkey and ad.id = @id 
+                       union all
+                       select distinct fi.ID from ArtworkPO_Detail ad, FarmIn_Detail fi where ad.Ukey = fi.ArtworkPo_DetailUkey and ad.id = @id";
 
             DataTable dt;
             DBProxy.Current.Select(null, sqlcmd, paras, out dt);
+            //有則return
             if (dt.Rows.Count > 0)
-            {
-                string ids = "";
-                for (int i = 0; i < dt.Rows.Count; i++)
-                {
-                    ids += dt.Rows[i][0].ToString() + ";";
-                }
-                MyUtility.Msg.WarningBox(string.Format("Below IDs {0} refer to details data, can't delete.", ids), "Warning");
+            {                
+                MyUtility.Msg.WarningBox(string.Format("Some SP# already have Farm In/Out data!!!"), "Warning");
                 return false;
             }
             return base.ClickDeleteBefore();
@@ -232,10 +225,10 @@ namespace Sci.Production.Subcon
             return base.OnRenewDataDetailPost(e);
         }
 
-        //refresh
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            dateBox3.ReadOnly = true;
             #region --動態unit header --
             string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype where id='{0}'", CurrentMaintain["artworktypeid"])).ToString().Trim();
             if (artworkunit == "") artworkunit = "PCS";
@@ -416,14 +409,27 @@ namespace Sci.Production.Subcon
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
+            DualResult result;
+            string checksql = string.Format("select ApQty from ArtworkPO_Detail where id = '{0}'", CurrentMaintain["id"]);
+            DataTable checkdt;
             String sqlcmd;
+            if (!(result = DBProxy.Current.Select(null, checksql, out checkdt)))
+            {
+                ShowErr(checksql, result);
+                return;
+            }
+            if (checkdt.Rows.Count > 0)
+            {
+                if (checkdt.AsEnumerable().Any(row => MyUtility.Convert.GetInt(row["ApQty"]) > 0))//subconP01需要檢查,P02不會有ApQty
+                {
+                    MessageBox.Show("Can not unconfirm");
+                    return;
+                }
+            }  
+
             DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO") return;
-            sqlcmd = string.Format("update artworkpo set status = 'New', apvname='', apvdate = null , editname = '{0}' , editdate = GETDATE() " +
-                            "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-
-
-            DualResult result;
+            sqlcmd = string.Format(@"update artworkpo set status = 'New', apvname='', apvdate = null , editname = '{0}' , editdate = GETDATE()  where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
                 ShowErr(sqlcmd, result);
