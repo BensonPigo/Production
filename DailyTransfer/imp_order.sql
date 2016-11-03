@@ -388,6 +388,7 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		on t.ukey=s.ukey
 		when matched then
 			update set
+			t.id=s.id,
 			t.Seq = s.Seq ,
 			t.Article = s.Article ,
 			t.SizeCode = s.SizeCode ,
@@ -545,6 +546,7 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		on t.ukey=s.ukey	
 		when matched then 
 			update set
+			t.id=s.id,
 			t.FabricCode= s.FabricCode,
 			t.Refno= s.Refno,
 			t.SCIRefno= s.SCIRefno,
@@ -605,6 +607,7 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		on t.ukey=s.ukey
 		when matched then 
 			update set
+			t.id=s.id,
 			t.Refno= s.Refno,
 			t.SCIRefno= s.SCIRefno,
 			t.SuppID= s.SuppID,
@@ -642,6 +645,7 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		on t.ukey=s.ukey
 		when matched then 
 			update set
+			t.id=s.id,
 			t.Order_BOAUkey= s.Order_BOAUkey,
 			t.OrderQty= s.OrderQty,
 			t.Refno= s.Refno,
@@ -677,6 +681,7 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		on t.ukey=s.ukey	
 		when matched then 
 			update set
+			t.id=.s.id,
 			t.Seq= s.Seq,
 			t.MarkerName= s.MarkerName,
 			t.FabricCode= s.FabricCode,
@@ -734,6 +739,7 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		on t.ukey=s.ukey	
 		when matched then 
 			update set
+			t.id=s.id,
 			t.ArtworkTypeID= s.ArtworkTypeID,
 			t.Article= s.Article,
 			t.PatternCode= s.PatternCode,
@@ -881,6 +887,7 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		on t.ukey=s.ukey
 		when matched then 
 			update set 
+			t.id=s.id,
 			t.Order_BOAUkey= s.Order_BOAUkey,
 			t.Prefix= s.Prefix,
 			t.KeyWordID= s.KeyWordID,
@@ -903,6 +910,7 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		on t.Order_BOAUkey=s.Order_BOAUkey and t.custcdid=s.custcdid and t.refno=s.refno
 		when matched then 
 			update set 
+			t.id=s.id,
 			t.CustCDID= s.CustCDID,
 			t.Refno= s.Refno,
 			t.SCIRefno= s.SCIRefno,
@@ -922,6 +930,7 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		on t.Ukey=s.Ukey
 		when matched then 
 			update set 
+			t.id=s.id,
 			t.NewSciDelivery= s.NewSciDelivery,
 			t.OldSciDelivery= s.OldSciDelivery,
 			t.LETA= s.LETA,
@@ -1167,6 +1176,7 @@ s.AddDate
 		on t.ukey=s.ukey
 		when matched then 
 			update set 
+			t.id=s.id,
 			t.Refno= s.Refno,
 			t.SCIRefno= s.SCIRefno,
 			t.SuppID= s.SuppID,
