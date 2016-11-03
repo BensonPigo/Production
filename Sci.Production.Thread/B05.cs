@@ -87,7 +87,7 @@ namespace Sci.Production.Thread
         {
             base.OnDetailEntered();
             detailgridbs.Filter = ""; //清空Filter
-            dateRange1.TextBox1.Text = DateTime.Now.AddDays(-1).ToShortDateString();
+            dateRange1.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
             dateRange1.TextBox2.Text = DateTime.Now.ToShortDateString();
             transrecord(dateRange1.TextBox1.Text, dateRange1.TextBox2.Text);
             grid1.DataSource = gridTb; //因重新Generator 所以要重給
