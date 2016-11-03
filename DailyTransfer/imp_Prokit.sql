@@ -26,8 +26,8 @@ where b.Ukey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.Ukey	 =b.Ukey
-      ,a.StyleUkey	      =b.StyleUkey
+      -- a.Ukey	 =b.Ukey
+      a.StyleUkey	      =b.StyleUkey
       ,a.ProductionKitsGroup	      =b.ProductionKitsGroup
       ,a.FactoryID	      =b.FactoryID
       ,a.Article	      =b.Article

@@ -18,9 +18,9 @@ BEGIN
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	      =b.ID
-      ,a.Version	      =b.Version
-      ,a.BrandID	      =b.BrandID
+       --a.ID	      =b.ID
+      --,a.Version	      =b.Version
+      a.BrandID	      =b.BrandID
       ,a.ActFtyPattern	      =b.ActFtyPattern
       ,a.PatternNO	      =b.PatternNO
       ,a.RevisedReason	      =b.RevisedReason
@@ -111,10 +111,10 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	       =b.ID
-      ,a.Version	      =b.Version
-      ,a.PatternUKEY	      =b.PatternUKEY
-      ,a.SEQ	      =b.SEQ
+      -- a.ID	       =b.ID
+     -- ,a.Version	      =b.Version
+      a.PatternUKEY	      =b.PatternUKEY
+     -- ,a.SEQ	      =b.SEQ
       ,a.PatternCode	      =b.PatternCode
       ,a.PatternDesc	      =b.PatternDesc
       ,a.Annotation	      =b.Annotation
@@ -169,9 +169,9 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	    =b.ID
-      ,a.Version	      =b.Version
-      ,a.PatternUKEY	      =b.PatternUKEY
+      -- a.ID	    =b.ID
+      --,a.Version	      =b.Version
+      a.PatternUKEY	      =b.PatternUKEY
       ,a.SEQ	      =b.SEQ
       ,a.PatternCode	      =b.PatternCode
       ,a.ArticleGroup	      =b.ArticleGroup
@@ -220,12 +220,12 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	    =b.ID		
-      ,a.Seq	      =b.Seq		
-      ,a.Version	      =b.Version		
-      ,a.PatternUKEY	      =b.PatternUKEY		
-      ,a.ArticleGroup	      =b.ArticleGroup		
-      ,a.Article	      =b.Article		
+     --  a.ID	    =b.ID		
+      --,a.Seq	      =b.Seq		
+     -- ,a.Version	      =b.Version		
+      a.PatternUKEY	      =b.PatternUKEY		
+     -- ,a.ArticleGroup	      =b.ArticleGroup		
+     -- ,a.Article	      =b.Article		
       ,a.SizeRange	      =b.SizeRange		
       ,a.Remark	      =b.Remark		
       ,a.AddName	      =b.AddName		

@@ -22,9 +22,9 @@ where b.id is null
 ---------------------------UPDATE �DTABLE��ӷ�TABLE ���@��(�DTABLE�h���� �O�_�� ~�ӷ�TABLE�h���ܤ��z�|)
 UPDATE a
 SET  
-a.ID	= b.ID
-,a.Version	= b.Version
-,a.Ukey	= b.Ukey
+--a.ID	= b.ID
+--,a.Version	= b.Version
+a.Ukey	= b.Ukey
 ,a.IEName	= b.IEName
 ,a.ActFinDate	= b.ActFinDate
 ,a.GSDStyleCode	= b.GSDStyleCode

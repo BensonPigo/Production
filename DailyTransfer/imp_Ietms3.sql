@@ -19,8 +19,8 @@ BEGIN
 ---------------------------UPDATE �DTABLE��ӷ�TABLE ���@��(�DTABLE�h���� �O�_�� ~�ӷ�TABLE�h���ܤ��z�|)
 UPDATE a
 SET  
-a.ID	= b.ID
-,a.MainID	= b.MainID
+--a.ID	= b.ID
+a.MainID	= b.MainID
 ,a.Mr	= b.Mr
 ,a.SMR	= b.SMR
 ,a.BrandID	= b.BrandID
@@ -108,10 +108,10 @@ where b.id is null
 ---------------------------UPDATE �DTABLE��ӷ�TABLE ���@��(�DTABLE�h���� �O�_�� ~�ӷ�TABLE�h���ܤ��z�|)
 UPDATE a
 SET  
-a.ID	= b.ID
-,a.SEQ	= b.SEQ
-,a.MarkerVersion	= b.MarkerVersion
-,a.MarkerNo	= b.MarkerNo
+--a.ID	= b.ID
+--,a.SEQ	= b.SEQ
+--,a.MarkerVersion	= b.MarkerVersion
+a.MarkerNo	= b.MarkerNo
 ,a.PatternSMID	= b.PatternSMID
 ,a.PatternVersion	= b.PatternVersion
 ,a.ToFactory	= b.ToFactory

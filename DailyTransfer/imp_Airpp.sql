@@ -16,8 +16,8 @@ BEGIN
    ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	 =b.ID
-      ,a.CDate	      =b.CDate
+      -- a.ID	 =b.ID
+      a.CDate	      =b.CDate
       ,a.OrderID	      =b.OrderID
       ,a.OrderShipmodeSeq	      =b.OrderShipmodeSeq
       ,a.MDivisionID	      =b.MDivisionID

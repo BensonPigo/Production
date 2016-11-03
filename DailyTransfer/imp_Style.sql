@@ -63,11 +63,11 @@ where not exists(select 1 from Production.dbo.Style_Location as a where a.StyleU
 ---------------------------UPDATE STYLE BY UKEY
 UPDATE a
 SET  
-a.ID	= b.ID
-,a.Ukey	= b.Ukey
-,a.BrandID	= b.BrandID
+--a.ID	= b.ID
+a.Ukey	= b.Ukey
+--,a.BrandID	= b.BrandID
 ,a.ProgramID	= b.ProgramID
-,a.SeasonID	= b.SeasonID
+--,a.SeasonID	= b.SeasonID
 ,a.Model	= b.Model
 ,a.Description	= b.Description
 ,a.StyleName	= b.StyleName
@@ -118,70 +118,71 @@ a.ID	= b.ID
 ,a.ModularParent	= b.ModularParent
 ,a.CPUAdjusted	= b.CPUAdjusted
 ,a.LocalStyle = 0
-from Production.dbo.Style as a inner join Trade_To_Pms.dbo.Style as b ON a.Ukey=b.Ukey
+from Production.dbo.Style as a inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID AND a.SeasonID	= b.SeasonID
+
 
 -----------------------------------------------------------------------------------------------------------
----------------------------UPDATE STYLE BY PK
-UPDATE a
-SET  
-a.ID	= b.ID
-,a.Ukey	= b.Ukey
-,a.BrandID	= b.BrandID
-,a.ProgramID	= b.ProgramID
-,a.SeasonID	= b.SeasonID
-,a.Model	= b.Model
-,a.Description	= b.Description
-,a.StyleName	= b.StyleName
-,a.CdCodeID	= b.CdCodeID
-,a.ApparelType	= b.ApparelType
-,a.FabricType	= b.FabricType
-,a.Contents	= b.Contents
-,a.GMTLT	= b.GMTLT
-,a.CPU	= b.CPU
-,a.Factories	= b.Factories
-,a.FTYRemark	= b.FTYRemark
-,a.Phase	= b.Phase
-,a.SampleSMR	= b.SampleSMR
-,a.SampleMRHandle	= b.SampleMRHandle
-,a.BulkSMR	= b.BulkSMR
-,a.BulkMRHandle	= b.BulkMRHandle
-,a.Junk	= b.Junk
-,a.RainwearTestPassed	= b.RainwearTestPassed
-,a.SizePage	= b.SizePage
-,a.SizeRange	= b.SizeRange
-,a.Gender	= b.Gender
-,a.CTNQty	= b.CTNQty
-,a.StdCost	= b.StdCost
-,a.Processes	= b.Processes
-,a.ArtworkCost	= b.ArtworkCost
-,a.Picture1	= b.Picture1
-,a.Picture2	= b.Picture2
-,a.Label	= b.Label
-,a.Packing	= b.Packing
-,a.IETMSID	= b.IETMSID
-,a.IETMSVersion	= b.IETMSVersion
-,a.IEImportName	= b.IEImportName
-,a.IEImportDate	= b.IEImportDate
-,a.ApvDate	= b.ApvDate
-,a.ApvName	= b.ApvName
-,a.CareCode	= b.CareCode
-,a.SpecialMark	= b.SpecialMark
-,a.Lining	= b.Lining
-,a.StyleUnit	= b.StyleUnit
-,a.ExpectionForm	= b.ExpectionForm
-,a.ExpectionFormRemark	= b.ExpectionFormRemark
-,a.ComboType	= b.ComboType
-,a.AddName	= b.AddName
-,a.AddDate	= b.AddDate
-,a.EditName	= IIF(a.EditDate >= b.EditDate,a.EditName,b.EditName)
-,a.EditDate	= IIF(a.EditDate >= b.EditDate,a.EditDate,b.EditDate)
-,a.SizeUnit	= b.SizeUnit
-,a.ModularParent	= b.ModularParent
-,a.CPUAdjusted	= b.CPUAdjusted
-,a.LocalStyle = 0
-from Production.dbo.Style as a 
-inner join Trade_To_Pms.dbo.Style as b ON a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID
-where a.LocalStyle=1
+-----------------------------UPDATE STYLE BY PK
+--UPDATE a
+--SET  
+--a.ID	= b.ID
+--,a.Ukey	= b.Ukey
+--,a.BrandID	= b.BrandID
+--,a.ProgramID	= b.ProgramID
+--,a.SeasonID	= b.SeasonID
+--,a.Model	= b.Model
+--,a.Description	= b.Description
+--,a.StyleName	= b.StyleName
+--,a.CdCodeID	= b.CdCodeID
+--,a.ApparelType	= b.ApparelType
+--,a.FabricType	= b.FabricType
+--,a.Contents	= b.Contents
+--,a.GMTLT	= b.GMTLT
+--,a.CPU	= b.CPU
+--,a.Factories	= b.Factories
+--,a.FTYRemark	= b.FTYRemark
+--,a.Phase	= b.Phase
+--,a.SampleSMR	= b.SampleSMR
+--,a.SampleMRHandle	= b.SampleMRHandle
+--,a.BulkSMR	= b.BulkSMR
+--,a.BulkMRHandle	= b.BulkMRHandle
+--,a.Junk	= b.Junk
+--,a.RainwearTestPassed	= b.RainwearTestPassed
+--,a.SizePage	= b.SizePage
+--,a.SizeRange	= b.SizeRange
+--,a.Gender	= b.Gender
+--,a.CTNQty	= b.CTNQty
+--,a.StdCost	= b.StdCost
+--,a.Processes	= b.Processes
+--,a.ArtworkCost	= b.ArtworkCost
+--,a.Picture1	= b.Picture1
+--,a.Picture2	= b.Picture2
+--,a.Label	= b.Label
+--,a.Packing	= b.Packing
+--,a.IETMSID	= b.IETMSID
+--,a.IETMSVersion	= b.IETMSVersion
+--,a.IEImportName	= b.IEImportName
+--,a.IEImportDate	= b.IEImportDate
+--,a.ApvDate	= b.ApvDate
+--,a.ApvName	= b.ApvName
+--,a.CareCode	= b.CareCode
+--,a.SpecialMark	= b.SpecialMark
+--,a.Lining	= b.Lining
+--,a.StyleUnit	= b.StyleUnit
+--,a.ExpectionForm	= b.ExpectionForm
+--,a.ExpectionFormRemark	= b.ExpectionFormRemark
+--,a.ComboType	= b.ComboType
+--,a.AddName	= b.AddName
+--,a.AddDate	= b.AddDate
+--,a.EditName	= IIF(a.EditDate >= b.EditDate,a.EditName,b.EditName)
+--,a.EditDate	= IIF(a.EditDate >= b.EditDate,a.EditDate,b.EditDate)
+--,a.SizeUnit	= b.SizeUnit
+--,a.ModularParent	= b.ModularParent
+--,a.CPUAdjusted	= b.CPUAdjusted
+--,a.LocalStyle = 0
+--from Production.dbo.Style as a 
+--inner join Trade_To_Pms.dbo.Style as b ON a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID
+--where a.LocalStyle=1
 ---------------------------------------------------------------
 ---------------------------UPDATE Style_Artwork_Quot(StyleD)
 UPDATE a
@@ -324,9 +325,9 @@ where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-a.StyleUkey	= b.StyleUkey
-,a.ArtworkTypeID	= b.ArtworkTypeID
-,a.Seq	= b.Seq
+--a.StyleUkey	= b.StyleUkey
+--,a.ArtworkTypeID	= b.ArtworkTypeID
+a.Seq	= b.Seq
 ,a.Qty	= b.Qty
 ,a.ArtworkUnit	= b.ArtworkUnit
 ,a.TMS	= b.TMS
@@ -393,13 +394,12 @@ SET
 ,a.Price	= b.Price
 ,a.Cost	= b.Cost
 ,a.Remark	= b.Remark
---,a.Ukey	= b.Ukey
 ,a.AddName	= b.AddName
 ,a.AddDate	= b.AddDate
 ,a.EditName	= b.EditName
 ,a.EditDate	= b.EditDate
 ,a.TMS	= b.TMS
-,a.TradeUkey	= b.Ukey
+--,a.TradeUkey	= b.Ukey
 
 from Production.dbo.Style_Artwork as a 
 inner join Trade_To_Pms.dbo.Style_Artwork as b ON a.TradeUkey=b.Ukey
@@ -463,7 +463,7 @@ SET
 ,a.AddDate	= b.AddDate
 ,a.EditName	= b.EditName
 ,a.EditDate	= b.EditDate
-,a.UKey	= b.UKey
+--,a.UKey	= b.UKey
 
 from Production.dbo.Style_QtyCTN as a 
 inner join Trade_To_Pms.dbo.Style_QtyCTN as b ON a.UKey=b.UKey
@@ -512,7 +512,7 @@ a.StyleUkey	= b.StyleUkey
 ,a.Seq	= b.Seq
 ,a.SizeGroup	= b.SizeGroup
 ,a.SizeCode	= b.SizeCode
-,a.UKey	= b.UKey
+--,a.UKey	= b.UKey
 from Production.dbo.Style_SizeCode as a 
 inner join Trade_To_Pms.dbo.Style_SizeCode as b ON a.Ukey=b.Ukey
 -------------------------- INSERT INTO 抓
@@ -549,7 +549,7 @@ a.StyleUkey	= b.StyleUkey
 ,a.SizeItem	= b.SizeItem
 ,a.SizeCode	= b.SizeCode
 ,a.SizeSpec	= b.SizeSpec
-,a.UKey	= b.UKey
+--,a.UKey	= b.UKey
 from Production.dbo.Style_SizeSpec as a 
 inner join Trade_To_Pms.dbo.Style_SizeSpec as b ON a.Ukey=b.Ukey
 -------------------------- INSERT INTO 抓
@@ -582,9 +582,9 @@ where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-a.StyleUkey	= b.StyleUkey
-,a.Seq	= b.Seq
-,a.Article	= b.Article
+--a.StyleUkey	= b.StyleUkey
+a.Seq	= b.Seq
+--,a.Article	= b.Article
 ,a.TissuePaper	= b.TissuePaper
 ,a.ArticleName	= b.ArticleName
 ,a.Contents	= b.Contents
@@ -621,7 +621,7 @@ where b.Ukey is null
 UPDATE a
 SET  
 a. StyleUkey	= b. StyleUkey
-,a.Ukey	= b.Ukey
+--,a.Ukey	= b.Ukey
 ,a.Seq	= b.Seq
 ,a.MarkerName	= b.MarkerName
 ,a.FabricCode	= b.FabricCode
@@ -736,9 +736,9 @@ where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-a.StyleUkey	= b.StyleUkey
-,a.LectraCode	= b.LectraCode
-,a.FabricCode	= b.FabricCode
+--a.StyleUkey	= b.StyleUkey
+--,a.LectraCode	= b.LectraCode
+a.FabricCode	= b.FabricCode
 ,a.PatternPanel	= b.PatternPanel
 ,a.AddName	= b.AddName
 ,a.AddDate	= b.AddDate
@@ -791,7 +791,7 @@ a.StyleUkey	= b.StyleUkey
 ,a.Refno	= b.Refno
 ,a.SCIRefno	= b.SCIRefno
 ,a.Kind	= b.Kind
-,a.Ukey	= b.Ukey
+--,a.Ukey	= b.Ukey
 ,a.SuppIDBulk	= b.SuppIDBulk
 ,a.SuppIDSample	= b.SuppIDSample
 
@@ -839,7 +839,7 @@ where b.Ukey is null
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
-,a.Ukey	= b.Ukey
+--,a.Ukey	= b.Ukey
 ,a.Refno	= b.Refno
 ,a.SCIRefno	= b.SCIRefno
 ,a.SEQ1	= b.SEQ1
@@ -927,11 +927,11 @@ where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-a. StyleUkey	= b. StyleUkey
-,a.Article	= b.Article
-,a.ColorID	= b.ColorID
+--a. StyleUkey	= b. StyleUkey
+--,a.Article	= b.Article
+a.ColorID	= b.ColorID
 ,a.FabricCode	= b.FabricCode
-,a.LectraCode	= b.LectraCode
+--,a.LectraCode	= b.LectraCode
 ,a.PatternPanel	= b.PatternPanel
 ,a.AddName	= b.AddName
 ,a.AddDate	= b.AddDate
@@ -979,7 +979,7 @@ where b.UKEY is null
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
-,a.UKEY	= b.UKEY
+--,a.UKEY	= b.UKEY
 ,a.Article	= b.Article
 ,a.CountryID	= b.CountryID
 ,a.Continent	= b.Continent
@@ -1040,14 +1040,14 @@ where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-a.StyleUkey	= b.StyleUkey
-,a.LectraCode	= b.LectraCode
-,a.SetupID	= b.SetupID
+--a.StyleUkey	= b.StyleUkey
+--,a.LectraCode	= b.LectraCode
+a.SetupID	= b.SetupID
 ,a.AddName	= b.AddName
 ,a.AddDate	= b.AddDate
 ,a.EditName	= b.EditName
 ,a.EditDate	= b.EditDate
-,a.Ukey_old	= b.Ukey_old
+--,a.Ukey_old	= b.Ukey_old
 
 from Production.dbo.Style_MiAdidasColorCombo as a 
 inner join Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b ON a.StyleUkey	= b.StyleUkey AND a.LectraCode	= b.LectraCode AND a.Ukey_old	= b.Ukey_old
@@ -1086,9 +1086,9 @@ where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-a.StyleUkey	= b.StyleUkey
-,a.FactoryID	= b.FactoryID
-,a.GMTLT	= b.GMTLT
+--a.StyleUkey	= b.StyleUkey
+--,a.FactoryID	= b.FactoryID
+a.GMTLT	= b.GMTLT
 ,a.AddName	= b.AddName
 ,a.AddDate	= b.AddDate
 ,a.EditName	= b.EditName
@@ -1130,11 +1130,11 @@ SET
 a.MasterBrandID	= b.MasterBrandID
 ,a.MasterStyleID	= b.MasterStyleID
 ,a.MasterSeasonID	= b.MasterSeasonID
-,a.MasterStyleUkey	= b.MasterStyleUkey
+--,a.MasterStyleUkey	= b.MasterStyleUkey
 ,a.ChildrenBrandID	= b.ChildrenBrandID
 ,a.ChildrenStyleID	= b.ChildrenStyleID
 ,a.ChildrenSeasonID	= b.ChildrenSeasonID
-,a.ChildrenStyleUkey	= b.ChildrenStyleUkey
+--,a.ChildrenStyleUkey	= b.ChildrenStyleUkey
 ,a.AddName	= b.AddName
 ,a.AddDate	= b.AddDate
 ,a.EditName	= b.EditName

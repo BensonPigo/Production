@@ -24,8 +24,8 @@ where b.id is null
 ---------------------------UPDATE �DTABLE��ӷ�TABLE ���@��(�DTABLE�h���� �O�_�� ~�ӷ�TABLE�h���ܤ��z�|)
 UPDATE a
 SET  
-a.ID	= b.ID
-,a.FromGSD	= b.FromGSD
+--a.ID	= b.ID
+a.FromGSD	= b.FromGSD
 ,a.CalibratedCode	= b.CalibratedCode
 ,a.DescEN	= b.DescEN
 ,a.DescCH	= b.DescCH
@@ -147,8 +147,8 @@ where b.id is null
 ---------------------------UPDATE �DTABLE��ӷ�TABLE ���@��(�DTABLE�h���� �O�_�� ~�ӷ�TABLE�h���ܤ��z�|)
 UPDATE a
 SET  
-a.ID	= b.ID
-,a.Description	= b.Description
+--a.ID	= b.ID
+a.Description	= b.Description
 ,a.DescCH	= b.DescCH
 ,a.ISO	= b.ISO
 ,a.ArtworkTypeID	= b.ArtworkTypeID
@@ -225,8 +225,8 @@ where b.id is null
 ---------------------------UPDATE �DTABLE��ӷ�TABLE ���@��(�DTABLE�h���� �O�_�� ~�ӷ�TABLE�h���ܤ��z�|)
 UPDATE a
 SET  
-a.ID	= b.ID
-,a.Type	= b.Type
+--a.ID	= b.ID
+a.Type	= b.Type
 ,a.DescCH	= b.DescCH
 ,a.DescEN	= b.DescEN
 ,a.Junk	= b.Junk

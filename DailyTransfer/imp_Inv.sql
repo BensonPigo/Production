@@ -18,13 +18,13 @@ BEGIN
 UPDATE a
 SET  
        a.Ukey	       =b.Ukey
-      ,a.POID	      =b.POID
-      ,a.Seq1	      =b.Seq1
-      ,a.Seq2	      =b.Seq2
-      ,a.ProjectID	      =b.ProjectID
-      ,a.FactoryID	      =b.FactoryID
-      ,a.UnitID	      =b.UnitID
-      ,a.InventoryRefnoId	      =b.InventoryRefnoId
+      --,a.POID	      =b.POID
+      --,a.Seq1	      =b.Seq1
+     -- ,a.Seq2	      =b.Seq2
+      --,a.ProjectID	      =b.ProjectID
+     -- ,a.FactoryID	      =b.FactoryID
+     -- ,a.UnitID	      =b.UnitID
+     -- ,a.InventoryRefnoId	      =b.InventoryRefnoId
       ,a.Refno	      =b.Refno
       ,a.BrandGroup	      =b.BrandGroup
       ,a.BrandID	      =b.BrandID
@@ -153,8 +153,8 @@ where not exists(select POID from Production.dbo.Inventory as a where a.POID=b.P
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	       =b.ID
-      ,a.Refno	      =b.Refno
+      -- a.ID	       =b.ID
+      a.Refno	      =b.Refno
       ,a.Width	      =b.Width
       ,a.ColorID	      =b.ColorID
       ,a.SizeSpec	      =b.SizeSpec
@@ -211,9 +211,9 @@ AND a.ID > (select top 1 id from  Trade_To_Pms.dbo.Invtrans order by id)
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	 =b.ID
-      ,a.Ukey	  =b.Ukey
-      ,a.ConfirmDate	      =b.ConfirmDate
+       --a.ID	 =b.ID
+      --,a.Ukey	  =b.Ukey
+      a.ConfirmDate	      =b.ConfirmDate
       ,a.ConfirmHandle	      =b.ConfirmHandle
       ,a.Confirmed	      =b.Confirmed
       ,a.Qty	      =b.Qty
@@ -389,8 +389,8 @@ where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	       =b.ID
-      ,a.ReasonEN	      =b.ReasonEN
+      -- a.ID	       =b.ID
+      a.ReasonEN	      =b.ReasonEN
       ,a.ReasonCH	      =b.ReasonCH
       ,a.IsDefault	      =b.IsDefault
       ,a.Junk	      =b.Junk

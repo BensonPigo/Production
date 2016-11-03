@@ -201,10 +201,10 @@ where not exists(select id from Production.dbo.PO_Supp as a where a.id = b.id an
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	     =b.ID	
-      ,a.Seq1	      =b.Seq1	
-      ,a.Seq2	      =b.Seq2	
-      ,a.FactoryID	      =b.FactoryID	
+      -- a.ID	     =b.ID	
+      --,a.Seq1	      =b.Seq1	
+      --,a.Seq2	      =b.Seq2	
+      a.FactoryID	      =b.FactoryID	
       ,a.RefNo	      =b.RefNo	
       ,a.SCIRefNo	      =b.SCIRefNo	
       ,a.FabricType	      =b.FabricType	
@@ -424,11 +424,11 @@ and  a.id in (select id from #Trade_To_Pms_PO)
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.ID	     =b.ID		
-      ,a.SEQ1	             =b.SEQ1		
-      ,a.SEQ2	      =b.SEQ2		
-      ,a.OrderID	      =b.OrderID		
-      ,a.AddName	      =b.AddName		
+       --a.ID	     =b.ID		
+      --,a.SEQ1	             =b.SEQ1		
+      --,a.SEQ2	      =b.SEQ2		
+      --,a.OrderID	      =b.OrderID		
+      a.AddName	      =b.AddName		
       ,a.AddDate	      =b.AddDate		
       ,a.EditName	      =b.EditName		
       ,a.EditDate	      =b.EditDate		
@@ -485,8 +485,8 @@ drop table #Trade_To_Pms_PO
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-        a.SCIRefno	 =b.SCIRefno
-      ,a.BrandID	      =b.BrandID
+       -- a.SCIRefno	 =b.SCIRefno
+      a.BrandID	      =b.BrandID
       ,a.Refno	      =b.Refno
       ,a.Width	      =b.Width
       ,a.Junk	      =b.Junk
@@ -593,7 +593,7 @@ where b.Ukey is null
 UPDATE a
 SET  
        a.SCIRefno	    =b.SCIRefno	
-      ,a.Ukey	      =b.Ukey	
+      --,a.Ukey	      =b.Ukey	
       ,a.Layerno	      =b.Layerno	
       ,a.percentage	      =b.percentage	
       ,a.MtltypeId	      =b.MtltypeId	
@@ -648,10 +648,10 @@ where b.SCIRefno is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
-       a.SCIRefno	     =b.SCIRefno	
-      ,a.Ukey	      =b.Ukey	
-      ,a.SuppID	      =b.SuppID	
-      ,a.Year	      =b.Year	
+      -- a.SCIRefno	     =b.SCIRefno	
+      a.Ukey	      =b.Ukey	
+      --,a.SuppID	      =b.SuppID	
+      --,a.Year	      =b.Year	
       ,a.HsCode	      =b.HsCode	
       ,a.ImportDuty	      =b.ImportDuty	
       ,a.ECFADuty	      =b.ECFADuty	
