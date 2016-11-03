@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
-    public partial class txtwhseRefundAction : UserControl
+    public partial class txtwhseRefundAction : Sci.Win.UI._UserControl
     {
         public txtwhseRefundAction()
         {

@@ -18,7 +18,7 @@ using Sci;
 
 namespace Sci.Production.Class
 {
-    public partial class txtcutReason : UserControl
+    public partial class txtcutReason : Sci.Win.UI._UserControl
     {
         public txtcutReason()
         {

@@ -16,7 +16,7 @@ using Ict.Win;
 
 namespace Sci.Production.Class
 {
-    public partial class txtsubcon : UserControl
+    public partial class txtsubcon : Sci.Win.UI._UserControl
     {
         private bool isIncludeJunk;
         public txtsubcon()

@@ -12,7 +12,7 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtpayterm_fty : UserControl
+    public partial class txtpayterm_fty : Sci.Win.UI._UserControl
     {
         public txtpayterm_fty()
         {

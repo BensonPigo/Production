@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
-    public partial class txtLocalSupp : UserControl
+    public partial class txtLocalSupp : Sci.Win.UI._UserControl
     {
         public txtLocalSupp()
         {

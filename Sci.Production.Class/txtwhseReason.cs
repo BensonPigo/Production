@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
-    public partial class txtwhseReason : UserControl
+    public partial class txtwhseReason : Sci.Win.UI._UserControl
     {
         public txtwhseReason()
         {

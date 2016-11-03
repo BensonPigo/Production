@@ -13,7 +13,7 @@ using Sci.Win;
 
 namespace Sci.Production.Class
 {
-    public partial class Holiday : UserControl
+    public partial class Holiday : Sci.Win.UI._UserControl
     {
         public DateTime Today;
 

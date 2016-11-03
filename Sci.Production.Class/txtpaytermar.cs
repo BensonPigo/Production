@@ -12,7 +12,7 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtpaytermar : UserControl
+    public partial class txtpaytermar : Sci.Win.UI._UserControl
     {
         public txtpaytermar()
         {

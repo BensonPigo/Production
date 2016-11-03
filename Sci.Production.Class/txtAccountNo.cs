@@ -12,7 +12,7 @@ using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
-    public partial class txtAccountNo : UserControl
+    public partial class txtAccountNo : Sci.Win.UI._UserControl
     {
         public txtAccountNo()
         {
