@@ -405,7 +405,8 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 	                                where c.Styleukey =(select o.Styleukey from Orders o where o.id = '{0}')
 	                                and a.ThreadColorId is not null and a.ThreadColorId !=''
 	                                and a.Refno is not null and a.Refno !='' and Seamlength !=0
-	                                and a.id=b.id",
+	                                and a.id=b.id
+                                    and f.OrderQty !='0'",
                                     id);
 
             DualResult result;
