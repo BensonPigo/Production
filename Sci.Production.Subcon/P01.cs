@@ -77,14 +77,16 @@ namespace Sci.Production.Subcon
             paras.Add(sp1);
             //FarmOut_Detail/FarmIn_Detail
             string sqlcmd;
-            sqlcmd = @"select distinct fo.ID from ArtworkPO_Detail ad, FarmOut_Detail fo where ad.Ukey = fo.ArtworkPo_DetailUkey and ad.id = @id 
-                       union all
-                       select distinct fi.ID from ArtworkPO_Detail ad, FarmIn_Detail fi where ad.Ukey = fi.ArtworkPo_DetailUkey and ad.id = @id";
+//            sqlcmd = @"select distinct fo.ID from ArtworkPO_Detail ad, FarmOut_Detail fo where ad.Ukey = fo.ArtworkPo_DetailUkey and ad.id = @id 
+//                       union all
+//                       select distinct fi.ID from ArtworkPO_Detail ad, FarmIn_Detail fi where ad.Ukey = fi.ArtworkPo_DetailUkey and ad.id = @id";
+            sqlcmd = @"select a.Farmin,a.Farmout from ArtworkPO_Detail a where a.ID=@id";
 
             DataTable dt;
             DBProxy.Current.Select(null, sqlcmd, paras, out dt);
             //有則return
-            if (dt.Rows.Count > 0)
+            if (dt.AsEnumerable().Any(r => MyUtility.Convert.GetInt(r["Farmin"]) > 0)||
+                dt.AsEnumerable().Any(r => MyUtility.Convert.GetInt(r["Farmout"]) > 0))
             {                
                 MyUtility.Msg.WarningBox(string.Format("Some SP# already have Farm In/Out data!!!"), "Warning");
                 return false;

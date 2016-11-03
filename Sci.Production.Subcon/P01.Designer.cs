@@ -81,7 +81,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.dateBox3);
             this.masterpanel.Controls.Add(this.txtmfactory1);
             this.masterpanel.Controls.Add(this.label12);
             this.masterpanel.Controls.Add(this.numericBox4);
@@ -115,12 +114,14 @@
             this.masterpanel.Controls.Add(this.label5);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.dateBox3);
             this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Size = new System.Drawing.Size(1058, 248);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
@@ -154,7 +155,6 @@
             this.masterpanel.Controls.SetChildIndex(this.numericBox4, 0);
             this.masterpanel.Controls.SetChildIndex(this.label12, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtmfactory1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
             // 
             // detailpanel
             // 
