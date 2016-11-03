@@ -45,12 +45,13 @@ namespace Sci.Production.IE
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
-            {
-                MyUtility.Msg.WarningBox("< Brand > can not be empty!");
-                textBox4.Focus();
-                return false;
-            }
+            //移除BrandID必填，避免無BrandID的舊資料無法更新
+            //if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
+            //{
+            //    MyUtility.Msg.WarningBox("< Brand > can not be empty!");
+            //    textBox4.Focus();
+            //    return false;
+            //}
 
             if (MyUtility.Check.Empty(CurrentMaintain["Description"]))
             {

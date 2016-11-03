@@ -52,10 +52,6 @@
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(682, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.textBox4);
@@ -71,19 +67,14 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(682, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(682, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(682, 395);
+            this.browse.Size = new System.Drawing.Size(696, 395);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(690, 424);
+            this.tabs.Size = new System.Drawing.Size(704, 424);
             // 
             // label3
             // 
@@ -243,7 +234,7 @@
             // 
             // B01
             // 
-            this.ClientSize = new System.Drawing.Size(690, 457);
+            this.ClientSize = new System.Drawing.Size(704, 457);
             this.DefaultOrder = "BrandID,Code";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
