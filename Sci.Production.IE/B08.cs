@@ -108,6 +108,10 @@ namespace Sci.Production.IE
                         newRow["ResignationDate"] = dr["ResignationDate"];
                         newRow["SewingLineID"] = dr["SewingLineID"];
                         newRow["MDivisionID"] = Sci.Env.User.Keyword;
+                        newRow["AddName"] = Sci.Env.User.UserID;
+                        newRow["AddDate"] = DateTime.Now;
+                        newRow["EditName"] = "";
+                        newRow["EditDate"] = DBNull.Value;
                         UpdateData.Rows.Add(newRow);
 
                         dr["ErrorMsg"] = "Job is completed!";
