@@ -387,24 +387,25 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             CurrentMaintain["factoryid"] = drOrder["factoryid"].ToString();
             CurrentMaintain["OrderID"] = id;
             //事先整理資料
-            sqlpre = string.Format(@"Select    	a.ThreadColorId,  	d.Allowance,	a.Article,	a.ThreadCombId,
+            sqlpre = string.Format(@"Select distinct   	a.ThreadColorId,  	d.Allowance,	a.Article,	a.ThreadCombId,
 	                                b.OperationId,e.SeamLength,a.Seq, a.ThreadLocationId, a.Refno,d.UseRatioNumeric,
-                                    a.MachineTypeId,  isnull(f.OrderQty,0) as OrderQty ,g.MeterToCone,
-                                    g.Description as Threadcombdesc,h.Description as colordesc
+	                                a.MachineTypeId,  isnull(f.OrderQty,0) as OrderQty ,g.MeterToCone,
+	                                g.Description as Threadcombdesc,h.Description as colordesc
 	                                from ThreadColorComb_Detail a 
 	                                cross join ThreadColorComb_Operation b
 	                                left join ThreadColorcomb c on a.id=c.id 
 	                                left join MachineType_ThreadRatio d on a.Machinetypeid=d.Id and a.seq=d.seq
 	                                left join Operation e on b.OperationId= e.Id
-	                                Left join (Select Article,sum(qty) as OrderQty 
-                                               from Order_Qty a where a.id='{0}' group by Article) f
-	                                           on a.Article=f.Article
+	                                Left join (Select a.Article,sum(a.qty) as OrderQty 
+                                               from Order_Qty a inner join orders b on a.id=b.id  where b.POID='{0}' group by Article) f 
+                                              on a.Article=f.Article
 	                                Left join LocalItem g on a.Refno=g.Refno
-                                    Left join threadcolor h on h.id = a.threadcolorid
+	                                Left join threadcolor h on h.id = a.threadcolorid
                                     
 	                                where c.Styleukey =(select o.Styleukey from Orders o where o.id = '{0}')
-                                    and a.ThreadColorId is not null and a.ThreadColorId !=''
-	                                and a.Refno is not null and a.Refno !='' and Seamlength !=0",
+	                                and a.ThreadColorId is not null and a.ThreadColorId !=''
+	                                and a.Refno is not null and a.Refno !='' and Seamlength !=0
+	                                and a.id=b.id",
                                     id);
 
             DualResult result;
