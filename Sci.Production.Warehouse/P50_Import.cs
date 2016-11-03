@@ -264,7 +264,7 @@ and a.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
 
         private void txtLocation_Validating(object sender, CancelEventArgs e)
         {
-            base.OnValidating(e);
+          //  base.OnValidating(e);
             string textValue = this.txtLocation.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtLocation.OldValue)
             {
