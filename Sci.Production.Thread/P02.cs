@@ -170,7 +170,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 decimal newvalue = (decimal)e.FormattedValue;
                 if (!this.EditMode || oldvalue == newvalue) return;
                 CurrentDetailData["ConsumptionQty"] = newvalue;
-                //ReQty(CurrentDetailData);
+                ReQty(CurrentDetailData);
                 CurrentDetailData.EndEdit();
             };
             cons.CellMouseDoubleClick += (s, e) =>
@@ -273,7 +273,8 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             if (!this.EditMode 
                 || ( e.ColumnIndex != this.col_Allowance.Index
                     && e.ColumnIndex != this.col_NewCone.Index
-                    && e.ColumnIndex != this.col_UsedCone.Index)
+                    && e.ColumnIndex != this.col_UsedCone.Index
+                    && e.ColumnIndex != this.col_cons.Index)
                 )return;
             this.update_detailgrid_CellValidated(e.RowIndex);
         }
@@ -738,7 +739,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                         e.CellStyle.BackColor = Color.Pink;
                         e.CellStyle.ForeColor = Color.Red;
                     }
-                };
+                };                
                 col_refno.EditingControlShowing += (s, e) =>
                 {
                     if (e.RowIndex == -1) return;
