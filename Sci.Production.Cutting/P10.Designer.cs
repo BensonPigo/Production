@@ -73,7 +73,7 @@
             this.textBox_Colorid = new Sci.Win.UI.TextBox();
             this.Generate_Button = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
-            this.txtsewingline1 = new Sci.Production.Class.txtsewingline();
+            this.txtLine = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -90,7 +90,7 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.txtsewingline1);
+            this.masterpanel.Controls.Add(this.txtLine);
             this.masterpanel.Controls.Add(this.Generate_Button);
             this.masterpanel.Controls.Add(this.textBox_Colorid);
             this.masterpanel.Controls.Add(this.textBox_Article);
@@ -181,7 +181,7 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox_Article, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox_Colorid, 0);
             this.masterpanel.Controls.SetChildIndex(this.Generate_Button, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtsewingline1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtLine, 0);
             // 
             // detailpanel
             // 
@@ -729,16 +729,17 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // txtsewingline1
+            // txtLine
             // 
-            this.txtsewingline1.BackColor = System.Drawing.Color.White;
-            this.txtsewingline1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "sewinglineid", true));
-            this.txtsewingline1.factoryobjectName = null;
-            this.txtsewingline1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtsewingline1.Location = new System.Drawing.Point(96, 115);
-            this.txtsewingline1.Name = "txtsewingline1";
-            this.txtsewingline1.Size = new System.Drawing.Size(53, 23);
-            this.txtsewingline1.TabIndex = 47;
+            this.txtLine.BackColor = System.Drawing.Color.White;
+            this.txtLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "sewinglineid", true));
+            this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLine.Location = new System.Drawing.Point(97, 115);
+            this.txtLine.Name = "txtLine";
+            this.txtLine.Size = new System.Drawing.Size(73, 23);
+            this.txtLine.TabIndex = 47;
+            this.txtLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLine_PopUp);
+            this.txtLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtLine_Validating);
             // 
             // P10
             // 
@@ -819,6 +820,6 @@
         private Win.UI.NumericBox numericBox_GroupQty;
         private Win.UI.Button Generate_Button;
         private Win.UI.Button button1;
-        private Class.txtsewingline txtsewingline1;
+        private Win.UI.TextBox txtLine;
     }
 }

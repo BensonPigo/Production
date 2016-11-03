@@ -782,6 +782,34 @@ namespace Sci.Production.Cutting
 
         }
 
+        private void txtLine_PopUp(object sender, TextBoxPopUpEventArgs e)
+        {
+            if (!this.EditMode) return;
+            string sql = string.Format(@"Select ID,FactoryID,Description  From SewingLine  
+                                        where FactoryID in (select ID from Factory where MDivisionID='{0}')", Sci.Env.User.Keyword);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2,8,16", this.Text, false, ",");
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel) { return; }
+            txtLine.Text = item.GetSelectedString();
+        }
+
+        private void txtLine_Validating(object sender, CancelEventArgs e)
+        {
+            if (!this.EditMode) return;
+            string newvalue = txtLine.Text;
+            if (txtLine.OldValue.ToString() == newvalue) return;
+            string sql = string.Format(@"Select ID  From SewingLine  
+                    where FactoryID in (select ID from Factory where MDivisionID='{0}') and ID='{1}'", Sci.Env.User.Keyword, newvalue);
+            string tmp = MyUtility.GetValue.Lookup(sql);
+            if (string.IsNullOrWhiteSpace(tmp))
+            {
+                txtLine.Text = "";
+                e.Cancel = true;
+                MyUtility.Msg.WarningBox(string.Format("< Sewing Line> : {0} not found!!!", newvalue));
+                return;
+            }
+        }
+
 
         //private void textBox_Line_MouseDown(object sender, MouseEventArgs e)
         //{
