@@ -231,6 +231,7 @@
             this.textBox4.Size = new System.Drawing.Size(66, 23);
             this.textBox4.TabIndex = 13;
             this.textBox4.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
+            this.textBox4.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
             // 
             // B01
             // 

@@ -79,5 +79,21 @@ namespace Sci.Production.IE
             if (result == DialogResult.Cancel) { return; }
             textBox4.Text = item.GetSelectedString();
         }
+
+        private void textBox4_Validating(object sender, CancelEventArgs e)
+        {
+            string textValue = this.textBox4.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox4.OldValue)
+            {
+                if (!MyUtility.Check.Seek(string.Format(@"SELECT Id FROM Brand WHERE Junk=0 AND id = '{0}'", textValue)))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("< Brand: {0} > not found!!!", textValue));
+                    this.textBox4.Text = "";
+                    e.Cancel = true;
+                    return;
+                }
+            }
+        }
+
     }
 }
