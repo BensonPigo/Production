@@ -127,8 +127,10 @@ Database/dbo/Tables/BorrowBack.sql -text
 Database/dbo/Tables/BorrowBack_Detail.sql -text
 Database/dbo/Tables/Brand.sql -text
 Database/dbo/Tables/Bundle.sql -text
+Database/dbo/Tables/BundleInOut.sql -text
 Database/dbo/Tables/BundleTrack.sql -text
 Database/dbo/Tables/BundleTrack_detail.sql -text
+Database/dbo/Tables/BundleTransfer.sql -text
 Database/dbo/Tables/Bundle_Detail.sql -text
 Database/dbo/Tables/Bundle_Detail_Allpart.sql -text
 Database/dbo/Tables/Bundle_Detail_Art.sql -text
@@ -393,6 +395,7 @@ Database/dbo/Tables/Pullout_History.sql -text
 Database/dbo/Tables/Pullout_Revise.sql -text
 Database/dbo/Tables/Pullout_Revise_Detail.sql -text
 Database/dbo/Tables/Query.sql -text
+Database/dbo/Tables/RFIDReader.sql -text
 Database/dbo/Tables/Reason.sql -text
 Database/dbo/Tables/Receiving.sql -text
 Database/dbo/Tables/Receiving_Detail.sql -text
