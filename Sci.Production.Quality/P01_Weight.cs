@@ -103,11 +103,8 @@ namespace Sci.Production.Quality
             approve_box.Text = maindr["ApproveDate"].ToString();
             arriveqty_box.Text = maindr["arriveQty"].ToString();
             arrwhdate_box.Value = MyUtility.Convert.GetDate(maindr["whseArrival"]);
-            //brandrefno_box.Text = maindr["SCIRefno"].ToString();
-            //color_box.Text = maindr["Colorid"].ToString();
             lastinspdate_box.Value = MyUtility.Convert.GetDate(maindr["WeightDate"]);
             refdesc_box.Text = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
-            //scirefno_box.Text = maindr["SciRefno"].ToString();
             seq_box.Text = maindr["Seq1"].ToString() + "-" + maindr["Seq2"].ToString();
             sp_box.Text = maindr["POID"].ToString();
             wk_box.Text = maindr["Exportid"].ToString();
@@ -126,18 +123,32 @@ namespace Sci.Production.Quality
             datas.Columns.Add("SEQ1", typeof(string));
             datas.Columns.Add("SEQ2", typeof(string));
             //datas.Columns.Add("WeightM2", typeof(decimal));
+            DataTable dt;
+            //string aaa=CurrentData["SCIRefno"].ToString();
+            
 
             foreach (DataRow dr in datas.Rows)
             {
                 dr["Name"] = MyUtility.GetValue.Lookup("Name", dr["Inspector"].ToString(), "Pass1", "ID");
-                //待FIR.SCIRefno 資料正確在處理 .willy 20161008
-                //dr["WeightM2"] = MyUtility.GetValue.Lookup("WeightM2", dr["SCIRefno"].ToString()+dr["Suppid"].ToString(), "Fabric_supp", "SCIRefno+Suppid");
+//                //待FIR.SCIRefno 資料正確在處理 .willy 20161008
+//                DBProxy.Current.Select(null, string.Format(@"
+//select WeightM2 from Fabric a inner join Fabric_Supp b on a.SCIRefno=b.SCIRefno 
+//where a.SCIRefno='{0}'
+//and b.SuppID='{1}'", maindr["SCIRefno"].ToString(), maindr["Suppid"].ToString()),out dt );
+
+//                if (dt.Rows.Count==0)
+//                {
+//                    dr["WeightM2"] = 0;
+//                }
+//                else
+//                {
+//                    dr["WeightM2"] = dt.Rows[0]["WeightM2"];                
+//                }                
                 dr["poid"] = maindr["poid"];
                 dr["SEQ1"] = maindr["SEQ1"];
                 dr["SEQ2"] = maindr["SEQ2"];
             }
         }
-
         protected override bool OnGridSetup()
         {
 
@@ -235,7 +246,6 @@ namespace Sci.Production.Quality
             return true;
 
         }
-
         protected override void OnInsert()
         {
             DataTable Dt = (DataTable)gridbs.DataSource;
@@ -475,7 +485,7 @@ namespace Sci.Production.Quality
                 approve_button.Enabled = this.CanEdit && !this.EditMode && lCheck == 1 && !MyUtility.Check.Empty(maindr["Result"]);
             }
         }
-      
+       
         private void button3_Click(object sender, EventArgs e)
         {
             #region Excel Grid Value

@@ -100,21 +100,15 @@ namespace Sci.Production.Quality
             else
             {
                 scirefno_box.Text = "";
-                color_box.Text = "";
-                
+                color_box.Text = "";                
             }
 
             approve_box.Text = maindr["ApproveDate"].ToString();
             arriveqty_box.Text = maindr["arriveQty"].ToString();
-            //arrwhdate_box.Value = MyUtility.Convert.GetDate(maindr["whseArrival"]);            
-            //brandrefno_box.Text = maindr["SCIRefno"].ToString();
-            //color_box.Text = maindr["Colorid"].ToString();
             lastinspdate_box.Value = MyUtility.Convert.GetDate(maindr["ContinuityDate"]);
             refdesc_box.Text = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
-            //scirefno_box.Text = maindr["SciRefno"].ToString();
             seq_box.Text = maindr["Seq1"].ToString() + "-" + maindr["Seq2"].ToString();
             sp_box.Text = maindr["POID"].ToString();
-            //wk_box.Text = maindr["Exportid"].ToString();
             checkBox1.Value = maindr["nonContinuity"].ToString();
             result_box.Text = maindr["Continuity"].ToString();
             txtuser1.TextBox1.Text = maindr["Approve"].ToString();

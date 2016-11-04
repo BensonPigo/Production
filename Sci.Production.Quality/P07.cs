@@ -335,7 +335,6 @@ namespace Sci.Production.Quality
                     rowindex = rIdx;
                     break;
                 }
-
             }
             detailgrid.SelectRowTo(rowindex);
         }

@@ -222,9 +222,9 @@ namespace Sci.Production.Quality
         {
             DataTable dt;
             DBProxy.Current.Select(null, "select Max(id) as id from ColorFastness", out dt);
-
-            int ID = MyUtility.Convert.GetInt(dt.Rows[0]["id"]);
-            ID = ID + 1;
+            string ID = MyUtility.GetValue.GetID("CF", "ColorFastness", DateTime.Today, 2, "ID", null);
+            //int ID = MyUtility.Convert.GetInt(dt.Rows[0]["id"]);
+            //ID = ID + 1;
 
             Sci.Production.Quality.P06_Detail callNewDetailForm = new P06_Detail(IsSupportEdit, ID.ToString(), null, null, null, this.sp_text.Text);
             callNewDetailForm.ShowDialog(this);
@@ -236,12 +236,30 @@ namespace Sci.Production.Quality
         // Context Menu選擇Edit This Record's Detail
         private void EditThisDetail()
         {
+            string currentID = this.CurrentDetailData["ID"].ToString();
+            string spno = this.sp_text.Text;
             var dr = this.CurrentDetailData; if (null == dr) return;
             var frm = new Sci.Production.Quality.P06_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr, sp_text.Text);
             frm.ShowDialog(this);
             frm.Dispose();
             contextMenuStrip();
             this.RenewData();
+            OnDetailEntered();
+            // 固定滑鼠指向位置,避免被renew影響
+            int rowindex = 0;
+            for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
+            {
+                DataGridViewRow dvr = detailgrid.Rows[rIdx];
+                DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
+
+                if (row["ID"].ToString()== currentID )
+                {
+                    rowindex = rIdx;
+                    break;
+                }
+            }
+            detailgrid.SelectRowTo(rowindex);
+
         }
         
         // Context Menu選擇Delete This Record's Detail
@@ -270,6 +288,7 @@ namespace Sci.Production.Quality
             }
             contextMenuStrip();
             this.RenewData();
+            OnDetailEntered();
         }
 
         private void contextMenuStrip()

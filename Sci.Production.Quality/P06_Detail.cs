@@ -184,17 +184,9 @@ namespace Sci.Production.Quality
 
         protected override bool OnGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings groupCell = new DataGridViewGeneratorMaskedTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings seqMskCell = new DataGridViewGeneratorMaskedTextColumnSettings();
-            seqMskCell.TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;
-           // DataGridViewGeneratorTextColumnSettings groupCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings seqCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings rollCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings chgCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings staCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings resultCell = new DataGridViewGeneratorTextColumnSettings();
 
-            #region MouseClick
+            #region -- seqMskCell
+            Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings seqMskCell = new DataGridViewGeneratorMaskedTextColumnSettings();
 
             seqMskCell.CellMouseClick += (s, e) =>
             {
@@ -213,13 +205,16 @@ namespace Sci.Production.Quality
                     }
                     Char splitChar = '-';
                     string[] seqSplit = item.GetSelectedString().Split(splitChar);
-                    dr["seq1"] = seqSplit[0];
-                    dr["seq2"] = seqSplit[1];
                     if (seqSplit[0].ToString().Length <= 2)
                     {
                         seqSplit[0] = seqSplit[0] + " ";
                     }
-                    dr["SEQ"] = seqSplit[0] + "-" + seqSplit[1];
+                    dr["SEQ"] = seqSplit[0] + "-" + seqSplit[1];                    
+                    dr["seq1"] = seqSplit[0];
+                    dr["seq2"] = seqSplit[1];
+
+                    //e.FormattedValue = "";
+                    // this.grid.CurrentCell.Value = "";
                 }
 
             };
@@ -240,17 +235,59 @@ namespace Sci.Production.Quality
                     }
                     Char splitChar = '-';
                     string[] seqSplit = item.GetSelectedString().Split(splitChar);
-                    dr["seq1"] = seqSplit[0];
-                    dr["seq2"] = seqSplit[1];
                     if (seqSplit[0].ToString().Length <= 2)
                     {
                         seqSplit[0] = seqSplit[0] + " ";
                     }
                     dr["SEQ"] = seqSplit[0] + "-" + seqSplit[1];
+                    var ctl = (Ict.Win.UI.DataGridViewMaskedTextBoxEditingControl)this.grid.EditingControl;
+                   // this.grid.CurrentCell.Value = dr["SEQ"].ToString();
+                    ctl.Text = dr["SEQ"].ToString();
+                    dr["seq1"] = seqSplit[0];
+                    dr["seq2"] = seqSplit[1];
                 }
 
             };
-            
+
+            seqMskCell.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) return;
+                if (MyUtility.Check.Empty(e.FormattedValue)) { return; }
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                DataTable dt;
+                string seq1 = e.FormattedValue.ToString().PadRight(5).Substring(0, 3),
+                    seq2 = e.FormattedValue.ToString().PadRight(5).Substring(3, 2);
+
+                // dr["SEQ"] = e.FormattedValue;
+                string sql_cmd = string.Format("select seq1,seq2 from PO_Supp_Detail where id='{0}' and FabricType='F' and seq1='{1}' and seq2='{2}'", PoID, seq1, seq2);
+                DBProxy.Current.Select(null, sql_cmd, out dt);
+                if (dt.Rows.Count <= 0)
+                {
+                    //e.Cancel = true;//將value卡住,沒輸入正確or清空不給離開
+                    var ctl = (Ict.Win.UI.DataGridViewMaskedTextBoxEditingControl)this.grid.EditingControl;
+                    ctl.Text = "";
+                    //e.FormattedValue = "";
+                    // this.grid.CurrentCell.Value = "";
+                    MyUtility.Msg.InfoBox("<SEQ#> doesn't exist in Data!");
+                    dr["seq1"] = "";
+                    dr["seq2"] = "";
+                    return;
+                }
+                dr["seq1"] = seq1;
+                dr["seq2"] = seq2;
+                if (dr["seq1"].ToString().Length != 3)
+                {
+                    dr["SEQ"] = dr["seq1"] + " -" + dr["seq2"];
+                }
+                else
+                {
+                    dr["SEQ"] = dr["seq1"] + "-" + dr["seq2"];
+                }
+            };
+            #endregion
+
+            #region -- rollCell
+            DataGridViewGeneratorTextColumnSettings rollCell = new DataGridViewGeneratorTextColumnSettings();
             rollCell.CellMouseClick += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
@@ -335,128 +372,6 @@ namespace Sci.Production.Quality
                 }
 
             };
-            chgCell.CellMouseClick += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string item_cmd = "select id from Scale where Junk=0 ";
-
-                    SelectItem item = new SelectItem(item_cmd, "10", dr["Changescale"].ToString());
-                    DialogResult dresult = item.ShowDialog();
-                    if (dresult == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-                    dr["Changescale"] = item.GetSelectedString();
-                }
-
-            };
-
-            chgCell.EditingMouseDown += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string item_cmd = "select id from Scale where Junk=0 ";
-
-                    SelectItem item = new SelectItem(item_cmd, "10", dr["Changescale"].ToString());
-                    DialogResult dresult = item.ShowDialog();
-                    if (dresult == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-                    dr["Changescale"] = item.GetSelectedString();
-                }
-
-            };
-            staCell.CellMouseClick += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string item_cmd = "select id from Scale where Junk=0 ";
-
-                    SelectItem item = new SelectItem(item_cmd, "10", dr["StainingScale"].ToString());
-                    DialogResult dresult = item.ShowDialog();
-                    if (dresult == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-                    dr["StainingScale"] = item.GetSelectedString();
-                }
-
-            };
-            staCell.EditingMouseDown += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                if (this.EditMode == false) return;
-                if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string item_cmd = "select id from Scale where Junk=0 ";
-
-                    SelectItem item = new SelectItem(item_cmd, "10", dr["StainingScale"].ToString());
-                    DialogResult dresult = item.ShowDialog();
-                    if (dresult == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-                    dr["StainingScale"] = item.GetSelectedString();
-                }
-
-            };
-            #endregion
-
-            #region Valid
-            //// 個位數需補0
-            //groupCell.CellValidating += (s, e) =>
-            //{
-            //    if (this.EditMode == false) return;
-            //    DataRow dr = grid.GetDataRow(e.RowIndex);
-            //    if (e.FormattedValue.ToString().Length != 2)
-            //    {
-            //        dr["ColorFastnessGroup"] = "0" + e.FormattedValue.ToString();
-            //    }
-         
-            //};
-            seqMskCell.CellValidating += (s, e) =>
-            {
-                if (!this.EditMode) return;
-                if (MyUtility.Check.Empty(e.FormattedValue)) { return; }
-                DataRow dr = grid.GetDataRow(e.RowIndex);
-                DataTable dt;
-
-                dr["seq1"] = e.FormattedValue.ToString().PadRight(5).Substring(0, 3);
-                dr["seq2"] = e.FormattedValue.ToString().PadRight(5).Substring(3, 2);
-                if (dr["seq1"].ToString().Length != 3)
-                {
-                    dr["SEQ"] = dr["seq1"] + " -" + dr["seq2"];
-                }
-                else
-                {
-                    dr["SEQ"] = dr["seq1"] + "-" + dr["seq2"];
-                }
-                // dr["SEQ"] = e.FormattedValue;
-                string sql_cmd = string.Format("select seq1,seq2 from PO_Supp_Detail where id='{0}' and FabricType='F' and seq1='{1}' and seq2='{2}'", PoID, dr["seq1"].ToString().Trim(), dr["seq2"].ToString().Trim());
-                DBProxy.Current.Select(null, sql_cmd, out dt);
-                if (dt.Rows.Count <= 0)
-                {
-                    MyUtility.Msg.InfoBox("<SEQ#> doesn't exist in Data!");
-                    dr["SEQ"] = "";
-                    dr["seq1"] = "";
-                    dr["seq2"] = "";
-                    return;
-                }
-              
-            };
-            
             rollCell.CellValidating += (s, e) =>
             {
                 if (this.EditMode == false) return;
@@ -472,10 +387,13 @@ namespace Sci.Production.Quality
                     DBProxy.Current.Select(null, cmd, spam, out dt);
                     if (dt.Rows.Count <= 0)
                     {
+                        var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;
+                        ctl.Text = "";
+                        this.grid.CurrentCell.Value = "";
                         MyUtility.Msg.InfoBox("<Roll> doesn't exist in Data!");
-                        dr["Roll"] = "";
                         dr["Dyelot"] = "";
                         return;
+
                     }
                     else
                     {
@@ -510,10 +428,62 @@ namespace Sci.Production.Quality
 
 
             };
+            #endregion
+
+            #region -- chgCell
+            DataGridViewGeneratorTextColumnSettings chgCell = new DataGridViewGeneratorTextColumnSettings();
+          
+            chgCell.CellMouseClick += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string item_cmd = "select id from Scale where Junk=0 ";
+
+                    SelectItem item = new SelectItem(item_cmd, "10", dr["Changescale"].ToString());
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    
+                    //var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.;  
+                    dr["Changescale"] = item.GetSelectedString();
+                   
+                }
+
+            };
+
+            chgCell.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string item_cmd = "select id from Scale where Junk=0 ";
+
+                    SelectItem item = new SelectItem(item_cmd, "10", dr["Changescale"].ToString());
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;                
+                    dr["Changescale"] = item.GetSelectedString();
+                    ctl.Text = dr["Changescale"].ToString();  
+                    this.grid.InvalidateCell(e.ColumnIndex, e.RowIndex);
+                    
+                }
+
+            };
+
             chgCell.CellValidating += (s, e) =>
             {
                 if (this.EditMode == false) return;
-                if (e.FormattedValue == "") return;
+                if (MyUtility.Check.Empty(e.FormattedValue)) return;
                 DataTable dt;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 string cmd = "select id from Scale where Junk=0  and id=@ChangeScale";
@@ -528,10 +498,57 @@ namespace Sci.Production.Quality
                     return;
                 }
             };
+            #endregion
+
+            #region -- staCell
+            DataGridViewGeneratorTextColumnSettings staCell = new DataGridViewGeneratorTextColumnSettings();
+
+            staCell.CellMouseClick += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string item_cmd = "select id from Scale where Junk=0 ";
+
+                    SelectItem item = new SelectItem(item_cmd, "10", dr["StainingScale"].ToString());
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    dr["StainingScale"] = item.GetSelectedString();
+                }
+
+            };
+            staCell.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string item_cmd = "select id from Scale where Junk=0 ";
+
+                    SelectItem item = new SelectItem(item_cmd, "10", dr["StainingScale"].ToString());
+                    DialogResult dresult = item.ShowDialog();
+                    if (dresult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;
+                    dr["StainingScale"] = item.GetSelectedString();
+                    ctl.Text = dr["StainingScale"].ToString();
+                    this.grid.InvalidateCell(e.ColumnIndex, e.RowIndex);
+                }
+
+            };
+
             staCell.CellValidating += (s, e) =>
             {
                 if (this.EditMode == false) return;
-                if (e.FormattedValue == "") return;
+                if (MyUtility.Check.Empty(e.FormattedValue)) return;
                 DataTable dt;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 string cmd = "select id from Scale where Junk=0  and id=@StainingScale";
@@ -546,20 +563,48 @@ namespace Sci.Production.Quality
                     return;
                 }
             };
+            #endregion
+
+            #region -- resultCell
+            DataGridViewGeneratorTextColumnSettings resultCell = new DataGridViewGeneratorTextColumnSettings();
+
+
             resultCell.CellMouseDoubleClick += (s, e) =>
             {
                 if (this.EditMode == false) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (dr["result"].ToString() == "PASS") { dr["result"] = "FAIL"; }
-                else { dr["result"] = "PASS"; }
+                if (dr["result"].ToString() == "PASS") 
+                {
+                    var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;                   
+                    dr["result"] = "FAIL";
+                    ctl.Text = dr["result"].ToString();
+                }
+                else
+                {
+                    var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;           
+                    dr["result"] = "PASS";
+                    ctl.Text = dr["result"].ToString();
+                }
             };
+            #endregion
+            seqMskCell.TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;
+           // DataGridViewGeneratorTextColumnSettings groupCell = new DataGridViewGeneratorTextColumnSettings();
+
+            #region MouseClick
+
+            
+            #endregion
+
+            #region Valid
+          
+            
+            
             #endregion
 
             Helper.Controls.Grid.Generator(this.grid)
-                .MaskedText("ColorFastnessGroup", "CC", "Body", width: Widths.AnsiChars(5), settings: groupCell)
-                //.Text("ColorFastnessGroup","Body",width:Widths.AnsiChars(5),settings:groupCell)
-                .MaskedText("SEQ", "CCC-CC", "SEQ#", width: Widths.AnsiChars(7), settings: seqMskCell)
-                //.Text("SEQ", header: "SEQ#", width: Widths.AnsiChars(10), iseditable: false, settings: seqCell)
+                .MaskedText("ColorFastnessGroup", "CC", "Body", width: Widths.AnsiChars(5))//, settings: groupCell)
+                //.Text("ColorFastnessGroup", "Body", width: Widths.AnsiChars(5))//, settings: groupCell)
+                .MaskedText("SEQ", "CCC-CC", "SEQ#", width: Widths.AnsiChars(7), settings: seqMskCell)  
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(5), settings: rollCell)
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -633,11 +678,9 @@ namespace Sci.Production.Quality
 
                     if (newOven)  //insert 新資料進ColorFastness
                     {
-                        string insCmd = @"
-                                            SET IDENTITY_INSERT ColorFastness ON
+                        string insCmd = @"                                            
                                             insert into ColorFastness(ID,POID,TestNo,InspDate,Article,Result,Status,Inspector,Remark,addName,addDate)
-                                            values(@id ,@poid,'1',GETDATE(),@Article,'Pass','New',@logid,@remark,@logid,GETDATE())
-                                            SET IDENTITY_INSERT ColorFastness off";
+                                            values(@id ,@poid,'1',GETDATE(),@Article,'Pass','New',@logid,@remark,@logid,GETDATE())";
                         List<SqlParameter> spamAddNew = new List<SqlParameter>();
                         spamAddNew.Add(new SqlParameter("@id", ID));//New ID
                         spamAddNew.Add(new SqlParameter("@poid", PoID));
@@ -647,7 +690,7 @@ namespace Sci.Production.Quality
                         upResult = DBProxy.Current.Execute(null, insCmd, spamAddNew);
                     }
                 }
-                if (dr.RowState == DataRowState.Modified || isModify)
+                if (dr.RowState == DataRowState.Modified && isModify)
                 {
                     string editCmd = @"update ColorFastness set inspdate=@insDate,Article=@Article,Inspector=@insor,remark=@remark , EditName=@EditName , EditDate=@EditDate
                                                        where id=@id";
