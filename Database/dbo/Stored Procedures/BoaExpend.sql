@@ -22,15 +22,15 @@ Begin
 			 , OrderQty Numeric(6,0), Price Numeric(8,4), UsageQty Numeric(9,2), UsageUnit VarChar(8), SysUsageQty  Numeric(9,2)
 			 , BomZipperInsert VarChar(5), BomCustPONo VarChar(30)
 			 , Primary Key (ExpendUkey)
+			 , Index Idx_ID NonClustered (ID, Order_BOAUkey, ColorID) -- table index
 			);
-		Create NonClustered Index Idx_ID on #Tmp_BoaExpend (ID, Order_BOAUkey, ColorID) -- table index
 	End;	
 	If Object_ID('tempdb..#Tmp_BoaExpend_OrderList') Is Null
 	Begin
 		Create Table #Tmp_BoaExpend_OrderList
 			(ExpendUkey BigInt, ID Varchar(13), OrderID Varchar(13)
+			 Index Idx_ID NonClustered (ExpendUkey, ID, OrderID) -- table index
 			);
-		Create NonClustered Index Idx_ID on #Tmp_BoaExpend_OrderList (ExpendUkey, ID, OrderID) -- table index
 	End;	
 	If Object_ID('tempdb..#Tmp_Order_Qty') Is Null
 	Begin

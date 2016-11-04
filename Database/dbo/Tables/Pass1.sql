@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Pass1] (
     [ID]         VARCHAR (10)  CONSTRAINT [DF_Pass1_ID] DEFAULT ('') NOT NULL,
-    [Name]       NVARCHAR (30) CONSTRAINT [DF_Pass1_Name] DEFAULT ('') NULL,
+    [Name]       NVARCHAR (20) CONSTRAINT [DF_Pass1_Name] DEFAULT ('') NULL,
     [Password]   VARCHAR (10)  CONSTRAINT [DF_Pass1_Password] DEFAULT ('') NULL,
     [Position]   VARCHAR (20)  CONSTRAINT [DF_Pass1_Position] DEFAULT ('') NULL,
     [FKPass0]    BIGINT        CONSTRAINT [DF_Pass1_FKPass0] DEFAULT ((0)) NULL,
@@ -22,4 +22,6 @@
     [EditDate]   DATETIME      NULL,
     CONSTRAINT [PK_Pass1_1] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 

@@ -15,8 +15,10 @@
     [AddDate]         DATETIME       NULL,
     [EditName]        VARCHAR (10)   CONSTRAINT [DF_Receiving_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME       NULL,
-    CONSTRAINT [PK_Receiving] PRIMARY KEY CLUSTERED ([Id] ASC) 
+    CONSTRAINT [PK_Receiving] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
@@ -93,4 +95,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯日�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving', @level2type = N'COLUMN', @level2name = N'MDivisionID';
+
+
+GO
+CREATE NONCLUSTERED INDEX [invno]
+    ON [dbo].[Receiving]([InvNo] ASC);
 
