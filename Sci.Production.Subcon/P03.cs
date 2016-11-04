@@ -525,10 +525,11 @@ where b.bundleno !='' and b.id = '{0}'and a.artworktypeid = '{1}'", CurrentMaint
             }
 
             sqlcmd = string.Format(@"select b.id,b.bundleno 
-from farmin a inner join farmin_detail b on b.id = a.id 
-inner join farmout_detail c on b.bundleno = c.bundleno and b.artworkid = c.artworkid
-where c.bundleno !='' and c.id = '{0}'
-and a.artworktypeid = '{1}'", CurrentMaintain["id"], CurrentMaintain["artworktypeid"]);
+                                    from farmin a inner join farmin_detail b on b.id = a.id 
+                                    inner join farmout_detail c on b.bundleno = c.bundleno and b.artworkid = c.artworkid
+                                    where c.bundleno !='' and c.id = '{0}'
+                                    and a.artworktypeid = '{1}'", 
+                                    CurrentMaintain["id"], CurrentMaintain["artworktypeid"]);
 
             ids = "";
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck))) { ShowErr(sqlcmd, result); }
@@ -543,26 +544,38 @@ and a.artworktypeid = '{1}'", CurrentMaintain["id"], CurrentMaintain["artworktyp
                 return;
             }
 
-
-            ids = "";
-            foreach (var dr in DetailDatas)
+            string sqlcmdio = string.Format(@"
+                            select c.FarmOut,c.FarmIn,b.id,b.orderid,a.artworktypeid,b.artworkid,b.patterncode,c.Farmin
+                            from FarmOut a
+                            inner join FarmOut_Detail b on a.id=b.id
+                            inner join ArtworkPO_Detail c on b.ArtworkPo_DetailUkey=c.Ukey
+                            where a.Id='{0}' and a.artworktypeid = '{1}'"
+                            , CurrentMaintain["id"], CurrentMaintain["artworktypeid"]);
+            StringBuilder mids = new StringBuilder();
+            if (!(result = DBProxy.Current.Select(null, sqlcmdio, out datacheck)))
             {
-                if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
-                {
-                    ShowErr(sqlcmd, result);
-                    return;
-                }
-                if (datacheck.Rows.Count > 0)
-                {
-                    if ((decimal)datacheck.Rows[0]["farmout"] - (decimal)dr["qty"] < (decimal)datacheck.Rows[0]["farmin"])
-                    {
-                        ids += string.Format("{0}-{1}-{2}-{3}-{4} can't less farm in qty {5}", datacheck.Rows[0]["id"], datacheck.Rows[0]["orderid"], datacheck.Rows[0]["artworktypeid"], datacheck.Rows[0]["artworkid"], datacheck.Rows[0]["patterncode"], datacheck.Rows[0]["farmin"]) + Environment.NewLine;
-                    }
-                }
+                ShowErr(sqlcmd, result);
+                return;
             }
-            if (!MyUtility.Check.Empty(ids))
+            if (datacheck.Rows.Count > 0)
             {
-                MyUtility.Msg.WarningBox(ids);
+                int i = 0;
+                DataRow[] Srows;
+                foreach (var dr in DetailDatas)
+                {
+                    Srows = datacheck.Select(string.Format("OrderID = '{0}'",dr["orderid"].ToString()));
+                    if ((decimal)Srows[0]["farmout"] - (decimal)dr["qty"] < (decimal)Srows[0]["farmin"])
+                    {
+                        mids.Append(string.Format("{0}-{1}-{2}-{3}-{4} can't less farm in qty {5}", Srows[0]["id"], Srows[0]["orderid"], Srows[0]["artworktypeid"], Srows[0]["artworkid"], Srows[0]["patterncode"], Srows[0]["farmin"]) + Environment.NewLine);
+                    }
+                    i++;
+                }
+
+                if (!MyUtility.Check.Empty(mids))
+                {
+                    MyUtility.Msg.WarningBox(mids.ToString());
+                }
+                return;
             }
 
             // update farmout status
