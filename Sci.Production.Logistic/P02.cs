@@ -26,6 +26,10 @@ namespace Sci.Production.Logistic
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            TextBox a = new TextBox();
+            a.Text = Sci.Env.User.Keyword;
+            this.txtcloglocation1.MDivisionObjectName=a;
+
             this.grid1.IsEditingReadOnly = false;
             this.grid1.DataSource = listControlBindingSource1;
 
