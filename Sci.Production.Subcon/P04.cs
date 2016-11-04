@@ -167,7 +167,8 @@ namespace Sci.Production.Subcon
 BundleNo, OrderID, styleID, ArtworkPoID, ArtworkID, PatternCode, PatternDesc, ArtworkPoQty, OnHand, 
 (artworkpoqty - onhand) Variance, 
 Qty, 
-(artworkpoqty - onhand - qty) BalQty 
+(artworkpoqty - onhand - qty) BalQty ,
+Ukey
 from FarmIn_Detail 
 outer apply(
 	select styleID
