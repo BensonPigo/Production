@@ -233,7 +233,8 @@ outer apply(
             ts.CellValidating += (s, e) =>
             {
 
-                if (!(this.EditMode) || !(this.IsDetailInserting)) return;              
+                if (!(this.EditMode) || !(this.IsDetailInserting)) return;
+                if (e.FormattedValue.ToString() == CurrentDetailData["OrderID"].ToString()) return;
                    // && MyUtility.Check.Empty(string.Format("select styleid from orders where id ='{0}'", e.FormattedValue)))
 
                 if (!(MyUtility.Check.Empty(e.FormattedValue)))
@@ -650,6 +651,8 @@ and a.artworktypeid = '{1}'", CurrentMaintain["id"], CurrentMaintain["artworktyp
             OnDetailEntered();
             this.EnsureToolbarExt();
         }
+
+
 
         private void label25_Click(object sender, EventArgs e)
         {
