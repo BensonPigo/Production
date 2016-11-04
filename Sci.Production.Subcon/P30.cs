@@ -160,6 +160,15 @@ namespace Sci.Production.Subcon
                 txtmfactory1.Focus();
                 return false;
             }
+            foreach (DataRow Ddr in DetailDatas)
+            {
+                if (MyUtility.Check.Empty(Ddr["delivery"]))
+                {
+                    MessageBox.Show("Delivery can not any empty.");
+                    return false;
+                }
+            }
+
             #endregion
 
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty = 0 or qty = null"))
