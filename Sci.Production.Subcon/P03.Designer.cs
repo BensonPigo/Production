@@ -327,6 +327,7 @@
             this.DefaultControl = "datebox1";
             this.DefaultOrder = "IssueDate,ID";
             this.GridAlias = "FarmOut_detail";
+            this.GridUniqueKey = "Ukey";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;

@@ -157,10 +157,14 @@ namespace Sci.Production.Subcon
                 CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(factorykeyword + "FO", "FarmOut", (DateTime)CurrentMaintain["issuedate"]);
             }
 
-            #region 加總明細Qty至表頭
+            #region 加總明細Qty是否=0
 
             object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(qty)", "");
-            CurrentMaintain["totalqty"] = (decimal)detail_a;
+            if (MyUtility.Convert.GetDecimal(detail_a)==0)
+            {
+                MessageBox.Show("Farm In# Detail Qty can't all be zero.");
+                return false;
+            }
 
             #endregion
 
