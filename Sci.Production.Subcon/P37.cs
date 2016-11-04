@@ -59,7 +59,6 @@ namespace Sci.Production.Subcon
             queryfors.SelectedIndex = 0;
 
         }
-
         // Refresh
         protected override void OnDetailEntered()
         {
@@ -69,7 +68,6 @@ namespace Sci.Production.Subcon
             numBalance.Value = decimal.Parse(CurrentMaintain["amount"].ToString()) - decimal.Parse(CurrentMaintain["received"].ToString());
 
         }
-
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
@@ -85,8 +83,6 @@ namespace Sci.Production.Subcon
 
 
         }
-
-
         // 新增時預設資料
         protected override void ClickNewAfter()
         {
@@ -100,10 +96,6 @@ namespace Sci.Production.Subcon
             CurrentMaintain["Status"] = "New";
         }
 
-
-
-
-
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
@@ -115,8 +107,6 @@ from debit_detail Where debit_detail.id = '{0}' order by orderid ", masterID);
             return base.OnDetailSelectCommandPrepare(e);
 
         }
-
-
 
         private void btnDebitSchedule_Click(object sender, EventArgs e)
         {

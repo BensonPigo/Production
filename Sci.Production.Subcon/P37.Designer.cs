@@ -183,7 +183,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(1892, 397);
+            this.gridicon.Location = new System.Drawing.Point(2017, 397);
             // 
             // refresh
             // 
@@ -520,7 +520,7 @@
             // displayBox6
             // 
             this.displayBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "transid", true));
+            this.displayBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "VoucherID", true));
             this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox6.Location = new System.Drawing.Point(126, 28);
             this.displayBox6.Name = "displayBox6";
@@ -530,7 +530,7 @@
             // displayBox7
             // 
             this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "transidSettle", true));
+            this.displayBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SettleDate", true));
             this.displayBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox7.Location = new System.Drawing.Point(458, 57);
             this.displayBox7.Name = "displayBox7";
@@ -800,6 +800,7 @@
             // displayBox20
             // 
             this.displayBox20.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox20.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "VoucherSettle", true));
             this.displayBox20.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox20.Location = new System.Drawing.Point(806, 28);
             this.displayBox20.Name = "displayBox20";
@@ -809,7 +810,7 @@
             // displayBox5
             // 
             this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "transidFactory", true));
+            this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "VoucherFactory", true));
             this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox5.Location = new System.Drawing.Point(458, 28);
             this.displayBox5.Name = "displayBox5";
@@ -855,6 +856,7 @@
             this.DefaultWhere = "Settled != \'Y\'";
             this.ExpressQuery = true;
             this.GridAlias = "Debit_Detail";
+            this.GridUniqueKey = "id,TaipeiUkey,Ukey";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
