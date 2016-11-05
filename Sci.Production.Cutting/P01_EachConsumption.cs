@@ -67,52 +67,47 @@ namespace Sci.Production.Cutting
             string sqlCmd =  string.Format(
             @"Select a.*, 
             case
-            when b.EachConsSource='O' then 'Original'
-            when b.EachConsSource='P' then 'Prophet'
-            when b.EachConsSource='' then ''
+	            when b.EachConsSource='O' then 'Original'
+	            when b.EachConsSource='P' then 'Prophet'
+	            when b.EachConsSource='' then ''
             END
             AS EachConsSource,
-            g.TotalQty , d.PatternPanel, f.Article as ForArticle ,
-                (RTrim(h.Refno)+'-'+h.Description) as FabricDesc, h.Width as FabricWidth 
-                From dbo.Order_EachCons a 
-                Left Join dbo.Orders b 
-			            On a.ID = b.ID  
-                Left Join (
-				            Select c.Order_EachConsUkey, PatternPanel = 
+
+            d.PatternPanel, 
+            f.Article as ForArticle ,
+            EC_Size.TotalQty , 
+            concat(RTrim(Fabric.Refno),'-',Fabric.Description) as FabricDesc,
+            Fabric.Width as FabricWidth 
+
+            From dbo.Order_EachCons a 
+            Left Join dbo.Orders b On a.ID = b.ID  
+            Left Join (
+			            Select c.Order_EachConsUkey, PatternPanel = 
+			            (
+				            Select PatternPanel+',' 
+				            From dbo.Order_EachCons_PatternPanel as tmp 
+				            Where tmp.Order_EachConsUkey = c.Order_EachConsUkey 
+				            for XML path('')
+			            )
+			            From dbo.Order_EachCons_PatternPanel c 
+			            Group by Order_EachConsUkey  
+		            ) as d  
+		            On a.Ukey = d.Order_EachConsUkey 
+
+            Left Join (
+			            Select e.Order_EachConsUkey, Article =
 				            (
-					            Select PatternPanel+',' 
-					            From dbo.Order_EachCons_PatternPanel as tmp 
-					            Where tmp.Order_EachConsUkey = c.Order_EachConsUkey 
-					            for XML path('')
-				            )
-				            From dbo.Order_EachCons_PatternPanel c 
-				            Group by Order_EachConsUkey  
-			            ) as d  
-			            On a.Ukey = d.Order_EachConsUkey 
-                Left Join (
-			                Select e.Order_EachConsUkey, Article =
-				                (
-					                Select Article+',' 
-					                From dbo.Order_EachCons_Article as tmp 
-					                Where tmp.Order_EachConsUkey = e.Order_EachConsUkey for XML path('')
-				                ) 
-			                From dbo.Order_EachCons_Article e 
-			                Group by Order_EachConsUkey
-			                ) as f
-			                On a.Ukey = f.Order_EachConsUkey  
-                Left Join (
-			                Select Order_EachConsUkey, Sum(Qty) as TotalQty              
-			                From dbo.Order_EachCons_SizeQty              
-			                Group by Order_EachConsUkey            
-		                    ) as g    
-		                    On a.Ukey = g.Order_EachConsUkey  
-                Left Join (
-			                Select i.ID, i.FabricCode, j.RefNo, j.Description, j.Width      
-			                From dbo.Order_BOF i               
-				                Left Join Fabric j
-                                On i.SCIRefNo = j.SCIRefNo            
-			                ) as h 
-			                On a.ID = h.ID And a.FabricCode = h.FabricCode  
+					            Select Article+',' 
+					            From dbo.Order_EachCons_Article as tmp 
+					            Where tmp.Order_EachConsUkey = e.Order_EachConsUkey for XML path('')
+				            ) 
+			            From dbo.Order_EachCons_Article e 
+			            Group by Order_EachConsUkey
+			            ) as f
+			            On a.Ukey = f.Order_EachConsUkey  
+            outer apply(select sum(Qty) as TotalQty from  dbo.Order_EachCons_SizeQty  where  a.Ukey = Order_EachConsUkey  ) as EC_Size 
+            left join dbo.Order_BOF bof on bof.Id = a.Id and bof.FabricCode = a.FabricCode
+            left join dbo.Fabric on Fabric.SCIRefno = bof.SCIRefno
             Where a.ID = '{0}' Order by a.Seq",KeyValue1);
             DualResult result;
             if (!(result = DBProxy.Current.Select(null, sqlCmd, out datas))) return result;
