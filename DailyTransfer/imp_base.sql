@@ -2063,11 +2063,8 @@ SET
       ,a.EditDate	      =b.EditDate	
       ,a.EditName	      =b.EditName	
 
-<<<<<<< .mine
-from Production.dbo.FtyShipper as a inner join Trade_To_Pms.dbo.FtyShipper as b ON a.BrandID = b.BrandID and   a.FactoryID	    =b.FactoryID	
-=======
 from Production.dbo.FtyShipper as a inner join Trade_To_Pms.dbo.FtyShipper as b ON a.BrandID = b.BrandID and a.FactoryID=b.FactoryID
->>>>>>> .r2463
+
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.FtyShipper(
        BrandID
