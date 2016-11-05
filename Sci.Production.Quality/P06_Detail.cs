@@ -241,7 +241,6 @@ namespace Sci.Production.Quality
                     }
                     dr["SEQ"] = seqSplit[0] + "-" + seqSplit[1];
                     var ctl = (Ict.Win.UI.DataGridViewMaskedTextBoxEditingControl)this.grid.EditingControl;
-                   // this.grid.CurrentCell.Value = dr["SEQ"].ToString();
                     ctl.Text = dr["SEQ"].ToString();
                     dr["seq1"] = seqSplit[0];
                     dr["seq2"] = seqSplit[1];
@@ -448,8 +447,6 @@ namespace Sci.Production.Quality
                     {
                         return;
                     }
-                    
-                    //var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.;  
                     dr["Changescale"] = item.GetSelectedString();
                    
                 }
@@ -474,7 +471,6 @@ namespace Sci.Production.Quality
                     var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;                
                     dr["Changescale"] = item.GetSelectedString();
                     ctl.Text = dr["Changescale"].ToString();  
-                    this.grid.InvalidateCell(e.ColumnIndex, e.RowIndex);
                     
                 }
 

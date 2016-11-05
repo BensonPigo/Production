@@ -280,6 +280,7 @@ namespace Sci.Production.Quality
         {
             var dr = this.CurrentDetailData;
             DataTable dtCheck;
+            DataTable dtCheckDelete;
 
             add.Enabled = true;
 
@@ -291,42 +292,45 @@ namespace Sci.Production.Quality
             }
             else // oven 有東西
             {
+                DBProxy.Current.Select(null, string.Format("select * from oven where POID='{0}'", sp_text.Text.ToString()), out dtCheckDelete);
                 DBProxy.Current.Select(null, string.Format("select * from oven where id='{0}'", CurrentDetailData["ID"].ToString()), out dtCheck);
-                if (dtCheck.Rows.Count<=0)
+                if (dtCheckDelete.Rows.Count <= 0)
                 {
-                     edit.Enabled = false;
-                     delete.Enabled = false;
-                     return;
+                    edit.Enabled = false;
+                    delete.Enabled = false;
+                    return;
                 }
-                if (dtCheck.Rows[0]["Status"].ToString().Trim() == "New")
+                if (dtCheck.Rows.Count != 0)
                 {
-                    edit.Enabled = true;
-                    delete.Enabled = true;
+                    if (dtCheck.Rows[0]["Status"].ToString().Trim() == "New")
+                    {
+                        edit.Enabled = true;
+                        delete.Enabled = true;
+                    }
+                    else
+                    {
+                        edit.Enabled = true;
+                        delete.Enabled = false;
+                    }
                 }
-                else
+
+                DataTable dt = (DataTable)detailgridbs.DataSource;
+
+                //判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
+                if (dtCheckDelete.Rows.Count <= 0)
                 {
-                    edit.Enabled = true;
+                    edit.Enabled = false;
                     delete.Enabled = false;
                 }
-            }
-            
-            DataTable dt = (DataTable)detailgridbs.DataSource;
-            
-            //判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
-            if (dtCheck.Rows.Count <= 0)
-            {
-                edit.Enabled = false;
-                delete.Enabled = false;
-            }
 
-            if (EditMode)
-            {
-                add.Enabled = false;
-                edit.Enabled = false;
-                delete.Enabled = false;
+                if (EditMode)
+                {
+                    add.Enabled = false;
+                    edit.Enabled = false;
+                    delete.Enabled = false;
+                }
+
             }
-           
-        
         }
 
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)

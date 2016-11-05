@@ -319,8 +319,10 @@ namespace Sci.Production.Quality
             string currentseq2 = this.CurrentDetailData["SEQ2"].ToString();
 
             Sci.Production.Quality.P07_Oven callOvenDetailForm=new P07_Oven(true,this.CurrentDetailData["ID"].ToString(),this.sp_text.Text,this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString() , dr);
+            
             callOvenDetailForm.ShowDialog(this);
             callOvenDetailForm.Dispose();
+            
             this.RenewData();
             OnDetailEntered();
 

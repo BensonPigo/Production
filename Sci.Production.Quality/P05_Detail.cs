@@ -72,6 +72,7 @@ namespace Sci.Production.Quality
             if (isSee)
             {
                 this.ToExcel.Enabled = canEdit && !this.EditMode;
+                this.encode_btn.Enabled = canEdit && !this.EditMode;
             }
             
         }
@@ -139,6 +140,7 @@ namespace Sci.Production.Quality
             DataTable dtpo,dtsupp;
             // Gridview新增欄位
             datas.Columns.Add("SCIRefno", typeof(string));
+            datas.Columns.Add("Refno", typeof(string));
             datas.Columns.Add("Colorid", typeof(string));
             datas.Columns.Add("SEQ", typeof(string));
             datas.Columns.Add("LastUpdate", typeof(string));
@@ -178,6 +180,7 @@ and a.seq1=@seq1";
                     dr["SEQ"] = datas.Rows[i]["seq1"].ToString().PadRight(3,' ') + "-" + datas.Rows[i]["seq2"].ToString().TrimEnd();
                     //dr["SEQ"] = datas.Rows[i]["seq1"].ToString() + "" + datas.Rows[i]["seq2"].ToString();
                     dr["SCIRefno"] = dtpo.Rows[0]["SCIRefno"].ToString();
+                    dr["refno"] = dtpo.Rows[0]["refno"].ToString();
                     dr["Colorid"] = dtpo.Rows[0]["Colorid"].ToString();
                     dr["Supplier"] = dtsupp.Rows[0]["supplier"].ToString();
                     dr["LastUpdate"] = datas.Rows[i]["EditName"].ToString() + " - " + datas.Rows[i]["EditDate"].ToString();   
@@ -198,7 +201,7 @@ and a.seq1=@seq1";
             DataGridViewGeneratorTextColumnSettings staCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings resultCell = new DataGridViewGeneratorTextColumnSettings();
         
-
+            
             #region MouseClick
             seqMskCell.CellMouseClick += (s, e) =>
             {
@@ -207,6 +210,7 @@ and a.seq1=@seq1";
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
+                    DataTable dt;
                     string item_cmd = string.Format("select RTRIM(seq1) +'-'+ RTRIM(seq2) AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
                     SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
                     DialogResult dresult = item.ShowDialog();
@@ -223,7 +227,12 @@ and a.seq1=@seq1";
                         seqSplit[0] =  seqSplit[0]+" ";
                     }
                     dr["SEQ"] = seqSplit[0] + "-" + seqSplit[1];
-                   
+                    DBProxy.Current.Select(null,
+                    string.Format("select scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}' and FabricType='F'", PoID, dr["seq1"], dr["seq2"]), out dt);
+                    dr["scirefno"] = dt.Rows[0]["scirefno"].ToString();
+                    dr["refno"] = dt.Rows[0]["refno"].ToString();
+                    dr["colorid"] = dt.Rows[0]["colorid"].ToString();
+
                 }
               
             };
@@ -234,6 +243,7 @@ and a.seq1=@seq1";
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
+                    DataTable dt;
                     string item_cmd = string.Format("select RTRIM(seq1) +'-'+ RTRIM(seq2) AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
                     SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
                     DialogResult dresult = item.ShowDialog();
@@ -250,6 +260,11 @@ and a.seq1=@seq1";
                          seqSplit[0] =  seqSplit[0]+" ";
                     }
                     dr["SEQ"] = seqSplit[0]+"-" + seqSplit[1];
+                    DBProxy.Current.Select(null,
+                   string.Format("select scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}' and FabricType='F'", PoID, dr["seq1"], dr["seq2"]), out dt);
+                    dr["scirefno"] = dt.Rows[0]["scirefno"].ToString();
+                    dr["refno"] = dt.Rows[0]["refno"].ToString();
+                    dr["colorid"] = dt.Rows[0]["colorid"].ToString();
                 }
 
             };
@@ -460,6 +475,10 @@ and a.seq1=@seq1";
                     dr["seq2"] = "";
                     return;
                 }
+                dr["SEQ"].ToString().Replace("_", " ");
+                
+                    
+                
               
             };
             rollCell.CellValidating += (s, e) =>
@@ -564,6 +583,7 @@ and a.seq1=@seq1";
                 //.Text("SEQ", header: "SEQ#", width: Widths.AnsiChars(10),iseditable:true, settings : seqCell)
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(5), settings: rollCell)
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5),iseditingreadonly:true)
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(8),iseditingreadonly:true)
                 .Text("Changescale", header: "Color Change Scale", width: Widths.AnsiChars(16), settings: chgCell)
@@ -578,6 +598,7 @@ and a.seq1=@seq1";
             if (MyUtility.Check.Empty(this.article.Text))
             {
                 MyUtility.Msg.InfoBox("<Article> cannot be empty!!");
+                this.article.Select();
                 return false;
             }
             if (MyUtility.Check.Empty(this.txtuser1.TextBox1.Text))
@@ -672,19 +693,31 @@ SET IDENTITY_INSERT oven off";
         {
            
             DataTable dt;
+            
             DataTable dtGrid = (DataTable)gridbs.DataSource;
             DBProxy.Current.Select(null, string.Format("select * from oven_detail where id='{0}'", ID), out dt);
             int rows = dt.Rows.Count;
+            int rows1 = dtGrid.Rows.Count;
             base.OnInsert();           
             if (rows<=0)
 	        {
-                dtGrid.Rows[0]["OvenGroup"] = 01;
+                if (rows1==0)
+                {
+                    dtGrid.Rows[rows1]["OvenGroup"] = 01;
+                }
+                else
+                {
+                    int group = MyUtility.Convert.GetInt(dtGrid.Rows[rows1 - 1]["ovengroup"]);
+
+                    dtGrid.Rows[rows1]["ovengroup"] = group + 1;
+                }
+                
 	        }
             else
             {
-                int group = MyUtility.Convert.GetInt(dtGrid.Rows[rows-1]["ovengroup"]);
+                int group = MyUtility.Convert.GetInt(dtGrid.Rows[rows1 - 1]["ovengroup"]);
 
-                dtGrid.Rows[rows]["ovengroup"] = group + 1;
+                dtGrid.Rows[rows1]["ovengroup"] = group + 1;
             }
             
         }
@@ -879,6 +912,8 @@ group by a.Article";
         {
             isModify = true;
         }
+
+        
 
 
     }

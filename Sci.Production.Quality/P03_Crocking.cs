@@ -49,7 +49,7 @@ namespace Sci.Production.Quality
             this.save.Enabled = !MyUtility.Convert.GetBool(maindr["CrockingEncode"]);
             string fir_cmd = string.Format(
                 @"select distinct a.Poid,a.SEQ1+a.SEQ2 as seq,a.ArriveQty,
-				b.styleid,b.BrandID,c.ExportId,c.WhseArrival,f.SuppID,d.SCIRefno,d.Refno,d.ColorID,
+				b.styleid,b.BrandID,c.ExportId,c.WhseArrival,f.SuppID,a.SCIRefno,a.Refno,d.ColorID,
 				e.CrockingDate,e.Crocking,e.nonCrocking												
 				 from FIR a
 				left join Orders b on a.POID=b.POID

@@ -90,16 +90,15 @@ namespace Sci.Production.Quality
             string po_supp_detail_cmd = string.Format("select SCIRefno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}'", maindr["POID"], maindr["seq1"], maindr["seq2"]);
             DataRow po_supp_detail_dr;
             if (MyUtility.Check.Seek(po_supp_detail_cmd, out po_supp_detail_dr))
-            {
-                scirefno_box.Text = po_supp_detail_dr["SCIRefno"].ToString();               
+            {                
                 color_box.Text = po_supp_detail_dr["colorid"].ToString();
             }
             else
             {
-                scirefno_box.Text = "";
                 color_box.Text = "";
             }
 
+            scirefno_box.Text = maindr["SCIRefno"].ToString();               
             approve_box.Text = maindr["ApproveDate"].ToString();
             arriveqty_box.Text = maindr["arriveQty"].ToString();
             arrwhdate_box.Value = MyUtility.Convert.GetDate(maindr["whseArrival"]);

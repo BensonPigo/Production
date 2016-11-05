@@ -52,7 +52,8 @@ namespace Sci.Production.Quality
             #endregion
 
             #region [btnEncode]
-            save.Enabled = false;
+            this.btnSave.Enabled = false;
+            save.Visible = false;
             if (EDIT)
             {
                 if (Convert.ToBoolean(maindr["WashEncode"]))
@@ -64,13 +65,13 @@ namespace Sci.Production.Quality
                 {
                     btnEncode.Text = "Encode";
                     btnEncode.Enabled = true;
-                    save.Enabled = true;
+                    this.btnSave.Enabled = true;
                 }
             }
             else
             {
                 undo.Visible = false;
-                save.Visible = false;
+                this.btnSave.Visible = false;
                 btnClose.Visible = true;
 
             }
@@ -183,6 +184,7 @@ namespace Sci.Production.Quality
                 #endregion
 
                 btnEncode.Text = "Amend";
+                this.btnSave.Enabled = false;
 
             }
             else if (btnEncode.Text == "Amend")
@@ -195,22 +197,65 @@ namespace Sci.Production.Quality
                 #endregion
 
                 btnEncode.Text = "Encode";
-                btnEncode.Enabled = false;
-                save.Enabled = true;
+                //btnEncode.Enabled = false;
+                this.btnSave.Enabled = true;
             }
         }
+        //20161105 改變寫法
+        //protected override bool OnSaveBefore()
+        //{
+        //    if (save.Text == "Edit")
+        //    {
+        //        txtScale.Enabled = true;
+        //        comboResult.Enabled = true;
+        //        txtRemark.Enabled = true;
+        //        txtuser1.Enabled = true;
+        //        WashDate.Enabled = true;
+        //        save.Text = "save";
+        //        this.btnEncode.Enabled = false;
+        //        return false;
+        //    }
+        //    else
+        //    {
+        //        if (MyUtility.Check.Empty(txtuser1.TextBox1.Text))
+        //        {
+        //            CurrentData["WashInspector"] = Sci.Env.User.UserID;
+        //        }
+        //        if (MyUtility.Check.Empty(WashDate.Value))
+        //        {
+        //            CurrentData["WashDate"] = DateTime.Now;
+        //        }
+        //        txtScale.Enabled = false;
+        //        comboResult.Enabled = false;
+        //        txtRemark.Enabled = false;
+        //        txtuser1.Enabled = false;
+        //        WashDate.Enabled = false;
+        //        save.Text = "Edit";
+        //        this.btnEncode.Enabled = true;
+        //        return true;
+        //    }
 
-        protected override bool OnSaveBefore()
+        //}
+
+        private void btnClose_Click(object sender, EventArgs e)
         {
-            if (save.Text == "Edit")
+            this.Close();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            if (btnSave.Text == "Edit")
             {
                 txtScale.Enabled = true;
                 comboResult.Enabled = true;
                 txtRemark.Enabled = true;
                 txtuser1.Enabled = true;
                 WashDate.Enabled = true;
-                save.Text = "save";
-                return false;
+                this.btnSave.Text = "Save";
+                this.btnEncode.Enabled = false;
+                this.btnClose.Visible = false;
+                this.undo.Visible = true;
+                return;
             }
             else
             {
@@ -227,15 +272,21 @@ namespace Sci.Production.Quality
                 txtRemark.Enabled = false;
                 txtuser1.Enabled = false;
                 WashDate.Enabled = false;
-                save.Text = "Edit";
-                return true;
+                this.btnClose.Visible = true;
+                this.undo.Visible = false;
+                string sqlcmd = string.Format(@"update AIR_Laboratory
+set WashScale = '{3}',
+Wash='{4}',
+WashRemark='{5}',
+WashInspector='{6}',
+WashDate='{7}'
+where POID='{0}' and seq1='{1}' and SEQ2='{2}'",
+PoID, SEQ1, SEQ2, txtScale.Text, this.comboResult.Text, txtRemark.Text, txtuser1.TextBox1.Text, ((DateTime)this.WashDate.Value).ToShortDateString());
+                DBProxy.Current.Execute(null, sqlcmd);
+                this.btnSave.Text = "Edit";
+                this.btnEncode.Enabled = true;
+                return;
             }
-
-        }
-
-        private void btnClose_Click(object sender, EventArgs e)
-        {
-            this.Close();
         }
 
 

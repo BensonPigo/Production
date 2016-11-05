@@ -91,23 +91,19 @@ namespace Sci.Production.Quality
             DataRow po_supp_detail_dr;
             if (MyUtility.Check.Seek(po_supp_detail_cmd, out po_supp_detail_dr))
             {
-                scirefno_box.Text = po_supp_detail_dr["SCIRefno"].ToString();
                 color_box.Text = po_supp_detail_dr["colorid"].ToString();
             }
             else
-            {
-                scirefno_box.Text = "";                
+            {             
                 color_box.Text = "";
             }
 
             approve_box.Text = maindr["ApproveDate"].ToString();
             arriveqty_box.Text = maindr["arriveQty"].ToString();
             arrwhdate_box.Value = MyUtility.Convert.GetDate(maindr["whseArrival"]);
-            //brandrefno_box.Text = maindr["SCIRefno"].ToString();
-            //color_box.Text = maindr["Colorid"].ToString();
             lastinspdate_box.Value = MyUtility.Convert.GetDate(maindr["WeightDate"]);
             refdesc_box.Text = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
-            //scirefno_box.Text = maindr["SciRefno"].ToString();
+            scirefno_box.Text = maindr["SciRefno"].ToString();
             seq_box.Text = maindr["Seq1"].ToString() + "-" + maindr["Seq2"].ToString();
             sp_box.Text = maindr["POID"].ToString();
             wk_box.Text = maindr["Exportid"].ToString();

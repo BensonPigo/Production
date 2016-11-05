@@ -477,29 +477,75 @@ namespace Sci.Production.Quality
       
         private void modifyToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            string currentID = this.CurrentDetailData["ID"].ToString();
             var dr = this.CurrentDetailData; if (null == dr) return;
             var frm = new Sci.Production.Quality.P03_Crocking(IsSupportEdit, CurrentDetailData["ID"].ToString(),null,null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
-            //this.RenewData();會讓資料renew導致記憶被洗掉
+            this.RenewData();
+            // 固定滑鼠指向位置,避免被renew影響
+            int rowindex = 0;
+            for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
+            {
+                DataGridViewRow dvr = detailgrid.Rows[rIdx];
+                DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
+
+                if (row["ID"].ToString() == currentID)
+                {
+                    rowindex = rIdx;
+                    break;
+                }
+            }
+            detailgrid.SelectRowTo(rowindex);
         }
 
         private void modifyHeatTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            string currentID = this.CurrentDetailData["ID"].ToString();
             var dr = this.CurrentDetailData; if (null == dr) return;
             var frm = new Sci.Production.Quality.P03_Heat(IsSupportEdit, CurrentDetailData["ID"].ToString(),null,null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
-            //this.RenewData();會讓資料renew導致記憶被洗掉
+            this.RenewData();
+
+            // 固定滑鼠指向位置,避免被renew影響
+            int rowindex = 0;
+            for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
+            {
+                DataGridViewRow dvr = detailgrid.Rows[rIdx];
+                DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
+
+                if (row["ID"].ToString() == currentID)
+                {
+                    rowindex = rIdx;
+                    break;
+                }
+            }
+            detailgrid.SelectRowTo(rowindex);
         }
 
         private void modifyWashTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            string currentID = this.CurrentDetailData["ID"].ToString();
             var dr = this.CurrentDetailData; if (null == dr) return;
             var frm = new Sci.Production.Quality.P03_Wash(IsSupportEdit, CurrentDetailData["ID"].ToString(),null,null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
-            //this.RenewData();會讓資料renew導致記憶被洗掉
+            this.RenewData();
+            // 固定滑鼠指向位置,避免被renew影響
+            int rowindex = 0;
+            for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
+            {
+                DataGridViewRow dvr = detailgrid.Rows[rIdx];
+                DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
+
+                if (row["ID"].ToString() == currentID)
+                {
+                    rowindex = rIdx;
+                    break;
+                }
+            }
+            detailgrid.SelectRowTo(rowindex);
         }
 
     }

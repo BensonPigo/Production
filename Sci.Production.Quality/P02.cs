@@ -287,11 +287,29 @@ namespace Sci.Production.Quality
 
         private void modifyDetailToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            string currentID = CurrentDetailData["ID"].ToString();
             var dr = this.CurrentDetailData; if (null == dr) return;
             var frm = new Sci.Production.Quality.P02_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), dr);            
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
+            this.OnDetailEntered();
+            // 固定滑鼠指向位置,避免被renew影響
+            int rowindex = 0;
+            for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
+            {
+                DataGridViewRow dvr = detailgrid.Rows[rIdx];
+                DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
+
+                if (row["ID"].ToString() == currentID)
+                {
+                    rowindex = rIdx;
+                    break;
+                }
+            }
+            detailgrid.SelectRowTo(rowindex);
+
+
         }
 
         private void button1_Click_1(object sender, EventArgs e)

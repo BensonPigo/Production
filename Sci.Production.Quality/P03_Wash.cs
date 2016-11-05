@@ -52,7 +52,7 @@ namespace Sci.Production.Quality
 
             string fir_cmd = string.Format(
                 @"select distinct a.Poid,a.SEQ1+a.SEQ2 as seq,a.ArriveQty,
-				b.styleid,b.BrandID,c.ExportId,c.WhseArrival,f.SuppID,d.SCIRefno,d.Refno,d.ColorID,
+				b.styleid,b.BrandID,c.ExportId,c.WhseArrival,f.SuppID,a.SCIRefno,a.Refno,d.ColorID,
 				e.WashDate,e.Wash,e.nonWash												
 				 from FIR a
 				left join Orders b on a.POID=b.POID

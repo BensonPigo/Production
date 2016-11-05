@@ -44,7 +44,7 @@ namespace Sci.Production.Quality
             // 串接table Po_Supp_Detail
             DataTable dtPoSuppDetail;
             Ict.DualResult pstResult;
-            if (pstResult = DBProxy.Current.Select(null, string.Format("select a.SCIRefno,a.Refno,a.ColorID,a.ColorID,a.StockUnit,a.SizeSpec from PO_Supp_Detail a left join AIR b on a.ID=b.POID and a.SEQ1=b.SEQ1 and a.SEQ2=b.SEQ2 where b.ID='{0}'", id), out dtPoSuppDetail))
+            if (pstResult = DBProxy.Current.Select(null, string.Format("select B.SCIRefno,B.Refno,a.ColorID,a.ColorID,a.StockUnit,a.SizeSpec from PO_Supp_Detail a left join AIR b on a.ID=b.POID and a.SEQ1=b.SEQ1 and a.SEQ2=b.SEQ2 where b.ID='{0}'", id), out dtPoSuppDetail))
             {
                 if (dtPoSuppDetail.Rows.Count != 0)
                 {
@@ -264,8 +264,7 @@ namespace Sci.Production.Quality
                     updatesql1 = string.Format(
                     "Update Air set Status = 'New',EditDate=CONVERT(VARCHAR(20), GETDATE(), 120),EditName='{0}' where id ='{1}'",
                      loginID, textID.Text);
-
-                    //updatesql = string.Format("Update air set inspqty='{0}' where id='{1}'", this.inspQty_text.Text,this.textID.Text);
+                                       
 
                     DualResult upResult1;
                     TransactionScope _transactionscope1 = new TransactionScope();
@@ -281,14 +280,8 @@ namespace Sci.Production.Quality
                             }
                             _transactionscope1.Complete();
                             btn_status(this.textID.Text);
-                            //this.inspQty_text.ReadOnly = false;
-                            //this.RejQty_text.ReadOnly = false;
-                            //this.InsDate_text.ReadOnly = false;
-                            //this.Instor_text.ReadOnly = false;
-                            //this.comboBox1.ReadOnly = false;
-                            //this.Remark_text.ReadOnly = false;
-                            //this.editBox1.ReadOnly = false;
                             this.save.Text = "Edit";
+                            this.Encode.Text = "Encode";
                         }
                         catch (Exception ex)
                         {
@@ -300,6 +293,7 @@ namespace Sci.Production.Quality
 
                     #endregion
                 }
+                
                
             }
 
@@ -368,8 +362,7 @@ namespace Sci.Production.Quality
 
 
         }
-
-        
+                
         private void editBox1_MouseDown(object sender, MouseEventArgs e)
         {
             if (this.editBox1.ReadOnly == true)

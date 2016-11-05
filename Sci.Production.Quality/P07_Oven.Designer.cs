@@ -59,6 +59,7 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.Qty_text = new Sci.Win.UI.NumericBox();
             this.Supplier_text = new Sci.Win.UI.DisplayBox();
+            this.btnSave = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -66,10 +67,12 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.btnSave);
             this.btmcont.Controls.Add(this.btnClose);
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.btnClose, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnSave, 0);
             // 
             // undo
             // 
@@ -80,6 +83,7 @@
             this.save.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.save.Enabled = false;
             this.save.Text = "Edit";
+            this.save.Visible = false;
             // 
             // sp_text
             // 
@@ -377,7 +381,6 @@
             this.btnClose.TabIndex = 123;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Visible = false;
             this.btnClose.Click += new System.EventHandler(this.button1_Click);
             // 
             // Qty_text
@@ -421,6 +424,17 @@
             this.Supplier_text.Name = "Supplier_text";
             this.Supplier_text.Size = new System.Drawing.Size(150, 21);
             this.Supplier_text.TabIndex = 122;
+            // 
+            // btnSave
+            // 
+            this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSave.Location = new System.Drawing.Point(379, 5);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(80, 30);
+            this.btnSave.TabIndex = 124;
+            this.btnSave.Text = "Edit";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // P07_Oven
             // 
@@ -511,5 +525,6 @@
         private Win.UI.Label lbDate;
         private Win.UI.DateBox OvenDate;
         private Win.UI.Button btnClose;
+        private Win.UI.Button btnSave;
     }
 }

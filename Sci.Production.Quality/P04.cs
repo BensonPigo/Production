@@ -164,28 +164,28 @@ namespace Sci.Production.Quality
             
 
             #region CellEditable 事件
-            inspDateCell.CellEditable += (s, e) =>
-            {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (this.EditMode && !MyUtility.Check.Empty(dr["SendDate"]) && !MyUtility.Check.Empty(dr["ReceiveDate"])) e.IsEditable = true;
-                else
-                    e.IsEditable = false;
-            };
+            //inspDateCell.CellEditable += (s, e) =>
+            //{
+            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+            //    if (this.EditMode && !MyUtility.Check.Empty(dr["SendDate"]) && !MyUtility.Check.Empty(dr["ReceiveDate"])) e.IsEditable = true;
+            //    else
+            //        e.IsEditable = false;
+            //};
             ResultValid.CellEditable += (s, e) =>
             {
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
             };
-            ResultComboCell.CellEditable += (s, e) =>
-            {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
-            };
-            inspectorCell.CellEditable += (s, e) =>
-            {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
-            };
+            //ResultComboCell.CellEditable += (s, e) =>
+            //{
+            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+            //    if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
+            //};
+            //inspectorCell.CellEditable += (s, e) =>
+            //{
+            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+            //    if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
+            //};
             SendCell.CellEditable += (s, e) =>
             {
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
