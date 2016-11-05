@@ -34,16 +34,10 @@ namespace Sci.Production.IE
         {
             InitializeComponent();
             StringBuilder df = new StringBuilder();
-            df.Append(string.Format("StyleID = '{0}' and BrandID = '{1}' ", StyleID, BrandID));
-            if (SeasonID != null)
-            {
-                df.Append(string.Format("and SeasonID ='{0}'", SeasonID));
-            }
-            if (ComboType != null)
-            {
-                df.Append(string.Format("and ComboType ='{0}'", ComboType));
-            }
-
+            df.Append(string.Format("StyleID = '{0}' ", StyleID));
+            if (!MyUtility.Check.Empty(BrandID)) df.Append(string.Format(" and BrandID ='{0}' ", BrandID));
+            if (!MyUtility.Check.Empty(SeasonID)) df.Append(string.Format(" and SeasonID ='{0}' ", SeasonID));
+            if (!MyUtility.Check.Empty(ComboType)) df.Append(string.Format(" and ComboType ='{0}' ", ComboType));
             DefaultFilter = df.ToString();
             detailgrid.AllowUserToOrderColumns = true;
             InsertDetailGridOnDoubleClick = false;
