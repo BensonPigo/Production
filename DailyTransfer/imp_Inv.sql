@@ -1,4 +1,3 @@
-
 -- =============================================
 -- Author:		LEO
 -- Create date: 20160903
@@ -240,7 +239,7 @@ SET
       ,a.LimitHandle	      =b.LimitHandle
       ,a.LimitSmr	      =b.LimitSmr
       ,a.AuthMr	      =b.AuthMr
-      ,a.TransId	      =b.TransId
+      ,a.VoucherID	      =b.VoucherID
       ,a.TransferUkey	      =b.TransferUkey
       ,a.Po3QtyOld	      =b.Po3QtyOld
       ,a.InventoryQtyOld	      =b.InventoryQtyOld
@@ -298,7 +297,7 @@ INSERT INTO Production.dbo.Invtrans (
       ,LimitHandle
       ,LimitSmr
       ,AuthMr
-      ,TransId
+      ,VoucherID
       ,TransferUkey
       ,Po3QtyOld
       ,InventoryQtyOld
@@ -353,7 +352,7 @@ select
       ,LimitHandle
       ,LimitSmr
       ,AuthMr
-      ,TransId
+      ,VoucherID
       ,TransferUkey
       ,Po3QtyOld
       ,InventoryQtyOld
