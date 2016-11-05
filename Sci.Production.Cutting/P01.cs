@@ -12,6 +12,7 @@ namespace Sci.Production.Cutting
 {
     public partial class P01 : Sci.Win.Tems.Input1
     {
+        string StyleUkey;
         private string keyWord = Sci.Env.User.Keyword;
         private string histype;
         public P01(ToolStripMenuItem menuitem,string Type)
@@ -58,8 +59,7 @@ namespace Sci.Production.Cutting
                     this.Close();
                     return;
                 }
-                this.button4.Enabled = false;
-            }
+            }            
             base.OnFormLoaded();
         }
         protected override void OnFormClosed(FormClosedEventArgs e)
@@ -91,6 +91,7 @@ new Sci.Production.Cutting.P01_Date();
                 displayBox7.Text = orderdr["Category"].ToString();
                 displayBox3.Text = orderdr["Projectid"].ToString();
                 displayBox5.Text = orderdr["styleUnit"].ToString();
+                StyleUkey = orderdr["StyleUkey"].ToString();
                 if (orderdr["eachconsapv"] == DBNull.Value) dateBox11.Value = null;
                 else dateBox11.Value = Convert.ToDateTime(orderdr["eachconsapv"]);
                 if (orderdr["LETA"] == DBNull.Value) dateBox3.Value = null;
@@ -203,13 +204,11 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
             }
             if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "WorkOrder", "ID"))
             {
-                button4.ForeColor = Color.Blue;
                 button7.ForeColor = Color.Blue;
                 button8.ForeColor = Color.Blue;
             }
             else 
             {
-                button4.ForeColor = Color.Black;
                 button7.ForeColor = Color.Black;
                 button8.ForeColor = Color.Black;
             }
@@ -278,6 +277,13 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
             frm.ShowDialog(this);
             this.RenewData();
             this.OnDetailEntered();
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            Sci.Production.PPIC.P01_ProductionKit callNextForm = 
+                new Sci.Production.PPIC.P01_ProductionKit(true, StyleUkey, null, null, null);
+            callNextForm.ShowDialog(this);
         }
     }
 }

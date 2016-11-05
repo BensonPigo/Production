@@ -70,7 +70,6 @@
             this.button1 = new Sci.Win.UI.Button();
             this.button2 = new Sci.Win.UI.Button();
             this.button3 = new Sci.Win.UI.Button();
-            this.button4 = new Sci.Win.UI.Button();
             this.button5 = new Sci.Win.UI.Button();
             this.button7 = new Sci.Win.UI.Button();
             this.button8 = new Sci.Win.UI.Button();
@@ -114,7 +113,6 @@
             this.detailcont.Controls.Add(this.button7);
             this.detailcont.Controls.Add(this.button8);
             this.detailcont.Controls.Add(this.button3);
-            this.detailcont.Controls.Add(this.button4);
             this.detailcont.Controls.Add(this.button2);
             this.detailcont.Controls.Add(this.button1);
             this.detailcont.Controls.Add(this.dateBox5);
@@ -557,7 +555,7 @@
             // button3
             // 
             this.button3.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button3.Location = new System.Drawing.Point(734, 104);
+            this.button3.Location = new System.Drawing.Point(734, 74);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(151, 24);
             this.button3.TabIndex = 43;
@@ -565,20 +563,10 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button4
-            // 
-            this.button4.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button4.Location = new System.Drawing.Point(734, 74);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(151, 24);
-            this.button4.TabIndex = 42;
-            this.button4.Text = "Work Order(History)";
-            this.button4.UseVisualStyleBackColor = true;
-            // 
             // button5
             // 
             this.button5.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button5.Location = new System.Drawing.Point(734, 210);
+            this.button5.Location = new System.Drawing.Point(734, 180);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(151, 24);
             this.button5.TabIndex = 47;
@@ -588,7 +576,7 @@
             // button7
             // 
             this.button7.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button7.Location = new System.Drawing.Point(734, 164);
+            this.button7.Location = new System.Drawing.Point(734, 134);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(151, 42);
             this.button7.TabIndex = 45;
@@ -599,7 +587,7 @@
             // button8
             // 
             this.button8.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button8.Location = new System.Drawing.Point(734, 134);
+            this.button8.Location = new System.Drawing.Point(734, 104);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(151, 24);
             this.button8.TabIndex = 44;
@@ -610,7 +598,7 @@
             // button9
             // 
             this.button9.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button9.Location = new System.Drawing.Point(734, 300);
+            this.button9.Location = new System.Drawing.Point(734, 270);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(151, 24);
             this.button9.TabIndex = 53;
@@ -621,17 +609,18 @@
             // button11
             // 
             this.button11.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button11.Location = new System.Drawing.Point(734, 270);
+            this.button11.Location = new System.Drawing.Point(734, 240);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(151, 24);
             this.button11.TabIndex = 51;
             this.button11.Text = "Production kit";
             this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
             // button12
             // 
             this.button12.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button12.Location = new System.Drawing.Point(734, 240);
+            this.button12.Location = new System.Drawing.Point(734, 210);
             this.button12.Name = "button12";
             this.button12.Size = new System.Drawing.Size(151, 24);
             this.button12.TabIndex = 50;
@@ -677,7 +666,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.ReadOnly = true;
-            this.editBox1.Size = new System.Drawing.Size(574, 51);
+            this.editBox1.Size = new System.Drawing.Size(557, 51);
             this.editBox1.TabIndex = 56;
             // 
             // editBox2
@@ -689,7 +678,7 @@
             this.editBox2.Multiline = true;
             this.editBox2.Name = "editBox2";
             this.editBox2.ReadOnly = true;
-            this.editBox2.Size = new System.Drawing.Size(574, 51);
+            this.editBox2.Size = new System.Drawing.Size(557, 51);
             this.editBox2.TabIndex = 57;
             // 
             // displayBox5
@@ -817,7 +806,6 @@
         private Win.UI.Button button7;
         private Win.UI.Button button8;
         private Win.UI.Button button3;
-        private Win.UI.Button button4;
         private Win.UI.DateBox dateBox11;
         private Win.UI.DateBox dateBox9;
         private Win.UI.DateBox dateBox10;
