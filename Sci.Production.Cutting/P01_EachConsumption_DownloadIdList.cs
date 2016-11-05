@@ -28,12 +28,13 @@ namespace Sci.Production.Cutting
         {
             //return base.OnRequery();
             datas = null;
-            string sqlCmd =string.Format( @"Select ID, MarkerDownloadID, 
-                                            FabricCombo = (Select FabricCombo+',' 
-                                            From Order_EachCons as tmp
-                                            Where tmp.ID = Order_EachCons.ID
-                                            And IsNull(tmp.MarkerDownloadID, '') = IsNull(Order_EachCons.MarkerDownloadID, '')
-                                            Group by FabricCombo Order by FabricCombo for XML path(''))
+            string sqlCmd =string.Format(@"Select ID, MarkerDownloadID, 
+                                            FabricCombo = (Select LectraCode+',' 
+                                                           From Order_EachCons as tmp
+                                                           Where tmp.ID = Order_EachCons.ID
+                                                           And IsNull(tmp.MarkerDownloadID, '') 
+                                                               = IsNull(Order_EachCons.MarkerDownloadID, '')
+                                                           Group by LectraCode Order by LectraCode for XML path(''))
                                             From Order_EachCons
                                             Where Order_EachCons.ID = '{0}'
                                             Group by ID, MarkerDownloadID", this.KeyValue1);
