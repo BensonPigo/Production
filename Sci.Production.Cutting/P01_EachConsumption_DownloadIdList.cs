@@ -28,15 +28,15 @@ namespace Sci.Production.Cutting
         {
             //return base.OnRequery();
             datas = null;
-            string sqlCmd = "Select ID, MarkerDownloadID" +
-                            "     , FabricCombo = (Select FabricCombo+',' " +
-                            "                        From Order_EachCons as tmp" +
-                            "                       Where tmp.ID = Order_EachCons.ID" +
-                            "                         And IsNull(tmp.MarkerDownloadID, '') = IsNull(Order_EachCons.MarkerDownloadID, '')" +
-                            "                       Group by FabricCombo Order by FabricCombo for XML path(''))" +
-                            "  From Order_EachCons" +
-                            " Where Order_EachCons.ID = '"+ this.KeyValue1 + "'" +
-                            " Group by ID, MarkerDownloadID";
+            string sqlCmd =string.Format( @"Select ID, MarkerDownloadID, 
+                                            FabricCombo = (Select FabricCombo+',' 
+                                            From Order_EachCons as tmp
+                                            Where tmp.ID = Order_EachCons.ID
+                                            And IsNull(tmp.MarkerDownloadID, '') = IsNull(Order_EachCons.MarkerDownloadID, '')
+                                            Group by FabricCombo Order by FabricCombo for XML path(''))
+                                            From Order_EachCons
+                                            Where Order_EachCons.ID = '{0}'
+                                            Group by ID, MarkerDownloadID", this.KeyValue1);
             DualResult result;
             if (!(result = DBProxy.Current.Select(null, sqlCmd, out datas))) return result;
             return Result.True;
