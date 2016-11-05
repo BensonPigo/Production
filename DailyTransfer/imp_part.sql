@@ -198,8 +198,7 @@ s.EditDate
 		AddName,
 		AddDate,
 		EditName,
-		EditDate,
-		ukey
+		EditDate
 				)
 		values(s.Refno,
 		'T',
@@ -209,8 +208,7 @@ s.EditDate
 		s.AddName,
 		s.AddDate,
 		s.EditName,
-		s.EditDate,
-		s.id		
+		s.EditDate
 		)
 	when not matched by source and t.purchaseFrom='T' and t.id in (select refno from [Trade_To_Pms].[dbo].Part)  then
 		delete;
