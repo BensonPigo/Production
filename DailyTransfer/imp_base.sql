@@ -1600,8 +1600,8 @@ where not exists(select id from Production.dbo.PayTermAP as a where a.id = b.id)
 --MachineGroup
 --MACHINE 多一個 [InspLeadTime]
 ----------------------刪除主TABLE多的資料
-Delete Machine_Test.dbo.MachineGroup
-from Machine_Test.dbo.MachineGroup as a left join Trade_To_Pms.dbo.MachineGroup as b
+Delete Machine.dbo.MachineGroup
+from Machine.dbo.MachineGroup as a left join Trade_To_Pms.dbo.MachineGroup as b
 on a.id = b.id
 where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
@@ -1619,9 +1619,9 @@ SET
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
 
-from Machine_Test.dbo.MachineGroup as a inner join Trade_To_Pms.dbo.MachineGroup as b ON a.id=b.id
+from Machine.dbo.MachineGroup as a inner join Trade_To_Pms.dbo.MachineGroup as b ON a.id=b.id
 -------------------------- INSERT INTO 抓
-INSERT INTO Machine_Test.dbo.MachineGroup(
+INSERT INTO Machine.dbo.MachineGroup(
 ID
       ,Description
       ,DescCH
@@ -1649,7 +1649,7 @@ ID
       ,EditDate
 
 from Trade_To_Pms.dbo.MachineGroup as b
-where not exists(select id from Machine_Test.dbo.MachineGroup as a where a.id = b.id)
+where not exists(select id from Machine.dbo.MachineGroup as a where a.id = b.id)
 
 
 --Mockup
