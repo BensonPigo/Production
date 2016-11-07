@@ -25,7 +25,7 @@ namespace Sci.Production.Basic
             Sci.Win.Tools.SelectItem item;
             string selectCommand = "select Name from Reason where Junk = 0 and ReasonTypeID = 'Style_Apparel_Type' order by ID";
 
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "100", prodText.Text);
+            item = new Sci.Win.Tools.SelectItem(selectCommand, "20", prodText.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             prodText.Text = item.GetSelectedString();
@@ -37,7 +37,7 @@ namespace Sci.Production.Basic
             Sci.Win.Tools.SelectItem item;
             string selectCommand = "select Name from Reason where Junk = 0 and ReasonTypeID = 'Fabric_Kind' order by ID";
 
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "100", fabricText.Text);
+            item = new Sci.Win.Tools.SelectItem(selectCommand, "20", fabricText.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             fabricText.Text = item.GetSelectedString();
