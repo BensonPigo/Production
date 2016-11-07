@@ -15,24 +15,27 @@ namespace Sci.Production.PublicForm
     {
         private string cutid;
         private DataTable colortb;
+        public ColorCombination()
+        {
+            InitializeComponent();
+        }
+
         public ColorCombination(string cID)
         {
-
             InitializeComponent();
             cutid = cID;
             
-            color();
             requery();
-
+            color();
         }
         private void requery()
         {
-           Helper.Controls.Grid.Generator(this.grid1)
+           Helper.Controls.Grid.Generator(this.gridFab)
            .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true);
 
-           Helper.Controls.Grid.Generator(this.grid2)
+           Helper.Controls.Grid.Generator(this.gridColorDesc)
           .Text("ID", header: "Color ID", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("Name", header: "Name", width: Widths.AnsiChars(20), iseditingreadonly: true);
+            .Text("Name", header: "Color Decription", width: Widths.AnsiChars(20), iseditingreadonly: true);
 
             #region Create header
             string createheader = "Select Article";
@@ -51,7 +54,7 @@ namespace Sci.Production.PublicForm
                 headername = dr["LectraCode"].ToString().Trim();
                 createheader = createheader + string.Format(",case when a.Lectracode='{0}' then Colorid end '{0}' ", dr["LectraCode"].ToString().Trim());
                
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridFab)
             .Text(headername, header: headername, width: Widths.AnsiChars(8), iseditingreadonly: true);
             }
             //BOA
@@ -67,7 +70,7 @@ namespace Sci.Production.PublicForm
             {
                 headername = dr["PatternPanel"].ToString().Trim();
                 createheader = createheader + string.Format(",case when a.PatternPanel='{0}' then Colorid end '{0}' ", headername );
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridFab)
             .Text(headername, header: headername, width: Widths.AnsiChars(8), iseditingreadonly: true);
             }
 
@@ -94,24 +97,29 @@ namespace Sci.Production.PublicForm
                 return;
             }
             DataRow ndr = gridtb.NewRow();
-            ndr["Article"] = "QT With";
+            ndr["Article"] = "PatternPanel";
+            gridtb.Rows.Add(ndr);
+            ndr = gridtb.NewRow();
+            ndr["Article"] = "QT FabricCode";
             gridtb.Rows.Add(ndr);
             ndr = gridtb.NewRow();
             ndr["Article"] = "QT Width";
             gridtb.Rows.Add(ndr);
             foreach (DataRow dr in qttb.Rows)
             {
-                if (dr["seqno"].ToString() != "01")
+                if (dr["seqno"].ToString() != "")
                 {
                     string seqno = MyUtility.Convert.NTOC((MyUtility.Convert.GetInt(dr["SEQNo"])-1),2);
                     DataRow[] drqt = qttb2.Select(string.Format("LectraCode ='{0}' and SEQNO = '{1}'", dr["LecreaCode"],seqno));
                     string patternfab = drqt[0]["LectraCode"].ToString().Trim();
-                    string qtpatternfab = drqt[0]["QtLectraCode"].ToString().Trim() ;
+                    string qtpatternfab = drqt[0]["QtWidth"].ToString().Trim();
                     decimal qtpatternwidrh = MyUtility.Convert.GetDecimal(drqt[0]["QtWidth"]);
-                    DataRow[] tbdr = gridtb.Select("Article = 'QT With'");
-                    tbdr[0][patternfab] = qtpatternfab;
+                    DataRow[] tbdr = gridtb.Select("Article = 'PatternPanel'");
+                    tbdr[0][1] = patternfab;
+                    tbdr = gridtb.Select("Article = 'LectraCode'");
+                    tbdr[0][1] = qtpatternwidrh;
                     tbdr = gridtb.Select("Article = 'QT Width'");
-                    tbdr[0][patternfab] = qtpatternwidrh;
+                    tbdr[0][1] = qtpatternwidrh;
                 }
             }
             #endregion
@@ -153,19 +161,19 @@ namespace Sci.Production.PublicForm
                 
             }
             #endregion 
-            grid1.DataSource = gridtb;
-
-            grid1.CellEnter += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                DataRow coldr = grid1.GetDataRow(e.RowIndex); //取得資料列
-                string str= string.Empty;
-                string propertyname = grid1.Columns[e.ColumnIndex].DataPropertyName;//取得欄位名稱
-                str = coldr[propertyname].ToString();
-                colortb.DefaultView.RowFilter = string.Format("mid = '{0}'", str);
-
-            };
-
+            
+            
+            //gridFab.DataSource = gridtb;
+            this.listControlBindingSource1.DataSource = gridtb;
+            //gridFab.CellEnter += (s, e) =>
+            //{
+            //    if (e.RowIndex == -1) return;
+            //    DataRow coldr = gridFab.GetDataRow(e.RowIndex); //取得資料列
+            //    string str= string.Empty;
+            //    string propertyname = gridFab.Columns[e.ColumnIndex].DataPropertyName;//取得欄位名稱
+            //    str = coldr[propertyname].ToString();
+            //    colortb.DefaultView.RowFilter = string.Format("mid = '{0}'", str);
+            //};
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -219,11 +227,15 @@ namespace Sci.Production.PublicForm
                                 where g.brandid = h.brandid and g.id = h.ColorID and g.BrandId = '{1}' 
                             ) ord order by id ", cutid,brandid); //串出所有Colorid
             #endregion
-            
-            DualResult sqlresult = DBProxy.Current.Select(null, colorsql, out colortb);
-            grid2.DataSource = colortb;
-        }
 
-        
+            DualResult sqlresult = DBProxy.Current.Select(null, colorsql, out colortb);
+            if (!sqlresult)
+            {
+                ShowErr( sqlresult);
+                return;
+            }
+            //gridColorDesc.DataSource = colortb;
+            this.listControlBindingSource2.DataSource = colortb;
+        }
     }
 }
