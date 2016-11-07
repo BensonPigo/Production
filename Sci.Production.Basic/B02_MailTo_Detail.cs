@@ -27,7 +27,7 @@ namespace Sci.Production.Basic
 
             if (EditMode)
             {
-                textBox1.ReadOnly = data.RowState == DataRowState.Added ? false : true;
+                textBox1.ReadOnly = !MyUtility.Check.Empty(data["id"]);
             }
         }
 
