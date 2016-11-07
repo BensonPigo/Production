@@ -436,12 +436,12 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 			t.AddName= s.AddName,
 			t.AddDate= s.AddDate,
 			t.EditName= s.EditName,
-			t.EditDate= s.EditDate
+			t.EditDate= s.EditDate		
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 		delete;
 
 		------------------  insert Order_TmsCost
-		INSERT INTO Production.dbo.Order_TmsCost(ID,ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,InhouseOSP,LocalSuppID,AddName,AddDate,EditName,EditDate)
+			INSERT INTO Production.dbo.Order_TmsCost(ID,ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,InhouseOSP,LocalSuppID,AddName,AddDate,EditName,EditDate)
 		SELECT A.ID,A.ArtworkTypeID,A.Seq,A.Qty,A.ArtworkUnit,A.TMS,A.Price,C.InhouseOSP,
 		IIF(C.InhouseOSP='O',
 		(SELECT top 1 t.LocalSuppId FROM Production.dbo.Style_Artwork_Quot T
@@ -449,12 +449,12 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		inner join Trade_To_Pms.DBO.Order_TmsCost  b on a.ArtworkTypeID=b.ArtworkTypeID
 		WHERE T.Ukey IN (SELECT A.Ukey 
 		FROM Production.dbo.Style A	
-		INNER JOIN #TOrder B ON A.ID=B.StyleID AND A.BRANDID=B.BrandID AND A.SeasonID=B.SeasonID)
-		and t.Ukey=36351  ),
+		INNER JOIN #TOrder B ON A.ID=B.StyleID AND A.BRANDID=B.BrandID AND A.SeasonID=B.SeasonID) ),
 		(SELECT LocalSuppID FROM Production.dbo.Order_TmsCost WHERE ID=A.ID)),A.AddName,A.AddDate,A.EditName,A.EditDate 
 		FROM Trade_To_Pms.dbo.Order_TmsCost A
 		INNER JOIN #TOrder B ON A.ID=B.ID
-		INNER JOIN Production.dbo.ArtworkType C ON A.ID=C.ID
+		INNER JOIN Production.dbo.ArtworkType C ON A.ArtworkTypeID=C.ID
+		where a.Id not in (select id from Production.dbo.Order_TmsCost)
 		
 	
 
@@ -539,6 +539,26 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
+-------------Order_FabricCode_QT-----------------
+		Merge Production.dbo.Order_FabricCode_QT as t
+		Using (select a.* from Trade_To_Pms.dbo.Order_FabricCode_QT a inner join #TOrder b on a.id=b.id) as s
+		on t.id=s.id and t.Lectracode=s.Lectracode and t.seqno=s.seqno
+		when matched then 
+			update set
+			t.FabricCode= s.FabricCode,
+			t.QTFabricCode= s.QTFabricCode,
+			t.QTLectraCode= s.QTLectraCode,
+			t.AddName= s.AddName,
+			t.AddDate= s.AddDate,
+			t.EditName= s.EditName,
+			t.EditDate= s.EditDate,
+			t.PatternPanel= s.PatternPanel,
+			t.QTPatternPanel= s.QTPatternPanel
+		when not matched by target then 
+			insert(Id,FabricCode,LectraCode,SeqNO,QTFabricCode,QTLectraCode,AddName,AddDate,EditName,EditDate,PatternPanel,QTPatternPanel)
+			values(s.Id,s.FabricCode,s.LectraCode,s.SeqNO,s.QTFabricCode,s.QTLectraCode,s.AddName,s.AddDate,s.EditName,s.EditDate,s.PatternPanel,s.QTPatternPanel)
+		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
+			delete;
 		-------------Order_Bof -----------------------Bill of Fabric
 
 		Merge Production.dbo.Order_Bof as t
