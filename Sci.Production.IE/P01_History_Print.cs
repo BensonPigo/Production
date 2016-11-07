@@ -168,21 +168,21 @@ FOR XML PATH('')", id));
             worksheet.Range[String.Format("A{0}:B{0}", intRowsStart)].Merge(Type.Missing);
             worksheet.Range[String.Format("A{0}:B{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
             worksheet.Cells[intRowsStart, 1] = "100% Output/Hr:";
-            worksheet.Cells[intRowsStart, 3] = MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(ttlSewingTime) * MyUtility.Convert.GetDecimal(sewer), 0);
+            worksheet.Cells[intRowsStart, 3] = (MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(ttlSewingTime) * MyUtility.Convert.GetDecimal(sewer) * efficiency)) ? 0 : MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(ttlSewingTime) * MyUtility.Convert.GetDecimal(sewer), 0);
             worksheet.Cells[intRowsStart, 4] = "Pcs";
 
             intRowsStart++;
             worksheet.Range[String.Format("A{0}:B{0}", intRowsStart)].Merge(Type.Missing);
             worksheet.Range[String.Format("A{0}:B{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
             worksheet.Cells[intRowsStart, 1] = string.Format("{0}%", MyUtility.Convert.GetString(efficiency));
-            worksheet.Cells[intRowsStart, 3] = MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(ttlSewingTime) * MyUtility.Convert.GetDecimal(sewer) * efficiency / 100, 0);
+            worksheet.Cells[intRowsStart, 3] = (MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(ttlSewingTime) * MyUtility.Convert.GetDecimal(sewer) * efficiency)) ? 0 : MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(ttlSewingTime) * MyUtility.Convert.GetDecimal(sewer) * efficiency / 100, 0);
             worksheet.Cells[intRowsStart, 4] = "Pcs";
 
             intRowsStart++;
             worksheet.Range[String.Format("A{0}:B{0}", intRowsStart)].Merge(Type.Missing);
             worksheet.Range[String.Format("A{0}:B{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
             worksheet.Cells[intRowsStart, 1] = "PCS/HR/Sewer:";
-            worksheet.Cells[intRowsStart, 3] = MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(ttlSewingTime), 2);
+            worksheet.Cells[intRowsStart, 3] = (MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(ttlSewingTime))) ? 0 : MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(ttlSewingTime), 2);
             worksheet.Cells[intRowsStart, 4] = "Pcs";
             worksheet.Cells[intRowsStart, 5] = "Noted by:";
             worksheet.Range[String.Format("E{0}:E{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight;

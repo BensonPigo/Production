@@ -200,7 +200,7 @@ order by td.Seq", masterID);
                             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                             cmds.Add(sp1);
 
-                            string sqlCmd = "select DescEN,SMV,MachineTypeID,SeamLength,Mold,MtlFactorID from Operation where CalibratedCode = 1 and ID = @id";
+                            string sqlCmd = "select DescEN,SMV,MachineTypeID,SeamLength,MoldID,MtlFactorID from Operation where CalibratedCode = 1 and ID = @id";
                             DataTable opData;
                             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out opData);
                             if (result)
@@ -215,7 +215,7 @@ order by td.Seq", masterID);
                                     dr["OperationID"] = e.FormattedValue.ToString();
                                     dr["OperationDescEN"] = opData.Rows[0]["DescEN"].ToString();
                                     dr["MachineTypeID"] = opData.Rows[0]["MachineTypeID"].ToString();
-                                    dr["Mold"] = opData.Rows[0]["Mold"].ToString();
+                                    dr["Mold"] = opData.Rows[0]["MoldID"].ToString();
                                     dr["OperationMtlFactorID"] = opData.Rows[0]["MtlFactorID"].ToString();
                                     dr["Frequency"] = 1;
                                     dr["SeamLength"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SeamLength"]);
@@ -271,7 +271,7 @@ order by td.Seq", masterID);
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["SMV"]))
+                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) == MyUtility.Convert.GetDecimal(dr["SMV"]))
                     {
                         dr["SMV"] = e.FormattedValue.ToString();
                         if (MyUtility.Convert.GetDecimal(e.FormattedValue) == 0)
@@ -298,7 +298,7 @@ order by td.Seq", masterID);
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = "select ID,Description from MachineType where Junk = 0";
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", dr["MachineTypeID"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,80", dr["MachineTypeID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             e.EditingControl.Text = item.GetSelectedString();
