@@ -18,8 +18,6 @@ namespace Sci.Production.Cutting
         {
             InitializeComponent();
 
-
-
             this.Text = string.Format("Cut Parts Check<SP:{0}>)", cID);
             cutid = cID;
             requery();
@@ -30,23 +28,26 @@ namespace Sci.Production.Cutting
         {
             string sqlcmd = String.Format(
             @"with a as (
-            Select d.*,e.Colorid,e.PatternPanel
-            from 
-            (Select b.POID,c.ID,c.Article,c.SizeCode,c.Qty from (Select id,POID from Orders a where a.cuttingsp = '{0}') as b,
-            order_Qty c where c.id = b.id) d,Order_ColorCombo e 
-            where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !='')
-            , b as (
-            Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel,isnull(sum(b.qty),0) as cutqty from WorkOrder a ,WorkOrder_Distribute b , WorkOrder_PatternPanel c 
-            Where a.id = '{0}' and a.ukey = b.WorkOrderUkey and a.Ukey = c.WorkOrderUkey 
-            group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
+	            Select d.*,e.Colorid,e.PatternPanel
+	            from 
+	            (Select b.POID,c.ID,c.Article,c.SizeCode,c.Qty 
+	            from (Select id,POID from Orders a where a.cuttingsp = '{0}') as b,
+	            order_Qty c where c.id = b.id) d,Order_ColorCombo e 
+	            where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !=''
             )
-            Select a.* ,b.cutqty,a.qty - b.cutqty as varqty from a 
+            , b as (
+	            Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel,isnull(sum(b.qty),0) as cutqty 
+	            from WorkOrder a ,WorkOrder_Distribute b , WorkOrder_PatternPanel c 
+	            Where a.id = '{0}' and a.ukey = b.WorkOrderUkey and a.Ukey = c.WorkOrderUkey 
+	            group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
+            )
+            Select a.* ,b.cutqty,a.qty - b.cutqty as Variance 
+            from a 
             left join b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode  
             union all 
-            Select x.poid,y.ID,y.Article,y.SizeCode,y.qty,'' as Colorid,'=' as Patternpanel,null as cutqty,null as varqty 
-            from (Select id,POID from Orders z where z.cuttingsp = '{0}') as x,
-            order_Qty y where y.id = x.id
-
+            Select x.poid,y.ID,y.Article,y.SizeCode,y.qty,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
+            from (Select id,POID from Orders z where z.cuttingsp = '{0}') as x,order_Qty y 
+            where y.id = x.id
             order by id,article ,sizecode,PatternPanel", cutid);
             DataTable gridtb;
             DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
@@ -61,7 +62,6 @@ namespace Sci.Production.Cutting
                     if (grid1.Rows[i].Cells[4].Value.ToString() == "=")
                     {
                         grid1.Rows[i].DefaultCellStyle.BackColor = Color.Pink;
-
                     }
                 }
             };
