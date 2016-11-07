@@ -61,7 +61,6 @@ namespace Sci.Production.Subcon
         }
 
         // delete前檢查
-
         protected override bool ClickDeleteBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
@@ -564,23 +563,21 @@ where b.bundleno !='' and b.id = '{0}'and a.artworktypeid = '{1}'", CurrentMaint
             }
             if (datacheck.Rows.Count > 0)
             {
-                int i = 0;
                 DataRow[] Srows;
                 foreach (var dr in DetailDatas)
                 {
                     Srows = datacheck.Select(string.Format("OrderID = '{0}'",dr["orderid"].ToString()));
                     if ((decimal)Srows[0]["farmout"] - (decimal)dr["qty"] < (decimal)Srows[0]["farmin"])
                     {
-                        mids.Append(string.Format("{0}-{1}-{2}-{3}-{4} can't less farm in qty {5}", Srows[0]["id"], Srows[0]["orderid"], Srows[0]["artworktypeid"], Srows[0]["artworkid"], Srows[0]["patterncode"], Srows[0]["farmin"]) + Environment.NewLine);
+                        mids.Append(string.Format("{0}-{1}-{2}-{3}-{4} can't less farm in qty {5} \n", Srows[0]["id"], Srows[0]["orderid"], Srows[0]["artworktypeid"], Srows[0]["artworkid"], Srows[0]["patterncode"], Srows[0]["farmin"]));
                     }
-                    i++;
                 }
 
-                if (!MyUtility.Check.Empty(mids))
+                if (!MyUtility.Check.Empty(mids.ToString()))
                 {
                     MyUtility.Msg.WarningBox(mids.ToString());
+                    return;
                 }
-                return;
             }
 
             // update farmout status
