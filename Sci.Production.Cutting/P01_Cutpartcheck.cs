@@ -51,11 +51,10 @@ namespace Sci.Production.Cutting
             where y.id = x.id
             )
 
-            select c.*
+            select c.*,z.seq
             from c
-            left join Order_SizeCode d on c.ID = d.id and d.SizeCode=c.SizeCode 
-
-            order by d.seq,c.id,article ,c.sizecode,PatternPanel", cutid);
+            inner join Order_SizeCode z on z.id = c.POID and z.SizeCode = c.SizeCode
+            order by c.id,article,seq,c.sizecode,PatternPanel", cutid);
             DataTable gridtb;
             DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
             grid1.DataSource = gridtb;
