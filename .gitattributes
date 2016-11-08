@@ -35,6 +35,7 @@ DailyTransfer/imp_mockuporder.sql -text
 DailyTransfer/imp_order.sql -text svneol=unset#application/octet-stream
 DailyTransfer/imp_part.sql -text svneol=unset#application/octet-stream
 DailyTransfer/imp_replacement.sql -text
+DailyTransfer/update_LockDate.sql -text
 Database/Production.sql -text
 Database/ProductionDB.dbmdl -text
 Database/ProductionDB.publish.xml -text
