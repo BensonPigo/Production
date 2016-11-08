@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[Bundle] (
-    [ID]           VARCHAR (13) CONSTRAINT [DF_Bundle_ID] DEFAULT ('') NOT NULL,
+    [ID]           BIGINT       IDENTITY (1, 1) NOT NULL,
     [POID]         VARCHAR (13) CONSTRAINT [DF_Bundle_CuttingID] DEFAULT ('') NOT NULL,
     [MDivisionid]  VARCHAR (8)  CONSTRAINT [DF_Bundle_Factoryid] DEFAULT ('') NOT NULL,
     [Sizecode]     VARCHAR (17) CONSTRAINT [DF_Bundle_Sizecode] DEFAULT ('') NOT NULL,
@@ -25,6 +25,8 @@
     [oldid]        VARCHAR (13) NULL,
     CONSTRAINT [PK_Bundle] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
