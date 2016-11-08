@@ -700,7 +700,7 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		on t.ukey=s.ukey	
 		when matched then 
 			update set
-			t.id=.s.id,
+			t.id=s.id,
 			t.Seq= s.Seq,
 			t.MarkerName= s.MarkerName,
 			t.FabricCode= s.FabricCode,
