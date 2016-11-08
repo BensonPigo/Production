@@ -25,7 +25,7 @@ namespace Sci.Production.IE
         //Factory
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlCmd = "select distinct FTYGroup from Factory where Junk = 0";
+            string sqlCmd = "select distinct FTYGroup from Factory where Junk = 0 AND FTYGroup!=''";
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", textBox1.Text, "Factory");
             DialogResult returnResult = item.ShowDialog();
@@ -70,17 +70,29 @@ namespace Sci.Production.IE
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"select lm.FactoryID,lm.StyleID,lm.ComboType,lm.SeasonID,lm.BrandID,lm.Version,lm.SewingLineID,
-lm.Team,lm.CurrentOperators,lm.StandardOutput,lm.TaktTime,lm.TotalGSD,lm.TotalCycle,
-IIF(lm.HighestCycle = 0,0,Round(3600.0/lm.HighestCycle,2)) as EOLR,
-IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalGSD)/lm.HighestCycle/lm.CurrentOperators) as Eff,
-IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.HighestCycle/lm.CurrentOperators) as LB,
-IIF(lm.TaktTime*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.TaktTime/lm.CurrentOperators) as LLEF,
-IIF(lm.HighestCycle * lm.CurrentOperators = 0,0,(ROUND(3600.0/lm.HighestCycle, 2) * (select isnull(CPU,0) from Style where Ukey = lm.StyleUKey)/lm.CurrentOperators)) as PPH,
-isnull((select Name from Pass1 where ID = lm.AddName),'') as CreateBy,lm.AddDate,
-isnull((select Name from Pass1 where ID = lm.EditName),'') as EditBy,lm.EditDate
+            sqlCmd.Append(@"select lm.FactoryID,
+	   lm.StyleID,
+	   lm.ComboType,
+	   lm.SeasonID,
+	   lm.BrandID,
+	   lm.Version,
+	   lm.SewingLineID,
+       lm.Team,
+       lm.CurrentOperators,
+       lm.StandardOutput,
+       lm.TaktTime,
+       lm.TotalGSD,
+       lm.TotalCycle,
+	   IIF(lm.HighestCycle = 0,0,Round(3600.0/lm.HighestCycle,2)) as EOLR,
+	   IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalGSD)/lm.HighestCycle/lm.CurrentOperators) as Eff,
+	   IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.HighestCycle/lm.CurrentOperators) as LB,
+	   IIF(lm.TaktTime*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.TaktTime/lm.CurrentOperators) as LLEF,
+	   IIF(lm.HighestCycle * lm.CurrentOperators = 0,0,(ROUND(3600.0/lm.HighestCycle, 2) * (select isnull(CPU,0) from Style where lm.BrandID = BrandID and lm.StyleID = ID and lm.SeasonID = SeasonID)/lm.CurrentOperators)) as PPH,
+	   isnull((select Name from Pass1 where ID = lm.AddName),'') as CreateBy,lm.AddDate,
+	   isnull((select Name from Pass1 where ID = lm.EditName),'') as EditBy,lm.EditDate
 from LineMapping lm
-where 1 = 1");
+where 1 = 1
+");
             if (!MyUtility.Check.Empty(factory))
             {
                 sqlCmd.Append(string.Format(" and lm.FactoryID = '{0}'",factory));
