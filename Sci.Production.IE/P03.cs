@@ -456,15 +456,22 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         
         protected override void OnDetailGridInsertClick()
         {
-            //先紀錄目前Grid所指道的那筆資料
-            DataRow tmp = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
-            SumNoGSDCycleTime(CurrentDetailData["GroupKey"].ToString());
-           // base.OnDetailGridInsertClick();
-            DataRow newrow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
-            newrow.ItemArray = tmp.ItemArray;//將剛剛紀錄的資料複製到新增的那筆record
-            CurrentDetailData["New"] = true;
-            AssignNoGSDCycleTime(CurrentDetailData["GroupKey"].ToString());
-            base.OnDetailGridInsertClick();
+            DataRow newrow, tmp;
+           
+           
+                //先紀錄目前Grid所指道的那筆資料
+                tmp = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
+                 if (tmp.Empty())
+                 {
+                     return;
+                 }
+                SumNoGSDCycleTime(CurrentDetailData["GroupKey"].ToString());
+                base.OnDetailGridInsertClick();
+                newrow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
+                newrow.ItemArray = tmp.ItemArray;//將剛剛紀錄的資料複製到新增的那筆record
+                CurrentDetailData["New"] = true;
+                AssignNoGSDCycleTime(CurrentDetailData["GroupKey"].ToString());
+           
         }
 
         protected override void OnDetailGridDelete()
