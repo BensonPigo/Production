@@ -14,6 +14,7 @@ using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace Sci.Production.Cutting
 {
@@ -389,10 +390,15 @@ namespace Sci.Production.Cutting
             }
             return true;
         }
-
+        protected void createfolder()
+        {
+            if (!Directory.Exists(Sci.Env.Cfg.ReportTempDir))
+                Directory.CreateDirectory(Sci.Env.Cfg.ReportTempDir);
+        }
 
         private void button2_Click(object sender, EventArgs e)
         {
+            createfolder();
             if (!ToExcel(true))
             {
                 return;
