@@ -216,6 +216,27 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
             #endregion
         }
 
+        //private string cl(string s)
+        //{
+        //    StringBuilder sb = new StringBuilder();
+        //    int len = 77;
+        //    if (s.Length > len)
+        //    {
+        //        int c = s.Length / len;
+        //        int i;
+        //        for (i = 0; i < c; i++)
+        //        {
+        //            sb.Append((s.Substring(i * len, i * len + len)) + Environment.NewLine);
+        //        }
+        //        int m = s.Length % len;
+        //        if (m > 0)
+        //        {
+        //            sb.Append((s.Substring(i * len)));
+        //        }
+        //    }
+        //    return sb.ToString();
+        //}
+
         private void button1_Click(object sender, EventArgs e)
         {
             Sci.Production.Cutting.P01_MarkerList callNextForm =
