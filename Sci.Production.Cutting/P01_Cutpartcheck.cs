@@ -54,11 +54,30 @@ namespace Sci.Production.Cutting
             select c.*,z.seq
             from c
             inner join Order_SizeCode z on z.id = c.POID and z.SizeCode = c.SizeCode
-            order by c.id,article,seq,c.sizecode,PatternPanel", cutid);
+            order by c.id,article,seq,c.qty,c.ColorID,c.sizecode,PatternPanel", cutid);
             DataTable gridtb;
             DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
+
+            for (int i = gridtb.Rows.Count - 1; i > 0; i--)
+            {
+                if (gridtb.Rows[i]["PatternPanel"].ToString() != "=" &&
+                    MyUtility.Check.Empty(gridtb.Rows[i]["cutqty"]) &&
+                    MyUtility.Check.Empty(gridtb.Rows[i]["Variance"]))
+                {
+                    if (gridtb.Rows[i][0].ToString() == gridtb.Rows[i - 1][0].ToString() &&
+                        gridtb.Rows[i][1].ToString() == gridtb.Rows[i - 1][1].ToString() &&
+                        gridtb.Rows[i][2].ToString() == gridtb.Rows[i - 1][2].ToString() &&
+                        gridtb.Rows[i][3].ToString() == gridtb.Rows[i - 1][3].ToString() &&
+                        gridtb.Rows[i][4].ToString() == gridtb.Rows[i - 1][4].ToString() &&
+                        gridtb.Rows[i][5].ToString() == gridtb.Rows[i - 1][5].ToString())
+                    {
+                        gridtb.Rows[i].Delete();
+                    }
+                }
+            }
             grid1.DataSource = gridtb;
         }
+        
         private void gridSetup()
         {
             grid1.RowPostPaint += (s, e) =>
