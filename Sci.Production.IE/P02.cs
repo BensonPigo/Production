@@ -23,6 +23,11 @@ namespace Sci.Production.IE
             type = Type;
             this.Text = type == "1" ? "P02. Style Changeover Monitor" : "P021. Style Changeover Monitor (History)";
             this.DefaultFilter = type == "1" ? string.Format("MDivisionID = '{0}' AND Status <> 'Closed'", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND Status = 'Closed'", Sci.Env.User.Keyword);
+            if (type == "2")
+           {
+               this.IsSupportEdit = false;
+            }
+            
             //組InLine date的mask
             for (int i = 0; i < Sci.Env.Cfg.DateTimeStringFormat.Length; i++)
             {
@@ -33,7 +38,9 @@ namespace Sci.Production.IE
             }
             textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Inline", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
             textBox4.Mask = dateTimeMask;
+            
         }
+
 
         protected override void OnDetailEntered()
         {
@@ -142,8 +149,10 @@ order by OutputDate
             if (!MyUtility.Check.Empty(CurrentMaintain["ApvDate"]))
             {
                 MyUtility.Msg.WarningBox("This record is 'Approved', can't be modify!");
+              
                 return false;
             }
+            
             return base.ClickEditBefore();
         }
 
