@@ -14,6 +14,7 @@ using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace Sci.Production.Cutting
 {
@@ -33,7 +34,7 @@ namespace Sci.Production.Cutting
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmdsql = string.Format(
             @"
-            Select a.*,e.FabricCombo,e.seq1,e.seq2,e.FabricCode,e.SCIRefno,
+            Select a.*,e.FabricCombo,e.seq1,e.seq2,e.FabricCode,e.SCIRefno,e.Refno,
             (
                 Select distinct Article+'/ ' 
 			    From dbo.WorkOrder_Distribute b
@@ -70,23 +71,24 @@ namespace Sci.Production.Cutting
         {
             base.OnDetailGridSetup();
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("Sewinglineid", header: "Line#", width: Widths.AnsiChars(5), iseditingreadonly: true)
-            .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), integer_places: 3, iseditingreadonly: true)
-            .Text("Fabriccombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("Fabriccode", header: "Fabric Code", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("PatternPanel", header: "PatternPanel", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
-            .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("CutQty", header: "Total CutQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-            .Text("Remark", header: "Remark", width: Widths.AnsiChars(15));
-            this.detailgrid.Columns[15].DefaultCellStyle.BackColor = Color.Pink;
+            .Text("Sewinglineid", header: "Line#", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("Cutref", header: "CutRef#", width: Widths.Auto(), iseditingreadonly: true)
+            .Numeric("Cutno", header: "Cut#", width: Widths.Auto(), integer_places: 3, iseditingreadonly: true)
+            .Text("Fabriccombo", header: "Fabric Combo", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("Fabriccode", header: "Fabric Code", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("PatternPanel", header: "PatternPanel", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("orderid", header: "SP#", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("SEQ1", header: "SEQ1", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("SEQ2", header: "SEQ2", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("Article", header: "Article", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("Colorid", header: "Color", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("SizeCode", header: "Size", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("CutQty", header: "Total CutQty", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("SCIRefno", header: "SCIRefno", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("Refno", header: "Refno", width: Widths.Auto(), iseditingreadonly: true)
+            .Numeric("Cons", header: "Cons", width: Widths.Auto(), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+            .Text("Remark", header: "Remark", width: Widths.Auto());
+            this.detailgrid.Columns[15].DefaultCellStyle.BackColor = Color.Pink;            
         }
         protected override bool ClickDeleteBefore()
         {
@@ -140,7 +142,7 @@ namespace Sci.Production.Cutting
             @"Insert into MarkerReq
             (id,estcutdate,mDivisionid,CutCellid,Status,Cutplanid,AddName,AddDate) 
             values('{0}','{1}','{2}','{3}','New','{4}','{5}',getdate());",
-            reqid, CurrentMaintain["estcutdate"], CurrentMaintain["mDivisionid"],
+            reqid,dateBox1.Text, CurrentMaintain["mDivisionid"],
             CurrentMaintain["cutcellid"], CurrentMaintain["ID"], loginID);
 
             #region 表身
@@ -197,11 +199,13 @@ namespace Sci.Production.Cutting
                     if (!(upResult = DBProxy.Current.Execute(null, updSql)))
                     {
                         _transactionscope.Dispose();
+                        ShowErr("Commit transaction error.");
                         return;
                     }
                     if (!(upResult = DBProxy.Current.Execute(null, insert_cons)))
                     {
                         _transactionscope.Dispose();
+                        ShowErr("Commit transaction error.");
                         return;
                     }
                     if (insertmk != "")
@@ -209,6 +213,7 @@ namespace Sci.Production.Cutting
                         if (!(upResult = DBProxy.Current.Execute(null, insertmk)))
                         {
                             _transactionscope.Dispose();
+                            ShowErr("Commit transaction error.");
                             return;
                         }
                     }
@@ -217,13 +222,14 @@ namespace Sci.Production.Cutting
                         if (!(upResult = DBProxy.Current.Execute(null, insert_mark2)))
                         {
                             _transactionscope.Dispose();
+                            ShowErr("Commit transaction error.");
                             return;
                         }
                     }
                     _transactionscope.Complete();
-                    MyUtility.Msg.WarningBox("Successfully");
+                    MyUtility.Msg.InfoBox("Successfully");
                 }
-                catch (Exception ex)
+                catch (Exception ex)//絕對進不來catch
                 {
                     _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
@@ -329,9 +335,14 @@ namespace Sci.Production.Cutting
 
         private bool ToExcel(bool autoSave)
         {
+            if (MyUtility.Check.Empty(CurrentDetailData))
+            {
+                MyUtility.Msg.InfoBox("No any data.");
+                return false;
+            }
             DataTable ExcelTb;
             string cmdsql = string.Format(
-            @"select cd.id,cd.sewinglineid,cd.orderid,w.seq1,w.seq2,cd.cutref,cd.cutno,w.FabricCombo,w.FabricCode,
+            @"select cd.id,cd.sewinglineid,cd.orderid,w.seq1,w.seq2,cd.StyleID,cd.cutref,cd.cutno,w.FabricCombo,w.FabricCode,
 (
     Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
     From WorkOrder_SizeRatio c
@@ -358,20 +369,21 @@ inner join WorkOrder w on cd.WorkorderUkey = w.Ukey
 left join Fabric f on f.SCIRefno = w.SCIRefno
 where cd.id = '{0}'", CurrentDetailData["ID"]);
             DualResult dResult = DBProxy.Current.Select(null, cmdsql, out ExcelTb);
+            
             if (dResult)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P04.xltx"); //預先開啟excel app
                 pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_Daily_Plan" + DateTime.Now.ToFileTime() + ".xls";
                 string tmpName = Sci.Env.Cfg.ReportTempDir + "tmp.xls";
 
-
+                createfolder();
                 if (MyUtility.Excel.CopyToXls(ExcelTb, "", "Cutting_P04.xltx", 5, !autoSave, null, objApp, false))
                 {// 將datatable copy to excel
                     Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                     Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
 
                     objSheet.Cells[1, 1] = keyWord;   // 條件字串寫入excel
-                    objSheet.Cells[3, 2] = CurrentMaintain["EstCutDate"].ToString();
+                    objSheet.Cells[3, 2] = dateBox1.Text;
                     objSheet.Cells[3, 5] = CurrentMaintain["POID"].ToString();
                     objSheet.Cells[3, 9] = CurrentMaintain["CutCellid"].ToString();
                     objSheet.Cells[3, 12] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(loginID);
@@ -379,6 +391,7 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
                     if (autoSave)
                     {
                         Random random = new Random();
+
                         pathName = Env.Cfg.ReportTempDir + "Cutting_Daily_Plan - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
                         objBook.SaveAs(pathName);
                         objBook.Close();
@@ -408,6 +421,12 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
                 return false;
             }
             return true;
+        }
+
+        protected void createfolder()
+        {
+            if (!Directory.Exists(Sci.Env.Cfg.ReportTempDir))
+                Directory.CreateDirectory(Sci.Env.Cfg.ReportTempDir);
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -447,6 +466,13 @@ content, false, false);
         {
             ToExcel(false);
             return base.ClickPrint();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            detailgrid.ValidateControl();
+            var frm = new Sci.Production.Cutting.P04_FabricIssueList();
+            frm.ShowDialog(this);
         }
     }
 }

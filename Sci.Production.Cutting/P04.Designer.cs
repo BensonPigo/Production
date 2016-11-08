@@ -44,6 +44,7 @@
             this.displayBox2 = new Sci.Win.UI.DisplayBox();
             this.displayBox6 = new Sci.Win.UI.DisplayBox();
             this.button2 = new Sci.Win.UI.Button();
+            this.button3 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -60,6 +61,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.button3);
             this.masterpanel.Controls.Add(this.button2);
             this.masterpanel.Controls.Add(this.displayBox6);
             this.masterpanel.Controls.Add(this.displayBox2);
@@ -94,6 +96,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox6, 0);
             this.masterpanel.Controls.SetChildIndex(this.button2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.button3, 0);
             // 
             // detailpanel
             // 
@@ -260,9 +263,11 @@
             // 
             // button1
             // 
+            this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.button1.Enabled = false;
             this.button1.Location = new System.Drawing.Point(772, 77);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(97, 30);
+            this.button1.Size = new System.Drawing.Size(95, 30);
             this.button1.TabIndex = 17;
             this.button1.Text = "import";
             this.button1.UseVisualStyleBackColor = true;
@@ -298,6 +303,16 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(873, 77);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(119, 30);
+            this.button3.TabIndex = 21;
+            this.button3.Text = "Fabric issue list";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // P04
             // 
             this.ApvChkValue = "New";
@@ -305,8 +320,10 @@
             this.DefaultOrder = "id";
             this.GridAlias = "Cutplan_Detail";
             this.GridNew = 0;
+            this.GridUniqueKey = "id,workorderukey";
             this.IsGridIconVisible = false;
             this.IsSupportConfirm = true;
+            this.IsSupportCopy = false;
             this.IsSupportSend = true;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
@@ -352,5 +369,6 @@
         private Win.UI.DisplayBox displayBox1;
         private Win.UI.Label label10;
         private Win.UI.Label label9;
+        private Win.UI.Button button3;
     }
 }
