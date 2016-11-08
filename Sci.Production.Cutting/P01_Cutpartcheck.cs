@@ -41,14 +41,21 @@ namespace Sci.Production.Cutting
 	            Where a.id = '{0}' and a.ukey = b.WorkOrderUkey and a.Ukey = c.WorkOrderUkey 
 	            group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
             )
+            , c as(
             Select a.* ,b.cutqty,a.qty - b.cutqty as Variance 
             from a 
-            left join b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode  
+            left join b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
             union all 
             Select x.poid,y.ID,y.Article,y.SizeCode,y.qty,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
             from (Select id,POID from Orders z where z.cuttingsp = '{0}') as x,order_Qty y 
             where y.id = x.id
-            order by id,article ,sizecode,PatternPanel", cutid);
+            )
+
+            select c.*
+            from c
+            left join Order_SizeCode d on c.ID = d.id and d.SizeCode=c.SizeCode 
+
+            order by d.seq,c.id,article ,c.sizecode,PatternPanel", cutid);
             DataTable gridtb;
             DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
             grid1.DataSource = gridtb;
