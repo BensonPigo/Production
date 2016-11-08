@@ -2,7 +2,7 @@
     [ukey]          BIGINT       IDENTITY (1, 1) NOT NULL,
     [ID]            VARCHAR (13) CONSTRAINT [DF_MarkerReq_Detail_ID] DEFAULT ('') NOT NULL,
     [OrderID]       VARCHAR (13) CONSTRAINT [DF_MarkerReq_Detail_OrderID] DEFAULT ('') NOT NULL,
-    [SizeRatio]     VARCHAR (20) CONSTRAINT [DF_MarkerReq_Detail_SizeRatio] DEFAULT ('') NOT NULL,
+    [SizeRatio]     NVARCHAR(MAX) CONSTRAINT [DF_MarkerReq_Detail_SizeRatio] DEFAULT ('') NOT NULL,
     [MarkerName]    VARCHAR (5)  CONSTRAINT [DF_MarkerReq_Detail_MarkerName] DEFAULT ('') NOT NULL,
     [Layer]         NUMERIC (5)  CONSTRAINT [DF_MarkerReq_Detail_Layer] DEFAULT ((0)) NOT NULL,
     [FabricCombo]   VARCHAR (2)  CONSTRAINT [DF_MarkerReq_Detail_FabricCombo] DEFAULT ('') NOT NULL,
