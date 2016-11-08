@@ -4,11 +4,11 @@
     [Amount]    NUMERIC (12, 2) CONSTRAINT [DF_Debit_Schedule_Amount] DEFAULT ((0)) NULL,
     [VoucherID] VARCHAR (16)    CONSTRAINT [DF_Debit_Schedule_TransID] DEFAULT ('') NOT NULL,
     [AddName]   VARCHAR (10)    CONSTRAINT [DF_Debit_Schedule_AddName] DEFAULT ('') NULL,
-    [AddDate]   DATETIME        NULL,
+    [AddDate]   DATETIME        NOT NULL,
     [EditName]  VARCHAR (10)    CONSTRAINT [DF_Debit_Schedule_EditName] DEFAULT ('') NULL,
     [EditDate]  DATETIME        NULL,
     [SysDate]   DATETIME        NULL,
-    CONSTRAINT [PK_Debit_Schedule] PRIMARY KEY CLUSTERED ([ID] ASC, [IssueDate] ASC, [VoucherID] ASC)
+    CONSTRAINT [PK_Debit_Schedule] PRIMARY KEY CLUSTERED ([ID], [IssueDate], [VoucherID], [AddDate])
 );
 
 
