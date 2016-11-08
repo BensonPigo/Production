@@ -203,6 +203,7 @@ outer apply(
             {
 
                 if (!(this.EditMode) || !(this.IsDetailInserting)) return;
+                if (e.FormattedValue.ToString() == CurrentDetailData["OrderID"].ToString()) return;
 
                 if (!(MyUtility.Check.Empty(e.FormattedValue)))
                 {
