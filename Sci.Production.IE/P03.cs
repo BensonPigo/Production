@@ -258,28 +258,42 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                 detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
-            detailgrid.RowsAdded += (s, e) =>
-            {
+            //detailgrid.RowsAdded += (s, e) =>
+            //{
                 
-                DataTable dtData = (DataTable)detailgridbs.DataSource;
-                for (int i = 0; i < e.RowCount; i++)
-                {
-                    DataRow dr = detailgrid.GetDataRow(i + e.RowIndex);
-                    if (dr["New"].ToString().ToUpper() == "TRUE")
-                    {
-                        detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 186, 117);
-                    }
-                }
-            };
+            //    DataTable dtData = (DataTable)detailgridbs.DataSource;
+            //    for (int i = 0; i < e.RowCount; i++)
+            //    {
+            //        DataRow dr = detailgrid.GetDataRow(i + e.RowIndex);
+            //        if (dr["New"].ToString().ToUpper() == "TRUE")
+            //        {
+            //            detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 186, 117);
+            //        }
+                    
+            //    }
+            //};
 
-            detailgrid.RowValidated += (s, e) =>
+            //detailgrid.RowValidated += (s, e) =>
+            //{
+            //    DataTable dtData = (DataTable)detailgridbs.DataSource;
+            //    if (dtData.Rows[e.RowIndex].RowState != DataRowState.Deleted && dtData.Rows[e.RowIndex]["New"].ToString().ToUpper() == "TRUE")
+            //    {
+            //        detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 186, 117);
+            //    }
+            //};
+
+            detailgrid.RowPrePaint += detailgrid_RowPrePaint;
+        }
+
+        void detailgrid_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+            DataRow dr = ((DataRowView)detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
+
+            if (dr["New"].ToString().ToUpper() == "TRUE")
             {
-                DataTable dtData = (DataTable)detailgridbs.DataSource;
-                if (dtData.Rows[e.RowIndex].RowState != DataRowState.Deleted && dtData.Rows[e.RowIndex]["New"].ToString().ToUpper() == "TRUE")
-                {
-                    detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 186, 117);
-                }
-            };
+                detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 186, 117);
+            }
         }
 
         //撈出Employee資料
@@ -445,11 +459,12 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
             //先紀錄目前Grid所指道的那筆資料
             DataRow tmp = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
             SumNoGSDCycleTime(CurrentDetailData["GroupKey"].ToString());
-            base.OnDetailGridInsertClick();
+           // base.OnDetailGridInsertClick();
             DataRow newrow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
             newrow.ItemArray = tmp.ItemArray;//將剛剛紀錄的資料複製到新增的那筆record
             CurrentDetailData["New"] = true;
             AssignNoGSDCycleTime(CurrentDetailData["GroupKey"].ToString());
+            base.OnDetailGridInsertClick();
         }
 
         protected override void OnDetailGridDelete()
