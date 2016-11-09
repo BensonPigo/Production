@@ -54,7 +54,8 @@ namespace Sci.Production.Class
             set { this.displayBox1.Text = value; }
             get { return this.displayBox1.Text; }
         }
-
+     
+       
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
            // base.OnValidating(e);
@@ -87,7 +88,7 @@ namespace Sci.Production.Class
             }
             this.ValidateControl();
         }
-
+        
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
            
@@ -96,6 +97,7 @@ namespace Sci.Production.Class
             {
                 this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
             }
+            this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -116,6 +118,8 @@ namespace Sci.Production.Class
             this.textBox1.Text = item.GetSelectedString();
             this.textBox1.ValidateControl();
             this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
+           
+
         }
     }
     public class cellsbucon : DataGridViewGeneratorTextColumnSettings
@@ -169,6 +173,9 @@ namespace Sci.Production.Class
                         return;
                     }
                 }
+
+
+
 
             };
             return ts;
