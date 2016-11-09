@@ -117,16 +117,7 @@ namespace Sci.Production.Planning
         }
         
         //refresh
-        //protected override void ClickEditAfter()
-        //{
-        //    //txtsubcon1.DisplayBox1Binding.ToString();
-        // //   .DisplayBox1.Text.ToString();
-        //    txtsubcon1.DisplayBox1.Value.ToString();
-        //  //  base.ClickEditAfter();
-        //    return;
-        //}
-
-        protected override void OnDetailEntered()
+       protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
             switch (CurrentMaintain["artworktypeid"].ToString().TrimEnd())
