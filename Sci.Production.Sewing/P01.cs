@@ -48,21 +48,36 @@ namespace Sci.Production.Sewing
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(@"select sd.*,iif(rft.InspectQty is null or rft.InspectQty = 0,0, round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2)) as RFT, iif(ss.ID is null,'Data Migration (not belong to this line#)','') as Remark,
-ISNULL((select CONCAT(QaQty,',') from (
-select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) as QAQty,isnull(os.Seq,0) as Seq
-from SewingOutput_Detail_Detail sdd
-left join Orders o on o.ID = sdd.OrderId
-left join Order_SizeCode os on os.Id = o.POID and os.SizeCode = sdd.SizeCode
-where sdd.SewingOutput_DetailUKey = sd.UKey
-) a
-order by Seq
-for xml path('')),'') as QAOutput
-from SewingOutput_Detail sd 
-left join SewingOutput s on sd.ID = s.ID
-left join Rft on rft.OrderID = sd.OrderId and rft.CDate = s.OutputDate and rft.SewinglineID = s.SewingLineID and rft.Shift = s.Shift and rft.Team = s.Team
-left join SewingSchedule ss on ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID
-where sd.ID = '{0}'", masterID);
+            this.DetailSelectCommand = string.Format(@"
+                select sd.*,
+                [RFT] = iif(rft.InspectQty is null or rft.InspectQty = 0,0, round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2)), 
+                [Remark] = iif(ss.ID is null,'Data Migration (not belong to this line#)','') ,
+                [QAOutput] = ISNULL(A.QQ,'')
+                from SewingOutput_Detail sd 
+                left join SewingOutput s on sd.ID = s.ID
+                left join Rft on rft.OrderID = sd.OrderId and rft.CDate = s.OutputDate 
+			                  and rft.SewinglineID = s.SewingLineID and rft.Shift = s.Shift 
+			                  and rft.Team = s.Team
+                left join SewingSchedule ss on ss.OrderID = sd.OrderId 
+			                  and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID
+                left join SewingOutput_Detail_Detail sdd on sdd.SewingOutput_DetailUKey = sd.UKey	
+                left join Orders o on o.ID = sdd.OrderId
+                left join Order_SizeCode os on os.Id = o.POID and os.SizeCode = sdd.SizeCode
+                outer apply 
+                (
+	                select QQ=(		
+		                select CONCAT(QaQty,',') 
+		                from
+		                (
+			                select 
+			                [QAQty] = sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty),
+			                [Seq] = isnull(os.Seq,0)			
+		                ) a
+		                order by Seq 	
+		                for xml path('')
+	                )
+                ) A
+                where sd.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -70,26 +85,41 @@ where sd.ID = '{0}'", masterID);
         {
             string masterID = (e.Detail == null) ? "0" : MyUtility.Convert.GetString(e.Detail["UKey"]);
 
-            this.SubDetailSelectCommand = string.Format(@"with AllQty
-as
-(
-select sd.ID, sd.UKey as SewingOutput_DetailUkey, sd.OrderId, sd.ComboType,oq.Article,oq.SizeCode,oq.Qty as OrderQty,
-isnull((select QAQty from SewingOutput_Detail_Detail where SewingOutput_DetailUkey = sd.UKey and SizeCode = oq.SizeCode),0) as QAQty ,
-isnull((select sum(QAQty) from SewingOutput_Detail_Detail where OrderId = sd.OrderId and ComboType = sd.ComboType and Article = oq.Article and SizeCode = oq.SizeCode and ID != sd.ID),0) as AccumQty
-from SewingOutput_Detail sd,Order_Qty oq 
-where sd.UKey = {0} and sd.OrderId = oq.ID
-union all
-select sdd.ID, sdd.SewingOutput_DetailUkey, sdd.OrderId, sdd.ComboType,sdd.Article,sdd.SizeCode,0 as OrderQty,sdd.QAQty,
-isnull((select sum(QAQty) from SewingOutput_Detail_Detail where OrderId = sdd.OrderId and ComboType = sdd.ComboType and Article = sdd.Article and SizeCode = sdd.SizeCode and ID != sdd.ID),0) as AccumQty 
-from SewingOutput_Detail_Detail sdd 
-where SewingOutput_DetailUKey = {0}
-and not exists (select 1 from Order_Qty where ID = sdd.OrderId and Article = sdd.Article and SizeCode = sdd.SizeCode)
-)
-select a.*,a.OrderQty-a.AccumQty as Variance, a.OrderQty-a.AccumQty-a.QAQty as BalQty,isnull(os.Seq,0) as Seq
-from AllQty a
-left join Orders o on a.OrderId = o.ID
-left join Order_SizeCode os on os.Id = o.POID and os.SizeCode = a.SizeCode
-order by a.OrderId,os.Seq", masterID);
+            this.SubDetailSelectCommand = string.Format(@"
+            ;with AllQty as
+            (
+	            select sd.ID, sd.UKey as SewingOutput_DetailUkey, sd.OrderId, sd.ComboType,oq.Article,oq.SizeCode,oq.Qty as OrderQty,
+	            isnull((select QAQty from SewingOutput_Detail_Detail where SewingOutput_DetailUkey = sd.UKey and SizeCode = oq.SizeCode),0) as QAQty ,
+	            isnull(
+			            (
+				            select sum(QAQty) 
+				            from SewingOutput_Detail_Detail 
+				            where OrderId = sd.OrderId and ComboType = sd.ComboType and Article = oq.Article and SizeCode = oq.SizeCode and ID != sd.ID
+			            ),0
+		                ) as AccumQty
+	            from SewingOutput_Detail sd,Order_Qty oq 
+	            where sd.UKey = '{0}' and sd.OrderId = oq.ID
+	            union all
+	            select sdd.ID, sdd.SewingOutput_DetailUkey, sdd.OrderId, sdd.ComboType,sdd.Article,sdd.SizeCode,0 as OrderQty,sdd.QAQty,
+	            isnull(
+			            (
+				            select sum(QAQty) 
+				            from SewingOutput_Detail_Detail 
+				            where OrderId = sdd.OrderId and ComboType = sdd.ComboType and Article = sdd.Article and SizeCode = sdd.SizeCode and ID != sdd.ID
+			            ),0
+		                ) as AccumQty 
+	            from SewingOutput_Detail_Detail sdd 
+	            where SewingOutput_DetailUKey = '{0}'
+	            and not exists (select 1 from Order_Qty where ID = sdd.OrderId and Article = sdd.Article and SizeCode = sdd.SizeCode)
+            )
+            select a.*,
+            [Variance] = a.OrderQty-a.AccumQty, 
+            [BalQty] = a.OrderQty-a.AccumQty-a.QAQty,
+            [Seq] = isnull(os.Seq,0)
+            from AllQty a
+            left join Orders o on a.OrderId = o.ID
+            left join Order_SizeCode os on os.Id = o.POID and os.SizeCode = a.SizeCode
+            order by a.OrderId,os.Seq", masterID);
             return base.OnSubDetailSelectCommandPrepare(e);
         }
 
