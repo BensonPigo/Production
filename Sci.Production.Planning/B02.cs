@@ -62,7 +62,7 @@ namespace Sci.Production.Planning
             #endregion
             bool flag = false;
             Sci.Data.DBProxy.Current.Exists(null, s1, cmds,out flag);
-            if (flag)
+            if (flag == false)
             {
                 MyUtility.Msg.WarningBox("This Data ranage already cover existed data");
                 return false;
