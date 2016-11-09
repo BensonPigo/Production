@@ -67,10 +67,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(679, 576);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.button1);
@@ -81,14 +77,11 @@
             this.detailcont.Controls.Add(this.editBox2);
             this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Controls.Add(this.displayBox7);
-            this.detailcont.Controls.Add(this.txtpaytermar2);
-            this.detailcont.Controls.Add(this.txtpaytermar1);
             this.detailcont.Controls.Add(this.editBox1);
             this.detailcont.Controls.Add(this.displayBox6);
             this.detailcont.Controls.Add(this.displayBox5);
             this.detailcont.Controls.Add(this.displayBox4);
             this.detailcont.Controls.Add(this.displayBox3);
-            this.detailcont.Controls.Add(this.txtcountry1);
             this.detailcont.Controls.Add(this.displayBox2);
             this.detailcont.Controls.Add(this.displayBox1);
             this.detailcont.Controls.Add(this.label15);
@@ -104,20 +97,17 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(679, 538);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 538);
-            this.detailbtm.Size = new System.Drawing.Size(679, 38);
+            this.detailcont.Controls.Add(this.txtpaytermar2);
+            this.detailcont.Controls.Add(this.txtpaytermar1);
+            this.detailcont.Controls.Add(this.txtcountry1);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(679, 576);
+            this.browse.Size = new System.Drawing.Size(776, 576);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(687, 605);
+            this.tabs.Size = new System.Drawing.Size(784, 605);
             // 
             // label3
             // 
@@ -430,7 +420,7 @@
             // 
             // B11
             // 
-            this.ClientSize = new System.Drawing.Size(687, 638);
+            this.ClientSize = new System.Drawing.Size(784, 638);
             this.DefaultOrder = "BrandID,ID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
