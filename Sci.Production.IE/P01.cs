@@ -271,8 +271,8 @@ order by td.Seq", masterID);
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) == MyUtility.Convert.GetDecimal(dr["SMV"]))
-                    {
+                    //if (MyUtility.Convert.GetDecimal(e.FormattedValue) == MyUtility.Convert.GetDecimal(dr["SMV"]))
+                    //{
                         dr["SMV"] = e.FormattedValue.ToString();
                         if (MyUtility.Convert.GetDecimal(e.FormattedValue) == 0)
                         {
@@ -283,7 +283,7 @@ order by td.Seq", masterID);
                             dr["PcsPerHour"] = MyUtility.Convert.GetDouble(dr["SMV"]) == 0 ? 0 : MyUtility.Math.Round((3600.0 / MyUtility.Convert.GetDouble(dr["SMV"])), 1);
                         }
                         dr.EndEdit();
-                    }
+                    //}
                 }
             };
             #endregion
@@ -298,7 +298,7 @@ order by td.Seq", masterID);
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = "select ID,Description from MachineType where Junk = 0";
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,80", dr["MachineTypeID"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,35", dr["MachineTypeID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             e.EditingControl.Text = item.GetSelectedString();
