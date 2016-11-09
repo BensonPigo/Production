@@ -674,8 +674,7 @@ order by a.OrderId,os.Seq";
             #endregion
 
             #region 檢查資料是否已存在
-                if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput where OutputDate = '{0}' and SewingLineID = '{1}' and Shift = '{2}' and Team = '{3}' and FactoryID = '{4}' and ID <> '{5}'",
-                                                                                                               Convert.ToDateTime(CurrentMaintain["OutputDate"]).ToString("d"), MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(CurrentMaintain["Shift"]), MyUtility.Convert.GetString(CurrentMaintain["Team"]), MyUtility.Convert.GetString(CurrentMaintain["FactoryID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
+                if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput where OutputDate = '{0}' and SewingLineID = '{1}' and Shift = '{2}' and Team = '{3}' and FactoryID = '{4}' and ID <> '{5}'",Convert.ToDateTime(CurrentMaintain["OutputDate"]).ToString("d"), MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(CurrentMaintain["Shift"]), MyUtility.Convert.GetString(CurrentMaintain["Team"]), MyUtility.Convert.GetString(CurrentMaintain["FactoryID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
                 {
                     MyUtility.Msg.WarningBox(string.Format("Date:{0}, Line:{1}, Shift:{2}, Team:{3} already exist, can't save!!",
                         Convert.ToDateTime(CurrentMaintain["OutputDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)), MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(CurrentMaintain["Shift"]), MyUtility.Convert.GetString(CurrentMaintain["Team"]), MyUtility.Convert.GetString(CurrentMaintain["FactoryID"])));
@@ -774,6 +773,29 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
             {
                 MyUtility.Msg.WarningBox("The working hours summary is not equal to working hours/day, please correct, or else can't be saved.");
                 return false;
+            }
+            #endregion
+
+            #region 若sewingoutput.outputDate <= system.sewlock 表身Qty要等於表頭的Qty            
+            DataTable sys;
+            DBProxy.Current.Select(null,"select sewlock from system",out sys);
+            DateTime? Sod = MyUtility.Convert.GetDate(CurrentMaintain["outputDate"]);
+            DateTime? sl = MyUtility.Convert.GetDate(sys.Rows[0][0]);
+            if (Sod<=sl)
+            {                
+                decimal NQ=0;
+                foreach (DataRow dr in DetailDatas)
+                {
+                    if (!MyUtility.Check.Empty(dr["QAQty"]))
+                    {
+                        NQ += MyUtility.Convert.GetDecimal(dr["QAQty"]);
+                    }
+                }
+                if (NQ != (Decimal)(numericBox5.Value))
+                {
+                    MyUtility.Msg.WarningBox("QA Output shouled be the same as before.");
+                    return false; 
+                }
             }
             #endregion
 
