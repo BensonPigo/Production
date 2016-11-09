@@ -145,8 +145,8 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
             {
                 if (OrdersData.Rows.Count > 0)
                 {
-                    editBox1.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["PoList"]);
-                    editBox2.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["CuttingList"]);
+                    editBox1.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["PoList"].ToString().Replace(" ", ""));
+                    editBox2.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["CuttingList"].ToString().Replace(" ",""));
                 }
                 else
                 {
