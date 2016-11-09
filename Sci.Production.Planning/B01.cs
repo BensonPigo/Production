@@ -15,6 +15,7 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             InitializeComponent();
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
             DataTable dt = new DataTable();
             dt.Columns.Add("Value");
 
@@ -68,12 +69,24 @@ namespace Sci.Production.Planning
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["heads"].ToString()) && CurrentMaintain["artworktypeid"].ToString().TrimEnd()=="Embroidery")
+            if (CurrentMaintain["heads"].ToString() == "Embroidery" && CurrentMaintain["artworktypeid"].ToString() == "Embroidery")
+          //  .TrimEnd()==""
             {
                 MyUtility.Msg.WarningBox("< # of Heads > can not be empty!");
                 this.numericBox2.Focus();
                 return false;
             }
+
+
+
+            if (radioButton2.Checked == true)
+            {
+                int yy = DateTime.Parse(CurrentMaintain["issuedate"].ToString()).Year;
+                int mm = DateTime.Parse(CurrentMaintain["issuedate"].ToString()).Month;
+                CurrentMaintain["issuedate"] = DateTime.Parse(yy.ToString() + "/" + mm.ToString() + "/1");
+            } 
+
+
 
             return base.ClickSaveBefore();
         }
@@ -102,8 +115,17 @@ namespace Sci.Production.Planning
             }
 
         }
-
+        
         //refresh
+        //protected override void ClickEditAfter()
+        //{
+        //    //txtsubcon1.DisplayBox1Binding.ToString();
+        // //   .DisplayBox1.Text.ToString();
+        //    txtsubcon1.DisplayBox1.Value.ToString();
+        //  //  base.ClickEditAfter();
+        //    return;
+        //}
+
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -145,9 +167,11 @@ namespace Sci.Production.Planning
                 int yy = DateTime.Parse(CurrentMaintain["issuedate"].ToString()).Year;
                 int mm = DateTime.Parse(CurrentMaintain["issuedate"].ToString()).Month;
                 CurrentMaintain["issuedate"] = DateTime.Parse(yy.ToString() + "/" + mm.ToString() + "/1");
-            }
+            } 
+          
         }
 
+      
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
 
