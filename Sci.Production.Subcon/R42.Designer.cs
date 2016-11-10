@@ -61,7 +61,7 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(120, 158);
+            this.comboFactory.Location = new System.Drawing.Point(145, 158);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
             this.comboFactory.TabIndex = 113;
@@ -72,14 +72,14 @@
             this.comboSubProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboSubProcess.FormattingEnabled = true;
             this.comboSubProcess.IsSupportUnselect = true;
-            this.comboSubProcess.Location = new System.Drawing.Point(120, 128);
+            this.comboSubProcess.Location = new System.Drawing.Point(145, 128);
             this.comboSubProcess.Name = "comboSubProcess";
             this.comboSubProcess.Size = new System.Drawing.Size(121, 24);
             this.comboSubProcess.TabIndex = 112;
             // 
             // dateBundle
             // 
-            this.dateBundle.Location = new System.Drawing.Point(120, 70);
+            this.dateBundle.Location = new System.Drawing.Point(145, 70);
             this.dateBundle.Name = "dateBundle";
             this.dateBundle.Size = new System.Drawing.Size(280, 23);
             this.dateBundle.TabIndex = 111;
@@ -88,14 +88,14 @@
             // 
             this.textSP.BackColor = System.Drawing.Color.White;
             this.textSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textSP.Location = new System.Drawing.Point(120, 41);
+            this.textSP.Location = new System.Drawing.Point(145, 41);
             this.textSP.Name = "textSP";
             this.textSP.Size = new System.Drawing.Size(143, 23);
             this.textSP.TabIndex = 110;
             // 
             // dateCutRef
             // 
-            this.dateCutRef.Location = new System.Drawing.Point(120, 12);
+            this.dateCutRef.Location = new System.Drawing.Point(145, 12);
             this.dateCutRef.Name = "dateCutRef";
             this.dateCutRef.Size = new System.Drawing.Size(280, 23);
             this.dateCutRef.TabIndex = 109;
@@ -105,7 +105,7 @@
             this.label5.Lines = 0;
             this.label5.Location = new System.Drawing.Point(22, 159);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(95, 23);
+            this.label5.Size = new System.Drawing.Size(120, 23);
             this.label5.TabIndex = 108;
             this.label5.Text = "Factory";
             // 
@@ -114,7 +114,7 @@
             this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(22, 129);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(95, 23);
+            this.label4.Size = new System.Drawing.Size(120, 23);
             this.label4.TabIndex = 107;
             this.label4.Text = "Sub Process";
             // 
@@ -123,7 +123,7 @@
             this.label3.Lines = 0;
             this.label3.Location = new System.Drawing.Point(22, 70);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(95, 23);
+            this.label3.Size = new System.Drawing.Size(120, 23);
             this.label3.TabIndex = 106;
             this.label3.Text = "Bundle CDate";
             // 
@@ -132,7 +132,7 @@
             this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(22, 41);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(95, 23);
+            this.label2.Size = new System.Drawing.Size(120, 23);
             this.label2.TabIndex = 105;
             this.label2.Text = "SP#";
             // 
@@ -141,13 +141,13 @@
             this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(22, 12);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(95, 23);
+            this.label1.Size = new System.Drawing.Size(120, 23);
             this.label1.TabIndex = 104;
             this.label1.Text = "Cut Ref#";
             // 
             // dateBundleTransDate
             // 
-            this.dateBundleTransDate.Location = new System.Drawing.Point(120, 99);
+            this.dateBundleTransDate.Location = new System.Drawing.Point(145, 99);
             this.dateBundleTransDate.Name = "dateBundleTransDate";
             this.dateBundleTransDate.Size = new System.Drawing.Size(280, 23);
             this.dateBundleTransDate.TabIndex = 115;
@@ -157,7 +157,7 @@
             this.label6.Lines = 0;
             this.label6.Location = new System.Drawing.Point(22, 99);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(95, 23);
+            this.label6.Size = new System.Drawing.Size(120, 23);
             this.label6.TabIndex = 114;
             this.label6.Text = "Bundle Trans Date";
             // 
