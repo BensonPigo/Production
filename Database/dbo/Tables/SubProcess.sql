@@ -2,14 +2,15 @@
     [Id]            VARCHAR (10) CONSTRAINT [DF_SubProcess_Id] DEFAULT ('') NOT NULL,
     [ArtworkTypeId] VARCHAR (20) CONSTRAINT [DF_SubProcess_ArtworkTypeId] DEFAULT ('') NOT NULL,
     [IsSelection]   BIT          CONSTRAINT [DF_SubProcess_IsSelection] DEFAULT ((0)) NULL,
-    [IsProcess]     BIT          CONSTRAINT [DF_SubProcess_IsProcess] DEFAULT ((0)) NULL,
-    [IsDisplay]     BIT          CONSTRAINT [DF_SubProcess_IsDisplay] DEFAULT ((0)) NULL,
+    [IsRFIDProcess]     BIT          CONSTRAINT [DF_SubProcess_IsProcess] DEFAULT ((0)) NULL,
+    [IsRFIDDefault]     BIT          CONSTRAINT [DF_SubProcess_IsDisplay] DEFAULT ((0)) NULL,
     [ShowSeq]       VARCHAR (2)  CONSTRAINT [DF_SubProcess_ShowSeq] DEFAULT ('') NULL,
     [Junk]          BIT          CONSTRAINT [DF_SubProcess_Junk] DEFAULT ((0)) NULL,
     [AddName]       VARCHAR (10) CONSTRAINT [DF_SubProcess_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME     NULL,
     [EditName]      VARCHAR (10) CONSTRAINT [DF_SubProcess_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME     NULL,
+    [BCSDate] NCHAR(10) NULL, 
     CONSTRAINT [PK_SubProcess] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -31,11 +32,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0t
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SubProcess', @level2type = N'COLUMN', @level2name = N'IsProcess';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SubProcess', @level2type = N'COLUMN', @level2name = 'IsRFIDProcess';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SubProcess', @level2type = N'COLUMN', @level2name = N'IsDisplay';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SubProcess', @level2type = N'COLUMN', @level2name = 'IsRFIDDefault';
 
 
 GO
