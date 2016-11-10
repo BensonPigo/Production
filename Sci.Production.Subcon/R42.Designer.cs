@@ -44,6 +44,7 @@
             // 
             // print
             // 
+            this.print.Enabled = false;
             this.print.Location = new System.Drawing.Point(507, 12);
             // 
             // toexcel
