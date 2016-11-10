@@ -365,6 +365,7 @@ namespace Sci.Production.Tools
                         {
                             foreach (DataRow dr in drs)
                             {
+                                if (dr["MenuName"].ToString() != drDetailMenu["MenuName"].ToString()) dr["MenuName"] = drDetailMenu["MenuName"].ToString();
                                 if (dr["BarPrompt"].ToString() != drDetailMenu["BarPrompt"].ToString()) dr["BarPrompt"] = drDetailMenu["BarPrompt"].ToString();
                                 if (!(bool)drDetailMenu["CanNew"] && (bool)dr["CanNew"]) dr["CanNew"] = 0;
                                 if (!(bool)drDetailMenu["CanEdit"] && (bool)dr["CanEdit"]) dr["CanEdit"] = 0;
