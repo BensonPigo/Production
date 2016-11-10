@@ -142,6 +142,7 @@ namespace Sci.Production.Quality
                 frm.Dispose();
                 this.RenewData();
             };
+            
             inspDate.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
@@ -202,7 +203,22 @@ namespace Sci.Production.Quality
                 .Text("LastUpdate", header: "Last Update", width: Widths.AnsiChars(30), iseditingreadonly: true);
 
         }
-
+        public void grid_CellMouseClick(object sender,DataGridViewCellMouseEventArgs e)
+        {
+            this.grid_CellMouseClick(e.Button, e.RowIndex);
+        }
+        public void grid_CellMouseClick(System.Windows.Forms.MouseButtons eButton, int eRowIndex)
+        {
+            if (eButton== System.Windows.Forms.MouseButtons.Right)
+            {
+                MyUtility.Msg.InfoBox("Right Click Event!!");
+            }
+        }
+        protected override void OnMouseClick(MouseEventArgs e)
+        {          
+            base.OnMouseClick(e);
+            
+        }
         protected override void OnFormLoaded()
         {
             
@@ -215,7 +231,13 @@ namespace Sci.Production.Quality
             
             base.OnFormLoaded();
         }
-       
+        //private void detailgrid_MouseClick(object sender, MouseEventArgs e)
+        //{
+        //    if (e.Button==MouseButtons.Right)
+        //    {
+        //        MyUtility.Msg.InfoBox("right click event");
+        //    }
+        //}
 
         // Context Menu選擇Create New test
         private void CreateNewTest()
@@ -242,7 +264,7 @@ namespace Sci.Production.Quality
             var frm = new Sci.Production.Quality.P06_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr, sp_text.Text);
             frm.ShowDialog(this);
             frm.Dispose();
-            contextMenuStrip();
+            //contextMenuStrip();
             this.RenewData();
             OnDetailEntered();
             // 固定滑鼠指向位置,避免被renew影響
@@ -295,6 +317,7 @@ namespace Sci.Production.Quality
         {
             var dr = this.CurrentDetailData;
             DataTable dtCheck;
+            DataTable dtCheckDelete;
             add.Enabled = true;
             if (dr == null) // ColorFastness 空的
             {
@@ -306,21 +329,25 @@ namespace Sci.Production.Quality
             else // ColorFastness 有東西
             {
                 DBProxy.Current.Select(null, string.Format("select * from ColorFastness where id='{0}'", CurrentDetailData["ID"].ToString()), out dtCheck);
+                DBProxy.Current.Select(null, string.Format("select * from ColorFastness where POID='{0}'", sp_text.Text.ToString()), out dtCheckDelete);
                 if (dtCheck.Rows.Count <= 0)
                 {
                     edit.Enabled = false;
                     delete.Enabled = false;
                     return;
                 }
-                if (dtCheck.Rows[0]["Status"].ToString().Trim() == "New")
+                if (dtCheck.Rows.Count != 0)
                 {
-                    edit.Enabled = true;
-                    delete.Enabled = true;
-                }
-                else
-                {
-                    edit.Enabled = true;
-                    delete.Enabled = false;
+                    if (dtCheck.Rows[0]["Status"].ToString().Trim() == "New")
+                    {
+                        edit.Enabled = true;
+                        delete.Enabled = true;
+                    }
+                    else
+                    {
+                        edit.Enabled = true;
+                        delete.Enabled = false;
+                    }
                 }
             }
 
@@ -332,7 +359,12 @@ namespace Sci.Production.Quality
                 edit.Enabled = false;
                 delete.Enabled = false;
             }
-
+            if (EditMode)
+            {
+                add.Enabled = false;
+                edit.Enabled = false;
+                delete.Enabled = false;
+            }
         }
 
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
@@ -349,6 +381,11 @@ namespace Sci.Production.Quality
             return base.OnRenewDataDetailPost(e);
         }
 
+        protected override void OnDetailGridRowChanged()
+        {
+            contextMenuStrip();
+            base.OnDetailGridRowChanged();
+        }
 
     }
 }

@@ -231,22 +231,36 @@ namespace Sci.Production.Quality
             Sci.Production.Quality.P05_Detail callNewDetailForm = new P05_Detail(IsSupportEdit,ID.ToString(), null, null, null, this.sp_text.Text);
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
-            //this.RenewData();會讓資料renew導致記憶被洗掉
             this.RenewData();
             OnDetailEntered();
         }
         // Context Menu選擇Edit This Record's Detail
         private void EditThisDetail()
         {
+            string currentID = this.CurrentDetailData["ID"].ToString();
+            string spno = this.sp_text.Text;
             var dr = this.CurrentDetailData; if (null == dr) return;
             string id = CurrentDetailData["ID"].ToString();
             var frm = new Sci.Production.Quality.P05_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr,sp_text.Text);
             frm.ShowDialog(this);
             frm.Dispose();
             contextMenuStrip();
-            //this.RenewData();會讓資料renew導致記憶被洗掉
             this.RenewData();            
             OnDetailEntered();
+            // 固定滑鼠指向位置,避免被renew影響
+            int rowindex = 0;
+            for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
+            {
+                DataGridViewRow dvr = detailgrid.Rows[rIdx];
+                DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
+
+                if (row["ID"].ToString() == currentID)
+                {
+                    rowindex = rIdx;
+                    break;
+                }
+            }
+            detailgrid.SelectRowTo(rowindex);
         }
         // Context Menu選擇Delete This Record's Detail
         private void DeleteThisDetail()
@@ -329,7 +343,6 @@ namespace Sci.Production.Quality
                     edit.Enabled = false;
                     delete.Enabled = false;
                 }
-
             }
         }
 
@@ -346,6 +359,12 @@ namespace Sci.Production.Quality
                 i++;
             }
             return base.OnRenewDataDetailPost(e);
+        }
+
+        protected override void OnDetailGridRowChanged()
+        {
+            contextMenuStrip();
+            base.OnDetailGridRowChanged();
         }
 
     }

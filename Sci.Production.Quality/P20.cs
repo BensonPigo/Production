@@ -128,21 +128,26 @@ namespace Sci.Production.Quality
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                   
-                    string item_cmd = "Select ID from GarmentDefectCode ";
+
+                    string item_cmd = @"  select distinct  b.GarmentDefectCodeID,a.GarmentDefectTypeID,a.Description from GarmentDefectCode a inner join Rft_Detail b on a.id=b.GarmentDefectCodeID
+ order by GarmentDefectCodeID,GarmentDefectTypeID
+";
 
                     SelectItem item = new SelectItem(item_cmd, "10", dr["GarmentDefectCodeID"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel) return;
                     dr["GarmentDefectCodeID"] = item.GetSelectedString();
-                    string sqlcmd = string.Format(@"select Description from GarmentDefectCode a inner join Rft_Detail b on a.id=b.GarmentDefectCodeID where b.GarmentDefectCodeID='{0}'", item.GetSelectedString());
+                    string sqlcmd = string.Format(@"select Description,a.GarmentDefectTypeID from GarmentDefectCode a inner join Rft_Detail b on a.id=b.GarmentDefectCodeID where b.GarmentDefectCodeID='{0}'", item.GetSelectedString());
                     if (MyUtility.Check.Seek(sqlcmd, out drDesc))
                     {
                         dr["Description"] = drDesc["Description"];
+                        dr["GarmentDefectTypeid"] = drDesc["GarmentDefectTypeID"];
                     }
                     else
                     {
+
                         dr["Description"] = "";
+                        dr["GarmentDefectTypeid"] = "";
                     }
                 }
             };
@@ -154,21 +159,27 @@ namespace Sci.Production.Quality
              
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
-                    var dr = this.CurrentDetailData;
-                    string item_cmd = "Select ID from GarmentDefectCode ";
+                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+
+                    string item_cmd = @"  select distinct  b.GarmentDefectCodeID,a.GarmentDefectTypeID,a.Description from GarmentDefectCode a inner join Rft_Detail b on a.id=b.GarmentDefectCodeID
+ order by GarmentDefectCodeID,GarmentDefectTypeID
+";
 
                     SelectItem item = new SelectItem(item_cmd, "10", dr["GarmentDefectCodeID"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel) return;
                     dr["GarmentDefectCodeID"] = item.GetSelectedString();
-                    string sqlcmd = string.Format(@"select Description from GarmentDefectCode a inner join Rft_Detail b on a.id=b.GarmentDefectCodeID where b.GarmentDefectCodeID='{0}'", item.GetSelectedString());
+                    string sqlcmd = string.Format(@"select Description,a.GarmentDefectTypeID from GarmentDefectCode a inner join Rft_Detail b on a.id=b.GarmentDefectCodeID where b.GarmentDefectCodeID='{0}'", item.GetSelectedString());
                     if (MyUtility.Check.Seek(sqlcmd, out drDesc))
                     {
                         dr["Description"] = drDesc["Description"];
+                        dr["GarmentDefectTypeid"] = drDesc["GarmentDefectTypeID"];
                     }
                     else
                     {
+
                         dr["Description"] = "";
+                        dr["GarmentDefectTypeid"] = "";
                     }
                 }
             };
@@ -288,6 +299,15 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.WarningBox("DefectQty can not exceed InspectQty !!", "Warning");
                 return false;
             }
+            DataTable dt;
+            string sql = string.Format(@"select * from rft where OrderID='{0}' and CDate='{1}' and SewinglineID = '{2}' 
+  and FactoryID='{3}' and [Shift]='{4}' and Team='{5}' ", txtSP.Text,((DateTime)CDate.Value).ToShortDateString(), txtLine.Text, DisplayFactory.Text, comboShift.SelectedValue, comboTeam.Text);
+            DBProxy.Current.Select(null, sql, out dt);
+            if (dt.Rows.Count>0)
+            {
+                MyUtility.Msg.InfoBox("Data does exist!");
+                return false;
+            }
 
             return base.ClickSaveBefore();
         }
@@ -350,9 +370,11 @@ namespace Sci.Production.Quality
 
         // edit前檢查
         protected override bool ClickEditBefore()
-        {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() == "CONFIRMED")
+        {           
+            DataTable dt;
+            string sql = string.Format(@"select * from rft where id='{0}'", CurrentMaintain["ID"].ToString().Trim());
+            DBProxy.Current.Select(null, sql,out dt);
+            if (dt.Rows[0]["status"].ToString().ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
                 return false;

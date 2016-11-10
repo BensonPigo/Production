@@ -119,6 +119,7 @@
             0,
             0,
             0});
+            this.numericBox1.TextChanged += new System.EventHandler(this.numericBox1_TextChanged);
             // 
             // B05
             // 

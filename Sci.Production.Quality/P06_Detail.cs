@@ -67,6 +67,7 @@ namespace Sci.Production.Quality
             if (isSee)
             {
                 this.ToExcel.Enabled = canEdit && !this.EditMode;
+                this.encode_btn.Enabled = canEdit && !this.EditMode;
             }
         }
 
@@ -75,6 +76,7 @@ namespace Sci.Production.Quality
             Dictionary<String, String> Result_RowSource = new Dictionary<string, string>();
             Result_RowSource.Add("Pass", "Pass");
             Result_RowSource.Add("Fail", "Fail");
+            Result_RowSource.Add(" ", " ");
             comboBox1.DataSource = new BindingSource(Result_RowSource, null);
             comboBox1.ValueMember = "Key";
             comboBox1.DisplayMember = "Value";
@@ -116,7 +118,8 @@ namespace Sci.Production.Quality
                     this.article.Text = "";
                     this.txtuser1.TextBox1Binding = loginID;
                     this.remark.Text = "";
-                    this.comboBox1.Text = "";
+                    //this.comboBox1.Text = "";
+                    this.comboBox1.SelectedValue = " ";
                 }
             }
             #endregion
@@ -131,6 +134,7 @@ namespace Sci.Production.Quality
             DataTable dtpo, dtsupp;
             // Gridview新增欄位
             datas.Columns.Add("SCIRefno", typeof(string));
+            datas.Columns.Add("Refno", typeof(string));
             datas.Columns.Add("Colorid", typeof(string));
             datas.Columns.Add("SEQ", typeof(string));
             datas.Columns.Add("LastUpdate", typeof(string));
@@ -195,8 +199,8 @@ namespace Sci.Production.Quality
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
-                    //string item_cmd = string.Format("select seq1,seq2,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
+                    DataTable dt;
+                    string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);                   
                     SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -213,8 +217,11 @@ namespace Sci.Production.Quality
                     dr["seq1"] = seqSplit[0];
                     dr["seq2"] = seqSplit[1];
 
-                    //e.FormattedValue = "";
-                    // this.grid.CurrentCell.Value = "";
+                    DBProxy.Current.Select(null,
+                   string.Format("select scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}' and FabricType='F'", PoID, dr["seq1"], dr["seq2"]), out dt);
+                    dr["scirefno"] = dt.Rows[0]["scirefno"].ToString();
+                    dr["refno"] = dt.Rows[0]["refno"].ToString();
+                    dr["colorid"] = dt.Rows[0]["colorid"].ToString();
                 }
 
             };
@@ -225,6 +232,7 @@ namespace Sci.Production.Quality
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
+                    DataTable dt;
                     string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
                     //string item_cmd = string.Format("select seq1,seq2,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
                     SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
@@ -244,6 +252,11 @@ namespace Sci.Production.Quality
                     ctl.Text = dr["SEQ"].ToString();
                     dr["seq1"] = seqSplit[0];
                     dr["seq2"] = seqSplit[1];
+                    DBProxy.Current.Select(null,
+                  string.Format("select scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}' and FabricType='F'", PoID, dr["seq1"], dr["seq2"]), out dt);
+                    dr["scirefno"] = dt.Rows[0]["scirefno"].ToString();
+                    dr["refno"] = dt.Rows[0]["refno"].ToString();
+                    dr["colorid"] = dt.Rows[0]["colorid"].ToString();
                 }
 
             };
@@ -584,8 +597,7 @@ namespace Sci.Production.Quality
             };
             #endregion
             seqMskCell.TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;
-           // DataGridViewGeneratorTextColumnSettings groupCell = new DataGridViewGeneratorTextColumnSettings();
-
+           
             #region MouseClick
 
             
@@ -618,6 +630,7 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Empty(this.article.Text))
             {
                 MyUtility.Msg.InfoBox("<Article> cannot be empty!!");
+                this.article.Select();
                 return false;
             }
             if (MyUtility.Check.Empty(this.txtuser1.TextBox1.Text))
@@ -667,6 +680,12 @@ namespace Sci.Production.Quality
                 }
 
                 string Today = DateTime.Now.ToShortDateString();
+                #region 判斷Crocking Result
+                DataTable gridDt = (DataTable)gridbs.DataSource;
+                DataRow[] ResultAry = gridDt.Select("Result='Fail'");
+                string result = "Pass";               
+                if (ResultAry.Length > 0) result = "Fail";
+                #endregion
 
                 //新增
                 if (dr.RowState == DataRowState.Added)
@@ -676,19 +695,21 @@ namespace Sci.Production.Quality
                     {
                         string insCmd = @"                                            
                                             insert into ColorFastness(ID,POID,TestNo,InspDate,Article,Result,Status,Inspector,Remark,addName,addDate)
-                                            values(@id ,@poid,'1',GETDATE(),@Article,'Pass','New',@logid,@remark,@logid,GETDATE())";
+                                            values(@id ,@poid,'1',GETDATE(),@Article,@Result,'New',@logid,@remark,@logid,GETDATE())";
                         List<SqlParameter> spamAddNew = new List<SqlParameter>();
                         spamAddNew.Add(new SqlParameter("@id", ID));//New ID
                         spamAddNew.Add(new SqlParameter("@poid", PoID));
                         spamAddNew.Add(new SqlParameter("@article", this.article.Text));
                         spamAddNew.Add(new SqlParameter("@logid", loginID));
                         spamAddNew.Add(new SqlParameter("@remark", this.remark.Text));
+                        spamAddNew.Add(new SqlParameter("@Result", result));
+                        
                         upResult = DBProxy.Current.Execute(null, insCmd, spamAddNew);
                     }
                 }
                 if (dr.RowState == DataRowState.Modified && isModify)
                 {
-                    string editCmd = @"update ColorFastness set inspdate=@insDate,Article=@Article,Inspector=@insor,remark=@remark , EditName=@EditName , EditDate=@EditDate
+                    string editCmd = @"update ColorFastness set inspdate=@insDate,Article=@Article,Inspector=@insor,remark=@remark , EditName=@EditName , EditDate=@EditDate,result =@result
                                                        where id=@id";
                     List<SqlParameter> spamEdit = new List<SqlParameter>();
                     spamEdit.Add(new SqlParameter("@id", ID));//New ID
@@ -698,6 +719,7 @@ namespace Sci.Production.Quality
                     spamEdit.Add(new SqlParameter("@remark", this.remark.Text));
                     spamEdit.Add(new SqlParameter("@EditName", loginID));
                     spamEdit.Add(new SqlParameter("@EditDate", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
+                    spamEdit.Add(new SqlParameter("@result", result));
                     upResult = DBProxy.Current.Execute(null, editCmd, spamEdit);
                 }
             }
@@ -775,24 +797,34 @@ namespace Sci.Production.Quality
         }
        
         // 20161021 新增,讓使用者自行輸入
-        //protected override void OnInsert()
-        //{
-        //    DataTable dt;
-        //    DataTable dtGrid = (DataTable)gridbs.DataSource;
-        //    DBProxy.Current.Select(null, string.Format("select * from ColorFastness_Detail where id='{0}'", ID), out dt);
-        //    int rows = dt.Rows.Count;
-        //    base.OnInsert();
-        //    if (rows <= 0)
-        //    {
-        //        dtGrid.Rows[0]["ColorFastnessGroup"] = 01;
-        //    }
-        //    else
-        //    {
-        //        int group = MyUtility.Convert.GetInt(dtGrid.Rows[rows - 1]["ColorFastnessGroup"]);
+        protected override void OnInsert()
+        {
+            DataTable dt;
+            DataTable dtGrid = (DataTable)gridbs.DataSource;
+            DBProxy.Current.Select(null, string.Format("select * from ColorFastness_Detail where id='{0}'", ID), out dt);
+            int rows = dt.Rows.Count;
+            int rows1 = dtGrid.Rows.Count;
+            base.OnInsert();
+            if (rows <= 0)
+            {
+                if (rows1==0)
+                {
+                    dtGrid.Rows[rows1]["ColorFastnessGroup"] = 01;
+                }
+                else
+                {
+                    int group = MyUtility.Convert.GetInt(dtGrid.Rows[rows1 - 1]["ColorFastnessGroup"]);
 
-        //        dtGrid.Rows[rows]["ColorFastnessGroup"] = group + 1;
-        //    }
-        //}
+                    dtGrid.Rows[rows1]["ColorFastnessGroup"] = group + 1;
+                }                
+            }
+            else
+            {
+                int group = MyUtility.Convert.GetInt(dtGrid.Rows[rows1 - 1]["ColorFastnessGroup"]);
+
+                dtGrid.Rows[rows1]["ColorFastnessGroup"] = group + 1;
+            }
+        }
 
         #region 表頭Article 右鍵事件: 1.右鍵selectItem 2.判斷validated
         private void article_MouseDown(object sender, MouseEventArgs e)

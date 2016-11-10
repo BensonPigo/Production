@@ -144,10 +144,6 @@
             this.gridicon.Location = new System.Drawing.Point(3, 89);
             this.gridicon.Visible = false;
             // 
-            // refresh
-            // 
-            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
-            // 
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(1143, 358);

@@ -93,7 +93,7 @@ namespace Sci.Production.Quality
 
             if (articleDT.Rows.Count != 0)
             {
-                DataRow[] articleAry = articleDT.Select("Result<>'' and NonOven='True' and NonWash='True' ");
+                DataRow[] articleAry = articleDT.Select("Result<>'' OR( NonOven='True' and NonWash='True') ");
                 if (articleAry.Length > 0)
                 {
                     inspnum = Math.Round(((decimal)articleAry.Length / dRowCount) * 100, 2).ToString();
