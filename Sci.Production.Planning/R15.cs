@@ -302,7 +302,7 @@ where a.ArtworkTypeId='PRINTING'
  ,(select dbo.getTPEPass1(p.McHandle) from dbo.PO p where p.ID =t.POID) [MC Handle],t.DoxType
  ,(select article+',' from (select distinct q.Article  from dbo.Order_Qty q where q.ID = t.OrderID) t for xml path('')) article_list
  , t.Customize1 [SpecMark], t.GFR, t.SampleReason
- ,(select s.StandardTms * t.CPU from System s) [TMS]"));
+ ,(select s.StdTms * t.CPU from System s) [TMS]"));
             if (isArtwork) 
                 sqlCmd.Append(string.Format(@",{0} ",artworktypes.ToString().Substring(0, artworktypes.ToString().Length - 1)));
             sqlCmd.Append(string.Format(@" from cte t inner join cte2 on cte2.OrderID = t.OrderID"));
