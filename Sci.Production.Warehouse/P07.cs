@@ -359,16 +359,33 @@ namespace Sci.Production.Warehouse
                     }
                     else
                     {
-                        sqlcmd = string.Format(@"select e.poid,e.seq1+e.seq2 as seq, e.Refno, dbo.getmtldesc(e.poid,e.seq1,e.seq2,2,0) as [Description]
+//                        --select e.poid,e.seq1+e.seq2 as seq, e.Refno, dbo.getmtldesc(e.poid,e.seq1,e.seq2,2,0) as [Description]
+//--,p.ColorID
+//--,(SELECT eta from dbo.export where id = e.id) as eta
+//--,p.InQty,p.pounit,p.StockUnit,p.OutQty,p.AdjustQty
+//--,p.inqty - p.OutQty + p.AdjustQty as balance
+//--,p.LInvQty
+//--,p.fabrictype
+//--,e.seq1
+//--,e.seq2
+//--from dbo.Export_Detail e left join dbo.PO_Supp_Detail p on e.PoID = p.ID and e.Seq1 = p.SEQ1 and e.Seq2 = p.seq2
+                        sqlcmd = string.Format(@"
+
+select e.poid,e.seq1+e.seq2 as seq, e.Refno, dbo.getmtldesc(e.poid,e.seq1,e.seq2,2,0) as [Description]
 ,p.ColorID
 ,(SELECT eta from dbo.export where id = e.id) as eta
---,p.InQty,p.pounit,p.StockUnit,p.OutQty,p.AdjustQty
---,p.inqty - p.OutQty + p.AdjustQty as balance
---,p.LInvQty
+,M.InQty
+,p.pounit,p.StockUnit
+,M.OutQty
+,M.AdjustQty
+,M.inqty - M.OutQty + M.AdjustQty as balance
+,M.LInvQty
 ,p.fabrictype
 ,e.seq1
 ,e.seq2
-from dbo.Export_Detail e left join dbo.PO_Supp_Detail p on e.PoID = p.ID and e.Seq1 = p.SEQ1 and e.Seq2 = p.seq2
+from dbo.Export_Detail e 
+left join dbo.PO_Supp_Detail p on e.PoID = p.ID and e.Seq1 = p.SEQ1 and e.Seq2 = p.seq2
+INNER JOIN MDivisionPoDetail M ON E.PoID = M.POID and e.Seq1 = M.SEQ1 and e.Seq2 = M.seq2 
 where e.PoID ='{0}' and e.id = '{1}'", CurrentDetailData["poid"], CurrentMaintain["exportid"]);
 
                         DBProxy.Current.Select(null, sqlcmd, out poitems);
@@ -709,7 +726,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
             ////
 
             DataTable dtOut2;
-            string sql_UpdateFtyInventory= @"merge dbo.FtyInventory as target
+            string sql_UpdateFtyInventory= @"
+merge dbo.FtyInventory as target
 using #tmp as src
     on target.mdivisionid = src.mdivisionid and target.poid =src.poid and target.seq1 = src.seq1 and target.seq2 =src.seq2 and target.stocktype=src.stocktype and target.roll=src.roll
 when matched then
@@ -717,7 +735,15 @@ when matched then
     set inqty = isnull(inqty,0.00) + src.stockqty
 when not matched then
                  insert ([Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty],[MDivisionID],[MDivisionPoDetailUkey])
-      values (src.poid,src.seq1,src.seq2,src.roll,src.dyelot,src.stocktype,src.stockqty,src.mdivisionid,(select ukey from dbo.MDivisionPoDetail where mdivisionid=src.mdivisionid and poid=src.poid and seq1 = src.seq1 and seq2=src.seq2));";
+      values (src.poid,src.seq1,src.seq2,src.roll,src.dyelot,src.stocktype,src.stockqty,src.mdivisionid,(select ukey from dbo.MDivisionPoDetail where mdivisionid=src.mdivisionid and poid=src.poid and seq1 = src.seq1 and seq2=src.seq2));
+--------20161109LEO新增回寫PO_Supp_Detail的StockUnit
+merge dbo.PO_Supp_Detail as target
+using #tmp as src
+    on  target.ID =src.poid and target.seq1 = src.seq1 and target.seq2 =src.seq2 
+when matched then
+    update
+    set target.StockUnit = src.StockUnit;
+";
             DualResult AA = MyUtility.Tool.ProcessWithDatatable(detailDt, string.Join(",", detailDt.Columns.Cast<DataColumn>().Select(col => col.ColumnName).ToArray()), sql_UpdateFtyInventory, out dtOut2);
             //以上寫完 測試完畢
 
@@ -1023,7 +1049,10 @@ Where a.id = '{0}' ", masterID);
                     this.dateBox1.Enabled = false;
                     string selCom = string.Format(@"select a.poid,a.seq1,a.seq2,a.Qty+a.Foc as shipqty,a.UnitId,a.WeightKg as Weight
 , a.NetKg as ActualWeight, iif(c.category='M','I','B') as stocktype
-, b.POUnit ,b.StockUnit,b.FabricType
+, b.POUnit 
+--,b.StockUnit
+,IIF ( mm.IsExtensionUnit > 0, uu.ExtensionUnit, ff.UsageUnit ) AS StockUnit
+,b.FabricType
 , a.seq1+a.seq2 as seq
 , a.seq1,a.seq2,a.Qty+a.Foc as Actualqty
 , round((a.Qty+a.Foc)*v.rate,2) as stockqty
