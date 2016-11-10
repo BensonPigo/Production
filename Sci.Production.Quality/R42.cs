@@ -281,7 +281,7 @@ namespace Sci.Production.Quality
                 {
                     return false;
                 }
-                Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R42_Pilling & Snagging Detail.xltx");
+                Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R42.xltx");
                 SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dt_All);
 
 
