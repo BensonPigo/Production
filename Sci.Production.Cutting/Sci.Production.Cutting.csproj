@@ -303,6 +303,22 @@
     <Compile Include="P20_Import_Workorder.Designer.cs">
       <DependentUpon>P20_Import_Workorder.cs</DependentUpon>
     </Compile>
+    <Compile Include="R02.cs" />
+    <Compile Include="R02.Designer.cs">
+      <DependentUpon>R02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R03.cs" />
+    <Compile Include="R03.Designer.cs">
+      <DependentUpon>R03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R04.cs" />
+    <Compile Include="R04.Designer.cs">
+      <DependentUpon>R04.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R05.cs" />
+    <Compile Include="R05.Designer.cs">
+      <DependentUpon>R05.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -405,6 +421,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P11.resx">
       <DependentUpon>P11.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R02.resx">
+      <DependentUpon>R02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R03.resx">
+      <DependentUpon>R03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R04.resx">
+      <DependentUpon>R04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R05.resx">
+      <DependentUpon>R05.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
