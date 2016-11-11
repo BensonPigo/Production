@@ -25,7 +25,12 @@
     [ReadyDay]            TINYINT        CONSTRAINT [DF_System_ReadyDay] DEFAULT ((0)) NULL,
     [VNMultiple]          NUMERIC (4, 2) CONSTRAINT [DF_System_VNMultiple] DEFAULT ((0)) NULL,
     [MtlLeadTime]         TINYINT        CONSTRAINT [DF_System_MtlLeadTime] DEFAULT ((0)) NULL, 
-    [ExchangeID] VARCHAR(2) NULL DEFAULT ('')
+    [ExchangeID] VARCHAR(2) NULL DEFAULT (''), 
+    [RFIDServerName] VARCHAR(20) NULL, 
+    [RFIDDatabaseName] VARCHAR(20) NULL, 
+    [RFIDLoginId] VARCHAR(20) NULL, 
+    [RFIDLoginPwd] VARCHAR(20) NULL, 
+    [RFIDTable ] VARCHAR(20) NULL
 );
 
 
