@@ -26,6 +26,7 @@ namespace Sci.Production.Quality
         int index;
         string find = "";
         DataRow[] find_dr;
+
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -33,14 +34,14 @@ namespace Sci.Production.Quality
 
             detailgrid.ContextMenuStrip = gridmenu;
         }
+
         public P01(string Poid) //for Form直接call form
         {
             InitializeComponent();
-            DefaultFilter = string.Format("POID = '{0}'", Poid);
+            DefaultFilter = string.Format("ID = '{0}'", Poid);
             InsertDetailGridOnDoubleClick = false;
             IsSupportEdit = false;
             detailgrid.ContextMenuStrip = gridmenu;
-            
         }
 
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)

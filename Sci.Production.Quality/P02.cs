@@ -29,10 +29,16 @@ namespace Sci.Production.Quality
             detailgrid.ContextMenuStrip = contextMenuStrip1;
 
         }
+
         public P02(string POID)
         {
+            InitializeComponent();
+            DefaultFilter = string.Format("ID = '{0}'", POID);
+            InsertDetailGridOnDoubleClick = false;
             IsSupportEdit = false;
+            detailgrid.ContextMenuStrip = contextMenuStrip1;
         }
+
         //表身額外的資料來源
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {

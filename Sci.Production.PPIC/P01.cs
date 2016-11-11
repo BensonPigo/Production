@@ -742,7 +742,8 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
         //Sewing Inline History
         private void button16_Click(object sender, EventArgs e)
         {
-            Sci.Win.UI.ShowHistory callNextForm = new Win.UI.ShowHistory("Order_History", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "Sewing", caption: "History",dataType:"D");
+            //Sci.Win.UI.ShowHistory callNextForm = new Win.UI.ShowHistory("Order_History", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "Sewing", caption: "History", dataType: "D");
+            Sci.Win.UI.ShowHistory callNextForm = new Win.UI.ShowHistory("Order_History", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "SewInLine", caption: "History", dataType: "D");
             callNextForm.ShowDialog(this);
         }
 
@@ -770,13 +771,15 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
         //Fabric inspection list
         private void button20_Click(object sender, EventArgs e)
         {
-
+            Sci.Production.Quality.P01 callNextForm = new Sci.Production.Quality.P01(MyUtility.Convert.GetString(CurrentMaintain["POID"]));
+            callNextForm.ShowDialog(this);
         }
 
         //Accessory inspection list
         private void button21_Click(object sender, EventArgs e)
         {
-
+            Sci.Production.Quality.P02 callNextForm = new Sci.Production.Quality.P02(MyUtility.Convert.GetString(CurrentMaintain["POID"]));
+            callNextForm.ShowDialog(this);
         }
 
         //Each Cons. Print
@@ -788,6 +791,7 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
         //Each Consumption
         private void button23_Click(object sender, EventArgs e)
         {
+            
 
         }
 
