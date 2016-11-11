@@ -59,8 +59,6 @@ namespace Sci.Production.PPIC
             button19.Enabled = CurrentMaintain != null;
             button20.Enabled = CurrentMaintain != null;
             button21.Enabled = CurrentMaintain != null;
-            button22.Enabled = CurrentMaintain != null;
-            button23.Enabled = CurrentMaintain != null;
             button24.Enabled = CurrentMaintain != null;
             button25.Enabled = CurrentMaintain != null;
             button26.Enabled = CurrentMaintain != null;
@@ -851,7 +849,12 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
             {
                 if (!MyUtility.Check.Seek(string.Format("select ID from PO where ID = '{0}' and Complete = 1", MyUtility.Convert.GetString(CurrentMaintain["POID"]))))
                 {
-                    if (MyUtility.Check.Seek(string.Format("select ID from PO_Supp_Detail where ID = '{0}' and (ETA > GETDATE() or InQty <> OutQty - AdjustQty)", MyUtility.Convert.GetString(CurrentMaintain["POID"]))))
+                    sqlCmd = string.Format(@"select ID
+                                            from PO_Supp_Detail A
+                                            left join MDivisionPoDetail B on B.MDivisionID='{0}' and B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
+                                            where ID = '{1}' and (ETA > GETDATE() or B.InQty <> B.OutQty - B.AdjustQty)"
+                                            , CurrentMaintain["MDivisionID"], CurrentMaintain["POID"]);
+                    if (MyUtility.Check.Seek(sqlCmd))
                     {
                         MyUtility.Msg.WarningBox("Warehouse still have material, so can't finish shipment.");
                         return;

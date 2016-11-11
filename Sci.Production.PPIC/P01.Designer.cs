@@ -38,8 +38,6 @@
             this.button25 = new Sci.Win.UI.Button();
             this.button26 = new Sci.Win.UI.Button();
             this.button27 = new Sci.Win.UI.Button();
-            this.button22 = new Sci.Win.UI.Button();
-            this.button23 = new Sci.Win.UI.Button();
             this.button24 = new Sci.Win.UI.Button();
             this.button21 = new Sci.Win.UI.Button();
             this.button20 = new Sci.Win.UI.Button();
@@ -143,8 +141,8 @@
             this.lineShape6 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape5 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.txttpeuser5 = new Sci.Production.Class.txttpeuser();
-            this.txttpeuser4 = new Sci.Production.Class.txttpeuser();
             this.txttpeuser3 = new Sci.Production.Class.txttpeuser();
+            this.txttpeuser4 = new Sci.Production.Class.txttpeuser();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -287,11 +285,6 @@
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Location = new System.Drawing.Point(4, 24);
-            this.detail.Size = new System.Drawing.Size(1000, 661);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtmfactory1);
@@ -423,12 +416,12 @@
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.shapeContainer1);
-            this.detailcont.Size = new System.Drawing.Size(1000, 661);
+            this.detailcont.Size = new System.Drawing.Size(897, 395);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 661);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 395);
+            this.detailbtm.Size = new System.Drawing.Size(897, 0);
             // 
             // browse
             // 
@@ -473,8 +466,6 @@
             this.tabPage1.Controls.Add(this.button25);
             this.tabPage1.Controls.Add(this.button26);
             this.tabPage1.Controls.Add(this.button27);
-            this.tabPage1.Controls.Add(this.button22);
-            this.tabPage1.Controls.Add(this.button23);
             this.tabPage1.Controls.Add(this.button24);
             this.tabPage1.Controls.Add(this.button21);
             this.tabPage1.Controls.Add(this.button20);
@@ -572,18 +563,18 @@
             this.tabPage1.Controls.Add(this.label50);
             this.tabPage1.Controls.Add(this.shapeContainer2);
             this.tabPage1.Controls.Add(this.txttpeuser5);
-            this.tabPage1.Controls.Add(this.txttpeuser4);
             this.tabPage1.Controls.Add(this.txttpeuser3);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Controls.Add(this.txttpeuser4);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
             // button33
             // 
-            this.button33.Location = new System.Drawing.Point(799, 628);
+            this.button33.Location = new System.Drawing.Point(600, 628);
             this.button33.Name = "button33";
             this.button33.Size = new System.Drawing.Size(194, 27);
             this.button33.TabIndex = 110;
@@ -594,7 +585,7 @@
             // button31
             // 
             this.button31.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button31.Location = new System.Drawing.Point(798, 598);
+            this.button31.Location = new System.Drawing.Point(797, 568);
             this.button31.Name = "button31";
             this.button31.Size = new System.Drawing.Size(194, 27);
             this.button31.TabIndex = 109;
@@ -605,7 +596,7 @@
             // button32
             // 
             this.button32.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button32.Location = new System.Drawing.Point(798, 568);
+            this.button32.Location = new System.Drawing.Point(600, 598);
             this.button32.Name = "button32";
             this.button32.Size = new System.Drawing.Size(194, 27);
             this.button32.TabIndex = 108;
@@ -616,7 +607,7 @@
             // button28
             // 
             this.button28.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button28.Location = new System.Drawing.Point(600, 628);
+            this.button28.Location = new System.Drawing.Point(402, 628);
             this.button28.Name = "button28";
             this.button28.Size = new System.Drawing.Size(194, 27);
             this.button28.TabIndex = 107;
@@ -627,7 +618,7 @@
             // button29
             // 
             this.button29.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button29.Location = new System.Drawing.Point(600, 598);
+            this.button29.Location = new System.Drawing.Point(402, 598);
             this.button29.Name = "button29";
             this.button29.Size = new System.Drawing.Size(194, 27);
             this.button29.TabIndex = 106;
@@ -649,7 +640,7 @@
             // button25
             // 
             this.button25.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button25.Location = new System.Drawing.Point(402, 628);
+            this.button25.Location = new System.Drawing.Point(204, 628);
             this.button25.Name = "button25";
             this.button25.Size = new System.Drawing.Size(194, 27);
             this.button25.TabIndex = 104;
@@ -659,7 +650,7 @@
             // 
             // button26
             // 
-            this.button26.Location = new System.Drawing.Point(402, 598);
+            this.button26.Location = new System.Drawing.Point(204, 598);
             this.button26.Name = "button26";
             this.button26.Size = new System.Drawing.Size(194, 27);
             this.button26.TabIndex = 103;
@@ -677,26 +668,6 @@
             this.button27.Text = "Q\'ty b\'down by schedule";
             this.button27.UseVisualStyleBackColor = true;
             this.button27.Click += new System.EventHandler(this.button27_Click);
-            // 
-            // button22
-            // 
-            this.button22.Location = new System.Drawing.Point(204, 628);
-            this.button22.Name = "button22";
-            this.button22.Size = new System.Drawing.Size(194, 27);
-            this.button22.TabIndex = 101;
-            this.button22.Text = "Each Cons. Print";
-            this.button22.UseVisualStyleBackColor = true;
-            this.button22.Click += new System.EventHandler(this.button22_Click);
-            // 
-            // button23
-            // 
-            this.button23.Location = new System.Drawing.Point(204, 598);
-            this.button23.Name = "button23";
-            this.button23.Size = new System.Drawing.Size(194, 27);
-            this.button23.TabIndex = 100;
-            this.button23.Text = "Each Consumption";
-            this.button23.UseVisualStyleBackColor = true;
-            this.button23.Click += new System.EventHandler(this.button23_Click);
             // 
             // button24
             // 
@@ -1663,7 +1634,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(891, 389);
+            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -1731,15 +1702,6 @@
             this.txttpeuser5.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser5.TabIndex = 70;
             // 
-            // txttpeuser4
-            // 
-            this.txttpeuser4.DisplayBox1Binding = "";
-            this.txttpeuser4.DisplayBox2Binding = "";
-            this.txttpeuser4.Location = new System.Drawing.Point(468, 31);
-            this.txttpeuser4.Name = "txttpeuser4";
-            this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser4.TabIndex = 7;
-            // 
             // txttpeuser3
             // 
             this.txttpeuser3.DisplayBox1Binding = "";
@@ -1748,6 +1710,15 @@
             this.txttpeuser3.Name = "txttpeuser3";
             this.txttpeuser3.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser3.TabIndex = 6;
+            // 
+            // txttpeuser4
+            // 
+            this.txttpeuser4.DisplayBox1Binding = "";
+            this.txttpeuser4.DisplayBox2Binding = "";
+            this.txttpeuser4.Location = new System.Drawing.Point(468, 31);
+            this.txttpeuser4.Name = "txttpeuser4";
+            this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser4.TabIndex = 7;
             // 
             // label1
             // 
@@ -2141,7 +2112,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1000, 661);
+            this.shapeContainer1.Size = new System.Drawing.Size(992, 655);
             this.shapeContainer1.TabIndex = 45;
             this.shapeContainer1.TabStop = false;
             // 
@@ -3458,8 +3429,6 @@
         private Win.UI.Button button25;
         private Win.UI.Button button26;
         private Win.UI.Button button27;
-        private Win.UI.Button button22;
-        private Win.UI.Button button23;
         private Win.UI.Button button24;
         private Win.UI.Button button21;
         private Win.UI.Button button20;

@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.PublicPrg;
+
 
 namespace Sci.Production.Cutting
 {
@@ -57,6 +59,10 @@ namespace Sci.Production.Cutting
                 this._isCuttingPiece = "2";
                 this._cuttingPiece = 1;
             }
+
+            bool EditSwitch2Order = Prgs.GetAuthority(Sci.Env.User.UserID, "P01.Cutting Master List", "CanEdit");
+            button1.Enabled = EditSwitch2Order;
+
         }
 
         protected override Ict.DualResult OnRequery(out DataTable datas)

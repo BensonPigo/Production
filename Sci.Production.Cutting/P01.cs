@@ -50,26 +50,29 @@ namespace Sci.Production.Cutting
 
             base.OnEditModeChanged();
         }
+
         protected override void OnFormLoaded()
         {
-            if (histype == "1")
-            {
-                if (!setcuttingdate())
-                {
-                    this.Close();
-                    return;
-                }
-            }            
+            //搬到[PPIC][P07]及[P13]
+            //if (histype == "1")
+            //{
+            //    if (!setcuttingdate())
+            //    {
+            //        this.Close();
+            //        return;
+            //    }
+            //}            
             base.OnFormLoaded();
         }
+
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             base.OnFormClosed(e);
         }
+
         private bool setcuttingdate()
         {
-            Sci.Production.Cutting.P01_Date DateForm =
-new Sci.Production.Cutting.P01_Date();
+            Sci.Production.Cutting.P01_Date DateForm = new Sci.Production.Cutting.P01_Date();
             DateForm.ShowDialog(this);
             if (DateForm.cancel == true)
             {
@@ -80,6 +83,7 @@ new Sci.Production.Cutting.P01_Date();
                 return true;
             }
         }
+
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
