@@ -1203,12 +1203,12 @@ s.AddDate
 			t.UsedQty= s.UsedQty,
 			t.BomTypeSize= s.BomTypeSize,
 			t.BomTypeColor= s.BomTypeColor,
-			t.BomTypeStyle= s.BomTypeStyle,
-			t.BomTypeArticle= s.BomTypeArticle,
-			t.BomTypeCustCD= s.BomTypeCustCD,
+			--t.BomTypeStyle= s.BomTypeStyle,
+			--t.BomTypeArticle= s.BomTypeArticle,
+			--t.BomTypeCustCD= s.BomTypeCustCD,
 			t.BomTypePono= s.BomTypePono,
-			t.BomTypeBuyMonth= s.BomTypeBuyMonth,
-			t.BomTypeCountry= s.BomTypeCountry,
+			--t.BomTypeBuyMonth= s.BomTypeBuyMonth,
+			--t.BomTypeCountry= s.BomTypeCountry,
 			t.PatternPanel= s.PatternPanel,
 			t.SizeItem= s.SizeItem,
 			t.BomTypeZipper= s.BomTypeZipper,
@@ -1226,12 +1226,12 @@ s.AddDate
 ,UsedQty
 ,BomTypeSize
 ,BomTypeColor
-,BomTypeStyle
-,BomTypeArticle
-,BomTypeCustCD
+--,BomTypeStyle
+--,BomTypeArticle
+--,BomTypeCustCD
 ,BomTypePono
-,BomTypeBuyMonth
-,BomTypeCountry
+--,BomTypeBuyMonth
+--,BomTypeCountry
 ,PatternPanel
 ,SizeItem
 ,BomTypeZipper
@@ -1249,12 +1249,12 @@ s.Seq,
 s.UsedQty,
 s.BomTypeSize,
 s.BomTypeColor,
-s.BomTypeStyle,
-s.BomTypeArticle,
-s.BomTypeCustCD,
+--s.BomTypeStyle,
+--s.BomTypeArticle,
+--s.BomTypeCustCD,
 s.BomTypePono,
-s.BomTypeBuyMonth,
-s.BomTypeCountry,
+--s.BomTypeBuyMonth,
+--s.BomTypeCountry,
 s.PatternPanel,
 s.SizeItem,
 s.BomTypeZipper,
