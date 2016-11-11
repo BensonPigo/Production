@@ -8,12 +8,7 @@
     [ConsPC]              NUMERIC (8, 4) CONSTRAINT [DF_Order_BOA_ConsPC] DEFAULT ((0)) NULL,
     [BomTypeSize]         BIT            CONSTRAINT [DF_Order_BOA_BomTypeSize] DEFAULT ((0)) NULL,
     [BomTypeColor]        BIT            CONSTRAINT [DF_Order_BOA_BomTypeColor] DEFAULT ((0)) NULL,
-    [BomTypeStyle]        BIT            CONSTRAINT [DF_Order_BOA_BomTypeStyle] DEFAULT ((0)) NULL,
-    [BomTypeArticle]      BIT            CONSTRAINT [DF_Order_BOA_BomTypeArticle] DEFAULT ((0)) NULL,
-    [BomTypeCustCD]       BIT            CONSTRAINT [DF_Order_BOA_BomTypeCustCD] DEFAULT ((0)) NULL,
     [BomTypePono]         BIT            CONSTRAINT [DF_Order_BOA_BomTypePono] DEFAULT ((0)) NULL,
-    [BomTypeBuyMonth]     BIT            CONSTRAINT [DF_Order_BOA_BomTypeBuyMonth] DEFAULT ((0)) NULL,
-    [BomTypeCountry]      BIT            CONSTRAINT [DF_Order_BOA_BomTypeCountry] DEFAULT ((0)) NULL,
     [PatternPanel]        VARCHAR (2)    CONSTRAINT [DF_Order_BOA_PatternPanel] DEFAULT ('') NULL,
     [SizeItem]            VARCHAR (3)    CONSTRAINT [DF_Order_BOA_SizeItem] DEFAULT ('') NULL,
     [BomTypeZipper]       BIT            CONSTRAINT [DF_Order_BOA_BomTypeZipper] DEFAULT ((0)) NULL,
@@ -34,6 +29,8 @@
     [BomTypePo]           BIT            NULL,
     CONSTRAINT [PK_Order_BOA] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -79,15 +76,15 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'依顏色�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'依款式展開', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeStyle';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'依顏色組展開', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeArticle';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'依客戶資料展開', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeCustCD';
+
+
+
+GO
+
 
 
 GO
@@ -95,11 +92,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'依客人�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'依月份展開', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeBuyMonth';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'依工廠的國家別展開', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeCountry';
+
 
 
 GO

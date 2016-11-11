@@ -1,28 +1,25 @@
 ﻿CREATE TABLE [dbo].[MNOrder_BOA] (
-    [Id]              VARCHAR (13)   CONSTRAINT [DF_MNOrder_BOA_Id] DEFAULT ('') NULL,
-    [UKey]            BIGINT         CONSTRAINT [DF_MNOrder_BOA_UKey] DEFAULT ((0)) NOT NULL,
-    [Refno]           VARCHAR (20)   CONSTRAINT [DF_MNOrder_BOA_Refno] DEFAULT ('') NULL,
-    [SCIRefno]        VARCHAR (26)   CONSTRAINT [DF_MNOrder_BOA_SCIRefno] DEFAULT ('') NULL,
-    [SuppID]          VARCHAR (6)    CONSTRAINT [DF_MNOrder_BOA_SuppID] DEFAULT ('') NULL,
-    [Seq]             VARCHAR (3)    CONSTRAINT [DF_MNOrder_BOA_Seq] DEFAULT ('') NULL,
-    [UsedQty]         NUMERIC (8, 4) CONSTRAINT [DF_MNOrder_BOA_UsedQty] DEFAULT ((0)) NULL,
-    [BomTypeSize]     BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeSize] DEFAULT ((0)) NULL,
-    [BomTypeColor]    BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeColor] DEFAULT ((0)) NULL,
-    [BomTypeStyle]    BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeStyle] DEFAULT ((0)) NULL,
-    [BomTypeArticle]  BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeArticle] DEFAULT ((0)) NULL,
-    [BomTypeCustCD]   BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeCustCD] DEFAULT ((0)) NULL,
-    [BomTypePono]     BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypePono] DEFAULT ((0)) NULL,
-    [BomTypeBuyMonth] BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeBuyMonth] DEFAULT ((0)) NULL,
-    [BomTypeCountry]  BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeCountry] DEFAULT ((0)) NULL,
-    [PatternPanel]    VARCHAR (2)    CONSTRAINT [DF_MNOrder_BOA_PatternPanel] DEFAULT ('') NULL,
-    [SizeItem]        VARCHAR (3)    CONSTRAINT [DF_MNOrder_BOA_SizeItem] DEFAULT ('') NULL,
-    [BomTypeZipper]   BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeZipper] DEFAULT ((0)) NULL,
-    [Remark]          NVARCHAR (MAX) CONSTRAINT [DF_MNOrder_BOA_Remark] DEFAULT ('') NULL,
-    [Description]     NVARCHAR (150) CONSTRAINT [DF_MNOrder_BOA_Description] DEFAULT ('') NULL,
-    [FabricVer_Old] VARCHAR(2) NULL DEFAULT (''), 
-    [FabricUkey_Old] VARCHAR(10) NULL DEFAULT (''), 
+    [Id]             VARCHAR (13)   CONSTRAINT [DF_MNOrder_BOA_Id] DEFAULT ('') NULL,
+    [UKey]           BIGINT         CONSTRAINT [DF_MNOrder_BOA_UKey] DEFAULT ((0)) NOT NULL,
+    [Refno]          VARCHAR (20)   CONSTRAINT [DF_MNOrder_BOA_Refno] DEFAULT ('') NULL,
+    [SCIRefno]       VARCHAR (26)   CONSTRAINT [DF_MNOrder_BOA_SCIRefno] DEFAULT ('') NULL,
+    [SuppID]         VARCHAR (6)    CONSTRAINT [DF_MNOrder_BOA_SuppID] DEFAULT ('') NULL,
+    [Seq]            VARCHAR (3)    CONSTRAINT [DF_MNOrder_BOA_Seq] DEFAULT ('') NULL,
+    [UsedQty]        NUMERIC (8, 4) CONSTRAINT [DF_MNOrder_BOA_UsedQty] DEFAULT ((0)) NULL,
+    [BomTypeSize]    BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeSize] DEFAULT ((0)) NULL,
+    [BomTypeColor]   BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeColor] DEFAULT ((0)) NULL,
+    [BomTypePono]    BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypePono] DEFAULT ((0)) NULL,
+    [PatternPanel]   VARCHAR (2)    CONSTRAINT [DF_MNOrder_BOA_PatternPanel] DEFAULT ('') NULL,
+    [SizeItem]       VARCHAR (3)    CONSTRAINT [DF_MNOrder_BOA_SizeItem] DEFAULT ('') NULL,
+    [BomTypeZipper]  BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeZipper] DEFAULT ((0)) NULL,
+    [Remark]         NVARCHAR (MAX) CONSTRAINT [DF_MNOrder_BOA_Remark] DEFAULT ('') NULL,
+    [Description]    NVARCHAR (150) CONSTRAINT [DF_MNOrder_BOA_Description] DEFAULT ('') NULL,
+    [FabricVer_Old]  VARCHAR (2)    DEFAULT ('') NULL,
+    [FabricUkey_Old] VARCHAR (10)   DEFAULT ('') NULL,
     CONSTRAINT [PK_MNOrder_BOA] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
+
+
 
 
 GO
@@ -70,15 +67,15 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BomTypeColo
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BomTypeStyle', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeStyle';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BomTypeArticle', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeArticle';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BomTypeCustCD', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeCustCD';
+
+
+
+GO
+
 
 
 GO
@@ -86,11 +83,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BomTypePono
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BomTypeBuyMonth', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeBuyMonth';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'BomTypeCountry', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_BOA', @level2type = N'COLUMN', @level2name = N'BomTypeCountry';
+
 
 
 GO
