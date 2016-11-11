@@ -569,7 +569,9 @@
             // P30
             // 
             this.ClientSize = new System.Drawing.Size(957, 620);
+            this.Cursor = System.Windows.Forms.Cursors.Default;
             this.DefaultDetailOrder = "Type,Item,Colorid";
+            this.DefaultFilter = "orders.IsForecast<>1";
             this.DefaultOrder = "ID";
             this.GridAlias = "MD";
             this.GridUniqueKey = "Type,Item,Colorid";

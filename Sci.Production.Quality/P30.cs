@@ -18,15 +18,15 @@ namespace Sci.Production.Quality
     public partial class P30 : Sci.Win.Tems.Input6
     {
 
-      
+        bool ISEE = false;
         protected DataRow motherData;
 
         // (menuitem, args= 參數)
         public P30(ToolStripMenuItem menuitem,String history) : base(menuitem) 
         {
             InitializeComponent();
-           
-          
+
+            ISEE = true;
             string mdClose=this.textBox8.Text;
 
             //設定init()
@@ -48,16 +48,12 @@ namespace Sci.Production.Quality
         }
         
         protected override void OnEditModeChanged()
-        {
-            //if (EditMode)
-            //{
-            //    this.btnFinished.Enabled = true;
-            //}
-            //else
-            //{
-            //    this.btnFinished.Enabled = false;
-            //}
+        {                      
             base.OnEditModeChanged();
+            if (ISEE)
+            {
+                btnFinished.Enabled = !EditMode;
+            }
         }
         //public void Grid_editingControl(object sender, DataGridViewTextBoxEditingControlEventArgs e)
         //{
@@ -260,14 +256,14 @@ namespace Sci.Production.Quality
                 for (int i = t-1; i >= 0; i--)
                 {
                     //MD.PK都要有值才能save
-                    if (detailDt.Rows[i]["Result"].ToString()=="" 
-                        ||detailDt.Rows[i]["Type"].ToString()==""
-                        ||detailDt.Rows[i]["Item"].ToString()=="" )
+                    if (                       
+                        detailDt.Rows[i]["Type"].ToString()==""  
+                        ||detailDt.Rows[i]["Item"].ToString()==""
+                        || (detailDt.Rows[i]["Type"].ToString().ToUpper() == "ACCESSORY ITEMS" && detailDt.Rows[i]["Item"].ToString() == ""))
                     {
                         //刪除
-                        detailDt.Rows[i].Delete();
-                        
-                    }                      
+                        detailDt.Rows[i].Delete();                        
+                    }                 
                 }        
             }
             return Result.True;
@@ -315,21 +311,16 @@ namespace Sci.Production.Quality
                         MyUtility.Msg.InfoBox("<Main Item NO> cannot be null !");
                         return false;
                     }
-                    if (MyUtility.Check.Empty(detailDt.Rows[i]["Item"].ToString()))
-                    {
-                        MyUtility.Msg.InfoBox("<SEQ Ref> cannot be null !");
-                        return false;
-                    }
-                    //if (MyUtility.Check.Empty(detailDt.Rows[i]["Colorid"].ToString()))
+                    //if (MyUtility.Check.Empty(detailDt.Rows[i]["Item"].ToString()))
                     //{
-                    //    MyUtility.Msg.InfoBox("<SEQ Ref>:" + detailDt.Rows[i]["Item"].ToString() + " <Color> cannot be null !");
+                    //    MyUtility.Msg.InfoBox("<SEQ Ref> cannot be null !");
                     //    return false;
                     //}
-                    if (MyUtility.Check.Empty(detailDt.Rows[i]["Result"].ToString()))
-                    {
-                        MyUtility.Msg.InfoBox("<Result> cannot be null !");
-                        return false;
-                    }
+                    //if (MyUtility.Check.Empty(detailDt.Rows[i]["Result"].ToString()))
+                    //{
+                    //    MyUtility.Msg.InfoBox("<Result> cannot be null !");
+                    //    return false;
+                    //}
                 }
             return base.ClickSaveBefore();
         }

@@ -13,6 +13,7 @@ using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
 using Ict;
+using System.Text.RegularExpressions;
 
 
 namespace Sci.Production.Quality
@@ -185,13 +186,231 @@ namespace Sci.Production.Quality
             #endregion
 
         }
+        #region 測試
 
+//{
+//    ///
+//    ///頁面資料校驗類
+//    ///修改自 李天平先生的作品，一併感謝。
+//    ///
+//    public class PageValidate
+//    {
+//        private static Regex RegNumber = new Regex("^[0-9]+$");
+//        private static Regex RegNumberSign = new Regex("^[+-]?[0-9]+$");
+//        private static Regex RegDecimal = new Regex("^[0-9]+[.]?[0-9]+$");
+//        //等價於^[+-]?\d+[.]?\d+$
+//        private static Regex RegDecimalSign = new Regex("^[+-]?[0-9]+[.]?[0-9]+$");
+//        //w 英文字母或數位的字串，和 [a-zA-Z0-9] 語法一樣
+//        private static Regex RegEmail = new Regex("^[\\w-]+@[\\w-]+\\.(com|net|org|edu|mil|tv|biz|info)$");
+//        private static Regex RegCHZN = new Regex("[\u4e00-\u9fa5]");
+//        public PageValidate()
+//        {
+//        }
+//        #region 數位字串檢查     
+//        ///
+//        /// 檢查Request查詢字串的鍵值，是否是數字，最大長度限制
+//        ///
+//        /// Request
+//        /// Request的鍵值
+//        /// 最大長度
+//        /// 返回Request查詢字串
+//        public static string IsDigit(HttpRequest req, string inputKey, int maxLen)
+//        {
+//            string retVal = string.Empty;
+//            if(inputKey != null && inputKey != string.Empty)
+//            {
+//                retVal = req.QueryString[inputKey];
+//                if(null == retVal)
+//                    retVal = req.Form[inputKey];
+//                if(null != retVal)
+//                {
+//                    retVal = SqlText(retVal, maxLen);
+//                    if(!IsNumber(retVal))
+//                        retVal = string.Empty;
+//                }
+//            }
+//            if(retVal == null)
+//                retVal = string.Empty;
+//            return retVal;
+//        }
+//        ///
+//        /// 是否數位字串
+//        ///
+//        /// 輸入字串
+//        ///
+//        public static bool IsNumber(string inputData)
+//        {
+//            Match m = RegNumber.Match(inputData);
+//            return m.Success;
+//        }
+//        ///
+//        /// 是否數位字串 可帶正負號
+//        ///
+//        /// 輸入字串
+//        ///
+//        public static bool IsNumberSign(string inputData)
+//        {
+//            Match m = RegNumberSign.Match(inputData);
+//            return m.Success;
+//        }
+//        ///
+//        /// 是否是浮點數
+//        ///
+//        /// 輸入字串
+//        ///
+//        public static bool IsDecimal(string inputData)
+//        {
+//            Match m = RegDecimal.Match(inputData);
+//            return m.Success;
+//        }
+//        ///
+//        /// 是否是浮點數 可帶正負號
+//        ///
+//        /// 輸入字串
+//        ///
+//        public static bool IsDecimalSign(string inputData)
+//        {
+//            Match m = RegDecimalSign.Match(inputData);
+//            return m.Success;
+//        }      
+//        #endregion
+//        #region 中文檢測
+//        ///
+//        /// 檢測是否有中文字元
+//        ///
+//        ///
+//        ///
+//        public static bool IsHasCHZN(string inputData)
+//        {
+//            Match m = RegCHZN.Match(inputData);
+//            return m.Success;
+//        }  
+//        #endregion
+//        #region 郵寄地址
+//        ///
+//        /// 是否是浮點數 可帶正負號
+//        ///
+//        /// 輸入字串
+//        ///
+//        public static bool IsEmail(string inputData)
+//        {
+//            Match m = RegEmail.Match(inputData);
+//            return m.Success;
+//        }      
+//        #endregion
+//        #region 其他
+//        ///
+//        /// 檢查字串最大長度，返回指定長度的串
+//        ///
+//        /// 輸入字串
+//        /// 最大長度
+//        ///            
+//        public static string SqlText(string sqlInput, int maxLength)
+//        {          
+//            if(sqlInput != null && sqlInput != string.Empty)
+//            {
+//                sqlInput = sqlInput.Trim();                        
+//                if(sqlInput.Length > maxLength)//按最大長度截取字串
+//                    sqlInput = sqlInput.Substring(0, maxLength);
+//            }
+//            return sqlInput;
+//        }
+//        ///
+//        /// 字串編碼
+//        ///
+//        ///
+//        ///
+//        public static string HtmlEncode(string inputData)
+//        {
+//            return HttpUtility.HtmlEncode(inputData);
+//        }
+//        ///
+//        /// 設置Label顯示Encode的字串
+//        ///
+//        ///
+//        ///
+//        public static void SetLabel(Label lbl, string txtInput)
+//        {
+//            lbl.Text = HtmlEncode(txtInput);
+//        }
+//        public static void SetLabel(Label lbl, object inputObj)
+//        {
+//            SetLabel(lbl, inputObj.ToString());
+//        }      
+//        #endregion
+//    }
+//}
+        #endregion
+
+     //public void SqlText(string sqlInput, int maxLength)
+     //   {          
+     //       if(sqlInput != null && sqlInput != string.Empty)
+     //       {
+     //           sqlInput = sqlInput.Trim();                        
+     //           if(sqlInput.Length > maxLength)//按最大長度截取字串
+     //               sqlInput = sqlInput.Substring(0, maxLength);
+     //       }
+     //       return sqlInput;
+     //   }
+
+        public string  SQlText(string sqlInput, int maxLength)
+        {
+            if (!MyUtility.Check.Empty(sqlInput))
+            {
+                sqlInput = sqlInput.Trim();
+                if (sqlInput.Length> maxLength)
+                {
+                    sqlInput = sqlInput.Substring(0, maxLength);
+                }               
+            }
+            return sqlInput;
+        }
+    
         protected override bool OnGridSetup()
         {
+            #region groupCell
+            DataGridViewGeneratorTextColumnSettings groupCell = new DataGridViewGeneratorTextColumnSettings();
+            groupCell.EditingMouseClick += (s, e) =>
+            {
+
+            };
+            groupCell.EditingTextChanged +=(s,e) =>
+            {
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                               
+                var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;           
+                string groupValue = ctl.EditingControlFormattedValue.ToString();              
+                if (groupValue.ToString().Length > 2)
+                {
+                    dr["ColorFastnessGroup"] = SQlText(groupValue, 2);
+                }               
+                
+            };
+            groupCell.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                string groupcell= SQlText(e.FormattedValue.ToString(), 2);
+                dr["ColorFastnessGroup"] = groupcell;
+                //string input = e.FormattedValue.ToString();
+                //var RegexFormat = @"^/d{2}$";
+                //var regex = new Regex(RegexFormat);
+                //var match = regex.Match(input);
+                //if (match.Success)
+                //{
+                //    MyUtility.Msg.InfoBox("Match Success!");
+                //}
+                //else
+                //{
+                //    MyUtility.Msg.InfoBox("Match faile!" + e.FormattedValue);
+
+                //}
+            };
+            #endregion
 
             #region -- seqMskCell
             Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings seqMskCell = new DataGridViewGeneratorMaskedTextColumnSettings();
 
+         
             seqMskCell.CellMouseClick += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
@@ -596,22 +815,12 @@ namespace Sci.Production.Quality
                 }
             };
             #endregion
-            seqMskCell.TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;
-           
-            #region MouseClick
-
+            seqMskCell.TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;      
+        
             
-            #endregion
-
-            #region Valid
-          
-            
-            
-            #endregion
-
             Helper.Controls.Grid.Generator(this.grid)
-                .MaskedText("ColorFastnessGroup", "CC", "Body", width: Widths.AnsiChars(5))//, settings: groupCell)
-                //.Text("ColorFastnessGroup", "Body", width: Widths.AnsiChars(5))//, settings: groupCell)
+                //.MaskedText("ColorFastnessGroup", "CC", "Body", width: Widths.AnsiChars(5))//, settings: groupCell)
+                .Text("ColorFastnessGroup", "Body", width: Widths.AnsiChars(5), settings: groupCell)
                 .MaskedText("SEQ", "CCC-CC", "SEQ#", width: Widths.AnsiChars(7), settings: seqMskCell)  
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(5), settings: rollCell)
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -623,8 +832,8 @@ namespace Sci.Production.Quality
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(30))
                 .Text("LastUpdate", header: "LastUpdate", width: Widths.AnsiChars(30), iseditingreadonly: true);
             return true;
-        }
-
+        } 
+        
         protected override bool OnSaveBefore()
         {
             if (MyUtility.Check.Empty(this.article.Text))
@@ -797,34 +1006,34 @@ namespace Sci.Production.Quality
         }
        
         // 20161021 新增,讓使用者自行輸入
-        protected override void OnInsert()
-        {
-            DataTable dt;
-            DataTable dtGrid = (DataTable)gridbs.DataSource;
-            DBProxy.Current.Select(null, string.Format("select * from ColorFastness_Detail where id='{0}'", ID), out dt);
-            int rows = dt.Rows.Count;
-            int rows1 = dtGrid.Rows.Count;
-            base.OnInsert();
-            if (rows <= 0)
-            {
-                if (rows1==0)
-                {
-                    dtGrid.Rows[rows1]["ColorFastnessGroup"] = 01;
-                }
-                else
-                {
-                    int group = MyUtility.Convert.GetInt(dtGrid.Rows[rows1 - 1]["ColorFastnessGroup"]);
+        //protected override void OnInsert()
+        //{
+        //    DataTable dt;
+        //    DataTable dtGrid = (DataTable)gridbs.DataSource;
+        //    DBProxy.Current.Select(null, string.Format("select * from ColorFastness_Detail where id='{0}'", ID), out dt);
+        //    int rows = dt.Rows.Count;
+        //    int rows1 = dtGrid.Rows.Count;
+        //    base.OnInsert();
+        //    if (rows <= 0)
+        //    {
+        //        if (rows1==0)
+        //        {
+        //            dtGrid.Rows[rows1]["ColorFastnessGroup"] = 01;
+        //        }
+        //        else
+        //        {
+        //            int group = MyUtility.Convert.GetInt(dtGrid.Rows[rows1 - 1]["ColorFastnessGroup"]);
 
-                    dtGrid.Rows[rows1]["ColorFastnessGroup"] = group + 1;
-                }                
-            }
-            else
-            {
-                int group = MyUtility.Convert.GetInt(dtGrid.Rows[rows1 - 1]["ColorFastnessGroup"]);
+        //            dtGrid.Rows[rows1]["ColorFastnessGroup"] = group + 1;
+        //        }                
+        //    }
+        //    else
+        //    {
+        //        int group = MyUtility.Convert.GetInt(dtGrid.Rows[rows1 - 1]["ColorFastnessGroup"]);
 
-                dtGrid.Rows[rows1]["ColorFastnessGroup"] = group + 1;
-            }
-        }
+        //        dtGrid.Rows[rows1]["ColorFastnessGroup"] = group + 1;
+        //    }
+        //}
 
         #region 表頭Article 右鍵事件: 1.右鍵selectItem 2.判斷validated
         private void article_MouseDown(object sender, MouseEventArgs e)
