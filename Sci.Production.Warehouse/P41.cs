@@ -181,7 +181,11 @@ AND B.Special LIKE ('%EMB APPLIQUE%')", Sci.Env.User.Keyword);
         private void button3_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return;
+            if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("No Data!!");
+                return;
+            }
             Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
             sdExcel.Save();
             //string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);

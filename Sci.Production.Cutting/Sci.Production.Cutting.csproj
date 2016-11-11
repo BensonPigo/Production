@@ -303,19 +303,27 @@
     <Compile Include="P20_Import_Workorder.Designer.cs">
       <DependentUpon>P20_Import_Workorder.cs</DependentUpon>
     </Compile>
-    <Compile Include="R02.cs" />
+    <Compile Include="R02.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="R02.Designer.cs">
       <DependentUpon>R02.cs</DependentUpon>
     </Compile>
-    <Compile Include="R03.cs" />
+    <Compile Include="R03.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="R03.Designer.cs">
       <DependentUpon>R03.cs</DependentUpon>
     </Compile>
-    <Compile Include="R04.cs" />
+    <Compile Include="R04.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="R04.Designer.cs">
       <DependentUpon>R04.cs</DependentUpon>
     </Compile>
-    <Compile Include="R05.cs" />
+    <Compile Include="R05.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="R05.Designer.cs">
       <DependentUpon>R05.cs</DependentUpon>
     </Compile>
