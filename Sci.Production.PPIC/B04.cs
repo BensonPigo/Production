@@ -22,28 +22,22 @@ namespace Sci.Production.PPIC
         protected override bool ClickSaveBefore()
         {
             DataTable reason;
-            StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"SELECT max ([ID])
-  FROM [Production].[dbo].[Reason]
-  WHERE ID <'a' AND  ReasonTypeID like 'damage%'"));
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out reason);
-
+            string sqlCmd = @" SELECT max (ID) FROM Reason WHERE ID <'a' AND ReasonTypeID like 'damage%'";
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out reason);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
-
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Name"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< editBox1 > can not be empty!");
                 this.editBox1.Focus();
                 return false;
-            }
-            
+            }            
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
-                CurrentMaintain["ID"] = int.Parse(reason.Rows[0][0].ToString()) + 1;
+                CurrentMaintain["ID"] = (int.Parse(reason.Rows[0][0].ToString()) + 1).ToString("D4");
             }
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ReasonTypeID"].ToString()))
             {
