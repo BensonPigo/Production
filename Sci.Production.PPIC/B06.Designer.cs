@@ -36,9 +36,9 @@
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
             this.numericBox1 = new Sci.Win.UI.NumericBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.txtCell1 = new Sci.Production.Class.txtCell();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -53,9 +53,9 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtCell1);
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.numericBox1);
-            this.detailcont.Controls.Add(this.textBox3);
             this.detailcont.Controls.Add(this.textBox2);
             this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Controls.Add(this.displayBox1);
@@ -154,16 +154,6 @@
             this.textBox2.Size = new System.Drawing.Size(474, 23);
             this.textBox2.TabIndex = 7;
             // 
-            // textBox3
-            // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingCell", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(112, 137);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(40, 23);
-            this.textBox3.TabIndex = 8;
-            // 
             // numericBox1
             // 
             this.numericBox1.BackColor = System.Drawing.Color.White;
@@ -196,6 +186,17 @@
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
+            // txtCell1
+            // 
+            this.txtCell1.BackColor = System.Drawing.Color.White;
+            this.txtCell1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingCell", true));
+            this.txtCell1.FactoryId = "displayBox1";
+            this.txtCell1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCell1.Location = new System.Drawing.Point(112, 137);
+            this.txtCell1.Name = "txtCell1";
+            this.txtCell1.Size = new System.Drawing.Size(30, 23);
+            this.txtCell1.TabIndex = 11;
+            // 
             // B06
             // 
             this.ClientSize = new System.Drawing.Size(687, 457);
@@ -221,7 +222,6 @@
         #endregion
 
         private Win.UI.NumericBox numericBox1;
-        private Win.UI.TextBox textBox3;
         private Win.UI.TextBox textBox2;
         private Win.UI.TextBox textBox1;
         private Win.UI.DisplayBox displayBox1;
@@ -231,5 +231,6 @@
         private Win.UI.Label label4;
         private Win.UI.Label label3;
         private Win.UI.CheckBox checkBox1;
+        private Class.txtCell txtCell1;
     }
 }
