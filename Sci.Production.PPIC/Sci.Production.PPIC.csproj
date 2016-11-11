@@ -723,6 +723,10 @@
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
       <Name>Sci.Production.PublicPrg</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Quality\Sci.Production.Quality.csproj">
+      <Project>{73c13a2e-00fb-4dc9-ada1-121fba143a99}</Project>
+      <Name>Sci.Production.Quality</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Carton.bmp" />
