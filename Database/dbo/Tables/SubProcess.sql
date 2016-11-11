@@ -10,7 +10,7 @@
     [AddDate]       DATETIME     NULL,
     [EditName]      VARCHAR (10) CONSTRAINT [DF_SubProcess_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME     NULL,
-    [BCSDate] NCHAR(10) NULL, 
+    [BCSDate] NUMERIC(2) NULL, 
     CONSTRAINT [PK_SubProcess] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
