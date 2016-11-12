@@ -187,7 +187,7 @@
             this.lbSciRefno.Name = "lbSciRefno";
             this.lbSciRefno.Size = new System.Drawing.Size(75, 23);
             this.lbSciRefno.TabIndex = 111;
-            this.lbSciRefno.Text = "SCI Ref#";
+            this.lbSciRefno.Text = "SCI Refno";
             // 
             // BrandRefno_text
             // 
@@ -206,7 +206,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
             this.label1.TabIndex = 113;
-            this.label1.Text = "Brand Ref#";
+            this.label1.Text = "Refno";
             // 
             // lbSupplier
             // 

@@ -33,7 +33,7 @@ namespace Sci.Production.Quality
             string factoryId = Sci.Env.User.Factory;
             if (history == "1".ToString())
             {
-                this.DefaultFilter = string.Format("FactoryId= '{0}' and MDClose is null", factoryId);
+                this.DefaultFilter = string.Format("FactoryId= '{0}' and MDClose is null and orders.IsForecast<>1", factoryId);
                 this.Text = "P30 .MD Master List";
                
             }
@@ -102,6 +102,7 @@ namespace Sci.Production.Quality
         {
             if (eButton == System.Windows.Forms.MouseButtons.Right)
             {
+                if (!this.EditMode) return;
                 DataRow dr1 = this.detailgrid.GetDataRow<DataRow>(eRowIndex);
                 if (null == dr1) { return; }
                 if ((dr1.ItemArray[1].ToString()).ToUpper() == "CUTPARTS" || (dr1.ItemArray[1].ToString()).ToUpper() == "GARMENT")
@@ -129,6 +130,51 @@ namespace Sci.Production.Quality
             colorSelect.CellMouseClick += this.colorSelect_CellMouseClick;
             colorSelect.EditingMouseDown += this.colorSelect_CellMouseClick;
 
+            itemSelect.CellValidating += (s, e) =>
+            {
+                if (this.EditMode == false) return;
+                if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                DataRow dr1;
+                string sqlcmd = string.Format(@"select  refno from PO_Supp_Detail a,Orders b where a.id=b.POID and a.fabrictype='A'
+                and a.Scirefno is not null 
+                and b.id='{0}' and a.refno='{1}'"
+                   , textBox1.Text.ToString(),e.FormattedValue);
+
+                if (MyUtility.Check.Seek(sqlcmd,out dr1))
+                {
+                    dr["Item"] = e.FormattedValue;
+                }
+                else
+                {
+                    MyUtility.Msg.InfoBox(e.FormattedValue + " does not exist!");
+                    dr["Item"] = "";
+                }
+
+            };
+            colorSelect.CellValidating += (s, e) =>
+            {
+                if (this.EditMode == false) return;
+                if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                DataRow dr1;
+
+                string sqlcmd = string.Format(@" select colorid from po_supp_detail a,Orders b  
+                where a.id=b.POID and a.fabrictype='A' 
+                and colorid is not null  and b.id='{0}' and a.colorid='{1}'"
+                  , textBox1.Text.ToString(), e.FormattedValue);
+                if (MyUtility.Check.Seek(sqlcmd,out dr1))
+                {
+                    dr["Colorid"] = e.FormattedValue;
+                }
+                else
+                {
+                    MyUtility.Msg.InfoBox(e.FormattedValue + " does not exist!");
+                    dr["Colorid"] = "";
+                }
+            };
+
+
             //colorSelect.EditingMouseDown
 
             itemSelect.CellMouseClick += this.itemSelect_CellMouseClick;
@@ -143,8 +189,8 @@ namespace Sci.Production.Quality
 
             Helper.Controls.Grid.Generator(this.detailgrid)               
             .Text("Type", header: "Main Item NO", width: Ict.Win.Widths.AnsiChars(20), iseditingreadonly: true, iseditable: true, settings: typeSetting)
-            .Text("Item", header: "SEQ Ref", width: Ict.Win.Widths.AnsiChars(20),iseditingreadonly : true,settings: itemSelect)
-            .Text("Colorid", header: "Color", width: Ict.Win.Widths.AnsiChars(20),iseditingreadonly:true, settings: colorSelect)
+            .Text("Item", header: "SEQ Ref", width: Ict.Win.Widths.AnsiChars(20),settings: itemSelect)
+            .Text("Colorid", header: "Color", width: Ict.Win.Widths.AnsiChars(20),settings: colorSelect)
             .Date("inspdate", header: "Inspdate", width: Ict.Win.Widths.AnsiChars(18))
             .Text("Result", header: "Result", width: Ict.Win.Widths.AnsiChars(50));
             detailgrid.ValidateControl();
@@ -173,7 +219,6 @@ namespace Sci.Production.Quality
                 this.textBox13.ReadOnly = true;
                 this.textBox14.ReadOnly = true;
                 this.textBox15.ReadOnly = true;
-                this.textBox16.ReadOnly = true;
                 this.comboBox1.ReadOnly = true;
                 this.checkBox1.ReadOnly = true;
                 this.checkBox2.ReadOnly = true;
@@ -311,16 +356,6 @@ namespace Sci.Production.Quality
                         MyUtility.Msg.InfoBox("<Main Item NO> cannot be null !");
                         return false;
                     }
-                    //if (MyUtility.Check.Empty(detailDt.Rows[i]["Item"].ToString()))
-                    //{
-                    //    MyUtility.Msg.InfoBox("<SEQ Ref> cannot be null !");
-                    //    return false;
-                    //}
-                    //if (MyUtility.Check.Empty(detailDt.Rows[i]["Result"].ToString()))
-                    //{
-                    //    MyUtility.Msg.InfoBox("<Result> cannot be null !");
-                    //    return false;
-                    //}
                 }
             return base.ClickSaveBefore();
         }
@@ -361,6 +396,7 @@ namespace Sci.Production.Quality
             //訊息方塊選擇YES, MDClose填入Date()
             else
             {
+                string Today = DateTime.Now.ToShortDateString();
                 string sqlCmdUpdate = "update orders  set MDClose= CONVERT(VARCHAR(20), GETDATE(), 120)  where id=@MdID";
                 DataRow row1 = this.detailgrid.GetDataRow(this.detailgridbs.Position);
                 string sp1Value;
@@ -376,7 +412,8 @@ namespace Sci.Production.Quality
   
                 List<SqlParameter> spam = new List<SqlParameter>();
                 spam.Add(new SqlParameter("@MdID", sp1Value));
-                DualResult result= DBProxy.Current.Execute("Production", sqlCmdUpdate,spam);       
+                DualResult result= DBProxy.Current.Execute("Production", sqlCmdUpdate,spam);
+                this.textBox8.Value = MyUtility.Convert.GetDate( Today);
                 //MyUtility.Msg.WarningBox("order.mdclose insert date");
             }
         }

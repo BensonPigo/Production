@@ -43,7 +43,6 @@
             this.textBox5 = new Sci.Win.UI.TextBox();
             this.textBox6 = new Sci.Win.UI.TextBox();
             this.textBox7 = new Sci.Win.UI.TextBox();
-            this.textBox8 = new Sci.Win.UI.TextBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.checkBox2 = new Sci.Win.UI.CheckBox();
@@ -56,14 +55,14 @@
             this.label14 = new Sci.Win.UI.Label();
             this.textBox9 = new Sci.Win.UI.TextBox();
             this.textBox10 = new Sci.Win.UI.TextBox();
-            this.textBox11 = new Sci.Win.UI.TextBox();
-            this.textBox12 = new Sci.Win.UI.TextBox();
-            this.textBox13 = new Sci.Win.UI.TextBox();
-            this.textBox14 = new Sci.Win.UI.TextBox();
-            this.textBox15 = new Sci.Win.UI.TextBox();
-            this.textBox16 = new Sci.Win.UI.TextBox();
             this.btnFinished = new Sci.Win.UI.Button();
             this.dropDownListTableAdapter1 = new Sci.Trade.Report.GSchemas.GLOTableAdapters.DropDownListTableAdapter();
+            this.textBox8 = new Sci.Win.UI.DateBox();
+            this.textBox13 = new Sci.Win.UI.DateBox();
+            this.textBox14 = new Sci.Win.UI.DateBox();
+            this.textBox12 = new Sci.Win.UI.DateBox();
+            this.textBox11 = new Sci.Win.UI.DateBox();
+            this.textBox15 = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -80,13 +79,13 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.btnFinished);
-            this.masterpanel.Controls.Add(this.textBox16);
             this.masterpanel.Controls.Add(this.textBox15);
+            this.masterpanel.Controls.Add(this.textBox11);
+            this.masterpanel.Controls.Add(this.textBox12);
             this.masterpanel.Controls.Add(this.textBox14);
             this.masterpanel.Controls.Add(this.textBox13);
-            this.masterpanel.Controls.Add(this.textBox12);
-            this.masterpanel.Controls.Add(this.textBox11);
+            this.masterpanel.Controls.Add(this.textBox8);
+            this.masterpanel.Controls.Add(this.btnFinished);
             this.masterpanel.Controls.Add(this.textBox10);
             this.masterpanel.Controls.Add(this.textBox9);
             this.masterpanel.Controls.Add(this.label14);
@@ -99,7 +98,6 @@
             this.masterpanel.Controls.Add(this.checkBox2);
             this.masterpanel.Controls.Add(this.checkBox1);
             this.masterpanel.Controls.Add(this.comboBox1);
-            this.masterpanel.Controls.Add(this.textBox8);
             this.masterpanel.Controls.Add(this.textBox7);
             this.masterpanel.Controls.Add(this.textBox6);
             this.masterpanel.Controls.Add(this.textBox5);
@@ -115,7 +113,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(949, 341);
+            this.masterpanel.Size = new System.Drawing.Size(949, 314);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -132,7 +130,6 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox5, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox6, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox8, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkBox2, 0);
@@ -145,28 +142,28 @@
             this.masterpanel.Controls.SetChildIndex(this.label14, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox9, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox11, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox12, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnFinished, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox8, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox13, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox14, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox12, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox11, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox15, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox16, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnFinished, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 341);
-            this.detailpanel.Size = new System.Drawing.Size(949, 179);
+            this.detailpanel.Location = new System.Drawing.Point(0, 314);
+            this.detailpanel.Size = new System.Drawing.Size(949, 206);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(691, 303);
+            this.gridicon.Location = new System.Drawing.Point(692, 272);
             this.gridicon.TabIndex = 15;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(949, 179);
+            this.detailgridcont.Size = new System.Drawing.Size(949, 206);
             // 
             // detail2
             // 
@@ -281,7 +278,7 @@
             this.textBox1.Location = new System.Drawing.Point(129, 11);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
+            this.textBox1.Size = new System.Drawing.Size(150, 23);
             this.textBox1.TabIndex = 9;
             // 
             // textBox2
@@ -292,7 +289,7 @@
             this.textBox2.Location = new System.Drawing.Point(129, 45);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(100, 23);
+            this.textBox2.Size = new System.Drawing.Size(150, 23);
             this.textBox2.TabIndex = 10;
             // 
             // textBox3
@@ -303,7 +300,7 @@
             this.textBox3.Location = new System.Drawing.Point(129, 77);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(100, 23);
+            this.textBox3.Size = new System.Drawing.Size(150, 23);
             this.textBox3.TabIndex = 11;
             // 
             // textBox4
@@ -314,7 +311,7 @@
             this.textBox4.Location = new System.Drawing.Point(129, 114);
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
-            this.textBox4.Size = new System.Drawing.Size(100, 23);
+            this.textBox4.Size = new System.Drawing.Size(150, 23);
             this.textBox4.TabIndex = 12;
             // 
             // textBox5
@@ -325,7 +322,7 @@
             this.textBox5.Location = new System.Drawing.Point(129, 190);
             this.textBox5.Name = "textBox5";
             this.textBox5.ReadOnly = true;
-            this.textBox5.Size = new System.Drawing.Size(100, 23);
+            this.textBox5.Size = new System.Drawing.Size(150, 23);
             this.textBox5.TabIndex = 13;
             // 
             // textBox6
@@ -349,17 +346,6 @@
             this.textBox7.Size = new System.Drawing.Size(62, 23);
             this.textBox7.TabIndex = 15;
             // 
-            // textBox8
-            // 
-            this.textBox8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox8.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MDclose", true));
-            this.textBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox8.Location = new System.Drawing.Point(129, 271);
-            this.textBox8.Name = "textBox8";
-            this.textBox8.ReadOnly = true;
-            this.textBox8.Size = new System.Drawing.Size(100, 23);
-            this.textBox8.TabIndex = 16;
-            // 
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -372,7 +358,7 @@
             this.comboBox1.Location = new System.Drawing.Point(129, 154);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.ReadOnly = true;
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
+            this.comboBox1.Size = new System.Drawing.Size(150, 24);
             this.comboBox1.TabIndex = 17;
             // 
             // checkBox1
@@ -380,7 +366,7 @@
             this.checkBox1.AutoSize = true;
             this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LocalOrder", true));
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(273, 13);
+            this.checkBox1.Location = new System.Drawing.Point(314, 13);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(102, 21);
             this.checkBox1.TabIndex = 18;
@@ -392,7 +378,7 @@
             this.checkBox2.AutoSize = true;
             this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "pforder", true));
             this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox2.Location = new System.Drawing.Point(273, 40);
+            this.checkBox2.Location = new System.Drawing.Point(314, 40);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(146, 21);
             this.checkBox2.TabIndex = 19;
@@ -404,7 +390,7 @@
             this.checkBox3.AutoSize = true;
             this.checkBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox3.Location = new System.Drawing.Point(410, 13);
+            this.checkBox3.Location = new System.Drawing.Point(451, 13);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(130, 21);
             this.checkBox3.TabIndex = 20;
@@ -414,7 +400,7 @@
             // label9
             // 
             this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(322, 78);
+            this.label9.Location = new System.Drawing.Point(314, 77);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(111, 23);
             this.label9.TabIndex = 21;
@@ -423,7 +409,7 @@
             // label10
             // 
             this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(322, 115);
+            this.label10.Location = new System.Drawing.Point(314, 114);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(111, 23);
             this.label10.TabIndex = 22;
@@ -432,7 +418,7 @@
             // label11
             // 
             this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(322, 155);
+            this.label11.Location = new System.Drawing.Point(314, 154);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(111, 23);
             this.label11.TabIndex = 23;
@@ -441,7 +427,7 @@
             // label12
             // 
             this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(322, 191);
+            this.label12.Location = new System.Drawing.Point(314, 190);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(111, 23);
             this.label12.TabIndex = 24;
@@ -450,7 +436,7 @@
             // label13
             // 
             this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(322, 231);
+            this.label13.Location = new System.Drawing.Point(314, 230);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(111, 23);
             this.label13.TabIndex = 25;
@@ -459,7 +445,7 @@
             // label14
             // 
             this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(322, 272);
+            this.label14.Location = new System.Drawing.Point(314, 271);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(111, 23);
             this.label14.TabIndex = 26;
@@ -470,7 +456,7 @@
             this.textBox9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.textBox9.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MCHandle", true));
             this.textBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox9.Location = new System.Drawing.Point(436, 77);
+            this.textBox9.Location = new System.Drawing.Point(428, 76);
             this.textBox9.Name = "textBox9";
             this.textBox9.ReadOnly = true;
             this.textBox9.Size = new System.Drawing.Size(100, 23);
@@ -480,81 +466,16 @@
             // 
             this.textBox10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.textBox10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox10.Location = new System.Drawing.Point(542, 78);
+            this.textBox10.Location = new System.Drawing.Point(534, 77);
             this.textBox10.Name = "textBox10";
             this.textBox10.ReadOnly = true;
             this.textBox10.Size = new System.Drawing.Size(76, 23);
             this.textBox10.TabIndex = 28;
             // 
-            // textBox11
-            // 
-            this.textBox11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox11.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "sewinline", true));
-            this.textBox11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox11.Location = new System.Drawing.Point(436, 114);
-            this.textBox11.Name = "textBox11";
-            this.textBox11.ReadOnly = true;
-            this.textBox11.Size = new System.Drawing.Size(100, 23);
-            this.textBox11.TabIndex = 29;
-            // 
-            // textBox12
-            // 
-            this.textBox12.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox12.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "sewoffline", true));
-            this.textBox12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox12.Location = new System.Drawing.Point(436, 154);
-            this.textBox12.Name = "textBox12";
-            this.textBox12.ReadOnly = true;
-            this.textBox12.Size = new System.Drawing.Size(100, 23);
-            this.textBox12.TabIndex = 30;
-            // 
-            // textBox13
-            // 
-            this.textBox13.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox13.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "buyerdelivery", true));
-            this.textBox13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox13.Location = new System.Drawing.Point(436, 190);
-            this.textBox13.Name = "textBox13";
-            this.textBox13.ReadOnly = true;
-            this.textBox13.Size = new System.Drawing.Size(100, 23);
-            this.textBox13.TabIndex = 31;
-            // 
-            // textBox14
-            // 
-            this.textBox14.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox14.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "sdpdate", true));
-            this.textBox14.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox14.Location = new System.Drawing.Point(436, 230);
-            this.textBox14.Name = "textBox14";
-            this.textBox14.ReadOnly = true;
-            this.textBox14.Size = new System.Drawing.Size(100, 23);
-            this.textBox14.TabIndex = 32;
-            // 
-            // textBox15
-            // 
-            this.textBox15.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox15.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "mtleta", true));
-            this.textBox15.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox15.Location = new System.Drawing.Point(436, 271);
-            this.textBox15.Name = "textBox15";
-            this.textBox15.ReadOnly = true;
-            this.textBox15.Size = new System.Drawing.Size(100, 23);
-            this.textBox15.TabIndex = 33;
-            // 
-            // textBox16
-            // 
-            this.textBox16.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox16.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox16.Location = new System.Drawing.Point(542, 271);
-            this.textBox16.Name = "textBox16";
-            this.textBox16.ReadOnly = true;
-            this.textBox16.Size = new System.Drawing.Size(42, 23);
-            this.textBox16.TabIndex = 34;
-            // 
             // btnFinished
             // 
             this.btnFinished.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnFinished.Location = new System.Drawing.Point(628, 134);
+            this.btnFinished.Location = new System.Drawing.Point(620, 133);
             this.btnFinished.Name = "btnFinished";
             this.btnFinished.Size = new System.Drawing.Size(116, 30);
             this.btnFinished.TabIndex = 4;
@@ -565,6 +486,66 @@
             // dropDownListTableAdapter1
             // 
             this.dropDownListTableAdapter1.ClearBeforeFill = true;
+            // 
+            // textBox8
+            // 
+            this.textBox8.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDClose", true));
+            this.textBox8.IsSupportEditMode = false;
+            this.textBox8.Location = new System.Drawing.Point(130, 272);
+            this.textBox8.Name = "textBox8";
+            this.textBox8.ReadOnly = true;
+            this.textBox8.Size = new System.Drawing.Size(120, 23);
+            this.textBox8.TabIndex = 35;
+            // 
+            // textBox13
+            // 
+            this.textBox13.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "buyerdelivery", true));
+            this.textBox13.IsSupportEditMode = false;
+            this.textBox13.Location = new System.Drawing.Point(428, 189);
+            this.textBox13.Name = "textBox13";
+            this.textBox13.ReadOnly = true;
+            this.textBox13.Size = new System.Drawing.Size(120, 23);
+            this.textBox13.TabIndex = 36;
+            // 
+            // textBox14
+            // 
+            this.textBox14.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "sdpdate", true));
+            this.textBox14.IsSupportEditMode = false;
+            this.textBox14.Location = new System.Drawing.Point(428, 230);
+            this.textBox14.Name = "textBox14";
+            this.textBox14.ReadOnly = true;
+            this.textBox14.Size = new System.Drawing.Size(120, 23);
+            this.textBox14.TabIndex = 37;
+            // 
+            // textBox12
+            // 
+            this.textBox12.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "sewoffline", true));
+            this.textBox12.IsSupportEditMode = false;
+            this.textBox12.Location = new System.Drawing.Point(428, 154);
+            this.textBox12.Name = "textBox12";
+            this.textBox12.ReadOnly = true;
+            this.textBox12.Size = new System.Drawing.Size(120, 23);
+            this.textBox12.TabIndex = 38;
+            // 
+            // textBox11
+            // 
+            this.textBox11.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "sewinline", true));
+            this.textBox11.IsSupportEditMode = false;
+            this.textBox11.Location = new System.Drawing.Point(428, 114);
+            this.textBox11.Name = "textBox11";
+            this.textBox11.ReadOnly = true;
+            this.textBox11.Size = new System.Drawing.Size(120, 23);
+            this.textBox11.TabIndex = 39;
+            // 
+            // textBox15
+            // 
+            this.textBox15.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "mtleta", true));
+            this.textBox15.IsSupportEditMode = false;
+            this.textBox15.Location = new System.Drawing.Point(428, 270);
+            this.textBox15.Name = "textBox15";
+            this.textBox15.ReadOnly = true;
+            this.textBox15.Size = new System.Drawing.Size(120, 23);
+            this.textBox15.TabIndex = 40;
             // 
             // P30
             // 
@@ -578,13 +559,13 @@
             this.IsDeleteOnBrowse = false;
             this.IsGridIcon2Visible = false;
             this.IsSupportClip = false;
-            this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.Name = "P30";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds;
             this.Text = "P30.MD Master List";
             this.UniqueExpress = "ID";
             this.WorkAlias = "orders";
@@ -610,7 +591,6 @@
 
         #endregion
 
-        private Win.UI.TextBox textBox8;
         private Win.UI.TextBox textBox7;
         private Win.UI.TextBox textBox6;
         private Win.UI.TextBox textBox5;
@@ -627,12 +607,6 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.Button btnFinished;
-        private Win.UI.TextBox textBox16;
-        private Win.UI.TextBox textBox15;
-        private Win.UI.TextBox textBox14;
-        private Win.UI.TextBox textBox13;
-        private Win.UI.TextBox textBox12;
-        private Win.UI.TextBox textBox11;
         private Win.UI.TextBox textBox10;
         private Win.UI.TextBox textBox9;
         private Win.UI.Label label14;
@@ -646,5 +620,11 @@
         private Win.UI.CheckBox checkBox1;
         private Win.UI.ComboBox comboBox1;
         private Trade.Report.GSchemas.GLOTableAdapters.DropDownListTableAdapter dropDownListTableAdapter1;
+        private Win.UI.DateBox textBox8;
+        private Win.UI.DateBox textBox13;
+        private Win.UI.DateBox textBox15;
+        private Win.UI.DateBox textBox11;
+        private Win.UI.DateBox textBox12;
+        private Win.UI.DateBox textBox14;
     }
 }

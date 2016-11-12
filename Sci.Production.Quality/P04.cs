@@ -216,6 +216,23 @@ namespace Sci.Production.Quality
                     dr["Inspector"] =item1.GetSelectedString(); //將選取selectitem value帶入GridView
                 }
             };
+            inspectorCell.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                    string scalecmd = @"select id,name from Pass1 where Resign is null";
+                    SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Inspector"].ToString());
+                    DialogResult result = item1.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    dr["Inspector"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                }
+            };
             SendCell.EditingMouseClick += (s, e) =>
             {
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
@@ -330,7 +347,6 @@ namespace Sci.Production.Quality
             
             
         }
-       
         protected override void ClickNewAfter()
         {
             CurrentMaintain["No"] = (int)CurrentMaintain["No"]+1;

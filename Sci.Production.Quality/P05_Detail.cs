@@ -190,9 +190,25 @@ and a.seq1=@seq1";
             }
 
         }
+        // 限定字串長度
+        public string SQlText(string sqlInput, int maxLength)
+        {
+            if (!MyUtility.Check.Empty(sqlInput))
+            {
+                sqlInput = sqlInput.Trim();
+                if (sqlInput.Length > maxLength)
+                {
+                    sqlInput = sqlInput.Substring(0, maxLength);
+                }
+            }
+            return sqlInput;
+        }
+
         protected override bool OnGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings groupCell = new DataGridViewGeneratorMaskedTextColumnSettings();
+            //Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings groupCell = new DataGridViewGeneratorMaskedTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings groupCell = new DataGridViewGeneratorTextColumnSettings();
+           // DataGridViewGeneratorNumericColumnSettings groupCell = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
             Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings seqMskCell = new DataGridViewGeneratorMaskedTextColumnSettings();
             seqMskCell.TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;
             DataGridViewGeneratorTextColumnSettings seqCell = new DataGridViewGeneratorTextColumnSettings();
@@ -203,6 +219,52 @@ and a.seq1=@seq1";
         
             
             #region MouseClick
+            //groupCell.EditingValueChanged +=(s,e) =>
+            //{
+            //    DataRow dr = grid.GetDataRow(e.RowIndex);
+            //    var ctl = (Ict.Win.UI.DataGridViewNumericBoxEditingControl)this.grid.EditingControl;                
+            //    string groupValue = ctl.EditingControlFormattedValue.ToString();
+            //    if (groupValue.ToString().Length > 2)
+            //    {
+            //        dr["OvenGroup"] = SQlText(groupValue, 2);
+            //    }               
+            //};
+            groupCell.EditingTextChanged += (s, e) =>
+            {
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;
+                var groupValue = ctl.EditingControlFormattedValue.ToString();
+
+                int n;
+                if (int.TryParse(groupValue, out n))
+                {
+                    if (groupValue.ToString().Length > 2)
+                    {
+                        dr["OvenGroup"] = SQlText(groupValue, 2);
+                    } 
+                }
+                else
+                    {
+                        dr["OvenGroup"] = "";
+                    }
+                //if (groupValue.ToString().Length>2)
+                //{
+                //    if (int.TryParse(groupValue, out n))
+                //    {
+                //        dr["OvenGroup"] = SQlText(groupValue, 2);
+                //    }
+                //    else
+                //    {
+                //        dr["OvenGroup"] = "";
+                //    }
+                //}
+               
+                //if (groupValue.ToString().Length > 2)
+                //{
+                //    dr["OvenGroup"] = SQlText(groupValue, 2);
+                //}
+            };
+
             seqMskCell.CellMouseClick += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
@@ -211,7 +273,7 @@ and a.seq1=@seq1";
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     DataTable dt;
-                    string item_cmd = string.Format("select RTRIM(seq1) +'-'+ RTRIM(seq2) AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
+                    string item_cmd = string.Format("select RTRIM(seq1) +'-'+ RTRIM(seq2) AS SEQ,scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
                     SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -227,11 +289,9 @@ and a.seq1=@seq1";
                         seqSplit[0] =  seqSplit[0]+" ";
                     }
                     dr["SEQ"] = seqSplit[0] + "-" + seqSplit[1];
-                    DBProxy.Current.Select(null,
-                    string.Format("select scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}' and FabricType='F'", PoID, dr["seq1"], dr["seq2"]), out dt);
-                    dr["scirefno"] = dt.Rows[0]["scirefno"].ToString();
-                    dr["refno"] = dt.Rows[0]["refno"].ToString();
-                    dr["colorid"] = dt.Rows[0]["colorid"].ToString();
+                    dr["scirefno"] = item.GetSelecteds()[0]["scirefno"].ToString();
+                    dr["refno"] = item.GetSelecteds()[0]["refno"].ToString();
+                    dr["colorid"] = item.GetSelecteds()[0]["colorid"].ToString();
 
                 }
               
@@ -244,7 +304,7 @@ and a.seq1=@seq1";
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     DataTable dt;
-                    string item_cmd = string.Format("select RTRIM(seq1) +'-'+ RTRIM(seq2) AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
+                    string item_cmd = string.Format("select RTRIM(seq1) +'-'+ RTRIM(seq2) AS SEQ,scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
                     SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -259,12 +319,11 @@ and a.seq1=@seq1";
                     {
                          seqSplit[0] =  seqSplit[0]+" ";
                     }
-                    dr["SEQ"] = seqSplit[0]+"-" + seqSplit[1];
-                    DBProxy.Current.Select(null,
-                   string.Format("select scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}' and FabricType='F'", PoID, dr["seq1"], dr["seq2"]), out dt);
-                    dr["scirefno"] = dt.Rows[0]["scirefno"].ToString();
-                    dr["refno"] = dt.Rows[0]["refno"].ToString();
-                    dr["colorid"] = dt.Rows[0]["colorid"].ToString();
+                    dr["SEQ"] = seqSplit[0]+"-" + seqSplit[1];                    
+                    dr["scirefno"] = item.GetSelecteds()[0]["scirefno"].ToString();
+                    dr["refno"] = item.GetSelecteds()[0]["refno"].ToString();
+                    dr["colorid"] = item.GetSelecteds()[0]["colorid"].ToString();
+                  
                 }
 
             };
@@ -277,23 +336,23 @@ and a.seq1=@seq1";
                     
                     DataRow dr = grid.GetDataRow(e.RowIndex);
 
-                    if (newOven) //新資料 不判斷SEQ
-                    {                       
-                        string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>'' ";
-                        List<SqlParameter> spam = new List<SqlParameter>();
-                        spam.Add(new SqlParameter("@poid", PoID));
-                        SelectItem item = new SelectItem(item_cmd, spam, "10,10", dr["Roll"].ToString());
-                        DialogResult dresult = item.ShowDialog();
-                        if (dresult == DialogResult.Cancel)
-                        {
-                            return;
-                        }
-                        dr["Roll"] = item.GetSelectedString();
-                        dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
+                    //if (newOven) //新資料 不判斷SEQ
+                    //{                       
+                    //    string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>'' ";
+                    //    List<SqlParameter> spam = new List<SqlParameter>();
+                    //    spam.Add(new SqlParameter("@poid", PoID));
+                    //    SelectItem item = new SelectItem(item_cmd, spam, "10,10", dr["Roll"].ToString());
+                    //    DialogResult dresult = item.ShowDialog();
+                    //    if (dresult == DialogResult.Cancel)
+                    //    {
+                    //        return;
+                    //    }
+                    //    dr["Roll"] = item.GetSelectedString();
+                    //    dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
                                 
-                    }
-                    else
-                    {
+                    //}
+                    //else
+                    //{
                        
                         string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2";
                         List<SqlParameter> spam = new List<SqlParameter>();
@@ -308,7 +367,7 @@ and a.seq1=@seq1";
                         }
                         dr["Roll"] = item.GetSelectedString();
                         dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
-                    }
+                    //}
                    
                 }
 
@@ -322,23 +381,23 @@ and a.seq1=@seq1";
 
                     DataRow dr = grid.GetDataRow(e.RowIndex);
 
-                    if (newOven) //新資料 不判斷SEQ
-                    {
-                        string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>'' ";
-                        List<SqlParameter> spam = new List<SqlParameter>();
-                        spam.Add(new SqlParameter("@poid", PoID));
-                        SelectItem item = new SelectItem(item_cmd, spam, "10,10", dr["Roll"].ToString());
-                        DialogResult dresult = item.ShowDialog();
-                        if (dresult == DialogResult.Cancel)
-                        {
-                            return;
-                        }
-                        dr["Roll"] = item.GetSelectedString();
-                        dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
+                    //if (newOven) //新資料 不判斷SEQ
+                    //{
+                    //    string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>'' ";
+                    //    List<SqlParameter> spam = new List<SqlParameter>();
+                    //    spam.Add(new SqlParameter("@poid", PoID));
+                    //    SelectItem item = new SelectItem(item_cmd, spam, "10,10", dr["Roll"].ToString());
+                    //    DialogResult dresult = item.ShowDialog();
+                    //    if (dresult == DialogResult.Cancel)
+                    //    {
+                    //        return;
+                    //    }
+                    //    dr["Roll"] = item.GetSelectedString();
+                    //    dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
 
-                    }
-                    else
-                    {
+                    //}
+                    //else
+                    //{
 
                         string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2";
                         List<SqlParameter> spam = new List<SqlParameter>();
@@ -353,7 +412,7 @@ and a.seq1=@seq1";
                         }
                         dr["Roll"] = item.GetSelectedString();
                         dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
-                    }
+                    //}
 
                 }
 
@@ -453,6 +512,7 @@ and a.seq1=@seq1";
                 if (MyUtility.Check.Empty(e.FormattedValue)) { return; }              
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 DataTable dt;
+                DataTable dt1;
 
                 dr["seq1"] = e.FormattedValue.ToString().PadRight(5).Substring(0,3);
                 dr["seq2"] = e.FormattedValue.ToString().PadRight(5).Substring(3,2);
@@ -466,8 +526,8 @@ and a.seq1=@seq1";
                 }
                // dr["SEQ"] = e.FormattedValue;
                 string sql_cmd = string.Format("select seq1,seq2 from PO_Supp_Detail where id='{0}' and FabricType='F' and seq1='{1}' and seq2='{2}'", PoID, dr["seq1"].ToString().Trim(), dr["seq2"].ToString().Trim());
-                DBProxy.Current.Select(null, sql_cmd, out dt);
-                if (dt.Rows.Count<=0)
+                DBProxy.Current.Select(null, sql_cmd, out dt1);
+                if (dt1.Rows.Count<=0)
                 {
                     MyUtility.Msg.InfoBox("<SEQ#> doesn't exist in Data!");
                     dr["SEQ"] = "";
@@ -477,7 +537,35 @@ and a.seq1=@seq1";
                 }
                 dr["SEQ"].ToString().Replace("_", " ");
                 
-                    
+                //////
+                DBProxy.Current.Select(null,
+                   string.Format("select scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}' and FabricType='F'", PoID, dr["seq1"], dr["seq2"]), out dt1);
+                dr["scirefno"] = dt1.Rows[0]["scirefno"].ToString();
+                dr["refno"] = dt1.Rows[0]["refno"].ToString();
+                dr["colorid"] = dt1.Rows[0]["colorid"].ToString();
+
+                 // SEQ changed 判斷Roll# 是否存在
+                if (MyUtility.Check.Empty(dr["Roll"])) return;
+                string cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2 and Roll=@Roll ";
+                List<SqlParameter> spam = new List<SqlParameter>();
+                spam.Add(new SqlParameter("@poid", PoID));
+                spam.Add(new SqlParameter("@seq1", dr["seq1"]));
+                spam.Add(new SqlParameter("@seq2", dr["seq2"]));
+                spam.Add(new SqlParameter("@Roll", e.FormattedValue));
+                DBProxy.Current.Select(null, cmd, spam, out dt);
+                if (dt.Rows.Count <= 0)
+                {
+                    MyUtility.Msg.InfoBox("<Roll> doesn't exist in Data!");
+                    dr["Roll"] = "";
+                    dr["Dyelot"] = "";
+                    return;
+                }
+                else
+                {
+
+                    dr["Roll"] = e.FormattedValue;
+                    dr["Dyelot"] = dt.Rows[0]["Dyelot"].ToString().Trim();
+                }
                 
               
             };
@@ -488,28 +576,28 @@ and a.seq1=@seq1";
                 DataTable dt;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
 
-                if (newOven)//新資料 不判斷SEQ
-                {
-                    string cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>'' ";
-                    List<SqlParameter> spam = new List<SqlParameter>();
-                    spam.Add(new SqlParameter("@poid", PoID));                   
-                    DBProxy.Current.Select(null, cmd, spam, out dt);
-                    if (dt.Rows.Count <= 0)
-                    {                        
-                        MyUtility.Msg.InfoBox("<Roll> doesn't exist in Data!");
-                        dr["Roll"] = "";
-                        dr["Dyelot"] = "";
-                        return;
-                    }
-                    else
-                    {
-                        List<SqlParameter> spamUpdate = new List<SqlParameter>();
-                        spamUpdate.Add(new SqlParameter("@dyelot", dr["dyelot"]));
-                        DBProxy.Current.Execute(null, "update FtyInventory set dyelot=@dyelot", spamUpdate);
-                    }
-                }
-                else
-                {                    
+                //if (newOven)//新資料 不判斷SEQ
+                //{
+                //    string cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>'' ";
+                //    List<SqlParameter> spam = new List<SqlParameter>();
+                //    spam.Add(new SqlParameter("@poid", PoID));                   
+                //    DBProxy.Current.Select(null, cmd, spam, out dt);
+                //    if (dt.Rows.Count <= 0)
+                //    {                        
+                //        MyUtility.Msg.InfoBox("<Roll> doesn't exist in Data!");
+                //        dr["Roll"] = "";
+                //        dr["Dyelot"] = "";
+                //        return;
+                //    }
+                //    else
+                //    {
+                //        List<SqlParameter> spamUpdate = new List<SqlParameter>();
+                //        spamUpdate.Add(new SqlParameter("@dyelot", dr["dyelot"]));
+                //        DBProxy.Current.Execute(null, "update FtyInventory set dyelot=@dyelot", spamUpdate);
+                //    }
+                //}
+                //else
+                //{                    
                     string cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2 and Roll=@Roll ";
                     List<SqlParameter> spam = new List<SqlParameter>();
                     spam.Add(new SqlParameter("@poid", PoID));
@@ -530,7 +618,7 @@ and a.seq1=@seq1";
                         dr["Roll"] = e.FormattedValue;
                         dr["Dyelot"] = dt.Rows[0]["Dyelot"].ToString().Trim();
                     }
-                }                
+               // }                
                                 
             };
            chgCell.CellValidating += (s, e) =>
@@ -578,7 +666,9 @@ and a.seq1=@seq1";
             };
             #endregion           
             Helper.Controls.Grid.Generator(this.grid)               
-                .MaskedText("OvenGroup","00","Group",width: Widths.AnsiChars(5), settings:groupCell)
+                //.MaskedText("OvenGroup","00","Group",width: Widths.AnsiChars(5), settings:groupCell)
+                //.Numeric("OvenGroup", "Group",width: Widths.AnsiChars(2),decimal_places:0,integer_places:2,settings:groupCell)
+               .Text("OvenGroup", "Group", width: Widths.AnsiChars(5), settings: groupCell)                
                 .MaskedText("SEQ", "CCC-CC", "SEQ#", width: Widths.AnsiChars(7), settings: seqMskCell)
                 //.Text("SEQ", header: "SEQ#", width: Widths.AnsiChars(10),iseditable:true, settings : seqCell)
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(5), settings: rollCell)
@@ -617,6 +707,11 @@ and a.seq1=@seq1";
         {
             DualResult upResult = new DualResult(true);
             string update_cmd = "";
+            DataTable dt;
+
+            string sqlcmd=string.Format(@"select Max(TestNO) as MaxNO from oven where poid='{0}'",PoID);
+            DBProxy.Current.Select(null,sqlcmd,out dt);
+            int testno = MyUtility.Convert.GetInt(dt.Rows[0]["MaxNO"]);
             
             DataRow dr = ((DataTable)gridbs.DataSource).NewRow();
             for (int i = ((DataTable)gridbs.DataSource).Rows.Count; i > 0; i--)
@@ -657,7 +752,7 @@ and a.seq1=@seq1";
                         string insCmd = @"
 SET IDENTITY_INSERT oven ON
 insert into Oven(ID,POID,TestNo,InspDate,Article,Result,Status,Inspector,Remark,addName,addDate)
-values(@id ,@poid,'1',GETDATE(),@Article,'Pass','New',@logid,@remark,@logid,GETDATE())
+values(@id ,@poid,@testNO,GETDATE(),@Article,'Pass','New',@logid,@remark,@logid,GETDATE())
 SET IDENTITY_INSERT oven off";
                         List<SqlParameter> spamAddNew = new List<SqlParameter>();
                         spamAddNew.Add(new SqlParameter("@id", ID));//New ID
@@ -665,6 +760,7 @@ SET IDENTITY_INSERT oven off";
                         spamAddNew.Add(new SqlParameter("@article", this.article.Text));
                         spamAddNew.Add(new SqlParameter("@logid", loginID));
                         spamAddNew.Add(new SqlParameter("@remark", this.remark.Text));
+                        spamAddNew.Add(new SqlParameter("@testNO", testno + 1));
                         upResult= DBProxy.Current.Execute(null, insCmd,spamAddNew);
                     }                
                 }
@@ -706,20 +802,22 @@ SET IDENTITY_INSERT oven off";
                     dtGrid.Rows[rows1]["OvenGroup"] = 01;
                 }
                 else
-                {
+                {                       
                     int group = MyUtility.Convert.GetInt(dtGrid.Rows[rows1 - 1]["ovengroup"]);
-
-                    dtGrid.Rows[rows1]["ovengroup"] = group + 1;
-                }
-                
+                    if (group.ToString().Length==1)
+                    {
+                        dtGrid.Rows[rows1]["ovengroup"] ="0"+ group + 1;    
+                    }                    
+                }                
 	        }
             else
             {
                 int group = MyUtility.Convert.GetInt(dtGrid.Rows[rows1 - 1]["ovengroup"]);
 
-                dtGrid.Rows[rows1]["ovengroup"] = group + 1;
-            }
-            
+              
+                    dtGrid.Rows[rows1]["ovengroup"] =  (group + 1).ToString("D2");
+                
+            }            
         }
 
         #region 表頭Article 右鍵事件: 1.右鍵selectItem 2.判斷validated

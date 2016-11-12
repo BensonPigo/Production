@@ -185,173 +185,7 @@ namespace Sci.Production.Quality
             }
             #endregion
 
-        }
-        #region 測試
-
-//{
-//    ///
-//    ///頁面資料校驗類
-//    ///修改自 李天平先生的作品，一併感謝。
-//    ///
-//    public class PageValidate
-//    {
-//        private static Regex RegNumber = new Regex("^[0-9]+$");
-//        private static Regex RegNumberSign = new Regex("^[+-]?[0-9]+$");
-//        private static Regex RegDecimal = new Regex("^[0-9]+[.]?[0-9]+$");
-//        //等價於^[+-]?\d+[.]?\d+$
-//        private static Regex RegDecimalSign = new Regex("^[+-]?[0-9]+[.]?[0-9]+$");
-//        //w 英文字母或數位的字串，和 [a-zA-Z0-9] 語法一樣
-//        private static Regex RegEmail = new Regex("^[\\w-]+@[\\w-]+\\.(com|net|org|edu|mil|tv|biz|info)$");
-//        private static Regex RegCHZN = new Regex("[\u4e00-\u9fa5]");
-//        public PageValidate()
-//        {
-//        }
-//        #region 數位字串檢查     
-//        ///
-//        /// 檢查Request查詢字串的鍵值，是否是數字，最大長度限制
-//        ///
-//        /// Request
-//        /// Request的鍵值
-//        /// 最大長度
-//        /// 返回Request查詢字串
-//        public static string IsDigit(HttpRequest req, string inputKey, int maxLen)
-//        {
-//            string retVal = string.Empty;
-//            if(inputKey != null && inputKey != string.Empty)
-//            {
-//                retVal = req.QueryString[inputKey];
-//                if(null == retVal)
-//                    retVal = req.Form[inputKey];
-//                if(null != retVal)
-//                {
-//                    retVal = SqlText(retVal, maxLen);
-//                    if(!IsNumber(retVal))
-//                        retVal = string.Empty;
-//                }
-//            }
-//            if(retVal == null)
-//                retVal = string.Empty;
-//            return retVal;
-//        }
-//        ///
-//        /// 是否數位字串
-//        ///
-//        /// 輸入字串
-//        ///
-//        public static bool IsNumber(string inputData)
-//        {
-//            Match m = RegNumber.Match(inputData);
-//            return m.Success;
-//        }
-//        ///
-//        /// 是否數位字串 可帶正負號
-//        ///
-//        /// 輸入字串
-//        ///
-//        public static bool IsNumberSign(string inputData)
-//        {
-//            Match m = RegNumberSign.Match(inputData);
-//            return m.Success;
-//        }
-//        ///
-//        /// 是否是浮點數
-//        ///
-//        /// 輸入字串
-//        ///
-//        public static bool IsDecimal(string inputData)
-//        {
-//            Match m = RegDecimal.Match(inputData);
-//            return m.Success;
-//        }
-//        ///
-//        /// 是否是浮點數 可帶正負號
-//        ///
-//        /// 輸入字串
-//        ///
-//        public static bool IsDecimalSign(string inputData)
-//        {
-//            Match m = RegDecimalSign.Match(inputData);
-//            return m.Success;
-//        }      
-//        #endregion
-//        #region 中文檢測
-//        ///
-//        /// 檢測是否有中文字元
-//        ///
-//        ///
-//        ///
-//        public static bool IsHasCHZN(string inputData)
-//        {
-//            Match m = RegCHZN.Match(inputData);
-//            return m.Success;
-//        }  
-//        #endregion
-//        #region 郵寄地址
-//        ///
-//        /// 是否是浮點數 可帶正負號
-//        ///
-//        /// 輸入字串
-//        ///
-//        public static bool IsEmail(string inputData)
-//        {
-//            Match m = RegEmail.Match(inputData);
-//            return m.Success;
-//        }      
-//        #endregion
-//        #region 其他
-//        ///
-//        /// 檢查字串最大長度，返回指定長度的串
-//        ///
-//        /// 輸入字串
-//        /// 最大長度
-//        ///            
-//        public static string SqlText(string sqlInput, int maxLength)
-//        {          
-//            if(sqlInput != null && sqlInput != string.Empty)
-//            {
-//                sqlInput = sqlInput.Trim();                        
-//                if(sqlInput.Length > maxLength)//按最大長度截取字串
-//                    sqlInput = sqlInput.Substring(0, maxLength);
-//            }
-//            return sqlInput;
-//        }
-//        ///
-//        /// 字串編碼
-//        ///
-//        ///
-//        ///
-//        public static string HtmlEncode(string inputData)
-//        {
-//            return HttpUtility.HtmlEncode(inputData);
-//        }
-//        ///
-//        /// 設置Label顯示Encode的字串
-//        ///
-//        ///
-//        ///
-//        public static void SetLabel(Label lbl, string txtInput)
-//        {
-//            lbl.Text = HtmlEncode(txtInput);
-//        }
-//        public static void SetLabel(Label lbl, object inputObj)
-//        {
-//            SetLabel(lbl, inputObj.ToString());
-//        }      
-//        #endregion
-//    }
-//}
-        #endregion
-
-     //public void SqlText(string sqlInput, int maxLength)
-     //   {          
-     //       if(sqlInput != null && sqlInput != string.Empty)
-     //       {
-     //           sqlInput = sqlInput.Trim();                        
-     //           if(sqlInput.Length > maxLength)//按最大長度截取字串
-     //               sqlInput = sqlInput.Substring(0, maxLength);
-     //       }
-     //       return sqlInput;
-     //   }
+        }     
 
         public string  SQlText(string sqlInput, int maxLength)
         {
@@ -370,10 +204,6 @@ namespace Sci.Production.Quality
         {
             #region groupCell
             DataGridViewGeneratorTextColumnSettings groupCell = new DataGridViewGeneratorTextColumnSettings();
-            groupCell.EditingMouseClick += (s, e) =>
-            {
-
-            };
             groupCell.EditingTextChanged +=(s,e) =>
             {
                 DataRow dr = grid.GetDataRow(e.RowIndex);
@@ -390,27 +220,14 @@ namespace Sci.Production.Quality
             {
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 string groupcell= SQlText(e.FormattedValue.ToString(), 2);
-                dr["ColorFastnessGroup"] = groupcell;
-                //string input = e.FormattedValue.ToString();
-                //var RegexFormat = @"^/d{2}$";
-                //var regex = new Regex(RegexFormat);
-                //var match = regex.Match(input);
-                //if (match.Success)
-                //{
-                //    MyUtility.Msg.InfoBox("Match Success!");
-                //}
-                //else
-                //{
-                //    MyUtility.Msg.InfoBox("Match faile!" + e.FormattedValue);
-
-                //}
+                dr["ColorFastnessGroup"] = groupcell;         
             };
             #endregion
 
             #region -- seqMskCell
             Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings seqMskCell = new DataGridViewGeneratorMaskedTextColumnSettings();
-
-         
+                        
+                     
             seqMskCell.CellMouseClick += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
@@ -419,7 +236,7 @@ namespace Sci.Production.Quality
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     DataTable dt;
-                    string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);                   
+                    string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);                   
                     SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -436,11 +253,10 @@ namespace Sci.Production.Quality
                     dr["seq1"] = seqSplit[0];
                     dr["seq2"] = seqSplit[1];
 
-                    DBProxy.Current.Select(null,
-                   string.Format("select scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}' and FabricType='F'", PoID, dr["seq1"], dr["seq2"]), out dt);
-                    dr["scirefno"] = dt.Rows[0]["scirefno"].ToString();
-                    dr["refno"] = dt.Rows[0]["refno"].ToString();
-                    dr["colorid"] = dt.Rows[0]["colorid"].ToString();
+                    dr["scirefno"] = item.GetSelecteds()[0]["scirefno"].ToString();
+                    dr["refno"] = item.GetSelecteds()[0]["refno"].ToString();
+                    dr["colorid"] = item.GetSelecteds()[0]["colorid"].ToString();
+
                 }
 
             };
@@ -452,8 +268,7 @@ namespace Sci.Production.Quality
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     DataTable dt;
-                    string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
-                    //string item_cmd = string.Format("select seq1,seq2,scirefno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
+                    string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);                    
                     SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -471,26 +286,29 @@ namespace Sci.Production.Quality
                     ctl.Text = dr["SEQ"].ToString();
                     dr["seq1"] = seqSplit[0];
                     dr["seq2"] = seqSplit[1];
-                    DBProxy.Current.Select(null,
-                  string.Format("select scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}' and FabricType='F'", PoID, dr["seq1"], dr["seq2"]), out dt);
-                    dr["scirefno"] = dt.Rows[0]["scirefno"].ToString();
-                    dr["refno"] = dt.Rows[0]["refno"].ToString();
-                    dr["colorid"] = dt.Rows[0]["colorid"].ToString();
+
+                    dr["scirefno"] = item.GetSelecteds()[0]["scirefno"].ToString();
+                    dr["refno"] = item.GetSelecteds()[0]["refno"].ToString();
+                    dr["colorid"] = item.GetSelecteds()[0]["colorid"].ToString();
+
                 }
 
-            };
-
+            };        
             seqMskCell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode) return;
                 if (MyUtility.Check.Empty(e.FormattedValue)) { return; }
                 DataRow dr = grid.GetDataRow(e.RowIndex);
+              
                 DataTable dt;
+                DataTable dt1;
                 string seq1 = e.FormattedValue.ToString().PadRight(5).Substring(0, 3),
                     seq2 = e.FormattedValue.ToString().PadRight(5).Substring(3, 2);
 
-                // dr["SEQ"] = e.FormattedValue;
                 string sql_cmd = string.Format("select seq1,seq2 from PO_Supp_Detail where id='{0}' and FabricType='F' and seq1='{1}' and seq2='{2}'", PoID, seq1, seq2);
+
+              
+
                 DBProxy.Current.Select(null, sql_cmd, out dt);
                 if (dt.Rows.Count <= 0)
                 {
@@ -514,6 +332,37 @@ namespace Sci.Production.Quality
                 {
                     dr["SEQ"] = dr["seq1"] + "-" + dr["seq2"];
                 }
+
+
+                DBProxy.Current.Select(null,
+               string.Format("select scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}' and FabricType='F'", PoID, dr["seq1"], dr["seq2"]), out dt1);
+                dr["scirefno"] = dt1.Rows[0]["scirefno"].ToString();
+                dr["refno"] = dt1.Rows[0]["refno"].ToString();
+                dr["colorid"] = dt1.Rows[0]["colorid"].ToString();
+
+                // SEQ changed 判斷Roll# 是否存在
+                string cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2 and Roll=@Roll ";
+                List<SqlParameter> spam = new List<SqlParameter>();
+                spam.Add(new SqlParameter("@poid", PoID));
+                spam.Add(new SqlParameter("@seq1", dr["seq1"]));
+                spam.Add(new SqlParameter("@seq2", dr["seq2"]));
+                spam.Add(new SqlParameter("@Roll", e.FormattedValue));
+                DBProxy.Current.Select(null, cmd, spam, out dt1);
+                if (MyUtility.Check.Empty(dr["Roll"])) return;
+                if (dt1.Rows.Count <= 0)
+                {
+
+                    MyUtility.Msg.InfoBox("<Roll> doesn't exist in Data!");
+                    dr["Roll"] = "";
+                    dr["Dyelot"] = "";
+                    return;
+                }
+                else
+                {
+                    dr["Roll"] = e.FormattedValue;
+                    dr["Dyelot"] = dt1.Rows[0]["Dyelot"].ToString().Trim();
+                }
+             
             };
             #endregion
 
@@ -526,23 +375,23 @@ namespace Sci.Production.Quality
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    if (newOven) //新資料 不判斷SEQ
-                    {
-                        string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>''";
-                        List<SqlParameter> spam = new List<SqlParameter>();
-                        spam.Add(new SqlParameter("@poid", PoID));
-                        SelectItem item = new SelectItem(item_cmd, spam, "10,10", dr["Roll"].ToString());
-                        DialogResult dresult = item.ShowDialog();
-                        if (dresult == DialogResult.Cancel)
-                        {
-                            return;
-                        }
-                        dr["Roll"] = item.GetSelectedString();
-                        dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
+                    //if (newOven) //新資料 不判斷SEQ
+                    //{
+                    //    string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>''";
+                    //    List<SqlParameter> spam = new List<SqlParameter>();
+                    //    spam.Add(new SqlParameter("@poid", PoID));
+                    //    SelectItem item = new SelectItem(item_cmd, spam, "10,10", dr["Roll"].ToString());
+                    //    DialogResult dresult = item.ShowDialog();
+                    //    if (dresult == DialogResult.Cancel)
+                    //    {
+                    //        return;
+                    //    }
+                    //    dr["Roll"] = item.GetSelectedString();
+                    //    dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
 
-                    }
-                    else
-                    {
+                    //}
+                    //else
+                    //{
                         string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2";
                         List<SqlParameter> spam = new List<SqlParameter>();
                         spam.Add(new SqlParameter("@poid", PoID));
@@ -556,7 +405,7 @@ namespace Sci.Production.Quality
                         }
                         dr["Roll"] = item.GetSelectedString();
                         dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
-                    }
+                   // }
 
                 }
 
@@ -568,23 +417,23 @@ namespace Sci.Production.Quality
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    if (newOven) //新資料 不判斷SEQ
-                    {
-                        string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>''";
-                        List<SqlParameter> spam = new List<SqlParameter>();
-                        spam.Add(new SqlParameter("@poid", PoID));
-                        SelectItem item = new SelectItem(item_cmd, spam, "10,10", dr["Roll"].ToString());
-                        DialogResult dresult = item.ShowDialog();
-                        if (dresult == DialogResult.Cancel)
-                        {
-                            return;
-                        }
-                        dr["Roll"] = item.GetSelectedString();
-                        dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
+                    //if (newOven) //新資料 不判斷SEQ
+                    //{
+                    //    string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>''";
+                    //    List<SqlParameter> spam = new List<SqlParameter>();
+                    //    spam.Add(new SqlParameter("@poid", PoID));
+                    //    SelectItem item = new SelectItem(item_cmd, spam, "10,10", dr["Roll"].ToString());
+                    //    DialogResult dresult = item.ShowDialog();
+                    //    if (dresult == DialogResult.Cancel)
+                    //    {
+                    //        return;
+                    //    }
+                    //    dr["Roll"] = item.GetSelectedString();
+                    //    dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
 
-                    }
-                    else
-                    {
+                    //}
+                    //else
+                    //{
                         string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2";
                         List<SqlParameter> spam = new List<SqlParameter>();
                         spam.Add(new SqlParameter("@poid", PoID));
@@ -598,7 +447,7 @@ namespace Sci.Production.Quality
                         }
                         dr["Roll"] = item.GetSelectedString();
                         dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
-                    }
+                   // }
 
                 }
 
@@ -610,31 +459,31 @@ namespace Sci.Production.Quality
                 DataTable dt;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
 
-                if (newOven)//新資料 不判斷SEQ
-                {
-                    string cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>'' ";
-                    List<SqlParameter> spam = new List<SqlParameter>();
-                    spam.Add(new SqlParameter("@poid", PoID));
-                    DBProxy.Current.Select(null, cmd, spam, out dt);
-                    if (dt.Rows.Count <= 0)
-                    {
-                        var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;
-                        ctl.Text = "";
-                        this.grid.CurrentCell.Value = "";
-                        MyUtility.Msg.InfoBox("<Roll> doesn't exist in Data!");
-                        dr["Dyelot"] = "";
-                        return;
+                //if (newOven)//新資料 不判斷SEQ
+                //{
+                //    string cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>'' ";
+                //    List<SqlParameter> spam = new List<SqlParameter>();
+                //    spam.Add(new SqlParameter("@poid", PoID));
+                //    DBProxy.Current.Select(null, cmd, spam, out dt);
+                //    if (dt.Rows.Count <= 0)
+                //    {
+                //        var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;
+                //        ctl.Text = "";
+                //        this.grid.CurrentCell.Value = "";
+                //        MyUtility.Msg.InfoBox("<Roll> doesn't exist in Data!");
+                //        dr["Dyelot"] = "";
+                //        return;
 
-                    }
-                    else
-                    {
-                        List<SqlParameter> spamUpdate = new List<SqlParameter>();
-                        spamUpdate.Add(new SqlParameter("@dyelot", dr["dyelot"]));
-                        DBProxy.Current.Execute(null, "update FtyInventory set dyelot=@dyelot", spamUpdate);
-                    }
-                }
-                else
-                {
+                //    }
+                //    else
+                //    {
+                //        List<SqlParameter> spamUpdate = new List<SqlParameter>();
+                //        spamUpdate.Add(new SqlParameter("@dyelot", dr["dyelot"]));
+                //        DBProxy.Current.Execute(null, "update FtyInventory set dyelot=@dyelot", spamUpdate);
+                //    }
+                //}
+                //else
+                //{
                     string cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2 and Roll=@Roll ";
                     List<SqlParameter> spam = new List<SqlParameter>();
                     spam.Add(new SqlParameter("@poid", PoID));
@@ -655,7 +504,7 @@ namespace Sci.Production.Quality
                         dr["Roll"] = e.FormattedValue;
                         dr["Dyelot"] = dt.Rows[0]["Dyelot"].ToString().Trim();
                     }
-                }
+                //}
 
 
             };
@@ -859,6 +708,10 @@ namespace Sci.Production.Quality
         {
             DualResult upResult = new DualResult(true);
             string update_cmd = "";
+            DataTable dt;
+            string sqlcmd = string.Format("select Max(testno) as testMaxNo from ColorFastness where poid='{0}'", PoID);
+            DBProxy.Current.Select(null,sqlcmd,out dt);
+            int testMaxNo = MyUtility.Convert.GetInt(dt.Rows[0]["testMaxNo"]);
 
             DataRow dr = ((DataTable)gridbs.DataSource).NewRow();
             for (int i = ((DataTable)gridbs.DataSource).Rows.Count; i > 0; i--)
@@ -903,8 +756,8 @@ namespace Sci.Production.Quality
                     if (newOven)  //insert 新資料進ColorFastness
                     {
                         string insCmd = @"                                            
-                                            insert into ColorFastness(ID,POID,TestNo,InspDate,Article,Result,Status,Inspector,Remark,addName,addDate)
-                                            values(@id ,@poid,'1',GETDATE(),@Article,@Result,'New',@logid,@remark,@logid,GETDATE())";
+            insert into ColorFastness(ID,POID,TestNo,InspDate,Article,Result,Status,Inspector,Remark,addName,addDate)
+            values(@id ,@poid,@Testno,GETDATE(),@Article,@Result,'New',@logid,@remark,@logid,GETDATE())";
                         List<SqlParameter> spamAddNew = new List<SqlParameter>();
                         spamAddNew.Add(new SqlParameter("@id", ID));//New ID
                         spamAddNew.Add(new SqlParameter("@poid", PoID));
@@ -912,6 +765,7 @@ namespace Sci.Production.Quality
                         spamAddNew.Add(new SqlParameter("@logid", loginID));
                         spamAddNew.Add(new SqlParameter("@remark", this.remark.Text));
                         spamAddNew.Add(new SqlParameter("@Result", result));
+                        spamAddNew.Add(new SqlParameter("@Testno", testMaxNo+1));
                         
                         upResult = DBProxy.Current.Execute(null, insCmd, spamAddNew);
                     }

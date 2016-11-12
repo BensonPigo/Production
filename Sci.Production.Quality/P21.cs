@@ -269,6 +269,7 @@ where a.ID='{0}'",
             defectCode.CellValidating += (s, e) =>
             {
                 if (this.EditMode == false) return;
+                if (MyUtility.Check.Empty(e.FormattedValue)) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 DataTable dt;
                 DualResult result;
@@ -281,8 +282,23 @@ where a.ID='{0}'",
                     {
                         MyUtility.Msg.InfoBox("<Defect Code> is not exist");
                         dr["GarmentDefectCodeid"] = "";
+                        dr["Description"] = "";
+                        dr["GarmentDefectTypeID"] = "";
                         return;
                     }
+                }
+                DataRow drDesc;
+                string sqlcmd = string.Format(@"select GarmentDefectTypeID,Description from GarmentDefectCode  where id='{0}'", e.FormattedValue);
+                if (MyUtility.Check.Seek(sqlcmd, out drDesc))
+                {
+                    dr["GarmentDefectCodeid"] = e.FormattedValue;
+                    dr["Description"] = drDesc["Description"];
+                    dr["GarmentDefectTypeID"] = drDesc["GarmentDefectTypeID"];
+                }
+                else
+                {
+                    dr["Description"] = "";
+                    dr["GarmentDefectTypeID"] = "";
                 }
 
             };
@@ -295,6 +311,23 @@ where a.ID='{0}'",
                     MyUtility.Msg.InfoBox("<No.Of Defects> cannot less than 0"); 
                     dr["Qty"] = "";
                     return;
+                }
+            };
+            AreaCode.CellValidating += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                DataRow drDesc;
+                string sqlcmd = string.Format(@"select id,Description from CfaArea where id='{0}'",e.FormattedValue);
+                if (MyUtility.Check.Seek(sqlcmd, out drDesc))
+                {
+                    dr["AreaDesc"] = drDesc["Description"];
+                    dr["CFAAreaID"] = e.FormattedValue;
+                }
+                else
+                {
+                    MyUtility.Msg.InfoBox("<Area Code> is not exist");
+                    dr["CFAAreaID"] = "";
+                    dr["AreaDesc"] = "";
                 }
             };
             #endregion
@@ -419,8 +452,15 @@ where a.ID='{0}'",
                 this.Result_combo.Select();
                 return false;
             }
-            //((DataTable)this.detailgridbs.DataSource)
-
+            foreach (DataRow dr in afterDT.Rows)
+            {
+                DataRow[] daArray = afterDT.Select(string.Format("GarmentDefectCodeid ='{0}'",MyUtility.Convert.GetString(dr["GarmentDefectCodeid"])));
+                if (daArray.Length>1)
+                {
+                    MyUtility.Msg.WarningBox("<Defect Code>" + MyUtility.Convert.GetString(dr["GarmentDefectCodeid"]) + " is already exist! ");
+                    return false;
+                }
+            }
             foreach (DataRow dr in afterDT.Rows)
             {
                 if (MyUtility.Check.Empty(dr["GarmentDefectCodeid"]))
@@ -576,6 +616,11 @@ where a.OrderID='{0}'", SP_text.Text);
                     this.orderQty_text.Text = dt.Rows[0]["Qty"].ToString();
                 }
             }
+        }
+
+        private void Garment_text_TextChanged(object sender, EventArgs e)
+        {
+            this.Garment_text.MaxLength = 3;
         }
 
     }

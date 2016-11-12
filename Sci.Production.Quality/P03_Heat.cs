@@ -528,7 +528,7 @@ namespace Sci.Production.Quality
         {
             DataTable gridTb = (DataTable)gridbs.DataSource;
             DataTable afterDT = new DataTable();
-            //將將刪除資料過的grid 重新丟進新datatable 並將資料完全刪除來做判斷! 
+            //將刪除資料過的grid 重新丟進新datatable 並將資料以完全刪除來做判斷! 
             afterDT.Merge(gridTb, true);
             afterDT.AcceptChanges();
 

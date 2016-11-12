@@ -179,15 +179,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(1037, 588);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(1031, 542);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(1031, 40);
             // 
             // detail
             // 
@@ -204,7 +204,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1223, 588);
+            this.browse.Size = new System.Drawing.Size(1037, 588);
             // 
             // tabs
             // 
@@ -379,7 +379,7 @@
             this.SP_text.Location = new System.Drawing.Point(105, 45);
             this.SP_text.Name = "SP_text";
             this.SP_text.Size = new System.Drawing.Size(141, 23);
-            this.SP_text.TabIndex = 20;
+            this.SP_text.TabIndex = 2;
             this.SP_text.Validated += new System.EventHandler(this.SP_text_Validated);
             // 
             // Style_text
@@ -422,7 +422,7 @@
             this.Remark_text.Location = new System.Drawing.Point(105, 221);
             this.Remark_text.Name = "Remark_text";
             this.Remark_text.Size = new System.Drawing.Size(645, 23);
-            this.Remark_text.TabIndex = 25;
+            this.Remark_text.TabIndex = 11;
             // 
             // PO_text
             // 
@@ -456,7 +456,7 @@
             this.InspectStage_combo.Location = new System.Drawing.Point(634, 74);
             this.InspectStage_combo.Name = "InspectStage_combo";
             this.InspectStage_combo.Size = new System.Drawing.Size(121, 24);
-            this.InspectStage_combo.TabIndex = 35;
+            this.InspectStage_combo.TabIndex = 5;
             this.InspectStage_combo.SelectedIndexChanged += new System.EventHandler(this.InspectStage_combo_SelectedIndexChanged);
             // 
             // Result_combo
@@ -469,14 +469,14 @@
             this.Result_combo.Location = new System.Drawing.Point(634, 183);
             this.Result_combo.Name = "Result_combo";
             this.Result_combo.Size = new System.Drawing.Size(121, 24);
-            this.Result_combo.TabIndex = 37;
+            this.Result_combo.TabIndex = 10;
             // 
             // Encode_btn
             // 
             this.Encode_btn.Location = new System.Drawing.Point(634, 6);
             this.Encode_btn.Name = "Encode_btn";
             this.Encode_btn.Size = new System.Drawing.Size(100, 30);
-            this.Encode_btn.TabIndex = 38;
+            this.Encode_btn.TabIndex = 14;
             this.Encode_btn.Text = "Encode";
             this.Encode_btn.UseVisualStyleBackColor = true;
             this.Encode_btn.Click += new System.EventHandler(this.Encode_btn_Click);
@@ -486,7 +486,7 @@
             this.Audit_Date.Location = new System.Drawing.Point(105, 10);
             this.Audit_Date.Name = "Audit_Date";
             this.Audit_Date.Size = new System.Drawing.Size(141, 23);
-            this.Audit_Date.TabIndex = 39;
+            this.Audit_Date.TabIndex = 1;
             // 
             // CFA1_text
             // 
@@ -495,7 +495,7 @@
             this.CFA1_text.Location = new System.Drawing.Point(634, 113);
             this.CFA1_text.Name = "CFA1_text";
             this.CFA1_text.Size = new System.Drawing.Size(216, 23);
-            this.CFA1_text.TabIndex = 40;
+            this.CFA1_text.TabIndex = 6;
             this.CFA1_text.TextBox1Binding = "";
             // 
             // Line_text
@@ -507,7 +507,7 @@
             this.Line_text.Location = new System.Drawing.Point(362, 146);
             this.Line_text.Name = "Line_text";
             this.Line_text.Size = new System.Drawing.Size(77, 23);
-            this.Line_text.TabIndex = 41;
+            this.Line_text.TabIndex = 7;
             // 
             // label19
             // 
@@ -528,7 +528,7 @@
             this.txtdropdownlist1.Location = new System.Drawing.Point(634, 145);
             this.txtdropdownlist1.Name = "txtdropdownlist1";
             this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlist1.TabIndex = 3;
+            this.txtdropdownlist1.TabIndex = 8;
             this.txtdropdownlist1.Type = "SewingOutput_Shift";
             // 
             // Team_combo
@@ -541,7 +541,7 @@
             this.Team_combo.Location = new System.Drawing.Point(362, 185);
             this.Team_combo.Name = "Team_combo";
             this.Team_combo.Size = new System.Drawing.Size(121, 24);
-            this.Team_combo.TabIndex = 42;
+            this.Team_combo.TabIndex = 9;
             // 
             // txtStageInfo
             // 
@@ -552,7 +552,7 @@
             this.txtStageInfo.Name = "txtStageInfo";
             this.txtStageInfo.ReadOnly = true;
             this.txtStageInfo.Size = new System.Drawing.Size(260, 23);
-            this.txtStageInfo.TabIndex = 4;
+            this.txtStageInfo.TabIndex = 12;
             // 
             // Garment_text
             // 
@@ -572,12 +572,13 @@
             0,
             0});
             this.Garment_text.Size = new System.Drawing.Size(121, 23);
-            this.Garment_text.TabIndex = 43;
+            this.Garment_text.TabIndex = 3;
             this.Garment_text.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
+            this.Garment_text.TextChanged += new System.EventHandler(this.Garment_text_TextChanged);
             // 
             // InspectQty_text
             // 
@@ -596,7 +597,7 @@
             0,
             0});
             this.InspectQty_text.Size = new System.Drawing.Size(144, 23);
-            this.InspectQty_text.TabIndex = 44;
+            this.InspectQty_text.TabIndex = 4;
             this.InspectQty_text.Value = new decimal(new int[] {
             0,
             0,
@@ -607,6 +608,7 @@
             // 
             this.DefectsQty_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.DefectsQty_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.DefectsQty_text.IsSupportEditMode = false;
             this.DefectsQty_text.Location = new System.Drawing.Point(362, 112);
             this.DefectsQty_text.Maximum = new decimal(new int[] {
             1000000,
@@ -632,6 +634,7 @@
             // 
             this.SQR_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.SQR_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.SQR_text.IsSupportEditMode = false;
             this.SQR_text.Location = new System.Drawing.Point(105, 183);
             this.SQR_text.Maximum = new decimal(new int[] {
             100000,

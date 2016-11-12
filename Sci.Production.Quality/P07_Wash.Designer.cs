@@ -307,7 +307,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
             this.label1.TabIndex = 134;
-            this.label1.Text = "Brand Ref#";
+            this.label1.Text = "Refno";
             // 
             // SciRefno
             // 
@@ -326,7 +326,7 @@
             this.lbSciRefno.Name = "lbSciRefno";
             this.lbSciRefno.Size = new System.Drawing.Size(75, 23);
             this.lbSciRefno.TabIndex = 132;
-            this.lbSciRefno.Text = "SCI Ref#";
+            this.lbSciRefno.Text = "SCI Refno";
             // 
             // Size_text
             // 

@@ -10,6 +10,7 @@ using Sci.Win.Tools;
 using System.Data.SqlClient;
 using Sci.Data;
 using Ict;
+using System.Linq;
 
 
 namespace Sci.Production.Quality
@@ -18,7 +19,7 @@ namespace Sci.Production.Quality
     {
         string sql;
         DataRow ROW;
-
+        bool isNew = false;
 
         public P20(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -191,6 +192,7 @@ namespace Sci.Production.Quality
                 if (this.EditMode == false) return;
                 if (e.FormattedValue.ToString().Trim() == "") return;
                 DataTable dt;
+                DataRow drDesc;
                 var dr = this.CurrentDetailData;
                 string cmd = "select ID from GarmentDefectCode where ID=@ID";
                 List<SqlParameter> spam = new List<SqlParameter>();
@@ -201,7 +203,25 @@ namespace Sci.Production.Quality
                 {
                     MyUtility.Msg.InfoBox("<Defect Code> doesn't exist in Data!");
                     dr["GarmentDefectCodeID"] = "";
+                    dr["Description"] = "";
+                    dr["GarmentDefectTypeid"] = "";
                     return;
+                }
+
+                //帶出 Type and desc 資料
+                string sqlcmd1 = string.Format(@"select Description,a.GarmentDefectTypeID from GarmentDefectCode a inner join Rft_Detail b on a.id=b.GarmentDefectCodeID where b.GarmentDefectCodeID='{0}'", e.FormattedValue);
+
+              
+                if (MyUtility.Check.Seek(sqlcmd1, out drDesc))
+                {
+                    dr["GarmentDefectCodeID"] = e.FormattedValue;
+                    dr["Description"] = drDesc["Description"];
+                    dr["GarmentDefectTypeid"] = drDesc["GarmentDefectTypeID"];
+                }
+                else
+                {
+                    dr["Description"] = "";
+                    dr["GarmentDefectTypeid"] = "";
                 }
             };
             #endregion
@@ -252,25 +272,25 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
             {
                 MyUtility.Msg.WarningBox("< SP# >  can't be empty!", "Warning");
-                CDate.Focus();
+                txtSP.Select();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["SewinglineID"]))
             {
                 MyUtility.Msg.WarningBox("< Line# >  can't be empty!", "Warning");
-                CDate.Focus();
+                txtLine.Select();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Shift"]))
             {
                 MyUtility.Msg.WarningBox("< Shift >  can't be empty!", "Warning");
-                CDate.Focus();
+                comboShift.Select();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Team"]))
             {
                 MyUtility.Msg.WarningBox("< Team >  can't be empty!", "Warning");
-                CDate.Focus();
+                comboTeam.Select();
                 return false;
             }
             #endregion 必輸檢查
@@ -299,11 +319,31 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.WarningBox("DefectQty can not exceed InspectQty !!", "Warning");
                 return false;
             }
+            DataTable detaildt = (DataTable)detailgridbs.DataSource;
+            DataTable afterDT = new DataTable();
+            //將刪除資料過的grid 重新丟進新datatable 並將資料以完全刪除來做判斷! 
+            afterDT.Merge(detaildt, true);
+            afterDT.AcceptChanges();
+            if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["GarmentDefectCodeID"])))
+            {
+                MyUtility.Msg.InfoBox("<Defect Code> cannot be null!");
+                return false;
+            }
+            foreach (DataRow dr in afterDT.Rows)
+            {
+                DataRow[] daArray = afterDT.Select(string.Format("GarmentDefectCodeID ='{0}'", MyUtility.Convert.GetString(dr["GarmentDefectCodeid"])));
+                if (daArray.Length > 1)
+                {
+                    MyUtility.Msg.WarningBox("<Defect Code>" + MyUtility.Convert.GetString(dr["GarmentDefectCodeid"]) + " is already exist! ");
+                    return false;
+                }
+            }   
+          
             DataTable dt;
             string sql = string.Format(@"select * from rft where OrderID='{0}' and CDate='{1}' and SewinglineID = '{2}' 
   and FactoryID='{3}' and [Shift]='{4}' and Team='{5}' ", txtSP.Text,((DateTime)CDate.Value).ToShortDateString(), txtLine.Text, DisplayFactory.Text, comboShift.SelectedValue, comboTeam.Text);
             DBProxy.Current.Select(null, sql, out dt);
-            if (dt.Rows.Count>0)
+            if (dt.Rows.Count > 0 && isNew)// 如果是新增,才判斷ＳＰ＃是否存在
             {
                 MyUtility.Msg.InfoBox("Data does exist!");
                 return false;
@@ -389,6 +429,7 @@ namespace Sci.Production.Quality
             this.DisplayDest.Text = "";
             this.NumRFT.Text="";
             this.NumCPU.Text = "";
+            this.isNew = true;
             return base.ClickNew();
         }
 

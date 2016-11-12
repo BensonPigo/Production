@@ -211,7 +211,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
             this.label3.TabIndex = 97;
-            this.label3.Text = "SCI Ref#";
+            this.label3.Text = "SCI Refno";
             // 
             // label4
             // 
@@ -220,7 +220,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 23);
             this.label4.TabIndex = 98;
-            this.label4.Text = "Brand Ref#";
+            this.label4.Text = "Refno";
             // 
             // label5
             // 

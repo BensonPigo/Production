@@ -112,8 +112,8 @@ namespace Sci.Production.Quality
                 .Text("SEQ", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("ExportID", header: "WKNO", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Date("whseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("SCIRefno", header: "SCI Ref#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("Refno", header: "Brand Ref#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SuppEn", header: "Supplier", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Size", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -293,6 +293,7 @@ namespace Sci.Production.Quality
 
         private void modifyDetailToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(CurrentDetailData["ID"].ToString())) return;
             string currentID = CurrentDetailData["ID"].ToString();
             var dr = this.CurrentDetailData; if (null == dr) return;
             var frm = new Sci.Production.Quality.P02_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), dr);            
