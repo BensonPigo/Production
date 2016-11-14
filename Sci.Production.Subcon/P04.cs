@@ -474,11 +474,15 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
             }
 
             // 提示是否不低於ap qty
-
+            string sqlcmdaped = string.Format(@"select c.*
+                                                from artworkpo a 
+                                                inner join farmin_detail b on a.id = b.artworkpoid 
+                                                inner join ArtworkPO_Detail c on a.id=c.id
+                                                where b.id = '{0}'", CurrentMaintain["id"]);
             ids = "";
             foreach (var dr in DetailDatas)
             {
-                if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+                if (!(result = DBProxy.Current.Select(null, sqlcmdaped, out datacheck)))
                 {
                     ShowErr(sqlcmd, result);
                     return;
