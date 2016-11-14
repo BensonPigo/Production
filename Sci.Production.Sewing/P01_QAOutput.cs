@@ -22,6 +22,7 @@ namespace Sci.Production.Sewing
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            /*
             IsSupportDelete = false;
             IsSupportNew = false;
             IsSupportUpdate = false;
@@ -29,7 +30,7 @@ namespace Sci.Production.Sewing
             revise.Visible = false;
             delete.Visible = false;
             prev.Visible = false;
-            next.Visible = false;
+            next.Visible = false;*/
         }
 
         protected override void OnAttached()
@@ -43,10 +44,6 @@ namespace Sci.Production.Sewing
             numericBox2.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(AccumQty)", ""));
             numericBox3.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(Variance)", ""));
             CalculateTotal();
-
-            //528: SEWING_P01_QAOutput_QA Output，QA QTY無法輸入
-            this.EditMode = true;
-            this.grid.IsEditingReadOnly = !this.EditMode;
         }
 
         protected override bool OnGridSetup()

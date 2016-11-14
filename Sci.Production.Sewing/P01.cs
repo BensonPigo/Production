@@ -50,33 +50,14 @@ namespace Sci.Production.Sewing
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"
                 select sd.*,
-                [RFT] = iif(rft.InspectQty is null or rft.InspectQty = 0,0, round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2)), 
-                [Remark] = iif(ss.ID is null,'Data Migration (not belong to this line#)','') ,
-                [QAOutput] = ISNULL(A.QQ,'')
+                [RFT] = iif(rft.InspectQty is null or rft.InspectQty = 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%'  ),                 
+                [Remark] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') ,
+                [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
                 from SewingOutput_Detail sd 
                 left join SewingOutput s on sd.ID = s.ID
                 left join Rft on rft.OrderID = sd.OrderId and rft.CDate = s.OutputDate 
 			                  and rft.SewinglineID = s.SewingLineID and rft.Shift = s.Shift 
 			                  and rft.Team = s.Team
-                left join SewingSchedule ss on ss.OrderID = sd.OrderId 
-			                  and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID
-                left join SewingOutput_Detail_Detail sdd on sdd.SewingOutput_DetailUKey = sd.UKey	
-                left join Orders o on o.ID = sdd.OrderId
-                left join Order_SizeCode os on os.Id = o.POID and os.SizeCode = sdd.SizeCode
-                outer apply 
-                (
-	                select QQ=(		
-		                select CONCAT(QaQty,',') 
-		                from
-		                (
-			                select 
-			                [QAQty] = sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty),
-			                [Seq] = isnull(os.Seq,0)			
-		                ) a
-		                order by Seq 	
-		                for xml path('')
-	                )
-                ) A
                 where sd.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -429,7 +410,8 @@ namespace Sci.Production.Sewing
                 .Numeric("DefectQty", header: "Defect Q’ty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("WorkHour", header: "W’Hours", width: Widths.AnsiChars(5), decimal_places: 3, maximum: 999.999m, minimum: 0m)
                 .Numeric("TMS", header: "TMS", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Numeric("RFT", header: "RFT(%)", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                //.Numeric("RFT", header: "RFT(%)", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("RFT", header: "RFT(%)", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("Remark", header: "Remarks", width: Widths.AnsiChars(40), iseditingreadonly: true);
         }
 
