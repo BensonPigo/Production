@@ -90,8 +90,9 @@ namespace Sci.Production.PPIC
                     }
                 }
                 needSave = false;
-                QueryData();
             }
+            QueryData();          
+            
         }
 
         private void QueryData()
@@ -107,7 +108,7 @@ iif(sp.IsPF = 1,'Y','N') as CPF
 from Style_ProductionKits sp
 left join Style s on s.Ukey = sp.StyleUkey
 where sp.ReceiveDate is null
-and sp.MDivisionID = '{0}' order by FactoryID, StyleID", Sci.Env.User.Keyword));
+and sp.MDivisionID = '{0}' ", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(textBox1.Text))
             {
                 sqlCmd.Append(string.Format(" and s.ID = '{0}'",textBox1.Text));
@@ -122,7 +123,9 @@ and sp.MDivisionID = '{0}' order by FactoryID, StyleID", Sci.Env.User.Keyword));
             {
                 sqlCmd.Append(string.Format(" and sp.SendDate = '{0}'",Convert.ToDateTime(dateBox1.Value).ToString("d")));
             }
+            sqlCmd.Append(@" order by FactoryID, StyleID");
 
+            
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData);
             if (!result)
             {
