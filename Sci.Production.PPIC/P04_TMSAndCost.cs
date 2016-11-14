@@ -228,7 +228,7 @@ and st.StyleUkey = {0}", KeyValue1);
             decimal cpu = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlCmd)) / stdTMS, 3);
             IList<String> updateCmds = new List<String>();
             updateCmds.Add(string.Format("update Style set CPU = {0} where Ukey = {1};", MyUtility.Convert.GetString(cpu), KeyValue1));
-            updateCmds.Add(string.Format("update Orders set CPU = {0}, CMPPrice = {0}*12 where StyleUkey = {0} and not exists (select 1 from SewingOutput_Detail where OrderId = Orders.ID);", MyUtility.Convert.GetString(cpu), KeyValue1));
+            updateCmds.Add(string.Format("update Orders set CPU = {0}, CMPPrice = {0}*12 where StyleUkey = {1} and not exists (select 1 from SewingOutput_Detail where OrderId = Orders.ID);", MyUtility.Convert.GetString(cpu), KeyValue1));
             #region 組要更新Order_TMSCost的SQL，已經有Sewing Daily Output的Order就不更新
             sqlCmd = string.Format(@"declare @styleukey bigint;
 set @styleukey = {0};
