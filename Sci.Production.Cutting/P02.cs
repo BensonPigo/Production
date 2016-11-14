@@ -44,6 +44,16 @@ namespace Sci.Production.Cutting
         public P02(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
         {
+            if (history == "0")
+            {
+                this.Text = "P02.Cutting Work Order";
+                this.IsSupportEdit = true;
+            }
+            else
+            {
+                this.Text = "P02.Cutting Work Order(History)";
+                this.IsSupportEdit = false;
+            }
             InitializeComponent();
             if(history=="0")
             {
