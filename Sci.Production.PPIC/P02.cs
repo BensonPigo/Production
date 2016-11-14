@@ -178,6 +178,12 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
                 return;
             }
 
+            if (ExcelTable.Rows.Count==0)
+            {
+                MyUtility.Msg.InfoBox("No data.");
+                return;
+            }
+
             string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
             SaveFileDialog dlg = new SaveFileDialog();
