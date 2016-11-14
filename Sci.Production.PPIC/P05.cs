@@ -137,7 +137,7 @@ namespace Sci.Production.PPIC
             this.grid1.DataSource = listControlBindingSource1;
 
             Helper.Controls.Grid.Generator(this.grid1)
-                .Text("ID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("ID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("SDPDate", header: "SDP Date", iseditingreadonly: true)
                 .Numeric("OrderQty", header: "Total Order Qty", iseditingreadonly: true)
@@ -146,7 +146,7 @@ namespace Sci.Production.PPIC
                 .Numeric("AlloQty", header: "Allo Qty", iseditingreadonly: true)
                 .Date("KPILETA", header: "KPI L/ETA", iseditingreadonly: true)
                 .Date("MTLETA", header: "R/MTL ETA", iseditingreadonly: true)
-                .Text("MTLExport", header: "", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("MTLExport", header: "", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Date("SewETA", header: "Sew. MTL ETA(SP)", iseditingreadonly: true)
                 .Date("PackETA", header: "Pkg. MTL ETA(SP)", iseditingreadonly: true)
                 .Date("SewInLine", header: "Inline", iseditingreadonly: true)
