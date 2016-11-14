@@ -178,7 +178,7 @@ BundleNo, OrderID, styleID, ArtworkPoID, ArtworkID, PatternCode, PatternDesc, Ar
 (artworkpoqty - onhand) Variance, 
 Qty, 
 (artworkpoqty - onhand - qty) BalQty ,
-Ukey
+Ukey ,id, artworkpo_detailukey
 from FarmOut_Detail 
 outer apply(
 	select styleID
