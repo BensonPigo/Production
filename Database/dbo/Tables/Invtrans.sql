@@ -14,7 +14,7 @@
     [InventoryPOID]    VARCHAR (13)    CONSTRAINT [DF_Invtrans_InventoryPOID] DEFAULT ('') NULL,
     [InventorySeq1]    VARCHAR (3)     CONSTRAINT [DF_Invtrans_InventorySeq1] DEFAULT ('') NULL,
     [InventorySeq2]    VARCHAR (2)     CONSTRAINT [DF_Invtrans_InventorySeq2] DEFAULT ('') NULL,
-    [Remark]           NVARCHAR (100)  CONSTRAINT [DF_Invtrans_Remark] DEFAULT ('') NULL,
+    [Remark]           NVARCHAR (MAX)  CONSTRAINT [DF_Invtrans_Remark] DEFAULT ('') NULL,
     [CurrencyID]       VARCHAR (3)     CONSTRAINT [DF_Invtrans_CurrencyID] DEFAULT ('') NOT NULL,
     [JunkPo3]          VARCHAR (1)     CONSTRAINT [DF_Invtrans_JunkPo3] DEFAULT ('') NULL,
     [Deadline]         DATE            NULL,
