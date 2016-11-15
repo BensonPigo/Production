@@ -101,7 +101,6 @@
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.checkBox4 = new Sci.Win.UI.CheckBox();
             this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.comboBox2 = new Sci.Win.UI.ComboBox();
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.txttpeuser2 = new Sci.Production.Class.txttpeuser();
             this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
@@ -110,6 +109,7 @@
             this.label29 = new Sci.Win.UI.Label();
             this.displayBox8 = new Sci.Win.UI.DisplayBox();
             this.button16 = new Sci.Win.UI.Button();
+            this.comboBox2 = new Sci.Production.Class.txtdropdownlist();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -127,11 +127,11 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.comboBox2);
             this.detailcont.Controls.Add(this.button16);
             this.detailcont.Controls.Add(this.displayBox8);
             this.detailcont.Controls.Add(this.label29);
             this.detailcont.Controls.Add(this.button15);
-            this.detailcont.Controls.Add(this.comboBox2);
             this.detailcont.Controls.Add(this.displayBox5);
             this.detailcont.Controls.Add(this.checkBox4);
             this.detailcont.Controls.Add(this.displayBox4);
@@ -994,18 +994,6 @@
             this.displayBox5.Size = new System.Drawing.Size(92, 23);
             this.displayBox5.TabIndex = 67;
             // 
-            // comboBox2
-            // 
-            this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Gender", true));
-            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Location = new System.Drawing.Point(108, 276);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(100, 24);
-            this.comboBox2.TabIndex = 69;
-            // 
             // txtuser1
             // 
             this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalMR", true));
@@ -1085,6 +1073,19 @@
             this.button16.Text = "Combo Type";
             this.button16.UseVisualStyleBackColor = true;
             this.button16.Click += new System.EventHandler(this.button16_Click);
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.BackColor = System.Drawing.Color.White;
+            this.comboBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Gender", true));
+            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.IsSupportUnselect = true;
+            this.comboBox2.Location = new System.Drawing.Point(108, 277);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(121, 24);
+            this.comboBox2.TabIndex = 74;
+            this.comboBox2.Type = "Gender";
             // 
             // P04
             // 
@@ -1182,7 +1183,6 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.DisplayBox displayBox5;
-        private Win.UI.ComboBox comboBox2;
         private Win.UI.DisplayBox displayBox6;
         private Win.UI.Label label27;
         private Win.UI.Button button12;
@@ -1197,5 +1197,6 @@
         private Win.UI.DisplayBox displayBox8;
         private Win.UI.Label label29;
         private Win.UI.Button button16;
+        private Class.txtdropdownlist comboBox2;
     }
 }
