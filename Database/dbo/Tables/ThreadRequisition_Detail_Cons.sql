@@ -12,6 +12,7 @@
     [Machinetypeid]                VARCHAR (10)   CONSTRAINT [DF_ThreadRequisition_Detail_Cons_Machinetypeid] DEFAULT ('') NULL,
     [OrderQty]                     NUMERIC (6)    CONSTRAINT [DF_ThreadRequisition_Detail_Cons_OrderQty] DEFAULT ((0)) NULL,
     [Ukey]                         BIGINT         IDENTITY (1, 1) NOT NULL,
+    [Allowance] NUMERIC(4, 2) NULL DEFAULT ((0)), 
     CONSTRAINT [PK_ThreadRequisition_Detail_Cons] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -81,3 +82,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ukey', @lev
 GO
 
 
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Allowance',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ThreadRequisition_Detail_Cons',
+    @level2type = N'COLUMN',
+    @level2name = N'Allowance'
