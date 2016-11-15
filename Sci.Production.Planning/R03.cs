@@ -71,7 +71,7 @@ and o.SeasonID = '{0}'", season));
 
             if (!MyUtility.Check.Empty(smr))
             {
-                sqlCmd.Append(string.Format(@" and ((s.Phase = 1 and s.SampleSMR = '{0}') or (s.Phase = 2 and s.BulkSMR = '{0}'))", smr));
+                sqlCmd.Append(string.Format(@" and ((s.Phase = 'Sample' and s.SampleSMR = '{0}') or (s.Phase ='Bulk' and s.BulkSMR = '{0}'))", smr));
             }
 
             if (!MyUtility.Check.Empty(subcon))
