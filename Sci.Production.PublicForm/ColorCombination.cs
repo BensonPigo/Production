@@ -110,7 +110,8 @@ namespace Sci.Production.PublicForm
                 if (dr["seqno"].ToString() != "")
                 {
                     string seqno = MyUtility.Convert.NTOC((MyUtility.Convert.GetInt(dr["SEQNo"])-1),2);
-                    DataRow[] drqt = qttb2.Select(string.Format("LectraCode ='{0}' and SEQNO = '{1}'", dr["LecreaCode"],seqno));
+                    DataRow[] drqt = qttb2.Select(string.Format("LectraCode ='{0}' and SEQNO = '{1}'", dr["QTLectraCode"], seqno));
+                    if (drqt.Length == 0) continue;
                     string patternfab = drqt[0]["LectraCode"].ToString().Trim();
                     string qtpatternfab = drqt[0]["QtWidth"].ToString().Trim();
                     decimal qtpatternwidrh = MyUtility.Convert.GetDecimal(drqt[0]["QtWidth"]);
