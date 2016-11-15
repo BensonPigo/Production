@@ -161,6 +161,22 @@ namespace Sci.Production.Planning
                     ddr["suppnm"] = x[0][1];
                 }
             };
+
+            ts.CellValidating += (s, e) =>
+            {
+                string Code = e.FormattedValue.ToString();//抓到當下的cell值
+                DataRow dr = grid1.GetDataRow(e.RowIndex); //抓到當下的row
+
+                if (Code != dr["localSuppid"].ToString())
+                {
+                    MyUtility.Msg.WarningBox("This supp id is wrong");
+                    dr["localSuppid"] = "";
+                    e.Cancel = true;
+                    return;
+                }
+
+
+            };
             #endregion
 
             Ict.Win.UI.DataGridViewComboBoxColumn col_inhouseosp;
@@ -230,7 +246,7 @@ namespace Sci.Production.Planning
                 dateRange2.Focus1();
                 return;
             }
-
+            string orderby = "";
             string sqlcmd
                 = string.Format(@"SELECT 0 as selected,a.id, a.SciDelivery, a.CutInline, a.CutOffline, a.FactoryID
 , a.StyleID, a.SeasonID, a.Qty AS OrderQty, a.isforecast,a.poid
@@ -255,7 +271,7 @@ namespace Sci.Production.Planning
 ,'' as msg
  FROM Orders a inner join  Order_tmscost b on a.ID = b.ID
             inner join factory on factory.id = a.factoryid
- where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'PRINTING' and factory.mdivisionid='{0}'",Sci.Env.User.Keyword);
+ where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'PRINTING' and factory.mdivisionid='{0}'" + orderby, Sci.Env.User.Keyword);
 
             if (!(MyUtility.Check.Empty(styleid)))
             { sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid); }
@@ -266,7 +282,10 @@ namespace Sci.Production.Planning
             if (!(MyUtility.Check.Empty(inhouseosp)))
             { sqlcmd += string.Format(@" and b.InhouseOSP = '{0}'", inhouseosp); }
             if (!(MyUtility.Check.Empty(factoryid)))
-            { sqlcmd += string.Format(@" and a.FactoryID =''", factoryid); }
+            { 
+                sqlcmd += string.Format(@" and a.FactoryID ='{0}'", factoryid);
+                orderby = "order by a.factoryId and a.SeasonID and a.StyleID";
+            }
             if (chkprice)
             { sqlcmd += @" and b.Price > 0"; }
 
@@ -302,7 +321,7 @@ namespace Sci.Production.Planning
         //Save
         private void button3_Click(object sender, EventArgs e)
         {
-            //CheckData();
+            CheckData();
             DualResult result;
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             if (dt == null || dt.Rows.Count == 0) return;
