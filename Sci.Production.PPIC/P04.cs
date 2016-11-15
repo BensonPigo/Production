@@ -10,6 +10,7 @@ using Ict;
 using Sci.Data;
 using System.IO;
 using Sci.Production;
+using System.Data.SqlClient;
 
 namespace Sci.Production.PPIC
 {
@@ -160,6 +161,32 @@ namespace Sci.Production.PPIC
             }
             return true;
         }
+
+        protected override void ClickSaveAfter()
+        {
+            List<SqlParameter> cmds = new List<SqlParameter>();
+            cmds.Add(new SqlParameter("@k",CurrentMaintain["Ukey"].ToString()));
+            string sqlcmd = "Select StyleUkey From Style_TmsCost where StyleUkey = @k";
+            //若沒有對應Ukey資料則新增
+            if (!MyUtility.Check.Seek(sqlcmd, cmds))
+            {
+                cmds.Add(new SqlParameter("@N", Sci.Env.User.UserID));
+                StringBuilder splcmdin = new StringBuilder();
+                splcmdin.Append(@"INSERT INTO Style_TmsCost (Seq,ArtworkTypeID,ArtworkUnit,StyleUkey,AddDate,AddName)
+                                SELECT A.seq,A.ID,A.ArtworkUnit,@k,GETDATE(),@N
+                                FROM Artworktype A
+                                where ISNUMERIC(A.seq)=1");
+                DualResult result = DBProxy.Current.Execute(null, splcmdin.ToString(), cmds);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "insert TmdCost fail!!\r\n" + result.ToString());
+                    return;
+                }
+            }                
+            
+            base.ClickSaveAfter();
+        }
+        
 
         protected override DualResult ClickSavePre()
         {
