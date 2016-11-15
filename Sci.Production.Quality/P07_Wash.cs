@@ -23,8 +23,7 @@ namespace Sci.Production.Quality
         public P07_Wash(bool canedit, string id, string Poid, string seq1, string seq2, DataRow mainDr)
         {
             InitializeComponent();
-            maindr = mainDr;
-            SetUpdate(maindr);
+            maindr = mainDr;            
             ID = id.Trim();
             PoID = Poid.Trim();
             SEQ1 = seq1.Trim();
@@ -32,7 +31,11 @@ namespace Sci.Production.Quality
 
             #region 設定可否編輯
             if (!canedit) EDIT = false;
-            else EDIT = true;
+            else
+            { 
+                EDIT = true;
+                SetUpdate(maindr);
+            }
             #endregion
 
         }

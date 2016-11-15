@@ -57,8 +57,6 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.contextMenuStrip1 = new Sci.Win.UI.ContextMenuStrip();
-            this.modifyDetailToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -71,7 +69,6 @@
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
-            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -479,20 +476,6 @@
             this.label1.TabIndex = 31;
             this.label1.Text = "SP#";
             // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.modifyDetailToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(155, 26);
-            // 
-            // modifyDetailToolStripMenuItem
-            // 
-            this.modifyDetailToolStripMenuItem.Name = "modifyDetailToolStripMenuItem";
-            this.modifyDetailToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
-            this.modifyDetailToolStripMenuItem.Text = "modify_Detail";
-            this.modifyDetailToolStripMenuItem.Click += new System.EventHandler(this.modifyDetailToolStripMenuItem_Click);
-            // 
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(1052, 714);
@@ -527,7 +510,6 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
-            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -564,7 +546,5 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
-        private Win.UI.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem modifyDetailToolStripMenuItem;
     }
 }

@@ -17,6 +17,9 @@ namespace Sci.Production.Quality
 {
     public partial class P02 : Sci.Win.Tems.Input6
     {
+        // 宣告Context Menu Item
+        ToolStripMenuItem edit;
+
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
         string find = "";
@@ -26,7 +29,7 @@ namespace Sci.Production.Quality
         public P02(ToolStripMenuItem menuitem) : base(menuitem)
         {
             InitializeComponent();
-            detailgrid.ContextMenuStrip = contextMenuStrip1;
+            detailgrid.ContextMenuStrip = detailgridmenus;
 
         }
 
@@ -36,7 +39,7 @@ namespace Sci.Production.Quality
             DefaultFilter = string.Format("ID = '{0}'", POID);
             InsertDetailGridOnDoubleClick = false;
             IsSupportEdit = false;
-            detailgrid.ContextMenuStrip = contextMenuStrip1;
+            detailgrid.ContextMenuStrip = detailgridmenus;
         }
 
         //表身額外的資料來源
@@ -141,8 +144,17 @@ namespace Sci.Production.Quality
 
         }
 
+        protected override void OnFormLoaded()
+        {
+
+            this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
+            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("ModifyDetail", onclick: (s, e) => ModifyDetail()).Get(out edit);
+            base.OnFormLoaded();
+        }
+
         protected override void OnDetailEntered()
         {
+            contextMenuStrip();
             base.OnDetailEntered();
 
             DataRow queryDr;
@@ -290,13 +302,12 @@ namespace Sci.Production.Quality
             detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);
         }
 
-
-        private void modifyDetailToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ModifyDetail()
         {
             if (MyUtility.Check.Empty(CurrentDetailData["ID"].ToString())) return;
             string currentID = CurrentDetailData["ID"].ToString();
             var dr = this.CurrentDetailData; if (null == dr) return;
-            var frm = new Sci.Production.Quality.P02_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), dr);            
+            var frm = new Sci.Production.Quality.P02_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
@@ -315,10 +326,54 @@ namespace Sci.Production.Quality
                 }
             }
             detailgrid.SelectRowTo(rowindex);
-
+            contextMenuStrip();
 
         }
 
+        private void contextMenuStrip()
+        {
+            var dr = this.CurrentDetailData;
+            edit.Enabled = true;
+
+            if (dr==null)
+            {
+                edit.Enabled = false;
+                return;
+            }
+        }
+
+        //private void modifyDetailToolStripMenuItem_Click(object sender, EventArgs e)
+        //{            
+        //    string currentID = CurrentDetailData["ID"].ToString();
+        //    var dr = this.CurrentDetailData; if (null == dr) return;
+        //    var frm = new Sci.Production.Quality.P02_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), dr);            
+        //    frm.ShowDialog(this);
+        //    frm.Dispose();
+        //    this.RenewData();
+        //    this.OnDetailEntered();
+        //    // 固定滑鼠指向位置,避免被renew影響
+        //    int rowindex = 0;
+        //    for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
+        //    {
+        //        DataGridViewRow dvr = detailgrid.Rows[rIdx];
+        //        DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
+
+        //        if (row["ID"].ToString() == currentID)
+        //        {
+        //            rowindex = rIdx;
+        //            break;
+        //        }
+        //    }
+        //    detailgrid.SelectRowTo(rowindex);
+
+
+        //}
+
+        protected override void OnDetailGridRowChanged()
+        {
+            contextMenuStrip();
+            base.OnDetailGridRowChanged();
+        }
         private void button1_Click_1(object sender, EventArgs e)
         {
             DataTable detDtb = (DataTable)detailgridbs.DataSource;
