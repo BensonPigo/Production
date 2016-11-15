@@ -62,6 +62,7 @@
             // 
             // save
             // 
+            this.save.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.save.Location = new System.Drawing.Point(388, 5);
             // 
             // undo

@@ -418,7 +418,7 @@ namespace Sci.Production.Sewing
         //重組表身Grid的QA Qty資料
         protected override DualResult ConvertSubDetailDatasFromDoSubForm(SubDetailConvertFromEventArgs e)
         {
-            if (EditMode)
+            if (EditMode && DoSubForm.DialogResult == DialogResult.OK)
             {
                 StringBuilder QAOutput = new StringBuilder();
                 int QAQty = 0;

@@ -22,15 +22,15 @@ namespace Sci.Production.Sewing
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            /*
-            IsSupportDelete = false;
-            IsSupportNew = false;
-            IsSupportUpdate = false;
-            append.Visible = false;
-            revise.Visible = false;
-            delete.Visible = false;
+            
+            //IsSupportDelete = false;
+            //IsSupportNew = false;
+            //IsSupportUpdate = false;
+            //append.Visible = false;
+            //revise.Visible = false;
+            //delete.Visible = false;
             prev.Visible = false;
-            next.Visible = false;*/
+            next.Visible = false;
         }
 
         protected override void OnAttached()
