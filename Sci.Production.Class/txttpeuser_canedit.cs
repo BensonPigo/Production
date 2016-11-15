@@ -100,7 +100,7 @@ namespace Sci.Production.Class
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-            if (myForm.EditMode == false)
+            if (myForm.EditMode == true)
             {
                 string selectSql = string.Format("Select Name from TPEPass1 where id = '{0}'", this.textBox1.Text.ToString());
                 string name = MyUtility.GetValue.Lookup(selectSql);
@@ -110,6 +110,7 @@ namespace Sci.Production.Class
                 else this.displayBox1.Text = "";
                 if (!string.IsNullOrWhiteSpace(extNo)) { this.displayBox1.Text = name + " #" + extNo; }
             }
+           
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
