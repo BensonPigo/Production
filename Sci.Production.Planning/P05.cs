@@ -159,6 +159,19 @@ namespace Sci.Production.Planning
                     ddr["suppnm"] = x[0][1];
                 }
             };
+            ts.CellValidating += (s, e) =>
+            {
+                string Code = e.FormattedValue.ToString();//抓到當下的cell值
+                DataRow dr = grid1.GetDataRow(e.RowIndex); //抓到當下的row
+
+                if (Code != dr["localSuppid"].ToString())
+                {
+                    MyUtility.Msg.WarningBox("This supp id is wrong");
+                    dr["localSuppid"] = "";
+                    e.Cancel = true;
+                    return;
+                }
+            };
             #endregion
 
             Ict.Win.UI.DataGridViewComboBoxColumn col_inhouseosp;
@@ -182,8 +195,8 @@ namespace Sci.Production.Planning
                  .Date("cutoffline", header: "Cut Offline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Date("Sewinline", header: "Sew Inline" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Date("sewoffline", header: "Sew Offline" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Date("ArtworkInLine", header: "Inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Date("ArtworkOffLine", header: "Offline", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Date("ArtworkInLine", header: "Inline", width: Widths.AnsiChars(10))
+                 .Date("ArtworkOffLine", header: "Offline", width: Widths.AnsiChars(10))
                  .Numeric("Stdq", header: "Std. Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
                  .Numeric("batchno", header: "Bat.", width: Widths.AnsiChars(3), integer_places: 3,decimal_places:1, iseditingreadonly: true)
                  .Numeric("qty", header: "Stitches", width: Widths.AnsiChars(3), integer_places: 8, iseditingreadonly: true)
@@ -262,11 +275,11 @@ namespace Sci.Production.Planning
                 numericBox3.Focus();
                 return;
             }
-
+            string orderby = "";
             string sqlcmd
                 = string.Format(@"SELECT 0 as selected,a.id, a.SciDelivery, a.CutInline, a.CutOffline, a.FactoryID
 , a.StyleID, a.SeasonID, a.Qty AS OrderQty, a.isforecast,a.poid
-, (select cast(t.article as varchar)+',' from (select article from order_qty where id = a.ID group by article )t for xml path('')) as article
+, (select cast(t.article as varchar)+';' from (select article from order_qty where id = a.ID group by article )t for xml path('')) as article
 ,b.qty,b.InhouseOSP,b.LocalSuppID
 ,(select Abb from LocalSupp where id = b.LocalSuppID) suppnm
 ,b.ArtworkInLine
@@ -297,10 +310,13 @@ namespace Sci.Production.Planning
  FROM (Orders a inner join  Order_tmscost b on a.ID = b.ID) 
 inner join SewingSchedule c on a.id = c.OrderID
 inner join dbo.Factory on factory.id = a.factoryid
- where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'EMBROIDERY'  and factory.mdivisionid='{3}'", numericBox1.Text, numericBox3.Text, numericBox2.Text,Sci.Env.User.Keyword);
+ where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'EMBROIDERY'  and factory.mdivisionid='{3}'" + orderby, numericBox1.Text, numericBox3.Text, numericBox2.Text, Sci.Env.User.Keyword);
 
             if (!(MyUtility.Check.Empty(styleid)))
-            { sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid); }
+            {
+                sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid);
+                orderby = "order by a.SeasonID and a.StyleID";
+            }
             if (!(MyUtility.Check.Empty(seasonid)))
             { sqlcmd += string.Format(@" and a.SeasonID = '{0}'", seasonid); }
             if (!(MyUtility.Check.Empty(localsuppid)))
@@ -308,7 +324,10 @@ inner join dbo.Factory on factory.id = a.factoryid
             if (!(MyUtility.Check.Empty(inhouseosp)))
             { sqlcmd += string.Format(@" and b.InhouseOSP = '{0}'", inhouseosp); }
             if (!(MyUtility.Check.Empty(factoryid)))
-            { sqlcmd += string.Format(@" and a.FactoryID =''", factoryid); }
+            {
+                sqlcmd += string.Format(@" and a.FactoryID ='{0}'", factoryid);
+                orderby = "order by a.factoryId and a.SeasonID and a.StyleID";
+            }
 
             if (!(MyUtility.Check.Empty(sciDelivery_b)))
             { sqlcmd += string.Format(@" and a.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
@@ -318,6 +337,8 @@ inner join dbo.Factory on factory.id = a.factoryid
             { sqlcmd += string.Format(@" and not (b.artworkInLine > '{1}' or b.artworkOffLine < '{0}')", inline_b, inline_e); }
 
             MyUtility.Msg.WaitWindows("Querying....Please wait....");
+            int wkdays = 0;
+            DateTime inline;
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
             {
@@ -331,11 +352,19 @@ inner join dbo.Factory on factory.id = a.factoryid
                 //dtData.Columns["totalqty"].Expression = "round(alloqty / (heads * workhours * batchno) * 100 / eff,3)";
                 grid2_generate();
             }
-            else
+            foreach (DataRow item in dtData.Rows)
             {
-                ShowErr(sqlcmd, result);
-            }
-            MyUtility.Msg.WaitClear();
+                if (!MyUtility.Check.Empty(item["sewinline"]))//dtData["sewinline"]))
+                {
+                    inline = PublicPrg.Prgs.GetWorkDate(item["factoryid"].ToString(), -5, (DateTime)item["sewinline"]);
+                    decimal stdq = PublicPrg.Prgs.GetStdQ(item["id"].ToString());
+                    item["stdq"] = stdq;
+                    wkdays = (stdq != '0') ? ' ' : int.Parse(Math.Ceiling((decimal.Parse(item["OrderQty"].ToString()) - decimal.Parse(item["qaqty"].ToString())) / stdq).ToString());
+                    item["artworkinline"] = inline;
+                    item["artworkoffline"] = PublicPrg.Prgs.GetWorkDate(item["factoryid"].ToString(), wkdays, inline);
+                }
+                MyUtility.Msg.WaitClear();
+            }   
         }
 
         //close
@@ -347,7 +376,7 @@ inner join dbo.Factory on factory.id = a.factoryid
         //Save
         private void button3_Click(object sender, EventArgs e)
         {
-            //CheckData();
+            CheckData();
             DualResult result;
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             if (dt == null || dt.Rows.Count == 0) return;
@@ -452,7 +481,7 @@ inner join dbo.Factory on factory.id = a.factoryid
         private void grid2_generate()
         {
             var bs1 = (from rows in ((DataTable)listControlBindingSource1.DataSource).AsEnumerable()
-                       group rows by new { localsuppid = rows.Field<string>("localsuppid"), suppnm = rows.Field<string>("suppnm") } into grouprows
+                       group rows by new { localsuppid = rows["localsuppid"].ToString().TrimEnd(), suppnm = rows["suppnm"].ToString().TrimEnd() } into grouprows
                        orderby grouprows.Key.localsuppid
                        select new
                        {
