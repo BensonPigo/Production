@@ -158,15 +158,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(1000, 667);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(994, 621);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(994, 40);
             // 
             // detail
             // 
@@ -443,9 +443,19 @@
             this.numericBox_cutqty.IsSupportEditMode = false;
             this.numericBox_cutqty.Location = new System.Drawing.Point(773, 110);
             this.numericBox_cutqty.Name = "numericBox_cutqty";
+            this.numericBox_cutqty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox_cutqty.ReadOnly = true;
             this.numericBox_cutqty.Size = new System.Drawing.Size(100, 23);
             this.numericBox_cutqty.TabIndex = 27;
+            this.numericBox_cutqty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox2
             // 
@@ -455,9 +465,19 @@
             this.numericBox2.IsSupportEditMode = false;
             this.numericBox2.Location = new System.Drawing.Point(773, 143);
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
             this.numericBox2.TabIndex = 28;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox_NeedPerDay
             // 
@@ -466,9 +486,19 @@
             this.numericBox_NeedPerDay.IsSupportEditMode = false;
             this.numericBox_NeedPerDay.Location = new System.Drawing.Point(773, 44);
             this.numericBox_NeedPerDay.Name = "numericBox_NeedPerDay";
+            this.numericBox_NeedPerDay.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox_NeedPerDay.ReadOnly = true;
             this.numericBox_NeedPerDay.Size = new System.Drawing.Size(100, 23);
             this.numericBox_NeedPerDay.TabIndex = 29;
+            this.numericBox_NeedPerDay.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // displayBox5
             // 

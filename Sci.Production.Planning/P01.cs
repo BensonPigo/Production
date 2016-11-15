@@ -42,6 +42,7 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                 this.DefaultFilter = string.Format(@"qty > 0 and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 and factoryid  
 in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
             }
+            this.Text = "P01 Sub-process master list (History)";
         }
 
         private void ComboxChange(object o, DataGridViewCellEventArgs e)
@@ -141,15 +142,24 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                                                     WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' AND OT.ARTWORKTYPEID='{1}'
                                                     GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup", CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"]);
                         item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,15,12", null, null);
+                        DialogResult result = item.ShowDialog();
+                        if (result == DialogResult.Cancel) { return; }
+                        IList<DataRow> x = item.GetSelecteds();
+                        CurrentDetailData["localsuppid"] = x[0][0];
+                        CurrentDetailData["localsuppname"] = x[0][1];
+                        CurrentDetailData["mockupdate"] = x[0][2];
                     }
                     else
                     {
                         sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 1 order by ID";
                         item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30", null);
-                    }
-                    DialogResult result = item.ShowDialog();
+                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
-                    CurrentDetailData["localsuppid"] = item.GetSelectedString();
+                    IList<DataRow> x = item.GetSelecteds();
+                    CurrentDetailData["localsuppid"] = x[0][0];
+                    CurrentDetailData["localsuppname"] = x[0][1];
+                    
+                    }
                 }
             };
             #endregion
@@ -209,7 +219,9 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                     {
                         CurrentDetailData["localsuppid"] = Env.User.Factory;
                         CurrentDetailData["inhouseOSP"] = e.FormattedValue;
+                        
                     }
+                   
                 }
             };
 
