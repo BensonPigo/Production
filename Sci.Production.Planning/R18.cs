@@ -31,6 +31,8 @@ namespace Sci.Production.Planning
             txtfactory1.Text = Sci.Env.User.Factory;
             MyUtility.Tool.SetupCombox(cbbArtworkType,1,1,"HT(UA),HT(Non-UA)");
             cbbArtworkType.SelectedIndex = 0;
+            dateRange1.Value1 = DateTime.Now.Date;
+            dateRange1.Value2 = DateTime.Now.Date.AddMonths(2);
         }
 
         // 驗證輸入條件
