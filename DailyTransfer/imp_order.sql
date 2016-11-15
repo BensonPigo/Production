@@ -908,17 +908,10 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 			update set 
 			t.id=s.id,
 			t.Order_BOAUkey= s.Order_BOAUkey,
-			t.Prefix= s.Prefix,
-			t.KeyWordID= s.KeyWordID,
-			t.Postfix= s.Postfix,
-			t.Code= s.Code,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate
+			t.KeyWordID= s.KeyWordID
 		when not matched by target then
-			insert(ID,Ukey,Order_BOAUkey,Prefix,KeyWordID,Postfix,Code,AddName,AddDate,EditName,EditDate)
-			values(s.ID,s.Ukey,s.Order_BOAUkey,s.Prefix,s.KeyWordID,s.Postfix,s.Code,s.AddName,s.AddDate,s.EditName,s.EditDate)
+			insert(ID,Ukey,Order_BOAUkey,KeyWordID)
+			values(s.ID,s.Ukey,s.Order_BOAUkey,s.KeyWordID)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 	
