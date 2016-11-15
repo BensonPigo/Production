@@ -933,5 +933,18 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
                 CurrentMaintain["ShipModeList"] = item.GetSelectedString();
             }
         }
+
+        // edit前檢查，非LOCAL單，不可修改
+        protected override bool ClickEditBefore()
+        {
+            if (MyUtility.Convert.GetString(CurrentMaintain["LocalOrder"]).ToUpper() != "TRUE")
+            {
+                MyUtility.Msg.WarningBox("Only Local Order can edit !!", "Error");
+                return false;
+            }
+            return base.ClickEditBefore();
+        }
+
+
     }
 }
