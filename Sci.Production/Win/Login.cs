@@ -21,6 +21,11 @@ namespace Sci.Production.Win
             this.app = app;
             InitializeComponent();
 
+            // 測試用登入
+            this.act.Text = "MIS";
+            this.pwd.Text = "0000";
+            this.comboBox1.Text = "MAI";
+
             ok.Click += ok_Click;
             exit.Click += exit_Click;
 
@@ -31,9 +36,9 @@ namespace Sci.Production.Win
         void ok_Click(object sender, EventArgs e)
         {
             DataTable dtFactory;
-            string act = this.act.Text;
-            string loginFactory = (string)this.comboBox1.SelectedValue;
-            string pwd = this.pwd.Text;
+            string act = this.act.Text;            
+            string loginFactory = (string)this.comboBox1.SelectedValue;            
+            string pwd = this.pwd.Text;            
             string keyword = "";
 
             if (0 == act.Length)
@@ -63,10 +68,11 @@ namespace Sci.Production.Win
             if (dtFactory.Rows.Count > 0 && !MyUtility.Check.Empty(dtFactory.Rows[0]["MDivisionID"].ToString()))
             {
                 keyword = dtFactory.Rows[0]["MDivisionID"].ToString();
+                Sci.Env.App.Text = "Mdivision = " + keyword;
             }
             else
             {
-                ShowErr("M is not exist!");
+                ShowErr("M does not exist!");
                 return;
             }
 
@@ -153,7 +159,7 @@ namespace Sci.Production.Win
             }
             if (dtPass1.Rows.Count == 0)
             {
-                MyUtility.Msg.WarningBox("Account is not exist!");
+                MyUtility.Msg.WarningBox("Account is not exists!");
                 e.Cancel = true;
                 return;
             }
