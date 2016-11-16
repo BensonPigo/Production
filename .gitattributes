@@ -95,6 +95,7 @@ Database/dbo/Stored[!!-~]Procedures/GenGarmentTest.sql -text
 Database/dbo/Stored[!!-~]Procedures/PoApproveLock.sql -text
 Database/dbo/Stored[!!-~]Procedures/dbo.insertMygridstd2.sql -text
 Database/dbo/Stored[!!-~]Procedures/insertMygridstd2.sql -text
+Database/dbo/Stored[!!-~]Procedures/insert_Air_Fir.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_APSDataDownLoad.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_BoaByIssueBreakDown.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_FirEncode.sql -text
