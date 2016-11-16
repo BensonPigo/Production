@@ -128,7 +128,7 @@ namespace Sci.Production.Warehouse
             }
 
             #endregion 必輸檢查
-
+            
             foreach (DataRow row in DetailDatas)
             {
                 if (MyUtility.Check.Empty(row["seq1"]) || MyUtility.Check.Empty(row["seq2"]))
@@ -277,8 +277,22 @@ namespace Sci.Production.Warehouse
                         }
                         else
                         {
-                            if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,qty,dbo.getmtldesc(id,seq1,seq2,2,0) as [description] from po_supp_detail
-where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3), e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr, null))
+
+                            //jimmy 105/11/14
+                            //gird的StockUnit照新規則 抓取值
+                            if (!MyUtility.Check.Seek(string.Format(@"select 
+top 1 IIF ( mm.IsExtensionUnit > 0, uu.ExtensionUnit, ff.UsageUnit ) as stockunit
+--,stockunit
+,a.fabrictype
+,a.qty
+,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [description] 
+,a.POUnit 
+from po_supp_detail a 
+inner join Receiving_detail b on b.PoID= a.id and b.Seq1 = a.SEQ1 and b.Seq2 = a.SEQ2
+inner join [dbo].[Fabric] ff on a.SCIRefno= ff.SCIRefno
+inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
+inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
+where a.id = '{0}' and a.seq1 ='{1}'and a.seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3), e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr, null))
                             {
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 e.Cancel = true;
@@ -408,9 +422,23 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
             #endregion 檢查負數庫存
 
             #region 更新表頭狀態資料
+            //jimmy 105/11/15 
+            //CONFIRM時 需抓取 Receiving_detail的StockUnit 蓋到PO_SUPP_DETAIL
+            DataTable detailDt = (DataTable)this.detailgridbs.DataSource;
+            DataTable dtOut;
 
-            sqlupd3 = string.Format(@"update Receiving set status='Confirmed', editname = '{0}' , editdate = GETDATE()
-                                where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+            sqlupd3 = string.Format(@"
+update Receiving 
+set status='Confirmed', editname = '{0}' , editdate = GETDATE()
+where id = '{1}'
+---jimmy 105/11/15 detail的StockUnit 蓋到PO_SUPP_DETAIL
+merge dbo.PO_SUPP_DETAIL as a
+using #tmp as b
+on a.ID = b.poid and a.SEQ1 = b.seq1 and a.SEQ2 = b.seq2
+when matched then 
+update
+set a.StockUnit = b.StockUnit;
+", Env.User.UserID, CurrentMaintain["id"]);
 
             #endregion 更新表頭狀態資料
 
@@ -461,7 +489,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
                         ShowErr(sqlupd2.ToString(), result2);
                         return;
                     }
-                    if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
+                    if (//!(result = DBProxy.Current.Execute(null, sqlupd3)))  jimmy 105/11/15
+                        !(result = MyUtility.Tool.ProcessWithDatatable(detailDt, string.Join(",", detailDt.Columns.Cast<DataColumn>().Select(col => col.ColumnName).ToArray()), sqlupd3, out dtOut)))
                     {
                         _transactionscope.Dispose();
                         ShowErr(sqlupd3, result);
