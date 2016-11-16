@@ -137,8 +137,8 @@ namespace Sci.Production.Warehouse
             Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
             .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(20), iseditingreadonly: true)  //1
-            .Text("Colorid", header: "Colorid", width: Widths.AnsiChars(10), iseditingreadonly: true)  //2
-            .Text("SizeSpec", header: "SizeSpec", width: Widths.AnsiChars(10), iseditingreadonly: true)  //3
+            .Text("Color", header: "Colorid", width: Widths.AnsiChars(10), iseditingreadonly: true)  //2
+           // .Text("SizeSpec", header: "SizeSpec", width: Widths.AnsiChars(10), iseditingreadonly: true)  //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Numeric("requestqty", name: "requestqty", header: "Request", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //5
             .Numeric("accu_issue", name: "accu_issue", header: "Accu. Issued", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
@@ -164,9 +164,12 @@ a.Id
 ,a.SizeSpec
 ,(select DescDetail from fabric where scirefno= a.scirefno) [description]
 ,isnull((select sum(cons) from dbo.Cutplan_Detail_Cons c inner join dbo.PO_Supp_Detail p on p.ID=c.Poid and p.SEQ1 = c.Seq1 and p.SEQ2 = c.Seq2
-where  c.id='{1}' and p.scirefno = a.scirefno and c.poid = a.poid and p.colorid = a.colorid and p.SizeSpec = a.SizeSpec),0.00) as requestqty
+where  c.id='{1}' and p.scirefno = a.scirefno and c.poid = a.poid 
+--and p.colorid = a.colorid and p.SizeSpec = a.SizeSpec
+),0.00) as requestqty
 ,isnull((select sum(qty) from issue a1 inner join issue_summary b1 on b1.id = a1.id where a1.cutplanid = '{1}' 
---and b1.poid = a.poid and b1.scirefno = a.scirefno and b1.colorid = a.colorid  --20161006 by willy,這2欄位是空的,先mark做測試
+and b1.poid = a.poid and b1.scirefno = a.scirefno 
+--and b1.colorid = a.colorid  --20161006 by willy,20161116 LEO調整
 and a1.id != '{0}' and a1.status='Confirmed'),0.00) as accu_issue
 ,a.qty
 ,a.Ukey
