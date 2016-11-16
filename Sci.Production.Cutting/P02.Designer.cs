@@ -584,7 +584,7 @@
             this.label17.Lines = 0;
             this.label17.Location = new System.Drawing.Point(141, 4);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(59, 23);
+            this.label17.Size = new System.Drawing.Size(25, 23);
             this.label17.TabIndex = 34;
             this.label17.Text = "Y";
             this.label17.TextStyle.Color = System.Drawing.Color.Black;
@@ -593,7 +593,7 @@
             // 
             this.textBox_MarkerLengthE.BackColor = System.Drawing.Color.White;
             this.textBox_MarkerLengthE.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox_MarkerLengthE.Location = new System.Drawing.Point(158, 4);
+            this.textBox_MarkerLengthE.Location = new System.Drawing.Point(168, 4);
             this.textBox_MarkerLengthE.Mask = "00-0/0+0\"";
             this.textBox_MarkerLengthE.Name = "textBox_MarkerLengthE";
             this.textBox_MarkerLengthE.Size = new System.Drawing.Size(116, 23);
