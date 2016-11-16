@@ -56,10 +56,17 @@ namespace Sci.Production.Planning
             {
                 if (BeginEndChange) NeedCheck = true;
             }
-            if (!NeedCheck) return true;
+            if (!NeedCheck)
+            {
+                NeedCheck = false;  //初始化
+                return true;
+            } 
             #endregion
 
-            string s1 = "SELECT * FROM [Production].[dbo].[EmbBatch] where  not((BeginStitch > @begin  and BeginStitch > @end) or (EndStitch <  @begin and EndStitch < @end))";
+            //string s1 = "SELECT * FROM [Production].[dbo].[EmbBatch] where  not((BeginStitch > @begin  and BeginStitch > @end) or (EndStitch <  @begin and EndStitch < @end))";
+            string s1 = @"SELECT * FROM [Production].[dbo].[EmbBatch] 
+                          where BeginStitch <> @OldBegin and EndStitch <> @OldEnd
+                                and not((BeginStitch > @begin  and BeginStitch > @end) or (EndStitch <  @begin and EndStitch < @end))";
 
             #region 準備sql參數資料
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -70,9 +77,19 @@ namespace Sci.Production.Planning
             sp2.ParameterName = "@end";
             sp2.Value = CurrentMaintain["Endstitch"].ToString();
 
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+            sp3.ParameterName = "@OldBegin";
+            sp3.Value = this.numericBox1.OldValue;
+
+            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+            sp4.ParameterName = "@OldEnd";
+            sp4.Value = this.numericBox2.OldValue;
+
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
             cmds.Add(sp2);
+            cmds.Add(sp3);
+            cmds.Add(sp4);
            
             #endregion
 
@@ -81,8 +98,10 @@ namespace Sci.Production.Planning
             if (flag)
             {
                 MyUtility.Msg.WarningBox("This Data ranage already cover existed data");
+                NeedCheck = false;  //初始化
                 return false;
             }
+            NeedCheck = false;  //初始化
             return base.ClickSaveBefore();
         }
 
