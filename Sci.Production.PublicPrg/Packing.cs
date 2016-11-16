@@ -274,7 +274,7 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
                     ctnNo = dr["CTNStartNo"].ToString();
                     nw = 0;
                     nnw = 0;
-                    localItemWeight = MyUtility.GetValue.Lookup("Weight", MyUtility.Convert.GetString(dr["RefNo"]), "LocalItem", "RefNo");
+                    localItemWeight = MyUtility.GetValue.Lookup("CtnWeight", MyUtility.Convert.GetString(dr["RefNo"]), "LocalItem", "RefNo");
                     ctnWeight = MyUtility.Math.Round(MyUtility.Convert.GetDouble(localItemWeight), 6);
                 }
 
