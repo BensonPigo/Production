@@ -35,11 +35,9 @@ namespace Sci.Production.Win
 
         void ok_Click(object sender, EventArgs e)
         {
-            DataTable dtFactory;
-            string act = this.act.Text;            
-            string loginFactory = (string)this.comboBox1.SelectedValue;            
-            string pwd = this.pwd.Text;            
-            string keyword = "";
+            string act = this.act.Text;
+            string loginFactory = (string)this.comboBox1.SelectedValue;
+            string pwd = this.pwd.Text;
 
             if (0 == act.Length)
             {
@@ -60,40 +58,13 @@ namespace Sci.Production.Win
                 return;
             }
 
-            if (!(result = DBProxy.Current.Select(null, string.Format("SELECT MDivisionID FROM Factory WHERE ID = '{0}'", loginFactory), out dtFactory)))
-            {
-                ShowErr(result.ToString());
-                return;
-            }
-            if (dtFactory.Rows.Count > 0 && !MyUtility.Check.Empty(dtFactory.Rows[0]["MDivisionID"].ToString()))
-            {
-                keyword = dtFactory.Rows[0]["MDivisionID"].ToString();
-                Sci.Env.App.Text = "Mdivision = " + keyword;
-            }
-            else
-            {
-                ShowErr("M does not exist!");
-                return;
-            }
 
             IUserInfo user = null;
             if (!(result = AsyncHelper.Current.DataProcess(this, () =>
             {
-                Sci.Production.SCHEMAS.PASS1Row data;
-                if (!(result = Sci.Production.Win.ProjUtils.GetPass1(act, pwd, out data))) return result;
-                if (null == data) return new DualResult(false, "Account or password invalid.");
 
                 UserInfo u = new UserInfo();
-                u.UserID = act;
-                u.UserPassword = pwd;
-                if (!data.IsNAMENull()) u.UserName = data.NAME;
-                if (!data.IsISADMINNull()) u.IsAdmin = data.ISADMIN;
-                //if (!data.IsFACTORYNull()) Sci.Production.ProductionEnv.UserFactories = data.FACTORY;
-                if (!data.IsFACTORYNull()) u.FactoryList = data.FACTORY;
-                if (!data.IsISMISNull()) u.IsMIS = data.ISMIS;
-                if (!data.IsEMAILNull()) u.MailAddress = data.EMAIL;
-                u.Factory = loginFactory;
-                u.Keyword = keyword;
+                result = UserLogin(act, pwd, loginFactory, u);
 
 
                 // 載入登入人員相關資訊
@@ -107,12 +78,12 @@ namespace Sci.Production.Win
                 //u.SpecialAuthorityList = "";
                 //u.BrandList = "";
                 //u.MailAddress = "";
-               
+
                 // 載入根據登入資訊而異系統參數, 
                 //Sci.Env.Cfg.ReportTitle = "XXX"
 
                 user = u;
-                return Result.True;
+                return result;
             })))
             {
                 ShowErr(result);
@@ -124,6 +95,7 @@ namespace Sci.Production.Win
                 ShowErr(result);
                 return;
             }
+            Sci.Env.App.Text = "Mdivision = " + Sci.Env.User.Keyword;
 
             DialogResult = DialogResult.OK;
             Close();
@@ -137,7 +109,7 @@ namespace Sci.Production.Win
 
         private void act_Validated(object sender, CancelEventArgs e)
         {
-            comboBox1.DataSource = null; 
+            comboBox1.DataSource = null;
             if (MyUtility.Check.Empty(this.act.Text.Trim()))
             {
                 return;
@@ -159,7 +131,7 @@ namespace Sci.Production.Win
             }
             if (dtPass1.Rows.Count == 0)
             {
-                MyUtility.Msg.WarningBox("Account is not exists!");
+                MyUtility.Msg.WarningBox("Account does not exist!");
                 e.Cancel = true;
                 return;
             }
@@ -177,5 +149,42 @@ namespace Sci.Production.Win
                 comboBox1.DisplayMember = "Value";
             }
         }
+
+        public static DualResult UserLogin(string userid, string pwd, string factoryID, UserInfo u)
+        {
+            DualResult result;
+            DataTable dtFactory;
+            string keyword = "";
+            factoryID = factoryID.TrimEnd();
+            if (!(result = DBProxy.Current.Select(null, string.Format("SELECT MDivisionID FROM Factory WHERE ID = '{0}'", factoryID), out dtFactory)))
+            {
+                return result;
+            }
+            if (dtFactory.Rows.Count > 0 && !MyUtility.Check.Empty(dtFactory.Rows[0]["MDivisionID"].ToString()))
+            {
+                keyword = dtFactory.Rows[0]["MDivisionID"].ToString().TrimEnd();
+            }
+            else
+            {
+                return new DualResult(false, "Mdivision does not exist!");
+            }
+
+            Sci.Production.SCHEMAS.PASS1Row data;
+            if (!(result = Sci.Production.Win.ProjUtils.GetPass1(userid, pwd, out data))) return result;
+            if (null == data) return new DualResult(false, "Account or password invalid.");
+
+            u.UserID = userid;
+            u.UserPassword = pwd;
+            if (!data.IsNAMENull()) u.UserName = data.NAME;
+            if (!data.IsISADMINNull()) u.IsAdmin = data.ISADMIN;
+            //if (!data.IsFACTORYNull()) Sci.Production.ProductionEnv.UserFactories = data.FACTORY;
+            if (!data.IsFACTORYNull()) u.FactoryList = data.FACTORY;
+            if (!data.IsISMISNull()) u.IsMIS = data.ISMIS;
+            if (!data.IsEMAILNull()) u.MailAddress = data.EMAIL;
+            u.Factory = factoryID;
+            u.Keyword = keyword;
+            return result;
+        }
+
     }
 }

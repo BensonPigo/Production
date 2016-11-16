@@ -10,11 +10,13 @@ using Sci.Production.Basic;
 
 using Ict;
 using Ict.Win;
+using System.Diagnostics;
 namespace Sci.Production
 {
     public partial class Main : Sci.Win.Apps.Base
     {
         delegate Sci.Win.Tems.Base CREATETEMPLATE(ToolStripMenuItem menuitem);
+        public static List<Process> proList = new List<Process>();
 
         class TemplateInfo
         {
@@ -183,8 +185,16 @@ namespace Sci.Production
                         // PublicClass的Dll Name為Sci.Proj
                         if (dllName == "Sci.Win.UI") dllName = "Sci.Proj";
 
-                        Type typeofControl = Type.GetType(dr["FormName"].ToString() + "," + dllName);
-                        AddTemplate(menu, dr["BarPrompt"].ToString(), (menuitem) => (Sci.Win.Tems.Base)CreateFormObject(menuitem, typeofControl, dr["FormParameter"].ToString()));
+                        string typeName = dr["FormName"].ToString() + "," + dllName;
+                        Type typeofControl = Type.GetType(typeName);
+                        AddTemplate(menu
+                            , dr["BarPrompt"].ToString()
+                            , (menuitem) => (Sci.Win.Tems.Base)CreateFormObject(
+                                    menuitem
+                                    , typeofControl
+                                    , dr["FormParameter"].ToString()
+                                    , typeName)
+                             );
                         break;
 
                     case "1": //SubMenu
@@ -217,11 +227,73 @@ namespace Sci.Production
             }
             catch (Exception e)
             {
-                MyUtility.Msg.ErrorBox(e.ToString());
+                this.ShowErr(e);                
             }
             return formClass;
         }
 
+        private Object CreateFormObject(ToolStripMenuItem menuItem, Type typeofControl, String strArg, string formName)
+        {
+            bool isSwitchFactory = formName.IndexOf(typeof(Sci.Production.Tools.SwitchFactory).FullName,StringComparison.OrdinalIgnoreCase)>=0;
+            if (isSwitchFactory) { 
+                var formObj = CreateFormObject( menuItem,  typeofControl,  strArg);
+
+                var form = (Form)formObj;
+                form.FormClosed += (s, e) =>
+                {
+                    if (form.DialogResult == DialogResult.OK)
+                    {
+                        Sci.Production.Main.Kill_Process();
+                    }
+                };
+
+                return formObj;
+            }
+            else if (!Debugger.IsAttached)
+            {
+                Process myProcess = Process.Start(Application.ExecutablePath
+                    , string.Format("userid:'{0}' factoryID:'{1}' formName:'{2}' menuName:'{3}' args:'{4}'"
+                        , Env.User.UserID
+                        , Env.User.Factory
+                        , formName
+                        , menuItem.Text
+                        , strArg));
+                myProcess.EnableRaisingEvents = true;
+                myProcess.Exited += myProcess_Exited;
+                proList.Add(myProcess);
+
+                return null;
+            }
+            else
+            {
+                var formObj = CreateFormObject(menuItem, typeofControl, strArg);
+                return formObj;
+            }
+
+        }
+
+
+        void myProcess_Exited(object sender, EventArgs e)
+        {
+            proList.Remove((Process)sender);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            Kill_Process();
+            base.OnClosed(e);
+
+        }
+        
+        public static void Kill_Process()
+        {
+            var processArray = proList.Where(p => !p.HasExited).ToArray();
+            proList.Clear();
+            foreach (var p in processArray)
+            {
+                p.Kill();
+            }
+        }
 
         public void DoLogout(bool confirm = true)
         {

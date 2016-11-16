@@ -68,6 +68,7 @@
             this.exit.TabIndex = 99;
             this.exit.Text = "Exit";
             this.exit.UseVisualStyleBackColor = true;
+            this.exit.Click += new System.EventHandler(this.exit_Click);
             // 
             // ok
             // 
@@ -78,6 +79,7 @@
             this.ok.TabIndex = 98;
             this.ok.Text = "Login";
             this.ok.UseVisualStyleBackColor = true;
+            this.ok.Click += new System.EventHandler(this.ok_Click);
             // 
             // pwd
             // 

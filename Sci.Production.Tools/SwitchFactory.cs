@@ -22,44 +22,8 @@ namespace Sci.Production.Tools
             act.Enabled = false;
             pwd.Text = Sci.Env.User.UserPassword;
             pwd.Enabled = false;
-            DataTable dtFactory;
-            DualResult result;
-            ok.Click += (s, e) =>
-                {
-                    if (MyUtility.Check.Empty((string)this.comboBox1.SelectedValue))
-                    {
-                        MyUtility.Msg.WarningBox("Please select one factory");
-                    }
-                    else
-                    {
-                        UserInfo user = (UserInfo) Sci.Env.User;
-                        //if (!(result = DBProxy.Current.Select(null, string.Format("SELECT id FROM MDivision WHERE ID = '{0}'", (string)this.comboBox1.SelectedValue), out dtFactory)))
-                        if (!(result = DBProxy.Current.Select(null, string.Format("SELECT MDivisionid FROM Factory WHERE ID = '{0}'", (string)this.comboBox1.SelectedValue), out dtFactory)))
-                        {
-                            ShowErr(result.ToString());
-                            return;
-                        }
-                        //if (dtFactory.Rows.Count > 0 && !MyUtility.Check.Empty(dtFactory.Rows[0]["id"].ToString()))
-                        if (dtFactory.Rows.Count > 0 && !MyUtility.Check.Empty(dtFactory.Rows[0]["MDivisionid"].ToString()))
-                        {
-                            //user.Keyword = dtFactory.Rows[0]["id"].ToString();
-                            user.Keyword = dtFactory.Rows[0]["MDivisionid"].ToString();
-                        }
-                        else
-                        {
-                            ShowErr("MDivisionid is not exist!");
-                            return;
-                        }
-                        user.Factory = (string)this.comboBox1.SelectedValue;
-                        Env.User = user;
-                        Close();
-                    }
-                };
 
-            exit.Click += (s, e) =>
-                {
-                    Close();
-                };
+            this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
         }
 
         protected override void OnFormLoaded()
@@ -97,6 +61,54 @@ namespace Sci.Production.Tools
                 comboBox1.DisplayMember = "Value";
                 comboBox1.SelectedValue = Sci.Env.User.Factory;
             }
+        }
+
+        private void ok_Click(object sender, EventArgs e)
+        {
+
+            DataTable dtFactory;
+            DualResult result;
+            if (MyUtility.Check.Empty((string)this.comboBox1.SelectedValue))
+            {
+                MyUtility.Msg.WarningBox("Please select one factory");
+            }
+            else
+            {
+                UserInfo user = (UserInfo)Sci.Env.User;
+                string newFactory = (string)this.comboBox1.SelectedValue;
+                bool isFactoryChanged = !newFactory.EqualString(Sci.Env.User.Factory);
+                //if (!(result = DBProxy.Current.Select(null, string.Format("SELECT id FROM MDivision WHERE ID = '{0}'", (string)this.comboBox1.SelectedValue), out dtFactory)))
+                if (!(result = DBProxy.Current.Select(null, string.Format("SELECT MDivisionid FROM Factory WHERE ID = '{0}'",newFactory), out dtFactory)))
+                {
+                    ShowErr(result.ToString());
+                    return;
+                }
+                //if (dtFactory.Rows.Count > 0 && !MyUtility.Check.Empty(dtFactory.Rows[0]["id"].ToString()))
+
+                if (dtFactory.Rows.Count > 0 && !MyUtility.Check.Empty(dtFactory.Rows[0]["MDivisionid"].ToString()))
+                {
+                    //user.Keyword = dtFactory.Rows[0]["id"].ToString();
+                    user.Keyword = dtFactory.Rows[0]["MDivisionid"].ToString();
+                }
+                else
+                {
+                    ShowErr("MDivisionid is not exist!");
+                    return;
+                }
+                user.Factory = (string)this.comboBox1.SelectedValue;
+                this.DialogResult = isFactoryChanged 
+                        ? System.Windows.Forms.DialogResult.OK
+                        : System.Windows.Forms.DialogResult.Cancel ;
+                Env.User = user;
+                Close();
+            }
+        }
+
+        private void exit_Click(object sender, EventArgs e)
+        {
+
+            this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            Close();
         }
     }
 }
