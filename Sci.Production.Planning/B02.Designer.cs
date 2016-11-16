@@ -38,8 +38,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(676, 395);
             // 
             // detailcont
             // 
@@ -49,6 +54,19 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Size = new System.Drawing.Size(676, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(676, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(900, 395);
+            // 
+            // tabs
+            // 
+            this.tabs.Size = new System.Drawing.Size(684, 424);
             // 
             // label3
             // 
@@ -95,8 +113,19 @@
             0,
             0});
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
             this.numericBox1.TabIndex = 5;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox1.Validating += new System.ComponentModel.CancelEventHandler(this.numericBox1_Validating);
             // 
             // numericBox2
             // 
@@ -116,8 +145,19 @@
             0,
             0});
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
             this.numericBox2.TabIndex = 6;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox2.Validating += new System.ComponentModel.CancelEventHandler(this.numericBox2_Validating);
             // 
             // numericBox3
             // 
@@ -138,12 +178,22 @@
             0,
             65536});
             this.numericBox3.Name = "numericBox3";
+            this.numericBox3.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox3.Size = new System.Drawing.Size(100, 23);
             this.numericBox3.TabIndex = 7;
+            this.numericBox3.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(908, 457);
+            this.ClientSize = new System.Drawing.Size(684, 457);
             this.IsSupportClip = false;
             this.IsSupportLocate = false;
             this.IsSupportPrint = false;
@@ -155,6 +205,8 @@
             this.detail.ResumeLayout(false);
             this.detailcont.ResumeLayout(false);
             this.detailcont.PerformLayout();
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
