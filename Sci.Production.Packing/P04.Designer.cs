@@ -272,7 +272,7 @@
             this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox1.Location = new System.Drawing.Point(81, 4);
             this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(100, 23);
+            this.displayBox1.Size = new System.Drawing.Size(125, 23);
             this.displayBox1.TabIndex = 7;
             // 
             // txtbrand1
