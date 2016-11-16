@@ -69,8 +69,7 @@ namespace Sci.Production.Planning
                 return false;
             }
 
-            if (CurrentMaintain["heads"].ToString() == "Embroidery" && CurrentMaintain["artworktypeid"].ToString() == "Embroidery")
-          //  .TrimEnd()==""
+            if (MyUtility.Check.Empty(CurrentMaintain["heads"]) && CurrentMaintain["artworktypeid"].ToString() == "Embroidery")
             {
                 MyUtility.Msg.WarningBox("< # of Heads > can not be empty!");
                 this.numericBox2.Focus();
