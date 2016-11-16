@@ -113,7 +113,7 @@ isnull((select sum(pd.ShipQty) from PackingList_Detail pd where pd.OrderID = s.O
 o.InspDate,s.StandardOutput,
 (select IIF(ctn = 0,0,Hours/ctn) from (Select isnull(sum(w.Hours),0) as Hours, Count(w.Date) as ctn from WorkHour w where FactoryID = s.FactoryID and w.SewingLineID = s.SewingLineID and w.Date between s.Inline and s.Offline and w.Hours > 0) a) as WorkHour,
 s.MaxEff,o.KPILETA,
-isnull((Select op.Reamrk from Order_PFHis op where op.ID = s.OrderID and op.AddDate = (Select Max(AddDate) from Order_PFHis where ID = s.OrderID)),'') as PFRemark,
+isnull((Select op.Remark from Order_PFHis op where op.ID = s.OrderID and op.AddDate = (Select Max(AddDate) from Order_PFHis where ID = s.OrderID)),'') as PFRemark,
 o.MTLETA,o.MTLExport,s.Inline,s.Offline,o.SciDelivery,o.BuyerDelivery,
 o.CPU*o.CPUFactor*(isnull(sl.Rate,100)/100) as CPU,IIF(o.VasShas=1,'Y','') as VasShas,o.ShipModeList,isnull(c.Alias,'') as Alias,isnull(SUBSTRING(ta.Artwork,1,LEN(ta.Artwork)-1),'') as ArtWork,
 isnull((select CONCAT(Remark,', ') from (select s1.SewingLineID+'('+s1.ComboType+'):'+CONVERT(varchar,s1.AlloQty) as Remark from SewingSchedule s1 where s1.OrderID = s.OrderID and s1.ID != s.ID) a for xml path('')),'') as Remark
