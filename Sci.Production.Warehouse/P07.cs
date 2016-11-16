@@ -1056,7 +1056,6 @@ Where a.id = '{0}' ", masterID);
 , a.seq1+a.seq2 as seq
 , a.seq1,a.seq2,a.Qty+a.Foc as Actualqty
 , round((a.Qty+a.Foc)*v.rate,2) as stockqty
-, '' as roll
 , '' as dyelot
 , '' as remark
 , '' as location
