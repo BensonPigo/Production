@@ -60,7 +60,7 @@ BEGIN
 			t.CMPPrice = s.CMPPrice ,
 			t.FTYGroup = s.FTy_Group ,
 			t.CPUFactor =0 ,
-			t.MDivisionID = '' ,
+			t.MDivisionID = s.FactoryID ,
 			t.AddName = s.AddName ,
 			t.AddDate = s.AddDate ,
 			t.EditName = iif(s.EditDate<=t.EditDate,'',s.EditName) ,
