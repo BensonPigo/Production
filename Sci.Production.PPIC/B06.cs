@@ -22,18 +22,20 @@ namespace Sci.Production.PPIC
                 IsSupportEdit = false;
                 IsSupportNew = false;
             }
-            string sqlCommand2 = "select IsSampleRoom from factory where ID = '" + Sci.Env.User.Factory + "'";
-            string IsSampleRoom = MyUtility.GetValue.Lookup(sqlCommand2, null);
-            if (IsSampleRoom == "False")
-            {
-                IsSupportCopy = false;
-                IsSupportDelete = false;
-                IsSupportEdit = false;
-                IsSupportNew = false;
-            }
+
+            //string sqlCommand2 = "select IsSampleRoom from factory where ID = '" + Sci.Env.User.Factory + "'";
+            //string IsSampleRoom = MyUtility.GetValue.Lookup(sqlCommand2, null);
+            //if (IsSampleRoom == "False")
+            //{
+            //    IsSupportCopy = false;
+            //    IsSupportDelete = false;
+            //    IsSupportEdit = false;
+            //    IsSupportNew = false;
+            //}
 
             InitializeComponent();
             this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
+            txtCell1.FactoryId = Sci.Env.User.Factory;
         }
 
         protected override void ClickNewAfter()
