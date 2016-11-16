@@ -292,7 +292,7 @@ order by ld.Seq1,ld.Seq2", masterID);
             dr["Description"] = "";
             dr["InQty"] = 0;
             dr["OutQty"] = 0;
-            dr["IssueDate"] = null;
+            dr["IssueDate"] = DBNull.Value;
             dr.EndEdit();
         }
 
@@ -481,8 +481,8 @@ where l.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             worksheet.Cells[5, 4] = MyUtility.Convert.GetString(CurrentMaintain["Shift"]) == "D" ? "Day" : MyUtility.Convert.GetString(CurrentMaintain["Shift"]) == "N" ? "Night" : "Subcon-Out";
             worksheet.Cells[6, 4] = MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]);
 
-            worksheet.Cells[4, 6] = txtuser1.DisplayBox1.Value;
-            worksheet.Cells[5, 6] = txtuser2.DisplayBox1.Value;
+            worksheet.Cells[4, 6] = txtuser1.TextBox1.Text + " " + txtuser1.DisplayBox1.Text;
+            worksheet.Cells[5, 6] = txtuser2.TextBox1.Text + " " + txtuser2.DisplayBox1.Text;
             worksheet.Cells[6, 6] = MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToString("d");
 
             int intRowsStart = 10;
