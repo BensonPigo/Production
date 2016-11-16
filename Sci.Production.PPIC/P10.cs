@@ -462,8 +462,8 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                                     : MyUtility.Convert.GetString(CurrentMaintain["Shift"]) == "N" ? "Night" : "Subcon-Out";
             worksheet.Cells[6, 4] = MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]);
 
-            worksheet.Cells[4, 6] = txtuser1.DisplayBox1.Text;
-            worksheet.Cells[5, 6] = txtuser2.DisplayBox1.Text;
+            worksheet.Cells[4, 6] = txtuser1.TextBox1.Text + " " + txtuser1.DisplayBox1.Text;
+            worksheet.Cells[5, 6] = txtuser2.TextBox1.Text + " " + txtuser2.DisplayBox1.Text;
             worksheet.Cells[6, 6] = MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToString("d");
 
             int intRowsStart = 10;
