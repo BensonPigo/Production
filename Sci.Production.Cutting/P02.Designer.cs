@@ -197,7 +197,7 @@
             // detail
             // 
             this.detail.Controls.Add(this.rightpanel);
-            this.detail.Size = new System.Drawing.Size(1048, 682);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             this.detail.Controls.SetChildIndex(this.detailbtm, 0);
             this.detail.Controls.SetChildIndex(this.detailcont, 0);
             this.detail.Controls.SetChildIndex(this.rightpanel, 0);
@@ -220,8 +220,8 @@
             this.detailbtm.Controls.Add(this.textbox_LastCutRef);
             this.detailbtm.Controls.Add(this.Qtybreak);
             this.detailbtm.Controls.Add(this.label2);
-            this.detailbtm.Location = new System.Drawing.Point(0, 647);
-            this.detailbtm.Size = new System.Drawing.Size(1048, 35);
+            this.detailbtm.Location = new System.Drawing.Point(0, 352);
+            this.detailbtm.Size = new System.Drawing.Size(892, 35);
             this.detailbtm.Controls.SetChildIndex(this.label2, 0);
             this.detailbtm.Controls.SetChildIndex(this.Qtybreak, 0);
             this.detailbtm.Controls.SetChildIndex(this.textbox_LastCutRef, 0);
@@ -458,7 +458,7 @@
             // Qtybreak
             // 
             this.Qtybreak.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Qtybreak.Location = new System.Drawing.Point(901, 1);
+            this.Qtybreak.Location = new System.Drawing.Point(745, 1);
             this.Qtybreak.Name = "Qtybreak";
             this.Qtybreak.Size = new System.Drawing.Size(144, 30);
             this.Qtybreak.TabIndex = 23;
@@ -1102,9 +1102,9 @@
             this.rightpanel.Controls.Add(this.displayBox_FabricRefno);
             this.rightpanel.Controls.Add(this.displayBox_FabricType);
             this.rightpanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.rightpanel.Location = new System.Drawing.Point(678, 0);
+            this.rightpanel.Location = new System.Drawing.Point(522, 0);
             this.rightpanel.Name = "rightpanel";
-            this.rightpanel.Size = new System.Drawing.Size(370, 647);
+            this.rightpanel.Size = new System.Drawing.Size(370, 352);
             this.rightpanel.TabIndex = 60;
             // 
             // P02
@@ -1115,12 +1115,11 @@
             this.GridAlias = "WorkOrder";
             this.GridUniqueKey = "ukey";
             this.IsSupportClip = false;
-            this.IsSupportDelete = false;
             this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
             this.IsSupportNew = false;
             this.KeyField1 = "id";
             this.Name = "P02";
-            this.Text = "P02.Cutting Work Order";
             this.WorkAlias = "Cutting";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
