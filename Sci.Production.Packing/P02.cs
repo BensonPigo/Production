@@ -148,13 +148,13 @@ namespace Sci.Production.Packing
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                         cmds.Add(sp1);
 
-                        string sqlCmd = "select Description,Weight from LocalItem where RefNo = @refno";
+                        string sqlCmd = "select Description,CtnWeight from LocalItem where RefNo = @refno";
                         DataTable LocalItemData;
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out LocalItemData);
                         if (result)
                         {
                             dr["Description"] = LocalItemData.Rows[0]["Description"].ToString();
-                            dr["GW"] = MyUtility.Convert.GetDouble(dr["NW"]) + MyUtility.Convert.GetDouble(LocalItemData.Rows[0]["Weight"]);
+                            dr["GW"] = MyUtility.Convert.GetDouble(dr["NW"]) + MyUtility.Convert.GetDouble(LocalItemData.Rows[0]["CtnWeight"]);
                         }
                         else
                         {
@@ -1352,7 +1352,7 @@ BEGIN
 			SET @currentqty = @shipqty
 			WHILE @currentqty > 0
 			BEGIN
-				IF @currentqty > @qtyperctn
+				IF @currentqty >= @qtyperctn
 					BEGIN
 						SET @seqcount = @seqcount + 1
 						SELECT @seq = REPLICATE('0', 6 - LEN(CONVERT(VARCHAR,@seqcount))) + CONVERT(VARCHAR,@seqcount)

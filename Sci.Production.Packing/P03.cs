@@ -467,7 +467,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                     }
                     else
                     {
-                        string seekSql = string.Format("select Description,Weight from LocalItem where RefNo = '{0}'", dr["RefNo"].ToString());
+                        string seekSql = string.Format("select Description,CtnWeight from LocalItem where RefNo = '{0}'", dr["RefNo"].ToString());
                         DataRow localItem;
                         if (MyUtility.Check.Seek(seekSql, out localItem))
                         {
