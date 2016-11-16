@@ -127,10 +127,12 @@ from PackData pd
 left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Article");
             #region 準備sql參數資料
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@brand", displayBox1.Value);
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@custcd",txtcustcd1.Text);
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@custcd", txtcustcd1.Text);
             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@orderType", textBox1.Text);
             System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter("@season", txtseason1.Text);
-            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter("@buyMonth", txtdropdownlist1.SelectedValue);
+            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
+            sp5.ParameterName = "@buyMonth";
+            sp5.Value = !MyUtility.Check.Empty(txtdropdownlist1.SelectedValue) ? txtdropdownlist1.SelectedValue : "";
             System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
             System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
             sp6.ParameterName = "@buyerDelivery1";
