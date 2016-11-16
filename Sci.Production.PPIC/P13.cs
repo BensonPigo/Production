@@ -590,7 +590,7 @@ where o.ID in ({0})", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.
                 if (dr["offlinea"] == DBNull.Value) sewof = "";
                 else sewof = Convert.ToDateTime(dr["offlinea"]).ToShortDateString();
 
-                updsql = updsql + string.Format("insert into cutting(ID,sewInline,sewoffline,mDivisionid,FactoryID,AddName,AddDate) Values('{0}','{1}','{2}','{3}','{4}',GetDate()); ", dr["cuttingsp"], sewin, sewof, Sci.Env.User.Keyword, Sci.Env.User.Factory, Sci.Env.User.UserID);
+                updsql = updsql + string.Format("insert into cutting(ID,sewInline,sewoffline,mDivisionid,FactoryID,AddName,AddDate) Values('{0}','{1}','{2}','{3}','{4}','{5}',GetDate()); ", dr["cuttingsp"].ToString(), sewin, sewof, Sci.Env.User.Keyword, Sci.Env.User.Factory, Sci.Env.User.UserID);
             }
             sqlcmd = string.Format(@"Select ord.cuttingsp,min(ord.sewinline) as inline ,max(ord.sewoffline) as offlinea 
             from orders ord,
