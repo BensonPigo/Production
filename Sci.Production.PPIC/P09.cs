@@ -10,6 +10,7 @@ using Ict;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
+using System.Data.SqlClient;
 
 namespace Sci.Production.PPIC
 {
@@ -221,6 +222,21 @@ order by rd.Seq1,rd.Seq2", masterID);
 
         protected override bool ClickPrint()
         {
+            List<SqlParameter> cmds = new List<SqlParameter>();
+            cmds.Add(new SqlParameter("@ID", CurrentMaintain["ID"].ToString()));
+            string sqlcmd = "Select r.ApvDate From ReplacementReport r where r.ID = @ID";
+            DataTable ApvDate;
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, cmds, out ApvDate);
+            if (!result)
+            {
+                ShowErr(result);
+                return false;
+            }
+            if (MyUtility.Check.Empty(ApvDate.Rows[0][0]))
+            {
+                MyUtility.Msg.WarningBox("It dosen't approve.");
+                return false;
+            }
             ToExcel(false);
 
             return base.ClickPrint();
