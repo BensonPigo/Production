@@ -74,7 +74,7 @@ as
 ,
 tmpLocalReceiving
 as
-(select 'Local Purchase  Receiving' as Type, l.Id, null as ETA, l.IssueDate as WhseArrival, '' as Consignee,'' as ShipMark,'' as Vessel,'' as CYCFS, '' as Seq
+(select distinct 'Local Purchase  Receiving' as Type, l.Id, null as ETA, l.IssueDate as WhseArrival, '' as Consignee,'' as ShipMark,'' as Vessel,'' as CYCFS, '' as Seq
  from LocalReceiving l, LocalReceiving_Detail ld
  where l.Id = ld.Id
  and ld.OrderId = @OrderID
