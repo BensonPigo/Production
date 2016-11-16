@@ -23,5 +23,10 @@ namespace Sci.Production.Cutting
             base.ClickNewAfter();
             CurrentMaintain["mDivisionid"] = keyWord;
         }
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            textBox1.ReadOnly = true;
+        }
     }
 }
