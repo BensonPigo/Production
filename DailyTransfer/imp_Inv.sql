@@ -217,7 +217,7 @@ SET
       ,a.Confirmed	      =b.Confirmed
       ,a.Qty	      =b.Qty
       ,a.Type	      =b.Type
-      ,a.TransferFactory	      =b.TransferFactory
+      ,a.TransferFactory	      = iif(c.MDivisionID is null,'',c.MDivisionID) 
       ,a.InventoryUkey	      =b.InventoryUkey
       ,a.InventoryRefnoId	      =b.InventoryRefnoId
       ,a.PoID	      =b.PoID
@@ -265,6 +265,7 @@ SET
       ,a.Seq70Seq2	      =b.Seq70Seq2
 from Production.dbo.Invtrans  as a 
 inner join Trade_To_Pms.dbo.Invtrans  as b ON a.id=b.id   and a.Ukey = b.Ukey
+left JOIN Production.dbo.SCIFty c on b.TransferFactory=c.ID
 where b.Confirmed=1
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.Invtrans (
@@ -323,14 +324,14 @@ INSERT INTO Production.dbo.Invtrans (
       ,Seq70Seq2
 )
 select 
- ID
+ b.ID
 	  ,Ukey
       ,ConfirmDate
       ,ConfirmHandle
       ,Confirmed
       ,Qty
       ,Type
-      ,TransferFactory
+      ,iif(c.MDivisionID is null,'',c.MDivisionID) as TransferFactory
       ,InventoryUkey
       ,InventoryRefnoId
       ,PoID
@@ -369,14 +370,15 @@ select
       ,UnitID
       ,BomCustPONo
       ,BomZipperInsert
-      ,AddName
-      ,AddDate
-      ,EditDate
-      ,EditName
+      ,b.AddName
+      ,b.AddDate
+      ,b.EditDate
+      ,b.EditName
       ,Seq70PoID
       ,Seq70Seq1
       ,Seq70Seq2
-from Trade_To_Pms.dbo.Invtrans  as b
+from Trade_To_Pms.dbo.Invtrans as b
+left JOIN Production.dbo.SCIFty c on b.TransferFactory=c.ID
 where not exists(select id from Production.dbo.Invtrans  as a where a.id = b.id  and a.Ukey = b.Ukey)
 AND b.Confirmed=1
 --InReason  InvtransReason
