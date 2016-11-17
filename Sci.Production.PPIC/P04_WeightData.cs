@@ -13,10 +13,22 @@ namespace Sci.Production.PPIC
 {
     public partial class P04_WeightData : Sci.Win.Subs.Input4
     {
+        string uk;
         public P04_WeightData(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
+            uk = keyvalue1;
             InitializeComponent();
+        }
+        protected override DualResult OnRequery(out DataTable datas)
+        {
+            datas = null;
+            string sql = string.Format(@"select *
+                            from Style_WeightData sw where StyleUkey = '{0}'
+                            order by (select seq from Style_SizeCode ss where ss.StyleUkey = sw.StyleUkey and ss.SizeCode = sw.SizeCode)"
+                            , uk);
+            DualResult result;
+            return result = DBProxy.Current.Select(null, sql, out datas);
         }
 
         protected override bool OnGridSetup()
