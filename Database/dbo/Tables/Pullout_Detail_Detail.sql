@@ -14,6 +14,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Pullout Report Detail', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Pullout_Detail_Detail';
 
@@ -48,4 +50,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0t
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'UKey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Pullout_Detail_Detail', @level2type = N'COLUMN', @level2name = N'Pullout_DetailUKey';
+
+
+GO
+CREATE NONCLUSTERED INDEX [Index_OrderIDArticleSizeCode]
+    ON [dbo].[Pullout_Detail_Detail]([OrderID] ASC, [Article] ASC, [SizeCode] ASC)
+    INCLUDE([Pullout_DetailUKey], [ShipQty]);
 
