@@ -537,6 +537,7 @@ Database/dbo/Views/ShowName.sql -text
 Database/dbo/Views/View_OrderFAColor.sql -text
 Database/dbo/Views/View_Order_Artworks.sql -text
 Database/dbo/Views/View_Orders_subprocess.sql -text
+Database/dbo/Views/View_ShowName.sql -text
 Database/dbo/Views/View_TransactionList.sql -text
 Database/dbo/Views/View_Unitrate.sql -text
 Database/dbo/Views/dbo.View_Unitrate.sql -text
