@@ -45,18 +45,7 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
 
-            if (history == "0")
-            {
-                this.Text = "P02.Cutting Work Order";
-                this.IsSupportEdit = true;
-                this.DefaultFilter = string.Format("mDivisionid = '{0}' and WorkType is not null and WorkType != '' and Finished = 0", keyWord);
-            }
-            else
-            {
-                this.Text = "P02.Cutting Work Order(History)";
-                this.IsSupportEdit = false;
-                this.DefaultFilter = string.Format("mDivisionid = '{0}' and WorkType is not null and WorkType != '' and Finished = 1", keyWord);
-            }
+           
             InitializeComponent();
 
             Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
@@ -90,6 +79,19 @@ namespace Sci.Production.Cutting
 
             sizeratioMenuStrip.Enabled = this.EditMode;
             distributeMenuStrip.Enabled = this.EditMode;
+
+            if (history == "0")
+            {
+                this.Text = "P02.Cutting Work Order";
+                this.IsSupportEdit = true;
+                this.DefaultFilter = string.Format("mDivisionid = '{0}' and WorkType is not null and WorkType != '' and Finished = 0", keyWord);
+            }
+            else
+            {
+                this.Text = "P02.Cutting Work Order(History)";
+                this.IsSupportEdit = false;
+                this.DefaultFilter = string.Format("mDivisionid = '{0}' and WorkType is not null and WorkType != '' and Finished = 1", keyWord);
+            }
         }
 
         protected override void OnDetailEntered()
