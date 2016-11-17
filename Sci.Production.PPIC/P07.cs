@@ -49,8 +49,6 @@ namespace Sci.Production.PPIC
                 return;
             }
 
-            setcuttingdate();
-
             string sqlCmd = string.Format("exec dbo.usp_APSDataDownLoad '{0}','{1}','{2}','{3}'", MyUtility.Convert.GetString(dr["SQLServerName"]), MyUtility.Convert.GetString(dr["APSDatabaseName"]), Sci.Env.User.Factory, Sci.Env.User.UserID);
             DualResult Result = DBProxy.Current.Execute(null, sqlCmd);
             if (!Result)
@@ -58,6 +56,8 @@ namespace Sci.Production.PPIC
                 ShowErr(sqlCmd, Result);
                 return;
             }
+
+            setcuttingdate();
         }
 
         //Close
