@@ -41,9 +41,22 @@ namespace Sci.Production.Warehouse
             this.dis_desc.Text = CurrentDetailData["description"].ToString();
             this.num_requestqty.Text = CurrentDetailData["requestqty"].ToString();
             this.num_accuIssue.Text = CurrentDetailData["accu_issue"].ToString();
-            this.num_balance.Value = (decimal)CurrentDetailData["requestqty"] - (decimal)CurrentDetailData["accu_issue"];
+       
+            string STRrequestqty = CurrentDetailData["requestqty"].ToString();
+            string STRaccu_issue = CurrentDetailData["accu_issue"].ToString();
+            decimal DECrequestqty;
+            decimal DECaccu_issue;
+            if (!decimal.TryParse(STRrequestqty, out DECrequestqty))
+            { DECrequestqty = 0; }
+            if (!decimal.TryParse(STRaccu_issue, out DECaccu_issue))
+            { DECaccu_issue = 0; }
+            this.num_balance.Value = DECrequestqty - DECaccu_issue;
             this.num_issue.Text = CurrentDetailData["qty"].ToString();
-            this.num_variance.Value = (decimal)CurrentDetailData["requestqty"] - (decimal)CurrentDetailData["accu_issue"] - (decimal)CurrentDetailData["qty"];
+            string STRqty = CurrentDetailData["qty"].ToString();
+            decimal DECqty;
+            if (!decimal.TryParse(STRqty, out DECqty))
+            { DECqty = 0; }
+            this.num_variance.Value = DECrequestqty - DECaccu_issue - DECqty;
         }
 
         protected override bool OnGridSetup()
