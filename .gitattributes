@@ -533,7 +533,6 @@ Database/dbo/Tables/WorkOrder_Estcutdate.sql -text
 Database/dbo/Tables/WorkOrder_PatternPanel.sql -text
 Database/dbo/Tables/WorkOrder_SizeRatio.sql -text
 Database/dbo/Tables/dbo.InventoryRefno.sql -text
-Database/dbo/Views/ShowName.sql -text
 Database/dbo/Views/View_OrderFAColor.sql -text
 Database/dbo/Views/View_Order_Artworks.sql -text
 Database/dbo/Views/View_Orders_subprocess.sql -text
