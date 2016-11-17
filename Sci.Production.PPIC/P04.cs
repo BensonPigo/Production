@@ -28,7 +28,6 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
             MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "CM,INCH");
-            MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "Male,Female");
         }
 
         protected override void OnDetailEntered()
