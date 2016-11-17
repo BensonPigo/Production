@@ -54,7 +54,7 @@ namespace Sci.Production.Cutting
             select c.*,z.seq
             from c
             inner join Order_SizeCode z on z.id = c.POID and z.SizeCode = c.SizeCode
-            order by c.id,article,seq,c.qty,c.ColorID,c.sizecode,PatternPanel", cutid);
+            order by c.id,article,z.seq,PatternPanel", cutid);
             DataTable gridtb;
             DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
 
