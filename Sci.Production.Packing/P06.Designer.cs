@@ -439,7 +439,7 @@
             this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox6.Location = new System.Drawing.Point(623, 31);
             this.displayBox6.Name = "displayBox6";
-            this.displayBox6.Size = new System.Drawing.Size(100, 23);
+            this.displayBox6.Size = new System.Drawing.Size(130, 23);
             this.displayBox6.TabIndex = 30;
             // 
             // numericBox3

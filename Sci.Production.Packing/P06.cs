@@ -189,7 +189,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
                         //sql參數
                         System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@orderid", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
                         System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@seq", MyUtility.Convert.GetString(CurrentMaintain["OrderShipmodeSeq"]));
-                        System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@article", MyUtility.Convert.GetString(CurrentMaintain["Article"]));
+                        System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@article", MyUtility.Convert.GetString(dr["Article"]));
                         System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter("@sizecode", e.FormattedValue.ToString());
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
