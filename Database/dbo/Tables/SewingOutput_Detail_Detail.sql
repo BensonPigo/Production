@@ -15,6 +15,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Sewing Dailiy output(車縫日報明細檔)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_Detail_Detail';
 
@@ -53,4 +55,14 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0t
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Detail Key', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_Detail_Detail', @level2type = N'COLUMN', @level2name = N'SewingOutput_DetailUKey';
+
+
+GO
+CREATE NONCLUSTERED INDEX [SewingOutput_DetailUkey]
+    ON [dbo].[SewingOutput_Detail_Detail]([SewingOutput_DetailUKey] ASC, [Article] ASC, [SizeCode] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [OrderID]
+    ON [dbo].[SewingOutput_Detail_Detail]([OrderId] ASC, [Article] ASC, [SizeCode] ASC, [ComboType] ASC);
 
