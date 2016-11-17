@@ -105,7 +105,7 @@ namespace Sci.Production.PublicForm
             ndr["Article"] = "QT FabricCode";
             gridtb.Rows.Add(ndr);
             ndr = gridtb.NewRow();
-            ndr["Article"] = "QT Width";
+            ndr["Article"] = "QT With";
             gridtb.Rows.Add(ndr);
             foreach (DataRow dr in headertb0.Rows)
             {
