@@ -24,6 +24,9 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            string factory = Sci.Env.User.Factory;
+            string Mdvision = Sci.Env.User.Keyword;
+
           //  ChangeDetailColor();
             di_fabrictype.Add("F", "Fabric");
             di_fabrictype.Add("A", "Accessory");

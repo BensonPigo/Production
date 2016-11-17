@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace Sci.Production.Warehouse
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
+        string UserID = Sci.Env.User.UserID;
 
         public P07(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -564,6 +566,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
 
             StringBuilder sqlupd2 = new StringBuilder();
             String sqlcmd = "", sqlupd3 = "", ids = "", sqlcmd4 = "";
+
             DualResult result, result2, result3;
             DataTable datacheck;
 
@@ -812,6 +815,19 @@ drop table #tempUkeylocation;
 ,packingarrival = (select PackingReceive from dbo.receiving where id='{2}'), editname = '{0}' , editdate = GETDATE()
                                 where id = '{1}'", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain["id"]);
             #endregion
+
+            #region 更新FIR,AIR資料  
+            
+            List<SqlParameter> Fir_Air_Proce = new List<SqlParameter>();
+            Fir_Air_Proce.Add(new SqlParameter("@ID",CurrentMaintain["ID"]));
+            Fir_Air_Proce.Add(new SqlParameter("@LoginID",UserID));
+
+            DBProxy.Current.ExecuteSP(null, "insert_Air_Fir", Fir_Air_Proce);
+
+            #endregion
+
+
+
 
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
