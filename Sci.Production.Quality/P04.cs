@@ -181,17 +181,14 @@ namespace Sci.Production.Quality
             #endregion
 
             #region inspectorCell
-            //inspectorCell.CellEditable += (s, e) =>
-            //{
-            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-            //    if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
-            //};
+
             inspectorCell.CellMouseClick += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
                 if (this.EditMode == false) return;
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
+                    DataRow dr_showname;
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                     string scalecmd = @"select id,name from Pass1 where Resign is null";
                     SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Inspector"].ToString());
@@ -201,6 +198,10 @@ namespace Sci.Production.Quality
                         return;
                     }
                     dr["Inspector"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                    if (MyUtility.Check.Seek(string.Format(@"select * from view_ShowName where id ='{0}'", item1.GetSelectedString()), out dr_showname))
+                    {
+                        dr["Showname"] = dr_showname["Name_Extno"];
+                    }
                 }
             };
             inspectorCell.EditingMouseDown += (s, e) =>
@@ -209,6 +210,7 @@ namespace Sci.Production.Quality
                 if (this.EditMode == false) return;
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
+                    DataRow dr_showname;
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                     string scalecmd = @"select id,name from Pass1 where Resign is null";
                     SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Inspector"].ToString());
@@ -217,19 +219,27 @@ namespace Sci.Production.Quality
                     {
                         return;
                     }
-                    dr["Inspector"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                    dr["Inspector"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView                    
+                    if (MyUtility.Check.Seek(string.Format(@"select * from view_ShowName where id ='{0}'", item1.GetSelectedString()), out dr_showname))
+                    {
+                        dr["Showname"] = dr_showname["Name_Extno"];
+                    }
                 }
             };
             inspectorCell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode) return;// 
-                if (e.RowIndex == -1) return; //沒東西 return
-                if (CurrentDetailData == null) return; // 沒資料 return
+                if (e.RowIndex == -1) return; //沒東西 return               
 
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 DataRow dr_cmd;
                 DataRow dr_showname;
-
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    dr["inspector"] = "";
+                    dr["Showname"] = "";
+                    return; // 沒資料 return
+                } 
                     string cmd = string.Format(@"select * from pass1 where id='{0}' and Resign is null",e.FormattedValue);                    
                     
                     if (MyUtility.Check.Seek(cmd,out dr_cmd))
@@ -245,6 +255,7 @@ namespace Sci.Production.Quality
                     }
                     else
                     {
+                        MyUtility.Msg.WarningBox(string.Format("< Inspector> : {0} not found!!!",e.FormattedValue));
                         dr["EditName"] = loginID;
                         dr["EditDate"] = DateTime.Now.ToShortDateString();
                         dr["inspector"] = "";
