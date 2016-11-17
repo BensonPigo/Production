@@ -17,6 +17,7 @@ namespace Sci.Production.Planning
     {
         Dictionary<string, string> di_inhouseOsp2 = new Dictionary<string, string>();
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        DataGridViewColumn col_Fty, col_season, col_style;
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -25,14 +26,14 @@ namespace Sci.Production.Planning
 
         }
 
-       
+
 
         protected override void OnFormLoaded()
         {
 
             base.OnFormLoaded();
             //grid2.AutoGenerateColumns = true;
-
+           
             dateRange1.Value1 = DateTime.Now.AddMonths(1);
             dateRange1.Value2 = DateTime.Now.AddMonths(2).AddDays(-1);
 
@@ -172,37 +173,34 @@ namespace Sci.Production.Planning
                     ddr["suppnm"] = x[0][1];
 
                 }
-               
-                
             };
-             ts.CellValidating += (s, e) =>
-                {
-                    string Code = e.FormattedValue.ToString();//抓到當下的cell值
-                    DataRow dr = grid1.GetDataRow(e.RowIndex); //抓到當下的row
+            ts.CellValidating += (s, e) =>
+               {
+                   string Code = e.FormattedValue.ToString();//抓到當下的cell值
+                   DataRow dr = grid1.GetDataRow(e.RowIndex); //抓到當下的row
 
-                    if (Code != dr["localSuppid"].ToString())
-                    {
-                        MyUtility.Msg.WarningBox("This supp id is wrong");
-                        dr["localSuppid"] = "";
-                        e.Cancel = true;
-                        return;
-                    }
-
-
-                };
+                   if (Code != dr["localSuppid"].ToString())
+                   {
+                       MyUtility.Msg.WarningBox("This supp id is wrong");
+                       dr["localSuppid"] = "";
+                       dr["suppnm"] = "";
+                       e.Cancel = true;
+                       return;
+                   }
+               };
 
 
 
             #endregion
-
+           
             //設定Grid1的顯示欄位
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-                .Text("FactoryID", header: "Fac", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true)
-                .Text("Styleid", header: "Style", width: Widths.AnsiChars(15), settings: ts1, iseditingreadonly: true)
-                .Text("seasonid", header: "Season", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("FactoryID", header: "Fac", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true).Get(out col_Fty)
+                .Text("Styleid", header: "Style", width: Widths.AnsiChars(15), settings: ts1, iseditingreadonly: true).Get(out col_style)
+                .Text("seasonid", header: "Season", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out col_season)
                 .Text("POID", header: "Mother SP", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
                 .Text("id", header: "SP#", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
                 .Text("article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -226,11 +224,13 @@ namespace Sci.Production.Planning
                  .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
                  .Text("msg", header: "Error Message", width: Widths.AnsiChars(20), settings: ts1, iseditingreadonly: true)
                   ;
+            foreach (DataGridViewColumn col in grid1.Columns) { col.SortMode = DataGridViewColumnSortMode.NotSortable; } //關掉header排序
+            this.grid1.ColumnHeaderMouseClick += grid1_ColumnHeaderMouseClick;
+
             col_inhouseosp.DataSource = new BindingSource(di_inhouseOsp2, null);
             col_inhouseosp.ValueMember = "Key";
             col_inhouseosp.DisplayMember = "Value";
-            grid1.Columns[5].Frozen = true;  //SP#
-
+            grid1.Columns[5].Frozen = true;//SP#
             Helper.Controls.Grid.Generator(this.grid2)
                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(6))
                 .Numeric("totalqty", header: "M Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 3, iseditingreadonly: true)
@@ -238,13 +238,36 @@ namespace Sci.Production.Planning
                 .Numeric("Totaltms", header: "Total Tms", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true); ;
             
         }
-     
+            void grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.ColumnIndex == this.col_Fty.Index )
+            {
+                if (null != this.dtData) 
+                {
+                    this.dtData.DefaultView.Sort = "factoryID,seasonID,styleID";
+                    grid1.DataSource = dtData;
+
+                }
+            }
+            if (e.ColumnIndex == this.col_season.Index)
+            {
+                if (null != this.dtData)
+                {
+                    this.dtData.DefaultView.Sort = "seasonID,styleID";
+                    grid1.DataSource = dtData;
+
+                }
+            }
+        }
+
+        DataTable dtData = null;
+    
 
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
             numericBox4.Value = 0;
-            DataTable dtData;
+           // DataTable dtData;
             string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, styleid, seasonid, localsuppid, inhouseosp, factoryid,inline_b,inline_e,artworktypeid;
             sewinline_b = null;
             sewinline_e = null;
@@ -252,7 +275,8 @@ namespace Sci.Production.Planning
             sciDelivery_e = null;
             inline_b = null;
             inline_e = null;
-
+            bool chkprice;
+        
             styleid = txtstyle1.Text;
             seasonid = txtseason1.Text;
             localsuppid = txtsubcon1.TextBox1.Text;
