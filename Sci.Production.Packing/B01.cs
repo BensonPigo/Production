@@ -15,16 +15,5 @@ namespace Sci.Production.Packing
         {
             InitializeComponent();
         }
-        protected override void ClickNewAfter()
-        {
-            base.ClickNewAfter();
-            CurrentMaintain["Type"] = "OG";
-        }
-        protected override void ClickEditAfter()
-        {
-            base.ClickEditAfter();
-            textBox1.ReadOnly = true;
-        }
-
     }
 }
