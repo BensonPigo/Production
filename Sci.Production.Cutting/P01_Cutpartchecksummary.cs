@@ -84,12 +84,12 @@ namespace Sci.Production.Cutting
             gridResult = DBProxy.Current.Select(null, fabcodesql, out panneltb);
             foreach (DataRow dr in gridtb.Rows)
             {
-                complete = true;
+                complete = false;
                 DataRow[] sel = panneltb.Select(string.Format("Article = '{0}'", dr["Article"]));
                 foreach (DataRow pdr in sel)
                 {
 
-                    if (MyUtility.Convert.GetDecimal(dr["Qty"]) > MyUtility.Convert.GetDecimal(dr[pdr["Patternpanel"].ToString()])) complete = false;
+                    if (MyUtility.Convert.GetDecimal(dr["Qty"]) <= MyUtility.Convert.GetDecimal(dr[pdr["Patternpanel"].ToString()])) complete = true;
 
                 }
                 if (complete) dr["Complete"] = "Y";
