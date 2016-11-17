@@ -112,8 +112,8 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.textBox6);
             this.masterpanel.Controls.Add(this.button6);
+            this.masterpanel.Controls.Add(this.textBox6);
             this.masterpanel.Controls.Add(this.textBox7);
             this.masterpanel.Controls.Add(this.comboBox1);
             this.masterpanel.Controls.Add(this.textBox4);
@@ -247,9 +247,9 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox4, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button6, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox6, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.button6, 0);
             // 
             // detailpanel
             // 
