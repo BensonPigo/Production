@@ -82,16 +82,21 @@ namespace Sci.Production.Quality
         {                 
 
             DataTable dt = (DataTable)e.Details;
+            DataRow dr_showname;
 
             dt.Columns.Add("Send", typeof(string));
             dt.Columns.Add("Receive", typeof(string));
             dt.Columns.Add("NewKey", typeof(int));
             dt.Columns.Add("LastEditName", typeof(string));
+            dt.Columns.Add("Showname", typeof(string));
             int i = 0;
 
             foreach (DataRow dr in dt.Rows)
             {
-
+                if (MyUtility.Check.Seek(string.Format(@"select * from view_ShowName where id ='{0}'", dt.Rows[i]["Inspector"]), out dr_showname))
+                {
+                    dr["Showname"] = dr_showname["Name_Extno"];
+                }
                 dr["NewKey"] = i;
                 dr["Send"] = "";
                 dr["Receive"] = "";
@@ -149,8 +154,7 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorTextColumnSettings ReceiverCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorComboBoxColumnSettings ResultValid = new DataGridViewGeneratorComboBoxColumnSettings();
             DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
-            DataGridViewGeneratorTextColumnSettings SendChangeCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ReceiverChangeCell = new DataGridViewGeneratorTextColumnSettings();
+
             
             
 
@@ -161,51 +165,34 @@ namespace Sci.Production.Quality
             ResultComboCell.ValueMember = "Key";
             ResultComboCell.DisplayMember = "Value";
 
-            
-
-            #region CellEditable 事件
-            //inspDateCell.CellEditable += (s, e) =>
-            //{
-            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-            //    if (this.EditMode && !MyUtility.Check.Empty(dr["SendDate"]) && !MyUtility.Check.Empty(dr["ReceiveDate"])) e.IsEditable = true;
-            //    else
-            //        e.IsEditable = false;
-            //};
-            ResultValid.CellEditable += (s, e) =>
+            #region inspDateCell
+            inspDateCell.CellValidating += (s, e) =>
             {
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
+
+                dr["EditName"] = loginID;
+                dr["EditDate"] = DateTime.Now.ToShortDateString();
+                if (!MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    dr["inspdate"] = e.FormattedValue;
+                }
+
             };
-            //ResultComboCell.CellEditable += (s, e) =>
-            //{
-            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-            //    if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
-            //};
+            #endregion
+
+            #region inspectorCell
             //inspectorCell.CellEditable += (s, e) =>
             //{
             //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
             //    if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
             //};
-            SendCell.CellEditable += (s, e) =>
-            {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (this.EditMode == true && MyUtility.Check.Empty(dr["SendDate"])) e.IsEditable = false;
-            };
-            ReceiveCell.CellEditable += (s, e) =>
-            {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (this.EditMode == true && MyUtility.Check.Empty(dr["ReceiveDate"])) e.IsEditable = false;
-            };
-            #endregion
-
-            #region MouseClick 事件
             inspectorCell.CellMouseClick += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
                 if (this.EditMode == false) return;
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
+                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                     string scalecmd = @"select id,name from Pass1 where Resign is null";
                     SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Inspector"].ToString());
                     DialogResult result = item1.ShowDialog();
@@ -213,7 +200,7 @@ namespace Sci.Production.Quality
                     {
                         return;
                     }
-                    dr["Inspector"] =item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                    dr["Inspector"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
                 }
             };
             inspectorCell.EditingMouseDown += (s, e) =>
@@ -233,9 +220,68 @@ namespace Sci.Production.Quality
                     dr["Inspector"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
                 }
             };
+            inspectorCell.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) return;// 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (CurrentDetailData == null) return; // 沒資料 return
+
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                DataRow dr_cmd;
+                DataRow dr_showname;
+
+                    string cmd = string.Format(@"select * from pass1 where id='{0}' and Resign is null",e.FormattedValue);                    
+                    
+                    if (MyUtility.Check.Seek(cmd,out dr_cmd))
+                    {
+                        dr["EditName"] = loginID;
+                        dr["EditDate"] = DateTime.Now.ToShortDateString();
+                        dr["inspector"] = e.FormattedValue;
+                        if (MyUtility.Check.Seek(string.Format(@"select * from view_ShowName where id ='{0}'", e.FormattedValue), out dr_showname))
+                        {
+                            dr["Showname"] = dr_showname["Name_Extno"];
+                        }
+   
+                    }
+                    else
+                    {
+                        dr["EditName"] = loginID;
+                        dr["EditDate"] = DateTime.Now.ToShortDateString();
+                        dr["inspector"] = "";
+                        dr["Showname"] = "";
+                        dr.EndEdit();
+                        e.Cancel = true; return;
+                    }                
+                CurrentDetailData.EndEdit();
+                this.update_detailgrid_CellValidated(e.RowIndex);
+            };
+            #endregion
+
+            #region CommentsCell
+            CommentsCell.CellValidating += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["Remark"]))
+                {
+                    dr["EditName"] = loginID;
+                    dr["EditDate"] = DateTime.Now.ToShortDateString();
+                    if (!MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["Remark"] = e.FormattedValue;
+                    }
+                }
+            };
+            #endregion
+
+            #region SendCell
+            SendCell.CellEditable += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (this.EditMode == true && MyUtility.Check.Empty(dr["SendDate"])) e.IsEditable = false;
+            };
             SendCell.EditingMouseClick += (s, e) =>
             {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["Send"]))
                 {
                     dr["Send"] = loginID;
@@ -244,10 +290,21 @@ namespace Sci.Production.Quality
                     dr["EditDate"] = DateTime.Now.ToShortDateString();
                 }
             };
-        
+            #endregion
+
+            #region SenderCell
+            #endregion
+
+            #region ReceiveCell
+            ReceiveCell.CellEditable += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (this.EditMode == true && MyUtility.Check.Empty(dr["ReceiveDate"])) e.IsEditable = false;
+            };
+
             ReceiveCell.CellMouseClick += (s, e) =>
             {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["Receive"]))
                 {
                     dr["Receive"] = loginID;
@@ -256,23 +313,17 @@ namespace Sci.Production.Quality
                     dr["EditDate"] = DateTime.Now.ToShortDateString();
                 }
             };
-          
             #endregion
 
-            #region Valid 事件
-            inspDateCell.CellValidating += (s, e) =>
-            {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);             
-                                      
-                    dr["EditName"] = loginID;
-                    dr["EditDate"] = DateTime.Now.ToShortDateString();
-                    if (!MyUtility.Check.Empty(e.FormattedValue))
-                    {
-                        dr["inspdate"] = e.FormattedValue;
-                    }
-                    
-            };
+            #region ReceiverCell
+            #endregion
 
+            #region ResultValid
+            ResultValid.CellEditable += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
+            };
             ResultValid.CellValidating += (s, e) =>
             {
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
@@ -283,46 +334,21 @@ namespace Sci.Production.Quality
                     if (!MyUtility.Check.Empty(e.FormattedValue))
                     {
                         dr["Result"] = e.FormattedValue;
-                    }                    
+                    }
                 }
             };
-            inspectorCell.CellValidating += (s, e) =>
-                {
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);    
-                    if (dr.RowState == DataRowState.Modified)
-                    {
-                        DataTable dt;
-                        string cmd = "select * from pass1 where id=@id and Resign is null";
-                        List<SqlParameter> spam = new List<SqlParameter>();
-                        spam.Add(new SqlParameter("@id", e.FormattedValue));
-                        DualResult result;
-                        if (result = DBProxy.Current.Select(null, cmd, spam, out dt))
-                        {
-                            if (dt.Rows.Count > 0)
-                            {
-                                dr["EditName"] = loginID;
-                                dr["EditDate"] = DateTime.Now.ToShortDateString();
-                                dr["inspector"] = e.FormattedValue;
-                            }
-                        }
-                    } 
-                
-                };
-            CommentsCell.CellValidating += (s, e) =>
-                {
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    if (MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["Remark"]))
-                    {
-                        dr["EditName"] = loginID;
-                        dr["EditDate"] = DateTime.Now.ToShortDateString();
-                        if (!MyUtility.Check.Empty(e.FormattedValue))
-                        {
-                            dr["Remark"] = e.FormattedValue;
-                        }                        
-                    }
-                };
            
             #endregion
+
+            #region ResultComboCell
+            //ResultComboCell.CellEditable += (s, e) =>
+            //{
+            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+            //    if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
+            //};
+            
+            #endregion
+
 
             
 
@@ -333,7 +359,7 @@ namespace Sci.Production.Quality
             .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), settings: inspDateCell)
             .ComboBox("Result", header: "Result", width: Widths.AnsiChars(10), settings: ResultComboCell)//.Get(out ResultComboCell)
             .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(10),settings:inspectorCell)
-            .Text("Inspector", header: "Inspector Name", width: Widths.AnsiChars(10),iseditingreadonly:true)
+            .Text("Showname", header: "Inspector Name", width: Widths.AnsiChars(20),iseditingreadonly:true)
             .Text("Remark", header: "Comments", width: Widths.AnsiChars(10),settings:CommentsCell)
             .Button("Send", null, header: "Send", width: Widths.AnsiChars(5), onclick: btnSend)            
             .Text("Sender", header: "Sender", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -466,7 +492,11 @@ left join Order_Qty c on a.ID=c.ID and c.Article=b.Article where a.id=@orderID";
                 }
             }
         }
-     
+
+        void update_detailgrid_CellValidated(int RowIndex)
+        {
+            this.detailgrid.InvalidateRow(RowIndex);
+        }
       
         private void Send_Mail()
         {           
