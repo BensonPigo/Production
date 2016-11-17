@@ -9,6 +9,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Transactions;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Sewing
 {
@@ -597,6 +598,16 @@ order by a.OrderId,os.Seq";
             {
                 MyUtility.Msg.WarningBox("The date earlier than Sewing Lock Date, can't delete.");
                 return false;
+            }
+
+            //第3層SewingOutput_Detail_Detail刪除,以當前SewingOutput_DetailUKey為條件
+            string sqlcmdD ="Delete SewingOutput_Detail_Detail where SewingOutput_DetailUKey = @K";
+            List<SqlParameter> ps = new List<SqlParameter>();
+            ps.Add(new SqlParameter("@K", CurrentDetailData["Ukey"]));
+            DualResult result;
+            if (!(result =DBProxy.Current.Execute(null, sqlcmdD, ps)))
+            {
+                ShowErr(result);
             }
 
             return base.ClickDeleteBefore();
