@@ -1081,6 +1081,7 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
             int groupRec = PrintGroupData.Rows.Count, excelRow = 4, printRec = 1, printCtnCount = 0;
 
             string seq = "000000", article = "XXXX0000", size = "XXXX0000";
+            int qtyPerCTN = -1;
             StringBuilder articleSize = new StringBuilder();
 
             for (int i = 0; ; i++)
@@ -1127,11 +1128,12 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
                                 worksheet.Cells[excelRow, 1] = MyUtility.Convert.GetString(dr["Article"]) + ' ' + MyUtility.Convert.GetString(dr["Color"]);
                                 article = MyUtility.Convert.GetString(dr["Article"]);
                             }
-                            if (size != MyUtility.Convert.GetString(dr["SizeCode"]))
+                            if (size != MyUtility.Convert.GetString(dr["SizeCode"]) || qtyPerCTN != MyUtility.Convert.GetInt(dr["QtyPerCTN"]))
                             {
                                 worksheet.Cells[excelRow, 2] = MyUtility.Convert.GetString(dr["SizeCode"]);
                                 worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(dr["SizeSpec"]);
                                 size = MyUtility.Convert.GetString(dr["SizeCode"]);
+                                qtyPerCTN = MyUtility.Convert.GetInt(dr["QtyPerCTN"]);
                                 worksheet.Cells[excelRow, 4] = MyUtility.Convert.GetString(dr["QtyPerCTN"]);
                             }
                         }
