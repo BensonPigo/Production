@@ -100,6 +100,7 @@ namespace Sci.Production.Tools
                         ? System.Windows.Forms.DialogResult.OK
                         : System.Windows.Forms.DialogResult.Cancel ;
                 Env.User = user;
+                Sci.Env.App.Text = string.Format("Production Management System-{0}-({1})", Sci.Env.User.Factory, Sci.Env.User.UserID);
                 Close();
             }
         }

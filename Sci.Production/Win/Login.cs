@@ -95,7 +95,7 @@ namespace Sci.Production.Win
                 ShowErr(result);
                 return;
             }
-            Sci.Env.App.Text = "Mdivision = " + Sci.Env.User.Keyword;
+            Sci.Env.App.Text = string.Format("Production Management System-{0}-({1})", Sci.Env.User.Factory, Sci.Env.User.UserID);
 
             DialogResult = DialogResult.OK;
             Close();
