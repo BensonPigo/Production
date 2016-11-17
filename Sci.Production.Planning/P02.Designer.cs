@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(P02));
             this.button2 = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
@@ -48,7 +49,7 @@
             this.pictureBox1 = new Sci.Win.UI.PictureBox();
             this.label5 = new Sci.Win.UI.Label();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.grid1 = new Sci.Win.UI.Grid();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
@@ -57,6 +58,7 @@
             this.checkBox3 = new Sci.Win.UI.CheckBox();
             this.grid2 = new Sci.Win.UI.Grid();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
             this.label11 = new Sci.Win.UI.Label();
             this.txtstyle1 = new Sci.Production.Class.txtstyle();
             this.label2 = new Sci.Win.UI.Label();
@@ -68,7 +70,6 @@
             this.txtseason1 = new Sci.Production.Class.txtseason();
             this.button6 = new Sci.Win.UI.Button();
             this.label8 = new Sci.Win.UI.Label();
-            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -423,6 +424,15 @@
             this.groupBox2.TabIndex = 33;
             this.groupBox2.TabStop = false;
             // 
+            // txtmfactory1
+            // 
+            this.txtmfactory1.BackColor = System.Drawing.Color.White;
+            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory1.Location = new System.Drawing.Point(119, 189);
+            this.txtmfactory1.Name = "txtmfactory1";
+            this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtmfactory1.TabIndex = 7;
+            // 
             // label11
             // 
             this.label11.Lines = 0;
@@ -528,15 +538,6 @@
             this.label8.Size = new System.Drawing.Size(75, 23);
             this.label8.TabIndex = 22;
             this.label8.Text = "Style";
-            // 
-            // txtmfactory1
-            // 
-            this.txtmfactory1.BackColor = System.Drawing.Color.White;
-            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtmfactory1.Location = new System.Drawing.Point(119, 189);
-            this.txtmfactory1.Name = "txtmfactory1";
-            this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtmfactory1.TabIndex = 7;
             // 
             // P02
             // 

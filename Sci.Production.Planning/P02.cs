@@ -16,13 +16,14 @@ namespace Sci.Production.Planning
     public partial class P02 : Sci.Win.Tems.QueryForm
     {
         Dictionary<string, string> di_inhouseOsp2 = new Dictionary<string, string>();
+        DataGridViewColumn col_Fty, col_season, col_style;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public P02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
             this.EditMode = true;
-
+            
         }
 
         protected override void OnFormLoaded()
@@ -101,6 +102,7 @@ namespace Sci.Production.Planning
                     this.sum_checkedqty();
                 }
             };
+           
             Ict.Win.DataGridViewGeneratorDateColumnSettings ts2 = new DataGridViewGeneratorDateColumnSettings();
             ts2.CellValidating += (s, e) =>
             {
@@ -171,6 +173,7 @@ namespace Sci.Production.Planning
                 {
                     MyUtility.Msg.WarningBox("This supp id is wrong");
                     dr["localSuppid"] = "";
+                    dr["suppnm"] = "";
                     e.Cancel = true;
                     return;
                 }
@@ -180,16 +183,17 @@ namespace Sci.Production.Planning
             #endregion
 
             Ict.Win.UI.DataGridViewComboBoxColumn col_inhouseosp;
-            
-
+           
             //設定Grid1的顯示欄位
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
+           
+           
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-                .Text("FactoryID", header: "Fac", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true)
-                .Text("Styleid", header: "Style", width: Widths.AnsiChars(15), settings: ts1, iseditingreadonly: true)
-                .Text("seasonid", header: "Season", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("FactoryID", header: "Fac", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true).Get(out col_Fty)
+                .Text("Styleid", header: "Style", width: Widths.AnsiChars(15), settings: ts1, iseditingreadonly: true).Get(out col_style)
+                .Text("seasonid", header: "Season", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out col_season)
                 .Text("POID", header: "Mother SP", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
                 .Text("id", header: "SP#", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
                 .Text("article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -209,17 +213,43 @@ namespace Sci.Production.Planning
                  .Numeric("qty", header: "Panels", width: Widths.AnsiChars(3), integer_places: 8, iseditingreadonly: true)
                  .Text("msg", header: "Error Message", width: Widths.AnsiChars(20), settings: ts1, iseditingreadonly: true)
                   ;
+
+           foreach (DataGridViewColumn col in grid1.Columns) { col.SortMode = DataGridViewColumnSortMode.NotSortable; } //關掉header排序
+           this.grid1.ColumnHeaderMouseClick += grid1_ColumnHeaderMouseClick;
+                           
             col_inhouseosp.DataSource = new BindingSource(di_inhouseOsp2, null);
             col_inhouseosp.ValueMember = "Key";
             col_inhouseosp.DisplayMember = "Value";
-
+         
             grid1.Columns[5].Frozen = true;  //SP#
         }
 
+        void grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.ColumnIndex == this.col_Fty.Index )
+            {
+                if (null != this.dtData) 
+                {
+                    this.dtData.DefaultView.Sort = "factoryID,seasonID,styleID";
+                    grid1.DataSource = dtData;
+
+                }
+            }
+            if (e.ColumnIndex == this.col_season.Index)
+            {
+                if (null != this.dtData)
+                {
+                    this.dtData.DefaultView.Sort = "seasonID,styleID";
+                    grid1.DataSource = dtData;
+
+                }
+            }
+        }
+
+        DataTable dtData = null;
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            DataTable dtData;
             string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, styleid, seasonid, localsuppid, inhouseosp, factoryid;
             sewinline_b = null;
             sewinline_e = null;
@@ -295,6 +325,7 @@ namespace Sci.Production.Planning
             { sqlcmd += string.Format(@" and not (a.SewInLine > '{1}' or a.SewOffLine < '{0}')", sewinline_b, sewinline_e); }
 
             MyUtility.Msg.WaitWindows("Querying....Please wait....");
+            
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
             {
@@ -309,8 +340,11 @@ namespace Sci.Production.Planning
             {
                 ShowErr(sqlcmd, result);
             }
+
+          
             MyUtility.Msg.WaitClear();
         }
+        
 
         //close
         private void button4_Click(object sender, EventArgs e)
@@ -423,7 +457,7 @@ namespace Sci.Production.Planning
         private void grid2_generate()
         {
             var bs1 = (from rows in ((DataTable)listControlBindingSource1.DataSource).AsEnumerable()
-                       group rows by new { localsuppid = rows.Field<string>("localsuppid"), suppnm = rows.Field<string>("suppnm") } into grouprows
+                       group rows by new { localsuppid = rows["localsuppid"].ToString().TrimEnd(), suppnm = rows["suppnm"].ToString().TrimEnd() } into grouprows
                        orderby grouprows.Key.localsuppid
                        select new
                        {
