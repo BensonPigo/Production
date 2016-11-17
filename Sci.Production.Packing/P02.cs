@@ -442,7 +442,6 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             if (excel == null) return false;
             MyUtility.Msg.WaitWindows("Starting to excel...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            excel.Visible = false;
             
             worksheet.Cells[2, 2] = MyUtility.Check.Empty(PrintData.Rows[0]["BuyerDelivery"]) ? "" : Convert.ToDateTime(PrintData.Rows[0]["BuyerDelivery"]).ToString("d");
             worksheet.Cells[2, 19] = Convert.ToDateTime(DateTime.Today).ToString("d");
@@ -501,7 +500,10 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                     worksheet.Cells[row, 3] = MyUtility.Convert.GetInt(dr["QtyPerCTN"]);
                     worksheet.Cells[row, 19] = MyUtility.Convert.GetInt(dr["QtyPerCTN"]) * ctnQty;
                     ttlCtn = 0;
-
+                    if (printPackMethod == "2")
+                    {
+                        ctnNum = MyUtility.Convert.GetInt(CurrentMaintain["CTNStartNo"]);
+                    }
                     for (int i = 1; i <= Math.Floor(MyUtility.Convert.GetDecimal(ctnQty - 1) / 15) + 1; i++)
                     {
                         for (int j = 1; j <= 15; j++)
@@ -521,6 +523,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             #endregion
 
             #region 處理餘箱部分
+            int insertCTN = 1;
             foreach (DataRow dr in PrintData.Rows)
             {
                 int ctnQty = (printPackMethod == "2" ? MyUtility.Convert.GetInt(minCtnQty) : MyUtility.Convert.GetInt(dr["CtnQty"]));
@@ -530,9 +533,16 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                     worksheet.Cells[row, 1] = MyUtility.Convert.GetString(dr["Article"]) + " " + MyUtility.Convert.GetString(dr["Color"]);
                     worksheet.Cells[row, 2] = MyUtility.Convert.GetString(dr["SizeCode"]);
                     worksheet.Cells[row, 3] = remain;
-                    worksheet.Cells[row, 4] = ctnNum;
+                    if (printPackMethod == "2" && insertCTN == 1 || printPackMethod != "2")
+                    {
+                        worksheet.Cells[row, 4] = ctnNum;
+                        insertCTN = 2;
+                    }
                     worksheet.Cells[row, 19] = remain;
-                    ctnNum++;
+                    if(printPackMethod != "2")
+                    {
+                        ctnNum++;
+                    }
                     row++;
                 }
             }
