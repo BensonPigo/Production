@@ -155,7 +155,41 @@ namespace Sci.Production.Warehouse
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             string cutplanID = (e.Master == null) ? "" : e.Master["cutplanID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select
+            #region 20161117 舊寫法
+//            this.DetailSelectCommand = string.Format(@"select
+//a.Id
+//,a.Poid
+//,a.SCIRefno
+//,a.Qty
+//,a.Colorid
+//,a.SizeSpec
+//,(select DescDetail from fabric where scirefno= a.scirefno) [description]
+//,isnull((select sum(cons) from dbo.Cutplan_Detail_Cons c inner join dbo.PO_Supp_Detail p on p.ID=c.Poid and p.SEQ1 = c.Seq1 and p.SEQ2 = c.Seq2
+//where  c.id='{1}' and p.scirefno = a.scirefno and c.poid = a.poid 
+//--and p.colorid = a.colorid and p.SizeSpec = a.SizeSpec
+//),0.00) as requestqty
+//,isnull((select sum(qty) from issue a1 inner join issue_summary b1 on b1.id = a1.id where a1.cutplanid = '{1}' 
+//and b1.poid = a.poid and b1.scirefno = a.scirefno 
+//--and b1.colorid = a.colorid  --20161006 by willy,20161116 LEO調整
+//and a1.id != '{0}' and a1.status='Confirmed'),0.00) as accu_issue
+//,a.qty
+//,a.Ukey,t.netqty
+//--,(select sum(NETQty) from dbo.PO_Supp_Detail 
+//--where 1=1
+//--AND SCIRefno = a.SCIRefno 
+//--and Colorid = a.Colorid and SizeSpec = a.SizeSpec  --20161006 by willy,這2欄位是空的,先mark做測試
+//--and id = a.Poid and seq1 = (select min(seq1) from dbo.PO_Supp_Detail where id = a.Poid
+//--and SCIRefno = a.SCIRefno --and Colorid = a.Colorid and SizeSpec = a.SizeSpec 
+//--)) netqty
+//from dbo.Issue_Summary a
+//left join dbo.PO_Supp_Detail t on t.id=a.Poid and t.seq1=a.seq1 and t.seq2=a.Seq2
+//Where a.id = '{0}'", masterID, cutplanID);
+            #endregion
+this.DetailSelectCommand = string.Format(@"
+with
+main as
+(
+select
 a.Id
 ,a.Poid
 ,a.SCIRefno
@@ -165,24 +199,26 @@ a.Id
 ,(select DescDetail from fabric where scirefno= a.scirefno) [description]
 ,isnull((select sum(cons) from dbo.Cutplan_Detail_Cons c inner join dbo.PO_Supp_Detail p on p.ID=c.Poid and p.SEQ1 = c.Seq1 and p.SEQ2 = c.Seq2
 where  c.id='{1}' and p.scirefno = a.scirefno and c.poid = a.poid 
---and p.colorid = a.colorid and p.SizeSpec = a.SizeSpec
 ),0.00) as requestqty
 ,isnull((select sum(qty) from issue a1 inner join issue_summary b1 on b1.id = a1.id where a1.cutplanid = '{1}' 
 and b1.poid = a.poid and b1.scirefno = a.scirefno 
---and b1.colorid = a.colorid  --20161006 by willy,20161116 LEO調整
 and a1.id != '{0}' and a1.status='Confirmed'),0.00) as accu_issue
-,a.qty
 ,a.Ukey
-,(select sum(NETQty) from dbo.PO_Supp_Detail 
-where 1=1
-AND SCIRefno = a.SCIRefno 
---and Colorid = a.Colorid and SizeSpec = a.SizeSpec  --20161006 by willy,這2欄位是空的,先mark做測試
-and id = a.Poid and seq1 = (select min(seq1) from dbo.PO_Supp_Detail where id = a.Poid
-and SCIRefno = a.SCIRefno --and Colorid = a.Colorid and SizeSpec = a.SizeSpec 
-)) netqty
 from dbo.Issue_Summary a
---left join dbo.PO_Supp_Detail t on t.id=a.Poid and t.seq1=a.seq1 and t.seq2=a.Seq2
-Where a.id = '{0}'", masterID, cutplanID);
+Where a.id = '{0}'
+),
+NetQty as
+(
+select a.NETQty,a.ID,a.SEQ1,a.SEQ2,a.SCIRefno,a.ColorID from PO_Supp_Detail a,Issue_Summary b
+where a.SCIRefno=b.SCIRefno and a.ColorID=b.Colorid and a.ID=b.Poid
+and a.seq1 =(select min(seq1) from dbo.PO_Supp_Detail where id=b.Poid and SCIRefno=b.SCIRefno)
+and b.Id='{0}'
+)
+select * from main a
+inner join NetQty b on a.Poid=b.ID and a.SCIRefno=b.SCIRefno and a.Colorid=b.ColorID", masterID, cutplanID);
+
+
+
             return base.OnDetailSelectCommandPrepare(e);
         }
 
