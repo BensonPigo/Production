@@ -207,6 +207,7 @@ and sp.MDivisionID = '{0}' ", Sci.Env.User.Keyword));
         //View Detail
         private void button5_Click(object sender, EventArgs e)
         {
+            this.grid1.ValidateControl();
             Sci.Production.PPIC.P03_Detail DoForm = new Sci.Production.PPIC.P03_Detail();
             DoForm.Set(false, ((DataTable)listControlBindingSource1.DataSource).ToList(), grid1.GetDataRow(grid1.GetSelectedRowIndex())); DoForm.ShowDialog(this);
         }
