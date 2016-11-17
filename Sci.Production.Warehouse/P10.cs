@@ -137,7 +137,7 @@ namespace Sci.Production.Warehouse
             Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
             .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(20), iseditingreadonly: true)  //1
-            .Text("Color", header: "Colorid", width: Widths.AnsiChars(10), iseditingreadonly: true)  //2
+            .Text("Colorid", header: "Colorid", width: Widths.AnsiChars(10), iseditingreadonly: true)  //2
            // .Text("SizeSpec", header: "SizeSpec", width: Widths.AnsiChars(10), iseditingreadonly: true)  //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Numeric("requestqty", name: "requestqty", header: "Request", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //5
@@ -175,11 +175,13 @@ and a1.id != '{0}' and a1.status='Confirmed'),0.00) as accu_issue
 ,a.Ukey
 ,(select sum(NETQty) from dbo.PO_Supp_Detail 
 where 1=1
---SCIRefno = a.SCIRefno and Colorid = a.Colorid and SizeSpec = a.SizeSpec  --20161006 by willy,這2欄位是空的,先mark做測試
+AND SCIRefno = a.SCIRefno 
+--and Colorid = a.Colorid and SizeSpec = a.SizeSpec  --20161006 by willy,這2欄位是空的,先mark做測試
 and id = a.Poid and seq1 = (select min(seq1) from dbo.PO_Supp_Detail where id = a.Poid
---and SCIRefno = a.SCIRefno and Colorid = a.Colorid and SizeSpec = a.SizeSpec 
+and SCIRefno = a.SCIRefno --and Colorid = a.Colorid and SizeSpec = a.SizeSpec 
 )) netqty
 from dbo.Issue_Summary a
+--left join dbo.PO_Supp_Detail t on t.id=a.Poid and t.seq1=a.seq1 and t.seq2=a.Seq2
 Where a.id = '{0}'", masterID, cutplanID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -337,11 +339,16 @@ select poid,t.SCIRefno,t.ColorID,t.SizeSpec,sum(cons)requestqty,0.00 as qty,
 inner join Issue b on a.Id=b.Id
 inner join Cutplan d on b.CutplanID=d.ID
 where d.ID='{0}' and b.status='Confirmed') as accu_issue
-,'{1}' as id, '' [description], 0.00 as NETQty
+,'{1}' as id
+--, '' [Description]
+, (select DescDetail from fabric where scirefno= t.scirefno)as [description]
+, 0.00 as NETQty
+,t.SEQ1
+,t.SEQ2
 from dbo.Cutplan_Detail_Cons c 
 inner join dbo.PO_Supp_Detail t on t.id=c.Poid and t.seq1=c.seq1 and t.seq2=c.Seq2
 where c.ID='{0}'
-group by poid,t.SCIRefno,t.ColorID,t.SizeSpec", txtRequest.Text, CurrentMaintain["id"]);
+group by poid,t.SCIRefno,t.ColorID,t.SizeSpec,t.SEQ1,t.SEQ2", txtRequest.Text, CurrentMaintain["id"]);
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     if (MyUtility.Check.Empty(dt) || MyUtility.Check.Empty(dt.Rows.Count))
                     {
