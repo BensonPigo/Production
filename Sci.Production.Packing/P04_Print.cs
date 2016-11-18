@@ -129,6 +129,8 @@ BEGIN
 	FETCH NEXT FROM cursor_PackingListDetail INTO @refno, @ctnstartno
 END
 --最後一筆資料
+if(@insertrefno = '' OR @insertrefno IS NULL) 
+SET	@insertrefno = @firstctnno
 if(@orirefnno <> '')
 INSERT INTO @tempPackingListDetail (RefNo,CTNNo) VALUES (@orirefnno,@insertrefno)
 
