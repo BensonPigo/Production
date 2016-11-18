@@ -1241,6 +1241,18 @@
         <member name="F:Sci.SQL.MergeOption.InsertUpdate_SafeDelete">
             <summary> 先 Delete (not merge) , 再使用Merge 作Insert / update </summary>
         </member>
+        <member name="M:Sci.Utility.Drawing.DrawingPrg.DrawText(System.String,System.Drawing.Font,System.Drawing.Color,System.Drawing.Color,System.Int32,System.Int32)">
+            <summary>
+            文字 To Image
+            </summary>
+            <param name="text">文字內容</param>
+            <param name="font">字型</param>
+            <param name="textColor">文字顏色</param>
+            <param name="backColor">背景顏色</param>
+            <param name="Width">寬度，預設0為自動寬度</param>
+            <param name="Height">長度，預設0為自動長度</param>
+            <returns></returns>
+        </member>
         <member name="M:Sci.Utility.Excel.MyExcelPrg.SaveXlsAs(System.String)">
             <summary>
             Edward : 開啟Excel檔案另存
