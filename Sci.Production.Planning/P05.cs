@@ -17,6 +17,7 @@ namespace Sci.Production.Planning
     {
         Dictionary<string, string> di_inhouseOsp2 = new Dictionary<string, string>();
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        DataGridViewColumn col_Fty, col_season, col_style;
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -99,6 +100,8 @@ namespace Sci.Production.Planning
                     this.sum_checkedqty();
                 }
             };
+
+
             Ict.Win.DataGridViewGeneratorDateColumnSettings ts2 = new DataGridViewGeneratorDateColumnSettings();
             ts2.CellValidating += (s, e) =>
             {
@@ -162,12 +165,31 @@ namespace Sci.Production.Planning
             ts.CellValidating += (s, e) =>
             {
                 string Code = e.FormattedValue.ToString();//抓到當下的cell值
-                DataRow dr = grid1.GetDataRow(e.RowIndex); //抓到當下的row
-
-                if (Code != dr["localSuppid"].ToString())
+                string sqlcmd = ""; DataTable dt;
+                DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);//抓到當下的row
+                if (ddr["inhouseosp"].ToString() == "O")
+                    sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 0 order by ID";
+                if (ddr["inhouseosp"].ToString() == "I")
+                    sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 1 order by ID";
+                Ict.DualResult result;
+                string dtid = ""; string dtabb = "";
+                result = DBProxy.Current.Select(null, sqlcmd, out dt);
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    dtid = dt.Rows[i]["id"].ToString();
+                    dtabb = dt.Rows[i]["abb"].ToString();
+                    if (Code == dtid)
+                    {
+                        ddr["localsuppid"] = dtid;
+                        ddr["suppnm"] = dtabb;
+                        return;
+                    }
+                }
+                if (Code != dtid)
                 {
                     MyUtility.Msg.WarningBox("This supp id is wrong");
-                    dr["localSuppid"] = "";
+                    ddr["localSuppid"] = "";
+                    ddr["suppnm"] = "";
                     e.Cancel = true;
                     return;
                 }
@@ -181,9 +203,9 @@ namespace Sci.Production.Planning
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-                .Text("FactoryID", header: "Fac", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true)
-                .Text("Styleid", header: "Style", width: Widths.AnsiChars(15), settings: ts1, iseditingreadonly: true)
-                .Text("seasonid", header: "Season", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("FactoryID", header: "Fac", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true).Get(out col_Fty)
+                .Text("Styleid", header: "Style", width: Widths.AnsiChars(15), settings: ts1, iseditingreadonly: true).Get(out col_style)
+                .Text("seasonid", header: "Season", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out col_season)
                 .Text("POID", header: "Mother SP", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
                 .Text("id", header: "SP#", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
                 .Text("article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -204,26 +226,49 @@ namespace Sci.Production.Planning
                  .Numeric("ttlStitch", header: "TTL. Stitches", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
                  .Numeric("target", header: "Target Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 1, iseditingreadonly: true)
                  .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
-                 
-                 
                  .Text("msg", header: "Error Message", width: Widths.AnsiChars(20), settings: ts1, iseditingreadonly: true)
                   ;
+            foreach (DataGridViewColumn col in grid1.Columns) { col.SortMode = DataGridViewColumnSortMode.NotSortable; } //關掉header排序
+            this.grid1.ColumnHeaderMouseClick += grid1_ColumnHeaderMouseClick;
             col_inhouseosp.DataSource = new BindingSource(di_inhouseOsp2, null);
             col_inhouseosp.ValueMember = "Key";
             col_inhouseosp.DisplayMember = "Value";
             grid1.Columns[5].Frozen = true;  //SP#
-
             Helper.Controls.Grid.Generator(this.grid2)
                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(6))
                 .Numeric("totalqty", header: "M Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 3, iseditingreadonly: true)
-                .Numeric("TotalStitch", header: "Total Stitch", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true);
+                .Numeric("balance", header: "Balance M", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
+                .Numeric("Totaltms", header: "Total Tms", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true); ;
+            
+        }
+        void grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.ColumnIndex == this.col_Fty.Index)
+            {
+                if (null != this.dtData)
+                {
+                    this.dtData.DefaultView.Sort = "factoryID,seasonID,styleID";
+                    grid1.DataSource = dtData;
+
+                }
+            }
+            if (e.ColumnIndex == this.col_season.Index)
+            {
+                if (null != this.dtData)
+                {
+                    this.dtData.DefaultView.Sort = "seasonID,styleID";
+                    grid1.DataSource = dtData;
+
+                }
+            }
         }
 
+        DataTable dtData = null;
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
             numericBox4.Value = 0;
-            DataTable dtData;
+          //  DataTable dtData;
             string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, styleid, seasonid, localsuppid, inhouseosp, factoryid,inline_b,inline_e;
             sewinline_b = null;
             sewinline_e = null;
@@ -313,10 +358,7 @@ inner join dbo.Factory on factory.id = a.factoryid
  where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'EMBROIDERY'  and factory.mdivisionid='{3}'" + orderby, numericBox1.Text, numericBox3.Text, numericBox2.Text, Sci.Env.User.Keyword);
 
             if (!(MyUtility.Check.Empty(styleid)))
-            {
-                sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid);
-                orderby = "order by a.SeasonID and a.StyleID";
-            }
+            {sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid);}
             if (!(MyUtility.Check.Empty(seasonid)))
             { sqlcmd += string.Format(@" and a.SeasonID = '{0}'", seasonid); }
             if (!(MyUtility.Check.Empty(localsuppid)))
@@ -324,10 +366,7 @@ inner join dbo.Factory on factory.id = a.factoryid
             if (!(MyUtility.Check.Empty(inhouseosp)))
             { sqlcmd += string.Format(@" and b.InhouseOSP = '{0}'", inhouseosp); }
             if (!(MyUtility.Check.Empty(factoryid)))
-            {
-                sqlcmd += string.Format(@" and a.FactoryID ='{0}'", factoryid);
-                orderby = "order by a.factoryId and a.SeasonID and a.StyleID";
-            }
+            {sqlcmd += string.Format(@" and a.FactoryID ='{0}'", factoryid);}
 
             if (!(MyUtility.Check.Empty(sciDelivery_b)))
             { sqlcmd += string.Format(@" and a.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
@@ -360,13 +399,11 @@ inner join dbo.Factory on factory.id = a.factoryid
                     decimal stdq = PublicPrg.Prgs.GetStdQ(item["id"].ToString());
                     item["stdq"] = stdq;
                     wkdays = (stdq != '0') ? ' ' : int.Parse(Math.Ceiling((decimal.Parse(item["OrderQty"].ToString()) - decimal.Parse(item["qaqty"].ToString())) / stdq).ToString());
-                    item["artworkinline"] = inline;
-                    item["artworkoffline"] = PublicPrg.Prgs.GetWorkDate(item["factoryid"].ToString(), wkdays, inline);
                 }
                 MyUtility.Msg.WaitClear();
             }   
         }
-
+    
         //close
         private void button4_Click(object sender, EventArgs e)
         {
