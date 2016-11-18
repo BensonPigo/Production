@@ -26,11 +26,22 @@ BEGIN
         @ErrorLine=ERROR_LINE(),
         @ErrorNumber=ERROR_NUMBER();
 
-	set @ErrorMessage = 'Error Procedure: ' + @ErrorProcedure + char(13)+char(10) +
+	IF (@ErrorProcedure IS NULL)
+		BEGIN
+			set @ErrorMessage = 'Error Line: '+ CONVERT(NVARCHAR,@ErrorLine) + char(13)+char(10) +
+						'Error Number: '+CONVERT(NVARCHAR,@ErrorNumber)+ char(13)+char(10) +
+						'----------------------------------------------'+ char(13)+char(10) +
+						'Error Message: '+@ErrorMessage;
+		END
+	ELSE
+		BEGIN
+			set @ErrorMessage = 'Error Procedure: ' + @ErrorProcedure + char(13)+char(10) +
 						'Error Line: '+ CONVERT(NVARCHAR,@ErrorLine) + char(13)+char(10) +
 						'Error Number: '+CONVERT(NVARCHAR,@ErrorNumber)+ char(13)+char(10) +
 						'----------------------------------------------'+ char(13)+char(10) +
 						'Error Message: '+@ErrorMessage;
+		END
+
 
     -- Use RAISERROR inside the CATCH block to return error
     -- information about the original error that caused
