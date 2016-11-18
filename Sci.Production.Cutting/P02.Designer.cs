@@ -187,6 +187,10 @@
             // 
             // detailgridcont
             // 
+            this.detailgridcont.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.detailgridcont.Cursor = System.Windows.Forms.Cursors.AppStarting;
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(3, 101);
             this.detailgridcont.Size = new System.Drawing.Size(684, 531);
@@ -221,7 +225,6 @@
             this.detailbtm.Controls.Add(this.textbox_LastCutRef);
             this.detailbtm.Controls.Add(this.Qtybreak);
             this.detailbtm.Controls.Add(this.label2);
-            this.detailbtm.Dock = System.Windows.Forms.DockStyle.None;
             this.detailbtm.Location = new System.Drawing.Point(0, 637);
             this.detailbtm.Size = new System.Drawing.Size(1048, 35);
             this.detailbtm.Controls.SetChildIndex(this.label2, 0);
