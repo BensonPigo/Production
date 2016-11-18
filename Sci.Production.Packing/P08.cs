@@ -62,7 +62,8 @@ and pl.ApvToPurchase = 0
 and pl.EstCTNBooking is not null
 and pl.EstCTNArrive is not null
 and pld.ID = pl.ID
-and o.ID = pld.OrderID");
+and o.ID = pld.OrderID
+and o.Junk = 0");
             #region 組條件
             if (!MyUtility.Check.Empty(this.textBox1.Text))
             {
@@ -192,26 +193,10 @@ and o.ID = pld.OrderID");
                 MyUtility.Msg.ErrorBox("To Excel error.\r\n" + ex.ToString());
                 return;
             }
-            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Sci.Env.Cfg.XltPathDir);
-            SaveFileDialog dlg = new SaveFileDialog();
-            dlg.RestoreDirectory = true;
-            dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
-            dlg.Title = "Save as Excel File";
-            dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
+            
+            bool result = MyUtility.Excel.CopyToXls(ExcelTable, "", xltfile: "Packing_P08.xltx", headerRow: 2);
+            if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
 
-            // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
-            // Get the selected file name and CopyToXls
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
-            {
-                // Open document
-                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName, xltfile: "Packing_P08.xltx", headerRow: 2);
-                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
-            }
-            else
-            {
-                return;
-            }
         }
 
         //Approve
