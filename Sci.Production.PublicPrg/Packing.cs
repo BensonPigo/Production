@@ -834,12 +834,12 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             worksheet.Cells[4, 3] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
             worksheet.Cells[4, 6] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
             worksheet.Cells[4, 10] = MyUtility.Convert.GetInt(PrintData.Rows[0]["CustPONo"]);
-            worksheet.Cells[4, 13] = MyUtility.Convert.GetString("INVNo");
+            worksheet.Cells[4, 13] = MyUtility.Convert.GetString(PLdr["INVNo"]);
             worksheet.Cells[6, 1] = MyUtility.Convert.GetString(PLdr["CustCDID"]);
             worksheet.Cells[6, 3] = MyUtility.Convert.GetString(PLdr["ShipModeID"]);
-            worksheet.Cells[6, 6] = MyUtility.Convert.GetString(PrintData.Rows[0]["InClogQty"]) + " / " + MyUtility.Convert.GetString(PLdr["CTNQty"]) + "   ( " + MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(PrintData.Rows[0]["InClogQty"]) / MyUtility.Convert.GetDecimal(PLdr["CTNQty"]), 4) * 100) + "% )";
-            worksheet.Cells[6, 10] = MyUtility.Convert.GetInt(PrintData.Rows[0]["Alias"]);
-            worksheet.Cells[6, 13] = MyUtility.Check.Empty(PrintData.Rows[0]["EstPulloutDate"]) ? "" : Convert.ToDateTime(PrintData.Rows[0]["EstPulloutDate"]).ToString("d");
+            worksheet.Cells[6, 6] = (MyUtility.Check.Empty(MyUtility.Convert.GetString(PrintData.Rows[0]["InClogQty"])) ? "0" : MyUtility.Convert.GetString(PrintData.Rows[0]["InClogQty"])) + " / " + MyUtility.Convert.GetString(PLdr["CTNQty"]) + "   ( " + MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(PrintData.Rows[0]["InClogQty"]) / MyUtility.Convert.GetDecimal(PLdr["CTNQty"]), 4) * 100) + "% )";
+            worksheet.Cells[6, 10] = MyUtility.Convert.GetString(PrintData.Rows[0]["Alias"]);
+            worksheet.Cells[6, 13] = MyUtility.Check.Empty(PrintData.Rows[0]["EstPulloutDate"]) ? "  /  /    " : Convert.ToDateTime(PrintData.Rows[0]["EstPulloutDate"]).ToString("d");
 
             //當要列印的筆數超過22筆，就要插入Row，因為範本只留22筆記錄的空間
             if (PrintData.Rows.Count > 22)
@@ -892,6 +892,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                 worksheet.Cells[excelRow, 8] = string.Format("=SUM(H8:H{0})", MyUtility.Convert.GetString(excelRow - 1));
                 worksheet.Cells[excelRow, 13] = string.Format("=SUM(M8:M{0})", MyUtility.Convert.GetString(excelRow - 1));
                 worksheet.Cells[excelRow, 14] = string.Format("=SUM(N8:N{0})", MyUtility.Convert.GetString(excelRow - 1));
+                worksheet.Cells[excelRow, 15] = string.Format("=SUM(O8:O{0})", MyUtility.Convert.GetString(excelRow - 1));
             }
             if (excelRow <= 30)
             {
