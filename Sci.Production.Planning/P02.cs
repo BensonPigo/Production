@@ -166,19 +166,35 @@ namespace Sci.Production.Planning
 
             ts.CellValidating += (s, e) =>
             {
-                string Code = e.FormattedValue.ToString();//抓到當下的cell值
-                DataRow dr = grid1.GetDataRow(e.RowIndex); //抓到當下的row
-
-                if (Code != dr["localSuppid"].ToString())
-                {
-                    MyUtility.Msg.WarningBox("This supp id is wrong");
-                    dr["localSuppid"] = "";
-                    dr["suppnm"] = "";
-                    e.Cancel = true;
-                    return;
-                }
-
-
+               string Code = e.FormattedValue.ToString();//抓到當下的cell值
+                   string sqlcmd = ""; DataTable dt;
+                   DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);//抓到當下的row
+                   if (ddr["inhouseosp"].ToString() == "O")
+                       sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 0 order by ID";
+                   if (ddr["inhouseosp"].ToString() == "I")
+                       sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 1 order by ID";
+                   Ict.DualResult result;
+                   string dtid = ""; string dtabb = "";
+                   result = DBProxy.Current.Select(null, sqlcmd, out dt);
+                  for (int i = 0; i < dt.Rows.Count; i++)
+                   {
+                       dtid = dt.Rows[i]["id"].ToString();
+                       dtabb = dt.Rows[i]["abb"].ToString();
+                       if (Code == dtid)
+                       {
+                           ddr["localsuppid"] = dtid;
+                           ddr["suppnm"] = dtabb; 
+                           return;
+                       }
+                   } 
+                   if (Code != dtid)
+                       {
+                           MyUtility.Msg.WarningBox("This supp id is wrong");
+                           ddr["localSuppid"] = "";
+                           ddr["suppnm"] = "";
+                           e.Cancel = true;
+                           return;
+                       }
             };
             #endregion
 
