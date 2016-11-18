@@ -177,19 +177,35 @@ namespace Sci.Production.Planning
             ts.CellValidating += (s, e) =>
                {
                    string Code = e.FormattedValue.ToString();//抓到當下的cell值
-                   DataRow dr = grid1.GetDataRow(e.RowIndex); //抓到當下的row
-
-                   if (Code != dr["localSuppid"].ToString())
+                   string sqlcmd = ""; DataTable dt;
+                   DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);//抓到當下的row
+                   if (ddr["inhouseosp"].ToString() == "O")
+                       sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 0 order by ID";
+                   if (ddr["inhouseosp"].ToString() == "I")
+                       sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 1 order by ID";
+                   Ict.DualResult result;
+                   string dtid = ""; string dtabb = "";
+                   result = DBProxy.Current.Select(null, sqlcmd, out dt);
+                  for (int i = 0; i < dt.Rows.Count; i++)
                    {
-                       MyUtility.Msg.WarningBox("This supp id is wrong");
-                       dr["localSuppid"] = "";
-                       dr["suppnm"] = "";
-                       e.Cancel = true;
-                       return;
-                   }
+                       dtid = dt.Rows[i]["id"].ToString();
+                       dtabb = dt.Rows[i]["abb"].ToString();
+                       if (Code == dtid)
+                       {
+                           ddr["localsuppid"] = dtid;
+                           ddr["suppnm"] = dtabb; 
+                           return;
+                       }
+                   } 
+                   if (Code != dtid)
+                       {
+                           MyUtility.Msg.WarningBox("This supp id is wrong");
+                           ddr["localSuppid"] = "";
+                           ddr["suppnm"] = "";
+                           e.Cancel = true;
+                           return;
+                       }
                };
-
-
 
             #endregion
            
@@ -275,7 +291,7 @@ namespace Sci.Production.Planning
             sciDelivery_e = null;
             inline_b = null;
             inline_e = null;
-            bool chkprice;
+            
         
             styleid = txtstyle1.Text;
             seasonid = txtseason1.Text;
@@ -374,10 +390,7 @@ inner join factory on factory.id = a.factoryid
 and b.tms > 0  and factory.mdivisionid='{2}'"+orderby, numericBox3.Text, numericBox2.Text,Sci.Env.User.Keyword);
 
             if (!(MyUtility.Check.Empty(styleid)))
-            {
-                sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid);
-                orderby = "order by a.SeasonID and a.StyleID";
-            }
+            {sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid);}
             if (!(MyUtility.Check.Empty(seasonid)))
             { sqlcmd += string.Format(@" and a.SeasonID = '{0}'", seasonid); }
             if (!(MyUtility.Check.Empty(localsuppid)))
@@ -385,10 +398,7 @@ and b.tms > 0  and factory.mdivisionid='{2}'"+orderby, numericBox3.Text, numeric
             if (!(MyUtility.Check.Empty(inhouseosp)))
             { sqlcmd += string.Format(@" and b.InhouseOSP = '{0}'", inhouseosp); }
             if (!(MyUtility.Check.Empty(factoryid)))
-            {
-                sqlcmd += string.Format(@" and a.FactoryID ='{0}'", factoryid);
-                orderby = "order by a.factoryId and a.SeasonID and a.StyleID";
-            }
+            {sqlcmd += string.Format(@" and a.FactoryID ='{0}'", factoryid);}
 
             if (!(MyUtility.Check.Empty(sciDelivery_b)))
             { sqlcmd += string.Format(@" and a.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
@@ -419,8 +429,6 @@ and b.tms > 0  and factory.mdivisionid='{2}'"+orderby, numericBox3.Text, numeric
                     decimal stdq = PublicPrg.Prgs.GetStdQ(item["id"].ToString());
                     item["stdq"] = stdq;
                     wkdays = (stdq != '0') ? ' ' : int.Parse(Math.Ceiling((decimal.Parse(item["OrderQty"].ToString()) - decimal.Parse(item["qaqty"].ToString())) / stdq).ToString());
-                    item["artworkinline"] = inline;
-                    item["artworkoffline"] = PublicPrg.Prgs.GetWorkDate(item["factoryid"].ToString(), wkdays, inline);
                 }
                 MyUtility.Msg.WaitClear();
             }     
