@@ -30,7 +30,7 @@
     [RFIDDatabaseName] VARCHAR(20) NULL, 
     [RFIDLoginId] VARCHAR(20) NULL, 
     [RFIDLoginPwd] VARCHAR(20) NULL, 
-    [RFIDTable ] VARCHAR(20) NULL
+    [RFIDTable] VARCHAR(20) NULL
 );
 
 
