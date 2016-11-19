@@ -23,6 +23,7 @@
     [EditName]     VARCHAR (10) CONSTRAINT [DF_Bundle_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME     NULL,
     [oldid]        VARCHAR (13) NULL,
+    [LectraCode] VARCHAR(2) NULL, 
     CONSTRAINT [PK_Bundle] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
