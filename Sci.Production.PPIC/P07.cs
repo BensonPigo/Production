@@ -49,16 +49,22 @@ namespace Sci.Production.PPIC
                 return;
             }
 
+            MyUtility.Msg.WaitWindows("Data Downloading....");
+
             string sqlCmd = string.Format("exec dbo.usp_APSDataDownLoad '{0}','{1}','{2}','{3}'", MyUtility.Convert.GetString(dr["SQLServerName"]), MyUtility.Convert.GetString(dr["APSDatabaseName"]), Sci.Env.User.Factory, Sci.Env.User.UserID);
+            DBProxy.Current.DefaultTimeout = 600;
             DualResult Result = DBProxy.Current.Execute(null, sqlCmd);
+            DBProxy.Current.DefaultTimeout = 60;
             if (!Result)
             {
+                MyUtility.Msg.WaitClear();
                 ShowErr(sqlCmd, Result);
                 return;
             }
 
             setcuttingdate();
 
+            MyUtility.Msg.WaitClear();
             MyUtility.Msg.InfoBox("Download successful !!");
         }
 
