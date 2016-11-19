@@ -104,7 +104,7 @@ namespace Sci.Production.Cutting
         {
             //找出相同PatternPanel 的subprocessid
             int npart = 0; //allpart 數量
-            DataRow[] garmentar = garmentTb.Select(string.Format("{0} = '{1}'", f_code,maindatarow["patternPanel"]));
+            DataRow[] garmentar = garmentTb.Select(string.Format("{0} = '{1}'", f_code,maindatarow["Lectracode"]));
             foreach (DataRow dr in garmentar)
             {
                 if (MyUtility.Check.Empty(dr["annotation"])) //若無ANNOTATion直接寫入All Parts
