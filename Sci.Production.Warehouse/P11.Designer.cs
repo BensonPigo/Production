@@ -223,6 +223,7 @@
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(107, 23);
             this.displayBox1.TabIndex = 2;
+            this.displayBox1.ValueChanged += new System.EventHandler(this.displayBox1_ValueChanged);
             // 
             // label2
             // 
@@ -283,7 +284,7 @@
             // 
             this.disCutCell.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disCutCell.Location = new System.Drawing.Point(87, 133);
+            this.disCutCell.Location = new System.Drawing.Point(380, 102);
             this.disCutCell.Name = "disCutCell";
             this.disCutCell.Size = new System.Drawing.Size(100, 23);
             this.disCutCell.TabIndex = 10;
@@ -291,7 +292,7 @@
             // label5
             // 
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(9, 133);
+            this.label5.Location = new System.Drawing.Point(302, 102);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(75, 23);
             this.label5.TabIndex = 9;
@@ -302,7 +303,7 @@
             this.textBox2.BackColor = System.Drawing.Color.White;
             this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(87, 71);
+            this.textBox2.Location = new System.Drawing.Point(87, 133);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(340, 23);
             this.textBox2.TabIndex = 12;
@@ -310,7 +311,7 @@
             // label6
             // 
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(9, 71);
+            this.label6.Location = new System.Drawing.Point(9, 133);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(75, 23);
             this.label6.TabIndex = 11;
@@ -404,7 +405,7 @@
             // 
             this.disPOID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disPOID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disPOID.Location = new System.Drawing.Point(302, 40);
+            this.disPOID.Location = new System.Drawing.Point(302, 71);
             this.disPOID.Name = "disPOID";
             this.disPOID.Size = new System.Drawing.Size(107, 23);
             this.disPOID.TabIndex = 49;
@@ -412,7 +413,7 @@
             // label9
             // 
             this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(224, 40);
+            this.label9.Location = new System.Drawing.Point(224, 71);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(75, 23);
             this.label9.TabIndex = 48;
@@ -447,7 +448,7 @@
             this.textBox1.BackColor = System.Drawing.Color.White;
             this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderId", true));
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(301, 133);
+            this.textBox1.Location = new System.Drawing.Point(87, 71);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(107, 23);
             this.textBox1.TabIndex = 53;
@@ -455,7 +456,7 @@
             // label10
             // 
             this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(223, 133);
+            this.label10.Location = new System.Drawing.Point(9, 70);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(75, 23);
             this.label10.TabIndex = 52;

@@ -44,11 +44,12 @@ namespace Sci.Production.Warehouse
             // 呼叫procedure，取得BOA展開結果
             try
             {
+                
                 DBProxy.Current.OpenConnection(null, out sqlConnection);
                 sqlCmd = new SqlCommand("[dbo].[usp_BoaByIssueBreakDown]", sqlConnection);
                 sqlCmd.CommandType = CommandType.StoredProcedure;
                 sqlCmd.Parameters.Add(new SqlParameter("@IssueID", issueid));
-                sqlCmd.Parameters.Add(new SqlParameter("@OrderID", issueid));
+                sqlCmd.Parameters.Add(new SqlParameter("@OrderID", poid));
                 sqlCmd.Parameters.Add(new SqlParameter("@POID", poid));
                 sqlCmd.Parameters.Add(new SqlParameter("@Order_BOAUkey", "0"));
                 sqlCmd.Parameters.Add(new SqlParameter("@TestType", "1"));

@@ -21,6 +21,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class P11 : Sci.Win.Tems.Input8
     {
+        StringBuilder sbSizecode, sbSizecode2, strsbIssueBreakDown;
+        StringBuilder sbIssueBreakDown;
+        DataTable dtSizeCode, dtIssueBreakDown = null;
         DataRow dr;
         string poid = "";
 
@@ -48,6 +51,7 @@ namespace Sci.Production.Warehouse
             //SubDetailKeyField2 = "Issue_SummaryUkey"; // third FK
 
             DoSubForm = subform;
+
         }
 
         public P11(ToolStripMenuItem menuitem, string transID)
@@ -173,14 +177,13 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivision
             .MaskedText("seq", "CCC-CC", "Seq#", width: Widths.AnsiChars(6), settings: ts2)  //1
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //2
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)  //3
-            .Text("SizeSpec", header: "SizeSpec", width: Widths.AnsiChars(8), iseditingreadonly: true)  //4
-            .Text("SizeUnit", header: "SizeUnit", width: Widths.AnsiChars(6), iseditingreadonly: true)  //5
-            .Numeric("usedqty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)    //6
+            .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)  //4
+            .Numeric("usedqty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)    //5
+            .Text("SizeUnit", header: "SizeUnit", width: Widths.AnsiChars(6), iseditingreadonly: true)  //6          
             .Text("location", header: "Location", width: Widths.AnsiChars(6), iseditingreadonly: true)  //7
             .Numeric("accu_issue", header: "Accu. Issued", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //8
             .Text("output", header: "Output", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: ts) //9
-            .Numeric("Qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //10
-            .Numeric("balanceqty", header: "Bulk Balance", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //11
+            .Numeric("balanceqty", header: "Balance", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //11
             //.Text("ftyinventoryukey", header: "FtyInventoryUkey", width: Widths.AnsiChars(10), iseditingreadonly: true)  //12
             ;     //
             #endregion 欄位設定
@@ -272,12 +275,12 @@ Where a.id = '{0}'", masterID);
 
             #region 必輸檢查
 
-            if (MyUtility.Check.Empty(CurrentMaintain["cutplanId"]))
-            {
-                MyUtility.Msg.WarningBox("< Request# >  can't be empty!", "Warning");
-                txtRequest.Focus();
-                return false;
-            }
+            //if (MyUtility.Check.Empty(CurrentMaintain["cutplanId"]))
+            //{
+            //    MyUtility.Msg.WarningBox("< Request# >  can't be empty!", "Warning");
+            //    txtRequest.Focus();
+            //    return false;
+            //}
             if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
@@ -301,6 +304,53 @@ Where a.id = '{0}'", masterID);
                 CurrentMaintain["id"] = tmpId;
             }
 
+            if (dtSizeCode.Rows.Count != 0)
+            {
+                string sqlcmd;
+                sqlcmd = string.Format(@";WITH UNPIVOT_1
+AS
+(
+SELECT * FROM #tmp
+UNPIVOT
+(
+QTY
+FOR SIZECODE IN ({1})
+)
+AS PVT
+)
+MERGE INTO DBO.ISSUE_BREAKDOWN T
+USING UnPivot_1 S
+ON T.ID = '{0}' AND T.ORDERID= S.OrderID AND T.ARTICLE = S.ARTICLE AND T.SIZECODE = S.SIZECODE
+WHEN MATCHED THEN
+UPDATE
+SET QTY = S.QTY
+WHEN NOT MATCHED THEN
+INSERT (ID,ORDERID,ARTICLE,SIZECODE,QTY)
+VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
+;delete from dbo.issue_breakdown where id='{0}' and qty = 0; ", CurrentMaintain["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1));//.Replace("[", "[_")
+
+                string aaa = sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1).Replace("[", "").Replace("]", "");//.Replace("[", "").Replace("]", "")
+
+
+
+                //            sqlcmd = string.Format(string.Format(@";WITH UNPIVOT_1
+                //AS
+                //(
+                //SELECT * FROM #tmp
+                //UNPIVOT
+                //(
+                //QTY
+                //FOR SIZECODE IN ({1})
+                //)
+                //AS PVT
+                //)SELECT * FROM UNPIVOT_1;", Master["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));
+
+
+
+                ProcessWithDatatable2(dtIssueBreakDown, "OrderID,Article," + aaa
+                    , sqlcmd, out result, "#tmp");
+                //MyUtility.Msg.InfoBox("Save completed!!");
+            }
             return base.ClickSaveBefore();
         }
 
@@ -421,50 +471,105 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
 
         private DualResult matrix_Reload()
         {
+            string sqlcmd;
+            StringBuilder sbIssueBreakDown;
             DualResult result;
-            DataTable dtSizeCode, dtIssueBreakDown = null;
 
-            gridIssueBreakDown.AutoGenerateColumns = true;
-            gridIssueBreakDownBS.DataSource = dtIssueBreakDown;
-            gridIssueBreakDown.DataSource = gridIssueBreakDownBS;
-            gridIssueBreakDown.IsEditingReadOnly = true;
-            gridIssueBreakDown.ReadOnly = true;
+            //dtIssueBreakDown = null;
+            //gridIssueBreakDown.AutoGenerateColumns = true;
+            //gridIssueBreakDownBS.DataSource = dtIssueBreakDown;
+            //gridIssueBreakDown.DataSource = gridIssueBreakDownBS;
+            //gridIssueBreakDown.IsEditingReadOnly = true;
+            //gridIssueBreakDown.ReadOnly = true;
 
-            string sqlcmd = string.Format(@"select sizecode from dbo.order_sizecode 
-where id = (select poid from dbo.orders where id='{0}') order by seq", CurrentMaintain["orderid"]);
+            sqlcmd = string.Format(@"select sizecode from dbo.order_sizecode 
+where id = (select poid from dbo.orders where id='{0}') order by seq", CurrentDataRow["orderid"]);
 
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out dtSizeCode)))
             {
                 ShowErr(sqlcmd, result);
-                return result;
+                return Result.True;
             }
             if (dtSizeCode.Rows.Count == 0)
             {
+                //MyUtility.Msg.WarningBox(string.Format("Becuase there no sizecode data belong this OrderID {0} , can't show data!!", CurrentDataRow["orderid"]));
+                dtIssueBreakDown = null;
+                gridIssueBreakDown.DataSource = null;
                 return Result.True;
             }
 
-            StringBuilder sbSizecode = new StringBuilder();
-            sbSizecode.Clear();
+            if (dtIssueBreakDown != null)
+                return Result.True;
 
+            sbSizecode = new StringBuilder();
+            sbSizecode2 = new StringBuilder();
+            sbSizecode.Clear();
+            sbSizecode2.Clear();
             for (int i = 0; i < dtSizeCode.Rows.Count; i++)
             {
                 sbSizecode.Append(string.Format(@"[{0}],", dtSizeCode.Rows[i]["sizecode"].ToString().TrimEnd()));
+                sbSizecode2.Append(string.Format(@"{0},", dtSizeCode.Rows[i]["sizecode"].ToString().TrimEnd()));
             }
-
-            StringBuilder sbIssueBreakDown = new StringBuilder();
-            sbIssueBreakDown.Append(string.Format(@"select * from Issue_Breakdown
-pivot
-(
-	sum(qty)
-	for sizecode in ({2})
-)as pvt
-where id='{1}'
-order by [OrderID],[Article]", CurrentMaintain["orderid"], CurrentMaintain["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));
+            sbIssueBreakDown = new StringBuilder();
+            sbIssueBreakDown.Append(string.Format(@";with Bdown as 
+            (select a.ID [orderid],a.Article,a.SizeCode,a.Qty from dbo.order_qty a
+            inner join dbo.orders b on b.id = a.id
+            where b.POID=(select poid from dbo.orders where id = '{0}')
+            )
+            ,Issue_Bdown as
+            (
+            	select isnull(Bdown.orderid,ib.OrderID) [OrderID],isnull(Bdown.Article,ib.Article) Article,isnull(Bdown.SizeCode,ib.sizecode) sizecode,isnull(ib.Qty,0) qty
+            	from Bdown full outer join (select * from dbo.Issue_Breakdown where id='{1}') ib
+            	on Bdown.orderid = ib.OrderID and Bdown.Article = ib.Article and Bdown.SizeCode = ib.SizeCode
+            )
+            select * from Issue_Bdown
+            pivot
+            (
+            	sum(qty)
+            	for sizecode in ({2})
+            )as pvt
+            order by [OrderID],[Article]", CurrentDataRow["orderid"], CurrentDataRow["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));//.Replace("[", "[_")
+            strsbIssueBreakDown = sbIssueBreakDown;//多加一個變數來接 不改變欄位
             if (!(result = DBProxy.Current.Select(null, sbIssueBreakDown.ToString(), out dtIssueBreakDown)))
             {
                 ShowErr(sqlcmd, result);
-                return result;
+                return Result.True;
             }
+//            string sqlcmd = string.Format(@"select sizecode from dbo.order_sizecode 
+//where id = (select poid from dbo.orders where id='{0}') order by seq", CurrentMaintain["orderid"]);
+
+//            if (!(result = DBProxy.Current.Select(null, sqlcmd, out dtSizeCode)))
+//            {
+//                ShowErr(sqlcmd, result);
+//                return result;
+//            }
+//            if (dtSizeCode.Rows.Count == 0)
+//            {
+//                return Result.True;
+//            }
+
+//            StringBuilder sbSizecode = new StringBuilder();
+//            sbSizecode.Clear();
+
+//            for (int i = 0; i < dtSizeCode.Rows.Count; i++)
+//            {
+//                sbSizecode.Append(string.Format(@"[{0}],", dtSizeCode.Rows[i]["sizecode"].ToString().TrimEnd()));
+//            }
+
+//            StringBuilder sbIssueBreakDown = new StringBuilder();
+//            sbIssueBreakDown.Append(string.Format(@"select * from Issue_Breakdown
+//pivot
+//(
+//	sum(qty)
+//	for sizecode in ({2})
+//)as pvt
+//where id='{1}'
+//order by [OrderID],[Article]", CurrentMaintain["orderid"], CurrentMaintain["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));
+//            if (!(result = DBProxy.Current.Select(null, sbIssueBreakDown.ToString(), out dtIssueBreakDown)))
+//            {
+//                ShowErr(sqlcmd, result);
+//                return result;
+//            }
 
             gridIssueBreakDown.AutoGenerateColumns = true;
             gridIssueBreakDownBS.DataSource = dtIssueBreakDown;
@@ -841,7 +946,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
         private void btnBreakDown_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P11_IssueBreakDown(CurrentMaintain);
+            var frm = new Sci.Production.Warehouse.P11_IssueBreakDown(CurrentMaintain,dtIssueBreakDown,dtSizeCode);
             frm.ShowDialog(this);
             this.OnDetailEntered();
         }
@@ -1016,6 +1121,104 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             xl.Save(outpath, true);
 
             return true;
+        }
+        public static void ProcessWithDatatable2(DataTable source, string tmp_columns, string sqlcmd, out DataTable result, string temptablename = "#tmp")
+        {
+            result = null;
+            StringBuilder sb = new StringBuilder();
+            if (temptablename.TrimStart().StartsWith("#"))
+            {
+                sb.Append(string.Format("create table {0} (", temptablename));
+            }
+            else
+            {
+                sb.Append(string.Format("create table #{0} (", temptablename));
+            }
+            string[] cols = tmp_columns.Split(',');
+            for (int i = 0; i < cols.Length; i++)
+            {
+                if (MyUtility.Check.Empty(cols[i])) continue;
+                switch (Type.GetTypeCode(source.Columns[cols[i]].DataType))
+                {
+                    case TypeCode.Boolean:
+                        sb.Append(string.Format("[{0}] bit", cols[i]));
+                        break;
+
+                    case TypeCode.Char:
+                        sb.Append(string.Format("[{0}] varchar(1)", cols[i]));
+                        break;
+
+                    case TypeCode.DateTime:
+                        sb.Append(string.Format("[{0}] datetime", cols[i]));
+                        break;
+
+                    case TypeCode.Decimal:
+                        sb.Append(string.Format("[{0}] numeric(24,8)", cols[i]));
+                        break;
+
+                    case TypeCode.Int32:
+                        sb.Append(string.Format("[{0}] int", cols[i]));
+                        break;
+
+                    case TypeCode.String:
+                        sb.Append(string.Format("[{0}] varchar(max)", cols[i]));
+                        break;
+
+                    case TypeCode.Int64:
+                        sb.Append(string.Format("[{0}] bigint", cols[i]));
+                        break;
+                    default:
+                        break;
+                }
+                if (i < cols.Length - 1) { sb.Append(","); }
+            }
+            sb.Append(")");
+
+            System.Data.SqlClient.SqlConnection conn;
+            DBProxy.Current.OpenConnection(null, out conn);
+
+            try
+            {
+                DualResult result2 = DBProxy.Current.ExecuteByConn(conn, sb.ToString());
+                if (!result2) { MyUtility.Msg.ShowException(null, result2); return; }
+                using (System.Data.SqlClient.SqlBulkCopy bulkcopy = new System.Data.SqlClient.SqlBulkCopy(conn))
+                {
+                    bulkcopy.BulkCopyTimeout = 60;
+                    if (temptablename.TrimStart().StartsWith("#"))
+                    {
+                        bulkcopy.DestinationTableName = temptablename.Trim();
+                    }
+                    else
+                    {
+                        bulkcopy.DestinationTableName = string.Format("#{0}", temptablename.Trim());
+                    }
+
+                    for (int i = 0; i < cols.Length; i++)
+                    {
+                        bulkcopy.ColumnMappings.Add(cols[i], cols[i]);
+                    }
+                    bulkcopy.WriteToServer(source);
+                    bulkcopy.Close();
+                }
+                result2 = DBProxy.Current.SelectByConn(conn, sqlcmd, out result);
+                if (!result2) { MyUtility.Msg.ShowException(null, result2); return; }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+        private void displayBox1_ValueChanged(object sender, EventArgs e)
+        {
+            if (displayBox1.Text.ToString() == "")
+                return;
+            
+
         }
 
     }

@@ -45,7 +45,7 @@ namespace Sci.Production.Warehouse
                  .Numeric("Qty_unit", header: "Balance", width: Widths.AnsiChars(10), integer_places: 6, decimal_places: 2)
                  .Text("Brandid", header: "Brand", width: Widths.AnsiChars(10))
                  .Text("FabricType", header: "Fabric Type", width: Widths.AnsiChars(10))
-                 .Text("MtlType", header: "Material Type", width: Widths.AnsiChars(10))
+                 .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(10))
                  .Date("eta",header:"ETA")
                  .Date("Deadline", header: "Deadline")
                  .Text("scirefno", header: "SCI Refno#", width: Widths.AnsiChars(20))
@@ -309,6 +309,7 @@ select i.poid,i.seq1,i.Seq2,t.id
 
         private void Grid3Refresh()
         {
+            dtFtyInventory.DefaultView.RowFilter = string.Format("1=0");
             if (-1 == bindingSource1.Position) return;
             DataRow tmp = grid1.GetDataRow(bindingSource1.Position);
             if (MyUtility.Check.Empty(tmp)) return;

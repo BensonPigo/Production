@@ -33,6 +33,7 @@ namespace Sci.Production.Warehouse
         }
         protected override void OnSaveAfter()
         {
+            
             base.OnSaveAfter();
             parentData["output"] = string.Join(" , ",
                     this.CurrentSubDetailDatas
@@ -58,8 +59,7 @@ namespace Sci.Production.Warehouse
             #region -- matrix breakdown setting
             Sci.Win.UI.ListControlBindingSource gridbsBreakdown = new Sci.Win.UI.ListControlBindingSource();
             gridBreakDown.DataSource = gridbsBreakdown;
-
-            _matrix = new Sci.Win.MatrixHelper(this, gridBreakDown, gridbsBreakdown); // 建立 Matrix 物件
+            _matrix = new Sci.Win.MatrixHelper(this, gridBreakDown, gridbsBreakdown); // 建立 Matrix 物件           
             //_matrix.XTableName = "issue_breakdown";  // X 軸表格名稱
             //_matrix.YTableName = "issue_breakdown";  // Y 軸表格名稱
             //_matrix.TableName = "issue_breakdown";   // 第三表格名稱
@@ -80,7 +80,6 @@ namespace Sci.Production.Warehouse
                 .AddYColDef("article", header: "Article", width: Widths.AnsiChars(8))  // Y 要顯示的欄位名稱, 可設定多個.
                 //.AddYColDef("DESCRIPTION", header: "Description", width: Widths.UnicodeChars(15))
                 ;
-
             _matrix.IsXColEditable = false;  // X 顯示的欄位可否編輯?
             _matrix.IsYColEditable = false;  // Y 顯示的欄位可否編輯?
 
@@ -98,10 +97,9 @@ namespace Sci.Production.Warehouse
             DBProxy.Current.Select(null, string.Format(@"select sum(qty) Total,article from dbo.Order_Qty where id = '{0}' group by article
                                                          union all
                                                          select sum(qty) Total,'TTL' from dbo.Order_qty where id='{0}' ",Orderid), out dtY);
-            _matrix.Clear();
-
+            _matrix.Clear();          
             if (!(result = _matrix.Sets(dtIssueBreakdown, dtX, dtY))) return result;  // 如果不是直接由資料庫載入, PR 自行處理資料來源, 再由 matrix.Set() 設定資料.
-
+            ((DataTable)gridbsBreakdown.DataSource).Rows[0].Delete();  
             return Result.True;
         }
 
@@ -139,6 +137,7 @@ from dbo.po_supp_detail where id='{0}' and seq1='{1}' and seq2='{2}'"
             {
                 ShowErr(result);
             }
+
             #endregion
         }
         
@@ -156,5 +155,6 @@ from dbo.po_supp_detail where id='{0}' and seq1='{1}' and seq2='{2}'"
 
             return true;
         }
+
     }
 }

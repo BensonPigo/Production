@@ -64,7 +64,7 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
             #region 新增Batch Shipment Finished按鈕
             Sci.Win.UI.Button btnBatchClose = new Sci.Win.UI.Button();
-            btnBatchClose.Text = "Batch Shipment Finished";
+            btnBatchClose.Text = "Batch close R/MTL";
             btnBatchClose.Click += new EventHandler(btnBatchClose_Click);
             browsetop.Controls.Add(btnBatchClose);
             btnBatchClose.Size = new Size(180, 30);//預設是(80,30)
