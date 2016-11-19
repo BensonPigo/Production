@@ -9,7 +9,9 @@ BEGIN
 	--SewingLine
 	BEGIN
 	--撈APS上SewingLine資料
-	SET @cmd = 'DECLARE cursor_sewingline CURSOR FOR SELECT Facility.GroupName, SUBSTRING(Facility.NAME,1,2) as Name, Facility.Description, Facility.Workernumber FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility WHERE Factory.CODE = '''+ @factoryid + ''' and Facility.FactoryId = Factory.Id'
+	SET @cmd = 'DECLARE cursor_sewingline CURSOR FOR SELECT Facility.GroupName, SUBSTRING(Facility.NAME,1,2) as Name, Facility.Description, Facility.Workernumber 
+	FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility WHERE Factory.CODE = '''+ @factoryid + ''' and Facility.FactoryId = Factory.Id'
+	
 	Begin Try
 		execute (@cmd)						
 	End Try
@@ -34,7 +36,8 @@ BEGIN
 			BEGIN
 				--當資料已存在PMS且值有改變就更新
 				IF @tmpcell <> @sewingcell or @tmpdesc <> @description or @tmpsewer <> @sewer
-					update SewingLine set @tmpcell = isnull(@sewingcell,''), @tmpdesc = isnull(@description,''), @tmpsewer = isnull(@sewer,0), EditName = @login, EditDate = GETDATE() where ID = @sewinglineid and FactoryID = @factoryid;
+					--update SewingLine set @tmpcell = isnull(@sewingcell,''), @tmpdesc = isnull(@description,''), @tmpsewer = isnull(@sewer,0), EditName = @login, EditDate = GETDATE() where ID = @sewinglineid and FactoryID = @factoryid;
+					update SewingLine set SewingCell = isnull(@sewingcell,''), Description = isnull(@description,''), Sewer = isnull(@sewer,0), EditName = @login, EditDate = GETDATE() where ID = @sewinglineid and FactoryID = @factoryid;
 			END
 		ELSE
 			BEGIN
@@ -66,8 +69,21 @@ BEGIN
 	END
 	CLOSE cursor_sewingline
 	DEALLOCATE cursor_sewingline
-
 	drop table #tmpSewingLine;
+
+	--alger test 用DELDTE語法有問題，先不用
+	--SET @cmd = 'DELETE FROM SewingLine
+	--			WHERE FactoryID = '''+ @factoryid + '''
+	--			AND ID NOT IN ( SELECT SUBSTRING(Facility.Name,1,2) as ID
+	--							FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility
+	--							WHERE Factory.CODE = '''+ @factoryid + ''' and Facility.FactoryId = Factory.Id )'					
+	--Begin Try
+	--	execute (@cmd)						
+	--End Try
+	--Begin Catch
+	--	EXECUTE usp_GetErrorInfo;
+	--End Catch
+
 	END
 
 	--Holiday
@@ -87,6 +103,7 @@ BEGIN
 		WHILE (@_i < @daydiff)
 		BEGIN
 			declare @tmpname nvarchar(20)
+			SET @tmpname = null   --初始化
 			select @tmpname = Name from Holiday where FactoryID = @factoryid and HolidayDate = DATEADD(DAY,@_i,@startdate)
 			IF @tmpname is not null
 				BEGIN
@@ -95,9 +112,12 @@ BEGIN
 						BEGIN
 							Begin Try
 								Begin Transaction
-									update Holiday set @tmpname = isnull(@holidayname,''), EditName = @login, EditDate = GETDATE() where FactoryID = @factoryid and HolidayDate = DATEADD(DAY,@_i,@startdate);
+									--update Holiday set @tmpname = isnull(@holidayname,''), EditName = @login, EditDate = GETDATE() where FactoryID = @factoryid and HolidayDate = DATEADD(DAY,@_i,@startdate);
+									update Holiday set Name = isnull(@holidayname,''), EditName = @login, EditDate = GETDATE() where FactoryID = @factoryid and HolidayDate = DATEADD(DAY,@_i,@startdate);
+
 									--更新WorkHour
-									update WorkHour set Holiday = 1 where FactoryID = @factoryid and Date = DATEADD(DAY,@_i,@startdate);
+									--update WorkHour set Holiday = 1 where FactoryID = @factoryid and Date = DATEADD(DAY,@_i,@startdate);
+									update WorkHour set Holiday = 0 where FactoryID = @factoryid and Date = DATEADD(DAY,@_i,@startdate);
 								Commit Transaction;
 							End Try
 							Begin Catch
@@ -332,22 +352,67 @@ BEGIN
 		select @foundworkhour = Hours from WorkHour where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate
 
 		IF @foundworkhour is null
-			IF @specialtype = 1
-				insert into WorkHour(SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)
-				values (@sewinglineid,@factoryid,@workdate,@apsworkhour,(select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate),@login,GETDATE());
+			BEGIN
+				IF @specialtype = 1
+					insert into WorkHour(SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)
+					values (@sewinglineid,@factoryid,@workdate,@apsworkhour,(select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate),@login,GETDATE());
+			END
 		ELSE
-			IF @specialtype = 1
-				update WorkHour set Hours = isnull(@apsworkhour,0), EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
-			ELSE
-				BEGIN
-					IF @foundworkhour > 0
-						update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
-				END
+			BEGIN
+				IF @specialtype = 1
+					update WorkHour set Hours = isnull(@apsworkhour,0), EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+				ELSE
+					BEGIN
+						IF @foundworkhour > 0
+							update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+					END
+			END
 		FETCH NEXT FROM cursor_apsspecialtime INTO @sewinglineid,@specialtype,@workdate,@apsworkhour
 	END
 	CLOSE cursor_apsspecialtime
 	DEALLOCATE cursor_apsspecialtime
 	END
+
+
+	--[LearnCurve][LearnCurve_Detail]
+	BEGIN
+	--撈APS上[LNCURVETEMPLATE][LNCURVEDETAIL]來異動[LearnCurve][LearnCurve_Detail]
+	SET @cmd = 'BEGIN TRAN;
+				MERGE LearnCurve AS T
+				USING ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LNCURVETEMPLATE AS S	ON (T.ID = S.ID)
+				WHEN NOT MATCHED BY TARGET
+					THEN INSERT(ID, Name, Description, AddName, AddDate) VALUES(S.ID, S.NAME, S.DESCRIPTION, '''+ @login + ''', getdate())
+				WHEN MATCHED 
+					THEN UPDATE SET T.Name = S.NAME,  T.Description = S.DESCRIPTION,  T.EditName = '''+ @login + ''', T.EditDate = getdate()
+				WHEN NOT MATCHED BY SOURCE
+					THEN DELETE;
+				COMMIT TRAN;'
+	Begin Try
+		execute (@cmd)						
+	End Try
+	Begin Catch
+		EXECUTE usp_GetErrorInfo;
+	End Catch
+
+	SET @cmd = 'BEGIN TRAN;
+				MERGE LearnCurve_Detail AS T
+				USING ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LNCURVEDETAIL AS S ON (T.ID = S.TEMPLATEID AND T.Day = S.SERIALNUMBER)
+				WHEN NOT MATCHED BY TARGET
+					THEN INSERT(ID, Day, Efficiency) VALUES(S.TEMPLATEID, S.SERIALNUMBER, S.SNVALUE)
+				WHEN MATCHED 
+					THEN UPDATE SET T.Efficiency = S.SNVALUE
+				WHEN NOT MATCHED BY SOURCE
+					THEN DELETE;
+				COMMIT TRAN;'
+	Begin Try
+		execute (@cmd)						
+	End Try
+	Begin Catch
+		EXECUTE usp_GetErrorInfo;
+	End Catch
+
+	END
+
 
 	--SewingSchedule
 	BEGIN
@@ -418,6 +483,7 @@ BEGIN
 			@sizecode varchar(8),
 			@detailalloqty int
 
+
 	CREATE TABLE #ProdEff (Efficiency float)
 	CREATE TABLE #LnEff (lnEff float)
 	CREATE TABLE #DynamicEff (BeginDate datetime,Eff float)
@@ -444,7 +510,7 @@ BEGIN
 				ELSE
 					SET @maxeff = @apseff
 
-				drop table #ProdEff;
+				delete from #ProdEff 
 
 				SET @apseff = null
 				--否有設定LearningCurve
@@ -455,7 +521,7 @@ BEGIN
 				IF @apseff is not null
 					SET @maxeff = @maxeff*@apseff
 
-				drop table #LnEff;
+				delete from #LnEff 
 
 				SET @apseff = null
 				--是否有設定動態效率
@@ -465,10 +531,11 @@ BEGIN
 				
 				IF @apseff is not null
 					SET @maxeff = @maxeff*@apseff
-
-				drop table #DynamicEff;
-
+				
 				SET @sewer = isnull((select Sewer from SewingLine where FactoryID = @factoryid and ID = @sewinglineid),0)
+
+				delete from #DynamicEff
+
 
 				Begin Try
 					Begin Transaction
@@ -520,7 +587,7 @@ BEGIN
 						ELSE
 							SET @maxeff = @apseff
 
-						drop table #ProdEff;
+						delete from #ProdEff 
 
 						SET @apseff = null
 						--否有設定LearningCurve
@@ -531,7 +598,7 @@ BEGIN
 						IF @apseff is not null
 							SET @maxeff = @maxeff*@apseff
 
-						drop table #LnEff;
+						delete from #LnEff
 
 						SET @apseff = null
 						--是否有設定動態效率
@@ -542,7 +609,7 @@ BEGIN
 						IF @apseff is not null
 							SET @maxeff = @maxeff*@apseff
 
-						drop table #DynamicEff;
+						delete from #DynamicEff
 
 						Begin Try
 							Begin Transaction
@@ -599,10 +666,10 @@ BEGIN
 			END
 
 		FETCH NEXT FROM cursor_sewingschedule INTO @orderid,@combotype,@sewinglineid,@apsno,@inline,@offline,@gsd,@duration,@editdate,@alloqty,@apspoid
+
 	END
 	CLOSE cursor_sewingschedule
 	DEALLOCATE cursor_sewingschedule
-
 	drop table #tmpAPSSchedule;
 	END
 	
