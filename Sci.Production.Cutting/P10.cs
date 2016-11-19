@@ -58,6 +58,26 @@ namespace Sci.Production.Cutting
                 displayBox_Style.Text = "";
             }
 
+            DataTable wl;
+            if (DBProxy.Current.Select(null, string.Format(@"Select a.LectraCode From workorder a ,orders b 
+                    Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id"
+                , textBox_Cutref.Text, keyword), out wl))
+            {
+                if (wl.Rows.Count != 0)
+                {
+                    textBox_LectraCode.Text = wl.Rows[0][0].ToString();
+                }
+                else
+                {
+                    textBox_LectraCode.Text = "";
+                }
+            }
+            else
+            {
+                textBox_LectraCode.Text = "";
+            }
+
+
             string estcutdate = MyUtility.GetValue.Lookup(string.Format("Select estcutdate from workorder where id='{0}' and cutref = '{1}'", cuttingid, cutref), null);
             if (!MyUtility.Check.Empty(estcutdate))  displayBox_EstCutdate.Text = Convert.ToDateTime(estcutdate).ToString("yyyy/MM/dd");
             
@@ -479,6 +499,7 @@ namespace Sci.Production.Cutting
                 CurrentMaintain["startno"] = 1;
                 CurrentMaintain["cutref"] = "";
                 CurrentMaintain["ITEM"] = "";
+                textBox_LectraCode.Text = "";
 
                 DetailDatas.Clear();
                 bundle_Detail_allpart_Tb.Clear();
@@ -501,6 +522,7 @@ namespace Sci.Production.Cutting
                 CurrentMaintain["Article"] = cutdr["Article"].ToString();
                 CurrentMaintain["Colorid"] = cutdr["Colorid"].ToString();
                 CurrentMaintain["Qty"] = cutdr["Qty"];
+                textBox_LectraCode.Text = cutdr["LectraCode"].ToString();
                 displayBox_Season.Text = cutdr["Seasonid"].ToString();
                 displayBox_Style.Text = cutdr["Styleid"].ToString();
                 displayBox_PrintDate.Text = cutdr["Estcutdate"].ToString();
