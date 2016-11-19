@@ -759,6 +759,7 @@
             // textBox_LectraCode
             // 
             this.textBox_LectraCode.BackColor = System.Drawing.Color.White;
+            this.textBox_LectraCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LectraCode", true));
             this.textBox_LectraCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox_LectraCode.Location = new System.Drawing.Point(532, 81);
             this.textBox_LectraCode.Name = "textBox_LectraCode";
