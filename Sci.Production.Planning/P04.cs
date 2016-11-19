@@ -257,7 +257,7 @@ namespace Sci.Production.Planning
 
                 }
             }
-            if (e.ColumnIndex == this.col_season.Index)
+            if (e.ColumnIndex == this.col_style.Index)
             {
                 if (null != this.dtData)
                 {
