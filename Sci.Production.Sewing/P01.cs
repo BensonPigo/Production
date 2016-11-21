@@ -125,8 +125,8 @@ namespace Sci.Production.Sewing
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = string.Format("select distinct OrderID from SewingSchedule where FactoryID = '{0}' and SewingLineID = '{1}'", Sci.Env.User.Factory, MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]));
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "13", dr["OrderID"].ToString());
+                            string sqlCmd = string.Format("select distinct OrderID from SewingSchedule where FactoryID = '{0}' and SewingLineID = '{1}' and OrderFinished=0", Sci.Env.User.Factory, MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]));
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", dr["OrderID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             e.EditingControl.Text = item.GetSelectedString();
@@ -192,7 +192,7 @@ namespace Sci.Production.Sewing
                                 return;
                             }
                             //當該SP#+Line不屬於排程時，跳出確認訊息
-                            if (!MyUtility.Check.Seek(string.Format("select ID from SewingSchedule where OrderID = '{0}' and SewingLineID = '{1}'", MyUtility.Convert.GetString(e.FormattedValue), MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]))))
+                            if (!MyUtility.Check.Seek(string.Format("select ID from SewingSchedule where OrderID = '{0}' and SewingLineID = '{1}' and OrderFinished=0", MyUtility.Convert.GetString(e.FormattedValue), MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]))))
                             {
                                 //問是否要繼續，確定才繼續往下做
                                 DialogResult buttonResult = MyUtility.Msg.WarningBox("This SP# dosen't belong to this line, please inform scheduler.\r\n\r\nDo you want to continue?", "Warning", MessageBoxButtons.YesNo);
