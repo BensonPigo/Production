@@ -147,23 +147,22 @@
     [GFR]                  BIT            DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
-
-
-
-
-
-
-
-
-
-
-
-
 GO
 
-
-
+CREATE NONCLUSTERED INDEX [Index_CuttingSP]
+    ON [dbo].[Orders]([CuttingSP] ASC);
 GO
+
+CREATE NONCLUSTERED INDEX [Index_ForShipmentSchedule]
+    ON [dbo].[Orders]([Category] ASC, [PulloutComplete] ASC, [Finished] ASC, [MDivisionID] ASC, [Qty] ASC)
+    INCLUDE([ID], [ScanAndPack], [RainwearTestPassed], [SewLine], [InspDate], [DoxType], [CustPONo], [Customize1], [Customize2], [SciDelivery], [SewOffLine], [CRDDate], [BrandID], [StyleID], [BuyMonth], [Dest], [FactoryID], [CustCDID]);
+GO
+
+CREATE NONCLUSTERED INDEX [Index_POID]
+    ON [dbo].[Orders]([POID] ASC)
+    INCLUDE([ID]);
+GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Order', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders';
 
 
