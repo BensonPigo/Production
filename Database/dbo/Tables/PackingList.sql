@@ -1,44 +1,46 @@
 ﻿CREATE TABLE [dbo].[PackingList] (
-    [ID]                VARCHAR (13)   CONSTRAINT [DF_PackingList_ID] DEFAULT ('') NOT NULL,
-    [Type]              VARCHAR (1)    CONSTRAINT [DF_PackingList_Type] DEFAULT ('') NOT NULL,
-    [MDivisionID]       VARCHAR (8)    CONSTRAINT [DF_PackingList_MDivisionID] DEFAULT ('') NOT NULL,
-    [FactoryID]         VARCHAR (8)    CONSTRAINT [DF_PackingList_FactoryID] DEFAULT ('') NOT NULL,
-    [OrderID]           VARCHAR (13)   CONSTRAINT [DF_PackingList_OrderID] DEFAULT ('') NULL,
-    [OrderShipmodeSeq]  VARCHAR (2)    CONSTRAINT [DF_PackingList_OrderShipmodeSeq] DEFAULT ('') NULL,
-    [ShipModeID]        VARCHAR (10)   CONSTRAINT [DF_PackingList_ShipModeID] DEFAULT ('') NULL,
-    [BrandID]           VARCHAR (8)    CONSTRAINT [DF_PackingList_BrandID] DEFAULT ('') NULL,
-    [Dest]              VARCHAR (2)    CONSTRAINT [DF_PackingList_Dest] DEFAULT ('') NULL,
-    [CustCDID]          VARCHAR (16)   CONSTRAINT [DF_PackingList_CustCDID] DEFAULT ('') NULL,
-    [CTNQty]            INT            CONSTRAINT [DF_PackingList_CTNQty] DEFAULT ((0)) NULL,
-    [ShipQty]           INT            CONSTRAINT [DF_PackingList_ShipQty] DEFAULT ((0)) NULL,
-    [NW]                NUMERIC (8, 3) CONSTRAINT [DF_PackingList_NW] DEFAULT ((0)) NULL,
-    [GW]                NUMERIC (8, 3) CONSTRAINT [DF_PackingList_GW] DEFAULT ((0)) NULL,
-    [NNW]               NUMERIC (8, 3) CONSTRAINT [DF_PackingList_NNW] DEFAULT ((0)) NULL,
+    [ID]                VARCHAR (13)    CONSTRAINT [DF_PackingList_ID] DEFAULT ('') NOT NULL,
+    [Type]              VARCHAR (1)     CONSTRAINT [DF_PackingList_Type] DEFAULT ('') NOT NULL,
+    [MDivisionID]       VARCHAR (8)     CONSTRAINT [DF_PackingList_MDivisionID] DEFAULT ('') NOT NULL,
+    [FactoryID]         VARCHAR (8)     CONSTRAINT [DF_PackingList_FactoryID] DEFAULT ('') NOT NULL,
+    [OrderID]           VARCHAR (13)    CONSTRAINT [DF_PackingList_OrderID] DEFAULT ('') NULL,
+    [OrderShipmodeSeq]  VARCHAR (2)     CONSTRAINT [DF_PackingList_OrderShipmodeSeq] DEFAULT ('') NULL,
+    [ShipModeID]        VARCHAR (10)    CONSTRAINT [DF_PackingList_ShipModeID] DEFAULT ('') NULL,
+    [BrandID]           VARCHAR (8)     CONSTRAINT [DF_PackingList_BrandID] DEFAULT ('') NULL,
+    [Dest]              VARCHAR (2)     CONSTRAINT [DF_PackingList_Dest] DEFAULT ('') NULL,
+    [CustCDID]          VARCHAR (16)    CONSTRAINT [DF_PackingList_CustCDID] DEFAULT ('') NULL,
+    [CTNQty]            INT             CONSTRAINT [DF_PackingList_CTNQty] DEFAULT ((0)) NULL,
+    [ShipQty]           INT             CONSTRAINT [DF_PackingList_ShipQty] DEFAULT ((0)) NULL,
+    [NW]                NUMERIC (8, 3)  CONSTRAINT [DF_PackingList_NW] DEFAULT ((0)) NULL,
+    [GW]                NUMERIC (8, 3)  CONSTRAINT [DF_PackingList_GW] DEFAULT ((0)) NULL,
+    [NNW]               NUMERIC (8, 3)  CONSTRAINT [DF_PackingList_NNW] DEFAULT ((0)) NULL,
     [CBM]               NUMERIC (10, 3) CONSTRAINT [DF_PackingList_CBM] DEFAULT ((0)) NULL,
-    [CargoReadyDate]    DATE           NULL,
-    [Remark]            NVARCHAR (125) CONSTRAINT [DF_PackingList_Remark] DEFAULT ('') NULL,
-    [EstCTNBooking]     DATE           NULL,
-    [EstCTNArrive]      DATE           NULL,
-    [ApvToPurchase]     BIT            CONSTRAINT [DF_PackingList_ApvToPurchase] DEFAULT ((0)) NULL,
-    [ApvToPurchaseDate] DATE           NULL,
-    [LocalPOID]         VARCHAR (16)   CONSTRAINT [DF_PackingList_LocalPOID] DEFAULT ('') NULL,
-    [Status]            VARCHAR (15)   CONSTRAINT [DF_PackingList_Status] DEFAULT ('') NULL,
-    [INVNo]             VARCHAR (25)   CONSTRAINT [DF_PackingList_INVNo] DEFAULT ('') NULL,
-    [GMTBookingLock]    VARCHAR (1)    CONSTRAINT [DF_PackingList_GMTBookingLock] DEFAULT ('') NULL,
-    [ShipPlanID]        VARCHAR (13)   CONSTRAINT [DF_PackingList_ShipPlanID] DEFAULT ('') NULL,
-    [PulloutDate]       DATE           NULL,
-    [PulloutID]         VARCHAR (13)   CONSTRAINT [DF_PackingList_PulloutID] DEFAULT ('') NULL,
-    [ExpressID]         VARCHAR (13)   CONSTRAINT [DF_PackingList_ExpressID] DEFAULT ('') NULL,
-    [InspDate]          DATE           NULL,
-    [InspStatus]        VARCHAR (10)   CONSTRAINT [DF_PackingList_InspStatus] DEFAULT ('') NULL,
-    [AddName]           VARCHAR (10)   CONSTRAINT [DF_PackingList_AddName] DEFAULT ('') NULL,
-    [AddDate]           DATETIME       NULL,
-    [EditName]          VARCHAR (10)   CONSTRAINT [DF_PackingList_EditName] DEFAULT ('') NULL,
-    [EditDate]          DATETIME       NULL,
-    [TransFerToClogID] VARCHAR(13) NULL, 
-    [ClogReceiveID] VARCHAR(13) NULL, 
+    [CargoReadyDate]    DATE            NULL,
+    [Remark]            NVARCHAR (125)  CONSTRAINT [DF_PackingList_Remark] DEFAULT ('') NULL,
+    [EstCTNBooking]     DATE            NULL,
+    [EstCTNArrive]      DATE            NULL,
+    [ApvToPurchase]     BIT             CONSTRAINT [DF_PackingList_ApvToPurchase] DEFAULT ((0)) NULL,
+    [ApvToPurchaseDate] DATE            NULL,
+    [LocalPOID]         VARCHAR (16)    CONSTRAINT [DF_PackingList_LocalPOID] DEFAULT ('') NULL,
+    [Status]            VARCHAR (15)    CONSTRAINT [DF_PackingList_Status] DEFAULT ('') NULL,
+    [INVNo]             VARCHAR (25)    CONSTRAINT [DF_PackingList_INVNo] DEFAULT ('') NULL,
+    [GMTBookingLock]    VARCHAR (1)     CONSTRAINT [DF_PackingList_GMTBookingLock] DEFAULT ('') NULL,
+    [ShipPlanID]        VARCHAR (13)    CONSTRAINT [DF_PackingList_ShipPlanID] DEFAULT ('') NULL,
+    [PulloutDate]       DATE            NULL,
+    [PulloutID]         VARCHAR (13)    CONSTRAINT [DF_PackingList_PulloutID] DEFAULT ('') NULL,
+    [ExpressID]         VARCHAR (13)    CONSTRAINT [DF_PackingList_ExpressID] DEFAULT ('') NULL,
+    [InspDate]          DATE            NULL,
+    [InspStatus]        VARCHAR (10)    CONSTRAINT [DF_PackingList_InspStatus] DEFAULT ('') NULL,
+    [AddName]           VARCHAR (10)    CONSTRAINT [DF_PackingList_AddName] DEFAULT ('') NULL,
+    [AddDate]           DATETIME        NULL,
+    [EditName]          VARCHAR (10)    CONSTRAINT [DF_PackingList_EditName] DEFAULT ('') NULL,
+    [EditDate]          DATETIME        NULL,
+    [TransFerToClogID]  VARCHAR (13)    NULL,
+    [ClogReceiveID]     VARCHAR (13)    NULL,
     CONSTRAINT [PK_PackingList] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -189,4 +191,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList', @level2type = N'COLUMN', @level2name = N'MDivisionID';
+
+
+GO
+CREATE NONCLUSTERED INDEX [Index_OrderIDOrderShipmodeSeq]
+    ON [dbo].[PackingList]([OrderID] ASC, [OrderShipmodeSeq] ASC);
 

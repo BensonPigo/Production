@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[PackingList_Detail] (
+CREATE TABLE [dbo].[PackingList_Detail] (
     [ID]               VARCHAR (13)   CONSTRAINT [DF_PackingList_Detail_ID] DEFAULT ('') NOT NULL,
     [OrderID]          VARCHAR (13)   CONSTRAINT [DF_PackingList_Detail_OrderID] DEFAULT ('') NOT NULL,
     [OrderShipmodeSeq] VARCHAR (2)    CONSTRAINT [DF_PackingList_Detail_OrderShipmodeSeq] DEFAULT ('') NOT NULL,
@@ -26,6 +26,8 @@
     [Remark]           NVARCHAR (40)  CONSTRAINT [DF_PackingList_Detail_Remark] DEFAULT ('') NULL,
     CONSTRAINT [PK_PackingList_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC)
 );
+
+
 
 
 
@@ -151,7 +153,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'移箱檢�
 
 
 GO
-CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+CREATE NONCLUSTERED INDEX [Index_OrderIDOrderShipmodeSeq]
     ON [dbo].[PackingList_Detail]([OrderID] ASC, [OrderShipmodeSeq] ASC)
     INCLUDE([RefNo]);
 
