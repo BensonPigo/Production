@@ -45,6 +45,7 @@ namespace Sci.Production.Class
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             this.displayBox1.Text = MyUtility.GetValue.Lookup("Alias", this.textBox1.Text.ToString(), "Country", "Id");
+            this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
         }
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
@@ -57,6 +58,7 @@ namespace Sci.Production.Class
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Country: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
+                    this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                     e.Cancel = true;
                     return;
                 }
@@ -69,6 +71,9 @@ namespace Sci.Production.Class
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
+            this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+
+
         }     
     }
 }
