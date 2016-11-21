@@ -104,7 +104,7 @@ SELECT invtrans.ID, Type,case Type
                  .Numeric("inqty", header: "Stock In Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 0)
                  .Numeric("outqty", header: "Stock Allocated Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 0)
                  .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 0)
-                  .Text("Po3seq70", header: "Use for SP#", width: Widths.AnsiChars(20))
+                  .Text("seq70", header: "Use for SP#", width: Widths.AnsiChars(20))
                   .Text("ReasonEN", header: "Reason", width: Widths.AnsiChars(60))
                  ;
         }

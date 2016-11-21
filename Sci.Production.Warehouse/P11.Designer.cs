@@ -223,7 +223,6 @@
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(107, 23);
             this.displayBox1.TabIndex = 2;
-            this.displayBox1.ValueChanged += new System.EventHandler(this.displayBox1_ValueChanged);
             // 
             // label2
             // 
@@ -452,6 +451,8 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(107, 23);
             this.textBox1.TabIndex = 53;
+            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
             // label10
             // 

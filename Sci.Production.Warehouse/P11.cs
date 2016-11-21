@@ -26,6 +26,7 @@ namespace Sci.Production.Warehouse
         DataTable dtSizeCode, dtIssueBreakDown = null;
         DataRow dr;
         string poid = "";
+        Boolean Ismatrix_Reload; //是否需要重新抓取資料庫資料
 
         P11_Detail subform = new P11_Detail();
         public P11(ToolStripMenuItem menuitem)
@@ -471,16 +472,15 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
 
         private DualResult matrix_Reload()
         {
+            if (EditMode==true && Ismatrix_Reload == false)
+                return Result.True;
+
+            Ismatrix_Reload = false;
             string sqlcmd;
             StringBuilder sbIssueBreakDown;
             DualResult result;
-
-            //dtIssueBreakDown = null;
-            //gridIssueBreakDown.AutoGenerateColumns = true;
-            //gridIssueBreakDownBS.DataSource = dtIssueBreakDown;
-            //gridIssueBreakDown.DataSource = gridIssueBreakDownBS;
-            //gridIssueBreakDown.IsEditingReadOnly = true;
-            //gridIssueBreakDown.ReadOnly = true;
+            
+            
 
             sqlcmd = string.Format(@"select sizecode from dbo.order_sizecode 
 where id = (select poid from dbo.orders where id='{0}') order by seq", CurrentDataRow["orderid"]);
@@ -492,14 +492,12 @@ where id = (select poid from dbo.orders where id='{0}') order by seq", CurrentDa
             }
             if (dtSizeCode.Rows.Count == 0)
             {
-                //MyUtility.Msg.WarningBox(string.Format("Becuase there no sizecode data belong this OrderID {0} , can't show data!!", CurrentDataRow["orderid"]));
+                //MyUtility.Msg.WarningBox(string.Format("Becuase there no sizecode data belong this OrderID {0} , can't show data!!", CurrentDataRow["orderid"]));               
                 dtIssueBreakDown = null;
                 gridIssueBreakDown.DataSource = null;
                 return Result.True;
             }
 
-            if (dtIssueBreakDown != null)
-                return Result.True;
 
             sbSizecode = new StringBuilder();
             sbSizecode2 = new StringBuilder();
@@ -535,41 +533,6 @@ where id = (select poid from dbo.orders where id='{0}') order by seq", CurrentDa
                 ShowErr(sqlcmd, result);
                 return Result.True;
             }
-//            string sqlcmd = string.Format(@"select sizecode from dbo.order_sizecode 
-//where id = (select poid from dbo.orders where id='{0}') order by seq", CurrentMaintain["orderid"]);
-
-//            if (!(result = DBProxy.Current.Select(null, sqlcmd, out dtSizeCode)))
-//            {
-//                ShowErr(sqlcmd, result);
-//                return result;
-//            }
-//            if (dtSizeCode.Rows.Count == 0)
-//            {
-//                return Result.True;
-//            }
-
-//            StringBuilder sbSizecode = new StringBuilder();
-//            sbSizecode.Clear();
-
-//            for (int i = 0; i < dtSizeCode.Rows.Count; i++)
-//            {
-//                sbSizecode.Append(string.Format(@"[{0}],", dtSizeCode.Rows[i]["sizecode"].ToString().TrimEnd()));
-//            }
-
-//            StringBuilder sbIssueBreakDown = new StringBuilder();
-//            sbIssueBreakDown.Append(string.Format(@"select * from Issue_Breakdown
-//pivot
-//(
-//	sum(qty)
-//	for sizecode in ({2})
-//)as pvt
-//where id='{1}'
-//order by [OrderID],[Article]", CurrentMaintain["orderid"], CurrentMaintain["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));
-//            if (!(result = DBProxy.Current.Select(null, sbIssueBreakDown.ToString(), out dtIssueBreakDown)))
-//            {
-//                ShowErr(sqlcmd, result);
-//                return result;
-//            }
 
             gridIssueBreakDown.AutoGenerateColumns = true;
             gridIssueBreakDownBS.DataSource = dtIssueBreakDown;
@@ -1213,12 +1176,15 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 conn.Close();
             }
         }
-        private void displayBox1_ValueChanged(object sender, EventArgs e)
+        private void textBox1_Validating(object sender, EventArgs e)
         {
-            if (displayBox1.Text.ToString() == "")
-                return;
-            
+           
+        }
 
+        private void textBox1_Validated(object sender, EventArgs e) //若order ID有變，重新撈取資料庫。
+        {
+            Ismatrix_Reload = true;
+            matrix_Reload();
         }
 
     }
