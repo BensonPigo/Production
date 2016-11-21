@@ -240,7 +240,7 @@ Where a.id = '{0}'", masterID);
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Type"] = "B";
-            CurrentMaintain["issuedate"] = DateTime.Now;
+            CurrentMaintain["issuedate"] = DateTime.Now;            
         }
 
         // delete前檢查
@@ -472,18 +472,18 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
 
         private DualResult matrix_Reload()
         {
-            if (EditMode==true && Ismatrix_Reload == false)
+            if (EditMode == true && Ismatrix_Reload == false)
                 return Result.True;
 
             Ismatrix_Reload = false;
             string sqlcmd;
             StringBuilder sbIssueBreakDown;
             DualResult result;
-            
-            
+
+            string OrderID =textBox1.Text;
 
             sqlcmd = string.Format(@"select sizecode from dbo.order_sizecode 
-where id = (select poid from dbo.orders where id='{0}') order by seq", CurrentDataRow["orderid"]);
+where id = (select poid from dbo.orders where id='{0}') order by seq", OrderID);
 
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out dtSizeCode)))
             {
@@ -526,7 +526,7 @@ where id = (select poid from dbo.orders where id='{0}') order by seq", CurrentDa
             	sum(qty)
             	for sizecode in ({2})
             )as pvt
-            order by [OrderID],[Article]", CurrentDataRow["orderid"], CurrentDataRow["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));//.Replace("[", "[_")
+            order by [OrderID],[Article]", OrderID, CurrentDataRow["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));//.Replace("[", "[_")
             strsbIssueBreakDown = sbIssueBreakDown;//多加一個變數來接 不改變欄位
             if (!(result = DBProxy.Current.Select(null, sbIssueBreakDown.ToString(), out dtIssueBreakDown)))
             {
@@ -1178,11 +1178,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         }
         private void textBox1_Validating(object sender, EventArgs e)
         {
-           
+            
+            
         }
 
         private void textBox1_Validated(object sender, EventArgs e) //若order ID有變，重新撈取資料庫。
         {
+            string str = textBox1.Text;
+            if (textBox1.OldValue == str || str == "") return;
             Ismatrix_Reload = true;
             matrix_Reload();
         }

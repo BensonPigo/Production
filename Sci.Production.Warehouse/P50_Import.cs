@@ -105,7 +105,7 @@ and a.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
             }
             if (!MyUtility.Check.Empty(sp1) || !MyUtility.Check.Empty(sp2))
             {
-                strSQLCmd.Append(string.Format(@" and a.poid between '{0}' and '{1}' ", sp1, sp2.PadLeft(13,'Z')));
+                strSQLCmd.Append(string.Format(@" and a.poid between '{0}' and '{1}' ", sp1, sp2));
             }
             if (!MyUtility.Check.Empty(location))
             {
