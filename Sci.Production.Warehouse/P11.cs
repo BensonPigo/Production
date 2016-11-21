@@ -240,7 +240,9 @@ Where a.id = '{0}'", masterID);
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Type"] = "B";
-            CurrentMaintain["issuedate"] = DateTime.Now;            
+            CurrentMaintain["issuedate"] = DateTime.Now;
+            dtIssueBreakDown = null;
+            gridIssueBreakDown.DataSource = null;
         }
 
         // delete前檢查
