@@ -60,6 +60,7 @@
     [seq70poid]        VARCHAR (13)    NULL,
     [seq70seq1]        VARCHAR (3)     NULL,
     [seq70seq2]        VARCHAR (2)     NULL,
+    [TransferMDivisionID] VARCHAR(8) NULL, 
     CONSTRAINT [PK_Invtrans] PRIMARY KEY CLUSTERED ([ID] ASC, [Ukey] ASC)
 );
 
