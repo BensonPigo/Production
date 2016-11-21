@@ -27,7 +27,7 @@ namespace Sci.Production.Cutting
         public P10_Generate(DataRow maindr,DataTable table_bundle_Detail,DataTable table_bundleallpart, DataTable table_bundleart, DataTable table_bundleqty)
         {
 
-            string cmd_st = "Select PatternCode,PatternDesc, '' as annotation,parts from Bundle_detail_allpart where 1=0";
+            string cmd_st = "Select 0 as Sel, PatternCode,PatternDesc, '' as annotation,parts from Bundle_detail_allpart where 1=0";
             DBProxy.Current.Select(null, cmd_st, out allpartTb);
            
             string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art,0 AS parts from Bundle_Detail Where 1=0"; //左下的Table
@@ -698,6 +698,10 @@ namespace Sci.Production.Cutting
                     patternTb.Rows.Add(ndr2);
                     chdr.Delete(); //刪除
                 }
+            }
+            else if (checkdr.Length == 0)
+            {
+                MyUtility.Msg.WarningBox("Please select data !!");
             }
             #endregion
             calAllPart();
