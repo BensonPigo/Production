@@ -28,33 +28,39 @@ namespace Sci.Production.Cutting
         {
             string sqlcmd = String.Format(
             @"with a as (
-	            Select d.*,e.Colorid,e.PatternPanel
-	            from 
-	            (Select b.POID,c.ID,c.Article,c.SizeCode,c.Qty 
-	            from (Select id,POID from Orders a where a.cuttingsp = '{0}') as b,
-	            order_Qty c where c.id = b.id) d,Order_ColorCombo e 
-	            where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !=''
-            )
-            , b as (
-	            Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel,isnull(sum(b.qty),0) as cutqty 
-	            from WorkOrder a ,WorkOrder_Distribute b , WorkOrder_PatternPanel c 
-	            Where a.id = '{0}' and a.ukey = b.WorkOrderUkey and a.Ukey = c.WorkOrderUkey 
-	            group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
-            )
-            , c as(
-            Select a.* ,b.cutqty,a.qty - b.cutqty as Variance 
-            from a 
-            left join b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
-            union all 
-            Select x.poid,y.ID,y.Article,y.SizeCode,y.qty,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
-            from (Select id,POID from Orders z where z.cuttingsp = '{0}') as x,order_Qty y 
-            where y.id = x.id
-            )
+	        select a.POID,b.ID,b.Article,b.SizeCode,b.Qty,c.ColorID,c.PatternPanel
+	        from Orders a
+	        inner join order_Qty b on a.id = b.id
+	        inner join Order_ColorCombo c on c.id = a.POID and c.Article = b.Article 
+                and c.FabricCode is not null and c.FabricCode != ''
+	        where a.cuttingsp = '{0}'
+        )
+        , b as (
+	        Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel
+	        ,isnull(sum(b.qty),0) as cutqty
+	        from WorkOrder a ,WorkOrder_Distribute b , WorkOrder_PatternPanel c 
+	        Where a.id = '{0}' 
+	        and a.ukey = b.WorkOrderUkey
+	        and a.Ukey = c.WorkOrderUkey 
+	        group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
+        )
+        , c as(
+	        Select a.* ,b.cutqty, b.cutqty - a.qty as Variance 
+	        from a 
+	        left join b on a.id = b.orderid 
+	        and a.Article = b.Article 
+	        and a.PatternPanel = b.PatternPanel 
+	        and a.SizeCode = b.SizeCode
+	        union all 
+	        Select x.poid,y.ID,y.Article,y.SizeCode,y.qty,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
+	        from (Select id,POID from Orders z where z.cuttingsp = '{0}') as x,order_Qty y 
+	        where y.id = x.id
+        )
 
-            select c.*,z.seq
-            from c
-            inner join Order_SizeCode z on z.id = c.POID and z.SizeCode = c.SizeCode
-            order by c.id,article,z.seq,PatternPanel", cutid);
+        select c.*,z.seq
+        from c
+        inner join Order_SizeCode z on z.id = c.POID and z.SizeCode = c.SizeCode
+        order by c.id,article,z.seq,PatternPanel", cutid);
             DataTable gridtb;
             DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
 
