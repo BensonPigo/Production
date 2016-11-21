@@ -17,11 +17,11 @@ BEGIN
 UPDATE a
 SET  
       -- a.ID	 =b.ID
-      a.CDate	      =b.CDate
-      ,a.OrderID	      =b.OrderID
-      ,a.OrderShipmodeSeq	      =b.OrderShipmodeSeq
-      ,a.MDivisionID	      =b.MDivisionID
-      ,a.ShipQty	      =b.ShipQty
+      --a.CDate	      =b.CDate
+      --,a.OrderID	      =b.OrderID
+      --,a.OrderShipmodeSeq	      =b.OrderShipmodeSeq
+      --,a.MDivisionID	      =b.MDivisionID
+      a.ShipQty	      =b.ShipQty
       ,a.ETA	      =b.ETA
       ,a.ReceiveDoxDate	      =b.ReceiveDoxDate
       ,a.GW	      =b.GW
@@ -78,10 +78,10 @@ SET
       ,a.TaskApvDate	      =b.TaskApvDate
       ,a.Status	      =b.Status
       ,a.FtySendDate	      =b.FtySendDate
-      ,a.AddName	      =b.AddName
-      ,a.AddDate	      =b.AddDate
-      ,a.EditName	      =IIF ( b.EditDate <= a.EditDate,  b.EditName, NULL )          
-      ,a.EditDate	      =IIF ( b.EditDate <= a.EditDate,  b.EditDate, NULL )        
+      --,a.AddName	      =b.AddName
+      --,a.AddDate	      =b.AddDate
+      ,a.TPEEditName	      =IIF ( b.EditDate <= a.TPEEditDate,  b.EditName, NULL )          
+      ,a.TPEEditDate	      =IIF ( b.EditDate <= a.TPEEditDate,  b.EditDate, NULL )        
 from Production.dbo.AirPP as a inner join Trade_To_Pms.dbo.AirPP as b ON a.id=b.id
 -------------------------- 
 
