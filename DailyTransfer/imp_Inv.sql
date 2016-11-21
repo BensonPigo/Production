@@ -217,7 +217,8 @@ SET
       ,a.Confirmed	      =b.Confirmed
       ,a.Qty	      =b.Qty
       ,a.Type	      =b.Type
-      ,a.TransferFactory	      = iif(c.MDivisionID is null,'',c.MDivisionID) 
+      ,a.TransferMDivisionID	      = iif(c.MDivisionID is null,'',c.MDivisionID) 
+	  ,a.TransferFactory	      = b.TransferFactory
       ,a.InventoryUkey	      =b.InventoryUkey
       ,a.InventoryRefnoId	      =b.InventoryRefnoId
       ,a.PoID	      =b.PoID
@@ -277,6 +278,7 @@ INSERT INTO Production.dbo.Invtrans (
       ,Qty
       ,Type
       ,TransferFactory
+	  ,TransferMDivisionID
       ,InventoryUkey
       ,InventoryRefnoId
       ,PoID
@@ -331,7 +333,8 @@ select
       ,Confirmed
       ,Qty
       ,Type
-      ,iif(c.MDivisionID is null,'',c.MDivisionID) as TransferFactory
+	  ,TransferFactory
+      ,iif(c.MDivisionID is null,'',c.MDivisionID) as TransferMDivisionID
       ,InventoryUkey
       ,InventoryRefnoId
       ,PoID
