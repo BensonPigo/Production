@@ -29,9 +29,10 @@ isnull((select sum(ShipQty) from PackingList_Detail where OrderID = oq.ID and Ar
 isnull((select sum(pd.ShipQty) from PackingList p,PackingList_Detail pd where pd.OrderID = oq.ID and pd.Article = oq.Article and pd.SizeCode = oq.SizeCode and p.ID = pd.ID and p.INVNo <> ''),0) as BookingQty, 
 isnull((select sum(pdd.ShipQty) from Pullout_Detail_Detail pdd where pdd.OrderID = oq.ID and pdd.Article = oq.Article and pdd.SizeCode = oq.SizeCode),0) as PulloutQty, 
 isnull((select sum(iq.DiffQty) from InvAdjust i,InvAdjust_Qty iq where i.ID = iq.ID and i.OrderID = oq.ID and iq.Article = oq.Article and iq.SizeCode = oq.SizeCode),0) as AdjQty 
-from Order_Qty oq 
+from Order_Qty oq
+left join Orders o on o.ID = oq.ID 
 left join Order_Article oa on oa.id = oq.ID and oa.Article = oq.Article
-left join Order_SizeCode os on os.Id = oq.ID and os.SizeCode = oq.SizeCode
+left join Order_SizeCode os on os.Id = o.POID and os.SizeCode = oq.SizeCode
 where oq.ID = '{0}'
 order by oa.Seq,os.Seq",orderID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out QtyBDown);
