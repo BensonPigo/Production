@@ -352,7 +352,7 @@ where POID ='{0}'", CurrentDetailData["poid"].ToString());
                         CurrentDetailData["Dyelot"] = "";
                         CurrentDetailData["stockunit"] = "";
                         CurrentDetailData["Description"] = "";
-                        CurrentDetailData["fabrictype"] = "";
+                        //CurrentDetailData["fabrictype"] = "";
                     }
                     else
                     {
@@ -417,10 +417,30 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
             };
 
             #endregion Location 右鍵開窗
+
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
+            ts3.EditingTextChanged += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    //CurrentDetailData["seq"] = "";
+                    //CurrentDetailData["seq1"] = "";
+                    //CurrentDetailData["seq2"] = "";
+                    //CurrentDetailData["roll"] = "";
+                    CurrentDetailData["dyelot"] = "";
+
+                    //Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(CurrentDetailData["stocktype"].ToString(), CurrentDetailData["location"].ToString());
+                    //DialogResult result = item.ShowDialog();
+                    //if (result == DialogResult.Cancel) { return; }
+                    //CurrentDetailData["location"] = item.GetSelectedString();
+                }
+            };
+
+
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("poid", header: "SP#", width: Widths.AnsiChars(13))  //0
+            .Text("poid", header: "SP#", width: Widths.AnsiChars(13), settings: ts3)  //0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts)  //1
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6))  //2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6))  //3
