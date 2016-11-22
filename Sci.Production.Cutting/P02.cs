@@ -469,7 +469,7 @@ namespace Sci.Production.Cutting
                 }
                 else
                 {
-                    DataRow[] drar = layersTb.Select(string.Format("Order_EachUkey = '{0}' ", CurrentDetailData["Order_EachUkey"]));
+                    DataRow[] drar = layersTb.Select(string.Format("Order_EachconsUkey = '{0}' ", CurrentDetailData["Order_EachConsUkey"]));
                     if (drar.Length != 0)
                     {
                         drar[0]["layer"] = Convert.ToInt16(drar[0]["layer"]) + bal;
