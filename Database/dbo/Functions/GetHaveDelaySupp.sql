@@ -14,9 +14,9 @@ BEGIN
 		BEGIN
 			select @mtldelay = a.Delay 
 			from (select ps.SuppID,s.Delay from PO_Supp ps
-	  			  left join Supp s on ps.SuppID = s.ID
+	  			  left join Supp s on ps.SuppID = s.ID and s.Delay is not null
 				  where ps.ID = @poid) a
-			where a.Delay is not null
+			--where 
 
 			IF @mtldelay is null
 				SET @returnvalue = 0
