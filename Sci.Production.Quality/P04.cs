@@ -125,6 +125,7 @@ namespace Sci.Production.Quality
             }
 
         }
+
         private void btnSend(object sender, EventArgs e)
         {
             if (this.EditMode==true)
@@ -142,8 +143,10 @@ namespace Sci.Production.Quality
 
             Send_Mail();
         }
+
         protected override void OnDetailGridSetup()
         {
+            
             
             DataGridViewGeneratorDateColumnSettings inspDateCell = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorTextColumnSettings inspectorCell = new DataGridViewGeneratorTextColumnSettings();
@@ -153,8 +156,7 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorTextColumnSettings ReceiveCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings ReceiverCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorComboBoxColumnSettings ResultValid = new DataGridViewGeneratorComboBoxColumnSettings();
-            DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
-
+            DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();          
             
             
 
@@ -164,6 +166,7 @@ namespace Sci.Production.Quality
             ResultComboCell.DataSource = new BindingSource(ResultCombo, null);
             ResultComboCell.ValueMember = "Key";
             ResultComboCell.DisplayMember = "Value";
+      
 
             #region inspDateCell
             inspDateCell.CellValidating += (s, e) =>
@@ -240,29 +243,29 @@ namespace Sci.Production.Quality
                     dr["Showname"] = "";
                     return; // 沒資料 return
                 } 
-                    string cmd = string.Format(@"select * from pass1 where id='{0}' and Resign is null",e.FormattedValue);                    
+                string cmd = string.Format(@"select * from pass1 where id='{0}' and Resign is null",e.FormattedValue);                    
                     
-                    if (MyUtility.Check.Seek(cmd,out dr_cmd))
+                if (MyUtility.Check.Seek(cmd,out dr_cmd))
+                {
+                    dr["EditName"] = loginID;
+                    dr["EditDate"] = DateTime.Now.ToShortDateString();
+                    dr["inspector"] = e.FormattedValue;
+                    if (MyUtility.Check.Seek(string.Format(@"select * from view_ShowName where id ='{0}'", e.FormattedValue), out dr_showname))
                     {
-                        dr["EditName"] = loginID;
-                        dr["EditDate"] = DateTime.Now.ToShortDateString();
-                        dr["inspector"] = e.FormattedValue;
-                        if (MyUtility.Check.Seek(string.Format(@"select * from view_ShowName where id ='{0}'", e.FormattedValue), out dr_showname))
-                        {
-                            dr["Showname"] = dr_showname["Name_Extno"];
-                        }
-   
+                        dr["Showname"] = dr_showname["Name_Extno"];
                     }
-                    else
-                    {
-                        MyUtility.Msg.WarningBox(string.Format("< Inspector> : {0} not found!!!",e.FormattedValue));
-                        dr["EditName"] = loginID;
-                        dr["EditDate"] = DateTime.Now.ToShortDateString();
-                        dr["inspector"] = "";
-                        dr["Showname"] = "";
-                        dr.EndEdit();
-                        e.Cancel = true; return;
-                    }                
+   
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox(string.Format("< Inspector> : {0} not found!!!",e.FormattedValue));
+                    dr["EditName"] = loginID;
+                    dr["EditDate"] = DateTime.Now.ToShortDateString();
+                    dr["inspector"] = "";
+                    dr["Showname"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true; return;
+                }                
                 CurrentDetailData.EndEdit();
                 this.update_detailgrid_CellValidated(e.RowIndex);
             };

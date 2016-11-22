@@ -374,7 +374,7 @@
             // P05
             // 
             this.ClientSize = new System.Drawing.Size(1151, 581);
-            this.DefaultDetailOrder = "InspDate,Testno";
+            this.DefaultDetailOrder = "Testno,InspDate";
             this.DefaultOrder = "id";
             this.GridAlias = "oven";
             this.IsGridIconVisible = false;

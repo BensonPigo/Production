@@ -44,6 +44,7 @@ namespace Sci.Production.Quality
                 newOven = true;
             }                
         }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -55,6 +56,7 @@ namespace Sci.Production.Quality
                 this.OnUIConvertToMaintain();
             }
         }
+
         protected override void OnEditModeChanged()
         {
             DataTable dt;
@@ -170,12 +172,14 @@ namespace Sci.Production.Quality
                 {
                     dr["SCIRefno"] = "";
                     dr["Colorid"] = "";
+                    dr["Refno"] = "";
                 }
                 else
                 {
                     dr["SEQ"] = datas.Rows[i]["seq1"].ToString().PadRight(3, ' ') + "-" + datas.Rows[i]["seq2"].ToString().TrimEnd();
                     //dr["SEQ"] = datas.Rows[i]["seq1"].ToString() + "- " + datas.Rows[i]["seq2"].ToString();
                     dr["SCIRefno"] = dtpo.Rows[0]["SCIRefno"].ToString();
+                    dr["Refno"] = dtpo.Rows[0]["Refno"].ToString();
                     dr["Colorid"] = dtpo.Rows[0]["Colorid"].ToString();
                     dr["Supplier"] = dtsupp.Rows[0]["supplier"].ToString();
                     dr["LastUpdate"] = datas.Rows[i]["EditName"].ToString() + " - " + datas.Rows[i]["EditDate"].ToString();
@@ -320,7 +324,13 @@ namespace Sci.Production.Quality
                     MyUtility.Msg.InfoBox("<SEQ#> doesn't exist in Data!");
                     dr["seq1"] = "";
                     dr["seq2"] = "";
-                    return;
+                    dr["SEQ"] = "";
+                    dr["scirefno"] = "";
+                    dr["refno"] = "";
+                    dr["colorid"] = "";
+
+                    dr.EndEdit();
+                    e.Cancel = true; return;
                 }
                 dr["seq1"] = seq1;
                 dr["seq2"] = seq2;
@@ -346,7 +356,7 @@ namespace Sci.Production.Quality
                 spam.Add(new SqlParameter("@poid", PoID));
                 spam.Add(new SqlParameter("@seq1", dr["seq1"]));
                 spam.Add(new SqlParameter("@seq2", dr["seq2"]));
-                spam.Add(new SqlParameter("@Roll", e.FormattedValue));
+                spam.Add(new SqlParameter("@Roll", dr["Roll"]));
                 DBProxy.Current.Select(null, cmd, spam, out dt1);
                 if (MyUtility.Check.Empty(dr["Roll"])) return;
                 if (dt1.Rows.Count <= 0)
@@ -355,13 +365,9 @@ namespace Sci.Production.Quality
                     MyUtility.Msg.InfoBox("<Roll> doesn't exist in Data!");
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
-                    return;
-                }
-                else
-                {
-                    dr["Roll"] = e.FormattedValue;
-                    dr["Dyelot"] = dt1.Rows[0]["Dyelot"].ToString().Trim();
-                }
+                    dr.EndEdit();
+                    e.Cancel = true; return;
+                }               
              
             };
             #endregion
@@ -392,7 +398,7 @@ namespace Sci.Production.Quality
                     //}
                     //else
                     //{
-                        string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2";
+                    string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll";
                         List<SqlParameter> spam = new List<SqlParameter>();
                         spam.Add(new SqlParameter("@poid", PoID));
                         spam.Add(new SqlParameter("@seq1", dr["seq1"]));
@@ -417,7 +423,8 @@ namespace Sci.Production.Quality
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    //if (newOven) //新資料 不判斷SEQ
+                    #region 新資料 不判斷SEQ
+                    //if (newOven) //
                     //{
                     //    string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>''";
                     //    List<SqlParameter> spam = new List<SqlParameter>();
@@ -432,9 +439,9 @@ namespace Sci.Production.Quality
                     //    dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
 
                     //}
-                    //else
-                    //{
-                        string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2";
+                    #endregion
+
+                    string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll";
                         List<SqlParameter> spam = new List<SqlParameter>();
                         spam.Add(new SqlParameter("@poid", PoID));
                         spam.Add(new SqlParameter("@seq1", dr["seq1"]));
@@ -447,15 +454,15 @@ namespace Sci.Production.Quality
                         }
                         dr["Roll"] = item.GetSelectedString();
                         dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString().TrimEnd();
-                   // }
 
                 }
 
             };
             rollCell.CellValidating += (s, e) =>
             {
-                if (this.EditMode == false) return;
-                if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                if (!this.EditMode) return;// 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
                 DataTable dt;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
 
@@ -497,7 +504,8 @@ namespace Sci.Production.Quality
                         MyUtility.Msg.InfoBox("<Roll> doesn't exist in Data!");
                         dr["Roll"] = "";
                         dr["Dyelot"] = "";
-                        return;
+                        dr.EndEdit();
+                        e.Cancel = true; return;
                     }
                     else
                     {
@@ -572,7 +580,8 @@ namespace Sci.Production.Quality
                 {
                     MyUtility.Msg.InfoBox("<Color Change Scal> doesn't exist in Data!");
                     dr["Changescale"] = "";
-                    return;
+                    dr.EndEdit();
+                    e.Cancel = true; return;
                 }
             };
             #endregion
@@ -637,7 +646,8 @@ namespace Sci.Production.Quality
                 {
                     MyUtility.Msg.InfoBox("<Color Staining Scale> doesn't exist in Data!");
                     dr["StainingScale"] = "";
-                    return;
+                    dr.EndEdit();
+                    e.Cancel = true; return;
                 }
             };
             #endregion
@@ -671,13 +681,14 @@ namespace Sci.Production.Quality
                 //.MaskedText("ColorFastnessGroup", "CC", "Body", width: Widths.AnsiChars(5))//, settings: groupCell)
                 .Text("ColorFastnessGroup", "Body", width: Widths.AnsiChars(5), settings: groupCell)
                 .MaskedText("SEQ", "CCC-CC", "SEQ#", width: Widths.AnsiChars(7), settings: seqMskCell)  
-                .Text("Roll", header: "Roll#", width: Widths.AnsiChars(5), settings: rollCell)
+                .Text("Roll", header: "Roll#", width: Widths.AnsiChars(10), settings: rollCell)
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Changescale", header: "Color Change Scale", width: Widths.AnsiChars(16), settings: chgCell)
                 .Text("StainingScale", header: "Color Staining Scale", width: Widths.AnsiChars(10), settings: staCell)
-                .Text("Result", header: "Result", width: Widths.AnsiChars(8), settings: resultCell)
+                .Text("Result", header: "Result", width: Widths.AnsiChars(8), settings: resultCell,iseditingreadonly:true)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(30))
                 .Text("LastUpdate", header: "LastUpdate", width: Widths.AnsiChars(30), iseditingreadonly: true);
             return true;
