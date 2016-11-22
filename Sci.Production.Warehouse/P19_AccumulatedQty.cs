@@ -33,9 +33,9 @@ select A.PoId,A.Seq1,A.Seq2,isnull(sum(a1.qty),0 ) requestqty
 	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
 from dbo.TransferOut_Detail A LEFT JOIN DBO.Invtrans A1 on a1.InventoryPOID = a.PoId AND A1.InventorySeq1 =a.seq1 AND A1.InventorySeq2 = a.seq2
 where a1.type = 2 AND a.Id = '{0}' 
-AND (select mdivisionid FROM dbo.scifty where id=A1.TransferFactory) = '{1}' 
+AND (select mdivisionid FROM dbo.scifty where id=A1.TransferMDivisionID) = '{1}' 
 and (select mdivisionid FROM dbo.scifty where id=a1.FactoryID) = '{2}'
-GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.QTY,A1.FactoryID,A1.TransferFactory,A1.UnitID
+GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.QTY,A1.FactoryID,A1.TransferMDivisionID,A1.UnitID
 union all
 select A.PoId,A.Seq1,A.Seq2,isnull(sum(0 - a1.Qty),0) requestqty
 	,A1.UnitID
@@ -43,7 +43,7 @@ select A.PoId,A.Seq1,A.Seq2,isnull(sum(0 - a1.Qty),0) requestqty
 	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
 from dbo.TransferOut_Detail a LEFT JOIN DBO.Invtrans A1 ON a1.InventoryPOID = a.PoId AND A1.InventorySeq1 =a.seq1 AND A1.InventorySeq2 = a.seq2
 where a1.type = 6 AND a.Id = '{0}'  
-AND (select mdivisionid FROM dbo.scifty where id=A1.TransferFactory) ='{1}' 
+AND (select mdivisionid FROM dbo.scifty where id=A1.TransferMDivisionID) ='{1}' 
 and (select mdivisionid FROM dbo.scifty where id=a1.FactoryID) = '{2}'
 GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.UnitID
 union all
@@ -52,7 +52,7 @@ select A.PoId,A.Seq1,A.Seq2,isnull(sum(a1.qty),0) requestqty
 	,sum(a.Qty) as Qty 
 	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
 from dbo.TransferOut_Detail a LEFT JOIN DBO.Invtrans A1 ON  a1.InventoryPOID = a.PoId and a1.InventorySeq1 = a.Seq1 and a1.InventorySeq2 = a.Seq2
-WHERE (select mdivisionid FROM dbo.scifty where id=a1.TransferFactory) = '{1}' 
+WHERE (select mdivisionid FROM dbo.scifty where id=a1.TransferMDivisionID) = '{1}' 
 and (select mdivisionid FROM dbo.scifty where id=a1.FactoryID)='{2}'	and a1.Type = 3  AND a.Id = '{0}'
 GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.UnitID
 )

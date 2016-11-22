@@ -219,6 +219,12 @@ namespace Sci.Production.Warehouse
                 dateBox3.Focus();
                 return false;
             }
+            if (MyUtility.Check.Empty(this.textBox2.Text))
+            {
+                MyUtility.Msg.WarningBox("From Factory cannot be null! ");
+                this.textBox2.Focus();
+                return false;
+            }
 
             foreach (DataRow row in DetailDatas)
             {
@@ -878,6 +884,35 @@ Where a.id = '{0}'", masterID);
             var frm = new Sci.Production.Warehouse.P18_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
+        }
+
+        private void textBox2_Validating(object sender, CancelEventArgs e)
+        {
+            if (!MyUtility.Check.Seek(string.Format(@"select * from scifty where id='{0}'", this.textBox2.Text)))
+            {
+                MyUtility.Msg.WarningBox("From Factory : " + textBox2.Text + " not found!");
+                this.textBox2.Text = "";
+                this.textBox2.Focus();
+                this.textBox2.Select();
+            }
+        }
+   
+
+        private void textBox2_MouseClick(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void textBox2_MouseDown(object sender, MouseEventArgs e)
+        {
+         if (e.Button==System.Windows.Forms.MouseButtons.Right)
+            {
+                string cmd = "select ID from scifty where mdivisionid<>'' and Junk<>1 order by MDivisionID,ID ";
+                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(cmd, "6", this.textBox2.ToString());
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                this.textBox2.Text = item.GetSelectedString();
+            }
         }
 
     }
