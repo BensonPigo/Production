@@ -147,6 +147,8 @@
     [GFR]                  BIT            DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 GO
 
 CREATE NONCLUSTERED INDEX [Index_CuttingSP]
@@ -763,3 +765,7 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Orders',
     @level2type = N'COLUMN',
     @level2name = N'GFR'
+GO
+CREATE NONCLUSTERED INDEX [IX_SciDelivery]
+    ON [dbo].[Orders]([SciDelivery] ASC, [MDivisionID] ASC, [ID] ASC);
+
