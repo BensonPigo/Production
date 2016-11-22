@@ -26,7 +26,7 @@ namespace Sci.Production.Shipping
         {
             base.OnFormLoaded();
 
-            string selectCommand = string.Format("select a.CDate, a.ID, b.Qty, b.CurrencyID, b.Price,b.Rate, b.Amount, c.Abb from ShippingAP a, ShippingAP_Detail b, LocalSupp c where a.ID = b.ID and b.ShipExpenseID = '{0}' and a.LocalSuppID = c.ID order by a.CDate", MyUtility.Convert.GetString(motherData["ID"]));
+            string selectCommand = string.Format("select a.CDate, a.ID, b.Qty, b.CurrencyID, b.Price,b.Rate, b.Amount, c.Abb from ShippingAP a, ShippingAP_Detail b, LocalSupp c where a.ID = b.ID and b.ShipExpenseID = '{0}' and a.LocalSuppID = c.ID order by a.CDate,a.ID", MyUtility.Convert.GetString(motherData["ID"]));
             DataTable selectDataTable;
             DualResult selectResult = DBProxy.Current.Select(null, selectCommand, out selectDataTable);
             bindingSource1.DataSource = selectDataTable;
@@ -36,7 +36,7 @@ namespace Sci.Production.Shipping
             this.grid1.DataSource = bindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
                  .Date("Cdate",header:"A/P Date")
-                 .Text("ID", header: "AP#", width: Widths.AnsiChars(13))
+                 .Text("ID", header: "AP#", width: Widths.AnsiChars(15))
                  .Numeric("Qty",header:"Q'ty",decimal_places:4)
                  .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(3))
                  .Numeric("Price", header: "Price", decimal_places: 4)
