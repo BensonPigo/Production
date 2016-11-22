@@ -47,10 +47,9 @@ namespace Sci.Production.Logistic
         private void button1_Click(object sender, EventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"select cr.ReceiveDate,cr.PackingListID,cr.OrderID,cr.CTNStartNo,
+            sqlCmd.Append(string.Format(@"select cr.ReceiveDate,cr.PackingListID,cr.OrderID,oq.Seq,cr.CTNStartNo,
 isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1,
-isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest, isnull(o.FactoryID,'') as FactoryID,oq.BuyerDelivery,cr.ClogLocationId,cr.AddDate,
-oq.Seq
+isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest, isnull(o.FactoryID,'') as FactoryID,oq.BuyerDelivery,cr.ClogLocationId,cr.AddDate
 from ClogReceive cr
 left join Orders o on cr.OrderID =  o.ID
 left join Country c on o.Dest = c.ID
@@ -94,25 +93,8 @@ where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
         //To Excel
         private void button3_Click(object sender, EventArgs e)
         {
-
-            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
-            SaveFileDialog dlg = new SaveFileDialog();
-            dlg.RestoreDirectory = true;
-            dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
-            dlg.Title = "Save as Excel File";
-            dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
-
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
-            {
-                // Open document
-                bool result = MyUtility.Excel.CopyToXls((DataTable)listControlBindingSource1.DataSource, dlg.FileName, xltfile: "Logistic_P05.xltx", headerRow: 1);
-                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
-            }
-            else
-            {
-                return;
-            }
+            bool result = MyUtility.Excel.CopyToXls((DataTable)listControlBindingSource1.DataSource, "", xltfile: "Logistic_P05.xltx", headerRow: 1);
+            if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
         }
 
     }
