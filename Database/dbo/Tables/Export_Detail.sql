@@ -13,7 +13,7 @@
     [Price]          NUMERIC (11, 4) CONSTRAINT [DF_Export_Detail_Price] DEFAULT ((0)) NOT NULL,
     [NetKg]          NUMERIC (7, 2)  CONSTRAINT [DF_Export_Detail_NetKg] DEFAULT ((0)) NULL,
     [WeightKg]       NUMERIC (7, 2)  CONSTRAINT [DF_Export_Detail_WeightKg] DEFAULT ((0)) NULL,
-    [Remark]         NVARCHAR (300)   CONSTRAINT [DF_Export_Detail_Remark] DEFAULT ('') NULL,
+    [Remark]         NVARCHAR (300)  CONSTRAINT [DF_Export_Detail_Remark] DEFAULT ('') NULL,
     [PayDesc]        NVARCHAR (300)  CONSTRAINT [DF_Export_Detail_PayDesc] DEFAULT ('') NULL,
     [LastEta]        DATE            NULL,
     [Refno]          VARCHAR (23)    CONSTRAINT [DF_Export_Detail_Refno] DEFAULT ('') NULL,
@@ -40,7 +40,7 @@
     [FormXType]      VARCHAR (8)     CONSTRAINT [DF_Export_Detail_FormXType] DEFAULT ('') NULL,
     [FormXAwb]       VARCHAR (20)    CONSTRAINT [DF_Export_Detail_FormXAwb] DEFAULT ('') NULL,
     [FormXCarrier]   VARCHAR (30)    CONSTRAINT [DF_Export_Detail_FormXCarrier] DEFAULT ('') NULL,
-    [FormXRemark]    NVARCHAR (300)   CONSTRAINT [DF_Export_Detail_FormXRemark] DEFAULT ('') NULL,
+    [FormXRemark]    NVARCHAR (300)  CONSTRAINT [DF_Export_Detail_FormXRemark] DEFAULT ('') NULL,
     [AddName]        VARCHAR (10)    CONSTRAINT [DF_Export_Detail_AddName] DEFAULT ('') NULL,
     [AddDate]        DATETIME        NULL,
     [EditDate]       DATETIME        NULL,
@@ -54,9 +54,13 @@
 
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [NonClusteredIndex-20150824-133821]
-    ON [dbo].[Export_Detail]([PoID] ASC, [Seq1] ASC, [Seq2] ASC, [SuppID] ASC);
+    ON [dbo].[Export_Detail]([PoID] ASC, [Seq1] ASC, [Seq2] ASC, [ID] ASC, [SuppID] ASC);
+
+
 
 
 GO
