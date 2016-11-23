@@ -82,7 +82,7 @@ namespace Sci.Production.PublicForm
                 foreach (DataRow lecdr in lecdrar)
                 {
                     string artgroup = lecdr["ArticleGroup"].ToString().Trim();
-                    dr[artgroup] = lecdr["PatternPanel"].ToString().Trim();
+                    dr[artgroup] = lecdr["LectraCode"].ToString().Trim();  //1181:CUTTING_P01_GarmentList。F_Code & CodeA的資料不正確，應為PATTERN_GL_LECTRACODE.LectraCode
                 }
                 if (dr["SEQ"].ToString() == "0001") dr["PatternCode"] = dr["PatternCode"].ToString().Substring(10);
             }
@@ -94,9 +94,9 @@ namespace Sci.Production.PublicForm
         {
             Helper.Controls.Grid.Generator(this.grid1)
                 .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                .Text("PatternCode", header: "Cutpart ID", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("PatternCode", header: "Cutpart ID", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Artwork", header: "Artwork", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Alone", header: "Alone", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("Pair", header: "Pair", width: Widths.AnsiChars(2), iseditingreadonly: true)
