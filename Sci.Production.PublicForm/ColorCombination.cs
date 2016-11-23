@@ -31,7 +31,7 @@ namespace Sci.Production.PublicForm
         private void requery()
         {
             Helper.Controls.Grid.Generator(this.gridFab)
-            .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true);
+            .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
             Helper.Controls.Grid.Generator(this.gridColorDesc)
            .Text("ID", header: "Color ID", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -102,7 +102,7 @@ namespace Sci.Production.PublicForm
             ndr["Article"] = "PatternPanel";
             gridtb.Rows.Add(ndr);
             ndr = gridtb.NewRow();
-            ndr["Article"] = "QT FabricCode";
+            ndr["Article"] = "Fabric";
             gridtb.Rows.Add(ndr);
             ndr = gridtb.NewRow();
             ndr["Article"] = "QT With";
@@ -114,7 +114,7 @@ namespace Sci.Production.PublicForm
                 string fc = dr["FabricCode"].ToString();
                 DataRow[] tbdr = gridtb.Select("Article = 'PatternPanel'");
                 tbdr[0][lc] = pp;
-                DataRow[] tbdr2 = gridtb.Select("Article = 'QT FABRICCODE'");
+                DataRow[] tbdr2 = gridtb.Select("Article = 'Fabric'");
                 tbdr2[0][lc] = fc;
             }
 
