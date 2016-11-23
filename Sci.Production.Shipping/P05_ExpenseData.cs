@@ -30,14 +30,16 @@ namespace Sci.Production.Shipping
             switch (columnName)
             {
                 case "InvNo":
-                    sqlCmd = string.Format(@"select Type,CurrencyID,Amount,ShippingAPID
-from ShareExpense
-where InvNo = '{0}'", id);
+                    sqlCmd = string.Format(@"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.ShippingAPID
+from ShareExpense se
+LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
+where se.InvNo = '{0}'", id);
                     break;
                 case "WKNo":
-                    sqlCmd = string.Format(@"select Type,CurrencyID,Amount,ShippingAPID
-from ShareExpense
-where WKNo = '{0}'", id);
+                    sqlCmd = string.Format(@"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.ShippingAPID
+from ShareExpense se
+LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
+where se.WKNo = '{0}'", id);
                     break;
                 default:
                     sqlCmd = "select Type,CurrencyID,Amount,ShippingAPID from ShareExpense where 1=2";
@@ -56,10 +58,10 @@ where WKNo = '{0}'", id);
             this.grid1.IsEditingReadOnly = true;
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
-                .Text("Type", header: "Type", width: Widths.AnsiChars(13))
+                .Text("Type", header: "Type", width: Widths.AnsiChars(33))
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(3))
                 .Numeric("Amount",header: "Expense",decimal_places: 2)
-                .Text("ShippingAPID", header: "A/P No.", width: Widths.AnsiChars(13));
+                .Text("ShippingAPID", header: "A/P No.", width: Widths.AnsiChars(15));
 
         }
 
