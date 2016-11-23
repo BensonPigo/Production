@@ -401,7 +401,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
         {
             if (!(MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "New" || MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Sent"))
             {
-                MyUtility.Msg.WarningBox("Status is not 'New' or 'Send', can't modify!");
+                MyUtility.Msg.WarningBox("Status is not 'New' or 'Sent', can't modify!");
                 return false;
             }
             return base.ClickEditBefore();
