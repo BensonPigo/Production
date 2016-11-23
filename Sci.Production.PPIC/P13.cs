@@ -395,7 +395,7 @@ select *,iif(isnull(SewOutQty,0) >= Qty, tmpActSewOffLine, null) as ActSewOffLin
                         if (MyUtility.Convert.GetString(dr["InlineDiff"]) == "1")
                         {
                             updateCmds.Add(string.Format(@"insert into Order_History (ID,HisType,OldValue,NewValue,Remark,AddName,AddDate)
-values ('{0}','SewInLine',{1},{2},'Sewing Inline Update','{3}',GETDATE()) ", MyUtility.Convert.GetString(dr["ID"]),
+values ('{0}','SewInOffLine',{1},{2},'Sewing Inline Update','{3}',GETDATE()) ", MyUtility.Convert.GetString(dr["ID"]),
                             MyUtility.Check.Empty(dr["OInline"]) ? "null" : "'" + Convert.ToDateTime(dr["OInline"]).ToString("d") + "'",
                             MyUtility.Check.Empty(dr["TInLine"]) ? "null" : "'" + Convert.ToDateTime(dr["TInLine"]).ToString("d") + "'",
                             Sci.Env.User.UserID));
@@ -403,7 +403,7 @@ values ('{0}','SewInLine',{1},{2},'Sewing Inline Update','{3}',GETDATE()) ", MyU
                         if (MyUtility.Convert.GetString(dr["OfflineDiff"]) == "1")
                         {
                             updateCmds.Add(string.Format(@"insert into Order_History (ID,HisType,OldValue,NewValue,Remark,AddName,AddDate)
-values ('{0}','SewOffLine',{1},{2},'Sewing Offline Update','{3}',GETDATE()) ", MyUtility.Convert.GetString(dr["ID"]),
+values ('{0}','SewInOffLine',{1},{2},'Sewing Offline Update','{3}',GETDATE()) ", MyUtility.Convert.GetString(dr["ID"]),
                             MyUtility.Check.Empty(dr["OOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["OOffLine"]).ToString("d") + "'",
                             MyUtility.Check.Empty(dr["TOffLine"]) ? "null" : "'" + Convert.ToDateTime(dr["TOffLine"]).ToString("d") + "'",
                             Sci.Env.User.UserID));
