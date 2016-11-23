@@ -43,7 +43,7 @@ namespace Sci.Production.Planning
                  .Text("localsuppid", header: "Supplier", iseditingreadonly: true)      //3
                  .Text("SupplierName", header: "Supplier Name", iseditingreadonly: true)//4
                  .Date("ArtworkInLine", header: "Sub Process Inline", iseditingreadonly: true) //1
-                 .DateTime("ApvDate", header: "Approve Date", iseditingreadonly: true) //1
+                 .DateTime("ApvDate", header: "Approve Date", iseditingreadonly: true, format:DataGridViewDateTimeFormat.yyyyMMdd) //1
                  ;//10
 
             // 全選
@@ -99,8 +99,8 @@ namespace Sci.Production.Planning
             if (dateRangeSewInLine.Value2 != null) { sewinline_e = this.dateRangeSewInLine.Text2; }
             if (dateRangeSciDelivery.Value1 != null) {delivery_b = this.dateRangeSciDelivery.Text1;}
             if (dateRangeSciDelivery.Value2 != null) { delivery_e = this.dateRangeSciDelivery.Text2; }
-            if (dateRangeApvDate.Value1 != null) { approve_b = this.dateRangeApvDate.Text1; }
-            if (dateRangeApvDate.Value2 != null) { approve_e = this.dateRangeApvDate.Text2; }
+            if (dateRangeApvDate.Value1 != null) {approve_b = this.dateRangeApvDate.Text1;}
+            if (dateRangeApvDate.Value2 != null){ approve_e = this.dateRangeApvDate.Text2; }
 
             if (chkApprove && (MyUtility.Check.Empty(approve_b) || MyUtility.Check.Empty(approve_e)))
             {
@@ -138,7 +138,7 @@ inner join dbo.factory on factory.id = ods.factoryid
 where ods.finished=0 and ods.isforecast = 0 
     and (ods.category = 'B' or ods.category = 'S')
     and ods.qty > 0 and (ot.qty > 0 or ot.tms > 0)
-    and factory.mdivisionid='{0}'",Sci.Env.User.Keyword);
+    and factory.mdivisionid='{0}'", Sci.Env.User.Keyword);
                 if (!chkApprove) { strSQLCmd += " and  ot.apvdate is null"; }
                 if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and  ot.id  between @sp1 and  @sp2"; }
                 if (!MyUtility.Check.Empty(inline_b)) { strSQLCmd += string.Format(" and not(ot.artworkinline > '{1}' or ot.artworkoffline < '{0}')", inline_b, inline_e); }
@@ -178,7 +178,7 @@ where ods.finished=0 and ods.isforecast = 0
                 #endregion
 
                 DataTable dtOT;
-
+           
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out dtOT))
                 {
