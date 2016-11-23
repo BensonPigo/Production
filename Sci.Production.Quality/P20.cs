@@ -198,10 +198,17 @@ namespace Sci.Production.Quality
             GarmentDefectCodeIDCell.CellValidating += (s, e) =>
             {
                 if (this.EditMode == false) return;
-                if (e.FormattedValue.ToString().Trim() == "") return;
+                var dr = this.CurrentDetailData;
+                if (e.FormattedValue.ToString().Trim() == "")
+                {
+                    dr["GarmentDefectCodeID"] = "";
+                    dr["Description"] = "";
+                    dr["GarmentDefectTypeid"] = "";
+                    return;                
+                }
                 DataTable dt;
                 DataRow drDesc;
-                var dr = this.CurrentDetailData;
+               
                 string cmd = "select ID from GarmentDefectCode where ID=@ID";
                 List<SqlParameter> spam = new List<SqlParameter>();
                 spam.Add(new SqlParameter("@ID", e.FormattedValue));

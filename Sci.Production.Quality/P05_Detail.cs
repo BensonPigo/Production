@@ -124,7 +124,7 @@ namespace Sci.Production.Quality
                     this.article.Text = "";
                     this.txtuser1.TextBox1Binding = loginID;
                     this.remark.Text = "";
-                    this.comboBox1.Text = "";
+                    this.comboBox1.SelectedValue = "";
                 }
             }           
           

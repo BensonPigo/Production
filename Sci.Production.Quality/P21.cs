@@ -97,6 +97,7 @@ namespace Sci.Production.Quality
                 if (MyUtility.Check.Empty(this.InspectQty_text.Text) || Convert.ToInt32(this.InspectQty_text.Text)==0)
                 {
                     this.InspectQty_text.Text = "0";
+                    
                 }
                 else
                 {
@@ -111,7 +112,8 @@ namespace Sci.Production.Quality
                 this.Audit_Date.Text = "";         this.SP_text.Text = "";              this.Style_text.Text ="";
                 this.Des_text.Text = "";           this.Factory_text.Text = "";         this.PO_text.Text = "";
                 this.orderQty_text.Text = "0";      this.InspectQty_text.Text = "0";      this.DefectsQty_text.Text = "0";
-                this.Line_text.Text = "";          this.Garment_text.Text = "";         this.CFA1_text.Text = "";          this.Remark_text.Text = "";
+                this.Line_text.Text = "";          this.Garment_text.Text = "";         this.CFA1_text.Text = "";
+                this.SQR_text.Text = "0";   this.Remark_text.Text = "";
             }
             #region btnEncode
             Encode_btn.Enabled = !this.EditMode;
@@ -659,10 +661,17 @@ where a.OrderID='{0}'", SP_text.Text);
         private void SP_text_Validating(object sender, CancelEventArgs e)
         {
            if (MyUtility.Check.Empty(this.SP_text.Text))
-            {
-                return;
+                {
+                this.SP_text.Text = "";
+                this.Style_text.Text = "";
+                this.Des_text.Text = "";
+                this.Factory_text.Text = "";
+                this.PO_text.Text = "";
+                this.orderQty_text.Text = "0";  
+                this.SQR_text.Text = "0";
+                    return;
             }
-            DataTable dt;
+            DataTable dt;   
             DualResult result;
             string sqlcmd = string.Format(@"select a.OrderID,a.FactoryID,b.StyleID,b.Dest,b.CustPONo,b.Qty from Cfa a
 inner join Orders b on a.OrderID=b.ID 
@@ -679,6 +688,7 @@ where a.OrderID='{0}'", SP_text.Text);
                     this.Factory_text.Text = "";
                     this.PO_text.Text = ""; 
                     this.orderQty_text.Text = "0";
+                    this.SQR_text.Text = "0";
                     this.SP_text.Focus();
                     this.SP_text.Select();
                     return;
