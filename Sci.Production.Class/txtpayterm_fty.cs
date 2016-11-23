@@ -53,14 +53,13 @@ namespace Sci.Production.Class
                     MyUtility.Msg.WarningBox(string.Format("< Pay Term: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
                     e.Cancel = true;
-                    return;
                 }
             }
+            this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-
             this.displayBox1.Text = MyUtility.GetValue.Lookup("Name", this.textBox1.Text.ToString(), "PayTerm", "ID", "Production");
         }
 
