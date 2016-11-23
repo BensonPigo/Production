@@ -20,6 +20,7 @@ namespace Sci.Production.Quality
     {
         private string loginID = Sci.Env.User.UserID;
         private string Factory = Sci.Env.User.Keyword;
+        string tmpId;
 
         private Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
 
@@ -79,19 +80,19 @@ namespace Sci.Production.Quality
 
             if (MyUtility.Check.Seek(sql_cmd,spam,out dr))
             {
-                this.Audit_Date.Text = Convert.ToDateTime(dr["cDate"]).ToShortDateString();
-                this.SP_text.Text = dr["orderID"].ToString();
+                //this.Audit_Date.Text = Convert.ToDateTime(dr["cDate"]).ToShortDateString();
+                //this.SP_text.Text = dr["orderID"].ToString();
                 this.Style_text.Text = dr["StyleID"].ToString();
                 this.Des_text.Text = dr["dest"].ToString();
-                this.Factory_text.Text = dr["FactoryID"].ToString();
+                //this.Factory_text.Text = dr["FactoryID"].ToString();
                 this.PO_text.Text = dr["custPONo"].ToString();
                 this.orderQty_text.Text = dr["qty"].ToString();
-                this.InspectQty_text.Text = dr["InspectQty"].ToString();
-                this.DefectsQty_text.Text = dr["DefectQty"].ToString();
-                this.Line_text.Text = dr["SewingLineID"].ToString();
-                this.Garment_text.Text = dr["GarmentOutput"].ToString();
-                this.CFA1_text.Text = dr["CFA"].ToString();
-                this.Remark_text.Text = dr["Remark"].ToString();                
+                //this.InspectQty_text.Text = dr["InspectQty"].ToString();
+                //this.DefectsQty_text.Text = dr["DefectQty"].ToString();
+                //this.Line_text.Text = dr["SewingLineID"].ToString();
+                //this.Garment_text.Text = dr["GarmentOutput"].ToString();
+                //this.CFA1_text.Text = dr["CFA"].ToString();
+                //this.Remark_text.Text = dr["Remark"].ToString();                
                
                 if (MyUtility.Check.Empty(this.InspectQty_text.Text) || Convert.ToInt32(this.InspectQty_text.Text)==0)
                 {
@@ -99,9 +100,9 @@ namespace Sci.Production.Quality
                 }
                 else
                 {
-                    SQR_text.Text = (Convert.ToDouble(this.DefectsQty_text.Text) / Convert.ToDouble(this.InspectQty_text.Text)).ToString();
+                    decimal sqrValue = MyUtility.Convert.GetDecimal(Convert.ToDouble(this.DefectsQty_text.Text) / Convert.ToDouble(this.InspectQty_text.Text));
                     //四捨五入到第3位
-                    SQR_text.Text = Math.Round(Convert.ToDouble(this.SQR_text.Text),3).ToString();
+                    SQR_text.Text = Math.Round(Convert.ToDouble(sqrValue), 3).ToString();
                 }
                 
             }          
@@ -115,13 +116,14 @@ namespace Sci.Production.Quality
             #region btnEncode
             Encode_btn.Enabled = !this.EditMode;
             //if (MyUtility.Check.Empty(CurrentMaintain)) Encode_btn.Enabled = false;
-            //if (CurrentMaintain["status"].ToString().Trim() == "Confirmed") Encode_btn.Text = "Amend";
-            //else Encode_btn.Text = "Encode";
+            if (CurrentMaintain["status"].ToString().Trim() == "Confirmed") Encode_btn.Text = "Amend";
+            else Encode_btn.Text = "Encode";
             #endregion
            
 
             base.OnDetailEntered();
         }
+
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
@@ -142,6 +144,7 @@ where a.ID='{0}'",
  masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
+
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings defectCode = new DataGridViewGeneratorTextColumnSettings();
@@ -284,7 +287,8 @@ where a.ID='{0}'",
                         dr["GarmentDefectCodeid"] = "";
                         dr["Description"] = "";
                         dr["GarmentDefectTypeID"] = "";
-                        return;
+                        dr.EndEdit();
+                        e.Cancel = true; return;
                     }
                 }
                 DataRow drDesc;
@@ -299,6 +303,8 @@ where a.ID='{0}'",
                 {
                     dr["Description"] = "";
                     dr["GarmentDefectTypeID"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true; return;
                 }
 
             };
@@ -315,6 +321,9 @@ where a.ID='{0}'",
             };
             AreaCode.CellValidating += (s, e) =>
             {
+                if (!this.EditMode) return;// 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 DataRow drDesc;
                 string sqlcmd = string.Format(@"select id,Description from CfaArea where id='{0}'",e.FormattedValue);
@@ -328,6 +337,8 @@ where a.ID='{0}'",
                     MyUtility.Msg.InfoBox("<Area Code> is not exist");
                     dr["CFAAreaID"] = "";
                     dr["AreaDesc"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true; return;
                 }
             };
             #endregion
@@ -372,7 +383,6 @@ where a.ID='{0}'",
 
                 }
                 this.Encode_btn.Text = "Amend";
-
                 
             }
             // Amend
@@ -468,6 +478,11 @@ where a.ID='{0}'",
                     MyUtility.Msg.WarningBox("<Defect Code> cannot be empty", "Warning");
                     return false;
                 }
+                if (MyUtility.Check.Empty(dr["CFAAreaID"]))
+                {
+                    MyUtility.Msg.WarningBox("<Area Code> cannot be empty", "Warning");
+                    return false;
+                }
                 if (MyUtility.Check.Empty(dr["Qty"]))
                 {
                     MyUtility.Msg.WarningBox("<No. of Defects> cannot be empty", "Warning");
@@ -478,7 +493,7 @@ where a.ID='{0}'",
             //取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword, "CFA",(DateTime)Convert.ToDateTime(this.Audit_Date.Text));
+                 tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword, "CFA",(DateTime)Convert.ToDateTime(this.Audit_Date.Text));
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -504,11 +519,6 @@ where a.ID='{0}'",
             return base.ClickSaveBefore();
         }
 
-        protected override void ClickSaveAfter()
-        {                  
-            
-            base.ClickSaveAfter();
-        }
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -525,7 +535,7 @@ where a.ID='{0}'",
             DBProxy.Current.Select(null,sql,out dt);
             if (dt.Rows[0]["status"].ToString().ToUpper()== "CONFIRMED")
             {
-                MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
+                MyUtility.Msg.WarningBox("Data is confirmed !! Can not be modified...", "Warning");
                 return false;
             }
             return base.ClickEditBefore();
@@ -541,23 +551,45 @@ where a.ID='{0}'",
             }
             return base.ClickDeleteBefore();
         }
+
         protected override DualResult ClickSave()
         {
-            DualResult dresult;
-            string updCmd = "update Cfa set cDate=@cDate,OrderID=@orderID,InspectQty=@InsQty,SewingLineID=@line,CFA=@cfa,Remark=@Remark,DefectQty=@DefectQty where id=@id ";
-            List<SqlParameter> spam = new List<SqlParameter>();
-            spam.Add(new SqlParameter("@cDate", Audit_Date.Text));
-            spam.Add(new SqlParameter("@orderID", SP_text.Text));
-            spam.Add(new SqlParameter("@InsQty", InspectQty_text.Text));
-            spam.Add(new SqlParameter("@line", Line_text.Text));
-            spam.Add(new SqlParameter("@cfa", CFA1_text.Text));
-            spam.Add(new SqlParameter("@Remark", Remark_text.Text));
-            spam.Add(new SqlParameter("@id", CurrentMaintain["id"]));
-            spam.Add(new SqlParameter("@DefectQty", DefectsQty_text.Text));
-            if (dresult = DBProxy.Current.Execute(null, updCmd, spam))
-            {
-                MyUtility.Msg.InfoBox("save successful");
-            }
+//            DualResult dresult;
+//            if (this.IsDetailInserting)
+//            {
+//                string insCmd = @"insert into cfa(id,OrderID,cDate,FactoryID,SewingLineID,InspectQty,DefectQty,Team,Shift,Result,GarmentOutput,
+//  Stage,CFA,Remark,Status,AddDate,AddName,MDivisionid)
+//  values(@id,@OrderID,@cDate,@FactoryID,@SewingLineID,@InspectQty,@DefectQty,@Team,@Shift,@Result,@GarmentOutput,
+//  @Stage,@CFA,@Remark,@Status,@AddDate,@AddName,@MDivisionid)";
+//                List<SqlParameter> spamIns = new List<SqlParameter>();
+
+//                spamIns.Add(new SqlParameter("@id", tmpId.ToString()));                
+//                spamIns.Add(new SqlParameter("@orderID", SP_text.Text));
+//                spamIns.Add(new SqlParameter("@cDate", Audit_Date.Text));
+//                spamIns.Add(new SqlParameter("@FactoryID", Audit_Date.Text));
+//                spamIns.Add(new SqlParameter("@SewingLineID", Audit_Date.Text));
+//                spamIns.Add(new SqlParameter("@InsQty", InspectQty_text.Text));
+//                spamIns.Add(new SqlParameter("@line", Line_text.Text));
+//                spamIns.Add(new SqlParameter("@cfa", CFA1_text.Text));
+//                spamIns.Add(new SqlParameter("@Remark", Remark_text.Text));
+//                spamIns.Add(new SqlParameter("@id", CurrentMaintain["id"]));
+//                spamIns.Add(new SqlParameter("@DefectQty", DefectsQty_text.Text));
+//            }
+
+//            string updCmd = "update Cfa set cDate=@cDate,OrderID=@orderID,InspectQty=@InsQty,SewingLineID=@line,CFA=@cfa,Remark=@Remark,DefectQty=@DefectQty where id=@id ";
+//            List<SqlParameter> spam = new List<SqlParameter>();
+//            spam.Add(new SqlParameter("@cDate", Audit_Date.Text));
+//            spam.Add(new SqlParameter("@orderID", SP_text.Text));
+//            spam.Add(new SqlParameter("@InsQty", InspectQty_text.Text));
+//            spam.Add(new SqlParameter("@line", Line_text.Text));
+//            spam.Add(new SqlParameter("@cfa", CFA1_text.Text));
+//            spam.Add(new SqlParameter("@Remark", Remark_text.Text));
+//            spam.Add(new SqlParameter("@id", CurrentMaintain["id"]));
+//            spam.Add(new SqlParameter("@DefectQty", DefectsQty_text.Text));
+//            if (dresult = DBProxy.Current.Execute(null, updCmd, spam))
+//            {
+//                MyUtility.Msg.InfoBox("save successful");
+//            }
        
             
             return base.ClickSave();
@@ -597,6 +629,7 @@ where a.ID='{0}'",
         {
             if (MyUtility.Check.Empty(this.SP_text.Text))
             {
+                this.SP_text.Select();
                 return;
             }
             DataTable dt;
@@ -616,11 +649,41 @@ where a.OrderID='{0}'", SP_text.Text);
                     this.orderQty_text.Text = dt.Rows[0]["Qty"].ToString();
                 }
             }
-        }
+        }   
 
         private void Garment_text_TextChanged(object sender, EventArgs e)
         {
             this.Garment_text.MaxLength = 3;
+        }
+
+        private void SP_text_Validating(object sender, CancelEventArgs e)
+        {
+           if (MyUtility.Check.Empty(this.SP_text.Text))
+            {
+                return;
+            }
+            DataTable dt;
+            DualResult result;
+            string sqlcmd = string.Format(@"select a.OrderID,a.FactoryID,b.StyleID,b.Dest,b.CustPONo,b.Qty from Cfa a
+inner join Orders b on a.OrderID=b.ID 
+where a.OrderID='{0}'", SP_text.Text);
+            result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            if (result)
+            {
+                if (dt.Rows.Count==0)
+                {
+                    MyUtility.Msg.WarningBox("<SP#> Data is not found! ");
+                    this.SP_text.Text = "";
+                    this.Style_text.Text = "";
+                    this.Des_text.Text = "";
+                    this.Factory_text.Text = "";
+                    this.PO_text.Text = ""; 
+                    this.orderQty_text.Text = "0";
+                    this.SP_text.Focus();
+                    this.SP_text.Select();
+                    return;
+                }
+            }          
         }
 
     }

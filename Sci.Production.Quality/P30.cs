@@ -100,10 +100,16 @@ namespace Sci.Production.Quality
         }
         public void itemSelect_CellMouseClick(System.Windows.Forms.MouseButtons eButton, int eRowIndex)
         {
+            DataRow dr1 = this.detailgrid.GetDataRow<DataRow>(eRowIndex);
+            if (dr1["Type"].ToString().ToUpper() != "ACCESSORY ITEMS")
+            {
+                return;
+            }
+            
             if (eButton == System.Windows.Forms.MouseButtons.Right)
             {
                 if (!this.EditMode) return;
-                DataRow dr1 = this.detailgrid.GetDataRow<DataRow>(eRowIndex);
+               // DataRow dr1 = this.detailgrid.GetDataRow<DataRow>(eRowIndex);
                 if (null == dr1) { return; }
                 if ((dr1.ItemArray[1].ToString()).ToUpper() == "CUTPARTS" || (dr1.ItemArray[1].ToString()).ToUpper() == "GARMENT")
                 {
@@ -129,6 +135,19 @@ namespace Sci.Production.Quality
             typeSetting.CharacterCasing = CharacterCasing.Normal;
             colorSelect.CellMouseClick += this.colorSelect_CellMouseClick;
             colorSelect.EditingMouseDown += this.colorSelect_CellMouseClick;
+            itemSelect.CellEditable += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["Type"].ToString().ToUpper() == "ACCESSORY ITEMS")
+                {
+                    e.IsEditable = true;
+                }
+                else
+                {
+                    e.IsEditable = false;
+                }
+            
+            };
 
             itemSelect.CellValidating += (s, e) =>
             {
@@ -149,9 +168,25 @@ namespace Sci.Production.Quality
                 {
                     MyUtility.Msg.InfoBox(e.FormattedValue + " does not exist!");
                     dr["Item"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true; return;
                 }
 
             };
+            colorSelect.CellEditable += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+               
+                if (dr["Type"].ToString().ToUpper() == "ACCESSORY ITEMS")
+                {
+                    e.IsEditable = true;
+                }
+                else
+                {
+                    e.IsEditable = false;
+                }
+            };
+
             colorSelect.CellValidating += (s, e) =>
             {
                 if (this.EditMode == false) return;
@@ -171,6 +206,8 @@ namespace Sci.Production.Quality
                 {
                     MyUtility.Msg.InfoBox(e.FormattedValue + " does not exist!");
                     dr["Colorid"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true; return;
                 }
             };
 
@@ -188,11 +225,11 @@ namespace Sci.Production.Quality
             //設定Grid屬性 text 對應欄位值 header :顯示欄位名稱
 
             Helper.Controls.Grid.Generator(this.detailgrid)               
-            .Text("Type", header: "Main Item NO", width: Ict.Win.Widths.AnsiChars(20), iseditingreadonly: true, iseditable: true, settings: typeSetting)
-            .Text("Item", header: "SEQ Ref", width: Ict.Win.Widths.AnsiChars(20),settings: itemSelect)
-            .Text("Colorid", header: "Color", width: Ict.Win.Widths.AnsiChars(20),settings: colorSelect)
-            .Date("inspdate", header: "Inspdate", width: Ict.Win.Widths.AnsiChars(18))
-            .Text("Result", header: "Result", width: Ict.Win.Widths.AnsiChars(50));
+            .Text("Type", header: "Main Item NO", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true, iseditable: true, settings: typeSetting)
+            .Text("Item", header: "SEQ Ref", width: Ict.Win.Widths.AnsiChars(15),settings: itemSelect)
+            .Text("Colorid", header: "Color", width: Ict.Win.Widths.AnsiChars(10),settings: colorSelect)
+            .Date("inspdate", header: "Inspdate", width: Ict.Win.Widths.AnsiChars(10))
+            .Text("Result", header: "Result", width: Ict.Win.Widths.AnsiChars(20));
             detailgrid.ValidateControl();
       
         }
@@ -269,6 +306,7 @@ namespace Sci.Production.Quality
             }
             base.ClickEditAfter();        
         }
+
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
@@ -302,9 +340,7 @@ namespace Sci.Production.Quality
                 {
                     //MD.PK都要有值才能save
                     if (                       
-                        detailDt.Rows[i]["Type"].ToString()==""  
-                        ||detailDt.Rows[i]["Item"].ToString()==""
-                        || (detailDt.Rows[i]["Type"].ToString().ToUpper() == "ACCESSORY ITEMS" && detailDt.Rows[i]["Item"].ToString() == ""))
+                        (detailDt.Rows[i]["Type"].ToString().ToUpper() == "ACCESSORY ITEMS" && detailDt.Rows[i]["Item"].ToString() == ""))
                     {
                         //刪除
                         detailDt.Rows[i].Delete();                        

@@ -79,12 +79,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.textBox15);
-            this.masterpanel.Controls.Add(this.textBox11);
-            this.masterpanel.Controls.Add(this.textBox12);
-            this.masterpanel.Controls.Add(this.textBox14);
-            this.masterpanel.Controls.Add(this.textBox13);
-            this.masterpanel.Controls.Add(this.textBox8);
             this.masterpanel.Controls.Add(this.btnFinished);
             this.masterpanel.Controls.Add(this.textBox10);
             this.masterpanel.Controls.Add(this.textBox9);
@@ -97,6 +91,12 @@
             this.masterpanel.Controls.Add(this.checkBox3);
             this.masterpanel.Controls.Add(this.checkBox2);
             this.masterpanel.Controls.Add(this.checkBox1);
+            this.masterpanel.Controls.Add(this.textBox15);
+            this.masterpanel.Controls.Add(this.textBox11);
+            this.masterpanel.Controls.Add(this.textBox12);
+            this.masterpanel.Controls.Add(this.textBox14);
+            this.masterpanel.Controls.Add(this.textBox13);
+            this.masterpanel.Controls.Add(this.textBox8);
             this.masterpanel.Controls.Add(this.comboBox1);
             this.masterpanel.Controls.Add(this.textBox7);
             this.masterpanel.Controls.Add(this.textBox6);
@@ -113,7 +113,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(949, 314);
+            this.masterpanel.Size = new System.Drawing.Size(807, 314);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -131,6 +131,12 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox6, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox7, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox8, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox13, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox14, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox12, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox11, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox15, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkBox3, 0);
@@ -143,17 +149,11 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox9, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox10, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFinished, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox13, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox14, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox12, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox11, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox15, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 314);
-            this.detailpanel.Size = new System.Drawing.Size(949, 206);
+            this.detailpanel.Size = new System.Drawing.Size(807, 206);
             // 
             // gridicon
             // 
@@ -163,7 +163,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(949, 206);
+            this.detailgridcont.Size = new System.Drawing.Size(807, 206);
             // 
             // detail2
             // 
@@ -179,16 +179,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(949, 558);
+            this.detail.Size = new System.Drawing.Size(807, 558);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(949, 520);
+            this.detailcont.Size = new System.Drawing.Size(807, 520);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 520);
-            this.detailbtm.Size = new System.Drawing.Size(949, 38);
+            this.detailbtm.Size = new System.Drawing.Size(807, 38);
             // 
             // browse
             // 
@@ -196,7 +196,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(957, 587);
+            this.tabs.Size = new System.Drawing.Size(815, 587);
             // 
             // label1
             // 
@@ -549,7 +549,7 @@
             // 
             // P30
             // 
-            this.ClientSize = new System.Drawing.Size(957, 620);
+            this.ClientSize = new System.Drawing.Size(815, 620);
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.DefaultDetailOrder = "Type,Item,Colorid";
             this.DefaultFilter = "orders.IsForecast<>1";

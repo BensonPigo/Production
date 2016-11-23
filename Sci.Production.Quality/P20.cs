@@ -50,7 +50,7 @@ namespace Sci.Production.Quality
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtSP.OldValue)
             {
                 // 20161101 willy 修改and to or 原因文件上所示：編輯狀態下判斷若RFT.OrderID # Order.ID 或　Order.Factoryid # 登入工廠
-                if (!MyUtility.Check.Seek(string.Format(@"select id from Orders where ID='{0}' and MDivisionID='{1}'", textValue, Sci.Env.User.Keyword)))
+                if (!MyUtility.Check.Seek(string.Format(@"select id from Orders where ID='{0}' or MDivisionID='{1}'", textValue, Sci.Env.User.Keyword)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< SP# > does not exist OR Factory is not match !!", textValue));
                     this.txtSP.Text = "";                                       
@@ -89,14 +89,21 @@ namespace Sci.Production.Quality
             }
 
             #region btnEncode
+            DataRow drStatus;
             btnEncode.Enabled = !this.EditMode;
             if (MyUtility.Check.Empty(CurrentMaintain)) btnEncode.Enabled = false;
-            if (CurrentMaintain["status"].ToString().Trim() == "Confirmed") btnEncode.Text = "Amend";
-            else btnEncode.Text = "Encode";
+            string Sql_status = string.Format("select * from rft where id='{0}'", CurrentMaintain["ID"].ToString().Trim());
+            if (MyUtility.Check.Seek(Sql_status,out drStatus))
+            {
+                if (drStatus["status"].ToString().Trim() == "Confirmed") btnEncode.Text = "Amend";
+                else btnEncode.Text = "Encode";
+            }
+          
             #endregion
 
             base.OnDetailEntered();
         }
+
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             DataTable dt = (DataTable)e.Details;
@@ -116,6 +123,7 @@ namespace Sci.Production.Quality
             }
             return base.OnRenewDataDetailPost(e);
         }
+
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings GarmentDefectCodeIDCell = new DataGridViewGeneratorTextColumnSettings();
@@ -205,7 +213,8 @@ namespace Sci.Production.Quality
                     dr["GarmentDefectCodeID"] = "";
                     dr["Description"] = "";
                     dr["GarmentDefectTypeid"] = "";
-                    return;
+                    dr.EndEdit();
+                    e.Cancel = true; return;
                 }
 
                 //帶出 Type and desc 資料
@@ -222,6 +231,8 @@ namespace Sci.Production.Quality
                 {
                     dr["Description"] = "";
                     dr["GarmentDefectTypeid"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true; return;
                 }
             };
             #endregion
@@ -232,9 +243,7 @@ namespace Sci.Production.Quality
                 .Text("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), decimal_places: 0, integer_places: 5);
 
-        }
-
-      
+        }      
 
         //[Encode][Amend]
         private void btnEncode_Click(object sender, EventArgs e)
@@ -249,6 +258,7 @@ namespace Sci.Production.Quality
             }
             else if (btnEncode.Text == "Amend")
             {
+                MyUtility.Msg.InfoBox("Are you sure you want to <Amend> this data !?");
                 sql = string.Format(@"update Rft set Status='New' , editName='{0}', editDate='{1}'
                                       where ID='{2}'"
                                     , Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), CurrentMaintain["ID"].ToString().Trim());
@@ -345,7 +355,7 @@ namespace Sci.Production.Quality
             DBProxy.Current.Select(null, sql, out dt);
             if (dt.Rows.Count > 0 && isNew)// 如果是新增,才判斷ＳＰ＃是否存在
             {
-                MyUtility.Msg.InfoBox("Data does exist!");
+                MyUtility.Msg.InfoBox(" SP#,Shift,Team,Date,Factory can't be same in dataBase,please pick one least to change!");
                 return false;
             }
 

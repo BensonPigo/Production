@@ -52,7 +52,6 @@
             this.Factory_text = new Sci.Win.UI.TextBox();
             this.Remark_text = new Sci.Win.UI.TextBox();
             this.PO_text = new Sci.Win.UI.TextBox();
-            this.orderQty_text = new Sci.Win.UI.TextBox();
             this.InspectStage_combo = new Sci.Win.UI.ComboBox();
             this.Result_combo = new Sci.Win.UI.ComboBox();
             this.Encode_btn = new Sci.Win.UI.Button();
@@ -67,6 +66,7 @@
             this.InspectQty_text = new Sci.Win.UI.NumericBox();
             this.DefectsQty_text = new Sci.Win.UI.NumericBox();
             this.SQR_text = new Sci.Win.UI.NumericBox();
+            this.orderQty_text = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -83,6 +83,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.orderQty_text);
             this.masterpanel.Controls.Add(this.SQR_text);
             this.masterpanel.Controls.Add(this.DefectsQty_text);
             this.masterpanel.Controls.Add(this.InspectQty_text);
@@ -96,7 +97,6 @@
             this.masterpanel.Controls.Add(this.Encode_btn);
             this.masterpanel.Controls.Add(this.Result_combo);
             this.masterpanel.Controls.Add(this.InspectStage_combo);
-            this.masterpanel.Controls.Add(this.orderQty_text);
             this.masterpanel.Controls.Add(this.PO_text);
             this.masterpanel.Controls.Add(this.Remark_text);
             this.masterpanel.Controls.Add(this.Factory_text);
@@ -149,7 +149,6 @@
             this.masterpanel.Controls.SetChildIndex(this.Factory_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Remark_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.PO_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.orderQty_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.InspectStage_combo, 0);
             this.masterpanel.Controls.SetChildIndex(this.Result_combo, 0);
             this.masterpanel.Controls.SetChildIndex(this.Encode_btn, 0);
@@ -163,6 +162,7 @@
             this.masterpanel.Controls.SetChildIndex(this.InspectQty_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.DefectsQty_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.SQR_text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.orderQty_text, 0);
             // 
             // detailpanel
             // 
@@ -375,11 +375,13 @@
             // SP_text
             // 
             this.SP_text.BackColor = System.Drawing.Color.White;
+            this.SP_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "orderid", true));
             this.SP_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.SP_text.Location = new System.Drawing.Point(105, 45);
             this.SP_text.Name = "SP_text";
             this.SP_text.Size = new System.Drawing.Size(141, 23);
             this.SP_text.TabIndex = 2;
+            this.SP_text.Validating += new System.ComponentModel.CancelEventHandler(this.SP_text_Validating);
             this.SP_text.Validated += new System.EventHandler(this.SP_text_Validated);
             // 
             // Style_text
@@ -407,6 +409,7 @@
             // Factory_text
             // 
             this.Factory_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.Factory_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
             this.Factory_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.Factory_text.IsSupportEditMode = false;
             this.Factory_text.Location = new System.Drawing.Point(105, 146);
@@ -418,6 +421,7 @@
             // Remark_text
             // 
             this.Remark_text.BackColor = System.Drawing.Color.White;
+            this.Remark_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.Remark_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.Remark_text.Location = new System.Drawing.Point(105, 221);
             this.Remark_text.Name = "Remark_text";
@@ -434,17 +438,6 @@
             this.PO_text.ReadOnly = true;
             this.PO_text.Size = new System.Drawing.Size(144, 23);
             this.PO_text.TabIndex = 26;
-            // 
-            // orderQty_text
-            // 
-            this.orderQty_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.orderQty_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.orderQty_text.IsSupportEditMode = false;
-            this.orderQty_text.Location = new System.Drawing.Point(362, 45);
-            this.orderQty_text.Name = "orderQty_text";
-            this.orderQty_text.ReadOnly = true;
-            this.orderQty_text.Size = new System.Drawing.Size(144, 23);
-            this.orderQty_text.TabIndex = 27;
             // 
             // InspectStage_combo
             // 
@@ -483,6 +476,7 @@
             // 
             // Audit_Date
             // 
+            this.Audit_Date.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cDate", true));
             this.Audit_Date.Location = new System.Drawing.Point(105, 10);
             this.Audit_Date.Name = "Audit_Date";
             this.Audit_Date.Size = new System.Drawing.Size(141, 23);
@@ -583,6 +577,7 @@
             // InspectQty_text
             // 
             this.InspectQty_text.BackColor = System.Drawing.Color.White;
+            this.InspectQty_text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "inspectqty", true));
             this.InspectQty_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.InspectQty_text.Location = new System.Drawing.Point(362, 79);
             this.InspectQty_text.Maximum = new decimal(new int[] {
@@ -607,6 +602,7 @@
             // DefectsQty_text
             // 
             this.DefectsQty_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.DefectsQty_text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DefectQty", true));
             this.DefectsQty_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.DefectsQty_text.IsSupportEditMode = false;
             this.DefectsQty_text.Location = new System.Drawing.Point(362, 112);
@@ -633,6 +629,7 @@
             // SQR_text
             // 
             this.SQR_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.SQR_text.DecimalPlaces = 3;
             this.SQR_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.SQR_text.IsSupportEditMode = false;
             this.SQR_text.Location = new System.Drawing.Point(105, 183);
@@ -641,6 +638,11 @@
             0,
             0,
             0});
+            this.SQR_text.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            196608});
             this.SQR_text.Name = "SQR_text";
             this.SQR_text.NullValue = new decimal(new int[] {
             0,
@@ -651,6 +653,32 @@
             this.SQR_text.Size = new System.Drawing.Size(141, 23);
             this.SQR_text.TabIndex = 46;
             this.SQR_text.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // orderQty_text
+            // 
+            this.orderQty_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.orderQty_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.orderQty_text.IsSupportEditMode = false;
+            this.orderQty_text.Location = new System.Drawing.Point(362, 45);
+            this.orderQty_text.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.orderQty_text.Name = "orderQty_text";
+            this.orderQty_text.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.orderQty_text.ReadOnly = true;
+            this.orderQty_text.Size = new System.Drawing.Size(141, 23);
+            this.orderQty_text.TabIndex = 47;
+            this.orderQty_text.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -689,7 +717,6 @@
         private Win.UI.Button Encode_btn;
         private Win.UI.ComboBox Result_combo;
         private Win.UI.ComboBox InspectStage_combo;
-        private Win.UI.TextBox orderQty_text;
         private Win.UI.TextBox PO_text;
         private Win.UI.TextBox Remark_text;
         private Win.UI.TextBox Factory_text;
@@ -725,5 +752,6 @@
         private Win.UI.NumericBox InspectQty_text;
         private Win.UI.NumericBox SQR_text;
         private Win.UI.NumericBox DefectsQty_text;
+        private Win.UI.NumericBox orderQty_text;
     }
 }

@@ -297,7 +297,8 @@ namespace Sci.Production.Quality
 
                 }
 
-            };        
+            };     
+            
             seqMskCell.CellValidating += (s, e) =>
             {
                 if (!this.EditMode) return;

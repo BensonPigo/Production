@@ -149,10 +149,6 @@
             this.gridicon.Location = new System.Drawing.Point(909, 126);
             this.gridicon.Visible = false;
             // 
-            // refresh
-            // 
-            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
-            // 
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(1090, 309);
@@ -184,7 +180,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1017, 387);
+            this.browse.Size = new System.Drawing.Size(1090, 511);
             // 
             // tabs
             // 

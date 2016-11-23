@@ -31,16 +31,24 @@ namespace Sci.Production.Quality
             SEQ2 = seq2.Trim();
 
             #region 設定可否編輯
-            if (!canedit) EDIT = false;
+            if (!canedit) 
+            {
+                EDIT = false;
+                SetView(maindr);
+            }
             else
-            { 
+            {
                 EDIT = true;
                 SetUpdate(maindr);
             }
             #endregion
 
         }
-
+        protected override void OnEditModeChanged()
+        {
+            bool edit= this.EditMode;
+            base.OnEditModeChanged();
+        }
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -206,7 +214,7 @@ namespace Sci.Production.Quality
 
             }
         }
-        //修改寫法,先保留! 20161105        
+        #region 修改寫法,先保留! 20161105
         //protected override bool OnSaveBefore()
         //{
         //    if (save.Text == "Edit")
@@ -241,10 +249,11 @@ namespace Sci.Production.Quality
         //    }
 
         //}
-     
-       
+        #endregion
+
         private void button1_Click(object sender, EventArgs e)
         {
+            SetView(maindr);
             this.Close();
         }
 
@@ -294,8 +303,8 @@ where POID='{0}' and seq1='{1}' and SEQ2='{2}'",
 PoID, SEQ1, SEQ2, txtScale.Text, this.comboResult.Text, txtRemark.Text, txtuser1.TextBox1.Text, ((DateTime)this.OvenDate.Value).ToShortDateString());
                 DBProxy.Current.Execute(null, sqlcmd);
                 this.btnSave.Text = "Edit";
-                this.btnEncode.Enabled = true;
-                return ;
+                this.btnEncode.Enabled = true;                
+
             }
           
             

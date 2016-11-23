@@ -253,8 +253,7 @@ namespace Sci.Production.Quality
                     if (MyUtility.Check.Seek(string.Format(@"select * from view_ShowName where id ='{0}'", e.FormattedValue), out dr_showname))
                     {
                         dr["Showname"] = dr_showname["Name_Extno"];
-                    }
-   
+                    }   
                 }
                 else
                 {

@@ -30,9 +30,13 @@ namespace Sci.Production.Quality
             SEQ2 = seq2.Trim();
 
             #region 設定可否編輯
-            if (!canedit) EDIT = false;
+            if (!canedit)
+            {
+                SetView(maindr);
+                EDIT = false;
+            }
             else
-            { 
+            {
                 EDIT = true;
                 SetUpdate(maindr);
             }
@@ -242,6 +246,7 @@ namespace Sci.Production.Quality
 
         private void btnClose_Click(object sender, EventArgs e)
         {
+            SetView(maindr);
             this.Close();
         }
 
@@ -288,7 +293,6 @@ PoID, SEQ1, SEQ2, txtScale.Text, this.comboResult.Text, txtRemark.Text, txtuser1
                 DBProxy.Current.Execute(null, sqlcmd);
                 this.btnSave.Text = "Edit";
                 this.btnEncode.Enabled = true;
-                return;
             }
         }
 
