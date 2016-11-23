@@ -236,7 +236,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.refresh.Location = new System.Drawing.Point(1280, 8);
+            this.refresh.Location = new System.Drawing.Point(2075, 8);
             // 
             // detailgridcont
             // 
@@ -1053,11 +1053,12 @@
             // 
             // P02
             // 
-            this.ApvChkValue = "Send";
+            this.ApvChkValue = "Sent";
             this.ClientSize = new System.Drawing.Size(1006, 712);
             this.DefaultDetailOrder = "CTNNo,Seq1";
             this.DefaultOrder = "ShipDate,ID";
             this.GridAlias = "Express_Detail";
+            this.GridNew = 0;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
@@ -1068,7 +1069,7 @@
             this.JunkChkValue = "New";
             this.KeyField1 = "ID";
             this.Name = "P02";
-            this.RecallChkValue = "Send";
+            this.RecallChkValue = "Sent";
             this.SendChkValue = "New";
             this.Text = "P02. International Express";
             this.UnApvChkValue = "Approved";

@@ -205,13 +205,13 @@ namespace Sci.Production.Shipping
             displayBox3.Value = "";
             if (MyUtility.Convert.GetString(CurrentMaintain["ToTag"]) == "3")
             {
-                displayBox3.Value = MyUtility.GetValue.Lookup("AbbEN", MyUtility.Convert.GetString(CurrentMaintain["FromSite"]), "Supp", "ID");
+                displayBox3.Value = MyUtility.GetValue.Lookup("AbbEN", MyUtility.Convert.GetString(CurrentMaintain["ToSite"]), "Supp", "ID");
             }
             else
             {
                 if (MyUtility.Convert.GetString(CurrentMaintain["ToTag"]) == "4")
                 {
-                    displayBox3.Value = MyUtility.GetValue.Lookup("NameEN", MyUtility.Convert.GetString(CurrentMaintain["FromSite"]), "Brand", "ID");
+                    displayBox3.Value = MyUtility.GetValue.Lookup("NameEN", MyUtility.Convert.GetString(CurrentMaintain["ToSite"]), "Brand", "ID");
                 }
             }
             numericBox4.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["CTNNW"]);
@@ -399,9 +399,9 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
 
         protected override bool ClickEditBefore()
         {
-            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "New")
+            if (!(MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "New" || MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Sent"))
             {
-                MyUtility.Msg.WarningBox("Status is not 'New', can't modify!");
+                MyUtility.Msg.WarningBox("Status is not 'New' or 'Send', can't modify!");
                 return false;
             }
             return base.ClickEditBefore();
@@ -410,8 +410,30 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            textBox2.ReadOnly = MyUtility.Convert.GetString(CurrentMaintain["ToTag"]) == "1" ? true : false;
-            textBox5.ReadOnly = true;
+            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "New")
+            {
+                textBox2.ReadOnly = MyUtility.Convert.GetString(CurrentMaintain["ToTag"]) == "1" ? true : false;
+                textBox5.ReadOnly = true;
+            }
+            else
+            {
+                textBox1.ReadOnly = true;
+                textBox2.ReadOnly = true;
+                textBox3.ReadOnly = true;
+                textBox4.ReadOnly = true;
+                textBox5.ReadOnly = true;
+                textBox6.ReadOnly = true;
+                comboBox1.ReadOnly = true;
+                comboBox2.ReadOnly = true;
+                txtuser1.TextBox1.ReadOnly = true;
+                txtuser2.TextBox1.ReadOnly = true;
+                dateBox1.ReadOnly = true;
+                dateBox2.ReadOnly = true;
+                dateBox3.ReadOnly = true;
+                editBox1.ReadOnly = true;
+                txtcountry1.TextBox1.ReadOnly = true;
+
+            }
         }
 
         protected override bool ClickSaveBefore()
@@ -1039,7 +1061,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 return;
             }
             SendMail();
-            string updateCmd = string.Format("update Express set Status = 'Send', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update Express set Status = 'Sent', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -1190,7 +1212,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 return;
             }
 
-            string updateCmd = string.Format("update Express set Status = 'Send', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update Express set Status = 'Sent', StatusUpdateDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
