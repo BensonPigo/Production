@@ -124,7 +124,7 @@ namespace Sci.Production.Warehouse
             #region -- SQL Command --
             StringBuilder sqlcmd = new StringBuilder();
             sqlcmd.Append(@"select i.poid,i.seq1,i.seq2,i.BrandID,i.InputQty,i.OutputQty,i.Qty
-,case i.FabricType when 'F' then 'Fabric' when 'A' then 'Accessory' end as fabrictype
+,case b.FabricType when 'F' then 'Fabric' when 'A' then 'Accessory' else 'Other' end as fabrictype
 ,i.FactoryID,i.ETA
 ,i.MtlTypeID,i.ProjectID,i.Deadline,i.Refno,i.Ukey,I.SCIRefno,I.UnitID POUNIT,DBO.getStockUnit(b.SCIRefno,s.suppid) AS STOCKUNIT
 ,ISNULL((SELECT cast(V.Rate as numeric) FROM dbo.View_Unitrate V WHERE V.FROM_U=I.UnitID AND V.TO_U = DBO.getStockUnit(I.SCIRefno,I.suppid)),1.0) RATE
@@ -309,6 +309,7 @@ select i.poid,i.seq1,i.Seq2,t.id
 
         private void Grid3Refresh()
         {
+            if (dtFtyInventory==null) return;
             dtFtyInventory.DefaultView.RowFilter = string.Format("1=0");
             if (-1 == bindingSource1.Position) return;
             DataRow tmp = grid1.GetDataRow(bindingSource1.Position);

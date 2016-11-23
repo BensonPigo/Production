@@ -298,6 +298,7 @@
             // editBox1
             // 
             this.editBox1.BackColor = System.Drawing.Color.White;
+            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.editBox1.Location = new System.Drawing.Point(94, 47);
             this.editBox1.Multiline = true;

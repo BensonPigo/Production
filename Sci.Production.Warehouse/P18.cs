@@ -419,20 +419,22 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
             #endregion Location 右鍵開窗
 
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
-            ts3.EditingTextChanged += (s, e) =>
+            ts3.CellValidating += (s, e) =>
             {
-                if (this.EditMode)
+                if (this.EditMode == true)
                 {
-                    //CurrentDetailData["seq"] = "";
-                    //CurrentDetailData["seq1"] = "";
-                    //CurrentDetailData["seq2"] = "";
-                    //CurrentDetailData["roll"] = "";
-                    CurrentDetailData["dyelot"] = "";
-
-                    //Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(CurrentDetailData["stocktype"].ToString(), CurrentDetailData["location"].ToString());
-                    //DialogResult result = item.ShowDialog();
-                    //if (result == DialogResult.Cancel) { return; }
-                    //CurrentDetailData["location"] = item.GetSelectedString();
+                    if (!MyUtility.Check.Seek(string.Format(@"select POID from Inventory where POID = '{0}'", e.FormattedValue)))
+                    {
+                        this.CurrentDetailData["poid"] = CurrentDetailData["poid"];
+                        MyUtility.Msg.WarningBox("Data not found!", e.FormattedValue.ToString());
+                        return;
+                    }
+                    this.CurrentDetailData["seq"] = "";
+                    this.CurrentDetailData["seq1"] = "";
+                    this.CurrentDetailData["seq2"] = "";
+                    this.CurrentDetailData["roll"] = "";
+                    this.CurrentDetailData["dyelot"] = "";
+                    this.CurrentDetailData["poid"] = e.FormattedValue;
                 }
             };
 

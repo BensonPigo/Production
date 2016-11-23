@@ -10,6 +10,7 @@
     [WhseArrival]     DATE           NULL,
     [Status]          VARCHAR (15)   CONSTRAINT [DF_Receiving_Status] DEFAULT ('') NULL,
     [Transfer2Taipei] DATE           NULL,
+	[Remark]          NVARCHAR(100)  NULL,
     [InspectionRate]  NUMERIC (5, 2) CONSTRAINT [DF_Receiving_InspectionRate] DEFAULT ((0)) NULL,
     [AddName]         VARCHAR (10)   CONSTRAINT [DF_Receiving_AddName] DEFAULT ('') NULL,
     [AddDate]         DATETIME       NULL,
