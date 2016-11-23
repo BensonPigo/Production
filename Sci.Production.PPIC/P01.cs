@@ -741,7 +741,7 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
         private void button16_Click(object sender, EventArgs e)
         {
             //Sci.Win.UI.ShowHistory callNextForm = new Win.UI.ShowHistory("Order_History", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "Sewing", caption: "History", dataType: "D");
-            Sci.Win.UI.ShowHistory callNextForm = new Win.UI.ShowHistory("Order_History", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "SewInLine", caption: "History", dataType: "D");
+            Sci.Win.UI.ShowHistory callNextForm = new Win.UI.ShowHistory("Order_History", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "SewInOffLine", caption: "History111", dataType: "D");
             callNextForm.ShowDialog(this);
         }
 
