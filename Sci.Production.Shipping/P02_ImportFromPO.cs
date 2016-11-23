@@ -90,7 +90,7 @@ namespace Sci.Production.Shipping
             string sqlCmd = string.Format(@"select 0 as Selected, a.*, iif(a.POQty-a.ExpressQty>0,a.POQty-a.ExpressQty,0) as Qty
 from (
 select psd.ID,psd.SEQ1,psd.SEQ2,psd.Price,psd.POUnit as UnitID,isnull(o.BrandID,'') as BrandID,
-isnull(t.Name,'') as Leader,ps.SuppID,ps.SuppID+'-'+s.AbbEN as Supplier,psd.Qty as POQty,
+isnull(t.Name,'') as Leader, o.SMR  as LeaderID,ps.SuppID,ps.SuppID+'-'+s.AbbEN as Supplier,psd.Qty as POQty,
 (select isnull(sum(ed.Qty),0) from Express_Detail ed where ed.OrderID = psd.ID and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2) as ExpressQty,
 '' as Receiver,'' as CTNNo, 0.0 as NW
 from PO_Supp_Detail psd
@@ -197,7 +197,7 @@ where psd.ID = '{0}'{1}{2}) a", textBox1.Text, MyUtility.Check.Empty(textBox2.Te
  values('{0}','{1}','{2}','{3}',{4},{5},'{6}','4','{7}',{8},'{9}','{10}','{11}','{12}','{13}','{14}','{14}',GETDATE());",
                                             MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"]), MyUtility.Convert.GetString(dr["Qty"]),
                                             MyUtility.Convert.GetString(dr["NW"]), MyUtility.Convert.GetString(dr["CTNNo"]), MyUtility.Convert.GetString(dr["SuppID"]), MyUtility.Convert.GetString(dr["Price"]), MyUtility.Convert.GetString(dr["UnitID"]), MyUtility.Convert.GetString(dr["Receiver"]), MyUtility.Convert.GetString(dr["BrandID"]),
-                                            MyUtility.Convert.GetString(dr["Leader"]), textBox4.Text, Sci.Env.User.UserID));
+                                            MyUtility.Convert.GetString(dr["LeaderID"]), textBox4.Text, Sci.Env.User.UserID));
             }
 
             //Qty不可為0

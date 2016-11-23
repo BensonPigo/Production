@@ -61,21 +61,21 @@ namespace Sci.Production.Shipping
                 messrs = "";
                 if (MyUtility.Convert.GetString(masterData["ToTag"]) == "1" || MyUtility.Convert.GetString(masterData["ToTag"]) == "3")
                 {
-                    if (MyUtility.Check.Seek(string.Format("select AbbEN,AddressEN,Tel from Supp where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToTag"])), out dr))
+                    if (MyUtility.Check.Seek(string.Format("select AbbEN,AddressEN,Tel from Supp where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToSite"])), out dr))
                     {
                         messrs = string.Format("{0}\r\n{1}\r\nTEL: {2}", MyUtility.Convert.GetString(dr["AbbEN"]), MyUtility.Convert.GetString(dr["AddressEN"]), MyUtility.Convert.GetString(dr["Tel"]));
                     }
                 }
                 else if (MyUtility.Convert.GetString(masterData["ToTag"]) == "4")
                 {
-                    if (MyUtility.Check.Seek(string.Format("select NameEN,AddressEN,Tel from Brand where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToTag"])), out dr))
+                    if (MyUtility.Check.Seek(string.Format("select NameEN,AddressEN,Tel from Brand where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToSite"])), out dr))
                     {
                         messrs = string.Format("{0}\r\n{1}\r\nTEL: {2}", MyUtility.Convert.GetString(dr["NameEN"]), MyUtility.Convert.GetString(dr["AddressEN"]), MyUtility.Convert.GetString(dr["Tel"]));
                     }
                 }
                 else if (MyUtility.Convert.GetString(masterData["ToTag"]) == "2")
                 {
-                    if (MyUtility.Check.Seek(string.Format("select Abb,AddressEN,Tel from SCIFty where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToTag"])), out dr))
+                    if (MyUtility.Check.Seek(string.Format("select Abb,AddressEN,Tel from SCIFty where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToSite"])), out dr))
                     {
                         messrs = string.Format("{0}\r\n{1}\r\nTEL: {2}", MyUtility.Convert.GetString(dr["Abb"]), MyUtility.Convert.GetString(dr["AddressEN"]), MyUtility.Convert.GetString(dr["Tel"]));
                     }
@@ -114,6 +114,7 @@ group by UnitID", MyUtility.Convert.GetString(masterData["ID"]));
                 worksheet.Cells[3, 11] = managerName;
                 worksheet.Cells[4, 2] = MyUtility.Convert.GetString(masterData["ToTag"]) == "1" ? "SCI" : MyUtility.Convert.GetString(masterData["ToTag"]) == "2" ? "Factory" : MyUtility.Convert.GetString(masterData["ToTag"]) == "3" ? "Supplier" : "Brand";
                 worksheet.Cells[4, 3] = MyUtility.Convert.GetString(masterData["ToSite"]);
+                worksheet.Cells[4, 4] = MyUtility.Convert.GetString(masterData["ToTag"]) == "3" ? (MyUtility.GetValue.Lookup("AbbEN", MyUtility.Convert.GetString(masterData["ToSite"]), "Supp", "ID")) : MyUtility.Convert.GetString(masterData["ToTag"]) == "4" ? (MyUtility.GetValue.Lookup("NameEN", MyUtility.Convert.GetString(masterData["ToSite"]), "Brand", "ID")) : "";
                 worksheet.Cells[4, 10] = MyUtility.Convert.GetString(masterData["Dest"]);
                 worksheet.Cells[4, 11] = destination;
                 worksheet.Cells[5, 2] = MyUtility.Check.Empty(masterData["ShipDate"]) ? "" : Convert.ToDateTime(masterData["ShipDate"]).ToString("d");

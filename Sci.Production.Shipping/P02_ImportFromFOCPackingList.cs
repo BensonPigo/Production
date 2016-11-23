@@ -77,7 +77,7 @@ namespace Sci.Production.Shipping
             }
 
             string sqlCmd = string.Format(@"select pd.ID,pd.OrderID,o.SeasonID,o.StyleID,'Sample' as Category,
-'' as CTNNo, 0.0 as NW, 0.0 as Price,pd.ShipQty,o.StyleUnit as UnitID,'' as Receiver,
+'' as CTNNo, 0.0 as NW, 0.0 as Price,pd.ShipQty,o.StyleUnit as UnitID,'' as Receiver,o.SMR as LeaderID,
 t.Name as Leader, o.BrandID, [dbo].[getBOFMtlDesc](o.StyleUkey) as Description
 from PackingList_Detail pd
 left join Orders o on pd.OrderID = o.ID
@@ -175,7 +175,7 @@ where pd.ID = '{0}'", textBox1.Text);
 from Express_Detail where ID = '{0}' and Seq2 = ''),'{2}','{3}','{4}',{5},{6},'{7}','1','{8}',{9},'{10}','{11}','{12}','{13}','{14}','{14}',GETDATE());",
                                             MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["SeasonID"]), MyUtility.Convert.GetString(dr["StyleID"]), MyUtility.Convert.GetString(dr["Description"]), MyUtility.Convert.GetString(dr["ShipQty"]),
                                             MyUtility.Convert.GetString(dr["NW"]), MyUtility.Convert.GetString(dr["CTNNo"]), MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Price"]), MyUtility.Convert.GetString(dr["UnitID"]), MyUtility.Convert.GetString(dr["Receiver"]), MyUtility.Convert.GetString(dr["BrandID"]),
-                                            MyUtility.Convert.GetString(dr["Leader"]),Sci.Env.User.UserID));
+                                            MyUtility.Convert.GetString(dr["LeaderID"]), Sci.Env.User.UserID));
             }
 
             insertCmds.Add(string.Format("update PackingList set ExpressID = '{0}' where ID = '{1}'", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(dt.Rows[0]["ID"])));
