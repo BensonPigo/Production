@@ -650,7 +650,7 @@
             this.Controls.Add(this.CutRef_grid);
             this.EditMode = true;
             this.Name = "P11";
-            this.Text = "P21.Batch Create Bundle Card";
+            this.Text = "P11.Batch Create Bundle Card";
             this.Controls.SetChildIndex(this.CutRef_grid, 0);
             this.Controls.SetChildIndex(this.Qty_grid, 0);
             this.Controls.SetChildIndex(this.AllPart_grid, 0);
