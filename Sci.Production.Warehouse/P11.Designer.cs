@@ -343,7 +343,7 @@
             // 
             this.btnAutoPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAutoPick.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnAutoPick.Location = new System.Drawing.Point(911, 33);
+            this.btnAutoPick.Location = new System.Drawing.Point(911, 31);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
             this.btnAutoPick.TabIndex = 15;
@@ -369,9 +369,9 @@
             this.btnBreakDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBreakDown.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnBreakDown.Enabled = false;
-            this.btnBreakDown.Location = new System.Drawing.Point(887, 65);
+            this.btnBreakDown.Location = new System.Drawing.Point(876, 63);
             this.btnBreakDown.Name = "btnBreakDown";
-            this.btnBreakDown.Size = new System.Drawing.Size(104, 30);
+            this.btnBreakDown.Size = new System.Drawing.Size(120, 30);
             this.btnBreakDown.TabIndex = 45;
             this.btnBreakDown.Text = "Issue B\'down";
             this.btnBreakDown.UseVisualStyleBackColor = true;
