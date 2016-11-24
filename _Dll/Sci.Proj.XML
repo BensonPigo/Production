@@ -419,7 +419,7 @@
             <param name="offsetCols">指定最多抓幾行 ; sheet.Columns.Counts 會是該版本Excel的最大行數 </param>
             <returns></returns>
         </member>
-        <member name="M:Sci.MyUtility.Excel.CopyToXls(System.Data.DataTable,System.String,System.String,System.Int32,System.Boolean,System.String,System.Object,System.Boolean,System.Object)">
+        <member name="M:Sci.MyUtility.Excel.CopyToXls(System.Data.DataTable,System.String,System.String,System.Int32,System.Boolean,System.String,System.Object,System.Boolean,System.Object,System.Boolean)">
             <summary>
             CopyToXls()
             </summary>
