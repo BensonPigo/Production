@@ -23,6 +23,11 @@ namespace Sci.Production.Planning
         }
 
         //
+        protected override void ClickEditAfter()
+        {
+            refresh.Enabled = true;
+            base.ClickEditAfter();
+        }
         protected override bool ClickCopy()
         {
             if (MyUtility.Check.Empty(CurrentDetailData))
@@ -173,7 +178,8 @@ namespace Sci.Production.Planning
             this.DetailSelectCommand = string.Format(@"select A.*,S.ABB SuppName from style_artwork_quot a 
 INNER JOIN LocalSupp S ON S.ID = A.LocalSuppId Where a.styleUkey = {0}", masterID);
 
-            DBProxy.Current.Select(null, string.Format(@"select * from style_artwork t where styleukey={0}", masterID), out style_artwork);
+            DBProxy.Current.Select(null, string.Format(@"select t.*,B.ArtworkUnit AS unit from style_artwork t 
+LEFT JOIN ArtworkType B ON t.ArtworkTypeID=B.ID where styleukey={0}", masterID), out style_artwork);
 
             return base.OnDetailSelectCommandPrepare(e);
 
