@@ -86,7 +86,7 @@ namespace Sci.Production.Logistic
 
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-                .Text("TransferToClogID", header: "Trans. Slip#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                //.Text("TransferToClogID", header: "Trans. Slip#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("ID", header: "Pack ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("CustPONo", header: "P.O.#", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -103,7 +103,7 @@ namespace Sci.Production.Logistic
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.textBox1.Text) && MyUtility.Check.Empty(this.textBox2.Text) && MyUtility.Check.Empty(this.textBox3.Text) && MyUtility.Check.Empty(this.textBox4.Text) && MyUtility.Check.Empty(this.textBox5.Text) && MyUtility.Check.Empty(this.textBox6.Text) && MyUtility.Check.Empty(this.textBox7.Text) && MyUtility.Check.Empty(this.textBox8.Text))
+            if (MyUtility.Check.Empty(this.textBox1.Text) && MyUtility.Check.Empty(this.textBox2.Text) && MyUtility.Check.Empty(this.textBox3.Text) && MyUtility.Check.Empty(this.textBox4.Text) && MyUtility.Check.Empty(this.textBox7.Text) && MyUtility.Check.Empty(this.textBox8.Text))
             {
                 MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < Transfer Clog No. > or < PO# > can not empty!");
                 this.textBox1.Focus();
@@ -119,7 +119,7 @@ substring((select cast(Article as nvarchar) + ',' from PackingList_Detail where 
 substring((select cast(Color as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Color as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Color,
 substring((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as SizeCode
 from (
-	  select distinct b.TransferToClogID, b.ID, b.OrderID, c.CustPONo, b.CTNStartNo, b.ClogLocationId, b.Remark, b.ClogReceiveID,c.BrandID,c.BuyerDelivery,c.StyleID,c.FtyGroup,'('+c.Dest+')'+isnull((select Alias from Country where ID = c.Dest),'') as Dest,c.TotalCTN,c.ClogCTN
+	  select distinct  b.ID, b.OrderID, c.CustPONo, b.CTNStartNo, b.ClogLocationId, b.Remark, c.BrandID,c.BuyerDelivery,c.StyleID,c.FtyGroup,'('+c.Dest+')'+isnull((select Alias from Country where ID = c.Dest),'') as Dest,c.TotalCTN,c.ClogCTN
 	  from PackingList a, PackingList_Detail b, Orders c
 	  where (a.Type = 'B' or a.Type = 'L')
 	  and a.ID = b.ID
@@ -146,14 +146,14 @@ from (
                 sqlCmd.Append(string.Format(" and a.ID <= '{0}'", this.textBox4.Text));
             }
 
-            if (!MyUtility.Check.Empty(this.textBox5.Text))
-            {
-                sqlCmd.Append(string.Format(" and b.TransferToClogID >= '{0}'", this.textBox5.Text));
-            }
-            if (!MyUtility.Check.Empty(this.textBox6.Text))
-            {
-                sqlCmd.Append(string.Format(" and b.TransferToClogID <= '{0}'", this.textBox6.Text));
-            }
+            //if (!MyUtility.Check.Empty(this.textBox5.Text))
+            //{
+            //    sqlCmd.Append(string.Format(" and b.TransferToClogID >= '{0}'", this.textBox5.Text));
+            //}
+            //if (!MyUtility.Check.Empty(this.textBox6.Text))
+            //{
+            //    sqlCmd.Append(string.Format(" and b.TransferToClogID <= '{0}'", this.textBox6.Text));
+            //}
 
             if (!MyUtility.Check.Empty(this.textBox7.Text))
             {
@@ -276,9 +276,9 @@ from (
                             sp1.ParameterName = "@clogLocationId";
                             sp1.Value = currentRow["ClogLocationId"].ToString();
 
-                            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-                            sp2.ParameterName = "@clogReceiveID";
-                            sp2.Value = currentRow["ClogReceiveID"].ToString();
+                            //System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+                            //sp2.ParameterName = "@clogReceiveID";
+                            //sp2.Value = currentRow["ClogReceiveID"].ToString();
 
                             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
                             sp3.ParameterName = "@id";
@@ -298,7 +298,7 @@ from (
 
                             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                             cmds.Add(sp1);
-                            cmds.Add(sp2);
+                            //cmds.Add(sp2);
                             cmds.Add(sp3);
                             cmds.Add(sp4);
                             cmds.Add(sp5);
@@ -336,15 +336,13 @@ from (
             this.textBox1.Text = "";
             this.textBox2.Text = "";
             this.textBox3.Text = "";
-            this.textBox4.Text = "";
-            this.textBox5.Text = "";
-            this.textBox6.Text = "";
+            this.textBox4.Text = "";            
             this.textBox7.Text = "";
             this.textBox8.Text = "";
             this.comboBox1.SelectedValue = "1";
             this.comboBox2.SelectedIndex = -1;
 
-            string sqlCmd = @"select 0 as selected, b.TransferToClogID, b.ID, b.OrderID, c.CustPONo, b.CTNStartNo, b.Article, b.Color, b.SizeCode, b.QtyPerCTN, b.ShipQty, b.ClogLocationId, b.Remark, b.ClogReceiveID
+            string sqlCmd = @"select 0 as selected,  b.ID, b.OrderID, c.CustPONo, b.CTNStartNo, b.Article, b.Color, b.SizeCode, b.QtyPerCTN, b.ShipQty, b.ClogLocationId, b.Remark
                                            from PackingList a, PackingList_Detail b, Orders c where 1=0";
             DualResult result1 = DBProxy.Current.Select(null, sqlCmd, out gridData);
           

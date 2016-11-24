@@ -106,6 +106,7 @@ namespace Sci.Production.Logistic
         {
             Sci.Production.PPIC.P01_CTNStatus callNextForm = new Sci.Production.PPIC.P01_CTNStatus(CurrentMaintain["ID"].ToString(),true);
             callNextForm.ShowDialog(this);
+            this.RenewData();
         }
 
         //Order remark
