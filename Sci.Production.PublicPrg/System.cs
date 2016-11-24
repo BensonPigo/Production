@@ -231,8 +231,8 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
                 foreach (DataRow lecdr in lecdrar)
                 {
                     string artgroup = lecdr["ArticleGroup"].ToString().Trim();
-                    //dr[artgroup] = lecdr["PatternPanel"].ToString().Trim();
-                    dr[artgroup] = lecdr["LectraCode"].ToString().Trim();
+                    dr[artgroup] = lecdr["PatternPanel"].ToString().Trim();
+                    //dr[artgroup] = lecdr["LectraCode"].ToString().Trim();
                 }
                 if (dr["SEQ"].ToString() == "0001") dr["PatternCode"] = dr["PatternCode"].ToString().Substring(10);
             }
