@@ -80,7 +80,7 @@ case when e.Payer= 'S' then 'By Sci Taipei Office(Sender)' when e.Payer= 'M' the
 from Export e
 left join TPEPass1 t on e.Handle = t.ID
 where 1=1{0}{1}{2}
-order by e.ID", (MyUtility.Check.Empty(eta1) ? "" : " and e.Eta >= '" + eta1 + "'"), (MyUtility.Check.Empty(eta2) ? "" : " and e.Eta >= '" + eta2 + "'"), (MyUtility.Check.Empty(factory) ? "" : " and e.FactoryID = '" + factory + "'"));
+order by e.ID", (MyUtility.Check.Empty(eta1) ? "" : " and e.Eta >= '" + eta1 + "'"), (MyUtility.Check.Empty(eta2) ? "" : " and e.Eta <= '" + eta2 + "'"), (MyUtility.Check.Empty(factory) ? "" : " and e.FactoryID = '" + factory + "'"));
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
                 if (!result)
                 {
@@ -111,7 +111,7 @@ order by e.ID", (MyUtility.Check.Empty(eta1) ? "" : " and e.Eta >= '" + eta1 + "
                 worksheet.Cells[4, 2] = MyUtility.Convert.GetString(masterData["Consignee"]);
                 worksheet.Cells[4, 6] = MyUtility.Convert.GetString(masterData["Blno"]);
                 worksheet.Cells[4, 9] = MyUtility.Check.Empty(masterData["WhseArrival"]) ? "" : Convert.ToDateTime(masterData["WhseArrival"]).ToString("d");
-                worksheet.Cells[5, 2] = MyUtility.Convert.GetString(masterData["Consignee"]);
+                worksheet.Cells[5, 2] = MyUtility.Convert.GetString(masterData["Packages"]);
                 worksheet.Cells[5, 6] = MyUtility.Convert.GetString(masterData["Vessel"]);
                 worksheet.Cells[5, 9] = MyUtility.Check.Empty(masterData["DocArrival"]) ? "" : Convert.ToDateTime(masterData["DocArrival"]).ToString("d");
                 worksheet.Cells[6, 2] = MyUtility.Convert.GetString(masterData["CYCFS"]);
