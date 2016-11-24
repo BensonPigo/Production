@@ -28,7 +28,7 @@ BEGIN
 	
 
 	update #TOrder
-	set FTY_Group =IIF(b.FTYGroup is null,a.FactoryID,b.FTYGroup)
+	set FTY_Group =IIF(b.FTYGroup is null,a.FactoryID,b.FTYGroup) , MDivisionID=b.MDivisionID
 	from #TOrder a
 	inner join Production.dbo.Factory b on a.FactoryID=b.id
 
@@ -143,7 +143,7 @@ BEGIN
 
 	--需填入 Order.SDPDate = Buyer Delivery - 放假日(船期表)--
 		update a
-		set a.SDPDate = DATEADD(day,-1, a.BuyerDelivery) , a.MDivisionID = b.MDivisionID
+		set a.SDPDate = DATEADD(day,-1, a.BuyerDelivery) 
 		from #TOrder  a
 		inner join Production.dbo.Factory b on a.FactoryID=b.ID
 		inner join Production.dbo.Holiday c on b.id=c.factoryid and c.HolidayDate=a.BuyerDelivery
