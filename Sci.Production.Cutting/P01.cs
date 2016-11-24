@@ -261,7 +261,7 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
         private void button8_Click(object sender, EventArgs e)
         {
             Sci.Production.Cutting.P01_Cutpartcheck callNextForm =
-    new Sci.Production.Cutting.P01_Cutpartcheck(CurrentMaintain["ID"].ToString());
+    new Sci.Production.Cutting.P01_Cutpartcheck(CurrentMaintain["ID"].ToString(), CurrentMaintain["WorkType"].ToString());
             callNextForm.ShowDialog(this);
             OnDetailEntered();
         }

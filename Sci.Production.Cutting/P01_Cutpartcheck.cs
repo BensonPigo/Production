@@ -14,27 +14,75 @@ namespace Sci.Production.Cutting
     public partial class P01_Cutpartcheck : Sci.Win.Subs.Base
     {
         private string cutid;
-        public P01_Cutpartcheck(string cID)
+        private string WorkType;
+
+        public P01_Cutpartcheck(string cID, string _WorkType)
         {
             InitializeComponent();
 
             this.Text = string.Format("Cut Parts Check<SP:{0}>)", cID);
             cutid = cID;
+            WorkType = _WorkType;
             requery();
             gridSetup();
 
         }
         private void requery()
         {
-            string sqlcmd = String.Format(
-            @"with a as (
-	        select a.POID,b.ID,b.Article,b.SizeCode,b.Qty,c.ColorID,c.PatternPanel
-	        from Orders a
-	        inner join order_Qty b on a.id = b.id
-	        inner join Order_ColorCombo c on c.id = a.POID and c.Article = b.Article 
-                and c.FabricCode is not null and c.FabricCode != ''
-	        where a.cuttingsp = '{0}'
-        )
+            #region  1203: CUTTING_P01_CutPartsCheck  [Prd Qty]數量計算
+            string sql, sql2;
+            if (WorkType == "1")
+            {
+                sql = string.Format(@"with a as (
+	                    select a.CuttingSP,b.ID,b.Article,b.SizeCode
+                            ,( select sum(bb.qty)
+		                            from Orders aa
+		                            inner join order_Qty bb on aa.id = bb.id
+		                            where aa.cuttingsp=a.CuttingSP  and bb.Article=b.Article and bb.SizeCode=b.SizeCode ) Qty
+                            ,c.ColorID,c.PatternPanel
+	                    from Orders a
+	                    inner join order_Qty b on a.id = b.id
+	                    inner join Order_ColorCombo c on c.id = a.POID and c.Article = b.Article 
+                            and c.FabricCode is not null and c.FabricCode != ''
+	                    where a.cuttingsp = '{0}'
+                    ) ", cutid);
+                sql2 = string.Format(@"Select x.poid,y.ID,y.Article,y.SizeCode
+                                            ,( select sum(bb.qty)
+		                                        from Orders aa
+		                                        inner join order_Qty bb on aa.id = bb.id
+		                                        where aa.cuttingsp='{0}'  and bb.Article=Y.Article and bb.SizeCode=y.SizeCode ) QTY
+                                            ,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
+	                                    from (Select id,POID from Orders z where z.cuttingsp = '{0}') as x,order_Qty y 
+	                                    where y.id = x.id", cutid);
+            }
+            else  //WorkType == "2"
+            {
+                sql = string.Format(@"with a as (
+	                    select a.CuttingSP,b.ID,b.Article,b.SizeCode
+                            ,( select sum(bb.qty)
+		                            from Orders aa
+		                            inner join order_Qty bb on aa.id = bb.id
+		                            where aa.ID=a.ID  and bb.Article=b.Article and bb.SizeCode=b.SizeCode ) Qty
+                            ,c.ColorID,c.PatternPanel
+	                    from Orders a
+	                    inner join order_Qty b on a.id = b.id
+	                    inner join Order_ColorCombo c on c.id = a.POID and c.Article = b.Article 
+                            and c.FabricCode is not null and c.FabricCode != ''
+	                    where a.cuttingsp = '16040448NK'
+                    )  ", cutid);
+                sql2 = string.Format(@"Select x.poid,y.ID,y.Article,y.SizeCode
+                                            ,( select sum(bb.qty)
+		                                        from Orders aa
+		                                        inner join order_Qty bb on aa.id = bb.id
+		                                        where aa.ID='{0}'  and bb.Article=Y.Article and bb.SizeCode=y.SizeCode ) QTY
+                                            ,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
+	                                    from (Select id,POID from Orders z where z.cuttingsp = '{0}') as x,order_Qty y 
+	                                    where y.id = x.id", cutid);
+            }
+            #endregion
+
+            string sqlcmd = sql + String.Format(
+            @"
         , b as (
 	        Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel
 	        ,isnull(sum(b.qty),0) as cutqty
@@ -52,15 +100,13 @@ namespace Sci.Production.Cutting
 	        and a.PatternPanel = b.PatternPanel 
 	        and a.SizeCode = b.SizeCode
 	        union all 
-	        Select x.poid,y.ID,y.Article,y.SizeCode,y.qty,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
-	        from (Select id,POID from Orders z where z.cuttingsp = '{0}') as x,order_Qty y 
-	        where y.id = x.id
+	        {1}
         )
 
         select c.*,z.seq
         from c
-        inner join Order_SizeCode z on z.id = c.POID and z.SizeCode = c.SizeCode
-        order by c.id,article,z.seq,PatternPanel", cutid);
+        inner join Order_SizeCode z on z.id = c.CuttingSP and z.SizeCode = c.SizeCode
+        order by c.id,article,z.seq,PatternPanel", cutid, sql2);
             DataTable gridtb;
             DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
 
