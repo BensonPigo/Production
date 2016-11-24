@@ -288,7 +288,7 @@
             // txtcustcd1
             // 
             this.txtcustcd1.BackColor = System.Drawing.Color.White;
-            this.txtcustcd1.BrandObjectName = null;
+            this.txtcustcd1.BrandObjectName = this.txtbrand1;
             this.txtcustcd1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CustCDID", true));
             this.txtcustcd1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtcustcd1.Location = new System.Drawing.Point(81, 58);
