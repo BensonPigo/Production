@@ -98,20 +98,26 @@ as
                 sqlCmd.Append(@" ),
 POData
 as
-(select od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id as LocalPOID,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,sum(ld.Qty) as POQty,ld.Delivery
+(SELECT BrandID,ID,SciDelivery,SewInLine,Alias,LocalPOID,Refno,Dimension,CtnUnit,SUM(POQty) AS POQty,Delivery
+ FROM (select DISTINCT od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id as LocalPOID,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,ld.Qty as POQty,ld.Delivery
  from OrderData od, LocalPO_Detail ld, LocalItem li,LocalPO LP
  where od.ID = ld.OrderId
- --and od.RefNo =ld.Refno
  and li.RefNo = ld.Refno
  and LP.id= ld.id
- and LP.category='CARTON'
- group by od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4),li.CtnUnit,ld.Delivery
+ and LP.category='CARTON') a
+ group by BrandID,ID,SciDelivery,SewInLine,Alias,LocalPOID,Refno,Dimension,CtnUnit,Delivery
+),
+AccuQty
+as
+(SELECT RefNo,ID,SUM(POQty) as POQty 
+ FROM POData 
+ GROUP BY RefNo,ID
 )
 select isnull(od.BrandID,pd.BrandID) as BrandID,isnull(od.ID,pd.ID) as ID,isnull(od.Alias,isnull(pd.Alias,'')) as Alias,isnull(od.SciDelivery,pd.SciDelivery) as SciDelivery,isnull(od.SewInLine,pd.SewInLine) as SewInLine,isnull(od.Refno,pd.Refno) as Refno,
-isnull(od.Dimension,isnull(pd.Dimension,'')) as Dimension,isnull(od.CtnUnit,isnull(pd.CtnUnit,'')) as CtnUnit,isnull(od.CTNQty,0) as CTNQty,isnull(od.CTNQty,0)-isnull(pd.POQty,0) as AccuQty,isnull(pd.LocalPOID,'') as LocalPOID, pd.Delivery,isnull(pd.POQty,0) as POQty
+isnull(od.Dimension,isnull(pd.Dimension,'')) as Dimension,isnull(od.CtnUnit,isnull(pd.CtnUnit,'')) as CtnUnit,isnull(od.CTNQty,0) as CTNQty,isnull(od.CTNQty,0)-isnull((select a.POQty from AccuQty a where a.ID = pd.ID and a.Refno = pd.RefNo),0) as AccuQty,isnull(pd.LocalPOID,'') as LocalPOID, pd.Delivery,isnull(pd.POQty,0) as POQty
 from OrderData od
 full outer join POData pd on pd.ID = od.ID and pd.Refno = od.RefNo
-order by SciDelivery,ID");
+order by SciDelivery,ID,Refno");
             }
             else
             {
@@ -165,20 +171,26 @@ as
                 sqlCmd.Append(@" ),
 POData
 as
-(select od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id as LocalPOID,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,sum(ld.Qty) as POQty,ld.Delivery
+(SELECT BrandID,ID,SciDelivery,SewInLine,Alias,LocalPOID,Refno,Dimension,CtnUnit,SUM(POQty) AS POQty,Delivery
+ FROM (select DISTINCT od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id as LocalPOID,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,ld.Qty as POQty,ld.Delivery
  from OrderData od, LocalPO_Detail ld, LocalItem li,LocalPO LP
  where od.ID = ld.OrderId
- --and od.RefNo =ld.Refno
  and li.RefNo = ld.Refno
  and LP.id= ld.id
- and LP.category='CARTON'
- group by od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4),li.CtnUnit,ld.Delivery
+ and LP.category='CARTON') a
+ group by BrandID,ID,SciDelivery,SewInLine,Alias,LocalPOID,Refno,Dimension,CtnUnit,Delivery
+),
+AccuQty
+as
+(SELECT RefNo,ID,SUM(POQty) as POQty 
+ FROM POData 
+ GROUP BY RefNo,ID
 )
 select isnull(od.BrandID,pd.BrandID) as BrandID,isnull(od.ID,pd.ID) as ID,isnull(od.Alias,isnull(pd.Alias,'')) as Alias,isnull(od.SciDelivery,pd.SciDelivery) as SciDelivery,isnull(od.SewInLine,pd.SewInLine) as SewInLine,isnull(od.Refno,pd.Refno) as Refno,
-isnull(od.Dimension,isnull(pd.Dimension,'')) as Dimension,isnull(od.CtnUnit,isnull(pd.CtnUnit,'')) as CtnUnit,isnull(od.CTNQty,0) as CTNQty,isnull(od.CTNQty,0)-isnull(pd.POQty,0) as AccuQty,isnull(pd.LocalPOID,'') as LocalPOID,pd.Delivery,isnull(pd.POQty,0) as POQty
+isnull(od.Dimension,isnull(pd.Dimension,'')) as Dimension,isnull(od.CtnUnit,isnull(pd.CtnUnit,'')) as CtnUnit,isnull(od.CTNQty,0) as CTNQty,isnull(od.CTNQty,0)-isnull((select a.POQty from AccuQty a where a.ID = pd.ID and a.Refno = pd.RefNo),0) as AccuQty,isnull(pd.LocalPOID,'') as LocalPOID,pd.Delivery,isnull(pd.POQty,0) as POQty
 from OrderData od
 full outer join POData pd on pd.ID = od.ID and pd.Refno = od.RefNo
-order by SciDelivery,ID");
+order by SciDelivery,ID,Refno");
             }
             DualResult result;
             if (result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData))
