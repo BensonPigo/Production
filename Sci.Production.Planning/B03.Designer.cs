@@ -81,7 +81,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 349);
-            this.detailpanel.Size = new System.Drawing.Size(892, 145);
+            this.detailpanel.Size = new System.Drawing.Size(892, 0);
             // 
             // gridicon
             // 
@@ -89,15 +89,15 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 145);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 0);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 532);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 486);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
@@ -105,15 +105,15 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 532);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 494);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 494);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
             this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
@@ -241,6 +241,7 @@
             this.KeyField2 = "styleukey";
             this.Name = "B03";
             this.Text = "B03. Local Quotation";
+            this.UniqueExpress = "ID,BRANDID,SEASONID";
             this.WorkAlias = "style";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
