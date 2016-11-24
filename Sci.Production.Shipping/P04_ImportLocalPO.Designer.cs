@@ -28,9 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
+            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
             this.button1 = new Sci.Win.UI.Button();
             this.label2 = new Sci.Win.UI.Label();
             this.textBox1 = new Sci.Win.UI.TextBox();
@@ -40,10 +44,7 @@
             this.button2 = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
-            this.label3 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -82,12 +83,40 @@
             this.panel3.Size = new System.Drawing.Size(816, 45);
             this.panel3.TabIndex = 2;
             // 
+            // txtsubcon1
+            // 
+            this.txtsubcon1.DisplayBox1Binding = "";
+            this.txtsubcon1.IsIncludeJunk = false;
+            this.txtsubcon1.Location = new System.Drawing.Point(264, 11);
+            this.txtsubcon1.Name = "txtsubcon1";
+            this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
+            this.txtsubcon1.TabIndex = 1;
+            this.txtsubcon1.TextBox1Binding = "";
+            // 
+            // textBox2
+            // 
+            this.textBox2.BackColor = System.Drawing.Color.White;
+            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox2.Location = new System.Drawing.Point(573, 11);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(120, 23);
+            this.textBox2.TabIndex = 2;
+            // 
+            // label3
+            // 
+            this.label3.Lines = 0;
+            this.label3.Location = new System.Drawing.Point(461, 11);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(108, 23);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Local Purchase#";
+            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(729, 7);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 4;
+            this.button1.TabIndex = 3;
             this.button1.Text = "Query";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -108,7 +137,7 @@
             this.textBox1.Location = new System.Drawing.Point(45, 11);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(120, 23);
-            this.textBox1.TabIndex = 1;
+            this.textBox1.TabIndex = 0;
             // 
             // label1
             // 
@@ -163,16 +192,14 @@
             this.grid1.AllowUserToAddRows = false;
             this.grid1.AllowUserToDeleteRows = false;
             this.grid1.AllowUserToResizeRows = false;
-            this.grid1.AutoGenerateColumns = false;
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid1.DataSource = this.listControlBindingSource1;
             this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
@@ -184,34 +211,6 @@
             this.grid1.Size = new System.Drawing.Size(816, 417);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
-            // 
-            // label3
-            // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(461, 11);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(108, 23);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Local Purchase#";
-            // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(573, 11);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(120, 23);
-            this.textBox2.TabIndex = 6;
-            // 
-            // txtsubcon1
-            // 
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(264, 11);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 7;
-            this.txtsubcon1.TextBox1Binding = "";
             // 
             // P04_ImportLocalPO
             // 

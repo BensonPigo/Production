@@ -176,16 +176,6 @@ where ed.ID = '{0}'", masterID);
                 label16.Text = "Arrive Port Date";
             }
 
-            if (radioPanel1.Value == "1" || radioPanel1.Value == "2")
-            {
-                DataTable dt = (DataTable)txtshipmode1.DataSource;
-                dt.DefaultView.RowFilter = "UseFunction like '%ORDER%'";
-            }
-            if (radioPanel1.Value == "3" || radioPanel1.Value == "4")
-            {
-                DataTable dt = (DataTable)txtshipmode1.DataSource;
-                dt.DefaultView.RowFilter = "UseFunction like '%WK%'";
-            }
             if (this.EditMode)
             {
                 foreach (DataRow dr in DetailDatas)

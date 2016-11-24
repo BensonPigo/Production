@@ -113,7 +113,7 @@ and i.TransferFactory = '{2}'", textBox1.Text.Trim(), txtscifactory1.Text.Trim()
             this.grid1.ValidateControl();
             listControlBindingSource1.EndEdit();
             DataTable gridData = (DataTable)listControlBindingSource1.DataSource;
-            if (gridData.Rows.Count == 0)
+            if (MyUtility.Check.Empty(gridData) || gridData.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("No data!");
                 return;

@@ -303,7 +303,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(75, 34);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 8;
+            this.txtsubcon1.TabIndex = 2;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // textBox1
@@ -314,7 +314,7 @@
             this.textBox1.Location = new System.Drawing.Point(75, 62);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(230, 23);
-            this.textBox1.TabIndex = 9;
+            this.textBox1.TabIndex = 5;
             // 
             // textBox2
             // 
@@ -324,7 +324,7 @@
             this.textBox2.Location = new System.Drawing.Point(75, 90);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(75, 23);
-            this.textBox2.TabIndex = 10;
+            this.textBox2.TabIndex = 8;
             // 
             // textBox3
             // 
@@ -351,7 +351,7 @@
             this.textBox4.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.textBox4.ReadOnly = true;
             this.textBox4.Size = new System.Drawing.Size(185, 23);
-            this.textBox4.TabIndex = 12;
+            this.textBox4.TabIndex = 13;
             this.textBox4.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
             // 
             // displayBox2
@@ -384,7 +384,7 @@
             this.radioPanel1.Location = new System.Drawing.Point(199, 4);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(393, 25);
-            this.radioPanel1.TabIndex = 15;
+            this.radioPanel1.TabIndex = 0;
             this.radioPanel1.ValueChanged += new System.EventHandler(this.radioPanel1_ValueChanged);
             // 
             // radioButton4
@@ -503,8 +503,8 @@
             this.txtshipmode1.Location = new System.Drawing.Point(445, 31);
             this.txtshipmode1.Name = "txtshipmode1";
             this.txtshipmode1.Size = new System.Drawing.Size(80, 24);
-            this.txtshipmode1.TabIndex = 21;
-            this.txtshipmode1.UseFunction = null;
+            this.txtshipmode1.TabIndex = 3;
+            this.txtshipmode1.UseFunction = "WK";
             // 
             // txtdropdownlist1
             // 
@@ -516,7 +516,7 @@
             this.txtdropdownlist1.Location = new System.Drawing.Point(445, 60);
             this.txtdropdownlist1.Name = "txtdropdownlist1";
             this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlist1.TabIndex = 22;
+            this.txtdropdownlist1.TabIndex = 6;
             this.txtdropdownlist1.Type = "ContainerCY";
             // 
             // numericBox1
@@ -532,7 +532,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(67, 23);
-            this.numericBox1.TabIndex = 23;
+            this.numericBox1.TabIndex = 9;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -553,7 +553,7 @@
             0,
             0});
             this.numericBox2.Size = new System.Drawing.Size(67, 23);
-            this.numericBox2.TabIndex = 24;
+            this.numericBox2.TabIndex = 12;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -575,7 +575,7 @@
             0});
             this.numericBox3.ReadOnly = true;
             this.numericBox3.Size = new System.Drawing.Size(65, 23);
-            this.numericBox3.TabIndex = 25;
+            this.numericBox3.TabIndex = 16;
             this.numericBox3.Value = new decimal(new int[] {
             0,
             0,
@@ -611,7 +611,7 @@
             0});
             this.numericBox4.ReadOnly = true;
             this.numericBox4.Size = new System.Drawing.Size(65, 23);
-            this.numericBox4.TabIndex = 30;
+            this.numericBox4.TabIndex = 17;
             this.numericBox4.Value = new decimal(new int[] {
             0,
             0,
@@ -685,7 +685,7 @@
             this.txtuser1.Location = new System.Drawing.Point(664, 6);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(302, 23);
-            this.txtuser1.TabIndex = 37;
+            this.txtuser1.TabIndex = 1;
             this.txtuser1.TextBox1Binding = "";
             // 
             // textBox5
@@ -696,7 +696,7 @@
             this.textBox5.Location = new System.Drawing.Point(712, 34);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(185, 23);
-            this.textBox5.TabIndex = 38;
+            this.textBox5.TabIndex = 4;
             // 
             // textBox6
             // 
@@ -706,7 +706,7 @@
             this.textBox6.Location = new System.Drawing.Point(712, 62);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(254, 23);
-            this.textBox6.TabIndex = 39;
+            this.textBox6.TabIndex = 7;
             // 
             // dateBox1
             // 
@@ -714,7 +714,7 @@
             this.dateBox1.Location = new System.Drawing.Point(712, 90);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 40;
+            this.dateBox1.TabIndex = 10;
             // 
             // dateBox2
             // 
@@ -724,7 +724,7 @@
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.ReadOnly = true;
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 41;
+            this.dateBox2.TabIndex = 15;
             // 
             // dateBox3
             // 
@@ -732,7 +732,7 @@
             this.dateBox3.Location = new System.Drawing.Point(712, 146);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 42;
+            this.dateBox3.TabIndex = 14;
             // 
             // button1
             // 
