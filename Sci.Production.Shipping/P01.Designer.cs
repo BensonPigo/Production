@@ -1150,7 +1150,7 @@
             // 
             this.displayBox8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox8.Location = new System.Drawing.Point(187, 235);
+            this.displayBox8.Location = new System.Drawing.Point(186, 235);
             this.displayBox8.Name = "displayBox8";
             this.displayBox8.Size = new System.Drawing.Size(449, 21);
             this.displayBox8.TabIndex = 66;
@@ -1911,14 +1911,13 @@
             this.textBox8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.textBox8.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ReasonID", true));
             this.textBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox8.IsSupportEditMode = false;
             this.textBox8.Location = new System.Drawing.Point(155, 234);
             this.textBox8.Name = "textBox8";
-            this.textBox8.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.textBox8.ReadOnly = true;
             this.textBox8.Size = new System.Drawing.Size(32, 21);
             this.textBox8.TabIndex = 14;
             this.textBox8.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox8_PopUp);
+            this.textBox8.Validating += new System.ComponentModel.CancelEventHandler(this.textBox8_Validating);
             // 
             // txtsubcon3
             // 

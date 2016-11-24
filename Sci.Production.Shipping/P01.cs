@@ -382,6 +382,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
             return true;
         }
 
+
         private void textBox8_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (this.EditMode)
@@ -1119,6 +1120,32 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
         {
             Sci.Production.PPIC.P01_GMTExport callNextForm = new Sci.Production.PPIC.P01_GMTExport(MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
             callNextForm.ShowDialog(this);
+        }
+
+        private void textBox8_Validating(object sender, CancelEventArgs e)
+        {
+            string str = this.textBox8.Text;
+            DataRow dr;
+            if (!MyUtility.Check.Empty(this.textBox8.Text))
+            {
+                string cmd = string.Format(@"select ID,Name from Reason where ReasonTypeID = 'Air_Prepaid_Reason' and Junk = 0 and id='{0}' order by ID",this.textBox8.Text);
+                if (!MyUtility.Check.Seek(cmd,out dr))
+                {
+                    e.Cancel = true;
+                    this.textBox8.Text = "";
+                    displayBox8.Value = "";
+                    MyUtility.Msg.WarningBox(string.Format("{0}, Data not Found!", str));
+                    return;
+                }
+                else
+                {
+                    displayBox8.Value = MyUtility.Convert.GetString(dr["Name"]);
+                }
+            }
+            else
+            {
+                displayBox8.Value = "";
+            }
         }
     }
 }
