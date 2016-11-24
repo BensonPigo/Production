@@ -49,7 +49,7 @@ namespace Sci.Production.Warehouse
 //                ShowErr(sqlcmd, result);
 //                return;
 //            }
-            if (DtSizeCode.Rows.Count == 0)
+            if (DtSizeCode==null || DtSizeCode.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox(string.Format("Becuase there no sizecode data belong this OrderID {0} , can't show data!!", Master["orderid"]));
                 return;

@@ -421,7 +421,7 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
             ts3.CellValidating += (s, e) =>
             {
-                if (this.EditMode == true)
+                if (this.EditMode == true && String.Compare(e.FormattedValue.ToString(), CurrentDetailData["poid"].ToString()) != 0)
                 {
                     if (!MyUtility.Check.Seek(string.Format(@"select POID from Inventory where POID = '{0}'", e.FormattedValue)))
                     {

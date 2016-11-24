@@ -109,7 +109,6 @@
             // 
             // refresh
             // 
-            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.refresh.Location = new System.Drawing.Point(978, 0);
             this.refresh.TabIndex = 0;
             // 

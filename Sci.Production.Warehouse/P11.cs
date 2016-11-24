@@ -198,9 +198,11 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivision
         }
 
         protected override void OpenSubDetailPage()
-        {
-            subform.master = CurrentMaintain;            
-            base.OpenSubDetailPage();
+        {          
+            subform.master = CurrentMaintain;
+            subform.parentData = this.CurrentDetailData;
+            base.OpenSubDetailPage(); 
+                   
         }
 
         //寫明細撈出的sql command
@@ -424,9 +426,23 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
             if (!MyUtility.Check.Empty(txtRequest.Text) && txtRequest.Text != txtRequest.OldValue)
             {
                 CurrentMaintain["cutplanid"] = txtRequest.Text;
-                getpoid();
+                this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.cutplan where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["cutplanid"], Sci.Env.User.Keyword));
+                if (MyUtility.Check.Empty(this.poid))
+                {
+                    MyUtility.Msg.WarningBox("Can't found data");
+                    CurrentMaintain["cutplanid"] = "";
+                    txtRequest.Text = "";
+                    textBox1.Text = "";
+                    this.disPOID.Text = "";
+                    dtIssueBreakDown = null;
+                    gridIssueBreakDown.DataSource = null;
+                    return;
+                } 
+                //getpoid();
                 this.disPOID.Text = this.poid;
                 CurrentMaintain["orderid"] = this.poid;
+                Ismatrix_Reload = true;
+                matrix_Reload();
             }
         }
 
@@ -546,11 +562,11 @@ where id = (select poid from dbo.orders where id='{0}') order by seq", OrderID);
         }
         private void getpoid()
         {
-            //CurrentMaintain["cutplanid"] = txtRequest.Text;
+            CurrentMaintain["cutplanid"] = txtRequest.Text;
             this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.cutplan where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["cutplanid"], Sci.Env.User.Keyword));
             if (MyUtility.Check.Empty(this.poid))
             {
-                this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.orders where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["cutplanid"], Sci.Env.User.Keyword));
+                this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.orders where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["orderid"], Sci.Env.User.Keyword));
             }
 
         }
@@ -1180,14 +1196,33 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         }
         private void textBox1_Validating(object sender, EventArgs e)
         {
-            
-            
+            if (!MyUtility.Check.Empty(textBox1.Text) && textBox1.Text != textBox1.OldValue)
+            {               
+                CurrentMaintain["orderid"] = textBox1.Text;
+                this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.orders where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["orderid"], Sci.Env.User.Keyword));
+                if (MyUtility.Check.Empty(this.poid))
+                {
+                    MyUtility.Msg.WarningBox("Can't found data");
+                    CurrentMaintain["cutplanid"] = "";
+                    txtRequest.Text = "";
+                    textBox1.Text = "";
+                    this.disPOID.Text = "";
+                    return;
+                }
+                
+                this.disPOID.Text = this.poid;
+                //CurrentMaintain["orderid"] = this.poid;    
+            }
         }
 
         private void textBox1_Validated(object sender, EventArgs e) //若order ID有變，重新撈取資料庫。
         {
-            string str = textBox1.Text;
-            if (textBox1.OldValue == str || str == "") return;
+            if (MyUtility.Check.Empty(this.poid))
+            {
+                dtIssueBreakDown = null;
+                gridIssueBreakDown.DataSource = null;
+                return;
+            }
             Ismatrix_Reload = true;
             matrix_Reload();
         }

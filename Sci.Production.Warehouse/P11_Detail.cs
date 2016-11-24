@@ -24,6 +24,7 @@ namespace Sci.Production.Warehouse
             set;
         }
         public DataRow parentData;
+
         public P11_Detail()
         {
             InitializeComponent();
@@ -146,12 +147,12 @@ from dbo.po_supp_detail where id='{0}' and seq1='{1}' and seq2='{2}'"
             Helper.Controls.Grid.Generator(this.grid)
                 //.Text("id", header: "id", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
                 //.Numeric("Issue_SummaryUkey", header: "Issue_SummaryUkey", width: Widths.AnsiChars(8), integer_places: 10)    //6
-            .Text("Issue_detailUkey", header: "Ukey", width: Widths.AnsiChars(8), iseditingreadonly: true)    //0
+            //.Text("Issue_detailUkey", header: "Ukey", width: Widths.AnsiChars(8), iseditingreadonly: true)    //0
             .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(10), iseditingreadonly: true)  //1
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8)    //2
             ;     //
 
-            this.grid.Columns[2].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns[1].DefaultCellStyle.BackColor = Color.Pink;
 
             return true;
         }
