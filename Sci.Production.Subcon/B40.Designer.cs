@@ -51,6 +51,14 @@
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(676, 395);
+            // 
+            // tabs
+            // 
+            this.tabs.Size = new System.Drawing.Size(684, 424);
+            // 
             // label1
             // 
             this.label1.Lines = 0;
@@ -116,7 +124,7 @@
             // 
             // B40
             // 
-            this.ClientSize = new System.Drawing.Size(905, 457);
+            this.ClientSize = new System.Drawing.Size(684, 457);
             this.IsSupportPrint = false;
             this.Name = "B40";
             this.Text = "B40.RFID Reader setting";
