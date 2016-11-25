@@ -69,7 +69,7 @@ select distinct FTYGroup from Factory order by FTYGroup", out factory);
 
         private string SelectSewingLine(string line)
         {
-            string sql = string.Format("Select Distinct ID From SewingLine{0}", MyUtility.Check.Empty(comboBox4.Text) ? "" : string.Format(" where FactoryID = '{0}'", comboBox2.Text));
+            string sql = string.Format("Select Distinct ID From SewingLine{0}", MyUtility.Check.Empty(comboBox4.Text) ? "" : string.Format(" where FactoryID = '{0}'", comboBox4.Text));
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "3", line, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
