@@ -23,7 +23,7 @@ namespace Sci.Production.Warehouse
     {
         StringBuilder sbSizecode, sbSizecode2, strsbIssueBreakDown;
         StringBuilder sbIssueBreakDown;
-        DataTable dtSizeCode, dtIssueBreakDown = null;
+        DataTable dtSizeCode=null, dtIssueBreakDown = null;
         DataRow dr;
         string poid = "";
         Boolean Ismatrix_Reload; //是否需要重新抓取資料庫資料
@@ -309,7 +309,7 @@ Where a.id = '{0}'", masterID);
                 CurrentMaintain["id"] = tmpId;
             }
 
-            if (dtSizeCode.Rows.Count != 0)
+            if (dtSizeCode!=null && dtSizeCode.Rows.Count != 0 )
             {
                 string sqlcmd;
                 sqlcmd = string.Format(@";WITH UNPIVOT_1
@@ -423,10 +423,11 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
 
         private void txtRequest_Validating(object sender, CancelEventArgs e)
         {
+            CurrentMaintain["cutplanid"] = txtRequest.Text;
+            this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.cutplan where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["cutplanid"], Sci.Env.User.Keyword));
+
             if (!MyUtility.Check.Empty(txtRequest.Text) && txtRequest.Text != txtRequest.OldValue)
             {
-                CurrentMaintain["cutplanid"] = txtRequest.Text;
-                this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.cutplan where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["cutplanid"], Sci.Env.User.Keyword));
                 if (MyUtility.Check.Empty(this.poid))
                 {
                     MyUtility.Msg.WarningBox("Can't found data");
@@ -436,11 +437,18 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                     this.disPOID.Text = "";
                     dtIssueBreakDown = null;
                     gridIssueBreakDown.DataSource = null;
+                    foreach (DataRow dr in DetailDatas)
+                    {
+                        //刪除SubDetail資料
+                        ((DataTable)detailgridbs.DataSource).Rows.Remove(dr);
+                        dr.Delete();
+                    }
                     return;
                 } 
                 //getpoid();
                 this.disPOID.Text = this.poid;
                 CurrentMaintain["orderid"] = this.poid;
+                Detail_Reload();
                 Ismatrix_Reload = true;
                 matrix_Reload();
             }
@@ -1196,10 +1204,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         }
         private void textBox1_Validating(object sender, EventArgs e)
         {
+            CurrentMaintain["orderid"] = textBox1.Text;
+            this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.orders where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["orderid"], Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(textBox1.Text) && textBox1.Text != textBox1.OldValue)
             {               
-                CurrentMaintain["orderid"] = textBox1.Text;
-                this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.orders where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["orderid"], Sci.Env.User.Keyword));
                 if (MyUtility.Check.Empty(this.poid))
                 {
                     MyUtility.Msg.WarningBox("Can't found data");
@@ -1211,20 +1219,102 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 }
                 
                 this.disPOID.Text = this.poid;
+                
+
                 //CurrentMaintain["orderid"] = this.poid;    
             }
         }
 
         private void textBox1_Validated(object sender, EventArgs e) //若order ID有變，重新撈取資料庫。
         {
+            CurrentMaintain["cutplanid"] = "";
             if (MyUtility.Check.Empty(this.poid))
             {
                 dtIssueBreakDown = null;
                 gridIssueBreakDown.DataSource = null;
+                foreach (DataRow dr in DetailDatas)
+                {
+                    //刪除SubDetail資料
+                    ((DataTable)detailgridbs.DataSource).Rows.Remove(dr);
+                    dr.Delete();
+                }
                 return;
             }
+            Detail_Reload();
             Ismatrix_Reload = true;
             matrix_Reload();
+        }
+        private DualResult Detail_Reload()
+        {
+            foreach (DataRow dr in DetailDatas)
+            {
+                //刪除SubDetail資料
+                ((DataTable)detailgridbs.DataSource).Rows.Remove(dr);
+                dr.Delete();
+            }
+
+            DataTable lendData;
+            DBProxy.Current.Select(null, string.Format(@"select 
+a.POID
+,a.Ukey
+,a.Seq1
+,a.Seq2
+,left(a.seq1+'   ',3)+a.seq2 seq
+,a.StockType
+,b.ColorID
+,b.SizeSpec
+,b.UsedQty
+,b.SizeUnit
+,isnull((select t.MtlLocationID+',' from (select mtllocationid from [Production].[dbo].FtyInventory_Detail where ukey=a.Ukey)t for xml path('')),'') [location]
+,[Production].[dbo].getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
+,isnull((select a.InQty-a.OutQty+a.AdjustQty ),0.00) as balanceqty
+from [Production].[dbo].ftyinventory a 
+inner join [Production].[dbo].po_supp_detail b on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
+inner join [Production].[dbo].Fabric f on f.SCIRefno = b.SCIRefno
+inner join [Production].[dbo].MtlType m on m.ID = f.MtlTypeID
+where a.Lock=0 and a.InQty-a.OutQty+a.AdjustQty > 0 
+and a.MDivisionID='{0}' and a.POID='{1}' --and stocktype='B'
+and b.FabricType='A'
+and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, this.poid), out lendData);
+            //將資料塞入表身
+            foreach (DataRow dr in lendData.Rows)
+            {
+                DataRow ndr = ((DataTable)detailgridbs.DataSource).NewRow();
+                ndr["poid"] = dr["poid"];
+                ndr["seq"] = dr["seq"];
+                ndr["Description"] = dr["Description"];
+                ndr["Colorid"] = dr["Colorid"];
+                ndr["SizeSpec"] = dr["SizeSpec"];
+                ndr["usedqty"] = dr["usedqty"];
+                ndr["SizeUnit"] = dr["SizeUnit"];
+                ndr["location"] = dr["location"];
+                ndr["balanceqty"] = dr["balanceqty"];
+                ((DataTable)detailgridbs.DataSource).Rows.Add(ndr);
+
+                ndr["seq1"] = dr["seq1"];
+                ndr["seq2"] = dr["seq2"];
+                ndr["mdivisionid"] = Sci.Env.User.Keyword;
+                ndr["stocktype"] = dr["stocktype"];
+                ndr["ftyinventoryukey"] = dr["ukey"];
+
+                DetailDatas.Add(ndr);
+
+            }
+            return Result.True;
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (dtIssueBreakDown==null) return;
+            if (checkBox1.Checked)
+            {
+                dtIssueBreakDown.DefaultView.RowFilter = string.Format("");
+            }
+            else
+            {
+                dtIssueBreakDown.DefaultView.RowFilter = string.Format("OrderID='{0}'", textBox1.Text);
+            }
+
         }
 
     }

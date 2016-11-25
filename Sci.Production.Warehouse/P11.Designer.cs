@@ -57,6 +57,7 @@
             this.label10 = new Sci.Win.UI.Label();
             this.gridIssueBreakDown = new Sci.Win.UI.Grid();
             this.gridIssueBreakDownBS = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.checkBox1 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -76,6 +77,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.checkBox1);
             this.masterpanel.Controls.Add(this.textBox1);
             this.masterpanel.Controls.Add(this.label10);
             this.masterpanel.Controls.Add(this.btnClear);
@@ -128,6 +130,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnClear, 0);
             this.masterpanel.Controls.SetChildIndex(this.label10, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
             // 
             // detailpanel
             // 
@@ -487,6 +490,20 @@
             this.gridIssueBreakDown.TabIndex = 3;
             this.gridIssueBreakDown.TabStop = false;
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Checked = true;
+            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox1.Location = new System.Drawing.Point(224, 40);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(95, 21);
+            this.checkBox1.TabIndex = 54;
+            this.checkBox1.Text = "By Combo";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
             // P11
             // 
             this.ApvChkValue = "New";
@@ -560,5 +577,6 @@
         private Win.UI.Label label10;
         private Win.UI.Grid gridIssueBreakDown;
         private Win.UI.ListControlBindingSource gridIssueBreakDownBS;
+        private Win.UI.CheckBox checkBox1;
     }
 }

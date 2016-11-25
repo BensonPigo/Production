@@ -118,6 +118,8 @@ order by [OrderID],[Article]", Master["orderid"], sbSizecode.ToString().Substrin
             gridIssueBreakDownBS.DataSource = DtIssueBreakDown;
             gridIssueBreakDown.DataSource = gridIssueBreakDownBS;
             gridIssueBreakDown.IsEditingReadOnly = false;
+            if (gridIssueBreakDown.ColumnCount > 0) gridIssueBreakDown.Columns[0].ReadOnly = true;
+            if (gridIssueBreakDown.ColumnCount > 1) gridIssueBreakDown.Columns[1].ReadOnly = true;
 
         }
 
