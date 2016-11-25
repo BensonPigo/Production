@@ -100,6 +100,7 @@ namespace Sci.Production.Shipping
             callNewItemForm.SetInsert(dr);
             callNewItemForm.ShowDialog(this);
             RenewData();
+            numericBox4.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["CTNNW"]);
         }
 
         //Context Menu選擇Edit this Record's detail
@@ -130,6 +131,7 @@ namespace Sci.Production.Shipping
                 callNewItemForm.ShowDialog(this);
             }
             RenewData();
+            numericBox4.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["CTNNW"]);
         }
 
         //Context Menu選擇Delete this Record
@@ -160,6 +162,7 @@ namespace Sci.Production.Shipping
                 callNewItemForm.ShowDialog(this);
             }
             RenewData();
+            numericBox4.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["CTNNW"]);
         }
 
         //Context Menu選擇Print
