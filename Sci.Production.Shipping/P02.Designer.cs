@@ -236,7 +236,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.refresh.Location = new System.Drawing.Point(2181, 8);
+            this.refresh.Location = new System.Drawing.Point(2234, 8);
             // 
             // detailgridcont
             // 

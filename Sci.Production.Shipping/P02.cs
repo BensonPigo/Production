@@ -161,6 +161,63 @@ namespace Sci.Production.Shipping
                 callNewItemForm.SetDelete(CurrentDetailData);
                 callNewItemForm.ShowDialog(this);
             }
+            #region 重新計算vm 體積
+            if (null == CurrentMaintain) return;
+
+            string sqlCmd = string.Format(@"with NewCtn
+as
+(
+select distinct ed.ID,ed.CTNNo,'N' as Status 
+from Express_Detail ed
+where ed.ID = '{0}'
+and not exists (select 1 from Express_CTNData ec where ec.ID = ed.ID and ec.CTNNo = ed.CTNNo)
+),
+DeleteCtn
+as
+(
+select distinct ec.ID,ec.CTNNo,'D' as Status 
+from Express_CTNData ec
+where ec.ID = '{0}'
+and not exists (select 1 from Express_Detail ed where ec.ID = ed.ID and ec.CTNNo = ed.CTNNo)
+)
+select * from NewCtn
+union
+select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            DataTable CTNData;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out CTNData);
+            if (!result)
+            {               
+                return;
+            }
+
+            if (CTNData.Rows.Count > 0)
+            {
+                IList<string> updateCmds = new List<string>();
+                foreach (DataRow dr in CTNData.Rows)
+                {
+                    if (MyUtility.Convert.GetString(dr["Status"]) == "N")
+                    {
+                        updateCmds.Add(string.Format("insert into Express_CTNData(ID,CTNNo,AddName, AddDate) values ('{0}','{1}','{2}',GETDATE());", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["CTNNo"]), Sci.Env.User.UserID));
+                    }
+                    else
+                    {
+                        updateCmds.Add(string.Format("delete from Express_CTNData where ID = '{0}' and CTNNo = '{1}';", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["CTNNo"])));
+                    }
+                }
+                result = DBProxy.Current.Executes(null, updateCmds);
+
+                if (!result)
+                {                  
+                    return;
+                }
+            }
+            string sqlcmd = string.Format(@"update Express 
+set VW= (select isnull(sum((CtnLength*CtnWidth*CtnHeight)/6000),0) as VW from Express_CTNData where id='{0}'),
+CTNNW = (select isnull(sum(CTNNW),0) as CTNNW from Express_CTNData where id='{0}')
+where id='{0}' ", CurrentMaintain["ID"]);
+            DBProxy.Current.Execute(null, sqlcmd);
+            #endregion
+
             RenewData();
             numericBox4.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["CTNNW"]);
         }
@@ -1042,11 +1099,15 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                     return;
                 }
             }
+       
+                Sci.Production.Shipping.P02_CTNDimensionAndWeight callNextForm = new Sci.Production.Shipping.P02_CTNDimensionAndWeight(
+(MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "New" || MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Send") && (PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["Handle"])) || PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["Manager"]))), MyUtility.Convert.GetString(CurrentMaintain["ID"]), null, null);
+                callNextForm.ShowDialog(this);
+                this.RenewData();
+                numericBox4.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["CTNNW"]);
+          
 
-            Sci.Production.Shipping.P02_CTNDimensionAndWeight callNextForm = new Sci.Production.Shipping.P02_CTNDimensionAndWeight((MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "New" || MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Send") && (PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["Handle"])) || PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["Manager"]))), MyUtility.Convert.GetString(CurrentMaintain["ID"]), null, null);
-            callNextForm.ShowDialog(this);
-            this.RenewData();
-            numericBox4.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["CTNNW"]);
+
         }
 
         //Send
