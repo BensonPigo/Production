@@ -521,6 +521,12 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             return base.ClickSaveBefore();
         }
 
+        protected override void ClickSaveAfter()
+        {
+            numericBox4.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["CTNNW"]);
+            base.ClickSaveAfter();
+        }
+
         protected override bool ClickPrint()
         {
             Sci.Production.Shipping.P02_Print callPurchaseForm = new Sci.Production.Shipping.P02_Print(CurrentMaintain,(DataTable)detailgridbs.DataSource);
@@ -1037,6 +1043,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             Sci.Production.Shipping.P02_CTNDimensionAndWeight callNextForm = new Sci.Production.Shipping.P02_CTNDimensionAndWeight((MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "New" || MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Send") && (PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["Handle"])) || PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["Manager"]))), MyUtility.Convert.GetString(CurrentMaintain["ID"]), null, null);
             callNextForm.ShowDialog(this);
             this.RenewData();
+            numericBox4.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["CTNNW"]);
         }
 
         //Send
@@ -1071,7 +1078,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             RenewData();
             OnDetailEntered();
             EnsureToolbarExt();
-        }
+        }           
 
         //Recall
         protected override void ClickRecall()
