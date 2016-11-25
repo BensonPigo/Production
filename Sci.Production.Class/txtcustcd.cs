@@ -34,12 +34,12 @@ namespace Sci.Production.Class
             base.OnPopUp(e);
 
             Sci.Win.Tools.SelectItem item;
-            //string selectCommand = "select ID, CountryID, City from CustCD order by ID";
-            //if (this.brandObject != null && !string.IsNullOrWhiteSpace((string)this.brandObject.Text))
-            //{
-            //    selectCommand = string.Format("select ID, CountryID, City from CustCD where BrandID = '{0}' order by ID", this.brandObject.Text);
-            //}
-            string selectCommand = string.Format("select ID, CountryID, City from CustCD where BrandID = '{0}' order by ID", this.brandObject.Text);
+            //20161124 如果沒選Brandid,則條件帶空值,取消帶全部資料
+            string selectCommand = "select ID, CountryID, City from CustCD order by ID";
+            if (this.brandObject != null )//&& !string.IsNullOrWhiteSpace((string)this.brandObject.Text))
+            {
+                selectCommand = string.Format("select ID, CountryID, City from CustCD where BrandID = '{0}' order by ID", this.brandObject.Text);
+            }
             item = new Sci.Win.Tools.SelectItem(selectCommand, "17,3,17", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
