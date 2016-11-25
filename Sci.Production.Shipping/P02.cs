@@ -70,6 +70,7 @@ namespace Sci.Production.Shipping
             Sci.Production.Shipping.P02_ImportFromFOCPackingList callFOCPLForm = new Sci.Production.Shipping.P02_ImportFromFOCPackingList(CurrentMaintain);
             callFOCPLForm.ShowDialog(this);
             RenewData();
+            numericBox4.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["CTNNW"]);
         }
 
         //Context Menu選擇Import from purchase (Material)
@@ -78,6 +79,7 @@ namespace Sci.Production.Shipping
             Sci.Production.Shipping.P02_ImportFromPO callPurchaseForm = new Sci.Production.Shipping.P02_ImportFromPO(CurrentMaintain);
             callPurchaseForm.ShowDialog(this);
             RenewData();
+            numericBox4.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["CTNNW"]);
         }
 
         //Context Menu選擇Add by PO# item (Garment Chargeable)
@@ -89,6 +91,7 @@ namespace Sci.Production.Shipping
             callPOItemForm.SetInsert(dr);
             callPOItemForm.ShowDialog(this);
             RenewData();
+            numericBox4.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["CTNNW"]);
         }
 
         //Context Menu選擇Add new Item
