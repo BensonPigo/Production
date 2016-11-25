@@ -167,8 +167,8 @@ namespace Sci.Production.Subcon
         //算CBM
         private void getCBM()
         {
-            if (CurrentMaintain["Category"].ToString().IndexOf("THREAD") >= 0) return;
             if (CurrentMaintain == null) return;
+            if (CurrentMaintain["Category"].ToString().IndexOf("THREAD") >= 0) return;
             if (string.IsNullOrWhiteSpace(CurrentMaintain["CtnLength"].ToString()) 
                 || string.IsNullOrWhiteSpace(CurrentMaintain["CtnWidth"].ToString())
                 || string.IsNullOrWhiteSpace(CurrentMaintain["CtnHeight"].ToString()))
