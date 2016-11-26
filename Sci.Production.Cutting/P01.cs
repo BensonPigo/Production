@@ -278,8 +278,9 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
         #region ColorComb
         private void button12_Click(object sender, EventArgs e)
         {
+            string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["ID"].ToString(), "Orders", "ID");
             Sci.Production.PublicForm.ColorCombination callNextForm =
-    new Sci.Production.PublicForm.ColorCombination(CurrentMaintain["ID"].ToString());
+    new Sci.Production.PublicForm.ColorCombination(CurrentMaintain["ID"].ToString(), ukey);
             callNextForm.ShowDialog(this);
             OnDetailEntered();
         }

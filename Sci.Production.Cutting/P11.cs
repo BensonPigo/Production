@@ -929,9 +929,9 @@ namespace Sci.Production.Cutting
         private void button1_Click(object sender, EventArgs e)
         {
             DataRow selectDr = ((DataRowView)ArticleSize_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
-
+            string ukey = MyUtility.GetValue.Lookup("Styleukey", selectDr["poid"].ToString(), "Orders", "ID");
             Sci.Production.PublicForm.ColorCombination callNextForm =
-new Sci.Production.PublicForm.ColorCombination(selectDr["poid"].ToString());
+            new Sci.Production.PublicForm.ColorCombination(selectDr["poid"].ToString(), ukey);
             callNextForm.ShowDialog(this);
         }
 

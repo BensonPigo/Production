@@ -1,19 +1,21 @@
 ﻿CREATE TABLE [dbo].[Order_FabricCode_QT] (
     [Id]             VARCHAR (13)   CONSTRAINT [DF_Order_FabricCode_QT_Id] DEFAULT ('') NOT NULL,
+    [PatternPanel]   VARCHAR (2)    CONSTRAINT [DF_Order_FabricCode_QT_PatternPanel] DEFAULT ('') NULL,
     [FabricCode]     VARCHAR (3)    CONSTRAINT [DF_Order_FabricCode_QT_FabricCode] DEFAULT ('') NOT NULL,
     [LectraCode]     VARCHAR (2)    CONSTRAINT [DF_Order_FabricCode_QT_LectraCode] DEFAULT ('') NOT NULL,
     [SeqNO]          VARCHAR (2)    CONSTRAINT [DF_Order_FabricCode_QT_SeqNO] DEFAULT ('') NOT NULL,
+    [QTPatternPanel] VARCHAR (2)    CONSTRAINT [DF_Order_FabricCode_QT_QTPatternPanel] DEFAULT ('') NULL,
     [QTFabricCode]   VARCHAR (3)    CONSTRAINT [DF_Order_FabricCode_QT_QTFabricCode] DEFAULT ('') NOT NULL,
     [QTLectraCode]   VARCHAR (2)    CONSTRAINT [DF_Order_FabricCode_QT_QTLectraCode] DEFAULT ('') NULL,
     [AddName]        VARCHAR (10)   CONSTRAINT [DF_Order_FabricCode_QT_AddName] DEFAULT ('') NULL,
     [AddDate]        DATETIME       NULL,
     [EditName]       VARCHAR (10)   CONSTRAINT [DF_Order_FabricCode_QT_EditName] DEFAULT ('') NULL,
     [EditDate]       DATETIME       NULL,
-    [PatternPanel]   VARCHAR (2)    NULL,
-    [QTPatternPanel] VARCHAR (2)    NULL,
-    [QtWidth]        NUMERIC (3, 1) NULL,
+    [QTWidth]        NUMERIC (3, 1) NULL,
     CONSTRAINT [PK_Order_FabricCode_QT] PRIMARY KEY CLUSTERED ([Id] ASC, [LectraCode] ASC, [SeqNO] ASC)
 );
+
+
 
 
 
@@ -60,4 +62,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_FabricCode_QT', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QT Pattern Panel', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_FabricCode_QT', @level2type = N'COLUMN', @level2name = N'QTPatternPanel';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Pattern Panel', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_FabricCode_QT', @level2type = N'COLUMN', @level2name = N'PatternPanel';
 

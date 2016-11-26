@@ -14,20 +14,27 @@ namespace Sci.Production.PublicForm
     public partial class ColorCombination : Sci.Win.Subs.Base
     {
         private string cutid;
+        private string Styleukey;
         private DataTable colortb;
+        private DataTable dtQTWith;
+
+
         public ColorCombination()
         {
             InitializeComponent();
         }
 
-        public ColorCombination(string cID)
+        public ColorCombination(string cID, string _Styleukey)
         {
             InitializeComponent();
             cutid = cID;
+            Styleukey = _Styleukey;
 
+            GetQTWith();  //參考TRADE的方式抓[QT WITH]資料
             requery();
             color();
         }
+
         private void requery()
         {
             Helper.Controls.Grid.Generator(this.gridFab)
@@ -116,31 +123,17 @@ namespace Sci.Production.PublicForm
                 tbdr[0][lc] = pp;
                 DataRow[] tbdr2 = gridtb.Select("Article = 'Fabric'");
                 tbdr2[0][lc] = fc;
+
+                //產生[QT With]資料
+                DataRow[] tbdr3 = gridtb.Select("Article = 'QT With'");
+                DataRow[] drQTWith = dtQTWith.Select(string.Format("LectraCode = '{0}'", lc));
+                if (drQTWith.Length > 0) tbdr3[0][lc] = drQTWith[0]["IsQT"].ToString();
+
             }
 
-
-
-            //foreach (DataRow dr in qttb.Rows)
-            //{
-            //    if (dr["seqno"].ToString() != "")
-            //    {
-            //        string seqno = MyUtility.Convert.NTOC((MyUtility.Convert.GetInt(dr["SEQNo"])),2);
-            //        DataRow[] drqt = qttb2.Select(string.Format("LectraCode ='{0}' and SEQNO = '{1}'", dr["QTLectraCode"], seqno));
-            //        if (drqt.Length == 0) continue;
-            //        string patternfab = drqt[0]["LectraCode"].ToString().Trim();
-            //        string qtpatternfab = drqt[0]["QtWidth"].ToString().Trim();
-            //        decimal qtpatternwidrh = MyUtility.Convert.GetDecimal(drqt[0]["QtWidth"]);
-            //        DataRow[] tbdr = gridtb.Select("Article = 'PatternPanel'");
-            //        tbdr[0][1] = patternfab;
-            //        tbdr = gridtb.Select("Article = 'LectraCode'");
-            //        tbdr[0][1] = qtpatternwidrh;
-            //        tbdr = gridtb.Select("Article = 'QT Width'");
-            //        tbdr[0][1] = qtpatternwidrh;
-            //    }
-            //}
             #endregion
-            #region 建立Data
 
+            #region 建立Data
             sqlresult = DBProxy.Current.Select(null, createtable, out datatb);
             if (!sqlresult)
             {
@@ -173,28 +166,17 @@ namespace Sci.Production.PublicForm
                         }
                     }
                 }
-
-
             }
             #endregion
 
-
-            //gridFab.DataSource = gridtb;
             this.listControlBindingSource1.DataSource = gridtb;
-            //gridFab.CellEnter += (s, e) =>
-            //{
-            //    if (e.RowIndex == -1) return;
-            //    DataRow coldr = gridFab.GetDataRow(e.RowIndex); //取得資料列
-            //    string str= string.Empty;
-            //    string propertyname = gridFab.Columns[e.ColumnIndex].DataPropertyName;//取得欄位名稱
-            //    str = coldr[propertyname].ToString();
-            //    colortb.DefaultView.RowFilter = string.Format("mid = '{0}'", str);
-            //};
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
+
         private void color()
         {
             string brandid = MyUtility.GetValue.Lookup("Brandid", cutid, "Orders", "ID");
@@ -253,5 +235,37 @@ namespace Sci.Production.PublicForm
             //gridColorDesc.DataSource = colortb;
             this.listControlBindingSource2.DataSource = colortb;
         }
+
+        private void GetQTWith()
+        {
+            string sql = string.Format(@"with 
+	            fabericCode as (Select StyleUkey as myKey, Style_BOFUkey as parentKey, * From Style_FabricCode where StyleUkey = '{0}'),
+	            bof as (Select StyleUkey as myKey, * From Style_BOF where StyleUkey = '{0}'),
+	            boa as (Select StyleUkey as myKey, * From Style_BOA where StyleUkey = '{0}'),
+	            article as (Select StyleUkey as myKey, * From Style_Article where StyleUKey = '{0}'),
+	            colorCombo as (Select StyleUkey as myKey, * From Style_ColorCombo where StyleUkey = '{0}'),
+	            qt as (Select StyleUkey as myKey, * From Style_FabricCode_QT where StyleUkey = '{0}')
+
+            Select f.myKey, f.StyleUkey, f.LectraCode, f.PatternPanel, f.FabricCode, IsNull(q.IsQt, '') as IsQT
+            from bof b
+            Inner join fabericCode f on f.parentKey = b.Ukey
+            Outer Apply (
+                Select Top 1 Concat(qt.QTFabricCode, qt.QTPatternPanel) as IsQT
+                From qt
+                Where qt.myKey = f.myKey
+                and qt.LectraCode = f.LectraCode
+	            and qt.SeqNO > (Select distinct SeqNO From qt QR where QR.myKey = qt.myKey and QR.QTLectraCode = f.LectraCode)
+	            Order by qt.SeqNO
+            ) as q
+            Order by f.PatternPanel, f.FabricCode, f.LectraCode;", Styleukey);
+            DualResult sqlresult = DBProxy.Current.Select(null, sql, out dtQTWith);
+            if (!sqlresult)
+            {
+                ShowErr(sqlresult);
+                return;
+            }
+        }
+
+
     }
 }
