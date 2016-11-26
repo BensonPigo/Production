@@ -93,7 +93,10 @@ namespace Sci.Production.Shipping
             }
             if (!MyUtility.Check.Empty(dateBox1.Value))
             {
-                sqlCmd.Append(string.Format(" and g.CutOffDate >= '{0}' and g.CutOffDate < '{1}'", Convert.ToDateTime(dateRange1.Value1).ToString("d"), (Convert.ToDateTime(dateRange1.Value1).AddDays(1)).ToString("d")));
+                // 20161126 撈取DateBox1用法怪怪的
+                //sqlCmd.Append(string.Format(" and g.CutOffDate >= '{0}' and g.CutOffDate < '{1}'", Convert.ToDateTime(dateRange1.Value1).ToString("d"), (Convert.ToDateTime(dateRange1.Value1).AddDays(1)).ToString("d")));
+
+                sqlCmd.Append(string.Format(" and g.CutOffDate >= '{0}' and g.CutOffDate < '{1}'", Convert.ToDateTime(dateBox1.Value).ToString("d"), (Convert.ToDateTime(dateBox1.Value).AddDays(1)).ToString("d")));
             }
             if (!MyUtility.Check.Empty(txtshipmode1.SelectedValue))
             {
