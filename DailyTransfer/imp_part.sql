@@ -17,14 +17,10 @@ t.Description= s.Description,
 t.Partno= s.Partno,
 t.MachineGroupID= s.MachineGroupID,
 t.MachineBrandID= s.MachineBrandID,
---t.Needle= s.Needle,
---t.ControlPart= s.ControlPart,
---t.UseUnit= s.UseUnit,
---t.PoUnit= s.PoUnit,
---t.LocalPrice= s.LocalPrice,
+t.UseUnit= s.UnitID,
+t.PoUnit= s.PoUnitID,
 t.Price= s.Price,
---t.Minstock= s.Minstock,
---t.PurchaseBatchQty= s.PurchaseBatchQty,
+t.PurchaseBatchQty= s.BatchQty,
 t.Junk= s.Junk,
 t.PurchaseFrom= 'T',
 t.LocalSuppID= s.SuppID,
@@ -33,11 +29,10 @@ t.CurrencyID= s.CurrencyID,
 t.LocalCurrencyID= s.CurrencyID,
 t.Formula= s.Formula,
 t.Fix= s.Fix,
---t.Pic= s.Pic,
 t.AddName= s.AddName,
-t.AddDate= s.AddDate,
-t.EditName= s.EditName,
-t.EditDate= s.EditDate
+t.AddDate= s.AddDate
+--t.EditName= s.EditName,
+--t.EditDate= s.EditDate
 
 	when not matched by target and s.type='P' then 
 		insert ( ID
@@ -45,14 +40,10 @@ t.EditDate= s.EditDate
 ,Partno
 ,MachineGroupID
 ,MachineBrandID
---,Needle
---,ControlPart
---,UseUnit
---,PoUnit
---,LocalPrice
+,UseUnit
+,PoUnit
 ,Price
---,Minstock
---,PurchaseBatchQty
+,PurchaseBatchQty
 ,Junk
 ,PurchaseFrom
 ,LocalSuppID
@@ -61,7 +52,6 @@ t.EditDate= s.EditDate
 ,LocalCurrencyID
 ,Formula
 ,Fix
---,Pic
 ,AddName
 ,AddDate
 ,EditName
@@ -72,14 +62,10 @@ s.Description,
 s.Partno,
 s.MachineGroupID,
 s.MachineBrandID,
---s.Needle,
---s.ControlPart,
---s.UseUnit,
---s.PoUnit,
---s.LocalPrice,
+s.UnitID,
+s.POUnitID,
 s.Price,
---s.Minstock,
---s.PurchaseBatchQty,
+s.BatchQty,
 s.Junk,
 'T',
 s.SuppID,
@@ -88,7 +74,6 @@ s.CurrencyID,
 s.CurrencyID,
 s.Formula,
 s.Fix,
---s.Pic,
 s.AddName,
 s.AddDate,
 s.EditName,
@@ -101,22 +86,18 @@ s.EditDate
 	on t.id=s.Refno and s.type='O' 
 	when matched then 
 		update set 
-		--t.ID= s.ID,
 t.Model= s.Model,
---t.MiscBrandID= s.MiscBrandID,
+t.MiscBrandID= s.MachineBrandID,
 t.Description= s.Description,
 t.UnitID= s.UnitID,
 t.CurrencyID= s.CurrencyID,
 t.Price= s.Price,
 t.SuppID= s.SuppID,
 t.PurchaseFrom= 'T',
---t.Inspect= s.Inspect,
 t.IsMachine= s.IsMachine,
 t.IsAsset= s.IsAsset,
---t.PurchaseType= s.PurchaseType,
 t.Remark= s.Remark,
---t.PIC= s.PIC,
---t.InspLeadTime= s.InspLeadTime,
+t.InspLeadTime= s.Leadtime,
 t.AccountID= s.AccountID,
 t.Junk= s.Junk,
 t.AddName= s.AddName,
@@ -127,20 +108,17 @@ t.EditDate= s.EditDate
 	when not matched by target and s.type='O' then 
 		insert ( ID
 ,Model
---,MiscBrandID
+,MiscBrandID
 ,Description
 ,UnitID
 ,CurrencyID
 ,Price
 ,SuppID
 ,PurchaseFrom
---,Inspect
 ,IsMachine
 ,IsAsset
---,PurchaseType
 ,Remark
---,PIC
---,InspLeadTime
+,InspLeadTime
 ,AccountID
 ,Junk
 ,AddName
@@ -150,20 +128,17 @@ t.EditDate= s.EditDate
 
 values(s.refno,
 s.Model,
---s.MiscBrandID,
+s.MachineBrandID,
 s.Description,
 s.UnitID,
 s.CurrencyID,
 s.Price,
 s.SuppID,
 'T',
---s.Inspect,
 s.IsMachine,
 s.IsAsset,
---s.PurchaseType,
 s.Remark,
---s.PIC,
---s.InspLeadTime,
+s.Leadtime,
 s.AccountID,
 s.Junk,
 s.AddName,
@@ -171,13 +146,52 @@ s.AddDate,
 s.EditName,
 s.EditDate
  );
+
+ 	
+
+	------------------Machine type=M ------------------------
+	Merge Machine.dbo.Machine as t
+	Using (select * from Trade_TO_Pms.dbo.Part where type='M') as s
+	on t.id=s.refno
+		when matched then
+		update set	
+			t.MachineBrandID= s.MachineBrandID,
+			t.Model= s.Model,
+			t.MachineGroupID= s.MachineGroupID,
+			--t.SerialNo= s.SerialNo,
+			--t.MDivisionID= s.MDivisionID,
+			--t.OwnedFactory= s.OwnedFactory,
+			--t.ArriveDate= s.ArriveDate,
+			t.SuppID= s.SuppID,
+			t.CurrencyID= s.CurrencyID,
+			t.Price= s.Price,
+			t.Remark= s.Remark,
+			--t.Status= s.Status,
+			--t.FAID= s.FAID,
+			--t.LocationM= s.LocationM,
+			--t.MachineLocationID= s.MachineLocationID,
+			--t.LastTransferDate= s.LastTransferDate,
+			--t.LastInventoryDate= s.LastInventoryDate,
+			--t.LendTo= s.LendTo,
+			--t.MachineLendID= s.MachineLendID,
+			--t.LendDate= s.LendDate,
+			--t.LastEstReturnDate= s.LastEstReturnDate,
+			t.Junk= s.Junk,
+			t.AddName= s.AddName,
+			t.AddDate= s.AddDate,
+			t.EditName= s.EditName,
+			t.EditDate= s.EditDate
+		when not matched by target and s.type='M' then 
+			insert(ID,       MachineBrandID,  Model,  MachineGroupID,/*SerialNo,MDivisionID,OwnedFactory,ArriveDate,*/                SuppID,  CurrencyID,  Price,  Remark,/*Status,FAID,LocationM,MachineLocationID,LastTransferDate,LastInventoryDate,LendTo,MachineLendID,LendDate,LastEstReturnDate,*/                                          Junk,  AddName,  AddDate,  EditName  ,EditDate)
+			values(s.refno,s.MachineBrandID,s.Model,s.MachineGroupID,/*s.SerialNo,--s.MDivisionID,--s.OwnedFactory,--s.ArriveDate,*/s.SuppID,s.CurrencyID,s.Price,s.Remark,/*--s.Status,--s.FAID,--s.LocationM,--s.MachineLocationID,--s.LastTransferDate,--s.LastInventoryDate,--s.LendTo,--s.MachineLendID,--s.LendDate,--s.LastEstReturnDate,*/s.Junk,s.AddName,s.AddDate,s.EditName,s.EditDate);
+
+
  
 	-----------------PartQuot , type='P'-----------------------------
 
 	Merge [Machine].[dbo].[PartQuot] as t
 	Using (select  a.* from [Trade_To_Pms].[dbo].[MmsQuot] a  inner join  [Trade_To_Pms].[dbo].Part b
 	on a.refno=b.refno where a.type='P')	 as s
-	--on t.id=s.refno and t.purchaseFrom='T' and t.PartBrandID=s.MMSBrandID and t.suppid=s.suppid AND t.ldefault=s.isdefault
 	on t.id=s.refno and  t.ukey=s.id --and t.purchaseFrom='T' 
 	when matched then
 		update set 
@@ -189,7 +203,8 @@ s.EditDate
 		t.AddName=s.AddName,
 		t.AddDate=s.AddDate,
 		t.EditName=s.EditName,
-		t.EditDate=s.EditDate
+		t.EditDate=s.EditDate,
+		T.ldefault = S.IsDefault
 	when not matched by target then
 	insert (id,
 		purchaseFrom,
@@ -200,7 +215,8 @@ s.EditDate
 		AddDate,
 		EditName,
 		EditDate,
-		PartBrandID
+		PartBrandID,
+		ldefault
 				)
 		values(s.Refno,
 		'T',
@@ -211,7 +227,8 @@ s.EditDate
 		s.AddDate,
 		s.EditName,
 		s.EditDate,
-		s.mmsBrandID
+		s.mmsBrandID,
+		S.IsDefault
 		)
 	when not matched by source and t.purchaseFrom='T' and t.id in (select refno from [Trade_To_Pms].[dbo].Part)  then
 		delete;
@@ -274,7 +291,8 @@ s.EditDate
 		  ,AddName 
 		  ,AddDate 
 		  ,EditName 
-		  ,EditDate 
+		  ,EditDate ,
+		  [LOCAL]
 		)
 		values(
 		  s.id  ,
@@ -283,7 +301,8 @@ s.EditDate
 		  s.AddName ,  
 		  s.AddDate  , 
 		  s.EditName  , 
-		  s.EditDate   
+		  s.EditDate,   
+		  0
 		)
 	when not matched by source  then 
 	delete;
@@ -354,17 +373,19 @@ s.EditDate
 	-- ------------MachinePO--------------------
 	declare @T table (id varchar(13))
 
-	Merge Machine.dbo.MachinePO as t
-	Using (select * from Trade_To_Pms.DBO.MmsPO where factoryid in (select id from @Sayfty) and type = 'M')  as s
+		Merge Machine.dbo.MachinePO as t
+	Using (select a.*,b.MdivisionID from Trade_To_Pms.DBO.MmsPO a left join Production.dbo.scifty b on a.factoryid = b.id
+	 where a.factoryid in (select id from @Sayfty) and type = 'M')  as s
 	on t.id=s.id
 	when matched  then
 		update set
 		t.CDate = s.CDate ,
 		t.PurchaseFrom = 'T' ,		
 		t.FactoryID = s.FactoryID ,
+		t.MDivisionID = s.MDivisionID,
 		t.CurrencyID = s.CurrencyID ,
+		t.Status= IIF(s.Junk = 1,'Junked',IIF(s.ApvName != '',s.ApvName,'New')),
 		t.Handle = s.Handle ,
-		t.LocalSuppID = s.SuppID ,
 		t.Amount = s.Amount ,
 		t.Vatrate = s.Vatrate ,
 		t.Vat = s.Vat ,
@@ -377,66 +398,38 @@ s.EditDate
 		t.EditDate = s.EditDate 
 	when not matched by target then
 		insert
-		(
-			 ID ,
-        CDate ,
-        PurchaseFrom ,
-        FactoryID ,
-        CurrencyID ,
-        Handle ,
-        LocalSuppID ,
-        Amount ,
-        Vatrate ,
-        Vat ,
-        Remark ,
-        Approve ,
-        ApproveDate ,
-        AddName ,
-        AddDate ,
-        EditName ,
-        EditDate 
-		)
-		values(s. ID ,
-		s.CDate ,
-		'T' ,
-		s.FactoryID ,
-		s.CurrencyID ,
-		s.Handle ,
-		s.SuppID ,
-		s.Amount ,
-		s.Vatrate ,
-		s.Vat ,
-		s.Remark ,
-		s.ApvName ,
-		s.ApvDate ,
-		s.AddName ,
-		s.AddDate ,
-		s.EditName ,
-		s.EditDate 
-)
-output inserted.id into @T;
+		(ID ,	  CDate ,PurchaseFrom ,  FactoryID ,   CurrencyID ,   Handle,    LocalSuppID ,  Amount ,   Vatrate ,   Vat ,        Remark ,        Approve ,        ApproveDate ,        AddName ,        AddDate ,        EditName ,        EditDate
+		 ,MDivisionID,Status)
+		values
+		(s.ID ,	s.CDate , 'T' ,	s.FactoryID ,s.CurrencyID ,	s.Handle,s.SuppID ,		s.Amount ,		s.Vatrate ,	Vat ,		s.Remark ,		s.ApvName ,		s.ApvDate ,		s.AddName ,		s.AddDate ,		s.EditName ,		s.EditDate
+		,MDivisionID, IIF(s.Junk = 1,'Junked',IIF(s.ApvName != '',s.ApvName,'New')))
+	output inserted.id into @T;
 
 ------------------MachinePO_Detail----------------------
 
 	Merge Machine.[dbo].[MachinePO_Detail] as t
-	using (select * from  Trade_To_Pms.[dbo].[MmsPO_Detail] where id in (select id from @T)) as s
+	using (select a.*,iif(b.MachineGroupID is null,'',MachineGroupID) as MachineGroupID,
+iif(b.MachineBrandID is null,'',b.MachineBrandID) as MachineBrandID 
+from [Trade_To_Pms]..MmsPO_Detail a
+left join Machine..Machine b on a.Refno=b.ID
+where a.id in (select id from @T)) as s
 	on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
 	when matched then 
 				update set
 				t.Qty= s.Qty,
 				t.FOC= s.FOC,
+				t.MachineGroupID= s.MachineGroupID,
+				t.MachineBrandID= s.MachineBrandID,
 				t.Price= s.Price,
 				t.Remark= s.Remark,
-				t.Junk= s.Junk
-
+				t.Junk= s.Junk,
+				t.MachineReqID= s.MmsReqID
 		when not matched by target then
-		insert  (ID,Seq1,Seq2,Qty,FOC,Price,Remark,Junk)
-		values	(s.ID,s.Seq1,s.Seq2,s.Qty,s.FOC,s.Price,s.Remark,s.Junk	)
+		insert  (ID,Seq1,Seq2,Qty,FOC,Price,Remark,Junk,MachineReqID)
+		values	(s.ID,s.Seq1,s.Seq2,s.Qty,s.FOC,s.Price,s.Remark,s.Junk,MmsReqID)
 		when not matched by source and t.id in (select id from @T) then
 		delete ;
 
-	
-		
 	--------------Partunit-------------------------------
 		Merge [Machine].[dbo].[MMSUnit] as t
 	using [Trade_To_Pms].[dbo].[MmsUnit] as s
@@ -461,7 +454,7 @@ output inserted.id into @T;
       ,s.[EditName]
       ,s.[EditDate]
 	  );
-	
+
 
 END
 
