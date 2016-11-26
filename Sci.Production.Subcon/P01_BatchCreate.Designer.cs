@@ -54,6 +54,7 @@
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.button4 = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -73,7 +74,7 @@
             this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
@@ -129,7 +130,7 @@
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(637, 45);
+            this.textBox2.Location = new System.Drawing.Point(655, 45);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(122, 23);
             this.textBox2.TabIndex = 4;
@@ -154,6 +155,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.txtartworktype_fty1);
             this.groupBox1.Controls.Add(this.dateRange3);
@@ -339,6 +341,15 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(635, 51);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(16, 17);
+            this.label8.TabIndex = 13;
+            this.label8.Text = "~";
+            // 
             // P01_BatchCreate
             // 
             this.ClientSize = new System.Drawing.Size(1181, 541);
@@ -386,5 +397,6 @@
         private Win.UI.DateBox dateBox1;
         private Class.txtartworktype_fty txtartworktype_fty1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private System.Windows.Forms.Label label8;
     }
 }
