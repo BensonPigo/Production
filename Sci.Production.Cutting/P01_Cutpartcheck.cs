@@ -68,7 +68,7 @@ namespace Sci.Production.Cutting
 	                    inner join order_Qty b on a.id = b.id
 	                    inner join Order_ColorCombo c on c.id = a.POID and c.Article = b.Article 
                             and c.FabricCode is not null and c.FabricCode != ''
-	                    where a.cuttingsp = '16040448NK'
+	                    where a.cuttingsp = '{0}'
                     )  ", cutid);
                 sql2 = string.Format(@"Select x.poid,y.ID,y.Article,y.SizeCode
                                             ,( select sum(bb.qty)
