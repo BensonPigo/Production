@@ -311,6 +311,15 @@ Where a.id = '{0}'", masterID);
 
             if (dtSizeCode != null && dtSizeCode.Rows.Count != 0)
             {
+                if (checkBox1.Checked == false)
+                {
+                    foreach (DataRow data in dtIssueBreakDown.ToList())
+                    {
+                        if (data.ItemArray[0].ToString() != textBox1.Text)
+                            dtIssueBreakDown.Rows.Remove(data);                                          
+                    }
+                }
+
                 string sqlcmd;
                 sqlcmd = string.Format(@";WITH UNPIVOT_1
 AS

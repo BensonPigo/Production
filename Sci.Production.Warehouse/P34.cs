@@ -113,7 +113,7 @@ namespace Sci.Production.Warehouse
 
                 if (MyUtility.Check.Empty(row["AdjustQty"]))
                 {
-                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Adjust Qty can't be empty"
+                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Adjust Qty can't be 0 (Original Qty and Current Qty are equal in Quantity)"
                         , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
                 }
 

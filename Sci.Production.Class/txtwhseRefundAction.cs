@@ -79,6 +79,11 @@ namespace Sci.Production.Class
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             String actionCode = MyUtility.GetValue.Lookup("actioncode", "RR"+whseReason.TextBox1.Text, "WhseReason", "Type+ID");
+            if (actionCode == "")
+            {
+                MyUtility.Msg.WarningBox("can't fount data!", "Warning");
+                return;
+            }
             Sci.Win.Tools.SelectItem item = 
                 new Sci.Win.Tools.SelectItem("select Id, Description from WhseReason where type ='RA' "+
                 string.Format(" and id in ({0})", actionCode), "10,100", this.textBox1.Text);

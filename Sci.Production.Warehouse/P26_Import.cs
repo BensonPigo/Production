@@ -47,6 +47,7 @@ namespace Sci.Production.Warehouse
                         textBox1.Focus();
                         return;
                     }
+                        
                     else
                     {
                         // 建立可以符合回傳的Cursor
@@ -55,9 +56,12 @@ namespace Sci.Production.Warehouse
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
 ,(select t.mtllocationid +',' from (select mtllocationid from dbo.ftyinventory_detail where ukey = a.ukey) t for xml path('')) fromlocation
 ,'' tolocation, '' id
-,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
+,p1.refno
+,p1.colorid
+,p1.sizespec
 from dbo.FtyInventory a
     left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
+    left join dbo.PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0
 and a.poid='{0}'", sp, dr_master["stocktype"].ToString())); // 
                         if (!MyUtility.Check.Empty(seq))
