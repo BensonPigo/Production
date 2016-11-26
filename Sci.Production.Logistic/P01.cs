@@ -107,6 +107,9 @@ namespace Sci.Production.Logistic
             Sci.Production.PPIC.P01_CTNStatus callNextForm = new Sci.Production.PPIC.P01_CTNStatus(CurrentMaintain["ID"].ToString(),true);
             callNextForm.ShowDialog(this);
             this.RenewData();
+            numericBox7.Value = MyUtility.Convert.GetInt(CurrentMaintain["FtyCTN"]) - MyUtility.Convert.GetInt(CurrentMaintain["ClogCTN"]);
+            numericBox8.Value = MyUtility.Convert.GetInt(CurrentMaintain["TotalCTN"]) - MyUtility.Convert.GetInt(CurrentMaintain["FtyCTN"]);
+            numericBox9.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCTN"]) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["ClogCTN"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCTN"]) * 100, 2);
         }
 
         //Order remark
