@@ -524,7 +524,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                     return;
                 }
             }
-            string updateCmd = string.Format("update ShipPlan set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update ShipPlan set Status = 'Confirmed',CFMDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
@@ -541,7 +541,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            string updateCmd = string.Format("update ShipPlan set Status = 'Checked', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update ShipPlan set Status = 'New',CFMDate =Null ,EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
