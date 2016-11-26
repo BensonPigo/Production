@@ -1322,9 +1322,7 @@ namespace Sci.Production.Cutting
                     dv.Sort = "SORT_NUM,FabricCombo,Cutno,Markername,estcutdate";
                     break;
                 default:
-                    //dv.Sort = "FabricCombo,multisize,Article,SizeCode";
-                    //dv.Sort = "SORT_NUM ASC,FabricCombo ASC,multisize ASC,Colorid ASC,Order_SizeCode_Seq DESC";
-                    dv.Sort = "SORT_NUM ASC,FabricCombo ASC,LectraCode ASC,multisize ASC,Colorid ASC,Order_SizeCode_Seq DESC";
+                    dv.Sort = "SORT_NUM ASC,FabricCombo ASC,LectraCode ASC,multisize DESC,Colorid ASC,Order_SizeCode_Seq DESC";
                     break;
             }
             
