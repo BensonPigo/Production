@@ -24,23 +24,12 @@ namespace Sci.Production.Cutting
                 this.Text = "P01. Cutting Master List";
                 this.DefaultFilter = string.Format("MDivisionID = '{0}' AND Finished = 0", keyWord);
                 
-                //if (!setcuttingdate())
-                //{
-                //    InitializeComponent();
-                //    this.Dispose();
-                //}
-                //else
-                //{
-                //    InitializeComponent();
-                //    this.button4.Enabled = false;
-                //}
-                
             }
             else
             {
-                this.Text = "P01. Cutting Master List(History)";
+                this.Text = "P011. Cutting Master List(History)";
                 this.DefaultFilter = string.Format("MDivisionID = '{0}' AND Finished = 1", keyWord);
-
+                this.IsSupportEdit = false;
             }
             InitializeComponent();
            
