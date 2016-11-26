@@ -56,6 +56,7 @@ namespace Sci.Production.Subcon
             CurrentMaintain["amount"] = 0;
             CurrentMaintain["vat"] = 0;
             CurrentMaintain["closed"] = 0;
+            CurrentMaintain["Status"] = "New";
             ((DataTable)(detailgridbs.DataSource)).Rows[0].Delete();
         }
 
