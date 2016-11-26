@@ -34,7 +34,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox10</rd:DefaultName>
-                          <Top>0.05cm</Top>
+                          <Top>0.01827cm</Top>
                           <Left>0.05cm</Left>
                           <Height>0.6cm</Height>
                           <Width>2.7cm</Width>
@@ -67,7 +67,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!OrderID.Value, "Report_UpdateLocation")</Value>
+                                  <Value>=First(Fields!OrderID.Value)</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -153,7 +153,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!CustPONo.Value, "Report_UpdateLocation")</Value>
+                                  <Value>=First(Fields!CustPONo.Value)</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -239,7 +239,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!BrandID.Value, "Report_UpdateLocation")</Value>
+                                  <Value>=First(Fields!BrandID.Value)</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -301,7 +301,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!StyleID.Value, "Report_UpdateLocation")</Value>
+                                  <Value>=First(Fields!StyleID.Value)</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -387,7 +387,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!BuyerDelivery.Value, "Report_UpdateLocation")</Value>
+                                  <Value>=First(Fields!BuyerDelivery.Value)</Value>
                                   <Style>
                                     <Format>d</Format>
                                   </Style>
@@ -453,7 +453,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!Dest.Value, "Report_UpdateLocation")</Value>
+                                  <Value>=First(Fields!Dest.Value)</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -539,7 +539,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!FtyGroup.Value, "Report_UpdateLocation")</Value>
+                                  <Value>=First(Fields!FtyGroup.Value)</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -569,7 +569,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!TotalCTN.Value, "Report_UpdateLocation")</Value>
+                                  <Value>=Sum(Fields!TotalCTN.Value)</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -699,7 +699,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!ClogCTN.Value, "Report_UpdateLocation")</Value>
+                                  <Value>=Sum(Fields!ClogCTN.Value)</Value>
                                   <Style>
                                     <Format>0;(0)</Format>
                                   </Style>
@@ -789,7 +789,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!TransferPerCent.Value, "Report_UpdateLocation")</Value>
+                                  <Value>=Fields!TransferPerCent.Value</Value>
                                   <Style>
                                     <Format>0.00%</Format>
                                   </Style>
@@ -1325,7 +1325,7 @@
                           <Top>3.21639cm</Top>
                           <Left>0.05974cm</Left>
                           <Height>1.2cm</Height>
-                          <Width>18.58026cm</Width>
+                          <Width>18.58168cm</Width>
                           <ZIndex>20</ZIndex>
                           <Style>
                             <Border>
