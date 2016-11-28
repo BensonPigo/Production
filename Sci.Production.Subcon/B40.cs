@@ -39,6 +39,11 @@ namespace Sci.Production.Subcon
             comboType.DataSource = new BindingSource(comboType_RowSource, null);
             comboType.ValueMember = "Key";
             comboType.DisplayMember = "Value";
+        
+        }
+        protected override void ClickCopyAfter()
+        {
+            textID.ReadOnly = false;
         }
 
         protected override bool ClickNew()
@@ -54,6 +59,12 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox("ID can not empty!");
                 return false;
             }
+            if (MyUtility.Check.Empty(comboSubprocess.Text)|| MyUtility.Check.Empty(comboType.Text))
+            {
+                MyUtility.Msg.WarningBox("Sub-process and Stock Type can not empty!");
+                return false;
+            }
+            
             return base.ClickSaveBefore();
         }
 
@@ -61,6 +72,11 @@ namespace Sci.Production.Subcon
         {
             base.ClickSaveAfter();
             textID.ReadOnly = true;
+        }
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            this.textID.ReadOnly = true;
         }
     }
 }

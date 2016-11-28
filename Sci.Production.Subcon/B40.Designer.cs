@@ -42,6 +42,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(676, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.comboType);
@@ -50,6 +54,11 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Size = new System.Drawing.Size(676, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(676, 38);
             // 
             // browse
             // 
@@ -95,7 +104,7 @@
             this.textID.Location = new System.Drawing.Point(124, 37);
             this.textID.Name = "textID";
             this.textID.ReadOnly = true;
-            this.textID.Size = new System.Drawing.Size(100, 23);
+            this.textID.Size = new System.Drawing.Size(201, 23);
             this.textID.TabIndex = 3;
             // 
             // comboSubprocess
