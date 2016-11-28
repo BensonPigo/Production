@@ -48,6 +48,7 @@ namespace Sci.Production.Warehouse
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
+                .Text("", width: Widths.AnsiChars(2), iseditable: false)
                 .Text("Mdivisionid", header: "M", width: Widths.AnsiChars(5),  iseditingreadonly: true)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -111,8 +112,9 @@ namespace Sci.Production.Warehouse
 	) tmp) as ETA
 	,MIN(a.SewInLine) as FstSewinline
     ,b.Special
-	,round(cast(b.Qty as float)* (select unit_rate.rate from unit_rate where Unit_Rate.UnitFrom = b.POUnit and Unit_Rate.UnitTo = b.StockUnit)
-			,(select unit.Round from unit where id = b.StockUnit)) as qty
+	,round(cast(b.Qty as float)
+        * (iif(b.POUnit=b.StockUnit,1,(select unit_rate.rate from unit_rate where Unit_Rate.UnitFrom = b.POUnit and Unit_Rate.UnitTo = b.StockUnit)))
+		,(select unit.Round from unit where id = b.StockUnit)) as qty
 	,b.stockunit
 	,b.SizeSpec
     ,B.Refno
