@@ -169,8 +169,8 @@ namespace PMSUploadDataToAPS.Daily
 
             try
             {
-                //SqlCommand cmd = new SqlCommand("usp_PMSUploadDataToAPS", conn);
-                SqlCommand cmd = new SqlCommand("TESTTT", conn);
+                SqlCommand cmd = new SqlCommand("usp_PMSUploadDataToAPS", conn);
+                //SqlCommand cmd = new SqlCommand("TESTTT", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 foreach (DataRow drid in tbid.Rows)
