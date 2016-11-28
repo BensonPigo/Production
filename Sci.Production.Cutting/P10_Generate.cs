@@ -347,16 +347,15 @@ namespace Sci.Production.Cutting
                     caltotalpart();
                 }
             };
+            
             subcell.EditingMouseDown += (s, e) =>
             {
                 DataRow dr = grid_art.GetDataRow(e.RowIndex);
                 if (dr["PatternCode"].ToString() == "ALLPARTS") return;
                 if (e.Button == MouseButtons.Right)
                 {
-                    
                     SelectItem2 sele;
-
-                    sele = new SelectItem2("Select id from subprocess where junk=0 and IsProcess=1","Subprocess","23",dr["PatternCode"].ToString());
+                    sele = new SelectItem2("Select id from subprocess where junk=0 and IsRfidProcess=1", "Subprocess", "23", dr["PatternCode"].ToString());
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     string subpro = sele.GetSelectedString().Replace(",","+");
@@ -378,6 +377,7 @@ namespace Sci.Production.Cutting
                     }
                 }
             };
+
             grid_qty.DataSource = qtyTb;
             grid_qty.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid_qty)
@@ -395,6 +395,7 @@ namespace Sci.Production.Cutting
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partsCell1);
             grid_art.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
             grid_art.Columns[1].DefaultCellStyle.BackColor = Color.Pink;
+            grid_art.Columns[2].DefaultCellStyle.BackColor = Color.Pink;
             grid_art.Columns[3].DefaultCellStyle.BackColor = Color.Pink;
 
             grid_allpart.DataSource = allpartTb;
@@ -780,6 +781,7 @@ namespace Sci.Production.Cutting
                 {
                     foreach (DataRow dr2 in patternTb.Rows)
                     {
+                        if (Convert.ToInt16(dr2["Parts"]) == 0) continue;  //若Parts=0，則不需產生資料至Bundle card明細
                         DataRow nDetail = bundle_detail_tmp.NewRow();
                         nDetail["PatternCode"] = dr2["PatternCode"];
                         nDetail["PatternDesc"] = dr2["PatternDesc"];

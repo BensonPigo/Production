@@ -208,7 +208,7 @@ namespace Sci.Production.Cutting
                 if (e.Button == MouseButtons.Right)
                 {
                     SelectItem2 sele;
-                    sele = new SelectItem2("Select id from subprocess where junk=0 and IsProcess=1", "Subprocess", "23", dr["PatternCode"].ToString());
+                    sele = new SelectItem2("Select id from subprocess where junk=0 and IsRfidProcess=1", "Subprocess", "23", dr["PatternCode"].ToString());
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     string subpro = sele.GetSelectedString().Replace(",", "+");
