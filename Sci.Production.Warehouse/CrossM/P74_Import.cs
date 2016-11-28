@@ -70,7 +70,9 @@ namespace Sci.Production.Warehouse
                     from dbo.PO_Supp_Detail a 
                     left join dbo.po_supp_detail b on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec 
                         and b.ColorID = a.ColorID and b.BrandId = a.BrandId
-                    Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}'"
+                    Where a.id = (SELECT distinct poid FROM Orders where poid='{0}' and MDivisionID='{5}')
+                    and b.id = (SELECT distinct poid FROM Orders where poid='{1}' 
+                    and MDivisionID='{4}') and b.seq1 = '{2}' and b.seq2='{3}'"
                 , fromSP, sp, seq1, seq2, Sci.Env.User.Keyword, dr_master["mdivisionid"])); // 
 
                 MyUtility.Msg.WaitWindows("Data Loading....");
