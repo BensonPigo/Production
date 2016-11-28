@@ -814,9 +814,9 @@
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(744, 14);
+            this.button1.Location = new System.Drawing.Point(716, 14);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(129, 30);
+            this.button1.Size = new System.Drawing.Size(157, 30);
             this.button1.TabIndex = 23;
             this.button1.Text = "Quotation Record";
             this.button1.UseVisualStyleBackColor = true;
@@ -826,9 +826,9 @@
             // 
             this.button2.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(744, 43);
+            this.button2.Location = new System.Drawing.Point(716, 43);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(129, 30);
+            this.button2.Size = new System.Drawing.Size(157, 30);
             this.button2.TabIndex = 24;
             this.button2.Text = "Payment History";
             this.button2.UseVisualStyleBackColor = true;

@@ -60,6 +60,7 @@ namespace Sci.Production.Subcon
         {
             base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
+            this.txtsubcon1.TextBox1.ReadOnly=true;
         }
 
         //存檔前檢查
