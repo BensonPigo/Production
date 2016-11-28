@@ -18,7 +18,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select distinct MDivisionID from dbo.Factory WHERE Junk = 0 AND MDivisionID <> '' ", "8", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from dbo.MDivision", "8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
@@ -32,7 +32,7 @@ namespace Sci.Production.Class
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (MyUtility.Check.Seek(string.Format("select * from dbo.factory where mdivisionid = '{0}' AND Junk = 0 ", str)) == false)
+                if (MyUtility.Check.Seek(string.Format("select ID from dbo.MDivision where id = '{0}'", str)) == false)
                 {
                     MyUtility.Msg.WarningBox(string.Format("< M : {0} > not found!!!", str));
                     this.Text = "";
