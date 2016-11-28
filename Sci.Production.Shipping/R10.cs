@@ -146,7 +146,7 @@ inner join PackingList p on p.ID = se.InvNo
 inner join PackingList_Detail pd on pd.ID = p.ID
 left join Orders o on o.ID = pd.OrderID
 left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
+left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                         if (!MyUtility.Check.Empty(date1))
                         {
@@ -247,7 +247,7 @@ inner join PackingList p on p.ID = se.InvNo
 inner join PackingList_Detail pd on pd.ID = p.ID
 left join Orders o on o.ID = pd.OrderID
 left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
+left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                         if (!MyUtility.Check.Empty(date1))
                         {
@@ -332,7 +332,7 @@ inner join PackingList_Detail pd on pd.ID = p.ID
 left join Orders o on o.ID = pd.OrderID
 left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 left join LocalSupp ls on ls.ID = g.Forwarder
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
+left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                     if (!MyUtility.Check.Empty(date1))
                     {
@@ -383,7 +383,7 @@ inner join PackingList p on p.ID = se.InvNo
 inner join PackingList_Detail pd on pd.ID = p.ID
 left join Orders o on o.ID = pd.OrderID
 left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
+left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                     if (!MyUtility.Check.Empty(date1))
                     {
@@ -523,7 +523,7 @@ from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 inner join FtyExport f on f.ID = se.InvNo
 left join LocalSupp ls on ls.ID = f.Forwarder
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
+left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                     if (!MyUtility.Check.Empty(date1))
                     {
@@ -605,7 +605,7 @@ where s.Type = 'EXPORT'");
                 foreach (DataRow dr in accnoData.Rows)
                 {
                     i++;
-                    worksheet.Cells[1, allColumn + i] = MyUtility.GetValue.Lookup(string.Format("select Name from [Finance].dbo.AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
+                    worksheet.Cells[1, allColumn + i] = MyUtility.GetValue.Lookup(string.Format("select Name from [FinanceEN].dbo.AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
                 }
                 worksheet.Cells[1, allColumn + i + 1] = "Total Export Fee";
             }

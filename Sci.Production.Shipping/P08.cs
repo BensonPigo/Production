@@ -100,7 +100,7 @@ namespace Sci.Production.Shipping
             this.DetailSelectCommand = string.Format(@"select sd.*,isnull(se.Description,'') as Description, (isnull(se.AccountID,'') + '-' + isnull(a.Name,'')) as Account
 from ShippingAP_Detail sd
 left join ShipExpense se on se.ID = sd.ShipExpenseID
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
+left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 where sd.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }

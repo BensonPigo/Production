@@ -188,7 +188,7 @@ from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 inner join Export e on se.WKNo = e.ID
 left join Supp on supp.ID = e.Forwarder
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
+left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'IMPORT'");
                 if (!MyUtility.Check.Empty(arrivePortDate1))
                 {
@@ -234,7 +234,7 @@ from ShippingAP s
 inner join ShareExpense se on se.ShippingAPID = s.ID
 left join FtyExport fe on se.InvNo = fe.ID
 left join LocalSupp ls on ls.ID = fe.Forwarder
-left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
+left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 where fe.Type <> 3");
                 if (!MyUtility.Check.Empty(arrivePortDate1))
                 {
@@ -308,7 +308,7 @@ select * from FtyExportData");
                 foreach (DataRow dr in accnoData.Rows)
                 {
                     i++;
-                    worksheet.Cells[1, 19 + i] = MyUtility.GetValue.Lookup(string.Format("select Name from [Finance].dbo.AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
+                    worksheet.Cells[1, 19 + i] = MyUtility.GetValue.Lookup(string.Format("select Name from [FinanceEN].dbo.AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
                 }
                 worksheet.Cells[1, 19 + i + 1] = "Total Import Fee";
                 string excelSumCol = PublicPrg.Prgs.GetExcelEnglishColumnName(19 + i);

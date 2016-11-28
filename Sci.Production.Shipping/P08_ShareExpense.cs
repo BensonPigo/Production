@@ -83,7 +83,7 @@ namespace Sci.Production.Shipping
             sqlCmd = string.Format(@"select sh.*,an.Name as AccountName,
 case when sh.ShareBase = 'G' then 'G.W.' when sh.ShareBase = 'C' then 'CBM' else ' Number od Deliver Sheets' end as ShareRule 
 from ShareExpense sh
-left join [Finance].dbo.AccountNo an on an.ID = sh.AccountID
+left join [FinanceEN].dbo.AccountNo an on an.ID = sh.AccountID
 where sh.ShippingAPID = '{0}' order by sh.AccountID", MyUtility.Convert.GetString(apData["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out SEData);
             if (!result)
