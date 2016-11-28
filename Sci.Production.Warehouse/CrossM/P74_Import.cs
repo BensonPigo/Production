@@ -16,10 +16,8 @@ namespace Sci.Production.Warehouse
     {
         DataRow dr_master;
         DataTable dt_detail;
-        DataSet dsTmp;
         protected DataTable dtBorrow;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        DataRelation relation;
         public P74_Import(DataRow master, DataTable detail)
         {
             InitializeComponent();
@@ -52,7 +50,6 @@ namespace Sci.Production.Warehouse
             else
             {
                 // 建立可以符合回傳的Cursor
-
                 strSQLCmd.Append(string.Format(@"
                     select 0 as selected ,'' id
                     ,'{5}' as FromMdivisionid
@@ -69,6 +66,7 @@ namespace Sci.Production.Warehouse
                     ,b.id topoid
                     ,b.seq1 toseq1
                     ,b.seq2 toseq2
+                    ,a.ColorID,a.Refno,a.SizeSpec,a.Remark
                     from dbo.PO_Supp_Detail a 
                     left join dbo.po_supp_detail b on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec 
                         and b.ColorID = a.ColorID and b.BrandId = a.BrandId
@@ -85,7 +83,7 @@ namespace Sci.Production.Warehouse
                     dtBorrow.DefaultView.Sort = "topoid,toseq1,toseq2";
                 }
                 else { ShowErr(strSQLCmd.ToString(), result); }
-                MyUtility.Msg.WaitClear();
+                MyUtility.Msg.WaitClear();                
             }
         }
 
@@ -107,8 +105,7 @@ namespace Sci.Production.Warehouse
                 .Text("fromseq1", header: "From" + Environment.NewLine + "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(4))
                 .Text("fromseq2", header: "From" + Environment.NewLine + "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(3))
                 .Numeric("qty", header: "Borrow" + Environment.NewLine + "Qty", integer_places: 8, decimal_places: 2, width: Widths.AnsiChars(8)) 
-               ;
-
+               ;            
         }
 
         // Cancel
@@ -139,8 +136,8 @@ namespace Sci.Production.Warehouse
             dr2 = dt.Select("qty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.Select(string.Format(@"tomdivisionid = '{0}' and topoid = '{1}' and toseq1 = '{2}' and toseq2 = '{3}' 
-                                                        and frommdivisionid = '{4}' and frompoid = '{5}' and fromseq1 = '{6}' and fromseq2 = '{7}'"
+                DataRow[] findrow = dt_detail.Select(string.Format(@"tomdivisionid = '{0}' and topoid = '{1}'  and toseq1 = '{2}' and toseq2 = '{3}' 
+                    and frommdivisionid = '{4}' and frompoid = '{5}' and fromseq1 = '{6}' and fromseq2 = '{7}'"
                     , tmp["toMdivisionid"], tmp["topoid"], tmp["toseq1"], tmp["toseq2"]
                     , tmp["FromMdivisionid"], tmp["Frompoid"], tmp["Fromseq1"], tmp["Fromseq2"]));
 
@@ -158,6 +155,23 @@ namespace Sci.Production.Warehouse
             }
 
             this.Close();
+        }
+
+        //表頭
+        private void grid1_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dtBorrow.Rows.Count > 0 &&  !MyUtility.Check.Empty(grid1.CurrentCell))
+            {
+                var cRow = ((DataRowView)this.grid1.CurrentRow.DataBoundItem).Row;
+                string s1 = cRow["fromseq1"].ToString();
+                string s2 = cRow["fromseq2"].ToString();
+
+                DataRow[] dra = dtBorrow.Select(string.Format("fromseq1={0} and fromseq2={1}", s1, s2));
+                displayBoxSizeSpec.Text = dra[0]["SizeSpec"].ToString();
+                displayBoxRefno.Text = dra[0]["Refno"].ToString();
+                displayBoxColor.Text = dra[0]["ColorID"].ToString();
+                editBox1.Text = dra[0]["description"].ToString();
+            }
         }
     }
 }
