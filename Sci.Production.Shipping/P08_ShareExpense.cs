@@ -67,7 +67,7 @@ namespace Sci.Production.Shipping
                 .Text("AccountID", header: "Account No", width: Widths.AnsiChars(8))
                 .Text("AccountName", header: "Account Name", width: Widths.AnsiChars(30))
                 .Numeric("Amount", header: "Amount", decimal_places: 2)
-                .Text("ShareRule", header: "Share by", width: Widths.AnsiChars(19));
+                .Text("ShareRule", header: "Share by", width: Widths.AnsiChars(22));
             QueryData();
         }
 

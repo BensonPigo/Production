@@ -245,7 +245,7 @@ where sd.ID = '{0}'", masterID);
                 .Numeric("Rate", header: "Rate", width: Widths.AnsiChars(9), decimal_places: 6, settings: rate).Get(out col_rate)
                 .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(9), decimal_places: 4, iseditingreadonly: true)
                 .Text("Remark", header: "WK#/Reamrk", width: Widths.AnsiChars(10)).Get(out col_remark)
-                .Text("Account", header: "Account Name", width: Widths.AnsiChars(30), iseditingreadonly: true);
+                .Text("Account", header: "Account Name", width: Widths.AnsiChars(40), iseditingreadonly: true);
         }
 
         protected override void ClickNewAfter()
