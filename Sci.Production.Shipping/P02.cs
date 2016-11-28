@@ -133,6 +133,66 @@ namespace Sci.Production.Shipping
                 callNewItemForm.SetUpdate(CurrentDetailData);
                 callNewItemForm.ShowDialog(this);
             }
+            #region 重新計算ttl Carton Weight
+            if (null == CurrentMaintain) return;
+
+            string sqlCmd = string.Format(@"
+with NewCtn
+as
+(
+select distinct ed.ID,ed.CTNNo,'N' as Status 
+from Express_Detail ed
+where ed.ID = '{0}'
+and not exists (select 1 from Express_CTNData ec where ec.ID = ed.ID and ec.CTNNo = ed.CTNNo)
+),
+DeleteCtn
+as
+(
+select distinct ec.ID,ec.CTNNo,'D' as Status 
+from Express_CTNData ec
+where ec.ID = '{0}'
+and not exists (select 1 from Express_Detail ed where ec.ID = ed.ID and ec.CTNNo = ed.CTNNo)
+)
+select * from NewCtn
+union
+select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            DataTable CTNData;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out CTNData);
+            if (!result)
+            {
+                return;
+            }
+
+            if (CTNData.Rows.Count > 0)
+            {
+                IList<string> updateCmds = new List<string>();
+                foreach (DataRow dr in CTNData.Rows)
+                {
+                    if (MyUtility.Convert.GetString(dr["Status"]) == "N")
+                    {
+                        updateCmds.Add(string.Format("insert into Express_CTNData(ID,CTNNo,AddName, AddDate) values ('{0}','{1}','{2}',GETDATE());", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["CTNNo"]), Sci.Env.User.UserID));
+                    }
+                    else
+                    {
+                        updateCmds.Add(string.Format("delete from Express_CTNData where ID = '{0}' and CTNNo = '{1}';", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["CTNNo"])));
+                    }
+                }
+                result = DBProxy.Current.Executes(null, updateCmds);
+
+                if (!result)
+                {
+                    return;
+                }
+            }
+
+            string sqlcmd = string.Format(
+@"update Express set NW = (select SUM(NW) from Express_Detail where ID = '{0}'),
+CTNQty = (select COUNT(distinct CTNNo) from Express_Detail where ID = '{0}'),
+CTNNW = (SELECT SUM(CTNNW) FROM Express_CTNData WHERE ID='{0}' )
+where ID = '{0}'", CurrentMaintain["ID"]);
+
+            DBProxy.Current.Execute(null, sqlcmd);
+            #endregion
             RenewData();
             numericBox4.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["CTNNW"]);
         }
@@ -167,7 +227,8 @@ namespace Sci.Production.Shipping
             #region 重新計算vm 體積
             if (null == CurrentMaintain) return;
 
-            string sqlCmd = string.Format(@"with NewCtn
+            string sqlCmd = string.Format(@"
+with NewCtn
 as
 (
 select distinct ed.ID,ed.CTNNo,'N' as Status 

@@ -268,6 +268,7 @@ from Express_Detail where ID = '{0}' and Seq2 = ''", MyUtility.Convert.GetString
                 DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
                 return failResult;
             }
+//            DualResult result1 = DBProxy.Current.Execute(null,"select * from ")
             return Result.True;
         }
 
