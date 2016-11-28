@@ -34,11 +34,11 @@
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.BorrowItemBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
+            this.displayBoxColor = new Sci.Win.UI.DisplayBox();
             this.label7 = new Sci.Win.UI.Label();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
+            this.displayBoxRefno = new Sci.Win.UI.DisplayBox();
             this.label6 = new Sci.Win.UI.Label();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
+            this.displayBoxSizeSpec = new Sci.Win.UI.DisplayBox();
             this.label5 = new Sci.Win.UI.Label();
             this.textBox3 = new Sci.Win.UI.TextBox();
             this.label4 = new Sci.Win.UI.Label();
@@ -94,11 +94,11 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.displayBox4);
+            this.panel1.Controls.Add(this.displayBoxColor);
             this.panel1.Controls.Add(this.label7);
-            this.panel1.Controls.Add(this.displayBox3);
+            this.panel1.Controls.Add(this.displayBoxRefno);
             this.panel1.Controls.Add(this.label6);
-            this.panel1.Controls.Add(this.displayBox2);
+            this.panel1.Controls.Add(this.displayBoxSizeSpec);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.textBox3);
             this.panel1.Controls.Add(this.label4);
@@ -114,14 +114,14 @@
             this.panel1.Size = new System.Drawing.Size(1008, 155);
             this.panel1.TabIndex = 19;
             // 
-            // displayBox4
+            // displayBoxColor
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(690, 43);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(113, 23);
-            this.displayBox4.TabIndex = 25;
+            this.displayBoxColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxColor.Location = new System.Drawing.Point(690, 43);
+            this.displayBoxColor.Name = "displayBoxColor";
+            this.displayBoxColor.Size = new System.Drawing.Size(113, 23);
+            this.displayBoxColor.TabIndex = 25;
             // 
             // label7
             // 
@@ -132,14 +132,14 @@
             this.label7.TabIndex = 24;
             this.label7.Text = "Color ID";
             // 
-            // displayBox3
+            // displayBoxRefno
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(414, 43);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(153, 23);
-            this.displayBox3.TabIndex = 23;
+            this.displayBoxRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxRefno.Location = new System.Drawing.Point(414, 43);
+            this.displayBoxRefno.Name = "displayBoxRefno";
+            this.displayBoxRefno.Size = new System.Drawing.Size(153, 23);
+            this.displayBoxRefno.TabIndex = 23;
             // 
             // label6
             // 
@@ -150,14 +150,14 @@
             this.label6.TabIndex = 22;
             this.label6.Text = "Refno";
             // 
-            // displayBox2
+            // displayBoxSizeSpec
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(107, 43);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(189, 23);
-            this.displayBox2.TabIndex = 21;
+            this.displayBoxSizeSpec.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxSizeSpec.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxSizeSpec.Location = new System.Drawing.Point(107, 43);
+            this.displayBoxSizeSpec.Name = "displayBoxSizeSpec";
+            this.displayBoxSizeSpec.Size = new System.Drawing.Size(189, 23);
+            this.displayBoxSizeSpec.TabIndex = 21;
             // 
             // label5
             // 
@@ -310,11 +310,11 @@
         private Win.UI.Button button1;
         private Win.UI.Panel panel2;
         private Win.UI.Grid grid1;
-        private Win.UI.DisplayBox displayBox4;
+        private Win.UI.DisplayBox displayBoxColor;
         private Win.UI.Label label7;
-        private Win.UI.DisplayBox displayBox3;
+        private Win.UI.DisplayBox displayBoxRefno;
         private Win.UI.Label label6;
-        private Win.UI.DisplayBox displayBox2;
+        private Win.UI.DisplayBox displayBoxSizeSpec;
         private Win.UI.Label label5;
         private Win.UI.TextBox textBox3;
         private Win.UI.Label label4;
