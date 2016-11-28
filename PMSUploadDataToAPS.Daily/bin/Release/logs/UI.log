@@ -1,0 +1,6 @@
+﻿[2016/09/20 16:43:57.989] [9] ***** ***** ***** [2016/09/20 16:43:51.354] ***** ***** *****
+[2016/09/20 16:43:57.989] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/09/20 16:43:58.100] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/09/20 16:43:59.998] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'。
+[2016/09/20 16:43:59.998] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/09/20 16:44:00.001] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  Data Transfer[Main] - CloseReason:'UserClosing'、

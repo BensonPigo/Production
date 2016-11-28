@@ -1,0 +1,1714 @@
+﻿[2016/09/21 09:06:18.591][10] ***** ***** ***** [2016/09/20 18:56:40.116] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 09:06:18.595][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 09:06:18.598][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 09:06:18.598][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 09:06:18.598][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/21 09:06:38.468][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 09:09:33.366][10] ***** ***** ***** [2016/09/21 09:06:38.863] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 09:09:33.370][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 09:09:33.374][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 09:09:33.374][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 09:09:33.374][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/21 09:10:12.372][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 09:13:01.915][8] ***** ***** ***** [2016/09/21 09:10:14.661] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 09:13:01.919][8] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 09:13:01.922][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 09:13:01.923][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 09:13:01.923][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 09:13:06.077][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 09:13:06.077][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 09:13:06.077][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 09:13:06.077][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 09:13:06.079][10] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 09:15:11.653][10] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 執行非同步作業完成。
+** 應用程式結束 [2016/09/21 09:15:14.757][8] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 09:19:27.635][8] ***** ***** ***** [2016/09/21 09:15:16.641] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 09:19:27.639][8] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 09:19:27.643][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 09:19:27.643][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 09:19:27.643][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 09:19:33.657][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 09:19:33.657][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 09:19:33.657][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 09:19:33.657][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 09:19:33.659][10] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 09:32:06.757][9] ***** ***** ***** [2016/09/21 09:31:56.728] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 09:32:06.761][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 09:32:06.764][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 09:32:06.765][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 09:32:06.765][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 09:32:20.436][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 09:32:20.436][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 09:32:20.436][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 09:32:20.437][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 09:32:20.439][6] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 09:52:00.688][8] ***** ***** ***** [2016/09/21 09:51:14.346] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 09:52:00.692][8] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 09:52:00.696][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 09:52:00.696][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 09:52:00.696][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 09:52:07.243][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 09:52:07.243][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 09:52:07.243][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 09:52:07.243][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 09:52:07.245][10] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 09:53:14.732][10] ***** ***** ***** [2016/09/21 09:53:13.086] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 09:53:14.737][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 09:53:14.740][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 09:53:14.740][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 09:53:14.740][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 09:53:19.233][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 09:53:19.233][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 09:53:19.233][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 09:53:19.234][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 09:53:19.235][12] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 09:55:05.077][9] ***** ***** ***** [2016/09/21 09:54:28.491] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 09:55:05.082][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 09:55:05.085][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 09:55:05.085][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 09:55:05.085][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 09:55:08.229][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 09:55:08.229][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 09:55:08.229][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 09:55:08.230][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 09:55:08.233][11] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 09:55:56.598][9] ***** ***** ***** [2016/09/21 09:55:54.970] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 09:55:56.603][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 09:55:56.606][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 09:55:56.606][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 09:55:56.607][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 09:56:00.392][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 09:56:00.392][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 09:56:00.392][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 09:56:00.392][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 09:56:00.395][11] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 10:06:00.370][10] ***** ***** ***** [2016/09/21 10:05:54.162] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 10:06:00.375][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 10:06:00.378][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 10:06:00.378][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 10:06:00.378][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 10:06:05.728][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 10:06:05.729][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 10:06:05.729][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 10:06:05.729][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 10:06:05.730][12] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 10:22:46.995][12] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 執行非同步作業完成。
+[2016/09/21 10:23:07.699][10] ***** ***** ***** [2016/09/21 10:23:05.977] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 10:23:07.703][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 10:23:07.706][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 10:23:07.706][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 10:23:07.706][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/21 10:23:17.870][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 10:23:59.471][9] ***** ***** ***** [2016/09/21 10:23:18.186] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 10:23:59.475][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 10:23:59.478][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 10:23:59.478][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 10:23:59.478][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 10:24:05.851][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 10:24:05.851][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 10:24:05.851][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 10:24:05.852][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 10:24:05.855][11] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 10:33:18.414][9] ***** ***** ***** [2016/09/21 10:25:27.032] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 10:33:18.419][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 10:33:18.421][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 10:33:18.422][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 10:33:18.422][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/21 10:33:23.209][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 10:33:31.621][10] ***** ***** ***** [2016/09/21 10:33:23.524] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 10:33:31.625][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 10:33:31.628][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 10:33:31.628][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 10:33:31.628][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 10:33:33.947][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 10:33:33.947][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 10:33:33.947][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 10:33:33.948][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 10:33:33.950][12] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 10:39:34.296][9] ***** ***** ***** [2016/09/21 10:36:55.268] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 10:39:34.301][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 10:39:34.304][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 10:39:34.304][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 10:39:34.304][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 10:39:39.463][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 10:39:39.463][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 10:39:39.463][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 10:39:39.464][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 10:39:39.466][3] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 10:42:47.294][9] ***** ***** ***** [2016/09/21 10:42:25.990] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 10:42:47.299][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 10:42:47.302][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 10:42:47.302][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 10:42:47.302][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 10:42:49.709][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 10:42:49.709][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 10:42:49.710][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 10:42:49.710][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 10:42:49.713][11] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 10:44:44.994][10] ***** ***** ***** [2016/09/21 10:44:39.416] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 10:44:44.998][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 10:44:45.001][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 10:44:45.001][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 10:44:45.001][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 10:44:47.287][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 10:44:47.287][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 10:44:47.287][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 10:44:47.288][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 10:44:47.292][12] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 10:49:25.426][9] ***** ***** ***** [2016/09/21 10:49:23.833] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 10:49:25.430][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 10:49:25.433][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 10:49:25.434][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 10:49:25.434][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 10:49:28.517][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 10:49:28.517][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 10:49:28.518][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 10:49:28.518][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 10:49:28.520][11] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 10:52:38.028][9] ***** ***** ***** [2016/09/21 10:51:45.087] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 10:52:38.032][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 10:52:38.035][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 10:52:38.035][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 10:52:38.035][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/21 10:52:51.727][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 10:53:01.999][10] ***** ***** ***** [2016/09/21 10:52:52.065] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 10:53:02.003][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 10:53:02.006][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 10:53:02.007][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 10:53:02.007][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 10:53:05.143][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 10:53:05.143][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 10:53:05.143][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 10:53:05.144][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 10:53:05.146][12] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 11:02:31.471][10] ***** ***** ***** [2016/09/21 11:02:29.813] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 11:02:31.476][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 11:02:31.479][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 11:02:31.479][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 11:02:31.480][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 11:03:05.102][9] ***** ***** ***** [2016/09/21 11:02:37.944] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 11:03:05.107][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 11:03:05.110][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 11:03:05.110][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 11:03:05.110][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/21 11:03:05.121][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 11:03:15.317][10] ***** ***** ***** [2016/09/21 11:03:05.396] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 11:03:15.321][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 11:03:15.325][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 11:03:15.326][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 11:03:15.326][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/21 11:03:18.712][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 11:04:35.200][9] ***** ***** ***** [2016/09/21 11:03:20.547] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 11:04:35.204][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 11:04:35.207][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 11:04:35.207][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 11:04:35.207][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/21 11:04:35.218][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 11:04:51.739][10] ***** ***** ***** [2016/09/21 11:04:35.518] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 11:04:51.743][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 11:04:51.746][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 11:04:51.747][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 11:04:51.747][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/21 11:04:53.631][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 11:04:58.745][10] ***** ***** ***** [2016/09/21 11:04:53.952] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 11:04:58.750][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 11:04:58.754][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 11:04:58.754][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 11:04:58.754][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/21 11:05:14.250][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 11:05:16.227][10] ***** ***** ***** [2016/09/21 11:05:14.568] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 11:05:16.231][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 11:05:16.234][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 11:05:16.235][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 11:05:16.235][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 11:06:18.035][9] ***** ***** ***** [2016/09/21 11:05:45.439] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 11:06:18.039][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 11:06:18.042][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 11:06:18.043][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 11:06:18.043][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/21 11:06:21.021][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 11:06:27.342][10] ***** ***** ***** [2016/09/21 11:06:21.343] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 11:06:27.347][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 11:06:27.349][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 11:06:27.350][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 11:06:27.350][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/21 11:06:29.442][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 11:06:40.474][10] ***** ***** ***** [2016/09/21 11:06:31.267] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 11:06:40.478][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 11:06:40.481][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 11:06:40.482][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 11:06:40.482][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 11:06:53.785][10] ***** ***** ***** [2016/09/21 11:06:51.271] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 11:06:53.790][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 11:06:53.793][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 11:06:53.793][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 11:06:53.793][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 11:07:11.971][9] ***** ***** ***** [2016/09/21 11:06:56.307] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 11:07:11.975][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 11:07:11.978][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 11:07:11.978][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 11:07:11.978][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/21 11:07:15.676][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 11:07:51.244][8] ***** ***** ***** [2016/09/21 11:07:15.995] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 11:07:51.249][8] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 11:07:51.251][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 11:07:51.252][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 11:07:51.252][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 11:08:17.891][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 11:08:17.891][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 11:08:17.891][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 11:08:17.892][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 11:08:17.895][11] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 11:10:06.302][11] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 執行非同步作業完成。
+[2016/09/21 11:14:25.592][8] ***** ***** ***** [2016/09/21 11:10:12.852] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 11:14:25.597][8] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 11:14:25.600][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 11:14:25.600][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 11:14:25.600][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 11:14:40.340][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 11:14:40.340][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 11:14:40.340][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 11:14:40.341][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 11:14:40.344][10] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 11:37:43.472][10] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 執行非同步作業完成。
+[2016/09/21 11:48:29.919][9] ***** ***** ***** [2016/09/21 11:43:53.143] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 11:48:29.923][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 11:48:29.926][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 11:48:29.926][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 11:48:29.926][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 11:48:40.234][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 11:48:40.234][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 11:48:40.234][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 11:48:40.235][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 11:48:40.236][11] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 11:51:26.494][11] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 執行非同步作業完成。
+[2016/09/21 11:52:57.965][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 11:52:57.965][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 11:52:57.965][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 11:52:57.966][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 11:52:57.980][17] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 11:55:35.474][17] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 執行非同步作業完成。
+[2016/09/21 11:56:52.338][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 11:56:52.338][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 11:56:52.338][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 11:56:52.339][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 11:56:52.340][15] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 12:05:36.049][10] ***** ***** ***** [2016/09/21 12:05:15.683] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 12:05:36.053][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 12:05:36.056][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 12:05:36.057][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 12:05:36.057][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 12:05:38.322][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 12:05:38.322][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 12:05:38.322][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 12:05:38.323][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 12:05:38.325][11] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 12:10:50.117][11] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 執行非同步作業完成。
+** 應用程式結束 [2016/09/21 12:10:57.379][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 13:33:11.154][10] ***** ***** ***** [2016/09/21 12:10:59.280] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 13:33:11.159][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 13:33:11.161][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 13:33:11.162][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 13:33:11.162][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 13:33:17.420][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 13:33:17.420][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 13:33:17.420][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 13:33:17.420][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 13:33:17.422][3] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 13:37:05.225][3] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 執行非同步作業完成。
+[2016/09/21 13:42:42.973][10] ***** ***** ***** [2016/09/21 13:42:40.401] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 13:42:42.979][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 13:42:42.982][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 13:42:42.982][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 13:42:42.982][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 13:42:44.711][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 13:42:44.711][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 13:42:44.711][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 13:42:44.711][10] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 13:42:44.713][12] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+** 應用程式結束 [2016/09/21 14:14:49.246][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 14:21:03.049][9] ***** ***** ***** [2016/09/21 14:14:51.157] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 14:21:03.054][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 14:21:03.057][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 14:21:03.058][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 14:21:03.058][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 14:21:04.741][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 14:21:04.741][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 14:21:04.741][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 14:21:04.741][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 14:21:04.743][11] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 14:42:13.651][8] ***** ***** ***** [2016/09/21 14:39:55.046] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 14:42:13.656][8] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 14:42:13.659][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 14:42:13.659][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 14:42:13.659][8] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 14:42:17.764][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 14:42:17.764][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 14:42:17.764][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 14:42:17.765][8] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 14:42:17.767][10] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 14:43:18.104][9] ***** ***** ***** [2016/09/21 14:42:46.445] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 14:43:18.109][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 14:43:18.112][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 14:43:18.112][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 14:43:18.112][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 14:43:28.553][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 14:43:28.553][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 14:43:28.553][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 14:43:28.554][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 14:43:28.558][11] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 14:44:14.465][9] ***** ***** ***** [2016/09/21 14:43:42.526] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 14:44:14.470][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 14:44:14.473][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 14:44:14.473][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 14:44:14.474][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 14:44:17.480][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 14:44:17.480][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 14:44:17.480][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 14:44:17.480][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 14:44:17.482][11] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+** 應用程式結束 [2016/09/21 14:44:23.860][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 14:44:33.285][10] ***** ***** ***** [2016/09/21 14:44:27.635] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 14:44:33.290][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 14:44:33.293][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 14:44:33.293][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 14:44:33.293][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/21 14:44:37.528][10] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 14:45:02.443][9] ***** ***** ***** [2016/09/21 14:44:37.924] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 14:45:02.447][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 14:45:02.451][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 14:45:02.451][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 14:45:02.451][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 14:45:04.200][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 14:45:04.200][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 14:45:04.200][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 14:45:04.200][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 14:45:04.202][11] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+** 應用程式結束 [2016/09/21 14:45:09.119][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/21 16:09:45.119][9] ***** ***** ***** [2016/09/21 14:45:10.932] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 16:09:45.123][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 16:09:45.126][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 16:09:45.126][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 16:09:45.127][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 16:09:49.165][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 16:09:49.165][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 16:09:49.165][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 16:09:49.166][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 16:09:49.167][3] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
+[2016/09/21 16:23:21.077][9] ***** ***** ***** [2016/09/21 16:10:20.117] ***** ***** *****
+
+** 應用程式開始 [2016/09/21 16:23:21.081][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/21 16:23:21.084][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/21 16:23:21.085][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/21 16:23:21.085][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2016/09/21 16:23:23.199][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 要求開始非同步作業。
+[2016/09/21 16:23:23.199][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始建立並初始非同步處理緒。
+[2016/09/21 16:23:23.199][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 開始啟用非同步處理緒。
+[2016/09/21 16:23:23.199][9] Ict.AsyncWorker.Start[Ict.Win.Asyncs.Simple01] 啟用非同步處理緒完成。
+[2016/09/21 16:23:23.202][3] Ict.AsyncWorker.ThreadProc[Ict.Win.Asyncs.Simple01] 開始執行非同步作業。
