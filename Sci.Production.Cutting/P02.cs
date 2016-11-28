@@ -477,7 +477,11 @@ namespace Sci.Production.Cutting
                     }
 
                 }
-                cal_TotalCutQty(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
+
+                //1172: CUTTING_P02_Cutting Work Order
+                //cal_TotalCutQty(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
+                cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
+
                 totalDisQty();
 
                                                                                                                                             
@@ -844,7 +848,8 @@ namespace Sci.Production.Cutting
                 dr["SizeCode"] = newvalue;
                 dr.EndEdit();
           
-                cal_TotalCutQty(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
+                //cal_TotalCutQty(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
+                cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
                 totalDisQty();
                 updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]),newvalue);
             };
@@ -869,7 +874,8 @@ namespace Sci.Production.Cutting
                 dr["Qty"] = newvalue;
                 dr.EndEdit();
                 cal_Cons(true, false);
-                cal_TotalCutQty(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
+                //cal_TotalCutQty(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
+                cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
                 
                 updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]),dr["SizeCode"].ToString());
                 totalDisQty();
@@ -1512,12 +1518,26 @@ namespace Sci.Production.Cutting
             newRow["Order_SizeCode_Seq"] = OldRow["Order_SizeCode_Seq"];  
             newRow["SORT_NUM"] = OldRow["SORT_NUM"];  
             newRow["Adduser"] = loginID;
+            newRow["Ukey"] = 0;
 
             DataTable detailtmp = (DataTable)detailgridbs.DataSource;
             int TEMP = ((DataTable)detailgridbs.DataSource).Rows.Count;
 
             if (index == -1) index = TEMP;
             OldRow.Table.Rows.InsertAt(newRow, index);
+
+            //1172: CUTTING_P02_Cutting Work Order
+            DataRow[] drTEMPS = sizeratioTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
+            foreach (DataRow drTEMP in drTEMPS)
+            {
+                DataRow drNEW = sizeratioTb.NewRow();
+                drNEW["WorkOrderUkey"] = 0;  //新增WorkOrderUkey塞0
+                drNEW["ID"] = drTEMP["ID"];
+                drNEW["SizeCode"] = drTEMP["SizeCode"];
+                drNEW["Qty"] = drTEMP["Qty"];
+                drNEW["newkey"] = maxkey;
+                sizeratioTb.Rows.Add(drNEW);
+            }
 
         }
 
@@ -1558,7 +1578,8 @@ namespace Sci.Production.Cutting
             DataRow selectDr = ((DataRowView)sizeratio_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectDr.Delete();
 
-            cal_TotalCutQty(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
+            //cal_TotalCutQty(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
+            cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
         }
 
         private void numericBox_MarkerLengthY_Validated(object sender, EventArgs e)
@@ -1602,12 +1623,15 @@ namespace Sci.Production.Cutting
                 CurrentDetailData["Cons"] = MarkerLengthNum * Convert.ToInt32(CurrentDetailData["Layer"]);
         }
 
-        private void cal_TotalCutQty(int workorderukey,int newkey)
+        //1172: CUTTING_P02_Cutting Work Order
+        //private void cal_TotalCutQty(int workorderukey,int newkey)
+        private void cal_TotalCutQty(object workorderukey, object newkey)
         {
             gridValid();
             string TotalCutQtystr;
             TotalCutQtystr = "";
-            DataRow[] sizeview = sizeratioTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} ", workorderukey, newkey));
+            DataRow[] sizeview = sizeratioTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} ", Convert.ToInt32(workorderukey), Convert.ToInt32(newkey)));
+
             foreach (DataRow dr in sizeview)
             {
                 if (TotalCutQtystr == "")
@@ -1840,7 +1864,7 @@ namespace Sci.Production.Cutting
                 #region 刪除
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    delsql = delsql + string.Format("Delete From WorkOrder_SizeRatio Where WorkOrderUkey={0} and SizeCode ='{1}' and ID ='{2}';", dr["Ukey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], cId);
+                    delsql = delsql + string.Format("Delete From WorkOrder_SizeRatio Where WorkOrderUkey={0} and SizeCode ='{1}' and ID ='{2}';", dr["WorkOrderUkey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], cId);
                 }
                 #endregion
                 #region 修改
@@ -1891,7 +1915,7 @@ namespace Sci.Production.Cutting
                 #region 刪除
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    delsql = delsql + string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and ID = '{4}';", dr["Ukey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], dr["Article", DataRowVersion.Original], dr["Orderid", DataRowVersion.Original], cId);
+                    delsql = delsql + string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and ID = '{4}';", dr["WorkOrderUkey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], dr["Article", DataRowVersion.Original], dr["Orderid", DataRowVersion.Original], cId);
                 }
                 #endregion
                 #region 修改
