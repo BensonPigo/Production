@@ -32,8 +32,15 @@ namespace Sci.Production.Warehouse
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.textBox1.Text.TrimEnd();
-            String seq = this.textBox2.Text.TrimEnd();
+            String seq = this.textBox2.Text.Trim();
             String fromSP = this.textBox3.Text.TrimEnd();
+            if (seq.Length!=5)
+            {
+                MyUtility.Msg.WarningBox("Seq need enter 00-00");
+                return;
+            }
+            string seq1 = seq.Substring(0, 2).Trim();
+            string seq2 = seq.Substring(3, 2).Trim();
 
             if (string.IsNullOrWhiteSpace(sp) || string.IsNullOrWhiteSpace(seq) || string.IsNullOrWhiteSpace(fromSP))
             {
@@ -46,26 +53,27 @@ namespace Sci.Production.Warehouse
             {
                 // 建立可以符合回傳的Cursor
 
-                strSQLCmd.Append(string.Format(@"select 0 as selected ,'' id
-,'{5}' as FromMdivisionid
-, a.id as FromPoId
-,a.Seq1 as FromSeq1
-,a.Seq2 as FromSeq2
-,left(a.seq1+' ',3)+a.Seq2 as fromseq
-,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
-,a.stockunit
-,left(b.seq1+' ',3)+b.Seq2 as toseq
-,0.00 as Qty
-,'B' ToStocktype
-,'{4}' as tomdivisionid
-,b.id topoid
-,b.seq1 toseq1
-,b.seq2 toseq2
-from dbo.PO_Supp_Detail a 
-left join dbo.po_supp_detail b on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec 
-    and b.ColorID = a.ColorID and b.BrandId = a.BrandId
-Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}'"
-                    , fromSP, sp, seq.Substring(0, 3), seq.Substring(3, 2), Sci.Env.User.Keyword, dr_master["mdivisionid"])); // 
+                strSQLCmd.Append(string.Format(@"
+                    select 0 as selected ,'' id
+                    ,'{5}' as FromMdivisionid
+                    , a.id as FromPoId
+                    ,a.Seq1 as FromSeq1
+                    ,a.Seq2 as FromSeq2
+                    ,left(a.seq1+' ',3)+a.Seq2 as fromseq
+                    ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
+                    ,a.stockunit
+                    ,left(b.seq1+' ',3)+b.Seq2 as toseq
+                    ,0.00 as Qty
+                    ,'B' ToStocktype
+                    ,'{4}' as tomdivisionid
+                    ,b.id topoid
+                    ,b.seq1 toseq1
+                    ,b.seq2 toseq2
+                    from dbo.PO_Supp_Detail a 
+                    left join dbo.po_supp_detail b on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec 
+                        and b.ColorID = a.ColorID and b.BrandId = a.BrandId
+                    Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}'"
+                , fromSP, sp, seq1, seq2, Sci.Env.User.Keyword, dr_master["mdivisionid"])); // 
 
                 MyUtility.Msg.WaitWindows("Data Loading....");
                 Ict.DualResult result;
@@ -110,7 +118,6 @@ Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}'"
         }
 
         // SP# Valid
-
         private void btn_Import_Click(object sender, EventArgs e)
         {
             grid1.ValidateControl();
@@ -133,8 +140,9 @@ Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}'"
             foreach (DataRow tmp in dr2)
             {
                 DataRow[] findrow = dt_detail.Select(string.Format(@"tomdivisionid = '{0}' and topoid = '{1}' and toseq1 = '{2}' and toseq2 = '{3}' 
-                        and frommdivisionid = '{4}' and frompoid = '{5}' and fromseq1 = '{6}' and fromseq2 = '{7}'"
-                    , tmp["toMdivisionid"], tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["FromMdivisionid"], tmp["Frompoid"], tmp["Fromseq1"], tmp["Fromseq2"]));
+                                                        and frommdivisionid = '{4}' and frompoid = '{5}' and fromseq1 = '{6}' and fromseq2 = '{7}'"
+                    , tmp["toMdivisionid"], tmp["topoid"], tmp["toseq1"], tmp["toseq2"]
+                    , tmp["FromMdivisionid"], tmp["Frompoid"], tmp["Fromseq1"], tmp["Fromseq2"]));
 
                 if (findrow.Length > 0)
                 {
@@ -149,9 +157,7 @@ Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}'"
                 }
             }
 
-
             this.Close();
         }
-
     }
 }
