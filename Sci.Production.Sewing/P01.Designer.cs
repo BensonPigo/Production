@@ -134,7 +134,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 115);
-            this.detailpanel.Size = new System.Drawing.Size(892, 310);
+            this.detailpanel.Size = new System.Drawing.Size(892, 234);
             // 
             // gridicon
             // 
@@ -142,7 +142,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 310);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 234);
             // 
             // detail2
             // 
@@ -158,15 +158,15 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 463);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 425);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 425);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
             this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
@@ -570,10 +570,11 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P01";
-            this.SubDetailKeyField1 = "UKey";
+            this.SubDetailKeyField1 = "id";
             this.SubDetailKeyField2 = "SewingOutput_DetailUKey";
             this.SubGridAlias = "SewingOutput_Detail_Detail";
-            this.SubKeyField1 = "UKey";
+            this.SubKeyField1 = "id";
+            this.SubKeyField2 = "ukey";
             this.Text = "P01. Sewing Daily Output";
             this.UnApvChkValue = "Locked";
             this.UniqueExpress = "ID";

@@ -39,7 +39,7 @@ namespace Sci.Production.Sewing
                 }
             };
         }
-
+        
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -70,7 +70,9 @@ namespace Sci.Production.Sewing
             this.SubDetailSelectCommand = string.Format(@"
             ;with AllQty as
             (
-	            select sd.ID, sd.UKey as SewingOutput_DetailUkey, sd.OrderId, sd.ComboType,oq.Article,oq.SizeCode,oq.Qty as OrderQty,
+	            select 
+                    '' as ID ,--sd.ID, 
+                    sd.UKey as SewingOutput_DetailUkey, sd.OrderId, sd.ComboType,oq.Article,oq.SizeCode,oq.Qty as OrderQty,
 	            isnull((select QAQty from SewingOutput_Detail_Detail where SewingOutput_DetailUkey = sd.UKey and SizeCode = oq.SizeCode),0) as QAQty ,
 	            isnull(
 			            (
@@ -415,10 +417,11 @@ namespace Sci.Production.Sewing
                 .Text("RFT", header: "RFT(%)", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("Remark", header: "Remarks", width: Widths.AnsiChars(40), iseditingreadonly: true);
         }
-
+       
         //重組表身Grid的QA Qty資料
         protected override DualResult ConvertSubDetailDatasFromDoSubForm(SubDetailConvertFromEventArgs e)
         {
+            
             if (EditMode && DoSubForm.DialogResult == DialogResult.OK)
             {
                 StringBuilder QAOutput = new StringBuilder();
@@ -551,7 +554,7 @@ order by a.OrderId,os.Seq";
                 }
             }
         }
-
+       
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -737,7 +740,16 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
                     MyUtility.Msg.WarningBox("ComboType(*) can't empty!!");
                     return false;
                 }
-                gridTms = gridTms + gridQaQty == 0 ? 0 : (MyUtility.Convert.GetDecimal(dr["TMS"]) * MyUtility.Convert.GetDecimal(dr["QAQty"]) / MyUtility.Convert.GetDecimal(gridQaQty));
+
+               //回寫表頭TMS
+                if (gridQaQty == 0)
+                {
+                    gridTms = 0;
+                }
+                else
+                {
+                    gridTms = gridTms + (MyUtility.Convert.GetDecimal(dr["TMS"]) * MyUtility.Convert.GetDecimal(dr["QAQty"]) / MyUtility.Convert.GetDecimal(gridQaQty));
+                }
                 recCnt += 1;
                 //填入HourlyStandardOutput
                 DataRow[] sewing = SewingData.Select(string.Format("OrderID = '{0}' and ComboType = '{1}'", MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["ComboType"])));
@@ -795,7 +807,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
             #region GetID
             if (IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", Sci.Env.User.Factory, "Factory", "ID") + "SM", "SewingOutput", DateTime.Today, 3, "Id", null);
+                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", Sci.Env.User.Factory, "Factory", "ID") + "mM", "SewingOutput", DateTime.Today, 3, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -812,7 +824,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
             CurrentMaintain["Efficiency"] = MyUtility.Convert.GetDecimal(CurrentMaintain["TMS"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["ManHour"]) == 0 ? 0 : MyUtility.Convert.GetDecimal(gridQaQty) / (3600 / MyUtility.Convert.GetDecimal(CurrentMaintain["TMS"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["ManHour"])) * 100;
             return base.ClickSaveBefore();
         }
-
+    
         protected override DualResult ClickSaveSubDetial(SubDetailSaveEventArgs e)
         {
             List<DataRow> Inserted = new List<DataRow>();

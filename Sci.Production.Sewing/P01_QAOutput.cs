@@ -17,8 +17,24 @@ namespace Sci.Production.Sewing
         public P01_QAOutput()
         {
             InitializeComponent();
+            
         }
-
+        protected override void OnEditModeChanged()
+        {
+            base.OnEditModeChanged();
+        }
+        protected override bool OnSaveBefore()
+        {
+            foreach (DataRow row in this.CurrentSubDetailDatas.Rows) {
+                if (row["ID"].ToString().Empty())
+                {
+                    row["ID"] = this.CurrentDetailData["ID"];
+                    
+                }
+            }
+            return base.OnSaveBefore();
+        }
+        
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -75,6 +91,7 @@ namespace Sci.Production.Sewing
                         CalculateTotal();
                     }
                 }
+                
             };
             #endregion
             Helper.Controls.Grid.Generator(grid)
