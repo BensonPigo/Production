@@ -190,7 +190,6 @@
             this.detailgridcont.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.detailgridcont.Cursor = System.Windows.Forms.Cursors.AppStarting;
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(3, 101);
             this.detailgridcont.Size = new System.Drawing.Size(684, 531);
