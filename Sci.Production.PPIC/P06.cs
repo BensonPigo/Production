@@ -113,7 +113,7 @@ namespace Sci.Production.PPIC
             }
             StringBuilder sqlCmd = new StringBuilder();
             # region 組SQL
-            sqlCmd.Append(string.Format(@"select
+            sqlCmd.Append(string.Format(@"select DISTINCT
             o.FactoryID,o.BrandID,o.SewLine,o.Id,o.StyleID,o.CustPONo,o.CustCDID,o.Customize2,o.DoxType,oq.Qty,c.Alias,o.SewOffLine,
             isnull(o.InspDate,iif(oq.EstPulloutDate is null,dateadd(day,2,o.SewOffLine),dateadd(day,-2,oq.EstPulloutDate))) as InspDate,
             oq.SDPDate,oq.EstPulloutDate,oq.Seq,oq.ShipmodeID,oq.BuyerDelivery,o.SciDelivery,
