@@ -4,7 +4,7 @@
     [SizeUnit] VARCHAR (8)    CONSTRAINT [DF_Order_SizeItem_SizeUnit] DEFAULT ('') NULL,
     [SizeDesc] NVARCHAR (100) CONSTRAINT [DF_Order_SizeItem_SizeDesc] DEFAULT ('') NULL,
     [Ukey]     BIGINT         NOT NULL, 
-    CONSTRAINT [PK_Order_SizeItem] PRIMARY KEY ([Ukey]) 
+    CONSTRAINT [PK_Order_SizeItem] PRIMARY KEY ([Ukey])  
 );
 
 
