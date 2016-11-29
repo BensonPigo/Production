@@ -52,6 +52,7 @@ namespace Sci.Production.PPIC
             button10.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_HSCode where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
             button15.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_GMTLTFty where StyleUkey = {0}",MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
             button16.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_Location where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
+                  
         }
 
         protected override void ClickNewAfter()
@@ -59,6 +60,7 @@ namespace Sci.Production.PPIC
             base.ClickNewAfter();
             CurrentMaintain["LocalStyle"] = 1;
             CurrentMaintain["LocalMR"] = Sci.Env.User.UserID;
+
         }
 
         protected override void ClickEditAfter()
@@ -67,6 +69,7 @@ namespace Sci.Production.PPIC
             textBox1.ReadOnly = true;
             textBox6.ReadOnly = true;
             textBox2.ReadOnly = true;
+          
             if (MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "FALSE")
             {
                 textBox3.ReadOnly = true;
@@ -80,8 +83,9 @@ namespace Sci.Production.PPIC
                 txtcdcode1.ReadOnly = true;
                 checkBox3.ReadOnly = true;
                 checkBox4.ReadOnly = true;
-                comboBox1.ReadOnly = true;
+                comboBox1.ReadOnly = true; 
                 comboBox2.ReadOnly = true;
+              
             }
             if (MyUtility.Convert.GetString(CurrentMaintain["NoNeedPPMeeting"]).ToUpper() == "TRUE")
             {
@@ -279,11 +283,11 @@ namespace Sci.Production.PPIC
 
         //No need PP Meeting
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
-        {
-            if (EditMode)
+        {  
+           if (EditMode)
             {
                 CurrentMaintain["NoNeedPPMeeting"] = checkBox2.Checked;
-                dateBox1.ReadOnly = checkBox2.Value.ToUpper() == "TRUE";
+                dateBox1.ReadOnly = checkBox2.Value.ToUpper() == "TRUE";      
             }
         }
 

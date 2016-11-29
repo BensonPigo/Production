@@ -1077,7 +1077,7 @@
             // comboBox2
             // 
             this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Gender", true));
+            this.comboBox2.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Gender", true));
             this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.IsSupportUnselect = true;
