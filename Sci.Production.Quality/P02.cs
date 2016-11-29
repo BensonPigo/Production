@@ -57,7 +57,7 @@ namespace Sci.Production.Quality
                 (
                 Select weavetypeid from Fabric b where b.SCIRefno =a.SCIrefno
                 ) as weavetypeid,
-                c.Exportid,c.whseArrival,
+                c.ID AS ReceivingID,c.whseArrival,
                 (
                 Select d.colorid from PO_Supp_Detail d Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
                 ) as Colorid,
@@ -131,7 +131,7 @@ namespace Sci.Production.Quality
                 .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail   )            
                 .Text("ReplacementID", header: "1st ReplacementID", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("ExportID", header: "Receiving ID", width: Widths.AnsiChars(10), iseditingreadonly: true);
+                .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(10), iseditingreadonly: true);
             detailgrid.Columns[11].DefaultCellStyle.BackColor = Color.LemonChiffon;
             detailgrid.Columns[12].DefaultCellStyle.BackColor = Color.LemonChiffon;
             detailgrid.Columns[13].DefaultCellStyle.BackColor = Color.LemonChiffon;

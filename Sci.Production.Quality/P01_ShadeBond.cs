@@ -435,7 +435,7 @@ namespace Sci.Production.Quality
             string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P01", "MenuDetail", "FormName");
             string pass0pk = MyUtility.GetValue.Lookup("FKPass0", loginID, "Pass1", "ID");
             DataRow pass2_dr;
-            string pass2_cmd = string.Format("Select * from Pass2 Where FKPass0 ={0} and FKMenu={1}", pass0pk, menupk);
+            string pass2_cmd = string.Format("Select * from Pass2 Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
             int lApprove = 0; //有Confirm權限皆可按Pass的Approve, 有Check權限才可按Fail的Approve(TeamLeader 有Approve權限,Supervisor有Check)
             int lCheck = 0;
             if (MyUtility.Check.Seek(pass2_cmd, out pass2_dr))
