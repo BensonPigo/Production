@@ -180,14 +180,11 @@ namespace Sci.Production.Cutting
                 ShowErr(marker2sql, dResult);
                 return;
             }
-
-
-
-
             #endregion
 
             #region update Master
-            string updSql = string.Format("update Cutplan set Status = 'Confirmed', editdate = getdate(), editname = '{0}' Where id='{1}'", loginID, CurrentMaintain["ID"]);
+            //1386: CUTTING_P04_Cutting Daily Plan。CONFIRM時，須回寫更新MarkerReqid。
+            string updSql = string.Format("update Cutplan set  MarkerReqid = '{2}' , Status = 'Confirmed', editdate = getdate(), editname = '{0}' Where id='{1}'", loginID, CurrentMaintain["ID"], reqid);
             #endregion
             #region transaction
             DualResult upResult;
