@@ -406,13 +406,13 @@ namespace Sci.Production.Cutting
             DataRow seekdr;
             if (MyUtility.Check.Seek("select * from mailto where Id='004'", out seekdr))
             {
+                string mailFrom = Sci.Env.User.MailAddress;
                 string mailto = seekdr["ToAddress"].ToString();
                 string cc = seekdr["ccAddress"].ToString();
                 string content = seekdr["content"].ToString();
                 string subject = "<" + CurrentMaintain["mDivisionid"].ToString() + ">BulkMarkerRequest#:" + CurrentMaintain["ID"].ToString();
 
-                var email = new MailTo(Env.Cfg.MailFrom, mailto, cc, subject + "-" + fileNameExt, pathName,
-content, false, false);
+                var email = new MailTo(mailFrom, mailto, cc, subject + "-" + fileNameExt, pathName, content, false, false);
                 email.ShowDialog(this);
             }
             //刪除Excel File
