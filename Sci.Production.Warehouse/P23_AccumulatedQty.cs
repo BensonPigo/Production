@@ -45,6 +45,7 @@ cross apply
 select m.poid,m.seq1,m.seq2,m.StockUnit,m.Qty*isnull(u.Rate,1) as poqty,m.InputQty*isnull(u.Rate,1) as inputQty
 ,dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
 ,m.taipei_issue_date,m.taipei_qty,m.POUnit,accu_qty, m.trans_qty	
+,[balanceqty] = m.trans_qty + isnull(accu_qty,0) - isnull(m.taipei_qty,0)
 from cte m left join Unit_Rate u on u.UnitFrom = POUnit and u.UnitTo = StockUnit
 cross apply
 (
@@ -67,7 +68,7 @@ select sum(qty) accu_qty from (
             if (selectResult1 == false)
             { ShowErr(selectCommand1.ToString(), selectResult1); }
             MyUtility.Msg.WaitClear();
-            selectDataTable1.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - trans_qty");
+            //selectDataTable1.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - trans_qty");
             bindingSource1.DataSource = selectDataTable1;
 
             //設定Grid1的顯示欄位
