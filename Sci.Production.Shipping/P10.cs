@@ -75,7 +75,7 @@ where {0} order by g.ID", masterID);
             base.OnDetailGridSetup();
 
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("ID", header: "GB#", width: Widths.AnsiChars(25), iseditingreadonly: true)
+                .Text("ID", header: "GB#", width: Widths.AnsiChars(22), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("ShipModeID", header: "Ship Mode", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Forwarder", header: "Forwarder", width: Widths.AnsiChars(17), iseditingreadonly: true)
@@ -101,8 +101,8 @@ where {0} order by g.ID", masterID);
             grid1.DataSource = listControlBindingSource1;
             grid1.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid1)
-                .Text("ID", header: "Packing No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("ID", header: "Packing No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Delivery", iseditingreadonly: true)
                 .Text("Status", header: "Packing Status", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Numeric("CTNQty", header: "CTN Qty", iseditingreadonly: true)
@@ -394,6 +394,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
         {
             Sci.Production.Shipping.P10_UpdatePulloutDate callNextForm = new Sci.Production.Shipping.P10_UpdatePulloutDate(CurrentMaintain);
             callNextForm.ShowDialog(this);
+            RenewData();
         }
 
         //表身Grid的Delete
