@@ -405,28 +405,47 @@ s.EditDate
 		,MDivisionID, IIF(s.Junk = 1,'Junked',IIF(s.ApvName != '',s.ApvName,'New')))
 	output inserted.id into @T;
 
-------------------MachinePO_Detail----------------------
+-----------------MachinePO_Detail Type <>'M'---------------------
+update t
+		set t.TpePOID = s.id,
+		t.seq1=s.seq1
+		from  Machine.dbo.PartPO_Detail as  t
+		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
+		inner join Trade_To_Pms.DBO.MmsPO a on s.id=a.ID
+		left join Production.dbo.scifty b on a.FactoryID=b.ID
+		where a.Type='P'
+		
+
+		update t
+		set t.TpePOID = s.id,
+		t.seq1=s.seq1
+		from  Machine.dbo.MiscPO_Detail as  t
+		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
+		inner join Trade_To_Pms.DBO.MmsPO a on s.id=a.ID
+		left join Production.dbo.scifty b on a.FactoryID=b.ID
+		where a.Type='O'
+
+------------------MachinePO_Detail Type='M'----------------------
 
 	Merge Machine.[dbo].[MachinePO_Detail] as t
-	using (select a.*,iif(b.MachineGroupID is null,'',MachineGroupID) as MachineGroupID,
-iif(b.MachineBrandID is null,'',b.MachineBrandID) as MachineBrandID 
-from [Trade_To_Pms]..MmsPO_Detail a
-left join Machine..Machine b on a.Refno=b.ID
+	using (select * from Trade_To_PMS.dbo.MachinePO_Detail a
 where a.id in (select id from @T)) as s
 	on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
 	when matched then 
 				update set
-				t.Qty= s.Qty,
-				t.FOC= s.FOC,
 				t.MachineGroupID= s.MachineGroupID,
 				t.MachineBrandID= s.MachineBrandID,
-				t.Price= s.Price,
+				t.Model= s.Model,
+				t.Description= s.Description,
+				t.Qty= s.Qty,
+				t.FOC= s.FOC,
+				t.Price= s.Price,				
 				t.Remark= s.Remark,
-				t.Junk= s.Junk,
-				t.MachineReqID= s.MmsReqID
+				t.MachineReqID= s.MmsReqID,
+				t.Junk= s.Junk
 		when not matched by target then
-		insert  (ID,Seq1,Seq2,Qty,FOC,Price,Remark,Junk,MachineReqID)
-		values	(s.ID,s.Seq1,s.Seq2,s.Qty,s.FOC,s.Price,s.Remark,s.Junk,MmsReqID)
+		insert  (ID,Seq1,Seq2,MachineGroupID,MachineBrandID,Model,Description,Qty,FOC,Price,Remark,MachineReqID,Junk)
+		values	(s.ID,s.Seq1,s.Seq2,s.MachineGroupID,s.MachineBrandID,s.Model,s.Description,s.Qty,s.FOC,s.Price,s.Remark,s.MmsReqID,s.Junk)
 		when not matched by source and t.id in (select id from @T) then
 		delete ;
 
