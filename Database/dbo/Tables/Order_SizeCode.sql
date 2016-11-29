@@ -3,7 +3,8 @@
     [Seq]       VARCHAR (2)  CONSTRAINT [DF_Order_SizeCode_Seq] DEFAULT ('') NULL,
     [SizeGroup] VARCHAR (1)  CONSTRAINT [DF_Order_SizeCode_SizeGroup] DEFAULT ('') NULL,
     [SizeCode]  VARCHAR (8)  CONSTRAINT [DF_Order_SizeCode_SizeCode] DEFAULT ('') NOT NULL,
-    [Ukey]      BIGINT       NULL
+    [Ukey]      BIGINT       NULL, 
+    CONSTRAINT [PK_Order_SizeCode] PRIMARY KEY ([SizeCode], [Id])
 );
 
 

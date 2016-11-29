@@ -3,7 +3,8 @@
     [SizeItem] VARCHAR (3)  CONSTRAINT [DF_Order_SizeSpec_SizeItem] DEFAULT ('') NOT NULL,
     [SizeCode] VARCHAR (8)  CONSTRAINT [DF_Order_SizeSpec_SizeCode] DEFAULT ('') NOT NULL,
     [SizeSpec] VARCHAR (15) CONSTRAINT [DF_Order_SizeSpec_SizeSpec] DEFAULT ('') NULL,
-    [Ukey]     BIGINT       NULL
+    [Ukey]     BIGINT       NULL, 
+    CONSTRAINT [PK_Order_SizeSpec] PRIMARY KEY ([Id], [SizeCode], [SizeItem])
 );
 
 
