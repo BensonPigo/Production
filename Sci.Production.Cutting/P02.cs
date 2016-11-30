@@ -21,7 +21,7 @@ namespace Sci.Production.Cutting
         private string keyWord = Sci.Env.User.Keyword; 
 
         private DataTable sizeratioTb, layersTb, distqtyTb, qtybreakTb, sizeGroup, spTb, artTb, PatternPanelTb;
-
+        private DataRow drTEMP;  //紀錄目前表身選擇的資料，避免按列印時模組會重LOAD資料，導致永遠只能印到第一筆資料
 
         private Sci.Win.UI.BindingSource2 bindingSource2 = new Win.UI.BindingSource2();
         
@@ -1119,6 +1119,12 @@ namespace Sci.Production.Cutting
             bindingSource2.SetRow(this.CurrentDetailData);
             DataRow fabdr;
 
+            //1394: CUTTING_P02_Cutting Work Order。KEEP當前的資料。
+            if (detailgrid.CurrentCell.RowIndex > 0)
+            {
+                drTEMP = CurrentDetailData;
+            }
+
             if (MyUtility.Check.Seek(string.Format("Select * from Fabric Where SCIRefno ='{0}'", CurrentDetailData["SCIRefno"]), out fabdr))
             {
                 displayBox_FabricType.Text = fabdr["MtlTypeid"].ToString();
@@ -1977,14 +1983,26 @@ namespace Sci.Production.Cutting
             var dr = this.CurrentDetailData; if (null == dr) return;
             var frm = new Sci.Production.Cutting.P02_PatternPanel(!this.EditMode && MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]), dr["Ukey"].ToString(), null, null, layersTb);
             frm.ShowDialog(this);
-            this.RenewData();
-            sorting(comboBox1.Text);  //避免順序亂掉
-            this.OnDetailEntered();
+
+            //1394: CUTTING_P02_Cutting Work Order。(1) 按了Pattern panel按鈕，執行結束回到Workorder作業畫面時不要重新load資料。
+            //this.RenewData();
+            //sorting(comboBox1.Text);  //避免順序亂掉
+            //this.OnDetailEntered();
+
         }
 
         protected override bool ClickPrint()
         {
-            Sci.Production.Cutting.P02_Print callNextForm = new P02_Print(CurrentDetailData, CurrentMaintain["ID"].ToString());
+            Sci.Production.Cutting.P02_Print callNextForm;
+            if (drTEMP != null)
+            {
+                callNextForm = new P02_Print(drTEMP, CurrentMaintain["ID"].ToString());
+            }
+            else
+            {
+                callNextForm = new P02_Print(CurrentDetailData, CurrentMaintain["ID"].ToString());
+            }
+            
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }
