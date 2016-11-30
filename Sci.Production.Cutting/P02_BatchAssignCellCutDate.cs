@@ -23,6 +23,7 @@ namespace Sci.Production.Cutting
             curTb.Columns.Add("Sel", typeof(bool));
 
             gridsetup();
+            filter_button_Click(null,null);  //1390: CUTTING_P02_BatchAssignCellCutDate，當進去此功能時應直接預帶資料。
         }
         private void gridsetup()
         {
