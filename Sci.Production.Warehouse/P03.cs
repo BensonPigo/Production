@@ -32,7 +32,7 @@ namespace Sci.Production.Warehouse
         {
 
             base.OnFormLoaded();
-            comboBox1.SelectedIndex = 0;
+            comboBox1.SelectedIndex = 1;
             ChangeDetailColor();
             MyUtility.Tool.SetGridFrozen(this.grid1);
 
