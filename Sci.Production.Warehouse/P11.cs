@@ -245,6 +245,10 @@ Where a.id = '{0}'", masterID);
             CurrentMaintain["issuedate"] = DateTime.Now;
             dtIssueBreakDown = null;
             gridIssueBreakDown.DataSource = null;
+            textBox1.IsSupportEditMode = true;
+            txtRequest.IsSupportEditMode = true;
+            textBox1.ReadOnly = false;
+            txtRequest.ReadOnly = false;
         }
 
         // delete前檢查
@@ -269,6 +273,10 @@ Where a.id = '{0}'", masterID);
                 MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
                 return false;
             }
+            textBox1.IsSupportEditMode = false;
+            txtRequest.IsSupportEditMode = false;
+            textBox1.ReadOnly = true;
+            txtRequest.ReadOnly = true;
             return base.ClickEditBefore();
         }
 
@@ -280,12 +288,12 @@ Where a.id = '{0}'", masterID);
 
             #region 必輸檢查
 
-            //if (MyUtility.Check.Empty(CurrentMaintain["cutplanId"]))
-            //{
-            //    MyUtility.Msg.WarningBox("< Request# >  can't be empty!", "Warning");
-            //    txtRequest.Focus();
-            //    return false;
-            //}
+            if (MyUtility.Check.Empty(textBox1.Text.ToString()))
+            {
+                MyUtility.Msg.WarningBox("< Request# > or < Order ID >  can't be empty!", "Warning");
+                textBox1.Focus();
+                return false;
+            }
             if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
@@ -433,6 +441,7 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
         private void txtRequest_Validating(object sender, CancelEventArgs e)
         {
             if (txtRequest.Text == txtRequest.OldValue) return;
+            //DBProxy.Current.Execute(null, string.Format("delete from dbo.issue_breakdown where id='{0}';", CurrentMaintain["id"].ToString()));
             CurrentMaintain["cutplanid"] = txtRequest.Text;
             textBox1.Text = "";
             CurrentMaintain["orderid"] = "";
@@ -1248,6 +1257,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         private void textBox1_Validated(object sender, EventArgs e) //若order ID有變，重新撈取資料庫。
         {
             if (textBox1.Text == textBox1.OldValue) return;
+           // DBProxy.Current.Execute(null, string.Format("delete from dbo.issue_breakdown where id='{0}';", CurrentMaintain["id"].ToString()));
             CurrentMaintain["cutplanid"] = "";
             if (MyUtility.Check.Empty(this.poid))
             {
