@@ -57,7 +57,10 @@ namespace Sci.Production.Class
             string str = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
             {
-                if (!MyUtility.Check.Seek(str, "WhseReason", "ID"))
+                String actionCode = MyUtility.GetValue.Lookup("actioncode", "RR" + whseReason.TextBox1.Text, "WhseReason", "Type+ID");
+                string sqlcmd = string.Format(@"select Id, Description from WhseReason where type ='RA'and id in ({0}) and id in ('{1}')", actionCode,str);
+                //if (!MyUtility.Check.Seek(str, "WhseReason", "ID"))
+                if (!MyUtility.Check.Seek(sqlcmd) )
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Refund Action: {0} > not found!!!", str));
                     this.textBox1.Text = "";
