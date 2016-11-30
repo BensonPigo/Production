@@ -49,7 +49,7 @@ DECLARE cursor_ttlAmount CURSOR FOR
 		  from (select isnull(se.AccountID,'') as AccountID, sum(sd.Amount) as Amount, s.CurrencyID
 				from ShippingAP_Detail sd
 				left join ShipExpense se on se.ID = sd.ShipExpenseID
-				left join [Finance].dbo.AccountNo a on a.ID = se.AccountID
+				left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 				left join ShippingAP s on s.ID = sd.ID
 				where sd.ID = @id
 				group by se.AccountID, a.Name, s.CurrencyID) a,
@@ -211,9 +211,11 @@ CLOSE cursor_ttlAmount", shippingAPID, Sci.Env.User.UserID);
         /// <returns>string</returns>
         public static string ReCalculateExpress(string expressID)
         {
-            return string.Format(@"update Express set NW = (select SUM(NW) from Express_Detail where ID = '{0}'),
+            return string.Format(
+@"update Express set NW = (select SUM(NW) from Express_Detail where ID = '{0}'),
 CTNQty = (select COUNT(distinct CTNNo) from Express_Detail where ID = '{0}')
 where ID = '{0}'", expressID);
+
         }
         #endregion
     }
