@@ -43,9 +43,9 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(masterDate["ID"]));
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-                .Text("GMTBookingID", header: "GB#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("PackingListID", header: "Packing No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("GMTBookingID", header: "GB#", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("PackingListID", header: "Packing No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("PulloutDate", header: "Pullout Date").Get(out col_pulldate)
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
                 .Text("Status", header: "Packing Status", width: Widths.AnsiChars(9), iseditingreadonly: true)

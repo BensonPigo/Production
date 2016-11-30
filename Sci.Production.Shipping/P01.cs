@@ -1110,8 +1110,9 @@ from Orders o
 where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
             DataTable OrderData;
             DBProxy.Current.Select(null, sqlCmd, out OrderData);
+            int count = OrderData.Rows.Count;
 
-            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), MyUtility.Convert.GetString(OrderData.Rows[0]["POID"]), MyUtility.Convert.GetString(OrderData.Rows[0]["PoList"]));
+            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["OrderID"]),(count ==0)? "": MyUtility.Convert.GetString(OrderData.Rows[0]["POID"]),(count==0)?"":  MyUtility.Convert.GetString(OrderData.Rows[0]["PoList"]));
             callNextForm.ShowDialog(this);
         }
 
