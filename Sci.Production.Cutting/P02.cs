@@ -1110,6 +1110,13 @@ namespace Sci.Production.Cutting
             grid.ValidateControl();
         }
 
+        //1394: CUTTING_P02_Cutting Work Order。KEEP當前的資料。
+        protected override void DoPrint()
+        {
+            drTEMP = this.CurrentDetailData;
+            base.DoPrint();
+        }
+
         protected override void OnDetailGridRowChanged()
         {
             gridValid();
@@ -1118,12 +1125,6 @@ namespace Sci.Production.Cutting
             if (CurrentDetailData == null) return;
             bindingSource2.SetRow(this.CurrentDetailData);
             DataRow fabdr;
-
-            //1394: CUTTING_P02_Cutting Work Order。KEEP當前的資料。
-            if (detailgrid.CurrentCell.RowIndex > 0)
-            {
-                drTEMP = CurrentDetailData;
-            }
 
             if (MyUtility.Check.Seek(string.Format("Select * from Fabric Where SCIRefno ='{0}'", CurrentDetailData["SCIRefno"]), out fabdr))
             {
