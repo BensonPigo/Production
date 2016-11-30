@@ -41,7 +41,7 @@ namespace Sci.Production.Cutting
                 For XML path('')
             ) as PatternPanel,
             (
-                Select Orderid+'/' 
+                Select DISTINCT Orderid+'/' 
                 From WorkOrder_Distribute d
                 Where d.WorkOrderUkey =a.WorkOrderUkey and Orderid!='EXCESS'
                 For XML path('')
@@ -55,6 +55,7 @@ namespace Sci.Production.Cutting
             ) as SizeRatio      
             From cuttingoutput_Detail a, WorkOrder e
             where a.id = '{0}' and a.WorkOrderUkey = e.Ukey
+            ORDER BY CutRef
             ", masterID);
             this.DetailSelectCommand = cmdsql;
             return base.OnDetailSelectCommandPrepare(e);
@@ -367,44 +368,54 @@ namespace Sci.Production.Cutting
             }
             #endregion
             #region GMT SQL
-            string sql1 = string.Format(@"with a as (
+            string sql1 = string.Format(@"
             Select distinct d.*,e.Colorid,e.PatternPanel
+            into #tmp1
             from 
             (Select b.POID,c.ID,c.Article,c.SizeCode,c.Qty from (Select distinct a.id,POID ,w.article
-			from Orders a,CuttingOutput_Detail cu,WorkOrder_Distribute w where a.id = w.OrderID and cu.id='{0}' 
-			and w.WorkOrderUkey = cu.WorkOrderUkey) as b,
+            from Orders a,CuttingOutput_Detail cu,WorkOrder_Distribute w where a.id = w.OrderID and cu.id='{0}' 
+            and w.WorkOrderUkey = cu.WorkOrderUkey) as b,
             order_Qty c where c.id = b.id and b.Article = c.Article) d,Order_ColorCombo e,order_Eachcons cons
-            where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !='' and cons.id =e.id and d.poid = cons.id and cons.CuttingPiece='0' and  cons.FabricCombo = e.PatternPanel)
-            , b as (
+            where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !='' and cons.id =e.id and d.poid = cons.id and cons.CuttingPiece='0' and  cons.FabricCombo = e.PatternPanel
+
             Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel,isnull(sum(b.qty),0) as cutqty 
-			from CuttingOutput ma,CuttingOutput_Detail a ,WorkOrder_Distribute b , WorkOrder_PatternPanel c 
-            Where ma.cdate<'{1}' and ma.ID = a.id AND ma.MDivisionid ='{2}' and ma.Status!='New' 
-			and a.WorkOrderUkey = b.WorkOrderUkey and a.WorkOrderUkey = c.WorkOrderUkey 
+            into #tmp2
+            from CuttingOutput ma,CuttingOutput_Detail a ,WorkOrder_Distribute b , WorkOrder_PatternPanel c , Orders O
+            Where ma.cdate<'{1}' and ma.ID = a.id and ma.Status!='New' 
+            and a.WorkOrderUkey = b.WorkOrderUkey and a.WorkOrderUkey = c.WorkOrderUkey   and O.ID=b.OrderID
+            and O.POID in (select CuttingID from CuttingOutput_Detail where CuttingOutput_Detail.ID = '{0}')
             group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
-            )
-			Select  a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty from a 
-            left join b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
-			group by a.poid,a.id,a.article,a.sizecode", CurrentMaintain["ID"], Convert.ToDateTime(CurrentMaintain["cdate"]).ToShortDateString(), keyWord);
+
+            Select a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty 
+            from #tmp1 a 
+            left join #tmp2 b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
+            group by a.poid,a.id,a.article,a.sizecode"
+            , CurrentMaintain["ID"], Convert.ToDateTime(CurrentMaintain["cdate"]).ToShortDateString());
 
             string sql2 = string.Format(@"
-			with a as (
-            Select distinct d.*,e.Colorid,e.PatternPanel
+			Select distinct d.*,e.Colorid,e.PatternPanel
+            into #tmp1
             from 
             (Select b.POID,c.ID,c.Article,c.SizeCode,c.Qty from (Select distinct a.id,POID ,w.article
-			from Orders a,CuttingOutput_Detail cu,WorkOrder_Distribute w where a.id = w.OrderID and cu.id='{0}' 
-			and w.WorkOrderUkey = cu.WorkOrderUkey) as b,
+            from Orders a,CuttingOutput_Detail cu,WorkOrder_Distribute w where a.id = w.OrderID and cu.id='{0}' 
+            and w.WorkOrderUkey = cu.WorkOrderUkey) as b,
             order_Qty c where c.id = b.id and b.Article = c.Article) d,Order_ColorCombo e,order_Eachcons cons
-            where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !='' and cons.id =e.id and d.poid = cons.id and cons.CuttingPiece='0' and  cons.FabricCombo = e.PatternPanel)
-            , b as (
+            where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !='' and cons.id =e.id and d.poid = cons.id and cons.CuttingPiece='0' and  cons.FabricCombo = e.PatternPanel
+
             Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel,isnull(sum(b.qty),0) as cutqty 
-			from CuttingOutput ma,CuttingOutput_Detail a ,WorkOrder_Distribute b , WorkOrder_PatternPanel c 
-            Where ma.cdate<='{1}' and ma.ID = a.id AND ma.MDivisionid ='{2}' and ma.Status!='New' 
-			and a.WorkOrderUkey = b.WorkOrderUkey and a.WorkOrderUkey = c.WorkOrderUkey 
+            into #tmp2
+            from CuttingOutput ma,CuttingOutput_Detail a ,WorkOrder_Distribute b , WorkOrder_PatternPanel c , Orders O
+            Where ma.cdate<='{1}' and ma.ID = a.id and ma.Status!='New' 
+            and a.WorkOrderUkey = b.WorkOrderUkey and a.WorkOrderUkey = c.WorkOrderUkey   and O.ID=b.OrderID
+            and O.POID in (select CuttingID from CuttingOutput_Detail where CuttingOutput_Detail.ID = '{0}')
             group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
-            )
-			Select  a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty from a 
-            left join b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
-			group by a.poid,a.id,a.article,a.sizecode", CurrentMaintain["ID"], Convert.ToDateTime(CurrentMaintain["cdate"]).ToShortDateString(),keyWord);
+
+            Select a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty 
+            from #tmp1 a 
+            left join #tmp2 b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
+            group by a.poid,a.id,a.article,a.sizecode"
+            , CurrentMaintain["ID"], Convert.ToDateTime(CurrentMaintain["cdate"]).ToShortDateString());
+
             DataTable t1, t2;
             DBProxy.Current.Select(null, sql1, out t1); //今天日期之前的gmt數
             DBProxy.Current.Select(null, sql2, out t2); //包含今天之前的gmt 數
@@ -454,7 +465,6 @@ namespace Sci.Production.Cutting
 
             update = update + string.Format("update Cuttingoutput set status='Confirmed',editDate=getdate(),editname ='{0}',actgarment ='{2}',pph='{3}' where id='{1}'", loginID, CurrentMaintain["ID"], gmt, pph);
 
-
             #region transaction
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
@@ -485,6 +495,7 @@ namespace Sci.Production.Cutting
             this.OnDetailEntered();
             EnsureToolbarExt();
             #endregion
+
         }
         protected override void ClickUnconfirm()
         {
@@ -508,24 +519,29 @@ namespace Sci.Production.Cutting
             }
             #endregion
             #region GMT SQL
-            string sql1 = string.Format(@"with a as (
+            string sql1 = string.Format(@"
             Select distinct d.*,e.Colorid,e.PatternPanel
+            into #tmp1
             from 
             (Select b.POID,c.ID,c.Article,c.SizeCode,c.Qty from (Select distinct a.id,POID ,w.article
-			from Orders a,CuttingOutput_Detail cu,WorkOrder_Distribute w where a.id = w.OrderID and cu.id='{0}' 
-			and w.WorkOrderUkey = cu.WorkOrderUkey) as b,
+            from Orders a,CuttingOutput_Detail cu,WorkOrder_Distribute w where a.id = w.OrderID and cu.id='{0}' 
+            and w.WorkOrderUkey = cu.WorkOrderUkey) as b,
             order_Qty c where c.id = b.id and b.Article = c.Article) d,Order_ColorCombo e,order_Eachcons cons
-            where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !='' and cons.id =e.id and d.poid = cons.id and cons.CuttingPiece='0' and  cons.FabricCombo = e.PatternPanel)
-            , b as (
+            where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !='' and cons.id =e.id and d.poid = cons.id and cons.CuttingPiece='0' and  cons.FabricCombo = e.PatternPanel
+
             Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel,isnull(sum(b.qty),0) as cutqty 
-			from CuttingOutput ma,CuttingOutput_Detail a ,WorkOrder_Distribute b , WorkOrder_PatternPanel c 
-            Where ma.cdate<'{1}' and ma.ID = a.id AND ma.MDivisionid ='MAI' and ma.Status!='New' 
-			and a.WorkOrderUkey = b.WorkOrderUkey and a.WorkOrderUkey = c.WorkOrderUkey 
+            into #tmp2
+            from CuttingOutput ma,CuttingOutput_Detail a ,WorkOrder_Distribute b , WorkOrder_PatternPanel c , Orders O
+            Where ma.cdate<'{1}' and ma.ID = a.id and ma.Status!='New' 
+            and a.WorkOrderUkey = b.WorkOrderUkey and a.WorkOrderUkey = c.WorkOrderUkey   and O.ID=b.OrderID
+            and O.POID in (select CuttingID from CuttingOutput_Detail where CuttingOutput_Detail.ID = '{0}')
             group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
-            )
-			Select  a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty from a 
-            left join b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
-			group by a.poid,a.id,a.article,a.sizecode", CurrentMaintain["ID"], Convert.ToDateTime(CurrentMaintain["cdate"]).ToShortDateString());
+
+            Select a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty 
+            from #tmp1 a 
+            left join #tmp2 b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
+            group by a.poid,a.id,a.article,a.sizecode"
+            , CurrentMaintain["ID"], Convert.ToDateTime(CurrentMaintain["cdate"]).ToShortDateString());
 
             DataTable t1;
             DBProxy.Current.Select(null, sql1, out t1);
