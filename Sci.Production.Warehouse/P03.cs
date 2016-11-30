@@ -165,7 +165,7 @@ namespace Sci.Production.Warehouse
             .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //5
             .Text("refno", header: "Ref#", iseditingreadonly: true, settings: ts2)  //6
             .Text("fabrictype2", header: "Fabric Type", iseditingreadonly: true)  //7
-            .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(15))  //8
+            .EditText("description2", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(15))  //8
             .Text("ColorID", header: "Color", iseditingreadonly: true)  //9
             .Text("SizeSpec", header: "Size", iseditingreadonly: true)  //10
             .Text("CurrencyID", header: "Currency", iseditingreadonly: true)  //11
@@ -250,7 +250,7 @@ namespace Sci.Production.Warehouse
 	Select POID,SEQ1,SEQ2,a.result as [Result] 
 	from dbo.AIR a where a.POID LIKE @sp1 and a.Result !=''
 ) 
-			 
+, AllDesc AS( 	
 select 
 m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 ,[eta] = substring(convert(varchar, a.eta, 101),1,5)
@@ -270,7 +270,7 @@ m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 ,iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty)  balanceqty
 ,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
 ,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
-,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.refno,a.seq1,a.seq2),1,0)) AS description
+,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
 ,s.currencyid
 ,stuff((select Concat('/',t.Result) from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')),1,1,'') FIR
 ,(Select cast(tmp.Remark as nvarchar)+',' 
@@ -292,7 +292,10 @@ from Orders inner join PO_Supp_Detail a on a.id = orders.poid
 	left join po_supp b on a.id = b.id and a.SEQ1 = b.SEQ1
     left join supp s on s.id = b.suppid
 where orders.poid like @sp1 and orders.mdivisionid= '{0}' AND m.MDivisionID='{0}'
+
+--很重要要看到,修正欄位要上下一起改
 union
+
 select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
 ,substring(convert(varchar,a.RevisedETA, 101),1,5) as RevisedETA,a.Refno,a.SCIRefno
 ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
@@ -305,7 +308,8 @@ select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varcha
 ,iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty)  balanceqty
 ,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
 ,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
-,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.refno,a.seq1,a.seq2),1,0)) AS description,s.currencyid
+,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
+,s.currencyid
 ,stuff((select Concat('/',t.Result) from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')),1,1,'') FIR
 ,(Select cast(tmp.Remark as nvarchar)+',' 
   from (
@@ -326,7 +330,10 @@ left join po_supp b on a.id = b.id and a.SEQ1 = b.SEQ1
 left join supp s on s.id = b.suppid
 where m.MDivisionID='{0}' and m.poid like @sp1  
     AND a.id IS NOT NULL --0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
-order by m.mdivisionid,a.id,a.refno,a.colorid            
+)
+
+select *,iif(a.description=lag(a.description,1,'') over (order by a.id,a.seq1,a.seq2),'',a.description) AS description2
+from AllDesc a          
             "
             , Sci.Env.User.Keyword);
             #endregion
