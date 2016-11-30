@@ -17,7 +17,7 @@ BEGIN
 	from Orders o
 	inner join Order_Qty oq on o.ID = oq.ID
 	where o.Category = 'B' 
-	and (o.BuyerDelivery >= DATEADD(DAY,-60,CONVERT(date,GETDATE())) or o.SciDelivery >= DATEADD(DAY,-60,CONVERT(date,GETDATE())))
+	and o.SciDelivery >= DATEADD(DAY,-30,CONVERT(date,GETDATE()))
 	and o.Junk = 0
 	and o.IsForecast = 0
 	
