@@ -90,6 +90,7 @@ select cDate, sum(CutQty) as CutQty
 from (select Article,SizeCode,cDate,MIN(CutQty) as CutQty
           from tmpCutput
           group by Article,SizeCode,cDate) a
+where cDate != ''
 group by cDate", workType == "1" ? string.Format("o.CuttingSP = '{0}'", id) : string.Format("o.ID = '{0}'", id));
             }
             else
