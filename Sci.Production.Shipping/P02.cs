@@ -188,7 +188,10 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             string sqlcmd = string.Format(
 @"update Express set NW = (select SUM(NW) from Express_Detail where ID = '{0}'),
 CTNQty = (select COUNT(distinct CTNNo) from Express_Detail where ID = '{0}'),
-CTNNW = (SELECT SUM(CTNNW) FROM Express_CTNData WHERE ID='{0}' )
+CTNNW = (SELECT SUM(CTNNW) FROM Express_CTNData WHERE ID='{0}' ),
+VW = (select sum(vw) from (
+select CTNNo,(CtnLength*CtnWidth*CtnHeight)/6000 as vw from Express_CTNData
+where id='{0}') a)
 where ID = '{0}'", CurrentMaintain["ID"]);
 
             DBProxy.Current.Execute(null, sqlcmd);
