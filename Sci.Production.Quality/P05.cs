@@ -203,7 +203,7 @@ namespace Sci.Production.Quality
                 .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:inspDate)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:articleCell)
                 .Text("Result", header: "Result", width: Widths.AnsiChars(10),iseditingreadonly:true,settings:resultCell)
-                .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(5),iseditingreadonly:true,settings:inspectorCell)
+                .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(10),iseditingreadonly:true,settings:inspectorCell)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(25),iseditingreadonly:true)
                 .Text("LastUpdate", header: "Last Update", width: Widths.AnsiChars(30), iseditingreadonly: true);
             

@@ -272,7 +272,7 @@ namespace Sci.Production.Quality
 
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Text("wkno", header: "WKNO", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("wkno", header: "WKNO", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("WhseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)                
@@ -291,7 +291,7 @@ namespace Sci.Production.Quality
                 .CheckBox("nonWash", header: "Wash N/A", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0,settings:nonWash)
                 .Text("Wash", header: "Wash Result", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:wash)
                 .Date("WashDate", header: "Wash Last Test Date", width: Widths.AnsiChars(10),iseditingreadonly:true,settings:washD)
-                .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(10), iseditingreadonly: true);
+                .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
 
             detailgrid.Columns[8].DefaultCellStyle.BackColor = Color.MistyRose;

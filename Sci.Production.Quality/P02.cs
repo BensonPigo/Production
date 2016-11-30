@@ -130,8 +130,8 @@ namespace Sci.Production.Quality
                 .Text("Inspdate", header: "Insp. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail   )            
-                .Text("ReplacementID", header: "1st ReplacementID", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(10), iseditingreadonly: true);
+                .Text("ReplacementID", header: "1st ReplacementID", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(15), iseditingreadonly: true);
             detailgrid.Columns[11].DefaultCellStyle.BackColor = Color.LemonChiffon;
             detailgrid.Columns[12].DefaultCellStyle.BackColor = Color.LemonChiffon;
             detailgrid.Columns[13].DefaultCellStyle.BackColor = Color.LemonChiffon;
