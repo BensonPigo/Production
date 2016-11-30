@@ -1241,7 +1241,7 @@
         <member name="F:Sci.SQL.MergeOption.InsertUpdate_SafeDelete">
             <summary> 先 Delete (not merge) , 再使用Merge 作Insert / update </summary>
         </member>
-        <member name="M:Sci.Utility.Drawing.DrawingPrg.DrawText(System.String,System.Drawing.Font,System.Drawing.Color,System.Drawing.Color,System.Int32,System.Int32)">
+        <member name="M:Sci.Utility.Drawing.DrawingPrg.DrawText(System.String,System.Drawing.Font,System.Drawing.Color,System.Drawing.Color,System.Int32,System.Int32,System.Int32)">
             <summary>
             文字 To Image
             </summary>

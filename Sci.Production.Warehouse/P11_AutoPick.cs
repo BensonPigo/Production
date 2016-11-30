@@ -17,16 +17,20 @@ namespace Sci.Production.Warehouse
 {
     public partial class P11_AutoPick : Sci.Win.Subs.Base
     {
-        string poid, issueid, cutplanid;
-        public DataTable BOA, BOA_Orderlist, BOA_PO, BOA_PO_Size;
+        StringBuilder sbSizecode;
+        string poid, issueid, cutplanid,orderid;
+        public DataTable BOA, BOA_Orderlist, BOA_PO, BOA_PO_Size,dtIssueBreakDown;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
-        public P11_AutoPick(string _issueid, string _poid, string _cutplanid)
-        {
+        public P11_AutoPick(string _issueid, string _poid, string _cutplanid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode)
+        {            
             InitializeComponent();
             poid = _poid;
             issueid = _issueid;
             cutplanid = _cutplanid;
+            orderid = _orderid;
+            dtIssueBreakDown = _dtIssueBreakDown;
+            sbSizecode=_sbSizecode;
             this.Text += string.Format(" ({0})", poid);
             gridBOA.RowPostPaint += (s, e) =>
             {
@@ -59,44 +63,216 @@ namespace Sci.Production.Warehouse
             SqlCommand sqlCmd = null;
             DataSet dataSet = new DataSet();
             SqlDataAdapter sqlDataAdapter = null;
+            DataTable[] result = null;
 
             BOA = null;
             BOA_Orderlist = null;
             BOA_PO = null;
             BOA_PO_Size = null;
 
+            string sqlcmd;
+            sqlcmd = string.Format(@";
+;WITH UNPIVOT_1
+AS
+(
+    SELECT * FROM #tmp
+    UNPIVOT
+    (
+    QTY
+    FOR SIZECODE IN ({0})
+    )
+    AS PVT
+)select *
+into #tmp2
+from UNPIVOT_1 ;
+delete from #tmp2 where qty = 0;
+
+	declare @count as int;
+	create Table #tmpOrder_Qty
+		(  ID Varchar(13), FactoryID Varchar(8), CustCDID Varchar(16), ZipperInsert Varchar(5)
+		 , CustPONo VarChar(30), BuyMonth VarChar(16), CountryID VarChar(2), StyleID Varchar(15)
+		 , Article VarChar(8), SizeSeq VarChar(2), SizeCode VarChar(8), Qty Numeric(6,0)
+		);
+
+    Insert Into #tmpOrder_Qty
+		Select Orders.ID, Orders.FactoryID, Orders.CustCDID, CustCD.ZipperInsert
+			 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
+			 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
+			 , IsNull(#tmp2.Qty, 0) Qty
+		  From dbo.Orders
+		  Left Join dbo.Order_SizeCode
+			On Order_SizeCode.ID = Orders.POID
+		  Left Join dbo.Order_Article
+			On Order_Article.ID = Orders.ID
+		  Left Join #tmp2
+			On	   #tmp2.OrderID = Orders.ID
+			   And #tmp2.SizeCode = Order_SizeCode.SizeCode
+			   And #tmp2.Article = Order_Article.Article
+		  Left Join dbo.CustCD
+			On	   CustCD.BrandID = Orders.BrandID
+			   And CustCD.ID = Orders.CustCDID
+		  Left Join dbo.Factory
+			On Factory.ID = Orders.FactoryID
+		 Where Orders.POID = '{3}'
+		   And Orders.Junk = 0
+		 --  AND Issue_Breakdown.ID = '{1}'
+		 --Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
+			--	, CountryID, StyleID, Article, Seq, SizeCode;
+
+	select @count = count(1) from #tmpOrder_Qty;
+	if @count = 0
+	begin
+		Insert Into #tmpOrder_Qty
+		Select Orders.ID, Orders.FactoryID, Orders.CustCDID, CustCD.ZipperInsert
+			 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
+			 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
+			 , IsNull(Order_Qty.Qty, 0) Qty
+		  From dbo.Orders
+		  Left Join dbo.Order_SizeCode
+			On Order_SizeCode.ID = Orders.POID
+		  Left Join dbo.Order_Article
+			On Order_Article.ID = Orders.ID
+		  Left Join dbo.Order_Qty
+			On	   Order_Qty.ID = Orders.ID
+			   And Order_Qty.SizeCode = Order_SizeCode.SizeCode
+			   And Order_Qty.Article = Order_Article.Article
+		  Left Join dbo.CustCD
+			On	   CustCD.BrandID = Orders.BrandID
+			   And CustCD.ID = Orders.CustCDID
+		  Left Join dbo.Factory
+			On Factory.ID = Orders.FactoryID
+		 Where Orders.POID = '{3}'
+		   And Orders.Junk = 0
+		   AND Order_Qty.ID = '{2}'
+		 --Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
+			--	, CountryID, StyleID, Article, Seq, SizeCode;
+		select @count = count(1) from #tmpOrder_Qty;
+		if @count = 0
+		begin
+			Insert Into #tmpOrder_Qty
+			Select Orders.ID, Orders.FactoryID, Orders.CustCDID, CustCD.ZipperInsert
+				 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
+				 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
+				 , IsNull(Order_Qty.Qty, 0) Qty
+			  From dbo.Orders
+			  Left Join dbo.Order_SizeCode
+				On Order_SizeCode.ID = Orders.POID
+			  Left Join dbo.Order_Article
+				On Order_Article.ID = Orders.ID
+			  Left Join dbo.Order_Qty
+				On	   Order_Qty.ID = Orders.ID
+				   And Order_Qty.SizeCode = Order_SizeCode.SizeCode
+				   And Order_Qty.Article = Order_Article.Article
+			  Left Join dbo.CustCD
+				On	   CustCD.BrandID = Orders.BrandID
+				   And CustCD.ID = Orders.CustCDID
+			  Left Join dbo.Factory
+				On Factory.ID = Orders.FactoryID
+			 Where Orders.POID = '{3}'
+			   And Orders.Junk = 0
+			 --Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
+				--	, CountryID, StyleID, Article, Seq, SizeCode;
+		end
+	end
+
+	Create Table #Tmp_BoaExpend
+		(  ExpendUkey BigInt Identity(1,1) Not Null, ID Varchar(13), Order_BOAUkey BigInt
+		 , RefNo VarChar(20), SCIRefNo VarChar(26), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
+		 , SizeCode VarChar(8), SizeSpec VarChar(15), SizeUnit VarChar(8), Remark NVarChar(Max)
+		 , OrderQty Numeric(6,0), Price Numeric(8,4), UsageQty Numeric(9,2), UsageUnit VarChar(8), SysUsageQty  Numeric(9,2)
+		 , BomFactory VarChar(8), BomCountry VarChar(2), BomStyle VarChar(15), BomCustCD VarChar(20)
+		 , BomArticle VarChar(8), BomZipperInsert VarChar(5), BomBuymonth VarChar(10), BomCustPONo VarChar(30)
+		 , Primary Key (ExpendUkey)
+		);
+	Create NonClustered Index Idx_ID on #Tmp_BoaExpend (ID, Order_BOAUkey, ColorID) -- table index
+
+	Exec dbo.BoaExpend '{3}', {4}, {5}, '{6}',0,1;
+	Drop Table #tmpOrder_Qty;
+
+	select p.id as [poid], p.seq1, p.seq2, p.SCIRefno,dbo.getMtlDesc(p.id, p.seq1, p.seq2,2,0) [description] 
+	,p.ColorID, p.SizeSpec, p.Spec, p.Special, p.Remark into #tmpPO_supp_detail
+		from dbo.PO_Supp_Detail as p 
+	inner join dbo.Fabric f on f.SCIRefno = p.SCIRefno
+	inner join dbo.MtlType m on m.id = f.MtlTypeID
+	where p.id='{3}' and p.FabricType = 'A' and m.IssueType='{7}'
+
+	;with cte2 
+	as
+	(
+		select m.*,m.InQty-m.OutQty+m.AdjustQty as [balanceqty]
+		from #tmpPO_supp_detail inner join dbo.FtyInventory m on m.POID = #tmpPO_supp_detail.poid and m.seq1 = #tmpPO_supp_detail.seq1 and m.seq2 = #tmpPO_supp_detail.SEQ2
+		and m.MDivisionID = '{8}' and m.StockType = 'B' and Roll=''
+		where lock = 0
+	)
+	select 0 as [Selected],''as id,b.*,isnull(sum(a.OrderQty),0.00) qty,left(b.seq1+'   ',3)+b.seq2 as seq,cte2.MDivisionID,cte2.balanceqty,cte2.Ukey as ftyinventoryukey,cte2.StockType,cte2.Roll,cte2.Dyelot
+	from #tmpPO_supp_detail b
+	left join cte2 on cte2.poid = b.poid and cte2.seq1 = b.seq1 and cte2.SEQ2 = b.SEQ2
+	left join #Tmp_BoaExpend a on b.SCIRefno = a.scirefno and b.poid = a.ID
+	 and (b.SizeSpec = a.SizeSpec) and (b.ColorID = a.ColorID)
+	 group by b.poid,b.seq1,b.seq2,b.[description],b.ColorID,b.SizeSpec,b.SCIRefno,b.Spec,b.Special,b.Remark,cte2.MDivisionID,cte2.balanceqty,cte2.Ukey,cte2.StockType,cte2.Roll,cte2.Dyelot
+	 order by b.scirefno,b.ColorID,b.SizeSpec,b.Special,b.poid,b.seq1,b.seq2;
+
+	 with cte
+	 as(
+	 select b.poid,b.seq1,b.seq2,a.SizeCode,isnull(sum(a.OrderQty),0.00) qty 
+				from (#tmpPO_supp_detail b left join #Tmp_BoaExpend a 
+				on b.SCIRefno = a.scirefno and b.poid = a.ID and (b.SizeSpec = a.SizeSpec) and (b.ColorID = a.ColorID)) 
+					group by b.poid,b.seq1,b.seq2,a.SizeCode
+	 )
+	 
+	 select z.*,isnull(cte.qty,0) as qty,isnull(cte.qty,0) as ori_qty from
+	 (select x.poid,x.seq1,x.seq2,order_sizecode.SizeCode,Order_SizeCode.Seq 
+		from dbo.order_sizecode 
+			,(select distinct poid,seq1,seq2 from cte) as x
+		where Order_SizeCode.id = '{3}') z 
+	left join cte on cte.SizeCode = z.SizeCode and cte.poid = z.poid and cte.seq1 = z.seq1 and cte.seq2 = z.seq2
+	order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1), issueid, orderid, poid, 0, 1, Env.User.UserID, "Sewing", Env.User.Keyword);//.Replace("[", "[_")
+
             // 呼叫procedure，取得BOA展開結果
             try
             {
+                //SqlConnection conn;
                 DBProxy.Current.OpenConnection(null, out sqlConnection);
-                sqlCmd = new SqlCommand("[dbo].[usp_BoaByIssueBreakDown]", sqlConnection);
-                sqlCmd.CommandType = CommandType.StoredProcedure;
-                sqlCmd.Parameters.Add(new SqlParameter("@IssueID", issueid));
-                sqlCmd.Parameters.Add(new SqlParameter("@OrderID", issueid));
-                sqlCmd.Parameters.Add(new SqlParameter("@POID", poid));
-                sqlCmd.Parameters.Add(new SqlParameter("@Order_BOAUkey", "0"));
-                sqlCmd.Parameters.Add(new SqlParameter("@TestType", "1"));
-                sqlCmd.Parameters.Add(new SqlParameter("@UserID", Env.User.UserID));
-                sqlCmd.Parameters.Add(new SqlParameter("@IssueType", "Sewing"));
-                sqlCmd.Parameters.Add(new SqlParameter("@MDivisionId", Env.User.Keyword));
-                sqlCmd.CommandTimeout = 300;
-                sqlDataAdapter = new SqlDataAdapter(sqlCmd);
+                //DataTable source = null, a = null; ;
+                string aaa = sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1).Replace("[", "").Replace("]", "");//.Replace("[", "").Replace("]", "")
+                var RESULT = MyUtility.Tool.ProcessWithDatatable(dtIssueBreakDown, "OrderID,Article," + aaa, sqlcmd, out result, "#tmp", conn: sqlConnection);
+                //ProcessWithDatatable2(dtIssueBreakDown, "OrderID,Article," + aaa
+                //    , sqlcmd, out result, "#tmp");
+                if (!RESULT) ShowErr(RESULT);
+                if (!RESULT) return;
+                //var x = 0;
+                //sqlCmd = new SqlCommand(sqlcmd, sqlConnection);
+                //sqlCmd.CommandType = CommandType.Text;
 
-                sqlDataAdapter.Fill(dataSet);
+                ////sqlCmd.CommandType = CommandType.StoredProcedure;
+                ////sqlCmd.Parameters.Add(new SqlParameter("@IssueID", issueid));
+                ////sqlCmd.Parameters.Add(new SqlParameter("@OrderID", issueid));
+                ////sqlCmd.Parameters.Add(new SqlParameter("@POID", poid));
+                ////sqlCmd.Parameters.Add(new SqlParameter("@Order_BOAUkey", "0"));
+                ////sqlCmd.Parameters.Add(new SqlParameter("@TestType", "1"));
+                ////sqlCmd.Parameters.Add(new SqlParameter("@UserID", Env.User.UserID));
+                ////sqlCmd.Parameters.Add(new SqlParameter("@IssueType", "Sewing"));
+                ////sqlCmd.Parameters.Add(new SqlParameter("@MDivisionId", Env.User.Keyword));
+                //sqlCmd.CommandTimeout = 300;
+                //sqlDataAdapter = new SqlDataAdapter(sqlCmd);
 
-                if (dataSet.Tables.Count > 0)
+               // sqlDataAdapter.Fill(dataSet);
+
+                if (result.Length > 0)
                 {
-                    BOA = dataSet.Tables[0];
-                    BOA_Orderlist = dataSet.Tables[1];
-                    BOA_PO = dataSet.Tables[2];
+                    dataSet.Tables.AddRange(result);
+                    BOA = result[0];
+                    BOA_Orderlist = result[1];
+                    BOA_PO = result[2];
                     BOA_PO.DefaultView.Sort = "qty desc,scirefno,poid,seq1,seq2";
-                    BOA_PO_Size = dataSet.Tables[3];
+                    BOA_PO_Size = result[3];
 
                     DataRelation relation = new DataRelation("rel1"
                     , new DataColumn[] { BOA_PO.Columns["Poid"], BOA_PO.Columns["seq1"], BOA_PO.Columns["seq2"] }
                     , new DataColumn[] { BOA_PO_Size.Columns["Poid"], BOA_PO_Size.Columns["seq1"], BOA_PO_Size.Columns["seq2"] }
                     );
                     dataSet.Relations.Add(relation);
+                    
 
                     foreach (DataRow dr in BOA_PO.Rows)
                     {
@@ -141,8 +317,8 @@ namespace Sci.Production.Warehouse
             }
             finally
             {
-                sqlCmd.Dispose();
-                sqlDataAdapter.Dispose();
+                //sqlCmd.Dispose();
+                //sqlDataAdapter.Dispose();
                 dataSet.Dispose();
                 sqlConnection.Close();
             }
@@ -262,6 +438,97 @@ namespace Sci.Production.Warehouse
             }
 
             DialogResult = System.Windows.Forms.DialogResult.OK;
+        }
+        public static void ProcessWithDatatable2(DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result, string temptablename = "#tmp")
+        {
+            result = null;
+            StringBuilder sb = new StringBuilder();
+            if (temptablename.TrimStart().StartsWith("#"))
+            {
+                sb.Append(string.Format("create table {0} (", temptablename));
+            }
+            else
+            {
+                sb.Append(string.Format("create table #{0} (", temptablename));
+            }
+            string[] cols = tmp_columns.Split(',');
+            for (int i = 0; i < cols.Length; i++)
+            {
+                if (MyUtility.Check.Empty(cols[i])) continue;
+                switch (Type.GetTypeCode(source.Columns[cols[i]].DataType))
+                {
+                    case TypeCode.Boolean:
+                        sb.Append(string.Format("[{0}] bit", cols[i]));
+                        break;
+
+                    case TypeCode.Char:
+                        sb.Append(string.Format("[{0}] varchar(1)", cols[i]));
+                        break;
+
+                    case TypeCode.DateTime:
+                        sb.Append(string.Format("[{0}] datetime", cols[i]));
+                        break;
+
+                    case TypeCode.Decimal:
+                        sb.Append(string.Format("[{0}] numeric(24,8)", cols[i]));
+                        break;
+
+                    case TypeCode.Int32:
+                        sb.Append(string.Format("[{0}] int", cols[i]));
+                        break;
+
+                    case TypeCode.String:
+                        sb.Append(string.Format("[{0}] varchar(max)", cols[i]));
+                        break;
+
+                    case TypeCode.Int64:
+                        sb.Append(string.Format("[{0}] bigint", cols[i]));
+                        break;
+                    default:
+                        break;
+                }
+                if (i < cols.Length - 1) { sb.Append(","); }
+            }
+            sb.Append(")");
+
+            System.Data.SqlClient.SqlConnection conn;
+            DBProxy.Current.OpenConnection(null, out conn);
+
+            try
+            {
+                DualResult result2 = DBProxy.Current.ExecuteByConn(conn, sb.ToString());
+                if (!result2) { MyUtility.Msg.ShowException(null, result2); return; }
+                using (System.Data.SqlClient.SqlBulkCopy bulkcopy = new System.Data.SqlClient.SqlBulkCopy(conn))
+                {
+                    bulkcopy.BulkCopyTimeout = 60;
+                    if (temptablename.TrimStart().StartsWith("#"))
+                    {
+                        bulkcopy.DestinationTableName = temptablename.Trim();
+                    }
+                    else
+                    {
+                        bulkcopy.DestinationTableName = string.Format("#{0}", temptablename.Trim());
+                    }
+
+                    for (int i = 0; i < cols.Length; i++)
+                    {
+                        bulkcopy.ColumnMappings.Add(cols[i], cols[i]);
+                    }
+                    bulkcopy.WriteToServer(source);
+                    bulkcopy.Close();
+                }
+                result2 = DBProxy.Current.SelectByConn(conn, sqlcmd, out result);
+                if (!result2) { MyUtility.Msg.ShowException(null, result2); return; }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
         }
     }
 }

@@ -389,7 +389,7 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
 
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P11_AutoPick(CurrentMaintain["id"].ToString(), this.poid, CurrentMaintain["cutplanid"].ToString());
+            var frm = new Sci.Production.Warehouse.P11_AutoPick(CurrentMaintain["id"].ToString(), this.poid, CurrentMaintain["cutplanid"].ToString(),textBox1.Text.ToString(),dtIssueBreakDown, sbSizecode);
             DialogResult result = frm.ShowDialog(this);
             if (result == DialogResult.OK)
             {
@@ -572,7 +572,7 @@ where id = (select poid from dbo.orders where id='{0}') order by seq", OrderID);
             	sum(qty)
             	for sizecode in ({2})
             )as pvt
-            order by [OrderID],[Article]", OrderID, CurrentDataRow["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));//.Replace("[", "[_")
+            order by [OrderID],[Article]", OrderID, CurrentMaintain["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));//.Replace("[", "[_")
             strsbIssueBreakDown = sbIssueBreakDown;//多加一個變數來接 不改變欄位
             if (!(result = DBProxy.Current.Select(null, sbIssueBreakDown.ToString(), out dtIssueBreakDown)))
             {
@@ -941,7 +941,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
         private void btnBOA_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P11_BOA(CurrentMaintain["id"].ToString(), this.poid, CurrentMaintain["cutplanid"].ToString());
+            var frm = new Sci.Production.Warehouse.P11_BOA(CurrentMaintain["id"].ToString(), this.poid, CurrentMaintain["cutplanid"].ToString(),textBox1.Text.ToString());
             frm.ShowDialog(this);
         }
 

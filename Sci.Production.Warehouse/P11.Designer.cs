@@ -498,7 +498,7 @@
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox1.Location = new System.Drawing.Point(224, 40);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(95, 21);
+            this.checkBox1.Size = new System.Drawing.Size(91, 21);
             this.checkBox1.TabIndex = 54;
             this.checkBox1.Text = "By Combo";
             this.checkBox1.UseVisualStyleBackColor = true;

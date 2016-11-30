@@ -17,14 +17,15 @@ namespace Sci.Production.Warehouse
 {
     public partial class P11_BOA : Sci.Win.Subs.Base
     {
-        string poid, issueid, cutplanid;
+        string poid, issueid, cutplanid,orderid;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        public P11_BOA(string _issueid, string _poid, string _cutplanid)
+        public P11_BOA(string _issueid, string _poid, string _cutplanid, string _orderid)
         {
-            InitializeComponent();
+            InitializeComponent();           
             poid = _poid;
             issueid = _issueid;
             cutplanid = _cutplanid;
+            orderid = _orderid;
             this.Text += string.Format(" ({0} - {1})", poid,cutplanid);
         }
 
@@ -49,7 +50,7 @@ namespace Sci.Production.Warehouse
                 sqlCmd = new SqlCommand("[dbo].[usp_BoaByIssueBreakDown]", sqlConnection);
                 sqlCmd.CommandType = CommandType.StoredProcedure;
                 sqlCmd.Parameters.Add(new SqlParameter("@IssueID", issueid));
-                sqlCmd.Parameters.Add(new SqlParameter("@OrderID", poid));
+                sqlCmd.Parameters.Add(new SqlParameter("@OrderID", orderid));
                 sqlCmd.Parameters.Add(new SqlParameter("@POID", poid));
                 sqlCmd.Parameters.Add(new SqlParameter("@Order_BOAUkey", "0"));
                 sqlCmd.Parameters.Add(new SqlParameter("@TestType", "1"));
