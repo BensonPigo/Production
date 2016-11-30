@@ -44,13 +44,13 @@ namespace Sci.Production.Warehouse
             #region sql command
             StringBuilder selectCommand1 = new StringBuilder();
             selectCommand1.Append(string.Format(@"select *,
-sum(TMP.inqty - TMP.outqty+tmp.adjust) over ( order by tmp.IssueDate,TMP.inqty desc, TMP.outqty,tmp.adjust) as [balance] 
-from (
-	select a.IssueDate, a.id
-,Case type when 'A' then 'P35. Adjust Bulk Qty' when 'B' then 'P34. Adjust Stock Qty' end as name
-,0 as inqty,0 as outqty, sum(QtyAfter - QtyBefore) adjust, remark ,'' location
-from Adjust a, Adjust_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+            sum(TMP.inqty - TMP.outqty+tmp.adjust) over ( order by tmp.IssueDate,TMP.inqty desc, TMP.outqty,tmp.adjust) as [balance] 
+            from (
+	            select a.IssueDate, a.id
+                ,Case type when 'A' then 'P35. Adjust Bulk Qty' when 'B' then 'P34. Adjust Stock Qty' end as name
+                ,0 as inqty,0 as outqty, sum(QtyAfter - QtyBefore) adjust, remark ,'' location,AddDate
+                from Adjust a, Adjust_Detail b 
+                where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
@@ -61,13 +61,15 @@ where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate,type
-union all
-	select a.IssueDate, a.id
-,'P31. Material Borrow out' name
-,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location
-from BorrowBack a, BorrowBack_Detail b 
-where type='A' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id and b.frommdivisionid='{3}'"
+            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate,type,AddDate
+
+            union all
+            select a.IssueDate, a.id
+            ,'P31. Material Borrow out' name
+            ,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location,AddDate
+            from BorrowBack a, BorrowBack_Detail b 
+            where type='A' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  
+            and a.id = b.id and b.frommdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
@@ -78,12 +80,14 @@ where type='A' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'an
                 selectCommand1.Append(string.Format(@" and fromroll='{0}' and fromdyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate
-union all
-	select issuedate, a.id
-,'P31. Material Borrow In' name, sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location
-from BorrowBack a, BorrowBack_Detail b 
-where type='A' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id and b.tomdivisionid='{3}'"
+            selectCommand1.Append(string.Format(@"group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,AddDate
+
+            union all
+	        select issuedate, a.id
+            ,'P31. Material Borrow In' name, sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location,AddDate
+            from BorrowBack a, BorrowBack_Detail b 
+            where type='A' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  
+            and a.id = b.id and b.tomdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
@@ -93,13 +97,15 @@ where type='A' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and To
                 selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate
-union all
-	select a.IssueDate, a.id
-,'P32. Return Borrowing out' name
-,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location
-from BorrowBack a, BorrowBack_Detail b 
-where type='B' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id and b.frommdivisionid='{3}'"
+            selectCommand1.Append(string.Format(@"group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,AddDate
+
+            union all
+	            select a.IssueDate, a.id
+            ,'P32. Return Borrowing out' name
+            ,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location,AddDate
+            from BorrowBack a, BorrowBack_Detail b 
+            where type='B' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  
+            and a.id = b.id and b.frommdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
@@ -110,12 +116,14 @@ where type='B' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'an
                 selectCommand1.Append(string.Format(@" and fromroll='{0}' and fromdyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate
-union all
-	select issuedate, a.id
-,'P32. Return Borrowing In' name, sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location
-from BorrowBack a, BorrowBack_Detail b 
-where type='B' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id and b.tomdivisionid='{3}'"
+            selectCommand1.Append(string.Format(@"group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,AddDate
+
+            union all
+	            select issuedate, a.id
+            ,'P32. Return Borrowing In' name, sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location,AddDate
+            from BorrowBack a, BorrowBack_Detail b 
+            where type='B' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  
+            and a.id = b.id and b.tomdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
@@ -125,19 +133,20 @@ where type='B' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and To
                 selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate
-union all
-	select issuedate, a.id
-	,case type when 'A' then 'P10. Issue Fabric to Cutting Section' 
-			when 'B' then 'P11. Issue Sewing Material by Transfer Guide' 
-			when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
-			when 'D' then 'P13. Issue Material by Item'
-			when 'E' then 'P72. Transfer Inventory to Bulk (Confirm)'
-			when 'F' then 'P75. Material Borrow cross M (Confirm)'
-			when 'G' then 'P77. Material Return Back cross M (Request)'  end name
-	,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
-from Issue a, Issue_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+            selectCommand1.Append(string.Format(@"group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,AddDate
+
+            union all
+	            select issuedate, a.id
+	            ,case type when 'A' then 'P10. Issue Fabric to Cutting Section' 
+			            when 'B' then 'P11. Issue Sewing Material by Transfer Guide' 
+			            when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
+			            when 'D' then 'P13. Issue Material by Item'
+			            when 'E' then 'P72. Transfer Inventory to Bulk (Confirm)'
+			            when 'F' then 'P75. Material Borrow cross M (Confirm)'
+			            when 'G' then 'P77. Material Return Back cross M (Request)'  end name
+	            ,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location,AddDate
+            from Issue a, Issue_Detail b 
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
@@ -147,14 +156,16 @@ where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type                                                                          
-union all
-	select issuedate, a.id
-	,case FabricType when 'A' then 'P15. Issue Accessory Lacking & Replacement' 
-                              when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
-	, 0 as inqty,sum(b.Qty) outqty ,0 as adjust, remark ,'' location
-from IssueLack a, IssueLack_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}' and Type='R'"
+            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type ,AddDate 
+
+            union all
+            select issuedate, a.id
+            ,case FabricType when 'A' then 'P15. Issue Accessory Lacking & Replacement' 
+            when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
+            , 0 as inqty,sum(b.Qty) outqty ,0 as adjust, remark ,'' location,AddDate
+            from IssueLack a, IssueLack_Detail b 
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  
+            and a.id = b.id and b.mdivisionid='{3}' and Type='R'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
@@ -164,13 +175,14 @@ where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark  ,a.IssueDate,a.FabricType                                                               
-union all
-	select issuedate, a.id
-,'P17. R/Mtl Return' name
-, 0 as inqty, sum(0-b.Qty) released,0 as adjust, remark,'' location
-from IssueReturn a, IssueReturn_Detail b 
-where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark  ,a.IssueDate,a.FabricType,AddDate
+
+            union all
+            select issuedate, a.id
+            ,'P17. R/Mtl Return' name
+            , 0 as inqty, sum(0-b.Qty) released,0 as adjust, remark,'' location,AddDate
+            from IssueReturn a, IssueReturn_Detail b 
+            where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
@@ -180,14 +192,15 @@ where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.Id, poid, seq1,Seq2, remark,a.IssueDate                                                                                 
-union all
-	select case type when 'A' then a.eta else a.WhseArrival end as issuedate, a.id
-	,case type when 'A' then 'P07. Material Receiving' 
-                    when 'B' then 'P08. Warehouse Shopfloor Receiving' end name
-	, sum(b.StockQty) arrived,0 as ouqty,0 as adjust,'' remark ,'' location
-from Receiving a, Receiving_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+            selectCommand1.Append(string.Format(@"group by a.Id, poid, seq1,Seq2, remark,a.IssueDate,AddDate
+
+            union all
+            select case type when 'A' then a.eta else a.WhseArrival end as issuedate, a.id
+            ,case type when 'A' then 'P07. Material Receiving' 
+                        when 'B' then 'P08. Warehouse Shopfloor Receiving' end name
+            , sum(b.StockQty) arrived,0 as ouqty,0 as adjust,'' remark ,'' location,AddDate
+            from Receiving a, Receiving_Detail b 
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
@@ -197,13 +210,14 @@ where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,a.eta
-union all
-	select issuedate
-    ,'P37. Return Receiving Material' name
-    , a.id, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
-from ReturnReceipt a, ReturnReceipt_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+            selectCommand1.Append(string.Format(@"group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,a.eta,AddDate
+
+            union all
+            select issuedate
+            ,'P37. Return Receiving Material' name
+            , a.id, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location,AddDate
+            from ReturnReceipt a, ReturnReceipt_Detail b 
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
@@ -213,13 +227,14 @@ where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate                                                                               
-union all
-	select issuedate, a.id
-	,'P23. Transfer Inventory to Bulk' as name
-	, 0 as inqty, sum(Qty) released,0 as adjust , '' remark ,'' location
-from SubTransfer a, SubTransfer_Detail b 
-where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id and type = 'B' and b.frommdivisionid='{3}'"
+            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate ,AddDate                                                                              
+            union all
+	        select issuedate, a.id
+	        ,'P23. Transfer Inventory to Bulk' as name
+	        , 0 as inqty, sum(Qty) released,0 as adjust , '' remark ,'' location,AddDate
+            from SubTransfer a, SubTransfer_Detail b 
+            where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  
+            and a.id = b.id and type = 'B' and b.frommdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
@@ -229,22 +244,23 @@ where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '
                 selectCommand1.Append(string.Format(@" and fromroll='{0}' and fromdyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type                                                                               
-union all
-	select issuedate, a.id
-,'P23. Transfer Inventory to Bulk' name
-, sum(Qty) arrived,0 as ouqty,0 as adjust, remark
-	,(Select cast(tmp.ToLocation as nvarchar)+',' 
-                        from (select b1.ToLocation 
-                                    from SubTransfer a1 
-                                    inner join SubTransfer_Detail b1 on a1.id = b1.id 
-                                    where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
-                                        and b1.ToPoid = b.ToPoid
-                                        and b1.ToSeq1 = b.ToSeq1
-                                        and b1.ToSeq2 = b.ToSeq2 group by b1.ToLocation) tmp 
-                        for XML PATH('')) as ToLocation
-from SubTransfer a, SubTransfer_Detail b 
-where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id and type = 'B' and b.frommdivisionid='{3}'"
+            selectCommand1.Append(string.Format(@"group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type ,AddDate                                                                              
+            union all
+	            select issuedate, a.id
+            ,'P23. Transfer Inventory to Bulk' name
+            , sum(Qty) arrived,0 as ouqty,0 as adjust, remark
+	        ,(Select cast(tmp.ToLocation as nvarchar)+',' 
+                                    from (select b1.ToLocation 
+                                                from SubTransfer a1 
+                                                inner join SubTransfer_Detail b1 on a1.id = b1.id 
+                                                where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
+                                                    and b1.ToPoid = b.ToPoid
+                                                    and b1.ToSeq1 = b.ToSeq1
+                                                    and b1.ToSeq2 = b.ToSeq2 group by b1.ToLocation) tmp 
+                                    for XML PATH('')) as ToLocation,AddDate
+            from SubTransfer a, SubTransfer_Detail b 
+            where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id and type = 'B' 
+            and b.frommdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
@@ -254,22 +270,23 @@ where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  
                 selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, ToPoid, ToSeq1,ToSeq2, remark ,a.IssueDate     
-union all
-	select issuedate, a.id
-,'P18. TransferIn' name
-, sum(Qty) arrived,0 as ouqty,0 as adjust, remark
-	,(Select cast(tmp.Location as nvarchar)+',' 
-                        from (select b1.Location 
-                                    from TransferIn a1 
-                                    inner join TransferIn_Detail b1 on a1.id = b1.id 
-                                    where a1.status = 'Confirmed' and (b1.Location is not null or b1.Location !='')
-                                        and b1.Poid = b.Poid
-                                        and b1.Seq1 = b.Seq1
-                                        and b1.Seq2 = b.Seq2 group by b1.Location) tmp 
-                        for XML PATH('')) as Location
-from TransferIn a, TransferIn_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+            selectCommand1.Append(string.Format(@"group by a.id, ToPoid, ToSeq1,ToSeq2, remark ,a.IssueDate,AddDate
+
+            union all
+	            select issuedate, a.id
+            ,'P18. TransferIn' name
+            , sum(Qty) arrived,0 as ouqty,0 as adjust, remark
+	            ,(Select cast(tmp.Location as nvarchar)+',' 
+                                    from (select b1.Location 
+                                                from TransferIn a1 
+                                                inner join TransferIn_Detail b1 on a1.id = b1.id 
+                                                where a1.status = 'Confirmed' and (b1.Location is not null or b1.Location !='')
+                                                    and b1.Poid = b.Poid
+                                                    and b1.Seq1 = b.Seq1
+                                                    and b1.Seq2 = b.Seq2 group by b1.Location) tmp 
+                                    for XML PATH('')) as Location,AddDate
+            from TransferIn a, TransferIn_Detail b 
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
@@ -279,12 +296,13 @@ where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate                                                                                 
-union all
-	select issuedate, a.id
-,'P19. TransferOut' name, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
-from TransferOut a, TransferOut_Detail b 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate,AddDate
+
+            union all
+	        select issuedate, a.id
+            ,'P19. TransferOut' name, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location,AddDate
+            from TransferOut a, TransferOut_Detail b 
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
@@ -294,13 +312,15 @@ where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, poid, Seq1,Seq2, remark,a.IssueDate
-union all
-	select issuedate, a.id
-	,'P36. Transfer Scrap to Inventory' as name
-	, sum(qty) as inqty, 0 as released,0 as adjust ,isnull(a.remark,'') remark ,'' location
-from SubTransfer a, SubTransfer_Detail b 
-where type='C' and Status='Confirmed' and topoid='{0}' and toseq1 = '{1}' and toSeq2 = '{2}'  and a.id = b.id and b.tomdivisionid='{3}'"
+            selectCommand1.Append(string.Format(@"group by a.id, poid, Seq1,Seq2, remark,a.IssueDate,AddDate
+
+            union all
+	            select issuedate, a.id
+	            ,'P36. Transfer Scrap to Inventory' as name
+	            , sum(qty) as inqty, 0 as released,0 as adjust ,isnull(a.remark,'') remark ,'' location,AddDate
+            from SubTransfer a, SubTransfer_Detail b 
+            where type='C' and Status='Confirmed' and topoid='{0}' and toseq1 = '{1}' and toSeq2 = '{2}'  
+            and a.id = b.id and b.tomdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
@@ -312,15 +332,14 @@ where type='C' and Status='Confirmed' and topoid='{0}' and toseq1 = '{1}' and to
                 selectCommand1.Append(string.Format(@" and ToRoll='{0}' and ToDyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, topoid, toSeq1, toSeq2,a.IssueDate,a.Type,a.remark
-
+            selectCommand1.Append(string.Format(@"group by a.id, topoid, toSeq1, toSeq2,a.IssueDate,a.Type,a.remark,AddDate
             
             union all
             select issuedate, a.id
 	            ,case type when 'B' then 'P73. Transfer Inventory to Bulk cross M (Receive)' 
 			            when 'D' then 'P76. Material Borrow cross M (Receive)' 
 			            when 'G' then 'P78. Material Return Back cross M (Receive)'  end name
-	            ,sum(Qty) as inqty, 0 released,0 as adjust, remark,'' location
+	            ,sum(Qty) as inqty, 0 released,0 as adjust, remark,'' location,AddDate
             from RequestCrossM a, RequestCrossM_Receive b 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
@@ -332,17 +351,17 @@ where type='C' and Status='Confirmed' and topoid='{0}' and toseq1 = '{1}' and to
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type,a.remark
+            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type,a.remark,AddDate
 
-
-union all
-	select issuedate, a.id
-	,case type when 'D' then 'P25. Transfer Bulk to Scrap' 
-                    when 'E' then 'P24. Transfer Inventory to Scrap'
-    end as name
-	, 0 as inqty, sum(Qty) released,0 as adjust ,isnull(a.remark,'') remark ,'' location
-from SubTransfer a, SubTransfer_Detail b 
-where (type='D' or type='E') and Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}' and FromSeq2 = '{2}'  and a.id = b.id and b.frommdivisionid='{3}'"
+            union all
+            select issuedate, a.id
+            ,case type when 'D' then 'P25. Transfer Bulk to Scrap' 
+            when 'E' then 'P24. Transfer Inventory to Scrap'
+            end as name
+            , 0 as inqty, sum(Qty) released,0 as adjust ,isnull(a.remark,'') remark ,'' location,AddDate
+            from SubTransfer a, SubTransfer_Detail b 
+            where (type='D' or type='E') and Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}' 
+            and FromSeq2 = '{2}'  and a.id = b.id and b.frommdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
@@ -353,8 +372,11 @@ where (type='D' or type='E') and Status='Confirmed' and Frompoid='{0}' and Froms
                 //selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
                 selectCommand1.Append(string.Format(@" and FromRoll='{0}' and FromDyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
-selectCommand1.Append(@"group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,a.remark) tmp
-group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name");
+
+            selectCommand1.Append(@"group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,a.remark,AddDate
+                ) tmp
+                group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name, AddDate
+                order by AddDate");
 
             #endregion
 
