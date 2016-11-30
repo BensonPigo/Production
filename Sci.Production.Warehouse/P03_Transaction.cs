@@ -44,7 +44,7 @@ namespace Sci.Production.Warehouse
             #region sql command
             StringBuilder selectCommand1 = new StringBuilder();
             selectCommand1.Append(string.Format(@"select *,
-            sum(TMP.inqty - TMP.outqty+tmp.adjust) over ( order by tmp.IssueDate,TMP.inqty desc, TMP.outqty,tmp.adjust) as [balance] 
+            sum(TMP.inqty - TMP.outqty+tmp.adjust) over ( order by tmp.addDate,TMP.inqty desc, TMP.outqty,tmp.adjust) as [balance] 
             from (
 	            select a.IssueDate, a.id
                 ,Case type when 'A' then 'P35. Adjust Bulk Qty' when 'B' then 'P34. Adjust Stock Qty' end as name
