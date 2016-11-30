@@ -650,6 +650,7 @@
             this.Text = "P01. Sub-con Purchase Order";
             this.UnApvChkValue = "Approved";
             this.UncloseChkValue = "Closed";
+            this.UniqueExpress = "ID";
             this.WorkAlias = "ArtworkPO";
             this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.button3, 0);

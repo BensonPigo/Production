@@ -43,6 +43,7 @@ namespace Sci.Production.Subcon
                     
                 }
             };
+            
         }
 
         // 新增時預設資料
@@ -103,8 +104,15 @@ namespace Sci.Production.Subcon
                 this.RenewData();
                 return false;
             }
-
             return base.ClickEditBefore();
+        }
+
+        protected override void ClickEditAfter()
+        {
+
+          //  this.detailgrid[.ReadOnly = true;
+    
+            return;
         }
 
         // save前檢查 & 取id
@@ -195,6 +203,7 @@ namespace Sci.Production.Subcon
             object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(amount)", "");
             CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_a, exact);
             CurrentMaintain["vat"] = MyUtility.Math.Round((decimal)detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
+            
             #endregion
 
             return base.ClickSaveBefore();
@@ -224,6 +233,7 @@ namespace Sci.Production.Subcon
             return base.OnRenewDataDetailPost(e);
         }
 
+
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -242,6 +252,16 @@ namespace Sci.Production.Subcon
                     decimal amount = (decimal)CurrentMaintain["amount"] + (decimal)CurrentMaintain["vat"];
                     numericBox4.Text = amount.ToString();
                 }
+
+                decimal x = 0; decimal x1 = 0;
+                foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
+                {
+                    x += (decimal)drr["amount"];
+                }  
+                x1 += x + (decimal)CurrentMaintain["vat"];
+                Console.WriteLine("get {0}", x);
+                numericBox3.Text = x.ToString();
+                numericBox4.Text = x1.ToString();
             }
             #endregion
             txtsubcon1.Enabled = !this.EditMode || IsDetailInserting;
@@ -261,7 +281,6 @@ namespace Sci.Production.Subcon
             button3.Enabled = !this.EditMode;
             #endregion
         }
-
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
@@ -341,7 +360,7 @@ namespace Sci.Production.Subcon
                 }
             };
             #endregion
-
+        
             #region qtygarment Valid
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
@@ -366,7 +385,7 @@ namespace Sci.Production.Subcon
             .Numeric("coststitch", header: "Cost"+ Environment.NewLine+"(PCS/Stitch)", width: Widths.AnsiChars(3), iseditingreadonly: true)//6
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(3))    //7
             .Text("patterncode", header: "Cutpart"+ Environment.NewLine+"ID", width: Widths.AnsiChars(5), iseditingreadonly: true) //8
-            .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(15))   //9
+            .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(15), iseditingreadonly: true)   //9
             .Numeric("unitprice", header: "Unit Price", width: Widths.AnsiChars(5), settings: ns, decimal_places: 4, integer_places: 4)     //10
             .Numeric("cost", header: "Cost"+ Environment.NewLine+"(USD)", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 4, integer_places: 4)  //11
             .Numeric("qtygarment", header: "Qty/GMT", width: Widths.AnsiChars(5), settings: ns2, integer_places: 2)  //12
@@ -548,7 +567,7 @@ namespace Sci.Production.Subcon
         private void button3_Click(object sender, EventArgs e)
         {
             if (this.EditMode) return;
-            var frm = new Sci.Production.Subcon.P01_BatchCreate("P01");
+            var frm = new Sci.Production.Subcon.P01_BatchCreate("P01","O");
             frm.ShowDialog(this);
             ReloadDatas();
         }
@@ -577,9 +596,9 @@ namespace Sci.Production.Subcon
             string Issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             string Delivery = ((DateTime)MyUtility.Convert.GetDate(row["Delivery"])).ToShortDateString();
             string Remark = row["Remark"].ToString();
-            string TOTAL = row["Amount"].ToString();
+            string TOTAL = numericBox3.Text;
             string VAT = row["Vat"].ToString();
-            string GRATOTAL = row["Amount"] + row["Vat"].ToString();
+            string GRATOTAL = numericBox4.Text;
 
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
@@ -663,10 +682,6 @@ namespace Sci.Production.Subcon
             var frm = new Sci.Win.Subs.ReportView(report);
             frm.MdiParent = MdiParent;
             frm.Show();
-
-
-
-
 
             return true;
         }

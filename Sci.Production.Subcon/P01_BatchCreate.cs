@@ -29,9 +29,10 @@ namespace Sci.Production.Subcon
             InitializeComponent();
         }
 
-        public P01_BatchCreate(string fuc)
+        public P01_BatchCreate(string fuc,string POType)
         {
             InitializeComponent();
+            this.poType = POType;
             if (fuc == "P01")
             {
                 poType = "O";

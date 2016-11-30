@@ -54,6 +54,8 @@ namespace Sci.Production.Subcon
                 dr["exceedqty"] = 0;
                 this.displayBox9.Text = dr["exceedqty"].ToString();
             }
+
+            dr["amount"] = Convert.ToDecimal(dr["poqty"]) * Convert.ToDecimal(dr["price"]);
         }
 
         private void numericBox1_Validating(object sender, CancelEventArgs e)
@@ -109,11 +111,12 @@ namespace Sci.Production.Subcon
 
                     sqlcmd = string.Format(@" update artworkpo_detail 
                                 set poqty = {0}, exceedqty = {1}
+                                ,amount={7}
                                 where id = '{2}'
                                 and orderid = '{3}'
                                 and artworktypeid = '{4}'
                                 and artworkid ='{5}'
-                                and patterncode = '{6}'", dr["poqty"], dr["exceedqty"], dr["id"], dr["orderid"], dr["artworktypeid"], dr["artworkid"], dr["patterncode"]);
+                                and patterncode = '{6}'", dr["poqty"], dr["exceedqty"], dr["id"], dr["orderid"], dr["artworktypeid"], dr["artworkid"], dr["patterncode"], dr["amount"]);
                     result2 = DBProxy.Current.Execute(null, sqlcmd);
                     if (result && result2)
                     {
@@ -144,7 +147,9 @@ namespace Sci.Production.Subcon
 
         private void button2_Click(object sender, EventArgs e)
         {
+            dr.RejectChanges();
             this.Close();
+            
         }
     }
 }
