@@ -32,19 +32,16 @@ namespace Sci.Production.Warehouse
             {
                 sqlcmd.Append(string.Format(@"select b.MDivisionID,b.InvNo,b.ExportId,b.ETA,a.ArriveQty
 ,CASE 
-	when a.result = 'P' then 'Pass'
-	when a.result = 'L' then 'L/G'
-	when a.result = 'R' then 'Reject'
-	when a.result = 'F' then 'Fail' 
+    when a.result !='' then a.result
 	when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 then 'N/A'
 	else ''
-END as [Result]
+    END as [Result]
 ,iif(a.arriveqty = 0 ,null,round(a.TotalInspYds/a.ArriveQty * 100,2)) InspRate
 ,a.TotalInspYds
 ,a.TotalDefectPoint
-,CASE when a.Physical = 'P' then 'Pass' 
-		when a.Physical = 'F' then 'Fail' 
-		when a.Nonphysical=1 then  'N/A' else '' end AS [Physical]
+,CASE when a.Physical != '' then a.Physical
+	  when a.Nonphysical=1 then  'N/A' else '' 
+	  end AS [Physical]
 ,a.PhysicalDate
 ,CASE when a.Weight = 'P' then 'Pass' 
 		when a.Weight = 'F' then 'Fail' 
