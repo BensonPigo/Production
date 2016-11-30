@@ -238,78 +238,95 @@ namespace Sci.Production.Warehouse
             string spno = tb_Spno.Text.TrimEnd() + "%";
             #region -- SQL Command --
             string sqlcmd
-                = string.Format(@";WITH QA AS (
-Select POID,SEQ1,SEQ2,CASE 
-	            when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 then 'N/A'
-	            else a.result
-            END as [Result] from dbo.FIR a where a.POID LIKE @sp1 
-			and (a.ContinuityEncode = 1 or a.PhysicalEncode = 1 or a.ShadebondEncode =1 or a.WeightEncode = 1 
-                    or (a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1))
-			UNION ALL
-			Select POID,SEQ1,SEQ2,a.result as [Result] 
-			from dbo.AIR a where a.POID LIKE @sp1 and a.Result !=''
-			 )");
-            sqlcmd += string.Format(@" select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
-            ,substring(convert(varchar,a.RevisedETA, 101),1,5) as RevisedETD,a.Refno,a.SCIRefno
-            ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
-            , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
-            ,a.ColorID,a.SizeSpec
-            ,ROUND(a.UsedQty,4) unitqty,A.Qty,A.NETQty,A.NETQty+A.lossQty useqty ,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,iif(a.Complete='1','Y','N') as Complete
-            ,a.FinalETA,m.InQty,a.StockUnit
-            ,iif(m.OutQty is null,'0.00',m.OutQty) as OutQty
-            ,iif(m.AdjustQty is null,'0.00',m.AdjustQty) AdjustQty
-            ,iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty)  balanceqty
-			,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
-            ,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
-            ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.refno,a.seq1,a.seq2),1,0)) AS description,s.currencyid
-            ,stuff((select Concat('/',t.Result) from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')),1,1,'') FIR
-            ,(Select cast(tmp.Remark as nvarchar)+',' 
-                        from (select b1.remark 
-                                    from receiving a1 
-                                    inner join receiving_detail b1 on a1.id = b1.id 
-                                    where a1.status = 'Confirmed' and (b1.Remark is not null or b1.Remark !='')
-                                        and b1.poid = a.id
-                                        and b1.seq1 = a.seq1
-                                        and b1.seq2 = a.seq2 group by b1.remark) tmp 
-                        for XML PATH('')) as  Remark
-            from Orders inner join PO_Supp_Detail a on a.id = orders.id
-				left join dbo.MDivisionPoDetail m on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
-                left join fabric on fabric.SCIRefno = a.scirefno
-	            left join po_supp b on a.id = b.id and a.SEQ1 = b.SEQ1
-                left join supp s on s.id = b.suppid
-            where orders.poid like @sp1 and orders.mdivisionid= '{0}' AND m.MDivisionID='{0}'
-            union
-            select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
-            ,substring(convert(varchar,a.RevisedETA, 101),1,5) as RevisedETD,a.Refno,a.SCIRefno
-            ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
-             , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
-            ,a.ColorID,a.SizeSpec
-            ,ROUND(a.UsedQty,4) unitqty,A.Qty,A.NETQty,A.NETQty+A.lossQty useqty ,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,iif(a.Complete='1','Y','N') as Complete
-            ,a.FinalETA,m.InQty,a.StockUnit
-            ,iif(m.OutQty is null,'0.00',m.OutQty) as OutQty
-            ,iif(m.AdjustQty is null,'0.00',m.AdjustQty) AdjustQty
-            ,iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty)  balanceqty
-			,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
-            ,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
-            ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.refno,a.seq1,a.seq2),1,0)) AS description,s.currencyid
-            ,stuff((select Concat('/',t.Result) from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')),1,1,'') FIR
-            ,(Select cast(tmp.Remark as nvarchar)+',' 
-                        from (select b1.remark 
-                                    from receiving a1 
-                                    inner join receiving_detail b1 on a1.id = b1.id 
-                                    where a1.status = 'Confirmed' and (b1.Remark is not null or b1.Remark !='')
-                                        and b1.poid = a.id
-                                        and b1.seq1 = a.seq1
-                                        and b1.seq2 = a.seq2 group by b1.remark) tmp 
-                        for XML PATH('')) as  Remark
-            from dbo.MDivisionPoDetail m
-			left join  PO_Supp_Detail a on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
-            left join fabric on fabric.SCIRefno = a.scirefno
-	        left join po_supp b on a.id = b.id and a.SEQ1 = b.SEQ1
-            left join supp s on s.id = b.suppid
-            where m.MDivisionID='{0}' and m.poid like @sp1  
-                AND a.id IS NOT NULL --0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
-            order by m.mdivisionid,a.id,a.refno,a.colorid
+                = string.Format(@"
+;WITH QA AS (
+	Select POID,SEQ1,SEQ2,CASE 
+	when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 then 'N/A'
+	else a.result
+	END as [Result] from dbo.FIR a where a.POID LIKE @sp1 
+	and (a.ContinuityEncode = 1 or a.PhysicalEncode = 1 or a.ShadebondEncode =1 or a.WeightEncode = 1 
+	or (a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1))
+	UNION ALL
+	Select POID,SEQ1,SEQ2,a.result as [Result] 
+	from dbo.AIR a where a.POID LIKE @sp1 and a.Result !=''
+) 
+			 
+select 
+m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
+,[eta] = substring(convert(varchar, a.eta, 101),1,5)
+,[RevisedETA] = substring(convert(varchar,a.RevisedETA, 101),1,5)
+,a.Refno,a.SCIRefno
+,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
+, iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
+,a.ColorID,a.SizeSpec
+,ROUND(a.UsedQty,4) unitqty
+,A.Qty
+,A.NETQty
+,[useqty] = isnull(A.NETQty,0)+isnull(A.lossQty,0)
+,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,iif(a.Complete='1','Y','N') as Complete
+,a.FinalETA,m.InQty,a.StockUnit
+,iif(m.OutQty is null,'0.00',m.OutQty) as OutQty
+,iif(m.AdjustQty is null,'0.00',m.AdjustQty) AdjustQty
+,iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty)  balanceqty
+,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
+,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
+,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.refno,a.seq1,a.seq2),1,0)) AS description
+,s.currencyid
+,stuff((select Concat('/',t.Result) from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')),1,1,'') FIR
+,(Select cast(tmp.Remark as nvarchar)+',' 
+  from (
+			select b1.remark 
+			from receiving a1 
+			inner join receiving_detail b1 on a1.id = b1.id 
+			where a1.status = 'Confirmed' and (b1.Remark is not null or b1.Remark !='')
+			and b1.poid = a.id
+			and b1.seq1 = a.seq1
+			and b1.seq2 = a.seq2 group by b1.remark
+	   ) tmp 
+  for XML PATH('')
+ ) as  Remark
+
+from Orders inner join PO_Supp_Detail a on a.id = orders.poid
+	left join dbo.MDivisionPoDetail m on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
+    left join fabric on fabric.SCIRefno = a.scirefno
+	left join po_supp b on a.id = b.id and a.SEQ1 = b.SEQ1
+    left join supp s on s.id = b.suppid
+where orders.poid like @sp1 and orders.mdivisionid= '{0}' AND m.MDivisionID='{0}'
+union
+select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
+,substring(convert(varchar,a.RevisedETA, 101),1,5) as RevisedETA,a.Refno,a.SCIRefno
+,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
+    , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
+,a.ColorID,a.SizeSpec
+,ROUND(a.UsedQty,4) unitqty,A.Qty,A.NETQty,isnull(A.NETQty,0)+isnull(A.lossQty,0) useqty ,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,iif(a.Complete='1','Y','N') as Complete
+,a.FinalETA,m.InQty,a.StockUnit
+,iif(m.OutQty is null,'0.00',m.OutQty) as OutQty
+,iif(m.AdjustQty is null,'0.00',m.AdjustQty) AdjustQty
+,iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty)  balanceqty
+,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
+,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
+,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.refno,a.seq1,a.seq2),1,0)) AS description,s.currencyid
+,stuff((select Concat('/',t.Result) from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')),1,1,'') FIR
+,(Select cast(tmp.Remark as nvarchar)+',' 
+  from (
+			select b1.remark 
+			from receiving a1 
+			inner join receiving_detail b1 on a1.id = b1.id 
+			where a1.status = 'Confirmed' and (b1.Remark is not null or b1.Remark !='')
+			and b1.poid = a.id
+			and b1.seq1 = a.seq1
+			and b1.seq2 = a.seq2 group by b1.remark
+		) tmp 
+  for XML PATH('')
+) as  Remark
+from dbo.MDivisionPoDetail m
+left join  PO_Supp_Detail a on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
+left join fabric on fabric.SCIRefno = a.scirefno
+left join po_supp b on a.id = b.id and a.SEQ1 = b.SEQ1
+left join supp s on s.id = b.suppid
+where m.MDivisionID='{0}' and m.poid like @sp1  
+    AND a.id IS NOT NULL --0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
+order by m.mdivisionid,a.id,a.refno,a.colorid            
             "
             , Sci.Env.User.Keyword);
             #endregion
