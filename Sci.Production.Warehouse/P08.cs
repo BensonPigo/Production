@@ -375,7 +375,7 @@ where a.id = '{0}' and a.seq1 ='{1}'and a.seq2 = '{2}'", CurrentDetailData["poid
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Receiving_Detail d inner join FtyInventory f
 --on d.Ukey = f.ukey
-on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.Dyelot = f.Dyelot and d.StockType = f.StockType 
+on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -403,7 +403,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Receiving_Detail d left join FtyInventory f
 --on d.Ukey = f.ukey
-on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.Dyelot = f.Dyelot and d.StockType = f.StockType 
+on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -538,7 +538,7 @@ set a.StockUnit = b.StockUnit;
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Receiving_Detail d inner join FtyInventory f
 --on d.Ukey = f.ukey
-on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.Dyelot = f.Dyelot and d.StockType = f.StockType 
+on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -566,7 +566,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Receiving_Detail d left join FtyInventory f
 --on d.Ukey = f.ukey
-on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.Dyelot = f.Dyelot and d.StockType = f.StockType 
+on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
