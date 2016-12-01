@@ -116,10 +116,10 @@ namespace Sci.Production.Quality
                 this.SQR_text.Text = "0";   this.Remark_text.Text = "";
             }
             #region btnEncode
-            Encode_btn.Enabled = !this.EditMode;
-            //if (MyUtility.Check.Empty(CurrentMaintain)) Encode_btn.Enabled = false;
-            if (CurrentMaintain["status"].ToString().Trim() == "Confirmed") Encode_btn.Text = "Amend";
-            else Encode_btn.Text = "Encode";
+            //Encode_btn.Enabled = !this.EditMode;
+            ////if (MyUtility.Check.Empty(CurrentMaintain)) Encode_btn.Enabled = false;
+            //if (CurrentMaintain["status"].ToString().Trim() == "Confirmed") Encode_btn.Text = "Amend";
+            //else Encode_btn.Text = "Encode";
             #endregion
            
 
@@ -421,7 +421,6 @@ where a.ID='{0}'",
             afterDT.Merge(gridDT, true);
             afterDT.AcceptChanges();
 
-
             if (MyUtility.Check.Empty(this.Audit_Date.Text))
             {
                 MyUtility.Msg.WarningBox("<Audit Date> cannot be empty", "Warning");
@@ -521,13 +520,18 @@ where a.ID='{0}'",
             return base.ClickSaveBefore();
         }
 
+        protected override bool ClickNewBefore()
+        {
+            this.CFA1_text.DisplayBox1.Text = "";
+            return base.ClickNewBefore();
+        }
+
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
             CurrentMaintain["Status"] = "New";            
             CurrentMaintain["cDate"] = DateTime.Now;
-            this.Factory_text.Text = Sci.Env.User.Keyword;
-            this.Audit_Date.Text = Convert.ToDateTime(DateTime.Now).ToShortDateString();
+            CurrentMaintain["FactoryID"] = Sci.Env.User.Keyword;                        
         }
         // edit前檢查
         protected override bool ClickEditBefore()
@@ -690,7 +694,7 @@ where a.OrderID='{0}'", SP_text.Text);
                     this.orderQty_text.Text = "0";
                     this.SQR_text.Text = "0";
                     this.SP_text.Focus();
-                    this.SP_text.Select();
+                    this.SP_text.Select();  
                     return;
                 }
             }          

@@ -264,8 +264,8 @@ namespace Sci.Production.Quality
                 .Text("SEQ", header: "SEQ#", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("ExportID", header: "WKNO", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Date("WhseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("BrandRefno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(17), iseditingreadonly: true)
+                .Text("BrandRefno", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Sizespec", header: "Size", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -284,7 +284,7 @@ namespace Sci.Production.Quality
                 .Date("WashDate", header: "Wash Last Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: WashDateCell).Get(out col_WashDate)
                 .Text("Washinspector", header: "Wash Lab Tech", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: WashInspectorCell).Get(out col_Washinspector)
                 .Text("WashRemark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: WashRemarkCell).Get(out col_WashRemark)
-                .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(13), iseditingreadonly: true);
+                .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
             col_NonOven.DefaultCellStyle.BackColor = Color.Pink;
             col_NonWash.DefaultCellStyle.BackColor = Color.Pink;
