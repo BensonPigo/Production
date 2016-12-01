@@ -225,11 +225,13 @@ namespace Sci.Production.Warehouse
 	                    where 1=1
 	                    and a.seq1 =(select min(seq1) from dbo.PO_Supp_Detail where id=b.Poid and SCIRefno=b.SCIRefno)
 	                    and b.Id='{0}'
+                        group by a.NETQty,a.ID,a.SEQ1,a.SEQ2,a.SCIRefno,a.ColorID,[dbo].[getStockUnit](a.SCIRefno,c.SuppID)
                     )
                     select * 
                     ,[avqty] =[accu_issue]-[aiqqty]
                     from main a                    
                     inner join NetQty b on a.Poid=b.ID and a.SCIRefno=b.SCIRefno and a.Colorid=b.ColorID"
+
                 , masterID, cutplanID);
 
             return base.OnDetailSelectCommandPrepare(e);
