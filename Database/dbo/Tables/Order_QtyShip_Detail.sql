@@ -4,6 +4,7 @@
     [Article]  VARCHAR (8)  CONSTRAINT [DF_Order_QtyShip_Detail_Article] DEFAULT ('') NULL,
     [SizeCode] VARCHAR (8)  CONSTRAINT [DF_Order_QtyShip_Detail_SizeCode] DEFAULT ('') NULL,
     [Qty]      INT          CONSTRAINT [DF_Order_QtyShip_Detail_Qty] DEFAULT ((0)) NULL,
+	[OriQty]   INT			CONSTRAINT [DF_Order_QtyShip_Detail_OriQty] DEFAULT ((0)) NULL, 
     [AddName]  VARCHAR (10) CONSTRAINT [DF_Order_QtyShip_Detail_AddName] DEFAULT ('') NULL,
     [AddDate]  DATETIME     NULL,
     [EditName] VARCHAR (10) CONSTRAINT [DF_Order_QtyShip_Detail_EditName] DEFAULT ('') NULL,
@@ -63,3 +64,13 @@ GO
 CREATE NONCLUSTERED INDEX [Index_Id]
     ON [dbo].[Order_QtyShip_Detail]([Id] ASC);
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'原始數量',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Order_QtyShip_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'OriQty'

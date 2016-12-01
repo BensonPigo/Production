@@ -6,6 +6,7 @@
     [FtyKPI]              DATE           NULL,
     [ReasonID]            VARCHAR (5)    CONSTRAINT [DF_Order_QtyShip_ReasonID] DEFAULT ('') NULL,
     [Qty]                 INT            CONSTRAINT [DF_Order_QtyShip_Qty] DEFAULT ((0)) NULL,
+	[OriQty]			  INT			 CONSTRAINT [DF_Order_QtyShip_OriQty] DEFAULT ((0)) NULL,
     [EstPulloutDate]      DATE           NULL,
     [SDPDate]             DATE           NULL,
     [ProdRemark]          NVARCHAR (100) CONSTRAINT [DF_Order_QtyShip_ProdRemark] DEFAULT ('') NULL,
@@ -102,3 +103,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_QtyShip', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'原始數量',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Order_QtyShip',
+    @level2type = N'COLUMN',
+    @level2name = N'OriQty'

@@ -3,10 +3,11 @@
     [Article]  VARCHAR (8)  CONSTRAINT [DF_Order_Qty_Article] DEFAULT ('') NOT NULL,
     [SizeCode] VARCHAR (8)  CONSTRAINT [DF_Order_Qty_SizeCode] DEFAULT ('') NOT NULL,
     [Qty]      INT          CONSTRAINT [DF_Order_Qty_Qty] DEFAULT ((0)) NOT NULL,
+	[OriQty]   INT			CONSTRAINT [DF_Order_Qty_OriQty] DEFAULT ((0)) NOT NULL,
     [AddName]  VARCHAR (10) CONSTRAINT [DF_Order_Qty_AddName] DEFAULT ('') NULL,
     [AddDate]  DATETIME     NULL,
     [EditName] VARCHAR (10) CONSTRAINT [DF_Order_Qty_EditName] DEFAULT ('') NULL,
-    [EditDate] DATETIME     NULL,
+    [EditDate] DATETIME     NULL, 
     CONSTRAINT [PK_Order_Qty] PRIMARY KEY CLUSTERED ([ID] ASC, [Article] ASC, [SizeCode] ASC)
 );
 
@@ -46,3 +47,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_Qty', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'原始數量',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Order_Qty',
+    @level2type = N'COLUMN',
+    @level2name = N'OriQty'
