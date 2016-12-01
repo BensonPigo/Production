@@ -218,6 +218,7 @@ namespace Sci.Production.Warehouse
                     (
 	                    select a.NETQty,a.ID,a.SEQ1,a.SEQ2,a.SCIRefno,a.ColorID
 	                    ,[Unit] = [dbo].[getStockUnit](a.SCIRefno,c.SuppID)
+                        ,[aiqqty] = ISNULL(SUM(a.OutputQty)	,0.00)
 	                    from PO_Supp_Detail a
 	                    inner join Issue_Summary b on a.SCIRefno=b.SCIRefno and a.ColorID=b.Colorid and a.ID=b.Poid
 	                    left join PO_Supp c on c.id = a.ID and c.SEQ1 = a.SEQ1
@@ -225,7 +226,9 @@ namespace Sci.Production.Warehouse
 	                    and a.seq1 =(select min(seq1) from dbo.PO_Supp_Detail where id=b.Poid and SCIRefno=b.SCIRefno)
 	                    and b.Id='{0}'
                     )
-                    select * from main a
+                    select * 
+                    ,[avqty] =[accu_issue]-[aiqqty]
+                    from main a                    
                     inner join NetQty b on a.Poid=b.ID and a.SCIRefno=b.SCIRefno and a.Colorid=b.ColorID"
                 , masterID, cutplanID);
 
