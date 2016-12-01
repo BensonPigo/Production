@@ -24,7 +24,7 @@
     [TaipeiAMT]        NUMERIC (12, 2) CONSTRAINT [DF_LocalDebit_TaipeiAMT] DEFAULT ((0)) NULL,
     [TaipeiCurrencyID] VARCHAR (3)     CONSTRAINT [DF_LocalDebit_TaipeiCurrencyID] DEFAULT ('') NULL,
     [AccountID]        VARCHAR (8)     CONSTRAINT [DF_LocalDebit_AccID] DEFAULT ('') NULL,
-    [Issuedate]        DATE            NOT NULL,
+    [Issuedate]        DATE            NULL,
     [AddName]          VARCHAR (10)    CONSTRAINT [DF_LocalDebit_AddName] DEFAULT ('') NULL,
     [AddDate]          DATETIME        NULL,
     [EditName]         VARCHAR (10)    CONSTRAINT [DF_LocalDebit_EditName] DEFAULT ('') NULL,
