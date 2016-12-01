@@ -46,7 +46,7 @@ namespace Sci.Production.Warehouse
                 #region -- Sql Command --
                 strSQLCmd.Append(string.Format(@"
 ;with cte as (
-select o.MDivisionID,rtrim(pd.ID) poid ,rtrim(pd.seq1) seq1,pd.seq2,pd.POUnit,pd.StockUnit,pd.Qty*isnull(u.Rate,1) poqty
+select o.MDivisionID,rtrim(pd.ID) poid ,rtrim(pd.seq1) seq1,pd.seq2,pd.POUnit,pd.StockUnit,pd.Qty*isnull(u.RateValue,1) poqty
 	,dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
 	,x.InventoryPOID,x.InventorySeq1,x.InventorySeq2
 	,x.earliest,x.lastest,x.taipei_qty*isnull(u.RateValue,1) taipei_qty
