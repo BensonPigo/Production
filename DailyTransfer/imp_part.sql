@@ -9,7 +9,9 @@ BEGIN
 
 	---------- Parts, type='P'---------------------
 	Merge Machine.dbo.Part as t
-	Using (select * from Trade_To_Pms.dbo.Part where type='P')as s
+	Using (select * from Trade_To_Pms.dbo.Part where type='P' and refno <>'EM-DBXK5 #8'
+union all
+select top 1 * from Trade_To_Pms.dbo.Part where type='P' and refno ='EM-DBXK5 #8')as s
 	on t.id=s.Refno --and t.purchasefrom='T'
 	when matched then 
 	update set 
