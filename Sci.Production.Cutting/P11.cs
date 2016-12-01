@@ -1253,6 +1253,7 @@ namespace Sci.Production.Cutting
                         if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
                         {
                             _transactionscope.Dispose();
+                            ShowErr(dr["Insert"].ToString(), upResult);
                             return;
                         }                   
                     }
@@ -1261,6 +1262,7 @@ namespace Sci.Production.Cutting
                         if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
                         {
                             _transactionscope.Dispose();
+                            ShowErr(dr["Insert"].ToString(), upResult);
                             return;
                         }
                     }
@@ -1269,6 +1271,7 @@ namespace Sci.Production.Cutting
                         if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
                         {
                             _transactionscope.Dispose();
+                            ShowErr(dr["Insert"].ToString(), upResult);
                             return;
                         }
                     }
@@ -1277,6 +1280,7 @@ namespace Sci.Production.Cutting
                         if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
                         {
                             _transactionscope.Dispose();
+                            ShowErr(dr["Insert"].ToString(), upResult);
                             return;
                         }
                     }
@@ -1285,6 +1289,7 @@ namespace Sci.Production.Cutting
                         if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
                         {
                             _transactionscope.Dispose();
+                            ShowErr(dr["Insert"].ToString(), upResult);
                             return;
                         }
                     }
