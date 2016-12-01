@@ -28,6 +28,7 @@ namespace Sci.Production.Warehouse
             this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
             di_fabrictype.Add("F", "Fabric");
             di_fabrictype.Add("A", "Accessory");
+            di_fabrictype.Add("O", "Other");
         }
 
         public P51(ToolStripMenuItem menuitem, string transID)
