@@ -137,9 +137,10 @@ namespace Sci.Production.Warehouse
             Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
             .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(20), iseditingreadonly: true)  //1
-            .Text("Colorid", header: "Colorid", width: Widths.AnsiChars(10), iseditingreadonly: true)  //2
+            .Text("Colorid", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)  //2
            // .Text("SizeSpec", header: "SizeSpec", width: Widths.AnsiChars(10), iseditingreadonly: true)  //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
+            .Text("unit", header: "unit", width: Widths.AnsiChars(4))  //add
             .Numeric("requestqty", name: "requestqty", header: "Request", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //5
             .Numeric("accu_issue", name: "accu_issue", header: "Accu. Issued", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
             .Numeric("", name: "bal_qty", header: "Bal. Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //7
@@ -188,40 +189,45 @@ namespace Sci.Production.Warehouse
 //left join dbo.PO_Supp_Detail t on t.id=a.Poid and t.seq1=a.seq1 and t.seq2=a.Seq2
 //Where a.id = '{0}'", masterID, cutplanID);
             #endregion
-this.DetailSelectCommand = string.Format(@"
-with
-main as
-(
-select
-a.Id
-,a.Poid
-,a.SCIRefno
-,a.Qty
-,a.Colorid
-,a.SizeSpec
-,isnull((select sum(cons) from dbo.cutplan_detail_cons c where c.id='{1}' and c.poid=a.poid),0.00) as arqty
-,(select DescDetail from fabric where scirefno= a.scirefno) [description]
-,isnull((select sum(cons) from dbo.Cutplan_Detail_Cons c inner join dbo.PO_Supp_Detail p on p.ID=c.Poid and p.SEQ1 = c.Seq1 and p.SEQ2 = c.Seq2
-where  c.id='{1}' and p.scirefno = a.scirefno and c.poid = a.poid 
-),0.00) as requestqty
-,isnull((select sum(qty) from issue a1 inner join issue_summary b1 on b1.id = a1.id where a1.cutplanid = '{1}' 
-and b1.poid = a.poid and b1.scirefno = a.scirefno 
-and a1.id != '{0}' and a1.status='Confirmed'),0.00) as accu_issue
-,a.Ukey
-from dbo.Issue_Summary a
-Where a.id = '{0}'
-),
-NetQty as
-(
-select a.NETQty,a.ID,a.SEQ1,a.SEQ2,a.SCIRefno,a.ColorID from PO_Supp_Detail a,Issue_Summary b
-where a.SCIRefno=b.SCIRefno and a.ColorID=b.Colorid and a.ID=b.Poid
-and a.seq1 =(select min(seq1) from dbo.PO_Supp_Detail where id=b.Poid and SCIRefno=b.SCIRefno)
-and b.Id='{0}'
-)
-select * from main a
-inner join NetQty b on a.Poid=b.ID and a.SCIRefno=b.SCIRefno and a.Colorid=b.ColorID", masterID, cutplanID);
-
-
+            this.DetailSelectCommand = string.Format(@"
+                    ;with main as
+                    (
+	                    select
+	                    a.Id
+	                    ,a.Poid
+	                    ,a.SCIRefno
+	                    ,a.Qty
+	                    ,a.Colorid
+	                    ,a.SizeSpec
+	                    ,[arqty] = isnull((select sum(cons) from dbo.cutplan_detail_cons c where c.id='{1}' and c.poid = a.poid),0.00)
+	                    ,[description] = (select DescDetail from fabric where scirefno = a.scirefno)
+	                    ,[requestqty] = isnull((select sum(cons) 
+		                    from dbo.Cutplan_Detail_Cons c 
+		                    inner join dbo.PO_Supp_Detail p on p.ID=c.Poid and p.SEQ1 = c.Seq1 and p.SEQ2 = c.Seq2
+		                    where  c.id='{1}' and p.scirefno = a.scirefno and c.poid = a.poid), 0.00)
+	                    ,[accu_issue] = isnull((select sum(qty) 
+		                    from issue a1 
+		                    inner join issue_summary b1 on b1.id = a1.id 
+		                    where a1.cutplanid = '{1}' and b1.poid = a.poid and b1.scirefno = a.scirefno 
+		                    and a1.id != '{0}' and a1.status='Confirmed'), 0.00)
+	                    ,a.Ukey
+	                    from dbo.Issue_Summary a
+	                    Where a.id = '{0}'
+                    ),
+                    NetQty as
+                    (
+	                    select a.NETQty,a.ID,a.SEQ1,a.SEQ2,a.SCIRefno,a.ColorID
+	                    ,[Unit] = [dbo].[getStockUnit](a.SCIRefno,c.SuppID)
+	                    from PO_Supp_Detail a
+	                    inner join Issue_Summary b on a.SCIRefno=b.SCIRefno and a.ColorID=b.Colorid and a.ID=b.Poid
+	                    left join PO_Supp c on c.id = a.ID and c.SEQ1 = a.SEQ1
+	                    where 1=1
+	                    and a.seq1 =(select min(seq1) from dbo.PO_Supp_Detail where id=b.Poid and SCIRefno=b.SCIRefno)
+	                    and b.Id='{0}'
+                    )
+                    select * from main a
+                    inner join NetQty b on a.Poid=b.ID and a.SCIRefno=b.SCIRefno and a.Colorid=b.ColorID"
+                , masterID, cutplanID);
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -264,7 +270,6 @@ inner join NetQty b on a.Poid=b.ID and a.SCIRefno=b.SCIRefno and a.Colorid=b.Col
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
         {
-            DataTable result = null;
             StringBuilder warningmsg = new StringBuilder();
 
             #region 必輸檢查
@@ -758,6 +763,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             var frm = new Sci.Production.Warehouse.P10_CutRef(CurrentMaintain);
             frm.ShowDialog(this);
         }
+
         protected override bool ClickPrint()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
