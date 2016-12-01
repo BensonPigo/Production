@@ -394,8 +394,10 @@ when not matched then
         {
             DataTable dt;
             string sqlcmd = string.Format(@"select  m.poid,left(m.seq1+' ',3)+m.seq2 as seq, p.Refno, dbo.getmtldesc(m.poid,m.seq1,m.seq2,2,0) as Description 
-,p.ColorID,p.FinalETA,m.InQty,p.pounit,p.StockUnit,m.OutQty,m.AdjustQty
-,m.inqty - m.OutQty + m.AdjustQty as balance
+,p.ColorID,p.FinalETA,m.InQty,p.pounit,p.StockUnit
+,isnull(m.OutQty, 0) as outQty
+,isnull(m.AdjustQty, 0) as AdjustQty
+,isnull(m.inqty, 0) - isnull(m.OutQty, 0) + isnull(m.AdjustQty, 0) as balance
 ,m.LInvQty
 ,p.fabrictype
 ,m.seq1
