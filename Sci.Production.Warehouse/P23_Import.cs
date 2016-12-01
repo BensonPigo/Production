@@ -49,7 +49,7 @@ namespace Sci.Production.Warehouse
 select o.MDivisionID,rtrim(pd.ID) poid ,rtrim(pd.seq1) seq1,pd.seq2,pd.POUnit,pd.StockUnit,pd.Qty*isnull(u.Rate,1) poqty
 	,dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
 	,x.InventoryPOID,x.InventorySeq1,x.InventorySeq2
-	,x.earliest,x.lastest,x.taipei_qty*isnull(u.Rate,1) taipei_qty
+	,x.earliest,x.lastest,x.taipei_qty*isnull(u.RateValue,1) taipei_qty
 from dbo.PO_Supp_Detail pd 
 inner join dbo.orders o on o.id = pd.id and o.MDivisionID ='{0}'
 left join Unit_Rate u on u.UnitFrom = POUnit and u.UnitTo = StockUnit
