@@ -544,7 +544,7 @@ namespace Sci.Production.Subcon
         private void button3_Click(object sender, EventArgs e)
         {
             if (this.EditMode) return;
-            var frm = new Sci.Production.Subcon.P01_BatchCreate("P01");
+            var frm = new Sci.Production.Subcon.P01_BatchCreate("P10");
             frm.ShowDialog(this);
             ReloadDatas();
         }
