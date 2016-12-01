@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.button3 = new Sci.Win.UI.Button();
             this.checkBox2 = new Sci.Win.UI.CheckBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
@@ -43,7 +44,7 @@
             this.cbbStockType = new Sci.Win.UI.ComboBox();
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -198,6 +199,7 @@
             this.txtSeq.BackColor = System.Drawing.Color.White;
             this.txtSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSeq.Location = new System.Drawing.Point(543, 19);
+            this.txtSeq.Mask = "00-00";
             this.txtSeq.MaxLength = 5;
             this.txtSeq.Name = "txtSeq";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);

@@ -89,9 +89,13 @@ and a.id = @sp and c.mdivisionid='{0}' and c.stocktype = '{1}'", Sci.Env.User.Ke
 
             if (!MyUtility.Check.Empty(seq))
             {
+                if (seq.Length != 5)
+                {
+                    MyUtility.Msg.WarningBox("Seq need enter 00-00");
+                }
                 sbSQLCmd.Append(string.Format(@" and a.seq1 = @seq1 and a.seq2=@seq2"));
-                sp_seq1.Value = seq.Substring(0, 3);
-                sp_seq2.Value = seq.Substring(3, 2);
+                sp_seq1.Value = seq.Substring(0, 2).Trim();
+                sp_seq2.Value = seq.Substring(3, 2).Trim();
                 cmds.Add(sp_seq1);
                 cmds.Add(sp_seq2);
             }
