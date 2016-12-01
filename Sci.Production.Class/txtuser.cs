@@ -68,6 +68,7 @@ namespace Sci.Production.Class
                             if (returnResult == DialogResult.Cancel) 
                             {
                                 this.textBox1.Text = "";
+                                this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                                 return; 
                             }
                             this.textBox1.Text = item.GetSelectedString();
@@ -81,6 +82,7 @@ namespace Sci.Production.Class
                             if (returnResult == DialogResult.Cancel)
                             {
                                 this.textBox1.Text = "";
+                                this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                                 return;
                             }
                             this.textBox1.Text = item.GetSelectedString();
@@ -91,25 +93,36 @@ namespace Sci.Production.Class
                         MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textValue));
                         this.textBox1.Text = "";
                         e.Cancel = true;
+                        this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                         return;
                     }
                 }
             }
+
+            // 強制把binding的Text寫到DataRow
+            this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            //Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             //if (myForm.EditMode == false)
             //{
-                string selectSql = string.Format("Select Name from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
-                string name = MyUtility.GetValue.Lookup(selectSql);
-                selectSql = string.Format("Select ExtNo from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
-                string extNo = MyUtility.GetValue.Lookup(selectSql);
-                if (!string.IsNullOrWhiteSpace(name)) { this.displayBox1.Text = name; }
-                else this.displayBox1.Text = "";
-                if (!string.IsNullOrWhiteSpace(extNo)) { this.displayBox1.Text = name + " #" + extNo; }
+            string selectSql = string.Format("Select Name from Pass1 where id = '{0}'", (!MyUtility.Check.Empty(this.textBox1.Text.ToString())) ? this.textBox1.Text.ToString() : this.displayBox1.Text.ToString());
+            string name = MyUtility.GetValue.Lookup(selectSql);
+            selectSql = string.Format("Select ExtNo from Pass1 where id = '{0}'", (!MyUtility.Check.Empty(this.textBox1.Text.ToString())) ? this.textBox1.Text.ToString() : this.displayBox1.Text.ToString());
+            string extNo = MyUtility.GetValue.Lookup(selectSql);
+            if (!string.IsNullOrWhiteSpace(extNo))
+            {
+                this.displayBox1.Text = name + " #" + extNo; 
+            }
+            //if (!string.IsNullOrWhiteSpace(name)) 
+            //{ 
+            //    this.textBox1.Text = name;
             //}
+            //else this.textBox1.Text = "";
+           
+            ////}
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -120,7 +133,7 @@ namespace Sci.Production.Class
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
-            this.displayBox1.Text = item.GetSelecteds()[0]["Name"].ToString().TrimEnd();
+            this.displayBox1.Text = item.GetSelecteds()[0]["EXTNO"].ToString().TrimEnd();
         }
     }
 }
