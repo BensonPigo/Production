@@ -264,7 +264,7 @@ BEGIN
 		when not matched by target then
 insert(ID,	 BrandID,   ProgramID,   StyleID,   SeasonID,   ProjectID,     Category,   OrderTypeID,   BuyMonth,   Dest,   Model,   HsCode1,   HsCode2,   PayTermARID,   ShipTermID,   ShipModeList,   CdCodeID,   CPU,   Qty,   StyleUnit,   PoPrice,   CFMPrice,   CurrencyID,   Commission,   FactoryID,   BrandAreaCode,   BrandFTYCode,   CTNQty,   CustCDID,   CustPONo,   Customize1,   Customize2,   Customize3,   CFMDate,   BuyerDelivery,   SciDelivery,   SewOffLine,   CutInLine,   CutOffLine,   PulloutDate,   CMPUnit,   CMPPrice,   CMPQDate,  CMPQRemark,    EachConsApv,   MnorderApv,   CRDDate,   InitialPlanDate,   PlanDate,   FirstProduction,   FirstProductionLock,   OrigBuyerDelivery,   ExCountry,   InDCDate,   CFMShipment,   PFETA,   PackLETA,   LETA,   MRHandle,   SMR,   ScanAndPack,   VasShas,   SpecialCust,   TissuePaper,   Junk,   Packing,   MarkFront,   MarkBack,   MarkLeft,   MarkRight,   Label,   OrderRemark,   ArtWorkCost,   StdCost,   CtnType,   FOCQty,   SMnorderApv,   FOC,   MnorderApv2,   Packing2,   SampleReason,   RainwearTestPassed,   SizeRange,   MTLComplete,   SpecialMark,   OutstandingRemark,   OutstandingInCharge,   OutstandingDate,   OutstandingReason,   StyleUkey,   POID,   IsNotRepeatOrMapping,   SplitOrderId,   FtyKPI,   AddName,   AddDate,   EditName,   EditDate,   IsForecast,GMTComplete,                                          PFOrder,    InspDate,   KPILETA,   MTLETA,   SewETA,   PackETA,   MTLExport,   DoxType,   FtyGroup,    MDivisionID,   MCHandle,                                                                                                    KPIChangeReason,       MDClose,                                                   CPUFactor,   SizeUnit,   CuttingSP,   IsMixMarker,   EachConsSource,   KPIEachConsApprove,   KPICmpq,   KPIMNotice,   GFR,SDPDate )
 values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Category ,s.OrderTypeID ,s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,s.ShipModeList ,s.CdCodeID ,s.CPU ,s.Qty ,s.StyleUnit ,s.PoPrice ,s.CFMPrice ,s.CurrencyID ,s.Commission ,s.FactoryID ,s.BrandAreaCode ,s.BrandFTYCode ,s.CTNQty ,s.CustCDID ,s.CustPONo ,s.Customize1 ,s.Customize2 ,s.Customize3 ,s.CFMDate ,s.BuyerDelivery ,s.SciDelivery ,s.SewOffLine ,s.CutInLine ,s.CutOffLine ,s.PulloutDate ,s.CMPUnit ,s.CMPPrice ,s.CMPQDate ,s.CMPQRemark ,s.EachConsApv ,s.MnorderApv ,s.CRDDate ,s.InitialPlanDate ,s.PlanDate ,s.FirstProduction ,s.FirstProductionLock ,s.OrigBuyerDelivery ,s.ExCountry ,s.InDCDate ,s.CFMShipment ,s.PFETA ,s.PackLETA ,s.LETA ,s.MRHandle ,s.SMR ,s.ScanAndPack ,s.VasShas ,s.SpecialCust ,s.TissuePaper ,s.Junk ,s.Packing ,s.MarkFront ,s.MarkBack ,s.MarkLeft ,s.MarkRight ,s.Label ,s.OrderRemark ,s.ArtWorkCost ,s.StdCost ,s.CtnType ,s.FOCQty ,s.SMnorderApv ,s.FOC ,s.MnorderApv2 ,s.Packing2 ,s.SampleReason ,s.RainwearTestPassed ,s.SizeRange ,s.MTLComplete ,s.SpecialMark ,s.OutstandingRemark ,s.OutstandingInCharge ,s.OutstandingDate ,s.OutstandingReason ,s.StyleUkey ,s.POID ,s.IsNotRepeatOrMapping ,s.SplitOrderId ,s.FtyKPI ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate ,s.IsForecast,iif(s.GMTComplete='P' or s.GMTComplete is null,0,1) ,s.PFOrder ,s.InspDate ,s.KPILETA ,s.MTLETA ,s.SewETA ,s.PackETA ,s.MTLExport ,s.DoxType ,s.FTY_Group ,s.MDivisionID , (select localMR from Production.dbo.Style where BrandID=s.BrandID and id=s.styleid and SeasonID=s.SeasonID),s.KPIChangeReason , iif(s.GMTComplete='P' or s.GMTComplete is null,null,@dToDay) ,s.CPUFactor ,s.SizeUnit ,s.CuttingSP ,s.IsMixMarker ,s.EachConsSource ,s.KPIEachConsApprove ,s.KPICmpq ,s.KPIMNotice ,s.GFR,s.SDPDate )
-		output inserted.id, iif(deleted.id='',1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
+		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
 
 		
@@ -354,10 +354,11 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		t.AddName = s.	     AddName ,
 		t.AddDate = s.	     AddDate ,
 		t.EditName = s.	      EditName ,
-		t.EditDate = s.	      EditDate 
+		t.EditDate = s.	      EditDate ,
+		t.OriQty = s.OriQty
 	when not matched by target then 
-		insert(ID ,Article ,SizeCode ,Qty ,AddName ,AddDate ,EditName ,EditDate )
-		values(s.ID ,s.Article ,s.SizeCode ,s.Qty ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate )
+		insert(ID ,Article ,SizeCode ,Qty ,AddName ,AddDate ,EditName ,EditDate,OriQty )
+		values(s.ID ,s.Article ,s.SizeCode ,s.Qty ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate,s.OriQty )
 	when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then
 	delete;
 
@@ -375,10 +376,11 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		t.AddName = s.       AddName ,
 		t.AddDate = s.       AddDate ,
 		t.EditName = s.       EditName ,
-		t.EditDate = s.       EditDate  
+		t.EditDate = s.       EditDate,
+		t.OriQty = s.OriQty
 	when not matched by target then
-		insert(  Id ,  Seq ,  ShipmodeID ,  BuyerDelivery ,  FtyKPI ,  ReasonID ,  Qty ,  AddName ,  AddDate ,  EditName ,  EditDate )
-		values(s.Id ,s.Seq ,s.ShipmodeID ,s.BuyerDelivery ,s.FtyKPI ,s.ReasonID ,s.Qty ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate )
+		insert(  Id ,  Seq ,  ShipmodeID ,  BuyerDelivery ,  FtyKPI ,  ReasonID ,  Qty ,  AddName ,  AddDate ,  EditName ,  EditDate,OriQty )
+		values(s.Id ,s.Seq ,s.ShipmodeID ,s.BuyerDelivery ,s.FtyKPI ,s.ReasonID ,s.Qty ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate ,s.OriQty)
 	when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 	delete;
 
@@ -396,10 +398,11 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 			t.AddName = s.AddName ,
 			t.AddDate = s.AddDate ,
 			t.EditName = s.EditName ,
-			t.EditDate = s.EditDate 
+			t.EditDate = s.EditDate ,
+			t.OriQty=s.OriQty
 		when not matched by target then 
-			insert (Id ,Seq ,Article ,SizeCode ,Qty ,AddName ,AddDate ,EditName ,EditDate ,Ukey )
-			values (s.Id ,s.Seq ,s.Article ,s.SizeCode ,s.Qty ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate ,s.Ukey )
+			insert (Id ,Seq ,Article ,SizeCode ,Qty ,AddName ,AddDate ,EditName ,EditDate ,Ukey,OriQty )
+			values (s.Id ,s.Seq ,s.Article ,s.SizeCode ,s.Qty ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate ,s.Ukey ,s.OriQty)
 		when not matched by source  AND T.ID IN (SELECT ID FROM #Torder) then 
 		delete;
 
