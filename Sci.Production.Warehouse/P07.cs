@@ -160,6 +160,12 @@ namespace Sci.Production.Warehouse
                     dateBox3.Focus();
                     return false;
                 }
+                if (DateTime.Compare(WhseArrival, ArrivePortDate.AddDays(20)) > 0)
+                {
+                    MyUtility.Msg.WarningBox("Arrive Warehouse date can't be later than arrive port 20 days!!");
+                    dateBox3.Focus();
+                    return false;
+                }
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["WhseArrival"]) && !MyUtility.Check.Empty(CurrentMaintain["eta"]))
@@ -282,11 +288,11 @@ namespace Sci.Production.Warehouse
             DataRow dr;
             if (!(CurrentMaintain == null))
             {
+                dateBox2.Value = null;
+                dateBox5.Value = null;
                 if (MyUtility.Check.Seek(string.Format(@"select portarrival,docarrival from dbo.export where id='{0}'"
                     , CurrentMaintain["exportid"]), out dr, null))
-                {
-                    dateBox2.Value = null;
-                    dateBox5.Value = null;
+                {                                      
                     if (!MyUtility.Check.Empty(dr["portarrival"])) dateBox2.Value = DateTime.Parse(dr["portarrival"].ToString());
                     if (!MyUtility.Check.Empty(dr["docarrival"])) dateBox5.Value = DateTime.Parse(dr["docarrival"].ToString());
                 }
@@ -1052,11 +1058,14 @@ Where a.id = '{0}' ", masterID);
             if (!MyUtility.Check.Empty(textBox3.Text) && textBox3.Text != textBox3.OldValue)
             {
                 ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
-
                 CurrentMaintain["invno"] = textBox3.Text;
-                if (MyUtility.Check.Seek(string.Format("select packingarrival,whsearrival,eta from dbo.export where id='{0}'"
+                CurrentMaintain["ETA"] = DBNull.Value;
+                CurrentMaintain["WhseArrival"] = DBNull.Value;
+                dateBox2.Value = null;              
+                if (MyUtility.Check.Seek(string.Format("select packingarrival,whsearrival,eta,PortArrival from dbo.export where id='{0}'"
                     , textBox3.Text), out dr, null))
                 {
+                    if (!MyUtility.Check.Empty(dr["portarrival"])) dateBox2.Value = DateTime.Parse(dr["portarrival"].ToString());
                     CurrentMaintain["exportid"] = CurrentMaintain["invno"];
                     CurrentMaintain["PackingReceive"] = dr["packingarrival"];
                     CurrentMaintain["WhseArrival"] = dr["WhseArrival"];
@@ -1092,7 +1101,7 @@ where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword);
                     }
                     foreach (var item in dt.ToList())
                     {
-                        //DetailDatas.(item);
+                        //DetailDatas.Add(item);
                         ((DataTable)detailgridbs.DataSource).ImportRow(item);
                     }
                 }
