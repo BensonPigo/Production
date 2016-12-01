@@ -12,11 +12,13 @@
     [Ukey]     BIGINT       CONSTRAINT [DF_Order_QtyShip_Detail_Ukey] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Order_QtyShip_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
-
-
-
-
 GO
+
+CREATE NONCLUSTERED INDEX [Index_BuyerDelivery]
+    ON [dbo].[Order_QtyShip]([BuyerDelivery] ASC)
+    INCLUDE([Id], [Seq], [Qty]);
+GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Order Qty Breakdown By Shipmode Detail', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_QtyShip_Detail';
 
 
