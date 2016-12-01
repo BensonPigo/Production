@@ -85,7 +85,7 @@ namespace Sci.Production.Cutting
 
             if (Requ_ra.Checked)
             {
-                string Issue_cmd = string.Format("Select a.Cutplanid,b.Qty,b.Dyelot,b.Roll,Max(c.yds) as yds,c.Colorid from Issue a,Issue_Detail b, #tmp c Where a.id=b.id and c.Cutplanid = a.Cutplanid and c.SEQ1 = b.SEQ1 and c.SEQ2 = b.SEQ2 group by a.Cutplanid,b.Qty,b.Dyelot,b.Roll,c.Colorid order by roll,Dyelot", detDr["ID"], byType);
+                string Issue_cmd = string.Format("Select a.Cutplanid,b.Qty,b.Dyelot,b.Roll,Max(c.yds) as yds,c.Colorid from Issue a,Issue_Detail b, #tmp c Where a.id=b.id and c.Cutplanid = a.Cutplanid and c.SEQ1 = b.SEQ1 and c.SEQ2 = b.SEQ2 group by a.Cutplanid,b.Qty,b.Dyelot,b.Roll,c.Colorid order by Dyelot,roll", detDr["ID"], byType);
                 MyUtility.Tool.ProcessWithDatatable(WorkorderTb, "Cutplanid,SEQ1,SEQ2,yds,Colorid", Issue_cmd, out IssueTb); //整理FabricCombo     
             }
             return Result.True; 
@@ -375,7 +375,10 @@ Cutplanid, str_PIVOT);
                         worksheet.Cells[nRow, 2] = IssueDr["Colorid"].ToString();
                         worksheet.Cells[nRow, 4] = IssueDr["Dyelot"].ToString();
                         worksheet.Cells[nRow, 6] = IssueDr["Qty"].ToString();
-                        worksheet.Cells[nRow, 9] = MyUtility.Convert.GetDouble(IssueDr["yds"])==0? 0: Math.Ceiling(MyUtility.Convert.GetDouble(IssueDr["Qty"])/MyUtility.Convert.GetDouble(IssueDr["yds"]));
+
+                        //1401: CUTTING_P02_SpreadingReport。[LAYERS]欄位資料清空
+                        //worksheet.Cells[nRow, 9] = MyUtility.Convert.GetDouble(IssueDr["yds"])==0? 0: Math.Ceiling(MyUtility.Convert.GetDouble(IssueDr["Qty"])/MyUtility.Convert.GetDouble(IssueDr["yds"]));
+                        
                         nRow++;
                     }
                 }
