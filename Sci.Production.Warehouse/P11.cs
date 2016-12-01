@@ -326,10 +326,10 @@ Where a.id = '{0}'", masterID);
                         if (data.ItemArray[0].ToString() != textBox1.Text)
                             dtIssueBreakDown.Rows.Remove(data);                                          
                     }
-                }
-
+                }                
                 string sqlcmd;
-                sqlcmd = string.Format(@";WITH UNPIVOT_1
+                sqlcmd = string.Format(@";delete from dbo.issue_breakdown where id='{0}'
+;WITH UNPIVOT_1
 AS
 (
 SELECT * FROM #tmp

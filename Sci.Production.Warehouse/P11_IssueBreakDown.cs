@@ -27,12 +27,12 @@ namespace Sci.Production.Warehouse
             this.EditMode = true;
         }
 
-        public P11_IssueBreakDown(DataRow master, DataTable dtIssueBreakDown, DataTable dtSizeCode)
+        public P11_IssueBreakDown(DataRow _master, DataTable _dtIssueBreakDown, DataTable _dtSizeCode)
             : this()
         {
-            DtSizeCode = dtSizeCode;
-            DtIssueBreakDown = dtIssueBreakDown;
-            Master = master;
+            DtSizeCode = _dtSizeCode;
+            DtIssueBreakDown = _dtIssueBreakDown;
+            Master = _master;
         }
 
         protected override void OnFormLoaded()
@@ -291,6 +291,15 @@ order by [OrderID],[Article]", Master["orderid"], sbSizecode.ToString().Substrin
             {
                 string col_name = this.gridIssueBreakDown.Columns[e.ColumnIndex].DataPropertyName;
                 if (dataRow[col_name].Empty()) dataRow[col_name] = 0;
+            }
+        }
+        private void btnSet_Click(object sender, EventArgs e)
+        {
+            if (dtQtyBreakDown == null || DtIssueBreakDown==null) return;
+            ((DataTable)gridIssueBreakDownBS.DataSource).Rows.Clear();
+            foreach (DataRow tmprow in dtQtyBreakDown.Rows)
+            {
+                ((DataTable)gridIssueBreakDownBS.DataSource).ImportRow(tmprow);
             }
         }
 
