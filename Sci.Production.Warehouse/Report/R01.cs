@@ -271,8 +271,10 @@ where 1=1 and c.ThirdCountry = 1"));
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R01.xltx", 1);
+            //MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R01.xltx", 1);
 
+            Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(printData);
+            sdExcel.Save();
             return true;
         }
     }
