@@ -33,12 +33,12 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.panel4 = new Sci.Win.UI.Panel();
+            this.rbOriQty = new System.Windows.Forms.RadioButton();
+            this.rbQty = new System.Windows.Forms.RadioButton();
             this.button1 = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
             this.tabControl1 = new Sci.Win.UI.TabControl();
@@ -60,12 +60,12 @@
             this.displayBox2 = new Sci.Win.UI.DisplayBox();
             this.label2 = new Sci.Win.UI.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.panel10 = new Sci.Win.UI.Panel();
-            this.listControlBindingSource4 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel11 = new Sci.Win.UI.Panel();
+            this.grid4 = new Sci.Win.UI.Grid();
+            this.listControlBindingSource4 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.panel10 = new Sci.Win.UI.Panel();
             this.displayBox3 = new Sci.Win.UI.DisplayBox();
             this.label3 = new Sci.Win.UI.Label();
-            this.grid4 = new Sci.Win.UI.Grid();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -83,10 +83,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).BeginInit();
             this.panel8.SuspendLayout();
             this.tabPage4.SuspendLayout();
-            this.panel10.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource4)).BeginInit();
             this.panel11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource4)).BeginInit();
+            this.panel10.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -115,12 +115,40 @@
             // 
             // panel4
             // 
+            this.panel4.Controls.Add(this.rbOriQty);
+            this.panel4.Controls.Add(this.rbQty);
             this.panel4.Controls.Add(this.button1);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(10, 332);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(754, 40);
             this.panel4.TabIndex = 3;
+            // 
+            // rbOriQty
+            // 
+            this.rbOriQty.AutoSize = true;
+            this.rbOriQty.ForeColor = System.Drawing.Color.Red;
+            this.rbOriQty.Location = new System.Drawing.Point(325, 9);
+            this.rbOriQty.Name = "rbOriQty";
+            this.rbOriQty.Size = new System.Drawing.Size(75, 21);
+            this.rbOriQty.TabIndex = 2;
+            this.rbOriQty.Text = "Ori. Qty";
+            this.rbOriQty.UseVisualStyleBackColor = true;
+            this.rbOriQty.CheckedChanged += new System.EventHandler(this.rarioButton_CheckedChanged);
+            // 
+            // rbQty
+            // 
+            this.rbQty.AutoSize = true;
+            this.rbQty.Checked = true;
+            this.rbQty.ForeColor = System.Drawing.Color.Red;
+            this.rbQty.Location = new System.Drawing.Point(253, 9);
+            this.rbQty.Name = "rbQty";
+            this.rbQty.Size = new System.Drawing.Size(48, 21);
+            this.rbQty.TabIndex = 1;
+            this.rbQty.TabStop = true;
+            this.rbQty.Text = "Qty";
+            this.rbQty.UseVisualStyleBackColor = true;
+            this.rbQty.CheckedChanged += new System.EventHandler(this.rarioButton_CheckedChanged);
             // 
             // button1
             // 
@@ -202,10 +230,10 @@
             this.tabPage2.BackColor = System.Drawing.Color.Transparent;
             this.tabPage2.Controls.Add(this.panel7);
             this.tabPage2.Controls.Add(this.panel6);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(746, 293);
+            this.tabPage2.Size = new System.Drawing.Size(746, 296);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Comb by SP#";
             // 
@@ -215,7 +243,7 @@
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel7.Location = new System.Drawing.Point(3, 36);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(740, 254);
+            this.panel7.Size = new System.Drawing.Size(740, 257);
             this.panel7.TabIndex = 1;
             // 
             // grid2
@@ -246,7 +274,7 @@
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(740, 254);
+            this.grid2.Size = new System.Drawing.Size(740, 257);
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
             // 
@@ -363,12 +391,53 @@
             // 
             this.tabPage4.Controls.Add(this.panel11);
             this.tabPage4.Controls.Add(this.panel10);
-            this.tabPage4.Location = new System.Drawing.Point(4, 25);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(746, 293);
+            this.tabPage4.Size = new System.Drawing.Size(746, 296);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Comb by Buyer Delivery";
+            // 
+            // panel11
+            // 
+            this.panel11.Controls.Add(this.grid4);
+            this.panel11.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel11.Location = new System.Drawing.Point(3, 36);
+            this.panel11.Name = "panel11";
+            this.panel11.Size = new System.Drawing.Size(740, 257);
+            this.panel11.TabIndex = 1;
+            // 
+            // grid4
+            // 
+            this.grid4.AllowUserToAddRows = false;
+            this.grid4.AllowUserToDeleteRows = false;
+            this.grid4.AllowUserToResizeRows = false;
+            this.grid4.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid4.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.grid4.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid4.DataSource = this.listControlBindingSource4;
+            this.grid4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grid4.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.grid4.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.grid4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.grid4.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.grid4.Location = new System.Drawing.Point(0, 0);
+            this.grid4.Name = "grid4";
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid4.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            this.grid4.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.grid4.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.grid4.RowTemplate.Height = 24;
+            this.grid4.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid4.Size = new System.Drawing.Size(740, 257);
+            this.grid4.TabIndex = 0;
+            this.grid4.TabStop = false;
             // 
             // panel10
             // 
@@ -379,15 +448,6 @@
             this.panel10.Name = "panel10";
             this.panel10.Size = new System.Drawing.Size(740, 33);
             this.panel10.TabIndex = 0;
-            // 
-            // panel11
-            // 
-            this.panel11.Controls.Add(this.grid4);
-            this.panel11.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel11.Location = new System.Drawing.Point(3, 36);
-            this.panel11.Name = "panel11";
-            this.panel11.Size = new System.Drawing.Size(740, 254);
-            this.panel11.TabIndex = 1;
             // 
             // displayBox3
             // 
@@ -407,54 +467,6 @@
             this.label3.TabIndex = 2;
             this.label3.Text = "PO Combination";
             // 
-            // grid4
-            // 
-            this.grid4.AllowUserToAddRows = false;
-            this.grid4.AllowUserToDeleteRows = false;
-            this.grid4.AllowUserToResizeRows = false;
-            this.grid4.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid4.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid4.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.grid4.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid4.DataSource = this.listControlBindingSource4;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.grid4.DefaultCellStyle = dataGridViewCellStyle5;
-            this.grid4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid4.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid4.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid4.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid4.Location = new System.Drawing.Point(0, 0);
-            this.grid4.Name = "grid4";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid4.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
-            this.grid4.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid4.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid4.RowTemplate.Height = 24;
-            this.grid4.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid4.Size = new System.Drawing.Size(740, 254);
-            this.grid4.TabIndex = 0;
-            this.grid4.TabStop = false;
-            // 
             // P01_Qty
             // 
             this.CancelButton = this.button1;
@@ -467,6 +479,7 @@
             this.Name = "P01_Qty";
             this.Text = "Qty breakdown";
             this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
             this.panel5.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
@@ -485,11 +498,11 @@
             this.panel8.ResumeLayout(false);
             this.panel8.PerformLayout();
             this.tabPage4.ResumeLayout(false);
-            this.panel10.ResumeLayout(false);
-            this.panel10.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource4)).EndInit();
             this.panel11.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource4)).EndInit();
+            this.panel10.ResumeLayout(false);
+            this.panel10.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -527,5 +540,7 @@
         private Win.UI.Panel panel10;
         private Win.UI.DisplayBox displayBox3;
         private Win.UI.Label label3;
+        private System.Windows.Forms.RadioButton rbOriQty;
+        private System.Windows.Forms.RadioButton rbQty;
     }
 }

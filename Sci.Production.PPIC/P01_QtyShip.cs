@@ -13,7 +13,8 @@ namespace Sci.Production.PPIC
 {
     public partial class P01_QtyShip : Sci.Win.Subs.Base
     {
-        DataTable grid1Data, grid2Data;
+        DataTable grid1Data, grid2Data;  //存Qty資料
+        DataTable grid1Data_OriQty, grid2Data_OriQty;  //存OriQty資料
         string orderID, poID;
 
         public P01_QtyShip(string OrderID, string POID)
@@ -42,10 +43,13 @@ namespace Sci.Production.PPIC
                 .DateTime("EditDate", header: "Edit at", width: Widths.AnsiChars(18));
 
             string sqlCmd = string.Format(@"select Seq,ShipmodeID,BuyerDelivery,Qty,AddName,AddDate,EditName,EditDate from Order_QtyShip 
-where ID = '{0}'
-order by Seq", orderID);
+            where ID = '{0}'
+            order by Seq", orderID);
             DualResult result = DBProxy.Current.Select(null,sqlCmd,out grid1Data);
-
+            sqlCmd = string.Format(@"select Seq,ShipmodeID,BuyerDelivery,OriQty as Qty,AddName,AddDate,EditName,EditDate from Order_QtyShip 
+            where ID = '{0}'
+            order by Seq", orderID);
+            result = DBProxy.Current.Select(null, sqlCmd, out grid1Data_OriQty);
 
             sqlCmd = string.Format("select * from Order_SizeCode where ID = '{0}' order by Seq", poID);
             DataTable headerData;
@@ -71,36 +75,68 @@ order by Seq", orderID);
 
             //撈Grid2資料
             sqlCmd = string.Format(@"with tmpData
-as (
-select oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty,oa.Seq as ASeq
-from Order_QtyShip_Detail oqd
-left join Order_Article oa on oa.ID = oqd.ID and oa.Article = oqd.Article
-where oqd.ID = '{0}'
-),
-SubTotal
-as (
-select Seq,'TTL' as Article,SizeCode,SUM(Qty) as Qty, '9999' as ASeq
-from tmpData
-group by Seq,SizeCode
-),
-UnionData
-as (
-select * from tmpData
-union all
-select * from SubTotal
-),
-pivotData
-as (
-select *
-from UnionData
-pivot( sum(Qty)
-for SizeCode in ({1})
-) a
-)
-select *,(select sum(Qty) from UnionData where Seq = p.Seq and Article = p.Article) as TotalQty
-from pivotData p
-order by ASeq", orderID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+            as (
+            select oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty,oa.Seq as ASeq
+            from Order_QtyShip_Detail oqd
+            left join Order_Article oa on oa.ID = oqd.ID and oa.Article = oqd.Article
+            where oqd.ID = '{0}'
+            ),
+            SubTotal
+            as (
+            select Seq,'TTL' as Article,SizeCode,SUM(Qty) as Qty, '9999' as ASeq
+            from tmpData
+            group by Seq,SizeCode
+            ),
+            UnionData
+            as (
+            select * from tmpData
+            union all
+            select * from SubTotal
+            ),
+            pivotData
+            as (
+            select *
+            from UnionData
+            pivot( sum(Qty)
+            for SizeCode in ({1})
+            ) a
+            )
+            select *,(select sum(Qty) from UnionData where Seq = p.Seq and Article = p.Article) as TotalQty
+            from pivotData p
+            order by ASeq", orderID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
             result = DBProxy.Current.Select(null, sqlCmd, out grid2Data);
+
+            sqlCmd = string.Format(@"with tmpData
+            as (
+            select oqd.Seq,oqd.Article,oqd.SizeCode,oqd.OriQty,oa.Seq as ASeq
+            from Order_QtyShip_Detail oqd
+            left join Order_Article oa on oa.ID = oqd.ID and oa.Article = oqd.Article
+            where oqd.ID = '{0}'
+            ),
+            SubTotal
+            as (
+            select Seq,'TTL' as Article,SizeCode,SUM(OriQty) as Qty, '9999' as ASeq
+            from tmpData
+            group by Seq,SizeCode
+            ),
+            UnionData
+            as (
+            select * from tmpData
+            union all
+            select * from SubTotal
+            ),
+            pivotData
+            as (
+            select *
+            from UnionData
+            pivot( sum(OriQty)
+            for SizeCode in ({1})
+            ) a
+            )
+            select *,(select sum(OriQty) from UnionData where Seq = p.Seq and Article = p.Article) as TotalQty
+            from pivotData p
+            order by ASeq", orderID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+            result = DBProxy.Current.Select(null, sqlCmd, out grid2Data_OriQty);
             
 
             //設定兩個Grid的關聯
@@ -146,5 +182,23 @@ order by ASeq", orderID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot
                     break;
             }
         }
+
+        private void rarioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbQty.Checked)
+            {
+                listControlBindingSource1.DataSource = grid1Data;
+                listControlBindingSource2.DataSource = grid2Data;
+
+            }
+            else if (rbOriQty.Checked)
+            {
+                listControlBindingSource1.DataSource = grid1Data_OriQty;
+                listControlBindingSource2.DataSource = grid2Data_OriQty;
+
+            }
+        }
+
+
     }
 }
