@@ -663,11 +663,6 @@ namespace Sci.Production.Subcon
             var frm = new Sci.Win.Subs.ReportView(report);
             frm.MdiParent = MdiParent;
             frm.Show();
-
-
-
-
-
             return true;
         }
 
