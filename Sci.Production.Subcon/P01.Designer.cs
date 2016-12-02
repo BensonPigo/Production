@@ -117,7 +117,7 @@
             this.masterpanel.Controls.Add(this.dateBox3);
             this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(1058, 248);
+            this.masterpanel.Size = new System.Drawing.Size(1079, 248);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
@@ -159,7 +159,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 248);
-            this.detailpanel.Size = new System.Drawing.Size(1058, 229);
+            this.detailpanel.Size = new System.Drawing.Size(1079, 229);
             // 
             // gridicon
             // 
@@ -173,32 +173,32 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1058, 229);
+            this.detailgridcont.Size = new System.Drawing.Size(1079, 229);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1058, 515);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(1052, 469);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(1052, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1058, 515);
+            this.detail.Size = new System.Drawing.Size(1079, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1058, 477);
+            this.detailcont.Size = new System.Drawing.Size(1079, 477);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1079, 38);
             // 
             // browse
             // 
@@ -206,7 +206,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1066, 544);
+            this.tabs.Size = new System.Drawing.Size(1087, 544);
             // 
             // label3
             // 
@@ -372,7 +372,7 @@
             this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button4.Location = new System.Drawing.Point(928, 44);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(115, 30);
+            this.button4.Size = new System.Drawing.Size(136, 30);
             this.button4.TabIndex = 19;
             this.button4.Text = "Batch Import";
             this.button4.UseVisualStyleBackColor = true;
@@ -383,7 +383,7 @@
             this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button5.Location = new System.Drawing.Point(928, 79);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(115, 30);
+            this.button5.Size = new System.Drawing.Size(136, 30);
             this.button5.TabIndex = 20;
             this.button5.Text = "Special Record";
             this.button5.UseVisualStyleBackColor = true;
@@ -603,7 +603,7 @@
             // 
             this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button3.Location = new System.Drawing.Point(932, 12);
+            this.button3.Location = new System.Drawing.Point(953, 12);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(115, 30);
             this.button3.TabIndex = 4;
@@ -633,7 +633,7 @@
             // P01
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1066, 577);
+            this.ClientSize = new System.Drawing.Size(1087, 577);
             this.CloseChkValue = "Approved";
             this.Controls.Add(this.button3);
             this.DefaultFilter = "potype=\'O\'";
