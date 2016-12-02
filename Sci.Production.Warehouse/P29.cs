@@ -17,8 +17,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class P29 : Sci.Win.Tems.QueryForm
     {
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2;
+        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
+        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2 = new Ict.Win.UI.DataGridViewCheckBoxColumn();
         DataTable master, detail;
         public P29(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -32,7 +32,7 @@ namespace Sci.Production.Warehouse
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out col_chk)
                 .CheckBox("complete", header: "Complete" + Environment.NewLine + "Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
                  .Text("poid", header: "Issue SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("seq1", header: "Issue" + Environment.NewLine + "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -47,7 +47,33 @@ namespace Sci.Production.Warehouse
                  .Numeric("requestqty", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   ;
             #endregion
-
+            col_chk.CellClick += (s, e) =>
+            {
+                DataRow thisRow = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
+                if (null == thisRow) { return; }
+                if (e.RowIndex==-1)
+                {
+                    if (((bool)this.grid1.Rows[0].Cells[e.ColumnIndex].Value))
+                    {
+                        foreach (DataRow dr in detail.Rows)
+                        {
+                            dr["selected"] = false;
+                        }
+                        return;
+                    }
+                }
+                else
+                {
+                    if (((bool)this.grid1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value))
+                    {
+                        foreach (DataRow dr in thisRow.GetChildRows("rel1"))
+                        {
+                            dr["selected"] = false;
+                        }
+                        return;
+                    }
+                }
+            };
             Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
             Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
             #region -- transfer qty valid --
@@ -83,7 +109,7 @@ namespace Sci.Production.Warehouse
             this.grid2.DataSource = listControlBindingSource2;
 
             Helper.Controls.Grid.Generator(this.grid2)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk2)
+                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out col_chk2)
                  .Text("fromroll", header: "Roll#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                  .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(2), iseditingreadonly: true)
                  .Numeric("balanceQty", header: "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
@@ -93,6 +119,36 @@ namespace Sci.Production.Warehouse
                   ;
             col_Qty.DefaultCellStyle.BackColor = Color.Pink;
             col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
+            #endregion
+            chp();
+        }
+        private void chp()
+        {
+            #region selected
+            col_chk2.CellClick += (s, e) =>
+            {
+                DataRow thisRow = this.grid2.GetDataRow(this.listControlBindingSource2.Position);
+                if (null == thisRow) { return; }
+                if (e.RowIndex == -1)
+                {
+                    if (!((bool)this.grid2.Rows[0].Cells[e.ColumnIndex].Value))
+                    {
+                        // 原本沒selected , 會變selected , 就直接勾選parentRow
+                        thisRow.GetParentRow("rel1")["selected"] = true;
+                        return;
+                    }
+                }
+                else
+                {
+                    if (!((bool)this.grid2.Rows[e.RowIndex].Cells[e.ColumnIndex].Value))
+                    {
+                        // 原本沒selected , 會變selected , 就直接勾選parentRow
+                        thisRow.GetParentRow("rel1")["selected"] = true;
+                        return;
+                    }
+                }
+            };
+
             #endregion
         }
 
@@ -129,7 +185,7 @@ namespace Sci.Production.Warehouse
             sqlcmd.Append(string.Format(@";with cte
 as
 (
-select 0 as selected,iif(y.cnt > 0 ,0,1) complete,o.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup,o.CFMDate,o.CutInLine,o.ProjectID
+select convert(bit,0) as selected,iif(y.cnt >0 or z.cnt=0 ,0,1) complete,o.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup,o.CFMDate,o.CutInLine,o.ProjectID
 ,rtrim(pd.seq1) seq1,pd.seq2,pd.StockPOID,pd.StockSeq1,pd.StockSeq2
 ,pd.Qty*v.Rate PoQty,pd.POUnit,pd.StockUnit
 ,mpd.InQty
@@ -142,7 +198,11 @@ outer apply
 (select count(1) cnt from FtyInventory fi left join FtyInventory_Detail fid on fid.Ukey = fi.Ukey 
 	where  fi.POID = pd.stockpoID and fi.Seq1 = pd.stockSeq1 and fi.Seq2 = pd.stockSeq2 and fi.StockType = 'I' and fi.MDivisionID = o.MDivisionID
 	and fid.MtlLocationID is null and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0
-) y
+) y--Detail有MD為null數量,沒有則為0,沒資料也為0
+outer apply(
+	select count(1) cnt from FtyInventory fi left join FtyInventory_Detail fid on fid.Ukey = fi.Ukey 
+	where  fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2 and fi.StockType = 'B' and fi.MDivisionID = o.MDivisionID
+) z--Detail資料數量
 where o.MDivisionID = '{0}'
 and pd.seq1 like '7%'", Env.User.Keyword));
 
@@ -157,6 +217,18 @@ and pd.seq1 like '7%'", Env.User.Keyword));
                     break;
                 case 2:
                     sqlcmd.Append(@" and (o.Category = 'M')");
+                    break;
+            }
+
+            switch (selectindex2)
+            {
+                case 0:
+                    sqlcmd.Append(@" AND pd.FabricType ='F'");
+                    break;
+                case 1:
+                    sqlcmd.Append(@" AND pd.FabricType ='A'");
+                    break;
+                case 2:
                     break;
             }
 
@@ -236,7 +308,7 @@ drop table #tmp");
         {
             foreach (DataRow dr in master.Rows)
             {
-                if (dr["selected"].ToString() == "1" && !MyUtility.Check.Empty(dr["requestqty"]))
+                if (dr["selected"].ToString() == "true" && !MyUtility.Check.Empty(dr["requestqty"]))
                 {
                     var issued = PublicPrg.Prgs.autopick(dr, false);
                     if (issued == null) return;
@@ -261,7 +333,7 @@ drop table #tmp");
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to create data?");
             if (dResult == DialogResult.No) return;
 
-            DataRow[] findrow = detail.Select(@"selected = 1 and qty > 0");
+            DataRow[] findrow = detail.Select(@"selected = true and qty > 0");
             if (findrow.Length == 0)
             {
                 MyUtility.Msg.WarningBox("Please select data first!!");
@@ -351,7 +423,8 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
 
         private void btnExcel_Click(object sender, EventArgs e)
         {
-            MyUtility.Excel.CopyToXls(master, "");
+            Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(master);
+            sdExcel.Save();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
