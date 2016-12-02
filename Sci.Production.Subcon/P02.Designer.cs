@@ -273,7 +273,7 @@
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.label25.Lines = 0;
-            this.label25.Location = new System.Drawing.Point(928, 14);
+            this.label25.Location = new System.Drawing.Point(920, 14);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(115, 23);
             this.label25.TabIndex = 43;
@@ -285,7 +285,7 @@
             this.label17.BackColor = System.Drawing.Color.Transparent;
             this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.label17.Lines = 0;
-            this.label17.Location = new System.Drawing.Point(928, 110);
+            this.label17.Location = new System.Drawing.Point(922, 110);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(108, 23);
             this.label17.TabIndex = 44;
@@ -295,9 +295,9 @@
             // button4
             // 
             this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button4.Location = new System.Drawing.Point(928, 40);
+            this.button4.Location = new System.Drawing.Point(909, 40);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(115, 30);
+            this.button4.Size = new System.Drawing.Size(134, 30);
             this.button4.TabIndex = 7;
             this.button4.Text = "Batch Import";
             this.button4.UseVisualStyleBackColor = true;
@@ -306,9 +306,9 @@
             // button5
             // 
             this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button5.Location = new System.Drawing.Point(928, 75);
+            this.button5.Location = new System.Drawing.Point(909, 75);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(115, 30);
+            this.button5.Size = new System.Drawing.Size(134, 30);
             this.button5.TabIndex = 8;
             this.button5.Text = "Special Record";
             this.button5.UseVisualStyleBackColor = true;
