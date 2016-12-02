@@ -268,7 +268,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                         ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}'s balance: {4} is less than transfer qty: {5}" + Environment.NewLine
                             , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["balanceqty"], tmp["qty"]);
                     }
-                    MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
+                    MyUtility.Msg.WarningBox("Balance Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                     return;
                 }
             }
@@ -310,10 +310,8 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
             #endregion
 
             #region -- 更新表頭狀態資料 --
-
             sqlupd3 = string.Format(@"update SubTransfer set status='Confirmed', editname = '{0}' , editdate = GETDATE()
                                 where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-
             #endregion 更新表頭狀態資料
 
             #region -- 更新mdivisionpodetail B倉數 --
