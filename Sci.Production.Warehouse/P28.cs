@@ -350,11 +350,8 @@ drop table #tmp");
         {            
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to create data?");
             if (dResult == DialogResult.No) return;
-            //要判斷Grid1有勾選,且已經勾選的Grid1的row下的grid2有勾,否則顯示Please select data first!!
 
             DataRow[] findrow = detail.AsEnumerable().Where(row=>row["selected"].EqualString("True")).ToArray();
-            //DataRow[] findrow = detail.Select(@"selected = 1");
-            //DataRow[] findrow = detail.Select(@"selected = 1 and qty > 0");
 
             if (findrow.Length == 0)
             {
