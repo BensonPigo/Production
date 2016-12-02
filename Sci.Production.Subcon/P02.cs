@@ -45,7 +45,8 @@ namespace Sci.Production.Subcon
             };
 
         }
-
+        string Amount;
+        string Grandtotal;
         // 新增時預設資料
         protected override void ClickNewAfter()
         {
@@ -186,6 +187,19 @@ namespace Sci.Production.Subcon
                 CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(factorykeyword + "OS", "artworkpo", (DateTime)CurrentMaintain["issuedate"]);
             }
 
+            #region 加總明細金額至表頭
+            string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency where id = '{0}'", CurrentMaintain["currencyId"]), null);
+            if (str == null || string.IsNullOrWhiteSpace(str))
+            {
+                MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't save!", CurrentMaintain["currencyID"]), "Warning");
+                return false;
+            }
+            int exact = int.Parse(str);
+            object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(amount)", "");
+            CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_a, exact);
+            CurrentMaintain["vat"] = MyUtility.Math.Round((decimal)detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
+            #endregion
+
             return base.ClickSaveBefore();
         }
 
@@ -212,7 +226,7 @@ namespace Sci.Production.Subcon
             }
             return base.OnRenewDataDetailPost(e);
         }
-
+       
         //refresh
         protected override void OnDetailEntered()
         {
@@ -222,6 +236,28 @@ namespace Sci.Production.Subcon
             if (artworkunit == "") artworkunit = "PCS";
             this.detailgrid.Columns[6].HeaderText = "Cost(" + artworkunit + ")";
             this.detailgrid.Columns[7].HeaderText = artworkunit;
+            #endregion
+            #region -- 加總明細金額，顯示於表頭 --
+            if (!(CurrentMaintain == null))
+            {
+                if (!(CurrentMaintain["amount"] == DBNull.Value) && !(CurrentMaintain["vat"] == DBNull.Value))
+                {
+                    decimal amount = (decimal)CurrentMaintain["amount"] + (decimal)CurrentMaintain["vat"];
+                    Grandtotal = amount.ToString();
+                }
+
+                decimal x = 0; decimal x1 = 0;
+                foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
+                {
+                    x += (decimal)drr["amount"];
+                }
+                x1 += x + (decimal)CurrentMaintain["vat"];
+                Console.WriteLine("get {0}", x);
+                Amount = x.ToString();
+                Grandtotal = x1.ToString();
+            }
+
+           
             #endregion
             txtsubcon1.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
@@ -330,7 +366,7 @@ namespace Sci.Production.Subcon
             #endregion
             #region 可編輯欄位變色
             detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
-            detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;  //Cutpart Name
+            //detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;  //Cutpart Name
             detailgrid.Columns[10].DefaultCellStyle.BackColor = Color.Pink; //Qty/GMT
             #endregion
         }
@@ -490,9 +526,10 @@ namespace Sci.Production.Subcon
             string Issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             string Delivery = ((DateTime)MyUtility.Convert.GetDate(row["Delivery"])).ToShortDateString();
             string Remark = row["Remark"].ToString();
-            string TOTAL = row["Amount"].ToString();
+            string TOTAL = Amount;
             string VAT = row["Vat"].ToString();
-            string GRATOTAL = row["Amount"] + row["Vat"].ToString();
+            string GRATOTAL = Grandtotal;
+          
 
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
