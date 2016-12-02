@@ -542,8 +542,8 @@ namespace Sci.Production.Subcon
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", FAX));
 
             // 傳 list 資料            
-            List<P02_PrintData> data = dtDetail.AsEnumerable()
-                .Select(row1 => new P02_PrintData()
+            List<P01_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P01_PrintData()
                 {
                     OrderID = row1["Orderid"].ToString(),
                     StyleID = row1["styleID"].ToString(),
@@ -559,9 +559,9 @@ namespace Sci.Production.Subcon
             #endregion
             // 指定是哪個 RDLC
             //DualResult result;
-            Type ReportResourceNamespace = typeof(P02_PrintData);
+            Type ReportResourceNamespace = typeof(P01_PrintData);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P02_Print.rdlc";
+            string ReportResourceName = "P01_Print.rdlc";
 
             IReportResource reportresource;
             if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
