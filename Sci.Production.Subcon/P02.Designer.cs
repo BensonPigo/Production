@@ -97,7 +97,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 248);
+            this.masterpanel.Size = new System.Drawing.Size(1058, 248);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -129,7 +129,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 248);
-            this.detailpanel.Size = new System.Drawing.Size(892, 101);
+            this.detailpanel.Size = new System.Drawing.Size(1058, 229);
             // 
             // gridicon
             // 
@@ -143,32 +143,32 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 101);
+            this.detailgridcont.Size = new System.Drawing.Size(1058, 229);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(1058, 515);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(1052, 469);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(1052, 40);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(1058, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(1058, 477);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 477);
+            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
             // 
             // browse
             // 
@@ -459,6 +459,7 @@
             this.IsSupportClose = true;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportPrint = false;
             this.IsSupportUnclose = true;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
@@ -466,9 +467,10 @@
             this.Text = "P02. In-House Requisition";
             this.UnApvChkValue = "Approved";
             this.UncloseChkValue = "Closed";
+            this.UniqueExpress = "ID";
             this.WorkAlias = "ArtworkPO";
-            this.Controls.SetChildIndex(this.button3, 0);
             this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.button3, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);

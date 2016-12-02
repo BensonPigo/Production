@@ -14,6 +14,9 @@ using Sci.Production;
 
 using Sci.Production.PublicPrg;
 using System.Linq;
+using System.Data.SqlClient;
+using Sci.Win;
+using System.Reflection;
 
 
 
@@ -316,7 +319,7 @@ namespace Sci.Production.Subcon
             .Numeric("coststitch", header: "Cost(PCS/Stitch)", width: Widths.AnsiChars(5), iseditingreadonly: true)//6
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(5))    //7
             .Text("patterncode", header: "CutpartID", width: Widths.AnsiChars(10), iseditingreadonly: true) //8
-            .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(15))   //9
+            .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(15),iseditingreadonly: true)   //9
 
             .Numeric("qtygarment", header: "Qty/GMT", width: Widths.AnsiChars(5), integer_places: 2)  //10
 
@@ -479,5 +482,102 @@ namespace Sci.Production.Subcon
             }
         }
 
+        //print
+        protected override bool ClickPrint()
+        {
+            DataRow row = this.CurrentDataRow;
+            string id = row["ID"].ToString();
+            string Issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string Delivery = ((DateTime)MyUtility.Convert.GetDate(row["Delivery"])).ToShortDateString();
+            string Remark = row["Remark"].ToString();
+            string TOTAL = row["Amount"].ToString();
+            string VAT = row["Vat"].ToString();
+            string GRATOTAL = row["Amount"] + row["Vat"].ToString();
+
+            #region -- 撈表頭資料 --
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DualResult result;
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Delivery", Delivery));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issuedate", Issuedate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TOTAL", TOTAL));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VAT", VAT));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("GRATOTAL", GRATOTAL));
+
+            #endregion
+            #region -- 撈表身資料 --
+            pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", id));
+            DataTable dtDetail;
+            string sqlcmd = @"select 
+            F.nameEn,F.AddressEN,F.Tel,ART.LocalSuppID+'-'+L.name AS TITLETO,L.Tel,L.Address,L.fax,
+            A.Orderid,O.styleID,A.poQty,A.artworkid,A.Stitch,A.Unitprice,A.Qtygarment,A.Amount
+            from DBO.artworkpo ART
+			LEFT JOIN dbo.factory F
+			ON  F.ID = ART.factoryid
+			LEFT JOIN dbo.LocalSupp L
+			ON  L.ID = ART.LocalSuppID
+			LEFT JOIN dbo.Artworkpo_Detail A
+			ON  A.ID = ART.ID
+			LEFT JOIN dbo.Orders O
+			ON  O.id = A.OrderID where ART.id= @ID";
+            result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
+            if (!result) { this.ShowErr(sqlcmd, result); }
+            string Title1 = dtDetail.Rows[0]["nameEn"].ToString();
+            string Title2 = dtDetail.Rows[0]["AddressEN"].ToString();
+            string Title3 = dtDetail.Rows[0]["Tel"].ToString();
+            string TO = dtDetail.Rows[0]["TITLETO"].ToString();
+            string TEL = dtDetail.Rows[0]["Tel"].ToString();
+            string ADDRESS = dtDetail.Rows[0]["Address"].ToString();
+            string FAX = dtDetail.Rows[0]["fax"].ToString();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", Title3));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TO", TO));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL", TEL));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ADDRESS", ADDRESS));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", FAX));
+
+            // 傳 list 資料            
+            List<P02_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P02_PrintData()
+                {
+                    OrderID = row1["Orderid"].ToString(),
+                    StyleID = row1["styleID"].ToString(),
+                    poQTY = row1["poQty"].ToString(),
+                    ArtworkID = row1["artworkid"].ToString(),
+                    PCS = row1["Stitch"].ToString(),
+                    Unitprice = row1["Unitprice"].ToString(),
+                    QtyGMT = row1["Qtygarment"].ToString(),
+                    Amount = row1["Amount"].ToString()
+                }).ToList();
+
+            report.ReportDataSource = data;
+            #endregion
+            // 指定是哪個 RDLC
+            //DualResult result;
+            Type ReportResourceNamespace = typeof(P02_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P02_Print.rdlc";
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                //this.ShowException(result);
+                return false;
+            }
+
+            report.ReportResource = reportresource;
+
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
+
+            return true;
+        }
     }
 }
