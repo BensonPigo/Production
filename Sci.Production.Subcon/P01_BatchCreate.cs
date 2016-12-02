@@ -32,6 +32,7 @@ namespace Sci.Production.Subcon
         public P01_BatchCreate(string fuc)
         {
             InitializeComponent();
+
             if (fuc == "P01")
             {
                 poType = "O";

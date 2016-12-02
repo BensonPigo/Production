@@ -40,7 +40,11 @@ namespace Sci.Production.Subcon
             { sum_order_qty = int.Parse(tmpdt.Rows[0][0].ToString()); this.displayBox8.Text = tmpdt.Rows[0][0].ToString(); }
 
         }
-
+        protected override void OnClosed(EventArgs e)
+        {
+            dr.RejectChanges();
+            base.OnClosed(e);
+        }
         private void numericBox1_Validated(object sender, EventArgs e)
         {
             dr["poqty"] = ((Sci.Win.UI.NumericBox)sender).Value;
