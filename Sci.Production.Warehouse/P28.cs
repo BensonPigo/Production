@@ -57,7 +57,6 @@ namespace Sci.Production.Warehouse
                         {
                             dr["selected"] = false;
                         }
-                        return;
                     }
                 }
                 else
@@ -68,9 +67,9 @@ namespace Sci.Production.Warehouse
                         {
                             dr["selected"] = false;
                         }
-                        return;
                     }
                 }
+                this.grid1.ValidateControl();
             };
 
             Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
@@ -135,7 +134,6 @@ namespace Sci.Production.Warehouse
                     {
                         // 原本沒selected , 會變selected , 就直接勾選parentRow
                         thisRow.GetParentRow("rel1")["selected"] = true;
-                        return;
                     }                    
                 }
                 else
@@ -144,22 +142,10 @@ namespace Sci.Production.Warehouse
                     {
                         // 原本沒selected , 會變selected , 就直接勾選parentRow
                         thisRow.GetParentRow("rel1")["selected"] = true;
-                        return;
                     }
-
-                    //DataRow[] otherSelectedRow = detail.AsEnumerable()
-                    //    .Where(row => row != thisRow && row["selected"].EqualString("true")).ToArray();
-                    //if (otherSelectedRow.Length == 0) return;
-                    //else
-                    //{
-                    //    foreach (DataRow dr in otherSelectedRow)
-                    //    {
-                    //        dr.GetParentRow("rel1")["selected"] = true;
-                    //    }
-                    //}
                 }
+                this.grid1.ValidateControl();
             };
-                        
             #endregion
         }
 
@@ -243,7 +229,6 @@ where pd.inputqty > 0 and o.MDivisionID = '{0}'", Env.User.Keyword));
                     sqlcmd.Append(@" and (o.Category = 'M')");
                     break;
             }
-
             switch (selectindex2)
             {
                 case 0:
@@ -296,7 +281,6 @@ drop table #tmp");
                 MyUtility.Msg.WarningBox(sqlcmd.ToString(), "DB error!!");
                 return;
             }
-
             master = dataSet.Tables[0];
             master.TableName = "Master";
             master.DefaultView.Sort = "poid,seq1,seq2";

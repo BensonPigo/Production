@@ -59,7 +59,6 @@ namespace Sci.Production.Warehouse
                         {
                             dr["selected"] = false;
                         }
-                        return;
                     }
                 }
                 else
@@ -70,9 +69,9 @@ namespace Sci.Production.Warehouse
                         {
                             dr["selected"] = false;
                         }
-                        return;
                     }
                 }
+                this.grid1.ValidateControl();
             };
             Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
             Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
@@ -135,7 +134,7 @@ namespace Sci.Production.Warehouse
                     {
                         // 原本沒selected , 會變selected , 就直接勾選parentRow
                         thisRow.GetParentRow("rel1")["selected"] = true;
-                        return;
+                      
                     }
                 }
                 else
@@ -144,9 +143,10 @@ namespace Sci.Production.Warehouse
                     {
                         // 原本沒selected , 會變selected , 就直接勾選parentRow
                         thisRow.GetParentRow("rel1")["selected"] = true;
-                        return;
+                        
                     }
                 }
+                this.grid1.ValidateControl();
             };
 
             #endregion
@@ -254,7 +254,7 @@ where PoQty > InQty
 select * from #tmp;
 
 select 
-0 as selected,
+convert(bit,0) as selected,
 fi.Ukey FromFtyInventoryUkey,
 fi.MDivisionID FromMdivisionID,
 fi.POID FromPoid,
