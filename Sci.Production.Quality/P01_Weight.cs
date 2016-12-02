@@ -218,8 +218,18 @@ namespace Sci.Production.Quality
             {
                 if (!this.EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (dr["Result"].ToString() == "Pass") dr["Result"] = "Fail";
-                else dr["Result"] = "Pass";
+                if (dr["Result"].ToString() == "Pass")
+                {
+                    var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;
+                    dr["Result"] = "Fail";
+                    ctl.Text = dr["result"].ToString();
+                }
+                else
+                {
+                    var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;          
+                    dr["Result"] = "Pass";
+                    ctl.Text = dr["result"].ToString();
+                }
             };
             #endregion
             Helper.Controls.Grid.Generator(this.grid)

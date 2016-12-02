@@ -492,7 +492,7 @@ namespace Sci.Production.Quality
               .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
               .Numeric("HorizontalOriginal", header: "Original Horizontal", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: orlHorCell)
               .Numeric("VerticalOriginal", header: "Original Vertical", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: orlVirCell)
-              .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell)
+              .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell,iseditingreadonly:true)
               .Numeric("HorizontalTest1", header: "Horizontal 1", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: HorTest1Cell)
               .Numeric("HorizontalTest2", header: "Horizontal 2", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: HorTest2Cell)
               .Numeric("HorizontalTest3", header: "Horizontal 3", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2,maximum:99, settings: HorTest3Cell)

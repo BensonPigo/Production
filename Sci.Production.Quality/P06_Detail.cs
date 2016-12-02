@@ -655,22 +655,23 @@ namespace Sci.Production.Quality
 
             #region -- resultCell
             DataGridViewGeneratorTextColumnSettings resultCell = new DataGridViewGeneratorTextColumnSettings();
-
+            resultCell.CharacterCasing = CharacterCasing.Normal;
+            
 
             resultCell.CellMouseDoubleClick += (s, e) =>
             {
                 if (this.EditMode == false) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (dr["result"].ToString() == "PASS") 
+                if (dr["result"].ToString().ToUpper() == "PASS") 
                 {
                     var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;                   
-                    dr["result"] = "FAIL";
+                    dr["result"] = "Fail";
                     ctl.Text = dr["result"].ToString();
                 }
                 else
                 {
                     var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;           
-                    dr["result"] = "PASS";
+                    dr["result"] = "Pass";
                     ctl.Text = dr["result"].ToString();
                 }
             };
@@ -989,13 +990,13 @@ namespace Sci.Production.Quality
                             MyUtility.Msg.InfoBox("<Result> can not be empty!");
                             return;
                         }
-                        if (dr["Result"].ToString().Trim() == "FAIL")
+                        if (dr["Result"].ToString().Trim().ToUpper() == "FAIL")
                         {
                             result = false;
                             DBProxy.Current.Execute(null, string.Format("update ColorFastness set result='Fail',status='Confirmed',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dr["id"]));
 
                         }
-                        if (dr["Result"].ToString().Trim() == "PASS" && result)
+                        if (dr["Result"].ToString().Trim().ToUpper() == "PASS" && result)
                         {
                             DBProxy.Current.Execute(null, string.Format("update ColorFastness set result='Pass',status='Confirmed',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dr["id"]));
 
