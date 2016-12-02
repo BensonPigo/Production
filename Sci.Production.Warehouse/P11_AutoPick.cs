@@ -88,13 +88,13 @@ from UNPIVOT_1 ;
 delete from #tmp2 where qty = 0;
 
 	declare @count as int;
-	create Table #tmpOrder_Qty
+	create Table #Tmp_Order_Qty
 		(  ID Varchar(13), FactoryID Varchar(8), CustCDID Varchar(16), ZipperInsert Varchar(5)
 		 , CustPONo VarChar(30), BuyMonth VarChar(16), CountryID VarChar(2), StyleID Varchar(15)
 		 , Article VarChar(8), SizeSeq VarChar(2), SizeCode VarChar(8), Qty Numeric(6,0)
 		);
 
-    Insert Into #tmpOrder_Qty
+    Insert Into #Tmp_Order_Qty
 		Select Orders.ID, Orders.FactoryID, Orders.CustCDID, CustCD.ZipperInsert
 			 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
 			 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
@@ -119,10 +119,10 @@ delete from #tmp2 where qty = 0;
 		 --Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
 			--	, CountryID, StyleID, Article, Seq, SizeCode;
 
-	select @count = count(1) from #tmpOrder_Qty;
+	select @count = count(1) from #Tmp_Order_Qty;
 	if @count = 0
 	begin
-		Insert Into #tmpOrder_Qty
+		Insert Into #Tmp_Order_Qty
 		Select Orders.ID, Orders.FactoryID, Orders.CustCDID, CustCD.ZipperInsert
 			 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
 			 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
@@ -146,10 +146,10 @@ delete from #tmp2 where qty = 0;
 		   AND Order_Qty.ID = '{2}'
 		 --Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
 			--	, CountryID, StyleID, Article, Seq, SizeCode;
-		select @count = count(1) from #tmpOrder_Qty;
+		select @count = count(1) from #Tmp_Order_Qty;
 		if @count = 0
 		begin
-			Insert Into #tmpOrder_Qty
+			Insert Into #Tmp_Order_Qty
 			Select Orders.ID, Orders.FactoryID, Orders.CustCDID, CustCD.ZipperInsert
 				 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
 				 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
@@ -187,7 +187,7 @@ delete from #tmp2 where qty = 0;
 	Create NonClustered Index Idx_ID on #Tmp_BoaExpend (ID, Order_BOAUkey, ColorID) -- table index
 
 	Exec dbo.BoaExpend '{3}', {4}, {5}, '{6}',0,1;
-	Drop Table #tmpOrder_Qty;
+	Drop Table #Tmp_Order_Qty;
 
 	select p.id as [poid], p.seq1, p.seq2, p.SCIRefno,dbo.getMtlDesc(p.id, p.seq1, p.seq2,2,0) [description] 
 	,p.ColorID, p.SizeSpec, p.Spec, p.Special, p.Remark into #tmpPO_supp_detail
