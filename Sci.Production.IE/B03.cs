@@ -15,42 +15,5 @@ namespace Sci.Production.IE
         {
             InitializeComponent();
         }
-
-        protected override void ClickNewAfter()
-        {
-           
-            this.txtID.ReadOnly = false;
-            this.txtDescription.ReadOnly = false;
-            base.ClickNewAfter();
-        }
-
-        protected override void ClickEditAfter()
-        {
-            this.txtID.ReadOnly = true;
-            this.txtDescription.ReadOnly = false;
-            base.ClickEditAfter();
-        }
-
-        protected override bool ClickSaveBefore()
-        {
-            #region 必輸檢查
-            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
-            {
-                MyUtility.Msg.WarningBox("< ID > can not be empty!");
-                this.txtID.Focus();
-                return false;
-            }
-            if (MyUtility.Check.Empty(CurrentMaintain["Description"]))
-            {
-                MyUtility.Msg.WarningBox("< Description > can not be empty!");
-                this.txtDescription.Focus();
-                return false;
-            }
-            this.CurrentMaintain["Type"] = "LM";
-          
-            #endregion
-            return base.ClickSaveBefore();
-        }
-
     }
 }
