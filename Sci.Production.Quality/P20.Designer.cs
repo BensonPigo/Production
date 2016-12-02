@@ -106,7 +106,7 @@
             this.masterpanel.Controls.Add(this.txtSP);
             this.masterpanel.Controls.Add(this.lbDate);
             this.masterpanel.Controls.Add(this.CDate);
-            this.masterpanel.Size = new System.Drawing.Size(876, 170);
+            this.masterpanel.Size = new System.Drawing.Size(892, 170);
             this.masterpanel.Controls.SetChildIndex(this.CDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSP, 0);
@@ -143,7 +143,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 170);
-            this.detailpanel.Size = new System.Drawing.Size(876, 192);
+            this.detailpanel.Size = new System.Drawing.Size(892, 179);
             // 
             // gridicon
             // 
@@ -151,7 +151,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(876, 192);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 179);
             // 
             // detail2
             // 
@@ -164,19 +164,6 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(876, 400);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(876, 362);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 362);
-            this.detailbtm.Size = new System.Drawing.Size(876, 38);
             // 
             // browse
             // 
@@ -531,6 +518,8 @@
             this.DefaultDetailOrder = "GarmentDefectTypeid,GarmentDefectCodeID";
             this.DefaultOrder = "ID";
             this.GridAlias = "Rft_Detail";
+            this.IsSupportCopy = false;
+            this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.KeyField2 = "ID";
             this.Name = "P20";

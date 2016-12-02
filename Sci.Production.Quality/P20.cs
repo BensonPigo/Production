@@ -429,6 +429,7 @@ namespace Sci.Production.Quality
         protected override bool ClickEditBefore()
         {           
             DataTable dt;
+            isNew = false;
             string sql = string.Format(@"select * from rft where id='{0}'", CurrentMaintain["ID"].ToString().Trim());
             DBProxy.Current.Select(null, sql,out dt);
             if (dt.Rows[0]["status"].ToString().ToUpper() == "CONFIRMED")
