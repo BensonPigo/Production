@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.label4 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
-            this.txtDescription = new Sci.Win.UI.EditBox();
-            this.txtID = new Sci.Win.UI.TextBox();
-            this.checkBox2 = new Sci.Win.UI.CheckBox();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.editBox1 = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,9 +47,9 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.checkBox2);
-            this.detailcont.Controls.Add(this.txtID);
-            this.detailcont.Controls.Add(this.txtDescription);
+            this.detailcont.Controls.Add(this.editBox1);
+            this.detailcont.Controls.Add(this.displayBox1);
+            this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Size = new System.Drawing.Size(681, 357);
@@ -65,6 +65,20 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(689, 424);
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkBox1.IsSupportEditMode = false;
+            this.checkBox1.Location = new System.Drawing.Point(349, 44);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.ReadOnly = true;
+            this.checkBox1.Size = new System.Drawing.Size(57, 21);
+            this.checkBox1.TabIndex = 17;
+            this.checkBox1.Text = "Junk";
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // label4
             // 
@@ -84,39 +98,28 @@
             this.label3.TabIndex = 13;
             this.label3.Text = "ID";
             // 
-            // txtDescription
+            // displayBox1
             // 
-            this.txtDescription.BackColor = System.Drawing.Color.White;
-            this.txtDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
-            this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDescription.Location = new System.Drawing.Point(138, 96);
-            this.txtDescription.Multiline = true;
-            this.txtDescription.Name = "txtDescription";
-            this.txtDescription.Size = new System.Drawing.Size(348, 50);
-            this.txtDescription.TabIndex = 19;
+            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(137, 44);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(50, 23);
+            this.displayBox1.TabIndex = 18;
             // 
-            // txtID
+            // editBox1
             // 
-            this.txtID.BackColor = System.Drawing.Color.White;
-            this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtID.Location = new System.Drawing.Point(138, 44);
-            this.txtID.Name = "txtID";
-            this.txtID.ReadOnly = true;
-            this.txtID.Size = new System.Drawing.Size(100, 23);
-            this.txtID.TabIndex = 20;
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox2.Location = new System.Drawing.Point(282, 46);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(57, 21);
-            this.checkBox2.TabIndex = 21;
-            this.checkBox2.Text = "Junk";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.editBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
+            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editBox1.IsSupportEditMode = false;
+            this.editBox1.Location = new System.Drawing.Point(138, 96);
+            this.editBox1.Multiline = true;
+            this.editBox1.Name = "editBox1";
+            this.editBox1.ReadOnly = true;
+            this.editBox1.Size = new System.Drawing.Size(348, 50);
+            this.editBox1.TabIndex = 19;
             // 
             // B04
             // 
@@ -125,6 +128,8 @@
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B04";
             this.Text = "B04. Changeover Problem";
@@ -145,10 +150,10 @@
 
         #endregion
 
+        private Win.UI.CheckBox checkBox1;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
-        private Win.UI.EditBox txtDescription;
-        private Win.UI.TextBox txtID;
-        private Win.UI.CheckBox checkBox2;
+        private Win.UI.EditBox editBox1;
+        private Win.UI.DisplayBox displayBox1;
     }
 }
