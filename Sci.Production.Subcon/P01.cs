@@ -525,6 +525,7 @@ namespace Sci.Production.Subcon
             if (dg.Columns["scidelivery"] == null) dg.Columns.Add("scidelivery", typeof(DateTime));
             foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
             {
+                if (drr.RowState == DataRowState.Deleted) continue;
                 drr["Price"] = (Decimal)drr["unitprice"] * (Decimal)drr["qtygarment"];
                 DataTable order_dt;
                 DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders where id='{0}'", drr["orderid"].ToString()), out order_dt);
