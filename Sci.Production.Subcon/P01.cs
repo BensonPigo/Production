@@ -242,6 +242,16 @@ namespace Sci.Production.Subcon
                     decimal amount = (decimal)CurrentMaintain["amount"] + (decimal)CurrentMaintain["vat"];
                     numericBox4.Text = amount.ToString();
                 }
+
+                decimal x = 0; decimal x1 = 0;
+                foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
+                {
+                    x += (decimal)drr["amount"];
+                }
+                x1 += x + (decimal)CurrentMaintain["vat"];
+                Console.WriteLine("get {0}", x);
+                numericBox3.Text = x.ToString();
+                numericBox4.Text = x1.ToString();
             }
             #endregion
             txtsubcon1.Enabled = !this.EditMode || IsDetailInserting;
@@ -366,7 +376,7 @@ namespace Sci.Production.Subcon
             .Numeric("coststitch", header: "Cost"+ Environment.NewLine+"(PCS/Stitch)", width: Widths.AnsiChars(3), iseditingreadonly: true)//6
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(3))    //7
             .Text("patterncode", header: "Cutpart"+ Environment.NewLine+"ID", width: Widths.AnsiChars(5), iseditingreadonly: true) //8
-            .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(15))   //9
+            .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(15), iseditingreadonly: true)   //9
             .Numeric("unitprice", header: "Unit Price", width: Widths.AnsiChars(5), settings: ns, decimal_places: 4, integer_places: 4)     //10
             .Numeric("cost", header: "Cost"+ Environment.NewLine+"(USD)", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 4, integer_places: 4)  //11
             .Numeric("qtygarment", header: "Qty/GMT", width: Widths.AnsiChars(5), settings: ns2, integer_places: 2)  //12
@@ -577,9 +587,9 @@ namespace Sci.Production.Subcon
             string Issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             string Delivery = ((DateTime)MyUtility.Convert.GetDate(row["Delivery"])).ToShortDateString();
             string Remark = row["Remark"].ToString();
-            string TOTAL = row["Amount"].ToString();
+            string TOTAL = numericBox3.Text;
             string VAT = row["Vat"].ToString();
-            string GRATOTAL = row["Amount"] + row["Vat"].ToString();
+            string GRATOTAL = numericBox4.Text;
 
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
