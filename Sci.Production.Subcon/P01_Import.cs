@@ -82,7 +82,7 @@ namespace Sci.Production.Subcon
 ,oa.qty as coststitch,oa.qty Stitch,oa.PatternDesc,1 as qtygarment,oa.Cost
 , oa.Cost unitprice, oa.Cost as  price, sum(q.qty)*cost as amount
 from orders o inner join order_qty q on q.id = o.ID
-inner join dbo.View_Order_Artworks oa on oa.ID = o.ID
+inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article=Q.Article AND OA.SizeCode=Q.SizeCode
 inner join dbo.Order_TmsCost ot on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
 where not exists (select * from artworkpo a inner join ArtworkPO_Detail ap on a.ID=ap.ID where a.POType = '{0}' 
 and a.ArtworkTypeID = oa.ArtworkTypeID and a.LocalSuppID = ot.localsuppid  and ap.OrderID = o.ID)", poType);
