@@ -50,25 +50,26 @@ namespace Sci.Production.Cutting
         {
             this.grid1.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid1)
-                .CheckBox("selected", header: "Sel", width: Widths.AnsiChars(6), iseditable: true, trueValue: true, falseValue: false)
-                .Text("Bundle", header: "Bundle#", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("POID", header: "POID", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("SP", header: "SP#", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Group", header: "Group", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Line", header: "Line", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Cell", header: "Cell", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Style", header: "Style", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .CheckBox("selected", header: "Sel", width: Widths.AnsiChars(4), iseditable: true, trueValue: true, falseValue: false)
+                .Text("Bundle", header: "Bundle#", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("POID", header: "POID", width: Widths.AnsiChars(11), iseditingreadonly: true)
+                .Text("SP", header: "SP#", width: Widths.AnsiChars(14), iseditingreadonly: true)
+                .Text("Group", header: "Group", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Line", header: "Line", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                .Text("Cell", header: "Cell", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                .Text("Style", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Item", header: "Item", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Comb", header: "Comb", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Cut", header: "Cut#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Comb", header: "Comb", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Cut", header: "Cut#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Color", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Size", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Color", header: "Color", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Size", header: "Size", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Cutpart", header: "Cutpart Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Parts", header: "Parts", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("Qty", header: "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("SubProcess", header: "Artwork", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Parts", header: "Parts", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("Qty", header: "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(8), iseditingreadonly: true)
                 ;
 
         }
@@ -78,10 +79,10 @@ namespace Sci.Production.Cutting
         private void button1_Click(object sender, EventArgs e)
         {
 
-            if (this.textBox1.Text.Empty() || this.textBox2.Text.Empty() || this.textBox4.Text.Empty() || this.textBox3.Text.Empty() || this.textBox7.Text.Empty() || this.textBox6.Text.Empty()
-                || this.textBox5.Text.Empty() || this.dateBox1.Value.Empty())
+            if (this.textBox1.Text.Empty() && this.textBox2.Text.Empty() && this.textBox4.Text.Empty() && this.textBox3.Text.Empty() && this.textBox7.Text.Empty() && this.textBox6.Text.Empty()
+                || this.textBox5.Text.Empty() && this.dateBox1.Value.Empty())
             {
-                MyUtility.Msg.ErrorBox("[Cut_Ref# and SP# and POID and Bundle# and Est.Cut Date] can not is null");
+                MyUtility.Msg.ErrorBox("[Cut_Ref# and SP# and POID and Bundle# and Est.Cut Date] can not be all null !!");
                 textBox1.Focus();
                 return;
             }
@@ -185,6 +186,7 @@ namespace Sci.Production.Cutting
                                                 ,b.cutno [Cut]
                                                 ,b.Article [Article]
                                                 ,b.Colorid [Color]
+                                                ,b.Article + '\' + b.Colorid [Color2]
                                                 ,a.SizeCode [Size]
                                                 ,qq.Cutpart [Cutpart]
                                                 ,[Description]=iif(a.Patterncode = 'ALLPARTS',iif(@extend='1',d.PatternDesc,a.PatternDesc),a.PatternDesc)
@@ -192,16 +194,14 @@ namespace Sci.Production.Cutting
                                                 ,[Parts]=iif(a.Patterncode = 'ALLPARTS',iif(@extend='1',d.Parts,a.Parts),a.Parts)
                                                 ,a.Qty [Qty]
                                                 ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
-                                                ,left(a.BundleNo,3) [left]
+                                                --,left(a.BundleNo,3) [left]
+                                                ,b.MDivisionid [left]
                                                 from dbo.Bundle_Detail a
                                                 left join dbo.bundle b on a.id=b.ID
                                                 left join dbo.Orders c on c.id=b.Orderid
                                                 left join dbo.Bundle_Detail_Allpart d on d.id=a.id and d.BundleNo=a.BundleNo
                                                 left join dbo.WorkOrder e on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
-                                                outer apply(select iif(a1.PatternCode = 'ALLPARTS',iif(@extend='1',d1.PatternCode,a1.PatternCode),a1.PatternCode) [Cutpart]
-                                                             from dbo.Bundle_Detail a1 
-                                                             left join dbo.Bundle_Detail_Allpart d1 on d1.id=a1.Id and d1.BundleNo=a1.BundleNo 
-			                                                 where a1.Id = a.ID and d1.BundleNo = d.BundleNo and d1.Patterncode = d.Patterncode)[qq]
+                                                outer apply( select iif(a.PatternCode = 'ALLPARTS',iif('0'='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
                                                 outer apply(select SubProcess = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 							                                                     from dbo.Bundle_Detail_Art e1
 							                                                     where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= qq.Cutpart
@@ -256,7 +256,7 @@ namespace Sci.Production.Cutting
                 Item = row1["Item"].ToString(),
                 Body_Cut = row1["Body_Cut"].ToString(),
                 Parts = row1["Parts"].ToString(),
-                Color = row1["Color"].ToString(),
+                Color = row1["Color2"].ToString(),
                 Size = row1["Size"].ToString(),
                 Desc = row1["Description"].ToString(),
                 SubProcess = row1["SubProcess"].ToString(),

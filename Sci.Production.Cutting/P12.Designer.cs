@@ -53,16 +53,20 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label11 = new Sci.Win.UI.Label();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.button2 = new Sci.Win.UI.Button();
             this.button3 = new Sci.Win.UI.Button();
             this.button4 = new Sci.Win.UI.Button();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.panel5 = new Sci.Win.UI.Panel();
+            this.grid1 = new Sci.Win.UI.Grid();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            this.panel3.SuspendLayout();
+            this.panel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -89,9 +93,10 @@
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(12, 12);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1156, 86);
+            this.panel1.Size = new System.Drawing.Size(1187, 86);
             this.panel1.TabIndex = 1;
             // 
             // dateBox1
@@ -293,41 +298,10 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Cut Ref";
             // 
-            // grid1
-            // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(11, 113);
-            this.grid1.Name = "grid1";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1157, 253);
-            this.grid1.TabIndex = 2;
-            this.grid1.TabStop = false;
-            // 
             // label11
             // 
             this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(47, 385);
+            this.label11.Location = new System.Drawing.Point(10, 11);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(50, 22);
             this.label11.TabIndex = 3;
@@ -342,14 +316,15 @@
             this.comboBox1.Items.AddRange(new object[] {
             "Bundle#",
             "SP#"});
-            this.comboBox1.Location = new System.Drawing.Point(100, 385);
+            this.comboBox1.Location = new System.Drawing.Point(63, 11);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(144, 24);
             this.comboBox1.TabIndex = 4;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(740, 376);
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button2.Location = new System.Drawing.Point(742, 11);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(123, 33);
             this.button2.TabIndex = 5;
@@ -359,7 +334,8 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(879, 376);
+            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button3.Location = new System.Drawing.Point(881, 11);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(136, 33);
             this.button3.TabIndex = 6;
@@ -369,7 +345,8 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(1032, 376);
+            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button4.Location = new System.Drawing.Point(1034, 11);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(136, 33);
             this.button4.TabIndex = 7;
@@ -377,28 +354,77 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
+            // panel3
+            // 
+            this.panel3.Controls.Add(this.label11);
+            this.panel3.Controls.Add(this.comboBox1);
+            this.panel3.Controls.Add(this.button4);
+            this.panel3.Controls.Add(this.button2);
+            this.panel3.Controls.Add(this.button3);
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel3.Location = new System.Drawing.Point(0, 368);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(1187, 52);
+            this.panel3.TabIndex = 9;
+            // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel5.Location = new System.Drawing.Point(0, 86);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(1187, 282);
+            this.panel5.TabIndex = 10;
+            // 
+            // grid1
+            // 
+            this.grid1.AllowUserToAddRows = false;
+            this.grid1.AllowUserToDeleteRows = false;
+            this.grid1.AllowUserToResizeRows = false;
+            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid1.DataSource = this.listControlBindingSource1;
+            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.grid1.Location = new System.Drawing.Point(0, 0);
+            this.grid1.Name = "grid1";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.grid1.RowTemplate.Height = 24;
+            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid1.Size = new System.Drawing.Size(1187, 282);
+            this.grid1.TabIndex = 0;
+            this.grid1.TabStop = false;
+            // 
             // P12
             // 
             this.ClientSize = new System.Drawing.Size(1187, 420);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.grid1);
+            this.Controls.Add(this.panel5);
+            this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
             this.Name = "P12";
+            this.Text = "P12. Batch Print Bundle Card";
             this.Controls.SetChildIndex(this.panel1, 0);
-            this.Controls.SetChildIndex(this.grid1, 0);
-            this.Controls.SetChildIndex(this.label11, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
-            this.Controls.SetChildIndex(this.button2, 0);
-            this.Controls.SetChildIndex(this.button3, 0);
-            this.Controls.SetChildIndex(this.button4, 0);
+            this.Controls.SetChildIndex(this.panel3, 0);
+            this.Controls.SetChildIndex(this.panel5, 0);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            this.panel3.ResumeLayout(false);
+            this.panel5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -427,7 +453,6 @@
         private Win.UI.TextBox textBox10;
         private Win.UI.TextBox textBox9;
         private Win.UI.TextBox textBox7;
-        private Win.UI.Grid grid1;
         private Win.UI.Label label11;
         private Win.UI.ComboBox comboBox1;
         private Win.UI.Button button2;
@@ -435,5 +460,8 @@
         private Win.UI.Button button4;
         private Win.UI.DateBox dateBox1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private System.Windows.Forms.Panel panel3;
+        private Win.UI.Panel panel5;
+        private Win.UI.Grid grid1;
     }
 }
