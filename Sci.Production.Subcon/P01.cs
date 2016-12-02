@@ -389,7 +389,7 @@ namespace Sci.Production.Subcon
             #endregion
             #region 可編輯欄位變色
             detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
-            detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;  //Cutpart Name
+            //detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;  //Cutpart Name
             detailgrid.Columns[10].DefaultCellStyle.BackColor = Color.Pink; //Unit Price
             detailgrid.Columns[12].DefaultCellStyle.BackColor = Color.Pink; //Qty/GMT
             #endregion
