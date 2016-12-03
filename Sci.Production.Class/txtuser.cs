@@ -14,6 +14,7 @@ namespace Sci.Production.Class
 {
     public partial class txtuser : Sci.Win.UI._UserControl
     {
+
         public txtuser()
         {
             InitializeComponent();
@@ -32,7 +33,25 @@ namespace Sci.Production.Class
         [Bindable(true)]
         public string TextBox1Binding
         {
-            set { this.textBox1.Text = value; }
+            set 
+            { 
+                this.textBox1.Text = value;
+                if (!Env.DesignTime)
+                {
+                    string selectSql = string.Format("Select Name from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
+                    string name = MyUtility.GetValue.Lookup(selectSql);
+                    selectSql = string.Format("Select ExtNo from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
+                    string extNo = MyUtility.GetValue.Lookup(selectSql);
+                    if (!string.IsNullOrWhiteSpace(extNo) || !string.IsNullOrWhiteSpace(name))
+                    {
+                        this.displayBox1.Text = name + " #" + extNo;
+                    }
+                    else
+                    {
+                        this.displayBox1.Text = "";
+                    }
+                }
+            }
             get { return textBox1.Text; }
         }
 
@@ -101,13 +120,8 @@ namespace Sci.Production.Class
 
             // 強制把binding的Text寫到DataRow
             this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
-        }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            //Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-            //if (myForm.EditMode == false)
-            //{
+            //寫入displayBox1
             string selectSql = string.Format("Select Name from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
             string name = MyUtility.GetValue.Lookup(selectSql);
             selectSql = string.Format("Select ExtNo from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
@@ -122,11 +136,37 @@ namespace Sci.Production.Class
             }
             if (string.IsNullOrWhiteSpace(name))
             {
-                 this.textBox1.Text = "";
+                this.textBox1.Text = "";
             }
-           
-           
-            ////}
+         
+            }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {            
+           //Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+           //if (myForm.EditMode == false)
+           //{
+               if (this.textBox1.ReadOnly && this.DataBindings.Count == 0)
+               {
+                   string selectSql = string.Format("Select Name from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
+                   string name = MyUtility.GetValue.Lookup(selectSql);
+                   selectSql = string.Format("Select ExtNo from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
+                   string extNo = MyUtility.GetValue.Lookup(selectSql);
+                   if (!string.IsNullOrWhiteSpace(extNo) || !string.IsNullOrWhiteSpace(name))
+                   {
+                       this.displayBox1.Text = name + " #" + extNo;
+                   }
+                   else
+                   {
+                       this.displayBox1.Text = "";
+                   }
+                   if (string.IsNullOrWhiteSpace(name))
+                   {
+                       this.textBox1.Text = "";
+                   }
+               }
+              
+          // }
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
