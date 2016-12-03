@@ -28,22 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel2 = new Sci.Win.UI.Panel();
             this.btnPick = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.gridBOA = new Sci.Win.UI.Grid();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.gridBOA = new Sci.Win.UI.Grid();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridBOA)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBOA)).BeginInit();
             this.SuspendLayout();
             // 
             // panel2
@@ -51,7 +52,7 @@
             this.panel2.Controls.Add(this.btnPick);
             this.panel2.Controls.Add(this.button1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 503);
+            this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1008, 48);
             this.panel2.TabIndex = 0;
@@ -105,29 +106,6 @@
             this.splitContainer1.SplitterDistance = 264;
             this.splitContainer1.TabIndex = 2;
             // 
-            // gridBOA
-            // 
-            this.gridBOA.AllowUserToAddRows = false;
-            this.gridBOA.AllowUserToDeleteRows = false;
-            this.gridBOA.AllowUserToResizeRows = false;
-            this.gridBOA.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridBOA.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridBOA.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridBOA.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridBOA.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridBOA.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridBOA.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridBOA.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridBOA.Location = new System.Drawing.Point(0, 0);
-            this.gridBOA.Name = "gridBOA";
-            this.gridBOA.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridBOA.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridBOA.RowTemplate.Height = 24;
-            this.gridBOA.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridBOA.Size = new System.Drawing.Size(264, 503);
-            this.gridBOA.TabIndex = 0;
-            this.gridBOA.TabStop = false;
-            // 
             // grid1
             // 
             this.grid1.AllowUserToAddRows = false;
@@ -152,6 +130,29 @@
             this.grid1.TabIndex = 1;
             this.grid1.TabStop = false;
             // 
+            // gridBOA
+            // 
+            this.gridBOA.AllowUserToAddRows = false;
+            this.gridBOA.AllowUserToDeleteRows = false;
+            this.gridBOA.AllowUserToResizeRows = false;
+            this.gridBOA.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridBOA.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridBOA.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridBOA.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridBOA.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridBOA.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridBOA.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridBOA.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridBOA.Location = new System.Drawing.Point(0, 0);
+            this.gridBOA.Name = "gridBOA";
+            this.gridBOA.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridBOA.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridBOA.RowTemplate.Height = 24;
+            this.gridBOA.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBOA.Size = new System.Drawing.Size(264, 503);
+            this.gridBOA.TabIndex = 0;
+            this.gridBOA.TabStop = false;
+            // 
             // P11_AutoPick
             // 
             this.ClientSize = new System.Drawing.Size(1008, 551);
@@ -165,9 +166,9 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gridBOA)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBOA)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -179,8 +180,8 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private Win.UI.Grid gridBOA;
         private Win.UI.Grid grid1;
         private Win.UI.Button btnPick;
+        private Win.UI.Grid gridBOA;
     }
 }

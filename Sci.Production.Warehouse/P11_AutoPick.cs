@@ -204,12 +204,12 @@ delete from #tmp2 where qty = 0;
 		and m.MDivisionID = '{8}' and m.StockType = 'B' and Roll=''
 		where lock = 0
 	)
-	select 0 as [Selected],''as id,b.*,isnull(sum(a.OrderQty),0.00) qty,left(b.seq1+'   ',3)+b.seq2 as seq,cte2.MDivisionID,cte2.balanceqty,cte2.Ukey as ftyinventoryukey,cte2.StockType,cte2.Roll,cte2.Dyelot
+	select 0 as [Selected],''as id,a.Refno,b.*,isnull(sum(a.OrderQty),0.00) qty,left(b.seq1+'   ',3)+b.seq2 as seq,cte2.MDivisionID,cte2.balanceqty,cte2.Ukey as ftyinventoryukey,cte2.StockType,cte2.Roll,cte2.Dyelot
 	from #tmpPO_supp_detail b
 	left join cte2 on cte2.poid = b.poid and cte2.seq1 = b.seq1 and cte2.SEQ2 = b.SEQ2
 	left join #Tmp_BoaExpend a on b.SCIRefno = a.scirefno and b.poid = a.ID
 	 and (b.SizeSpec = a.SizeSpec) and (b.ColorID = a.ColorID)
-	 group by b.poid,b.seq1,b.seq2,b.[description],b.ColorID,b.SizeSpec,b.SCIRefno,b.Spec,b.Special,b.Remark,cte2.MDivisionID,cte2.balanceqty,cte2.Ukey,cte2.StockType,cte2.Roll,cte2.Dyelot
+	 group by b.poid,b.seq1,b.seq2,a.Refno,b.[description],b.ColorID,b.SizeSpec,b.SCIRefno,b.Spec,b.Special,b.Remark,cte2.MDivisionID,cte2.balanceqty,cte2.Ukey,cte2.StockType,cte2.Roll,cte2.Dyelot
 	 order by b.scirefno,b.ColorID,b.SizeSpec,b.Special,b.poid,b.seq1,b.seq2;
 
 	 with cte
@@ -376,6 +376,7 @@ delete from #tmp2 where qty = 0;
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))
+                 .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(8))
                  .Text("scirefno", header: "SCI Refno", width: Widths.AnsiChars(23))
                  .Text("colorid", header: "Color ID", width: Widths.AnsiChars(7))
                  .Text("sizespec", header: "SizeSpec", width: Widths.AnsiChars(6))
@@ -387,17 +388,9 @@ delete from #tmp2 where qty = 0;
                  .Text("remark", header: "Remark", width: Widths.AnsiChars(10))
                   .Text("usageqty", header: "Usage Qty", width: Widths.AnsiChars(10))
                   .Text("usageunit", header: "Usage Unit", width: Widths.AnsiChars(10))
-                  .Text("bomfactory", header: "bom factory", width: Widths.AnsiChars(6))
-                 .Text("bomcountry", header: "bom country", width: Widths.AnsiChars(15))
-                 .Text("bomstyle", header: "bom style", width: Widths.AnsiChars(10))
-                  .Text("bomcustcd", header: "bom custcd", width: Widths.AnsiChars(10))
-                  .Text("bomarticle", header: "bom article", width: Widths.AnsiChars(10))
-                  .Text("bomzipperinsert", header: "bom zipperinsert", width: Widths.AnsiChars(10))
-                  .Text("bombuymonth", header: "bom buymonth", width: Widths.AnsiChars(10))
-                  .Text("bomcustpono", header: "bom custpono", width: Widths.AnsiChars(10))
                  ;
-            grid1.Columns[7].Frozen = true;  //Qty
-            grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;   //Qty
+            grid1.Columns[8].Frozen = true;  //Qty
+            grid1.Columns[8].DefaultCellStyle.BackColor = Color.Pink;   //Qty
             #endregion
 
         }
