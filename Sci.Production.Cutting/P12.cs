@@ -80,7 +80,7 @@ namespace Sci.Production.Cutting
         {
 
             if (this.textBox1.Text.Empty() && this.textBox2.Text.Empty() && this.textBox4.Text.Empty() && this.textBox3.Text.Empty() && this.textBox7.Text.Empty() && this.textBox6.Text.Empty()
-                || this.textBox5.Text.Empty() && this.dateBox1.Value.Empty())
+                && this.textBox5.Text.Empty() && this.dateBox1.Value.Empty())
             {
                 MyUtility.Msg.ErrorBox("[Cut_Ref# and SP# and POID and Bundle# and Est.Cut Date] can not be all null !!");
                 textBox1.Focus();
