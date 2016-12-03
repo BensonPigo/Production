@@ -1171,7 +1171,7 @@ namespace Sci.Production.Cutting
                 patterncount = 0;
                 
                 DataRow[] QtyAry = qtyTb.Select(string.Format("iden={0}", artar["iden"]));
-                DataRow[] PatternAry = patternTb.Select(string.Format("iden={0}", artar["iden"]));
+                DataRow[] PatternAry = patternTb.Select(string.Format("iden={0} and parts<>0", artar["iden"]));  //1404: CUTTING_P11_Batch Create Bundle Card，[Batch create]會出現錯誤訊息。
                 DataRow[] AllPartArt = allpartTb.Select(string.Format("iden={0}", artar["iden"]));
                 foreach (DataRow rowqty in QtyAry)
                 {
