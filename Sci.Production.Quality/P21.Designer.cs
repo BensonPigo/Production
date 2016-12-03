@@ -173,6 +173,10 @@
             // 
             this.gridicon.Location = new System.Drawing.Point(918, 242);
             // 
+            // refresh
+            // 
+            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
+            // 
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(1037, 273);
@@ -488,7 +492,7 @@
             this.CFA1_text.DisplayBox1Binding = "";
             this.CFA1_text.Location = new System.Drawing.Point(634, 113);
             this.CFA1_text.Name = "CFA1_text";
-            this.CFA1_text.Size = new System.Drawing.Size(216, 23);
+            this.CFA1_text.Size = new System.Drawing.Size(265, 23);
             this.CFA1_text.TabIndex = 6;
             this.CFA1_text.TextBox1Binding = "";
             // 

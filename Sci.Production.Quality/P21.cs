@@ -116,10 +116,24 @@ namespace Sci.Production.Quality
                 this.SQR_text.Text = "0";   this.Remark_text.Text = "";
             }
             #region btnEncode
-            //Encode_btn.Enabled = !this.EditMode;
-            ////if (MyUtility.Check.Empty(CurrentMaintain)) Encode_btn.Enabled = false;
-            //if (CurrentMaintain["status"].ToString().Trim() == "Confirmed") Encode_btn.Text = "Amend";
-            //else Encode_btn.Text = "Encode";
+            DataRow drStatus;
+            Encode_btn.Enabled = !this.EditMode;
+            if (MyUtility.Check.Empty(CurrentMaintain))
+            {
+                Encode_btn.Enabled = false;
+            }
+            string sql_Status = string.Format(@"select * from cfa where id='{0}'", CurrentMaintain["ID"].ToString().Trim());
+            if (MyUtility.Check.Seek(sql_Status, out drStatus))
+            {
+                if (drStatus["Status"].ToString().ToUpper().Trim()=="CONFIRMED")
+                {
+                    Encode_btn.Text = "Amend";
+                }
+                else
+                {
+                    Encode_btn.Text = "Encode";
+                }
+            }
             #endregion
            
 
@@ -510,7 +524,8 @@ where a.ID='{0}'",
             {
                 qty = qty + Convert.ToInt32(dt.Rows[i]["Qty"]);
             }
-            this.DefectsQty_text.Text = qty.ToString();           
+            
+            CurrentMaintain["DefectQty"] = qty.ToString();
             InQty = Convert.ToInt32(this.InspectQty_text.Text);
             if (qty > InQty)
             {
@@ -518,12 +533,6 @@ where a.ID='{0}'",
                 return false;
             }
             return base.ClickSaveBefore();
-        }
-
-        protected override bool ClickNewBefore()
-        {
-            this.CFA1_text.DisplayBox1.Text = "";
-            return base.ClickNewBefore();
         }
 
         protected override void ClickNewAfter()
@@ -546,6 +555,13 @@ where a.ID='{0}'",
             }
             return base.ClickEditBefore();
         }
+
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            
+        }
+
         // delete前檢查
         protected override bool ClickDeleteBefore()
         {
@@ -694,7 +710,7 @@ where a.OrderID='{0}'", SP_text.Text);
                     this.orderQty_text.Text = "0";
                     this.SQR_text.Text = "0";
                     this.SP_text.Focus();
-                    this.SP_text.Select();  
+                    this.SP_text.Select();      
                     return;
                 }
             }          
