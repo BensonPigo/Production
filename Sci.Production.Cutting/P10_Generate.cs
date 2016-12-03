@@ -1,4 +1,5 @@
-﻿using Ict.Win;
+﻿using System.Linq;
+using Ict.Win;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -673,6 +674,7 @@ namespace Sci.Production.Cutting
             grid_art.ValidateControl();
             grid_qty.ValidateControl();
             if (patternTb.Rows.Count == 0) return;
+            if (grid_allpart.RowCount == 0) return;
             DataRow selectartDr = ((DataRowView)grid_art.GetSelecteds(SelectedSort.Index)[0]).Row;
             DataRow selectallparteDr = ((DataRowView)grid_allpart.GetSelecteds(SelectedSort.Index)[0]).Row;
 
@@ -720,10 +722,12 @@ namespace Sci.Production.Cutting
         public void calAllPart() //計算all part
         {
             int allpart = 0;
-            if(allpartTb.Rows.Count>0) allpart = Convert.ToInt16(allpartTb.Compute("Sum(Parts)", ""));
+            if (allpartTb.AsEnumerable().Count(row => row.RowState != DataRowState.Deleted) > 0)
+                allpart = allpartTb.AsEnumerable()
+                    .Where(row => row.RowState != DataRowState.Deleted)
+                    .Sum(row => Convert.ToInt16(row["Parts"]));
             DataRow[] dr = patternTb.Select("PatternCode='ALLPARTS'");
-            if (dr.Length == 0) dr[0]["Parts"] = 0;
-            else dr[0]["Parts"] = allpart;
+            if (dr.Length > 0)  dr[0]["Parts"] = allpart;
         }
 
         private void insertIntoRecordToolStripMenuItem_Click(object sender, EventArgs e)
