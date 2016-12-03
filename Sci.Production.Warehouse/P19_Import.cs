@@ -50,7 +50,7 @@ namespace Sci.Production.Warehouse
             StringBuilder sbSQLCmd = new StringBuilder();
             String stocktype = this.cbbStockType.SelectedValue.ToString();
             String sp = this.txtSP.Text;
-            String seq = this.txtSeq.Text.TrimEnd();
+            String seq = this.txtSeq.Text;
 
             #region -- sql parameters declare --
 
@@ -92,12 +92,16 @@ and a.id = @sp and c.mdivisionid='{0}' and c.stocktype = '{1}'", Sci.Env.User.Ke
                 if (seq.Length != 5)
                 {
                     MyUtility.Msg.WarningBox("Seq need enter 00-00");
+                    return;
                 }
-                sbSQLCmd.Append(string.Format(@" and a.seq1 = @seq1 and a.seq2=@seq2"));
-                sp_seq1.Value = seq.Substring(0, 2).Trim();
-                sp_seq2.Value = seq.Substring(3, 2).Trim();
-                cmds.Add(sp_seq1);
-                cmds.Add(sp_seq2);
+                else
+                {
+                    sbSQLCmd.Append(string.Format(@" and a.seq1 = @seq1 and a.seq2=@seq2"));
+                    sp_seq1.Value = seq.Substring(0, 2).Trim();
+                    sp_seq2.Value = seq.Substring(3, 2).Trim();
+                    cmds.Add(sp_seq1);
+                    cmds.Add(sp_seq2);
+                }
             }
 
             Ict.DualResult result;
