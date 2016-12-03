@@ -413,7 +413,21 @@ namespace Sci.Production.Cutting
                 string subject = "<" + CurrentMaintain["mDivisionid"].ToString() + ">BulkMarkerRequest#:" + CurrentMaintain["ID"].ToString();
 
                 var email = new MailTo(mailFrom, mailto, cc, subject + "-" + fileNameExt, pathName, content, false, false);
-                email.ShowDialog(this);
+                DialogResult DR = email.ShowDialog(this);
+                if (DR == DialogResult.OK)
+                {
+                    string sql = string.Format("Update MarkerReq set sendDate = getdate()  where id ='{0}'", CurrentMaintain["ID"]);
+                    DualResult Result;
+                    if (!(Result = DBProxy.Current.Execute(null, sql)))
+                    {
+                        ShowErr(sql, Result);
+                    }
+                    else
+                    {
+                        ReloadDatas();
+                    }
+                }
+
             }
             //刪除Excel File
             if (System.IO.File.Exists(pathName))
