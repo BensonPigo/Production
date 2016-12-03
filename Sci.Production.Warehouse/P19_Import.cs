@@ -91,7 +91,8 @@ and a.id = @sp and c.mdivisionid='{0}' and c.stocktype = '{1}'", Sci.Env.User.Ke
             {
                 if (seq.Length != 5 || seq=="-")
                 {
-                    MyUtility.Msg.WarningBox("Seq mask need enter 00-00");                    
+                    MyUtility.Msg.WarningBox("Seq' mask need enter 00-00");
+                    return;
                 }
                 else
                 {
