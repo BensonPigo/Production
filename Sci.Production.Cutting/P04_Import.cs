@@ -35,10 +35,10 @@ namespace Sci.Production.Cutting
             .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("POID", header: "PO#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Cuttingid", header: "Cutting SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("Brandid", header: "Brand", width: Widths.AnsiChars(2), iseditingreadonly: true)
+            .Text("Brandid", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Styleid", header: "Style#", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Cutcellid", header: "Cut Cell", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(30), iseditingreadonly: true);
+            .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(40), iseditingreadonly: true);
             this.grid1.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
 
         }
@@ -54,6 +54,7 @@ namespace Sci.Production.Cutting
                 MyUtility.Msg.WarningBox("<Est. Cut Date> can not be empty.");
                 return;
             }
+            gridTable.Rows.Clear();  //開始查詢前先清空資料
             string estcutdate = dateBox1.Text;
             string cutcellid = txtCell1.Text;
             string sqlcmd = string.Format("Select a.*,'' as orderid_b,'' as article_b, '' as sizecode,'' as sewinglineid,1 as sel from Workorder a where cutplanid='' and cutcellid!='' and mDivisionid ='{0}' and estcutdate = '{1}'", keyWord,estcutdate);
@@ -86,7 +87,7 @@ namespace Sci.Production.Cutting
                         {
                             DataRow newdr = gridTable.NewRow();
                             newdr["sel"] = 1;
-                            MyUtility.Check.Seek(string.Format("Select * from orders where id='{0}'", dr["ID"]),out ordersRow);
+                            MyUtility.Check.Seek(string.Format("Select * from orders where id='{0}'", dr["ID"]), out ordersRow);
                             newdr["POID"] = ordersRow["poid"];
                             newdr["Cuttingid"] = dr["ID"];
                             newdr["brandid"] = ordersRow["brandid"];
@@ -101,6 +102,11 @@ namespace Sci.Production.Cutting
                         }
                     }
                 }
+                else
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                }
+
             }
             else
             {
