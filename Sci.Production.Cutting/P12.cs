@@ -201,7 +201,7 @@ namespace Sci.Production.Cutting
                                                 left join dbo.Orders c on c.id=b.Orderid
                                                 left join dbo.Bundle_Detail_Allpart d on d.id=a.id and d.BundleNo=a.BundleNo
                                                 left join dbo.WorkOrder e on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
-                                                outer apply( select iif(a.PatternCode = 'ALLPARTS',iif('0'='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
+                                                outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
                                                 outer apply(select SubProcess = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 							                                                     from dbo.Bundle_Detail_Art e1
 							                                                     where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= qq.Cutpart
