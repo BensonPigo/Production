@@ -183,6 +183,7 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivision
             .Text("SizeUnit", header: "SizeUnit", width: Widths.AnsiChars(6), iseditingreadonly: true)  //6          
             .Text("location", header: "Location", width: Widths.AnsiChars(6), iseditingreadonly: true)  //7
             .Numeric("accu_issue", header: "Accu. Issued", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //8
+            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10)    //5
             .Text("output", header: "Output", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: ts) //9
             .Numeric("balanceqty", header: "Balance", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //11
                 //.Text("ftyinventoryukey", header: "FtyInventoryUkey", width: Widths.AnsiChars(10), iseditingreadonly: true)  //12
@@ -192,7 +193,7 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivision
             #region 可編輯欄位變色
 
             detailgrid.Columns[1].DefaultCellStyle.BackColor = Color.Pink;
-            detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
 
             #endregion 可編輯欄位變色
         }
@@ -1276,7 +1277,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             matrix_Reload();
         }
         private DualResult Detail_Reload()
-        {
+        {            
             foreach (DataRow dr in DetailDatas)
             {
                 //刪除SubDetail資料
@@ -1306,30 +1307,44 @@ inner join [Production].[dbo].MtlType m on m.ID = f.MtlTypeID
 where a.Lock=0 and a.InQty-a.OutQty+a.AdjustQty > 0 
 and a.MDivisionID='{0}' and a.POID='{1}' --and stocktype='B'
 and b.FabricType='A'
-and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, this.poid), out subData);
+and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, this.poid, 0), out subData);
             //將資料塞入表身
             foreach (DataRow dr in subData.Rows)
             {
-                DataRow ndr = ((DataTable)detailgridbs.DataSource).NewRow();
-                ndr["poid"] = dr["poid"];
-                ndr["seq"] = dr["seq"];
-                ndr["Description"] = dr["Description"];
-                ndr["Colorid"] = dr["Colorid"];
-                ndr["SizeSpec"] = dr["SizeSpec"];
-                ndr["usedqty"] = dr["usedqty"];
-                ndr["SizeUnit"] = dr["SizeUnit"];
-                ndr["location"] = dr["location"];
-                ndr["balanceqty"] = dr["balanceqty"];
-                ((DataTable)detailgridbs.DataSource).Rows.Add(ndr);
+                base.OnDetailGridInsert();
+                //DataRow ndr = ((DataTable)detailgridbs.DataSource).NewRow();
+                CurrentDetailData["poid"] = dr["poid"];
+                CurrentDetailData["seq"] = dr["seq"];
+                CurrentDetailData["Description"] = dr["Description"];
+                CurrentDetailData["Colorid"] = dr["Colorid"];
+                CurrentDetailData["SizeSpec"] = dr["SizeSpec"];
+                CurrentDetailData["usedqty"] = dr["usedqty"];
+                CurrentDetailData["SizeUnit"] = dr["SizeUnit"];
+                CurrentDetailData["location"] = dr["location"];
+                CurrentDetailData["balanceqty"] = dr["balanceqty"];
+                //((DataTable)detailgridbs.DataSource).Rows.Add(ndr);
 
-                ndr["seq1"] = dr["seq1"];
-                ndr["seq2"] = dr["seq2"];
-                ndr["mdivisionid"] = Sci.Env.User.Keyword;
-                ndr["stocktype"] = dr["stocktype"];
-                ndr["ftyinventoryukey"] = dr["ukey"];
+                CurrentDetailData["seq1"] = dr["seq1"];
+                CurrentDetailData["seq2"] = dr["seq2"];
+                CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
+                CurrentDetailData["stocktype"] = dr["stocktype"];
+                CurrentDetailData["ftyinventoryukey"] = dr["ukey"];
 
-                DetailDatas.Add(ndr);
+//                DetailDatas.Add(ndr);
 
+                DataTable sizeRange, subDetails;
+                if (GetSubDetailDatas(CurrentDetailData, out subDetails))
+                {
+                    DBProxy.Current.Select(null, string.Format(@"select a.SizeCode,b.Id,b.Issue_DetailUkey,isnull(b.Qty,0) QTY
+from dbo.Order_SizeCode a left join dbo.Issue_Size b on b.SizeCode = a.SizeCode and b.id = '{1}' and b.Issue_DetailUkey = {2}
+where a.id='{0}' order by Seq ", this.poid, CurrentMaintain["id"], CurrentDetailData["ukey"]), out sizeRange);
+                    foreach (DataRow drr in sizeRange.Rows)
+                    {
+                        drr.AcceptChanges();
+                        drr.SetAdded();
+                        subDetails.ImportRow(drr);
+                    }
+                }
             }
             return Result.True;
         }

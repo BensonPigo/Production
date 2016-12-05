@@ -32,31 +32,39 @@ namespace Sci.Production.Warehouse
             dtIssueBreakDown = _dtIssueBreakDown;
             sbSizecode=_sbSizecode;
             this.Text += string.Format(" ({0})", poid);
-            gridBOA.RowPostPaint += (s, e) =>
-            {
-                DataTable dtSource = (DataTable)listControlBindingSource1.DataSource;
+            //gridBOA.RowPostPaint += (s, e) =>
+            //{
+            //    DataTable dtSource = (DataTable)listControlBindingSource1.DataSource;
 
-                DataRow dr = gridBOA.GetDataRow(e.RowIndex);
-                bool exists = dtSource
-                    .AsEnumerable()
-                    .Any(dataRow =>
-                    {
-                        return string.Compare(dataRow.Field<string>("scirefno"), dr.Field<string>("scirefno"), true) == 0 &&
-                               string.Compare(dataRow.Field<string>("colorid"), dr.Field<string>("colorid"), true) == 0 &&
-                               string.Compare(dataRow.Field<string>("sizespec"), dr.Field<string>("sizespec"), true) == 0;
-                    });
+            //    DataRow dr = gridBOA.GetDataRow(e.RowIndex);
+            //    bool exists = dtSource
+            //        .AsEnumerable()
+            //        .Any(dataRow =>
+            //        {
+            //            return string.Compare(dataRow.Field<string>("scirefno"), dr.Field<string>("scirefno"), true) == 0 &&
+            //                   string.Compare(dataRow.Field<string>("colorid"), dr.Field<string>("colorid"), true) == 0 &&
+            //                   string.Compare(dataRow.Field<string>("sizespec"), dr.Field<string>("sizespec"), true) == 0;
+            //        });
 
-                if (exists)
-                {
-                    gridBOA.Rows[e.RowIndex].DefaultCellStyle.ForeColor = Color.Blue;
-                }
+            //    if (exists)
+            //    {
+            //        gridBOA.Rows[e.RowIndex].DefaultCellStyle.ForeColor = Color.Blue;
+            //    }
 
-            };
+            //};
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+
+            if (dtIssueBreakDown == null)
+            {
+                MyUtility.Msg.WarningBox("IssueBreakdown data no data!", "Warning");
+                this.Close();
+                return;
+            }
+
 
             //POPrg.BOAExpend(poid, "0", 1, out BOA, out BOA_Orderlist);
             SqlConnection sqlConnection = null;
@@ -266,6 +274,7 @@ delete from #tmp2 where qty = 0;
                     BOA_PO = result[2];
                     BOA_PO.DefaultView.Sort = "qty desc,scirefno,poid,seq1,seq2";
                     BOA_PO_Size = result[3];
+                    BOA_PO.ColumnsStringAdd("Output");
 
                     DataRelation relation = new DataRelation("rel1"
                     , new DataColumn[] { BOA_PO.Columns["Poid"], BOA_PO.Columns["seq1"], BOA_PO.Columns["seq2"] }
@@ -289,10 +298,14 @@ delete from #tmp2 where qty = 0;
                         var drs = dr.GetChildRows(relation);
                         if (drs.Count() > 0)
                         {
+                            var Output="";
                             foreach (DataRow dr2 in drs)
                             {
+                                if (Convert.ToInt32(dr2["qty"]) != 0)
+                                    Output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00")+", ";
                                 tmp.ImportRow(dr2);
                             }
+                            dr["Output"] = Output;
                         }
 
                         tmp.AcceptChanges();
@@ -327,20 +340,20 @@ delete from #tmp2 where qty = 0;
             this.grid1.DataSource = listControlBindingSource1;
 
             this.grid1.AutoResizeColumns();
-            this.gridBOA.DataSource = BOA;
-            Helper.Controls.Grid.Generator(this.gridBOA)
+            //this.gridBOA.DataSource = BOA;
+            //Helper.Controls.Grid.Generator(this.gridBOA)
 
-               .Text("ID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //1
-               .Text("RefNo", header: "RefNo", iseditingreadonly: true, width: Widths.AnsiChars(13)) //2
-               .Text("SCIRefNo", header: "SCIRefNo", iseditingreadonly: true, width: Widths.AnsiChars(17)) //2
-                .Text("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
-                 .Text("ColorID", header: "ColorID", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
-                  .Text("SizeCode", header: "SizeCode", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
-                    .Text("SizeSpec", header: "SizeSpec", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
-                       .Text("OrderQty", header: "OrderQty", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
-                       .Text("UsageQty", header: "UsageQty", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
-                       .Text("UsageUnit", header: "UsageUnit", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
-                       .Text("SysUsageQty", header: "SysUsageQty", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+            //   .Text("ID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //1
+            //   .Text("RefNo", header: "RefNo", iseditingreadonly: true, width: Widths.AnsiChars(13)) //2
+            //   .Text("SCIRefNo", header: "SCIRefNo", iseditingreadonly: true, width: Widths.AnsiChars(17)) //2
+            //    .Text("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+            //     .Text("ColorID", header: "ColorID", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+            //      .Text("SizeCode", header: "SizeCode", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+            //        .Text("SizeSpec", header: "SizeSpec", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+            //           .Text("OrderQty", header: "OrderQty", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+            //           .Text("UsageQty", header: "UsageQty", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+            //           .Text("UsageUnit", header: "UsageUnit", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
+            //           .Text("SysUsageQty", header: "SysUsageQty", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
 
               // .Numeric("", header: "SizeSpec", iseditingreadonly: true, decimal_places: 2, integer_places: 10) //3
 
@@ -363,6 +376,16 @@ delete from #tmp2 where qty = 0;
 
                 if (DResult == DialogResult.OK)
                     sum_subDetail(dr, tmpDt);
+                if (tmpDt != null)
+                {
+                    var Output = "";
+                    foreach (DataRow dr2 in tmpDt.ToList())
+                    {
+                        if (Convert.ToInt32(dr2["qty"]) != 0)
+                            Output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
+                    }
+                    dr["Output"] = Output;
+                }
             };
             #endregion
 
@@ -380,7 +403,8 @@ delete from #tmp2 where qty = 0;
                  .Text("scirefno", header: "SCI Refno", width: Widths.AnsiChars(23))
                  .Text("colorid", header: "Color ID", width: Widths.AnsiChars(7))
                  .Text("sizespec", header: "SizeSpec", width: Widths.AnsiChars(6))
-                 .Text("qty", header: "Pick Qty", width: Widths.AnsiChars(10), settings: ns)
+                 .Text("qty", header: "Pick Qty", width: Widths.AnsiChars(10))
+                 .Text("Output", header: "Output", width: Widths.AnsiChars(10), settings: ns)
                  .Text("Balanceqty", header: "Bulk Qty", width: Widths.AnsiChars(10))
                  .Text("suppcolor", header: "Supp Color", width: Widths.AnsiChars(10))
                   .Text("sizecode", header: "SizeCode", width: Widths.AnsiChars(6))
@@ -391,6 +415,7 @@ delete from #tmp2 where qty = 0;
                  ;
             grid1.Columns[8].Frozen = true;  //Qty
             grid1.Columns[8].DefaultCellStyle.BackColor = Color.Pink;   //Qty
+            grid1.Columns[9].DefaultCellStyle.BackColor = Color.Pink;   //Qty
             #endregion
 
         }
