@@ -92,7 +92,7 @@ namespace Sci.Production.Quality
             DataRow drStatus;
             btnEncode.Enabled = !this.EditMode;
             if (MyUtility.Check.Empty(CurrentMaintain)) btnEncode.Enabled = false;
-            string Sql_status = string.Format("select * from rft where id='{0}'", CurrentMaintain["ID"].ToString().Trim());
+            string Sql_status = string.Format(@"select * from rft where id='{0}'", CurrentMaintain["ID"].ToString().Trim());
             if (MyUtility.Check.Seek(Sql_status,out drStatus))
             {
                 if (drStatus["status"].ToString().Trim() == "Confirmed") btnEncode.Text = "Amend";

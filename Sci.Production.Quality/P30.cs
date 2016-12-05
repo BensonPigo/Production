@@ -249,8 +249,7 @@ namespace Sci.Production.Quality
                 this.textBox6.ReadOnly = true;
                 this.textBox7.ReadOnly = true;
                 this.textBox8.ReadOnly = true;
-                this.textBox9.ReadOnly = true;
-                this.textBox10.ReadOnly = true;
+                this.textBox9.TextBox1.ReadOnly = true;
                 this.textBox11.ReadOnly = true;
                 this.textBox12.ReadOnly = true;
                 this.textBox13.ReadOnly = true;
@@ -363,9 +362,9 @@ namespace Sci.Production.Quality
                 this.comboBox1.DisplayMember = "Name";
                 this.comboBox1.ValueMember = "ID";
             }
-            else { ShowErr(cbResult); }
-
+            else { ShowErr(cbResult); }       
         }
+       
 
         protected override bool ClickSaveBefore()
         {

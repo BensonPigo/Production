@@ -41,7 +41,6 @@
             this.textBox3 = new Sci.Win.UI.TextBox();
             this.textBox4 = new Sci.Win.UI.TextBox();
             this.textBox5 = new Sci.Win.UI.TextBox();
-            this.textBox6 = new Sci.Win.UI.TextBox();
             this.textBox7 = new Sci.Win.UI.TextBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
@@ -53,16 +52,16 @@
             this.label12 = new Sci.Win.UI.Label();
             this.label13 = new Sci.Win.UI.Label();
             this.label14 = new Sci.Win.UI.Label();
-            this.textBox9 = new Sci.Win.UI.TextBox();
-            this.textBox10 = new Sci.Win.UI.TextBox();
             this.btnFinished = new Sci.Win.UI.Button();
-            this.dropDownListTableAdapter1 = new Sci.Trade.Report.GSchemas.GLOTableAdapters.DropDownListTableAdapter();
             this.textBox8 = new Sci.Win.UI.DateBox();
             this.textBox13 = new Sci.Win.UI.DateBox();
             this.textBox14 = new Sci.Win.UI.DateBox();
             this.textBox12 = new Sci.Win.UI.DateBox();
             this.textBox11 = new Sci.Win.UI.DateBox();
             this.textBox15 = new Sci.Win.UI.DateBox();
+            this.textBox9 = new Sci.Production.Class.txtuser();
+            this.dropDownListTableAdapter1 = new Sci.Trade.Report.GSchemas.GLOTableAdapters.DropDownListTableAdapter();
+            this.textBox6 = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -79,9 +78,9 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.btnFinished);
-            this.masterpanel.Controls.Add(this.textBox10);
+            this.masterpanel.Controls.Add(this.textBox6);
             this.masterpanel.Controls.Add(this.textBox9);
+            this.masterpanel.Controls.Add(this.btnFinished);
             this.masterpanel.Controls.Add(this.label14);
             this.masterpanel.Controls.Add(this.label13);
             this.masterpanel.Controls.Add(this.label12);
@@ -99,7 +98,6 @@
             this.masterpanel.Controls.Add(this.textBox8);
             this.masterpanel.Controls.Add(this.comboBox1);
             this.masterpanel.Controls.Add(this.textBox7);
-            this.masterpanel.Controls.Add(this.textBox6);
             this.masterpanel.Controls.Add(this.textBox5);
             this.masterpanel.Controls.Add(this.textBox4);
             this.masterpanel.Controls.Add(this.textBox3);
@@ -113,7 +111,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(807, 314);
+            this.masterpanel.Size = new System.Drawing.Size(788, 314);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -128,7 +126,6 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox4, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox6, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox7, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox8, 0);
@@ -146,14 +143,14 @@
             this.masterpanel.Controls.SetChildIndex(this.label12, 0);
             this.masterpanel.Controls.SetChildIndex(this.label13, 0);
             this.masterpanel.Controls.SetChildIndex(this.label14, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox10, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFinished, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox9, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox6, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 314);
-            this.detailpanel.Size = new System.Drawing.Size(807, 206);
+            this.detailpanel.Size = new System.Drawing.Size(788, 206);
             // 
             // gridicon
             // 
@@ -163,7 +160,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(807, 206);
+            this.detailgridcont.Size = new System.Drawing.Size(788, 206);
             // 
             // detail2
             // 
@@ -179,24 +176,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(807, 558);
+            this.detail.Size = new System.Drawing.Size(788, 558);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(807, 520);
+            this.detailcont.Size = new System.Drawing.Size(788, 520);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 520);
-            this.detailbtm.Size = new System.Drawing.Size(807, 38);
+            this.detailbtm.Size = new System.Drawing.Size(788, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(807, 558);
+            this.browse.Size = new System.Drawing.Size(724, 558);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(815, 587);
+            this.tabs.Size = new System.Drawing.Size(796, 587);
             // 
             // label1
             // 
@@ -325,22 +322,12 @@
             this.textBox5.Size = new System.Drawing.Size(150, 23);
             this.textBox5.TabIndex = 13;
             // 
-            // textBox6
-            // 
-            this.textBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Qty", true));
-            this.textBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox6.Location = new System.Drawing.Point(129, 230);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.ReadOnly = true;
-            this.textBox6.Size = new System.Drawing.Size(100, 23);
-            this.textBox6.TabIndex = 14;
-            // 
             // textBox7
             // 
             this.textBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.textBox7.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "StyleUnit", true));
             this.textBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox7.Location = new System.Drawing.Point(235, 230);
+            this.textBox7.Location = new System.Drawing.Point(217, 230);
             this.textBox7.Name = "textBox7";
             this.textBox7.ReadOnly = true;
             this.textBox7.Size = new System.Drawing.Size(62, 23);
@@ -451,27 +438,6 @@
             this.label14.TabIndex = 26;
             this.label14.Text = "R/MTL ETA :";
             // 
-            // textBox9
-            // 
-            this.textBox9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox9.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MCHandle", true));
-            this.textBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox9.Location = new System.Drawing.Point(428, 76);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.ReadOnly = true;
-            this.textBox9.Size = new System.Drawing.Size(100, 23);
-            this.textBox9.TabIndex = 27;
-            // 
-            // textBox10
-            // 
-            this.textBox10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox10.Location = new System.Drawing.Point(534, 77);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.ReadOnly = true;
-            this.textBox10.Size = new System.Drawing.Size(76, 23);
-            this.textBox10.TabIndex = 28;
-            // 
             // btnFinished
             // 
             this.btnFinished.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
@@ -482,10 +448,6 @@
             this.btnFinished.Text = "Finished";
             this.btnFinished.UseVisualStyleBackColor = true;
             this.btnFinished.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // dropDownListTableAdapter1
-            // 
-            this.dropDownListTableAdapter1.ClearBeforeFill = true;
             // 
             // textBox8
             // 
@@ -547,9 +509,49 @@
             this.textBox15.Size = new System.Drawing.Size(120, 23);
             this.textBox15.TabIndex = 40;
             // 
+            // textBox9
+            // 
+            this.textBox9.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "MCHandle", true));
+            this.textBox9.DisplayBox1Binding = "";
+            this.textBox9.Location = new System.Drawing.Point(428, 77);
+            this.textBox9.Name = "textBox9";
+            this.textBox9.Size = new System.Drawing.Size(297, 23);
+            this.textBox9.TabIndex = 41;
+            this.textBox9.TextBox1Binding = "";
+            // 
+            // dropDownListTableAdapter1
+            // 
+            this.dropDownListTableAdapter1.ClearBeforeFill = true;
+            // 
+            // textBox6
+            // 
+            this.textBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.textBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Qty", true));
+            this.textBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.textBox6.Location = new System.Drawing.Point(130, 230);
+            this.textBox6.Maximum = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+            this.textBox6.Name = "textBox6";
+            this.textBox6.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.textBox6.ReadOnly = true;
+            this.textBox6.Size = new System.Drawing.Size(85, 23);
+            this.textBox6.TabIndex = 42;
+            this.textBox6.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // P30
             // 
-            this.ClientSize = new System.Drawing.Size(815, 620);
+            this.ClientSize = new System.Drawing.Size(796, 620);
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.DefaultDetailOrder = "Type,Item,Colorid";
             this.DefaultFilter = "orders.IsForecast<>1";
@@ -592,7 +594,6 @@
         #endregion
 
         private Win.UI.TextBox textBox7;
-        private Win.UI.TextBox textBox6;
         private Win.UI.TextBox textBox5;
         private Win.UI.TextBox textBox4;
         private Win.UI.TextBox textBox3;
@@ -607,8 +608,6 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.Button btnFinished;
-        private Win.UI.TextBox textBox10;
-        private Win.UI.TextBox textBox9;
         private Win.UI.Label label14;
         private Win.UI.Label label13;
         private Win.UI.Label label12;
@@ -626,5 +625,7 @@
         private Win.UI.DateBox textBox11;
         private Win.UI.DateBox textBox12;
         private Win.UI.DateBox textBox14;
+        private Class.txtuser textBox9;
+        private Win.UI.NumericBox textBox6;
     }
 }
