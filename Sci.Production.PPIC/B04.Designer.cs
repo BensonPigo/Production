@@ -147,6 +147,8 @@
             this.DefaultFilter = "ReasonTypeID = \'Damage Reason\'";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B04";
             this.Text = "B04. Damage Reason";
@@ -162,7 +164,6 @@
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
