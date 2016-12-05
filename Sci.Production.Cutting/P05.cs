@@ -352,7 +352,7 @@ namespace Sci.Production.Cutting
 
                     objSheet.Cells[1, 1] = keyWord;   // 條件字串寫入excel
                     objSheet.Cells[3, 2] = CurrentMaintain["id"].ToString();
-                    objSheet.Cells[3, 4] = CurrentMaintain["EstCutDate"].ToString();
+                    objSheet.Cells[3, 4] = Convert.ToDateTime(CurrentMaintain["EstCutDate"]).ToShortDateString();
                     objSheet.Cells[3, 6] = CurrentMaintain["CutCellid"].ToString();
                     objSheet.Cells[3, 8] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(loginID);
 
