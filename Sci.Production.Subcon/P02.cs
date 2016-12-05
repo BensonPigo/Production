@@ -293,6 +293,11 @@ namespace Sci.Production.Subcon
                     {
                         this.RenewData();
                         this.OnDetailEntered();
+
+                        string sqlcmd2 = string.Format(@"
+                                update artworkpo set Amount = {0}
+                                where id = '{1}'", Amount, this.CurrentMaintain["ID"].ToString());
+                        DBProxy.Current.Execute(null, sqlcmd2);
                     }
                 }
 

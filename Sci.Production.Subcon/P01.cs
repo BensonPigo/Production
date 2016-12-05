@@ -195,6 +195,11 @@ namespace Sci.Production.Subcon
             object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(amount)", "");
             CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_a, exact);
             CurrentMaintain["vat"] = MyUtility.Math.Round((decimal)detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
+
+            
+
+            
+
             #endregion
 
             return base.ClickSaveBefore();
@@ -248,7 +253,7 @@ namespace Sci.Production.Subcon
                 {
                     x += (decimal)drr["amount"];
                 }
-                x2 = x * (decimal)CurrentMaintain["VatRate"];
+                x2 = x * (decimal)CurrentMaintain["VatRate"]/100;
                 x1 += x + x2;
                 Console.WriteLine("get {0}", x);
                 numericBox3.Text = x.ToString();
@@ -290,6 +295,11 @@ namespace Sci.Production.Subcon
                     {
                         this.RenewData();
                         this.OnDetailEntered();
+
+                        string sqlcmd2 = string.Format(@"
+                                update artworkpo set Amount = {0}, Vat = {1}
+                                where id = '{2}'", numericBox3.Value, numericBox2.Value, this.CurrentMaintain["ID"].ToString());
+                        DBProxy.Current.Execute(null, sqlcmd2);
                     }
 
                 }
