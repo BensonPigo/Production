@@ -243,15 +243,17 @@ namespace Sci.Production.Subcon
                     numericBox4.Text = amount.ToString();
                 }
 
-                decimal x = 0; decimal x1 = 0;
+                decimal x = 0; decimal x1 = 0; decimal x2 = 0;
                 foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
                 {
                     x += (decimal)drr["amount"];
                 }
-                x1 += x + (decimal)CurrentMaintain["vat"];
+                x2 = x * (decimal)CurrentMaintain["VatRate"];
+                x1 += x + x2;
                 Console.WriteLine("get {0}", x);
                 numericBox3.Text = x.ToString();
                 numericBox4.Text = x1.ToString();
+                numericBox2.Text = x2.ToString();
             }
             #endregion
             txtsubcon1.Enabled = !this.EditMode || IsDetailInserting;
