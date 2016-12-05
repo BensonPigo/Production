@@ -142,6 +142,7 @@
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
             this.IsSupportPrint = false;
+            this.IsSupportNew = false;
             this.Name = "B01";
             this.Text = "B01. Fabric Lacking & Replacement Reason";
             this.UniqueExpress = "Type,ID";
