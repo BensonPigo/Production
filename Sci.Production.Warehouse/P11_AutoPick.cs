@@ -58,7 +58,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
 
-            if (dtIssueBreakDown == null)
+            if (dtIssueBreakDown == null )
             {
                 MyUtility.Msg.WarningBox("IssueBreakdown data no data!", "Warning");
                 this.Close();
@@ -272,7 +272,7 @@ delete from #tmp2 where qty = 0;
                     BOA = result[0];
                     BOA_Orderlist = result[1];
                     BOA_PO = result[2];
-                    BOA_PO.DefaultView.Sort = "qty desc,scirefno,poid,seq1,seq2";
+                    BOA_PO.DefaultView.Sort = "Selected desc,qty desc,scirefno,poid,seq1,seq2";
                     BOA_PO_Size = result[3];
                     BOA_PO.ColumnsStringAdd("Output");
 

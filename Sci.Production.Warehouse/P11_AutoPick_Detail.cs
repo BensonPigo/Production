@@ -56,6 +56,7 @@ namespace Sci.Production.Warehouse
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            if (!this.grid1.ValidateControl()) { return; }
             foreach (DataRow dr in dt_detail.Rows)
             {
                 dr["ori_qty"] = decimal.Parse(dr["qty"].ToString());
