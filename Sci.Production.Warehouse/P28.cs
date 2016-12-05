@@ -180,7 +180,7 @@ namespace Sci.Production.Warehouse
             sqlcmd.Append(string.Format(@";with cte
 as
 (
-select convert(bit,0) as selected,iif(y.cnt >0 or z.cnt=0 ,0,1) complete,o.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup
+select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,0,1) complete,o.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup
 ,rtrim(pd.seq1) seq1,pd.seq2,pd.id stockpoid,pd.seq1 stockseq1,pd.seq2 stockseq2
 ,pd.inputqty*v.RateValue inputqty,pd.POUnit,pd.StockUnit
 ,mpd.InQty
@@ -206,7 +206,7 @@ outer apply
 (
 	select count(1) cnt from FtyInventory fi left join FtyInventory_Detail fid on fid.Ukey = fi.Ukey 
 	where  fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2 and fi.StockType = 'B' and fi.MDivisionID = o.MDivisionID
-) z--Detail資料數量
+) yz--Detail資料數量
 outer apply
 (
 select sum(sd.Qty) accu_qty from dbo.SubTransfer s inner join dbo.SubTransfer_Detail sd on sd.ID = s.Id where
