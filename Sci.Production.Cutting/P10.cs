@@ -75,7 +75,7 @@ namespace Sci.Production.Cutting
         public void queryTable()
         {
             string masterID = (CurrentMaintain == null) ? "" : CurrentMaintain["id"].ToString();
-            string allPart_cmd = string.Format(@"Select 0 as sel,b.*, 0 as ukey1,'' as annotation from Bundle_Detail a,Bundle_Detail_Allpart b Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
+            string allPart_cmd = string.Format(@"Select 0 as sel,b.*, 0 as ukey1,'' as annotation from Bundle_Detail a,Bundle_Detail_Allpart b Where a.id ='{0}' and a.id = b.id", masterID);
             string art_cmd = string.Format(@"Select b.*, 0 as ukey1 from Bundle_Detail a,Bundle_Detail_art b Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
             string qty_cmd = string.Format(@"Select 0 as No,a.* from Bundle_Detail_qty a Where a.id ='{0}'", masterID);
             DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out bundle_Detail_allpart_Tb);
@@ -99,7 +99,8 @@ namespace Sci.Production.Cutting
             foreach (DataRow dr in DetailDatas)
             {
                 dr["ukey1"] = ukey;
-                DataRow[] allar = bundle_Detail_allpart_Tb.Select(string.Format("Bundleno='{0}'", dr["Bundleno"]));
+                //DataRow[] allar = bundle_Detail_allpart_Tb.Select(string.Format("Bundleno='{0}'", dr["Bundleno"]));
+                DataRow[] allar = bundle_Detail_allpart_Tb.Select(string.Format("id='{0}'", dr["ID"]));
                 if (allar.Length > 0)
                 {
                     foreach (DataRow dr2 in allar)
@@ -136,7 +137,7 @@ namespace Sci.Production.Cutting
             #region 先撈出底層其他Table
             if (!IsDetailInsertByCopy)
             {
-                string allPart_cmd = string.Format(@"Select 0 as sel,b.*, 0 as ukey1,'' as annotation from Bundle_Detail a,Bundle_Detail_Allpart b Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
+                string allPart_cmd = string.Format(@"Select 0 as sel,b.*, 0 as ukey1,'' as annotation from Bundle_Detail a,Bundle_Detail_Allpart b Where a.id ='{0}' and a.id = b.id", masterID);
                 string art_cmd = string.Format(@"Select b.*, 0 as ukey1 from Bundle_Detail a,Bundle_Detail_art b Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
                 string qty_cmd = string.Format(@"Select 0 as No,a.* from Bundle_Detail_qty a Where a.id ='{0}'", masterID);
                 DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out bundle_Detail_allpart_Tb);
@@ -250,11 +251,11 @@ namespace Sci.Production.Cutting
                 if (MyUtility.Check.Empty(dr["Bundleno"]) && dr.RowState != DataRowState.Deleted)
                 {
                     dr["Bundleno"] = cListBundleno[nCount];
-                    roway = bundle_Detail_allpart_Tb.Select(string.Format("ukey1 = {0}", dr["ukey1"]));
-                    foreach (DataRow dr2 in roway)
-                    {
-                        dr2["Bundleno"] = cListBundleno[nCount];
-                    }
+                    //roway = bundle_Detail_allpart_Tb.Select(string.Format("ukey1 = {0}", dr["ukey1"]));
+                    //foreach (DataRow dr2 in roway)
+                    //{
+                    //    dr2["Bundleno"] = cListBundleno[nCount];
+                    //}
                     roway = bundle_Detail_Art_Tb.Select(string.Format("ukey1 = {0}", dr["ukey1"]));
                     foreach (DataRow dr2 in roway)
                     {
@@ -275,7 +276,7 @@ namespace Sci.Production.Cutting
             #region 先撈出實體Table 為了平行判斷筆數 DataTable allparttmp, arttmp, qtytmp
             DataTable allparttmp, arttmp, qtytmp;
             string masterID = (CurrentMaintain == null) ? "" : CurrentMaintain["id"].ToString();
-            string allPart_cmd = string.Format(@"Select b.* from Bundle_Detail_Allpart b left join Bundle_Detail a on a.Bundleno = b.bundleno and a.id = b.id where b.id='{0}' ", masterID);
+            string allPart_cmd = string.Format(@"Select b.* from Bundle_Detail_Allpart b left join Bundle_Detail a on a.id = b.id where b.id='{0}' ", masterID);
             string art_cmd = string.Format(@"Select b.* from Bundle_Detail_art b left join Bundle_Detail a on a.Bundleno = b.bundleno and a.id = b.id where b.id='{0}'", masterID);
             string qty_cmd = string.Format(@"Select a.* from Bundle_Detail_qty a Where a.id ='{0}'", masterID);
             DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out allparttmp);
@@ -306,15 +307,14 @@ namespace Sci.Production.Cutting
                 if (row >= allpart_old_rowCount) //新增
                 {
                     allpart_cmd = allpart_cmd + string.Format(
-                    @"insert into bundle_Detail_allpart(ID,Bundleno,PatternCode,PatternDesc,Parts) 
-                values('{0}','{1}','{2}','{3}',{4});"
-                    , CurrentMaintain["ID"], dr["Bundleno"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"]);
+                    @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts) values('{0}','{1}','{2}','{3}');"
+                    , CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"]);
                 }
                 else //覆蓋
                 {
                     allpart_cmd = allpart_cmd + string.Format(
                 @"update bundle_Detail_allpart set PatternCode ='{0}',PatternDesc = '{1}',
-                Parts ={2},bundleno = '{3}' Where ukey ={4};", dr["PatternCode"], dr["PatternDesc"], dr["Parts"],dr["Bundleno"], allparttmp.Rows[row]["ukey"]);
+                Parts ={2}  Where ukey ={3};", dr["PatternCode"], dr["PatternDesc"], dr["Parts"], allparttmp.Rows[row]["ukey"]);
                 }
                 row++;
                 

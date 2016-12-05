@@ -56,7 +56,8 @@ namespace Sci.Production.Cutting
                     pars.Add(new SqlParameter("@extend", "0"));
                
               string scmd= string.Format(@"select a.BundleGroup [Group_right]
-                                    ,left(b.ID,3) [Group_left]
+                                    --,left(b.ID,3) [Group_left]
+		                            ,b.MDivisionid [Group_left]
                                     ,b.Sewinglineid [Line]
                                     ,b.SewingCell [Cell]
                                     ,b.Orderid [SP]
@@ -64,25 +65,25 @@ namespace Sci.Production.Cutting
                                     ,b.Item [Item]
                                     ,isnull(b.PatternPanel,'')+''+convert(varchar,b.Cutno) [Body_Cut]
                                     ,[Parts]=iif(a.Patterncode = 'ALLPARTS',iif(@extend='1',d.parts,a.Parts),a.Parts)
-                                    ,b.Colorid [Color]
+                                    --,b.Colorid [Color]
+                                    ,b.Article + '\' + b.Colorid [Color]
                                     ,a.SizeCode [Size]
                                     ,[Desc]=iif(a.Patterncode='ALLPARTS',iif(@extend='1',d.PatternDesc,a.PatternDesc),a.PatternDesc)
                                     ,Artwork.Artwork [Artwork]
                                     ,a.Qty [Quantity]
-                                    ,b.id [Barcode]
+                                    --,b.id [Barcode]
+                                    ,a.BundleNo [Barcode]
                             from dbo.Bundle_Detail a
                             left join dbo.Bundle b on a.id=b.id
                             left join dbo.orders c on c.id=b.Orderid
-                            left join dbo.Bundle_Detail_Allpart d on d.id=a.Id and d.BundleNo=a.BundleNo
-                            outer apply(select iif(c1.PatternCode = 'ALLPARTS',iif(@extend='1',d1.PatternCode,c1.PatternCode),c1.PatternCode) [Cutpart]
-                                                      from dbo.Bundle_Detail c1 
-                                                      left join dbo.Bundle_Detail_Allpart d1 on d1.id=c1.Id and d1.BundleNo=c1.BundleNo 
-			                                          where c1.Id = c.ID and d1.BundleNo = d.BundleNo and d1.Patterncode = d.Patterncode)[qq]
+                            left join dbo.Bundle_Detail_Allpart d on d.id=a.Id
+                            outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
                             outer apply(select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-							                         from dbo.Bundle_Detail_Art e1
-							                         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= qq.Cutpart
-							                         for xml path('')))as Artwork
-                            where a.ID= @ID");
+							                                                     from dbo.Bundle_Detail_Art e1
+							                                                     where e1.id=b.id and e1.PatternCode= qq.Cutpart
+							                                                     for xml path('')))as Artwork
+                            where a.ID= @ID
+                            order by a.BundleNo ");
                 result = DBProxy.Current.Select("", scmd, pars, out dt);
                 ReportDefinition report = e.Report;
                 if (!result)
@@ -148,14 +149,14 @@ namespace Sci.Production.Cutting
                                           from dbo.Bundle a
                                           left join dbo.Orders b on a.Orderid=b.id
                                           left join dbo.Bundle_Detail c on a.id=c.id
-                                          left join dbo.Bundle_Detail_Allpart d on d.id=c.id and d.BundleNo=c.BundleNo
+                                          left join dbo.Bundle_Detail_Allpart d on d.id=c.id 
                                           outer apply(select iif(c1.PatternCode = 'ALLPARTS',iif(@extend='1',d1.PatternCode,c1.PatternCode),c1.PatternCode) [Cutpart]
                                                       from dbo.Bundle_Detail c1 
-                                                      left join dbo.Bundle_Detail_Allpart d1 on d1.id=c1.Id and d1.BundleNo=c1.BundleNo 
-			                                          where c1.Id = c.ID and d1.BundleNo = d.BundleNo and d1.Patterncode = d.Patterncode)[qq]
+                                                      left join dbo.Bundle_Detail_Allpart d1 on d1.id=c1.Id
+			                                          where c1.Id = c.ID and d1.Patterncode = d.Patterncode)[qq]
                                           outer apply(select SubProcess = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 							                                                 from dbo.Bundle_Detail_Art e1
-							                                                 where e1.id=a.id and e1.Bundleno=c.BundleNo and e1.PatternCode= qq.Cutpart
+							                                                 where e1.id=a.id and e1.PatternCode= qq.Cutpart
 							                                                 for xml path('')))as SubProcess
                                           where a.id=@ID");
                 result = DBProxy.Current.Select("", sqlcmd, lis, out dtt);

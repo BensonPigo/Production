@@ -1218,16 +1218,20 @@ namespace Sci.Production.Cutting
                         #region Bundle allPart
                         if (rowPat["PatternCode"].ToString() == "ALLPARTS")
                         {
-                            foreach(DataRow rowall in AllPartArt)
+
+                            #region 讓Bundle_Detail_Allpart只產生一份資料
+                            if (allpartTb.Rows.Count > Insert_Bundle_Detail_AllPart.Rows.Count)
                             {
-                                DataRow nBundleDetailAllPart_dr = Insert_Bundle_Detail_AllPart.NewRow();
-                                nBundleDetailAllPart_dr["Insert"] = string.Format(
-                                    @"Insert Into Bundle_Detail_allpart
-                                    (ID,Bundleno,PatternCode,PatternDesc,Parts) Values
-                                    ('{0}','{1}','{2}','{3}',{4})",
-                                     id_list[idcount], bundleno_list[bundlenocount], rowall["PatternCode"], rowall["PatternDesc"], rowall["Parts"]);
-                                Insert_Bundle_Detail_AllPart.Rows.Add(nBundleDetailAllPart_dr);
+                                foreach (DataRow rowall in AllPartArt)
+                                {
+                                    DataRow nBundleDetailAllPart_dr = Insert_Bundle_Detail_AllPart.NewRow();
+                                    nBundleDetailAllPart_dr["Insert"] = string.Format(@"Insert Into Bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts) Values('{0}','{1}','{2}','{3}')",
+                                         id_list[idcount], rowall["PatternCode"], rowall["PatternDesc"], rowall["Parts"]);
+                                    Insert_Bundle_Detail_AllPart.Rows.Add(nBundleDetailAllPart_dr);
+                                }
                             }
+                            #endregion
+
                         }
                         #endregion
                         bundlenocount++; //每一筆Bundleno 都不同

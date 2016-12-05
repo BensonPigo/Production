@@ -832,19 +832,26 @@ namespace Sci.Production.Cutting
                         j++;
                         if (tmpdr["PatternCode"].ToString() == "ALLPARTS")
                         {
-                            foreach (DataRow aldr in allpartTb.Rows)
+
+                            #region 讓Bundle_Detail_Allpart只產生一份資料
+                            if (allpartTb.Rows.Count > alltmpTb.Rows.Count)
                             {
-                                if (aldr.RowState != DataRowState.Deleted)
+                                foreach (DataRow aldr in allpartTb.Rows)
                                 {
-                                    DataRow allpart_ndr = alltmpTb.NewRow();
-                                    allpart_ndr["Bundleno"] = dr["Bundleno"];
-                                    allpart_ndr["PatternCode"] = aldr["PatternCode"];
-                                    allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
-                                    allpart_ndr["Parts"] = aldr["Parts"];
-                                    allpart_ndr["ukey1"] = dr["ukey1"];
-                                    alltmpTb.Rows.Add(allpart_ndr);
+                                    if (aldr.RowState != DataRowState.Deleted)
+                                    {
+                                        DataRow allpart_ndr = alltmpTb.NewRow();
+                                        allpart_ndr["Bundleno"] = dr["Bundleno"];
+                                        allpart_ndr["PatternCode"] = aldr["PatternCode"];
+                                        allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
+                                        allpart_ndr["Parts"] = aldr["Parts"];
+                                        allpart_ndr["ukey1"] = dr["ukey1"];
+                                        alltmpTb.Rows.Add(allpart_ndr);
+                                    }
                                 }
                             }
+                            #endregion
+
                         }
                         DataRow[] artary = artTb.Select(string.Format("PatternCode='{0}'", tmpdr["PatternCode"]));
                         foreach (DataRow artdr in artary)
@@ -888,19 +895,26 @@ namespace Sci.Production.Cutting
                     detailTb.Rows.Add(ndr);
                     if (tmpdr["PatternCode"].ToString() == "ALLPARTS")
                     {
-                        foreach (DataRow aldr in allpartTb.Rows)
-                        {
-                            if (aldr.RowState != DataRowState.Deleted)
-                            {
-                                DataRow allpart_ndr = alltmpTb.NewRow();
 
-                                allpart_ndr["PatternCode"] = aldr["PatternCode"];
-                                allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
-                                allpart_ndr["Parts"] = aldr["Parts"];
-                                allpart_ndr["ukey1"] = tmpdr["ukey1"];
-                                alltmpTb.Rows.Add(allpart_ndr);
+                        #region 讓Bundle_Detail_Allpart只產生一份資料
+                        if (allpartTb.Rows.Count > alltmpTb.Rows.Count)
+                        {
+                            foreach (DataRow aldr in allpartTb.Rows)
+                            {
+                                if (aldr.RowState != DataRowState.Deleted)
+                                {
+                                    DataRow allpart_ndr = alltmpTb.NewRow();
+
+                                    allpart_ndr["PatternCode"] = aldr["PatternCode"];
+                                    allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
+                                    allpart_ndr["Parts"] = aldr["Parts"];
+                                    allpart_ndr["ukey1"] = tmpdr["ukey1"];
+                                    alltmpTb.Rows.Add(allpart_ndr);
+                                }
                             }
                         }
+                        #endregion
+
                     }
                     DataRow[] artary = artTb.Select(string.Format("PatternCode='{0}'", tmpdr["PatternCode"]));
                     foreach (DataRow artdr in artary)
