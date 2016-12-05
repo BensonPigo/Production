@@ -43,10 +43,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(675, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkBox1);
@@ -56,12 +52,7 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(675, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(675, 38);
-            // 
+            
             // browse
             // 
             this.browse.Size = new System.Drawing.Size(675, 395);
@@ -150,6 +141,7 @@
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B02";
             this.Text = "B02. Accessory Lacking & Replacement Reason";
