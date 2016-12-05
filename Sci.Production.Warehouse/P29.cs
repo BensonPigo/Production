@@ -185,9 +185,9 @@ namespace Sci.Production.Warehouse
             sqlcmd.Append(string.Format(@";with cte
 as
 (
-select convert(bit,0) as selected,iif(y.cnt >0 or z.cnt=0 ,0,1) complete,o.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup,o.CFMDate,o.CutInLine,o.ProjectID
+select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,0,1) complete,o.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup,o.CFMDate,o.CutInLine,o.ProjectID
 ,rtrim(pd.seq1) seq1,pd.seq2,pd.StockPOID,pd.StockSeq1,pd.StockSeq2
-,pd.Qty*v.Rate PoQty,pd.POUnit,pd.StockUnit
+,pd.Qty*v.RateValue PoQty,pd.POUnit,pd.StockUnit
 ,mpd.InQty
 from dbo.orders o 
 inner join dbo.PO_Supp_Detail pd on pd.id = o.ID
@@ -202,7 +202,7 @@ outer apply
 outer apply(
 	select count(1) cnt from FtyInventory fi left join FtyInventory_Detail fid on fid.Ukey = fi.Ukey 
 	where  fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2 and fi.StockType = 'B' and fi.MDivisionID = o.MDivisionID
-) z--Detail資料數量
+) yz--Detail資料數量
 where o.MDivisionID = '{0}'
 and pd.seq1 like '7%'", Env.User.Keyword));
 
@@ -306,17 +306,21 @@ drop table #tmp");
 
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
+            if (master.Rows.Count==0)
+            {
+                return;
+            }
             foreach (DataRow dr in master.Rows)
             {
-                if (dr["selected"].ToString() == "true" && !MyUtility.Check.Empty(dr["requestqty"]))
+                if (dr["selected"].ToString() == "True" && !MyUtility.Check.Empty(dr["requestqty"]))
                 {
                     var issued = PublicPrg.Prgs.autopick(dr, false);
                     if (issued == null) return;
-
-
+                    
                     foreach (DataRow dr2 in issued)
                     {
-                        DataRow[] findrow = detail.Select(string.Format(@"fromFtyInventoryUkey = {0} and topoid = '{1}' and toseq1 = '{2}' and toseq2 = '{3}'"
+                        DataRow[] findrow = detail.Select(string.Format(@"from FtyInventoryUkey = {0} and topoid = '{1}'
+                                                                          and toseq1 = '{2}' and toseq2 = '{3}'"
                             , dr2["ftyinventoryukey"], dr["poid"], dr["seq1"], dr["seq2"]));
                         if (findrow.Length > 0)
                         {
