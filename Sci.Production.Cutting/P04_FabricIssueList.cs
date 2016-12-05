@@ -26,6 +26,7 @@ namespace Sci.Production.Cutting
 
         public P04_FabricIssueList(string str)
         {
+            InitializeComponent();
             cutplanid = str;
             DBProxy.Current.Select(null, string.Format("Select id,issuedate from Issue Where Cutplanid ='{0}'", str), out gridTb);
             grid1.DataSource = gridTb;

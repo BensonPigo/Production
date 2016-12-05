@@ -468,7 +468,7 @@ content, false, false);
         private void button3_Click(object sender, EventArgs e)
         {
             detailgrid.ValidateControl();
-            var frm = new Sci.Production.Cutting.P04_FabricIssueList();
+            var frm = new Sci.Production.Cutting.P04_FabricIssueList(CurrentMaintain["ID"].ToString().Trim());
             frm.ShowDialog(this);
         }
     }
