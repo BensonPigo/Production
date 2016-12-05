@@ -83,7 +83,7 @@ from GMTBooking g
 left join PackingList pl on pl.INVNo = g.ID
 left join Country c on c.ID = g.Dest
 left join Pass1 p on p.ID = g.AddName
-where g.InvDate between '{0}' and '{1}'", Convert.ToDateTime(invdate1).ToString("d"), Convert.ToDateTime(invdate2).ToString("d")));
+where pl.ID<>'' and g.InvDate between '{0}' and '{1}' ", Convert.ToDateTime(invdate1).ToString("d"), Convert.ToDateTime(invdate2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(shipper))
             {
