@@ -23,6 +23,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             this.DefaultFilter = "MdivisionID = '" + Sci.Env.User.Keyword + "'";
+            txtmfactory1.ReadOnly = true;
         }
 
         // detail 新增時設定預設值
@@ -85,9 +86,10 @@ namespace Sci.Production.Subcon
                 this.RenewData();
                 return false;
             }
-
+            
             return base.ClickEditBefore();
         }
+    
 
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
@@ -164,11 +166,23 @@ namespace Sci.Production.Subcon
                 MessageBox.Show("Farm In# Detail Qty can't all be zero.");
                 return false;
             }
+            
 
             #endregion
 
+
+            #region 加總明細金額至表頭
+
+            object a = ((DataTable)detailgridbs.DataSource).Compute("sum(Qty)", "");
+            CurrentMaintain["TotalQty"] = MyUtility.Math.Round((decimal)a);
+            #endregion
+
+            
             return base.ClickSaveBefore();
         }
+
+
+      
 
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
@@ -220,6 +234,25 @@ outer apply(
             base.OnDetailEntered();
             
             txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
+           
+            this.txtmfactory1.ReadOnly = true;
+
+
+            #region -- 加總明細金額，顯示於表頭 --
+            if (!(CurrentMaintain == null))
+            {
+                decimal x = 0;
+                foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
+                {
+                    x += (decimal)drr["qty"];
+                }
+               
+                Console.WriteLine("get {0}", x);
+                numericBox3.Text = x.ToString();
+               
+            }
+            #endregion
+
             #region Status Label
             label25.Text = CurrentMaintain["Status"].ToString();
             #endregion
@@ -237,7 +270,7 @@ outer apply(
             ts.CellValidating += (s, e) =>
             {
 
-                if (!(this.EditMode) || !(this.IsDetailInserting)) return;
+              // if (!(this.EditMode) || !(this.IsDetailInserting)) return;
                 if (e.FormattedValue.ToString() == CurrentDetailData["OrderID"].ToString()) return;
                    // && MyUtility.Check.Empty(string.Format("select styleid from orders where id ='{0}'", e.FormattedValue)))
 
@@ -279,6 +312,9 @@ outer apply(
                         MyUtility.Msg.WarningBox("Please fill SP# first");
                         return;
                     }
+
+                   
+
                     if (e.Button == System.Windows.Forms.MouseButtons.Right && e.RowIndex != -1)
                     {
 
@@ -326,8 +362,8 @@ outer apply(
             .CellOrderId("OrderID", header: "SP#", width: Widths.AnsiChars(13), settings: ts)
             .Text("StyleID", header: "Style", width: Widths.AnsiChars(6), iseditingreadonly: true)    //2
             .Text("ArtworkPoID", header: "POID", settings: ts4, iseditingreadonly: true, width: Widths.AnsiChars(13))   //3
-            .Text("ArtworkId", header: "Artwork", iseditingreadonly: false)   //4
-            .Text("PatternCode", header: "Cutpart ID", iseditingreadonly: false)    //5
+            .Text("ArtworkId", header: "Artwork", iseditingreadonly: true)   //4
+            .Text("PatternCode", header: "Cutpart ID", iseditingreadonly: true)    //5
             .Text("PatternDesc", header: "Cutpart Name", iseditingreadonly: true)//6
             .Numeric("ArtworkPoQty", header: "P/O Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)    //7
             .Numeric("OnHand", header: "Accum. Qty", width: Widths.AnsiChars(5), iseditingreadonly: true) //8
@@ -674,6 +710,7 @@ where b.bundleno !='' and b.id = '{0}'and a.artworktypeid = '{1}'", CurrentMaint
 
         }
 
+        // P03_ImportFrom Real Time
         private void button2_Click(object sender, EventArgs e)
         {
             //P03_Import TrimCardPrint = new P03_Import();
