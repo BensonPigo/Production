@@ -227,6 +227,7 @@ namespace Sci.Production.Warehouse
 	                    where 1=1
 	                    and a.seq1 =(select min(seq1) from dbo.PO_Supp_Detail where id=b.Poid and seq1 = b.seq1 and seq2 = b.seq2)
 	                    and b.Id='{0}'
+                        and not a.SEQ1 >= '7'
                         group by a.NETQty,a.ID,a.SEQ1,a.SEQ2,a.SCIRefno,a.ColorID,[dbo].[getStockUnit](a.SCIRefno,c.SuppID)
                     )
                     select a.*
@@ -390,7 +391,7 @@ namespace Sci.Production.Warehouse
                 else
                 {
                     sqlcmd = string.Format(@" 
-with 
+ with 
 main as(
     select 
         poid,
