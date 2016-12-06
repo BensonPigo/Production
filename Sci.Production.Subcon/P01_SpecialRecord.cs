@@ -48,7 +48,8 @@ namespace Sci.Production.Subcon
                 {
                     DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
                     ddr["Price"] = (decimal)e.FormattedValue * 1;
-                    ddr["Amount"] = (decimal)e.FormattedValue * (int)ddr["poqty"];
+                    ddr["Amount"] = (decimal)e.FormattedValue * (int)ddr["poqty"]*1;
+                    ddr["UnitPrice"] = (decimal)e.FormattedValue;
                 };
 
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
