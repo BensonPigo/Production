@@ -65,7 +65,7 @@ namespace Sci.Production.Warehouse
                 ), la as(
                     select cte.Poid,seq1,seq2
                     ,sum(cte.requestqty) 
-                        * (select v.Rate from View_unitrate v where v.FROM_U = cte.UnitID and v.TO_U = cte.stockunit) requestqty
+                        * (select v.RateValue from View_unitrate v where v.FROM_U = cte.UnitID and v.TO_U = cte.stockunit) requestqty
                     ,cte.qty
                     ,dbo.getmtldesc(cte.poid,cte.seq1,cte.seq2,2,0) as [Description]
                     ,cte.UnitID
