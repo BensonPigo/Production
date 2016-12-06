@@ -239,7 +239,7 @@ where {0} order by g.ID", masterID);
                 {
                     updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '{0}' where ID = '{1}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
 
-                    //updateCmds.Add(string.Format("update PackingList set ShipPlanID = '{0}', InspDate='{1}' , InspStatus='{2}',PulloutDate='{3}' where ID = '{4}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
+                    //updateCmds.Add(string.Format("update PackingList set ShipPlanID = '{0}', InspDate='{1}' , InspStatus='{2}',PulloutDate='{3}' where invno = '{4}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
                     continue;
                 }
 

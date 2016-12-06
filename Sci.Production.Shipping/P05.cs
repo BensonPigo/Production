@@ -1075,18 +1075,25 @@ left join AirPP a on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipm
             DualResult resultPkl;
             if (resultPkl = DBProxy.Current.Select(null, string.Format(@"select * from PackingList where  invno='{0}' ",MyUtility.Convert.GetString(CurrentMaintain["ID"])),out selectData))
             {
-                if (selectData.Rows.Count>1)
+                if (selectData.Rows.Count>0)
                 {
                     DataRow[] row = selectData.Select("status<>'Confirmed'");
+                    StringBuilder MSG = new StringBuilder();
                     if (row.Length > 0)
                     {
-                        MyUtility.Msg.WarningBox("Packing List not yet confirmed, can't confirm!");
+                        foreach (DataRow dr in selectData.Rows)
+                        {
+                            MSG.Append(string.Format("Packing NO : {0}\n\r",dr["ID"]));
+                        }
+                        MyUtility.Msg.WarningBox(@"PackingList not yet confirmed,please confirm listed below first!! " + MSG.ToString());
                         return;   
                     }
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox("InvoNo doesn't exist in Packing List, can't confirm!");
+                    StringBuilder msg1 = new StringBuilder();
+                    msg1.Append(string.Format("InvoNO: {0}", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+                    MyUtility.Msg.WarningBox("InvoNo doesn't exist in Packing List, can't confirm!" + msg1.ToString());
                     return;
                 }
                

@@ -844,6 +844,11 @@ select 'S' as DataType,*,(isnull((select sum(ShipQty) from Pullout_Detail where 
                         DetailNewRow["Variance"] = MyUtility.Convert.GetInt(dr["OrderQty"]) - totalShipQty;
                         ((DataTable)detailgridbs.DataSource).Rows.Add(DetailNewRow);
 
+                        #region update PulloutID 到PackingList
+                        string updatePklst = string.Format(@"Update PackingList set pulloutID = '{0}' where id='{1}'", CurrentMaintain["ID"], dr["PackingListID"]);
+                        DBProxy.Current.Execute(null, updatePklst);
+                        #endregion
+
                         #region 新增資料到Pullout_Detail_Detail
                         DataRow[] AllSubDetail = AllPackData.Select(string.Format("DataType = 'D' and PackingListID = '{0}' and OrderID = '{1}' and OrderShipmodeSeq = '{2}'", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["OrderShipmodeSeq"])));
                         if (AllSubDetail.Length > 0)
@@ -924,7 +929,7 @@ select 'S' as DataType,*,(isnull((select sum(ShipQty) from Pullout_Detail where 
             ReviseRow["NewStatus"] = dr["Status"];
             ReviseRow["PackingListID"] = dr["PackingListID"];
             ReviseRow["Remark"] = dr["Remark"];
-            ReviseRow["UKey"] = dr["UKey"];
+            ReviseRow["Pullout_DetailUKey"] = dr["UKey"]; //Pullout_Revise沒有ukey
             ReviseRow["INVNo"] = dr["INVNo"];
             ReviseRow["ShipModeID"] = dr["ShipModeID"];
             ReviseRow["AddName"] = Sci.Env.User.UserID;
