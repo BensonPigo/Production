@@ -238,6 +238,8 @@ where {0} order by g.ID", masterID);
                 if (dr.RowState == DataRowState.Modified || dr.RowState == DataRowState.Added)
                 {
                     updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '{0}' where ID = '{1}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
+
+                    //updateCmds.Add(string.Format("update PackingList set ShipPlanID = '{0}', InspDate='{1}' , InspStatus='{2}',PulloutDate='{3}' where ID = '{4}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
                     continue;
                 }
 
@@ -542,7 +544,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            string updateCmd = string.Format("update ShipPlan set Status = 'New',CFMDate =Null ,EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update ShipPlan set Status = 'Checked',CFMDate =Null ,EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
