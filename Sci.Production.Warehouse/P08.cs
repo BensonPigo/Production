@@ -136,20 +136,20 @@ namespace Sci.Production.Warehouse
             {
                 if (MyUtility.Check.Empty(row["seq1"]) || MyUtility.Check.Empty(row["seq2"]))
                 {
-                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Seq1 or Seq2 can't be empty"
+                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Seq1 or Seq2 can't be empty"
                         , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"])
                         + Environment.NewLine);
                 }
 
                 if (row["seq1"].ToString().TrimStart().StartsWith("7"))
                 {
-                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Seq1 can't start with '7'"
+                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Seq1 can't start with '7'"
                         , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
                 }
 
                 if (MyUtility.Check.Empty(row["StockQty"]))
                 {
-                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Receiving Qty can't be empty"
+                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Receiving Qty can't be empty"
                         , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
                 }
 
@@ -162,13 +162,13 @@ namespace Sci.Production.Warehouse
 
                 if (MyUtility.Check.Empty(row["stocktype"]))
                 {
-                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Stock Type can't be empty"
+                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Stock Type can't be empty"
                         , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
                 }
 
                 if (row["fabrictype"].ToString().ToUpper() == "F" && (MyUtility.Check.Empty(row["roll"]) || MyUtility.Check.Empty(row["dyelot"])))
                 {
-                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Roll and Dyelot can't be empty"
+                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll and Dyelot can't be empty"
                         , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
                 }
 
@@ -437,12 +437,16 @@ update Receiving
 set status='Confirmed', editname = '{0}' , editdate = GETDATE()
 where id = '{1}'
 ---jimmy 105/11/15 detail的StockUnit 蓋到PO_SUPP_DETAIL
+select distinct poid, seq1, seq2, StockUnit into #tmp2 from #tmp
+
 merge dbo.PO_SUPP_DETAIL as a
-using #tmp as b
+using #tmp2 as b
 on a.ID = b.poid and a.SEQ1 = b.seq1 and a.SEQ2 = b.seq2
 when matched then 
 update
 set a.StockUnit = b.StockUnit;
+
+drop table #tmp2
 ", Env.User.UserID, CurrentMaintain["id"]);
 
             #endregion 更新表頭狀態資料
