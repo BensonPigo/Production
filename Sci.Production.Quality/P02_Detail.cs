@@ -19,6 +19,7 @@ namespace Sci.Production.Quality
     {
         private string loginID = Sci.Env.User.UserID;
         private DataRow maindr;
+        private bool canedit;
 
         public P02_Detail(bool CanEdit, string airID, DataRow mainDr)
         {
@@ -27,7 +28,7 @@ namespace Sci.Production.Quality
             this.textID.Text = id.ToString();
             this.comboBox1.ReadOnly = false;
             maindr = mainDr;
-            bool canedit = CanEdit;
+            canedit = CanEdit;
             button_enable(canedit);
             btn_status(id);
 
@@ -112,19 +113,23 @@ namespace Sci.Production.Quality
 
         }
 
-
-        protected override void OnFormDispose()
+        //++1206
+        protected override void OnFormLoaded()
         {
-
-            base.OnFormDispose();
+            base.OnFormLoaded();
+            if (canedit)
+            {
+                this.undo.Text = "Close";
+            }
 
         }
-
 
         private void save_Click(object sender, EventArgs e)
         {
             string strSqlcmd = "";
             this.Encode.Enabled = false;
+            //++1206
+            this.undo.Text = "Undo";
 
             DualResult result;
             DataTable dt;
@@ -166,9 +171,10 @@ namespace Sci.Production.Quality
                             this.editBox1.Focus();
                             return;
                         }
-                        if ((editBox1.Text != null || editBox1.Text != "") && (this.RejQty_text.Text == "0.00"))
+                        //if ((editBox1.Text != null || editBox1.Text != "") && (this.RejQty_text.Text == "0.00"))
+                        if (( !MyUtility.Check.Empty(editBox1.Text)) && (this.RejQty_text.Text == "0.00"))
                         {
-                            MyUtility.Msg.InfoBox("When <Defect> has any value then <Rejected Qty> can not be empty !");
+                            MyUtility.Msg.InfoBox("<Rejected Qty> can not be empty ,when <Defect> has not empty ! ");
                             this.RejQty_text.Focus();
                             return;
                         }
@@ -200,6 +206,7 @@ namespace Sci.Production.Quality
                                 this.Encode.Text = "Encode";
                                 this.save.Text = "Edit";
                                 this.Encode.Enabled = true;
+                               
                             }
                             catch (Exception ex)
                             {
@@ -216,6 +223,7 @@ namespace Sci.Production.Quality
                         this.comboBox1.ReadOnly = true;
                         this.Remark_text.ReadOnly = true;
                         this.editBox1.ReadOnly = true;
+                        this.undo.Text = "Close";
                         return;
                     }
                     else
@@ -242,9 +250,12 @@ namespace Sci.Production.Quality
                     }
                 }
             }
+            //++1206
+            this.undo.Visible = false;
+            this.btnClose.Visible = true;
         }
 
-        
+               
 
         private void Encode_Click(object sender, EventArgs e)
         {
@@ -428,6 +439,11 @@ namespace Sci.Production.Quality
                     this.Encode.Text = "Encode";
                 }
             }
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
     }

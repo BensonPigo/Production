@@ -61,8 +61,9 @@
             this.textID = new Sci.Win.UI.TextBox();
             this.editBox1 = new Sci.Win.UI.EditBox();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
             this.InsDate_text = new Sci.Win.UI.DateBox();
+            this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
+            this.btnClose = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -70,8 +71,14 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.btnClose);
             this.btmcont.Location = new System.Drawing.Point(0, 416);
             this.btmcont.Size = new System.Drawing.Size(669, 40);
+            this.btmcont.Controls.SetChildIndex(this.left, 0);
+            this.btmcont.Controls.SetChildIndex(this.right, 0);
+            this.btmcont.Controls.SetChildIndex(this.undo, 0);
+            this.btmcont.Controls.SetChildIndex(this.save, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnClose, 0);
             // 
             // undo
             // 
@@ -403,6 +410,13 @@
             this.panel1.Size = new System.Drawing.Size(639, 234);
             this.panel1.TabIndex = 133;
             // 
+            // InsDate_text
+            // 
+            this.InsDate_text.Location = new System.Drawing.Point(103, 101);
+            this.InsDate_text.Name = "InsDate_text";
+            this.InsDate_text.Size = new System.Drawing.Size(145, 23);
+            this.InsDate_text.TabIndex = 135;
+            // 
             // txtsupplier1
             // 
             this.txtsupplier1.DisplayBox1Binding = "";
@@ -412,12 +426,16 @@
             this.txtsupplier1.TabIndex = 134;
             this.txtsupplier1.TextBox1Binding = "";
             // 
-            // InsDate_text
+            // btnClose
             // 
-            this.InsDate_text.Location = new System.Drawing.Point(103, 101);
-            this.InsDate_text.Name = "InsDate_text";
-            this.InsDate_text.Size = new System.Drawing.Size(145, 23);
-            this.InsDate_text.TabIndex = 135;
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnClose.Location = new System.Drawing.Point(350, 5);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 135;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // P02_Detail
             // 
@@ -533,6 +551,7 @@
         private Win.UI.Panel panel1;
         private Class.txtsupplier txtsupplier1;
         private Win.UI.DateBox InsDate_text;
+        private Win.UI.Button btnClose;
 
     }
 }
