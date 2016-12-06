@@ -841,7 +841,7 @@ namespace Sci.Production.Cutting
                                     if (aldr.RowState != DataRowState.Deleted)
                                     {
                                         DataRow allpart_ndr = alltmpTb.NewRow();
-                                        allpart_ndr["Bundleno"] = dr["Bundleno"];
+                                        //allpart_ndr["Bundleno"] = dr["Bundleno"];
                                         allpart_ndr["PatternCode"] = aldr["PatternCode"];
                                         allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
                                         allpart_ndr["Parts"] = aldr["Parts"];
