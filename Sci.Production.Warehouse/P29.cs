@@ -319,7 +319,7 @@ drop table #tmp");
                     
                     foreach (DataRow dr2 in issued)
                     {
-                        DataRow[] findrow = detail.Select(string.Format(@"from FtyInventoryUkey = {0} and topoid = '{1}'
+                        DataRow[] findrow = detail.Select(string.Format(@"FromftyInventoryUkey = {0} and topoid = '{1}'
                                                                           and toseq1 = '{2}' and toseq2 = '{3}'"
                             , dr2["ftyinventoryukey"], dr["poid"], dr["seq1"], dr["seq2"]));
                         if (findrow.Length > 0)
