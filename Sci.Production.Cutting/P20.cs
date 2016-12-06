@@ -93,7 +93,7 @@ namespace Sci.Production.Cutting
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 string oldvalue =  dr["Cutref"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if ( newvalue == oldvalue) return;
+                if (newvalue == oldvalue || newvalue.Trim()=="") return;
                 DataTable dt;
                 if (DBProxy.Current.Select(null, string.Format(
                 @"Select a.*,     
@@ -144,6 +144,9 @@ namespace Sci.Production.Cutting
                 dr["Layer"] = seldr["Layer"];
                 dr["Cons"] = seldr["Cons"];
                 dr["PatternPanel"] = seldr["PatternPanel"];
+                dr["cutno"] = seldr["cutno"];
+                dr["MarkerLength"] = seldr["MarkerLength"];
+                dr["colorID"] = seldr["colorID"];
                 dr["Workorderukey"] = seldr["Ukey"];
                 dr["SizeRatio"] = "";
                 DataTable workorderTb;
@@ -156,11 +159,11 @@ namespace Sci.Production.Cutting
                         {
                             if (str != "")
                             {
-                                str = str + "," + ddr["SizeCode"].ToString() + "/" + ddr["Qty"].ToString();
+                                str = str + "/ " + ddr["SizeCode"].ToString() + "*" + ddr["Qty"].ToString();
                             }
                             else
                             {
-                                str = ddr["SizeCode"].ToString() + "/" + ddr["Qty"].ToString();
+                                str = ddr["SizeCode"].ToString() + "*" + ddr["Qty"].ToString();
                             }
                         }
                     }
@@ -213,7 +216,7 @@ namespace Sci.Production.Cutting
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2)
+            .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2, iseditingreadonly: true)
             .Text("sizeRatio", header: "Size Ratio", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: sizeratio);
             this.detailgrid.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
         }
