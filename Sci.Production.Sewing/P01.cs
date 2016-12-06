@@ -505,6 +505,7 @@ and Team = @team";
             {
                 ddr.Delete();
             }
+           
         }
 
         //產生SubDetail資料
@@ -655,6 +656,7 @@ order by a.OrderId,os.Seq";
                 numericBox2.Focus();
                 return false;
             }
+          
             #endregion
 
             #region 新增時檢查Date不可早於Sewing Lock Date
@@ -694,7 +696,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
                 return false;
             }
             #endregion
-
+            
             #region 先算出QAQty,InLineQty,DefectQty,W/Hours
             DataTable SumQty;
             int gridQaQty, gridInlineQty, gridDefectQty;//加總表身的QAQty,InLineQty,DefectQty
@@ -730,11 +732,13 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
             #region 刪除表身資料(OrderID, ComboType, Article)
             foreach (DataRow dr in DetailDatas)
             {
-                if (MyUtility.Check.Empty(dr["OrderID"]) || MyUtility.Check.Empty(dr["Article"]))
+                if (MyUtility.Check.Empty(dr["OrderID"])||MyUtility.Check.Empty(dr["Article"]))
                 {
                     dr.Delete();
-                    continue;
+                   // if (dr.RowState == DataRowState.Deleted) { continue; } 
+                    continue;                   
                 }
+               
                 if (MyUtility.Check.Empty(dr["ComboType"]))
                 {
                     MyUtility.Msg.WarningBox("ComboType(*) can't empty!!");
@@ -860,7 +864,8 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
                     dr.Delete();
                 }
             }
-            DualResult result = base.ClickSaveSubDetial(e);
+          DualResult result = base.ClickSaveSubDetial(e);
+            
             if (!result)
             {
                 foreach (DataRow dr in Inserted)

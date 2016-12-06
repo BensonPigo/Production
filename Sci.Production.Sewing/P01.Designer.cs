@@ -144,31 +144,6 @@
             // 
             this.detailgridcont.Size = new System.Drawing.Size(892, 234);
             // 
-            // detail2
-            // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
-            // 
-            // detailgridcont2
-            // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
-            // 
-            // detailpanel2
-            // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
-            // 
             // browse
             // 
             this.browse.Size = new System.Drawing.Size(892, 463);
@@ -570,11 +545,10 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P01";
-            this.SubDetailKeyField1 = "id";
-            this.SubDetailKeyField2 = "SewingOutput_DetailUKey";
+            this.SubDetailKeyField1 = "id,ukey";
+            this.SubDetailKeyField2 = "id,SewingOutput_DetailUKey";
             this.SubGridAlias = "SewingOutput_Detail_Detail";
-            this.SubKeyField1 = "id";
-            this.SubKeyField2 = "ukey";
+            this.SubKeyField1 = "UKey";
             this.Text = "P01. Sewing Daily Output";
             this.UnApvChkValue = "Locked";
             this.UniqueExpress = "ID";
