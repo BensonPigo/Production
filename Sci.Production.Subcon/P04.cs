@@ -23,6 +23,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             this.DefaultFilter = string.Format("mdivisionid = '{0}'", Sci.Env.User.Keyword);
+            
         }
 
         // detail 新增時設定預設值
@@ -81,14 +82,18 @@ namespace Sci.Production.Subcon
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
             if (dr["status"].ToString() == "Confirmed")
             {
-                var frm = new Sci.Production.PublicForm.EditRemark("farmout", "remark", dr);
+                var frm = new Sci.Production.PublicForm.EditRemark("FarmIn", "remark", dr);
                 frm.ShowDialog(this);
+         
                 this.RenewData();
+               
                 return false;
             }
 
+            this.txtmfactory1.ReadOnly = true;
             return base.ClickEditBefore();
         }
+       
 
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
@@ -184,7 +189,8 @@ outer apply(
         {
             base.OnDetailEntered();
             txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
-            txtmfactory1.Enabled = !this.EditMode || IsDetailInserting;
+            //txtmfactory1.Enabled = !this.EditMode || IsDetailInserting;
+            this.txtmfactory1.ReadOnly = true;
             #region Status Label
             label25.Text = CurrentMaintain["Status"].ToString();
             #endregion
@@ -202,7 +208,7 @@ outer apply(
             ts.CellValidating += (s, e) =>
             {
 
-                if (!(this.EditMode) || !(this.IsDetailInserting)) return;
+                //if (!(this.EditMode) || !(this.IsDetailInserting)) return;
                 if (e.FormattedValue.ToString() == CurrentDetailData["OrderID"].ToString()) return;
 
                 if (!(MyUtility.Check.Empty(e.FormattedValue)))
@@ -292,9 +298,9 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
             .CellOrderId("OrderID", header: "SP#", width: Widths.AnsiChars(13), settings: ts)
             .Text("StyleID", header: "Style", width: Widths.AnsiChars(6), iseditingreadonly: true)    //2
             .Text("ArtworkPoID", header: "POID", settings: ts4, iseditingreadonly: true, width: Widths.AnsiChars(13))   //3
-            .Text("ArtworkId", header: "Artwork", iseditingreadonly: false)   //4
-            .Text("PatternCode", header: "Cutpart ID", iseditingreadonly: false)    //5
-            .Text("PatternDesc", header: "Cutpart Name", iseditingreadonly: false)//6
+            .Text("ArtworkId", header: "Artwork", iseditingreadonly: true)   //4
+            .Text("PatternCode", header: "Cutpart ID", iseditingreadonly: true)    //5
+            .Text("PatternDesc", header: "Cutpart Name", iseditingreadonly: true)//6
             .Numeric("ArtworkPoQty", header: "P/O Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)    //7
             .Numeric("OnHand", header: "Accum. Qty", width: Widths.AnsiChars(5), iseditingreadonly: true) //8
             .Numeric("Variance", header: "Variance", width: Widths.AnsiChars(5), iseditingreadonly: true)   //9
@@ -592,6 +598,7 @@ group by b.artworkpo_detailukey ", dr["artworkpo_detailukey"]);
         {
             //P03_Import TrimCardPrint = new P03_Import();
             //P03_Import.ShowDialog(this);
+          
         }
 
     }
