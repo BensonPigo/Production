@@ -389,7 +389,7 @@ namespace Sci.Production.Warehouse
                 }
                 else
                 {
-                    sqlcmd = string.Format(@"
+                    sqlcmd = string.Format(@" 
 with 
 main as(
     select 
