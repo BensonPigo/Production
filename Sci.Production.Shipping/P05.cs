@@ -1071,6 +1071,31 @@ left join AirPP a on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipm
                     return;
                 }
             }
+            //Check PackingList 全部是否都Confirmed
+            DualResult resultPkl;
+            if (resultPkl = DBProxy.Current.Select(null, string.Format(@"select * from PackingList where  invno='{0}' ",MyUtility.Convert.GetString(CurrentMaintain["ID"])),out selectData))
+            {
+                if (selectData.Rows.Count>1)
+                {
+                    DataRow[] row = selectData.Select("status<>'Confirmed'");
+                    if (row.Length > 0)
+                    {
+                        MyUtility.Msg.WarningBox("Packing List not yet confirmed, can't confirm!");
+                        return;   
+                    }
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("InvoNo doesn't exist in Packing List, can't confirm!");
+                    return;
+                }
+               
+            }
+            else
+            {
+                MyUtility.Msg.ErrorBox(resultPkl.ToString());
+                return;
+            }
 
             string updateCmd = string.Format("update GMTBooking set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DualResult result1 = DBProxy.Current.Execute(null, updateCmd);
