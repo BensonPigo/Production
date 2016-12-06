@@ -146,6 +146,7 @@ namespace Sci.Production.Cutting
             this.button2.Enabled = (CurrentMaintain["Status"].ToString() != "New");
             this.displayBox_Requestby.Text = PublicPrg.Prgs.GetAddOrEditBy(CurrentMaintain["AddName"]);
             this.label7.Text = CurrentMaintain["Status"].ToString();
+            if (!MyUtility.Check.Empty(CurrentMaintain["sendDate"])) displayBox_LastSendDate.Text = Convert.ToDateTime(CurrentMaintain["sendDate"]).ToString("yyyy/MM/dd HH:mm:ss");
         }
         protected override void ClickUnconfirm()
         {
@@ -217,7 +218,7 @@ namespace Sci.Production.Cutting
             {
                 return false;
             }
-            CurrentMaintain["ID"] = reqid;
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"])) CurrentMaintain["ID"] = reqid;  //若單號為空，才要賦予新單號
             return base.ClickSaveBefore();
         }
         protected override DualResult ClickSavePost()
@@ -416,7 +417,8 @@ namespace Sci.Production.Cutting
                 DialogResult DR = email.ShowDialog(this);
                 if (DR == DialogResult.OK)
                 {
-                    string sql = string.Format("Update MarkerReq set sendDate = getdate()  where id ='{0}'", CurrentMaintain["ID"]);
+                    DateTime NOW = DateTime.Now;
+                    string sql = string.Format("Update MarkerReq set sendDate = '{0}'  where id ='{1}'", NOW.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"]);
                     DualResult Result;
                     if (!(Result = DBProxy.Current.Execute(null, sql)))
                     {
@@ -424,7 +426,8 @@ namespace Sci.Production.Cutting
                     }
                     else
                     {
-                        ReloadDatas();
+                        CurrentMaintain["sendDate"] = NOW;
+                        this.OnDetailEntered();
                     }
                 }
 
