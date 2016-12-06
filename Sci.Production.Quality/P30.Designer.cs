@@ -189,7 +189,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(724, 558);
+            this.browse.Size = new System.Drawing.Size(788, 558);
             // 
             // tabs
             // 
@@ -391,7 +391,7 @@
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(111, 23);
             this.label9.TabIndex = 21;
-            this.label9.Text = "Local MR :";
+            this.label9.Text = "MC Handle :";
             // 
             // label10
             // 
@@ -515,7 +515,7 @@
             this.textBox9.DisplayBox1Binding = "";
             this.textBox9.Location = new System.Drawing.Point(428, 77);
             this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(297, 23);
+            this.textBox9.Size = new System.Drawing.Size(266, 23);
             this.textBox9.TabIndex = 41;
             this.textBox9.TextBox1Binding = "";
             // 
