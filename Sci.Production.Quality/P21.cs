@@ -396,6 +396,7 @@ where a.ID='{0}'",
                     spamO.Add(new SqlParameter("@cfa", dt.Rows[0]["Cfa"]));
                     spamO.Add(new SqlParameter("@id", this.SP_text.Text));
                     DBProxy.Current.Execute(null, updOrders, spamO);
+                    this.RenewData();
 
                 }
                 this.Encode_btn.Text = "Amend";
@@ -419,7 +420,7 @@ where a.ID='{0}'",
                     spamO.Add(new SqlParameter("@cfa", dt.Rows[0]["Cfa"]));
                     spamO.Add(new SqlParameter("@id", this.SP_text.Text));
                     DBProxy.Current.Execute(null, updOrders, spamO);
-
+                    this.RenewData();
                 }
                 this.Encode_btn.Text = "Encode";
             }
