@@ -204,13 +204,15 @@ namespace Sci.Production.Warehouse
 	                    ,[requestqty] = isnull((select sum(cons) 
 		                    from dbo.Cutplan_Detail_Cons c 
 		                    inner join dbo.PO_Supp_Detail p on p.ID=c.Poid and p.SEQ1 = c.Seq1 and p.SEQ2 = c.Seq2
-		                    where  c.id='{1}' and p.scirefno = a.scirefno and c.poid = a.poid), 0.00)
+		                    where  c.id='{1}' and p.seq1 = a.seq1 and p.seq2 = a.seq2 and c.poid = a.poid), 0.00)
 	                    ,[accu_issue] = isnull((select sum(qty) 
 		                    from issue a1 
 		                    inner join issue_summary b1 on b1.id = a1.id 
-		                    where a1.cutplanid = '{1}' and b1.poid = a.poid and b1.scirefno = a.scirefno 
+		                    where a1.cutplanid = '{1}' and b1.poid = a.poid and b1.seq1 = a.seq1 and b1.seq2 = a.seq2
 		                    and a1.id != '{0}' and a1.status='Confirmed'), 0.00)
 	                    ,a.Ukey
+                        ,a.seq1
+                        ,a.seq2
 	                    from dbo.Issue_Summary a
 	                    Where a.id = '{0}'
                     ),
@@ -220,10 +222,10 @@ namespace Sci.Production.Warehouse
 	                    ,[Unit] = [dbo].[getStockUnit](a.SCIRefno,c.SuppID)
                         ,[aiqqty] = ISNULL(SUM(a.OutputQty)	,0.00)
 	                    from PO_Supp_Detail a
-	                    left join Issue_Summary b on a.SCIRefno=b.SCIRefno and a.ColorID=b.Colorid and a.ID=b.Poid
+	                    left join Issue_Summary b on  a.ID=b.Poid and a.seq1 = b.seq1 and a.seq2 = b.seq2
 	                    left join PO_Supp c on c.id = a.ID and c.SEQ1 = a.SEQ1
 	                    where 1=1
-	                    and a.seq1 =(select min(seq1) from dbo.PO_Supp_Detail where id=b.Poid and SCIRefno=b.SCIRefno)
+	                    and a.seq1 =(select min(seq1) from dbo.PO_Supp_Detail where id=b.Poid and seq1 = b.seq1 and seq2 = b.seq2)
 	                    and b.Id='{0}'
                         group by a.NETQty,a.ID,a.SEQ1,a.SEQ2,a.SCIRefno,a.ColorID,[dbo].[getStockUnit](a.SCIRefno,c.SuppID)
                     )
@@ -234,7 +236,7 @@ namespace Sci.Production.Warehouse
                     ,[aiqqty] = isnull(b.aiqqty,0)
                     ,[avqty] =isnull([accu_issue],0)-isnull([aiqqty],0)
                     from main a                    
-                    left join NetQty b on a.Poid=b.ID and a.SCIRefno=b.SCIRefno and a.Colorid=b.ColorID"
+                    left join NetQty b on a.Poid = b.ID and a.seq1 = b.seq1 and a.seq2 = b.seq2"
 
                 , masterID, cutplanID);
 
@@ -388,30 +390,72 @@ namespace Sci.Production.Warehouse
                 else
                 {
                     sqlcmd = string.Format(@"
-select poid,t.SCIRefno,t.ColorID,t.SizeSpec,sum(cons)requestqty,0.00 as qty,
-(select sum(qty) from Issue_Summary a
-inner join Issue b on a.Id=b.Id
-inner join Cutplan d on b.CutplanID=d.ID
-where d.ID='{0}' and b.status='Confirmed') as accu_issue
-,'{1}' as id
---, '' [Description]
-, (select DescDetail from fabric where scirefno= t.scirefno)as [description]
-, 0.00 as NETQty
-,t.SEQ1
-,t.SEQ2
-from dbo.Cutplan_Detail_Cons c 
-inner join dbo.PO_Supp_Detail t on t.id=c.Poid and t.seq1=c.seq1 and t.seq2=c.Seq2
-where c.ID='{0}'
-group by poid,t.SCIRefno,t.ColorID,t.SizeSpec,t.SEQ1,t.SEQ2", txtRequest.Text, CurrentMaintain["id"]);
+with 
+main as(
+    select 
+        poid,
+        t.SCIRefno,
+        t.ColorID,
+        t.SizeSpec,
+        sum(cons)requestqty,0.00 as qty,
+        --isnull((select sum(qty) from Issue_Summary a inner join Issue b on a.Id=b.Id inner join Cutplan d on b.CutplanID=d.ID where d.ID='{0}' and b.status='Confirmed'), 0.00) as accu_issue,
+        isnull((
+            select 
+	            sum(qty) 
+            from Issue_Summary a 
+	            inner join Issue b on a.Id=b.Id 
+	            inner join Cutplan d on b.CutplanID=d.ID 
+            where 
+	            d.ID='{0}' and 
+	            t.SEQ1 = a.seq1 and
+				t.seq2 = a.seq2 and
+	            b.status='Confirmed')
+            , 0.00) as accu_issue,
+
+        '{1}' as id,
+        --'' [Description], 
+        (select DescDetail from fabric where scirefno= t.scirefno)as [description], 
+        t.SEQ1,
+        t.SEQ2
+    from dbo.Cutplan_Detail_Cons c 
+        inner join dbo.PO_Supp_Detail t on t.id=c.Poid and t.seq1=c.seq1 and t.seq2=c.Seq2
+    where 
+        c.ID='{0}'
+    group by poid,t.SCIRefno,t.ColorID,t.SizeSpec,t.SEQ1,t.SEQ2
+),
+NetQty as(
+    select DISTINCT  
+        a.NETQty,
+        a.ID,
+        a.SEQ1,
+        a.SEQ2,
+        a.SCIRefno,
+        a.ColorID 
+    from PO_Supp_Detail a,Issue_Summary b
+    where 
+        a.seq1 = b.seq1 
+        and a.seq2 = b.seq2 
+        and a.ID=b.Poid 
+        and not a.SEQ1 >= '7'
+        and a.SEQ1 = (select min(seq1) from dbo.PO_Supp_Detail where id=a.id and seq1 = a.SEQ1 and seq2 = a.seq2)
+)
+select a.*, isnull(b.NETQty,0) as NETQty from main a 
+left join NetQty b on a.Poid = b.ID and a.seq1 = b.seq1 and a.seq2 = b.seq2
+", txtRequest.Text, CurrentMaintain["id"]);
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     if (MyUtility.Check.Empty(dt) || MyUtility.Check.Empty(dt.Rows.Count))
                     {
                         MyUtility.Msg.WarningBox("Cutplan Cons Data not found!!");
                         return;
                     }
+                    List<DataRow> rows = dt.AsEnumerable().ToList();
+                    DataTable gridTable = ((DataTable)detailgridbs.DataSource);
+                    var sameFields = gridTable.GetSameFields(dt);
                     foreach (DataRow item in dt.Rows)
                     {
-                        ((DataTable)detailgridbs.DataSource).ImportRow(item);
+                        var newRow = gridTable.NewRow();
+                        item.CopyTo(newRow, sameFields);
+                        gridTable.Rows.Add(newRow);
                     }
                 }
             }
@@ -445,21 +489,21 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
 
             #endregion Status Label
         }
-
-        protected override DualResult OnSubDetailSelectCommandPrepare(PrepareSubDetailSelectCommandEventArgs e)
-        {
-            string masterID = (e.Detail == null) ? "" : e.Detail["ID"].ToString();
-            string ukey = (e.Detail == null || MyUtility.Check.Empty(e.Detail["ukey"])) ? "0" : e.Detail["ukey"].ToString();
-            this.SubDetailSelectCommand = string.Format(@"select *,a.seq1+a.seq2 as seq
-,(Select t.mtllocationid+',' from (select mtllocationid from ftyinventory_detail where ukey = a.ftyinventoryukey) t for xml path('')) [location]
-,ftyinventory.inqty
-,ftyinventory.outqty
-,ftyinventory.adjustqty
-,ftyinventory.inqty-ftyinventory.outqty+ftyinventory.adjustqty as balanceQty
-from dbo.Issue_detail a inner join dbo.ftyinventory on ftyinventory.ukey = a.ftyinventoryukey
-Where a.id = '{0}' and a.issue_summaryukey = {1}", masterID, ukey);
-            return base.OnSubDetailSelectCommandPrepare(e);
-        }
+        //以下設定ISS Detail
+//        protected override DualResult OnSubDetailSelectCommandPrepare(PrepareSubDetailSelectCommandEventArgs e)
+//        {
+//            string masterID = (e.Detail == null) ? "" : e.Detail["ID"].ToString();
+//            string ukey = (e.Detail == null || MyUtility.Check.Empty(e.Detail["ukey"])) ? "0" : e.Detail["ukey"].ToString();
+//            this.SubDetailSelectCommand = string.Format(@"select *,a.seq1+a.seq2 as seq
+//,(Select t.mtllocationid+',' from (select mtllocationid from ftyinventory_detail where ukey = a.ftyinventoryukey) t for xml path('')) [location]
+//,ftyinventory.inqty
+//,ftyinventory.outqty
+//,ftyinventory.adjustqty
+//,ftyinventory.inqty-ftyinventory.outqty+ftyinventory.adjustqty as balanceQty
+//from dbo.Issue_detail a inner join dbo.ftyinventory on ftyinventory.ukey = a.ftyinventoryukey
+//Where a.id = '{0}' and a.issue_summaryukey = {1}", masterID, ukey);
+//            return base.OnSubDetailSelectCommandPrepare(e);
+//        }
 
         protected override void ClickConfirm()
         {
