@@ -215,11 +215,20 @@ namespace Sci.Production.Quality
             decimal detailRowCount = DetailDatas.Count;
             string inspnum = "0";
             DataTable detailTb = (DataTable)detailgridbs.DataSource;
+            int t = detailTb.Rows.Count;
+            for (int i =t-1; i >= 0; i--)
+            {
+                if (detailTb.Rows[i]["STATUS"].ToString().ToUpper()=="NEW")
+                {
+                    detailTb.Rows[i]["Result"] = "";
+                }
+            }
             if (detailRowCount!=0)
             {
                 if (detailTb.Rows.Count!=0)
                 {
-                    DataRow[] inspectAry = detailTb.Select("Result<>''");
+
+                    DataRow[] inspectAry = detailTb.Select("Result<>'' AND STATUS='Confirmed'");
                     
                     if (inspectAry.Length >0)
                     {
