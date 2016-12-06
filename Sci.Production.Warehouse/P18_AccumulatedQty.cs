@@ -89,7 +89,7 @@ namespace Sci.Production.Warehouse
             	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
             	from dbo.TransferIn_Detail a LEFT JOIN DBO.Invtrans A1 
             	ON a1.Seq70poid = a.PoId and a1.seq70seq1 = a.seq1 and a1.seq70seq2 = a.seq2
-                and a1.type = 6 AND A1.FactoryID ='{2}' and a1.TransferMDivisionID='{1}'
+                and a1.type = 6 AND A1.FactoryID ='{2}'-- and a1.TransferMDivisionID='{1}'
             	where a.Id = '{0}'
             	GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.UnitID
             --union all
