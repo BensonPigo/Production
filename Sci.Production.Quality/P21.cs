@@ -509,7 +509,7 @@ where a.ID='{0}'",
             //取單號
             if (this.IsDetailInserting)
             {
-                 tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword, "CFA",(DateTime)Convert.ToDateTime(this.Audit_Date.Text));
+                 tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword+"CA", "CFA",(DateTime)Convert.ToDateTime(this.Audit_Date.Text));
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
