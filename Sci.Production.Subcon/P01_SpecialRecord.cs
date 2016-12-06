@@ -165,7 +165,7 @@ namespace Sci.Production.Subcon
             dr2 = dtGridBS1.Select("Selected =  1");
             if (dr2.Length > 0)
             {
-                foreach (DataRow tmp in dtGridBS1.Rows)
+                foreach (DataRow tmp in dr2)//dtGridBS1.Rows
                 {
                     DataRow[] findrow = dt_artworkpo_detail.Select(string.Format("orderid = '{0}' and ArtworkId = '{1}' and patterncode = '{2}'", tmp["orderid"].ToString(), tmp["ArtworkId"].ToString(), tmp["patterncode"].ToString()));
 
