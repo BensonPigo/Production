@@ -54,6 +54,7 @@ SET
       ,a.EditName	      =b.EditName
       ,a.EditDate	      =b.EditDate
       ,a.ETA	      =b.ETA
+	  ,a.SCIRefno = b.SCIRefno
 from Production.dbo.Inventory as a 
 inner join Trade_To_Pms.dbo.Inventory as b ON a.POID=b.POID and a.Seq1=b.Seq1 and a.Seq2=b.Seq2 and a.FactoryID=b.FactoryID and a.UnitID=b.UnitID and a.ProjectID=b.ProjectID and a.InventoryRefnoId=b.InventoryRefnoId
 -------------------------- INSERT INTO §ì
@@ -96,6 +97,7 @@ INSERT INTO Production.dbo.Inventory(
       ,EditName
       ,EditDate
       ,ETA
+	  ,SCIRefno
 )
 select 
        Ukey
@@ -136,6 +138,7 @@ select
       ,EditName
       ,EditDate
       ,ETA
+	  ,SCIRefno
 from Trade_To_Pms.dbo.Inventory as b
 where not exists(select POID from Production.dbo.Inventory as a where a.POID=b.POID and a.Seq1=b.Seq1 and a.Seq2=b.Seq2 and a.FactoryID=b.FactoryID and a.UnitID=b.UnitID and a.ProjectID=b.ProjectID and a.InventoryRefnoId=b.InventoryRefnoId)
 
