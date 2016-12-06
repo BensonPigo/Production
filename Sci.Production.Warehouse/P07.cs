@@ -746,12 +746,15 @@ when not matched then
                  insert ([Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty],[MDivisionID],[MDivisionPoDetailUkey])
       values (src.poid,src.seq1,src.seq2,src.roll,src.dyelot,src.stocktype,src.stockqty,src.mdivisionid,(select ukey from dbo.MDivisionPoDetail where mdivisionid=src.mdivisionid and poid=src.poid and seq1 = src.seq1 and seq2=src.seq2));
 --------20161109LEO新增回寫PO_Supp_Detail的StockUnit 
+--select distinct poid, seq1, seq2, StockUnit into #tmp2 from #tmp
 merge dbo.PO_Supp_Detail as target
+--using #tmp2 as src
 using #tmp as src
     on  target.ID =src.poid and target.seq1 = src.seq1 and target.seq2 =src.seq2 
 when matched then
     update
     set target.StockUnit = src.StockUnit;
+--drop table #tmp2
 ";
             DualResult AA = MyUtility.Tool.ProcessWithDatatable(detailDt, string.Join(",", detailDt.Columns.Cast<DataColumn>().Select(col => col.ColumnName).ToArray()), sql_UpdateFtyInventory, out dtOut2);
             //以上寫完 測試完畢
