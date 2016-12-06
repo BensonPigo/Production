@@ -37,7 +37,7 @@ namespace Sci.Production.Warehouse
             this.dis_scirefno.Text = CurrentDetailData["scirefno"].ToString();
             this.dis_poid.Text = CurrentDetailData["poid"].ToString();
             this.dis_colorid.Text = CurrentDetailData["colorid"].ToString();
-            this.dis_sizespec.Text = CurrentDetailData["sizespec"].ToString();
+            //this.dis_sizespec.Text = CurrentDetailData["sizespec"].ToString();
             this.dis_desc.Text = CurrentDetailData["description"].ToString();
             this.num_requestqty.Text = CurrentDetailData["requestqty"].ToString();
             this.num_accuIssue.Text = CurrentDetailData["accu_issue"].ToString();
