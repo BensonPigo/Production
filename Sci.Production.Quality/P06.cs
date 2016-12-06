@@ -244,7 +244,8 @@ namespace Sci.Production.Quality
         {
             DataTable dt;
             DBProxy.Current.Select(null, "select Max(id) as id from ColorFastness", out dt);
-            string ID = MyUtility.GetValue.GetID("CF", "ColorFastness", DateTime.Today, 2, "ID", null);
+            //string ID = MyUtility.GetValue.GetID("CF", "ColorFastness", DateTime.Today, 2, "ID", null);
+            string ID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "CF", "ColorFastness", DateTime.Today, 2, "ID", null);
             //int ID = MyUtility.Convert.GetInt(dt.Rows[0]["id"]);
             //ID = ID + 1;
 
