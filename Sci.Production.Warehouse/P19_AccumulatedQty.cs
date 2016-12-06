@@ -76,7 +76,7 @@ namespace Sci.Production.Warehouse
                     ,cte.UnitID
                     ,cte.stockunit 
                 )
-                select Poid,seq1,seq2,sum(requestqty) requestqty,qty,Description,stockunit
+                select Poid,seq1,seq2,isnull(sum(requestqty),0) requestqty,qty,Description,stockunit
                 from la
 			    group by Poid,seq1,seq2,qty,Description,stockunit
                 ;
