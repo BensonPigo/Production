@@ -345,9 +345,9 @@
             // button1
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button1.Location = new System.Drawing.Point(470, 102);
+            this.button1.Location = new System.Drawing.Point(448, 102);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(181, 30);
+            this.button1.Size = new System.Drawing.Size(200, 30);
             this.button1.TabIndex = 3;
             this.button1.Text = "Import from WorkOrder";
             this.button1.UseVisualStyleBackColor = true;

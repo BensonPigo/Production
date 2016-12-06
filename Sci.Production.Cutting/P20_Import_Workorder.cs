@@ -12,6 +12,8 @@ using Sci.Win;
 using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
+using System.Linq;
+
 
 namespace Sci.Production.Cutting
 {
@@ -20,12 +22,26 @@ namespace Sci.Production.Cutting
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
         DataTable gridTable, detailTable, currentdetailTable;
-        public P20_Import_Workorder(DataTable dt)
+        DataRow drCurrentMaintain;
+
+
+        public P20_Import_Workorder(DataRow _drCurrentMaintain, DataTable dt)
         {
             InitializeComponent();
+            drCurrentMaintain = _drCurrentMaintain;
             currentdetailTable = dt;
-            dateBox1.Value = DateTime.Today;
+
+            if (MyUtility.Check.Empty(drCurrentMaintain["cDate"]))
+            {
+                dateBox1.Value = DateTime.Today;
+            }
+            else
+            {
+                dateBox1.Value = Convert.ToDateTime(drCurrentMaintain["cDate"]);
+            }
+
         }
+
         protected override void OnFormLoaded()
         {
             DBProxy.Current.Select(null, 
@@ -40,8 +56,8 @@ namespace Sci.Production.Cutting
             .Text("Cutref", header: "Cut Ref#", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Cuttingid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("OrderID", header: "Sub-SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("FabricCombo", header: "FabricCombo", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("PatternPanel", header: "PatternPanel", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("FabricCombo", header: "Pattern Panel", width: Widths.AnsiChars(2), iseditingreadonly: true)
+            .Text("PatternPanel", header: "Lectra Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -52,6 +68,7 @@ namespace Sci.Production.Cutting
             this.grid1.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
 
         }
+
         private void Close_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -66,6 +83,8 @@ namespace Sci.Production.Cutting
             }
             gridTable.Clear();
             string estcutdate = dateBox1.Text;
+            string condition = string.Join(",", currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + r["CutRef"].ToString() + "'"));
+            if (MyUtility.Check.Empty(condition)) condition = @"''";
             string sqlcmd = string.Format(
                 @"Select 0 as sel,a.*, a.id as Cuttingid,a.ukey as workorderukey,    
                 (
@@ -86,7 +105,10 @@ namespace Sci.Production.Cutting
                 Where c.WorkOrderUkey =a.Ukey 
                 For XML path('')
                 ) as SizeRatio from WorkOrder a where mDivisionid = '{0}' and a.estcutdate = '{1}'
-                and a.Ukey not in (Select WorkOrderUkey from CuttingOutput_Detail) order by cutref", keyWord, estcutdate);
+                and a.Ukey not in (Select WorkOrderUkey from CuttingOutput_Detail) 
+                and CutRef != ''
+                and CutRef not in ( {2} )
+                order by cutref", keyWord, estcutdate, condition);
             DualResult dResult = DBProxy.Current.Select(null, sqlcmd, out detailTable);
             if (dResult)
             {

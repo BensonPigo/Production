@@ -600,9 +600,10 @@ namespace Sci.Production.Cutting
         {
             detailgrid.ValidateControl();
             DataTable dt = (DataTable)detailgridbs.DataSource;
-            var frm = new Sci.Production.Cutting.P20_Import_Workorder(dt);
+            var frm = new Sci.Production.Cutting.P20_Import_Workorder(CurrentMaintain, dt);
             frm.ShowDialog(this);
         }
+
 //        private void Gmtrequery()
 //        {
 //            #region 找出有哪些部位

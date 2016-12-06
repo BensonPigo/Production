@@ -124,7 +124,7 @@
             this.Controls.Add(this.Query);
             this.Controls.Add(this.grid1);
             this.Name = "P20_Import_Workorder";
-            this.Text = "P04_Import";
+            this.Text = "P20_Import";
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             this.ResumeLayout(false);
 
