@@ -674,7 +674,7 @@ namespace Sci.Production.Cutting
             }
             foreach (DataRow dr in bundle_Detail_allpart_Tb.Rows)
             {
-                dr["Bundleno"] = "";
+                //dr["Bundleno"] = "";
                 dr["ID"] = "";
             }
             foreach (DataRow dr in bundle_Detail_Art_Tb.Rows)
