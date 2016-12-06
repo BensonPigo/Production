@@ -57,7 +57,7 @@ namespace Sci.Production.Cutting
             gridTable.Rows.Clear();  //開始查詢前先清空資料
             string estcutdate = dateBox1.Text;
             string cutcellid = txtCell1.Text;
-            string sqlcmd = string.Format("Select a.*,'' as orderid_b,'' as article_b, '' as sizecode,'' as sewinglineid,1 as sel from Workorder a where cutplanid='' and cutcellid!='' and mDivisionid ='{0}' and estcutdate = '{1}'", keyWord,estcutdate);
+            string sqlcmd = string.Format("Select a.*,'' as orderid_b,'' as article_b, '' as sizecode,'' as sewinglineid,1 as sel from Workorder a where (cutplanid='' or cutplanid is null) and cutcellid!='' and mDivisionid ='{0}' and estcutdate = '{1}'", keyWord, estcutdate);
             if (!MyUtility.Check.Empty(cutcellid))
             {
                 sqlcmd = sqlcmd + string.Format(" and cutcellid = '{0}'", cutcellid);
