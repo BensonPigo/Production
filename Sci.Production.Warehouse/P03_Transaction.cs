@@ -214,8 +214,9 @@ namespace Sci.Production.Warehouse
 
             union all
             select issuedate
-            ,'P37. Return Receiving Material' name
-            , a.id, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location,AddDate
+            , a.id
+            ,'P37. Return Receiving Material' name            
+            , 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location,AddDate
             from ReturnReceipt a, ReturnReceipt_Detail b 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
