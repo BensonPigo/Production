@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[Bundle_Detail] (
-    [BundleNo]    VARCHAR (10)  CONSTRAINT [DF_Bundle_Detail_BundleNo] DEFAULT ('') NOT NULL,
+    [BundleNo]    VARCHAR (13)  CONSTRAINT [DF_Bundle_Detail_BundleNo] DEFAULT ('') NOT NULL,
     [Id]          VARCHAR (13)  CONSTRAINT [DF_Bundle_Detail_Id] DEFAULT ((0)) NOT NULL,
     [BundleGroup] NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_BundleGroup] DEFAULT ((0)) NULL,
     [Patterncode] VARCHAR (20)  CONSTRAINT [DF_Bundle_Detail_Patterncode] DEFAULT ('') NOT NULL,
@@ -11,6 +11,8 @@
     [FarmOut]     NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_FarmOut] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Bundle_Detail] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [Id] ASC)
 );
+
+
 
 
 
