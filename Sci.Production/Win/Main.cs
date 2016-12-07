@@ -44,11 +44,14 @@ namespace Sci.Production
 
             if (!Env.DesignTime)
             {
-                if (null == Env.User)
-                {
-                    this.Shown+=(s,e)=>{OpenLogin();};
+                this.Shown+=(s,e)=>{
+                    if (null == Env.User)
+                        {
+                            OpenLogin();
+                        }
+                };
 
-                }
+                
             }
         }
         protected override void OnFormClosing(FormClosingEventArgs e)
