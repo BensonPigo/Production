@@ -36,6 +36,144 @@ namespace Sci.Production.PublicPrg
         /// <param name="string stocktype"></param>
         /// <param name="string m"></param>
         /// <returns>String Sqlcmd</returns>
+
+        private static void addlocationvalue(bool attachLocation, List<Prgs_POSuppDetailData> datas)
+        {
+            string tmplocation = "";
+            if (attachLocation)
+            {
+                #region
+//                DataTable tmp = null;
+//                #region 撈location後與原本的distinct已,分開,重組新的datas
+//                string sc = @"
+//;with forlocation as
+//(
+//	select mdivisionid,poid,seq1,seq2,stocktype,mtllocationid
+//	from #tmp
+//	union
+//	select f.mdivisionid,f.poid,f.seq1,f.seq2,f.stocktype,fd.mtllocationid
+//	from ftyinventory f
+//	inner join ftyinventory_detail fd on f.ukey = fd.ukey 
+//	inner join #tmp t on f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
+//		and f.seq2 = t.Seq2 and f.stocktype = t.StockType
+//)
+//select mdivisionid,poid,seq1,seq2,stocktype,l.bocation
+//from forlocation fl1
+//outer apply
+//(
+//	select location=(
+//		select distinct concat(fl2.mtllocationid,',')
+//		from forlocation fl2
+//		where fl1.mdivisionid = fl2.MDivisionID and fl1.poid = fl2.POID and fl1.seq1 = fl2.Seq1 
+//		and fl1.seq2 = fl2.Seq2 and fl1.stocktype = fl2.StockType
+//		for xml path('')
+//	)
+//)l";
+//                #endregion
+//                MyUtility.Tool.ProcessWithObject(datas, "", sc, out tmp, "#tmp");
+
+//                var newDatas = tmp.AsEnumerable().Select(w =>
+//                    new Prgs_POSuppDetailData()
+//                    {
+//                        mdivisionid = w.Field<string>("mdivisionid"),
+//                        poid = w.Field<string>("poid"),
+//                        seq1 = w.Field<string>("seq1"),
+//                        seq2 = w.Field<string>("seq2"),
+//                        stocktype = w.Field<string>("stocktype"),
+//                        qty = w.Field<decimal>("qty"),
+//                        location = w.Field<string>("location"),
+//                        //location_new = w.Field<string>("location")
+//                    }).ToList();
+//                datas.Clear();
+//                datas.AddRange(newDatas);
+                #endregion
+
+                foreach (var item in datas)
+                {
+                    tmplocation = MyUtility.GetValue.Lookup(string.Format(@"
+select t.mtllocationid+','
+from (select distinct mtllocationid from ftyinventory f inner join ftyinventory_detail fd on f.ukey = fd.ukey 
+where f.mdivisionid ='{0}' and f.poid = '{1}' and f.seq1='{2}' and f.seq2='{3}' and stocktype='{4}') t for xml path('')"
+                        , item.mdivisionid, item.poid, item.seq1, item.seq2, item.stocktype));
+                    item.location = DistinctString(tmplocation + item.location);
+                }
+            }        
+        }
+
+        public static string UpdateMPoDetail(int type, List<Prgs_POSuppDetailData> datas
+            , bool encoded, bool attachLocation = true)
+        {
+            
+            
+
+            StringBuilder sqlcmd = new StringBuilder();
+
+            switch (type)
+            {
+                case 2:
+                    
+                    break;
+                case 4:
+                    #region -- Case 4 OutQty --
+                    if (encoded)
+                    {
+                        sqlcmd.Append(@"
+update t
+set t.OutQty = isnull(t.OutQty,0.00) + s.qty
+from mdivisionpodetail t
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;");
+                    }
+                    else
+                    {
+                        sqlcmd.Append(@"
+update t
+set t.OutQty = isnull(t.OutQty,0.00) - s.qty
+from mdivisionpodetail t
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;");
+                    }
+                    #endregion
+                    break;
+                case 8:
+                    #region -- Case 8 LInvQty --
+                    if (encoded)
+                    {
+                        addlocationvalue(attachLocation, datas);
+                        sqlcmd.Append(@"
+merge dbo.mdivisionpodetail as target
+using #TmpSource as src
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
+when matched then
+update 
+set target.LInvQty = isnull(target.LInvQty,0.00) - src.qty , target.blocation = src.location
+when not matched then
+    insert ([Poid],[Seq1],[Seq2],[MDivisionID],[LInvQty],[blocation])
+    values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);");
+                    }
+                    else
+                    {
+                        sqlcmd.Append(@"
+update t 
+set t.LInvQty = isnull(t.LInvQty,0.00) + s.qty
+from mdivisionpodetail t
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;");
+                    }
+                    #endregion
+                    break;
+                case 16:
+
+                    break;
+                case 32:
+
+                    break;
+            
+            }
+
+            return sqlcmd.ToString();
+        }
+
         public static string UpdateMPoDetail(int type, string Poid, string seq1, string seq2, decimal qty, bool encoded, string stocktype, string m, string location = "", bool attachLocation = true)
         {
             string sqlcmd = null, tmplocation = "";
@@ -92,13 +230,13 @@ where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
                     if (encoded)
                     {
                         sqlcmd = string.Format(@"update mdivisionpodetail set  OutQty = isnull(OutQty,0.00) + {3} 
-where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
+                            where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
                             , Poid, seq1, seq2, qty, m);
                     }
                     else
                     {
                         sqlcmd = string.Format(@"update mdivisionpodetail set  OutQty = isnull(OutQty,0.00) - {3} 
-where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
+                            where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
                             , Poid, seq1, seq2, qty, m);
                     }
                     #endregion
@@ -621,5 +759,17 @@ order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["p
         }
     }
 
+    public class Prgs_POSuppDetailData {
+        public string mdivisionid {get;set;}
+        public string poid {get;set;}
+        public string seq1 {get;set;}
+        public string seq2 {get;set;}
+        public string stocktype {get;set;}
+        public decimal qty { get; set; }
+        public string location { get; set; }
+
+        //private string location_new_ = "";
+        //public string location_new { get { return this.location_new_; } set { this.location_new_= value; } }
+    }
 
 }
