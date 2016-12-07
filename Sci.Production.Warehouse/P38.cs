@@ -210,6 +210,8 @@ where fi.MDivisionID = '{0}' and fi.POID like @poid1
                 return;
             }
             else { MyUtility.Msg.InfoBox(string.Format("{0} successful!!", keyword)); }
+
+            btnQuery_Click(null,null);
         }
 
         private void btnExcel_Click(object sender, EventArgs e)
