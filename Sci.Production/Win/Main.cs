@@ -46,10 +46,8 @@ namespace Sci.Production
             {
                 if (null == Env.User)
                 {
-                    OpenLogin();
-                    Invoke(new Action(() =>
-                    {
-                    }));
+                    this.Shown+=(s,e)=>{OpenLogin();};
+
                 }
             }
         }
