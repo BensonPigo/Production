@@ -88,6 +88,7 @@ order by [OrderID],[Article]", Master["orderid"], sbSizecode.ToString().Substrin
             gridQtyBreakDown.DataSource = gridQtyBreakDownBS;
             gridQtyBreakDown.IsEditingReadOnly = true;
             gridQtyBreakDown.ReadOnly = true;
+            if (gridQtyBreakDown.ColumnCount > 1) gridQtyBreakDown.Columns[1].Frozen = true;
 
             //sbIssueBreakDown = new StringBuilder();
 //            sbIssueBreakDown.Append(string.Format(@";with Bdown as 
@@ -120,6 +121,7 @@ order by [OrderID],[Article]", Master["orderid"], sbSizecode.ToString().Substrin
             gridIssueBreakDown.IsEditingReadOnly = false;
             if (gridIssueBreakDown.ColumnCount > 0) gridIssueBreakDown.Columns[0].ReadOnly = true;
             if (gridIssueBreakDown.ColumnCount > 1) gridIssueBreakDown.Columns[1].ReadOnly = true;
+            if (gridIssueBreakDown.ColumnCount > 1) gridIssueBreakDown.Columns[1].Frozen = true;
 
         }
 

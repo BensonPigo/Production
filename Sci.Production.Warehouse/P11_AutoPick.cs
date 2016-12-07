@@ -196,6 +196,7 @@ delete from #tmp2 where qty = 0;
 
 	Exec dbo.BoaExpend '{3}', {4}, {5}, '{6}',0,1;
 	Drop Table #Tmp_Order_Qty;
+    --Select * From #Tmp_BoaExpend group by id,Order_BOAUkey,RefNo,SCIRefNo,Article,ColorID,SuppColor,SizeCode,SizeSpec,SizeUnit,Remark, OrderQty, Price, UsageQty, UsageUnit, SysUsageQty , BomZipperInsert , BomCustPONo;
 
 	select p.id as [poid], p.seq1, p.seq2, p.SCIRefno,dbo.getMtlDesc(p.id, p.seq1, p.seq2,2,0) [description] 
 	,p.ColorID, p.SizeSpec, p.Spec, p.Special, p.Remark into #tmpPO_supp_detail
@@ -212,7 +213,7 @@ delete from #tmp2 where qty = 0;
 		and m.MDivisionID = '{8}' and m.StockType = 'B' and Roll=''
 		where lock = 0
 	)
-	select 0 as [Selected],''as id,a.Refno,b.*,isnull(sum(a.OrderQty),0.00) qty,left(b.seq1+'   ',3)+b.seq2 as seq,cte2.MDivisionID,cte2.balanceqty,cte2.Ukey as ftyinventoryukey,cte2.StockType,cte2.Roll,cte2.Dyelot
+	select 0 as [Selected],''as id,a.Refno,b.*,isnull(sum(a.OrderQty),0.00) qty,left(b.seq1+'   ',3)+b.seq2 as seq,cte2.MDivisionID,isnull(cte2.balanceqty,0) as balanceqty,cte2.Ukey as ftyinventoryukey,cte2.StockType,cte2.Roll,cte2.Dyelot
 	from #tmpPO_supp_detail b
 	left join cte2 on cte2.poid = b.poid and cte2.seq1 = b.seq1 and cte2.SEQ2 = b.SEQ2
 	left join #Tmp_BoaExpend a on b.SCIRefno = a.scirefno and b.poid = a.ID
@@ -386,8 +387,20 @@ delete from #tmp2 where qty = 0;
                     }
                     dr["Output"] = Output;
                 }
+                if (Convert.ToDecimal(dr["qty"]) > 0) dr["Selected"] = 1;
+                else dr["Selected"] = 0;
+                
             };
             #endregion
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            ns2.CellValidating += (s, e) =>
+            {              
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                dr["qty"] = e.FormattedValue;
+                if (Convert.ToDecimal(dr["qty"]) > 0) dr["Selected"] = 1;
+                else dr["Selected"] = 0;
+            };
 
             #region --設定Grid1的顯示欄位--
             MyUtility.Tool.SetGridFrozen(grid1);
@@ -403,7 +416,7 @@ delete from #tmp2 where qty = 0;
                  .Text("scirefno", header: "SCI Refno", width: Widths.AnsiChars(23))
                  .Text("colorid", header: "Color ID", width: Widths.AnsiChars(7))
                  .Text("sizespec", header: "SizeSpec", width: Widths.AnsiChars(6))
-                 .Text("qty", header: "Pick Qty", width: Widths.AnsiChars(10))
+                 .Numeric("qty", header: "Pick Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, settings: ns2)
                  .Text("Output", header: "Output", width: Widths.AnsiChars(10), settings: ns)
                  .Text("Balanceqty", header: "Bulk Qty", width: Widths.AnsiChars(10))
                  .Text("suppcolor", header: "Supp Color", width: Widths.AnsiChars(10))
