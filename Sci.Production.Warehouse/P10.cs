@@ -403,14 +403,15 @@ main as(
         isnull((
             select 
 	            sum(qty) 
-            from Issue_Summary a 
-	            inner join Issue b on a.Id=b.Id 
-	            inner join Cutplan d on b.CutplanID=d.ID 
-            where 
-	            d.ID='{0}' and 
-	            t.SEQ1 = a.seq1 and
-				t.seq2 = a.seq2 and
-	            b.status='Confirmed')
+            from Issue a 
+	            inner join Issue_Summary b on a.Id=b.Id 
+            where  
+				c.poid = b.poid and
+				a.CutplanID = '{0}' and
+	            t.SEQ1 = b.seq1 and
+				t.seq2 = b.seq2 and
+	            a.status='Confirmed'and
+				a.id != '{1}')
             , 0.00) as accu_issue,
 
         '{1}' as id,
@@ -432,12 +433,10 @@ NetQty as(
         a.SEQ2,
         a.SCIRefno,
         a.ColorID 
-    from PO_Supp_Detail a,Issue_Summary b
+    from PO_Supp_Detail a
+        left join Issue_Summary b on  a.seq1 = b.seq1 and a.seq2 = b.seq2 and a.ID=b.Poid 
     where 
-        a.seq1 = b.seq1 
-        and a.seq2 = b.seq2 
-        and a.ID=b.Poid 
-        and not a.SEQ1 >= '7'
+        not a.SEQ1 >= '7'
         and a.SEQ1 = (select min(seq1) from dbo.PO_Supp_Detail where id=a.id and seq1 = a.SEQ1 and seq2 = a.seq2)
 )
 select a.*, isnull(b.NETQty,0) as NETQty from main a 
