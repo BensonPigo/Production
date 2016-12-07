@@ -184,25 +184,40 @@ namespace Sci.Production.Warehouse
 
             foreach (DataRow row in DetailDatas)
             {
-                if (MyUtility.Check.Empty(row["seq1"]) || MyUtility.Check.Empty(row["seq2"]))
+                if ((MyUtility.Check.Empty(row["seq1"]) || MyUtility.Check.Empty(row["seq2"])) && row["fabrictype"].ToString() == "F")
                 {
                     warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Seq1 or Seq2 can't be empty"
                         , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"])
                         + Environment.NewLine);
                 }
+                else if ((MyUtility.Check.Empty(row["seq1"]) || MyUtility.Check.Empty(row["seq2"])) && row["fabrictype"].ToString() != "F")
+                {
+                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Seq1 or Seq2 can't be empty"
+                        , row["poid"], row["seq1"], row["seq2"])
+                        + Environment.NewLine);
+                }
 
-                if (row["seq1"].ToString().TrimStart().StartsWith("7"))
+                if (row["seq1"].ToString().TrimStart().StartsWith("7") && row["fabrictype"].ToString() == "F")
                 {
                     warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Seq1 can't start with '7'"
                         , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
                 }
+                else if (row["seq1"].ToString().TrimStart().StartsWith("7") && row["fabrictype"].ToString() != "F")
+                {
+                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Seq1 can't start with '7'"
+                        , row["poid"], row["seq1"], row["seq2"]) + Environment.NewLine);
+                }
 
-                if (MyUtility.Check.Empty(row["ActualQty"]))
+                if (MyUtility.Check.Empty(row["ActualQty"]) && row["fabrictype"].ToString() == "F")
                 {
                     warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Actual Qty can't be empty"
                         , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
                 }
-
+                else if (MyUtility.Check.Empty(row["ActualQty"]) && row["fabrictype"].ToString() != "F")
+                {
+                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Actual Qty can't be empty"
+                    , row["poid"], row["seq1"], row["seq2"]) + Environment.NewLine);
+                }
                 //565: WAREHOUSE_P07_Material Receiving，移除表身[stockunit]必填的檢核
                 //if (MyUtility.Check.Empty(row["stockunit"]))
                 //{
@@ -210,10 +225,15 @@ namespace Sci.Production.Warehouse
                 //        , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
                 //}
 
-                if (MyUtility.Check.Empty(row["stocktype"]))
+                if (MyUtility.Check.Empty(row["stocktype"]) && row["fabrictype"].ToString() == "F")
                 {
                     warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Stock Type can't be empty"
                         , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
+                }
+                else if (MyUtility.Check.Empty(row["stocktype"]) && row["fabrictype"].ToString() != "F")
+                {
+                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Stock Type can't be empty"
+                        , row["poid"], row["seq1"], row["seq2"]) + Environment.NewLine);
                 }
 
                 if (row["fabrictype"].ToString().ToUpper() == "F" && (MyUtility.Check.Empty(row["roll"]) || MyUtility.Check.Empty(row["dyelot"])))
@@ -221,7 +241,6 @@ namespace Sci.Production.Warehouse
                     warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Roll and Dyelot can't be empty"
                         , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
                 }
-
                 if (row["fabrictype"].ToString().ToUpper() != "F")
                 {
                     row["roll"] = "";
@@ -1064,14 +1083,16 @@ Where a.id = '{0}' ", masterID);
                 CurrentMaintain["invno"] = textBox3.Text;
                 CurrentMaintain["ETA"] = DBNull.Value;
                 CurrentMaintain["WhseArrival"] = DBNull.Value;
-                dateBox2.Value = null;              
-                if (MyUtility.Check.Seek(string.Format("select packingarrival,whsearrival,eta,PortArrival from dbo.export where id='{0}'"
+                dateBox5.Value = null;
+                dateBox2.Value = null;
+                if (MyUtility.Check.Seek(string.Format("select packingarrival,whsearrival,eta,PortArrival,DocArrival from dbo.export where id='{0}'"
                     , textBox3.Text), out dr, null))
                 {
                     if (!MyUtility.Check.Empty(dr["portarrival"])) dateBox2.Value = DateTime.Parse(dr["portarrival"].ToString());
                     CurrentMaintain["exportid"] = CurrentMaintain["invno"];
                     CurrentMaintain["PackingReceive"] = dr["packingarrival"];
                     CurrentMaintain["WhseArrival"] = dr["WhseArrival"];
+                    dateBox5.Value = Convert.ToDateTime(dr["DocArrival"]);
                     CurrentMaintain["ETA"] = dr["ETA"];
                     CurrentMaintain["third"] = 0;
                     this.dateBox1.Enabled = false;
