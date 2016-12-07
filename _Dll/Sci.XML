@@ -230,6 +230,16 @@
             Property of MailServerPassword.
             </summary>
         </member>
+        <member name="P:Sci.Cfg.Test_Mail_Enabled">
+            <summary>
+            Property of Test Mail Enabled
+            </summary>
+        </member>
+        <member name="P:Sci.Cfg.Test_Mail_Prefix">
+            <summary>
+            Property of Test mail Prefix
+            </summary>
+        </member>
         <member name="P:Sci.Cfg.FtpServerIP">
             <summary>
             Property of FtpServerIP.

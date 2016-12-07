@@ -978,6 +978,20 @@
             <param name="onCheckedChanged">specify code in checkBox.CheckedChanged</param>
             <returns></returns>
         </member>
+        <member name="M:Sci.ProjExts.GetTable(System.Windows.Forms.DataGridView)">
+            <summary>
+            由 Grid 取回 DataSource 的 Datatable，若Source不為DataTable不在此Method使用範圍內
+            </summary>
+            <param name="grid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.ProjExts.GetTableWithGridLayout(System.Windows.Forms.DataGridView)">
+            <summary>
+            由 Grid 取回 DataSource 的 Datatable，並依照Grid顯示之欄位數量、名稱設定，若Source不為DataTable不在此Method使用範圍內
+            </summary>
+            <param name="grid"></param>
+            <returns></returns>
+        </member>
         <member name="M:Sci.ProjExts.CopyTo(System.Data.DataRow,System.Data.DataRow,System.String)">
             <summary>
             fieldNames 須以","隔開
