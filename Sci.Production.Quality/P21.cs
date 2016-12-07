@@ -147,14 +147,13 @@ namespace Sci.Production.Quality
 select a.ID, a.GarmentDefectTypeid,
 a.GarmentDefectCodeID,
 b.Description,
-c.Remark,
+a.Remark,
 a.Qty,
 a.Action,
 [CFAAreaID] =d.Id,
 d.Description as AreaDesc
 from CFA_Detail a
 left join GarmentDefectCode b on b.ID=a.GarmentDefectCodeID
-left join Cfa c on a.ID=c.ID
 left join CFAArea d on a.CFAAreaID=d.Id 
 where a.ID='{0}'",
  masterID);
@@ -518,14 +517,12 @@ where a.ID='{0}'",
                 CurrentMaintain["id"] = tmpId;
             }
             int qty = 0;
-            int InQty = 0; 
+            int InQty = 0;          
 
-            DataTable dt = (DataTable)detailgridbs.DataSource;
-            for (int i = 0; i < dt.Rows.Count; i++)
+            foreach (DataRow row in DetailDatas)
             {
-                qty = qty + Convert.ToInt32(dt.Rows[i]["Qty"]);
-            }
-            
+                qty += Convert.ToInt32(row["Qty"]);
+            }        
             CurrentMaintain["DefectQty"] = qty.ToString();
             InQty = Convert.ToInt32(this.InspectQty_text.Text);
             if (qty > InQty)
