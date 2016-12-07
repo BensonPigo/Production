@@ -293,12 +293,12 @@ m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 ,[OrderIdList]=e.OrderID
 
 from Orders inner join PO_Supp_Detail a on a.id = orders.poid
-	left join dbo.MDivisionPoDetail m on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
+	left join dbo.MDivisionPoDetail m on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 AND m.MDivisionID='{0}'
     left join fabric on fabric.SCIRefno = a.scirefno
 	left join po_supp b on a.id = b.id and a.SEQ1 = b.SEQ1
     left join supp s on s.id = b.suppid
     left join PO_Supp_Detail_OrderList e on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
-where orders.poid like @sp1 and orders.mdivisionid= '{0}' AND m.MDivisionID='{0}'
+where orders.poid like @sp1 and orders.mdivisionid= '{0}' 
 
 --很重要要看到,修正欄位要上下一起改
 union
@@ -332,12 +332,12 @@ select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varcha
 ) as  Remark
 ,[OrderIdList]=e.OrderID
 from dbo.MDivisionPoDetail m
-left join  PO_Supp_Detail a on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
+left join  PO_Supp_Detail a on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 AND m.MDivisionID='{0}' and m.poid like @sp1  
 left join fabric on fabric.SCIRefno = a.scirefno
 left join po_supp b on a.id = b.id and a.SEQ1 = b.SEQ1
 left join supp s on s.id = b.suppid
 left join PO_Supp_Detail_OrderList e on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
-where m.MDivisionID='{0}' and m.poid like @sp1  
+where 1=1
     AND a.id IS NOT NULL --0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
 ) as xxx
 ) as xxx2
