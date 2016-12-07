@@ -211,7 +211,7 @@ outer apply(
                 //if (!(this.EditMode) || !(this.IsDetailInserting)) return;
                 if (e.FormattedValue.ToString() == CurrentDetailData["OrderID"].ToString()) return;
 
-                if (!(MyUtility.Check.Empty(e.FormattedValue)))
+                if (!(MyUtility.Check.Empty(e.FormattedValue)) || (MyUtility.Check.Empty()))
                 {
                     CurrentDetailData["OrderID"] = e.FormattedValue;
                     CurrentDetailData["StyleID"] = MyUtility.GetValue.Lookup(string.Format("select styleid from orders where id ='{0}'", e.FormattedValue));
