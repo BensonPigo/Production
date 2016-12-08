@@ -13,8 +13,11 @@
     [AddDate]         DATETIME       NULL,
     [EditName]        VARCHAR (10)   CONSTRAINT [DF_MtlType_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME       NULL,
+    [TrimCardOther]   BIT            NULL,
     CONSTRAINT [PK_MtlType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
