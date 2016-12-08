@@ -9,13 +9,15 @@
     [OutputUnit]      VARCHAR (1)    CONSTRAINT [DF_MtlType_OutputUnit] DEFAULT ('') NULL,
     [IsExtensionUnit] BIT            CONSTRAINT [DF_MtlType_IsExtensionUnit] DEFAULT ((0)) NULL,
     [IssueType]       VARCHAR (20)   CONSTRAINT [DF_MtlType_IssueType] DEFAULT ('') NULL,
+    [IsTrimCardOther] BIT            NULL,
     [AddName]         VARCHAR (10)   CONSTRAINT [DF_MtlType_AddName] DEFAULT ('') NULL,
     [AddDate]         DATETIME       NULL,
     [EditName]        VARCHAR (10)   CONSTRAINT [DF_MtlType_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME       NULL,
-    [TrimCardOther]   BIT            NULL,
     CONSTRAINT [PK_MtlType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
