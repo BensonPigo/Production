@@ -31,7 +31,7 @@ namespace Sci.Production.Warehouse
             : this(menuitem)
         {
             this.Text = history != "Y" ? this.Text : this.Text += " (History)";
-            this.Text = history != "Y" ? btnCloseMTL.Text : btnCloseMTL.Text = "P011.W/House Master List (History)";
+            this.Text = history != "Y" ? btnCloseMTL.Text : btnCloseMTL.Text = "Transfer Bulk to Scrap";
             this.DefaultFilter = history != "Y" ? string.Format("IsForecast = 0 and Whseclose is null and mdivisionid='{0}'", Sci.Env.User.Keyword)
                 : string.Format("IsForecast = 0 and Whseclose is not null and mdivisionid='{0}'", Sci.Env.User.Keyword);
             dataType = history;
@@ -456,6 +456,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
                     MyUtility.Msg.WarningBox(ex.Message);
                     return;
                 }
+                MyUtility.Msg.WarningBox("Finished!");
             }
             else
             {
