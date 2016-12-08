@@ -442,7 +442,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             foreach (var item in bs1)
             {
                 sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid));
-                sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, 0 - item.qty, true, item.stocktype, item.mdivisionid));
+                if (item.stocktype.ToUpper() == "I") sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, 0 - item.qty, true, item.stocktype, item.mdivisionid));                
             }
 
             #endregion 更新庫存數量  ftyinventory
@@ -592,7 +592,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             foreach (var item in bs1)
             {
                 sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype, item.mdivisionid));
-                sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, 0 - item.qty, false, item.stocktype, item.mdivisionid));
+                if (item.stocktype.ToUpper() == "I") sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, 0 - item.qty, false, item.stocktype, item.mdivisionid));
             }
 
             #endregion 更新庫存數量  ftyinventory

@@ -53,13 +53,16 @@ namespace Sci.Production.Class
             if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
             {
                 if (!MyUtility.Check.Seek(Type + str, "WhseReason", "type+ID"))
-                {
-                    MyUtility.Msg.WarningBox(string.Format("< Reason: {0} > not found!!!", str));
+                {                    
                     this.textBox1.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Reason: {0} > not found!!!", str));
+                    this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                     return;
                 }
+                this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
             }
+
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -79,6 +82,7 @@ namespace Sci.Production.Class
             if (result == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
             this.Validate();
+            this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
         }
     }
 }

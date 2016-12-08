@@ -61,12 +61,14 @@ namespace Sci.Production.Class
                 string sqlcmd = string.Format(@"select Id, Description from WhseReason where type ='RA'and id in ({0}) and id in ('{1}')", actionCode,str);
                 //if (!MyUtility.Check.Seek(str, "WhseReason", "ID"))
                 if (!MyUtility.Check.Seek(sqlcmd) )
-                {
-                    MyUtility.Msg.WarningBox(string.Format("< Refund Action: {0} > not found!!!", str));
+                {                   
                     this.textBox1.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Refund Action: {0} > not found!!!", str));
+                    this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                     return;
                 }
+                this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
             }
         }
 
@@ -94,6 +96,7 @@ namespace Sci.Production.Class
             if (result == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
             this.Validate();
+            this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
         }
     }
 }
