@@ -41,7 +41,8 @@ namespace Sci.Production.Warehouse
 
                  .Numeric("inputqty", header: "TPE Input", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("accu_qty", header: "Accu Trans.", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                 .Numeric("total_qty", header: "Trans. Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                 .Numeric("total_qty", header: "Trans. Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2,
+iseditingreadonly: true)
                  .Numeric("requestqty", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   ;
             #endregion
@@ -81,9 +82,13 @@ namespace Sci.Production.Warehouse
             {
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    DataRow thisRow = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
+                    DataRow[] curentgridrowChild = thisRow.GetChildRows("rel1");
                     DataRow currentrow = grid2.GetDataRow(grid2.GetSelectedRowIndex());
                     currentrow["qty"] = e.FormattedValue;
                     currentrow["selected"] = true;
+                    currentrow.GetParentRow("rel1")["selected"] = true;
+                    currentrow.GetParentRow("rel1")["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
                 }
             };
             #endregion
@@ -206,6 +211,7 @@ outer apply
 (
 	select count(1) cnt from FtyInventory fi left join FtyInventory_Detail fid on fid.Ukey = fi.Ukey 
 	where  fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2 and fi.StockType = 'B' and fi.MDivisionID = o.MDivisionID
+    and fid.MtlLocationID is not null 
 ) yz--Detail資料數量
 outer apply
 (
@@ -295,8 +301,9 @@ drop table #tmp");
 
             dataSet.Relations.Add(relation);
 
-           
-            master.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
+            //detail.Columns.Add("selectedQty", typeof(decimal), "iif(selected='true',qty,0)");
+            //master.Columns.Add("total_qty", typeof(decimal), "sum(child.selectedQty)");
+            master.Columns.Add("total_qty", typeof(decimal));
             master.Columns.Add("requestqty", typeof(decimal), "InputQty - accu_qty - sum(child.qty)");
 
             listControlBindingSource1.DataSource = dataSet;
