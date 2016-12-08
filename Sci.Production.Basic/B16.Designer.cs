@@ -117,7 +117,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B16";
-            this.Text = "B16. Shippng Mode";
+            this.Text = "B16. Shipping Mode";
             this.UniqueExpress = "Id";
             this.WorkAlias = "ShipMode";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
