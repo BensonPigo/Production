@@ -58,7 +58,6 @@ namespace Sci.Production.Subcon
             CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
             CurrentMaintain["HANDLE"] = Sci.Env.User.UserID;
             CurrentMaintain["Status"] = "New";
-
         }
 
         // delete前檢查
@@ -90,7 +89,6 @@ namespace Sci.Production.Subcon
             return base.ClickEditBefore();
         }
     
-
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
         {
@@ -145,7 +143,6 @@ namespace Sci.Production.Subcon
                 return false;
             }
 
-
             //取單號： 
             if (this.IsDetailInserting)
             {
@@ -157,7 +154,6 @@ namespace Sci.Production.Subcon
                 }
                 CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(factorykeyword + "FO", "FarmOut", (DateTime)CurrentMaintain["issuedate"]);
             }
-
             #region 加總明細Qty是否=0
 
             object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(qty)", "");
@@ -169,20 +165,13 @@ namespace Sci.Production.Subcon
             
 
             #endregion
-
-
             #region 加總明細金額至表頭
 
             object a = ((DataTable)detailgridbs.DataSource).Compute("sum(Qty)", "");
             CurrentMaintain["TotalQty"] = MyUtility.Math.Round((decimal)a);
             #endregion
-
-            
             return base.ClickSaveBefore();
         }
-
-
-      
 
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
@@ -237,7 +226,6 @@ outer apply(
            
             this.txtmfactory1.ReadOnly = true;
 
-
             #region -- 加總明細金額，顯示於表頭 --
             if (!(CurrentMaintain == null))
             {
@@ -252,7 +240,6 @@ outer apply(
                 numericBox3.Text= x.ToString();
             }
             #endregion
-
             #region Status Label
             label25.Text = CurrentMaintain["Status"].ToString();
             #endregion
@@ -317,7 +304,7 @@ outer apply(
 
                     if (e.Button == System.Windows.Forms.MouseButtons.Right && e.RowIndex != -1)
                     {
-
+                        
                         string sqlcmd = string.Format(@"SELECT B.id
                                                         ,b.artworktypeid
                                                         ,b.artworkid
@@ -326,6 +313,7 @@ outer apply(
                                                         ,b.poqty
                                                         ,b.farmout
                                                         ,b.ukey
+                                                        ,A.Status
                                                         FROM ArtworkPO A inner join ArtworkPO_Detail B on A.ID = B.ID
                                                         WHERE a.mdivisionid = '{2}'
                                                         AND A.ApvName IS NOT NULL
@@ -338,11 +326,15 @@ outer apply(
                         item.Height = 480;
 
                         DialogResult returnResult = item.ShowDialog();
-                        if (returnResult == DialogResult.Cancel) { return; }
-                        dr["artworkpoID"] = item.GetSelectedString();
                         IList<DataRow> selectedData = item.GetSelecteds();
-                        if (selectedData.Count > 0)
+                        if (returnResult == DialogResult.Cancel) { return; }
+                        if ((selectedData[0])["Status"].ToString() =="New")
                         {
+                            MyUtility.Msg.WarningBox("PO is not confirmed yet");
+                        } 
+                        else if (selectedData.Count > 0)
+                        {
+                            dr["artworkpoID"] = item.GetSelectedString();
                             dr["artworkid"] = (selectedData[0])["artworkid"].ToString();
                             dr["patterncode"] = (selectedData[0])["patterncode"].ToString();
                             dr["patterndesc"] = (selectedData[0])["patterndesc"].ToString();
@@ -351,6 +343,7 @@ outer apply(
                             dr["ArtworkPo_DetailUkey"] = (selectedData[0])["ukey"].ToString();
                             dr["qty"] = (decimal)(selectedData[0])["poqty"] - (decimal)(selectedData[0])["farmout"];
                         }
+                        
                     }
                 }
             };
