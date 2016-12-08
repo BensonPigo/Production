@@ -210,7 +210,7 @@ namespace Sci.Production.Cutting
             if (IsDetailInserting)
             {
                 string Keyword = keyword + "BC";
-                string cid = MyUtility.GetValue.GetID(Keyword, "Bundle", Convert.ToDateTime(CurrentMaintain["cdate"]));
+                string cid = MyUtility.GetValue.GetID(Keyword, "Bundle", Convert.ToDateTime(CurrentMaintain["cdate"]), sequenceMode: 2);
                 if (string.IsNullOrWhiteSpace(cid))
                 {
                     return false;

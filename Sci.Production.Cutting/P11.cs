@@ -1136,7 +1136,7 @@ namespace Sci.Production.Cutting
             
             #endregion
             string IDKeyword = keyWord + "BC";
-            List<string> id_list = MyUtility.GetValue.GetBatchID(IDKeyword, "Bundle", batchNumber: idofnum);
+            List<string> id_list = MyUtility.GetValue.GetBatchID(IDKeyword, "Bundle", batchNumber: idofnum, sequenceMode: 2);
             List<string> bundleno_list = MyUtility.GetValue.GetBatchID("", "Bundle_Detail", format: 3, checkColumn: "Bundleno", batchNumber: bundleofnum, sequenceMode: 2);
             #region Insert Table
             int idcount = 0;
