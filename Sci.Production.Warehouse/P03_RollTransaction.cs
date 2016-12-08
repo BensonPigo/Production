@@ -52,6 +52,7 @@ namespace Sci.Production.Warehouse
             string selectCommand1
                 = string.Format(@"Select a.Roll,a.Dyelot
                                 ,[stocktype] = case when stocktype = 'B' then 'Bulk'
+                                                    when stocktype = 'I' then 'Invertory'
 			                                        when stocktype = 'O' then 'Other' End
                                             ,a.InQty,a.OutQty,a.AdjustQty
                                             ,a.InQty - a.OutQty + a.AdjustQty as balance
@@ -80,6 +81,7 @@ namespace Sci.Production.Warehouse
             string selectCommand2
                 = string.Format(@"select tmp.Roll,
 [stocktype] = case when stocktype = 'B' then 'Bulk'
+                   when stocktype = 'I' then 'Invertory'
 			       when stocktype = 'O' then 'Other' End
 ,Dyelot,IssueDate,ID,name,inqty,outqty,adjust,Remark,location,
 sum(TMP.inqty - TMP.outqty+tmp.adjust) 
