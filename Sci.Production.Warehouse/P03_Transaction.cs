@@ -377,7 +377,7 @@ namespace Sci.Production.Warehouse
             selectCommand1.Append(@"group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,a.remark,AddDate
                 ) tmp
                 group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name, AddDate
-                order by AddDate");
+                order by IssueDate,name");
 
             #endregion
 
