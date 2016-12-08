@@ -50,7 +50,10 @@ namespace Sci.Production.Warehouse
 
             #region Grid1 - Sql command
             string selectCommand1
-                = string.Format(@"Select a.Roll,a.Dyelot,a.StockType,a.InQty,a.OutQty,a.AdjustQty
+                = string.Format(@"Select a.Roll,a.Dyelot
+                                ,[stocktype] = case when stocktype = 'B' then 'Bulk'
+			                                        when stocktype = 'O' then 'Other' End
+                                            ,a.InQty,a.OutQty,a.AdjustQty
                                             ,a.InQty - a.OutQty + a.AdjustQty as balance
                                             , (Select cast(tmp.MtlLocationID as nvarchar)+',' 
                                                                     from (select b.MtlLocationID 
@@ -75,7 +78,10 @@ namespace Sci.Production.Warehouse
             #region Grid2 - Sql Command
             
             string selectCommand2
-                = string.Format(@"select *,
+                = string.Format(@"select tmp.Roll,
+[stocktype] = case when stocktype = 'B' then 'Bulk'
+			       when stocktype = 'O' then 'Other' End
+,Dyelot,IssueDate,ID,name,inqty,outqty,adjust,Remark,location,
 sum(TMP.inqty - TMP.outqty+tmp.adjust) 
 over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.stocktype,tmp.IssueDate,tmp.inqty desc,tmp.iD ) as [balance] 
 from (
@@ -87,6 +93,7 @@ from Adjust a, Adjust_Detail b
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
     and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate,type,b.roll,b.stocktype,b.dyelot
+
 union all
 	select b.FromRoll,b.FromStockType,b.FromDyelot,a.IssueDate, a.id
 ,case type when 'A' then 'P31. Material Borrow From' 
