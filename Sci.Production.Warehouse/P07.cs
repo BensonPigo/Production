@@ -968,7 +968,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
             foreach (var item in bs1)
             {
                 sqlupd2.Append(Prgs.UpdateMPoDetail(2, item.poid, item.seq1, item.seq2, item.stockqty, false, item.stocktype, item.mdivisionid));
-                if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, item.stockqty, false, item.stocktype, item.mdivisionid));
+                if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, 0-item.stockqty, false, item.stocktype, item.mdivisionid));
             }
 
             #endregion 更新庫存數量 po_supp_detail & ftyinventory
