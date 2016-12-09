@@ -184,7 +184,6 @@ namespace Sci.Production.Warehouse
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Numeric("poqty", header: "PO Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6, iseditingreadonly: true)
             .Text("unitId", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))
-            .Numeric("price", header: "PO Price", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 8, iseditingreadonly: true)
             .Numeric("onRoad", header: "On Road", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6, iseditingreadonly: true)
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6,settings:ns)
             .Text("Remark", header: "remark", width: Widths.AnsiChars(20))
@@ -477,7 +476,7 @@ on LocalPO_Detail.id = s.LocalPoId and LocalPO_Detail.ukey = s.LocalPo_detailuke
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.*,b.Qty poqty,b.Qty - b.InQty onRoad,b.Price
+            this.DetailSelectCommand = string.Format(@"select a.*,b.Qty poqty,b.Price
 ,dbo.getItemDesc(a.category,a.Refno) [description],b.UnitId
 from dbo.LocalReceiving_Detail a left join dbo.LocalPO_Detail b
 on b.id = a.LocalPoId and b.Ukey = a.LocalPo_detailukey
@@ -560,7 +559,7 @@ Where a.id = '{0}' ", masterID);
 	               lpd.qty [poqty],
 	               lpd.UnitId,
 	               lpd.Price,
-	               lpd.qty - lpd.InQty [OnRoad],
+	               ld.OnRoad,
 	               ld.qty,
 	               ld.Remark
             from LocalReceiving_Detail ld

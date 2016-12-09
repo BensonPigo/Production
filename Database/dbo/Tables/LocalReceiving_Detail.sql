@@ -3,6 +3,7 @@
     [OrderId]            VARCHAR (13)   NOT NULL,
     [Refno]              VARCHAR (20)   NOT NULL,
     [ThreadColorID]      VARCHAR (15)   NULL,
+	[OnRoad]             NUMERIC (8, 2) NULL,
     [Qty]                NUMERIC (8, 2) NOT NULL,
     [LocalPoId]          VARCHAR (13)   NOT NULL,
     [Remark]             NVARCHAR (100) NULL,
