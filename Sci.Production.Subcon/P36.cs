@@ -27,7 +27,7 @@ namespace Sci.Production.Subcon
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = string.Format("factoryid = '{0}'", Sci.Env.User.Factory);
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
         }
 
         protected override void OnFormLoaded()
