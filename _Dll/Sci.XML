@@ -1577,12 +1577,22 @@
             Represents the strongly named DataTable class.
             </summary>
         </member>
+        <member name="T:Sci.Data.SYS.S03DataTable">
+             <summary>
+            Represents the strongly named DataTable class.
+            </summary>
+        </member>
         <member name="T:Sci.Data.SYS.S01Row">
              <summary>
             Represents strongly named DataRow class.
             </summary>
         </member>
         <member name="T:Sci.Data.SYS.S02Row">
+             <summary>
+            Represents strongly named DataRow class.
+            </summary>
+        </member>
+        <member name="T:Sci.Data.SYS.S03Row">
              <summary>
             Represents strongly named DataRow class.
             </summary>
@@ -1597,12 +1607,22 @@
             Row event argument class
             </summary>
         </member>
+        <member name="T:Sci.Data.SYS.S03RowChangeEvent">
+             <summary>
+            Row event argument class
+            </summary>
+        </member>
         <member name="T:Sci.Data.SYSTableAdapters.S01TableAdapter">
              <summary>
             Represents the connection and commands used to retrieve and save data.
             </summary>
         </member>
         <member name="T:Sci.Data.SYSTableAdapters.S02TableAdapter">
+             <summary>
+            Represents the connection and commands used to retrieve and save data.
+            </summary>
+        </member>
+        <member name="T:Sci.Data.SYSTableAdapters.S03TableAdapter">
              <summary>
             Represents the connection and commands used to retrieve and save data.
             </summary>
@@ -9081,7 +9101,7 @@
             Template used.
             </summary>
         </member>
-        <member name="M:Sci.Win.Tems.InputMasterDetail.OnInternalDeletePost">
+        <member name="M:Sci.Win.Tems.InputMasterDetail.OnInternalDeleteMasterPre">
             <summary>
             Template used.
             </summary>
