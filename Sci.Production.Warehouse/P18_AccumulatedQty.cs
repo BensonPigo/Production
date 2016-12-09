@@ -92,30 +92,6 @@ namespace Sci.Production.Warehouse
                 and a1.type = 6 AND A1.FactoryID ='{2}'-- and a1.TransferMDivisionID='{1}'
             	where a.Id = '{0}'
             	GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.UnitID
-            --union all
-            --select A.PoId,A.Seq1,A.Seq2,isnull(a1.qty,0) requestqty
-            --	,A1.UnitID
-            --	,sum(a.Qty) as Qty 
-            --	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
-            --	from dbo.TransferIn_Detail a LEFT JOIN DBO.Invtrans A1 
-            --	ON  a1.InventoryPOID = a.PoId and a1.InventorySeq1 = a.Seq1 and a1.InventorySeq2 = a.Seq2
-            --					WHERE  a1.Type =3  -- 20161118 WILLY 依照舊系統邏輯 抓TYPE=2,3
-            --					AND TransferMDivisionID = '{1}' 
-            --					and a1.FactoryID='{2}'
-            --					and a.Id = '{0}'
-            --	GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.UnitID
-            --union all 
-            --select distinct A.PoId,A.Seq1,A.Seq2,0 as requestqty
-	        --    ,A1.UnitID
-	        --    ,sum(a.Qty) as Qty 
-	        --    ,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
-	        --    from dbo.TransferIn_Detail a LEFT JOIN DBO.Invtrans A1 
-	        --    ON  a1.InventoryPOID = a.PoId and a1.InventorySeq1 = a.Seq1 and a1.InventorySeq2 = a.Seq2
-            --    and a1.FactoryID='{2}'
-			--		            WHERE  1=1
-			--		            and a.Id = '{0}'                                
-			--		            and a.Seq1 not like '7_'
-	        --    GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.UnitID
             ),t1 as(
 	            select A.PoId,A.Seq1,A.Seq2
 	            ,sum(a.Qty) as Qty 
