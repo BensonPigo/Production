@@ -76,7 +76,7 @@ namespace Sci.Production.Cutting
             .Numeric("Cutno", header: "Cut#", width: Widths.Auto(), integer_places: 3, iseditingreadonly: true)
             .Text("Fabriccombo", header: "Fabric Combo", width: Widths.Auto(), iseditingreadonly: true)
             .Text("Fabriccode", header: "Fabric Code", width: Widths.Auto(), iseditingreadonly: true)
-            .Text("PatternPanel", header: "PatternPanel", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("PatternPanel", header: "Lectra Code", width: Widths.Auto(), iseditingreadonly: true)
             .Text("orderid", header: "SP#", width: Widths.Auto(), iseditingreadonly: true)
             .Text("SEQ1", header: "SEQ1", width: Widths.Auto(), iseditingreadonly: true)
             .Text("SEQ2", header: "SEQ2", width: Widths.Auto(), iseditingreadonly: true)
