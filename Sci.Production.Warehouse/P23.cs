@@ -341,7 +341,7 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
                        }).ToList();
 
             sqlupd2_B.Append(Prgs.UpdateMPoDetail_B(4, null, true));//4不用傳bs1,4不會變更到location
-            sqlupd2_B.Append(Prgs.UpdateMPoDetail_B(8, bs1, true));
+            sqlupd2_B.Append(Prgs.UpdateMPoDetail_B(8, bs1, false));
             //foreach (var item in bs1)
             //{
                 //sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid));
@@ -569,7 +569,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
 
             sqlupd2_B.Append(Prgs.UpdateMPoDetail_B(4, null, false));//4不用傳bs1,4不會變更到location
-            sqlupd2_B.Append(Prgs.UpdateMPoDetail_B(8, bs1, false));
+            sqlupd2_B.Append(Prgs.UpdateMPoDetail_B(8, bs1, true));
 
             //foreach (var item in bs1)
             //{
