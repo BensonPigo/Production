@@ -52,7 +52,7 @@ isnull((select SUM(c.Qty)
 	   from Orders o
 	   inner join CuttingOutput_WIP c on o.ID = c.OrderID
 	   where {1}),0) as CutQty", MyUtility.Convert.GetString(masterData["ID"]),
-                                        cuttingWorkType == "1" ? string.Format("o.CuttingSP = '{0}'", MyUtility.Convert.GetString(masterData["CuttingSP"])) : string.Format("o.ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"])));
+            string.Format("o.ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"])));
             DataTable summaryQty;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out summaryQty);
             dateBox1.Value = MyUtility.Convert.GetDate(summaryQty.Rows[0]["LastSewingDate"]);
@@ -269,8 +269,9 @@ order by oa.Seq,os.Seq", string.Format("o.ID = '{0}'", MyUtility.Convert.GetStri
         //Cutting Q'ty
         private void numericBox3_DoubleClick(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_ProductionOutput_CuttingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_CuttingDetail(cuttingWorkType, cuttingWorkType == "1" ? MyUtility.Convert.GetString(masterData["CuttingSP"]) : MyUtility.Convert.GetString(masterData["ID"]), "A", "", "");
-            callNextForm.ShowDialog(this);
+            //因為會誤導使用者，所以取消
+            //Sci.Production.PPIC.P01_ProductionOutput_CuttingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_CuttingDetail(cuttingWorkType, cuttingWorkType == "1" ? MyUtility.Convert.GetString(masterData["CuttingSP"]) : MyUtility.Convert.GetString(masterData["ID"]), "A", "", "");
+            //callNextForm.ShowDialog(this);
         }
     }
 }
