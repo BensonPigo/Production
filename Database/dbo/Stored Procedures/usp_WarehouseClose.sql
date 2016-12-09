@@ -109,16 +109,21 @@ BEGIN
 		group by sd.MDivisionID,sd.POID,sd.seq1,sd.Seq2
 			
 		-- 更新 MdivisionPodetail
-		--update dbo.MDivisionPoDetail  
-		--SET OutQty = OutQty +
-		--(SELECT t.ScrapQty from #tmpScrap t where t.MDivisionID = MDivisionPoDetail.MDivisionID
-		--	and t.poid = MDivisionPoDetail.POID and t.seq1 = MDivisionPoDetail.Seq1 and t.Seq2 = MDivisionPoDetail.seq2);
-		merge dbo.MDivisionPoDetail as target 
-		using #tmpScrap as src
-		on src.MDivisionID = target.MDivisionID and src.poid = target.POID and src.seq1 = target.Seq1 and src.Seq2 = target.seq2
-		when matched then
-		update 
-		set OutQty = isnull(OutQty,0) + isnull(src.ScrapQty, 0);
+		--merge dbo.MDivisionPoDetail as target 
+		--using #tmpScrap as src
+		--on src.MDivisionID = target.MDivisionID and src.poid = target.POID and src.seq1 = target.Seq1 and src.Seq2 = target.seq2
+		--when matched then
+		--update 
+		--set OutQty = isnull(OutQty,0) + isnull(src.ScrapQty, 0);
+
+		update  a
+		set a.OutQty = isnull(a.OutQty,0) + isnull(b.ScrapQty, 0)
+		from dbo.MDivisionPoDetail a 
+		inner join #tmpScrap b on
+			a.MDivisionID = b.MDivisionID and 
+			a.poid = b.poid and
+			a.seq1 = b.seq1 and
+			a.seq2 = b.seq2;
 
 		drop table #tmpScrap;
 		
