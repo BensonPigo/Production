@@ -182,9 +182,13 @@ BEGIN
 		IF @Stocktype ='B'
 		BEGIN
 			-- 更新 MdivisionPodetail
-			update dbo.MDivisionPoDetail  SET AdjustQty = AdjustQty +
-			(SELECT t.AdjustQty from #tmpAdjust1 t where t.MDivisionID = MDivisionPoDetail.MDivisionID
-				and t.poid = MDivisionPoDetail.POID and t.seq1 = MDivisionPoDetail.Seq1 and t.Seq2 = MDivisionPoDetail.seq2)
+			--update dbo.MDivisionPoDetail  SET AdjustQty = AdjustQty +
+			--(SELECT t.AdjustQty from #tmpAdjust1 t where t.MDivisionID = MDivisionPoDetail.MDivisionID
+			--	and t.poid = MDivisionPoDetail.POID and t.seq1 = MDivisionPoDetail.Seq1 and t.Seq2 = MDivisionPoDetail.seq2)
+			update a
+			set a.AdjustQty = isnull(a.AdjustQty, 0) + ISNULL(b.AdjustQty, 0)
+			from dbo.MDivisionPoDetail a 
+			inner join #tmpAdjust1 b on a.MDivisionID = b.MDivisionID and a.POID = b.POID and a.Seq1 = b.Seq1 and a.Seq2 = b.Seq2
 		END
 		ELSE
 		BEGIN
