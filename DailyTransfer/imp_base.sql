@@ -1523,8 +1523,10 @@ where not exists(select id from Production.dbo.Carrier as a where a.id = b.id)
 
 
 
+
 --PayTerm
 --PayTermAP    
+--PayTermAR
 ----------------------刪除主TABLE多的資料
 Delete Production.dbo.PayTermAP
 from Production.dbo.PayTermAP as a left join Trade_To_Pms.dbo.PayTermAP as b
@@ -1594,6 +1596,79 @@ select
 
 from Trade_To_Pms.dbo.PayTermAP as b
 where not exists(select id from Production.dbo.PayTermAP as a where a.id = b.id)
+
+
+-----------------PayTermAR 20161209 add
+Merge Production.dbo.PayTermAR as t
+Using Trade_TO_Pms.dbo.PayTermAR as s
+	on t.id=s.id
+	when matched then
+		update set
+		t.Description= s.Description,
+		t.Term= s.Term,
+		t.BeforeAfter= s.BeforeAfter,
+		t.BaseDate= s.BaseDate,
+		t.AccountDay= s.AccountDay,
+		t.CloseAccountDay= s.CloseAccountDay,
+		t.CloseMonth= s.CloseMonth,
+		t.CloseDay= s.CloseDay,
+		t.DueAccountday= s.DueAccountday,
+		t.DueMonth= s.DueMonth,
+		t.DueDay= s.DueDay,
+		t.JUNK= s.JUNK,
+		t.SamplePI= s.SamplePI,
+		t.BulkPI= s.BulkPI,
+		t.AddName= s.AddName,
+		t.AddDate= s.AddDate,
+		t.EditName= s.EditName,
+		t.EditDate= s.EditDate
+	when not matched by target then
+	insert(ID
+,Description
+,Term
+,BeforeAfter
+,BaseDate
+,AccountDay
+,CloseAccountDay
+,CloseMonth
+,CloseDay
+,DueAccountday
+,DueMonth
+,DueDay
+,JUNK
+,SamplePI
+,BulkPI
+,AddName
+,AddDate
+,EditName
+,EditDate
+)
+	values(s.ID,
+s.Description,
+s.Term,
+s.BeforeAfter,
+s.BaseDate,
+s.AccountDay,
+s.CloseAccountDay,
+s.CloseMonth,
+s.CloseDay,
+s.DueAccountday,
+s.DueMonth,
+s.DueDay,
+s.JUNK,
+s.SamplePI,
+s.BulkPI,
+s.AddName,
+s.AddDate,
+s.EditName,
+s.EditDate
+)
+	 when not matched by source then
+	 delete;
+
+
+
+
 
 
 --Mtype
