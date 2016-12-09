@@ -143,6 +143,12 @@ namespace Sci.Production.Subcon
                 txtmfactory1.Focus();
                 return false;
             }
+            if (CurrentMaintain["PayTermid"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["PayTermid"].ToString()))
+            {
+                MyUtility.Msg.WarningBox("< Terms >  can't be empty!", "Warning");
+                txtpayterm_fty1.Focus();
+                return false;
+            }
             #endregion
 
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty = 0"))
@@ -666,7 +672,7 @@ where localap_detail.id = '{0}'", masterID);
                     ,a.price [Price]
                     ,a.qty [Qty]
                     ,a.unitid [Unit]
-                    ,a.price*a.Qty [Amount]
+                    ,CONVERT(decimal(10,4),a.price*a.Qty) [Amount]
             from dbo.LocalAP_Detail a
             left join dbo.LocalAP b on a.id=b.Id
             where a.id= @ID", pars, out dd);

@@ -405,7 +405,7 @@
             0,
             0,
             0});
-            this.numericBox1.MaxLength = 3;
+            this.numericBox1.MaxLength = 5;
             this.numericBox1.Minimum = new decimal(new int[] {
             0,
             0,
@@ -429,7 +429,7 @@
             // 
             this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "vat", true));
-            this.numericBox2.DecimalPlaces = 4;
+            this.numericBox2.DecimalPlaces = 2;
             this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox2.IsSupportEditMode = false;
             this.numericBox2.Location = new System.Drawing.Point(781, 49);
@@ -452,7 +452,7 @@
             // 
             this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "amount", true));
-            this.numericBox3.DecimalPlaces = 4;
+            this.numericBox3.DecimalPlaces = 2;
             this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox3.IsSupportEditMode = false;
             this.numericBox3.Location = new System.Drawing.Point(781, 15);
@@ -474,7 +474,7 @@
             // numericBox4
             // 
             this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox4.DecimalPlaces = 4;
+            this.numericBox4.DecimalPlaces = 2;
             this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox4.IsSupportEditMode = false;
             this.numericBox4.Location = new System.Drawing.Point(781, 84);
