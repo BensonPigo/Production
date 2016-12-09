@@ -23,6 +23,7 @@ namespace Sci.Production.Cutting
         public string SubProcess { get; set; }
         public string Qty { get; set; }
         public string Barcode { get; set; }
+        public string Patterncode { get; set; }
     }
 }
 

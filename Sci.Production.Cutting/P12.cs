@@ -192,6 +192,7 @@ namespace Sci.Production.Cutting
                                                 ,b.Article + '\' + b.Colorid [Color2]
                                                 ,a.SizeCode [Size]
                                                 ,qq.Cutpart [Cutpart]
+                                                ,'('+a.Patterncode+')' [Patterncode]
                                                 ,a.PatternDesc [Description]
                                                 ,SubProcess.SubProcess [SubProcess]
                                                 ,a.Parts [Parts]
@@ -206,7 +207,7 @@ namespace Sci.Production.Cutting
                                         outer apply(select SubProcess = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 							                                                from dbo.Bundle_Detail_Art e1
 							                                                where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= qq.Cutpart
-							                                                for xml path('')))as SubProcess " + sqlWhere +  @" and a.Patterncode != 'ALLPARTS' 
+							                                                for xml path('')))as SubProcess " + sqlWhere + @" and a.Patterncode != 'ALLPARTS' 
                                         
                                         union all
 
@@ -227,6 +228,7 @@ namespace Sci.Production.Cutting
                                                 ,b.Article + '\' + b.Colorid [Color2]
                                                 ,a.SizeCode [Size]
                                                 ,qq.Cutpart [Cutpart]
+                                                ,'('+d.Patterncode+')' [Patterncode]
                                                 ,d.PatternDesc [Description]
                                                 ,SubProcess.SubProcess [SubProcess]
                                                 ,d.Parts [Parts]
@@ -269,6 +271,7 @@ namespace Sci.Production.Cutting
                                                 ,b.Article + '\' + b.Colorid [Color2]
                                                 ,a.SizeCode [Size]
                                                 ,qq.Cutpart [Cutpart]
+                                                 ,'('+a.Patterncode+')' [Patterncode]
                                                 ,a.PatternDesc [Description]
                                                 ,SubProcess.SubProcess [SubProcess]
                                                 ,a.Parts [Parts]
@@ -304,6 +307,7 @@ namespace Sci.Production.Cutting
                                                 ,b.Article + '\' + b.Colorid [Color2]
                                                 ,a.SizeCode [Size]
                                                 ,qq.Cutpart [Cutpart]
+                                                ,'('+a.Patterncode+')' [Patterncode]
                                                 ,a.PatternDesc [Description]
                                                 ,SubProcess.SubProcess [SubProcess]
                                                 ,a.Parts [Parts]
@@ -380,6 +384,7 @@ namespace Sci.Production.Cutting
                 Parts = row1["Parts"].ToString(),
                 Color = row1["Color2"].ToString(),
                 Size = row1["Size"].ToString(),
+                Patterncode = row1["Patterncode"].ToString(),
                 Desc = row1["Description"].ToString(),
                 SubProcess = row1["SubProcess"].ToString(),
                 Qty = row1["Qty"].ToString(),
