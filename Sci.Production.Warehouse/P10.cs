@@ -438,10 +438,10 @@ NetQty as(
     from PO_Supp_Detail a
         left join Issue_Summary b on  a.seq1 = b.seq1 and a.seq2 = b.seq2 and a.ID=b.Poid 
     where 
-        not a.SEQ1 >= '7'
+        a.STOCKPOID =''
         and a.SEQ1 = (select min(seq1) from dbo.PO_Supp_Detail where id=a.id and seq1 = a.SEQ1 and seq2 = a.seq2)
 )
-select a.*, isnull(b.NETQty,0) as NETQty from main a 
+select a.*,left(a.seq1+' ',3)+a.Seq2 as seq, isnull(b.NETQty,0) as NETQty from main a 
 left join NetQty b on a.Poid = b.ID and a.seq1 = b.seq1 and a.seq2 = b.seq2
 ", txtRequest.Text, CurrentMaintain["id"]);
                     DBProxy.Current.Select(null, sqlcmd, out dt);
