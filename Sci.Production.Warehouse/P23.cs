@@ -215,10 +215,11 @@ namespace Sci.Production.Warehouse
             var dr = this.CurrentMaintain;
             if (null == dr) return;
             
-            string sqlcmd = "";
             StringBuilder sqlupd2_B = new StringBuilder();
             string sqlupd2_A = "";
             StringBuilder sqlupd2_FIO = new StringBuilder();
+
+            string sqlcmd = "";
             string sqlupd3, ids = "";
             DualResult result, result2;
             DataTable datacheck;
