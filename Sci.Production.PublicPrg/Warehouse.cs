@@ -36,102 +36,186 @@ namespace Sci.Production.PublicPrg
         /// <param name="string stocktype"></param>
         /// <param name="string m"></param>
         /// <returns>String Sqlcmd</returns>
-
-        private static void addlocationvalue(bool attachLocation, List<Prgs_POSuppDetailData> datas)
+        /// 
+        
+        //新(整批)A倉
+        public static string UpdateMPoDetail_A(int type, List<Prgs_POSuppDetailData_A> datas, bool encoded, bool attachLocation = true)
         {
-            string tmplocation = "";
+            #region 以原本的datas的5keys 去ftyinventory撈location和原本loction重組以逗號分開,塞回原本資料
+            DataTable TBattachlocation;
             if (attachLocation)
             {
-                #region
-//                DataTable tmp = null;
-//                #region 撈location後與原本的distinct已,分開,重組新的datas
-//                string sc = @"
-//;with forlocation as
-//(
-//	select mdivisionid,poid,seq1,seq2,stocktype,mtllocationid
-//	from #tmp
-//	union
-//	select f.mdivisionid,f.poid,f.seq1,f.seq2,f.stocktype,fd.mtllocationid
-//	from ftyinventory f
-//	inner join ftyinventory_detail fd on f.ukey = fd.ukey 
-//	inner join #tmp t on f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
-//		and f.seq2 = t.Seq2 and f.stocktype = t.StockType
-//)
-//select mdivisionid,poid,seq1,seq2,stocktype,l.bocation
-//from forlocation fl1
-//outer apply
-//(
-//	select location=(
-//		select distinct concat(fl2.mtllocationid,',')
-//		from forlocation fl2
-//		where fl1.mdivisionid = fl2.MDivisionID and fl1.poid = fl2.POID and fl1.seq1 = fl2.Seq1 
-//		and fl1.seq2 = fl2.Seq2 and fl1.stocktype = fl2.StockType
-//		for xml path('')
-//	)
-//)l";
-//                #endregion
-//                MyUtility.Tool.ProcessWithObject(datas, "", sc, out tmp, "#tmp");
-
-//                var newDatas = tmp.AsEnumerable().Select(w =>
-//                    new Prgs_POSuppDetailData()
-//                    {
-//                        mdivisionid = w.Field<string>("mdivisionid"),
-//                        poid = w.Field<string>("poid"),
-//                        seq1 = w.Field<string>("seq1"),
-//                        seq2 = w.Field<string>("seq2"),
-//                        stocktype = w.Field<string>("stocktype"),
-//                        qty = w.Field<decimal>("qty"),
-//                        location = w.Field<string>("location"),
-//                        //location_new = w.Field<string>("location")
-//                    }).ToList();
-//                datas.Clear();
-//                datas.AddRange(newDatas);
-                #endregion
-
-                foreach (var item in datas)
-                {
-                    tmplocation = MyUtility.GetValue.Lookup(string.Format(@"
-select t.mtllocationid+','
-from (select distinct mtllocationid from ftyinventory f inner join ftyinventory_detail fd on f.ukey = fd.ukey 
-where f.mdivisionid ='{0}' and f.poid = '{1}' and f.seq1='{2}' and f.seq2='{3}' and stocktype='{4}') t for xml path('')"
-                        , item.mdivisionid, item.poid, item.seq1, item.seq2, item.stocktype));
-                    item.location = DistinctString(tmplocation + item.location);
-                }
-            }        
-        }
-
-        public static string UpdateMPoDetail(int type, List<Prgs_POSuppDetailData> datas
-            , bool encoded, bool attachLocation = true)
-        {
-            
-            
-
-            StringBuilder sqlcmd = new StringBuilder();
-
+                string sqlcmdforlocation = @"
+select mdivisionid,poid,seq1,seq2,qty,stocktype
+,[location] = stuff(L.locationid,1,1,'' )
+from #tmp t
+OUTER APPLY(
+	SELECT locationid=(
+		select distinct concat(',',u.location)
+		from 
+		(
+			select mdivisionid,poid,seq1,seq2,stocktype,location
+			from #tmp f
+			where f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
+			and f.seq2 = t.Seq2 and f.stocktype = t.StockType and f.location !=''
+			union
+			select mdivisionid,poid,seq1,seq2,stocktype,[location] = fd.mtllocationid
+			from ftyinventory f 
+			inner join ftyinventory_detail fd on f.ukey = fd.ukey 
+			where f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
+			and f.seq2 = t.Seq2 and f.stocktype = t.StockType
+		)u
+		for xml path('')
+	)
+)L";
+                MyUtility.Tool.ProcessWithObject(datas, "", sqlcmdforlocation, out TBattachlocation, "#Tmp");
+                var newDatas = TBattachlocation.AsEnumerable().Select(w =>
+                        new Prgs_POSuppDetailData_A
+                        {
+                            mdivisionid = w.Field<string>("mdivisionid"),
+                            poid = w.Field<string>("poid"),
+                            seq1 = w.Field<string>("seq1"),
+                            seq2 = w.Field<string>("seq2"),
+                            stocktype = w.Field<string>("stocktype"),
+                            qty = w.Field<decimal>("qty"),
+                            location = w.Field<string>("location"),
+                        }).ToList();
+                datas.Clear();
+                datas.AddRange(newDatas);
+            }
+            #endregion
+            String sqlcmd = "";
             switch (type)
             {
                 case 2:
-                    
+                    #region -- Case 2 InQty --
+                    if (encoded)
+                    {
+                        sqlcmd = @"
+merge dbo.mdivisionpodetail as target
+using  #TmpSource as src
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
+when matched and src.stocktype = 'I' then
+	update 
+	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.blocation = src.location
+when not matched by target and src.stocktype = 'I' then
+    insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[blocation])
+    values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);
+
+merge dbo.mdivisionpodetail as target
+using  #TmpSource as src
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
+when matched and src.stocktype = 'B' then
+	update 
+	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.alocation = src.location
+when not matched by target and src.stocktype = 'B' then
+    insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[alocation])
+    values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);";
+                    }
+                    else
+                    {
+                        sqlcmd = @"
+update t
+set t.inqty = isnull(t.inqty,0.00) - s.qty
+from mdivisionpodetail t
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
+                    }
+                    #endregion
+                    break;                        
+                case 16:
+
                     break;
+                case 32:
+
+                    break;
+            }
+            return sqlcmd;
+        }
+        //新(整批)B倉
+        public static string UpdateMPoDetail_B(int type, List<Prgs_POSuppDetailData_B> datas, bool encoded, bool attachLocation = true)
+        {
+            #region 以原本的datas的5keys 去ftyinventory撈location和原本loction重組以逗號分開,塞回原本資料
+            DataTable TBattachlocation;
+            if (datas != null)
+            {
+                if (attachLocation)
+                {
+                    string sqlcmdforlocation = @"
+select mdivisionid,poid,seq1,seq2,qty,stocktype
+,[location] = stuff(L.locationid,1,1,'' )
+from #tmp t
+OUTER APPLY(
+	SELECT locationid=(
+		select distinct concat(',',u.location)
+		from 
+		(
+			select mdivisionid,poid,seq1,seq2,stocktype,location
+			from #tmp f
+			where f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
+			and f.seq2 = t.Seq2 and f.stocktype = t.StockType and f.location !=''
+			union
+			select mdivisionid,poid,seq1,seq2,stocktype,[location] = fd.mtllocationid
+			from ftyinventory f 
+			inner join ftyinventory_detail fd on f.ukey = fd.ukey 
+			where f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
+			and f.seq2 = t.Seq2 and f.stocktype = t.StockType
+		)u
+		for xml path('')
+	)
+)L";
+                    MyUtility.Tool.ProcessWithObject(datas, "", sqlcmdforlocation, out TBattachlocation, "#Tmp");
+                    var newDatas = TBattachlocation.AsEnumerable().Select(w =>
+                            new Prgs_POSuppDetailData_B
+                            {
+                                mdivisionid = w.Field<string>("mdivisionid"),
+                                poid = w.Field<string>("poid"),
+                                seq1 = w.Field<string>("seq1"),
+                                seq2 = w.Field<string>("seq2"),
+                                stocktype = w.Field<string>("stocktype"),
+                                qty = w.Field<decimal>("qty"),
+                                location = w.Field<string>("location"),
+                            }).ToList();
+                    datas.Clear();
+                    datas.AddRange(newDatas);
+                    #region 一筆一筆更新法location
+                    //string tmplocation = "";//用此法要搬上去
+                    //foreach (var item in datas)
+                    //                {
+                    //                    tmplocation = MyUtility.GetValue.Lookup(string.Format(@"
+                    //select t.mtllocationid+','
+                    //from (select distinct mtllocationid from ftyinventory f inner join ftyinventory_detail fd on f.ukey = fd.ukey 
+                    //where f.mdivisionid ='{0}' and f.poid = '{1}' and f.seq1='{2}' and f.seq2='{3}' and stocktype='{4}') t 
+                    //for xml path('')"
+                    //                        , item.mdivisionid, item.poid, item.seq1, item.seq2, item.stocktype));
+                    //                    item.location = DistinctString(tmplocation + item.location);
+                    //                }
+                    #endregion
+                }
+            }
+            #endregion
+            String sqlcmd = "";
+            switch (type)
+            {
                 case 4:
                     #region -- Case 4 OutQty --
                     if (encoded)
                     {
-                        sqlcmd.Append(@"
+                        sqlcmd = @"
 update t
 set t.OutQty = isnull(t.OutQty,0.00) + s.qty
 from mdivisionpodetail t
 inner join #TmpSource s
-on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;");
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
                     }
                     else
                     {
-                        sqlcmd.Append(@"
+                        sqlcmd = @"
 update t
 set t.OutQty = isnull(t.OutQty,0.00) - s.qty
 from mdivisionpodetail t
 inner join #TmpSource s
-on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;");
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
                     }
                     #endregion
                     break;
@@ -139,8 +223,7 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.m
                     #region -- Case 8 LInvQty --
                     if (encoded)
                     {
-                        addlocationvalue(attachLocation, datas);
-                        sqlcmd.Append(@"
+                        sqlcmd = @"
 merge dbo.mdivisionpodetail as target
 using #TmpSource as src
 on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
@@ -149,16 +232,16 @@ update
 set target.LInvQty = isnull(target.LInvQty,0.00) - src.qty , target.blocation = src.location
 when not matched then
     insert ([Poid],[Seq1],[Seq2],[MDivisionID],[LInvQty],[blocation])
-    values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);");
+    values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);";
                     }
                     else
                     {
-                        sqlcmd.Append(@"
+                        sqlcmd = @"
 update t 
 set t.LInvQty = isnull(t.LInvQty,0.00) + s.qty
 from mdivisionpodetail t
 inner join #TmpSource s
-on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;");
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
                     }
                     #endregion
                     break;
@@ -167,13 +250,11 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.m
                     break;
                 case 32:
 
-                    break;
-            
+                    break;            
             }
-
-            return sqlcmd.ToString();
+            return sqlcmd;
         }
-
+        //舊
         public static string UpdateMPoDetail(int type, string Poid, string seq1, string seq2, decimal qty, bool encoded, string stocktype, string m, string location = "", bool attachLocation = true)
         {
             string sqlcmd = null, tmplocation = "";
@@ -297,6 +378,7 @@ where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
                     #endregion
                     break;
             }
+            #region 前人遺留下來
             //            if (encoded && (type == 2 || type == 8 || type == 16) && !MyUtility.Check.Empty(stocktype))
             //            {
             //                switch (stocktype)
@@ -326,9 +408,11 @@ where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
             //                }
 
             //            }
+            #endregion
             return sqlcmd;
         }
         #endregion
+
         #region -- UpdateFtyInventory --
         /// <summary>
         /// UpdateFtyInventory()
@@ -351,7 +435,86 @@ where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
         /// <param name="bool encoded"></param>
         /// <param name="location"></param>
         /// <returns>String Sqlcmd</returns>
+        //新(整批)
+        public static string UpdateFtyInventory_IO(int type,IList<DataRow> datas, bool encoded)
+        {
+            string sqlcmd = "";
+            switch (type)
+            {
+                case 2:
+                    #region 更新 inqty
+                    if (encoded)
+                    {
+                        sqlcmd = @"
+merge dbo.FtyInventory as target
+using #TmpSource as s
+    on target.mdivisionid = s.tomdivisionid and target.poid = s.topoid and target.seq1 = s.toseq1 
+	and target.seq2 = s.toseq2 and target.stocktype = s.tostocktype and target.roll = s.toroll
+when matched then
+    update
+    set inqty = isnull(inqty,0.00) + s.qty
+when not matched then
+    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
+    values ((select ukey from dbo.MDivisionPoDetail 
+			 where mdivisionid = s.tomdivisionid and poid = s.topoid and seq1 = s.toseq1 and seq2 = s.toseq2)
+			 ,s.tomdivisionid,s.topoid,s.toseq1,s.toseq2,s.toroll,s.todyelot,s.tostocktype,s.qty);
 
+select location,[ukey] = f.ukey
+into #tmp_L_K 
+from #TmpSource s
+left join ftyinventory f on mdivisionid = s.tomdivisionid and poid = s.topoid 
+						 and seq1 = s.toseq1 and seq2 = s.toseq2 and roll = s.toroll
+merge dbo.ftyinventory_detail as t
+using #tmp_L_K as s on t.ukey = s.ukey and t.mtllocationid = s.location
+when not matched then
+    insert ([ukey],[mtllocationid]) 
+	values (s.ukey,s.location);
+
+delete t from FtyInventory_Detail t
+where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
+";
+                        //↑最後一段delete寫法千萬不能用merge作,即使只有一筆資料也要跑超久
+                    }
+                    else
+                    {
+                        sqlcmd = @"
+merge dbo.FtyInventory as target
+using #TmpSource as s
+    on target.mdivisionid = s.tomdivisionid and target.poid = s.topoid and target.seq1 = s.toseq1 
+	and target.seq2 = s.toseq2 and target.stocktype = s.tostocktype and target.roll = s.toroll
+when matched then
+    update
+    set inqty = isnull(inqty,0.00) - s.qty;
+
+when not matched then
+    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
+    values ((select ukey FROM dbo.MDivisionPoDetail 
+			 where mdivisionid = s.tomdivisionid and poid = s.topoid and seq1 = s.toseq1 and seq2 = s.toseq2)
+			 ,s.tomdivisionid,s.topoid,s.toseq1,s.toseq2,s.toroll,s.todyelot,s.tostocktype,s.qty);";
+                    }
+                    break;
+                #endregion
+                case 4:
+                    #region 更新OutQty
+                    sqlcmd = @"
+merge dbo.FtyInventory as target
+using #TmpSource as s
+    on target.mdivisionid = s.frommdivisionid and target.poid = s.frompoid and target.seq1 = s.fromseq1 
+	and target.seq2 = s.fromseq2 and target.stocktype = s.fromstocktype and target.roll = s.fromroll
+when matched then
+    update
+    set outqty = isnull(outqty,0.00) + s.qty
+when not matched then
+    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
+    values ((select ukey from dbo.MDivisionPoDetail 
+			 where mdivisionid = s.frommdivisionid and poid = s.frompoid and seq1 = s.fromseq1 and seq2 = s.fromseq2)
+			 ,s.frommdivisionid,s.frompoid,s.fromseq1,s.fromseq2,s.fromroll,s.fromdyelot,s.fromstocktype,s.qty);";
+                    #endregion
+                    break;
+            }
+            return sqlcmd;
+        }
+        //舊
         public static string UpdateFtyInventory(int type, string m, string Poid, string seq1, string seq2
             , decimal qty, string roll, string dyelot, string stocktype, bool encoded, string location = null)
         {
@@ -361,7 +524,8 @@ where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
                 case 2:
                     if (encoded)
                     {
-                        sqlcmd = string.Format(@"merge dbo.FtyInventory as target
+                        sqlcmd = string.Format(@"
+merge dbo.FtyInventory as target
 using (values ({3}))
     as source (field1)
     on target.mdivisionid ='{7}' and target.poid ='{0}' and target.seq1 = '{1}' and target.seq2 ='{2}' and stocktype='{6}' and target.roll='{4}' 
@@ -520,6 +684,7 @@ when not matched then
             return sqlcmd;
         }
         #endregion
+
         #region -- SelePoItem --
         /// <summary>
         /// 右鍵開窗選取採購項
@@ -759,7 +924,8 @@ order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["p
         }
     }
 
-    public class Prgs_POSuppDetailData {
+    public class Prgs_POSuppDetailData_B 
+    {
         public string mdivisionid {get;set;}
         public string poid {get;set;}
         public string seq1 {get;set;}
@@ -767,9 +933,15 @@ order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["p
         public string stocktype {get;set;}
         public decimal qty { get; set; }
         public string location { get; set; }
-
-        //private string location_new_ = "";
-        //public string location_new { get { return this.location_new_; } set { this.location_new_= value; } }
     }
-
+    public class Prgs_POSuppDetailData_A
+    {
+        public string mdivisionid { get; set; }
+        public string poid { get; set; }
+        public string seq1 { get; set; }
+        public string seq2 { get; set; }
+        public string stocktype { get; set; }
+        public decimal qty { get; set; }
+        public string location { get; set; }
+    }
 }
