@@ -188,12 +188,10 @@ namespace Sci.Production.Warehouse
                     (row["seq1"].ToString().TrimStart().StartsWith("7")) || 
                     (MyUtility.Check.Empty(row["ActualQty"])) || 
                     (MyUtility.Check.Empty(row["stocktype"])) || 
-                    (row["fabrictype"].ToString().ToUpper() == "F" && (MyUtility.Check.Empty(row["roll"]) || MyUtility.Check.Empty(row["dyelot"]))))
+                    (row["fabrictype"].ToString().ToUpper() == "F" && (MyUtility.Check.Empty(row["roll"]) || MyUtility.Check.Empty(row["dyelot"])))
+                   )
                 {
-                    if (row["fabrictype"].ToString() == "F")
-                        warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} ", row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]));                    
-                    else
-                        warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} ", row["poid"], row["seq1"], row["seq2"]));  
+                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} ", row["poid"], row["seq1"], row["seq2"]));  
                   
                     if ((MyUtility.Check.Empty(row["seq1"]) || MyUtility.Check.Empty(row["seq2"])))
                         warningmsg.Append(string.Format(@"Seq1 or Seq2 can't be empty ,"));
