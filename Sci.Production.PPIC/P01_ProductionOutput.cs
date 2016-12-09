@@ -27,14 +27,15 @@ namespace Sci.Production.PPIC
             masterData = MasterData;
             Text = "Production output - " + MyUtility.Convert.GetString(masterData["ID"]);
             cuttingWorkType = MyUtility.GetValue.Lookup(string.Format("select WorkType from Cutting where ID = '{0}'", MyUtility.Convert.GetString(masterData["CuttingSP"])));
-            if (cuttingWorkType == "1")
-            {
-                tabPage2.Text = "Cutting(Comb) - " + MyUtility.Convert.GetString(masterData["CuttingSP"]);
-            }
-            else
-            {
-                tabPage2.Text = "Cutting - " + MyUtility.Convert.GetString(masterData["ID"]);
-            }
+            //if (cuttingWorkType == "1")
+            //{
+            //    tabPage2.Text = "Cutting(Comb) - " + MyUtility.Convert.GetString(masterData["CuttingSP"]);
+            //}
+            //else
+            //{
+            //    tabPage2.Text = "Cutting - " + MyUtility.Convert.GetString(masterData["ID"]);
+            //}
+            tabPage2.Text = "Cutting output";
         }
 
         protected override void OnFormLoaded()
@@ -245,7 +246,7 @@ left join Order_Article oa on oa.ID = o.POID and oa.Article = oq.Article
 left join Order_SizeCode os on os.ID = o.POID and os.SizeCode = oq.SizeCode
 where {0}
 group by oq.Article,oq.SizeCode,oq.Qty,oa.Seq,os.Seq
-order by oa.Seq,os.Seq", cuttingWorkType == "1" ? string.Format("o.CuttingSP = '{0}'", MyUtility.Convert.GetString(masterData["CuttingSP"])) : string.Format("o.ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"])));
+order by oa.Seq,os.Seq", string.Format("o.ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"])));
 
             DataTable CuttingData;
             result = DBProxy.Current.Select(null, sqlCmd, out CuttingData);

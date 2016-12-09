@@ -50,7 +50,8 @@ namespace Sci.Production.PPIC
             grid1.Columns[1].Visible = type != "A";
             grid1.Columns[2].Visible = type != "A";
             grid1.Columns[3].Visible = type != "A";
-            grid1.Columns[5].Visible = type != "A";
+            grid1.Columns[4].Visible = type != "A";
+            grid1.Columns[6].Visible = type != "A";
 
             string sqlCmd;
             if (type == "A")
@@ -92,7 +93,7 @@ from (select Article,SizeCode,cDate,MIN(CutQty) as CutQty
           from tmpCutput
           group by Article,SizeCode,cDate) a
 where cDate != ''
-group by cDate", workType == "1" ? string.Format("o.CuttingSP = '{0}'", id) : string.Format("o.ID = '{0}'", id));
+group by cDate", string.Format("o.ID = '{0}'", id));
             }
             else
             {
@@ -105,7 +106,7 @@ inner join CuttingOutput_Detail cd on cd.WorkOrderUkey = wd.WorkOrderUkey
 inner join CuttingOutput c on c.ID = cd.ID
 where {0}
 group by c.cDate,cd.CutRef,wp.PatternPanel,w.LectraCode,CD.Cutno,IIF(c.Status = 'Confirmed','Y','')"
-                    , workType == "1" ? string.Format("o.CuttingSP = '{0}'",id) : string.Format("o.ID = '{0}'", id)
+                    , string.Format("o.ID = '{0}'", id)
                     ,article,sizeCode);
             }
             DataTable gridData;
