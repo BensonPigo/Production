@@ -468,7 +468,7 @@ merge dbo.ftyinventory_detail as t
 using #tmp_L_K as s on t.ukey = s.ukey and t.mtllocationid = s.location
 when not matched then
     insert ([ukey],[mtllocationid]) 
-	values (s.ukey,s.location);
+	values (s.ukey,isnull(s.location,''));
 
 delete t from FtyInventory_Detail t
 where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
@@ -496,7 +496,9 @@ when not matched then
                 #endregion
                 case 4:
                     #region 更新OutQty
-                    sqlcmd = @"
+                    if (encoded)
+                    {
+                        sqlcmd = @"
 merge dbo.FtyInventory as target
 using #TmpSource as s
     on target.mdivisionid = s.frommdivisionid and target.poid = s.frompoid and target.seq1 = s.fromseq1 
@@ -509,6 +511,24 @@ when not matched then
     values ((select ukey from dbo.MDivisionPoDetail 
 			 where mdivisionid = s.frommdivisionid and poid = s.frompoid and seq1 = s.fromseq1 and seq2 = s.fromseq2)
 			 ,s.frommdivisionid,s.frompoid,s.fromseq1,s.fromseq2,s.fromroll,s.fromdyelot,s.fromstocktype,s.qty);";
+                    }
+                    else
+                    {
+                        sqlcmd = @"
+merge dbo.FtyInventory as target
+using #TmpSource as s
+    on target.mdivisionid = s.frommdivisionid and target.poid = s.frompoid and target.seq1 = s.fromseq1 
+	and target.seq2 = s.fromseq2 and target.stocktype = s.fromstocktype and target.roll = s.fromroll
+when matched then
+    update
+    set outqty = isnull(outqty,0.00) - s.qty
+when not matched then
+    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
+    values ((select ukey from dbo.MDivisionPoDetail 
+			 where mdivisionid = s.frommdivisionid and poid = s.frompoid and seq1 = s.fromseq1 and seq2 = s.fromseq2)
+			 ,s.frommdivisionid,s.frompoid,s.fromseq1,s.fromseq2,s.fromroll,s.fromdyelot,s.fromstocktype,s.qty);";
+                    }
+                    
                     #endregion
                     break;
             }
