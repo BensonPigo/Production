@@ -229,7 +229,7 @@ using #TmpSource as src
 on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
 when matched then
 update 
-set target.LInvQty = isnull(target.LInvQty,0.00) - src.qty , target.blocation = src.location
+set target.LInvQty = isnull(target.LInvQty,0.00) + src.qty , target.blocation = src.location
 when not matched then
     insert ([Poid],[Seq1],[Seq2],[MDivisionID],[LInvQty],[blocation])
     values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);";
@@ -238,7 +238,7 @@ when not matched then
                     {
                         sqlcmd = @"
 update t 
-set t.LInvQty = isnull(t.LInvQty,0.00) + s.qty
+set t.LInvQty = isnull(t.LInvQty,0.00) - s.qty
 from mdivisionpodetail t
 inner join #TmpSource s
 on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
