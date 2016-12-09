@@ -42,10 +42,11 @@ namespace Sci.Production.PPIC
             Helper.Controls.Grid.Generator(this.grid1)
                  .Date("CDate", header: "Date", width: Widths.AnsiChars(12))
                  .Text("CutRef", header: "Ref#", width: Widths.AnsiChars(6))
-                 .Text("ComboType", header: "Comb", width: Widths.AnsiChars(2))
-                 .Text("PatternPanel", header: "Cut#", width: Widths.AnsiChars(3))
+                 .Text("PatternPanel", header: "Fabric Comb", width: Widths.AnsiChars(2))
+                 .Text("LectraCode", header: "Lectra Code", width: Widths.AnsiChars(2))
+                 .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3))
                  .Numeric("CutQty", header: "Q'ty", width: Widths.AnsiChars(6))
-                 .Text("Confirmed", header: "Confirmed", width: Widths.AnsiChars(1));
+                 .Text("Confirmed", header: "Status", width: Widths.AnsiChars(8));
             grid1.Columns[1].Visible = type != "A";
             grid1.Columns[2].Visible = type != "A";
             grid1.Columns[3].Visible = type != "A";
@@ -95,14 +96,15 @@ group by cDate", workType == "1" ? string.Format("o.CuttingSP = '{0}'", id) : st
             }
             else
             {
-                sqlCmd = string.Format(@"select c.cDate,cd.CutRef,wp.PatternPanel,cd.CutRef,sum(wd.Qty) as CutQty,IIF(c.Status = 'Confirmed','Y','') as Confirmed
+                sqlCmd = string.Format(@"select c.cDate,cd.CutRef,wp.PatternPanel,w.LectraCode,CD.Cutno,sum(wd.Qty) as CutQty,IIF(c.Status = 'Confirmed','Y','') as Status
 from Orders o
 inner join WorkOrder_Distribute wd on wd.OrderID = o.ID and wd.Article = '{1}' and wd.SizeCode = '{2}'
 inner join WorkOrder_PatternPanel wp on wp.WorkOrderUkey = wd.WorkOrderUkey
+inner join WorkOrder w on w.ID=wp.ID and w.Ukey=wp.WorkOrderUkey
 inner join CuttingOutput_Detail cd on cd.WorkOrderUkey = wd.WorkOrderUkey
 inner join CuttingOutput c on c.ID = cd.ID
 where {0}
-group by c.cDate,cd.CutRef,wp.PatternPanel,cd.CutRef,IIF(c.Status = 'Confirmed','Y','')"
+group by c.cDate,cd.CutRef,wp.PatternPanel,w.LectraCode,CD.Cutno,IIF(c.Status = 'Confirmed','Y','')"
                     , workType == "1" ? string.Format("o.CuttingSP = '{0}'",id) : string.Format("o.ID = '{0}'", id)
                     ,article,sizeCode);
             }
