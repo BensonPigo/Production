@@ -67,6 +67,8 @@
     [EditName]        VARCHAR (10)    CONSTRAINT [DF_PO_Supp_Detail_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME        NULL,
     [StockUnit]       VARCHAR (8)     CONSTRAINT [DF_PO_Supp_Detail_StockUnit] DEFAULT ('') NULL,
+    [CfmETA] DATE NULL, 
+    [RevisedETD] DATE NULL, 
     CONSTRAINT [PK_PO_Supp_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
 
