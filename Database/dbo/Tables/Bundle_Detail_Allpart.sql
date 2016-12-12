@@ -1,6 +1,5 @@
 ﻿CREATE TABLE [dbo].[Bundle_Detail_Allpart] (
     [ID]          VARCHAR (13)  CONSTRAINT [DF_Bundle_Detail_Allpart_ID] DEFAULT ((0)) NOT NULL,
-    [BundleNo]    VARCHAR (10)  CONSTRAINT [DF_Bundle_Detail_Allpart_BundleNo] DEFAULT ('') NOT NULL,
     [Patterncode] VARCHAR (20)  CONSTRAINT [DF_Bundle_Detail_Allpart_Patterncode] DEFAULT ('') NOT NULL,
     [PatternDesc] NVARCHAR (40) CONSTRAINT [DF_Bundle_Detail_Allpart_PatternDesc] DEFAULT ('') NOT NULL,
     [parts]       NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_Allpart_parts] DEFAULT ((0)) NOT NULL,
@@ -20,7 +19,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Bundle 單�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'捆包號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail_Allpart', @level2type = N'COLUMN', @level2name = N'BundleNo';
+
 
 
 GO
