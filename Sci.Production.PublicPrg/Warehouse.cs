@@ -135,8 +135,14 @@ alter table #TmpSource alter column seq2 varchar(3)
 update t
 set t.inqty = isnull(t.inqty,0.00) - s.qty
 from mdivisionpodetail t
-inner join #TmpSource s
-on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
+(
+	select s.poid, s.seq1,s.seq2,s.mdivisionid,sum(qty) qty
+	from mdivisionpodetail t
+	inner join #TmpSource s
+	on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
+	group by s.poid, s.seq1,s.seq2,s.mdivisionid
+) s
+where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
                     }
                     #endregion
                     break;
@@ -227,8 +233,14 @@ alter table #TmpSource alter column seq2 varchar(3)
 update t
 set t.OutQty = isnull(t.OutQty,0.00) + s.qty
 from mdivisionpodetail t
-inner join #TmpSource s
-on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
+(
+	select s.poid, s.seq1,s.seq2,s.mdivisionid,sum(qty) qty
+	from mdivisionpodetail t
+	inner join #TmpSource s
+	on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
+	group by s.poid, s.seq1,s.seq2,s.mdivisionid
+) s
+where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
                     }
                     else
                     {
@@ -241,8 +253,14 @@ alter table #TmpSource alter column seq2 varchar(3)
 update t
 set t.OutQty = isnull(t.OutQty,0.00) - s.qty
 from mdivisionpodetail t
-inner join #TmpSource s
-on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
+(
+	select s.poid, s.seq1,s.seq2,s.mdivisionid,sum(qty) qty
+	from mdivisionpodetail t
+	inner join #TmpSource s
+	on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
+	group by s.poid, s.seq1,s.seq2,s.mdivisionid
+) s
+where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
                     }
                     #endregion
                     break;
@@ -276,8 +294,14 @@ alter table #TmpSource alter column seq2 varchar(3)
 update t 
 set t.LInvQty = isnull(t.LInvQty,0.00) - s.qty
 from mdivisionpodetail t
-inner join #TmpSource s
-on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
+(
+	select s.poid, s.seq1,s.seq2,s.mdivisionid,sum(qty) qty
+	from mdivisionpodetail t
+	inner join #TmpSource s
+	on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
+	group by s.poid, s.seq1,s.seq2,s.mdivisionid
+) s
+where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
                     }
                     #endregion
                     break;
@@ -294,8 +318,14 @@ alter table #TmpSource alter column seq2 varchar(3)
 update t 
 set t.LObQty = isnull(t.LObQty,0.00) + s.qty
 from mdivisionpodetail t
-inner join #TmpSource s
-on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
+(
+	select s.poid, s.seq1,s.seq2,s.mdivisionid,sum(qty) qty
+	from mdivisionpodetail t
+	inner join #TmpSource s
+	on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
+	group by s.poid, s.seq1,s.seq2,s.mdivisionid
+) s
+where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
                     }
                     else
                     {
@@ -308,8 +338,14 @@ alter table #TmpSource alter column seq2 varchar(3)
 update t 
 set t.LObQty = isnull(t.LObQty,0.00) - s.qty
 from mdivisionpodetail t
-inner join #TmpSource s
-on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
+(
+	select s.poid, s.seq1,s.seq2,s.mdivisionid,sum(qty) qty
+	from mdivisionpodetail t
+	inner join #TmpSource s
+	on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
+	group by s.poid, s.seq1,s.seq2,s.mdivisionid
+) s
+where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
                     }
                     #endregion
                     break;
@@ -326,8 +362,14 @@ alter table #TmpSource alter column seq2 varchar(3)
 update t 
 set t.AdjustQty = isnull(t.AdjustQty,0.00) + s.qty
 from mdivisionpodetail t
-inner join #TmpSource s
-on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
+(
+	select s.poid, s.seq1,s.seq2,s.mdivisionid,sum(qty) qty
+	from mdivisionpodetail t
+	inner join #TmpSource s
+	on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
+	group by s.poid, s.seq1,s.seq2,s.mdivisionid
+) s
+where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
                     }
                     else
                     {
@@ -340,8 +382,14 @@ alter table #TmpSource alter column seq2 varchar(3)
 update t 
 set t.AdjustQty = isnull(t.AdjustQty,0.00) - s.qty
 from mdivisionpodetail t
-inner join #TmpSource s
-on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
+(
+	select s.poid, s.seq1,s.seq2,s.mdivisionid,sum(qty) qty
+	from mdivisionpodetail t
+	inner join #TmpSource s
+	on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
+	group by s.poid, s.seq1,s.seq2,s.mdivisionid
+) s
+where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
                     }
                     #endregion
                     break;            
@@ -1199,16 +1247,6 @@ order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["p
         public string location { get; set; }
     }
     public class Prgs_POSuppDetailData_A
-    {
-        public string mdivisionid { get; set; }
-        public string poid { get; set; }
-        public string seq1 { get; set; }
-        public string seq2 { get; set; }
-        public string stocktype { get; set; }
-        public decimal qty { get; set; }
-        public string location { get; set; }
-    }
-    public class Prgs_POSuppDetailData_C
     {
         public string mdivisionid { get; set; }
         public string poid { get; set; }
