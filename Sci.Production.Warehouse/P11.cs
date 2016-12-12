@@ -621,7 +621,7 @@ where id = (select poid from dbo.orders where id='{0}') order by seq", OrderID);
             if (GetSubDetailDatas(CurrentDetailData, out subDetails))
             {
                 DBProxy.Current.Select(null, string.Format(@"select a.SizeCode,b.Id,b.Issue_DetailUkey,isnull(b.Qty,0) QTY
-from dbo.Order_SizeCode a left join dbo.Issue_Size b on b.SizeCode = a.SizeCode and b.id = '{1}' and b.Issue_DetailUkey = {2}
+from dbo.Order_SizeCode a left join dbo.Issue_Size b on b.SizeCode = a.SizeCode and b.id = '{1}' --and b.Issue_DetailUkey = {2}
 where a.id='{0}' order by Seq", this.poid, CurrentMaintain["id"], CurrentDetailData["ukey"]), out sizeRange);
                 foreach (DataRow dr in sizeRange.Rows)
                 {
@@ -1336,7 +1336,7 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, this.po
                 if (GetSubDetailDatas(CurrentDetailData, out subDetails))
                 {
                     DBProxy.Current.Select(null, string.Format(@"select a.SizeCode,b.Id,b.Issue_DetailUkey,isnull(b.Qty,0) QTY
-from dbo.Order_SizeCode a left join dbo.Issue_Size b on b.SizeCode = a.SizeCode and b.id = '{1}' and b.Issue_DetailUkey = {2}
+from dbo.Order_SizeCode a left join dbo.Issue_Size b on b.SizeCode = a.SizeCode and b.id = '{1}' --and b.Issue_DetailUkey = {2}
 where a.id='{0}' order by Seq ", this.poid, CurrentMaintain["id"], CurrentDetailData["ukey"]), out sizeRange);
                     foreach (DataRow drr in sizeRange.Rows)
                     {
