@@ -69,7 +69,7 @@ namespace Sci.Production.Subcon
 ,c.SciDelivery
 ,c.StyleID
 ,b.ArtworkId
-,b.PatternCode + '-' + b.PatternDesc
+,RTrim(b.PatternCode) + '-' + b.PatternDesc
 ,b.PoQty
 ,b.UnitPrice
 ,b.PoQty*b.UnitPrice as poamt
