@@ -218,7 +218,7 @@ SET
       ,a.RevisedETA	      =b.RevisedETA	
       ,a.FinalETD	      =b.FinalETD	
       ,a.ShipETA	      =b.ShipETA	
-      ,a.ETA	      =b.ETA	
+      ,a.ETA	      =b.EstETA	
       ,a.FinalETA	      =b.FinalETA	
       ,a.ShipModeID	      =b.ShipModeID	
       ,a.SMRLock	      =b.SMRLock	
@@ -260,6 +260,8 @@ SET
       ,a.AddDate	      =b.AddDate	
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
+	  ,a.RevisedETD = b.RevisedETD
+	  ,a.CfmETA =b.CfmETA
 	
 
 from Production.dbo.PO_Supp_Detail as a inner join Trade_To_Pms.dbo.PO_Supp_Detail as b ON a.id=b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
@@ -327,6 +329,8 @@ ID
       ,AddDate
       ,EditName
       ,EditDate
+	  ,RevisedETD
+	  ,CfmETA 
 )
 select 
        b.ID
@@ -346,7 +350,7 @@ select
       ,RevisedETA
       ,FinalETD
       ,ShipETA
-      ,ETA
+      ,EstETA
       ,FinalETA
       ,ShipModeID
       ,SMRLock
@@ -388,6 +392,8 @@ select
       ,b.AddDate
       ,b.EditName
       ,b.EditDate
+	  ,b.RevisedETD
+	  ,b.CfmETA 
 from Trade_To_Pms.dbo.PO_Supp_Detail as b inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
 where not exists(select id from Production.dbo.PO_Supp_Detail as a where a.id = b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2	)
 
