@@ -28,6 +28,10 @@ namespace Sci.Production.Subcon
             MyUtility.Tool.SetupCombox(cbbOrderBy, 1, 1, "Supplier,Handle");
             cbbOrderBy.SelectedIndex = 0;
             txtMdivision1.Text = Sci.Env.User.Keyword;
+            int month = DateTime.Today.Month;
+            int day = DateTime.Today.Day;
+            this.dateRange1.Value1 = DateTime.Today.AddMonths(-month + 1).AddDays(-day + 1);
+            this.dateRange1.Value2 = DateTime.Now;
         }
 
         // 驗證輸入條件
@@ -63,13 +67,13 @@ namespace Sci.Production.Subcon
 ,a.IssueDate
 ,dbo.getpass1(a.Handle) handle
 ,a.CurrencyID
-,a.Amount+a.vat apAmount
+,CONVERT(VARCHAR(20),CAST(a.Amount+a.vat AS Money),1) as apAmount 
 ,a.ArtworkTypeID
 ,b.ArtworkPoID
 ,b.OrderID
 ,(select orders.StyleID from orders where id = b.OrderID) style
 ,dbo.getPass1(c.Handle) pohandle
-,c.Amount+c.Vat poAmount
+,CONVERT(VARCHAR(20),CAST(c.Amount+c.Vat AS Money),1) as poAmount
 ,c.IssueDate poDate
 ,a.InvNo
 from artworkap a inner join artworkap_detail b on a.id = b.id 
