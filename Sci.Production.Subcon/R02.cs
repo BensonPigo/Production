@@ -68,7 +68,7 @@ namespace Sci.Production.Subcon
 ,c.StyleID
 ,b.BundleNo
 ,b.ArtworkID
-,b.PatternCode+'-'+b.PatternDesc pattern
+,RTrim(b.PatternCode)+'-'+b.PatternDesc pattern
 ,b.Qty
 from farmout a
 inner join farmout_detail b on b.ID = a.Id
