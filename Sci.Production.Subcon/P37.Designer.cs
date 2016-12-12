@@ -183,7 +183,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(2017, 397);
+            this.gridicon.Location = new System.Drawing.Point(2142, 397);
             // 
             // refresh
             // 
@@ -259,7 +259,7 @@
             this.lblSubconDebitNote.BackColor = System.Drawing.Color.Transparent;
             this.lblSubconDebitNote.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.lblSubconDebitNote.Lines = 0;
-            this.lblSubconDebitNote.Location = new System.Drawing.Point(699, 9);
+            this.lblSubconDebitNote.Location = new System.Drawing.Point(659, 9);
             this.lblSubconDebitNote.Name = "lblSubconDebitNote";
             this.lblSubconDebitNote.Size = new System.Drawing.Size(178, 23);
             this.lblSubconDebitNote.TabIndex = 46;
@@ -272,9 +272,9 @@
             this.lblStatus.BackColor = System.Drawing.Color.Transparent;
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.lblStatus.Lines = 0;
-            this.lblStatus.Location = new System.Drawing.Point(877, 9);
+            this.lblStatus.Location = new System.Drawing.Point(836, 9);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(115, 23);
+            this.lblStatus.Size = new System.Drawing.Size(151, 23);
             this.lblStatus.TabIndex = 45;
             this.lblStatus.Text = "Not Approve";
             this.lblStatus.TextStyle.Color = System.Drawing.Color.Red;
