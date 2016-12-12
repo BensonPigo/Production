@@ -54,6 +54,7 @@
             this.txtuser2 = new Sci.Production.Class.txtuser();
             this.dateBox2 = new Sci.Win.UI.DateBox();
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
+            this.lbStatus = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -70,6 +71,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.lbStatus);
             this.masterpanel.Controls.Add(this.displayBox4);
             this.masterpanel.Controls.Add(this.txtuser2);
             this.masterpanel.Controls.Add(this.txtuser1);
@@ -124,6 +126,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtuser1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtuser2, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbStatus, 0);
             // 
             // detailpanel
             // 
@@ -141,6 +144,18 @@
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(868, 307);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -417,6 +432,21 @@
             this.displayBox4.Size = new System.Drawing.Size(120, 23);
             this.displayBox4.TabIndex = 26;
             // 
+            // lbStatus
+            // 
+            this.lbStatus.BackColor = System.Drawing.Color.Transparent;
+            this.lbStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
+            this.lbStatus.Lines = 0;
+            this.lbStatus.Location = new System.Drawing.Point(700, 60);
+            this.lbStatus.Name = "lbStatus";
+            this.lbStatus.Size = new System.Drawing.Size(120, 31);
+            this.lbStatus.TabIndex = 37;
+            this.lbStatus.Text = "Confirmed";
+            this.lbStatus.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.lbStatus.TextStyle.Color = System.Drawing.Color.Red;
+            this.lbStatus.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
+            this.lbStatus.TextStyle.GradientColor = System.Drawing.Color.Red;
+            // 
             // P11
             // 
             this.ApvChkValue = "New";
@@ -484,5 +514,6 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private Win.UI.Label lbStatus;
     }
 }

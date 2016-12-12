@@ -660,5 +660,13 @@ where l.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             OnDetailEntered();
             EnsureToolbarExt();
         }
+
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+            lbStatus.Text = CurrentMaintain["status"].ToString().Trim();
+        }
+
+
     }
 }
