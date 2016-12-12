@@ -69,7 +69,7 @@ a.mdivisionid
 ,c.StyleID
 ,b.BundleNo
 ,b.ArtworkID
-,b.PatternCode+'-'+b.PatternDesc pattern
+,RTrim(b.PatternCode)+'-'+b.PatternDesc pattern
 ,b.Qty
 ,d.delivery
 from farmin a
