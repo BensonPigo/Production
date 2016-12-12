@@ -2376,7 +2376,78 @@ from Trade_To_Pms.dbo.ADIDASMiSetup_ColorComb as b
 where not exists(select id from Production.dbo.ADIDASMiSetup_ColorComb as a where a.id = b.id)
 
 
+--------------------------ShipMode-------
 
+Merge Production.dbo.ShipMode as t
+using Trade_To_Pms.dbo.ShipMode as s
+on t.id=s.id
+	when matched then
+		update set 
+		t.ID= s.ID,
+		t.Description= s.Description,
+		t.UseFunction= s.UseFunction,
+		t.Junk= s.Junk,
+		t.ShareBase= s.ShareBase,
+		t.AddName= s.AddName,
+		t.AddDate= s.AddDate,
+		t.EditName= s.EditName,
+		t.EditDate= s.EditDate
+	when not matched by target then
+		insert(ID
+		,Description
+		,UseFunction
+		,Junk
+		,ShareBase
+		,AddName
+		,AddDate
+		,EditName
+		,EditDate
+		)
+				values(s.ID,
+		s.Description,
+		s.UseFunction,
+		s.Junk,
+		s.ShareBase,
+		s.AddName,
+		s.AddDate,
+		s.EditName,
+		s.EditDate
+		)
+	when not matched by source then
+		delete;
+
+
+
+--------------------------DropDownList--------
+
+Merge Production.dbo.DropDownList as t
+Using Trade_To_Pms.dbo.DropDownList as s
+on t.type=s.type and t.id=s.id
+	when matched then
+	update set
+		t.Type= s.Type,
+		t.ID= s.ID,
+		t.Name= s.Name,
+		t.RealLength= s.RealLength,
+		t.Description= s.Description,
+		t.Seq= s.Seq
+	when not matched by target then
+		insert(Type
+				,ID
+				,Name
+				,RealLength
+				,Description
+				,Seq
+				)
+						values(s.Type,
+				s.ID,
+				s.Name,
+				s.RealLength,
+				s.Description,
+				s.Seq
+				)
+	when not matched by source then
+		delete;
 
   
 END
