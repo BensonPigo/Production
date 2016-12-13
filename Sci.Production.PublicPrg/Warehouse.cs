@@ -20,6 +20,11 @@ namespace Sci.Production.PublicPrg
         /// UpdatePO_Supp_Detail()
         /// *	更新 Po3 的庫存
         /// *-----------------------------------------------------
+        /// * 使用新方法↓
+        /// * 1.各程式 OnDetailSelectCommandPrepare()欄位名稱要與這Sqlcommand對上 EX:統一用Location
+        /// * 2.延續舊做法True 為增加 / False為減少
+        /// * 3.Case2,8才需要傳List<>過來,重組Location
+        /// 
         /// * Type	: 
         /// *	2.	更新InQty
         /// *	4.	更新OutQty
@@ -135,14 +140,8 @@ alter table #TmpSource alter column seq2 varchar(3)
 update t
 set t.inqty = isnull(t.inqty,0.00) - s.qty
 from mdivisionpodetail t
-(
-	select s.poid, s.seq1,s.seq2,s.mdivisionid,sum(qty) qty
-	from mdivisionpodetail t
-	inner join #TmpSource s
-	on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
-	group by s.poid, s.seq1,s.seq2,s.mdivisionid
-) s
-where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
                     }
                     #endregion
                     break;
@@ -233,14 +232,8 @@ alter table #TmpSource alter column seq2 varchar(3)
 update t
 set t.OutQty = isnull(t.OutQty,0.00) + s.qty
 from mdivisionpodetail t
-(
-	select s.poid, s.seq1,s.seq2,s.mdivisionid,sum(qty) qty
-	from mdivisionpodetail t
-	inner join #TmpSource s
-	on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
-	group by s.poid, s.seq1,s.seq2,s.mdivisionid
-) s
-where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
                     }
                     else
                     {
@@ -253,14 +246,8 @@ alter table #TmpSource alter column seq2 varchar(3)
 update t
 set t.OutQty = isnull(t.OutQty,0.00) - s.qty
 from mdivisionpodetail t
-(
-	select s.poid, s.seq1,s.seq2,s.mdivisionid,sum(qty) qty
-	from mdivisionpodetail t
-	inner join #TmpSource s
-	on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
-	group by s.poid, s.seq1,s.seq2,s.mdivisionid
-) s
-where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
                     }
                     #endregion
                     break;
@@ -294,14 +281,8 @@ alter table #TmpSource alter column seq2 varchar(3)
 update t 
 set t.LInvQty = isnull(t.LInvQty,0.00) - s.qty
 from mdivisionpodetail t
-(
-	select s.poid, s.seq1,s.seq2,s.mdivisionid,sum(qty) qty
-	from mdivisionpodetail t
-	inner join #TmpSource s
-	on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
-	group by s.poid, s.seq1,s.seq2,s.mdivisionid
-) s
-where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
                     }
                     #endregion
                     break;
@@ -318,14 +299,8 @@ alter table #TmpSource alter column seq2 varchar(3)
 update t 
 set t.LObQty = isnull(t.LObQty,0.00) + s.qty
 from mdivisionpodetail t
-(
-	select s.poid, s.seq1,s.seq2,s.mdivisionid,sum(qty) qty
-	from mdivisionpodetail t
-	inner join #TmpSource s
-	on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
-	group by s.poid, s.seq1,s.seq2,s.mdivisionid
-) s
-where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
                     }
                     else
                     {
@@ -338,14 +313,8 @@ alter table #TmpSource alter column seq2 varchar(3)
 update t 
 set t.LObQty = isnull(t.LObQty,0.00) - s.qty
 from mdivisionpodetail t
-(
-	select s.poid, s.seq1,s.seq2,s.mdivisionid,sum(qty) qty
-	from mdivisionpodetail t
-	inner join #TmpSource s
-	on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
-	group by s.poid, s.seq1,s.seq2,s.mdivisionid
-) s
-where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
                     }
                     #endregion
                     break;
@@ -362,14 +331,8 @@ alter table #TmpSource alter column seq2 varchar(3)
 update t 
 set t.AdjustQty = isnull(t.AdjustQty,0.00) + s.qty
 from mdivisionpodetail t
-(
-	select s.poid, s.seq1,s.seq2,s.mdivisionid,sum(qty) qty
-	from mdivisionpodetail t
-	inner join #TmpSource s
-	on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
-	group by s.poid, s.seq1,s.seq2,s.mdivisionid
-) s
-where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
                     }
                     else
                     {
@@ -382,14 +345,8 @@ alter table #TmpSource alter column seq2 varchar(3)
 update t 
 set t.AdjustQty = isnull(t.AdjustQty,0.00) - s.qty
 from mdivisionpodetail t
-(
-	select s.poid, s.seq1,s.seq2,s.mdivisionid,sum(qty) qty
-	from mdivisionpodetail t
-	inner join #TmpSource s
-	on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
-	group by s.poid, s.seq1,s.seq2,s.mdivisionid
-) s
-where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
                     }
                     #endregion
                     break;            
