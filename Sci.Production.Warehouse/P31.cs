@@ -770,7 +770,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            stocktype = m.First().Field<string>("fromstocktype"),
                            qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
-            var bs1I = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("fromstocktype") == "I")
+            var bs1I = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("fromstocktype").Trim() == "I")
                         group b by new 
                        {
                            mdivisionid = b.Field<string>("frommdivisionid").Trim(),
@@ -789,9 +789,9 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
             if (bs1.Count > 0)
-            sqlupd2_B = Prgs.UpdateMPoDetail(4, null, true);//4不用傳bs1,4不會變更到location
+                sqlupd2_B = Prgs.UpdateMPoDetail(4, null, false);//4不用傳bs1,4不會變更到location
             if (bs1I.Count > 0)
-            sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1I, true);
+                sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1I, false);
 
             //foreach (var item in bs1)
             //{
