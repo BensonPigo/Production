@@ -101,7 +101,7 @@ namespace Sci.Production.Subcon
             from Bundle b
             inner join Bundle_Detail bd on bd.Id = b.Id
             inner join orders o on o.Id = b.OrderId
-            left join BundleTransfer bt on bt.BundleNo = bt.BundleNo
+            left join BundleTransfer bt on bt.BundleNo = bd.BundleNo
             outer apply(
 	             select sub= (
 		             Select distinct concat('+', bda.SubprocessId)
