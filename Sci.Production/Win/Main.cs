@@ -16,7 +16,7 @@ namespace Sci.Production
     public partial class Main : Sci.Win.Apps.Base
     {
         delegate Sci.Win.Tems.Base CREATETEMPLATE(ToolStripMenuItem menuitem);
-        public static List<Process> proList = new List<Process>();
+        static Dictionary<Process, ToolStripMenuItem> proList = new Dictionary<Process, ToolStripMenuItem>();
 
         class TemplateInfo
         {
@@ -46,9 +46,9 @@ namespace Sci.Production
             {
                 this.Shown+=(s,e)=>{
                     if (null == Env.User)
-                        {
-                            OpenLogin();
-                        }
+                    {
+                        OpenLogin();
+                    }
                 };
 
                 
@@ -252,17 +252,22 @@ namespace Sci.Production
             }
             else if (!Debugger.IsAttached)
             {
-                Process myProcess = Process.Start(Application.ExecutablePath
+                try {
+                    Process myProcess = Process.Start(Application.ExecutablePath
                     , string.Format("userid:'{0}' factoryID:'{1}' formName:'{2}' menuName:'{3}' args:'{4}'"
                         , Env.User.UserID
                         , Env.User.Factory
                         , formName
                         , menuItem.Text
                         , strArg));
-                myProcess.EnableRaisingEvents = true;
-                myProcess.Exited += myProcess_Exited;
-                proList.Add(myProcess);
+                    myProcess.EnableRaisingEvents = true;
+                    myProcess.Exited += myProcess_Exited;
+                    proList.Add(myProcess, menuItem);
+                    menuItem.Enabled = false;
+                }
+                catch (Exception e) {
 
+                }
                 return null;
             }
             else
@@ -276,7 +281,17 @@ namespace Sci.Production
 
         void myProcess_Exited(object sender, EventArgs e)
         {
-            proList.Remove((Process)sender);
+            Process p = (Process)sender;
+
+            if (proList.ContainsKey(p))
+            {
+                var menuItem = proList[p];
+                proList.Remove(p);
+                this.Invoke(() => { menuItem.Enabled = true; });
+
+                //Cross-thread operation not valid: Control '' accessed from a thread other than the thread it was created on.
+                //this.proList[p].Enabled = true;
+            }
         }
 
         protected override void OnClosed(EventArgs e)
@@ -288,12 +303,13 @@ namespace Sci.Production
         
         public static void Kill_Process()
         {
-            var processArray = proList.Where(p => !p.HasExited).ToArray();
-            proList.Clear();
+            var processArray = proList.Keys.Where(p => !p.HasExited).ToArray();
             foreach (var p in processArray)
             {
                 p.Kill();
+
             }
+            proList.Clear();
         }
 
         public void DoLogout(bool confirm = true)
