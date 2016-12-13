@@ -20,7 +20,7 @@ namespace Sci.Production.PublicPrg
         /// UpdatePO_Supp_Detail()
         /// *	更新 Po3 的庫存
         /// *-----------------------------------------------------
-        /// * 使用新方法↓
+        /// * 使用新方法
         /// * 1.各程式 OnDetailSelectCommandPrepare()欄位名稱要與這Sqlcommand對上 EX:統一用Location
         /// * 2.延續舊做法True 為增加 / False為減少
         /// * 3.Case2,8才需要傳List<>過來,重組Location
@@ -55,7 +55,6 @@ alter table #Tmp alter column mdivisionid varchar(10)
 alter table #Tmp alter column poid varchar(20)
 alter table #Tmp alter column seq1 varchar(3)
 alter table #Tmp alter column seq2 varchar(3)
-alter table #Tmp alter column stocktype varchar(1)
 
 select mdivisionid,poid,seq1,seq2,qty,stocktype
 ,[location] = stuff(L.locationid,1,1,'' )
@@ -517,6 +516,9 @@ where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
         /// UpdateFtyInventory()
         /// *	更新 FtyInventory 的庫存
         /// *-----------------------------------------------------
+        /// * 使用新方法
+        /// * IList<DataRow>只是先預留,目前做法都不用,都先填上null即可
+        /// /// 
         /// * Type	: 
         /// *	2.	更新InQty
         /// *	4.	更新OutQty
@@ -568,8 +570,8 @@ when not matched then
 select location,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
-left join ftyinventory f on mdivisionid = s.tomdivisionid and poid = s.topoid 
-						 and seq1 = s.toseq1 and seq2 = s.toseq2 and roll = s.toroll
+left join ftyinventory f on f.mdivisionid = s.tomdivisionid and f.poid = s.topoid 
+						 and f.seq1 = s.toseq1 and f.seq2 = s.toseq2 and f.roll = s.toroll
 merge dbo.ftyinventory_detail as t
 using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.location,'')
 when not matched then
@@ -728,48 +730,48 @@ when not matched then
                     if (encoded)
                     {
                         sqlcmd = @"
-alter table #TmpSource alter column frommdivisionid varchar(10)
-alter table #TmpSource alter column frompoid varchar(20)
-alter table #TmpSource alter column fromseq1 varchar(3)
-alter table #TmpSource alter column fromseq2 varchar(3)
-alter table #TmpSource alter column fromstocktype varchar(1)
-alter table #TmpSource alter column fromroll varchar(15)
+alter table #TmpSource alter column mdivisionid varchar(10)
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
 
 merge dbo.FtyInventory as target
 using #TmpSource as s
-    on target.mdivisionid = s.frommdivisionid and target.poid = s.frompoid and target.seq1 = s.fromseq1 
-	and target.seq2 = s.fromseq2 and target.stocktype = s.fromstocktype and target.roll = s.fromroll
+    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
+	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
 when matched then
     update
-    set adjustqty = isnull(adjustqty,0.00) + s.qty
+    set adjustqty = isnull(s.adjustqty,0.00) + s.qty
 when not matched then
     insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[adjustqty])
     values ((select ukey from dbo.MDivisionPoDetail 
-			 where mdivisionid = s.frommdivisionid and poid = s.frompoid and seq1 = s.fromseq1 and seq2 = s.fromseq2)
-			 ,s.frommdivisionid,s.frompoid,s.fromseq1,s.fromseq2,s.fromroll,s.fromdyelot,s.fromstocktype,s.qty);";
+			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
+			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
                     }
                     else
                     {
                         sqlcmd = @"
-alter table #TmpSource alter column frommdivisionid varchar(10)
-alter table #TmpSource alter column frompoid varchar(20)
-alter table #TmpSource alter column fromseq1 varchar(3)
-alter table #TmpSource alter column fromseq2 varchar(3)
-alter table #TmpSource alter column fromstocktype varchar(1)
-alter table #TmpSource alter column fromroll varchar(15)
+alter table #TmpSource alter column mdivisionid varchar(10)
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
 
 merge dbo.FtyInventory as target
 using #TmpSource as s
-    on target.mdivisionid = s.frommdivisionid and target.poid = s.frompoid and target.seq1 = s.fromseq1 
-	and target.seq2 = s.fromseq2 and target.stocktype = s.fromstocktype and target.roll = s.fromroll
+    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
+	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
 when matched then
     update
-    set adjustqty = isnull(adjustqty,0.00) - s.qty
+    set adjustqty = isnull(s.adjustqty,0.00) - s.qty
 when not matched then
     insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[adjustqty])
     values ((select ukey from dbo.MDivisionPoDetail 
-			 where mdivisionid = s.frommdivisionid and poid = s.frompoid and seq1 = s.fromseq1 and seq2 = s.fromseq2)
-			 ,s.frommdivisionid,s.frompoid,s.fromseq1,s.fromseq2,s.fromroll,s.fromdyelot,s.fromstocktype,s.qty);";
+			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
+			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
                     }
                     #endregion
                     break;
