@@ -26,6 +26,15 @@ namespace Sci.Production.Subcon
             MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
             cbbFactory.Text = Sci.Env.User.Factory;
             txtMdivision1.Text = Sci.Env.User.Keyword;
+
+            int month = DateTime.Today.Month;
+            int day = DateTime.Today.Day;
+            int year = DateTime.Today.Year;
+            this.dateRange1.Value1 = DateTime.Today.AddDays(-day + 1);
+            this.dateRange1.Value2 = DateTime.Now;
+            this.dateRange2.Value1 = DateTime.Today.AddDays(-day + 1);
+            this.dateRange2.Value2 = DateTime.Today.AddMonths(1).AddDays(-DateTime.Now.AddMonths(1).Day);
+            
         }
 
         // 驗證輸入條件
@@ -56,48 +65,49 @@ namespace Sci.Production.Subcon
             if (this.checkBox1.Checked)
             {
                 #region -- Summary Sql Command --
-                sqlCmd.Append(string.Format(@"Select a.MDivisionID
-,a.FactoryID
-, a.LocalSuppID
-, (select abb from localsupp where id = a.localsuppid) suppabb
-, a.ArtworkTypeID, a.CurrencyID, sum(a.Amount+a.Vat) as Amt 
-, PayTermID+'-' +(select Name from PayTerm where id = a.paytermid) payterm
-from artworkap a inner join artworkap_detail b on a.id = b.id 
-left join ArtworkPO c on c.ID = b.ArtworkPoID
-where  a.issuedate between '{0}' and '{1}'
- and a.apvdate between '{2}' and '{3}'"
-                    , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
-                    , Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")
-                ));
+                sqlCmd.Append(string.Format(@"Select a.FactoryID
+                                                    ,a.LocalSuppID
+                                                    ,b.Abb,a.ArtworkTypeID
+                                                    ,a.CurrencyID
+                                                    ,a.Amount
+                                                    ,a.PayTermID 
+                                           from ArtworkAP a
+                                           left join LocalSupp b on a.LocalSuppID=b.ID
+                                            where  a.issuedate between '{0}' and '{1}'
+                                                   and a.apvdate between '{2}' and '{3}'"
+                                                  ,Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
+                                                  ,Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")));
                 #endregion
             }
             else
             {
                 #region -- List Sql Command --
-                sqlCmd.Append(string.Format(@"Select a.MDivisionID
-,a.FactoryID
-,a.LocalSuppID
-,(select abb from LocalSupp where id = a.LocalSuppID) supplier
-,a.Id
-,a.IssueDate
-,a.ApvDate
-,a.CurrencyID
-,a.Amount+a.Vat apAmount
-,a.ArtworkTypeID
-,b.ArtworkPoID
-,b.OrderID
-,(select orders.StyleID from orders where id = b.OrderID) style
-,dbo.getPass1(c.Handle) pohandle
-,c.Amount+c.Vat poAmount
-,c.IssueDate poDate
-,a.InvNo
-from artworkap a inner join artworkap_detail b on a.id = b.id 
-left join ArtworkPO c on c.ID = b.ArtworkPoID
-where  a.issuedate between '{0}' and '{1}'
- and a.apvdate between '{2}' and '{3}'"
-                    , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
-                    , Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")
-                ));
+                sqlCmd.Append(string.Format(@"Select a.FactoryID
+                                                    ,a.LocalSuppID
+                                                    ,b.abb
+                                                    ,a.id
+                                                    ,a.IssueDate
+                                                    ,a.ApvDate
+                                                    ,a.CurrencyID
+                                                    ,a.Amount+a.Vat
+                                                    ,a.ArtworkTypeID
+                                                    ,c.ArtworkPoID
+                                                    ,c.OrderID
+                                                    ,d.StyleID
+                                                    ,dbo.getPass1(e.Handle) pohandle
+                                                    ,f.Amount
+                                                    ,e.IssueDate
+                                                    ,a.InvNo
+                                             from ArtworkAP a 
+                                             left join LocalSupp b on a.LocalSuppID=b.ID
+                                             inner join ArtworkAP_Detail c on a.Id=c.ID
+                                             left join Orders d on c.OrderID=d.id
+                                             left join ArtworkPO e on e.id=c.ArtworkPoID
+                                             inner join ArtworkPO_Detail f on c.ArtworkPoID=f.id and c.ArtworkPo_DetailUkey=f.Ukey
+                                            where  a.issuedate between '{0}' and '{1}'
+                                            and a.apvdate between '{2}' and '{3}'"
+                                                  , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
+                                                  , Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")));
                 #endregion
             }
             System.Data.SqlClient.SqlParameter sp_artworktype = new System.Data.SqlClient.SqlParameter();
@@ -142,13 +152,11 @@ where  a.issuedate between '{0}' and '{1}'
 
             if (this.checkBox1.Checked)
             {
-                sqlCmd.Append(@" group by a.mdivisionid,a.factoryid, a.localsuppid,a.ArtworkTypeID, a.id, a.CurrencyID, paytermid
-		order by a.ArtworkTypeID, currencyid, factoryid, a.LocalSuppID");
-
+                sqlCmd.Append(" "+@"order by a.ArtworkTypeID, a.currencyid, a.factoryid, a.LocalSuppID");
             }
             else
             {
-                sqlCmd.Append(@" order by a.Currencyid, a.LocalSuppId, a.Id");
+                sqlCmd.Append(" "+@"order by a.Currencyid, a.LocalSuppId,a.Id");
 
             }
 

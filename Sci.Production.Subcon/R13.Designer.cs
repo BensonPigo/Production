@@ -207,6 +207,7 @@
             this.Controls.Add(this.label1);
             this.IsSupportToPrint = false;
             this.Name = "R13";
+            this.RightToLeftLayout = true;
             this.Text = "R13. Sub-con Payment List or Summary";
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
