@@ -60,36 +60,15 @@ namespace Sci.Production.Win
 
 
             IUserInfo user = null;
-            if (!(result = AsyncHelper.Current.DataProcess(this, () =>
-            {
+            UserInfo u = new UserInfo();
+            result = UserLogin(act, pwd, loginFactory, u);
 
-                UserInfo u = new UserInfo();
-                result = UserLogin(act, pwd, loginFactory, u);
-
-
-                // 載入登入人員相關資訊
-                //u.AuthorityList = "";
-                //u.IsTS = false;
-                //u.FactoryList = "";
-                //u.Department = "";
-                //u.Director = "";
-                //u.ProxyList = "";
-                //u.MemberList = "";
-                //u.SpecialAuthorityList = "";
-                //u.BrandList = "";
-                //u.MailAddress = "";
-
-                // 載入根據登入資訊而異系統參數, 
-                //Sci.Env.Cfg.ReportTitle = "XXX"
-
-                user = u;
-                return result;
-            })))
+            if (!result )
             {
                 ShowErr(result);
                 return;
             }
-
+            user = u;
             if (!(result = app.DoLogin(user)))
             {
                 ShowErr(result);
