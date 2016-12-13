@@ -210,6 +210,7 @@ from Production.dbo.Invtrans  as a
 left join Trade_To_Pms.dbo.Invtrans  as b on a.id = b.id and a.Ukey = b.Ukey
 where b.id is null
 AND a.ID > (select top 1 id from  Trade_To_Pms.dbo.Invtrans order by id)
+
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
@@ -271,6 +272,8 @@ from Production.dbo.Invtrans  as a
 inner join Trade_To_Pms.dbo.Invtrans  as b ON a.id=b.id   and a.Ukey = b.Ukey
 left JOIN Production.dbo.SCIFty c on b.TransferFactory=c.ID
 where b.Confirmed=1
+
+
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.Invtrans (
        ID
@@ -388,6 +391,14 @@ left JOIN Production.dbo.SCIFty c on b.TransferFactory=c.ID
 where not exists(select id from Production.dbo.Invtrans  as a where a.id = b.id  and a.Ukey = b.Ukey)
 AND b.Confirmed=1
 --InReason  InvtransReason
+
+update invtrans
+set TransferMDivisionID = iif(c.MDivisionID is null,'',c.MDivisionID)
+from invtrans b
+left JOIN Production.dbo.SCIFty c on b.TransferFactory=c.ID
+where b.TransferMDivisionID is null
+
+
 ----------------------刪除主TABLE多的資料
 Delete Production.dbo.InvtransReason
 from Production.dbo.InvtransReason as a left join Trade_To_Pms.dbo.InvtransReason as b
