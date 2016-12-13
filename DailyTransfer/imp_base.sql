@@ -1017,7 +1017,13 @@ where not exists(select id from Production.dbo.Factory_WorkHour as a where a.id 
 
 
 --SCI_FTY
---SCIFTY
+--SCIFTY ---delete
+
+Delete Production.dbo.SCIFty
+from Production.dbo.SCIFty as a 
+left join Trade_To_Pms.dbo.Factory as b on a.id = b.id and b.IsSCI=1
+where b.id is null
+
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
@@ -1041,6 +1047,8 @@ SET
       ,a.EditDate	      =b.EditDate	
 
 from Production.dbo.SCIFty as a inner join Trade_To_Pms.dbo.Factory as b ON a.id=b.id
+where b.IsSCI=1
+
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.SCIFty(
        ID
@@ -1085,6 +1093,7 @@ select
 
 from Trade_To_Pms.dbo.Factory as b
 where not exists(select id from Production.dbo.SCIFty as a where a.id = b.id)
+and b.IsSCI=1
 
 --Unit   Unit 
 ----------------------刪除主TABLE多的資料
