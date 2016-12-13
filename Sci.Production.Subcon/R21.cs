@@ -28,6 +28,12 @@ namespace Sci.Production.Subcon
             MyUtility.Tool.SetupCombox(cbbOrderBy, 1, 1, "Supplier,Handle");
             cbbOrderBy.SelectedIndex = 0;
             txtMdivision1.Text = Sci.Env.User.Keyword;
+
+            int month = DateTime.Today.Month;
+            int day = DateTime.Today.Day;
+            int year = DateTime.Today.Year;
+            this.dateRange1.Value1 = DateTime.Today.AddMonths(-month+1).AddDays(-day + 1);
+            this.dateRange1.Value2 = DateTime.Now;
         }
 
         // 驗證輸入條件
