@@ -663,7 +663,7 @@ where d.Id = '{0}' and f.id is null", CurrentMaintain["id"]);
             //}
             #endregion
             #region -- 更新庫存數量  ftyinventory --
-
+            //因欄位名稱故不呼叫方法,直接在這加入字串
             sqlupd2_FIO = @"
 alter table #TmpSource alter column mdivisionid varchar(10)
 alter table #TmpSource alter column poid varchar(20)
