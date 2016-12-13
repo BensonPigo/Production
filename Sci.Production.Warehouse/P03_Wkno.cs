@@ -45,7 +45,7 @@ namespace Sci.Production.Warehouse
             this.grid1.DataSource = bindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
                  .Text("id", header: "WK#", width: Widths.AnsiChars(13))
-                 .Date("issuedate", header: "ETA", width: Widths.AnsiChars(12))
+                 .Date("ETA", header: "ETA", width: Widths.AnsiChars(12))
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(12), integer_places: 6, decimal_places: 4)
                  .Numeric("Foc", header: "FOC", width: Widths.AnsiChars(12), integer_places: 6, decimal_places: 4)
                  .Text("Vessel", header: "Vessel Name", width: Widths.AnsiChars(20))
