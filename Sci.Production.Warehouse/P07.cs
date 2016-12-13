@@ -42,6 +42,7 @@ namespace Sci.Production.Warehouse
                     this.OnDetailGridInsert();
                     DataRow newrow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
                     newrow.ItemArray = tmp.ItemArray;
+                    detailgrid.CurrentCell = detailgrid.Rows[detailgrid.RowCount - 1].Cells[0];
                 }
             };
         }
@@ -72,7 +73,7 @@ namespace Sci.Production.Warehouse
             CurrentMaintain["Third"] = 1;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Type"] = "A";
-           
+            foreach (DataGridViewColumn index in detailgrid.Columns) { index.SortMode = DataGridViewColumnSortMode.NotSortable; }
         }
       
 
@@ -310,6 +311,8 @@ namespace Sci.Production.Warehouse
         }
 
         // Detail Grid 設定
+
+        DataGridViewColumn Col_ActualQty, Col_Location;
         protected override void OnDetailGridSetup()
         {
             #region SP# Vaild 判斷此sp#存在po中。
@@ -468,6 +471,42 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                 }
             };
 
+            ts2.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    CurrentDetailData["location"] = e.FormattedValue;
+                    string sqlcmd = string.Format(@"SELECT id FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errLocation = new List<string>();
+                    List<string> trueLocation = new List<string>();
+                    foreach (string location in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                        {
+                            selectId &= false;
+                            errLocation.Add(location);
+                        }
+                        else if(!(location.EqualString("")))
+                        {
+                            trueLocation.Add(location);
+                        }
+                    }
+
+                    if (!selectId)
+                    {
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()), "Data not found");
+                        e.Cancel = true;
+                    }
+                    trueLocation.Sort();
+                    CurrentDetailData["location"] = string.Join(",", (trueLocation).ToArray());
+                    //去除錯誤的Location將正確的Location填回
+                }
+            };
+
             #endregion Location 右鍵開窗
 
             #region Ship Qty Valid
@@ -515,7 +554,6 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
 
             #region 欄位設定
-
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("poid", header: "SP#", width: Widths.AnsiChars(13), settings: ts4)  //0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts)  //1
@@ -525,12 +563,12 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
             .Numeric("actualweight", header: "Act.(kg)", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 7)    //5
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9))    //6
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5))    //7
-            .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(13), decimal_places: 2, integer_places: 10, settings: ns2)    //8
+            .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(13), decimal_places: 2, integer_places: 10, settings: ns2).Get(out Col_ActualQty)    //8
             .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)    //9
             .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(13), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //10
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //11
             .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)   //12
-            .Text("Location", header: "Location", settings: ts2, iseditingreadonly: true)    //13
+            .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false).Get(out Col_Location)    //13
             .Text("remark", header: "Remark")    //14
             ;     //
 
@@ -1077,7 +1115,14 @@ Where a.id = '{0}' ", masterID);
 , a.NetKg as ActualWeight, iif(c.category='M','I','B') as stocktype
 , b.POUnit 
 --,b.StockUnit
-,IIF ( mm.IsExtensionUnit > 0, uu.ExtensionUnit, ff.UsageUnit ) AS StockUnit
+,iif(mm.IsExtensionUnit is null, 
+	ff.UsageUnit , 
+	iif(mm.IsExtensionUnit > 0 , 
+		iif(uu.ExtensionUnit is null, 
+			ff.UsageUnit , 
+			uu.ExtensionUnit), 
+		ff.UsageUnit)) as StockUnit
+--,IIF ( mm.IsExtensionUnit > 0, uu.ExtensionUnit, ff.UsageUnit ) AS StockUnit
 ,b.FabricType
 , left(a.seq1+' ',3)+a.Seq2 as seq
 , a.seq1,a.seq2,a.Qty+a.Foc as Actualqty
@@ -1227,6 +1272,44 @@ where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword);
 
             P07_Sticker s = new P07_Sticker(this.CurrentDataRow);
             s.ShowDialog();
+        }
+
+        protected override void ClickEditAfter()
+        {
+            foreach (DataGridViewColumn index in detailgrid.Columns) { index.SortMode = DataGridViewColumnSortMode.NotSortable; }
+            base.ClickEditAfter();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            foreach (DataGridViewColumn index in detailgrid.Columns) { index.SortMode = DataGridViewColumnSortMode.Automatic; }
+            base.ClickSaveAfter();
+        }
+
+        protected override void ClickUndo()
+        {
+            foreach (DataGridViewColumn index in detailgrid.Columns) { index.SortMode = DataGridViewColumnSortMode.Automatic; }
+            base.ClickUndo();
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (this.EditMode)
+            {
+                switch (keyData)
+                {
+                    case Keys.Tab:
+                        var currentCell = this.detailgrid.CurrentCell;
+                        var columnIndex = currentCell.ColumnIndex;
+                        if (columnIndex == 8)
+                        {
+                            this.detailgrid.CurrentCell = this.detailgrid.Rows[currentCell.RowIndex].Cells[13];
+
+                        }
+                        break;
+                }
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }
