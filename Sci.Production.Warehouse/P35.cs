@@ -536,11 +536,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
-                           mdivisionid = b.Field<string>("mdivisionid"),
-                           poid = b.Field<string>("poid"),
-                           seq1 = b.Field<string>("seq1"),
-                           seq2 = b.Field<string>("seq2"),
-                           stocktype = b.Field<string>("stocktype")
+                           mdivisionid = b.Field<string>("mdivisionid").Trim(),
+                           poid = b.Field<string>("poid").Trim(),
+                           seq1 = b.Field<string>("seq1").Trim(),
+                           seq2 = b.Field<string>("seq2").Trim(),
+                           stocktype = b.Field<string>("stocktype").Trim()
                        } into m
                        select new Prgs_POSuppDetailData_B
                        {
