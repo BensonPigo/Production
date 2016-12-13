@@ -314,7 +314,7 @@ where po_qty > 0
 
             if (!MyUtility.Check.Empty(style))
             {
-                sqlCmd.Append(" and c.styleid = @style");
+                sqlCmd.Append(" and aa.styleid = @style");
                 sp_style.Value = style;
                 cmds.Add(sp_style);
             }
@@ -346,7 +346,7 @@ where po_qty > 0
             }
             else
             {
-                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R16.xltx", 5);
+                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R16.xltx",4);
             }
             return true;
 
