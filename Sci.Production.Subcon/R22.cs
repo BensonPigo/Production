@@ -26,6 +26,14 @@ namespace Sci.Production.Subcon
             MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
             cbbFactory.Text = Sci.Env.User.Factory;
             txtMdivision1.Text = Sci.Env.User.Keyword;
+
+            int month = DateTime.Today.Month;
+            int day = DateTime.Today.Day;
+            int year = DateTime.Today.Year;
+            this.dateRange1.Value1 = DateTime.Today.AddDays(-day + 1);
+            this.dateRange1.Value2 = DateTime.Now;
+            this.dateRange2.Value1 = DateTime.Today.AddDays(-day + 1);
+            this.dateRange2.Value2 = DateTime.Today.AddMonths(1).AddDays(-DateTime.Now.AddMonths(1).Day);
         }
 
         // 驗證輸入條件
@@ -56,61 +64,57 @@ namespace Sci.Production.Subcon
             if (this.checkBox1.Checked)
             {
                 #region -- Summary Sql Command --
-                sqlCmd.Append(string.Format(@"Select a.MDivisionID
-,a.FactoryID
-, a.LocalSuppID
-, (select abb from localsupp where id = a.localsuppid) suppabb
-, a.category
-, a.CurrencyID
-, sum(a.Amount+a.Vat) as Amt 
-, PayTermID+'-' +(select Name from PayTerm where id = a.paytermid) payterm
-from localap a 
-inner join localap_detail b on a.id = b.id 
-left join localPO c on c.ID = b.localPoID
-where  a.issuedate between '{0}' and '{1}'
- and a.apvdate between '{2}' and '{3}'"
-                    , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
-                    , Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")
-                ));
+                sqlCmd.Append(string.Format(@"Select a.FactoryId
+                                                    ,a.LocalSuppID
+	                                                ,d.Abb
+	                                                ,a.Category
+	                                                ,a.CurrencyID
+	                                                ,a.Amount
+	                                                ,a.PaytermID
+                                             from LocalAP a
+                                             left join LocalSupp d on a.LocalSuppID=d.ID
+                                             where  a.issuedate between '{0}' and '{1}'
+                                                    and a.apvdate between '{2}' and '{3}'"
+                                                     , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
+                                                     , Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")));
                 #endregion
             }
             else
             {
                 #region -- List Sql Command --
-                sqlCmd.Append(string.Format(@"Select 
-(select orders.factoryid from orders where id = b.OrderID) order_factory
-,a.MDivisionID
-,a.FactoryID
-,a.LocalSuppID
-,(select abb from LocalSupp where id = a.LocalSuppID) supplier
-,a.Id
-,a.IssueDate
-,a.ApvDate
-,dbo.getPass1(a.Handle) ApHandle
-,a.CurrencyID
-,a.Amount+a.Vat apAmount
-,a.category
-,b.OrderID
-,b.refno
-,dbo.getItemDesc(a.Category,b.Refno) [desc]
-,b.ThreadColorID
-,b.UnitID
-,b.price
-,b.qty
-,b.price*b.qty [ApAmount]
-,b.localPoID
-,c.Amount+c.Vat poAmount
-,dbo.getPass1(c.AddName) pohandle
-,c.IssueDate poDate
-,a.InvNo
-from localap a 
-inner join localap_detail b on a.id = b.id 
-left join localPO c on c.ID = b.localPoID
-where  a.issuedate between '{0}' and '{1}'
- and a.apvdate between '{2}' and '{3}'"
+                sqlCmd.Append(string.Format(@"Select  c.FactoryID
+	                                                 ,a.FactoryId
+	                                                 ,a.LocalSuppID
+	                                                 ,d.Abb
+	                                                 ,a.id
+	                                                 ,a.IssueDate
+	                                                 ,a.ApvDate
+	                                                 ,dbo.getPass1(a.Handle) Handle
+	                                                 ,a.CurrencyID
+	                                                 ,a.Amount+a.Vat APAmount
+	                                                 ,a.Category
+	                                                 ,b.LocalPoId
+	                                                 ,b.OrderId
+	                                                 ,b.Refno
+	                                                 ,dbo.getItemDesc(a.Category,b.Refno) Description
+	                                                 ,b.ThreadColorID
+	                                                 ,b.UnitID
+	                                                 ,b.Price
+	                                                 ,b.Qty
+	                                                 ,b.Price*b.Qty Amount
+	                                                 ,dbo.getPass1(e.AddName) POHandle
+	                                                 ,e.Amount+e.Vat poamt
+	                                                 ,e.IssueDate
+	                                                 ,a.InvNo
+                                            from LocalAP a
+                                            inner join LocalAP_Detail b on b.id=a.id
+                                            left join Orders c on b.OrderId=c.ID
+                                            left join localsupp d on a.LocalSuppID=d.ID
+                                            left join localpo e on b.LocalPoId=e.Id 
+                                            where  a.issuedate between '{0}' and '{1}'
+                                             and a.apvdate between '{2}' and '{3}'"
                     , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
-                    , Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")
-                ));
+                    , Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")));
                 #endregion
             }
             System.Data.SqlClient.SqlParameter sp_category = new System.Data.SqlClient.SqlParameter();
@@ -155,8 +159,7 @@ where  a.issuedate between '{0}' and '{1}'
 
             if (this.checkBox1.Checked)
             {
-                sqlCmd.Append(@" group by a.mdivisionid,a.factoryid, a.localsuppid,a.category, a.id, a.CurrencyID, paytermid
-		order by a.category, a.currencyid, a.factoryid, a.LocalSuppID");
+                sqlCmd.Append(@" order by a.category, a.currencyid, a.factoryid, a.LocalSuppID");
             }
             else
             {
