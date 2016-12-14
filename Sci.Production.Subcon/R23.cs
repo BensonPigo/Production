@@ -240,7 +240,7 @@ where Po_qty > 0
 
             if (!MyUtility.Check.Empty(style))
             {
-                sqlCmd.Append(" and c.styleid = @style");
+                sqlCmd.Append(" and aa.styleid = @style");
                 sp_style.Value = style;
                 cmds.Add(sp_style);
             }
