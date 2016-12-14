@@ -68,7 +68,7 @@
             this.masterpanel.Controls.Add(this.label25);
             this.masterpanel.Controls.Add(this.label11);
             this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Size = new System.Drawing.Size(892, 139);
+            this.masterpanel.Size = new System.Drawing.Size(1058, 139);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label11, 0);
             this.masterpanel.Controls.SetChildIndex(this.label25, 0);
@@ -86,7 +86,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 139);
-            this.detailpanel.Size = new System.Drawing.Size(892, 210);
+            this.detailpanel.Size = new System.Drawing.Size(1058, 338);
             // 
             // gridicon
             // 
@@ -100,7 +100,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 210);
+            this.detailgridcont.Size = new System.Drawing.Size(1058, 338);
             // 
             // detail2
             // 
@@ -116,16 +116,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(1058, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(1058, 477);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 477);
+            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
             // 
             // browse
             // 
@@ -191,7 +191,7 @@
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(89, 31);
             this.button5.TabIndex = 4;
-            this.button5.Text = "Import";
+            this.button5.Text = "generate";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
