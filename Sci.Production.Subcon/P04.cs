@@ -169,17 +169,18 @@ namespace Sci.Production.Subcon
         {
             string id = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"select 
-BundleNo, OrderID, styleID, ArtworkPoID, ArtworkID, PatternCode, PatternDesc, ArtworkPoQty, OnHand, 
-(artworkpoqty - onhand) Variance, 
-Qty, 
-(artworkpoqty - onhand - qty) BalQty ,
-Ukey
-from FarmIn_Detail 
-outer apply(
-	select styleID
-	from orders
-	where orders.id = FarmIn_Detail.Orderid	
-) styleID where id='{0}'", id);
+                BundleNo, OrderID, styleID, ArtworkPoID, ArtworkID, PatternCode, PatternDesc, ArtworkPoQty, OnHand, 
+                (artworkpoqty - onhand) Variance, 
+                Qty, 
+                (artworkpoqty - onhand - qty) BalQty ,
+                Ukey , 
+                ArtworkPo_DetailUkey
+                from FarmIn_Detail 
+                outer apply(
+	                select styleID
+	                from orders
+	                where orders.id = FarmIn_Detail.Orderid	
+                ) styleID where id='{0}'", id);
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -480,25 +481,25 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
             }
 
             // 提示是否不低於ap qty
-            string sqlcmdaped = string.Format(@"select c.*
-                                                from artworkpo a 
-                                                inner join farmin_detail b on a.id = b.artworkpoid 
-                                                inner join ArtworkPO_Detail c on a.id=c.id
-                                                where b.id = '{0}'", CurrentMaintain["id"]);
+            string sqlcmdaped = string.Format(@"select Ukey , Farmin , Farmin as Farmin_Cal , ApQty from ArtworkPO_Detail 
+                where Ukey in (select distinct ArtworkPo_DetailUkey from farmin_detail where ID='{0}')", CurrentMaintain["id"]);
+            if (!(result = DBProxy.Current.Select(null, sqlcmdaped, out datacheck)))
+            {
+                ShowErr(sqlcmdaped, result);
+                return;
+            }
+
             ids = "";
             foreach (var dr in DetailDatas)
             {
-                if (!(result = DBProxy.Current.Select(null, sqlcmdaped, out datacheck)))
-                {
-                    ShowErr(sqlcmd, result);
-                    return;
-                }
                 if (datacheck.Rows.Count > 0)
                 {
-                    if ((decimal)datacheck.Rows[0]["farmin"] - (decimal)dr["qty"] < (decimal)datacheck.Rows[0]["apqty"])
+                    DataRow drTEMP = datacheck.Select(string.Format("UKey={0}", dr["ArtworkPo_DetailUkey"].ToString()))[0];
+                    drTEMP["Farmin_Cal"] = (decimal)drTEMP["Farmin_Cal"] - (decimal)dr["qty"];
+                    if ((decimal)drTEMP["Farmin_Cal"] < (decimal)drTEMP["ApQty"])
                     {
-                        ids += string.Format("{0}-{1}-{2}-{3}-{4} can't less AP qty {5}", datacheck.Rows[0]["id"], datacheck.Rows[0]["orderid"]
-                            , datacheck.Rows[0]["artworktypeid"], datacheck.Rows[0]["artworkid"], datacheck.Rows[0]["patterncode"], datacheck.Rows[0]["apqty"]) + Environment.NewLine;
+                        ids += string.Format("{0}-{1}-{2}-{3} FarmIn can't less AP qty {4}", dr["orderid"], dr["artworkpoid"]
+                            , dr["artworkid"], dr["patterncode"].ToString().Trim() , drTEMP["ApQty"]) + Environment.NewLine;
                     }
                 }
             }
@@ -509,7 +510,6 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
             }
 
             // update farmout status
-
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to amend it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO") return;
             sqlcmd3 = string.Format("update FarmIn set status = 'New', editname = '{0}' , editdate = GETDATE() " +
