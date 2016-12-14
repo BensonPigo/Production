@@ -374,27 +374,12 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
 
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(8, bs1, true));
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(32, null, true));
-
-            //foreach (var item in bs1)
-            //{
-            //    sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid));
-            //    sqlupd2.Append(Prgs.UpdateMPoDetail(32, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid));
-            //}
             #endregion
 
             #region 更新庫存數量  ftyinventory
             DataTable dtio = (DataTable)detailgridbs.DataSource;
             dtio.ColumnsDecimalAdd("qty",expression: "QtyAfter- QtyBefore");
             sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(8, null, true));
-            //sqlupd2.Append("declare @iden as bigint;");
-            //sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
-            //foreach (DataRow item in DetailDatas)
-            //{
-            //    sqlupd2.Append(Prgs.UpdateFtyInventory(8, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString()
-            //        , (decimal)item["QtyAfter"] - (decimal)item["QtyBefore"]
-            //        , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), true, item["location"].ToString()));
-            //}
-            //sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
             #endregion 更新庫存數量  ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -402,8 +387,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
             {
                 try
                 {
-                    DataTable resulttb;//在這邊沒啥用,只是為了使用ProcessWithObject要放一個參數
-                    //更新mdivisionpodetail B倉數 --
+                    DataTable resulttb;
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B.ToString(), out resulttb
                         , "#TmpSource")))
                     {
@@ -411,7 +395,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
                         ShowErr(result);
                         return;
                     }
-                    //IN/OUT
                     if (!(result = MyUtility.Tool.ProcessWithDatatable
                         (dtio, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
                     {
@@ -419,12 +402,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
                         ShowErr(result);
                         return;
                     }
-                    //if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
-                    //{
-                    //    _transactionscope.Dispose();
-                    //    ShowErr(sqlupd2.ToString(), result2);
-                    //    return;
-                    //}
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
@@ -555,11 +532,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
 
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(8, bs1, false));
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(32, null, false));
-            //foreach (var item in bs1)
-            //{
-            //    sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype, item.mdivisionid));
-            //    sqlupd2.Append(Prgs.UpdateMPoDetail(32, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype, item.mdivisionid));
-            //}
             #endregion
             #region -- 更新庫存數量  ftyinventory --
 
@@ -583,8 +555,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
             {
                 try
                 {
-                    DataTable resulttb;//在這邊沒啥用,只是為了使用ProcessWithObject要放一個參數
-                    //更新mdivisionpodetail B倉數 --
+                    DataTable resulttb;
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B.ToString(), out resulttb
                         , "#TmpSource")))
                     {
@@ -592,7 +563,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
                         ShowErr(result);
                         return;
                     }
-                    //IN/OUT
                     if (!(result = MyUtility.Tool.ProcessWithDatatable
                         (dtio, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
                     {
@@ -600,12 +570,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
                         ShowErr(result);
                         return;
                     }
-                    //if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
-                    //{
-                    //    _transactionscope.Dispose();
-                    //    ShowErr(sqlupd2.ToString(), result2);
-                    //    return;
-                    //}
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
