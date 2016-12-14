@@ -47,6 +47,7 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList where MDivisio
 
             //Grid設定
             this.grid1.IsEditingReadOnly = true;
+            this.grid1.RowHeadersVisible = true;
             this.grid1.DataSource = listControlBindingSource1;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
 
