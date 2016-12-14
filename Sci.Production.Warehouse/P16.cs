@@ -301,26 +301,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 #endregion 檢查負數庫存
                 #region -- 更新庫存數量  ftyinventory --
                 sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(4, null, true);
-                sqlupd2_B = Prgs.UpdateMPoDetail(4, null, true);      
-
-                var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                           group b by new
-                           {
-                               mdivisionid = b.Field<string>("mdivisionid"),
-                               poid = b.Field<string>("poid"),
-                               seq1 = b.Field<string>("seq1"),
-                               seq2 = b.Field<string>("seq2"),
-                               stocktype = b.Field<string>("stocktype")
-                           } into m
-                           select new
-                           {
-                               mdivisionid = m.First().Field<string>("mdivisionid"),
-                               poid = m.First().Field<string>("poid"),
-                               seq1 = m.First().Field<string>("seq1"),
-                               seq2 = m.First().Field<string>("seq2"),
-                               stocktype = m.First().Field<string>("stocktype"),
-                               qty = m.Sum(w => w.Field<decimal>("qty"))
-                           }).ToList();
+                sqlupd2_B = Prgs.UpdateMPoDetail(4, null, true);
                 #endregion 更新庫存數量  ftyinventory
             }
             #region -- 更新表頭狀態資料 --
