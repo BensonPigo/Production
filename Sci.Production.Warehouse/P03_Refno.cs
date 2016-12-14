@@ -34,7 +34,7 @@ namespace Sci.Production.Warehouse
                 = string.Format(@"Select md.mdivisionid ,  b.id, b.seq1+b.seq2 seq
 , b.colorid,  b.sizespec
 , c.suppid, a.sewinline
-, a.sewline, b.FinalETD
+, a.sewline, b.FinalETA
 , md.inqty - md.outqty + md.adjustqty Balance
 , b.stockunit 
 from orders a
@@ -214,7 +214,7 @@ order by ColorID, SizeSpec ,SewinLine
                  .Text("suppid", header: "Supp", width: Widths.AnsiChars(6))
                  .Date("sewinline", header: "Sewing Inline Date", width: Widths.AnsiChars(10))
                   .Text("sewline", header: "Sewing Line#", width: Widths.AnsiChars(10))
-                   .Date("FinalETD", header: "FinalETD", width: Widths.AnsiChars(10))
+                   .Date("FinalETA", header: "FinalETA", width: Widths.AnsiChars(10))
                  .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                   .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(8))
                  ;
