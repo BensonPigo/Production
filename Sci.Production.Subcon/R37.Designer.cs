@@ -274,6 +274,7 @@
             this.ClientSize = new System.Drawing.Size(627, 348);
             this.Controls.Add(this.panel1);
             this.Name = "R37";
+            this.Text = "R37. Debit Memo List(Taipei)";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);

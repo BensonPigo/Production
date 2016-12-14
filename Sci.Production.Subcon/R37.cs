@@ -35,6 +35,7 @@ namespace Sci.Production.Subcon
             this.combFac.ValueMember = "BrandID";
             this.combFac.DisplayMember = "BrandID";
             this.combFac.SelectedIndex = 0;
+            this.combFac.Text = Sci.Env.User.Factory;
             this.comboPay.SelectedIndex = 0;
             this.comboReport.SelectedIndex = 0;
             print.Enabled = false;
@@ -123,8 +124,8 @@ namespace Sci.Production.Subcon
 				            on a.ID = LocDeb.id 
 				            where a.ID = LocDeb.id and tmpSum.Amount >= LocDeb.Amount+LocDeb.Tax
 					            ) Cur_Debit5
-		             outer apply(select deb.TransidFactory,VoucherDate,SettleDate from dbo.Debit deb where deb.TransidFactory = VoucherID ) n
-					 outer apply(select [Voucher No.] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherID, n.TransidFactory)
+		             outer apply(select deb.VoucherFactory,VoucherDate,SettleDate from dbo.Debit deb where deb.VoucherFactory = VoucherID ) n
+					 outer apply(select [Voucher No.] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherID, n.VoucherFactory)
 	               ,[Voucher Date] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherDate, n.VoucherDate)
 	               ,[Settled Date] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherDate, n.SettleDate) ) as finalVoucher
 		            where a.type='F' and " + sqlWhere + ' ' + sqlHaving);
@@ -156,8 +157,8 @@ namespace Sci.Production.Subcon
 				                on a.ID = LocDeb.id 
 				                where a.ID = LocDeb.id and tmpSum.Amount >= LocDeb.Amount+LocDeb.Tax
 					                ) Cur_Debit5
-		                 outer apply(select deb.TransidFactory,VoucherDate,SettleDate from dbo.Debit deb where deb.TransidFactory = VoucherID ) n
-                         outer apply(select [Voucher No.] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherID, n.TransidFactory)
+		                 outer apply(select deb.VoucherFactory,VoucherDate,SettleDate from dbo.Debit deb where deb.VoucherFactory = VoucherID ) n
+                         outer apply(select [Voucher No.] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherID, n.VoucherFactory)
 	                               ,[Voucher Date] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherDate, n.VoucherDate)
 	                               ,[Settled Date] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherDate, n.SettleDate) ) as finalVoucher
 		                where a.type='F' and " + sqlWhere + ' ' + sqlHaving);
