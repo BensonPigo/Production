@@ -33,6 +33,15 @@ namespace Sci.Production.Subcon
             cbbRateType.SelectedIndex = 0;
             MyUtility.Tool.SetupCombox(cbbStatus, 1, 1, "Only Approved,Only Unapproved,All");
             cbbStatus.SelectedIndex = 0;
+
+            int month = DateTime.Today.Month;
+            int day = DateTime.Today.Day;
+            int year = DateTime.Today.Year;
+            this.dateRangeAPDate.Value1 = DateTime.Today.AddMonths(-1);
+            this.dateRangeAPDate.Value2 = DateTime.Now;
+            this.dateRangeGLDate.Value1 = DateTime.Today.AddMonths(-1);
+            this.dateRangeGLDate.Value2 = DateTime.Now;
+
         }
 
         // 驗證輸入條件
@@ -167,7 +176,7 @@ as
 
             if (!MyUtility.Check.Empty(GLdate1))
             {
-                sqlCmd.Append(" and a.transdate between @GLdate1 and @GLdate1");
+                sqlCmd.Append(" and a.ApvDate between @GLdate1 and @GLdate2");
                 sp_GLdate1.Value = GLdate1;
                 cmds.Add(sp_GLdate1);
                 sp_GLdate2.Value = GLdate2;
@@ -258,10 +267,18 @@ where ap_qty > 0
 
             if (!MyUtility.Check.Empty(style))
             {
-                sqlCmd.Append(" and c.styleid = @style");
+                sqlCmd.Append(" and aa.styleid = @style");
                 sp_style.Value = style;
                 cmds.Add(sp_style);
             }
+
+            if (!MyUtility.Check.Empty(brandid))
+            {
+                sqlCmd.Append(" and aa.brandid = @brandid");
+                sp_brandid.Value = brandid;
+                cmds.Add(sp_brandid);
+            }
+
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
             if (!result)
