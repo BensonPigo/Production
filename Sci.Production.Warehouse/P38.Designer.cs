@@ -108,7 +108,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(59, 23);
             this.label1.TabIndex = 35;
-            this.label1.Text = "SP#(%)";
+            this.label1.Text = "SP#";
             // 
             // label2
             // 
