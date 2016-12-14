@@ -209,6 +209,8 @@ namespace Sci.Production.Warehouse
             StringBuilder sqlupd2 = new StringBuilder();
             String sqlupd3 = "";
             DualResult result, result2;
+            string sqlupd2_A = "";
+            string sqlupd2_FIO = "";
 
             #region 更新表頭狀態資料
 
@@ -226,32 +228,55 @@ namespace Sci.Production.Warehouse
                            seq1 = b.Field<string>("seq1"),
                            seq2 = b.Field<string>("seq2")
                        } into m
-                       select new
+                       select new Prgs_POSuppDetailData_A
                        {
                            mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
                            location = string.Join(",", m.Select(r => r.Field<string>("ToLocation")).Distinct()),
+                           qty = 0,
+                           stocktype = CurrentMaintain["stocktype"].ToString()
                        }).ToList();
 
-            foreach (var item in bs1)
-            {
-                sqlupd2.Append(Prgs.UpdateMPoDetail(2, item.poid, item.seq1, item.seq2,0m, true, CurrentMaintain["stocktype"].ToString(),item.mdivisionid,item.location,false));
-            }
+            sqlupd2_A = Prgs.UpdateMPoDetail_A(2, bs1, true);
+
             #endregion
             #region 更新庫存數量 po_supp_detail & ftyinventory
+            sqlupd2_FIO = @"
+alter table #TmpSource alter column mdivisionid varchar(10)
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column roll varchar(15)
 
-            sqlupd2.Append("declare @iden as bigint;");
-            sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
-            foreach (DataRow item in DetailDatas)
-            {
-                sqlupd2.Append(Prgs.UpdateFtyInventory(2, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), 0m
-                    , item["roll"].ToString(), item["dyelot"].ToString(),  CurrentMaintain["stocktype"].ToString(), true, item["tolocation"].ToString()));
-            }
-            sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
-            
+merge dbo.FtyInventory as target
+using #TmpSource as s
+    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
+	and target.seq2 = s.seq2 and target.roll = s.roll
+when matched then
+    update
+    set inqty = isnull(inqty,0.00) + 0
+when not matched then
+    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[InQty])
+    values ((select ukey from dbo.MDivisionPoDetail 
+			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
+			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,0);
 
+select tolocation,[ukey] = f.ukey
+into #tmp_L_K 
+from #TmpSource s
+left join ftyinventory f on f.mdivisionid = s.mdivisionid and f.poid = s.poid 
+						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll
+merge dbo.ftyinventory_detail as t
+using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.tolocation,'')
+when not matched then
+    insert ([ukey],[mtllocationid]) 
+	values (s.ukey,isnull(s.tolocation,''));
+
+delete t from FtyInventory_Detail t
+where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.tolocation != t.MtlLocationID)
+";
             #endregion 更新庫存數量 po_supp_detail & ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -259,10 +284,18 @@ namespace Sci.Production.Warehouse
             {
                 try
                 {
-                    if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                    DataTable resulttb;
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_A, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(sqlupd2.ToString(), result2);
+                        ShowErr(result);
+                        return;
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable
+                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
                         return;
                     }
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
