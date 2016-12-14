@@ -45,7 +45,7 @@ namespace Sci.Production.Warehouse
             StringBuilder selectCommand1 = new StringBuilder();
             selectCommand1.Append(string.Format(@"select *,
             --sum(TMP.inqty - TMP.outqty+tmp.adjust) over ( order by tmp.addDate,TMP.inqty desc, TMP.outqty,tmp.adjust) as [balance] 
-            sum(TMP.inqty - TMP.outqty+tmp.adjust) over (order by IssueDate,name) as [balance] 
+            sum(TMP.inqty - TMP.outqty+tmp.adjust) over (order by IssueDate,tmp.addDate, name) as [balance] 
             from (
 	            select a.IssueDate, a.id
                 ,Case type when 'A' then 'P35. Adjust Bulk Qty' when 'B' then 'P34. Adjust Stock Qty' end as name
@@ -378,7 +378,7 @@ namespace Sci.Production.Warehouse
             selectCommand1.Append(@"group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,a.remark,AddDate
                 ) tmp
                 group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name, AddDate
-                order by IssueDate,name");
+                order by IssueDate,tmp.addDate,name");
 
             #endregion
 
