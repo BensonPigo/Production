@@ -215,6 +215,9 @@ namespace Sci.Production.Warehouse
             String sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
             DataTable datacheck;
+            StringBuilder sqlupd2_B = new StringBuilder();
+            string sqlupd2_A = "";
+            StringBuilder sqlupd2_FIO = new StringBuilder();
 
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
@@ -294,14 +297,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            seq1 = m.First().Field<string>("fromseq1"),
                            seq2 = m.First().Field<string>("fromseq2"),
                            stocktype = m.First().Field<string>("fromstocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty"))
+                           qty = -m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
 
-            foreach (var item in bs1)
-            {
-                sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, 0-item.qty, true, item.stocktype,item.mdivisionid));
-                sqlupd2.Append(Prgs.UpdateMPoDetail(16, item.poid, item.seq1, item.seq2, 0-item.qty, true, item.stocktype,item.mdivisionid));
-            }
+            sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
+            sqlupd2_B.Append(Prgs.UpdateMPoDetail(16, null, true));
             #endregion
             #region -- 更新mdivisionpodetail Inventory 數 --
             var bs2 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
@@ -313,7 +313,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        seq2 = b.Field<string>("toseq2"),
                        stocktype = b.Field<string>("tostocktype")
                    } into m
-                   select new
+                       select new Prgs_POSuppDetailData_A
                    {
                        mdivisionid = m.First().Field<string>("tomdivisionid"),
                        poid = m.First().Field<string>("topoid"),
@@ -321,31 +321,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        seq2 = m.First().Field<string>("toseq2"),
                        stocktype = m.First().Field<string>("tostocktype"),
                        qty = m.Sum(w => w.Field<decimal>("qty")),
-                       tolocation = string.Join(",", m.Select(r => r.Field<string>("tolocation")).Distinct())
+                       location = string.Join(",", m.Select(r => r.Field<string>("tolocation")).Distinct())
                    }).ToList();
-
-            foreach (var item in bs2)
-            {
-                sqlupd2.Append(Prgs.UpdateMPoDetail(2, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid, item.tolocation));
-            }
+            sqlupd2_A = Prgs.UpdateMPoDetail_A(2, bs2, true);            
             #endregion 
 
             #region -- 更新庫存數量  ftyinventory --
-
-            sqlupd2.Append("declare @iden as bigint;");
-            sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
-            foreach (DataRow item in DetailDatas)
-            {
-                // Scrap扣數
-                sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["frommdivisionid"].ToString(), item["frompoid"].ToString(), item["fromseq1"].ToString(), item["fromseq2"].ToString()
-                    , (decimal)item["qty"], item["fromroll"].ToString(), item["fromdyelot"].ToString(), item["fromstocktype"].ToString(), true));
-                // Inventory加量
-                sqlupd2.Append(Prgs.UpdateFtyInventory(2, item["tomdivisionid"].ToString(), item["topoid"].ToString(), item["toseq1"].ToString(), item["toseq2"].ToString()
-                    , (decimal)item["qty"], item["toroll"].ToString(), item["todyelot"].ToString(), item["tostocktype"].ToString(), true
-                    , item["tolocation"].ToString()));
-            }
-            sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
-
+            sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(4, null, true));
+            sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(2, null, true));
             #endregion 更新庫存數量  ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -353,10 +336,24 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             {
                 try
                 {
-                    if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                    DataTable resulttb;
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B.ToString(), out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(sqlupd2.ToString(), result2);
+                        ShowErr(result);
+                        return;
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs2, "", sqlupd2_A, out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable
+                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
                         return;
                     }
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
@@ -396,6 +393,9 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             StringBuilder sqlupd2 = new StringBuilder();
             string sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
+            StringBuilder sqlupd2_B = new StringBuilder();
+            string sqlupd2_A = "";
+            StringBuilder sqlupd2_FIO = new StringBuilder();
 
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
@@ -484,17 +484,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            seq1 = m.First().Field<string>("fromseq1"),
                            seq2 = m.First().Field<string>("fromseq2"),
                            stocktype = m.First().Field<string>("fromstocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty"))
+                           qty = -m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
-
-            foreach (var item in bs1)
-            {
-                sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, 0 - item.qty, false, item.stocktype, item.mdivisionid));
-                sqlupd2.Append(Prgs.UpdateMPoDetail(16, item.poid, item.seq1, item.seq2, 0 - item.qty, false, item.stocktype, item.mdivisionid));
-            }
+            sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
+            sqlupd2_B.Append(Prgs.UpdateMPoDetail(16, null, false));
             #endregion
             #region -- 更新mdivisionpodetail Inventory數 --
-            bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+            var bs2 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                    group b by new
                    {
                        mdivisionid = b.Field<string>("tomdivisionid"),
@@ -503,7 +499,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        seq2 = b.Field<string>("toseq2"),
                        stocktype = b.Field<string>("tostocktype")
                    } into m
-                   select new
+                   select new Prgs_POSuppDetailData_A
                    {
                        mdivisionid = m.First().Field<string>("tomdivisionid"),
                        poid = m.First().Field<string>("topoid"),
@@ -512,27 +508,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        stocktype = m.First().Field<string>("tostocktype"),
                        qty = m.Sum(w => w.Field<decimal>("qty"))
                    }).ToList();
-
-            foreach (var item in bs1)
-            {
-                sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype, item.mdivisionid));
-            }
+            sqlupd2_A = Prgs.UpdateMPoDetail_A(2, bs2, true);    
             #endregion
             #region -- 更新庫存數量  ftyinventory --
-
-            sqlupd2.Append("declare @iden as bigint;");
-            sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
-            foreach (DataRow item in DetailDatas)
-            {
-                // 借出扣數
-                sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["frommdivisionid"].ToString(), item["frompoid"].ToString(), item["fromseq1"].ToString(), item["fromseq2"].ToString(), (decimal)item["qty"]
-                    , item["fromroll"].ToString(), item["fromdyelot"].ToString(), item["fromstocktype"].ToString(), false, item["tolocation"].ToString()));
-                // 借出加量
-                sqlupd2.Append(Prgs.UpdateFtyInventory(2, item["tomdivisionid"].ToString(), item["topoid"].ToString(), item["toseq1"].ToString(), item["toseq2"].ToString(), (decimal)item["qty"]
-                    , item["toroll"].ToString(), item["todyelot"].ToString(), item["tostocktype"].ToString(), false, item["tolocation"].ToString()));
-            }
-            sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
-            
+            sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(4, null, false));
+            sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(2, null, false));
             #endregion 更新庫存數量  ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -540,13 +520,26 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             {
                 try
                 {
-                    if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                    DataTable resulttb;
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B.ToString(), out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(sqlupd2.ToString(), result2);
+                        ShowErr(result);
                         return;
                     }
-
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs2, "", sqlupd2_A, out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable
+                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
