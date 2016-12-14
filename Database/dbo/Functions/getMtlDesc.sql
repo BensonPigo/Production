@@ -18,7 +18,8 @@ BEGIN
 	SELECT @scirefno=p.SCIRefno
 		, @refno = p.Refno
 		, @suppcolor = ISNULL(p.SuppColor,'')
-		, @StockSP = isnull(concat(p.StockPOID,' ',p.SEQ1,' ',p.SEQ2),'')
+		--, @StockSP = isnull(concat(p.StockPOID,' ',p.SEQ1,' ',p.SEQ2),'')
+		, @StockSP = isnull(concat(p.StockPOID,' ',p.StockSeq1,' ',p.StockSeq2),'')
 		, @po_desc=@po_desc + ISNULL(p.ColorDetail,'')+ CHAR(13)+CHAR(10)
 		, @po_desc=@po_desc + ISNULL(p.sizespec,'')+ CHAR(13)+CHAR(10)
 		, @po_desc=@po_desc + ISNULL(p.SizeUnit,'')+ CHAR(13)+CHAR(10)
