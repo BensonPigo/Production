@@ -469,7 +469,7 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
 
             string sqlupd2_B = "";
             string sqlupd2_BI = "";
-            String sqlupd2_FIO = "";
+            String sqlupd2_FIO_iss = "";
 
             StringBuilder sqlupd2 = new StringBuilder();
             String sqlcmd = "", sqlupd3 = "", ids = "";
@@ -652,63 +652,12 @@ where d.Id = '{0}' and f.id is null", CurrentMaintain["id"]);
                        }).ToList();
 
             if (bs1.Count > 0)
-                sqlupd2_B = Prgs.UpdateMPoDetail_A(2, bs1, true);//4不用傳bs1,4不會變更到location
+                sqlupd2_B = Prgs.UpdateMPoDetail_A(2, bs1, true);
             if (bs1I.Count > 0)
                 sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1I, true);
-
-            //foreach (var item in bs1)
-            //{
-            //    sqlupd2.Append(Prgs.UpdateMPoDetail(2, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid, item.location));
-            //    if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid));
-            //}
             #endregion
             #region -- 更新庫存數量  ftyinventory --
-            //因欄位名稱故不呼叫方法,直接在這加入字串
-            sqlupd2_FIO = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
-alter table #TmpSource alter column poid varchar(20)
-alter table #TmpSource alter column seq1 varchar(3)
-alter table #TmpSource alter column seq2 varchar(3)
-alter table #TmpSource alter column stocktype varchar(1)
-alter table #TmpSource alter column roll varchar(15)
-
-merge dbo.FtyInventory as target
-using #TmpSource as s
-    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
-	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
-when matched then
-    update
-    set inqty = isnull(inqty,0.00) + s.qty
-when not matched then
-    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
-    values ((select ukey from dbo.MDivisionPoDetail 
-			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
-
-select location,[ukey] = f.ukey
-into #tmp_L_K 
-from #TmpSource s
-left join ftyinventory f on f.mdivisionid = s.mdivisionid and f.poid = s.poid 
-						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll
-merge dbo.ftyinventory_detail as t
-using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.location,'')
-when not matched then
-    insert ([ukey],[mtllocationid]) 
-	values (s.ukey,isnull(s.location,''));
-
-delete t from FtyInventory_Detail t
-where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
-";
-            //sqlupd2.Append("declare @iden as bigint;");
-            //sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
-            //foreach (DataRow item in DetailDatas)
-            //{
-            //    sqlupd2.Append(Prgs.UpdateFtyInventory(2, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString()
-            //        , (decimal)item["qty"]
-            //        , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), true, item["location"].ToString()));
-            //}
-
-            //sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
+            sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(2, null, true);
             #endregion 更新庫存數量  ftyinventory
 
             #region -- Transaction --
@@ -717,8 +666,7 @@ where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.M
             {
                 try
                 {
-                    DataTable resulttb;//在這邊沒啥用,只是為了使用ProcessWithObject要放一個參數
-                    //更新mdivisionpodetail 倉數 --
+                    DataTable resulttb;
                     if (bs1.Count > 0)
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B, out resulttb, "#TmpSource")))
@@ -728,7 +676,6 @@ where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.M
                             return;
                         }
                     }
-                    //更新mdivisionpodetail 倉數 --
                     if (bs1I.Count > 0)
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(bs1I, "", sqlupd2_BI, out resulttb, "#TmpSource")))
@@ -738,20 +685,13 @@ where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.M
                             return;
                         }
                     }
-                    //IN/OUT
                     if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
+                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO_iss, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
                         return;
                     }
-                    //if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
-                    //{
-                    //    _transactionscope.Dispose();
-                    //    ShowErr(sqlupd2.ToString(), result2);
-                    //    return;
-                    //}
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
@@ -786,7 +726,7 @@ where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.M
 
             string sqlupd2_B = "";
             string sqlupd2_BI = "";
-            String sqlupd2_FIO = "";
+            String sqlupd2_FIO_iss = "";
 
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unconfirme it?");
             if (dResult == DialogResult.No) return;
@@ -907,46 +847,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                         }).ToList();
 
             if (bs1.Count > 0)
-                sqlupd2_B = Prgs.UpdateMPoDetail_A(2, bs1, false);//4不用傳bs1,4不會變更到location
+                sqlupd2_B = Prgs.UpdateMPoDetail_A(2, bs1, false);
             if (bs1I.Count > 0)
                 sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1I, false);
 
-            //foreach (var item in bs1)
-            //{
-            //    sqlupd2.Append(Prgs.UpdateMPoDetail(2, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype, item.mdivisionid));
-            //    if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype, item.mdivisionid));
-            //}
             #endregion
             #region -- 更新庫存數量  ftyinventory --
-            sqlupd2_FIO = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
-alter table #TmpSource alter column poid varchar(20)
-alter table #TmpSource alter column seq1 varchar(3)
-alter table #TmpSource alter column seq2 varchar(3)
-alter table #TmpSource alter column stocktype varchar(1)
-alter table #TmpSource alter column roll varchar(15)
-
-merge dbo.FtyInventory as target
-using #TmpSource as s
-    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
-	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
-when matched then
-    update
-    set inqty = isnull(inqty,0.00) - s.qty
-when not matched then
-    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
-    values ((select ukey FROM dbo.MDivisionPoDetail 
-			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
-
-            //sqlupd2.Append("declare @iden as bigint;");
-            //sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
-            //foreach (DataRow item in DetailDatas)
-            //{
-            //    sqlupd2.Append(Prgs.UpdateFtyInventory(2, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), (decimal)item["qty"]
-            //        , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), false, item["location"].ToString()));
-            //}
-            //sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
+            sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(2, null, false);
             #endregion 更新庫存數量  ftyinventory
 
             #region -- Transaction --
@@ -955,8 +862,7 @@ when not matched then
             {
                 try
                 {
-                    DataTable resulttb;//在這邊沒啥用,只是為了使用ProcessWithObject要放一個參數
-                    //更新mdivisionpodetail 倉數 --
+                    DataTable resulttb;
                     if (bs1.Count > 0)
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B, out resulttb, "#TmpSource")))
@@ -966,7 +872,6 @@ when not matched then
                             return;
                         }
                     }
-                    //更新mdivisionpodetail 倉數 --
                     if (bs1I.Count > 0)
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(bs1I, "", sqlupd2_BI, out resulttb, "#TmpSource")))
@@ -976,20 +881,13 @@ when not matched then
                             return;
                         }
                     }
-                    //IN/OUT
                     if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
+                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO_iss, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
                         return;
                     }
-                    //if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
-                    //{
-                    //    _transactionscope.Dispose();
-                    //    ShowErr(sqlupd2.ToString(), result2);
-                    //    return;
-                    //}
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
