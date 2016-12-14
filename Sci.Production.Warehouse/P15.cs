@@ -236,7 +236,8 @@ namespace Sci.Production.Warehouse
             String sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2, result3;
             DataTable datacheck;
-
+            string sqlupd2_FIO_iss = "";
+            string sqlupd2_B = "";
             string issuelackid = MyUtility.GetValue.Lookup(string.Format(@"Select issuelackid from dbo.lack where id = '{0}'", CurrentMaintain["requestid"]));
             if (!MyUtility.Check.Empty(issuelackid))
             {
@@ -299,40 +300,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
                 #endregion 檢查負數庫存
                 #region -- 更新庫存數量  ftyinventory --
-
-                sqlupd2.Append("declare @iden as bigint;");
-                sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
-                foreach (DataRow item in DetailDatas)
-                {
-                    sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString()
-                        , (decimal)item["qty"]
-                        , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), true, item["location"].ToString()));
-                }
-                sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
-                var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                           group b by new
-                           {
-                               mdivisionid = b.Field<string>("mdivisionid"),
-                               poid = b.Field<string>("poid"),
-                               seq1 = b.Field<string>("seq1"),
-                               seq2 = b.Field<string>("seq2"),
-                               stocktype = b.Field<string>("stocktype")
-                           } into m
-                           select new
-                           {
-                               mdivisionid = m.First().Field<string>("mdivisionid"),
-                               poid = m.First().Field<string>("poid"),
-                               seq1 = m.First().Field<string>("seq1"),
-                               seq2 = m.First().Field<string>("seq2"),
-                               stocktype = m.First().Field<string>("stocktype"),
-                               qty = m.Sum(w => w.Field<decimal>("qty"))
-                           }).ToList();
-
-                foreach (var item in bs1)
-                {
-                    sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid));
-                }
-
+                sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(4, null, true);
+                sqlupd2_B=Prgs.UpdateMPoDetail(4, null, true);                
                 #endregion 更新庫存數量  ftyinventory
             }
             #region -- 更新表頭狀態資料 --
@@ -342,6 +311,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             #endregion 更新表頭狀態資料
             #region -- update Lack.issuelackid & Lack.issuelackdt
+
             sqlupd4.Append(string.Format(@"update dbo.Lack set dbo.Lack.IssueLackDT='{0}'
 , IssueLackId = '{1}' where id = '{2}';", DateTime.Parse(CurrentMaintain["issuedate"].ToString()).ToShortDateString(), CurrentMaintain["id"], CurrentMaintain["requestid"]));
             sqlupd4.Append(Environment.NewLine);
@@ -349,6 +319,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             sqlupd4.Append(string.Format(@"update dbo.Lack_Detail  set IssueQty = t.qty
 from (select seq1,seq2,sum(qty) qty from dbo.IssueLack_Detail where id='{0}' group by seq1,seq2) t
 where dbo.Lack_Detail.id = '{1}' and dbo.Lack_Detail.seq1 = t.Seq1 and dbo.Lack_Detail.seq2 = t.Seq2", CurrentMaintain["id"], CurrentMaintain["requestid"]));
+
             #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -358,10 +329,37 @@ where dbo.Lack_Detail.id = '{1}' and dbo.Lack_Detail.seq1 = t.Seq1 and dbo.Lack_
                 {
                     if (CurrentMaintain["type"].ToString() == "R")
                     {
-                        if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                        DataTable resulttb;
+                        var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                                   group b by new
+                                   {
+                                       mdivisionid = b.Field<string>("mdivisionid"),
+                                       poid = b.Field<string>("poid"),
+                                       seq1 = b.Field<string>("seq1"),
+                                       seq2 = b.Field<string>("seq2"),
+                                       stocktype = b.Field<string>("stocktype")
+                                   } into m
+                                   select new Prgs_POSuppDetailData_B
+                                   {
+                                       mdivisionid = m.First().Field<string>("mdivisionid"),
+                                       poid = m.First().Field<string>("poid"),
+                                       seq1 = m.First().Field<string>("seq1"),
+                                       seq2 = m.First().Field<string>("seq2"),
+                                       stocktype = m.First().Field<string>("stocktype"),
+                                       qty = m.Sum(w => w.Field<decimal>("qty"))
+                                   }).ToList();
+                        if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B, out resulttb
+                            , "#TmpSource")))
                         {
                             _transactionscope.Dispose();
-                            ShowErr(sqlupd2.ToString(), result2);
+                            ShowErr(result);
+                            return;
+                        }
+                        if (!(result = MyUtility.Tool.ProcessWithDatatable
+                            ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO_iss, out resulttb, "#TmpSource")))
+                        {
+                            _transactionscope.Dispose();
+                            ShowErr(result);
                             return;
                         }
                     }
@@ -407,6 +405,8 @@ where dbo.Lack_Detail.id = '{1}' and dbo.Lack_Detail.seq1 = t.Seq1 and dbo.Lack_
             StringBuilder sqlupd4 = new StringBuilder();
             string sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2, result3;
+            string sqlupd2_FIO_iss = "";
+            string sqlupd2_B = "";
 
             if (CurrentMaintain["type"].ToString() == "R")
             {
@@ -463,39 +463,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
                 #endregion 檢查負數庫存
                 #region -- 更新庫存數量  ftyinventory --
-
-                sqlupd2.Append("declare @iden as bigint;");
-                sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
-                foreach (DataRow item in DetailDatas)
-                {
-                    sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), (decimal)item["qty"]
-                        , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), false, item["location"].ToString()));
-                }
-                sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
-                var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                           group b by new
-                           {
-                               mdivisionid = b.Field<string>("mdivisionid"),
-                               poid = b.Field<string>("poid"),
-                               seq1 = b.Field<string>("seq1"),
-                               seq2 = b.Field<string>("seq2"),
-                               stocktype = b.Field<string>("stocktype")
-                           } into m
-                           select new
-                           {
-                               mdivisionid = m.First().Field<string>("mdivisionid"),
-                               poid = m.First().Field<string>("poid"),
-                               seq1 = m.First().Field<string>("seq1"),
-                               seq2 = m.First().Field<string>("seq2"),
-                               stocktype = m.First().Field<string>("stocktype"),
-                               qty = m.Sum(w => w.Field<decimal>("qty"))
-                           }).ToList();
-
-                foreach (var item in bs1)
-                {
-                    sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype, item.mdivisionid));
-                }
-
+                sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(4, null, false);
+                sqlupd2_B = Prgs.UpdateMPoDetail(4, null, false);  
                 #endregion 更新庫存數量  ftyinventory
             }
             #region -- 更新表頭狀態資料 --
@@ -518,10 +487,37 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 {
                     if (CurrentMaintain["type"].ToString() == "R")
                     {
-                        if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                        DataTable resulttb;
+                        var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                                   group b by new
+                                   {
+                                       mdivisionid = b.Field<string>("mdivisionid"),
+                                       poid = b.Field<string>("poid"),
+                                       seq1 = b.Field<string>("seq1"),
+                                       seq2 = b.Field<string>("seq2"),
+                                       stocktype = b.Field<string>("stocktype")
+                                   } into m
+                                   select new Prgs_POSuppDetailData_B
+                                   {
+                                       mdivisionid = m.First().Field<string>("mdivisionid"),
+                                       poid = m.First().Field<string>("poid"),
+                                       seq1 = m.First().Field<string>("seq1"),
+                                       seq2 = m.First().Field<string>("seq2"),
+                                       stocktype = m.First().Field<string>("stocktype"),
+                                       qty = m.Sum(w => w.Field<decimal>("qty"))
+                                   }).ToList();
+                        if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B, out resulttb
+                            , "#TmpSource")))
                         {
                             _transactionscope.Dispose();
-                            ShowErr(sqlupd2.ToString(), result2);
+                            ShowErr(result);
+                            return;
+                        }
+                        if (!(result = MyUtility.Tool.ProcessWithDatatable
+                            ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO_iss, out resulttb, "#TmpSource")))
+                        {
+                            _transactionscope.Dispose();
+                            ShowErr(result);
                             return;
                         }
                     }
