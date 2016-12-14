@@ -659,6 +659,8 @@ where a.id='{0}' order by Seq", this.poid, masterID, ukey);
             String sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
             DataTable datacheck;
+            string sqlupd2_FIO = "";
+            StringBuilder sqlupd2_B = new StringBuilder();
 
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
@@ -728,14 +730,35 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 ShowErr(sqlcmd, result2);
                 return;
             }
+            // OUT
+            sqlupd2_FIO = @"
+alter table #TmpSource alter column mdivisionid varchar(10)
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
 
-            foreach (DataRow item in datacheck.Rows)
-            {
-                sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString()
-                    , (decimal)item["qty"]
-                    , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), true));
-            }
+merge dbo.FtyInventory as target
+using #TmpSource as s
+    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
+	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
+when matched then
+    update
+    set outqty = isnull(outqty,0.00) + s.qty
+when not matched then
+    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
+    values ((select ukey from dbo.MDivisionPoDetail 
+			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
+			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
 
+            //foreach (DataRow item in datacheck.Rows)
+            //{
+            //    sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString()
+            //        , (decimal)item["qty"]
+            //        , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), true));
+            //}
+            #region -- 更新mdivisionpodetail B倉數 --
             var bs1 = (from b in datacheck.AsEnumerable()
                        group b by new
                        {
@@ -745,7 +768,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
                        } into m
-                       select new
+                       select new Prgs_POSuppDetailData_B
                        {
                            mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
@@ -755,24 +778,41 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
 
-            foreach (var item in bs1)
-            {
-                sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid));
-            }
-
-            #endregion 更新庫存數量  ftyinventory
+            sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));//4不用傳bs1,4不會變更到location
+            //foreach (var item in bs1)
+            //{
+            //    sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, true, item.stocktype, item.mdivisionid));
+            //}
+            #endregion
+            #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
                 try
                 {
-                    if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                    DataTable resulttb;//在這邊沒啥用,只是為了使用ProcessWithObject要放一個參數
+                    //更新mdivisionpodetail B倉數 --
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B.ToString(), out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(sqlupd2.ToString(), result2);
+                        ShowErr(result);
                         return;
                     }
+                    //IN/OUT
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable
+                        (datacheck, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
+                    //if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                    //{
+                    //    _transactionscope.Dispose();
+                    //    ShowErr(sqlupd2.ToString(), result2);
+                    //    return;
+                    //}
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
@@ -797,7 +837,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             this.EnsureToolbarExt();
         }
 
-        //Unconfirm
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -810,6 +849,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             StringBuilder sqlupd2 = new StringBuilder();
             string sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
+            string sqlupd2_FIO = "";
+            StringBuilder sqlupd2_B = new StringBuilder();
 
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
@@ -881,11 +922,32 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             }
             //sqlupd2.Append("declare @iden as bigint;");
             //sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
-            foreach (DataRow item in datacheck.Rows)
-            {
-                sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), (decimal)item["qty"]
-                    , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), false));
-            }
+            // OUT
+            sqlupd2_FIO = @"
+alter table #TmpSource alter column mdivisionid varchar(10)
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+
+merge dbo.FtyInventory as target
+using #TmpSource as s
+    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
+	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
+when matched then
+    update
+    set outqty = isnull(outqty,0.00) - s.qty
+when not matched then
+    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
+    values ((select ukey from dbo.MDivisionPoDetail 
+			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
+			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
+            //foreach (DataRow item in datacheck.Rows)
+            //{
+            //    sqlupd2.Append(Prgs.UpdateFtyInventory(4, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), (decimal)item["qty"]
+            //        , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), false));
+            //}
             //sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
             var bs1 = (from b in datacheck.AsEnumerable()
                        group b by new
@@ -896,7 +958,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                            seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
                        } into m
-                       select new
+                       select new Prgs_POSuppDetailData_B
                        {
                            mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
@@ -906,11 +968,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                            qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
 
-            foreach (var item in bs1)
-            {
-                sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype, item.mdivisionid));
-            }
-
+            sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));//4不用傳bs1,4不會變更到location
+            //foreach (var item in bs1)
+            //{
+            //    sqlupd2.Append(Prgs.UpdateMPoDetail(4, item.poid, item.seq1, item.seq2, item.qty, false, item.stocktype, item.mdivisionid));
+            //}
             #endregion 更新庫存數量  ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -918,13 +980,28 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             {
                 try
                 {
-                    if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                    DataTable resulttb;//在這邊沒啥用,只是為了使用ProcessWithObject要放一個參數
+                    //更新mdivisionpodetail B倉數 --
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B.ToString(), out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(sqlupd2.ToString(), result2);
+                        ShowErr(result);
                         return;
                     }
-
+                    //IN/OUT
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable
+                        (datacheck, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
+                    //if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                    //{
+                    //    _transactionscope.Dispose();
+                    //    ShowErr(sqlupd2.ToString(), result2);
+                    //    return;
+                    //}
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
