@@ -178,7 +178,7 @@ sqlWhere = string.Join(" and ", sqlWheres);
 --declare @SDNo char(13) = ''
 --declare @orderby varchar(30) = 'a.handle'
 
-select a.ID, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID + s.Abb as SupplierByPay, 
+select a.ID, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID+'-'+ s.Abb as SupplierByPay, 
 		( select stuff(s.SPList ,1,1,'')
 		  from (
 			   select (select  ','+Orderid 
@@ -207,7 +207,7 @@ select a.ID, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID + s.A
             #endregion
            #region --撈SummaryExcel資料--
            cmdSummary = string.Format(@"
-select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID + s.Abb as SupplierByPay,a.TaipeiCurrencyID, 
+select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID+'-'+ s.Abb as SupplierByPay,a.TaipeiCurrencyID, 
 	   a.TaipeiAMT,a.exchange,a.currencyid,a.amount,a.Tax,a.taxrate,a.amount+a.tax as ttlAmount,vs3.Name_Extno as AmtRN,
 	   a.AmtReviseDate,vs4.Name_Extno as AccRH,a.ReceiveDate,vs5.Name_Extno as AccAH,a.cfmdate,
 	   cur_schedule.VoucherID[VoucherNo],cur_schedule.VoucherDate,cur_schedule.VoucherDate[Settled Date],
@@ -243,7 +243,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
            #endregion
            #region --撈DetailExcel資料--
            cmdDetail = string.Format(@"
-select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID + s.Abb as SupplierByPay,a.TaipeiCurrencyID, 
+select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID+'-'+ s.Abb as SupplierByPay,a.TaipeiCurrencyID, 
 	   a.TaipeiAMT,a.exchange,a.currencyid,a.amount,a.Tax,a.taxrate,a.amount+a.tax as ttlAmount,vs3.Name_Extno as AmtRN,
 	   a.AmtReviseDate,vs4.Name_Extno as AccRH,a.ReceiveDate,vs5.Name_Extno as AccAH,a.cfmdate,
 	   cur_schedule.VoucherID[VoucherNo],cur_schedule.VoucherDate,cur_schedule.VoucherDate[Settled Date],
@@ -274,15 +274,15 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 " + sqlWhere + ' ' + order);
            #endregion
            #region --撈ScheduleExcel資料--
-           cmdSchedule = string.Format(@"select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID + s.Abb as SupplierByPay,a.TaipeiCurrencyID, 
+           cmdSchedule = string.Format(@"select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID+'-'+ s.Abb as SupplierByPay,a.TaipeiCurrencyID, 
 	   a.TaipeiAMT,a.exchange,a.currencyid,a.amount,a.Tax,a.taxrate,a.amount+a.tax as ttlAmount,vs3.Name_Extno as AmtRN,
 	   a.AmtReviseDate,vs4.Name_Extno as AccRH,a.ReceiveDate,vs5.Name_Extno as AccAH,a.cfmdate,
 	   cur_schedule.VoucherID[VoucherNo],cur_schedule.VoucherDate,cur_schedule.VoucherDate[Settled Date],
 	   c.issuedate,c.amount,c.VoucherId,V.VoucherDate,c.addDate,vs6.Name_Extno as SCN,c.editdate,vs7.Name_Extno as SEN
 	  
 		from DBO.LocalDebit a 
-			inner join dbo.LocalSupp s on a.localsuppid = s.ID
 			inner join dbo.debit_schedule c on a.id = c.id
+            outer apply(select * from LocalSupp s where a.localsuppid = s.ID)s
 		    outer apply (select VoucherDate from FinanceEn.dbo.Voucher Fv where Fv.id = c.VoucherID ) V
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
@@ -400,6 +400,8 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 x1.dicDatas.Add("##FACTORY", factoryid);
                 x1.dicDatas.Add("##Status", status);
                 x1.dicDatas.Add("##PaymentSettled", payment);
+                //SaveXltReportCls.xltRptTable xdt = new SaveXltReportCls.xltRptTable(dtDetail);
+                //xdt.boAutoFitColumn = true;
                 x1.dicDatas.Add("##SD", dtDetail);
                 x1.Save(outpath, false);
             }
@@ -422,6 +424,8 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 x1.dicDatas.Add("##FACTORY", factoryid);
                 x1.dicDatas.Add("##Status", status);
                 x1.dicDatas.Add("##PaymentSettled", payment);
+                //SaveXltReportCls.xltRptTable xdt = new SaveXltReportCls.xltRptTable(dtSchedule);
+                //xdt.boAutoFitColumn = true;
                 x1.dicDatas.Add("##SD", dtSchedule);
                 x1.Save(outpath, false);
             }
