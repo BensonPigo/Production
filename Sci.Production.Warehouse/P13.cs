@@ -325,7 +325,6 @@ namespace Sci.Production.Warehouse
             String sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
             DataTable datacheck;
-
             StringBuilder sqlupd2_B = new StringBuilder();
             string sqlupd2_FIO_iss = "";
             #region 檢查庫存項lock
@@ -389,9 +388,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             #endregion 更新表頭狀態資料
 
-            #region 更新庫存數量  ftyinventory            
+            #region 更新庫存數量  ftyinventory
             sqlupd2_FIO_iss=Prgs.UpdateFtyInventory_IO_ISS(4, null, true);
-
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
@@ -410,9 +408,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            stocktype = m.First().Field<string>("stocktype"),
                            qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
-
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
-            #endregion 更新庫存數量  ftyinventory
+            #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
@@ -440,7 +437,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                         ShowErr(sqlupd3, result);
                         return;
                     }
-
                     _transactionscope.Complete();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
@@ -538,7 +534,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             #region 更新庫存數量  ftyinventory
             sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(4, null, false);
-
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
@@ -557,10 +552,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                            stocktype = m.First().Field<string>("stocktype"),
                            qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
-
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
-
-            #endregion 更新庫存數量  ftyinventory
+            #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
