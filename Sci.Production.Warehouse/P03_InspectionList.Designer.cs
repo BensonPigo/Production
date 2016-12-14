@@ -30,19 +30,19 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.gridFir_Laboratory = new Sci.Win.UI.Grid();
             this.gridFirAir = new Sci.Win.UI.Grid();
             this.panel2 = new Sci.Win.UI.Panel();
             this.button1 = new Sci.Win.UI.Button();
             this.bsAIR_FIR = new Sci.Win.UI.BindingSource(this.components);
-            this.gridFir_Laboratory = new Sci.Win.UI.Grid();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
             this.bsFIR_Laboratory = new Sci.Win.UI.BindingSource(this.components);
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridFir_Laboratory)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridFirAir)).BeginInit();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bsAIR_FIR)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridFir_Laboratory)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bsFIR_Laboratory)).BeginInit();
             this.SuspendLayout();
             // 
@@ -58,6 +58,46 @@
             this.panel1.Size = new System.Drawing.Size(784, 561);
             this.panel1.TabIndex = 0;
             // 
+            // label2
+            // 
+            this.label2.Lines = 0;
+            this.label2.Location = new System.Drawing.Point(9, 308);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(75, 23);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Laboratory";
+            // 
+            // label1
+            // 
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(9, 14);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Inspection";
+            // 
+            // gridFir_Laboratory
+            // 
+            this.gridFir_Laboratory.AllowUserToAddRows = false;
+            this.gridFir_Laboratory.AllowUserToDeleteRows = false;
+            this.gridFir_Laboratory.AllowUserToResizeRows = false;
+            this.gridFir_Laboratory.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridFir_Laboratory.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridFir_Laboratory.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridFir_Laboratory.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridFir_Laboratory.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridFir_Laboratory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridFir_Laboratory.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridFir_Laboratory.Location = new System.Drawing.Point(3, 334);
+            this.gridFir_Laboratory.Name = "gridFir_Laboratory";
+            this.gridFir_Laboratory.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridFir_Laboratory.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridFir_Laboratory.RowTemplate.Height = 24;
+            this.gridFir_Laboratory.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridFir_Laboratory.Size = new System.Drawing.Size(778, 173);
+            this.gridFir_Laboratory.TabIndex = 1;
+            this.gridFir_Laboratory.TabStop = false;
+            // 
             // gridFirAir
             // 
             this.gridFirAir.AllowUserToAddRows = false;
@@ -72,7 +112,6 @@
             this.gridFirAir.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridFirAir.Location = new System.Drawing.Point(0, 40);
             this.gridFirAir.Name = "gridFirAir";
-            this.gridFirAir.RowHeadersVisible = false;
             this.gridFirAir.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridFirAir.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridFirAir.RowTemplate.Height = 24;
@@ -102,47 +141,6 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // gridFir_Laboratory
-            // 
-            this.gridFir_Laboratory.AllowUserToAddRows = false;
-            this.gridFir_Laboratory.AllowUserToDeleteRows = false;
-            this.gridFir_Laboratory.AllowUserToResizeRows = false;
-            this.gridFir_Laboratory.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridFir_Laboratory.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridFir_Laboratory.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridFir_Laboratory.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridFir_Laboratory.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridFir_Laboratory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridFir_Laboratory.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridFir_Laboratory.Location = new System.Drawing.Point(3, 334);
-            this.gridFir_Laboratory.Name = "gridFir_Laboratory";
-            this.gridFir_Laboratory.RowHeadersVisible = false;
-            this.gridFir_Laboratory.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridFir_Laboratory.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridFir_Laboratory.RowTemplate.Height = 24;
-            this.gridFir_Laboratory.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridFir_Laboratory.Size = new System.Drawing.Size(778, 173);
-            this.gridFir_Laboratory.TabIndex = 1;
-            this.gridFir_Laboratory.TabStop = false;
-            // 
-            // label1
-            // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 14);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Inspection";
-            // 
-            // label2
-            // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(9, 308);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Laboratory";
-            // 
             // P03_InspectionList
             // 
             this.ClientSize = new System.Drawing.Size(784, 561);
@@ -151,10 +149,10 @@
             this.Name = "P03_InspectionList";
             this.Text = "Inspection List";
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridFir_Laboratory)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridFirAir)).EndInit();
             this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bsAIR_FIR)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridFir_Laboratory)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bsFIR_Laboratory)).EndInit();
             this.ResumeLayout(false);
 
