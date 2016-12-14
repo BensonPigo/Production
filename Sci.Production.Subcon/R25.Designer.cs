@@ -44,6 +44,18 @@
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // print
+            // 
+            this.print.Location = new System.Drawing.Point(429, 27);
+            // 
+            // toexcel
+            // 
+            this.toexcel.Location = new System.Drawing.Point(429, 63);
+            // 
+            // close
+            // 
+            this.close.Location = new System.Drawing.Point(429, 99);
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.txtartworktype_fty1);
@@ -58,9 +70,9 @@
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(22, 16);
+            this.panel1.Location = new System.Drawing.Point(9, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(494, 263);
+            this.panel1.Size = new System.Drawing.Size(414, 244);
             this.panel1.TabIndex = 94;
             // 
             // txtartworktype_fty1
@@ -125,45 +137,45 @@
             this.label6.Lines = 0;
             this.label6.Location = new System.Drawing.Point(13, 209);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(90, 23);
+            this.label6.Size = new System.Drawing.Size(102, 23);
             this.label6.TabIndex = 5;
-            this.label6.Text = "Factory........:";
+            this.label6.Text = "Factory";
             // 
             // label5
             // 
             this.label5.Lines = 0;
             this.label5.Location = new System.Drawing.Point(13, 169);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(90, 23);
+            this.label5.Size = new System.Drawing.Size(102, 23);
             this.label5.TabIndex = 4;
-            this.label5.Text = "Supplier........:";
+            this.label5.Text = "Supplier";
             // 
             // label4
             // 
             this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(13, 131);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(81, 23);
+            this.label4.Size = new System.Drawing.Size(102, 23);
             this.label4.TabIndex = 3;
-            this.label4.Text = "Category..:";
+            this.label4.Text = "Category";
             // 
             // label3
             // 
             this.label3.Lines = 0;
             this.label3.Location = new System.Drawing.Point(13, 92);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(62, 23);
+            this.label3.Size = new System.Drawing.Size(102, 23);
             this.label3.TabIndex = 2;
-            this.label3.Text = "Refno.";
+            this.label3.Text = "Refno";
             // 
             // label2
             // 
             this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(13, 51);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(62, 23);
+            this.label2.Size = new System.Drawing.Size(102, 23);
             this.label2.TabIndex = 1;
-            this.label2.Text = "SP#.....:";
+            this.label2.Text = "SP#";
             // 
             // label1
             // 
@@ -172,13 +184,14 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(102, 23);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Receive Date:";
+            this.label1.Text = "Receive Date";
             // 
             // R25
             // 
-            this.ClientSize = new System.Drawing.Size(627, 314);
+            this.ClientSize = new System.Drawing.Size(517, 294);
             this.Controls.Add(this.panel1);
             this.Name = "R25";
+            this.Text = "R25. Local Purchase Receiving List";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);

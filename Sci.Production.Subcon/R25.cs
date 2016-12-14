@@ -20,14 +20,11 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             DataTable factory = null;
-            string sqlcmd = (@"select DISTINCT ftygroup FROM DBO.Factory");
-            DBProxy.Current.Select("", sqlcmd, out factory);
-            factory.Rows.Add(new string[]{""});
-            factory.DefaultView.Sort = "ftygroup";
-            this.comboBox1.DataSource = factory;
-            this.comboBox1.ValueMember = "ftygroup";
-            this.comboBox1.DisplayMember = "ftygroup";
-            this.comboBox1.SelectedIndex = 0;
+            
+            DBProxy.Current.Select(null, "select '' as ID union all select DISTINCT ftygroup from Factory", out factory);
+            MyUtility.Tool.SetupCombox(comboBox1, 1, factory);
+            comboBox1.SelectedValue = Sci.Env.User.Factory;
+            this.print.Enabled = false;
         }
 
         DateTime? ReceiveDate;
@@ -91,7 +88,7 @@ namespace Sci.Production.Subcon
                 sqlWheres.Add("lrd.category=@Category");
                 lis.Add(new SqlParameter("@Category", Category));
             }
-            if (!this.txtsubcon1.Text.Empty())
+            if (!this.txtsubcon1.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("lr.localsuppid=@Supplier");
                 lis.Add(new SqlParameter("@Supplier", Supplier));
@@ -137,6 +134,11 @@ namespace Sci.Production.Subcon
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            if (dtt.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return false;
+            }
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
             saveDialog.ShowDialog();
             string outpath = saveDialog.FileName;
