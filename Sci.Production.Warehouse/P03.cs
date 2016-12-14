@@ -214,7 +214,7 @@ namespace Sci.Production.Warehouse
                 {
                     if (dr["ThirdCountry"].ToString() == "True")
                     {
-                        grid1.Rows[i].Cells[2].Style.BackColor = Color.DeepPink;
+                        grid1.Rows[i].Cells[3].Style.BackColor = Color.DeepPink;
                     }
 
                     if (dr["BomTypeCalculate"].ToString() == "True")
