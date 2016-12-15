@@ -72,7 +72,6 @@ namespace Sci.Production.Warehouse
 
             SubKeyField1 = "ID";    // 將第2層的PK欄位傳給第3層的FK。
             SubKeyField2 = "Ukey";  // 將第2層的PK欄位傳給第3層的FK。
-
             DoSubForm = new P10_Detail();
         }
 
@@ -116,8 +115,8 @@ namespace Sci.Production.Warehouse
                 string STRaccu_issue = this.detailgrid.Rows[e.RowIndex].Cells["accu_issue"].Value.ToString();
                 string STRqty = this.detailgrid.Rows[e.RowIndex].Cells["qty"].Value.ToString();
                 decimal DECrequestqty;
-                 decimal DECaccu_issue;
-                 decimal DECqty;
+                decimal DECaccu_issue;
+                decimal DECqty;
                 if (!decimal.TryParse(STRrequestqty, out DECrequestqty))
                 { DECrequestqty= 0;}
                  if (!decimal.TryParse(STRaccu_issue, out DECaccu_issue))
@@ -153,6 +152,10 @@ namespace Sci.Production.Warehouse
             .Numeric("netqty", name: "netqty", header: "Net Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: ns, iseditingreadonly: true)    //10
             ;     //
             #endregion 欄位設定
+        }
+        protected override void OpenSubDetailPage()
+        {
+            base.OpenSubDetailPage();
         }
 
         //寫明細撈出的sql command
@@ -200,28 +203,38 @@ namespace Sci.Production.Warehouse
 	                    ,a.Qty
 	                    ,a.Colorid
 	                    ,a.SizeSpec
-	                    ,[arqty] = isnull((select sum(cons) from dbo.cutplan_detail_cons c where c.id='{1}' and c.poid = a.poid),0.00)
+	                    --,[arqty] = isnull((select sum(cons) from dbo.cutplan_detail_cons c where c.id='{1}' and c.poid = a.poid),0.00)
 	                    ,[description] = (select DescDetail from fabric where scirefno = a.scirefno)
 	                    ,[requestqty] = isnull((select sum(cons) 
 		                    from dbo.Cutplan_Detail_Cons c 
 		                    inner join dbo.PO_Supp_Detail p on p.ID=c.Poid and p.SEQ1 = c.Seq1 and p.SEQ2 = c.Seq2
 		                    where  c.id='{1}' and p.seq1 = a.seq1 and p.seq2 = a.seq2 and c.poid = a.poid), 0.00)
-	                    ,[accu_issue] = isnull((select sum(qty) 
-		                    from issue a1 
-		                    inner join issue_summary b1 on b1.id = a1.id 
-		                    where a1.cutplanid = '{1}' and b1.poid = a.poid and b1.seq1 = a.seq1 and b1.seq2 = a.seq2
-		                    and a1.id != '{0}' and a1.status='Confirmed'), 0.00)
+	                    ,[accu_issue] =isnull((
+                                            select 
+                                	            sum(qty) 
+                                            from Issue c 
+                                	        inner join Issue_Summary b on c.Id=b.Id 
+                                            where  
+                                				a.poid = b.poid and
+                                				c.CutplanID = '{1}' and
+                                	            t.SCIRefno = b.SCIRefno and
+                                				t.Colorid = b.Colorid and
+                                	            c.status='Confirmed'and
+                                				c.id != '{0}')
+                                                , 0.00)
 	                    ,a.Ukey
                         ,a.seq1
                         ,a.seq2
+                        ,t.POUnit as unit
 	                    from dbo.Issue_Summary a
+                        Left join dbo.PO_Supp_Detail t on t.id=a.Poid and t.seq1=a.seq1 and t.seq2=a.Seq2
 	                    Where a.id = '{0}'
                     ),
                     NetQty as
                     (
 	                    select a.NETQty,a.ID,a.SEQ1,a.SEQ2,a.SCIRefno,a.ColorID
 	                    ,[Unit] = [dbo].[getStockUnit](a.SCIRefno,c.SuppID)
-                        ,[aiqqty] = ISNULL(SUM(a.OutputQty)	,0.00)
+                        --,[aiqqty] = ISNULL(SUM(a.OutputQty)	,0.00)
 	                    from PO_Supp_Detail a
 	                    left join Issue_Summary b on  a.ID=b.Poid and a.seq1 = b.seq1 and a.seq2 = b.seq2
 	                    left join PO_Supp c on c.id = a.ID and c.SEQ1 = a.SEQ1
@@ -233,13 +246,17 @@ namespace Sci.Production.Warehouse
                     )
                     select a.*
                     ,left(a.seq1+' ',3)+a.Seq2 as seq
-                    ,b.ColorID
-                    ,[Unit] = isnull(b.Unit,0)
                     ,[NETQty] = isnull(b.NETQty,0)
-                    ,[aiqqty] = isnull(b.aiqqty,0)
-                    ,[avqty] =isnull([accu_issue],0)-isnull([aiqqty],0)
+                    ,tmpQty.arqty 
+                    ,tmpQty.aiqqty
+                    ,tmpQty.arqty -tmpQty.aiqqty as [avqty] 
                     from main a                    
-                    left join NetQty b on a.Poid = b.ID and a.seq1 = b.seq1 and a.seq2 = b.seq2"
+                    left join NetQty b on a.Poid = b.ID and a.seq1 = b.seq1 and a.seq2 = b.seq2
+                    outer apply(
+                        select arqty = a.requestqty + isnull((select sum(c.Cons) from  dbo.Cutplan_Detail_Cons c  inner join (Select distinct s.Poid,s.seq1,s.seq2,i.CutplanID from Issue_Summary s inner join Issue i on s.Id=i.Id and i.CutplanID!='{1}' and i.status='Confirmed' where a.Poid=s.Poid and a.SCIRefno =s.SCIRefno and a.ColorID=s.ColorID) s on c.Poid=s.poid and c.SEQ1=s.SEQ1 and c.SEQ2=s.SEQ2 ),0.00)
+                              ,aiqqty = isnull((select a.qty from dbo.Issue c where c.id=a.id and c.status!='Confirmed' ),0.00)+isnull((select sum(s.Qty) from Issue_Summary s inner join Issue i on s.Id=i.Id where s.Poid=a.poid and s.SCIRefno=a.SCIRefno and s.Colorid=a.ColorID and i.status='Confirmed'), 0.00)
+                    ) as tmpQty
+                    "
 
                 , masterID, cutplanID);
 
@@ -326,21 +343,27 @@ namespace Sci.Production.Warehouse
 
         protected override DualResult ConvertSubDetailDatasFromDoSubForm(SubDetailConvertFromEventArgs e)
         {
-            DataTable dt;
-            foreach (DataRow dr in DetailDatas)
-            {
-                if (GetSubDetailDatas(dr, out dt))
-                {
-                    sum_subDetail(dr, dt);
-                }
-            }
+            sum_subDetail(e.Detail, e.SubDetails);
+
+            //舊寫法
+            //DataTable dt;
+            //foreach (DataRow dr in DetailDatas)
+            //{
+            //    if (GetSubDetailDatas(dr, out dt))
+            //    {
+            //        sum_subDetail(dr, dt);
+            //    }
+            //}
             return base.ConvertSubDetailDatasFromDoSubForm(e);
         }
 
         static void sum_subDetail(DataRow target, DataTable source)
         {
+            target["aiqqty"] = (Decimal)target["aiqqty"] - (Decimal)target["qty"];
             target["qty"] = (source.Rows.Count == 0) ? 0m : source.AsEnumerable().Where(r => r.RowState != DataRowState.Deleted)
                 .Sum(r => r.Field<decimal>("qty"));
+            target["aiqqty"] = (Decimal)target["aiqqty"] + (Decimal)target["qty"];
+            target["avqty"] = (Decimal)target["arqty"] - (Decimal)target["aiqqty"];
         }
 
         private void btnAutoPick_Click(object sender, EventArgs e)
@@ -400,6 +423,7 @@ main as(
         t.SCIRefno,
         t.ColorID,
         t.SizeSpec,
+        t.POUnit as unit,
         sum(cons)requestqty,0.00 as qty,
         --isnull((select sum(qty) from Issue_Summary a inner join Issue b on a.Id=b.Id inner join Cutplan d on b.CutplanID=d.ID where d.ID='{0}' and b.status='Confirmed'), 0.00) as accu_issue,
         isnull((
@@ -410,8 +434,8 @@ main as(
             where  
 				c.poid = b.poid and
 				a.CutplanID = '{0}' and
-	            t.SEQ1 = b.seq1 and
-				t.seq2 = b.seq2 and
+	            t.SCIRefno = b.SCIRefno and
+				t.Colorid = b.Colorid and
 	            a.status='Confirmed'and
 				a.id != '{1}')
             , 0.00) as accu_issue,
@@ -425,7 +449,7 @@ main as(
         inner join dbo.PO_Supp_Detail t on t.id=c.Poid and t.seq1=c.seq1 and t.seq2=c.Seq2
     where 
         c.ID='{0}'
-    group by poid,t.SCIRefno,t.ColorID,t.SizeSpec,t.SEQ1,t.SEQ2
+    group by poid,t.SCIRefno,t.ColorID,t.SizeSpec,t.SEQ1,t.SEQ2,t.POUnit
 ),
 NetQty as(
     select DISTINCT  
@@ -441,8 +465,16 @@ NetQty as(
         a.STOCKPOID =''
         and a.SEQ1 = (select min(seq1) from dbo.PO_Supp_Detail where id=a.id and seq1 = a.SEQ1 and seq2 = a.seq2)
 )
-select a.*,left(a.seq1+' ',3)+a.Seq2 as seq, isnull(b.NETQty,0) as NETQty from main a 
+select a.*,left(a.seq1+' ',3)+a.Seq2 as seq, isnull(b.NETQty,0) as NETQty 
+,tmpQty.arqty 
+,tmpQty.aiqqty
+,tmpQty.arqty -tmpQty.aiqqty as [avqty] 
+from main a 
 left join NetQty b on a.Poid = b.ID and a.seq1 = b.seq1 and a.seq2 = b.seq2
+                    outer apply(
+                        select arqty = a.requestqty + isnull((select sum(c.Cons) from  dbo.Cutplan_Detail_Cons c  inner join (Select distinct s.Poid,s.seq1,s.seq2,i.CutplanID from Issue_Summary s inner join Issue i on s.Id=i.Id and i.CutplanID!='{0}' and i.status='Confirmed' where a.Poid=s.Poid and a.SCIRefno =s.SCIRefno and a.ColorID=s.ColorID) s on c.Poid=s.poid and c.SEQ1=s.SEQ1 and c.SEQ2=s.SEQ2 ),0.00)
+                              ,aiqqty = isnull((select a.qty from dbo.Issue c where c.id=a.id and c.status!='Confirmed' ),0.00)+isnull((select sum(s.Qty) from Issue_Summary s inner join Issue i on s.Id=i.Id where s.Poid=a.poid and s.SCIRefno=a.SCIRefno and s.Colorid=a.ColorID and i.status='Confirmed'), 0.00)
+                    ) as tmpQty
 ", txtRequest.Text, CurrentMaintain["id"]);
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     if (MyUtility.Check.Empty(dt) || MyUtility.Check.Empty(dt.Rows.Count))

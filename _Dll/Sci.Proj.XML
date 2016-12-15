@@ -1141,6 +1141,13 @@
             <param name="expression"></param>
             <returns></returns>
         </member>
+        <member name="M:Sci.ProjExts.SetReadOnly(System.Windows.Forms.Control,System.Boolean)">
+            <summary>
+            由Control層級設定ReadOnly屬性，若Control非指定之Type則不做其他動作
+            </summary>
+            <param name="c"></param>
+            <param name="boReadOnly"></param>
+        </member>
         <member name="F:Sci.SQL.QueryConnectionName">
             
              SqlBuliCopy
