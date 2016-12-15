@@ -87,3 +87,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂購月�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客戶訂單單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Summary', @level2type = N'COLUMN', @level2name = N'BomCustPONo';
 
+
+GO
+
+CREATE INDEX [Poid_SCIRefo_Color] ON [dbo].[Issue_Summary] ([Poid],[SCIRefno],[Colorid])

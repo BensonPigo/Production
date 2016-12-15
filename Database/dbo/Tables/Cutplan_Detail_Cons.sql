@@ -45,3 +45,7 @@ GO
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SEQ', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutplan_Detail_Cons', @level2type = N'COLUMN', @level2name = N'SEQ1';
 
+
+GO
+
+CREATE INDEX [Poid_SEQ] ON [dbo].[Cutplan_Detail_Cons] ([Poid],[SEQ1],[SEQ2])
