@@ -175,7 +175,7 @@ namespace Sci.Production.Warehouse
             .Numeric("useqty", header: "Use Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //15
             .Numeric("ShipQty", header: "Ship Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts3)    //16
             .Numeric("ShipFOC", header: "F.O.C", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //17
-            .Numeric("ApQty", header: "AP Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //18
+            //.Numeric("ApQty", header: "AP Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //18
             .Numeric("InputQty", header: "Taipei Stock Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)    //19
             .Text("POUnit", header: "PO Unit", iseditingreadonly: true)  //20
             .Text("Complete", header: "Cmplt", iseditingreadonly: true)  //21
@@ -268,7 +268,9 @@ m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 ,A.Qty
 ,A.NETQty
 ,[useqty] = isnull(A.NETQty,0)+isnull(A.lossQty,0)
-,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,iif(a.Complete='1','Y','N') as Complete
+,a.ShipQty,a.ShipFOC
+--,a.ApQty
+,a.InputQty,a.POUnit,iif(a.Complete='1','Y','N') as Complete
 ,a.FinalETA,m.InQty,a.StockUnit
 ,iif(m.OutQty is null,'0.00',m.OutQty) as OutQty
 ,iif(m.AdjustQty is null,'0.00',m.AdjustQty) AdjustQty
@@ -308,7 +310,9 @@ select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varcha
 ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
     , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
 ,a.ColorID,a.SizeSpec
-,ROUND(a.UsedQty,4) unitqty,A.Qty,A.NETQty,isnull(A.NETQty,0)+isnull(A.lossQty,0) useqty ,a.ShipQty,a.ShipFOC,a.ApQty,a.InputQty,a.POUnit,iif(a.Complete='1','Y','N') as Complete
+,ROUND(a.UsedQty,4) unitqty,A.Qty,A.NETQty,isnull(A.NETQty,0)+isnull(A.lossQty,0) useqty ,a.ShipQty,a.ShipFOC
+--,a.ApQty
+,a.InputQty,a.POUnit,iif(a.Complete='1','Y','N') as Complete
 ,a.FinalETA,m.InQty,a.StockUnit
 ,iif(m.OutQty is null,'0.00',m.OutQty) as OutQty
 ,iif(m.AdjustQty is null,'0.00',m.AdjustQty) AdjustQty
