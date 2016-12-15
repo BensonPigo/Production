@@ -306,12 +306,6 @@ namespace Sci.Production.Warehouse
         // detail 新增時設定預設值
         protected override void OnDetailGridInsert(int index = -1)
         {
-            if (MyUtility.Check.Empty(CurrentMaintain["invno"]))
-            {
-                MyUtility.Msg.WarningBox("< Invoice# >  can't be empty!", "Warning");
-                textBox3.Focus();
-                return;
-            }
             base.OnDetailGridInsert(index);
             CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
         }
@@ -327,6 +321,14 @@ namespace Sci.Production.Warehouse
             DataRow dr;
             ts4.CellValidating += (s, e) =>
             {
+                if (MyUtility.Check.Empty(CurrentMaintain["invno"]))
+                {
+                    MyUtility.Msg.WarningBox("< Invoice# >  can't be empty!", "Warning");
+                    e.Cancel = true;
+                    CurrentDetailData["poid"] = "";
+                    textBox3.Focus();
+                    return;
+                }
                 if (this.EditMode && e.FormattedValue.ToString()!="")
                 {
                     if (MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po where id = '{0}')", e.FormattedValue), null))
