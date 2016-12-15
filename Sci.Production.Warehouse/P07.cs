@@ -306,6 +306,12 @@ namespace Sci.Production.Warehouse
         // detail 新增時設定預設值
         protected override void OnDetailGridInsert(int index = -1)
         {
+            if (MyUtility.Check.Empty(CurrentMaintain["invno"]))
+            {
+                MyUtility.Msg.WarningBox("< Invoice# >  can't be empty!", "Warning");
+                textBox3.Focus();
+                return;
+            }
             base.OnDetailGridInsert(index);
             CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
         }
