@@ -107,7 +107,13 @@ namespace Sci.Production.Warehouse
                 )
                 select 0 Selected
                 , m.poid
-                ,x.FactoryID,x.Category,x.StyleID,x.BrandID,x.BuyerDelivery,m.ActPulloutDate,m.ppicClose
+                ,x.FactoryID
+                ,Category =case when x.Category='B'then 'Bulk'
+			                   when x.Category='M'then 'Material'
+			                   when x.Category='O'then 'Other'
+			                   when x.Category='S'then 'Sample'
+			                   end
+                ,x.StyleID,x.BrandID,x.BuyerDelivery,m.ActPulloutDate,m.ppicClose
                 ,dbo.getPOComboList(m.poid,m.poid) [PoCombo] 
                 from (
                     select a.POID
@@ -148,36 +154,10 @@ namespace Sci.Production.Warehouse
                 .Text("styleid", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(20)) //3
                 .Text("brandid", header: "Brand", iseditingreadonly: true)      //5
                 .Date("buyerdelivery", header: "Buyer Delivery", iseditingreadonly: true)      //5
-                .Date("buyerdelivery", header: "Last Pullout Date", iseditingreadonly: true)      //5
+                .Date("ActPulloutDate", header: "Last Pullout Date", iseditingreadonly: true)      //5
                 .Date("ppicclose", header: "Last PPIC Close", iseditingreadonly: true)      //5
                .EditText("pocombo", header: "PO Combo", iseditingreadonly: true, width: Widths.AnsiChars(25))
                ; //8
-
-            // 全選
-            checkBox1.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetCheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
-
-            // 全不選
-            checkBox2.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetUncheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -232,13 +212,25 @@ namespace Sci.Production.Warehouse
             //this.QueryData();
             MyUtility.Msg.InfoBox("Finish closing R/Mtl!!");
             MyUtility.Msg.WaitClear();
+
+            QueryData();
         }
 
         private void btnToEexcel_Click(object sender, EventArgs e)
         {
+            string cmd = @"select [SP#]=poid,[Factory]=FactoryID
+,Category,Style=StyleID,Brand=BrandID,[BuyerDelivery]=BuyerDelivery,[Last Pullout Date]=ActPulloutDate
+,[Last PPIC Close] = ppicClose,[PO Combo] = PoCombo
+
+from #tmp";
+            DataTable printDatatable; 
+
             if (dtBatch != null && dtBatch.Rows.Count > 0)
             {
-                MyUtility.Excel.CopyToXls(dtBatch, "");
+                MyUtility.Tool.ProcessWithDatatable(dtBatch, "",cmd , out printDatatable, "#Tmp");
+                Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(printDatatable);
+                sdExcel.Save();
+
             }
         }
     }
