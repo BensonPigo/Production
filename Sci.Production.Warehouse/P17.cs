@@ -661,7 +661,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #endregion 更新表頭狀態資料
 
             #region 更新庫存數量  ftyinventory
-            sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(4, null, false);
+            sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(4, null, true);
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
