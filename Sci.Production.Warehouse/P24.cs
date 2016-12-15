@@ -283,10 +283,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        seq1 = m.First().Field<string>("fromseq1"),
                        seq2 = m.First().Field<string>("fromseq2"),
                        stocktype = m.First().Field<string>("fromstocktype"),
-                       qty = m.Sum(w => w.Field<decimal>("qty")),
+                       qty = -m.Sum(w => w.Field<decimal>("qty")),
                    }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
-            sqlupd2_B.Append(Prgs.UpdateMPoDetail(8, bs1, false));
+            sqlupd2_B.Append(Prgs.UpdateMPoDetail(8, bs1, true));
             #endregion 
             #region -- 更新mdivisionpodetail Scrap數 --
             var bs2 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
@@ -468,10 +468,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            seq1 = m.First().Field<string>("fromseq1"),
                            seq2 = m.First().Field<string>("fromseq2"),
                            stocktype = m.First().Field<string>("fromstocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty"))
+                           qty = -m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
-            sqlupd2_B.Append(Prgs.UpdateMPoDetail(8, bs1, true));
+            sqlupd2_B.Append(Prgs.UpdateMPoDetail(8, bs1, false));
             #endregion
             #region -- 更新mdivisionpodetail Scrap數 --
             var bs2 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
