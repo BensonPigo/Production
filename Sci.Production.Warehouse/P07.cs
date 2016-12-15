@@ -560,6 +560,8 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
 
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_fabrictype;
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_Roll;
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_Dyelot;
 
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
@@ -569,8 +571,8 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
             .Numeric("shipqty", header: "Ship Qty", width: Widths.AnsiChars(13), decimal_places: 2, integer_places: 10, settings: ns)    //3
             .Numeric("weight", header: "G.W(kg)", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 7)    //4
             .Numeric("actualweight", header: "Act.(kg)", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 7)    //5
-            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9))    //6
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5))    //7
+            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9)).Get(out cbb_Roll)    //6
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5)).Get(out cbb_Dyelot)    //7
             .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(13), decimal_places: 2, integer_places: 10, settings: ns2).Get(out Col_ActualQty)    //8
             .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)    //9
             .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(13), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //10
@@ -579,7 +581,8 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
             .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false).Get(out Col_Location)    //13
             .Text("remark", header: "Remark")    //14
             ;     //
-
+            cbb_Roll.MaxLength = 8;
+            cbb_Dyelot.MaxLength = 4;
             #endregion 欄位設定
 
             cbb_fabrictype.DataSource = new BindingSource(di_fabrictype, null);
