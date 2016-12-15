@@ -47,7 +47,7 @@ select issuedate,id,sum(qty) qty
 ,(select FromLocation+',' from (select distinct tmp_b.FromLocation from tmp tmp_b where tmp_b.id=a.ID) t for xml path('') ) fromlocation
 ,(select tolocation+',' from (select distinct tmp_c.ToLocation from tmp tmp_c where tmp_c.id=a.ID) t for xml path('') ) tolocation
 ,remark
-,EditName+'-'+ isnull((select pass1.NAME from pass1 where id = EditName),'') editname
+,EditName+'-'+ isnull((select pass1.NAME from pass1 where id = a.EditName),'') editname
 ,EditDate from  tmp a
 group by EditName,ID,issuedate, Remark,EditDate
 order by EditName,ID"
