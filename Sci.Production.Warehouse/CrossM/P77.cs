@@ -191,7 +191,6 @@ namespace Sci.Production.Warehouse
             #endregion 欄位設定
         }
 
-        //Confirm
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -203,7 +202,6 @@ namespace Sci.Production.Warehouse
             DualResult result, result2;
             DataTable datacheck;
             string sqlupd2_B = "";
-            string sqlupd2_BI = "";
             string sqlupd2_FIO = "";
 
             #region 檢查庫存項lock
@@ -286,29 +284,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            stocktype = m.First().Field<string>("stocktype"),
                            qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
-            var bs1I = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
-                       group b by new
-                       {
-                           mdivisionid = b.Field<string>("mdivisionid"),
-                           poid = b.Field<string>("poid"),
-                           seq1 = b.Field<string>("seq1"),
-                           seq2 = b.Field<string>("seq2"),
-                           stocktype = b.Field<string>("stocktype")
-                       } into m
-                        select new Prgs_POSuppDetailData_B
-                       {
-                           mdivisionid = m.First().Field<string>("mdivisionid"),
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty"))
-                       }).ToList();
-
-            if (bs1.Count > 0)
-                sqlupd2_B = Prgs.UpdateMPoDetail(4, null, true);
-            if (bs1I.Count > 0)
-                sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1I, true);
+            sqlupd2_B = Prgs.UpdateMPoDetail(4, null, true);
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO_ISS(4, null, true);
             #endregion 更新庫存數量  ftyinventory
 
@@ -321,15 +297,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     if (bs1.Count > 0)
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B, out resulttb, "#TmpSource")))
-                        {
-                            _transactionscope.Dispose();
-                            ShowErr(result);
-                            return;
-                        }
-                    }
-                    if (bs1I.Count > 0)
-                    {
-                        if (!(result = MyUtility.Tool.ProcessWithObject(bs1I, "", sqlupd2_BI, out resulttb, "#TmpSource")))
                         {
                             _transactionscope.Dispose();
                             ShowErr(result);
@@ -373,7 +340,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             this.EnsureToolbarExt();
         }
 
-        //Unconfirm
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -387,7 +353,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             string sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
             string sqlupd2_B = "";
-            string sqlupd2_BI = "";
             string sqlupd2_FIO = "";
 
             #region 檢查庫存項lock
@@ -470,29 +435,9 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                            stocktype = m.First().Field<string>("stocktype"),
                            qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
-            var bs1I = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
-                        group b by new
-                        {
-                            mdivisionid = b.Field<string>("mdivisionid"),
-                            poid = b.Field<string>("poid"),
-                            seq1 = b.Field<string>("seq1"),
-                            seq2 = b.Field<string>("seq2"),
-                            stocktype = b.Field<string>("stocktype")
-                        } into m
-                        select new Prgs_POSuppDetailData_B
-                        {
-                            mdivisionid = m.First().Field<string>("mdivisionid"),
-                            poid = m.First().Field<string>("poid"),
-                            seq1 = m.First().Field<string>("seq1"),
-                            seq2 = m.First().Field<string>("seq2"),
-                            stocktype = m.First().Field<string>("stocktype"),
-                            qty = -m.Sum(w => w.Field<decimal>("qty"))
-                        }).ToList();
 
             if (bs1.Count > 0)
                 sqlupd2_B = Prgs.UpdateMPoDetail(4, null, false);
-            if (bs1I.Count > 0)
-                sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1I, false);
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO_ISS(4, null, false);
             #endregion 更新庫存數量  ftyinventory
 
@@ -505,15 +450,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     if (bs1.Count > 0)
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B, out resulttb, "#TmpSource")))
-                        {
-                            _transactionscope.Dispose();
-                            ShowErr(result);
-                            return;
-                        }
-                    }
-                    if (bs1I.Count > 0)
-                    {
-                        if (!(result = MyUtility.Tool.ProcessWithObject(bs1I, "", sqlupd2_BI, out resulttb, "#TmpSource")))
                         {
                             _transactionscope.Dispose();
                             ShowErr(result);
@@ -577,7 +513,7 @@ Where a.id = '{0}'", masterID);
             detailgrid.ValidateControl();
             //detailgridbs.EndEdit();
             ((DataTable)detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => r.Delete());
-            
+
         }
 
         //Import
