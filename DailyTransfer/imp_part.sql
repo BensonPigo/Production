@@ -17,18 +17,13 @@ select top 1 * from Trade_To_Pms.dbo.Part where type='P' and refno ='EM-DBXK5 #8
 	update set 
 t.Description= s.Description,
 t.Partno= s.Partno,
-t.MachineGroupID= s.MachineGroupID,
-t.MachineBrandID= s.MachineBrandID,
 t.UseUnit= s.UnitID,
 t.PoUnit= s.PoUnitID,
 t.Price= s.Price,
 t.PurchaseBatchQty= s.BatchQty,
 t.Junk= s.Junk,
-t.PurchaseFrom= 'T',
-t.LocalSuppID= s.SuppID,
 t.SuppID= s.SuppID,
 t.CurrencyID= s.CurrencyID,
-t.LocalCurrencyID= s.CurrencyID,
 t.Formula= s.Formula,
 t.Fix= s.Fix,
 t.AddName= s.AddName,
@@ -37,7 +32,8 @@ t.AddDate= s.AddDate
 --t.EditDate= s.EditDate
 
 	when not matched by target and s.type='P' then 
-		insert ( ID
+		insert ( 
+		ID
 ,Description
 ,Partno
 ,MachineGroupID
@@ -48,10 +44,8 @@ t.AddDate= s.AddDate
 ,PurchaseBatchQty
 ,Junk
 ,PurchaseFrom
-,LocalSuppID
 ,SuppID
 ,CurrencyID
-,LocalCurrencyID
 ,Formula
 ,Fix
 ,AddName
@@ -71,8 +65,6 @@ s.BatchQty,
 s.Junk,
 'T',
 s.SuppID,
-s.SuppID,
-s.CurrencyID,
 s.CurrencyID,
 s.Formula,
 s.Fix,
@@ -94,8 +86,7 @@ t.Description= s.Description,
 t.UnitID= s.UnitID,
 t.CurrencyID= s.CurrencyID,
 t.Price= s.Price,
-t.SuppID= s.SuppID,
-t.PurchaseFrom= 'T',
+--t.SuppID= s.SuppID, MMS可以編輯,所以不用update
 t.IsMachine= s.IsMachine,
 t.IsAsset= s.IsAsset,
 t.Remark= s.Remark,
@@ -166,8 +157,8 @@ s.EditDate
 			--t.ArriveDate= s.ArriveDate,
 			t.SuppID= s.SuppID,
 			t.CurrencyID= s.CurrencyID,
-			t.Price= s.Price,
-			t.Remark= s.Remark,
+			t.Price= s.Price, 
+			--t.Remark= s.Remark, --MMS可以編輯,所以不需update
 			--t.Status= s.Status,
 			--t.FAID= s.FAID,
 			--t.LocationM= s.LocationM,
@@ -178,7 +169,7 @@ s.EditDate
 			--t.MachineLendID= s.MachineLendID,
 			--t.LendDate= s.LendDate,
 			--t.LastEstReturnDate= s.LastEstReturnDate,
-			t.Junk= s.Junk,
+			--t.Junk= s.Junk,--MMS可以編輯,所以不需update
 			t.AddName= s.AddName,
 			t.AddDate= s.AddDate,
 			t.EditName= s.EditName,
@@ -280,9 +271,9 @@ s.EditDate
 	on t.id=s.id
 	when matched then
 			update set
-		  t.Name= 	      s.Name   
-		  ,t.Junk= 	      s.Junk   
-		  ,t.AddName= 	      s.AddName   
+		  --t.Name= 	      s.Name    MMS可以編輯,所以不用update
+		  --,t.Junk= 	      s.Junk    MMS可以編輯,所以不用update
+		  t.AddName= 	      s.AddName   
 		  ,t.AddDate= 	      s.AddDate   
 		  ,t.EditName= 	      s.EditName   
 		  ,t.EditDate= 	      s.EditDate   
@@ -352,7 +343,7 @@ s.EditDate
 
 	----------------整理所有工廠--------------------
 	declare @Sayfty table(id varchar(10)) --工廠代碼
-	insert @Sayfty select id from Production.dbo.Factory
+	insert @Sayfty select id from Machine.dbo.Factory
 	
 	-- if type<>'M'
 	UPDATE Machine.DBO.PartPO_Detail
