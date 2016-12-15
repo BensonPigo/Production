@@ -331,10 +331,10 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                     bindingSource1.Filter = "";
                     break;
                 case 1:
-                    bindingSource1.Filter = "stocktype='B'";
+                    bindingSource1.Filter = "stocktype='Bulk'";
                     break;
                 case 2:
-                    bindingSource1.Filter = "stocktype='I'";
+                    bindingSource1.Filter = "stocktype='Invertory'";
                     break;
             }
         }
@@ -346,18 +346,18 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             switch (comboBox1.SelectedIndex)
             {
                 case -1:
-                    tmpStocktype[0] = "B";
-                    tmpStocktype[1] = "I";
+                    tmpStocktype[0] = "Bulk";
+                    tmpStocktype[1] = "Invertory";
                     break;
                 case 0:
-                    tmpStocktype[0]="B";
-                    tmpStocktype[1]="I";
+                    tmpStocktype[0] = "Bulk";
+                    tmpStocktype[1] = "Invertory";
                     break;
                 case 1:
-                    tmpStocktype[0]="B";
+                    tmpStocktype[0] = "Bulk";
                     break;
                 case 2:
-                    tmpStocktype[0]="I";
+                    tmpStocktype[0] = "Invertory";
                     break;
             }
 
