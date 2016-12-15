@@ -43,20 +43,21 @@ declare @tLocalDebit table (id varchar(13),isinsert bit)
 	using (Select * from Trade_To_Pms.dbo.debit where id in (select id from @Tdebit where isinsert=1)) as s
 	on t.id = s.id
 	when not matched by target and s.IsSubcon = 1 then
-		insert(TaipeiDBC,id, FactoryID, TaipeiAMT, TaipeiCurrencyID, AddDate, AddName,[status],MDivisionID)
+		insert(TaipeiDBC,id, FactoryID, TaipeiAMT, TaipeiCurrencyID, AddDate, AddName,[status],MDivisionID,issuedate)
 		values( '1', Id, BrandID, Amount, CurrencyID, AddDate,'SCIMIS','New',
-		(SELECT  iif(MDivisionID is null,'',MDivisionID) FROM SCIFTY WHERE ID=S.BRANDID) )
+		(SELECT  iif(MDivisionID is null,'',MDivisionID) FROM SCIFTY WHERE ID=S.BRANDID),s.adddate )
 		output inserted.id,iif(deleted.id='',1,0) into @tLocalDebit;
 
 
 	Merge Production.dbo.LocalDebit_Detail as t
 	using( select a.*,b.adddate as add1 from Trade_To_Pms.dbo.debit_detail a
 	inner join Trade_To_Pms.dbo.debit b on a.id=b.id
-	 where a.id in (select id from @tLocalDebit where isinsert=1)) as s
+	 where a.id in (select id from  Production.dbo.LocalDebit where TaipeiDBC=1)) as s
 	on t.ukey=s.ukey
 	when not matched by target then
-		insert(	 id,   Orderid,   UnitID,   qty,   amount,  AddDate, AddName)
-		values(s.Id, s.orderid, s.UnitID, s.qty, s.Amount,s.add1, 'SCIMIS');
+		insert(	 id,   Orderid,   UnitID,   qty,   amount,  AddDate, AddName,taipeireason,description)
+		values(s.Id, s.orderid, s.UnitID, s.qty, s.Amount,s.add1, 'SCIMIS',s.reason,s.description
+);
 
 
 END
