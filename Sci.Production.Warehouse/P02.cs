@@ -55,10 +55,7 @@ iif(ed.Description = '',isnull(f.DescDetail,''),ed.Description) as Description,
 
 FabricType =iif(ed.potype='M',
 (case when ed.FabricType = 'M' then 'Machine' when ed.FabricType = 'P' then 'Part' when ed.FabricType = 'O' then 'Miscellaneous' else '' end),
-			 case when ed.FabricType = 'F' then 'Fabric'
-             when ed.FabricType = 'A' then 'Accessories'
-			 when ed.FabricType = 'O' then 'Other'
-			 else o.FactoryID end),
+			''),
 
 ed.UnitId,isnull(psd.ColorID,'') as ColorID,isnull(psd.SizeSpec,'') as SizeSpec,ed.Qty,ed.Foc,ed.BalanceQty,
 ed.NetKg,ed.WeightKg,iif(ed.IsFormA = 1,'Y','') as IsFormA,ed.FormXType,ed.FormXReceived,ed.FormXDraftCFM,ed.FormXINV,ed.ID,ed.Seq1,ed.Seq2,ed.Ukey,rtrim(ed.PoID)+(SUBSTRING(ed.Seq1,1,3)+'-'+ed.Seq2) as FindColumn
