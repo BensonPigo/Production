@@ -222,6 +222,7 @@ namespace Sci.Production.Warehouse
             DualResult result, result2;
             DataTable datacheck;
             string sqlupd2_A = "";
+            string sqlupd2_BI= "";
             string sqlupd2_FIO = "";
 
             #region 檢查負數庫存
@@ -284,8 +285,28 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                            qty = m.Sum(w => w.Field<decimal>("qty")),
                            location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
                        }).ToList();
-
+            var bs1I = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
+                        group b by new
+                        {
+                            mdivisionid = b.Field<string>("mdivisionid"),
+                            poid = b.Field<string>("poid"),
+                            seq1 = b.Field<string>("seq1"),
+                            seq2 = b.Field<string>("seq2"),
+                            stocktype = b.Field<string>("stocktype")
+                        } into m
+                        select new Prgs_POSuppDetailData_B
+                        {
+                            mdivisionid = m.First().Field<string>("mdivisionid"),
+                            poid = m.First().Field<string>("poid"),
+                            seq1 = m.First().Field<string>("seq1"),
+                            seq2 = m.First().Field<string>("seq2"),
+                            stocktype = m.First().Field<string>("stocktype"),
+                            qty = m.Sum(w => w.Field<decimal>("qty")),
+                            location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
+                        }).ToList();
             sqlupd2_A = Prgs.UpdateMPoDetail_A(2, bs1, true);
+            if (bs1I.Count > 0)
+                sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1I, true);
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO_ISS(2, null, true);
             #endregion 更新庫存數量 po_supp_detail & ftyinventory
             
@@ -296,6 +317,12 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 {
                     DataTable resulttb;
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_A, out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_BI, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
@@ -349,6 +376,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             string sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
             string sqlupd2_A = "";
+            string sqlupd2_BI = "";
             string sqlupd2_FIO = "";
 
             #region 檢查負數庫存
@@ -411,12 +439,31 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            qty = m.Sum(w => w.Field<decimal>("qty")),
                            location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
                        }).ToList();
-
+            var bs1I = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
+                       group b by new
+                       {
+                           mdivisionid = b.Field<string>("mdivisionid"),
+                           poid = b.Field<string>("poid"),
+                           seq1 = b.Field<string>("seq1"),
+                           seq2 = b.Field<string>("seq2"),
+                           stocktype = b.Field<string>("stocktype")
+                       } into m
+                        select new Prgs_POSuppDetailData_B
+                       {
+                           mdivisionid = m.First().Field<string>("mdivisionid"),
+                           poid = m.First().Field<string>("poid"),
+                           seq1 = m.First().Field<string>("seq1"),
+                           seq2 = m.First().Field<string>("seq2"),
+                           stocktype = m.First().Field<string>("stocktype"),
+                           qty = m.Sum(w => w.Field<decimal>("qty")),
+                           location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
+                       }).ToList();
             sqlupd2_A = Prgs.UpdateMPoDetail_A(2, bs1, false);
+            if (bs1I.Count > 0)
+                sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1I, false);
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO_ISS(2, null, false);
             #endregion 更新庫存數量 po_supp_detail & ftyinventory
-
-            
+                        
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
@@ -424,6 +471,12 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 {
                     DataTable resulttb;
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_A, out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_BI, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
