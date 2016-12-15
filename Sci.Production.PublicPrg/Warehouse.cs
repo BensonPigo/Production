@@ -824,7 +824,6 @@ when not matched then
 delete t from FtyInventory_Detail t
 where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
 ";
-                        //↑最後一段delete寫法千萬不能用merge作,即使只有一筆資料也要跑超久
                     }
                     else
                     {
