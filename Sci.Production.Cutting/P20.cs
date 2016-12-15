@@ -131,7 +131,7 @@ namespace Sci.Production.Cutting
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.FormattedValue = sele.GetSelectedString();
-                    seldr = (DataRow)sele.GetSelecteds();
+                    seldr = sele.GetSelecteds()[0];
                 }
                 else
                 {
@@ -209,8 +209,8 @@ namespace Sci.Production.Cutting
              .Text("Cutref", header: "Cut Ref#", width: Widths.AnsiChars(6), settings: cutref)
             .Text("Cuttingid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("OrderID", header: "Sub-SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("FabricCombo", header: "FabricCombo", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("PatternPanel", header: "PatternPanel", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("FabricCombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
+            .Text("PatternPanel", header: "Lectra code", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
