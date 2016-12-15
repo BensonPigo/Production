@@ -65,16 +65,18 @@ namespace Sci.Production.Subcon
             if (this.checkBox1.Checked)
             {
                 #region -- Summary Sql Command --
-                sqlCmd.Append(string.Format(@"Select a.FactoryID
+                sqlCmd.Append(string.Format(@"Select a.MDivisionID
+		                                            ,a.FactoryID
                                                     ,a.LocalSuppID
-                                                    ,b.Abb,a.ArtworkTypeID
+                                                    ,b.Abb
+		                                            ,a.ArtworkTypeID
                                                     ,a.CurrencyID
-                                                    ,a.Amount
-                                                    ,a.PayTermID 
-                                           from ArtworkAP a
-                                           left join LocalSupp b on a.LocalSuppID=b.ID
+                                                    ,sum(a.Amount + a.Vat) Amt
+                                                    ,a.PayTermID+'-' +(select Name from PayTerm where id = a.paytermid) payterm
+                                            from ArtworkAP a
+                                            left join LocalSupp b on a.LocalSuppID=b.ID
                                             where  a.issuedate between '{0}' and '{1}'
-                                                   and a.apvdate between '{2}' and '{3}'"
+                                                    and a.apvdate between '{2}' and '{3}'"
                                                   ,Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
                                                   ,Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")));
                 #endregion
@@ -82,20 +84,21 @@ namespace Sci.Production.Subcon
             else
             {
                 #region -- List Sql Command --
-                sqlCmd.Append(string.Format(@"Select a.FactoryID
+                sqlCmd.Append(string.Format(@"Select a.MDivisionID
+                                                    ,a.FactoryID
                                                     ,a.LocalSuppID
                                                     ,b.abb
                                                     ,a.id
                                                     ,a.IssueDate
                                                     ,a.ApvDate
                                                     ,a.CurrencyID
-                                                    ,a.Amount+a.Vat
+                                                    ,a.Amount+a.Vat apAmount
                                                     ,a.ArtworkTypeID
                                                     ,c.ArtworkPoID
                                                     ,c.OrderID
                                                     ,d.StyleID
                                                     ,dbo.getPass1(e.Handle) pohandle
-                                                    ,f.Amount
+                                                    ,f.Amount poAmount
                                                     ,e.IssueDate
                                                     ,a.InvNo
                                              from ArtworkAP a 
@@ -152,11 +155,12 @@ namespace Sci.Production.Subcon
 
             if (this.checkBox1.Checked)
             {
-                sqlCmd.Append(" "+@"order by a.ArtworkTypeID, a.currencyid, a.factoryid, a.LocalSuppID");
+                sqlCmd.Append(@" group by a.MDivisionID, a.FactoryID, a.LocalSuppID, b.Abb, a.ArtworkTypeID, a.CurrencyID, a.PayTermID
+                                 order by a.ArtworkTypeID, a.currencyid, a.factoryid, a.LocalSuppID");
             }
             else
             {
-                sqlCmd.Append(" "+@"order by a.Currencyid, a.LocalSuppId,a.Id");
+                sqlCmd.Append(@" order by a.Currencyid, a.LocalSuppId,a.Id");
 
             }
 
