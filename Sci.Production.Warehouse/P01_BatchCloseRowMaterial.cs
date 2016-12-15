@@ -86,10 +86,7 @@ namespace Sci.Production.Warehouse
                 strSQLCmd.Append(string.Format(@" and id between '{0}' and '{1}' ", sp1, sp2));
                 //strSQLCmd.Append(string.Format(@" and id between '{0}' and '{1}' ", sp1, sp2.PadLeft(13, 'Z')));
             }
-            if (!MyUtility.Check.Empty(category))
-            {
-                strSQLCmd.Append(string.Format(@" and category = '{0}' ", category));
-            }
+
             if (!MyUtility.Check.Empty(style))
             {
                 strSQLCmd.Append(string.Format(@" and styleid = '{0}' ", style));
@@ -101,6 +98,12 @@ namespace Sci.Production.Warehouse
             if (!MyUtility.Check.Empty(factory))
             {
                 strSQLCmd.Append(string.Format(@" and factoryid = '{0}' ", factory));
+            }
+
+            string categorySql = "";
+            if (!MyUtility.Check.Empty(category))
+            {
+                categorySql = (string.Format(@" and category = '{0}' ", category));
             }
 
             strSQLCmd.Append(string.Format(@"
@@ -123,8 +126,8 @@ namespace Sci.Production.Warehouse
                     where  a.MDivisionID = '{0}' and a.Finished=1 and a.WhseClose is null 
                     group by a.poid
                 ) m
-                cross apply (select * from dbo.orders a1 where a1.id=m.POID and MDivisionID = '{0}') x
-                order by m.POID", Sci.Env.User.Keyword
+                cross apply (select * from dbo.orders a1 where a1.id=m.POID and MDivisionID = '{0}' {1}) x
+                order by m.POID", Sci.Env.User.Keyword, categorySql
             ));
 
             MyUtility.Msg.WaitWindows("Data Loading....");
