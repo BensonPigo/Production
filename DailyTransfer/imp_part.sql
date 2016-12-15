@@ -476,6 +476,52 @@ where a.id in (select id from @T)) as s
       ,s.[EditDate]
 	  );
 
+	  -----------MachineGroup------------------------
+
+		Merge Machine.dbo.MachineGroup as t
+		using Trade_To_Pms.dbo.MachineGroup as s 
+		on t.id=s.id
+		when matched then
+				update set 
+				t.ID= s.ID,
+				t.Description= s.Description,
+				t.DescCH= s.DescriptionCH,
+				t.Substitute= s.Substitute,
+				t.Junk= s.Junk,
+				t.Picture1= s.Picture1,
+				t.Picture2= s.Picture2,				
+				t.AddName= s.AddName,
+				t.AddDate= s.AddDate,
+				t.EditName= s.EditName,
+				t.EditDate= s.EditDate
+		when not matched by target then
+				insert(ID
+				,Description
+				,DescCH
+				,Substitute
+				,Junk
+				,Picture1
+				,Picture2
+				,AddName
+				,AddDate
+				,EditName
+				,EditDate
+				)
+				values(s.ID,
+				s.Description,
+				s.DescriptionCH,
+				s.Substitute,
+				s.Junk,
+				s.Picture1,
+				s.Picture2,
+				s.AddName,
+				s.AddDate,
+				s.EditName,
+				s.EditDate
+				);
+		
+
+
 
 END
 
