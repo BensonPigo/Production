@@ -158,7 +158,7 @@ as
 
             if (!MyUtility.Check.Empty(artworktype))
             {
-                sqlCmd.Append(" and a.category = @artworktype");
+                //sqlCmd.Append(" and a.category = @artworktype");
                 sp_artworktype.Value = artworktype;
                 cmds.Add(sp_artworktype);
             }
