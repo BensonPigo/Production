@@ -239,13 +239,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(CurrentMaintain["Label"]), "Label & Hangtag", false, null);
             callNextForm.ShowDialog(this);
         }
-
-        //Quantity breakdown
-        private void button8_Click(object sender, EventArgs e)
-        {
-
-        }
-
+        
         //Shipping mark
         private void button9_Click(object sender, EventArgs e)
         {
@@ -465,6 +459,19 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
                 frm.ShowDialog(this);
             }
         }
- 
+
+        //Quantity breakdown
+        private void button8_Click(object sender, EventArgs e)
+        {
+            Sci.Production.PPIC.P01_ProductionOutput callNextForm = new Sci.Production.PPIC.P01_ProductionOutput(CurrentMaintain);
+            callNextForm.ShowDialog(this);
+        }
+
+        private void button23_Click(object sender, EventArgs e)
+        {
+            var dr = this.CurrentMaintain; if (null == dr) return;
+            var frm = new Sci.Production.Cutting.P01_EachConsumption(false, CurrentMaintain["id"].ToString(), null, null, false);
+            frm.ShowDialog(this);
+        }
     }
 }
