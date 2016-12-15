@@ -66,11 +66,11 @@ namespace Sci.Production.Cutting
                                                     ,b.Orderid [SP]
                                                     ,c.StyleID [Style]
                                                     ,b.Item [Item]
-                                                    ,isnull(b.PatternPanel,'')+''+convert(varchar,b.Cutno) [Body_Cut]
+                                                    ,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
 		                                            ,a.Parts [Parts]
                                                     ,b.Article + '\' + b.Colorid [Color]
                                                     ,a.SizeCode [Size]
-		                                            ,a.PatternDesc [Desc]
+		                                            ,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
                                                     ,Artwork.Artwork [Artwork]
                                                     ,a.Qty [Quantity]
                                                     ,a.BundleNo [Barcode]
@@ -80,7 +80,7 @@ namespace Sci.Production.Cutting
                                             outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
                                             outer apply(select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 							                                                                        from dbo.Bundle_Detail_Art e1
-							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart
+							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
 							                                                                        for xml path('')))as Artwork
                                             where a.ID= @ID and a.Patterncode != 'ALLPARTS'
 
@@ -93,11 +93,11 @@ namespace Sci.Production.Cutting
                                                     ,b.Orderid [SP]
                                                     ,c.StyleID [Style]
                                                     ,b.Item [Item]
-                                                    ,isnull(b.PatternPanel,'')+''+convert(varchar,b.Cutno) [Body_Cut]
+                                                    ,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
 		                                            ,d.Parts [Parts]
                                                     ,b.Article + '\' + b.Colorid [Color]
                                                     ,a.SizeCode [Size]
-		                                            ,d.PatternDesc [Desc]
+		                                            ,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
                                                     ,Artwork.Artwork [Artwork]
                                                     ,a.Qty [Quantity]
                                                     ,a.BundleNo [Barcode]
@@ -108,7 +108,7 @@ namespace Sci.Production.Cutting
                                             outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
                                             outer apply(select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 							                                                                        from dbo.Bundle_Detail_Art e1
-							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart
+							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
 							                                                                        for xml path('')))as Artwork
                                             where a.ID= @ID and a.Patterncode = 'ALLPARTS'
                                             order by a.BundleNo ");
@@ -124,11 +124,11 @@ namespace Sci.Production.Cutting
                                                     ,b.Orderid [SP]
                                                     ,c.StyleID [Style]
                                                     ,b.Item [Item]
-                                                    ,isnull(b.PatternPanel,'')+''+convert(varchar,b.Cutno) [Body_Cut]
+                                                    ,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
 		                                            ,a.Parts [Parts]
                                                     ,b.Article + '\' + b.Colorid [Color]
                                                     ,a.SizeCode [Size]
-		                                            ,a.PatternDesc [Desc]
+		                                            ,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
                                                     ,Artwork.Artwork [Artwork]
                                                     ,a.Qty [Quantity]
                                                     ,a.BundleNo [Barcode]
@@ -139,7 +139,7 @@ namespace Sci.Production.Cutting
                                             outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
                                             outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 							                                                                        from dbo.Bundle_Detail_Art e1
-							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart
+							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
 							                                                                        for xml path('')))as Artwork
                                             where a.ID= @ID and a.Patterncode != 'ALLPARTS'
 
@@ -152,11 +152,11 @@ namespace Sci.Production.Cutting
                                                     ,b.Orderid [SP]
                                                     ,c.StyleID [Style]
                                                     ,b.Item [Item]
-                                                    ,isnull(b.PatternPanel,'')+''+convert(varchar,b.Cutno) [Body_Cut]
+                                                    ,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
 		                                            ,a.Parts [Parts]
                                                     ,b.Article + '\' + b.Colorid [Color]
                                                     ,a.SizeCode [Size]
-		                                            ,a.PatternDesc [Desc]
+		                                            ,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
                                                     ,Artwork.Artwork [Artwork]
                                                     ,a.Qty [Quantity]
                                                     ,a.BundleNo [Barcode]
@@ -167,7 +167,7 @@ namespace Sci.Production.Cutting
                                             outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
                                             outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 							                                                                        from dbo.Bundle_Detail_Art e1
-							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart
+							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
 							                                                                        for xml path('')))as Artwork
                                             where a.ID= @ID and a.Patterncode = 'ALLPARTS'
                                             order by a.BundleNo ");
@@ -246,7 +246,7 @@ namespace Sci.Production.Cutting
                                             outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
                                             outer apply(select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 							                                                                        from dbo.Bundle_Detail_Art e1
-							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart
+							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
 							                                                                        for xml path('')))as Artwork
                                             where a.ID= @ID and a.Patterncode != 'ALLPARTS'
 
@@ -276,7 +276,7 @@ namespace Sci.Production.Cutting
                                             outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
                                             outer apply(select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 							                                                                        from dbo.Bundle_Detail_Art e1
-							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart
+							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
 							                                                                        for xml path('')))as Artwork
                                             where a.ID= @ID and a.Patterncode = 'ALLPARTS'
                                             order by a.BundleNo ");
@@ -308,7 +308,7 @@ namespace Sci.Production.Cutting
                                             outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
                                             outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 							                                                                        from dbo.Bundle_Detail_Art e1
-							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart
+							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
 							                                                                        for xml path('')))as Artwork
                                             where a.ID= @ID and a.Patterncode != 'ALLPARTS'
 
@@ -337,7 +337,7 @@ namespace Sci.Production.Cutting
                                             outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
                                             outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 							                                                                        from dbo.Bundle_Detail_Art e1
-							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart
+							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
 							                                                                        for xml path('')))as Artwork
                                             where a.ID= @ID and a.Patterncode = 'ALLPARTS'
                                             order by a.BundleNo ");

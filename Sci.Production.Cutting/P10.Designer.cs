@@ -451,7 +451,7 @@
             this.displayBox_ID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox_ID.Location = new System.Drawing.Point(96, 13);
             this.displayBox_ID.Name = "displayBox_ID";
-            this.displayBox_ID.Size = new System.Drawing.Size(100, 23);
+            this.displayBox_ID.Size = new System.Drawing.Size(120, 23);
             this.displayBox_ID.TabIndex = 23;
             // 
             // displayBox_poid
