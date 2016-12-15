@@ -16,7 +16,7 @@ BEGIN
 			DECLARE @id varchar(13), --暫存Orders Id
 					@left10id varchar(10),  --暫存Orders.Id的前10碼
 					@tmpstring varchar(13)  --暫存要寫入的資料
-			SET @string = @cuttingsp;
+			SET @string = RTrim(@cuttingsp);
 			SET @left10id = LEFT(@cuttingsp,10);
 			--開始run cursor
 			OPEN cursor_Orders
