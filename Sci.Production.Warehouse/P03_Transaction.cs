@@ -199,8 +199,16 @@ namespace Sci.Production.Warehouse
             select case type when 'A' then a.eta else a.WhseArrival end as issuedate, a.id
             ,case type when 'A' then 'P07. Material Receiving' 
                         when 'B' then 'P08. Warehouse Shopfloor Receiving' end name
-            , sum(b.StockQty) arrived,0 as ouqty,0 as adjust,'' remark ,'' location,AddDate
+            , sum(b.StockQty) arrived,0 as ouqty,0 as adjust,'' remark ,X.Location,AddDate
             from Receiving a, Receiving_Detail b 
+			outer apply(
+				select Location = (
+					select distinct concat(c.Location,'')
+					from Receiving_Detail c
+					where c.Id = b.Id and c.Seq1 = b.Seq1 and c.Seq2 = b.Seq2
+					for xml path('')
+				)
+			)X
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
@@ -211,7 +219,7 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,a.eta,AddDate
+            selectCommand1.Append(string.Format(@"group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,a.eta,AddDate,X.Location
 
             union all
             select issuedate
@@ -233,8 +241,16 @@ namespace Sci.Production.Warehouse
             union all
 	        select issuedate, a.id
 	        ,'P23. Transfer Inventory to Bulk' as name
-	        , 0 as inqty, sum(Qty) released,0 as adjust , '' remark ,'' location,AddDate
+	        , 0 as inqty, sum(Qty) released,0 as adjust , '' remark ,X.Location,AddDate
             from SubTransfer a, SubTransfer_Detail b 
+			outer apply(
+				select Location = (
+					select distinct concat(c.toLocation,'')
+					from SubTransfer_Detail c
+					where c.Id = b.Id and c.toSeq1 = b.toSeq1 and c.toSeq2 = b.toSeq2
+					for xml path('')
+				)
+			)X
             where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  
             and a.id = b.id and type = 'B' and b.frommdivisionid='{3}'"
                 , dr["id"].ToString()
@@ -246,7 +262,7 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and fromroll='{0}' and fromdyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type ,AddDate                                                                              
+            selectCommand1.Append(string.Format(@"group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type ,AddDate,X.Location                                                                               
             union all
 	            select issuedate, a.id
             ,'P23. Transfer Inventory to Bulk' name
@@ -319,7 +335,17 @@ namespace Sci.Production.Warehouse
             union all
 	            select issuedate, a.id
 	            ,'P36. Transfer Scrap to Inventory' as name
-	            , sum(qty) as inqty, 0 as released,0 as adjust ,isnull(a.remark,'') remark ,'' location,AddDate
+	            , sum(qty) as inqty, 0 as released,0 as adjust ,isnull(a.remark,'') remark 
+				,(Select cast(tmp.ToLocation as nvarchar)+',' 
+                                    from (select b1.ToLocation 
+                                                from SubTransfer a1 
+                                                inner join SubTransfer_Detail b1 on a1.id = b1.id 
+                                                where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
+                                                    and b1.ToPoid = b.ToPoid
+                                                    and b1.ToSeq1 = b.ToSeq1
+                                                    and b1.ToSeq2 = b.ToSeq2 group by b1.ToLocation) tmp 
+                                    for XML PATH('')) as ToLocation
+									,AddDate
             from SubTransfer a, SubTransfer_Detail b 
             where type='C' and Status='Confirmed' and topoid='{0}' and toseq1 = '{1}' and toSeq2 = '{2}'  
             and a.id = b.id and b.tomdivisionid='{3}'"
@@ -341,8 +367,16 @@ namespace Sci.Production.Warehouse
 	            ,case type when 'B' then 'P73. Transfer Inventory to Bulk cross M (Receive)' 
 			            when 'D' then 'P76. Material Borrow cross M (Receive)' 
 			            when 'G' then 'P78. Material Return Back cross M (Receive)'  end name
-	            ,sum(Qty) as inqty, 0 released,0 as adjust, remark,'' location,AddDate
+	            ,sum(Qty) as inqty, 0 released,0 as adjust, remark,X.location,AddDate
             from RequestCrossM a, RequestCrossM_Receive b 
+			outer apply(
+				select Location = (
+					select distinct concat(c.Location,',')
+					from RequestCrossM_Receive c
+					where c.Id = b.Id and c.Seq1 = b.Seq1 and c.Seq2 = b.Seq2
+					for xml path('')
+				)
+			)X
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
@@ -353,14 +387,24 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type,a.remark,AddDate
+            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type,a.remark,AddDate,X.location
 
             union all
             select issuedate, a.id
             ,case type when 'D' then 'P25. Transfer Bulk to Scrap' 
             when 'E' then 'P24. Transfer Inventory to Scrap'
             end as name
-            , 0 as inqty, sum(Qty) released,0 as adjust ,isnull(a.remark,'') remark ,'' location,AddDate
+            , 0 as inqty, sum(Qty) released,0 as adjust ,isnull(a.remark,'') remark 
+			,(Select cast(tmp.ToLocation as nvarchar)+',' 
+                                    from (select b1.ToLocation 
+                                                from SubTransfer a1 
+                                                inner join SubTransfer_Detail b1 on a1.id = b1.id 
+                                                where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
+                                                    and b1.ToPoid = b.ToPoid
+                                                    and b1.ToSeq1 = b.ToSeq1
+                                                    and b1.ToSeq2 = b.ToSeq2 group by b1.ToLocation) tmp 
+                                    for XML PATH('')) as ToLocation
+									,AddDate
             from SubTransfer a, SubTransfer_Detail b 
             where (type='D' or type='E') and Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}' 
             and FromSeq2 = '{2}'  and a.id = b.id and b.frommdivisionid='{3}'"
@@ -375,7 +419,7 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and FromRoll='{0}' and FromDyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(@"group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,a.remark,AddDate
+            selectCommand1.Append(@"group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,a.remark,AddDate, ToPoid, ToSeq1,ToSeq2
                 ) tmp
                 group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name, AddDate
                 order by IssueDate,tmp.addDate,name");
