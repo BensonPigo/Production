@@ -14,15 +14,17 @@ namespace Sci.Production.Subcon
     public partial class R42 : Sci.Win.Tems.PrintForm
     {
         DataTable printData;
-        string SubProcess, SP, Factory;
-        DateTime? dateCutRef1, dateCutRef2, dateBundle1, dateBundle2, dateBundleTransDate1, dateBundleTransDate2;
+        DataTable printData2;
+
+        string SubProcess, SP, Factory,CutRef1, CutRef2;
+        DateTime?  dateBundle1, dateBundle2, dateBundleTransDate1, dateBundleTransDate2;
         public R42(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
             comboload();
         }
-
+        string date = "";
         private void comboload()
         {
             DataTable dtSubprocessID;
@@ -38,8 +40,8 @@ namespace Sci.Production.Subcon
             DataTable dtfactory;
             if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory", out dtfactory))
             {
-                this.comboFactory.DataSource = dtfactory;
-                this.comboFactory.DisplayMember = "ID";
+                this.comboM.DataSource = dtfactory;
+                this.comboM.DisplayMember = "ID";
             }
             else { ShowErr(Result); }
         }
@@ -56,9 +58,9 @@ namespace Sci.Production.Subcon
             }
             SubProcess = comboSubProcess.Text;
             SP = textSP.Text;
-            Factory = comboFactory.Text;
-            dateCutRef1 = dateCutRef.Value1;
-            dateCutRef2 = dateCutRef.Value2;
+            Factory = comboM.Text;
+            CutRef1 = textCutRef_Start.Text;
+            CutRef2 = textCutRef_End.Text;
             dateBundle1 = dateBundle.Value1;
             dateBundle2 = dateBundle.Value2;
             dateBundleTransDate1 = dateBundleTransDate.Value1;
@@ -96,7 +98,8 @@ namespace Sci.Production.Subcon
 			              when bt.Type = '2' then 'Out'
 			              when bt.Type = '3' then 'In/Out' end,
             [TagId] = bt.TagId,
-            [Transfer Date] = bt.TransferDate
+            [TransferDate] = bt.TransferDate
+            --CAST ( bt.TransferDate AS DATE) AS TransferDate
 
             from Bundle b
             inner join Bundle_Detail bd on bd.Id = b.Id
@@ -118,10 +121,9 @@ namespace Sci.Production.Subcon
             {
                 sqlCmd.Append(string.Format(@" and (bt.SubprocessId = '{0}' or '{0}' = 'ALL') ", SubProcess));
             }
-            if (!MyUtility.Check.Empty(dateCutRef1))
+            if (!MyUtility.Check.Empty(CutRef1)&&(!MyUtility.Check.Empty(CutRef1))) 
             {
-                sqlCmd.Append(string.Format(@" and b.CutRef between '{0}' and '{1}'",
-                    Convert.ToDateTime(dateCutRef1).ToString("d"), Convert.ToDateTime(dateCutRef2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and b.CutRef between '{0}' and '{1}'", CutRef1, CutRef2));
             }
             if (!MyUtility.Check.Empty(SP))
             {
@@ -146,6 +148,17 @@ namespace Sci.Production.Subcon
             sqlCmd.Append(@"order by [Bundle#],[Cut Ref#],[SP#],[Style],[Season],[Brand],[Article],[Color],[Line],[Cell],[Pattern],[PtnDesc],[Group],[Size]");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            
+            printData2 = printData.Clone();
+            printData2.Columns["TransferDate"].DataType = typeof(string);
+            
+            foreach (DataRow rd in printData.Rows)
+            {
+                object[] itemarr = rd.ItemArray;
+                itemarr[itemarr.Length - 1] = (rd["TransferDate"].ToString() == "") ? "" : Convert.ToDateTime(rd["TransferDate"]).ToShortDateString();
+
+                printData2.LoadDataRow(itemarr, true);
+            }
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -153,6 +166,8 @@ namespace Sci.Production.Subcon
             }
             return Result.True;
         }
+
+
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
@@ -162,12 +177,16 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
+         
             //預先開啟excel app
             Microsoft.Office.Interop.Excel.Application objApp
                 = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R42_Bundle Transaction detail (RFID).xltx");
             // 將datatable copy to excel
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", 1, true, null, objApp);
+         
+            
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            MyUtility.Excel.CopyToXls(printData2, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", 1, true, null, objApp);
+
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;
