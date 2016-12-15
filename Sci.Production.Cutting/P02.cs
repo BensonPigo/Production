@@ -1500,32 +1500,60 @@ namespace Sci.Production.Cutting
             else maxkey = Convert.ToInt32(comput);
             maxkey = maxkey + 1;
 
-
-            newRow["Newkey"] = maxkey;
-            newRow["CutRef"] = "";
-            newRow["Cutno"] = 0;
-            newRow["Markername"] = OldRow["Markername"];
-            newRow["FabricCombo"] = OldRow["FabricCombo"];
-            newRow["LectraCode"] = OldRow["LectraCode"];
-            newRow["Article"] = OldRow["Article"];
-            newRow["Colorid"] = OldRow["Colorid"];
-            newRow["SizeCode"] = OldRow["SizeCode"];
-            newRow["Layer"] = OldRow["Layer"];
-            newRow["CutQty"] = OldRow["CutQty"];
-            newRow["orderid"] = OldRow["orderid"];
+            // 除Cutref, Cutno, Addname, AddDate, EditName, EditDate以外的所有欄位
+            newRow["ID"] = OldRow["ID"];
+            newRow["FactoryID"] = OldRow["FactoryID"];
+            newRow["MDivisionId"] = OldRow["MDivisionId"];
             newRow["SEQ1"] = OldRow["SEQ1"];
             newRow["SEQ2"] = OldRow["SEQ2"];
-            newRow["Fabeta"] = OldRow["Fabeta"];
-            newRow["estcutdate"] = OldRow["estcutdate"];
-            newRow["sewinline"] = OldRow["sewinline"];
-            newRow["Cutcellid"] = OldRow["Cutcellid"];
+            //CutRef
+            newRow["OrderID"] = OldRow["OrderID"];
             newRow["Cutplanid"] = OldRow["Cutplanid"];
+            newRow["Cutno"] = OldRow["Cutno"];
+            newRow["Layer"] = OldRow["Layer"];
+            newRow["Colorid"] = OldRow["Colorid"];
+            newRow["Markername"] = OldRow["Markername"];
+            newRow["EstCutDate"] = OldRow["EstCutDate"];
+            newRow["Cutcellid"] = OldRow["Cutcellid"];
+            newRow["MarkerLength"] = OldRow["MarkerLength"];
+            newRow["ConsPC"] = OldRow["ConsPC"];
+            newRow["Cons"] = OldRow["Cons"];
+            newRow["Refno"] = OldRow["Refno"];
+            newRow["SCIRefno"] = OldRow["SCIRefno"];
+            newRow["MarkerNo"] = OldRow["MarkerNo"];
+            newRow["MarkerVersion"] = OldRow["MarkerVersion"];
+            newRow["UKey"] = 0;
+            newRow["Type"] = OldRow["Type"];
+            newRow["Type"] = OldRow["Type"];
+            //Addname
+            //AddDate
+            //EditName
+            //EditDate
+            newRow["FabricCombo"] = OldRow["FabricCombo"];
+            newRow["MarkerDownLoadID"] = OldRow["MarkerDownLoadID"];
+            newRow["FabricCode"] = OldRow["FabricCode"];
+            newRow["LectraCode"] = OldRow["LectraCode"];
+            newRow["Order_EachconsUKey"] = OldRow["Order_EachconsUKey"];
+            newRow["Article"] = OldRow["Article"];
+            newRow["SizeCode"] = OldRow["SizeCode"];
+            newRow["CutQty"] = OldRow["CutQty"];
+            newRow["LectraCode1"] = OldRow["LectraCode1"];
+            newRow["PatternPanel"] = OldRow["PatternPanel"];
+            newRow["Fabeta"] = OldRow["Fabeta"];
+            newRow["sewinline"] = OldRow["sewinline"];
             newRow["actcutdate"] = OldRow["actcutdate"];
-            newRow["multisize"] = OldRow["multisize"];  
-            newRow["Order_SizeCode_Seq"] = OldRow["Order_SizeCode_Seq"];  
-            newRow["SORT_NUM"] = OldRow["SORT_NUM"];  
             newRow["Adduser"] = loginID;
-            newRow["Ukey"] = 0;
+            newRow["edituser"] = OldRow["edituser"];
+            newRow["totallayer"] = OldRow["totallayer"];
+            newRow["totallayer"] = OldRow["totallayer"];
+            newRow["multisize"] = OldRow["multisize"];
+            newRow["Order_SizeCode_Seq"] = OldRow["Order_SizeCode_Seq"];
+            newRow["SORT_NUM"] = OldRow["SORT_NUM"];
+            newRow["MtlTypeID"] = OldRow["MtlTypeID"];
+            newRow["DescDetail"] = OldRow["DescDetail"];
+            newRow["Newkey"] = maxkey;
+            newRow["MarkerLengthY"] = OldRow["MarkerLengthY"];
+            newRow["MarkerLengthE"] = OldRow["MarkerLengthE"];            
 
             DataTable detailtmp = (DataTable)detailgridbs.DataSource;
             int TEMP = ((DataTable)detailgridbs.DataSource).Rows.Count;
