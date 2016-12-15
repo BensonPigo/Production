@@ -173,7 +173,7 @@ namespace Sci.Production.Warehouse
 	,MIN(a.SewInLine) as FstSewinline
     ,b.Special AS cutType
 	,round(cast(b.Qty as float)
-        * (iif(b.POUnit=b.StockUnit,1,(select unit_rate.rate from unit_rate where Unit_Rate.UnitFrom = b.POUnit and Unit_Rate.UnitTo = b.StockUnit)))
+        * (iif(b.POUnit=b.StockUnit,1,(select unit_rate.rateValue from unit_rate where Unit_Rate.UnitFrom = b.POUnit and Unit_Rate.UnitTo = b.StockUnit)))
 		,(select unit.Round from unit where id = b.StockUnit)) as qty
 	,b.stockunit
 	,b.SizeSpec cutwidth,B.Refno,B.SEQ1,B.SEQ2
