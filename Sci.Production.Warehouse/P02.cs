@@ -42,17 +42,27 @@ on pd.id = ed.PoID and pd.seq1 = ed.seq1 and pd.seq2 = ed.Seq2 where ed.ID='{0}'
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"
-select (case when ed.FabricType = 'M' then (select mpo.FactoryID from [Machine].dbo.MachinePO mpo, [Machine].dbo.MachinePO_Detail mpod where mpo.ID = mpod.ID and mpod.TPEPOID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2)
+select FactoryID=iif(ed.potype='M', (case when ed.FabricType = 'M' then (select mpo.FactoryID from [Machine].dbo.MachinePO mpo, [Machine].dbo.MachinePO_Detail mpod where mpo.ID = mpod.ID and mpod.ID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2)
              when ed.FabricType = 'P' then (select ppo.FactoryID from [Machine].dbo.PartPO ppo, [Machine].dbo.PartPO_Detail ppod where ppo.ID = ppod.ID and ppod.TPEPOID = ed.PoID and ppod.Seq1 = ed.Seq1 and ppod.seq2 = ed.Seq2) 
-			 when ed.FabricType = 'O' then (select mpo.Factoryid from [Machine].dbo.MiscPO mpo, [Machine].dbo.MiscPO_Detail mpod where mpo.ID = mpod.ID and mpod.TPEPOID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2) else o.FactoryID end) as FactoryID,
+			 when ed.FabricType = 'O' then (select mpo.Factoryid from [Machine].dbo.MiscPO mpo, [Machine].dbo.MiscPO_Detail mpod where mpo.ID = mpod.ID and mpod.TPEPOID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2) 
+			 else o.FactoryID end),o.FactoryID
+			 ),
 o.ProjectID,ed.PoID,(select min(SciDelivery) from Orders where POID = ed.PoID and (Category = 'B' or Category = o.Category)) as SCIDlv,
 (case when o.Category = 'B' then 'Bulk' when o.Category = 'S' then 'Sample' when o.Category = 'M' then 'Material' else '' end) as Category,
 iif(o.PFOrder = 1,dateadd(day,-10,o.SciDelivery),iif((select CountryID from Factory where ID = o.factoryID)='PH',iif((select MrTeam from Brand where ID = o.BrandID) = '01',dateadd(day,-15,o.SciDelivery),dateadd(day,-24,o.SciDelivery)),dateadd(day,-34,o.SciDelivery))) as InspDate,
 (SUBSTRING(ed.Seq1,1,3)+'-'+ed.Seq2) as Seq,(ed.SuppID+'-'+s.AbbEN) as Supp,
 iif(ed.Description = '',isnull(f.DescDetail,''),ed.Description) as Description,
-(case when ed.FabricType = 'M' then 'Machine' when ed.FabricType = 'P' then 'Part' when ed.FabricType = 'O' then 'Miscellaneous' else '' end) as FabricType,
+
+FabricType =iif(ed.potype='M',
+(case when ed.FabricType = 'M' then 'Machine' when ed.FabricType = 'P' then 'Part' when ed.FabricType = 'O' then 'Miscellaneous' else '' end),
+			 case when ed.FabricType = 'F' then 'Fabric'
+             when ed.FabricType = 'A' then 'Accessories'
+			 when ed.FabricType = 'O' then 'Other'
+			 else o.FactoryID end),
+
 ed.UnitId,isnull(psd.ColorID,'') as ColorID,isnull(psd.SizeSpec,'') as SizeSpec,ed.Qty,ed.Foc,ed.BalanceQty,
 ed.NetKg,ed.WeightKg,iif(ed.IsFormA = 1,'Y','') as IsFormA,ed.FormXType,ed.FormXReceived,ed.FormXDraftCFM,ed.FormXINV,ed.ID,ed.Seq1,ed.Seq2,ed.Ukey,rtrim(ed.PoID)+(SUBSTRING(ed.Seq1,1,3)+'-'+ed.Seq2) as FindColumn
+
 from Export_Detail ed
 left join Orders o on o.ID = ed.PoID
 left join Supp s on s.id = ed.SuppID 
@@ -106,7 +116,7 @@ where ed.ID = '{0}'", masterID);
                 .Numeric("Foc", header: "F.O.C.", decimal_places: 2)
                 .Numeric("BalanceQty", header: "Balance", decimal_places: 2)
                 .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2)
-                .Numeric("WeightKg", header: "N.W.(kg)", decimal_places: 2)
+                .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2)
                 .Text("IsFormA", header: "FormX Needed", width: Widths.AnsiChars(1))
                 .Text("FormXType", header: "FormX Type", width: Widths.AnsiChars(8))
                 .Date("FormXReceived", header: "FoemX Rcvd")
