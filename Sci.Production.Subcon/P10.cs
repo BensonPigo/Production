@@ -34,7 +34,7 @@ namespace Sci.Production.Subcon
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
-
+           
             this.txtsubcon1.TextBox1.Validated += (s, e) =>
             {
                 if (this.EditMode && this.txtsubcon1.TextBox1.Text != this.txtsubcon1.TextBox1.OldValue)
@@ -44,7 +44,7 @@ namespace Sci.Production.Subcon
                     ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
                 }
             };
-
+            
         }
 
         private void txtartworktype_fty1_Validated(object sender, EventArgs e)
@@ -97,28 +97,29 @@ namespace Sci.Production.Subcon
                 this.RenewData();
                 return false;
             }
-
+            
             return base.ClickEditBefore();
         }
 
-        //// edit後，更新detail的farm in跟accu. ap qty
-        //protected override void ClickEditAfter()
-        //{
-        //    base.ClickEditAfter();
-        //    foreach (DataRow dr in DetailDatas)
-        //    {
-        //        var v = MyUtility.GetValue.Lookup(string.Format("select farmin from artworkpo_detail where ukey = '{0}'", dr["artworkpo_detailukey"].ToString()));
-        //        decimal accQty; 
-        //        Decimal.TryParse(v,out accQty);
-        //        dr["Farmin"] = accQty;
-        //        var v2=MyUtility.GetValue.Lookup(string.Format("select apqty from artworkpo_detail where ukey = '{0}'", dr["artworkpo_detailukey"].ToString()));
-        //        decimal accQty2;
-        //        Decimal.TryParse(v2,out accQty2);
-        //        dr["accumulatedqty"] = accQty2;
-        //        //無此資料行且結果必=0
-        //        //dr["balance"] = (decimal)dr["Farmin"] - (decimal)dr["accumulatedqty"];
-        //    }
-        //}
+        // edit後，更新detail的farm in跟accu. ap qty
+        protected override void ClickEditAfter()
+        {
+           
+            base.ClickEditAfter();
+            //foreach (DataRow dr in DetailDatas)
+            //{
+            //    var v = MyUtility.GetValue.Lookup(string.Format("select farmin from artworkpo_detail where ukey = '{0}'", dr["artworkpo_detailukey"].ToString()));
+            //    decimal accQty;
+            //    Decimal.TryParse(v, out accQty);
+            //    dr["Farmin"] = accQty;
+            //    var v2 = MyUtility.GetValue.Lookup(string.Format("select apqty from artworkpo_detail where ukey = '{0}'", dr["artworkpo_detailukey"].ToString()));
+            //    decimal accQty2;
+            //    Decimal.TryParse(v2, out accQty2);
+            //    dr["accumulatedqty"] = accQty2;
+            //    //無此資料行且結果必=0
+            //    //dr["balance"] = (decimal)dr["Farmin"] - (decimal)dr["accumulatedqty"];
+            //}
+        }
 
         // detail 新增時設定預設值
         protected override void OnDetailGridInsert(int index = -1)
@@ -169,6 +170,13 @@ namespace Sci.Production.Subcon
             {
                 MyUtility.Msg.WarningBox("< Factory Id >  can't be empty!", "Warning");
                 txtmfactory1.Focus();
+                return false;
+            }
+
+            if (CurrentMaintain["PayTermid"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["PayTermid"].ToString()))
+            {
+                MyUtility.Msg.WarningBox("< Terms >  can't be empty!", "Warning");
+                txtpayterm_fty1.Focus();
                 return false;
             }
             #endregion
@@ -236,6 +244,25 @@ namespace Sci.Production.Subcon
  	         return base.OnRenewDataDetailPost(e);
         }
 
+        void addBalance()
+        {
+            DataTable Details = (DataTable)this.detailgridbs.DataSource;
+            if (Details.Columns.Contains("balance")) return;
+
+            if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
+            {
+                (Details).Columns.Add("poqty", typeof(decimal));
+                (Details).Columns.Add("balance", typeof(decimal));
+                decimal poqty;
+                foreach (DataRow dr in Details.Rows)
+                {
+                    poqty = 0m;
+                    decimal.TryParse(MyUtility.GetValue.Lookup(string.Format("select poqty from artworkpo_detail where ukey = {0}", (long)dr["artworkpo_detailukey"])), out poqty);
+                    dr["poqty"] = poqty;
+                    dr["balance"] = (decimal)dr["farmin"] - (decimal)dr["accumulatedqty"];
+                }
+            }
+        }
         //refresh
         protected override void OnDetailEntered()
         {
@@ -255,6 +282,7 @@ namespace Sci.Production.Subcon
             txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
             txtpayterm_fty1.Enabled =  !this.EditMode || IsDetailInserting;
             txtmfactory1.Enabled = !this.EditMode || IsDetailInserting;
+            dateBox2.ReadOnly = true;
             #region Status Label
             label25.Text = CurrentMaintain["status"].ToString();
             #endregion
@@ -273,10 +301,12 @@ namespace Sci.Production.Subcon
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {
+               
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    if ((decimal)e.FormattedValue > (decimal)CurrentDetailData["balance"] ||
-                        (decimal)e.FormattedValue + (decimal)CurrentDetailData["accumulatedqty"] > (decimal)CurrentDetailData["Poqty"] )
+                    addBalance();
+                    if ((decimal)e.FormattedValue > (decimal)CurrentDetailData["balance"]||
+                        (decimal)e.FormattedValue + (decimal)CurrentDetailData["accumulatedqty"] > (decimal)CurrentDetailData["PoQty"])
                     {
                         MyUtility.Msg.WarningBox("can't over balance and can't over poqty", "Warning");
                         e.Cancel = true;
@@ -539,7 +569,6 @@ namespace Sci.Production.Subcon
             this.RenewData();
         }
 
-        
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -561,9 +590,7 @@ namespace Sci.Production.Subcon
             string Issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             string Invoice = row["invno"].ToString();
             string Remarks = row["Remark"].ToString();
-            string Total = row["Amount"].ToString();
-            string VAT = row["VatRate"] + row["Vat"].ToString();
-            string GrandTotal = row["Amount"] + row["Vat"].ToString();
+          
 
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
@@ -574,9 +601,7 @@ namespace Sci.Production.Subcon
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remarks", Remarks));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issuedate", Issuedate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total", Total));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VAT", VAT));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("GrandTotal", GrandTotal));
+            
 
             #endregion
             #region -- 撈表身資料 --
@@ -587,7 +612,7 @@ namespace Sci.Production.Subcon
                    F.nameEn,F.AddressEN,F.Tel,ap.LocalSuppID+'-'+L.name AS Supplier,L.Address,L.tel,ap.ID,
 	               A.ArtworkPoID,A.OrderID,A.ArtworkId,A.PatternDesc,A.Price,A.ApQty,A.Amount,ap.PayTermID+'-'+P.name as Terms,
 	               LOB.AccountNo,LOB.AccountName,LOB.BankName,LOB.CountryID+'/'+LOB.City as Country,LOB.SWIFTCode,
-	               ap.Handle+''+pas.name as PreparedBy
+	               ap.Handle+CHAR(13)+CHAR(10)+pas.name as PreparedBy,ap.Amount as Total,ap.VatRate+ap.Vat as Vat,ap.Amount+ap.Vat as GrandTotal,ap.currencyid as Currency
                    from DBO.artworkap ap
 	               LEFT JOIN dbo.factory F
 	               ON  F.ID = ap.factoryid
@@ -618,6 +643,10 @@ namespace Sci.Production.Subcon
             string Country = dtDetail.Rows[0]["Country"].ToString();
             string SWIFCode = dtDetail.Rows[0]["SWIFTCode"].ToString();
             string PreparedBy = dtDetail.Rows[0]["PreparedBy"].ToString();
+            string Total = dtDetail.Rows[0]["Total"].ToString();
+            string VAT = dtDetail.Rows[0]["Vat"].ToString();
+            string GrandTotal = dtDetail.Rows[0]["GrandTotal"].ToString();
+            string Currency = dtDetail.Rows[0]["Currency"].ToString();
            
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL", TEL));
@@ -633,6 +662,10 @@ namespace Sci.Production.Subcon
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Country", Country));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SWIFCode", SWIFCode));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("PreparedBy", PreparedBy));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total", Total));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VAT", VAT));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("GrandTotal", GrandTotal));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Currency", Currency));
 
             if (!AddressEN.EndsWith(Environment.NewLine))
             {

@@ -348,9 +348,9 @@
             // button4
             // 
             this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button4.Location = new System.Drawing.Point(923, 45);
+            this.button4.Location = new System.Drawing.Point(899, 45);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(127, 30);
+            this.button4.Size = new System.Drawing.Size(151, 30);
             this.button4.TabIndex = 19;
             this.button4.Text = "Import From PO#";
             this.button4.UseVisualStyleBackColor = true;
@@ -405,7 +405,7 @@
             0,
             0,
             0});
-            this.numericBox1.MaxLength = 3;
+            this.numericBox1.MaxLength = 5;
             this.numericBox1.Minimum = new decimal(new int[] {
             0,
             0,
@@ -429,7 +429,7 @@
             // 
             this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "vat", true));
-            this.numericBox2.DecimalPlaces = 4;
+            this.numericBox2.DecimalPlaces = 2;
             this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox2.IsSupportEditMode = false;
             this.numericBox2.Location = new System.Drawing.Point(781, 49);
@@ -452,7 +452,7 @@
             // 
             this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "amount", true));
-            this.numericBox3.DecimalPlaces = 4;
+            this.numericBox3.DecimalPlaces = 2;
             this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox3.IsSupportEditMode = false;
             this.numericBox3.Location = new System.Drawing.Point(781, 15);
@@ -474,7 +474,7 @@
             // numericBox4
             // 
             this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox4.DecimalPlaces = 4;
+            this.numericBox4.DecimalPlaces = 2;
             this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox4.IsSupportEditMode = false;
             this.numericBox4.Location = new System.Drawing.Point(781, 84);
@@ -623,6 +623,7 @@
             this.GridAlias = "ArtworkAP_detail";
             this.GridUniqueKey = "artworkpo_detailukey";
             this.IsSupportConfirm = true;
+            this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P10";
