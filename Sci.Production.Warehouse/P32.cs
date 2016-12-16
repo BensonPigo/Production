@@ -467,7 +467,7 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
 
             #endregion 更新表頭狀態資料
             #region -- 更新mdivisionPoDetail 還出數 --
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("fromstocktype").Trim() != "I")
+            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
                            mdivisionid = b.Field<string>("frommdivisionid").Trim(),
@@ -726,7 +726,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #endregion 更新表頭狀態資料
 
             #region -- 更新MdivisionPoDetail 借出數 --
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("fromstocktype").Trim() != "I")
+            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
                            mdivisionid = b.Field<string>("frommdivisionid").Trim(),
