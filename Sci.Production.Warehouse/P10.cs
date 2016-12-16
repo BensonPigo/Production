@@ -253,7 +253,7 @@ namespace Sci.Production.Warehouse
                     from main a                    
                     left join NetQty b on a.Poid = b.ID and a.seq1 = b.seq1 and a.seq2 = b.seq2
                     outer apply(
-                        select arqty = a.requestqty + isnull((select sum(c.Cons) from  dbo.Cutplan_Detail_Cons c  inner join (Select distinct s.Poid,s.seq1,s.seq2,i.CutplanID from Issue_Summary s inner join Issue i on s.Id=i.Id and i.CutplanID!='{1}' and i.status='Confirmed' where a.Poid=s.Poid and a.SCIRefno =s.SCIRefno and a.ColorID=s.ColorID) s on c.Poid=s.poid and c.SEQ1=s.SEQ1 and c.SEQ2=s.SEQ2 ),0.00)
+                        select arqty = a.requestqty + isnull((select sum(c.Cons) from  dbo.Cutplan_Detail_Cons c  inner join (Select distinct s.Poid,s.seq1,s.seq2,i.CutplanID from Issue_Summary s inner join Issue i on s.Id=i.Id and i.CutplanID!='{1}' and i.status='Confirmed' where a.Poid=s.Poid and a.SCIRefno =s.SCIRefno and a.ColorID=s.ColorID) s on c.Poid=s.poid and c.SEQ1=s.SEQ1 and c.SEQ2=s.SEQ2 and c.ID=s.CutplanID),0.00)
                               ,aiqqty = isnull((select a.qty from dbo.Issue c where c.id=a.id and c.status!='Confirmed' ),0.00)+isnull((select sum(s.Qty) from Issue_Summary s inner join Issue i on s.Id=i.Id where s.Poid=a.poid and s.SCIRefno=a.SCIRefno and s.Colorid=a.ColorID and i.status='Confirmed'), 0.00)
                     ) as tmpQty
                     "
@@ -482,7 +482,7 @@ select a.*,left(a.seq1+' ',3)+a.Seq2 as seq, isnull(b.NETQty,0) as NETQty
 from main a 
 left join NetQty b on a.Poid = b.ID and a.seq1 = b.seq1 and a.seq2 = b.seq2
                     outer apply(
-                        select arqty = a.requestqty + isnull((select sum(c.Cons) from  dbo.Cutplan_Detail_Cons c  inner join (Select distinct s.Poid,s.seq1,s.seq2,i.CutplanID from Issue_Summary s inner join Issue i on s.Id=i.Id and i.CutplanID!='{0}' and i.status='Confirmed' where a.Poid=s.Poid and a.SCIRefno =s.SCIRefno and a.ColorID=s.ColorID) s on c.Poid=s.poid and c.SEQ1=s.SEQ1 and c.SEQ2=s.SEQ2 ),0.00)
+                        select arqty = a.requestqty + isnull((select sum(c.Cons) from  dbo.Cutplan_Detail_Cons c  inner join (Select distinct s.Poid,s.seq1,s.seq2,i.CutplanID from Issue_Summary s inner join Issue i on s.Id=i.Id and i.CutplanID!='{0}' and i.status='Confirmed' where a.Poid=s.Poid and a.SCIRefno =s.SCIRefno and a.ColorID=s.ColorID) s on c.Poid=s.poid and c.SEQ1=s.SEQ1 and c.SEQ2=s.SEQ2 and c.ID=s.CutplanID),0.00)
                               ,aiqqty = isnull((select a.qty from dbo.Issue c where c.id=a.id and c.status!='Confirmed' ),0.00)+isnull((select sum(s.Qty) from Issue_Summary s inner join Issue i on s.Id=i.Id where s.Poid=a.poid and s.SCIRefno=a.SCIRefno and s.Colorid=a.ColorID and i.status='Confirmed'), 0.00)
                     ) as tmpQty
 ", txtRequest.Text, CurrentMaintain["id"]);
