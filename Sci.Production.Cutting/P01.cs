@@ -264,6 +264,15 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
             OnDetailEntered();
         }
         #endregion
+
+        #region Quantity breakdown
+        private void button5_Click(object sender, EventArgs e)
+        {
+            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]), editBox1.Text);
+            callNextForm.ShowDialog(this);
+        }
+        #endregion
+
         #region ColorComb
         private void button12_Click(object sender, EventArgs e)
         {
@@ -300,5 +309,7 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
                 new Sci.Production.PPIC.P01_ProductionKit(true, StyleUkey, null, null, null);
             callNextForm.ShowDialog(this);
         }
+
+
     }
 }
