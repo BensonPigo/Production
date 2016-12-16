@@ -1382,6 +1382,7 @@
             this.button19.TabIndex = 134;
             this.button19.Text = "Material Import";
             this.button19.UseVisualStyleBackColor = true;
+            this.button19.Click += new System.EventHandler(this.button19_Click_1);
             // 
             // button25
             // 

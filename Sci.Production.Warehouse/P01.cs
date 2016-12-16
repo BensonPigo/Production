@@ -195,7 +195,10 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             button29.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing"]) ? Color.Blue : Color.Black;
 
             button23.ForeColor = MyUtility.Check.Seek(string.Format("select ID From dbo.Order_EachCons a  where a.id ='{0}'", CurrentMaintain["id"].ToString())) ? Color.Blue : Color.Black;
-            button8.ForeColor = MyUtility.Check.Seek(string.Format("select WorkType from Cutting where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["CuttingSP"]))) ? Color.Blue : Color.Black;
+
+            button8.ForeColor = MyUtility.Check.Seek(string.Format(@"select oq.Article from Orders o inner join Order_Qty oq on oq.ID = o.ID
+where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["CuttingSP"]))) ? Color.Blue : Color.Black;
+
             button4.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
 
         }
@@ -483,6 +486,11 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             Sci.Production.PPIC.P01_ProductionKit callNextForm =
                 new Sci.Production.PPIC.P01_ProductionKit(false, CurrentMaintain["StyleUkey"].ToString(), null, null, null);
             callNextForm.ShowDialog(this);
+        }
+
+        private void button19_Click_1(object sender, EventArgs e)
+        {
+
         }
     }
 }
