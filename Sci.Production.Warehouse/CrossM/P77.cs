@@ -176,13 +176,30 @@ namespace Sci.Production.Warehouse
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
+            ns.CellFormatting = (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                switch (dr["StockType"].ToString())
+                {
+                    case "B":
+                        e.Value = "Bulk";
+                        break;
+                    case "I":
+                        e.Value = "Inventory";
+                        break;
+                    case "O":
+                        e.Value = "Other";
+                        break;
+                }
+            };
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("stocktype", header: "Stock Type", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("stocktype", header: "Stock Type", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ns)
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("stockunit", header: "Unit", iseditingreadonly: true)
             .Numeric("qty", header: "Return Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)
@@ -498,7 +515,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 ,a.Roll
 ,a.Dyelot
 ,a.Qty
-,StockType = IIF ( a.StockType = 'B', 'Bulk', 'Inventory' ) 
+,a.StockType
 ,(select t.MtlLocationID+',' from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FtyInventoryUkey) t 
 	for xml path('')) location
 ,a.ukey

@@ -30,8 +30,8 @@ namespace Sci.Production.Warehouse
         public P01(ToolStripMenuItem menuitem, string history)
             : this(menuitem)
         {
-            this.Text = history != "Y" ? this.Text : this.Text += " (History)";
-            this.Text = history != "Y" ? btnCloseMTL.Text : btnCloseMTL.Text = "Transfer Bulk to Scrap";
+            this.Text = history != "Y" ? this.Text : this.Text + " (History)";
+            btnCloseMTL.Text = history != "Y" ? btnCloseMTL.Text : "Transfer Bulk to Scrap";
             this.DefaultFilter = history != "Y" ? string.Format("IsForecast = 0 and Whseclose is null and mdivisionid='{0}'", Sci.Env.User.Keyword)
                 : string.Format("IsForecast = 0 and Whseclose is not null and mdivisionid='{0}'", Sci.Env.User.Keyword);
             dataType = history;

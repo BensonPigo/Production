@@ -48,6 +48,7 @@ namespace Sci.Production.Warehouse
             #endregion
             #region -- gridDetail設定 --
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ns2 = new DataGridViewGeneratorTextColumnSettings();
             ns.CellValidating += (s, e) =>
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
@@ -56,6 +57,22 @@ namespace Sci.Production.Warehouse
                         gridDetail.GetDataRow(gridDetail.GetSelectedRowIndex())["selected"] = true;
                         this.gridDetail.CurrentCell = this.gridDetail.Rows[this.gridDetail.CurrentCell.RowIndex].Cells[8];                                      
                     }
+                };
+            ns2.CellFormatting = (s, e) =>
+                {
+                   DataRow dr = gridDetail.GetDataRow(e.RowIndex);
+                   switch (dr["StockType"].ToString())
+                   {
+                       case "B":
+                           e.Value = "Bulk";
+                           break;
+                       case "I":
+                           e.Value = "Inventory";
+                           break;
+                       case "O":
+                           e.Value = "Other";
+                           break;                                              
+                   }                  
                 };
 
             this.gridDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
@@ -70,7 +87,7 @@ namespace Sci.Production.Warehouse
                 .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //6
                 .Numeric("balanceqty", header: "Stock Qty", iseditable: true, decimal_places: 2, integer_places: 10) //7
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns)  //8
-                .Text("StockType", header: "Stock Type", iseditingreadonly: true, width: Widths.AnsiChars(6)) //9
+                .Text("StockType", header: "Stock Type", iseditingreadonly: true, width: Widths.AnsiChars(6), settings: ns2) //9
                 ;
             this.gridDetail.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
@@ -91,7 +108,7 @@ select rtrim(toPOID) frompoid,rtrim(toSeq1) FromSeq1,rtrim(toSeq2) FromSeq2,Qty 
 	where r.Status = 'Confirmed' and r.id='{0}' and r.toMDivisionID = '{1}'
 )
 select 0 as selected,'' as id,fi.Ukey FtyInventoryUkey,0.00 as qty,fi.MDivisionID,fi.POID,rtrim(fi.seq1) seq1,fi.seq2
-	,fi.Roll,fi.Dyelot,StockType = IIF ( fi.StockType = 'B', 'Bulk', 'Inventory' ),fi.InQty - fi.OutQty+fi.AdjustQty balanceqty 
+	,fi.Roll,fi.Dyelot,fi.StockType,fi.InQty - fi.OutQty+fi.AdjustQty balanceqty 
     ,(select mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where ukey = fi.ukey) t for xml path('')) [location]
 from cte inner join FtyInventory fi on fi.MDivisionID  =  cte.ToMDivisionID 
 and fi.POID = cte.toPOID and fi.Seq1 = cte.toSeq1 and fi.Seq2 = cte.toSeq2 

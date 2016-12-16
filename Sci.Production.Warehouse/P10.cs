@@ -106,7 +106,7 @@ namespace Sci.Production.Warehouse
                 OpenSubDetailPage();
             };
             #endregion
-
+            
             // 使用虛擬欄位顯示 "bal_qty"及"var_qty"
             this.detailgrid.VirtualMode = true;
             this.detailgrid.CellValueNeeded += (s, e) =>
@@ -325,6 +325,16 @@ namespace Sci.Production.Warehouse
                 MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
                 return false;
             }
+
+            Double sum = 0.00;
+            foreach (DataRow dr in DetailDatas)
+                sum +=  Convert.ToDouble(dr["qty"]);
+            if (sum == 0)
+            {
+                MyUtility.Msg.WarningBox("All Issue_Qty are zero", "Warning");
+                return false;
+            }
+
 
             //取單號
             if (this.IsDetailInserting)
