@@ -64,13 +64,14 @@ namespace Sci.Production.Subcon
             if (this.checkBox1.Checked)
             {
                 #region -- Summary Sql Command --
-                sqlCmd.Append(string.Format(@"Select a.FactoryId
+                sqlCmd.Append(string.Format(@"Select distinct a.MDivisionID
+                                                    ,a.FactoryId
                                                     ,a.LocalSuppID
 	                                                ,d.Abb
 	                                                ,a.Category
 	                                                ,a.CurrencyID
-	                                                ,a.Amount
-	                                                ,a.PaytermID
+	                                                ,sum(a.Amount + a.Vat) Amt
+	                                                ,a.PaytermID+'-' +(select Name from PayTerm where id = a.paytermid) payterm
                                              from LocalAP a
                                              left join LocalSupp d on a.LocalSuppID=d.ID
                                              where  a.issuedate between '{0}' and '{1}'
@@ -82,7 +83,8 @@ namespace Sci.Production.Subcon
             else
             {
                 #region -- List Sql Command --
-                sqlCmd.Append(string.Format(@"Select  c.FactoryID
+                sqlCmd.Append(string.Format(@"Select distinct a.MDivisionID
+                                                     ,c.FactoryID
 	                                                 ,a.FactoryId
 	                                                 ,a.LocalSuppID
 	                                                 ,d.Abb
@@ -101,9 +103,8 @@ namespace Sci.Production.Subcon
 	                                                 ,b.UnitID
 	                                                 ,b.Price
 	                                                 ,b.Qty
-	                                                 ,b.Price*b.Qty Amount
 	                                                 ,dbo.getPass1(e.AddName) POHandle
-	                                                 ,e.Amount+e.Vat poamt
+	                                                 ,e.Amount poamt
 	                                                 ,e.IssueDate
 	                                                 ,a.InvNo
                                             from LocalAP a
@@ -159,7 +160,8 @@ namespace Sci.Production.Subcon
 
             if (this.checkBox1.Checked)
             {
-                sqlCmd.Append(@" order by a.category, a.currencyid, a.factoryid, a.LocalSuppID");
+                sqlCmd.Append(@" group by a.MDivisionID, a.FactoryID, a.LocalSuppID, d.Abb, a.Category, a.CurrencyID, a.PayTermID
+                                order by a.category, a.currencyid, a.factoryid, a.LocalSuppID");
             }
             else
             {
