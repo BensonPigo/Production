@@ -57,6 +57,26 @@ namespace Sci.Production.Warehouse
                     }
                 };
 
+            Ict.Win.DataGridViewGeneratorTextColumnSettings sk = new DataGridViewGeneratorTextColumnSettings();
+            sk.CellFormatting += (s, e) =>
+            {
+                switch (e.Value.ToString())
+                {
+                    case "B":
+                        e.Value = "Bulk";
+                        e.FormattingApplied = true;
+                        break;
+                    case "I":
+                        e.Value = "Inventory";
+                        e.FormattingApplied = true;
+                        break;
+                    case "O":
+                        e.Value = "Scrap";
+                        e.FormattingApplied = true;
+                        break;
+                }
+            };
+
             this.gridDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridDetail.DataSource = listControlBindingSource2;
             Helper.Controls.Grid.Generator(this.gridDetail)
@@ -69,7 +89,7 @@ namespace Sci.Production.Warehouse
                 .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //6
                 .Numeric("balanceqty", header: "Stock Qty", iseditable: true, decimal_places: 2, integer_places: 10) //7
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns)  //8
-                .Text("StockType", header: "Stock Type", iseditingreadonly: true, width: Widths.AnsiChars(6)) //9
+                .Text("StockType", header: "Stock Type", iseditingreadonly: true, width: Widths.AnsiChars(6), settings: sk) //9
                 ;
             this.gridDetail.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
@@ -90,7 +110,9 @@ select rtrim(FromPOID) frompoid,rtrim(FromSeq1) FromSeq1,rtrim(FromSeq2) FromSeq
 	where r.Status = 'Sent' and r.id='{0}' and r.MDivisionID = '{1}'
 )
 select 0 as selected,'' as id,fi.Ukey FtyInventoryUkey,0.00 as qty,fi.MDivisionID,fi.POID,rtrim(fi.seq1) seq1,fi.seq2
-	,fi.Roll,fi.Dyelot,fi.StockType,fi.InQty - fi.OutQty+fi.AdjustQty balanceqty 
+	,fi.Roll,fi.Dyelot
+,fi.StockType
+,fi.InQty - fi.OutQty+fi.AdjustQty balanceqty 
     ,(select mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where ukey = fi.ukey) t for xml path('')) [location]
 from cte inner join FtyInventory fi on fi.MDivisionID  =  cte.FromMDivisionID 
 and fi.POID = cte.FromPOID and fi.Seq1 = cte.FromSeq1 and fi.Seq2 = cte.FromSeq2 
@@ -171,6 +193,18 @@ where lock = 0 and fi.InQty - fi.OutQty+fi.AdjustQty > 0;", dr_master["cutplanid
                     tmp.AcceptChanges();
                     tmp.SetAdded();
                     dt_detail.ImportRow(tmp);
+                    DataRow[] setRow = dt_detail.Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and roll ='{3}'and dyelot='{4}'"
+                        , tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString(), tmp["roll"].ToString(), tmp["dyelot"].ToString()));
+
+                    string sql = string.Format(@"select StockUnit , dbo.getmtldesc(id,seq1,seq2,2,0) as [description]
+                                                    from PO_Supp_Detail where id = '{0}' and seq1 = '{1}' and seq2 = '{2}'"
+                        , tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString());
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sql, out dt);
+
+                    setRow[0]["seq"] = tmp["seq1"] + " " + tmp["seq2"];
+                    setRow[0]["Description"] = dt.Rows[0].GetValue("Description");
+                    setRow[0]["StockUnit"] = dt.Rows[0].GetValue("StockUnit");
                 }
             }
 
