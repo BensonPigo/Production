@@ -2,7 +2,7 @@
     [ID]            VARCHAR (13)   CONSTRAINT [DF_CuttingOutput_Detail_ID] DEFAULT ('') NOT NULL,
     [CutRef]        VARCHAR (6)    CONSTRAINT [DF_CuttingOutput_Detail_CutRef] DEFAULT ('') NOT NULL,
     [CuttingID]     VARCHAR (13)   CONSTRAINT [DF_CuttingOutput_Detail_CuttingID] DEFAULT ('') NOT NULL,
-    [Cutno]         NUMERIC(3)    CONSTRAINT [DF_CuttingOutput_Detail_Cutno] DEFAULT ('') NOT NULL,
+    [Cutno]         NUMERIC (3)    CONSTRAINT [DF_CuttingOutput_Detail_Cutno] DEFAULT ('') NOT NULL,
     [MarkerName]    VARCHAR (5)    CONSTRAINT [DF_CuttingOutput_Detail_MarkName] DEFAULT ('') NOT NULL,
     [MarkerLength]  VARCHAR (13)   CONSTRAINT [DF_CuttingOutput_Detail_Marker] DEFAULT ('') NOT NULL,
     [Layer]         NUMERIC (5)    CONSTRAINT [DF_CuttingOutput_Detail_Layers] DEFAULT ((0)) NOT NULL,
@@ -12,6 +12,8 @@
     [Ukey]          BIGINT         IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_CuttingOutput_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -73,14 +75,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Detail Ukey
 
 
 GO
-CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname1,>]
-    ON [dbo].[CuttingOutput_Detail]([WorkOrderUkey] ASC);
+
 
 
 GO
-CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
-    ON [dbo].[CuttingOutput_Detail]([ID] ASC)
-    INCLUDE([WorkOrderUkey]);
+
 
 
 GO
@@ -93,4 +92,15 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'馬克長',
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'層數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CuttingOutput_Detail', @level2type = N'COLUMN', @level2name = N'Layer';
+
+
+GO
+CREATE NONCLUSTERED INDEX [WorkOrderUkey]
+    ON [dbo].[CuttingOutput_Detail]([WorkOrderUkey] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [ID]
+    ON [dbo].[CuttingOutput_Detail]([ID] ASC)
+    INCLUDE([WorkOrderUkey]);
 

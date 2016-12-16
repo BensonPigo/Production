@@ -8,6 +8,8 @@
 );
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Cuttng Dailiy output', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CuttingOutput_Detail_Detail';
 
@@ -30,4 +32,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'尺寸', @l
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單層裁剪比率', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CuttingOutput_Detail_Detail', @level2type = N'COLUMN', @level2name = N'Qty';
+
+
+GO
+CREATE NONCLUSTERED INDEX [CuttingOutput_detailUkey]
+    ON [dbo].[CuttingOutput_Detail_Detail]([CuttingOutput_detailUkey] ASC);
 
