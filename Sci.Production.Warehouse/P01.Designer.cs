@@ -1392,6 +1392,7 @@
             this.button25.TabIndex = 135;
             this.button25.Text = "Production Kits";
             this.button25.UseVisualStyleBackColor = true;
+            this.button25.Click += new System.EventHandler(this.button25_Click_1);
             // 
             // button29
             // 

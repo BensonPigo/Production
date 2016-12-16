@@ -179,6 +179,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
 
             //按鈕變色
             bool haveTmsCost = MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+
             button3.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             button4.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
 
@@ -190,9 +191,12 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             button19.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Export_Detail where PoID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]))) ? Color.Blue : Color.Black;
 
             button25.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"]))) ? Color.Blue : Color.Black;
-
-
+            
             button29.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing"]) ? Color.Blue : Color.Black;
+
+            button23.ForeColor = MyUtility.Check.Seek(string.Format("select ID From dbo.Order_EachCons a  where a.id ='{0}'", CurrentMaintain["id"].ToString())) ? Color.Blue : Color.Black;
+            button8.ForeColor = MyUtility.Check.Seek(string.Format("select WorkType from Cutting where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["CuttingSP"]))) ? Color.Blue : Color.Black;
+            button4.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
 
         }
 
@@ -472,6 +476,13 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             var dr = this.CurrentMaintain; if (null == dr) return;
             var frm = new Sci.Production.Cutting.P01_EachConsumption(false, CurrentMaintain["id"].ToString(), null, null, false);
             frm.ShowDialog(this);
+        }
+
+        private void button25_Click_1(object sender, EventArgs e)
+        {
+            Sci.Production.PPIC.P01_ProductionKit callNextForm =
+                new Sci.Production.PPIC.P01_ProductionKit(false, CurrentMaintain["StyleUkey"].ToString(), null, null, null);
+            callNextForm.ShowDialog(this);
         }
     }
 }
