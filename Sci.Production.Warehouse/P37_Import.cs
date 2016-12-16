@@ -52,7 +52,7 @@ namespace Sci.Production.Warehouse
 ,'' id
 , '' ExportId
 ,null as ETA
-,f.PoId,f.seq1,f.seq2,f.seq1+f.seq2 as seq,f.Roll,f.Dyelot
+,f.PoId,f.seq1,f.seq2,f.seq1+f.seq2 as seq,f.Roll,f.Dyelot,p1.stockunit
 ,f.StockType,f.InQty - f.OutQty + f.AdjustQty balance
 ,0.00 as qty
 ,(select t.MtlLocationID+',' from (select MtlLocationID from FtyInventory_Detail where Ukey = f.Ukey) t for xml path('')) as location
@@ -60,13 +60,14 @@ namespace Sci.Production.Warehouse
 ,f.ukey ftyinventoryukey
 ,f.mdivisionid
 from dbo.FtyInventory f 
+left join PO_Supp_Detail p1 on p1.ID = f.PoId and p1.seq1 = f.SEQ1 and p1.SEQ2 = f.seq2
 where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and f.mdivisionid='{0}'", Sci.Env.User.Keyword));
                 }
                 else
                 {
                     strSQLCmd.Append(string.Format(@"select 0 as selected 
 ,'' id
-, a.ExportId,a.ETA,b.PoId,b.seq1,b.seq2,b.seq1+b.seq2 as seq,b.Roll,b.Dyelot
+, a.ExportId,a.ETA,b.PoId,b.seq1,b.seq2,b.seq1+b.seq2 as seq,b.Roll,b.Dyelot,p1.stockunit
 ,b.StockType,f.InQty - f.OutQty + f.AdjustQty balance
 ,0.00 as qty
 ,(select t.MtlLocationID+',' from (select MtlLocationID from FtyInventory_Detail where Ukey = f.Ukey) t for xml path('')) as location
@@ -75,6 +76,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and f.mdivisionid='{0}'"
 ,f.mdivisionid
 from dbo.Receiving a inner join dbo.Receiving_Detail b on a.id = b.id
 inner join dbo.FtyInventory f on f.POID = b.PoId and f.seq1 = b.seq1 and f.seq2 = b.Seq2 and f.stocktype = b.stocktype and f.MDivisionID = b.mdivisionid
+left join PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirmed' and a.mdivisionid='{0}'", Sci.Env.User.Keyword));
                 }
                 #endregion

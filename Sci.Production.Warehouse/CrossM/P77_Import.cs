@@ -51,9 +51,10 @@ namespace Sci.Production.Warehouse
             ns.CellValidating += (s, e) =>
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
-                    {
+                    {                       
                         gridDetail.GetDataRow(gridDetail.GetSelectedRowIndex())["qty"] = e.FormattedValue;
                         gridDetail.GetDataRow(gridDetail.GetSelectedRowIndex())["selected"] = true;
+                        this.gridDetail.CurrentCell = this.gridDetail.Rows[this.gridDetail.CurrentCell.RowIndex].Cells[8];                                      
                     }
                 };
 
@@ -90,7 +91,7 @@ select rtrim(toPOID) frompoid,rtrim(toSeq1) FromSeq1,rtrim(toSeq2) FromSeq2,Qty 
 	where r.Status = 'Confirmed' and r.id='{0}' and r.toMDivisionID = '{1}'
 )
 select 0 as selected,'' as id,fi.Ukey FtyInventoryUkey,0.00 as qty,fi.MDivisionID,fi.POID,rtrim(fi.seq1) seq1,fi.seq2
-	,fi.Roll,fi.Dyelot,fi.StockType,fi.InQty - fi.OutQty+fi.AdjustQty balanceqty 
+	,fi.Roll,fi.Dyelot,StockType = IIF ( fi.StockType = 'B', 'Bulk', 'Inventory' ),fi.InQty - fi.OutQty+fi.AdjustQty balanceqty 
     ,(select mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where ukey = fi.ukey) t for xml path('')) [location]
 from cte inner join FtyInventory fi on fi.MDivisionID  =  cte.ToMDivisionID 
 and fi.POID = cte.toPOID and fi.Seq1 = cte.toSeq1 and fi.Seq2 = cte.toSeq2 
@@ -177,7 +178,6 @@ where fi.stocktype = 'B' and lock = 0 and fi.InQty - fi.OutQty+fi.AdjustQty > 0;
 
             this.Close();
         }
-
         
     }
 }

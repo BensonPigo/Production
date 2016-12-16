@@ -498,7 +498,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 ,a.Roll
 ,a.Dyelot
 ,a.Qty
-,a.StockType
+,StockType = IIF ( a.StockType = 'B', 'Bulk', 'Inventory' ) 
 ,(select t.MtlLocationID+',' from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FtyInventoryUkey) t 
 	for xml path('')) location
 ,a.ukey

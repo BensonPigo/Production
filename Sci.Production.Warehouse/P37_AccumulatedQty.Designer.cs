@@ -98,8 +98,8 @@
             this.ClientSize = new System.Drawing.Size(784, 437);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.Name = "P16_AccumulatedQty";
-            this.Text = "P16. Accumulated Qty";
+            this.Name = "P37_AccumulatedQty";
+            this.Text = "P37. Accumulated Qty";
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             this.panel1.ResumeLayout(false);

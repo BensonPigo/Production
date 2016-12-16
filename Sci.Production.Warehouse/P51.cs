@@ -217,6 +217,11 @@ namespace Sci.Production.Warehouse
                     CurrentDetailData["refno"] = x[0]["refno"];
                     CurrentDetailData["qtybefore"] = 0m;
                     CurrentDetailData["qtyafter"] = 0m;
+                    CurrentDetailData["ftyinventoryukey"] = 0;
+                    CurrentDetailData["roll"] = "";
+                    CurrentDetailData["dyelot"] = "";
+                    CurrentDetailData["Location"] = "";
+                    CurrentDetailData["description"] = "";
                 }
             };
             ts.CellValidating += (s, e) =>
@@ -235,6 +240,11 @@ namespace Sci.Production.Warehouse
                         CurrentDetailData["refno"] = "";
                         CurrentDetailData["qtybefore"] = 0m;
                         CurrentDetailData["qtyafter"] = 0m;
+                        CurrentDetailData["ftyinventoryukey"] = 0;
+                        CurrentDetailData["roll"] = "";
+                        CurrentDetailData["dyelot"] = "";
+                        CurrentDetailData["Location"] = "";
+                        CurrentDetailData["description"] = "";
                     }
                     else
                     {
@@ -257,6 +267,11 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                             CurrentDetailData["refno"] = dr["refno"];
                             CurrentDetailData["qtybefore"] = 0m;
                             CurrentDetailData["qtyafter"] = 0m;
+                            CurrentDetailData["ftyinventoryukey"] = 0;
+                            CurrentDetailData["roll"] = "";
+                            CurrentDetailData["dyelot"] = "";
+                            CurrentDetailData["Location"] = "";
+                            CurrentDetailData["description"] = "";
                         }
                     }
                 }
@@ -276,16 +291,19 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                     if (MyUtility.Check.Empty(CurrentDetailData["mdivisionid"])) CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
                     if (MyUtility.Check.Empty(CurrentDetailData["stocktype"])) CurrentDetailData["stocktype"] = CurrentMaintain["stocktype"].ToString();
 
-                    string sqlcmd = string.Format(@"select ukey,roll,dyelot,inqty-outqty+adjustqty qty from dbo.ftyinventory 
+                    string sqlcmd = string.Format(@"select a.ukey,a.roll,a.dyelot,inqty-a.outqty+a.adjustqty qty 
+                                 ,(select t.MtlLocationID+',' from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.Ukey) t for xml path('')) as location 
+                                 ,dbo.getmtldesc('{1}','{2}','{3}',2,0) as [description]
+                                        from dbo.ftyinventory a
                                         where mdivisionid='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' 
-                                        and stocktype='{4}' and lock =0",CurrentDetailData["mdivisionid"]
+                                        and stocktype='{4}' and lock =0", CurrentDetailData["mdivisionid"]
                                                                         ,CurrentDetailData["poid"]
                                                                         ,CurrentDetailData["seq1"]
                                                                         ,CurrentDetailData["seq2"]
                                                                         ,CurrentDetailData["stocktype"]);
                     IList<DataRow> x;
                     Sci.Win.Tools.SelectItem selepoitem2 = new Win.Tools.SelectItem(sqlcmd
-                        ,"Ukey,Roll,Dyelot,Balance",CurrentDetailData["roll"].ToString());
+                        , "Ukey,Roll,Dyelot,Balance,Location", CurrentDetailData["roll"].ToString());
 
                     DialogResult result = selepoitem2.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -296,6 +314,8 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                     CurrentDetailData["dyelot"] = x[0]["dyelot"];
                     CurrentDetailData["qtybefore"] = x[0]["qty"];
                     CurrentDetailData["qtyafter"] = 0m;
+                    CurrentDetailData["Location"] = x[0]["Location"];
+                    CurrentDetailData["description"] = x[0]["description"];
                 }
             };
             ts2.CellValidating += (s, e) =>
@@ -315,6 +335,8 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                         CurrentDetailData["dyelot"] = "";
                         CurrentDetailData["qtybefore"] = 0m;
                         CurrentDetailData["qtyafter"] = 0m;
+                        CurrentDetailData["Location"] = "";
+                        CurrentDetailData["description"] = "";
                     }
                     else
                     {
@@ -322,9 +344,11 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                         if (MyUtility.Check.Empty(CurrentDetailData["mdivisionid"])) CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
                         if (MyUtility.Check.Empty(CurrentDetailData["stocktype"])) CurrentDetailData["stocktype"] = CurrentMaintain["stocktype"].ToString();
 
-                        if (!MyUtility.Check.Seek(string.Format(@"select ukey,roll,dyelot,inqty-outqty+adjustqty qty 
-                                        from dbo.ftyinventory where mdivisionid='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' 
-                                        and stocktype='{4}' and roll='{5}' and lock =0" ,CurrentDetailData["mdivisionid"]
+                        if (!MyUtility.Check.Seek(string.Format(@"select a.ukey,a.roll,a.dyelot,a.inqty-a.outqty+a.adjustqty qty
+                                 ,(select t.MtlLocationID+',' from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.Ukey) t for xml path('')) as location 
+                                 ,dbo.getmtldesc('{1}','{2}','{3}',2,0) as [description] 
+                                        from dbo.ftyinventory a where mdivisionid='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' 
+                                        and stocktype='{4}' and roll='{5}' and lock =0", CurrentDetailData["mdivisionid"]
                                                                         ,CurrentDetailData["poid"]
                                                                         ,CurrentDetailData["seq1"]
                                                                         ,CurrentDetailData["seq2"]
@@ -342,6 +366,8 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                             CurrentDetailData["dyelot"] = dr["dyelot"];
                             CurrentDetailData["qtybefore"] = dr["qty"];
                             CurrentDetailData["qtyafter"] = 0m;
+                            CurrentDetailData["Location"] = dr["Location"];
+                            CurrentDetailData["description"] = dr["description"];
                         }
                     }
                 }
