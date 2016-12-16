@@ -183,7 +183,7 @@ s.EditDate
 	-----------------PartQuot , type='P'-----------------------------
 
 	Merge [Machine].[dbo].[PartQuot] as t
-	Using (select  a.* from [Trade_To_Pms].[dbo].[MmsQuot] a  inner join  [Trade_To_Pms].[dbo].Part b
+	Using (select distinct a.* from [Trade_To_Pms].[dbo].[MmsQuot] a  inner join  [Trade_To_Pms].[dbo].Part b
 	on a.refno=b.refno where a.type='P')	 as s
 	on t.id=s.refno and  t.ukey=s.id --and t.purchaseFrom='T' 
 	when matched then
