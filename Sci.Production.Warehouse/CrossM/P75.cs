@@ -147,6 +147,8 @@ namespace Sci.Production.Warehouse
                 CurrentMaintain["id"] = tmpId;
             }
 
+
+            //Data
             return base.ClickSaveBefore();
         }
 
@@ -176,13 +178,34 @@ namespace Sci.Production.Warehouse
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
+
+            Ict.Win.DataGridViewGeneratorTextColumnSettings sk = new DataGridViewGeneratorTextColumnSettings();
+            sk.CellFormatting += (s, e) =>
+            {
+                switch (e.Value.ToString())
+                {
+                    case "B":
+                        e.Value = "Bulk";
+                        e.FormattingApplied = true;
+                        break;
+                    case "I":
+                        e.Value = "Inventory";
+                        e.FormattingApplied = true;
+                        break;
+                    case "O":
+                        e.Value = "Scrap";
+                        e.FormattingApplied = true;
+                        break;
+                }
+            };
+
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //1
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
-            .Text("stocktype", header: "Stock Type", width: Widths.AnsiChars(6), iseditingreadonly: true)  //4
+            .Text("stocktype", header: "Stock Type", width: Widths.AnsiChars(6), iseditingreadonly: true, settings : sk)  //4
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //5
             .Text("stockunit", header: "Unit", iseditingreadonly: true)    //6
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //7
@@ -687,6 +710,5 @@ Where a.id = '{0}'", masterID);
             frm.Show();
             return true;
         }
-
     }
 }
