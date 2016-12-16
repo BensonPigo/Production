@@ -176,7 +176,7 @@
             this.textBox3.MaxLength = 13;
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(122, 23);
-            this.textBox3.TabIndex = 16;
+            this.textBox3.TabIndex = 2;
             // 
             // label4
             // 
@@ -217,7 +217,7 @@
             this.textBox2.MaxLength = 5;
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(61, 23);
-            this.textBox2.TabIndex = 15;
+            this.textBox2.TabIndex = 1;
             // 
             // textBox1
             // 
@@ -227,7 +227,7 @@
             this.textBox1.MaxLength = 13;
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(122, 23);
-            this.textBox1.TabIndex = 13;
+            this.textBox1.TabIndex = 0;
             // 
             // label1
             // 
@@ -245,7 +245,7 @@
             this.button1.Location = new System.Drawing.Point(895, 11);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(101, 30);
-            this.button1.TabIndex = 6;
+            this.button1.TabIndex = 3;
             this.button1.Text = "Find Now";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);

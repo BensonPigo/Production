@@ -49,6 +49,13 @@ namespace Sci.Production.Warehouse
 
             else
             {
+                //建立表頭
+                string headSql = string.Format(@"select 
+SizeSpec, Refno, ColorID,dbo.getmtldesc(id,seq1,seq2,2,0) as [Description]
+from PO_Supp_Detail 
+where id = (SELECT distinct poid FROM Orders where poid='{0}' and MDivisionID='{3}') 
+and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2, Sci.Env.User.Keyword);
+
                 // 建立可以符合回傳的Cursor
                 strSQLCmd.Append(string.Format(@"
                     select 0 as selected ,'' id
@@ -57,7 +64,8 @@ namespace Sci.Production.Warehouse
                     ,a.Seq1 as FromSeq1
                     ,a.Seq2 as FromSeq2
                     ,left(a.seq1+' ',3)+a.Seq2 as fromseq
-                    ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
+                    --,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
+                    ,a.qty as poqty
                     ,a.stockunit
                     ,left(b.seq1+' ',3)+b.Seq2 as toseq
                     ,0.00 as Qty
@@ -83,6 +91,22 @@ namespace Sci.Production.Warehouse
                     { MyUtility.Msg.WarningBox("Data not found!!"); }
                     BorrowItemBS.DataSource = dtBorrow;
                     dtBorrow.DefaultView.Sort = "topoid,toseq1,toseq2";
+
+                    DataTable headDt;
+                    if (!(result = DBProxy.Current.Select(null, headSql, out headDt)) | headDt.Rows.Count == 0 | dtBorrow.Rows.Count == 0)
+                    {
+                        displayBoxSizeSpec.Text = "";
+                        displayBoxRefno.Text = "";
+                        displayBoxColor.Text = "";
+                        editBox1.Text = "";
+                    }
+                    else
+                    {
+                        displayBoxSizeSpec.Text = headDt.Rows[0].GetValue("SizeSpec").ToString();
+                        displayBoxRefno.Text = headDt.Rows[0].GetValue("Refno").ToString();
+                        displayBoxColor.Text = headDt.Rows[0].GetValue("ColorID").ToString();
+                        editBox1.Text = headDt.Rows[0].GetValue("Description").ToString();
+                    }
                 }
                 else { ShowErr(strSQLCmd.ToString(), result); }
                 MyUtility.Msg.WaitClear();                
@@ -102,7 +126,7 @@ namespace Sci.Production.Warehouse
                 .Text("toseq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(3))
                 .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6)) 
                 .Numeric("poqty", header: "PO Qty", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)) 
-                .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(16)) 
+                //.EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(16)) 
                 .Text("frompoid", header: "From" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("fromseq1", header: "From" + Environment.NewLine + "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(4))
                 .Text("fromseq2", header: "From" + Environment.NewLine + "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(3))
