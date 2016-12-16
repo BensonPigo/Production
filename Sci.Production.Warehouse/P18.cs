@@ -612,7 +612,7 @@ where d.Id = '{0}' and f.id is null", CurrentMaintain["id"]);
 
             #endregion 更新表頭狀態資料
             #region -- 更新庫存數量 MDivisionPoDetail -- 
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() != "I")
+            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
                            mdivisionid = b.Field<string>("mdivisionid").Trim(),
@@ -843,7 +843,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #endregion 更新表頭狀態資料
 
             #region -- 更新庫存數量 MDivisionPoDetail --
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() != "I")
+            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
                            mdivisionid = b.Field<string>("mdivisionid").Trim(),
