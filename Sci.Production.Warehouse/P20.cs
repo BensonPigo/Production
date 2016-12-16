@@ -42,7 +42,7 @@ namespace Sci.Production.Warehouse
                  .Text("refno", header: "Refno", width: Widths.AnsiChars(18))
                  .Numeric("InputQty_unit", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("OutputQty_unit", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                 .Numeric("Qty_unit", header: "Balance", width: Widths.AnsiChars(10), integer_places: 6, decimal_places: 2)
+                 .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 6, decimal_places: 2)
                  .Text("Brandid", header: "Brand", width: Widths.AnsiChars(10))
                  .Text("FabricType", header: "Fabric Type", width: Widths.AnsiChars(10))
                  .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(10))
@@ -259,8 +259,8 @@ select i.poid,i.seq1,i.Seq2,t.id
 
             dtTpeIventory.TableName = "dtTpeIventory";
             dtInvtrans.TableName = "dtInvtrans";
-            dtFtyInventory.Columns.Add("balance", typeof(decimal),"inqty-outqty+adjustqty");
-            
+            dtFtyInventory.Columns.Add("balance", typeof(decimal), "InQty-outqty+adjustqty");
+            dtTpeIventory.Columns.Add("Balance", typeof(decimal), "InputQty - OutputQty");
             DataRelation relation = new DataRelation("rel1"
                 , new DataColumn[] { dtTpeIventory.Columns["Ukey"] }
                 , new DataColumn[] { dtInvtrans.Columns["InventoryUkey"] }
