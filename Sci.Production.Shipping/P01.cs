@@ -780,7 +780,7 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())", MyUtility.C
             RenewData();
             OnDetailEntered();
             EnsureToolbarExt();
-            SendMail(true);
+            SendMail(false);
         }
 
         //PPIC mgr Approve
@@ -990,7 +990,7 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert
             RenewData();
             OnDetailEntered();
             EnsureToolbarExt();
-            SendMail(true);
+            SendMail(false);
         }
 
         //Status update history
@@ -1003,7 +1003,7 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert
         //Mail To
         private void button5_Click(object sender, EventArgs e)
         {
-            SendMail(true);
+            SendMail(false);
         }
 
         //寄Mail
@@ -1050,6 +1050,7 @@ where a.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 #region 組Content
                 content.Append(string.Format(@"Hi MR team, cc.Production team/Task Team
 Please refer to attachment – air pp request and refer to below datas.
+
 SMR: {0} Ext.{1}, POSMR: {2} Ext.{3}
 {4} - {5} for SP - {6} buyer del: {7} 
 Air q’ty: {8}
