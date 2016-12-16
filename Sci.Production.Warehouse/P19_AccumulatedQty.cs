@@ -70,7 +70,7 @@ namespace Sci.Production.Warehouse
 select PoId,Seq1,Seq2,requestqty=sum(requestqty)
 * isnull((select v.Ratevalue from dbo.View_Unitrate v where v.FROM_U = 
 		(
-			select unitID
+			select distinct unitID
 			from Invtrans B
 			where B.InventoryPoId = z.PoId 
 			and B.InventorySeq1 = z.Seq1 
