@@ -71,66 +71,89 @@ namespace Sci.Production.Warehouse
 //,cte.stockunit ;
             //", dr["id"].ToString(), dr["mdivisionid"].ToString(), dr["fromftyid"].ToString()));
             #endregion
-            selectCommand1.Append(string.Format(@";with cte as 
-            (
-            select A.PoId,A.Seq1,A.Seq2,isnull(a1.qty,0 ) requestqty
-            	,A1.UnitID
-            	,sum(a.Qty) as Qty 
-            	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
-            	from dbo.TransferIn_Detail A LEFT JOIN DBO.Invtrans A1 
-            	ON a1.Seq70poid = a.PoId and a1.seq70seq1 = a.seq1 and a1.seq70seq2 = a.seq2 
-                and a1.type = 2 AND A1.FactoryID ='{2}' and a1.TransferMDivisionID='{1}'
-            	where a.Id = '{0}'
-            	GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.QTY,A1.FactoryID,A1.TransferMDivisionID,A1.UnitID
-            union 
-            select A.PoId,A.Seq1,A.Seq2,isnull(0 - a1.Qty,0) requestqty
-            	,A1.UnitID
-            	,sum(a.Qty) as Qty 
-            	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
-            	from dbo.TransferIn_Detail a LEFT JOIN DBO.Invtrans A1 
-            	ON a1.Seq70poid = a.PoId and a1.seq70seq1 = a.seq1 and a1.seq70seq2 = a.seq2
-                and a1.type = 6 AND A1.FactoryID ='{2}'-- and a1.TransferMDivisionID='{1}'
-            	where a.Id = '{0}'
-            	GROUP BY A.PoId,A.Seq1,A.Seq2,A1.QTY,A1.UnitID
-            ),t1 as(
-	            select A.PoId,A.Seq1,A.Seq2
-	            ,sum(a.Qty) as Qty 
-	            ,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit	
-	            from dbo.TransferIn_Detail a 
-	            WHERE a.Id = '{0}'
-	            GROUP BY A.PoId,A.Seq1,A.Seq2
-            )
-            , i1 as(
-	            select distinct isnull(b1.qty,0) as requestqty,b1.UnitID,InventoryPOID,InventorySeq1,InventorySeq2
-	            from invtrans b1,t1
-	            where b1.InventoryPOID=t1.POID and b1.InventorySeq1=t1.Seq1 and b1.InventorySeq2 =t1.Seq2	
-            ), u4 as (
-	            select t1.POID,t1.Seq1,t1.Seq2,
-	            i1.requestqty,i1.UnitID,t1.Qty
-	            ,(select StockUnit from dbo.PO_Supp_Detail t where t.id = t1.Poid and t.seq1=t1.seq1 and t.seq2 = t1.Seq2) stockunit
-	            from t1 left join i1 on i1.InventoryPOID=t1.POID and i1.InventorySeq1=t1.Seq1 and i1.InventorySeq2 =t1.Seq2	
-	            where seq1 not like '7_'
-	            union all 
-	            select *
-	            from cte
-            ), la as(
-				select u4.Poid,seq1,seq2
-				,isnull(sum(u4.requestqty) 
-					* (select v.Ratevalue from dbo.View_Unitrate v where v.FROM_U = u4.UnitID and v.TO_U = u4.stockunit),0)requestqty
-				,u4.qty
-				,dbo.getmtldesc(u4.poid,u4.seq1,u4.seq2,2,0) as [Description]
-				--,u4.UnitID
-				,u4.stockunit 
-				from u4
-				group by u4.Poid,seq1,seq2
-				,u4.qty
-				,dbo.getmtldesc(u4.poid,u4.seq1,u4.seq2,2,0)
-				,u4.UnitID
-				,u4.stockunit
-			)
-			select Poid,seq1,seq2,sum(requestqty) requestqty,qty,Description,stockunit
-            from la
-			group by Poid,seq1,seq2,qty,Description,stockunit
+            selectCommand1.Append(string.Format(@"
+;with Z as(
+	select A.PoId,A.Seq1,A.Seq2
+	,requestqty = isnull(X.Q,0)
+	,sum(a.Qty) as Qty 
+	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit	
+	from dbo.TransferIn_Detail a 
+	outer apply(
+		select Q = (
+			Select Sum(Qty) qty
+			from Invtrans B 
+			where (B.Type='2' or B.Type='3')
+			and B.InventoryPoId = a.Poid
+			and B.InventorySeq1 = a.seq1
+			and B.InventorySeq2 = a.Seq2
+			and B.FactoryId = '{2}'
+			and B.TransferFactory in (select Id from Factory where MDivisionId = '{1}')
+		)
+	)X
+	WHERE a.Id = '{0}'
+	group by  A.PoId,A.Seq1,A.Seq2,X.Q
+
+	union all 
+	select A.PoId,A.Seq1,A.Seq2
+	,requestqty = isnull(X.Q,0)
+	,sum(a.Qty) as Qty 
+	,stockunit = (select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) 
+	from dbo.TransferIn_Detail A 
+	outer apply(	
+		select Q = (
+			select sum(qty) 
+			from DBO.Invtrans A1 
+			where a1.Seq70poid = a.PoId 
+			and a1.seq70seq1 = a.seq1 
+			and a1.seq70seq2 = a.seq2 
+			and a1.type = 2 
+			AND A1.FactoryID ='{2}' 
+			and A1.TransferFactory in (select Id from Factory where MDivisionId='{1}')
+		)
+	) X
+	where a.Id = '{0}'
+	group by  A.PoId,A.Seq1,A.Seq2,X.Q
+
+	union all 
+	select A.PoId,A.Seq1,A.Seq2
+	,requestqty = -isnull(X.Q,0)
+	,sum(a.Qty) as Qty 
+	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
+	from dbo.TransferIn_Detail a
+	outer apply(	
+		select Q = (
+			Select Sum(Qty)
+			from Invtrans B
+			where B.Type = '6' 
+			and B.InventoryPoId = a.PoId 
+			and B.InventorySeq1 = a.Seq1 
+			and B.InventorySeq2 = a.Seq2 
+			and B.FactoryId = '{2}'
+		)
+	) X
+	where a.Id = '{0}'
+	group by  A.PoId,A.Seq1,A.Seq2,X.Q
+)
+
+select z.POID,z.Seq1,z.Seq2
+,requestqty = sum(z.requestqty) 
+* isnull((select v.Ratevalue from dbo.View_Unitrate v where v.FROM_U = 
+		(
+			select unitID
+			from Invtrans B
+			where B.InventoryPoId = z.PoId 
+			and B.InventorySeq1 = z.Seq1 
+			and B.InventorySeq2 = z.Seq2 
+			and B.FactoryId = '{2}'
+		) 
+		and v.TO_U = z.stockunit),1)
+,qty
+,z.stockunit
+,[Description] = dbo.getmtldesc(Z.poid,Z.seq1,Z.seq2,2,0)
+from Z 
+
+group by z.POID,z.Seq1,z.Seq2,qty,z.stockunit
+
             ", dr["id"].ToString(), dr["mdivisionid"].ToString(), dr["fromftyid"].ToString()));
 
             DataTable selectDataTable1;
