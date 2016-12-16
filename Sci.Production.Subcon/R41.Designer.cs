@@ -33,11 +33,13 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
-            this.dateCutRef = new Sci.Win.UI.DateRange();
             this.textSP = new Sci.Win.UI.TextBox();
             this.dateBundle = new Sci.Win.UI.DateRange();
             this.comboSubProcess = new Sci.Win.UI.ComboBox();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.comboM = new Sci.Win.UI.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.textCutRef_Start = new System.Windows.Forms.TextBox();
+            this.textCutRef_End = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // print
@@ -96,14 +98,7 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(95, 23);
             this.label5.TabIndex = 98;
-            this.label5.Text = "Factory";
-            // 
-            // dateCutRef
-            // 
-            this.dateCutRef.Location = new System.Drawing.Point(125, 19);
-            this.dateCutRef.Name = "dateCutRef";
-            this.dateCutRef.Size = new System.Drawing.Size(280, 23);
-            this.dateCutRef.TabIndex = 99;
+            this.label5.Text = "M";
             // 
             // textSP
             // 
@@ -132,25 +127,54 @@
             this.comboSubProcess.Size = new System.Drawing.Size(121, 24);
             this.comboSubProcess.TabIndex = 102;
             // 
-            // comboFactory
+            // comboM
             // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(125, 136);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.Size = new System.Drawing.Size(121, 24);
-            this.comboFactory.TabIndex = 103;
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(125, 136);
+            this.comboM.Name = "comboM";
+            this.comboM.Size = new System.Drawing.Size(121, 24);
+            this.comboM.TabIndex = 103;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(252, 22);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(16, 17);
+            this.label6.TabIndex = 106;
+            this.label6.Text = "~";
+            // 
+            // textCutRef_Start
+            // 
+            this.textCutRef_Start.BackColor = System.Drawing.Color.White;
+            this.textCutRef_Start.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textCutRef_Start.Location = new System.Drawing.Point(125, 19);
+            this.textCutRef_Start.Name = "textCutRef_Start";
+            this.textCutRef_Start.Size = new System.Drawing.Size(121, 23);
+            this.textCutRef_Start.TabIndex = 107;
+            // 
+            // textCutRef_End
+            // 
+            this.textCutRef_End.BackColor = System.Drawing.Color.White;
+            this.textCutRef_End.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textCutRef_End.Location = new System.Drawing.Point(274, 19);
+            this.textCutRef_End.Name = "textCutRef_End";
+            this.textCutRef_End.Size = new System.Drawing.Size(131, 23);
+            this.textCutRef_End.TabIndex = 108;
             // 
             // R41
             // 
             this.ClientSize = new System.Drawing.Size(517, 205);
-            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.textCutRef_End);
+            this.Controls.Add(this.textCutRef_Start);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.comboM);
             this.Controls.Add(this.comboSubProcess);
             this.Controls.Add(this.dateBundle);
             this.Controls.Add(this.textSP);
-            this.Controls.Add(this.dateCutRef);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -166,11 +190,13 @@
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.dateCutRef, 0);
             this.Controls.SetChildIndex(this.textSP, 0);
             this.Controls.SetChildIndex(this.dateBundle, 0);
             this.Controls.SetChildIndex(this.comboSubProcess, 0);
-            this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.label6, 0);
+            this.Controls.SetChildIndex(this.textCutRef_Start, 0);
+            this.Controls.SetChildIndex(this.textCutRef_End, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -183,11 +209,13 @@
         private Win.UI.Label label3;
         private Win.UI.Label label4;
         private Win.UI.Label label5;
-        private Win.UI.DateRange dateCutRef;
         private Win.UI.TextBox textSP;
         private Win.UI.DateRange dateBundle;
         private Win.UI.ComboBox comboSubProcess;
-        private Win.UI.ComboBox comboFactory;
+        private Win.UI.ComboBox comboM;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox textCutRef_Start;
+        private System.Windows.Forms.TextBox textCutRef_End;
 
     }
 }

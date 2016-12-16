@@ -14,15 +14,15 @@ namespace Sci.Production.Subcon
     public partial class R41 : Sci.Win.Tems.PrintForm
     {
         DataTable printData;
-        string SubProcess, SP, Factory;
-        DateTime? dateCutRef1, dateCutRef2, dateBundle1, dateBundle2;
+        string SubProcess, SP, M, CutRef1, CutRef2;
+        DateTime?  dateBundle1, dateBundle2;
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
             comboload();
         }
-
+       
         private void comboload()
         {
             DataTable dtSubprocessID;
@@ -35,11 +35,11 @@ namespace Sci.Production.Subcon
             }
             else { ShowErr(Result); }
 
-            DataTable dtfactory;
-            if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory", out dtfactory))
+            DataTable dtM;
+            if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory", out dtM))
             {
-                this.comboFactory.DataSource = dtfactory;
-                this.comboFactory.DisplayMember = "ID";
+                this.comboM.DataSource = dtM;
+                this.comboM.DisplayMember = "ID";
             }
             else { ShowErr(Result); }
         }
@@ -55,9 +55,9 @@ namespace Sci.Production.Subcon
             }
             SubProcess = comboSubProcess.Text;
             SP = textSP.Text;
-            Factory = comboFactory.Text;
-            dateCutRef1 = dateCutRef.Value1;
-            dateCutRef2 = dateCutRef.Value2;
+            M = comboM.Text;
+            CutRef1 = textCutRef_Start.Text;
+            CutRef2 = textCutRef_End.Text;
             dateBundle1 = dateBundle.Value1;
             dateBundle2 = dateBundle.Value2;
             return base.ValidateInput();
@@ -88,7 +88,7 @@ namespace Sci.Production.Subcon
             [Artwork] = stuff(sub.sub,1,1,''),
             [Qty] = bd.Qty,
             [Sub-process] = s.Id,
-            [In (Time)] = bio.InComing,
+            [InComing] = bio.InComing,
             [Out (Time)] = bio.OutGoing
 
             from Bundle b
@@ -115,10 +115,9 @@ namespace Sci.Production.Subcon
             {
                 sqlCmd.Append(string.Format(@" and (s.Id = '{0}' or '{0}' = 'ALL') ", SubProcess));
             }
-            if (!MyUtility.Check.Empty(dateCutRef1))
+            if (!MyUtility.Check.Empty(CutRef1) && (!MyUtility.Check.Empty(CutRef2)))
             {
-                sqlCmd.Append(string.Format(@" and b.CutRef between '{0}' and '{1}'",
-                    Convert.ToDateTime(dateCutRef1).ToString("d"), Convert.ToDateTime(dateCutRef2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and b.CutRef between '{0}' and '{1}'", CutRef1, CutRef2));
             }
             if (!MyUtility.Check.Empty(SP))
             {
@@ -129,15 +128,16 @@ namespace Sci.Production.Subcon
                 sqlCmd.Append(string.Format(@" and b.Cdate between '{0}' and '{1}'",
                     Convert.ToDateTime(dateBundle1).ToString("d"), Convert.ToDateTime(dateBundle2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(Factory))
+            if (!MyUtility.Check.Empty(M))
             {
-                sqlCmd.Append(string.Format(@" and b.MDivisionid = '{0}'", Factory));
+                sqlCmd.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
             }
             #endregion
 
             sqlCmd.Append(@"order by [Bundleno],[Cut Ref#],[SP#],[Style],[Season],[Brand],[Article],[Color],[Line],[Cell],[Pattern],[PtnDesc],[Group],[Size]");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -146,6 +146,8 @@ namespace Sci.Production.Subcon
             return Result.True;
         }
         // 產生Excel
+
+
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             SetCount(printData.Rows.Count);
