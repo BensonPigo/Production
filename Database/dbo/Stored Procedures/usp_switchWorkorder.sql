@@ -881,10 +881,10 @@ BEGIN
 	Begin
 		insert into WorkOrder(id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
 						EstCutDate,CutCellid,MarkerLength,ConsPC,Cons,Refno,SCIRefno,MarkerNo,MarkerVersion,Type,Order_EachconsUkey,
-						AddName,FabricCombo,MarkerDownLoadId,FabricCode,LectraCode)
+						AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,LectraCode)
 						(Select id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
 						EstCutDate,CutCellid,MarkerLength,ConsPC,Cons,Refno,SCIRefno,MarkerNo,MarkerVersion,Type,Order_EachconsUkey,
-						AddName,FabricCombo,MarkerDownLoadId,FabricCode,LectraCode 
+						AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,LectraCode 
 						From #NewWorkOrder Where newkey = @insertRow)
 		select @iden = @@IDENTITY 
 		--------將撈出的Ident 寫入----------
