@@ -139,7 +139,7 @@ select z.POID,z.Seq1,z.Seq2
 ,requestqty = sum(z.requestqty) 
 * isnull((select v.Ratevalue from dbo.View_Unitrate v where v.FROM_U = 
 		(
-			select unitID
+			select distinct unitID
 			from Invtrans B
 			where B.InventoryPoId = z.PoId 
 			and B.InventorySeq1 = z.Seq1 
