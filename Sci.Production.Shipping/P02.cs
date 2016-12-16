@@ -361,7 +361,7 @@ where id='{0}' ", CurrentMaintain["ID"]);
                 displayBox7.Value = Convert.ToDateTime(CurrentMaintain["SendDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             }
 
-            button1.Enabled = !EditMode && (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Send" || MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Approve") && (PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["Handle"])) || PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["Manager"])));
+            button1.Enabled = !EditMode && (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Sent" || MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Approved") && (PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["Handle"])) || PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["Manager"])));
 
             if (CurrentDetailData == null)
             {
