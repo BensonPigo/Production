@@ -44,9 +44,9 @@ namespace Sci.Production.Cutting
 
         protected override void OnFormLoaded()
         {
-            DBProxy.Current.Select(null, 
+            DBProxy.Current.Select(null,
             @"Select 0 as Sel, '' as cutref,'' as cuttingid,'' as orderid,'' as Fabriccombo,
-            '' as PatternPanel,'' as cutno, '' as MarkerName, '' as MarkerLength, '' as Colorid, 0 as Layer,
+            '' as LectraCode,'' as cutno, '' as MarkerName, '' as MarkerLength, '' as Colorid, 0 as Layer,
             0 as Cons, '' as Ratio from Workorder where 1=0", out gridTable);
             base.OnFormLoaded();
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
@@ -56,8 +56,8 @@ namespace Sci.Production.Cutting
             .Text("Cutref", header: "Cut Ref#", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Cuttingid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("OrderID", header: "Sub-SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("FabricCombo", header: "Pattern Panel", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("PatternPanel", header: "Lectra Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("FabricCombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
+            .Text("LectraCode", header: "Lectra Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -87,12 +87,6 @@ namespace Sci.Production.Cutting
             if (MyUtility.Check.Empty(condition)) condition = @"''";
             string sqlcmd = string.Format(
                 @"Select 0 as sel,a.*, a.id as Cuttingid,a.ukey as workorderukey,    
-                (
-                Select PatternPanel+'+ ' 
-                From WorkOrder_PatternPanel c
-                Where c.WorkOrderUkey =a.Ukey 
-                For XML path('')
-                ) as PatternPanel,
                 (
                 Select orderid+'/' 
                 From WorkOrder_Distribute c
@@ -138,7 +132,7 @@ namespace Sci.Production.Cutting
                         ndr["Cuttingid"] = dr["Cuttingid"];
                         ndr["OrderID"] = dr["Orderid"];
                         ndr["FabricCombo"] = dr["FabricCombo"];
-                        ndr["PatternPanel"] = dr["PatternPanel"];
+                        ndr["LectraCode"] = dr["LectraCode"];
                         ndr["Cutno"] = dr["cutno"];
                         ndr["MarkerName"] = dr["MarkerName"];
                         ndr["MarkerLength"] = dr["MarkerLength"];
@@ -156,7 +150,7 @@ namespace Sci.Production.Cutting
                         exist[0]["Cuttingid"] = dr["Cuttingid"];
                         exist[0]["OrderID"] = dr["Orderid"];
                         exist[0]["FabricCombo"] = dr["FabricCombo"];
-                        exist[0]["PatternPanel"] = dr["PatternPanel"];
+                        exist[0]["LectraCode"] = dr["LectraCode"];
                         exist[0]["Cutno"] = dr["cutno"];
                         exist[0]["MarkerName"] = dr["MarkerName"];
                         exist[0]["MarkerLength"] = dr["MarkerLength"];

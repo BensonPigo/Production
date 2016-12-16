@@ -35,7 +35,13 @@
             this.Close = new Sci.Win.UI.Button();
             this.label2 = new Sci.Win.UI.Label();
             this.dateBox1 = new Sci.Win.UI.DateBox();
+            this.panelTOP = new Sci.Win.UI.Panel();
+            this.panelBOTTOM = new Sci.Win.UI.Panel();
+            this.panelMIDDLE = new Sci.Win.UI.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            this.panelTOP.SuspendLayout();
+            this.panelBOTTOM.SuspendLayout();
+            this.panelMIDDLE.SuspendLayout();
             this.SuspendLayout();
             // 
             // grid1
@@ -46,11 +52,12 @@
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(8, 52);
+            this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -64,13 +71,13 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(927, 424);
+            this.grid1.Size = new System.Drawing.Size(944, 439);
             this.grid1.TabIndex = 3;
             this.grid1.TabStop = false;
             // 
             // Query
             // 
-            this.Query.Location = new System.Drawing.Point(852, 12);
+            this.Query.Location = new System.Drawing.Point(852, 7);
             this.Query.Name = "Query";
             this.Query.Size = new System.Drawing.Size(80, 30);
             this.Query.TabIndex = 2;
@@ -80,7 +87,8 @@
             // 
             // Import
             // 
-            this.Import.Location = new System.Drawing.Point(769, 482);
+            this.Import.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.Import.Location = new System.Drawing.Point(766, 5);
             this.Import.Name = "Import";
             this.Import.Size = new System.Drawing.Size(80, 30);
             this.Import.TabIndex = 2;
@@ -90,7 +98,8 @@
             // 
             // Close
             // 
-            this.Close.Location = new System.Drawing.Point(855, 482);
+            this.Close.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.Close.Location = new System.Drawing.Point(852, 5);
             this.Close.Name = "Close";
             this.Close.Size = new System.Drawing.Size(80, 30);
             this.Close.TabIndex = 3;
@@ -101,7 +110,7 @@
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(9, 12);
+            this.label2.Location = new System.Drawing.Point(13, 12);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(99, 23);
             this.label2.TabIndex = 5;
@@ -109,23 +118,53 @@
             // 
             // dateBox1
             // 
-            this.dateBox1.Location = new System.Drawing.Point(111, 12);
+            this.dateBox1.Location = new System.Drawing.Point(115, 12);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
             this.dateBox1.TabIndex = 0;
             // 
+            // panelTOP
+            // 
+            this.panelTOP.Controls.Add(this.label2);
+            this.panelTOP.Controls.Add(this.dateBox1);
+            this.panelTOP.Controls.Add(this.Query);
+            this.panelTOP.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelTOP.Location = new System.Drawing.Point(0, 0);
+            this.panelTOP.Name = "panelTOP";
+            this.panelTOP.Size = new System.Drawing.Size(944, 44);
+            this.panelTOP.TabIndex = 6;
+            // 
+            // panelBOTTOM
+            // 
+            this.panelBOTTOM.Controls.Add(this.Close);
+            this.panelBOTTOM.Controls.Add(this.Import);
+            this.panelBOTTOM.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panelBOTTOM.Location = new System.Drawing.Point(0, 483);
+            this.panelBOTTOM.Name = "panelBOTTOM";
+            this.panelBOTTOM.Size = new System.Drawing.Size(944, 39);
+            this.panelBOTTOM.TabIndex = 7;
+            // 
+            // panelMIDDLE
+            // 
+            this.panelMIDDLE.Controls.Add(this.grid1);
+            this.panelMIDDLE.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelMIDDLE.Location = new System.Drawing.Point(0, 44);
+            this.panelMIDDLE.Name = "panelMIDDLE";
+            this.panelMIDDLE.Size = new System.Drawing.Size(944, 439);
+            this.panelMIDDLE.TabIndex = 8;
+            // 
             // P20_Import_Workorder
             // 
             this.ClientSize = new System.Drawing.Size(944, 522);
-            this.Controls.Add(this.dateBox1);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.Close);
-            this.Controls.Add(this.Import);
-            this.Controls.Add(this.Query);
-            this.Controls.Add(this.grid1);
+            this.Controls.Add(this.panelMIDDLE);
+            this.Controls.Add(this.panelBOTTOM);
+            this.Controls.Add(this.panelTOP);
             this.Name = "P20_Import_Workorder";
             this.Text = "P20_Import";
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            this.panelTOP.ResumeLayout(false);
+            this.panelBOTTOM.ResumeLayout(false);
+            this.panelMIDDLE.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -138,5 +177,8 @@
         private Win.UI.Button Close;
         private Win.UI.Label label2;
         private Win.UI.DateBox dateBox1;
+        private Win.UI.Panel panelTOP;
+        private Win.UI.Panel panelBOTTOM;
+        private Win.UI.Panel panelMIDDLE;
     }
 }

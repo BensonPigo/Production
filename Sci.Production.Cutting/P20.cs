@@ -33,13 +33,7 @@ namespace Sci.Production.Cutting
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmdsql = string.Format(
             @"
-            Select a.*,e.FabricCombo,
-            (
-                Select PatternPanel+'+' 
-                From WorkOrder_PatternPanel c
-                Where c.WorkOrderUkey =a.WorkOrderUkey 
-                For XML path('')
-            ) as PatternPanel,
+            Select a.* , e.FabricCombo, e.LectraCode, 
             (
                 Select DISTINCT Orderid+'/' 
                 From WorkOrder_Distribute d
@@ -95,14 +89,7 @@ namespace Sci.Production.Cutting
                 string newvalue = e.FormattedValue.ToString();
                 if (newvalue == oldvalue || newvalue.Trim()=="") return;
                 DataTable dt;
-                if (DBProxy.Current.Select(null, string.Format(
-                @"Select a.*,     
-                (
-                Select PatternPanel+'+ ' 
-                From WorkOrder_PatternPanel c
-                Where c.WorkOrderUkey =a.Ukey 
-                For XML path('')
-                ) as PatternPanel from WorkOrder a where a.cutref = '{0}'", e.FormattedValue.ToString()), out dt))
+                if (DBProxy.Current.Select(null, string.Format(@"Select * from WorkOrder a where a.cutref = '{0}'", e.FormattedValue.ToString()), out dt))
                 {
                     if (dt.Rows.Count==0)
                     {
@@ -114,7 +101,7 @@ namespace Sci.Production.Cutting
                         dr["MarkerName"] = "";
                         dr["Layer"] =0;
                         dr["Cons"] = 0;
-                        dr["PatternPanel"] = "";
+                        dr["LectraCode"] = "";
                         dr["Workorderukey"] = 0;
                         dr["SizeRatio"] = "";
                         dr.EndEdit();
@@ -143,7 +130,7 @@ namespace Sci.Production.Cutting
                 dr["MarkerName"] = seldr["MarkerName"];
                 dr["Layer"] = seldr["Layer"];
                 dr["Cons"] = seldr["Cons"];
-                dr["PatternPanel"] = seldr["PatternPanel"];
+                dr["LectraCode"] = seldr["LectraCode"];
                 dr["cutno"] = seldr["cutno"];
                 dr["MarkerLength"] = seldr["MarkerLength"];
                 dr["colorID"] = seldr["colorID"];
@@ -210,7 +197,7 @@ namespace Sci.Production.Cutting
             .Text("Cuttingid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("OrderID", header: "Sub-SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("FabricCombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("PatternPanel", header: "Lectra code", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("LectraCode", header: "Lectra code", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
