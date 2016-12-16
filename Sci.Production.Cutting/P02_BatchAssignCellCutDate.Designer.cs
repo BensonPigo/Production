@@ -41,7 +41,6 @@
             this.SP_textbox = new Sci.Win.UI.TextBox();
             this.label8 = new Sci.Win.UI.Label();
             this.article_textbox = new Sci.Win.UI.TextBox();
-            this.txtcell = new Sci.Production.Class.txtCell();
             this.cutno_numericbox = new Sci.Win.UI.NumericBox();
             this.sizecode_textbox = new Sci.Win.UI.TextBox();
             this.estcutdate_textbox1 = new Sci.Win.UI.DateBox();
@@ -49,7 +48,6 @@
             this.markername_textbox = new Sci.Win.UI.TextBox();
             this.only_checkBox = new Sci.Win.UI.CheckBox();
             this.filter_button = new Sci.Win.UI.Button();
-            this.txtCell2 = new Sci.Production.Class.txtCell();
             this.label9 = new Sci.Win.UI.Label();
             this.estcutdate_textbox2 = new Sci.Win.UI.DateBox();
             this.label10 = new Sci.Win.UI.Label();
@@ -58,6 +56,8 @@
             this.batchestcutdate_button = new Sci.Win.UI.Button();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.txtCell2 = new Sci.Production.Class.txtCell();
+            this.txtcell = new Sci.Production.Class.txtCell();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -66,6 +66,9 @@
             this.grid1.AllowUserToAddRows = false;
             this.grid1.AllowUserToDeleteRows = false;
             this.grid1.AllowUserToResizeRows = false;
+            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -94,6 +97,8 @@
             // 
             // button1
             // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.AutoSize = true;
             this.button1.Location = new System.Drawing.Point(916, 467);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
@@ -192,24 +197,24 @@
             this.article_textbox.Size = new System.Drawing.Size(78, 23);
             this.article_textbox.TabIndex = 1;
             // 
-            // txtcell
-            // 
-            this.txtcell.BackColor = System.Drawing.Color.White;
-            this.txtcell.FactoryId = "";
-            this.txtcell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcell.Location = new System.Drawing.Point(693, 46);
-            this.txtcell.Name = "txtcell";
-            this.txtcell.Size = new System.Drawing.Size(30, 23);
-            this.txtcell.TabIndex = 7;
-            // 
             // cutno_numericbox
             // 
             this.cutno_numericbox.BackColor = System.Drawing.Color.White;
             this.cutno_numericbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cutno_numericbox.Location = new System.Drawing.Point(273, 9);
             this.cutno_numericbox.Name = "cutno_numericbox";
+            this.cutno_numericbox.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.cutno_numericbox.Size = new System.Drawing.Size(45, 23);
             this.cutno_numericbox.TabIndex = 2;
+            this.cutno_numericbox.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // sizecode_textbox
             // 
@@ -265,16 +270,6 @@
             this.filter_button.Text = "Filter";
             this.filter_button.UseVisualStyleBackColor = true;
             this.filter_button.Click += new System.EventHandler(this.filter_button_Click);
-            // 
-            // txtCell2
-            // 
-            this.txtCell2.BackColor = System.Drawing.Color.White;
-            this.txtCell2.FactoryId = "";
-            this.txtCell2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell2.Location = new System.Drawing.Point(107, 87);
-            this.txtCell2.Name = "txtCell2";
-            this.txtCell2.Size = new System.Drawing.Size(30, 23);
-            this.txtCell2.TabIndex = 10;
             // 
             // label9
             // 
@@ -346,6 +341,26 @@
             this.lineShape1.X2 = 1004;
             this.lineShape1.Y1 = 79;
             this.lineShape1.Y2 = 78;
+            // 
+            // txtCell2
+            // 
+            this.txtCell2.BackColor = System.Drawing.Color.White;
+            this.txtCell2.FactoryId = "";
+            this.txtCell2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCell2.Location = new System.Drawing.Point(107, 87);
+            this.txtCell2.Name = "txtCell2";
+            this.txtCell2.Size = new System.Drawing.Size(30, 23);
+            this.txtCell2.TabIndex = 10;
+            // 
+            // txtcell
+            // 
+            this.txtcell.BackColor = System.Drawing.Color.White;
+            this.txtcell.FactoryId = "";
+            this.txtcell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcell.Location = new System.Drawing.Point(693, 46);
+            this.txtcell.Name = "txtcell";
+            this.txtcell.Size = new System.Drawing.Size(30, 23);
+            this.txtcell.TabIndex = 7;
             // 
             // P02_BatchAssignCellCutDate
             // 

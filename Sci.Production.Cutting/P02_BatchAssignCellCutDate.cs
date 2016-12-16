@@ -1,4 +1,7 @@
-﻿using Ict.Win;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,10 +27,58 @@ namespace Sci.Production.Cutting
 
             gridsetup();
             filter_button_Click(null,null);  //1390: CUTTING_P02_BatchAssignCellCutDate，當進去此功能時應直接預帶資料。
+
         }
+     
+        
         private void gridsetup()
         {
+            DataGridViewGeneratorTextColumnSettings Cell = new DataGridViewGeneratorTextColumnSettings();
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            Cell.EditingMouseDown += (s, e) => 
+            {
+                 DualResult  DR; DataTable DT; SelectItem S;
+                if (e.Button == MouseButtons.Right)
+                {
+                    string keyWord = Sci.Env.User.Keyword;
+                    // Parent form 若是非編輯狀態就 return 
+                    if (!this.EditMode) { return; }
+                    string CUTCELL= string.Format("Select id from Cutcell where mDivisionid = '{0}' and junk=0", keyWord);
+                    DR = DBProxy.Current.Select(null, CUTCELL, out DT);
+                    S = new SelectItem(DT, "ID", "10",DT.Columns["id"].ToString(), false, ",");
+                    DialogResult result = S.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    e.EditingControl.Text = S.GetSelectedString();
+                }
+            };
+            Cell.CellValidating += (s, e) =>
+            {
+                DualResult DR; DataTable DT;
+               
+                string keyWord = Sci.Env.User.Keyword;
+                if (!this.EditMode) { return; }
+                // 右鍵彈出功能
+                if (e.RowIndex == -1) return;
+                DataRow dr = grid1.GetDataRow(e.RowIndex);
+                string oldvalue = dr["Cutcellid"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (oldvalue == newvalue) return;
+                string CUTCELL = string.Format("Select id from Cutcell where mDivisionid = '{0}' and junk=0", keyWord);
+                DR = DBProxy.Current.Select(null, CUTCELL, out DT);
+              
+                DataRow[] seledr = DT.Select(string.Format("ID='{0}'", newvalue));
+                if (seledr.Length == 0)
+                {
+                    MyUtility.Msg.WarningBox(string.Format("<Cell> : {0} data not found!", newvalue));
+                    dr["Cutcellid"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true;
+                    return;
+                }
+
+                dr["Cutcellid"] = newvalue;
+                dr.EndEdit();
+            };
 
             Helper.Controls.Grid.Generator(this.grid1)
              .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
@@ -35,8 +86,8 @@ namespace Sci.Production.Cutting
              .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), integer_places: 3, iseditingreadonly: true)
              .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5), iseditingreadonly: true)
              .Text("Fabriccombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
-             .Text("PatternPanel", header: "PatternPanel", width: Widths.AnsiChars(2), iseditingreadonly: true)
-             .Text("Cutcellid", header: "Cell", width: Widths.AnsiChars(2), iseditingreadonly: true)
+             .Text("LectraCode", header: "Lectra Code", width: Widths.AnsiChars(2), iseditingreadonly: true)
+             .Text("Cutcellid", header: "Cell", width: Widths.AnsiChars(2),settings:Cell,iseditingreadonly: false)
              .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
              .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -46,14 +97,15 @@ namespace Sci.Production.Cutting
              .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
              .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), iseditingreadonly: true)
              .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-             .Date("estcutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+             .Date("estcutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: false)
              .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true);
-
+            
             this.grid1.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
             this.grid1.Columns[6].DefaultCellStyle.BackColor = Color.Pink;
             this.grid1.Columns[6].DefaultCellStyle.ForeColor = Color.Red;
             this.grid1.Columns[16].DefaultCellStyle.BackColor = Color.Pink;
             this.grid1.Columns[16].DefaultCellStyle.ForeColor = Color.Red;
+
         }
 
         private void filter_button_Click(object sender, EventArgs e)
@@ -79,7 +131,7 @@ namespace Sci.Production.Cutting
             grid1.DataSource = curTb;
             
         }
-
+       
         private void button1_Click(object sender, EventArgs e)
         {
             Close();
