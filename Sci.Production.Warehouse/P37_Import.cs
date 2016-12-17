@@ -61,7 +61,7 @@ namespace Sci.Production.Warehouse
 ,f.mdivisionid
 from dbo.FtyInventory f 
 left join PO_Supp_Detail p1 on p1.ID = f.PoId and p1.seq1 = f.SEQ1 and p1.SEQ2 = f.seq2
-where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and f.mdivisionid='{0}'", Sci.Env.User.Keyword));
+where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and stocktype !='O' and f.mdivisionid='{0}'", Sci.Env.User.Keyword));
                 }
                 else
                 {
@@ -77,7 +77,9 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and f.mdivisionid='{0}'"
 from dbo.Receiving a inner join dbo.Receiving_Detail b on a.id = b.id
 inner join dbo.FtyInventory f on f.POID = b.PoId and f.seq1 = b.seq1 and f.seq2 = b.Seq2 and f.stocktype = b.stocktype and f.MDivisionID = b.mdivisionid
 left join PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirmed' and a.mdivisionid='{0}'", Sci.Env.User.Keyword));
+where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirmed' and a.mdivisionid='{0}'
+
+", Sci.Env.User.Keyword));
                 }
                 #endregion
 
