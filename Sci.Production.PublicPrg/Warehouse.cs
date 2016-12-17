@@ -587,6 +587,7 @@ delete t from FtyInventory_Detail t
 where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
 
 drop table #tmp_L_K 
+drop table #tmpS1 
 ";
                         //↑最後一段delete寫法千萬不能用merge作,即使只有一筆資料也要跑超久
                     }
@@ -615,7 +616,9 @@ when not matched then
     insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
     values ((select ukey FROM dbo.MDivisionPoDetail 
 			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
+			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
+
+drop table #tmpS1 ";
                     }
                     break;
                 #endregion
@@ -646,7 +649,9 @@ when not matched then
     insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
     values ((select ukey from dbo.MDivisionPoDetail 
 			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
+			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
+
+drop table #tmpS1 ";
                     }
                     else
                     {
@@ -673,7 +678,9 @@ when not matched then
     insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
     values ((select ukey from dbo.MDivisionPoDetail 
 			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
+			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
+
+drop table #tmpS1 ";
                     }
                     
                     #endregion
@@ -722,6 +729,7 @@ delete t from FtyInventory_Detail t
 where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
 
 drop table #tmp_L_K 
+drop table #tmpS1 
 ";
                         //↑最後一段delete寫法千萬不能用merge作,即使只有一筆資料也要跑超久
                     }
@@ -750,7 +758,9 @@ when not matched then
     insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
     values ((select ukey FROM dbo.MDivisionPoDetail 
 			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
+			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
+
+drop table #tmpS1 ";
                     }
 #endregion
                     break;
@@ -776,12 +786,14 @@ using #tmpS1 as s
 	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
 when matched then
     update
-    set adjustqty = isnull(s.adjustqty,0.00) + s.qty
+    set adjustqty = isnull(s.qty,0.00) + s.qty
 when not matched then
     insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[adjustqty])
     values ((select ukey from dbo.MDivisionPoDetail 
 			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
+			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
+
+drop table #tmpS1 ";
                     }
                     else
                     {
@@ -803,12 +815,14 @@ using #tmpS1 as s
 	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
 when matched then
     update
-    set adjustqty = isnull(s.adjustqty,0.00) - s.qty
+    set adjustqty = isnull(s.qty,0.00) - s.qty
 when not matched then
     insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[adjustqty])
     values ((select ukey from dbo.MDivisionPoDetail 
 			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
+			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
+
+drop table #tmpS1 ";
                     }
                     #endregion
                     break;
