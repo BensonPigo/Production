@@ -273,7 +273,7 @@ delete from #tmp2 where qty = 0;
                     BOA = result[0];
                     BOA_Orderlist = result[1];
                     BOA_PO = result[2];
-                    BOA_PO.DefaultView.Sort = "Selected desc,qty desc,scirefno,poid,seq1,seq2";
+                    BOA_PO.DefaultView.Sort = "poid,seq1,seq2";
                     BOA_PO_Size = result[3];
                     BOA_PO.ColumnsStringAdd("Output");
 
@@ -409,22 +409,22 @@ delete from #tmp2 where qty = 0;
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
-                 .Text("poid", header: "SP#", width: Widths.AnsiChars(13))
-                 .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
-                 .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))
-                 .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(8))
-                 .Text("scirefno", header: "SCI Refno", width: Widths.AnsiChars(23))
-                 .Text("colorid", header: "Color ID", width: Widths.AnsiChars(7))
-                 .Text("sizespec", header: "SizeSpec", width: Widths.AnsiChars(6))
+                 .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                 .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                 .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                 .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("scirefno", header: "SCI Refno", width: Widths.AnsiChars(23), iseditingreadonly: true)
+                 .Text("colorid", header: "Color ID", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                 .Text("sizespec", header: "SizeSpec", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Numeric("qty", header: "Pick Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, settings: ns2)
                  .Text("Output", header: "Output", width: Widths.AnsiChars(10), settings: ns)
-                 .Text("Balanceqty", header: "Bulk Qty", width: Widths.AnsiChars(10))
-                 .Text("suppcolor", header: "Supp Color", width: Widths.AnsiChars(10))
-                  .Text("sizecode", header: "SizeCode", width: Widths.AnsiChars(6))
-                 .Text("sizeunit", header: "Size Unit", width: Widths.AnsiChars(15))
-                 .Text("remark", header: "Remark", width: Widths.AnsiChars(10))
-                  .Text("usageqty", header: "Usage Qty", width: Widths.AnsiChars(10))
-                  .Text("usageunit", header: "Usage Unit", width: Widths.AnsiChars(10))
+                 .Text("Balanceqty", header: "Bulk Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("suppcolor", header: "Supp Color", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                  .Text("sizecode", header: "SizeCode", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Text("sizeunit", header: "Size Unit", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Text("remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                  .Text("usageqty", header: "Usage Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                  .Text("usageunit", header: "Usage Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  ;
             grid1.Columns[8].Frozen = true;  //Qty
             grid1.Columns[8].DefaultCellStyle.BackColor = Color.Pink;   //Qty
