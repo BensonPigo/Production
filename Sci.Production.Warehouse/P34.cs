@@ -379,6 +379,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
             #region 更新庫存數量  ftyinventory
             DataTable dtio = (DataTable)detailgridbs.DataSource;
             dtio.ColumnsDecimalAdd("qty",expression: "QtyAfter- QtyBefore");
+
             sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(8, null, true));
             #endregion 更新庫存數量  ftyinventory
 
@@ -538,15 +539,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
             DataTable dtio = (DataTable)detailgridbs.DataSource;
             dtio.ColumnsDecimalAdd("qty", expression: "QtyAfter- QtyBefore");
             sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(8, null, false));
-            //sqlupd2.Append("declare @iden as bigint;");
-            //sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
-            //foreach (DataRow item in DetailDatas)
-            //{
-            //    sqlupd2.Append(Prgs.UpdateFtyInventory(8, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString()
-            //        , (decimal)item["QtyAfter"] - (decimal)item["QtyBefore"]
-            //        , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), false, item["location"].ToString()));
-            //}
-            //sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
             
             #endregion 更新庫存數量  ftyinventory
 
