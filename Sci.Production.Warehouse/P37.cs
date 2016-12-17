@@ -335,8 +335,9 @@ namespace Sci.Production.Warehouse
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
+            .Text("StockType", header: "StockType", iseditingreadonly: true)    //5
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //6
-            .Text("Location", header: "Bulk Location", iseditingreadonly: true)    //7
+            .Text("Location", header: "Location", iseditingreadonly: true)    //7
             ;     //
             #endregion 欄位設定
         }
