@@ -196,7 +196,8 @@ namespace Sci.Production.Warehouse
 
             string sqlupd2_C = "";
             StringBuilder sqlupd2_B = new StringBuilder();
-            StringBuilder sqlupd2_FIO = new StringBuilder();
+            String sqlupd2_FIO = "";
+            String sqlupd2_FIO2 = "";
 
             StringBuilder sqlupd2 = new StringBuilder();
             String sqlcmd = "", sqlupd3 = "", ids = "";
@@ -310,8 +311,34 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             sqlupd2_C = Prgs.UpdateMPoDetail(16, null, true);
             #endregion
             #region -- 更新庫存數量  ftyinventory --
-            sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(4, null, true));
-            sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(2, null, true));
+            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         select new
+                         {
+                             mdivisionid = m.Field<string>("fromMdivisionid"),
+                             poid = m.Field<string>("frompoid"),
+                             seq1 = m.Field<string>("fromseq1"),
+                             seq2 = m.Field<string>("fromseq2"),
+                             stocktype = m.Field<string>("fromstocktype"),
+                             qty = m.Field<decimal>("qty"),
+                             location = m.Field<string>("tolocation"),
+                             roll = m.Field<string>("fromroll"),
+                             dyelot = m.Field<string>("fromdyelot"),
+                         }).ToList();
+            var bsfioto = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                           select new
+                           {
+                               mdivisionid = m.Field<string>("toMdivisionid"),
+                               poid = m.Field<string>("topoid"),
+                               seq1 = m.Field<string>("toseq1"),
+                               seq2 = m.Field<string>("toseq2"),
+                               stocktype = m.Field<string>("tostocktype"),
+                               qty = m.Field<decimal>("qty"),
+                               location = m.Field<string>("tolocation"),
+                               roll = m.Field<string>("toroll"),
+                               dyelot = m.Field<string>("todyelot"),
+                           }).ToList();
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
+            sqlupd2_FIO2 = Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion 更新庫存數量  ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -333,8 +360,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                         ShowErr(result);
                         return;
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfioto, "", sqlupd2_FIO2, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
@@ -372,7 +404,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             StringBuilder sqlupd2_B = new StringBuilder();
             string sqlupd2_C = "";
-            StringBuilder sqlupd2_FIO = new StringBuilder();
+            String sqlupd2_FIO = "";
+            String sqlupd2_FIO2 = "";
 
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unconfirme it?");
             if (dResult.ToString().ToUpper() == "NO") return;
@@ -496,8 +529,34 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             sqlupd2_C = Prgs.UpdateMPoDetail(16, null, false);
             #endregion
             #region -- 更新庫存數量  ftyinventory --
-            sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(4, null, false));
-            sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(2, null, false));
+            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         select new
+                         {
+                             mdivisionid = m.Field<string>("fromMdivisionid"),
+                             poid = m.Field<string>("frompoid"),
+                             seq1 = m.Field<string>("fromseq1"),
+                             seq2 = m.Field<string>("fromseq2"),
+                             stocktype = m.Field<string>("fromstocktype"),
+                             qty = m.Field<decimal>("qty"),
+                             location = m.Field<string>("tolocation"),
+                             roll = m.Field<string>("fromroll"),
+                             dyelot = m.Field<string>("fromdyelot"),
+                         }).ToList();
+            var bsfioto = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                           select new
+                           {
+                               mdivisionid = m.Field<string>("toMdivisionid"),
+                               poid = m.Field<string>("topoid"),
+                               seq1 = m.Field<string>("toseq1"),
+                               seq2 = m.Field<string>("toseq2"),
+                               stocktype = m.Field<string>("tostocktype"),
+                               qty = m.Field<decimal>("qty"),
+                               location = m.Field<string>("tolocation"),
+                               roll = m.Field<string>("toroll"),
+                               dyelot = m.Field<string>("todyelot"),
+                           }).ToList();
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
+            sqlupd2_FIO2 = Prgs.UpdateFtyInventory_IO(2, null, false);
             #endregion 更新庫存數量  ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -518,13 +577,18 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                         ShowErr(result);
                         return;
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
                         return;
-                    }                    
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfioto, "", sqlupd2_FIO2, out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }               
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
