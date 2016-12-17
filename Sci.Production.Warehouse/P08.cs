@@ -350,7 +350,7 @@ where a.id = '{0}' and a.seq1 ='{1}'and a.seq2 = '{2}'", CurrentDetailData["poid
             if (null == dr) return;
 
             string sqlupd2_A = "";
-            string sqlupd2_FIO_iss = "";
+            string sqlupd2_FIO = "";
 
             StringBuilder sqlupd2 = new StringBuilder();
             String sqlcmd = "", sqlupd3 = "", ids = "";
@@ -469,7 +469,20 @@ drop table #tmp2
             #endregion
 
             #region 更新庫存數量  ftyinventory
-            sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(2, null, true);
+            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         select new
+                         {
+                             mdivisionid = m.Field<string>("mdivisionid"),
+                             poid = m.Field<string>("poid"),
+                             seq1 = m.Field<string>("seq1"),
+                             seq2 = m.Field<string>("seq2"),
+                             stocktype = m.Field<string>("stocktype"),
+                             qty = m.Field<decimal>("stockqty"),
+                             location = m.Field<string>("location"),
+                             roll = m.Field<string>("roll"),
+                             dyelot = m.Field<string>("dyelot"),
+                         }).ToList();
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -484,8 +497,7 @@ drop table #tmp2
                         ShowErr(result);
                         return;
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO_iss, out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
@@ -524,7 +536,7 @@ drop table #tmp2
             DataTable dt = (DataTable)detailgridbs.DataSource;
 
             string sqlupd2_A = "";
-            string sqlupd2_FIO_iss = "";
+            string sqlupd2_FIO = "";
 
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unconfirme it?");
             if (dResult.ToString().ToUpper() == "NO") return;
@@ -619,7 +631,20 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
             #endregion 
 
             #region 更新庫存數量  ftyinventory
-            sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(2, null, false);
+            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         select new
+                         {
+                             mdivisionid = m.Field<string>("mdivisionid"),
+                             poid = m.Field<string>("poid"),
+                             seq1 = m.Field<string>("seq1"),
+                             seq2 = m.Field<string>("seq2"),
+                             stocktype = m.Field<string>("stocktype"),
+                             qty = m.Field<decimal>("stockqty"),
+                             location = m.Field<string>("location"),
+                             roll = m.Field<string>("roll"),
+                             dyelot = m.Field<string>("dyelot"),
+                         }).ToList();
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO_ISS(2, null, false);
             #endregion 更新庫存數量  ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -634,7 +659,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
                         ShowErr(result);
                         return;
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO_iss, out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
