@@ -95,23 +95,26 @@ namespace Sci.Production.Warehouse
             #region -- 撈資料 --
             string selectCommand1 = string.Format(@";with cte as
 (
-	select rd.*
+	select SUM(rd.Qty) as QTY,rd.Id,rd.ToMDivisionID,rd.ToPOID,rd.ToSeq1,rd.toSeq2
 	from dbo.RequestCrossM r inner join dbo.RequestCrossM_Detail rd on rd.id = r.Id
 	where r.Status = 'Confirmed' and r.id='{0}' and r.toMDivisionID = '{1}'
+    Group BY rd.Id,rd.ToMDivisionID,rd.ToPOID,rd.ToSeq1,rd.toSeq2
 )
 select distinct rtrim(toPOID) frompoid,rtrim(toSeq1) FromSeq1,rtrim(toSeq2) FromSeq2,Qty from cte;", dr_master["cutplanid"], Sci.Env.User.Keyword);
             
             string selectCommand2 = string.Format(@";with cte as
 (
-	select rd.*
+	select distinct rd.Id,rd.ToMDivisionID,rd.ToPOID,rd.ToSeq1,rd.toSeq2
 	from dbo.RequestCrossM r inner join dbo.RequestCrossM_Detail rd on rd.id = r.Id
 	where r.Status = 'Confirmed' and r.id='{0}' and r.toMDivisionID = '{1}'
+    
 )
-select distinct 0 as selected,'' as id,fi.Ukey FtyInventoryUkey,0.00 as qty,fi.MDivisionID,fi.POID,rtrim(fi.seq1) seq1,fi.seq2
+select distinct 0 as selected,'' as id,fi.Ukey FtyInventoryUkey,0.00 as qty,fi.MDivisionID,fi.POID,rtrim(fi.seq1) seq1,fi.seq2,left(fi.seq1+' ',3)+fi.Seq2 as seq,dbo.getmtldesc(fi.poid,fi.seq1,fi.seq2,2,0) as [description],p1.stockunit
 	,fi.Roll,fi.Dyelot,fi.StockType,fi.InQty - fi.OutQty+fi.AdjustQty balanceqty 
     ,(select mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where ukey = fi.ukey) t for xml path('')) [location]
 from cte inner join FtyInventory fi on fi.MDivisionID  =  cte.ToMDivisionID 
 and fi.POID = cte.toPOID and fi.Seq1 = cte.toSeq1 and fi.Seq2 = cte.toSeq2 
+left join PO_Supp_Detail p1 on p1.ID = cte.toPOID and p1.seq1 = cte.toSeq1 and p1.SEQ2 = cte.toSeq2
 where fi.stocktype = 'B' and lock = 0 and fi.InQty - fi.OutQty+fi.AdjustQty > 0;", dr_master["cutplanid"], Sci.Env.User.Keyword);
 
             MyUtility.Msg.WaitWindows("Data Loading....");
@@ -189,18 +192,6 @@ where fi.stocktype = 'B' and lock = 0 and fi.InQty - fi.OutQty+fi.AdjustQty > 0;
                     tmp.AcceptChanges();
                     tmp.SetAdded();
                     dt_detail.ImportRow(tmp);
-                    DataRow[] setRow = dt_detail.Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and roll ='{3}'and dyelot='{4}'"
-                        , tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString(), tmp["roll"].ToString(), tmp["dyelot"].ToString()));
-
-                    string sql = string.Format(@"select StockUnit , dbo.getmtldesc(id,seq1,seq2,2,0) as [description]
-                                                    from PO_Supp_Detail where id = '{0}' and seq1 = '{1}' and seq2 = '{2}'"
-                        , tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString());
-                    DataTable dt;
-                    DBProxy.Current.Select(null, sql, out dt);
-
-                    setRow[0]["seq"] = tmp["seq1"] + " " + tmp["seq2"];
-                    setRow[0]["Description"] = dt.Rows[0].GetValue("Description");
-                    setRow[0]["StockUnit"] = dt.Rows[0].GetValue("StockUnit");
                 }
             }
 

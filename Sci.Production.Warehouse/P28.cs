@@ -148,6 +148,22 @@ iseditingreadonly: true)
                         // 原本沒selected , 會變selected , 就直接勾選parentRow
                         thisRow.GetParentRow("rel1")["selected"] = true;
                     }
+                    else
+                    {
+                        //thisRow["selected"] = false;
+                        DataRow y = thisRow.GetParentRow("rel1");
+                        var temp = y.GetChildRows("rel1");
+                        if (temp != null) 
+                        {
+                            var selected = temp.Where(row => (bool)row["selected"]).ToList();
+                            if (selected.Count <= 1)
+                            {
+                                thisRow.GetParentRow("rel1")["selected"] = false;
+                                thisRow.GetParentRow("rel1")["total_qty"] = 0;
+                            }
+                        }
+
+                    }
                 }
                 this.grid1.ValidateControl();
             };
