@@ -353,6 +353,19 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
                              roll = m.Field<string>("fromroll"),
                              dyelot = m.Field<string>("fromdyelot"),
                          }).ToList();
+            var bsfioto = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         select new
+                         {
+                             mdivisionid = m.Field<string>("toMdivisionid"),
+                             poid = m.Field<string>("topoid"),
+                             seq1 = m.Field<string>("toseq1"),
+                             seq2 = m.Field<string>("toseq2"),
+                             stocktype = m.Field<string>("tostocktype"),
+                             qty = m.Field<decimal>("qty"),
+                             location = m.Field<string>("tolocation"),
+                             roll = m.Field<string>("toroll"),
+                             dyelot = m.Field<string>("todyelot"),
+                         }).ToList();
             sqlupd2_FIO=Prgs.UpdateFtyInventory_IO(4, null, true);
             sqlupd2_FIO2=Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion 更新庫存數量 ftyinventory
@@ -375,8 +388,8 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
                         _transactionscope.Dispose();
                         ShowErr(result);
                         return;
-                    } 
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO2, out resulttb, "#TmpSource")))
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfioto, "", sqlupd2_FIO2, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
@@ -531,6 +544,19 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                              roll = m.Field<string>("fromroll"),
                              dyelot = m.Field<string>("fromdyelot"),
                          }).ToList();
+            var bsfioto = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                           select new
+                           {
+                               mdivisionid = m.Field<string>("toMdivisionid"),
+                               poid = m.Field<string>("topoid"),
+                               seq1 = m.Field<string>("toseq1"),
+                               seq2 = m.Field<string>("toseq2"),
+                               stocktype = m.Field<string>("tostocktype"),
+                               qty = m.Field<decimal>("qty"),
+                               location = m.Field<string>("tolocation"),
+                               roll = m.Field<string>("toroll"),
+                               dyelot = m.Field<string>("todyelot"),
+                           }).ToList();
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
             sqlupd2_FIO2 = Prgs.UpdateFtyInventory_IO(2, null, false);
             #endregion 更新庫存數量  ftyinventory
@@ -553,7 +579,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                         ShowErr(result);
                         return;
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO2, out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfioto, "", sqlupd2_FIO2, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
