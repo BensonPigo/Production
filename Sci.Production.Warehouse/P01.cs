@@ -490,7 +490,8 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["CuttingSP"])))
 
         private void button19_Click_1(object sender, EventArgs e)
         {
-
+            Sci.Production.PPIC.P01_MTLImport callNextForm = new Sci.Production.PPIC.P01_MTLImport(CurrentMaintain);
+            callNextForm.ShowDialog(this);
         }
     }
 }
