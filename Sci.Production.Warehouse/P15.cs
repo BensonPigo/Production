@@ -102,8 +102,6 @@ namespace Sci.Production.Warehouse
             return base.ClickEditBefore();
         }
 
-
-
         // Print - subreport
         private void MySubreportEventHandler(object sender, SubreportProcessingEventArgs e)
         {
@@ -236,7 +234,7 @@ namespace Sci.Production.Warehouse
             String sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2, result3;
             DataTable datacheck;
-            string sqlupd2_FIO_iss = "";
+            string sqlupd2_FIO = "";
             string sqlupd2_B = "";
             string issuelackid = MyUtility.GetValue.Lookup(string.Format(@"Select issuelackid from dbo.lack where id = '{0}'", CurrentMaintain["requestid"]));
             if (!MyUtility.Check.Empty(issuelackid))
@@ -300,7 +298,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
                 #endregion 檢查負數庫存
                 #region -- 更新庫存數量  ftyinventory --
-                sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(4, null, true);
+                sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
                 sqlupd2_B=Prgs.UpdateMPoDetail(4, null, true);                
                 #endregion 更新庫存數量  ftyinventory
             }
@@ -356,7 +354,7 @@ where dbo.Lack_Detail.id = '{1}' and dbo.Lack_Detail.seq1 = t.Seq1 and dbo.Lack_
                             return;
                         }
                         if (!(result = MyUtility.Tool.ProcessWithDatatable
-                            ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO_iss, out resulttb, "#TmpSource")))
+                            ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                         {
                             _transactionscope.Dispose();
                             ShowErr(result);
@@ -405,7 +403,7 @@ where dbo.Lack_Detail.id = '{1}' and dbo.Lack_Detail.seq1 = t.Seq1 and dbo.Lack_
             StringBuilder sqlupd4 = new StringBuilder();
             string sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2, result3;
-            string sqlupd2_FIO_iss = "";
+            string sqlupd2_FIO = "";
             string sqlupd2_B = "";
 
             if (CurrentMaintain["type"].ToString() == "R")
@@ -463,7 +461,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
                 #endregion 檢查負數庫存
                 #region -- 更新庫存數量  ftyinventory --
-                sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(4, null, false);
+                sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
                 sqlupd2_B = Prgs.UpdateMPoDetail(4, null, false);  
                 #endregion 更新庫存數量  ftyinventory
             }
@@ -514,7 +512,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                             return;
                         }
                         if (!(result = MyUtility.Tool.ProcessWithDatatable
-                            ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO_iss, out resulttb, "#TmpSource")))
+                            ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                         {
                             _transactionscope.Dispose();
                             ShowErr(result);
