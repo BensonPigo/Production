@@ -659,7 +659,7 @@ where a.id='{0}' order by Seq", this.poid, masterID, ukey);
             String sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
             DataTable datacheck;
-            string sqlupd2_FIO_iss = "";
+            string sqlupd2_FIO = "";
             StringBuilder sqlupd2_B = new StringBuilder();
 
             #region 檢查庫存項lock
@@ -732,7 +732,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 ShowErr(sqlcmd, result2);
                 return;
             }
-            sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(4, null, true);
             #region -- 更新mdivisionpodetail B倉數 --
             var bs1 = (from b in datacheck.AsEnumerable()
                        group b by new
@@ -753,6 +752,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion
             #endregion
             TransactionScope _transactionscope = new TransactionScope();
@@ -768,7 +768,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                         return;
                     }
                     if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        (datacheck, "", sqlupd2_FIO_iss, out resulttb, "#TmpSource")))
+                        (datacheck, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
@@ -810,7 +810,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             StringBuilder sqlupd2 = new StringBuilder();
             string sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
-            string sqlupd2_FIO_iss = "";
+            string sqlupd2_FIO = "";
             StringBuilder sqlupd2_B = new StringBuilder();
 
             #region 檢查庫存項lock
@@ -883,7 +883,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 ShowErr(sqlcmd, result2);
                 return;
             }
-            sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(4, null, false);
             var bs1 = (from b in datacheck.AsEnumerable()
                        group b by new
                        {
@@ -903,6 +902,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                            qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
             #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -918,7 +918,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                         return;
                     }
                     if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        (datacheck, "", sqlupd2_FIO_iss, out resulttb, "#TmpSource")))
+                        (datacheck, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
