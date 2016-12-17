@@ -411,41 +411,20 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             #endregion 檢查負數庫存
             #region -- 更新庫存數量  ftyinventory --
-            sqlupd2_FIO = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
-alter table #TmpSource alter column poid varchar(20)
-alter table #TmpSource alter column seq1 varchar(3)
-alter table #TmpSource alter column seq2 varchar(3)
-alter table #TmpSource alter column stocktype varchar(1)
-alter table #TmpSource alter column roll varchar(15)
-
-merge dbo.FtyInventory as target
-using #TmpSource as s
-    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
-	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
-when matched then
-    update
-    set inqty = isnull(inqty,0.00) - s.qty
-when not matched then
-    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
-    values ((select ukey from dbo.MDivisionPoDetail 
-			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
-
-select location,[ukey] = f.ukey
-into #tmp_L_K 
-from #TmpSource s
-left join ftyinventory f on f.mdivisionid = s.mdivisionid and f.poid = s.poid 
-						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll
-merge dbo.ftyinventory_detail as t
-using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.location,'')
-when not matched then
-    insert ([ukey],[mtllocationid]) 
-	values (s.ukey,isnull(s.location,''));
-
-delete t from FtyInventory_Detail t
-where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
-";
+            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         select new
+                         {
+                             mdivisionid = m.Field<string>("mdivisionid"),
+                             poid = m.Field<string>("poid"),
+                             seq1 = m.Field<string>("seq1"),
+                             seq2 = m.Field<string>("seq2"),
+                             stocktype = m.Field<string>("stocktype"),
+                             qty = -m.Field<decimal>("qty"),
+                             location = m.Field<string>("location"),
+                             roll = m.Field<string>("roll"),
+                             dyelot = m.Field<string>("dyelot"),
+                         }).ToList();
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion
             #region -- update mdivisionPoDetail --
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() != "I")
@@ -521,8 +500,7 @@ where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.M
                             return;
                         }
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
@@ -626,26 +604,20 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             #endregion 檢查負數庫存
             #region -- 更新庫存數量  ftyinventory --
-            sqlupd2_FIO = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
-alter table #TmpSource alter column poid varchar(20)
-alter table #TmpSource alter column seq1 varchar(3)
-alter table #TmpSource alter column seq2 varchar(3)
-alter table #TmpSource alter column stocktype varchar(1)
-alter table #TmpSource alter column roll varchar(15)
-
-merge dbo.FtyInventory as target
-using #TmpSource as s
-    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
-	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
-when matched then
-    update
-    set inqty = isnull(inqty,0.00) + s.qty
-when not matched then
-    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
-    values ((select ukey FROM dbo.MDivisionPoDetail 
-			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
+            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         select new
+                         {
+                             mdivisionid = m.Field<string>("mdivisionid"),
+                             poid = m.Field<string>("poid"),
+                             seq1 = m.Field<string>("seq1"),
+                             seq2 = m.Field<string>("seq2"),
+                             stocktype = m.Field<string>("stocktype"),
+                             qty = -m.Field<decimal>("qty"),
+                             location = m.Field<string>("location"),
+                             roll = m.Field<string>("roll"),
+                             dyelot = m.Field<string>("dyelot"),
+                         }).ToList();
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(2, null, false);
             #endregion
             #region -- update mdivisionPoDetail --
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() != "I")
@@ -721,8 +693,7 @@ when not matched then
                             return;
                         }
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
