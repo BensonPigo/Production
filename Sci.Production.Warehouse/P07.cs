@@ -476,7 +476,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     CurrentDetailData["location"] = item.GetSelectedString();
-                    //CurrentDetailData.EndEdit();
+                    CurrentDetailData.EndEdit();
                 }
             };
 
