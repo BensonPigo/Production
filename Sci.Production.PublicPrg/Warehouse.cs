@@ -786,7 +786,7 @@ using #tmpS1 as s
 	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
 when matched then
     update
-    set adjustqty = isnull(s.qty,0.00) + s.qty
+    set adjustqty = isnull(s.adjustqty,0.00) + s.qty
 when not matched then
     insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[adjustqty])
     values ((select ukey from dbo.MDivisionPoDetail 
@@ -815,7 +815,7 @@ using #tmpS1 as s
 	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
 when matched then
     update
-    set adjustqty = isnull(s.qty,0.00) - s.qty
+    set adjustqty = isnull(s.adjustqty,0.00) - s.qty
 when not matched then
     insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[adjustqty])
     values ((select ukey from dbo.MDivisionPoDetail 
