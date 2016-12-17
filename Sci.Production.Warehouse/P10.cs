@@ -533,21 +533,6 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
 
             #endregion Status Label
         }
-        //以下設定ISS Detail
-//        protected override DualResult OnSubDetailSelectCommandPrepare(PrepareSubDetailSelectCommandEventArgs e)
-//        {
-//            string masterID = (e.Detail == null) ? "" : e.Detail["ID"].ToString();
-//            string ukey = (e.Detail == null || MyUtility.Check.Empty(e.Detail["ukey"])) ? "0" : e.Detail["ukey"].ToString();
-//            this.SubDetailSelectCommand = string.Format(@"select *,a.seq1+a.seq2 as seq
-//,(Select t.mtllocationid+',' from (select mtllocationid from ftyinventory_detail where ukey = a.ftyinventoryukey) t for xml path('')) [location]
-//,ftyinventory.inqty
-//,ftyinventory.outqty
-//,ftyinventory.adjustqty
-//,ftyinventory.inqty-ftyinventory.outqty+ftyinventory.adjustqty as balanceQty
-//from dbo.Issue_detail a inner join dbo.ftyinventory on ftyinventory.ukey = a.ftyinventoryukey
-//Where a.id = '{0}' and a.issue_summaryukey = {1}", masterID, ukey);
-//            return base.OnSubDetailSelectCommandPrepare(e);
-//        }
 
         protected override void ClickConfirm()
         {
@@ -559,7 +544,7 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
             String sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
             DataTable datacheck;
-            string sqlupd2_FIO_iss = "";
+            string sqlupd2_FIO = "";
             StringBuilder sqlupd2_B = new StringBuilder();
 
             #region 檢查庫存項lock
@@ -632,7 +617,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 ShowErr(sqlcmd, result2);
                 return;
             }
-            sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(4, null, true);
             var bs1 = (from b in datacheck.AsEnumerable()
                        group b by new
                        {
@@ -652,6 +636,9 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
+
+
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -666,8 +653,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                         ShowErr(result);
                         return;
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        (datacheck, "", sqlupd2_FIO_iss, out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable(datacheck, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
@@ -709,7 +695,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             StringBuilder sqlupd2 = new StringBuilder();
             string sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
-            string sqlupd2_FIO_iss = "";
+            string sqlupd2_FIO = "";
             StringBuilder sqlupd2_B = new StringBuilder();
 
             #region 檢查庫存項lock
@@ -782,7 +768,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 ShowErr(sqlcmd, result2);
                 return;
             }
-            sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(4, null, false);
             var bs1 = (from b in datacheck.AsEnumerable()
                        group b by new
                        {
@@ -802,6 +787,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                            qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
             #endregion 更新庫存數量  ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -816,8 +802,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                         ShowErr(result);
                         return;
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        (datacheck, "", sqlupd2_FIO_iss, out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable(datacheck, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
