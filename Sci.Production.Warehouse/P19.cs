@@ -225,7 +225,7 @@ namespace Sci.Production.Warehouse
 
             string sqlupd2_B = "";
             string sqlupd2_BI = "";
-            String sqlupd2_FIO_iss = "";
+            String sqlupd2_FIO = "";
 
             StringBuilder sqlupd2 = new StringBuilder();
             String sqlcmd = "", sqlupd3 = "", ids = "";
@@ -236,7 +236,12 @@ namespace Sci.Production.Warehouse
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.TransferOut_Detail d inner join FtyInventory f
-on d.ftyinventoryukey = f.ukey
+on d.mdivisionid = f.mdivisionid
+and d.PoId = f.PoId
+and d.Seq1 = f.Seq1
+and d.Seq2 = f.seq2
+and d.StockType = f.StockType
+and d.Roll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -263,7 +268,12 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.TransferOut_Detail d left join FtyInventory f
-on d.ftyinventoryukey = f.ukey
+on d.mdivisionid = f.mdivisionid
+and d.PoId = f.PoId
+and d.Seq1 = f.Seq1
+and d.Seq2 = f.seq2
+and d.StockType = f.StockType
+and d.Roll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -337,43 +347,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #endregion
 
             #region 更新庫存數量  ftyinventory
-            sqlupd2_FIO_iss = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
-alter table #TmpSource alter column poid varchar(20)
-alter table #TmpSource alter column seq1 varchar(3)
-alter table #TmpSource alter column seq2 varchar(3)
-alter table #TmpSource alter column stocktype varchar(1)
-alter table #TmpSource alter column roll varchar(15)
-
-merge dbo.FtyInventory as target
-using #TmpSource as s
-    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
-	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
-when matched then
-    update
-    set inqty = isnull(inqty,0.00) + s.qty
-when not matched then
-    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
-    values ((select ukey from dbo.MDivisionPoDetail 
-			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
-
-select location,[ukey] = f.ukey
-into #tmp_L_K 
-from #TmpSource s
-left join ftyinventory f on f.mdivisionid = s.mdivisionid and f.poid = s.poid 
-						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll
-merge dbo.ftyinventory_detail as t
-using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.location,'')
-when not matched then
-    insert ([ukey],[mtllocationid]) 
-	values (s.ukey,isnull(s.location,''));
-
-delete t from FtyInventory_Detail t
-where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
-
-drop table #tmp_L_K 
-";
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion 更新庫存數量  ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -401,7 +375,7 @@ drop table #tmp_L_K
                         }
                     }
                     if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO_iss, out resulttb, "#TmpSource")))
+                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
@@ -439,7 +413,7 @@ drop table #tmp_L_K
 
             string sqlupd2_B = "";
             string sqlupd2_BI = "";
-            String sqlupd2_FIO_iss = "";
+            String sqlupd2_FIO = "";
 
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unconfirme it?");
             if (dResult == DialogResult.No) return;
@@ -554,26 +528,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             #endregion
 
             #region 更新庫存數量  ftyinventory
-            sqlupd2_FIO_iss = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
-alter table #TmpSource alter column poid varchar(20)
-alter table #TmpSource alter column seq1 varchar(3)
-alter table #TmpSource alter column seq2 varchar(3)
-alter table #TmpSource alter column stocktype varchar(1)
-alter table #TmpSource alter column roll varchar(15)
-
-merge dbo.FtyInventory as target
-using #TmpSource as s
-    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
-	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
-when matched then
-    update
-    set inqty = isnull(inqty,0.00) - s.qty
-when not matched then
-    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
-    values ((select ukey FROM dbo.MDivisionPoDetail 
-			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(2, null, false);
             #endregion 更新庫存數量  ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -601,7 +556,7 @@ when not matched then
                         }
                     }
                     if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO_iss, out resulttb, "#TmpSource")))
+                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
