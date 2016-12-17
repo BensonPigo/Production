@@ -225,7 +225,13 @@ namespace Sci.Production.Warehouse
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Issue_Detail d inner join FtyInventory f
-on d.ftyinventoryukey = f.ukey
+on --d.ftyinventoryukey = f.ukey
+d.MDivisionID = f.MDivisionID
+and d.POID = f.POID
+and d.Seq1 = f.Seq1
+and d.Seq2 = f.Seq2
+and d.StockType = f.StockType
+and d.Roll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -252,7 +258,13 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Issue_Detail d left join FtyInventory f
-on d.ftyinventoryukey = f.ukey
+on --d.ftyinventoryukey = f.ukey
+d.MDivisionID = f.MDivisionID
+and d.POID = f.POID
+and d.Seq1 = f.Seq1
+and d.Seq2 = f.Seq2
+and d.StockType = f.StockType
+and d.Roll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -302,7 +314,21 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
             sqlupd2_B = Prgs.UpdateMPoDetail(4, null, true);
-            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO_ISS(4, null, true);
+
+            var bsfio = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         select new
+                         {
+                             mdivisionid = b.Field<string>("mdivisionid"),
+                             poid = b.Field<string>("poid"),
+                             seq1 = b.Field<string>("seq1"),
+                             seq2 = b.Field<string>("seq2"),
+                             stocktype = b.Field<string>("stocktype"),
+                             qty = b.Field<decimal>("qty"),
+                             location = b.Field<string>("location"),
+                             roll = b.Field<string>("roll"),
+                             dyelot = b.Field<string>("dyelot"),
+                         }).ToList();
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion 更新庫存數量  ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -320,19 +346,26 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                             return;
                         }
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable
-                         ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
                         return;
                     }
-                    if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
-                    {
-                        _transactionscope.Dispose();
-                        ShowErr(sqlupd2.ToString(), result2);
-                        return;
-                    }
+                    //if (!(result = MyUtility.Tool.ProcessWithDatatable
+                    //     ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
+                    //{
+                    //    _transactionscope.Dispose();
+                    //    ShowErr(result);
+                    //    return;
+                    //}
+                    //Console.WriteLine("TTTTTTTTTTT" + sqlupd2.ToString());
+                    //if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                    //{
+                    //    _transactionscope.Dispose();
+                    //    ShowErr(sqlupd2.ToString(), result2);
+                    //    return;
+                    //}
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
@@ -376,7 +409,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Issue_Detail d inner join FtyInventory f
-on d.ftyinventoryukey = f.ukey
+on --d.ftyinventoryukey = f.ukey
+d.MDivisionID = f.MDivisionID
+and d.POID = f.POID
+and d.Seq1 = f.Seq1
+and d.Seq2 = f.Seq2
+and d.StockType = f.StockType
+and d.Roll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -403,7 +442,13 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Issue_Detail d left join FtyInventory f
-on d.ftyinventoryukey = f.ukey
+on --d.ftyinventoryukey = f.ukey
+d.MDivisionID = f.MDivisionID
+and d.POID = f.POID
+and d.Seq1 = f.Seq1
+and d.Seq2 = f.Seq2
+and d.StockType = f.StockType
+and d.Roll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -455,7 +500,21 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             if (bs1.Count > 0)
                 sqlupd2_B = Prgs.UpdateMPoDetail(4, null, false);
-            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO_ISS(4, null, false);
+
+            var bsfio = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         select new
+                         {
+                             mdivisionid = b.Field<string>("mdivisionid"),
+                             poid = b.Field<string>("poid"),
+                             seq1 = b.Field<string>("seq1"),
+                             seq2 = b.Field<string>("seq2"),
+                             stocktype = b.Field<string>("stocktype"),
+                             qty = b.Field<decimal>("qty"),
+                             location = b.Field<string>("location"),
+                             roll = b.Field<string>("roll"),
+                             dyelot = b.Field<string>("dyelot"),
+                         }).ToList();
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
             #endregion 更新庫存數量  ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -473,13 +532,19 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                             return;
                         }
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable
-                         ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
                         return;
                     }
+                    //if (!(result = MyUtility.Tool.ProcessWithDatatable
+                    //     ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
+                    //{
+                    //    _transactionscope.Dispose();
+                    //    ShowErr(result);
+                    //    return;
+                    //}
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
