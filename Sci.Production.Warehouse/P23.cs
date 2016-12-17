@@ -367,6 +367,19 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
             #endregion
             
             #region -- 更新庫存數量 ftyinventory --
+            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         select new
+                         {
+                             mdivisionid = m.Field<string>("fromMdivisionid"),
+                             poid = m.Field<string>("frompoid"),
+                             seq1 = m.Field<string>("fromseq1"),
+                             seq2 = m.Field<string>("fromseq2"),
+                             stocktype = m.Field<string>("fromstocktype"),
+                             qty = m.Field<decimal>("qty"),
+                             location = m.Field<string>("tolocation"),
+                             roll = m.Field<string>("fromroll"),
+                             dyelot = m.Field<string>("fromdyelot"),
+                         }).ToList();
             sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(4, null, true));
             sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(2, null, true));
             #endregion 更新庫存數量 ftyinventory
@@ -555,6 +568,19 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #endregion
 
             #region -- 更新庫存數量  ftyinventory --
+            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         select new
+                         {
+                             mdivisionid = m.Field<string>("fromMdivisionid"),
+                             poid = m.Field<string>("frompoid"),
+                             seq1 = m.Field<string>("fromseq1"),
+                             seq2 = m.Field<string>("fromseq2"),
+                             stocktype = m.Field<string>("fromstocktype"),
+                             qty = m.Field<decimal>("qty"),
+                             location = m.Field<string>("tolocation"),
+                             roll = m.Field<string>("fromroll"),
+                             dyelot = m.Field<string>("fromdyelot"),
+                         }).ToList();
             sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(4, null, false));
             sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(2, null, false));
             #endregion 更新庫存數量  ftyinventory
