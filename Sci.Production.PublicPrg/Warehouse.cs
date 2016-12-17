@@ -776,7 +776,7 @@ alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
-select distinct mdivisionid,poid,seq1,seq2,stocktype,roll,qty,dyelot
+select distinct mdivisionid,poid,seq1,seq2,stocktype,roll,qty,dyelot,adjustqty
 into #tmpS1
 from #TmpSource
 
@@ -805,7 +805,7 @@ alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
-select distinct mdivisionid,poid,seq1,seq2,stocktype,roll,qty,dyelot
+select distinct mdivisionid,poid,seq1,seq2,stocktype,roll,qty,dyelot,adjustqty
 into #tmpS1
 from #TmpSource
 
