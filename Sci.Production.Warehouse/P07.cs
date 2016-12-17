@@ -617,7 +617,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
 
             string sqlupd2_A = "";
             string sqlupd2_BI = "";
-            string sqlupd2_FIO_iss = "";
+            string sqlupd2_FIO = "";
             StringBuilder sqlupd2 = new StringBuilder();
             String sqlcmd = "", sqlupd3 = "", ids = "", sqlcmd4 = "";
 
@@ -678,7 +678,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
             #endregion 更新表頭狀態資料
 
             #region 更新庫存數量 mdivisionPoDetail & ftyinventory
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() != "I")
+            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
                            mdivisionid = b.Field<string>("mdivisionid").Trim(),
@@ -723,7 +723,20 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
                 sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1I, true);
             
             #region -- 更新庫存數量  ftyinventory --
-            sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(2, null, true);
+            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         select new
+                         {
+                             mdivisionid = m.Field<string>("mdivisionid"),
+                             poid = m.Field<string>("poid"),
+                             seq1 = m.Field<string>("seq1"),
+                             seq2 = m.Field<string>("seq2"),
+                             stocktype = m.Field<string>("stocktype"),
+                             qty = m.Field<decimal>("stockqty"),
+                             location = m.Field<string>("location"),
+                             roll = m.Field<string>("roll"),
+                             dyelot = m.Field<string>("dyelot"),
+                         }).ToList();
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion 更新庫存數量  ftyinventory
 
             string sql_UpdatePO_Supp_Detail = @";
@@ -780,8 +793,7 @@ when matched then
                             return;
                         }
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO_iss, out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
@@ -846,7 +858,7 @@ when matched then
 
             string sqlupd2_A = "";
             string sqlupd2_BI = "";
-            string sqlupd2_FIO_iss = "";
+            string sqlupd2_FIO = "";
 
             #region 檢查負數庫存
 
@@ -889,17 +901,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
             #endregion 更新表頭狀態資料
 
             #region 更新庫存數量 po_supp_detail & ftyinventory
-            //sqlupd2.Append("declare @iden as bigint;");
-            //sqlupd2.Append("create table #tmp (ukey bigint,locationid varchar(10));");
-            //foreach (DataRow item in DetailDatas)
-            //{
-            //    sqlupd2.Append(Prgs.UpdateFtyInventory(2, item["mdivisionid"].ToString(), item["poid"].ToString(), item["seq1"].ToString(), item["seq2"].ToString(), (decimal)item["stockqty"]
-            //        , item["roll"].ToString(), item["dyelot"].ToString(), item["stocktype"].ToString(), false, item["location"].ToString()));
-            //}
-            //sqlupd2.Append("drop table #tmp;" + Environment.NewLine);
-            sqlupd2_FIO_iss = Prgs.UpdateFtyInventory_IO_ISS(2, null, false);
-
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() != "I")
+            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
                            mdivisionid = b.Field<string>("mdivisionid"),
@@ -908,7 +910,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
                            seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
                        } into m
-                       select new Prgs_POSuppDetailData_B
+                       select new Prgs_POSuppDetailData_A
                        {
                            mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
@@ -927,7 +929,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
                            seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
                        } into m
-                        select new Prgs_POSuppDetailData_A
+                        select new Prgs_POSuppDetailData_B
                        {
                            mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
@@ -938,21 +940,29 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
                        }).ToList();
 
             if (bs1.Count > 0)
-                sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1, false);
+                sqlupd2_A = Prgs.UpdateMPoDetail_A(2, bs1, false);
             if (bs1I.Count > 0)
-                sqlupd2_A = Prgs.UpdateMPoDetail_A(2, bs1I, false);
+                sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1I, false);
 
-            //foreach (var item in bs1)
-            //{
-            //    sqlupd2.Append(Prgs.UpdateMPoDetail(2, item.poid, item.seq1, item.seq2, item.stockqty, false, item.stocktype, item.mdivisionid));
-            //    if (item.stocktype == "I") sqlupd2.Append(Prgs.UpdateMPoDetail(8, item.poid, item.seq1, item.seq2, 0-item.stockqty, false, item.stocktype, item.mdivisionid));
-            //}
+            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         select new
+                         {
+                             mdivisionid = m.Field<string>("mdivisionid"),
+                             poid = m.Field<string>("poid"),
+                             seq1 = m.Field<string>("seq1"),
+                             seq2 = m.Field<string>("seq2"),
+                             stocktype = m.Field<string>("stocktype"),
+                             qty = m.Field<decimal>("stockqty"),
+                             location = m.Field<string>("location"),
+                             roll = m.Field<string>("roll"),
+                             dyelot = m.Field<string>("dyelot"),
+                         }).ToList();
 
-            #endregion 更新庫存數量 po_supp_detail & ftyinventory
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(2, null, false);
+            #endregion
 
             sqlcmd4 = string.Format(@"update dbo.export set whsearrival =null,packingarrival =null, editname = '{0}' , editdate = GETDATE()
                                 where id = '{1}'", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain["id"]);
-
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
@@ -977,8 +987,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
                             return;
                         }
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO_iss, out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
