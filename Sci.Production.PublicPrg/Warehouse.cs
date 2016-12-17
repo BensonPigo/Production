@@ -555,8 +555,12 @@ alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
+select distinct mdivisionid,poid,seq1,seq2,stocktype,roll,qty,dyelot
+into #tmpS1
+from #TmpSource
+
 merge dbo.FtyInventory as target
-using #TmpSource as s
+using #tmpS1 as s
     on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
 	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
 when matched then
@@ -596,8 +600,12 @@ alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
+select distinct mdivisionid,poid,seq1,seq2,stocktype,roll,qty,dyelot
+into #tmpS1
+from #TmpSource
+
 merge dbo.FtyInventory as target
-using #TmpSource as s
+using #tmpS1 as s
     on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
 	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
 when matched then
