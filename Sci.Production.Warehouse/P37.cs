@@ -410,6 +410,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             }
 
             #endregion 檢查負數庫存
+
             #region -- 更新庫存數量  ftyinventory --
             var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                          select new
@@ -426,6 +427,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                          }).ToList();
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion
+
             #region -- update mdivisionPoDetail --
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
@@ -467,7 +469,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 sqlupd2_B = Prgs.UpdateMPoDetail(4, null, true);
             if (bs1I.Count > 0)
                 sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1I, true);
-            #endregion 更新庫存數量  ftyinventory
+            #endregion
 
             #region -- 更新表頭狀態資料 --
 
@@ -603,6 +605,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             }
 
             #endregion 檢查負數庫存
+
             #region -- 更新庫存數量  ftyinventory --
             var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                          select new
@@ -619,6 +622,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                          }).ToList();
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(2, null, false);
             #endregion
+
             #region -- update mdivisionPoDetail --
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
@@ -657,10 +661,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                             qty = -m.Sum(w => w.Field<decimal>("qty"))
                         }).ToList();
             if (bs1.Count > 0)
-                sqlupd2_B = Prgs.UpdateMPoDetail(4, null, true);
+                sqlupd2_B = Prgs.UpdateMPoDetail(4, null, false);
             if (bs1I.Count > 0)
-                sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1I, true);
-            #endregion 更新庫存數量  ftyinventory
+                sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1I, false);
+            #endregion
 
             #region -- 更新表頭狀態資料 --
 
