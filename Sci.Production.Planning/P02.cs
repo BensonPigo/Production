@@ -604,5 +604,30 @@ namespace Sci.Production.Planning
             }
             dt.DefaultView.Sort = "err desc";
         }
+
+        private void grid1_ColumnDividerDoubleClick(object sender, DataGridViewColumnDividerDoubleClickEventArgs e)
+        {
+            //Auto Resize the columns to fit the data
+            foreach (DataGridViewColumn column in grid1.Columns)
+            {
+                grid1.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+                int widthCol = grid1.Columns[column.Index].Width;
+                grid1.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                grid1.Columns[column.Index].Width = widthCol;
+            }
+        }
+
+        private void grid2_ColumnDividerDoubleClick(object sender, DataGridViewColumnDividerDoubleClickEventArgs e)
+        {
+            //Auto Resize the columns to fit the data
+            foreach (DataGridViewColumn column in grid2.Columns)
+            {
+                grid2.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+                int widthCol = grid2.Columns[column.Index].Width;
+                grid2.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                grid2.Columns[column.Index].Width = widthCol;
+            }
+        }
+
     }
 }

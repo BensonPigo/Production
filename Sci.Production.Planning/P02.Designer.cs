@@ -326,6 +326,7 @@
             this.grid1.Size = new System.Drawing.Size(794, 610);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
+            this.grid1.ColumnDividerDoubleClick += new System.Windows.Forms.DataGridViewColumnDividerDoubleClickEventHandler(this.grid1_ColumnDividerDoubleClick);
             // 
             // groupBox1
             // 
@@ -397,6 +398,7 @@
             this.grid2.Size = new System.Drawing.Size(409, 205);
             this.grid2.TabIndex = 17;
             this.grid2.TabStop = false;
+            this.grid2.ColumnDividerDoubleClick += new System.Windows.Forms.DataGridViewColumnDividerDoubleClickEventHandler(this.grid2_ColumnDividerDoubleClick);
             // 
             // groupBox2
             // 
