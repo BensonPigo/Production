@@ -887,6 +887,27 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 			values(s.Id,s.Order_EachCons_ColorUkey,s.Article,s.ColorID,s.SizeCode,s.Orderqty,s.Layer,s.CutQty,s.Variance,s.Ukey)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;
+
+		----------Order_EachCons_PatternPanel---------------PatternPanel
+			Merge Production.dbo.Order_EachCons_PatternPanel as t
+		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_PatternPanel a inner join #TOrder b on a.id=b.id) as s
+		on t.id=s.id and t.PatternPanel=s.PatternPanel and t.Order_EachConsUkey=s.Order_EachConsUkey and t.LectraCode=s.LectraCode
+		When matched then 
+			update set 
+			--t.Id= s.Id,
+			--t.PatternPanel= s.PatternPanel,
+			--t.Order_EachConsUkey= s.Order_EachConsUkey,
+			--t.LectraCode= s.LectraCode,
+			t.AddName= s.AddName,
+			t.AddDate= s.AddDate,
+			t.EditName= s.EditName,
+			t.EditDate= s.EditDate
+		when not matched by target then 
+			insert(Id,PatternPanel,Order_EachConsUkey,LectraCode,AddName,AddDate,EditName,EditDate)
+			values(s.Id,s.PatternPanel,s.Order_EachConsUkey,s.LectraCode,s.AddName,s.AddDate,s.EditName,s.EditDate)
+		when not matched by source and t.id in (select id from #TOrder) then 
+			delete;
+
 		
 		------------Order_Article----------------------Art
 		Merge Production.dbo.Order_Article as t
