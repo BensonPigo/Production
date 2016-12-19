@@ -104,7 +104,7 @@ namespace Sci.Production.Subcon
 	                                                 ,b.Price
 	                                                 ,b.Qty
                                                      ,b.price*b.qty amount
-                                                     ,e.Amount poamt
+                                                     ,e.Amount+e.vat poamt
 	                                                 ,vs2.Name_Extno POHandle
 	                                                 ,e.IssueDate
 	                                                 ,a.InvNo
