@@ -612,7 +612,7 @@ namespace Sci.Production.Subcon
                    F.nameEn,F.AddressEN,F.Tel,ap.LocalSuppID+'-'+L.name AS Supplier,L.Address,L.tel,ap.ID,
 	               A.ArtworkPoID,A.OrderID,A.ArtworkId,A.PatternDesc,A.Price,A.ApQty,A.Amount,ap.PayTermID+'-'+P.name as Terms,
 	               LOB.AccountNo,LOB.AccountName,LOB.BankName,LOB.CountryID+'/'+LOB.City as Country,LOB.SWIFTCode,
-	               ap.Handle+CHAR(13)+CHAR(10)+pas.name as PreparedBy,ap.Amount as Total,ap.VatRate+ap.Vat as Vat,ap.Amount+ap.Vat as GrandTotal,ap.currencyid as Currency
+	               ap.Handle+CHAR(13)+CHAR(10)+pas.name as PreparedBy,ap.Amount as Total,ap.Vat as Vat,ap.Amount+ap.Vat as GrandTotal,ap.currencyid as Currency
                    from DBO.artworkap ap
 	               LEFT JOIN dbo.factory F
 	               ON  F.ID = ap.factoryid
