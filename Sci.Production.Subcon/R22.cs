@@ -91,7 +91,7 @@ namespace Sci.Production.Subcon
 	                                                 ,a.id
 	                                                 ,a.IssueDate
 	                                                 ,a.ApvDate
-	                                                 ,dbo.getPass1(a.Handle) Handle
+	                                                 ,vs1.Name_Extno Handle
 	                                                 ,a.CurrencyID
 	                                                 ,a.Amount+a.Vat APAmount
 	                                                 ,a.Category
@@ -103,8 +103,9 @@ namespace Sci.Production.Subcon
 	                                                 ,b.UnitID
 	                                                 ,b.Price
 	                                                 ,b.Qty
-	                                                 ,dbo.getPass1(e.AddName) POHandle
-	                                                 ,e.Amount poamt
+                                                     ,b.price*b.qty amount
+                                                     ,e.Amount poamt
+	                                                 ,vs2.Name_Extno POHandle
 	                                                 ,e.IssueDate
 	                                                 ,a.InvNo
                                             from LocalAP a
@@ -112,6 +113,8 @@ namespace Sci.Production.Subcon
                                             left join Orders c on b.OrderId=c.ID
                                             left join localsupp d on a.LocalSuppID=d.ID
                                             left join localpo e on b.LocalPoId=e.Id 
+                                            outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
+											outer apply (select * from dbo.View_ShowName vs where vs.id = e.AddName) vs2
                                             where  a.issuedate between '{0}' and '{1}'
                                              and a.apvdate between '{2}' and '{3}'"
                     , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
