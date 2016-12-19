@@ -366,9 +366,9 @@ BEGIN
 							From #PatternPanel_cutlayer
 							Where Rowid = @WorkOrder_SizeRatioRowid
 
-							--insert NewWorkOrder_PatternPanel  error
-							Insert into #NewWorkOrder_PatternPanel(ID,WorkOrderUkey,PatternPanel,LectraCode,newKey)
-							Values(@Cuttingid,@NewKey,@WorkOrder_PatternPanel,@WorkOrder_LectraCode,@NewKey)
+							--insert NewWorkOrder_PatternPanel
+							Insert into #NewWorkOrder_PatternPanel(ID,PatternPanel,LectraCode,newKey,WorkOrderUkey)
+							Values(@Cuttingid,@WorkOrder_PatternPanel,@WorkOrder_LectraCode,@NewKey,0)
 
 							set @WorkOrder_SizeRatioRowid += 1
 						End;
@@ -500,9 +500,9 @@ BEGIN
 						From #PatternPanel_modlayer 
 						Where Rowid = @WorkOrder_SizeRatioRowid
 
-						-- insert error
-						Insert into #NewWorkOrder_PatternPanel(ID,WorkOrderUkey,PatternPanel,LectraCode,newKey)
-						Values(@Cuttingid,@NewKey,@WorkOrder_PatternPanel,@WorkOrder_LectraCode,@NewKey)
+						-- insert WorkOrder_PatternPanel
+						Insert into #NewWorkOrder_PatternPanel(ID,PatternPanel,LectraCode,newKey,WorkOrderUkey)
+						Values(@Cuttingid,@WorkOrder_PatternPanel,@WorkOrder_LectraCode,@NewKey,0)
 
 						set @WorkOrder_SizeRatioRowid += 1
 					End;
@@ -697,8 +697,9 @@ BEGIN
 									From #PatternPanel_bysp
 									Where Rowid = @WorkOrder_SizeRatioRowid
 
-									Insert into #NewWorkOrder_PatternPanel(ID,PatternPanel,LectraCode,newKey)
-									Values(@Cuttingid,@WorkOrder_PatternPanel,@WorkOrder_LectraCode,@NewKey)
+									--insert NewWorkOrder_PatternPanel
+									Insert into #NewWorkOrder_PatternPanel(ID,PatternPanel,LectraCode,newKey,WorkOrderUkey)
+									Values(@Cuttingid,@WorkOrder_PatternPanel,@WorkOrder_LectraCode,@NewKey,0)
 
 									set @WorkOrder_SizeRatioRowid += 1
 								End;
@@ -835,8 +836,9 @@ BEGIN
 									From #PatternPanel_byspmod
 									Where Rowid = @WorkOrder_SizeRatioRowid
 
-									Insert into #NewWorkOrder_PatternPanel(ID,PatternPanel,LectraCode,newKey)
-									Values(@Cuttingid,@WorkOrder_PatternPanel,@WorkOrder_LectraCode,@NewKey)
+									--insert NewWorkOrder_PatternPanel
+									Insert into #NewWorkOrder_PatternPanel(ID,PatternPanel,LectraCode,newKey,WorkOrderUkey)
+									Values(@Cuttingid,@WorkOrder_PatternPanel,@WorkOrder_LectraCode,@NewKey,0)
 
 									set @WorkOrder_SizeRatioRowid += 1
 								End;
