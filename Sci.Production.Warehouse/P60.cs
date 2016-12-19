@@ -166,7 +166,9 @@ namespace Sci.Production.Warehouse
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     DataRow dr = CurrentDetailData;
-                    if (decimal.Parse(e.FormattedValue.ToString()) > decimal.Parse(dr["onRoad"].ToString()))
+                    var v = detailgrid.Rows[e.RowIndex].Cells["onRoad"].Value;
+                    string st =  v.Empty() ? "0" : v.ToString();
+                    if (decimal.Parse(e.FormattedValue.ToString()) > decimal.Parse(st))
                     {
                         MyUtility.Msg.WarningBox("Qty can't be over on road qty!!");
                         e.Cancel = true;
@@ -476,7 +478,9 @@ on LocalPO_Detail.id = s.LocalPoId and LocalPO_Detail.ukey = s.LocalPo_detailuke
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.*,b.Qty poqty,b.Price
+            this.DetailSelectCommand = string.Format(@"select a.*
+,b.qty - b.inqty [onRoad]
+,b.Qty poqty,b.Price
 ,dbo.getItemDesc(a.category,a.Refno) [description],b.UnitId
 from dbo.LocalReceiving_Detail a left join dbo.LocalPO_Detail b
 on b.id = a.LocalPoId and b.Ukey = a.LocalPo_detailukey
