@@ -1268,18 +1268,14 @@ where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword);
                 {
                     case Keys.Tab:
                         var currentCell = this.detailgrid.CurrentCell;
-                        try
-                        {
+                        if(detailgrid.RowCount > 0){
                             var columnIndex = currentCell.ColumnIndex;
                             if (columnIndex == 8)
                             {
                                 this.detailgrid.CurrentCell = this.detailgrid.Rows[currentCell.RowIndex].Cells[13];
 
                             }
-                        }
-                        catch (Exception e)
-                        {
-                        }
+                        }                        
                         break;
                 }
             }
