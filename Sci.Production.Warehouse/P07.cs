@@ -722,9 +722,31 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
                 sqlupd2_A = Prgs.UpdateMPoDetail_A(2, bs1, true);
             if (bs1I.Count > 0)
                 sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1I, true);
-            
+
+            DataTable newDt = ((DataTable)detailgridbs.DataSource).Clone();
+            foreach (DataRow dtr in ((DataTable)detailgridbs.DataSource).Rows)
+            {
+                string[] dtrLocation = dtr["location"].ToString().Split(',');
+                if (dtrLocation.Length == 0)
+                {
+                    DataRow newDr = newDt.NewRow();
+                    newDr.ItemArray = dtr.ItemArray;
+                    newDt.Rows.Add(newDr);
+                }
+                else
+                {
+                    foreach (string location in dtrLocation)
+                    {
+                        DataRow newDr = newDt.NewRow();
+                        newDr.ItemArray = dtr.ItemArray;
+                        newDr["location"] = location;
+                        newDt.Rows.Add(newDr);
+                    }
+                }
+            }
+
             #region -- 更新庫存數量  ftyinventory --
-            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+            var bsfio = (from m in newDt.AsEnumerable()
                          select new
                          {
                              mdivisionid = m.Field<string>("mdivisionid"),

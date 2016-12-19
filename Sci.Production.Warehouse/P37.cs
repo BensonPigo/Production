@@ -326,7 +326,23 @@ namespace Sci.Production.Warehouse
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
-
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
+            ns.CellFormatting = (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                switch (dr["StockType"].ToString())
+                {
+                    case "B":
+                        e.Value = "Bulk";
+                        break;
+                    case "I":
+                        e.Value = "Inventory";
+                        break;
+                    case "O":
+                        e.Value = "Obsolete";
+                        break;
+                }
+            };
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
@@ -335,7 +351,7 @@ namespace Sci.Production.Warehouse
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
-            .Text("StockType", header: "StockType", iseditingreadonly: true)    //5
+            .Text("StockType", header: "StockType", iseditingreadonly: true, settings: ns)    //5
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //6
             .Text("Location", header: "Location", iseditingreadonly: true)    //7
             ;     //

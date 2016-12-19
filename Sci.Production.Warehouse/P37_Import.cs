@@ -53,7 +53,8 @@ namespace Sci.Production.Warehouse
 , '' ExportId
 ,null as ETA
 ,f.PoId,f.seq1,f.seq2,f.seq1+f.seq2 as seq,f.Roll,f.Dyelot,p1.stockunit
-,f.StockType,f.InQty - f.OutQty + f.AdjustQty balance
+,f.StockType 
+,f.InQty - f.OutQty + f.AdjustQty balance
 ,0.00 as qty
 ,(select t.MtlLocationID+',' from (select MtlLocationID from FtyInventory_Detail where Ukey = f.Ukey) t for xml path('')) as location
 ,dbo.getMtlDesc(f.PoId,f.seq1,f.seq2,2,0) [description]
@@ -68,7 +69,8 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and stocktype !='O' and 
                     strSQLCmd.Append(string.Format(@"select 0 as selected 
 ,'' id
 , a.ExportId,a.ETA,b.PoId,b.seq1,b.seq2,b.seq1+b.seq2 as seq,b.Roll,b.Dyelot,p1.stockunit
-,b.StockType,f.InQty - f.OutQty + f.AdjustQty balance
+,b.StockType 
+,f.InQty - f.OutQty + f.AdjustQty balance
 ,0.00 as qty
 ,(select t.MtlLocationID+',' from (select MtlLocationID from FtyInventory_Detail where Ukey = f.Ukey) t for xml path('')) as location
 ,dbo.getMtlDesc(b.PoId,b.seq1,b.seq2,2,0) [description]
@@ -76,8 +78,8 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and stocktype !='O' and 
 ,f.mdivisionid
 from dbo.Receiving a inner join dbo.Receiving_Detail b on a.id = b.id
 inner join dbo.FtyInventory f on f.POID = b.PoId and f.seq1 = b.seq1 and f.seq2 = b.Seq2 and f.stocktype = b.stocktype and f.MDivisionID = b.mdivisionid
-left join PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirmed' and a.mdivisionid='{0}'
+left join PO_Supp_Detail p1 on p1.ID = b.PoId and p1.seq1 = b.SEQ1 and p1.SEQ2 = b.seq2
+where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirmed' and a.mdivisionid='{0}' and b.StockType!='O'
 
 ", Sci.Env.User.Keyword));
                 }
@@ -161,6 +163,24 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
                     }
                 };
             #endregion
+            
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ns2 = new DataGridViewGeneratorTextColumnSettings();
+            ns2.CellFormatting = (s, e) =>
+            {
+                DataRow dr = grid1.GetDataRow(e.RowIndex);
+                switch (dr["StockType"].ToString())
+                {
+                    case "B":
+                        e.Value = "Bulk";
+                        break;
+                    case "I":
+                        e.Value = "Inventory";
+                        break;
+                    case "O":
+                        e.Value = "Obsolete";
+                        break;
+                }
+            };
 
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
@@ -172,7 +192,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
                 .Text("seq", header: "SEQ", iseditingreadonly: true, width: Widths.AnsiChars(6)) //4
                 .Text("roll", header: "Roll#", iseditingreadonly: true, width: Widths.AnsiChars(8)) //5
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //6
-                .Text("stocktype", header: "stocktype", iseditingreadonly: true, width: Widths.AnsiChars(6)) //7
+                .Text("stocktype", header: "stocktype", iseditingreadonly: true, width: Widths.AnsiChars(6), settings: ns2) //7
                 .Numeric("balance", header: "Balance" + Environment.NewLine + "Qty", iseditable: false, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //8
                 .Numeric("Qty", header: "Return" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6))  //9
                 .Text("location", header: "Location", width: Widths.AnsiChars(30), iseditingreadonly: true)    //10
