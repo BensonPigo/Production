@@ -87,18 +87,16 @@ namespace Sci.Production.Cutting
 
             From dbo.Order_EachCons a 
             Left Join dbo.Orders b On a.ID = b.ID  
-            Left Join (
-			            Select c.Order_EachConsUkey, PatternPanel = 
-			            (
-				            Select PatternPanel+',' 
-				            From dbo.Order_EachCons_PatternPanel as tmp 
-				            Where tmp.Order_EachConsUkey = c.Order_EachConsUkey 
-				            for XML path('')
-			            )
-			            From dbo.Order_EachCons_PatternPanel c 
-			            Group by Order_EachConsUkey  
-		            ) as d  
-		            On a.Ukey = d.Order_EachConsUkey 
+
+            outer apply(
+	            select (
+		            select distinct PatternPanel+',' 
+		            From dbo.Order_EachCons_PatternPanel as tmp 
+		            Where tmp.Order_EachConsUkey = a.Ukey
+		            for XML path('')
+		            )
+	            as PatternPanel
+            ) d
 
             Left Join (
 			            Select e.Order_EachConsUkey, Article =
@@ -114,7 +112,7 @@ namespace Sci.Production.Cutting
             outer apply(select sum(Qty) as TotalQty from  dbo.Order_EachCons_SizeQty  where  a.Ukey = Order_EachConsUkey  ) as EC_Size 
             left join dbo.Order_BOF bof on bof.Id = a.Id and bof.FabricCode = a.FabricCode
             left join dbo.Fabric on Fabric.SCIRefno = bof.SCIRefno
-            Where a.ID = '{0}' Order by a.Seq",KeyValue1);
+            Where a.ID = '{0}' Order by a.Seq", KeyValue1);
             DualResult result;
             if (!(result = DBProxy.Current.Select(null, sqlCmd, out datas))) return result;
 
