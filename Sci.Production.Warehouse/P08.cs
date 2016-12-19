@@ -41,6 +41,7 @@ namespace Sci.Production.Warehouse
                     this.OnDetailGridInsert();
                     DataRow newrow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
                     newrow.ItemArray = tmp.ItemArray;
+                    detailgrid.CurrentCell = detailgrid.Rows[detailgrid.RowCount - 1].Cells[0];
                 }
             };
         }
@@ -325,20 +326,61 @@ where a.id = '{0}' and a.seq1 ='{1}'and a.seq2 = '{2}'", CurrentDetailData["poid
                 }
             };
 
+            ts2.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    CurrentDetailData["location"] = e.FormattedValue;
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errLocation = new List<string>();
+                    List<string> trueLocation = new List<string>();
+                    foreach (string location in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                        {
+                            selectId &= false;
+                            errLocation.Add(location);
+                        }
+                        else if (!(location.EqualString("")))
+                        {
+                            trueLocation.Add(location);
+                        }
+                    }
+
+                    if (!selectId)
+                    {
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
+                        e.Cancel = true;
+                    }
+                    trueLocation.Sort();
+                    CurrentDetailData["location"] = string.Join(",", (trueLocation).ToArray());
+                    //去除錯誤的Location將正確的Location填回
+                }
+            };
             #endregion Location 右鍵開窗
+
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_Roll;
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_Dyelot;
 
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13))  //0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts)  //1
-            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9))    //2
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5))    //3
+            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9)).Get(out cbb_Roll)    //2
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5)).Get(out cbb_Dyelot)    //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //5
             .Numeric("useqty", header: "Use Qty", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
             .Numeric("stockqty", header: "Receiving Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //7
-            .Text("Location", header: "Bulk Location", settings: ts2, iseditingreadonly: true)    //8
+            .Text("Location", header: "Bulk Location", settings: ts2, iseditingreadonly: false)    //8
             ;     //
+
+            cbb_Roll.MaxLength = 8;
+            cbb_Dyelot.MaxLength = 4;
             #endregion 欄位設定
         }
 
