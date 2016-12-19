@@ -851,7 +851,9 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!GrandTotal.Value</Value>
-                <Style />
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -913,7 +915,9 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!Currency.Value</Value>
-                <Style />
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
