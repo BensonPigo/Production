@@ -65,7 +65,7 @@ and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2, Sci.Env.User.Keyword);
                     ,a.Seq2 as FromSeq2
                     ,left(a.seq1+' ',3)+a.Seq2 as fromseq
                     --,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
-                    ,a.qty as poqty
+                    ,a.usedqty as poqty
                     ,a.stockunit
                     ,left(b.seq1+' ',3)+b.Seq2 as toseq
                     ,0.00 as Qty
