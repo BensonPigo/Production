@@ -83,7 +83,8 @@ namespace Sci.Production.Warehouse
             }
             if (!MyUtility.Check.Empty(sp1) || !MyUtility.Check.Empty(sp2))
             {
-                strSQLCmd.Append(string.Format(@" and id between '{0}' and '{1}' ", sp1, sp2));
+                strSQLCmd.Append(string.Format(@" and poid between '{0}' and '{1}' ", sp1, sp2));
+                //strSQLCmd.Append(string.Format(@" and id between '{0}' and '{1}' ", sp1, sp2));
                 //strSQLCmd.Append(string.Format(@" and id between '{0}' and '{1}' ", sp1, sp2.PadLeft(13, 'Z')));
             }
 
