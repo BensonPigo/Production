@@ -28,7 +28,7 @@ namespace Sci.Production.IE
                 .Text("ChkListDesc", header: "Activities", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Date("ScheduleDate",header:"Schedule Date")
                 .Date("ActualDate", header: "Actual Date")
-                .Text("Remark", header: "Remark", width: Widths.AnsiChars(60));
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(30));
 
             grid.Columns[3].DefaultCellStyle.BackColor = Color.Pink;
             grid.Columns[4].DefaultCellStyle.BackColor = Color.Pink;

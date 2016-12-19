@@ -97,6 +97,8 @@
             this.textBox4 = new Sci.Win.UI.TextBox();
             this.label31 = new Sci.Win.UI.Label();
             this.displayBox10 = new Sci.Win.UI.DisplayBox();
+            this.label_brand = new Sci.Win.UI.Label();
+            this.textBox_brand = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -111,6 +113,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.textBox_brand);
+            this.detailcont.Controls.Add(this.label_brand);
             this.detailcont.Controls.Add(this.displayBox10);
             this.detailcont.Controls.Add(this.label31);
             this.detailcont.Controls.Add(this.textBox4);
@@ -988,6 +992,25 @@
             this.displayBox10.Size = new System.Drawing.Size(40, 23);
             this.displayBox10.TabIndex = 63;
             // 
+            // label_brand
+            // 
+            this.label_brand.Lines = 0;
+            this.label_brand.Location = new System.Drawing.Point(519, 31);
+            this.label_brand.Name = "label_brand";
+            this.label_brand.Size = new System.Drawing.Size(53, 23);
+            this.label_brand.TabIndex = 64;
+            this.label_brand.Text = "Brand";
+            // 
+            // textBox_brand
+            // 
+            this.textBox_brand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.textBox_brand.ForeColor = System.Drawing.Color.Blue;
+            this.textBox_brand.IsSupportEditMode = false;
+            this.textBox_brand.Location = new System.Drawing.Point(575, 31);
+            this.textBox_brand.Name = "textBox_brand";
+            this.textBox_brand.Size = new System.Drawing.Size(90, 23);
+            this.textBox_brand.TabIndex = 65;
+            // 
             // P02
             // 
             this.ApvChkValue = "New";
@@ -1087,5 +1110,7 @@
         private Win.UI.TextBox textBox4;
         private Win.UI.DisplayBox displayBox10;
         private Win.UI.Label label31;
+        private Win.UI.TextBox textBox_brand;
+        private Win.UI.Label label_brand;
     }
 }
