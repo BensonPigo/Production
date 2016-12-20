@@ -38,6 +38,8 @@
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.textBox3 = new Sci.Win.UI.TextBox();
+            this.textBox5 = new Sci.Win.UI.TextBox();
+            this.label5 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -48,6 +50,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.label5);
+            this.detailcont.Controls.Add(this.textBox5);
             this.detailcont.Controls.Add(this.textBox3);
             this.detailcont.Controls.Add(this.textBox2);
             this.detailcont.Controls.Add(this.textBox1);
@@ -164,6 +168,26 @@
             this.textBox3.Size = new System.Drawing.Size(53, 23);
             this.textBox3.TabIndex = 12;
             // 
+            // textBox5
+            // 
+            this.textBox5.BackColor = System.Drawing.Color.White;
+            this.textBox5.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "bcsdate", true));
+            this.textBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox5.Location = new System.Drawing.Point(162, 221);
+            this.textBox5.MaxLength = 2;
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(66, 23);
+            this.textBox5.TabIndex = 15;
+            // 
+            // label5
+            // 
+            this.label5.Lines = 0;
+            this.label5.Location = new System.Drawing.Point(70, 221);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(89, 23);
+            this.label5.TabIndex = 16;
+            this.label5.Text = "BcsDate";
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(905, 457);
@@ -200,5 +224,7 @@
         private Win.UI.TextBox textBox3;
         private Win.UI.TextBox textBox2;
         private Win.UI.TextBox textBox1;
+        private Win.UI.Label label5;
+        private Win.UI.TextBox textBox5;
     }
 }
