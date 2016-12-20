@@ -654,10 +654,11 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 			t.EditName= s.EditName,
 			t.EditDate= s.EditDate,
 			t.SizeItem_Elastic= s.SizeItem_Elastic,
-			t.BomTypePo= s.BomTypePo
+			t.BomTypePo= s.BomTypePo,
+			t.Keyword=s.Keyword
 		when not matched by target then
-			insert(Id,Ukey,Refno,SCIRefno,SuppID,Seq,ConsPC,BomTypeSize,PatternPanel,SizeItem,BomTypeZipper,Remark,ProvidedPatternRoom,ColorDetail,isCustCD,lossType,LossPercent,LossQty,LossStep,AddName,AddDate,EditName,EditDate,SizeItem_Elastic,BomTypePo)			
-			values(s.Id,s.Ukey,s.Refno,s.SCIRefno,s.SuppID,s.Seq1,s.ConsPC,s.BomTypeSize,s.PatternPanel,s.SizeItem,s.BomTypeZipper,s.Remark,s.ProvidedPatternRoom,s.ColorDetail,s.isCustCD,s.lossType,s.LossPercent,s.LossQty,s.LossStep,s.AddName,s.AddDate,s.EditName,s.EditDate,s.SizeItem_Elastic,s.BomTypePo)
+			insert(Id,Ukey,Refno,SCIRefno,SuppID,Seq,ConsPC,BomTypeSize,PatternPanel,SizeItem,BomTypeZipper,Remark,ProvidedPatternRoom,ColorDetail,isCustCD,lossType,LossPercent,LossQty,LossStep,AddName,AddDate,EditName,EditDate,SizeItem_Elastic,BomTypePo,Keyword)			
+			values(s.Id,s.Ukey,s.Refno,s.SCIRefno,s.SuppID,s.Seq1,s.ConsPC,s.BomTypeSize,s.PatternPanel,s.SizeItem,s.BomTypeZipper,s.Remark,s.ProvidedPatternRoom,s.ColorDetail,s.isCustCD,s.lossType,s.LossPercent,s.LossQty,s.LossStep,s.AddName,s.AddDate,s.EditName,s.EditDate,s.SizeItem_Elastic,s.BomTypePo,s.Keyword)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
@@ -932,10 +933,11 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 			update set 
 			t.id=s.id,
 			t.Order_BOAUkey= s.Order_BOAUkey,
-			t.KeyWordID= s.KeyWordID
+			t.KeyWordID= s.KeyWordID,
+			t.Relation=s.Relation
 		when not matched by target then
-			insert(ID,Ukey,Order_BOAUkey,KeyWordID)
-			values(s.ID,s.Ukey,s.Order_BOAUkey,s.KeyWordID)
+			insert(ID,Ukey,Order_BOAUkey,KeyWordID,Relation)
+			values(s.ID,s.Ukey,s.Order_BOAUkey,s.KeyWordID,s.Relation)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 	
