@@ -101,13 +101,13 @@ INSERT INTO Production.dbo.Inventory(
 )
 select 
        Ukey
-      ,POID
-      ,Seq1
-      ,Seq2
-      ,ProjectID
-      ,FactoryID
-      ,UnitID
-      ,InventoryRefnoId
+      ,iif(POID is null ,'',POID)
+      ,iif(Seq1 is null, '' ,seq1)
+      ,iif(Seq2 is null, '' ,seq2)
+      ,iif(ProjectID is null,'',ProjectID)
+      ,iif(FactoryID is null,'',FactoryID)
+      ,iif(UnitID is null,'',UnitID)
+      ,iif(InventoryRefnoId is null,'',InventoryRefnoId)
       ,Refno
       ,BrandGroup
       ,BrandID
@@ -140,7 +140,7 @@ select
       ,ETA
 	  ,SCIRefno
 from Trade_To_Pms.dbo.Inventory as b
-where not exists(select POID from Production.dbo.Inventory as a where a.POID=b.POID and a.Seq1=b.Seq1 and a.Seq2=b.Seq2 and a.FactoryID=b.FactoryID and a.UnitID=b.UnitID and a.ProjectID=b.ProjectID and a.InventoryRefnoId=b.InventoryRefnoId)
+where not exists(select POID from Production.dbo.Inventory as a where a.POID=b.POID and a.Seq1=b.Seq1 and a.Seq2=b.Seq2 and a.FactoryID=ISNULL(B.FactoryID,'') and a.UnitID=b.UnitID and a.ProjectID=b.ProjectID and a.InventoryRefnoId=b.InventoryRefnoId)
 
 
 
@@ -220,7 +220,7 @@ SET
       ,a.ConfirmHandle	      =b.ConfirmHandle
       ,a.Confirmed	      =b.Confirmed
       ,a.Qty	      =b.Qty
-      ,a.Type	      =b.Type
+      ,a.Type	      =isnull(b.Type,'')
       ,a.TransferMDivisionID	      = iif(c.MDivisionID is null,'',c.MDivisionID) 
 	  ,a.TransferFactory	      = b.TransferFactory
       ,a.InventoryUkey	      =b.InventoryUkey
@@ -336,9 +336,9 @@ select
 	  ,Ukey
       ,ConfirmDate
       ,ConfirmHandle
-      ,Confirmed
-      ,Qty
-      ,Type
+      ,ISNULL(Confirmed,0)
+      ,ISNULL(Qty,0)
+      ,ISNULL(Type,'')
 	  ,TransferFactory
       ,iif(c.MDivisionID is null,'',c.MDivisionID) as TransferMDivisionID
       ,InventoryUkey
