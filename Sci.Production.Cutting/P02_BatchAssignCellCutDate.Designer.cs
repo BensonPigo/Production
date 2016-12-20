@@ -58,6 +58,7 @@
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.txtCell2 = new Sci.Production.Class.txtCell();
             this.txtcell = new Sci.Production.Class.txtCell();
+            this.btn_Confirm = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -362,9 +363,20 @@
             this.txtcell.Size = new System.Drawing.Size(30, 23);
             this.txtcell.TabIndex = 7;
             // 
+            // btn_Confirm
+            // 
+            this.btn_Confirm.Location = new System.Drawing.Point(819, 467);
+            this.btn_Confirm.Name = "btn_Confirm";
+            this.btn_Confirm.Size = new System.Drawing.Size(80, 30);
+            this.btn_Confirm.TabIndex = 25;
+            this.btn_Confirm.Text = "Confirm";
+            this.btn_Confirm.UseVisualStyleBackColor = true;
+            this.btn_Confirm.Click += new System.EventHandler(this.btn_Confirm_Click);
+            // 
             // P02_BatchAssignCellCutDate
             // 
             this.ClientSize = new System.Drawing.Size(1010, 503);
+            this.Controls.Add(this.btn_Confirm);
             this.Controls.Add(this.batchestcutdate_button);
             this.Controls.Add(this.batchcutcell_button);
             this.Controls.Add(this.estcutdate_textbox2);
@@ -432,5 +444,6 @@
         private Win.UI.Button batchestcutdate_button;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
+        private Win.UI.Button btn_Confirm;
     }
 }

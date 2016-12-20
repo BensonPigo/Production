@@ -145,8 +145,8 @@ namespace Sci.Production.Cutting
                 if(dr["Sel"].ToString()=="True")
                 {
                     DataRow[] detaildr = detailTb.Select(string.Format("Ukey = '{0}'",dr["Ukey"]));
-                    detaildr[0]["Cutcellid"] = cell;
-                    dr["Cutcellid"] = cell;
+                  //  detaildr[0]["Cutcellid"] = cell;
+                   dr["Cutcellid"] = cell;
                 }
             }
 
@@ -166,13 +166,13 @@ namespace Sci.Production.Cutting
                     DataRow[] detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
                     if (cdate != "")
                     {
-                        detaildr[0]["estcutdate"] = cdate;
-                        dr["estcutdate"] = cdate;
+                       //  detaildr[0]["estcutdate"] = cdate;
+                       dr["estcutdate"] = cdate;
                     }
                     else
                     {
-                        detaildr[0]["estcutdate"] = DBNull.Value;
-                        dr["estcutdate"] = DBNull.Value;
+                     //  detaildr[0]["estcutdate"] = DBNull.Value;
+                         dr["estcutdate"] = DBNull.Value;
                     }
                 }
             }
@@ -181,6 +181,54 @@ namespace Sci.Production.Cutting
         private void grid1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
+        }
+
+        private void btn_Confirm_Click(object sender, EventArgs e)
+        {
+            string cell = txtCell2.Text;string cdate = ""; 
+            if (!MyUtility.Check.Empty(estcutdate_textbox2.Value))
+            {
+                cdate = estcutdate_textbox2.Text;
+            };
+            foreach (DataRow dr in curTb.Rows)
+            {
+                if (dr["Sel"].ToString() == "True")
+                {
+                    DataRow[] detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
+                    if (cell != "")
+                    {
+                        detaildr[0]["Cutcellid"] = cell;
+                        dr["Cutcellid"] = cell;
+                    } 
+                    if (dr["Cutcellid"].ToString() != "")
+                    {
+                        string CUTCELL = dr["Cutcellid"].ToString();
+                        detaildr[0]["Cutcellid"] = CUTCELL;
+
+                    }
+                    else 
+                    {
+                        detaildr[0]["Cutcellid"] = DBNull.Value;
+                        dr["Cutcellid"] = DBNull.Value;
+                    }
+                    if (cdate != "")
+                    {
+                        detaildr[0]["estcutdate"] = cdate;
+                        dr["estcutdate"] = cdate;
+                    }
+                    if (dr["estcutdate"].ToString() != "")
+                    {
+                        string ESTDATE = dr["estcutdate"].ToString();
+                        detaildr[0]["estcutdate"] = ESTDATE;
+                    }
+                    else
+                    {
+                        detaildr[0]["estcutdate"] = DBNull.Value;
+                        dr["estcutdate"] = DBNull.Value;
+                    }
+                }
+            }   
+            Close();
         }
     }
 }
