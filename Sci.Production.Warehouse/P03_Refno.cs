@@ -125,7 +125,24 @@ order by ColorID, SizeSpec ,SewinLine
                 comboSize.DataSource = dts3;
                 //MyUtility.Tool.SetupCombox(comboSize, 1, dt3);
             }
-
+            //設定Grid1的顯示欄位
+            MyUtility.Tool.SetGridFrozen(grid1);
+            MyUtility.Tool.AddMenuToPopupGridFilter(this, this.grid1, null, "factoryid,colorid,sizespec");
+            this.grid1.IsEditingReadOnly = true;
+            this.grid1.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.grid1)
+                 .Text("mdivisionid", header: "M", width: Widths.AnsiChars(8))
+                 .Text("id", header: "SP#", width: Widths.AnsiChars(13))
+                 .Text("seq", header: "Seq", width: Widths.AnsiChars(5))
+                 .Text("colorid", header: "Color", width: Widths.AnsiChars(6))
+                 .Text("sizespec", header: "Size", width: Widths.AnsiChars(15))
+                 .Text("suppid", header: "Supp", width: Widths.AnsiChars(6))
+                 .Date("sewinline", header: "Sewing Inline Date", width: Widths.AnsiChars(10))
+                  .Text("sewline", header: "Sewing Line#", width: Widths.AnsiChars(10))
+                   .Date("FinalETA", header: "FinalETA", width: Widths.AnsiChars(10))
+                 .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                  .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(8))
+                 ;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -200,24 +217,7 @@ order by ColorID, SizeSpec ,SewinLine
             {
                 listControlBindingSource1.DataSource = selectDataTable1;
             }
-            //設定Grid1的顯示欄位
-            MyUtility.Tool.SetGridFrozen(grid1);
-            MyUtility.Tool.AddMenuToPopupGridFilter(this, this.grid1, null, "factoryid,colorid,sizespec");
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
-                 .Text("mdivisionid", header: "M", width: Widths.AnsiChars(8))
-                 .Text("id", header: "SP#", width: Widths.AnsiChars(13))
-                 .Text("seq", header: "Seq", width: Widths.AnsiChars(5))
-                 .Text("colorid", header: "Color", width: Widths.AnsiChars(6))
-                 .Text("sizespec", header: "Size", width: Widths.AnsiChars(15))
-                 .Text("suppid", header: "Supp", width: Widths.AnsiChars(6))
-                 .Date("sewinline", header: "Sewing Inline Date", width: Widths.AnsiChars(10))
-                  .Text("sewline", header: "Sewing Line#", width: Widths.AnsiChars(10))
-                   .Date("FinalETA", header: "FinalETA", width: Widths.AnsiChars(10))
-                 .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                  .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(8))
-                 ;
+
         }
     }
 }

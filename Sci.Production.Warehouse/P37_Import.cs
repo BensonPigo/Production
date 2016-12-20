@@ -52,7 +52,7 @@ namespace Sci.Production.Warehouse
 ,'' id
 , '' ExportId
 ,null as ETA
-,f.PoId,f.seq1,f.seq2,f.seq1+f.seq2 as seq,f.Roll,f.Dyelot,p1.stockunit
+,f.PoId,f.seq1,f.seq2,left(f.seq1+' ',3)+f.Seq2 as seq,f.Roll,f.Dyelot,p1.stockunit
 ,f.StockType 
 ,f.InQty - f.OutQty + f.AdjustQty balance
 ,0.00 as qty
@@ -202,30 +202,30 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
             this.grid1.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
 
             // 全選
-            checkBox1.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetCheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
+            //checkBox1.Click += (s, e) =>
+            //{
+            //    if (null != col_chk)
+            //    {
+            //        this.grid1.SetCheckeds(col_chk);
+            //        if (col_chk.Index == this.grid1.CurrentCellAddress.X)
+            //        {
+            //            if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
+            //        }
+            //    }
+            //};
 
             // 全不選
-            checkBox2.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetUncheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
+            //checkBox2.Click += (s, e) =>
+            //{
+            //    if (null != col_chk)
+            //    {
+            //        this.grid1.SetUncheckeds(col_chk);
+            //        if (col_chk.Index == this.grid1.CurrentCellAddress.X)
+            //        {
+            //            if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
+            //        }
+            //    }
+            //};
         }
 
         //Close
