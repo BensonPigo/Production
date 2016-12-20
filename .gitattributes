@@ -261,6 +261,7 @@ Database/dbo/Tables/KHContract.sql -text
 Database/dbo/Tables/KHContract_Detail.sql -text
 Database/dbo/Tables/KHEachYearFinalInventory.sql -text
 Database/dbo/Tables/KHGoodsHSCode.sql -text
+Database/dbo/Tables/Keyword.sql -text
 Database/dbo/Tables/Lack.sql -text
 Database/dbo/Tables/Lack_Detail.sql -text
 Database/dbo/Tables/LearnCurve.sql -text
