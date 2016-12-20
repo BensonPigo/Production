@@ -27,8 +27,11 @@
     [SizeItem_Elastic]    VARCHAR (3)    NULL,
     [BomTypeFactory]      BIT            NULL,
     [BomTypePo]           BIT            NULL,
+    [Keyword]             VARCHAR (MAX)  NULL,
     CONSTRAINT [PK_Order_BOA] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

@@ -10,8 +10,11 @@
     [AddDate]       DATETIME      NULL,
     [EditName]      VARCHAR (10)  CONSTRAINT [DF_Order_BOA_KeyWord_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME      NULL,
+    [Relation]      NVARCHAR (10) NULL,
     CONSTRAINT [PK_Order_BOA_KeyWord] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO
