@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
@@ -51,7 +52,7 @@
             this.panel4 = new Sci.Win.UI.Panel();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
@@ -150,9 +151,19 @@
             this.numericBox2.IsSupportEditMode = false;
             this.numericBox2.Location = new System.Drawing.Point(400, 61);
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(45, 23);
             this.numericBox2.TabIndex = 12;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox1
             // 
@@ -161,9 +172,19 @@
             this.numericBox1.IsSupportEditMode = false;
             this.numericBox1.Location = new System.Drawing.Point(400, 34);
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.ReadOnly = true;
             this.numericBox1.Size = new System.Drawing.Size(66, 23);
             this.numericBox1.TabIndex = 11;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // comboBox1
             // 
@@ -289,9 +310,7 @@
             this.grid1.AllowUserToAddRows = false;
             this.grid1.AllowUserToDeleteRows = false;
             this.grid1.AllowUserToResizeRows = false;
-            this.grid1.AutoGenerateColumns = false;
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid1.DataSource = this.listControlBindingSource1;
@@ -302,7 +321,6 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
