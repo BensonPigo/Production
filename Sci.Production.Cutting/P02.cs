@@ -1509,7 +1509,7 @@ namespace Sci.Production.Cutting
             //CutRef
             newRow["OrderID"] = OldRow["OrderID"];
             newRow["Cutplanid"] = OldRow["Cutplanid"];
-            newRow["Cutno"] = OldRow["Cutno"];
+            //Cutno
             newRow["Layer"] = OldRow["Layer"];
             newRow["Colorid"] = OldRow["Colorid"];
             newRow["Markername"] = OldRow["Markername"];
@@ -1573,12 +1573,10 @@ namespace Sci.Production.Cutting
                 drNEW["newkey"] = maxkey;
                 sizeratioTb.Rows.Add(drNEW);
             }
-
         }
 
         protected override void OnDetailGridDelete()
-        {
-            
+        {            
             string ukey = CurrentDetailData["Ukey"].ToString();
             int NewKey = Convert.ToInt16(CurrentDetailData["NewKey"]);
             DataRow[] drar = sizeratioTb.Select(string.Format("WorkOrderUkey = {0} and NewKey = {1}", ukey, NewKey));
