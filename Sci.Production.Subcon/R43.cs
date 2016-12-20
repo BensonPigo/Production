@@ -15,7 +15,7 @@ namespace Sci.Production.Subcon
     public partial class R43 : Sci.Win.Tems.PrintForm
     {
         DataTable printData;
-        string SubProcess, Factory;
+        string SubProcess, M;
         DateTime? dateBundleReceive1, dateBundleReceive2;
 
         public R43(ToolStripMenuItem menuitem)
@@ -37,11 +37,11 @@ namespace Sci.Production.Subcon
             }
             else { ShowErr(Result); }
 
-            DataTable dtfactory;
-            if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory", out dtfactory))
+            DataTable dtM;
+            if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory", out dtM))
             {
-                this.comboFactory.DataSource = dtfactory;
-                this.comboFactory.DisplayMember = "ID";
+                this.comboM.DataSource = dtM;
+                this.comboM.DisplayMember = "ID";
             }
             else { ShowErr(Result); }
         }
@@ -57,7 +57,7 @@ namespace Sci.Production.Subcon
             }
 
             SubProcess = comboSubProcess.Text;
-            Factory = comboFactory.Text;
+            M = comboM.Text;
             dateBundleReceive1 = dateBundleReceive.Value1;
             dateBundleReceive2 = dateBundleReceive.Value2;
             return base.ValidateInput();
@@ -101,10 +101,10 @@ namespace Sci.Production.Subcon
                 cmds.Add(new SqlParameter("@BundleReceive1", Convert.ToDateTime(dateBundleReceive1).ToString("d")));
                 cmds.Add(new SqlParameter("@BundleReceive2", Convert.ToDateTime(dateBundleReceive2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(Factory))
+            if (!MyUtility.Check.Empty(M))
             {
                 sqlCmd.Append(string.Format(@" and b.MDivisionid = @Factory"));
-                cmds.Add(new SqlParameter("@Factory", Factory));
+                cmds.Add(new SqlParameter("@Factory", M));
             }
             #endregion
             #region group order

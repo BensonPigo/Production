@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.comboM = new Sci.Win.UI.ComboBox();
             this.comboSubProcess = new Sci.Win.UI.ComboBox();
             this.label5 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
@@ -49,16 +49,16 @@
             // 
             this.close.Location = new System.Drawing.Point(473, 84);
             // 
-            // comboFactory
+            // comboM
             // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(169, 78);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.Size = new System.Drawing.Size(121, 24);
-            this.comboFactory.TabIndex = 117;
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(169, 78);
+            this.comboM.Name = "comboM";
+            this.comboM.Size = new System.Drawing.Size(121, 24);
+            this.comboM.TabIndex = 117;
             // 
             // comboSubProcess
             // 
@@ -78,7 +78,7 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(134, 23);
             this.label5.TabIndex = 115;
-            this.label5.Text = "Factory";
+            this.label5.Text = "M";
             // 
             // label4
             // 
@@ -110,7 +110,7 @@
             this.ClientSize = new System.Drawing.Size(565, 145);
             this.Controls.Add(this.dateBundleReceive);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.comboM);
             this.Controls.Add(this.comboSubProcess);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -122,7 +122,7 @@
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.comboSubProcess, 0);
-            this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.dateBundleReceive, 0);
             this.ResumeLayout(false);
@@ -132,7 +132,7 @@
 
         #endregion
 
-        private Win.UI.ComboBox comboFactory;
+        private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboSubProcess;
         private Win.UI.Label label5;
         private Win.UI.Label label4;
