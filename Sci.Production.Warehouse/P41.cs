@@ -185,6 +185,8 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", S
         private void button3_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            dt.DefaultView.RowFilter = listControlBindingSource1.Filter;
+            dt = dt.DefaultView.ToTable();
             if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("No Data!!");
