@@ -64,8 +64,8 @@ namespace Sci.Production.Shipping
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(@"select NLCode,HSCode,UnitID
 from VNContract_Detail
-where ID in (select ID from (select ID,MAX(StartDate) as MaxDate from VNContract where Encode = 1 group by ID) a)
-order by NLCode", "5,11,8", this.Text, false, ",",headercaptions:"NL Code, HSCode, Unit");
+where ID in (select ID from VNContract WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract where Status = 'Confirmed') )
+order by NLCode", "5,11,8", this.Text, false, ",", headercaptions: "NL Code, HSCode, Unit");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             IList<DataRow> selectedData = item.GetSelecteds();
@@ -90,7 +90,7 @@ order by NLCode", "5,11,8", this.Text, false, ",",headercaptions:"NL Code, HSCod
                     DataRow NLCodeDate;
                     if (MyUtility.Check.Seek(string.Format(@"select NLCode,HSCode,UnitID
 from VNContract_Detail
-where ID in (select ID from (select ID,MAX(StartDate) as MaxDate from VNContract where Encode = 1 group by ID) a)
+where ID in (select ID from VNContract WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract where Status = 'Confirmed') )
 and NLCode = '{0}'", textBox1.Text), out NLCodeDate))
                     {
                         CurrentMaintain["NLCode"] = textBox1.Text;
