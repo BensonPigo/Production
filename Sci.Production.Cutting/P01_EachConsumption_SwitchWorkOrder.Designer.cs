@@ -40,9 +40,9 @@
             // 
             this.radioGroup1.Controls.Add(this.BYSP);
             this.radioGroup1.Controls.Add(this.Combination);
-            this.radioGroup1.Location = new System.Drawing.Point(64, 32);
+            this.radioGroup1.Location = new System.Drawing.Point(11, 8);
             this.radioGroup1.Name = "radioGroup1";
-            this.radioGroup1.Size = new System.Drawing.Size(183, 114);
+            this.radioGroup1.Size = new System.Drawing.Size(183, 85);
             this.radioGroup1.TabIndex = 0;
             this.radioGroup1.TabStop = false;
             // 
@@ -50,7 +50,7 @@
             // 
             this.BYSP.AutoSize = true;
             this.BYSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.BYSP.Location = new System.Drawing.Point(26, 60);
+            this.BYSP.Location = new System.Drawing.Point(19, 48);
             this.BYSP.Name = "BYSP";
             this.BYSP.Size = new System.Drawing.Size(72, 21);
             this.BYSP.TabIndex = 1;
@@ -62,7 +62,7 @@
             // 
             this.Combination.AutoSize = true;
             this.Combination.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Combination.Location = new System.Drawing.Point(26, 33);
+            this.Combination.Location = new System.Drawing.Point(19, 21);
             this.Combination.Name = "Combination";
             this.Combination.Size = new System.Drawing.Size(104, 21);
             this.Combination.TabIndex = 0;
@@ -72,7 +72,7 @@
             // 
             // OK_But
             // 
-            this.OK_But.Location = new System.Drawing.Point(273, 41);
+            this.OK_But.Location = new System.Drawing.Point(220, 17);
             this.OK_But.Name = "OK_But";
             this.OK_But.Size = new System.Drawing.Size(80, 30);
             this.OK_But.TabIndex = 1;
@@ -82,7 +82,7 @@
             // 
             // Cancel_But
             // 
-            this.Cancel_But.Location = new System.Drawing.Point(273, 77);
+            this.Cancel_But.Location = new System.Drawing.Point(220, 53);
             this.Cancel_But.Name = "Cancel_But";
             this.Cancel_But.Size = new System.Drawing.Size(80, 30);
             this.Cancel_But.TabIndex = 2;
@@ -92,11 +92,12 @@
             // 
             // P01_EachCons_SwitchWorkOrder
             // 
-            this.ClientSize = new System.Drawing.Size(390, 223);
+            this.ClientSize = new System.Drawing.Size(334, 115);
             this.Controls.Add(this.Cancel_But);
             this.Controls.Add(this.OK_But);
             this.Controls.Add(this.radioGroup1);
             this.Name = "P01_EachCons_SwitchWorkOrder";
+            this.Text = "Switch To WorkOrder";
             this.radioGroup1.ResumeLayout(false);
             this.radioGroup1.PerformLayout();
             this.ResumeLayout(false);
